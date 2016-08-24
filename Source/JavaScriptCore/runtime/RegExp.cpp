@@ -296,13 +296,13 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
     m_regExpBytecode = Yarr::byteCompile(pattern, &vm->m_regExpAllocator, &vm->m_regExpAllocatorLock);
 }
 
-int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int>& ovector)
+int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int, 32>& ovector)
 {
     return matchInline(vm, s, startOffset, ovector);
 }
 
 bool RegExp::matchConcurrently(
-    VM& vm, const String& s, unsigned startOffset, int& position, Vector<int>& ovector)
+    VM& vm, const String& s, unsigned startOffset, int& position, Vector<int, 32>& ovector)
 {
     ConcurrentJITLocker locker(m_lock);
 
@@ -382,7 +382,7 @@ void RegExp::deleteCode()
 void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* offsetVector, int jitResult)
 {
     int offsetVectorSize = (m_numSubpatterns + 1) * 2;
-    Vector<int> interpreterOvector;
+    Vector<int, 32> interpreterOvector;
     interpreterOvector.resize(offsetVectorSize);
     int* interpreterOffsetVector = interpreterOvector.data();
     int interpreterResult = 0;

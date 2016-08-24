@@ -1,3 +1,12 @@
+2016-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.
+
+        * stress/array-storage-array-unshift.js: Removed.
+        * stress/contiguous-array-unshift.js: Removed.
+        * stress/double-array-unshift.js: Removed.
+        * stress/int32-array-unshift.js: Removed.
+
 2016-08-24  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES2016] Allow assignment in for-in head in not-strict mode

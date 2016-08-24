@@ -26,6 +26,7 @@
 #ifndef VMEntryScope_h
 #define VMEntryScope_h
 
+#include "Interpreter.h"
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
 #include <wtf/Vector.h>

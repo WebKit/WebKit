@@ -27,7 +27,8 @@
 #include "TypeSet.h"
 
 #include "InspectorProtocolObjects.h"
-#include "JSCInlines.h"
+#include "JSCJSValue.h"
+#include "JSCJSValueInlines.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/text/StringBuilder.h>

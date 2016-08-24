@@ -113,13 +113,16 @@ inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendUnbarrieredPointer(&structure);
 }
 
+inline VM* JSCell::vm() const
+{
+    return MarkedBlock::blockFor(this)->vm();
+}
+
 ALWAYS_INLINE VM& ExecState::vm() const
 {
     ASSERT(callee());
     ASSERT(callee()->vm());
-    ASSERT(!callee()->isLargeAllocation());
-    // This is an important optimization since we access this so often.
-    return *calleeAsValue().asCell()->markedBlock().vm();
+    return *calleeAsValue().asCell()->vm();
 }
 
 template<typename T>
@@ -230,19 +233,12 @@ inline bool JSCell::canUseFastGetOwnProperty(const Structure& structure)
         && !structure.typeInfo().overridesGetOwnPropertySlot();
 }
 
-ALWAYS_INLINE const ClassInfo* JSCell::classInfo() const
+inline const ClassInfo* JSCell::classInfo() const
 {
-    if (isLargeAllocation()) {
-        LargeAllocation& allocation = largeAllocation();
-        if (allocation.attributes().destruction == NeedsDestruction
-            && !(inlineTypeFlags() & StructureIsImmortal))
-            return static_cast<const JSDestructibleObject*>(this)->classInfo();
-        return structure(*allocation.vm())->classInfo();
-    }
-    MarkedBlock& block = markedBlock();
-    if (block.needsDestruction() && !(inlineTypeFlags() & StructureIsImmortal))
+    MarkedBlock* block = MarkedBlock::blockFor(this);
+    if (block->needsDestruction() && !(inlineTypeFlags() & StructureIsImmortal))
         return static_cast<const JSDestructibleObject*>(this)->classInfo();
-    return structure(*block.vm())->classInfo();
+    return structure(*block->vm())->classInfo();
 }
 
 inline bool JSCell::toBoolean(ExecState* exec) const
@@ -259,18 +255,6 @@ inline TriState JSCell::pureToBoolean() const
     if (isSymbol())
         return TrueTriState;
     return MixedTriState;
-}
-
-inline void JSCell::callDestructor(VM& vm)
-{
-    if (isZapped())
-        return;
-    ASSERT(structureID());
-    if (inlineTypeFlags() & StructureIsImmortal)
-        structure(vm)->classInfo()->methodTable.destroy(this);
-    else
-        jsCast<JSDestructibleObject*>(this)->classInfo()->methodTable.destroy(this);
-    zap();
 }
 
 } // namespace JSC

@@ -402,7 +402,7 @@ const InitializationModeMask = 0xffc00
 const InitializationModeShift = 10
 const NotInitialization = 2
 
-const MarkedBlockSize = 64 * 1024
+const MarkedBlockSize = 16 * 1024
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
 
 # Allocation constants
@@ -1068,6 +1068,24 @@ macro functionInitialization(profileArgSkip)
 .argumentProfileDone:
 end
 
+macro allocateJSObject(allocator, structure, result, scratch1, slowCase)
+    const offsetOfFirstFreeCell = 
+        MarkedAllocator::m_freeList + 
+        MarkedBlock::FreeList::head
+
+    # Get the object from the free list.   
+    loadp offsetOfFirstFreeCell[allocator], result
+    btpz result, slowCase
+    
+    # Remove the object from the free list.
+    loadp [result], scratch1
+    storep scratch1, offsetOfFirstFreeCell[allocator]
+
+    # Initialize the object.
+    storep 0, JSObject::m_butterfly[result]
+    storeStructureWithTypeInfo(result, structure, scratch1)
+end
+
 macro doReturn()
     restoreCalleeSavesUsedByLLInt()
     restoreCallerPCAndCFR()
@@ -1287,18 +1305,6 @@ _llint_op_create_cloned_arguments:
     traceExecution()
     callOpcodeSlowPath(_slow_path_create_cloned_arguments)
     dispatch(2)
-
-
-_llint_op_create_this:
-    traceExecution()
-    callOpcodeSlowPath(_slow_path_create_this)
-    dispatch(5)
-
-
-_llint_op_new_object:
-    traceExecution()
-    callOpcodeSlowPath(_llint_slow_path_new_object)
-    dispatch(4)
 
 
 _llint_op_new_func:

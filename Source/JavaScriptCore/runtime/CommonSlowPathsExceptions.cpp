@@ -28,7 +28,6 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
-#include "Interpreter.h"
 #include "JITExceptions.h"
 #include "LLIntCommon.h"
 #include "JSCInlines.h"

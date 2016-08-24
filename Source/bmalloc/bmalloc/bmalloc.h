@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,12 +41,6 @@ inline void* tryMalloc(size_t size)
 inline void* malloc(size_t size)
 {
     return Cache::allocate(size);
-}
-
-// Returns null on failure.
-inline void* tryMemalign(size_t alignment, size_t size)
-{
-    return Cache::tryAllocate(alignment, size);
 }
 
 // Crashes on failure.

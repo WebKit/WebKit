@@ -48,7 +48,6 @@
 #include "StorageNamespaceProvider.h"
 #include "ThreadableWebSocketChannel.h"
 #include "UserContentProvider.h"
-#include <heap/HeapInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

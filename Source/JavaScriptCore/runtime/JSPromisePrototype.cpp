@@ -29,11 +29,13 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "JSCBuiltins.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSPromise.h"
 #include "Microtask.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

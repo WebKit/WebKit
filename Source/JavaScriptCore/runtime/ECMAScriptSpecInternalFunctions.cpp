@@ -28,7 +28,7 @@
 
 #include "CallFrame.h"
 #include "ConstructData.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "RegExpObject.h"
 
 namespace JSC {

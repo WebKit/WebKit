@@ -71,11 +71,7 @@ public:
         IndexSet<BasicBlock> candidates;
 
         for (BasicBlock* block : m_proc) {
-            if (block->size() > m_maxSize)
-                continue;
-            if (block->numSuccessors() > m_maxSuccessors)
-                continue;
-            if (block->last()->type() != Void) // Demoting doesn't handle terminals with values.
+            if (block->size() > m_maxSize || block->numSuccessors() > m_maxSuccessors)
                 continue;
 
             candidates.add(block);

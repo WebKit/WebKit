@@ -33,7 +33,6 @@
 #include "Executable.h"
 #include "HeapInlines.h"
 #include "HeapIterationScope.h"
-#include "HeapUtil.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
@@ -357,6 +356,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
     RELEASE_ASSERT(m_lock.isLocked());
 
     TinyBloomFilter filter = m_vm.heap.objectSpace().blocks().filter();
+    MarkedBlockSet& markedBlockSet = m_vm.heap.objectSpace().blocks();
 
     for (UnprocessedStackTrace& unprocessedStackTrace : m_unprocessedStackTraces) {
         m_stackTraces.append(StackTrace());
@@ -390,7 +390,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             JSValue callee = JSValue::decode(encodedCallee);
             StackFrame& stackFrame = stackTrace.frames.last();
             bool alreadyHasExecutable = !!stackFrame.executable;
-            if (!HeapUtil::isValueGCObject(m_vm.heap, filter, callee)) {
+            if (!Heap::isValueGCObject(filter, markedBlockSet, callee)) {
                 if (!alreadyHasExecutable)
                     stackFrame.frameType = FrameType::Unknown;
                 return;
@@ -435,7 +435,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 return;
             }
 
-            RELEASE_ASSERT(HeapUtil::isPointerGCObjectJSCell(m_vm.heap, filter, executable));
+            RELEASE_ASSERT(Heap::isPointerGCObject(filter, markedBlockSet, executable));
             stackFrame.frameType = FrameType::Executable;
             stackFrame.executable = executable;
             m_liveCellPointers.add(executable);

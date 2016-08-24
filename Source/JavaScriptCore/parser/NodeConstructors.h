@@ -23,7 +23,6 @@
 
 #include "Nodes.h"
 #include "Lexer.h"
-#include "Opcode.h"
 #include "Parser.h"
 
 namespace JSC {

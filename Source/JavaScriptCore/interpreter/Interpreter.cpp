@@ -51,7 +51,6 @@
 #include "JSString.h"
 #include "JSWithScope.h"
 #include "LLIntCLoop.h"
-#include "LLIntData.h"
 #include "LLIntThunks.h"
 #include "LiteralParser.h"
 #include "ObjectPrototype.h"
@@ -85,6 +84,46 @@
 using namespace std;
 
 namespace JSC {
+
+intptr_t StackFrame::sourceID() const
+{
+    if (!codeBlock)
+        return noSourceID;
+    return codeBlock->ownerScriptExecutable()->sourceID();
+}
+
+String StackFrame::sourceURL() const
+{
+    if (!codeBlock)
+        return ASCIILiteral("[native code]");
+
+    String sourceURL = codeBlock->ownerScriptExecutable()->sourceURL();
+    if (!sourceURL.isNull())
+        return sourceURL;
+    return emptyString();
+}
+
+String StackFrame::functionName(VM& vm) const
+{
+    if (codeBlock) {
+        switch (codeBlock->codeType()) {
+        case EvalCode:
+            return ASCIILiteral("eval code");
+        case ModuleCode:
+            return ASCIILiteral("module code");
+        case FunctionCode:
+            break;
+        case GlobalCode:
+            return ASCIILiteral("global code");
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+    String name;
+    if (callee)
+        name = getCalculatedDisplayName(vm, callee.get()).impl();
+    return name.isNull() ? emptyString() : name;
+}
 
 JSValue eval(CallFrame* callFrame)
 {
@@ -225,7 +264,6 @@ void loadVarargs(CallFrame* callFrame, VirtualRegister firstElementDest, JSValue
         return;
     
     JSCell* cell = arguments.asCell();
-
     switch (cell->type()) {
     case DirectArgumentsType:
         jsCast<DirectArguments*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
@@ -432,6 +470,48 @@ bool Interpreter::isOpcode(Opcode opcode)
 #else
     return opcode >= 0 && opcode <= op_end;
 #endif
+}
+
+void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
+{
+    if (!codeBlock) {
+        line = 0;
+        column = 0;
+        return;
+    }
+
+    int divot = 0;
+    int unusedStartOffset = 0;
+    int unusedEndOffset = 0;
+    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divot, unusedStartOffset, unusedEndOffset, line, column);
+
+    ScriptExecutable* executable = codeBlock->ownerScriptExecutable();
+    if (executable->hasOverrideLineNumber())
+        line = executable->overrideLineNumber();
+}
+
+String StackFrame::toString(VM& vm) const
+{
+    StringBuilder traceBuild;
+    String functionName = this->functionName(vm);
+    String sourceURL = this->sourceURL();
+    traceBuild.append(functionName);
+    if (!sourceURL.isEmpty()) {
+        if (!functionName.isEmpty())
+            traceBuild.append('@');
+        traceBuild.append(sourceURL);
+        if (codeBlock) {
+            unsigned line;
+            unsigned column;
+            computeLineAndColumn(line, column);
+
+            traceBuild.append(':');
+            traceBuild.appendNumber(line);
+            traceBuild.append(':');
+            traceBuild.appendNumber(column);
+        }
+    }
+    return traceBuild.toString().impl();
 }
 
 static inline bool isWebAssemblyExecutable(ExecutableBase* executable)

@@ -31,11 +31,13 @@
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
 #include "IteratorOperations.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSFunctionInlines.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
 #include "Lookup.h"
 #include "MapDataInlines.h"
+#include "StructureInlines.h"
 
 #include "SetPrototype.lut.h"
 

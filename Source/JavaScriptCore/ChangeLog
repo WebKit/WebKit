@@ -1,3 +1,642 @@
+2016-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.
+
+        * API/JSTypedArray.cpp:
+        * API/ObjCCallbackFunction.mm:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/builtins/builtins_generate_combined_implementation.py:
+        (BuiltinsCombinedImplementationGenerator.generate_secondary_header_includes):
+        * Scripts/builtins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_secondary_header_includes):
+        * Scripts/builtins/builtins_generate_separate_implementation.py:
+        (BuiltinsSeparateImplementationGenerator.generate_secondary_header_includes):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::JumpList::link):
+        (JSC::AbstractMacroAssembler::JumpList::linkTo):
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::add32):
+        * assembler/MacroAssemblerCodeRef.cpp: Removed.
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::createLLIntCodePtr):
+        (JSC::MacroAssemblerCodePtr::dumpWithName):
+        (JSC::MacroAssemblerCodePtr::dump):
+        (JSC::MacroAssemblerCodeRef::createLLIntCodeRef):
+        (JSC::MacroAssemblerCodeRef::dump):
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::appendBoolConstant): Deleted.
+        * b3/B3BasicBlock.h:
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3StackmapGenerationParams.h:
+        * b3/testb3.cpp:
+        (JSC::B3::run):
+        (JSC::B3::testPatchpointTerminalReturnValue): Deleted.
+        * bindings/ScriptValue.cpp:
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        * bytecode/BytecodeBasicBlock.cpp:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        * bytecode/BytecodeUseDef.h:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::callTypeFor): Deleted.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::callTypeFor):
+        * bytecode/CallLinkStatus.cpp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::clearLLIntGetByIdCache): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::jitCodeMap):
+        (JSC::clearLLIntGetByIdCache):
+        * bytecode/Instruction.h:
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::isNull):
+        (JSC::ObjectAllocationProfile::initialize):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/PreciseJumpTargets.cpp:
+        * bytecode/StructureStubInfo.cpp:
+        * bytecode/StructureStubInfo.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::vm):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedInstructionStream.cpp:
+        * bytecode/UnlinkedInstructionStream.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSCell):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCompile.cpp:
+        * ftl/FTLJITFinalizer.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateRest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAllocateArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::initializeArrayElements):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateCell):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateArrayWithSize): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::allocatorForSize): Deleted.
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::constBool):
+        (JSC::FTL::Output::add):
+        (JSC::FTL::Output::shl):
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::lShr):
+        (JSC::FTL::Output::zeroExt):
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        (JSC::FTL::Output::above):
+        (JSC::FTL::Output::aboveOrEqual):
+        (JSC::FTL::Output::below):
+        (JSC::FTL::Output::belowOrEqual):
+        (JSC::FTL::Output::greaterThan):
+        (JSC::FTL::Output::greaterThanOrEqual):
+        (JSC::FTL::Output::lessThan):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::select):
+        (JSC::FTL::Output::addIncomingToPhi):
+        (JSC::FTL::Output::appendSuccessor): Deleted.
+        * ftl/FTLOutput.h:
+        * ftl/FTLValueFromBlock.h:
+        (JSC::FTL::ValueFromBlock::ValueFromBlock):
+        (JSC::FTL::ValueFromBlock::operator bool): Deleted.
+        * ftl/FTLWeightedTarget.h:
+        (JSC::FTL::WeightedTarget::frequentedBlock): Deleted.
+        * heap/CellContainer.h: Removed.
+        * heap/CellContainerInlines.h: Removed.
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::~ConservativeRoots):
+        (JSC::ConservativeRoots::grow):
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::genericAddSpan):
+        * heap/ConservativeRoots.h:
+        (JSC::ConservativeRoots::roots):
+        * heap/CopyToken.h:
+        * heap/FreeList.cpp: Removed.
+        * heap/FreeList.h: Removed.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::copyBackingStores):
+        (JSC::Heap::gatherStackRoots):
+        (JSC::Heap::gatherJSStackRoots):
+        (JSC::Heap::gatherScratchBufferRoots):
+        (JSC::Heap::clearLivenessData):
+        (JSC::Heap::visitSmallStrings):
+        (JSC::Heap::visitConservativeRoots):
+        (JSC::Heap::removeDeadCompilerWorklistEntries):
+        (JSC::Heap::gatherExtraHeapSnapshotData):
+        (JSC::Heap::removeDeadHeapSnapshotNodes):
+        (JSC::Heap::visitProtectedObjects):
+        (JSC::Heap::visitArgumentBuffers):
+        (JSC::Heap::visitException):
+        (JSC::Heap::visitStrongHandles):
+        (JSC::Heap::visitHandleStack):
+        (JSC::Heap::visitSamplingProfiler):
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines):
+        (JSC::Heap::converge):
+        (JSC::Heap::visitWeakHandles):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::clearUnmarkedExecutables):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collect):
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::suspendCompilerThreads):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::flushOldStructureIDTables):
+        (JSC::Heap::flushWriteBarrierBuffer):
+        (JSC::Heap::stopAllocation):
+        (JSC::Heap::reapWeakHandles):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCMaps):
+        (JSC::Heap::sweepArrayBuffers):
+        (JSC::Heap::snapshotMarkedSpace):
+        (JSC::Heap::deleteSourceProviderCaches):
+        (JSC::Heap::notifyIncrementalSweeper):
+        (JSC::Heap::writeBarrierCurrentlyExecutingCodeBlocks):
+        (JSC::Heap::resetAllocators):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::resumeCompilerThreads):
+        (JSC::Zombify::visit):
+        (JSC::Heap::collectWithoutAnySweep): Deleted.
+        (JSC::Heap::prepareForMarking): Deleted.
+        (JSC::Heap::forEachCodeBlockImpl): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::allocatorForObjectWithoutDestructor):
+        (JSC::Heap::allocatorForObjectWithDestructor):
+        (JSC::Heap::storageAllocator):
+        (JSC::Heap::jitStubRoutines):
+        (JSC::Heap::codeBlockSet):
+        (JSC::Heap::allocatorForAuxiliaryData): Deleted.
+        * heap/HeapCell.h:
+        (JSC::HeapCell::isZapped):
+        * heap/HeapCellInlines.h: Removed.
+        * heap/HeapInlines.h:
+        (JSC::Heap::heap):
+        (JSC::Heap::isLive):
+        (JSC::Heap::isMarked):
+        (JSC::Heap::testAndSetMarked):
+        (JSC::Heap::setMarked):
+        (JSC::Heap::forEachCodeBlock):
+        (JSC::Heap::allocateObjectOfType):
+        (JSC::Heap::subspaceForObjectOfType):
+        (JSC::Heap::allocatorForObjectOfType):
+        (JSC::Heap::isPointerGCObject):
+        (JSC::Heap::isValueGCObject):
+        (JSC::Heap::cellSize): Deleted.
+        (JSC::Heap::allocateAuxiliary): Deleted.
+        (JSC::Heap::tryAllocateAuxiliary): Deleted.
+        (JSC::Heap::tryReallocateAuxiliary): Deleted.
+        * heap/HeapUtil.h: Removed.
+        * heap/LargeAllocation.cpp: Removed.
+        * heap/LargeAllocation.h: Removed.
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::retire):
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::tryPopFreeList):
+        (JSC::MarkedAllocator::tryAllocate):
+        (JSC::MarkedAllocator::allocateSlowCase):
+        (JSC::MarkedAllocator::allocateBlock):
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        (JSC::MarkedAllocator::reset):
+        (JSC::MarkedAllocator::MarkedAllocator): Deleted.
+        (JSC::MarkedAllocator::tryAllocateWithoutCollectingImpl): Deleted.
+        (JSC::MarkedAllocator::tryAllocateWithoutCollecting): Deleted.
+        (JSC::MarkedAllocator::tryAllocateSlowCase): Deleted.
+        (JSC::MarkedAllocator::allocateSlowCaseImpl): Deleted.
+        (JSC::blockHeaderSize): Deleted.
+        (JSC::MarkedAllocator::blockSizeForBytes): Deleted.
+        (JSC::MarkedAllocator::tryAllocateBlock): Deleted.
+        (JSC::MarkedAllocator::setFreeList): Deleted.
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::offsetOfFreeListHead):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::init):
+        (JSC::MarkedAllocator::allocate):
+        (JSC::MarkedAllocator::stopAllocating):
+        (JSC::MarkedAllocator::offsetOfFreeList): Deleted.
+        (JSC::MarkedAllocator::offsetOfCellSize): Deleted.
+        (JSC::MarkedAllocator::tryAllocate): Deleted.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::callDestructor):
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::sweepHelper):
+        (JSC::MarkedBlock::stopAllocating):
+        (JSC::MarkedBlock::clearMarksWithCollectionType):
+        (JSC::MarkedBlock::resumeAllocating):
+        (JSC::MarkedBlock::didRetireBlock):
+        (JSC::MarkedBlock::tryCreate): Deleted.
+        (JSC::MarkedBlock::sweepHelperSelectScribbleMode): Deleted.
+        (JSC::MarkedBlock::sweepHelperSelectStateAndSweepMode): Deleted.
+        (JSC::MarkedBlock::forEachFreeCell): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::FreeList::FreeList):
+        (JSC::MarkedBlock::isEmpty):
+        (JSC::MarkedBlock::setHasAnyMarked): Deleted.
+        (JSC::MarkedBlock::hasAnyMarked): Deleted.
+        (JSC::MarkedBlock::clearHasAnyMarked): Deleted.
+        (JSC::MarkedBlock::cellAlign): Deleted.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::zombifySweep):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::visitWeakSets):
+        (JSC::MarkedSpace::reapWeakSets):
+        (JSC::MarkedSpace::forEachAllocator):
+        (JSC::MarkedSpace::stopAllocating):
+        (JSC::MarkedSpace::resumeAllocating):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::shrink):
+        (JSC::MarkedSpace::clearNewlyAllocated):
+        (JSC::MarkedSpace::clearMarks):
+        (JSC::MarkedSpace::initializeSizeClassForStepSize): Deleted.
+        (JSC::MarkedSpace::allocate): Deleted.
+        (JSC::MarkedSpace::tryAllocate): Deleted.
+        (JSC::MarkedSpace::allocateLarge): Deleted.
+        (JSC::MarkedSpace::tryAllocateLarge): Deleted.
+        (JSC::MarkedSpace::sweepLargeAllocations): Deleted.
+        (JSC::MarkedSpace::prepareForMarking): Deleted.
+        (JSC::MarkedSpace::objectCount): Deleted.
+        (JSC::MarkedSpace::size): Deleted.
+        (JSC::MarkedSpace::capacity): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::blocksWithNewObjects):
+        (JSC::MarkedSpace::forEachLiveCell):
+        (JSC::MarkedSpace::forEachDeadCell):
+        (JSC::MarkedSpace::allocatorFor):
+        (JSC::MarkedSpace::destructorAllocatorFor):
+        (JSC::MarkedSpace::auxiliaryAllocatorFor):
+        (JSC::MarkedSpace::allocateWithoutDestructor):
+        (JSC::MarkedSpace::allocateWithDestructor):
+        (JSC::MarkedSpace::allocateAuxiliary):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::size):
+        (JSC::MarkedSpace::capacity):
+        (JSC::MarkedSpace::sizeClassToIndex): Deleted.
+        (JSC::MarkedSpace::indexToSizeClass): Deleted.
+        (JSC::MarkedSpace::largeAllocations): Deleted.
+        (JSC::MarkedSpace::largeAllocationsNurseryOffset): Deleted.
+        (JSC::MarkedSpace::largeAllocationsOffsetForThisCollection): Deleted.
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionBegin): Deleted.
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionEnd): Deleted.
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionSize): Deleted.
+        (JSC::MarkedSpace::tryAllocateAuxiliary): Deleted.
+        (JSC::MarkedSpace::forEachAllocator): Deleted.
+        (JSC::MarkedSpace::optimalSizeFor): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary): Deleted.
+        (JSC::SlotVisitor::markAuxiliary): Deleted.
+        (JSC::SlotVisitor::noteLiveAuxiliaryCell): Deleted.
+        * heap/SlotVisitor.h:
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create):
+        (JSC::WeakBlock::WeakBlock):
+        (JSC::WeakBlock::visit):
+        (JSC::WeakBlock::reap):
+        * heap/WeakBlock.h:
+        (JSC::WeakBlock::disconnectMarkedBlock):
+        (JSC::WeakBlock::disconnectContainer): Deleted.
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep):
+        (JSC::WeakSet::addAllocator):
+        * heap/WeakSet.h:
+        (JSC::WeakSet::WeakSet):
+        * heap/WeakSetInlines.h:
+        (JSC::WeakSet::allocate):
+        * inspector/InjectedScriptManager.cpp:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/ScriptDebugServer.cpp:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * interpreter/Interpreter.cpp:
+        (JSC::StackFrame::sourceID):
+        (JSC::StackFrame::sourceURL):
+        (JSC::StackFrame::functionName):
+        (JSC::loadVarargs):
+        (JSC::StackFrame::computeLineAndColumn):
+        (JSC::StackFrame::toString):
+        * interpreter/Interpreter.h:
+        (JSC::StackFrame::isNative):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocate):
+        (JSC::AssemblyHelpers::emitAllocateJSCell):
+        (JSC::AssemblyHelpers::emitAllocateJSObject):
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateVariableSized):
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator): Deleted.
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::GCAwareJITStubRoutine):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileCTINativeCall): Deleted.
+        * jit/JIT.h:
+        (JSC::JIT::compileCTINativeCall):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind): Deleted.
+        * jit/JITExceptions.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+        * jit/JITThunks.cpp:
+        * jit/JITThunks.h:
+        * jsc.cpp:
+        (functionDescribeArray):
+        (main):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntExceptions.cpp:
+        * llint/LLIntThunks.cpp:
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ModuleAnalyzer.cpp:
+        * parser/NodeConstructors.h:
+        * parser/Nodes.h:
+        * profiler/ProfilerBytecode.cpp:
+        * profiler/ProfilerBytecode.h:
+        * profiler/ProfilerBytecodeSequence.cpp:
+        * runtime/ArrayConventions.h:
+        (JSC::indexingHeaderForArray):
+        (JSC::baseIndexingHeaderForArray):
+        (JSC::indexingHeaderForArrayStorage): Deleted.
+        (JSC::baseIndexingHeaderForArrayStorage): Deleted.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+        (JSC::concatAppendOne):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        * runtime/ArrayStorage.h:
+        (JSC::ArrayStorage::vectorLength):
+        (JSC::ArrayStorage::sizeFor):
+        (JSC::ArrayStorage::totalSizeFor): Deleted.
+        (JSC::ArrayStorage::totalSize): Deleted.
+        (JSC::ArrayStorage::availableVectorLength): Deleted.
+        (JSC::ArrayStorage::optimalVectorLength): Deleted.
+        * runtime/AuxiliaryBarrier.h: Removed.
+        * runtime/AuxiliaryBarrierInlines.h: Removed.
+        * runtime/Butterfly.h:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::availableContiguousVectorLength): Deleted.
+        (JSC::Butterfly::optimalContiguousVectorLength): Deleted.
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+        * runtime/CommonSlowPathsExceptions.cpp:
+        * runtime/CommonSlowPathsExceptions.h:
+        * runtime/DataView.cpp:
+        * runtime/DirectArguments.h:
+        * runtime/ECMAScriptSpecInternalFunctions.cpp:
+        * runtime/Error.cpp:
+        * runtime/Error.h:
+        * runtime/ErrorInstance.cpp:
+        * runtime/ErrorInstance.h:
+        * runtime/Exception.cpp:
+        * runtime/Exception.h:
+        * runtime/GeneratorFrame.cpp:
+        * runtime/GeneratorPrototype.cpp:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/IntlCollator.cpp:
+        * runtime/IntlCollatorConstructor.cpp:
+        * runtime/IntlCollatorPrototype.cpp:
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlNumberFormat.cpp:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/IntlObject.cpp:
+        * runtime/IteratorPrototype.cpp:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLengthWritable):
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::setLengthWithArrayStorage):
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        (JSC::JSArray::tryCreateUninitialized): Deleted.
+        * runtime/JSArray.h:
+        (JSC::createContiguousArrayButterfly):
+        (JSC::createArrayButterfly):
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCInlines.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure):
+        * runtime/JSCallee.cpp:
+        (JSC::JSCallee::JSCallee):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::estimatedSize):
+        * runtime/JSCell.h:
+        (JSC::JSCell::cellStateOffset):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::vm):
+        (JSC::ExecState::vm):
+        (JSC::JSCell::classInfo):
+        (JSC::JSCell::callDestructor): Deleted.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::JSFunction::setFunctionName):
+        (JSC::JSFunction::reifyLength):
+        (JSC::JSFunction::reifyName):
+        (JSC::JSFunction::reifyLazyPropertyIfNeeded):
+        (JSC::JSFunction::reifyBoundNameIfNeeded):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::createWithInvalidatedReallocationWatchpoint):
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * runtime/JSInternalPromise.cpp:
+        * runtime/JSInternalPromiseConstructor.cpp:
+        * runtime/JSInternalPromiseDeferred.cpp:
+        * runtime/JSInternalPromisePrototype.cpp:
+        * runtime/JSJob.cpp:
+        * runtime/JSMapIterator.cpp:
+        * runtime/JSModuleNamespaceObject.cpp:
+        * runtime/JSModuleRecord.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::copyBackingStore):
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::createInitialArrayStorage):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::growOutOfLineStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::setStructureAndReallocateStorageIfNecessary):
+        (JSC::JSObject::globalObject): Deleted.
+        * runtime/JSObjectInlines.h:
+        * runtime/JSPromise.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        * runtime/JSPromiseDeferred.cpp:
+        * runtime/JSPromisePrototype.cpp:
+        * runtime/JSPropertyNameIterator.cpp:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolve):
+        * runtime/JSScope.h:
+        (JSC::JSScope::vm):
+        (JSC::JSScope::globalObject): Deleted.
+        * runtime/JSSetIterator.cpp:
+        * runtime/JSStringIterator.cpp:
+        * runtime/JSTemplateRegistryKey.cpp:
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        * runtime/JSWeakMap.cpp:
+        * runtime/JSWeakSet.cpp:
+        * runtime/MapConstructor.cpp:
+        * runtime/MapIteratorPrototype.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeStdFunctionCell.cpp:
+        * runtime/Operations.h:
+        (JSC::scribbleFreeCells): Deleted.
+        (JSC::scribble): Deleted.
+        * runtime/Options.h:
+        * runtime/PropertyTable.cpp:
+        * runtime/ProxyConstructor.cpp:
+        * runtime/ProxyObject.cpp:
+        * runtime/ProxyRevoke.cpp:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::matchCompareWithInterpreter):
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        (JSC::createRegExpMatchesArray):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::genericSplit):
+        * runtime/RuntimeType.cpp:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * runtime/SetConstructor.cpp:
+        * runtime/SetIteratorPrototype.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/StackFrame.cpp: Removed.
+        * runtime/StackFrame.h: Removed.
+        * runtime/StringConstructor.cpp:
+        * runtime/StringIteratorPrototype.cpp:
+        * runtime/TemplateRegistry.cpp:
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::finalizeStatsAtEndOfTesting): Deleted.
+        * runtime/TestRunnerUtils.h:
+        * runtime/TypeProfilerLog.cpp:
+        * runtime/TypeSet.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::ensureStackCapacityForCLoop): Deleted.
+        (JSC::VM::isSafeToRecurseSoftCLoop): Deleted.
+        * runtime/VM.h:
+        * runtime/VMEntryScope.h:
+        * runtime/VMInlines.h:
+        (JSC::VM::ensureStackCapacityFor):
+        (JSC::VM::isSafeToRecurseSoft):
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakMapData.cpp:
+        * runtime/WeakMapPrototype.cpp:
+        * runtime/WeakSetConstructor.cpp:
+        * runtime/WeakSetPrototype.cpp:
+        * testRegExp.cpp:
+        (testOneRegExp):
+        * tools/JSDollarVM.cpp:
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::isInObjectSpace):
+
 2016-08-23  Filip Pizlo  <fpizlo@apple.com>
 
         js/regress/put-by-id-transition-with-indexing-header.html and svg/carto.net/window.svg fail in debug after r204854

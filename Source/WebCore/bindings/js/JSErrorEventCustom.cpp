@@ -27,7 +27,6 @@
 #include "JSErrorEvent.h"
 
 #include "ErrorEvent.h"
-#include <heap/HeapInlines.h>
 
 using namespace JSC;
 

@@ -1193,7 +1193,7 @@ EncodedJSValue JSC_HOST_CALL functionDescribeArray(ExecState* exec)
     JSObject* object = jsDynamicCast<JSObject*>(exec->argument(0));
     if (!object)
         return JSValue::encode(jsNontrivialString(exec, ASCIILiteral("<not object>")));
-    return JSValue::encode(jsNontrivialString(exec, toString("<Butterfly: ", RawPointer(object->butterfly()), "; public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
+    return JSValue::encode(jsNontrivialString(exec, toString("<Public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
 }
 
 class FunctionJSCStackFunctor {
@@ -2004,7 +2004,10 @@ int main(int argc, char** argv)
     TRY
         res = jscmain(argc, argv);
     EXCEPT(res = 3)
-    finalizeStatsAtEndOfTesting();
+    if (Options::logHeapStatisticsAtExit())
+        HeapStatistics::reportSuccess();
+    if (Options::reportLLIntStats())
+        LLInt::Data::finalizeStats();
 
 #if PLATFORM(EFL)
     ecore_shutdown();

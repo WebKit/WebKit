@@ -1,3 +1,17 @@
+2016-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocate):
+        (bmalloc::Allocator::tryAllocate): Deleted.
+        (bmalloc::Allocator::allocateImpl): Deleted.
+        * bmalloc/Allocator.h:
+        * bmalloc/Cache.h:
+        (bmalloc::Cache::tryAllocate): Deleted.
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::tryMemalign): Deleted.
+
 2016-08-12  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression

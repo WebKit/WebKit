@@ -26,7 +26,10 @@
 #include "config.h"
 #include "PropertyMapHashTable.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
+#include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -70,15 +70,13 @@ namespace JSC {
 // 0xFFFFFFFF is a bit weird -- is not an array index even though it's an integer.
 #define MAX_ARRAY_INDEX 0xFFFFFFFEU
 
-// The value BASE_XXX_VECTOR_LEN is the maximum number of vector elements we'll allocate
+// The value BASE_VECTOR_LEN is the maximum number of vector elements we'll allocate
 // for an array that was created with a sepcified length (e.g. a = new Array(123))
-#define BASE_CONTIGUOUS_VECTOR_LEN 3U
-#define BASE_CONTIGUOUS_VECTOR_LEN_EMPTY 5U
-#define BASE_ARRAY_STORAGE_VECTOR_LEN 4U
-
+#define BASE_VECTOR_LEN 4U
+    
 // The upper bound to the size we'll grow a zero length array when the first element
 // is added.
-#define FIRST_ARRAY_STORAGE_VECTOR_GROW 4U
+#define FIRST_VECTOR_GROW 4U
 
 #define MIN_BEYOND_LENGTH_SPARSE_INDEX 1000
 
@@ -98,7 +96,7 @@ inline bool indexIsSufficientlyBeyondLengthForSparseMap(unsigned i, unsigned len
     return i >= MIN_BEYOND_LENGTH_SPARSE_INDEX && i > length;
 }
 
-inline IndexingHeader indexingHeaderForArrayStorage(unsigned length, unsigned vectorLength)
+inline IndexingHeader indexingHeaderForArray(unsigned length, unsigned vectorLength)
 {
     IndexingHeader result;
     result.setPublicLength(length);
@@ -106,9 +104,9 @@ inline IndexingHeader indexingHeaderForArrayStorage(unsigned length, unsigned ve
     return result;
 }
 
-inline IndexingHeader baseIndexingHeaderForArrayStorage(unsigned length)
+inline IndexingHeader baseIndexingHeaderForArray(unsigned length)
 {
-    return indexingHeaderForArrayStorage(length, BASE_ARRAY_STORAGE_VECTOR_LEN);
+    return indexingHeaderForArray(length, BASE_VECTOR_LEN);
 }
 
 } // namespace JSC

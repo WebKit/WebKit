@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,7 @@
 #include "ArrayConventions.h"
 #include "Butterfly.h"
 #include "IndexingHeader.h"
-#include "MarkedSpace.h"
 #include "SparseArrayValueMap.h"
-#include "Structure.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
 
@@ -60,7 +58,7 @@ public:
     // We steal two fields from the indexing header: vectorLength and length.
     unsigned length() const { return indexingHeader()->publicLength(); }
     void setLength(unsigned length) { indexingHeader()->setPublicLength(length); }
-    unsigned vectorLength() const { return indexingHeader()->vectorLength(); }
+    unsigned vectorLength() { return indexingHeader()->vectorLength(); }
     void setVectorLength(unsigned length) { indexingHeader()->setVectorLength(length); }
     
     ALWAYS_INLINE void copyHeaderFromDuringGC(const ArrayStorage& other)
@@ -100,66 +98,6 @@ public:
     static size_t sizeFor(unsigned vectorLength)
     {
         return ArrayStorage::vectorOffset() + vectorLength * sizeof(WriteBarrier<Unknown>);
-    }
-    
-    static size_t totalSizeFor(unsigned indexBias, size_t propertyCapacity, unsigned vectorLength)
-    {
-        return Butterfly::totalSize(indexBias, propertyCapacity, true, sizeFor(vectorLength));
-    }
-    
-    size_t totalSize(size_t propertyCapacity) const
-    {
-        return totalSizeFor(m_indexBias, propertyCapacity, vectorLength());
-    }
-    
-    size_t totalSize(Structure* structure) const
-    {
-        return totalSize(structure->outOfLineCapacity());
-    }
-    
-    static unsigned availableVectorLength(unsigned indexBias, size_t propertyCapacity, unsigned vectorLength)
-    {
-        size_t cellSize = MarkedSpace::optimalSizeFor(totalSizeFor(indexBias, propertyCapacity, vectorLength));
-        
-        vectorLength = (cellSize - totalSizeFor(indexBias, propertyCapacity, 0)) / sizeof(WriteBarrier<Unknown>);
-
-        return vectorLength;
-    }
-    
-    static unsigned availableVectorLength(unsigned indexBias, Structure* structure, unsigned vectorLength)
-    {
-        return availableVectorLength(indexBias, structure->outOfLineCapacity(), vectorLength);
-    }
-    
-    unsigned availableVectorLength(size_t propertyCapacity, unsigned vectorLength)
-    {
-        return availableVectorLength(m_indexBias, propertyCapacity, vectorLength);
-    }
-    
-    unsigned availableVectorLength(Structure* structure, unsigned vectorLength)
-    {
-        return availableVectorLength(structure->outOfLineCapacity(), vectorLength);
-    }
-
-    static unsigned optimalVectorLength(unsigned indexBias, size_t propertyCapacity, unsigned vectorLength)
-    {
-        vectorLength = std::max(BASE_ARRAY_STORAGE_VECTOR_LEN, vectorLength);
-        return availableVectorLength(indexBias, propertyCapacity, vectorLength);
-    }
-    
-    static unsigned optimalVectorLength(unsigned indexBias, Structure* structure, unsigned vectorLength)
-    {
-        return optimalVectorLength(indexBias, structure->outOfLineCapacity(), vectorLength);
-    }
-    
-    unsigned optimalVectorLength(size_t propertyCapacity, unsigned vectorLength)
-    {
-        return optimalVectorLength(m_indexBias, propertyCapacity, vectorLength);
-    }
-    
-    unsigned optimalVectorLength(Structure* structure, unsigned vectorLength)
-    {
-        return optimalVectorLength(structure->outOfLineCapacity(), vectorLength);
     }
 };
 

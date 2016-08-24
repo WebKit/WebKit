@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2015-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -60,7 +60,7 @@ public:
     // contents are known at time of creation. Clients of this interface must:
     //   - null-check the result (indicating out of memory, or otherwise unable to allocate vector).
     //   - call 'initializeIndex' for all properties in sequence, for 0 <= i < initialLength.
-    JS_EXPORT_PRIVATE static JSArray* tryCreateUninitialized(VM&, Structure*, unsigned initialLength);
+    static JSArray* tryCreateUninitialized(VM&, Structure*, unsigned initialLength);
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool throwException);
 
@@ -177,8 +177,7 @@ private:
 inline Butterfly* createContiguousArrayButterfly(VM& vm, JSCell* intendedOwner, unsigned length, unsigned& vectorLength)
 {
     IndexingHeader header;
-    vectorLength = Butterfly::optimalContiguousVectorLength(
-        intendedOwner ? intendedOwner->structure(vm) : 0, length);
+    vectorLength = std::max(length, BASE_VECTOR_LEN);
     header.setVectorLength(vectorLength);
     header.setPublicLength(length);
     Butterfly* result = Butterfly::create(
@@ -189,11 +188,11 @@ inline Butterfly* createContiguousArrayButterfly(VM& vm, JSCell* intendedOwner, 
 inline Butterfly* createArrayButterfly(VM& vm, JSCell* intendedOwner, unsigned initialLength)
 {
     Butterfly* butterfly = Butterfly::create(
-        vm, intendedOwner, 0, 0, true, baseIndexingHeaderForArrayStorage(initialLength),
-        ArrayStorage::sizeFor(BASE_ARRAY_STORAGE_VECTOR_LEN));
+        vm, intendedOwner, 0, 0, true, baseIndexingHeaderForArray(initialLength),
+        ArrayStorage::sizeFor(BASE_VECTOR_LEN));
     ArrayStorage* storage = butterfly->arrayStorage();
-    storage->m_sparseMap.clear();
     storage->m_indexBias = 0;
+    storage->m_sparseMap.clear();
     storage->m_numValuesInVector = 0;
     return butterfly;
 }
@@ -212,20 +211,57 @@ inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLe
             || hasContiguous(structure->indexingType()));
         unsigned vectorLength;
         butterfly = createContiguousArrayButterfly(vm, 0, initialLength, vectorLength);
+        ASSERT(initialLength < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH);
         if (hasDouble(structure->indexingType())) {
             for (unsigned i = 0; i < vectorLength; ++i)
                 butterfly->contiguousDouble()[i] = PNaN;
-        } else {
-            for (unsigned i = 0; i < vectorLength; ++i)
-                butterfly->contiguous()[i].clear();
         }
     } else {
         ASSERT(
             structure->indexingType() == ArrayWithSlowPutArrayStorage
             || structure->indexingType() == ArrayWithArrayStorage);
         butterfly = createArrayButterfly(vm, 0, initialLength);
-        for (unsigned i = 0; i < BASE_ARRAY_STORAGE_VECTOR_LEN; ++i)
-            butterfly->arrayStorage()->m_vector[i].clear();
+    }
+
+    return createWithButterfly(vm, structure, butterfly);
+}
+
+inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, unsigned initialLength)
+{
+    unsigned vectorLength = std::max(BASE_VECTOR_LEN, initialLength);
+    if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
+        return 0;
+
+    unsigned outOfLineStorage = structure->outOfLineCapacity();
+
+    Butterfly* butterfly;
+    if (LIKELY(!hasAnyArrayStorage(structure->indexingType()))) {
+        ASSERT(
+            hasUndecided(structure->indexingType())
+            || hasInt32(structure->indexingType())
+            || hasDouble(structure->indexingType())
+            || hasContiguous(structure->indexingType()));
+
+        void* temp;
+        if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)), &temp))
+            return 0;
+        butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
+        butterfly->setVectorLength(vectorLength);
+        butterfly->setPublicLength(initialLength);
+        if (hasDouble(structure->indexingType())) {
+            for (unsigned i = initialLength; i < vectorLength; ++i)
+                butterfly->contiguousDouble()[i] = PNaN;
+        }
+    } else {
+        void* temp;
+        if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)), &temp))
+            return 0;
+        butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
+        *butterfly->indexingHeader() = indexingHeaderForArray(initialLength, vectorLength);
+        ArrayStorage* storage = butterfly->arrayStorage();
+        storage->m_indexBias = 0;
+        storage->m_sparseMap.clear();
+        storage->m_numValuesInVector = initialLength;
     }
 
     return createWithButterfly(vm, structure, butterfly);

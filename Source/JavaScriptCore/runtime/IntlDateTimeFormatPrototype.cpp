@@ -34,8 +34,10 @@
 #include "IntlDateTimeFormat.h"
 #include "IntlObject.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSObject.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

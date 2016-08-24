@@ -182,11 +182,6 @@ typedef const char* optionString;
     v(bool, testTheFTL, false, Normal, nullptr) \
     v(bool, verboseSanitizeStack, false, Normal, nullptr) \
     v(bool, useGenerationalGC, true, Normal, nullptr) \
-    v(bool, scribbleFreeCells, false, Normal, nullptr) \
-    v(double, sizeClassProgression, 1.4, Normal, nullptr) \
-    v(unsigned, largeAllocationCutoff, 400, Normal, nullptr) \
-    v(bool, dumpSizeClasses, false, Normal, nullptr) \
-    v(bool, useBumpAllocator, true, Normal, nullptr) \
     v(bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
     \
     v(bool, useOSREntryToDFG, true, Normal, nullptr) \

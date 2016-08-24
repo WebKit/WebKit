@@ -28,9 +28,6 @@
 
 #include "CopyBarrier.h"
 #include "Heap.h"
-#include "HeapCellInlines.h"
-#include "IndexingHeader.h"
-#include "JSCallee.h"
 #include "JSCell.h"
 #include "Structure.h"
 #include <type_traits>
@@ -62,11 +59,9 @@ inline bool Heap::isCollecting()
     return m_operationInProgress == FullCollection || m_operationInProgress == EdenCollection;
 }
 
-ALWAYS_INLINE Heap* Heap::heap(const HeapCell* cell)
+inline Heap* Heap::heap(const JSCell* cell)
 {
-    if (cell->isLargeAllocation())
-        return cell->largeAllocation().heap();
-    return cell->markedBlock().heap();
+    return MarkedBlock::blockFor(cell)->heap();
 }
 
 inline Heap* Heap::heap(const JSValue v)
@@ -76,42 +71,24 @@ inline Heap* Heap::heap(const JSValue v)
     return heap(v.asCell());
 }
 
-inline bool Heap::isLive(const void* rawCell)
+inline bool Heap::isLive(const void* cell)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
-    if (cell->isLargeAllocation())
-        return cell->largeAllocation().isLive();
-    return cell->markedBlock().isLiveCell(cell);
+    return MarkedBlock::blockFor(cell)->isLiveCell(cell);
 }
 
-ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
+inline bool Heap::isMarked(const void* cell)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
-    if (cell->isLargeAllocation())
-        return cell->largeAllocation().isMarked();
-    return cell->markedBlock().isMarked(cell);
+    return MarkedBlock::blockFor(cell)->isMarked(cell);
 }
 
-ALWAYS_INLINE bool Heap::testAndSetMarked(const void* rawCell)
+inline bool Heap::testAndSetMarked(const void* cell)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
-    if (cell->isLargeAllocation())
-        return cell->largeAllocation().testAndSetMarked();
-    return cell->markedBlock().testAndSetMarked(cell);
+    return MarkedBlock::blockFor(cell)->testAndSetMarked(cell);
 }
 
-inline void Heap::setMarked(const void* rawCell)
+inline void Heap::setMarked(const void* cell)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
-    if (cell->isLargeAllocation())
-        cell->largeAllocation().setMarked();
-    else
-        cell->markedBlock().setMarked(cell);
-}
-
-ALWAYS_INLINE size_t Heap::cellSize(const void* rawCell)
-{
-    return bitwise_cast<HeapCell*>(rawCell)->cellSize();
+    MarkedBlock::blockFor(cell)->setMarked(cell);
 }
 
 inline void Heap::writeBarrier(const JSCell* from, JSValue to)
@@ -188,9 +165,12 @@ inline void Heap::deprecatedReportExtraMemory(size_t size)
         deprecatedReportExtraMemorySlowCase(size);
 }
 
-template<typename Functor> inline void Heap::forEachCodeBlock(const Functor& func)
+template<typename Functor> inline void Heap::forEachCodeBlock(const Functor& functor)
 {
-    forEachCodeBlockImpl(scopedLambdaRef<bool(CodeBlock*)>(func));
+    // We don't know the full set of CodeBlocks until compilation has terminated.
+    completeAllJITPlans();
+
+    return m_codeBlocks.iterate<Functor>(functor);
 }
 
 template<typename Functor> inline void Heap::forEachProtectedCell(const Functor& functor)
@@ -219,7 +199,7 @@ inline void* Heap::allocateWithoutDestructor(size_t bytes)
 }
 
 template<typename ClassType>
-inline void* Heap::allocateObjectOfType(size_t bytes)
+void* Heap::allocateObjectOfType(size_t bytes)
 {
     // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
     ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
@@ -230,7 +210,7 @@ inline void* Heap::allocateObjectOfType(size_t bytes)
 }
 
 template<typename ClassType>
-inline MarkedSpace::Subspace& Heap::subspaceForObjectOfType()
+MarkedSpace::Subspace& Heap::subspaceForObjectOfType()
 {
     // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
     ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
@@ -241,50 +221,14 @@ inline MarkedSpace::Subspace& Heap::subspaceForObjectOfType()
 }
 
 template<typename ClassType>
-inline MarkedAllocator* Heap::allocatorForObjectOfType(size_t bytes)
+MarkedAllocator& Heap::allocatorForObjectOfType(size_t bytes)
 {
     // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
     ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
-
-    MarkedAllocator* result;
-    if (ClassType::needsDestruction)
-        result = allocatorForObjectWithDestructor(bytes);
-    else
-        result = allocatorForObjectWithoutDestructor(bytes);
     
-    ASSERT(result || !ClassType::info()->isSubClassOf(JSCallee::info()));
-    return result;
-}
-
-inline void* Heap::allocateAuxiliary(JSCell* intendedOwner, size_t bytes)
-{
-    void* result = m_objectSpace.allocateAuxiliary(bytes);
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes of auxiliary for %p: %p.\n", bytes, intendedOwner, result);
-#else
-    UNUSED_PARAM(intendedOwner);
-#endif
-    return result;
-}
-
-inline void* Heap::tryAllocateAuxiliary(JSCell* intendedOwner, size_t bytes)
-{
-    void* result = m_objectSpace.tryAllocateAuxiliary(bytes);
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes of auxiliary for %p: %p.\n", bytes, intendedOwner, result);
-#else
-    UNUSED_PARAM(intendedOwner);
-#endif
-    return result;
-}
-
-inline void* Heap::tryReallocateAuxiliary(JSCell* intendedOwner, void* oldBase, size_t oldSize, size_t newSize)
-{
-    void* newBase = tryAllocateAuxiliary(intendedOwner, newSize);
-    if (!newBase)
-        return nullptr;
-    memcpy(newBase, oldBase, oldSize);
-    return newBase;
+    if (ClassType::needsDestruction)
+        return allocatorForObjectWithDestructor(bytes);
+    return allocatorForObjectWithoutDestructor(bytes);
 }
 
 inline CheckedBoolean Heap::tryAllocateStorage(JSCell* intendedOwner, size_t bytes, void** outPtr)
@@ -408,6 +352,33 @@ inline void Heap::didFreeBlock(size_t capacity)
 #else
     UNUSED_PARAM(capacity);
 #endif
+}
+
+inline bool Heap::isPointerGCObject(TinyBloomFilter filter, MarkedBlockSet& markedBlockSet, void* pointer)
+{
+    MarkedBlock* candidate = MarkedBlock::blockFor(pointer);
+    if (filter.ruleOut(bitwise_cast<Bits>(candidate))) {
+        ASSERT(!candidate || !markedBlockSet.set().contains(candidate));
+        return false;
+    }
+
+    if (!MarkedBlock::isAtomAligned(pointer))
+        return false;
+
+    if (!markedBlockSet.set().contains(candidate))
+        return false;
+
+    if (!candidate->isLiveCell(pointer))
+        return false;
+
+    return true;
+}
+
+inline bool Heap::isValueGCObject(TinyBloomFilter filter, MarkedBlockSet& markedBlockSet, JSValue value)
+{
+    if (!value.isCell())
+        return false;
+    return isPointerGCObject(filter, markedBlockSet, static_cast<void*>(value.asCell()));
 }
 
 } // namespace JSC

@@ -80,7 +80,7 @@ private:
 
     RegExpCachedResult m_cachedResult;
     bool m_multiline;
-    Vector<int> m_ovector;
+    Vector<int, 32> m_ovector;
 };
 
 RegExpConstructor* asRegExpConstructor(JSValue);

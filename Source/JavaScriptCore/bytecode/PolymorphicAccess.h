@@ -29,10 +29,10 @@
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"
-#include "JITStubRoutine.h"
 #include "JSFunctionInlines.h"
 #include "MacroAssembler.h"
 #include "ObjectPropertyConditionSet.h"
+#include "Opcode.h"
 #include "ScratchRegisterAllocator.h"
 #include "Structure.h"
 #include <wtf/Vector.h>

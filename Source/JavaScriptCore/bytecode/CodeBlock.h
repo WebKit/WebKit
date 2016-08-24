@@ -297,8 +297,6 @@ public:
     {
         return m_jitCodeMap.get();
     }
-    
-    static void clearLLIntGetByIdCache(Instruction*);
 
     unsigned bytecodeOffset(Instruction* returnAddress)
     {
@@ -1304,6 +1302,14 @@ private:
     static void destroy(JSCell*);
 };
 #endif
+
+inline void clearLLIntGetByIdCache(Instruction* instruction)
+{
+    instruction[0].u.opcode = LLInt::getOpcode(op_get_by_id);
+    instruction[4].u.pointer = nullptr;
+    instruction[5].u.pointer = nullptr;
+    instruction[6].u.pointer = nullptr;
+}
 
 inline Register& ExecState::r(int index)
 {

@@ -92,7 +92,7 @@ public:
     // This is computed lazily, so it won't work if you capture StackmapGenerationParams by value.
     // Returns true if the successor at the given index is going to be emitted right after the
     // patchpoint.
-    JS_EXPORT_PRIVATE bool fallsThroughToSuccessor(unsigned successorIndex) const;
+    bool fallsThroughToSuccessor(unsigned successorIndex) const;
 
     // This is provided for convenience; it means that you don't have to capture it if you don't want to.
     JS_EXPORT_PRIVATE Procedure& proc() const;

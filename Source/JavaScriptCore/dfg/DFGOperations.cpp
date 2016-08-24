@@ -914,6 +914,7 @@ char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayS
         return bitwise_cast<char*>(exec->vm().throwException(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
 
     JSArray* result = JSArray::create(*vm, arrayStructure, size);
+    result->butterfly(); // Ensure that the backing store is in to-space.
     return bitwise_cast<char*>(result);
 }
 

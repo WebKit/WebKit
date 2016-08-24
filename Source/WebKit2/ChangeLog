@@ -1,3 +1,14 @@
+2016-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.
+
+        * UIProcess/ViewGestureController.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+
 2016-08-24  Anders Carlsson  <andersca@apple.com>
 
         In some cases, an IPC::Connection won't know when the other end has gone away

@@ -994,7 +994,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         if (UNLIKELY(vm.exception()))
             return JSValue::encode(jsUndefined());
     }
-    
+
     setLength(exec, thisObj, length - deleteCount + additionalArgs);
     return JSValue::encode(result);
 }
@@ -1129,7 +1129,6 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
     unsigned firstArraySize = firstButterfly->publicLength();
 
     IndexingType type = first->mergeIndexingTypeForCopying(indexingTypeForValue(second) | IsArray);
-    
     if (type == NonArray)
         type = first->indexingType();
 
@@ -1157,7 +1156,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
     VM& vm = exec->vm();
 
     JSArray* firstArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
-    
+
     // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
     // has indexed accessors then one of those accessors might change the value of Symbol.isConcatSpreadable
     // on the second argument.
@@ -1173,15 +1172,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         return concatAppendOne(exec, vm, firstArray, second);
 
     JSArray* secondArray = jsCast<JSArray*>(second);
-    
+
     Butterfly* firstButterfly = firstArray->butterfly();
     Butterfly* secondButterfly = secondArray->butterfly();
 
     unsigned firstArraySize = firstButterfly->publicLength();
     unsigned secondArraySize = secondButterfly->publicLength();
 
-    IndexingType secondType = secondArray->indexingType();
-    IndexingType type = firstArray->mergeIndexingTypeForCopying(secondType);
+    IndexingType type = firstArray->mergeIndexingTypeForCopying(secondArray->indexingType());
     if (type == NonArray || !firstArray->canFastCopy(vm, secondArray) || firstArraySize + secondArraySize >= MIN_SPARSE_ARRAY_INDEX) {
         JSArray* result = constructEmptyArray(exec, nullptr, firstArraySize + secondArraySize);
         if (vm.exception())
@@ -1200,7 +1198,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
     JSArray* result = JSArray::tryCreateUninitialized(vm, resultStructure, firstArraySize + secondArraySize);
     if (!result)
         return JSValue::encode(throwOutOfMemoryError(exec));
-    
+
     if (type == ArrayWithDouble) {
         double* buffer = result->butterfly()->contiguousDouble().data();
         memcpy(buffer, firstButterfly->contiguousDouble().data(), sizeof(JSValue) * firstArraySize);
@@ -1208,12 +1206,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
     } else if (type != ArrayWithUndecided) {
         WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
         memcpy(buffer, firstButterfly->contiguous().data(), sizeof(JSValue) * firstArraySize);
-        if (secondType != ArrayWithUndecided)
-            memcpy(buffer + firstArraySize, secondButterfly->contiguous().data(), sizeof(JSValue) * secondArraySize);
-        else {
-            for (unsigned i = secondArraySize; i--;)
-                buffer[i + firstArraySize].clear();
-        }
+        memcpy(buffer + firstArraySize, secondButterfly->contiguous().data(), sizeof(JSValue) * secondArraySize);
     }
 
     result->butterfly()->setPublicLength(firstArraySize + secondArraySize);

@@ -80,7 +80,7 @@ public:
 
     enum CreatingEarlyCellTag { CreatingEarlyCell };
     JSCell(CreatingEarlyCellTag);
-    
+
 protected:
     JSCell(VM&, Structure*);
     JS_EXPORT_PRIVATE static void destroy(JSCell*);
@@ -107,6 +107,8 @@ public:
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }
 
     const char* className() const;
+
+    VM* vm() const;
 
     // Extracting the value.
     JS_EXPORT_PRIVATE bool getString(ExecState*, String&) const;
@@ -188,8 +190,6 @@ public:
     {
         return OBJECT_OFFSETOF(JSCell, m_cellState);
     }
-    
-    void callDestructor(VM&);
 
     static const TypedArrayType TypedArrayStorageType = NotTypedArray;
 protected:

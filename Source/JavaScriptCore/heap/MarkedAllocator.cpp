@@ -30,22 +30,10 @@
 #include "Heap.h"
 #include "IncrementalSweeper.h"
 #include "JSCInlines.h"
-#include "SuperSampler.h"
 #include "VM.h"
 #include <wtf/CurrentTime.h>
 
 namespace JSC {
-
-MarkedAllocator::MarkedAllocator(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, const AllocatorAttributes& attributes)
-    : m_currentBlock(0)
-    , m_lastActiveBlock(0)
-    , m_nextBlockToSweep(0)
-    , m_cellSize(static_cast<unsigned>(cellSize))
-    , m_attributes(attributes)
-    , m_heap(heap)
-    , m_markedSpace(markedSpace)
-{
-}
 
 static bool isListPagedOut(double deadline, DoublyLinkedList<MarkedBlock>& list)
 {
@@ -71,31 +59,30 @@ bool MarkedAllocator::isPagedOut(double deadline)
     return false;
 }
 
-void MarkedAllocator::retire(MarkedBlock* block, FreeList& freeList)
+void MarkedAllocator::retire(MarkedBlock* block, MarkedBlock::FreeList& freeList)
 {
     m_blockList.remove(block);
     m_retiredBlocks.push(block);
     block->didRetireBlock(freeList);
 }
 
-inline void* MarkedAllocator::tryAllocateWithoutCollectingImpl(size_t bytes)
+inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
 {
     if (m_currentBlock) {
         ASSERT(m_currentBlock == m_nextBlockToSweep);
         m_currentBlock->didConsumeFreeList();
         m_nextBlockToSweep = m_currentBlock->next();
     }
-    
-    setFreeList(FreeList());
 
     MarkedBlock* next;
     for (MarkedBlock*& block = m_nextBlockToSweep; block; block = next) {
         next = block->next();
 
-        FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
+        MarkedBlock::FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
         
-        double utilization = ((double)MarkedBlock::blockSize - (double)freeList.originalSize) / (double)MarkedBlock::blockSize;
+        double utilization = ((double)MarkedBlock::blockSize - (double)freeList.bytes) / (double)MarkedBlock::blockSize;
         if (utilization >= Options::minMarkedBlockUtilization()) {
+            ASSERT(freeList.bytes || !freeList.head);
             retire(block, freeList);
             continue;
         }
@@ -104,37 +91,40 @@ inline void* MarkedAllocator::tryAllocateWithoutCollectingImpl(size_t bytes)
             block->stopAllocating(freeList);
             continue;
         }
-        
+
         m_currentBlock = block;
-        setFreeList(freeList);
+        m_freeList = freeList;
         break;
     }
     
-    if (!m_freeList) {
+    if (!m_freeList.head) {
         m_currentBlock = 0;
         return 0;
     }
 
-    void* result;
-    if (m_freeList.remaining) {
-        unsigned cellSize = m_cellSize;
-        m_freeList.remaining -= cellSize;
-        result = m_freeList.payloadEnd - m_freeList.remaining - cellSize;
-    } else {
-        FreeCell* head = m_freeList.head;
-        m_freeList.head = head->next;
-        result = head;
-    }
-    RELEASE_ASSERT(result);
+    ASSERT(m_freeList.head);
+    void* head = tryPopFreeList(bytes);
+    ASSERT(head);
     m_markedSpace->didAllocateInBlock(m_currentBlock);
-    return result;
+    return head;
 }
 
-inline void* MarkedAllocator::tryAllocateWithoutCollecting(size_t bytes)
+inline void* MarkedAllocator::tryPopFreeList(size_t bytes)
+{
+    ASSERT(m_currentBlock);
+    if (bytes > m_currentBlock->cellSize())
+        return 0;
+
+    MarkedBlock::FreeCell* head = m_freeList.head;
+    m_freeList.head = head->next;
+    return head;
+}
+
+inline void* MarkedAllocator::tryAllocate(size_t bytes)
 {
     ASSERT(!m_heap->isBusy());
     m_heap->m_operationInProgress = Allocation;
-    void* result = tryAllocateWithoutCollectingImpl(bytes);
+    void* result = tryAllocateHelper(bytes);
 
     m_heap->m_operationInProgress = NoOperation;
     ASSERT(result || !m_currentBlock);
@@ -158,73 +148,51 @@ ALWAYS_INLINE void MarkedAllocator::doTestCollectionsIfNeeded()
 
 void* MarkedAllocator::allocateSlowCase(size_t bytes)
 {
-    bool crashOnFailure = true;
-    return allocateSlowCaseImpl(bytes, crashOnFailure);
-}
-
-void* MarkedAllocator::tryAllocateSlowCase(size_t bytes)
-{
-    bool crashOnFailure = false;
-    return allocateSlowCaseImpl(bytes, crashOnFailure);
-}
-
-void* MarkedAllocator::allocateSlowCaseImpl(size_t bytes, bool crashOnFailure)
-{
     ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
     doTestCollectionsIfNeeded();
 
     ASSERT(!m_markedSpace->isIterating());
-    m_heap->didAllocate(m_freeList.originalSize);
+    ASSERT(!m_freeList.head);
+    m_heap->didAllocate(m_freeList.bytes);
     
-    void* result = tryAllocateWithoutCollecting(bytes);
+    void* result = tryAllocate(bytes);
     
     if (LIKELY(result != 0))
         return result;
     
     if (m_heap->collectIfNecessaryOrDefer()) {
-        result = tryAllocateWithoutCollecting(bytes);
+        result = tryAllocate(bytes);
         if (result)
             return result;
     }
 
     ASSERT(!m_heap->shouldCollect());
     
-    MarkedBlock* block = tryAllocateBlock();
-    if (!block) {
-        if (crashOnFailure)
-            RELEASE_ASSERT_NOT_REACHED();
-        else
-            return nullptr;
-    }
+    MarkedBlock* block = allocateBlock(bytes);
+    ASSERT(block);
     addBlock(block);
         
-    result = tryAllocateWithoutCollecting(bytes);
+    result = tryAllocate(bytes);
     ASSERT(result);
     return result;
 }
 
-static size_t blockHeaderSize()
-{
-    return WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(sizeof(MarkedBlock));
-}
-
-size_t MarkedAllocator::blockSizeForBytes(size_t bytes)
+MarkedBlock* MarkedAllocator::allocateBlock(size_t bytes)
 {
     size_t minBlockSize = MarkedBlock::blockSize;
-    size_t minAllocationSize = blockHeaderSize() + WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
+    size_t minAllocationSize = WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(sizeof(MarkedBlock)) + WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
     minAllocationSize = WTF::roundUpToMultipleOf(WTF::pageSize(), minAllocationSize);
-    return std::max(minBlockSize, minAllocationSize);
-}
+    size_t blockSize = std::max(minBlockSize, minAllocationSize);
 
-MarkedBlock* MarkedAllocator::tryAllocateBlock()
-{
-    return MarkedBlock::tryCreate(*m_heap, this, MarkedBlock::blockSize, m_cellSize, m_attributes);
+    size_t cellSize = m_cellSize ? m_cellSize : WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
+
+    return MarkedBlock::create(*m_heap, this, blockSize, cellSize, m_attributes);
 }
 
 void MarkedAllocator::addBlock(MarkedBlock* block)
 {
     ASSERT(!m_currentBlock);
-    ASSERT(!m_freeList);
+    ASSERT(!m_freeList.head);
     
     m_blockList.append(block);
     m_nextBlockToSweep = block;
@@ -235,7 +203,7 @@ void MarkedAllocator::removeBlock(MarkedBlock* block)
 {
     if (m_currentBlock == block) {
         m_currentBlock = m_currentBlock->next();
-        setFreeList(FreeList());
+        m_freeList = MarkedBlock::FreeList();
     }
     if (m_nextBlockToSweep == block)
         m_nextBlockToSweep = m_nextBlockToSweep->next();
@@ -248,7 +216,7 @@ void MarkedAllocator::reset()
 {
     m_lastActiveBlock = 0;
     m_currentBlock = 0;
-    setFreeList(FreeList());
+    m_freeList = MarkedBlock::FreeList();
     if (m_heap->operationInProgress() == FullCollection)
         m_blockList.append(m_retiredBlocks);
 
@@ -259,7 +227,7 @@ void MarkedAllocator::reset()
         for (MarkedBlock*& block = m_nextBlockToSweep; block; block = next) {
             next = block->next();
 
-            FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
+            MarkedBlock::FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
             retire(block, freeList);
         }
     }
@@ -272,11 +240,6 @@ void MarkedAllocator::lastChanceToFinalize()
         [&] (MarkedBlock* block) {
             block->lastChanceToFinalize();
         });
-}
-
-void MarkedAllocator::setFreeList(const FreeList& freeList)
-{
-    m_freeList = freeList;
 }
 
 } // namespace JSC

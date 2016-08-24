@@ -29,6 +29,7 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "JITCode.h"
+#include "Opcode.h"
 #include "ParserArena.h"
 #include "ParserTokens.h"
 #include "ResultType.h"
@@ -39,8 +40,6 @@
 #include <wtf/SmallPtrSet.h>
 
 namespace JSC {
-
-    enum OpcodeID : unsigned;
 
     class ArgumentListNode;
     class BytecodeGenerator;

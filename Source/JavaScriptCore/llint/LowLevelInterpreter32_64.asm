@@ -702,6 +702,31 @@ _llint_op_get_scope:
     dispatch(2)
 
 
+_llint_op_create_this:
+    traceExecution()
+    loadi 8[PC], t0
+    loadp PayloadOffset[cfr, t0, 8], t0
+    bbneq JSCell::m_type[t0], JSFunctionType, .opCreateThisSlow
+    loadp JSFunction::m_rareData[t0], t5
+    btpz t5, .opCreateThisSlow
+    loadp FunctionRareData::m_objectAllocationProfile + ObjectAllocationProfile::m_allocator[t5], t1
+    loadp FunctionRareData::m_objectAllocationProfile + ObjectAllocationProfile::m_structure[t5], t2
+    btpz t1, .opCreateThisSlow
+    loadpFromInstruction(4, t5)
+    bpeq t5, 1, .hasSeenMultipleCallee
+    bpneq t5, t0, .opCreateThisSlow
+.hasSeenMultipleCallee:
+    allocateJSObject(t1, t2, t0, t3, .opCreateThisSlow)
+    loadi 4[PC], t1
+    storei CellTag, TagOffset[cfr, t1, 8]
+    storei t0, PayloadOffset[cfr, t1, 8]
+    dispatch(5)
+
+.opCreateThisSlow:
+    callOpcodeSlowPath(_slow_path_create_this)
+    dispatch(5)
+
+
 _llint_op_to_this:
     traceExecution()
     loadi 4[PC], t0
@@ -714,6 +739,22 @@ _llint_op_to_this:
 
 .opToThisSlow:
     callOpcodeSlowPath(_slow_path_to_this)
+    dispatch(4)
+
+
+_llint_op_new_object:
+    traceExecution()
+    loadpFromInstruction(3, t0)
+    loadp ObjectAllocationProfile::m_allocator[t0], t1
+    loadp ObjectAllocationProfile::m_structure[t0], t2
+    allocateJSObject(t1, t2, t0, t3, .opNewObjectSlow)
+    loadi 4[PC], t1
+    storei CellTag, TagOffset[cfr, t1, 8]
+    storei t0, PayloadOffset[cfr, t1, 8]
+    dispatch(4)
+
+.opNewObjectSlow:
+    callOpcodeSlowPath(_llint_slow_path_new_object)
     dispatch(4)
 
 

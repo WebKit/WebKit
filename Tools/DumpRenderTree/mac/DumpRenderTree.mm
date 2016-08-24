@@ -56,7 +56,9 @@
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 #import <CoreFoundation/CoreFoundation.h>
-#import <JavaScriptCore/TestRunnerUtils.h>
+#import <JavaScriptCore/HeapStatistics.h>
+#import <JavaScriptCore/LLIntData.h>
+#import <JavaScriptCore/Options.h>
 #import <WebCore/LogInitialization.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
@@ -1427,7 +1429,10 @@ int DumpRenderTreeMain(int argc, const char *argv[])
 #endif
     [WebCoreStatistics garbageCollectJavaScriptObjects];
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts
-    JSC::finalizeStatsAtEndOfTesting();
+    if (JSC::Options::logHeapStatisticsAtExit())
+        JSC::HeapStatistics::reportSuccess();
+    if (JSC::Options::reportLLIntStats())
+        JSC::LLInt::Data::finalizeStats();
     [pool release];
     returningFromMain = true;
     return 0;

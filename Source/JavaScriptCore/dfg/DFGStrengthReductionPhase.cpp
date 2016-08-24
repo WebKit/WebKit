@@ -40,7 +40,6 @@
 #include "RegExpConstructor.h"
 #include "StringPrototype.h"
 #include <cstdlib>
-#include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace DFG {
 
@@ -421,7 +420,7 @@ private:
                     dataLog("Giving up because of pattern limit.\n");
                 break;
             }
-            
+
             unsigned lastIndex;
             if (regExp->globalOrSticky()) {
                 // This will only work if we can prove what the value of lastIndex is. To do this
@@ -469,7 +468,7 @@ private:
             FrozenValue* constructorFrozenValue = m_graph.freeze(constructor);
 
             MatchResult result;
-            Vector<int> ovector;
+            Vector<int, 32> ovector;
             // We have to call the kind of match function that the main thread would have called.
             // Otherwise, we might not have the desired Yarr code compiled, and the match will fail.
             if (m_node->op() == RegExpExec) {
@@ -515,8 +514,7 @@ private:
                     }
 
                     unsigned publicLength = resultArray.size();
-                    unsigned vectorLength =
-                        Butterfly::optimalContiguousVectorLength(structure, publicLength);
+                    unsigned vectorLength = std::max(BASE_VECTOR_LEN, publicLength);
 
                     UniquedStringImpl* indexUID = vm().propertyNames->index.impl();
                     UniquedStringImpl* inputUID = vm().propertyNames->input.impl();
@@ -651,7 +649,7 @@ private:
             bool ok = true;
             do {
                 MatchResult result;
-                Vector<int> ovector;
+                Vector<int, 32> ovector;
                 // Model which version of match() is called by the main thread.
                 if (replace.isEmpty() && regExp->global()) {
                     if (!regExp->matchConcurrently(vm(), string, startPosition, result)) {

@@ -42,11 +42,10 @@ namespace JSC {
         CachedCall(CallFrame* callFrame, JSFunction* function, int argumentCount)
             : m_valid(false)
             , m_interpreter(callFrame->interpreter())
-            , m_vm(callFrame->vm())
-            , m_entryScope(m_vm, function->scope()->globalObject(m_vm))
+            , m_entryScope(callFrame->vm(), function->scope()->globalObject())
         {
             ASSERT(!function->isHostFunctionNonInline());
-            if (UNLIKELY(m_vm.isSafeToRecurseSoft())) {
+            if (UNLIKELY(callFrame->vm().isSafeToRecurseSoft())) {
                 m_arguments.resize(argumentCount);
                 m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments.data());
             } else
@@ -65,7 +64,6 @@ namespace JSC {
     private:
         bool m_valid;
         Interpreter* m_interpreter;
-        VM& m_vm;
         VMEntryScope m_entryScope;
         ProtoCallFrame m_protoCallFrame;
         Vector<JSValue> m_arguments;

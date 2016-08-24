@@ -34,7 +34,6 @@
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSCTestRunnerUtils.h>
 #include <JavaScriptCore/JSObjectRef.h>

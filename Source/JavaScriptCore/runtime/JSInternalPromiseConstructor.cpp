@@ -27,9 +27,11 @@
 #include "JSInternalPromiseConstructor.h"
 
 #include "JSCBuiltins.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromisePrototype.h"
+#include "StructureInlines.h"
 
 #include "JSInternalPromiseConstructor.lut.h"
 

@@ -35,7 +35,6 @@
 #include "InjectedScriptManager.h"
 #include "InspectorFrontendRouter.h"
 #include "InspectorValues.h"
-#include "JSCInlines.h"
 #include "RegularExpression.h"
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"

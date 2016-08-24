@@ -24,7 +24,6 @@
 
 #include "AllocatorAttributes.h"
 #include "DestructionMode.h"
-#include "FreeList.h"
 #include "HeapCell.h"
 #include "HeapOperation.h"
 #include "IterationStatus.h"
@@ -71,13 +70,25 @@ namespace JSC {
         friend struct VerifyMarkedOrRetired;
     public:
         static const size_t atomSize = 16; // bytes
-        static const size_t blockSize = 64 * KB;
+        static const size_t blockSize = 16 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
         static const size_t atomsPerBlock = blockSize / atomSize;
 
         static_assert(!(MarkedBlock::atomSize & (MarkedBlock::atomSize - 1)), "MarkedBlock::atomSize must be a power of two.");
         static_assert(!(MarkedBlock::blockSize & (MarkedBlock::blockSize - 1)), "MarkedBlock::blockSize must be a power of two.");
+
+        struct FreeCell {
+            FreeCell* next;
+        };
+        
+        struct FreeList {
+            FreeCell* head;
+            size_t bytes;
+
+            FreeList();
+            FreeList(FreeCell*, size_t);
+        };
 
         struct VoidFunctor {
             typedef void ReturnType;
@@ -98,14 +109,12 @@ namespace JSC {
             mutable ReturnType m_count;
         };
 
-        static MarkedBlock* tryCreate(Heap&, MarkedAllocator*, size_t capacity, size_t cellSize, const AllocatorAttributes&);
+        static MarkedBlock* create(Heap&, MarkedAllocator*, size_t capacity, size_t cellSize, const AllocatorAttributes&);
         static void destroy(Heap&, MarkedBlock*);
 
         static bool isAtomAligned(const void*);
-        void* cellAlign(void*);
         static MarkedBlock* blockFor(const void*);
         static size_t firstAtom();
-        size_t atomNumber(const void*);
         
         void lastChanceToFinalize();
 
@@ -166,15 +175,6 @@ namespace JSC {
         bool needsSweeping() const;
         void didRetireBlock(const FreeList&);
         void willRemoveBlock();
-        
-        void setHasAnyMarked()
-        {
-            if (!m_hasAnyMarked) // Prevent store traffic if it's not needed.
-                m_hasAnyMarked = true;
-        }
-        bool hasAnyMarked() const { return m_hasAnyMarked; }
-        
-        void clearHasAnyMarked() { m_hasAnyMarked = false; }
 
         template <typename Functor> IterationStatus forEachCell(const Functor&);
         template <typename Functor> IterationStatus forEachLiveCell(const Functor&);
@@ -183,29 +183,27 @@ namespace JSC {
     private:
         static const size_t atomAlignmentMask = atomSize - 1;
 
-        enum BlockState : uint8_t { New, FreeListed, Allocated, Marked, Retired };
-        
-        template<DestructionMode>
-        FreeList sweepHelperSelectScribbleMode(SweepMode = SweepOnly);
-        
-        enum ScribbleMode { DontScribble, Scribble };
-        
-        template<DestructionMode, ScribbleMode>
-        FreeList sweepHelperSelectStateAndSweepMode(SweepMode = SweepOnly);
+        // During allocation, we look for available space in free lists in blocks.
+        // If a block's utilization is sufficiently high (i.e. it's almost full),
+        // we want to remove that block as a candidate for allocating to reduce
+        // the likelihood of allocation having to take a slow path. When the
+        // block is in this state, we say that it is "Retired".
+        //
+        // A full GC can take a Retired blocks out of retirement. An eden GC
+        // will simply ignore Retired blocks (i.e. they will not be swept even
+        // if they no longer have live objects).
 
-        enum NewlyAllocatedMode { HasNewlyAllocated, DoesNotHaveNewlyAllocated };
-        
-        template<BlockState, SweepMode, DestructionMode, ScribbleMode, NewlyAllocatedMode>
-        FreeList specializedSweep();
-        
+        enum BlockState { New, FreeListed, Allocated, Marked, Retired };
+        template<bool callDestructors> FreeList sweepHelper(SweepMode = SweepOnly);
+
         typedef char Atom[atomSize];
 
         MarkedBlock(MarkedAllocator*, size_t capacity, size_t cellSize, const AllocatorAttributes&);
         Atom* atoms();
+        size_t atomNumber(const void*);
+        void callDestructor(HeapCell*);
+        template<BlockState, SweepMode, bool callDestructors> FreeList specializedSweep();
         
-        template<typename Func>
-        void forEachFreeCell(const FreeList&, const Func&);
-
         MarkedBlock* m_prev;
         MarkedBlock* m_next;
 
@@ -216,17 +214,22 @@ namespace JSC {
 
         size_t m_capacity;
         AllocatorAttributes m_attributes;
-        BlockState m_state;
-        bool m_hasAnyMarked { false };
         MarkedAllocator* m_allocator;
+        BlockState m_state;
         WeakSet m_weakSet;
-        // FIXME: We "need" this to get 10% on Kraken/ai-astar. I'm pretty sure that's because we
-        // lose the butterfly allocation if the subsequent cell allocation fails, during NewArray
-        // and friends.
-        // https://bugs.webkit.org/show_bug.cgi?id=160783
-        uintptr_t m_padding1;
-        uintptr_t m_padding2;
     };
+
+    inline MarkedBlock::FreeList::FreeList()
+        : head(0)
+        , bytes(0)
+    {
+    }
+
+    inline MarkedBlock::FreeList::FreeList(FreeCell* head, size_t bytes)
+        : head(head)
+        , bytes(bytes)
+    {
+    }
 
     inline size_t MarkedBlock::firstAtom()
     {
@@ -241,16 +244,6 @@ namespace JSC {
     inline bool MarkedBlock::isAtomAligned(const void* p)
     {
         return !(reinterpret_cast<Bits>(p) & atomAlignmentMask);
-    }
-
-    inline void* MarkedBlock::cellAlign(void* p)
-    {
-        Bits base = reinterpret_cast<Bits>(atoms() + firstAtom());
-        Bits bits = reinterpret_cast<Bits>(p);
-        bits -= base;
-        bits -= bits % cellSize();
-        bits += base;
-        return reinterpret_cast<void*>(bits);
     }
 
     inline MarkedBlock* MarkedBlock::blockFor(const void* p)
@@ -313,7 +306,7 @@ namespace JSC {
 
     inline bool MarkedBlock::isEmpty()
     {
-        return m_state == Marked && !m_hasAnyMarked && m_weakSet.isEmpty() && (!m_newlyAllocated || m_newlyAllocated->isEmpty());
+        return m_marks.isEmpty() && m_weakSet.isEmpty() && (!m_newlyAllocated || m_newlyAllocated->isEmpty());
     }
 
     inline size_t MarkedBlock::cellSize()
@@ -501,7 +494,7 @@ namespace JSC {
     {
         return m_state == Marked || m_state == Retired;
     }
-        
+
 } // namespace JSC
 
 namespace WTF {

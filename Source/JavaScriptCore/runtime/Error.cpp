@@ -28,16 +28,14 @@
 #include "ErrorConstructor.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
-#include "Interpreter.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSString.h"
-#include "JSCInlines.h"
 #include "NativeErrorConstructor.h"
+#include "JSCInlines.h"
 #include "SourceCode.h"
-#include "StackFrame.h"
 
 namespace JSC {
 

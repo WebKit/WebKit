@@ -27,10 +27,9 @@
 #include "ProfilerBytecodeSequence.h"
 
 #include "CodeBlock.h"
-#include "Interpreter.h"
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "Operands.h"
+#include "JSCInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {

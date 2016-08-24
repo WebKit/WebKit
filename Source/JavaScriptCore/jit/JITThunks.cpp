@@ -30,9 +30,8 @@
 
 #include "Executable.h"
 #include "JIT.h"
-#include "JSCInlines.h"
-#include "LLIntData.h"
 #include "VM.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

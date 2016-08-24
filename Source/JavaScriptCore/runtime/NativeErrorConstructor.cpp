@@ -22,7 +22,6 @@
 #include "NativeErrorConstructor.h"
 
 #include "ErrorInstance.h"
-#include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "NativeErrorPrototype.h"

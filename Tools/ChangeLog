@@ -1,3 +1,14 @@
+2016-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.
+
+        * DumpRenderTree/TestRunner.cpp:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (DumpRenderTreeMain):
+        * Scripts/run-jsc-stress-tests:
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-08-24  Simon Fraser  <simon.fraser@apple.com>
 
         Try to fix Production builds.

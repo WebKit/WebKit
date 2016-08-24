@@ -42,7 +42,6 @@
 #include "FTLJITCode.h"
 #include "FTLThunks.h"
 #include "JITSubGenerator.h"
-#include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "PCToCodeOriginMap.h"
 #include "ScratchRegisterAllocator.h"

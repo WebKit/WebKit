@@ -69,7 +69,7 @@ public:
     JSScope* next();
 
     JSGlobalObject* globalObject();
-    JSGlobalObject* globalObject(VM&);
+    VM* vm();
     JSObject* globalThis();
 
     SymbolTable* symbolTable();
@@ -129,9 +129,9 @@ inline JSGlobalObject* JSScope::globalObject()
     return structure()->globalObject();
 }
 
-inline JSGlobalObject* JSScope::globalObject(VM& vm)
+inline VM* JSScope::vm()
 { 
-    return structure(vm)->globalObject();
+    return MarkedBlock::blockFor(this)->vm();
 }
 
 inline Register& Register::operator=(JSScope* scope)

@@ -1240,5 +1240,3 @@ webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 
 webkit.org/b/160017 js/regress-139548.html [ Slow ]
-
-

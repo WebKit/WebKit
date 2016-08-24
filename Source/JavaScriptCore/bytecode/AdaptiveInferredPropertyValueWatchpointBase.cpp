@@ -26,7 +26,8 @@
 #include "config.h"
 #include "AdaptiveInferredPropertyValueWatchpointBase.h"
 
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

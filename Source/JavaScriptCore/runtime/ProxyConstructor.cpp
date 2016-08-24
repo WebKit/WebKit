@@ -28,7 +28,8 @@
 
 #include "Error.h"
 #include "IdentifierInlines.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "ProxyObject.h"

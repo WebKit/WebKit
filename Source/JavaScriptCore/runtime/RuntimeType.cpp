@@ -28,7 +28,8 @@
 #include "config.h"
 #include "RuntimeType.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValue.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

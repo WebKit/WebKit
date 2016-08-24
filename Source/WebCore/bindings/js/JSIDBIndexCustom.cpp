@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBIndex.h"
-#include <heap/HeapInlines.h>
 
 using namespace JSC;
 

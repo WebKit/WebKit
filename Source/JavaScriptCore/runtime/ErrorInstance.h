@@ -21,7 +21,7 @@
 #ifndef ErrorInstance_h
 #define ErrorInstance_h
 
-#include "JSObject.h"
+#include "Interpreter.h"
 #include "RuntimeType.h"
 #include "SourceProvider.h"
 

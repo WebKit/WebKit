@@ -1,3 +1,20 @@
+2016-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::tryFastAlignedMalloc): Deleted.
+        * wtf/FastMalloc.h:
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::forEach):
+        (WTF::ParkingLot::forEachImpl): Deleted.
+        * wtf/ParkingLot.h:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::forEach): Deleted.
+        * wtf/ScopedLambda.h:
+        (WTF::scopedLambdaRef): Deleted.
+
 2016-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression

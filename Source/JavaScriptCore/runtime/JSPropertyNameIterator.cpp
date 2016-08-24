@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,13 @@
 #include "config.h"
 #include "JSPropertyNameIterator.h"
 
+#include "IdentifierInlines.h"
 #include "IteratorOperations.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSPropertyNameEnumerator.h"
+#include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

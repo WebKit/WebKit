@@ -94,8 +94,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSiz
     compile(&vm, charSize);
 }
 
-template<typename VectorType>
-ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOffset, VectorType& ovector)
+ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOffset, Vector<int, 32>& ovector)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;

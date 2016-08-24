@@ -26,7 +26,10 @@
 #include "config.h"
 #include "NativeStdFunctionCell.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
+#include "JSFunctionInlines.h"
+#include "SlotVisitorInlines.h"
 
 namespace JSC {
 

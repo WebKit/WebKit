@@ -28,6 +28,7 @@
 
 #include "Disassembler.h"
 #include "ExecutableAllocator.h"
+#include "LLIntData.h"
 #include <wtf/DataLog.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/PrintStream.h>
@@ -51,8 +52,6 @@
 #endif
 
 namespace JSC {
-
-enum OpcodeID : unsigned;
 
 // FunctionPtr:
 //
@@ -274,7 +273,10 @@ public:
         return result;
     }
 
-    static MacroAssemblerCodePtr createLLIntCodePtr(OpcodeID codeId);
+    static MacroAssemblerCodePtr createLLIntCodePtr(OpcodeID codeId)
+    {
+        return createFromExecutableAddress(LLInt::getCodePtr(codeId));
+    }
 
     explicit MacroAssemblerCodePtr(ReturnAddressPtr ra)
         : m_value(ra.value())
@@ -297,9 +299,23 @@ public:
         return m_value == other.m_value;
     }
 
-    void dumpWithName(const char* name, PrintStream& out) const;
+    void dumpWithName(const char* name, PrintStream& out) const
+    {
+        if (!m_value) {
+            out.print(name, "(null)");
+            return;
+        }
+        if (executableAddress() == dataLocation()) {
+            out.print(name, "(", RawPointer(executableAddress()), ")");
+            return;
+        }
+        out.print(name, "(executable = ", RawPointer(executableAddress()), ", dataLocation = ", RawPointer(dataLocation()), ")");
+    }
     
-    void dump(PrintStream& out) const;
+    void dump(PrintStream& out) const
+    {
+        dumpWithName("CodePtr", out);
+    }
     
     enum EmptyValueTag { EmptyValue };
     enum DeletedValueTag { DeletedValue };
@@ -373,7 +389,10 @@ public:
     }
     
     // Helper for creating self-managed code refs from LLInt.
-    static MacroAssemblerCodeRef createLLIntCodeRef(OpcodeID codeId);
+    static MacroAssemblerCodeRef createLLIntCodeRef(OpcodeID codeId)
+    {
+        return createSelfManagedCodeRef(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(codeId)));
+    }
 
     ExecutableMemoryHandle* executableMemory() const
     {
@@ -399,7 +418,10 @@ public:
     
     explicit operator bool() const { return !!m_codePtr; }
     
-    void dump(PrintStream& out) const;
+    void dump(PrintStream& out) const
+    {
+        m_codePtr.dumpWithName("CodeRef", out);
+    }
 
 private:
     MacroAssemblerCodePtr m_codePtr;

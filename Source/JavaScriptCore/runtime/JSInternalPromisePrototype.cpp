@@ -28,10 +28,12 @@
 
 #include "Error.h"
 #include "JSCBuiltins.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSInternalPromise.h"
 #include "Microtask.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

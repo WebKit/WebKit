@@ -29,9 +29,11 @@
 #include "DebuggerScope.h"
 #include "Error.h"
 #include "IdentifierInlines.h"
-#include "JSCInlines.h"
+#include "JSCJSValue.h"
+#include "JSCellInlines.h"
 #include "JSJavaScriptCallFramePrototype.h"
 #include "ObjectConstructor.h"
+#include "StructureInlines.h"
 
 using namespace JSC;
 

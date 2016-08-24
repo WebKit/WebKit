@@ -38,6 +38,7 @@
 #include <bytecode/CodeBlock.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
+#include <interpreter/Interpreter.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/ErrorHandlingScope.h>
@@ -48,7 +49,6 @@
 #include <stdarg.h>
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/CharacterNames.h>
-#include <wtf/text/StringBuilder.h>
 
 using namespace JSC;
 using namespace Inspector;

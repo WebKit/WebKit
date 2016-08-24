@@ -26,10 +26,11 @@
 #ifndef CommonSlowPathExceptions_h
 #define CommonSlowPathExceptions_h
 
+#include "MacroAssemblerCodeRef.h"
+
 namespace JSC {
 
 class ExecState;
-class JSObject;
 
 namespace CommonSlowPaths {
 

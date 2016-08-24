@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +26,9 @@
 #include "config.h"
 #include "JSTemplateRegistryKey.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
+#include "StructureInlines.h"
 #include "VM.h"
 
 namespace JSC {

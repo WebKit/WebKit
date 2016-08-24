@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,10 +53,10 @@ void WeakSet::sweep()
         if (block->isLogicallyEmptyButNotFree()) {
             // If this WeakBlock is logically empty, but still has Weaks pointing into it,
             // we can't destroy it just yet. Detach it from the WeakSet and hand ownership
-            // to the Heap so we don't pin down the entire MarkedBlock or LargeAllocation.
+            // to the Heap so we don't pin down the entire 64kB MarkedBlock.
             m_blocks.remove(block);
             heap()->addLogicallyEmptyWeakBlock(block);
-            block->disconnectContainer();
+            block->disconnectMarkedBlock();
         }
         block = nextBlock;
     }
@@ -88,7 +88,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 
 WeakBlock::FreeCell* WeakSet::addAllocator()
 {
-    WeakBlock* block = WeakBlock::create(*heap(), m_container);
+    WeakBlock* block = WeakBlock::create(*heap(), m_markedBlock);
     heap()->didAllocate(WeakBlock::blockSize);
     m_blocks.append(block);
     WeakBlock::SweepResult sweepResult = block->takeSweepResult();

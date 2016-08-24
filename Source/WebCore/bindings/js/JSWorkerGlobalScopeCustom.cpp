@@ -41,6 +41,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
+#include <interpreter/Interpreter.h>
 
 #if ENABLE(WEB_SOCKETS)
 #include "JSWebSocket.h"

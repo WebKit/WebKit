@@ -26,8 +26,9 @@
 #include "config.h"
 #include "WeakSetPrototype.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "JSWeakSet.h"
+#include "StructureInlines.h"
 #include "WeakMapData.h"
 
 namespace JSC {

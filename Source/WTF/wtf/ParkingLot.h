@@ -66,14 +66,14 @@ public:
     template<typename ValidationFunctor, typename BeforeSleepFunctor>
     static ParkResult parkConditionally(
         const void* address,
-        const ValidationFunctor& validation,
-        const BeforeSleepFunctor& beforeSleep,
+        ValidationFunctor&& validation,
+        BeforeSleepFunctor&& beforeSleep,
         Clock::time_point timeout)
     {
         return parkConditionallyImpl(
             address,
-            scopedLambdaRef<bool()>(validation),
-            scopedLambdaRef<void()>(beforeSleep),
+            scopedLambda<bool()>(std::forward<ValidationFunctor>(validation)),
+            scopedLambda<void()>(std::forward<BeforeSleepFunctor>(beforeSleep)),
             timeout);
     }
 
@@ -124,9 +124,9 @@ public:
     // moment nobody can add any threads to the queue because the queue lock is still held. Also,
     // WTF::Lock uses the timeToBeFair and token mechanism to implement eventual fairness.
     template<typename Callback>
-    static void unparkOne(const void* address, const Callback& callback)
+    static void unparkOne(const void* address, Callback&& callback)
     {
-        unparkOneImpl(address, scopedLambdaRef<intptr_t(UnparkResult)>(callback));
+        unparkOneImpl(address, scopedLambda<intptr_t(UnparkResult)>(std::forward<Callback>(callback)));
     }
 
     // Unparks every thread from the queue associated with the given address, which cannot be null.
@@ -145,11 +145,7 @@ public:
     // As well as many other possible interleavings that all have T1 before T2 and T3 before T4 but are
     // otherwise unconstrained. This method is useful primarily for debugging. It's also used by unit
     // tests.
-    template<typename Func>
-    static void forEach(const Func& func)
-    {
-        forEachImpl(scopedLambdaRef<void(ThreadIdentifier, const void*)>(func));
-    }
+    WTF_EXPORT_PRIVATE static void forEach(std::function<void(ThreadIdentifier, const void*)>);
 
 private:
     WTF_EXPORT_PRIVATE static ParkResult parkConditionallyImpl(
@@ -161,7 +157,7 @@ private:
     WTF_EXPORT_PRIVATE static void unparkOneImpl(
         const void* address, const ScopedLambda<intptr_t(UnparkResult)>& callback);
 
-    WTF_EXPORT_PRIVATE static void forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>&);
+    WTF_EXPORT_PRIVATE static void forEachImpl(const std::function<void(ThreadIdentifier, const void*)>&);
 };
 
 } // namespace WTF

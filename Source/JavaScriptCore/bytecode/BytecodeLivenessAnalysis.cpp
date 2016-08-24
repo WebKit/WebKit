@@ -31,7 +31,6 @@
 #include "BytecodeUseDef.h"
 #include "CodeBlock.h"
 #include "FullBytecodeLiveness.h"
-#include "Interpreter.h"
 #include "PreciseJumpTargets.h"
 
 namespace JSC {

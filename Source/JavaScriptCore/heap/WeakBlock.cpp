@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WeakBlock.h"
 
-#include "CellContainerInlines.h"
 #include "Heap.h"
 #include "HeapRootVisitor.h"
 #include "JSCInlines.h"
@@ -35,10 +34,10 @@
 
 namespace JSC {
 
-WeakBlock* WeakBlock::create(Heap& heap, CellContainer container)
+WeakBlock* WeakBlock::create(Heap& heap, MarkedBlock& markedBlock)
 {
     heap.didAllocateBlock(WeakBlock::blockSize);
-    return new (NotNull, fastMalloc(blockSize)) WeakBlock(container);
+    return new (NotNull, fastMalloc(blockSize)) WeakBlock(markedBlock);
 }
 
 void WeakBlock::destroy(Heap& heap, WeakBlock* block)
@@ -48,9 +47,9 @@ void WeakBlock::destroy(Heap& heap, WeakBlock* block)
     heap.didFreeBlock(WeakBlock::blockSize);
 }
 
-WeakBlock::WeakBlock(CellContainer container)
+WeakBlock::WeakBlock(MarkedBlock& markedBlock)
     : DoublyLinkedListNode<WeakBlock>()
-    , m_container(container)
+    , m_markedBlock(&markedBlock)
 {
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
@@ -102,11 +101,11 @@ void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
     if (isEmpty())
         return;
 
-    // If this WeakBlock doesn't belong to a CellContainer, we won't even be here.
-    ASSERT(m_container);
+    // If this WeakBlock doesn't belong to a MarkedBlock, we won't even be here.
+    ASSERT(m_markedBlock);
 
     // We only visit after marking.
-    ASSERT(m_container.isMarkedOrRetired());
+    ASSERT(m_markedBlock->isMarkedOrRetired());
 
     SlotVisitor& visitor = heapRootVisitor.visitor();
 
@@ -120,7 +119,7 @@ void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
             continue;
 
         const JSValue& jsValue = weakImpl->jsValue();
-        if (m_container.isMarkedOrNewlyAllocated(jsValue.asCell()))
+        if (m_markedBlock->isMarkedOrNewlyAllocated(jsValue.asCell()))
             continue;
 
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor))
@@ -136,18 +135,18 @@ void WeakBlock::reap()
     if (isEmpty())
         return;
 
-    // If this WeakBlock doesn't belong to a CellContainer, we won't even be here.
-    ASSERT(m_container);
+    // If this WeakBlock doesn't belong to a MarkedBlock, we won't even be here.
+    ASSERT(m_markedBlock);
 
     // We only reap after marking.
-    ASSERT(m_container.isMarkedOrRetired());
+    ASSERT(m_markedBlock->isMarkedOrRetired());
 
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
         if (weakImpl->state() > WeakImpl::Dead)
             continue;
 
-        if (m_container.isMarkedOrNewlyAllocated(weakImpl->jsValue().asCell())) {
+        if (m_markedBlock->isMarkedOrNewlyAllocated(weakImpl->jsValue().asCell())) {
             ASSERT(weakImpl->state() == WeakImpl::Live);
             continue;
         }

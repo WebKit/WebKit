@@ -29,10 +29,11 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "NumberObject.h"
+#include "StructureInlines.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 
@@ -255,11 +256,7 @@ void JSValue::dumpInContextAssumingStructure(
             out.print("Symbol: ", RawPointer(asCell()));
         else if (structure->classInfo()->isSubClassOf(Structure::info()))
             out.print("Structure: ", inContext(*jsCast<Structure*>(asCell()), context));
-        else if (structure->classInfo()->isSubClassOf(JSObject::info())) {
-            out.print("Object: ", RawPointer(asCell()));
-            out.print(" with butterfly ", RawPointer(asObject(asCell())->butterfly()));
-            out.print(" (", inContext(*structure, context), ")");
-        } else {
+        else {
             out.print("Cell: ", RawPointer(asCell()));
             out.print(" (", inContext(*structure, context), ")");
         }

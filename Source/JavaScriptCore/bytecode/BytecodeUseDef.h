@@ -27,7 +27,6 @@
 #define BytecodeUseDef_h
 
 #include "CodeBlock.h"
-#include "Interpreter.h"
 
 namespace JSC {
 

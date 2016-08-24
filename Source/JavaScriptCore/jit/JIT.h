@@ -40,16 +40,16 @@
 
 #include "CodeBlock.h"
 #include "CompactJITCodeMap.h"
+#include "Interpreter.h"
 #include "JITDisassembler.h"
 #include "JITInlineCacheGenerator.h"
 #include "JITMathIC.h"
 #include "JSInterfaceJIT.h"
+#include "Opcode.h"
 #include "PCToCodeOriginMap.h"
 #include "UnusedPointer.h"
 
 namespace JSC {
-
-    enum OpcodeID : unsigned;
 
     class ArrayAllocationProfile;
     class CallLinkInfo;
@@ -248,7 +248,14 @@ namespace JSC {
             jit.privateCompileHasIndexedProperty(byValInfo, returnAddress, arrayMode);
         }
 
-        static CodeRef compileCTINativeCall(VM*, NativeFunction);
+        static CodeRef compileCTINativeCall(VM* vm, NativeFunction func)
+        {
+            if (!vm->canUseJIT()) {
+                return CodeRef::createLLIntCodeRef(llint_native_call_trampoline);
+            }
+            JIT jit(vm, 0);
+            return jit.privateCompileCTINativeCall(vm, func);
+        }
 
         static unsigned frameRegisterCountFor(CodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,12 @@
 #ifndef WeakSet_h
 #define WeakSet_h
 
-#include "CellContainer.h"
 #include "WeakBlock.h"
 
 namespace JSC {
 
 class Heap;
+class MarkedBlock;
 class WeakImpl;
 
 class WeakSet {
@@ -41,7 +41,7 @@ public:
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);
 
-    WeakSet(VM*, CellContainer);
+    WeakSet(VM*, MarkedBlock&);
     ~WeakSet();
     void lastChanceToFinalize();
 
@@ -66,14 +66,14 @@ private:
     WeakBlock* m_nextAllocator;
     DoublyLinkedList<WeakBlock> m_blocks;
     VM* m_vm;
-    CellContainer m_container;
+    MarkedBlock& m_markedBlock;
 };
 
-inline WeakSet::WeakSet(VM* vm, CellContainer container)
+inline WeakSet::WeakSet(VM* vm, MarkedBlock& markedBlock)
     : m_allocator(0)
     , m_nextAllocator(0)
     , m_vm(vm)
-    , m_container(container)
+    , m_markedBlock(markedBlock)
 {
 }
 

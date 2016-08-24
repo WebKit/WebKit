@@ -45,8 +45,6 @@ public:
         , m_block(block)
     {
     }
-    
-    explicit operator bool() const { return m_value || m_block; }
 
     LValue value() const { return m_value; }
     LBasicBlock block() const { return m_block; }

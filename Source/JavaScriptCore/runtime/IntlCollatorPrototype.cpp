@@ -32,7 +32,10 @@
 #include "Error.h"
 #include "IntlCollator.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
+#include "JSObject.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

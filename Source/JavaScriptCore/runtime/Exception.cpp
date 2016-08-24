@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Exception.h"
 
-#include "Interpreter.h"
 #include "JSCInlines.h"
 
 namespace JSC {

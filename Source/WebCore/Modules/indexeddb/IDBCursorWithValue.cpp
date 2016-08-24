@@ -28,8 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <heap/HeapInlines.h>
-
 namespace WebCore {
 
 Ref<IDBCursorWithValue> IDBCursorWithValue::create(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)

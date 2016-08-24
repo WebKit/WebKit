@@ -398,8 +398,6 @@ public:
     void ret(LValue);
 
     void unreachable();
-    
-    void appendSuccessor(WeightedTarget);
 
     B3::CheckValue* speculate(LValue);
     B3::CheckValue* speculateAdd(LValue, LValue);

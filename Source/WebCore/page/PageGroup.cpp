@@ -36,7 +36,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
-#include <heap/HeapInlines.h>
 #include <runtime/StructureInlines.h>
 #include <wtf/StdLibExtras.h>
 

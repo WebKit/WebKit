@@ -12920,80 +12920,6 @@ void testBranchBitAndImmFusion(
     CHECK(terminal.args[2].kind() == Air::Arg::BitImm || terminal.args[2].kind() == Air::Arg::BitImm64);
 }
 
-void testPatchpointTerminalReturnValue(bool successIsRare)
-{
-    // This is a unit test for how FTL's heap allocation fast paths behave.
-    Procedure proc;
-    
-    BasicBlock* root = proc.addBlock();
-    BasicBlock* success = proc.addBlock();
-    BasicBlock* slowPath = proc.addBlock();
-    BasicBlock* continuation = proc.addBlock();
-    
-    Value* arg = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    
-    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
-    patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
-    
-    if (successIsRare) {
-        root->appendSuccessor(FrequentedBlock(success, FrequencyClass::Rare));
-        root->appendSuccessor(slowPath);
-    } else {
-        root->appendSuccessor(success);
-        root->appendSuccessor(FrequentedBlock(slowPath, FrequencyClass::Rare));
-    }
-    
-    patchpoint->appendSomeRegister(arg);
-    
-    patchpoint->setGenerator(
-        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            
-            CCallHelpers::Jump jumpToSlow =
-                jit.branch32(CCallHelpers::Above, params[1].gpr(), CCallHelpers::TrustedImm32(42));
-            
-            jit.add32(CCallHelpers::TrustedImm32(31), params[1].gpr(), params[0].gpr());
-            
-            CCallHelpers::Jump jumpToSuccess;
-            if (!params.fallsThroughToSuccessor(0))
-                jumpToSuccess = jit.jump();
-            
-            Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();
-            
-            params.addLatePath(
-                [=] (CCallHelpers& jit) {
-                    jumpToSlow.linkTo(*labels[1], &jit);
-                    if (jumpToSuccess.isSet())
-                        jumpToSuccess.linkTo(*labels[0], &jit);
-                });
-        });
-    
-    UpsilonValue* successUpsilon = success->appendNew<UpsilonValue>(proc, Origin(), patchpoint);
-    success->appendNew<Value>(proc, Jump, Origin());
-    success->setSuccessors(continuation);
-    
-    UpsilonValue* slowPathUpsilon = slowPath->appendNew<UpsilonValue>(
-        proc, Origin(), slowPath->appendNew<Const32Value>(proc, Origin(), 666));
-    slowPath->appendNew<Value>(proc, Jump, Origin());
-    slowPath->setSuccessors(continuation);
-    
-    Value* phi = continuation->appendNew<Value>(proc, Phi, Int32, Origin());
-    successUpsilon->setPhi(phi);
-    slowPathUpsilon->setPhi(phi);
-    continuation->appendNew<Value>(proc, Return, Origin(), phi);
-    
-    auto code = compile(proc);
-    CHECK_EQ(invoke<int>(*code, 0), 31);
-    CHECK_EQ(invoke<int>(*code, 1), 32);
-    CHECK_EQ(invoke<int>(*code, 41), 72);
-    CHECK_EQ(invoke<int>(*code, 42), 73);
-    CHECK_EQ(invoke<int>(*code, 43), 666);
-    CHECK_EQ(invoke<int>(*code, -1), 666);
-}
-
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -14411,8 +14337,6 @@ void run(const char* filter)
     RUN(testEntrySwitchLoop());
 
     RUN(testSomeEarlyRegister());
-    RUN(testPatchpointTerminalReturnValue(true));
-    RUN(testPatchpointTerminalReturnValue(false));
     
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));

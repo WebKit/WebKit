@@ -30,6 +30,10 @@
 #include "VM.h"
 #include "Watchdog.h"
 
+#if !ENABLE(JIT)
+#include "CLoopStackInlines.h"
+#endif
+
 namespace JSC {
     
 bool VM::ensureStackCapacityFor(Register* newTopOfStack)
@@ -38,7 +42,7 @@ bool VM::ensureStackCapacityFor(Register* newTopOfStack)
     ASSERT(wtfThreadData().stack().isGrowingDownward());
     return newTopOfStack >= m_softStackLimit;
 #else
-    return ensureStackCapacityForCLoop(newTopOfStack);
+    return interpreter->cloopStack().ensureCapacityFor(newTopOfStack);
 #endif
     
 }
@@ -47,7 +51,7 @@ bool VM::isSafeToRecurseSoft() const
 {
     bool safe = isSafeToRecurse(m_softStackLimit);
 #if !ENABLE(JIT)
-    safe = safe && isSafeToRecurseSoftCLoop();
+    safe = safe && interpreter->cloopStack().isSafeToRecurse();
 #endif
     return safe;
 }
