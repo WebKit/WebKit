@@ -28,6 +28,7 @@
 #pragma once
 
 #if ENABLE(MATHML)
+
 #include "MathMLRowElement.h"
 
 namespace WebCore {

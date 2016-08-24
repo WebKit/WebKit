@@ -27,6 +27,7 @@
 #pragma once
 
 #if ENABLE(MATHML)
+
 #include "MathMLMencloseElement.h"
 #include "RenderMathMLRow.h"
 

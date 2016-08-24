@@ -26,6 +26,7 @@
 #pragma once
 
 #if ENABLE(MATHML)
+
 #include "GlyphPage.h"
 #include "LayoutUnit.h"
 #include "OpenTypeMathData.h"

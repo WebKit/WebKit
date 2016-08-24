@@ -26,6 +26,7 @@
 #pragma once
 
 #if ENABLE(MATHML)
+
 #include "MathMLOperatorDictionary.h"
 #include "MathMLTokenElement.h"
 

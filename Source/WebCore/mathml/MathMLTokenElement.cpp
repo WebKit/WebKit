@@ -26,9 +26,9 @@
  */
 
 #include "config.h"
+#include "MathMLTokenElement.h"
 
 #if ENABLE(MATHML)
-#include "MathMLTokenElement.h"
 
 #include "MathMLNames.h"
 #include "RenderMathMLToken.h"

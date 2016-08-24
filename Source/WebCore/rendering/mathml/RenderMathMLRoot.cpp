@@ -26,10 +26,9 @@
  */
 
 #include "config.h"
+#include "RenderMathMLRoot.h"
 
 #if ENABLE(MATHML)
-
-#include "RenderMathMLRoot.h"
 
 #include "FontCache.h"
 #include "GraphicsContext.h"

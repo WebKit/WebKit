@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "MathMLOperatorDictionary.h"
 
 #if ENABLE(MATHML)
-#include "MathMLOperatorDictionary.h"
 
 namespace WebCore {
 

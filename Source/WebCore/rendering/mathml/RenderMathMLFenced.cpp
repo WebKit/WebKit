@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "RenderMathMLFenced.h"
 
 #if ENABLE(MATHML)
-
-#include "RenderMathMLFenced.h"
 
 #include "FontSelector.h"
 #include "MathMLNames.h"

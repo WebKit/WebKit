@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "MathOperator.h"
 
 #if ENABLE(MATHML)
-#include "MathOperator.h"
 
 #include "RenderStyle.h"
 #include "StyleInheritedData.h"

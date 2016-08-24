@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
+#include "MathMLUnderOverElement.h"
 
 #if ENABLE(MATHML)
-#include "MathMLUnderOverElement.h"
 
 #include "RenderMathMLUnderOver.h"
 

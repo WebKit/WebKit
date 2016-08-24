@@ -26,10 +26,9 @@
  */
 
 #include "config.h"
+#include "RenderMathMLScripts.h"
 
 #if ENABLE(MATHML)
-
-#include "RenderMathMLScripts.h"
 
 #include "MathMLElement.h"
 #include "MathMLScriptsElement.h"

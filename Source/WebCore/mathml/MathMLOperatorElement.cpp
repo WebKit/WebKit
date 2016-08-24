@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
+#include "MathMLOperatorElement.h"
 
 #if ENABLE(MATHML)
-#include "MathMLOperatorElement.h"
 
 #include "RenderMathMLOperator.h"
 #include <wtf/unicode/CharacterNames.h>

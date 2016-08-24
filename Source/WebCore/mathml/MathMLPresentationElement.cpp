@@ -26,9 +26,9 @@
  */
 
 #include "config.h"
+#include "MathMLPresentationElement.h"
 
 #if ENABLE(MATHML)
-#include "MathMLPresentationElement.h"
 
 #include "MathMLNames.h"
 #include "RenderMathMLBlock.h"

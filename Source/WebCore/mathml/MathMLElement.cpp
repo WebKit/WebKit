@@ -27,10 +27,9 @@
  */
 
 #include "config.h"
+#include "MathMLElement.h"
 
 #if ENABLE(MATHML)
-
-#include "MathMLElement.h"
 
 #include "ElementIterator.h"
 #include "Event.h"

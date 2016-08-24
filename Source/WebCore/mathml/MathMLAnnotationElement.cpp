@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
+#include "MathMLAnnotationElement.h"
 
 #if ENABLE(MATHML)
-#include "MathMLAnnotationElement.h"
 
 #include "HTMLHtmlElement.h"
 #include "MathMLMathElement.h"

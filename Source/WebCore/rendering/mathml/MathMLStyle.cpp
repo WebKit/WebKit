@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "MathMLStyle.h"
 
 #if ENABLE(MATHML)
-#include "MathMLStyle.h"
 
 #include "MathMLElement.h"
 #include "MathMLNames.h"

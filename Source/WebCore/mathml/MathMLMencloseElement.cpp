@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
+#include "MathMLMencloseElement.h"
 
 #if ENABLE(MATHML)
-#include "MathMLMencloseElement.h"
 
 #include "MathMLNames.h"
 #include "RenderMathMLMenclose.h"

@@ -26,9 +26,9 @@
  */
 
 #include "config.h"
+#include "RenderMathMLFraction.h"
 
 #if ENABLE(MATHML)
-#include "RenderMathMLFraction.h"
 
 #include "GraphicsContext.h"
 #include "MathMLFractionElement.h"

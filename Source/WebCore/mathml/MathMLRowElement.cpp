@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "MathMLRowElement.h"
 
 #if ENABLE(MATHML)
-#include "MathMLRowElement.h"
 
 #include "MathMLNames.h"
 #include "MathMLOperatorElement.h"

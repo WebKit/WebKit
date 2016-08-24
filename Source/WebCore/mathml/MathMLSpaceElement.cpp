@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
+#include "MathMLSpaceElement.h"
 
 #if ENABLE(MATHML)
-#include "MathMLSpaceElement.h"
 
 #include "RenderMathMLSpace.h"
 

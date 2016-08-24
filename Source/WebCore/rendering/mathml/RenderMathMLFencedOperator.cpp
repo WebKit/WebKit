@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "RenderMathMLFencedOperator.h"
 
 #if ENABLE(MATHML)
-
-#include "RenderMathMLFencedOperator.h"
 
 #include "MathMLOperatorDictionary.h"
 #include "MathMLOperatorElement.h"

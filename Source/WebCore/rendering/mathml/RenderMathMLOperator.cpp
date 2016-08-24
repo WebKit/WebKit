@@ -26,10 +26,9 @@
  */
 
 #include "config.h"
+#include "RenderMathMLOperator.h"
 
 #if ENABLE(MATHML)
-
-#include "RenderMathMLOperator.h"
 
 #include "FontSelector.h"
 #include "MathMLNames.h"

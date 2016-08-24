@@ -25,10 +25,9 @@
  */
 
 #include "config.h"
+#include "RenderMathMLUnderOver.h"
 
 #if ENABLE(MATHML)
-
-#include "RenderMathMLUnderOver.h"
 
 #include "MathMLElement.h"
 #include "MathMLOperatorDictionary.h"
