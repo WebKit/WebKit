@@ -1,3 +1,11 @@
+2016-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Try to fix Production builds.
+        
+        PRODUCTION_FRAMEWORKS_DIR was undefined here.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+
 2016-08-24  Dan Bernstein  <mitz@apple.com>
 
         Add a convenience function for creating a WKFrameHandleRef from a WKFrameRef without going through WKFrameInfoRef
