@@ -8,7 +8,6 @@
 
 fast/scrolling/ios [ Pass ]
 fast/viewport/ios [ Pass ]
-fast/zooming/ios [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

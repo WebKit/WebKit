@@ -1,3 +1,15 @@
+2016-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS DRT] Hook up uiController.zoomToScale() for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=161173
+
+        Reviewed by Tim Horton.
+        
+        The one test in fast/zooming/ios works in DRT and WTR now.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rebase iOS simulator WK1 fast/table tests

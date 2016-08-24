@@ -222,7 +222,7 @@ static WebHistoryItem *prevTestBFItem; // current b/f item at the end of the pre
 #if PLATFORM(IOS)
 const CGRect layoutTestViewportRect = { {0, 0}, {static_cast<CGFloat>(TestRunner::viewWidth), static_cast<CGFloat>(TestRunner::viewHeight)} };
 DumpRenderTreeBrowserView *gWebBrowserView = nil;
-UIWebScrollView *gWebScrollView = nil;
+DumpRenderTreeWebScrollView *gWebScrollView = nil;
 DumpRenderTreeWindow *gDrtWindow = nil;
 #endif
 
@@ -829,7 +829,7 @@ WebView *createWebViewAndOffscreenWindow()
     drtWindow.uiWindow = uiWindow;
     drtWindow.browserView = webBrowserView;
 
-    UIWebScrollView *scrollView = [[UIWebScrollView alloc] initWithFrame:layoutTestViewportRect];
+    DumpRenderTreeWebScrollView *scrollView = [[DumpRenderTreeWebScrollView alloc] initWithFrame:layoutTestViewportRect];
     [scrollView addSubview:webBrowserView];
 
     [viewController.view addSubview:scrollView];

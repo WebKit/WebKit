@@ -1,3 +1,32 @@
+2016-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS DRT] Hook up uiController.zoomToScale() for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=161173
+
+        Reviewed by Tim Horton.
+        
+        Make a UIWebScrollView subclass, DumpRenderTreeWebScrollView, which has an internal delegate to get
+        UIScrollView delegate callbacks. Store the zoomToScaleCompletionHandler on it.
+        
+        UIScriptController::zoomToScale() has to bounce the zoom to the main thread (no poking UIKit from
+        the WebThread!), but queue up the callback first.
+
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.h:
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.mm:
+        (-[DumpRenderTreeWebScrollView initWithFrame:]):
+        (-[DumpRenderTreeWebScrollView dealloc]):
+        (-[DumpRenderTreeWebScrollView zoomToScale:animated:completionHandler:]):
+        (-[DumpRenderTreeWebScrollView completedZoomToScale]):
+        (-[DumpRenderTreeWebScrollViewDelegate initWithScrollView:]):
+        (-[DumpRenderTreeWebScrollViewDelegate viewForZoomingInScrollView:]): All UIScrollView delegates need to implement this.
+        (-[DumpRenderTreeWebScrollViewDelegate scrollViewDidEndZooming:withView:atScale:]):
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::zoomToScale):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::context):
+
 2016-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Attempt to fix Windows build after r204918.

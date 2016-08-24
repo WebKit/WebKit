@@ -13,6 +13,7 @@ http/tests/quicklook [ Pass ]
 media/controls/ipad [ Pass ]
 
 fast/text-autosizing/ios [ Pass ]
+fast/zooming/ios [ Pass ]
 
 # <rdar://problem/22898927> Crashes in iWorkImport.framework
 quicklook/pages.html [ Pass Crash ]

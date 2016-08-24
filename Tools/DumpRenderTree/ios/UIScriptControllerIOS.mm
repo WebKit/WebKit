@@ -31,9 +31,10 @@
 #import "DumpRenderTreeBrowserView.h"
 #import "UIScriptContext.h"
 #import <WebCore/FloatRect.h>
+#import <wtf/MainThread.h>
 
 extern DumpRenderTreeBrowserView *gWebBrowserView;
-extern UIWebScrollView *gWebScrollView;
+extern DumpRenderTreeWebScrollView *gWebScrollView;
 
 namespace WTR {
 
@@ -50,6 +51,16 @@ void UIScriptController::doAsyncTask(JSValueRef callback)
 
 void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 {
+    RefPtr<UIScriptController> protectedThis(this);
+    unsigned callbackID = strongThis->context()->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [gWebScrollView zoomToScale:scale animated:YES completionHandler:^{
+            if (!strongThis->context())
+                return;
+            strongThis->context()->asyncTaskComplete(callbackID);
+        }];
+    });
 }
 
 double UIScriptController::zoomScale() const

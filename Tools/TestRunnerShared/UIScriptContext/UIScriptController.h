@@ -100,6 +100,8 @@ public:
 
 private:
     UIScriptController(UIScriptContext&);
+    
+    UIScriptContext* context() { return m_context; }
 
     void platformSetDidStartFormControlInteractionCallback();
     void platformSetDidEndFormControlInteractionCallback();

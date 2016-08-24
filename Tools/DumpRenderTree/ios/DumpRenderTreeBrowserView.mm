@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS)
 
+#import <WebCore/WebCoreThreadRun.h>
+#import <WebKit/WebCoreThread.h>
 #import <WebKit/WebView.h>
 
 @interface UIWebBrowserView (WebUIKitDelegate)
@@ -83,6 +85,81 @@
 - (CGRect)documentVisibleRect
 {
     return [self _documentViewVisibleRect];
+}
+
+@end
+
+@interface DumpRenderTreeWebScrollViewDelegate : NSObject <UIScrollViewDelegate> {
+    DumpRenderTreeWebScrollView *_scrollView;
+}
+- (instancetype)initWithScrollView:(DumpRenderTreeWebScrollView *)scrollView;
+@end
+
+
+@implementation DumpRenderTreeWebScrollView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (!self)
+        return nil;
+    
+    self.scrollViewDelegate = [[[DumpRenderTreeWebScrollViewDelegate alloc] initWithScrollView:self] autorelease];
+    self.delegate = self.scrollViewDelegate;
+
+    return self;
+}
+
+- (void)dealloc
+{
+    self.scrollViewDelegate = nil;
+    [super dealloc];
+}
+
+- (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
+{
+    ASSERT(!self.zoomToScaleCompletionHandler);
+    self.zoomToScaleCompletionHandler = completionHandler;
+
+    [self setZoomScale:scale animated:animated];
+}
+
+- (void)completedZoomToScale
+{
+    if (self.zoomToScaleCompletionHandler) {
+        auto completionHandlerCopy = Block_copy(self.zoomToScaleCompletionHandler);
+
+        WebThreadRun(^{
+            completionHandlerCopy();
+            Block_release(completionHandlerCopy);
+        });
+        self.zoomToScaleCompletionHandler = nullptr;
+    }
+}
+
+@end
+
+@implementation DumpRenderTreeWebScrollViewDelegate
+
+- (instancetype)initWithScrollView:(DumpRenderTreeWebScrollView *)scrollView
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _scrollView = scrollView;
+    return self;
+}
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+    return [scrollView.subviews firstObject];
+}
+
+// UIScrollView delegate methods.
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
+{
+    [_scrollView completedZoomToScale];
 }
 
 @end
