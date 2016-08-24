@@ -1,3 +1,12 @@
+2016-08-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Attempt to fix Windows build after r204918.
+
+        Unreviewed build fix.
+
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::willSendRequest):
+
 2016-08-24  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS DRT] Get basic viewport tests working in DRT

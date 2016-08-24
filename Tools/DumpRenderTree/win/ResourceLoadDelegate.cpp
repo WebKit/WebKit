@@ -242,14 +242,6 @@ HRESULT ResourceLoadDelegate::willSendRequest(_In_opt_ IWebView* webView, unsign
             descriptionSuitableForTestResult(redirectResponse).c_str());
     }
 
-    if (!done && !gTestRunner->deferMainResourceDataLoad()) {
-        COMPtr<IWebDataSourcePrivate> dataSourcePrivate(Query, dataSource);
-        if (!dataSourcePrivate)
-            return E_FAIL;
-
-        dataSourcePrivate->setDeferMainResourceDataLoad(FALSE);
-    }
-
     if (!done && gTestRunner->willSendRequestReturnsNull())
         return S_OK;
 
