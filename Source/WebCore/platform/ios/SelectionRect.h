@@ -128,6 +128,8 @@ private:
     int m_pageNumber;
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, SelectionRect);
+
 } // namespace WebCore
 
 #endif // SelectionRect_h

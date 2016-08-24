@@ -52,6 +52,7 @@ namespace WebCore {
 class Color;
 class FloatQuad;
 class IntSize;
+class TextStream;
 }
 
 namespace WebKit {
@@ -76,6 +77,7 @@ typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsM
 typedef void (^UIWKKeyWebEventCompletionHandler)(WebIOSEvent *theEvent, BOOL wasHandled);
 
 namespace WebKit {
+
 struct WKSelectionDrawingInfo {
     enum class SelectionType { None, Plugin, Range };
     WKSelectionDrawingInfo();
@@ -84,6 +86,9 @@ struct WKSelectionDrawingInfo {
     WebCore::IntRect caretRect;
     Vector<WebCore::SelectionRect> selectionRects;
 };
+
+WebCore::TextStream& operator<<(WebCore::TextStream&, const WKSelectionDrawingInfo&);
+
 struct WKAutoCorrectionData {
     String fontName;
     CGFloat fontSize;

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "SelectionRect.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -85,6 +86,45 @@ SelectionRect::SelectionRect()
     , m_isRubyText(false)
     , m_pageNumber(0)
 {
+}
+
+TextStream& operator<<(TextStream& stream, SelectionRect rect)
+{
+    TextStream::GroupScope group(stream);
+    stream << "selection rect";
+
+    stream.dumpProperty("rect", rect.rect());
+    stream.dumpProperty("direction", isLeftToRightDirection(rect.direction()) ? "ltr" : "rtl");
+
+    stream.dumpProperty("min-x", rect.minX());
+    stream.dumpProperty("max-x", rect.maxX());
+    stream.dumpProperty("max-y", rect.maxY());
+
+    stream.dumpProperty("line number", rect.lineNumber());
+    if (rect.isLineBreak())
+        stream.dumpProperty("is line break", true);
+    if (rect.isFirstOnLine())
+        stream.dumpProperty("is first on line", true);
+    if (rect.isLastOnLine())
+        stream.dumpProperty("is last on line", true);
+
+    if (rect.containsStart())
+        stream.dumpProperty("contains start", true);
+
+    if (rect.containsEnd())
+        stream.dumpProperty("contains end", true);
+
+    if (rect.isHorizontal())
+        stream.dumpProperty("is horizontal", true);
+    
+    if (rect.isInFixedPosition())
+        stream.dumpProperty("is in fixed position", true);
+
+    if (rect.isRubyText())
+        stream.dumpProperty("is ruby text", true);
+
+    stream.dumpProperty("page number", rect.pageNumber());
+    return stream;
 }
 
 } // namespace WebCore

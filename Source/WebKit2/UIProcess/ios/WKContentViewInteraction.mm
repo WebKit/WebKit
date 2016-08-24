@@ -30,6 +30,7 @@
 
 #import "APIUIClient.h"
 #import "EditingRange.h"
+#import "Logging.h"
 #import "ManagedConfigurationSPI.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
@@ -73,6 +74,7 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/TextStream.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
@@ -148,6 +150,26 @@ inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawing
 inline bool operator!=(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
 {
     return !(a == b);
+}
+
+static WebCore::TextStream& operator<<(WebCore::TextStream& stream, WKSelectionDrawingInfo::SelectionType type)
+{
+    switch (type) {
+    case WKSelectionDrawingInfo::SelectionType::None: stream << "none"; break;
+    case WKSelectionDrawingInfo::SelectionType::Plugin: stream << "plugin"; break;
+    case WKSelectionDrawingInfo::SelectionType::Range: stream << "range"; break;
+    }
+    
+    return stream;
+}
+
+WebCore::TextStream& operator<<(WebCore::TextStream& stream, const WKSelectionDrawingInfo& info)
+{
+    TextStream::GroupScope group(stream);
+    stream.dumpProperty("type", info.type);
+    stream.dumpProperty("caret rect", info.caretRect);
+    stream.dumpProperty("selection rects", info.selectionRects);
+    return stream;
 }
 
 } // namespace WebKit
@@ -3677,6 +3699,8 @@ static bool isAssistableInputType(InputType type)
     WKSelectionDrawingInfo selectionDrawingInfo(_page->editorState());
     if (!force && selectionDrawingInfo == _lastSelectionDrawingInfo)
         return;
+
+    LOG_WITH_STREAM(Selection, stream << "_updateChangedSelection " << selectionDrawingInfo);
 
     _lastSelectionDrawingInfo = selectionDrawingInfo;
 

@@ -59,6 +59,7 @@ extern "C" {
     M(Printing) \
     M(RemoteLayerTree) \
     M(Resize) \
+    M(Selection) \
     M(SessionState) \
     M(StorageAPI) \
     M(TextInput) \
