@@ -89,7 +89,7 @@ private:
 
     void runUISideScript(WKStringRef, unsigned callbackID);
     // UIScriptContextDelegate
-    void uiScriptDidComplete(WKStringRef result, unsigned callbackID) override;
+    void uiScriptDidComplete(const String& result, unsigned callbackID) override;
 
     const TestOptions m_options;
     

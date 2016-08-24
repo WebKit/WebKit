@@ -35,6 +35,7 @@
 #import "TestRunnerWKWebView.h"
 #import "UIScriptContext.h"
 #import <UIKit/UIKit.h>
+#import <WebCore/FloatRect.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 
@@ -239,8 +240,8 @@ JSObjectRef UIScriptController::contentVisibleRect() const
 
     CGRect contentVisibleRect = webView._contentVisibleRect;
     
-    WKRect wkRect = WKRectMake(contentVisibleRect.origin.x, contentVisibleRect.origin.y, contentVisibleRect.size.width, contentVisibleRect.size.height);
-    return m_context->objectFromRect(wkRect);
+    WebCore::FloatRect rect(contentVisibleRect.origin.x, contentVisibleRect.origin.y, contentVisibleRect.size.width, contentVisibleRect.size.height);
+    return m_context->objectFromRect(rect);
 }
 
 void UIScriptController::platformSetDidStartFormControlInteractionCallback()

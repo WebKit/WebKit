@@ -1,3 +1,92 @@
+2016-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Hook up UIScriptController in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=161064
+
+        Reviewed by Sam Weinig.
+
+        Add a skeleton implementation of UIScriptController to DumpRenderTree, building for both
+        Mac and iOS. Currently this is sufficient to test doAsyncTask(), enabling two tests
+        in fast/harness which test this.
+
+        Add a DerivedSources target to DumpRenderTree to invoke DerivedSources.make.
+
+        Move related code shared between WTR and DRT into Tools/TestRunnerShared, and cleanse it of
+        WK2-isms. Fix the makefiles to refer to the new location.
+
+        Hook up TestRunner::runUIScript() for DumpRenderTree, which requires keeping track of callbacks
+        by ID and firing them once they are complete.
+
+        * DumpRenderTree/Bindings/CodeGeneratorDumpRenderTree.pm: Added (copied from WTR).
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/DerivedSources.make: Copied from Tools/WebKitTestRunner/DerivedSources.make.
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestRunner.cpp:
+        (runUIScriptCallback):
+        (TestRunner::staticFunctions):
+        (TestRunner::cacheTestRunnerCallback):
+        (TestRunner::callTestRunnerCallback):
+        (TestRunner::clearTestRunnerCallbacks):
+        (nextUIScriptCallbackID):
+        (TestRunner::runUIScript):
+        (TestRunner::callUIScriptCallback):
+        (TestRunner::uiScriptDidComplete):
+        (TestRunner::cleanup):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm: Added.
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: DerivedSources.make needs WEBCORE_PRIVATE_HEADERS_DIR to be defined.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::mainFrameJSContext):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm: Copied from Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h.
+        (WTR::UIScriptController::doAsyncTask):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * TestRunnerShared/Bindings/JSWrappable.h: Renamed from Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h.
+        (WTR::JSWrappable::~JSWrappable):
+        (WTR::JSValueMakeStringOrNull):
+        * TestRunnerShared/Bindings/JSWrapper.cpp: Renamed from Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp.
+        (WTR::JSWrapper::wrap):
+        (WTR::JSWrapper::unwrap):
+        (WTR::unwrapObject):
+        (WTR::JSWrapper::initialize):
+        (WTR::JSWrapper::finalize):
+        * TestRunnerShared/Bindings/JSWrapper.h: Renamed from Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.h.
+        (WTR::toJS):
+        (WTR::setProperty):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl: Renamed from Tools/WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl.
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp: Renamed from Tools/WebKitTestRunner/UIScriptContext/UIScriptContext.cpp.
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h: Renamed from Tools/WebKitTestRunner/UIScriptContext/UIScriptContext.h.
+        (WTR::UIScriptContext::currentParentCallbackIsPendingCompletion):
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp: Renamed from Tools/WebKitTestRunner/UIScriptContext/UIScriptController.cpp.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h: Renamed from Tools/WebKitTestRunner/UIScriptContext/UIScriptController.h.
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/DerivedSources.make:
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h:
+        (WTR::JSWrappable::~JSWrappable): Deleted.
+        (WTR::JSValueMakeStringOrNull): Deleted.
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp:
+        (WTR::JSWrapper::wrap): Deleted.
+        (WTR::JSWrapper::unwrap): Deleted.
+        (WTR::unwrapObject): Deleted.
+        (WTR::JSWrapper::initialize): Deleted.
+        (WTR::JSWrapper::finalize): Deleted.
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.h:
+        (WTR::toJS): Deleted.
+        (WTR::setProperty): Deleted.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::runUISideScript):
+        (WTR::TestInvocation::uiScriptDidComplete):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.cpp: Moved
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.h: Moved
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp: Moved
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h: Moved
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/config.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::contentVisibleRect):
+
 2016-08-23  Saam Barati  <sbarati@apple.com>
 
         JSC should have a "microbenchmarks" directory instead of "regress" directory

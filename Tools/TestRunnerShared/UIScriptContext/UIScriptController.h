@@ -29,6 +29,10 @@
 #include "JSWrappable.h"
 #include <wtf/Ref.h>
 
+namespace WebCore {
+class FloatRect;
+}
+
 namespace WTR {
 
 class UIScriptContext;
@@ -108,7 +112,7 @@ private:
 
     JSClassRef wrapperClass() final;
 
-    JSObjectRef objectFromRect(const WKRect&) const;
+    JSObjectRef objectFromRect(const WebCore::FloatRect&) const;
 
     UIScriptContext* m_context;
 };

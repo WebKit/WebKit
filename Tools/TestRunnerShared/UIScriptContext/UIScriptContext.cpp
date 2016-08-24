@@ -26,13 +26,10 @@
 #include "config.h"
 #include "UIScriptContext.h"
 
-#include "StringFunctions.h"
 #include "UIScriptController.h"
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSValueRef.h>
-#include <WebKit/WKRetainPtr.h>
-#include <WebKit/WKString.h>
-#include <WebKit/WKStringPrivate.h>
+#include <WebCore/FloatRect.h>
 
 using namespace WTR;
 
@@ -58,14 +55,14 @@ UIScriptContext::~UIScriptContext()
     m_controller->contextDestroyed();
 }
 
-void UIScriptContext::runUIScript(WKStringRef script, unsigned scriptCallbackID)
+void UIScriptContext::runUIScript(const String& script, unsigned scriptCallbackID)
 {
     m_currentScriptCallbackID = scriptCallbackID;
 
-    auto scriptRef = toJS(script);
-    
+    JSRetainPtr<JSStringRef> stringRef(Adopt, JSStringCreateWithUTF8CString(script.utf8().data()));
+
     JSValueRef exception = nullptr;
-    JSValueRef result = JSEvaluateScript(m_context.get(), scriptRef.get(), 0, 0, 1, &exception);
+    JSValueRef result = JSEvaluateScript(m_context.get(), stringRef.get(), 0, 0, 1, &exception);
     
     if (!hasOutstandingAsyncTasks()) {
         JSValueRef stringifyException = nullptr;
@@ -169,21 +166,22 @@ void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
         return;
 
     JSStringRef result = m_uiScriptResultsPendingCompletion.take(m_currentScriptCallbackID);
-    WKRetainPtr<WKStringRef> uiScriptResult = adoptWK(WKStringCreateWithJSString(result));
-    m_delegate.uiScriptDidComplete(uiScriptResult.get(), m_currentScriptCallbackID);
+    String scriptResult(JSStringGetCharactersPtr(result), JSStringGetLength(result));
+
+    m_delegate.uiScriptDidComplete(scriptResult, m_currentScriptCallbackID);
     m_currentScriptCallbackID = 0;
     if (result)
         JSStringRelease(result);
 }
 
-JSObjectRef UIScriptContext::objectFromRect(const WKRect& rect) const
+JSObjectRef UIScriptContext::objectFromRect(const WebCore::FloatRect& rect) const
 {
     JSObjectRef object = JSObjectMake(m_context.get(), nullptr, nullptr);
 
-    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("left")).get(), JSValueMakeNumber(m_context.get(), rect.origin.x), kJSPropertyAttributeNone, nullptr);
-    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("top")).get(), JSValueMakeNumber(m_context.get(), rect.origin.y), kJSPropertyAttributeNone, nullptr);
-    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("width")).get(), JSValueMakeNumber(m_context.get(), rect.size.width), kJSPropertyAttributeNone, nullptr);
-    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("height")).get(), JSValueMakeNumber(m_context.get(), rect.size.height), kJSPropertyAttributeNone, nullptr);
+    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("left")).get(), JSValueMakeNumber(m_context.get(), rect.x()), kJSPropertyAttributeNone, nullptr);
+    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("top")).get(), JSValueMakeNumber(m_context.get(), rect.y()), kJSPropertyAttributeNone, nullptr);
+    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("width")).get(), JSValueMakeNumber(m_context.get(), rect.width()), kJSPropertyAttributeNone, nullptr);
+    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("height")).get(), JSValueMakeNumber(m_context.get(), rect.height()), kJSPropertyAttributeNone, nullptr);
     
     return object;
 }

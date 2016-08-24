@@ -23,12 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #ifndef UIScriptContext_h
 #define UIScriptContext_h
 
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class FloatRect;
+}
 
 namespace WTR {
 
@@ -36,7 +43,7 @@ class UIScriptController;
 
 class UIScriptContextDelegate {
 public:
-    virtual void uiScriptDidComplete(WKStringRef result, unsigned callbackID) = 0;
+    virtual void uiScriptDidComplete(const String& result, unsigned callbackID) = 0;
 };
 
 const unsigned firstNonPersistentCallbackID = 1000;
@@ -58,7 +65,7 @@ public:
     UIScriptContext(UIScriptContextDelegate&);
     ~UIScriptContext();
 
-    void runUIScript(WKStringRef script, unsigned scriptCallbackID);
+    void runUIScript(const String& script, unsigned scriptCallbackID);
     void requestUIScriptCompletion(JSStringRef);
 
     // For one-shot tasks callbacks.
@@ -73,7 +80,7 @@ public:
 
     unsigned nextTaskCallbackID(CallbackType);
 
-    JSObjectRef objectFromRect(const WKRect&) const;
+    JSObjectRef objectFromRect(const WebCore::FloatRect&) const;
 
 private:
     JSRetainPtr<JSGlobalContextRef> m_context;

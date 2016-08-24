@@ -132,6 +132,11 @@ TestRunner::~TestRunner()
 {
 }
 
+JSContextRef TestRunner::mainFrameJSContext()
+{
+    return [mainFrame globalContext];
+}
+
 void TestRunner::addDisallowedURL(JSStringRef url)
 {
     RetainPtr<CFStringRef> urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, url));

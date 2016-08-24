@@ -846,10 +846,10 @@ void TestInvocation::runUISideScript(WKStringRef script, unsigned scriptCallback
     if (!m_UIScriptContext)
         m_UIScriptContext = std::make_unique<UIScriptContext>(*this);
     
-    m_UIScriptContext->runUIScript(script, scriptCallbackID);
+    m_UIScriptContext->runUIScript(toWTFString(script), scriptCallbackID);
 }
 
-void TestInvocation::uiScriptDidComplete(WKStringRef result, unsigned scriptCallbackID)
+void TestInvocation::uiScriptDidComplete(const String& result, unsigned scriptCallbackID)
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallUISideScriptCallback"));
 
@@ -858,7 +858,7 @@ void TestInvocation::uiScriptDidComplete(WKStringRef result, unsigned scriptCall
     WKRetainPtr<WKStringRef> callbackIDKey(AdoptWK, WKStringCreateWithUTF8CString("CallbackID"));
     WKRetainPtr<WKUInt64Ref> callbackIDValue = adoptWK(WKUInt64Create(scriptCallbackID));
 
-    WKDictionarySetItem(messageBody.get(), resultKey.get(), result);
+    WKDictionarySetItem(messageBody.get(), resultKey.get(), toWK(result).get());
     WKDictionarySetItem(messageBody.get(), callbackIDKey.get(), callbackIDValue.get());
 
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), messageBody.get());

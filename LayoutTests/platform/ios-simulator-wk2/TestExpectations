@@ -6,8 +6,6 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-fast/harness/ui-side-scripts.html [ Pass ]
-fast/harness/concurrent-ui-side-scripts.html [ Pass ]
 fast/scrolling/ios [ Pass ]
 fast/viewport/ios [ Pass ]
 fast/zooming/ios [ Pass ]

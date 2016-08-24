@@ -2101,6 +2101,7 @@ static void runTest(const string& inputLine)
     ASSERT(CFArrayGetCount(openWindowsRef) == 1);
     ASSERT(CFArrayGetValueAtIndex(openWindowsRef, 0) == [[mainFrame webView] window]);
 
+    gTestRunner->cleanup();
     gTestRunner = nullptr;
 
     if (ignoreWebCoreNodeLeaks)

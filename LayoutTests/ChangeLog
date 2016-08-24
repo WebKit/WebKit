@@ -1,3 +1,17 @@
+2016-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Hook up UIScriptController in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=161064
+
+        Reviewed by Sam Weinig.
+
+        fast/harness/ui-side-scripts.html and fast/harness/concurrent-ui-side-scripts.html
+        pass in DumpRenderTree now.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-08-23  Dean Jackson  <dino@apple.com>
 
         fast/canvas/canvas-alphaImageData-behavior.html doesn't appear to be flakey any

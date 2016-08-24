@@ -29,6 +29,7 @@
 #ifndef TestRunner_h
 #define TestRunner_h
 
+#include "UIScriptContext.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <map>
 #include <set>
@@ -37,7 +38,8 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-class TestRunner : public RefCounted<TestRunner> {
+class TestRunner : public WTR::UIScriptContextDelegate, public RefCounted<TestRunner> {
+    WTF_MAKE_NONCOPYABLE(TestRunner);
 public:
     static PassRefPtr<TestRunner> create(const std::string& testURL, const std::string& expectedPixelHash);
 
@@ -47,7 +49,9 @@ public:
     static const unsigned w3cSVGViewWidth;
     static const unsigned w3cSVGViewHeight;
 
-    ~TestRunner();
+    virtual ~TestRunner();
+    
+    void cleanup();
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
@@ -138,6 +142,8 @@ public:
 #endif
 
     void setAccummulateLogsForChannel(JSStringRef);
+
+    void runUIScript(JSContextRef, JSStringRef, JSValueRef callback);
 
     // Legacy here refers to the old TestRunner API for handling web notifications, not the legacy web notification API.
     void ignoreLegacyWebNotificationPermissionRequests();
@@ -366,8 +372,19 @@ public:
 
     unsigned imageCountInGeneralPasteboard() const;
     
+    void callUIScriptCallback(unsigned callbackID, JSStringRef result);
+
 private:
     TestRunner(const std::string& testURL, const std::string& expectedPixelHash);
+
+    JSContextRef mainFrameJSContext();
+
+    // UIScriptContextDelegate
+    void uiScriptDidComplete(const String&, unsigned callbackID) override;
+    
+    void cacheTestRunnerCallback(unsigned index, JSValueRef);
+    void callTestRunnerCallback(unsigned index, size_t argumentCount = 0, const JSValueRef arguments[] = nullptr);
+    void clearTestRunnerCallbacks();
 
     void setGeolocationPermissionCommon(bool allow);
 
@@ -438,6 +455,14 @@ private:
     std::vector<char> m_audioResult;
 
     std::map<std::string, std::string> m_URLsToRedirect;
+
+    struct UIScriptInvocationData {
+        unsigned callbackID;
+        String scriptString;
+    };
+
+    std::unique_ptr<WTR::UIScriptContext> m_UIScriptContext;
+    UIScriptInvocationData* m_pendingUIScriptInvocationData { nullptr };
 
     static JSClassRef getJSClass();
     static JSStaticValue* staticValues();

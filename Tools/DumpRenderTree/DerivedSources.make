@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,20 +21,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-VPATH = \
-    $(WebKitTestRunner)/InjectedBundle/Bindings \
-    $(WebKitTestRunner)/../TestRunnerShared/UIScriptContext/Bindings \
-#
+UISCRIPTCONTEXT_DIR = $(DumpRenderTree)/../TestRunnerShared/UIScriptContext/Bindings
 
-INJECTED_BUNDLE_INTERFACES = \
-    AccessibilityController \
-    AccessibilityTextMarker \
-    AccessibilityTextMarkerRange \
-    AccessibilityUIElement \
-    EventSendingController \
-    GCController \
-    TestRunner \
-    TextInputController \
+VPATH = \
+    $(UISCRIPTCONTEXT_DIR) \
 #
 
 UICONTEXT_INTERFACES = \
@@ -43,7 +33,7 @@ UICONTEXT_INTERFACES = \
 
 SCRIPTS = \
     $(WebCoreScripts)/CodeGenerator.pm \
-    $(WebKitTestRunner)/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
+    $(DumpRenderTree)/Bindings/CodeGeneratorDumpRenderTree.pm \
     $(WebCoreScripts)/IDLParser.pm \
     $(WebCoreScripts)/generate-bindings.pl \
 #
@@ -52,11 +42,9 @@ SCRIPTS = \
 
 JS%.h JS%.cpp : %.idl $(SCRIPTS)
 	@echo Generating bindings for $*...
-	@perl -I $(WebCoreScripts) -I $(WebKitTestRunner)/InjectedBundle/Bindings -I $(WebKitTestRunner)/UIScriptContext/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "" --include InjectedBundle/Bindings --include UIScriptContext/Bindings --outputDir . --generator TestRunner $<
+	@perl -I $(WebCoreScripts) -I $(UISCRIPTCONTEXT_DIR) -I $(DumpRenderTree)/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "" --include $(UISCRIPTCONTEXT_DIR) --outputDir . --generator DumpRenderTree $<
 
 all : \
-    $(INJECTED_BUNDLE_INTERFACES:%=JS%.h) \
-    $(INJECTED_BUNDLE_INTERFACES:%=JS%.cpp) \
     $(UICONTEXT_INTERFACES:%=JS%.h) \
     $(UICONTEXT_INTERFACES:%=JS%.cpp) \
 #

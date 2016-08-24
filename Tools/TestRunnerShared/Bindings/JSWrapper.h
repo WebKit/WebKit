@@ -34,8 +34,8 @@ namespace WTR {
 // FIXME: If necessary, we can do wrapper caching here.
 class JSWrapper {
 public:
-    static JSValueRef wrap(JSContextRef context, JSWrappable* object);
-    static JSWrappable* unwrap(JSContextRef context, JSValueRef value);
+    static JSValueRef wrap(JSContextRef, JSWrappable*);
+    static JSWrappable* unwrap(JSContextRef, JSValueRef);
 
     static void initialize(JSContextRef, JSObjectRef);
     static void finalize(JSObjectRef);

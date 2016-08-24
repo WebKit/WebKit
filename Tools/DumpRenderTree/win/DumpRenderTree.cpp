@@ -1197,6 +1197,7 @@ static void runTest(const string& inputLine)
 
 exit:
     removeFontFallbackIfPresent(fallbackPath);
+    ::gTestRunner->cleanup();
     ::gTestRunner = nullptr;
 
     fputs("#EOF\n", stderr);

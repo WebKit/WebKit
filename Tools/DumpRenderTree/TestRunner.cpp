@@ -2004,6 +2004,20 @@ static JSValueRef accummulateLogsForChannel(JSContextRef context, JSObjectRef fu
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef runUIScriptCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> script = argumentCount > 0 ? JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, arguments[0], 0)) : JSRetainPtr<JSStringRef>();
+    JSValueRef callback = argumentCount > 1 ? arguments[1] : JSValueMakeUndefined(context);
+
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->runUIScript(context, script.get(), callback);
+
+    return JSValueMakeUndefined(context);
+}
+
 static void testRunnerObjectFinalize(JSObjectRef object)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(object));
@@ -2208,6 +2222,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "numberOfDFGCompiles", numberOfDFGCompiles, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "neverInlineFunction", neverInlineFunction, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "accummulateLogsForChannel", accummulateLogsForChannel, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "runUIScript", runUIScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "imageCountInGeneralPasteboard", imageCountInGeneralPasteboardCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
@@ -2306,7 +2321,95 @@ void TestRunner::setAccummulateLogsForChannel(JSStringRef channel)
     WebCoreTestSupport::setLogChannelToAccumulate({ buffer.get() });
 }
 
+typedef WTF::HashMap<unsigned, JSValueRef> CallbackMap;
+static CallbackMap& callbackMap()
+{
+    static CallbackMap& map = *new CallbackMap;
+    return map;
+}
+
+void TestRunner::cacheTestRunnerCallback(unsigned index, JSValueRef callback)
+{
+    if (!callback)
+        return;
+
+    if (callbackMap().contains(index)) {
+        fprintf(stderr, "FAIL: Tried to install a second TestRunner callback for the same event (id %d)\n", index);
+        return;
+    }
+
+    JSContextRef context = mainFrameJSContext();
+    JSValueProtect(context, callback);
+    callbackMap().add(index, callback);
+}
+
+void TestRunner::callTestRunnerCallback(unsigned index, size_t argumentCount, const JSValueRef arguments[])
+{
+    if (!callbackMap().contains(index))
+        return;
+
+    JSContextRef context = mainFrameJSContext();
+    if (JSObjectRef callback = JSValueToObject(context, callbackMap().take(index), 0)) {
+        JSObjectCallAsFunction(context, callback, JSContextGetGlobalObject(context), argumentCount, arguments, 0);
+        JSValueUnprotect(context, callback);
+    }
+}
+
+void TestRunner::clearTestRunnerCallbacks()
+{
+    JSContextRef context = mainFrameJSContext();
+
+    for (auto& iter : callbackMap()) {
+        if (JSObjectRef callback = JSValueToObject(context, iter.value, 0))
+            JSValueUnprotect(context, callback);
+    }
+
+    callbackMap().clear();
+}
+
+enum {
+    FirstUIScriptCallbackID = 100
+};
+
+static unsigned nextUIScriptCallbackID()
+{
+    static unsigned callbackID = FirstUIScriptCallbackID;
+    return callbackID++;
+}
+
+void TestRunner::runUIScript(JSContextRef context, JSStringRef script, JSValueRef callback)
+{
+    m_pendingUIScriptInvocationData = nullptr;
+
+    unsigned callbackID = nextUIScriptCallbackID();
+    cacheTestRunnerCallback(callbackID, callback);
+
+    if (!m_UIScriptContext)
+        m_UIScriptContext = std::make_unique<WTR::UIScriptContext>(*this);
+
+    String scriptString(JSStringGetCharactersPtr(script), JSStringGetLength(script));
+    m_UIScriptContext->runUIScript(scriptString, callbackID);
+}
+
+void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
+{
+    JSContextRef context = mainFrameJSContext();
+    JSValueRef resultValue = JSValueMakeString(context, result);
+    callTestRunnerCallback(callbackID, 1, &resultValue);
+}
+
+void TestRunner::uiScriptDidComplete(const String& result, unsigned callbackID)
+{
+    JSRetainPtr<JSStringRef> stringRef(Adopt, JSStringCreateWithCharacters(result.characters16(), result.length()));
+    callUIScriptCallback(callbackID, stringRef.get());
+}
+
 void TestRunner::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)
 {
     WebCoreTestSupport::setAllowsAnySSLCertificate(allowsAnySSLCertificate);
+}
+
+void TestRunner::cleanup()
+{
+    clearTestRunnerCallbacks();
 }

@@ -1,3 +1,8 @@
+set(WEBKIT_TESTRUNNER_SHARED_DIR "${TOOLS_DIR}/TestRunnerShared/")
+set(WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR "${TOOLS_DIR}/TestRunnerShared/UIScriptContext")
+
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/DumpRenderTree)
+
 set(DumpRenderTree_SOURCES
     AccessibilityController.cpp
     AccessibilityTextMarker.cpp
@@ -9,6 +14,9 @@ set(DumpRenderTree_SOURCES
     PixelDumpSupport.cpp
     TestRunner.cpp
     WorkQueue.cpp
+    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
+    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptController.cpp
+    ${WEBKIT_TESTRUNNER_SHARED_DIR}/Bindings/JSWrapper.cpp
 )
 
 set(DumpRenderTree_LIBRARIES
@@ -58,6 +66,9 @@ set(DumpRenderTree_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
+    ${DERIVED_SOURCES_DIR}/DumpRenderTree
+    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}
+    ${WEBKIT_TESTRUNNER_SHARED_DIR}/Bindings
     ${TOOLS_DIR}/DumpRenderTree
     ${WTF_DIR}
     ${CMAKE_SOURCE_DIR}/Source
@@ -102,6 +113,18 @@ set(TestNetscapePlugin_LIBRARIES
     WTF
     WebCoreTestSupport
 )
+
+set(DumpRenderTree_IDL_FILES
+    "${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
+)
+
+GENERATE_BINDINGS(DumpRenderTree_SOURCES
+    "${DumpRenderTree_IDL_FILES}"
+    "${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/Bindings"
+    "--include=${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/Bindings"
+    "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
+    ${DERIVED_SOURCES_DIR}/DumpRenderTree JS DumpRenderTree cpp
+    ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
