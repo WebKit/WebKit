@@ -1,3 +1,15 @@
+2016-08-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Warning fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=161079
+
+        Reviewed by Brent Fulgham.
+
+        * MiniBrowser/win/WebDownloadDelegate.cpp:
+        * MiniBrowser/win/WinMain.cpp:
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows DRT build.

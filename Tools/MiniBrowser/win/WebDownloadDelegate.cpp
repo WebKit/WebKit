@@ -23,6 +23,8 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#pragma warning(disable: 4091)
+
 #include "stdafx.h"
 #include "WebDownloadDelegate.h"
 

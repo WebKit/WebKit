@@ -162,7 +162,7 @@ TEST(WTF, StringIsolatedCopy)
 
 TEST(WTF, StringToInt)
 {
-    bool ok;
+    bool ok = false;
 
     EXPECT_EQ(0, String().toInt());
     EXPECT_EQ(0, String().toInt(&ok));
@@ -214,7 +214,7 @@ TEST(WTF, StringToInt)
 
 TEST(WTF, StringToDouble)
 {
-    bool ok;
+    bool ok = false;
 
     EXPECT_EQ(0.0, String().toDouble());
     EXPECT_EQ(0.0, String().toDouble(&ok));
