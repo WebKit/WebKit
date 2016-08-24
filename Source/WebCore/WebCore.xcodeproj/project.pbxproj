@@ -27157,7 +27157,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ditto \"${SRCROOT}/Configurations/WebKitLegacyStub.iOS.tbd\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/PhonyWebKitLegacy/WebKitLegacy.framework/WebKitLegacy.tbd\"";
+			shellScript = "set -e\n\ncase $PLATFORM_NAME in\niphone*)\n    TBD_PLATFORM=ios\n    ;;\nappletv*)\n    TBD_PLATFORM=tvos\n    ;;\nesac\n\nif [[ -n $TBD_PLATFORM ]]; then\n    sed -E s/\\TBD_PLATFORM/$TBD_PLATFORM/ \"${SCRIPT_INPUT_FILE_0}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nfi\n";
 		};
 		37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
