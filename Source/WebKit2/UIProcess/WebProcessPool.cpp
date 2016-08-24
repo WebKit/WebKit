@@ -1278,7 +1278,7 @@ void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy& process)
 void WebProcessPool::gamepadConnected(const UIGamepad& gamepad)
 {
     for (auto& process : m_processesUsingGamepads)
-        process->send(Messages::WebProcess::GamepadConnected(gamepad.gamepadData()), 0);
+        process->send(Messages::WebProcess::GamepadConnected(gamepad.fullGamepadData()), 0);
 }
 
 void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
@@ -1294,7 +1294,7 @@ void WebProcessPool::setInitialConnectedGamepads(const Vector<std::unique_ptr<UI
     for (size_t i = 0; i < gamepads.size(); ++i) {
         if (!gamepads[i])
             continue;
-        gamepadDatas[i] = gamepads[i]->gamepadData();
+        gamepadDatas[i] = gamepads[i]->fullGamepadData();
     }
 
     for (auto& process : m_processesUsingGamepads)

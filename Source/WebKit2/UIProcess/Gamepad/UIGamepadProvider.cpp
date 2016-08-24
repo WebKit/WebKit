@@ -215,7 +215,7 @@ Vector<GamepadData> UIGamepadProvider::snapshotGamepads()
 
     for (auto& gamepad : m_gamepads) {
         if (gamepad)
-            gamepadDatas.uncheckedAppend(gamepad->gamepadData());
+            gamepadDatas.uncheckedAppend(gamepad->condensedGamepadData());
         else
             gamepadDatas.uncheckedAppend({ });
     }

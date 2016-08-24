@@ -45,6 +45,7 @@ public:
     }
 
     GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues);
+    GamepadData(unsigned index, const String& id, const Vector<double>& axisValues, const Vector<double>& buttonValues);
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, GamepadData&);
@@ -52,11 +53,13 @@ public:
     bool isNull() const { return m_isNull; }
 
     unsigned index() const { return m_index; }
+    const String& id() const { return m_id; }
     const Vector<double>& axisValues() const { return m_axisValues; }
     const Vector<double>& buttonValues() const { return m_buttonValues; }
 
 private:
     unsigned m_index;
+    String m_id;
     Vector<double> m_axisValues;
     Vector<double> m_buttonValues;
 

@@ -30,6 +30,8 @@
 
 #include "GamepadData.h"
 #include "Logging.h"
+#include <wtf/CurrentTime.h>
+
 
 namespace WebKit {
 
@@ -38,6 +40,7 @@ WebGamepad::WebGamepad(const GamepadData& gamepadData)
 {
     LOG(Gamepad, "Connecting WebGamepad %u", gamepadData.index());
 
+    m_id = gamepadData.id();
     m_axisValues.resize(gamepadData.axisValues().size());
     m_buttonValues.resize(gamepadData.buttonValues().size());
 
@@ -63,6 +66,8 @@ void WebGamepad::updateValues(const GamepadData& gamepadData)
 
     m_axisValues = gamepadData.axisValues();
     m_buttonValues = gamepadData.buttonValues();
+
+    m_lastUpdateTime = monotonicallyIncreasingTime();
 }
 
 }

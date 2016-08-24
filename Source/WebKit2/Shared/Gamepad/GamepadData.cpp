@@ -40,13 +40,21 @@ GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const
 {
 }
 
+GamepadData::GamepadData(unsigned index, const String& id, const Vector<double>& axisValues, const Vector<double>& buttonValues)
+    : m_index(index)
+    , m_id(id)
+    , m_axisValues(axisValues)
+    , m_buttonValues(buttonValues)
+{
+}
+
 void GamepadData::encode(IPC::Encoder& encoder) const
 {
     encoder << m_isNull;
     if (m_isNull)
         return;
 
-    encoder << m_index << m_axisValues << m_buttonValues;
+    encoder << m_index << m_id << m_axisValues << m_buttonValues;
 }
 
 bool GamepadData::decode(IPC::Decoder& decoder, GamepadData& data)
@@ -58,6 +66,9 @@ bool GamepadData::decode(IPC::Decoder& decoder, GamepadData& data)
         return true;
 
     if (!decoder.decode(data.m_index))
+        return false;
+
+    if (!decoder.decode(data.m_id))
         return false;
 
     if (!decoder.decode(data.m_axisValues))

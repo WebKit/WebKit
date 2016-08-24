@@ -1,3 +1,15 @@
+2016-08-24  Brady Eidson  <beidson@apple.com>
+
+        Get timestamps and ids working in WK2 gamepads (and test them!)
+        https://bugs.webkit.org/show_bug.cgi?id=161112
+
+        Reviewed by Alex Christensen.
+
+        * gamepad/gamepad-polling-access-expected.txt:
+        * gamepad/gamepad-polling-access.html:
+        * gamepad/gamepad-timestamp-expected.txt: Added.
+        * gamepad/gamepad-timestamp.html: Added.
+
 2016-08-24  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES2016] Allow assignment in for-in head in not-strict mode

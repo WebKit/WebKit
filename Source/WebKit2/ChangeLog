@@ -1,3 +1,36 @@
+2016-08-24  Brady Eidson  <beidson@apple.com>
+
+        Get timestamps and ids working in WK2 gamepads (and test them!)
+        https://bugs.webkit.org/show_bug.cgi?id=161112
+
+        Reviewed by Alex Christensen.
+
+        * Shared/Gamepad/GamepadData.cpp:
+        (WebKit::GamepadData::GamepadData):
+        (WebKit::GamepadData::encode):
+        (WebKit::GamepadData::decode):
+        * Shared/Gamepad/GamepadData.h:
+        (WebKit::GamepadData::id):
+        (WebKit::GamepadData::index): Deleted.
+        
+        * UIProcess/Gamepad/UIGamepad.cpp:
+        (WebKit::UIGamepad::UIGamepad):
+        (WebKit::UIGamepad::condensedGamepadData):
+        (WebKit::UIGamepad::fullGamepadData): Include the ID for initial WebGamepad creation.
+        (WebKit::UIGamepad::gamepadData): Deleted.
+        * UIProcess/Gamepad/UIGamepad.h:
+        
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::snapshotGamepads):
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gamepadConnected):
+        (WebKit::WebProcessPool::setInitialConnectedGamepads):
+        
+        * WebProcess/Gamepad/WebGamepad.cpp:
+        (WebKit::WebGamepad::WebGamepad):
+        (WebKit::WebGamepad::updateValues):
+
 2016-08-24  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Fix test_ewk2_view
