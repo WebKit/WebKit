@@ -539,8 +539,8 @@ TEST_F(EWK2ViewTest, ewk_view_title_changed)
         "<!doctype html><head><title>Title before changed</title></head>"
         "<body onload=\"document.title=null;\"></body>";
     ewk_view_html_string_load(webView(), titleChangedHTML, 0, 0);
-    EXPECT_TRUE(waitUntilTitleChangedTo(""));
-    EXPECT_STREQ("", ewk_view_title_get(webView()));
+    EXPECT_TRUE(waitUntilTitleChangedTo("null"));
+    EXPECT_STREQ("null", ewk_view_title_get(webView()));
 }
 
 TEST_F(EWK2ViewTest, ewk_view_run_javascript_alert)
@@ -1265,7 +1265,7 @@ TEST_F(EWK2ViewTest, ewk_view_layout_fixed)
 }
 
 TEST_F(EWK2ViewTest, ewk_view_layout_fixed_size)
-{    
+{
     // Fixed layout is not enabled in webview as default.
     EXPECT_FALSE(ewk_view_layout_fixed_get(webView()));
     EXPECT_TRUE(ewk_view_layout_fixed_set(webView(), true));
