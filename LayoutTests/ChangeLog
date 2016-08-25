@@ -1,3 +1,20 @@
+2016-08-25  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Update the Resource Timing implementation
+        https://bugs.webkit.org/show_bug.cgi?id=161068
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        Skip resource outside of resource-folder.
+        Mark one test as flaky (see bug 161088).
+
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback):
+        Updated completion callback to wait for any other completion callbacks
+        before finishing, so the Resource Timing tests can cleanup first.
+        Enabled the ResourceTiming runtime flag.
+
 2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rebase iOS simulator WK1 fast/multicol tests

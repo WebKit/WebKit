@@ -37,11 +37,12 @@ class CachedResource;
 class CachedResourceRequest;
 class Document;
 class Frame;
+class LoadTiming;
 
 class ResourceTimingInformation {
 public:
 
-    void addResourceTiming(CachedResource*, Document&);
+    void addResourceTiming(CachedResource*, Document&, const LoadTiming&);
     void storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>&, const CachedResourceRequest&, Frame*);
 
 private:

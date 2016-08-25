@@ -68,6 +68,7 @@
 #include "SessionID.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
+#include "SubresourceLoader.h"
 #include "UserContentController.h"
 #include "UserStyleSheet.h"
 #include <wtf/text/CString.h>
@@ -595,6 +596,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     }
 #endif
 
+#if ENABLE(WEB_TIMING)
+    LoadTiming loadTiming;
+    loadTiming.markStartTimeAndFetchStart();
+#endif
+
     auto& memoryCache = MemoryCache::singleton();
     if (request.allowsCaching() && memoryCache.disabled()) {
         DocumentResourceMap::iterator it = m_documentResources.find(url.string());
@@ -638,8 +644,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         memoryCache.resourceAccessed(*resource);
 #if ENABLE(WEB_TIMING)
         if (document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
+            // FIXME (161170): The networkLoadTiming shouldn't be stored on the ResourceResponse.
+            resource->response().networkLoadTiming().reset();
+            loadTiming.setResponseEnd(monotonicallyIncreasingTime());
             m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
-            m_resourceTimingInfo.addResourceTiming(resource.get(), *document());
+            m_resourceTimingInfo.addResourceTiming(resource.get(), *document(), loadTiming);
         }
 #endif
         break;
@@ -695,7 +704,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
     memoryCache.add(*newResource);
 #if ENABLE(WEB_TIMING)
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
+        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, request, frame());
 #else
     UNUSED_PARAM(request);
 #endif
@@ -988,8 +997,8 @@ void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerform
     RefPtr<Document> protectDocument(m_document);
 
 #if ENABLE(WEB_TIMING)
-    if (document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        m_resourceTimingInfo.addResourceTiming(resource, *document());
+    if (resource && document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
+        m_resourceTimingInfo.addResourceTiming(resource, *document(), resource->loader()->loadTiming());
 #else
     UNUSED_PARAM(resource);
 #endif

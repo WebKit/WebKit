@@ -449,6 +449,7 @@ imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/r
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown-child.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/resource-timing/iframe-setdomain.sub.html [ Skip ]
 
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 
@@ -1242,3 +1243,5 @@ webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 
 webkit.org/b/160017 js/regress-139548.html [ Slow ]
+
+webkit.org/b/161088 imported/w3c/web-platform-tests/resource-timing/resource-timing.html [ Pass Failure ]

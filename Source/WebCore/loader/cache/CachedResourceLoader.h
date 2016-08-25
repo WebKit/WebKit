@@ -140,6 +140,8 @@ public:
 
     void documentDidFinishLoadEvent();
 
+    ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
+
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 

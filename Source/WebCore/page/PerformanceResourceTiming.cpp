@@ -76,11 +76,11 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, Document* r
     return false;
 }
 
-PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const ResourceRequest& request, const ResourceResponse& response, double initiationTime, double finishTime, Document* requestingDocument)
-    : PerformanceEntry(request.url().string(), "resource", monotonicTimeToDocumentMilliseconds(requestingDocument, initiationTime), monotonicTimeToDocumentMilliseconds(requestingDocument, finishTime))
+PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const URL& originalURL, const ResourceResponse& response, LoadTiming loadTiming, Document* requestingDocument)
+    : PerformanceEntry(originalURL.string(), "resource", monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.startTime()), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.responseEnd()))
     , m_initiatorType(initiatorType)
     , m_timing(response.networkLoadTiming())
-    , m_finishTime(finishTime)
+    , m_loadTiming(loadTiming)
     , m_shouldReportDetails(passesTimingAllowCheck(response, requestingDocument))
     , m_requestingDocument(requestingDocument)
 {
@@ -97,23 +97,23 @@ AtomicString PerformanceResourceTiming::initiatorType() const
 
 double PerformanceResourceTiming::redirectStart() const
 {
-    // FIXME: Need to track and report redirects for resources.
     if (!m_shouldReportDetails)
         return 0.0;
-    return 0;
+
+    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_loadTiming.redirectStart());
 }
 
 double PerformanceResourceTiming::redirectEnd() const
 {
     if (!m_shouldReportDetails)
         return 0.0;
-    return 0;
+
+    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_loadTiming.redirectEnd());
 }
 
 double PerformanceResourceTiming::fetchStart() const
 {
-    // FIXME: This should be different depending on redirects.
-    return (startTime());
+    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_loadTiming.fetchStart());
 }
 
 double PerformanceResourceTiming::domainLookupStart() const
@@ -121,7 +121,7 @@ double PerformanceResourceTiming::domainLookupStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    if (m_timing.domainLookupStart < 0)
+    if (m_timing.domainLookupStart <= 0)
         return fetchStart();
 
     return resourceTimeToDocumentMilliseconds(m_timing.domainLookupStart);
@@ -132,7 +132,7 @@ double PerformanceResourceTiming::domainLookupEnd() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    if (m_timing.domainLookupEnd < 0)
+    if (m_timing.domainLookupEnd <= 0)
         return domainLookupStart();
 
     return resourceTimeToDocumentMilliseconds(m_timing.domainLookupEnd);
@@ -144,7 +144,7 @@ double PerformanceResourceTiming::connectStart() const
         return 0.0;
 
     // connectStart will be -1 when a network request is not made.
-    if (m_timing.connectStart < 0)
+    if (m_timing.connectStart <= 0)
         return domainLookupEnd();
 
     // connectStart includes any DNS time, so we may need to trim that off.
@@ -161,7 +161,7 @@ double PerformanceResourceTiming::connectEnd() const
         return 0.0;
 
     // connectStart will be -1 when a network request is not made.
-    if (m_timing.connectEnd < 0)
+    if (m_timing.connectEnd <= 0)
         return connectStart();
 
     return resourceTimeToDocumentMilliseconds(m_timing.connectEnd);
@@ -186,16 +186,27 @@ double PerformanceResourceTiming::requestStart() const
     return resourceTimeToDocumentMilliseconds(m_timing.requestStart);
 }
 
+double PerformanceResourceTiming::responseStart() const
+{
+    if (!m_shouldReportDetails)
+        return 0.0;
+
+    return resourceTimeToDocumentMilliseconds(m_timing.responseStart);
+}
+
 double PerformanceResourceTiming::responseEnd() const
 {
-    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_finishTime);
+    if (!m_shouldReportDetails)
+        return 0.0;
+
+    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_loadTiming.responseEnd());
 }
 
 double PerformanceResourceTiming::resourceTimeToDocumentMilliseconds(double deltaMilliseconds) const
 {
     if (!deltaMilliseconds)
         return 0.0;
-    double documentStartTime = m_requestingDocument->loader()->timing().monotonicTimeToZeroBasedDocumentTime(m_requestingDocument->loader()->timing().startTime()) * 1000.0;
+    double documentStartTime = m_requestingDocument->loader()->timing().monotonicTimeToZeroBasedDocumentTime(m_loadTiming.fetchStart()) * 1000.0;
     double resourceTimeSeconds = (documentStartTime + deltaMilliseconds) / 1000.0;
     return 1000.0 * Performance::reduceTimeResolution(resourceTimeSeconds);
 }

@@ -44,7 +44,7 @@ public:
         , secureConnectionStart(-1)
     {
     }
-    
+
     NetworkLoadTiming(const NetworkLoadTiming& other)
         : domainLookupStart(other.domainLookupStart)
         , domainLookupEnd(other.domainLookupEnd)
@@ -55,7 +55,18 @@ public:
         , secureConnectionStart(other.secureConnectionStart)
     {
     }
-    
+
+    void reset()
+    {
+        domainLookupStart = -1;
+        domainLookupEnd = -1;
+        connectStart = -1;
+        connectEnd = -1;
+        requestStart = 0;
+        responseStart = 0;
+        secureConnectionStart = -1;
+    }
+
     NetworkLoadTiming& operator=(const NetworkLoadTiming& other)
     {
         domainLookupStart = other.domainLookupStart;

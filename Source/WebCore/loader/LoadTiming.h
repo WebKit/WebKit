@@ -34,13 +34,14 @@ class URL;
 
 class LoadTiming {
 public:
-    LoadTiming();
 
     double monotonicTimeToZeroBasedDocumentTime(double) const;
     double monotonicTimeToPseudoWallTime(double) const;
 
     void markStartTime();
     void addRedirect(const URL& redirectingUrl, const URL& redirectedUrl);
+
+    void markStartTimeAndFetchStart() { markStartTime(); m_fetchStart = m_startTime; }
 
     void markUnloadEventStart() { m_unloadEventStart = monotonicallyIncreasingTime(); }
     void markUnloadEventEnd() { m_unloadEventEnd = monotonicallyIncreasingTime(); }
@@ -70,20 +71,20 @@ public:
     double referenceWallTime() const { return m_referenceWallTime; }
 
 private:
-    double m_referenceMonotonicTime;
-    double m_referenceWallTime;
-    double m_startTime;
-    double m_unloadEventStart;
-    double m_unloadEventEnd;
-    double m_redirectStart;
-    double m_redirectEnd;
-    short m_redirectCount;
-    double m_fetchStart;
-    double m_responseEnd;
-    double m_loadEventStart;
-    double m_loadEventEnd;
-    bool m_hasCrossOriginRedirect;
-    bool m_hasSameOriginAsPreviousDocument;
+    double m_referenceMonotonicTime { 0.0 };
+    double m_referenceWallTime { 0.0 };
+    double m_startTime { 0.0 };
+    double m_unloadEventStart { 0.0 };
+    double m_unloadEventEnd { 0.0 };
+    double m_redirectStart { 0.0 };
+    double m_redirectEnd { 0.0 };
+    short m_redirectCount { 0 };
+    double m_fetchStart { 0.0 };
+    double m_responseEnd { 0.0 };
+    double m_loadEventStart { 0.0 };
+    double m_loadEventEnd { 0.0 };
+    bool m_hasCrossOriginRedirect { false };
+    bool m_hasSameOriginAsPreviousDocument { false };
 };
 
 } // namespace WebCore

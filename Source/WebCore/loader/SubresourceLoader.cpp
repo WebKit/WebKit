@@ -42,6 +42,7 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "ResourceLoadObserver.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -216,6 +217,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
             cancel();
             return;
         }
+        m_loadTiming.addRedirect(redirectResponse.url(), newRequest.url());
         m_resource->redirectReceived(newRequest, redirectResponse);
     }
 
@@ -457,6 +459,12 @@ void SubresourceLoader::didFinishLoading(double finishTime)
 
     Ref<SubresourceLoader> protectedThis(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
+
+    finishTime = monotonicallyIncreasingTime();
+    m_loadTiming.setResponseEnd(finishTime);
+
+    if (m_documentLoader->cachedResourceLoader().document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
+        m_documentLoader->cachedResourceLoader().resourceTimingInformation().addResourceTiming(m_resource, *m_documentLoader->cachedResourceLoader().document(), m_resource->loader()->loadTiming());
 
     m_state = Finishing;
     m_resource->setLoadFinishTime(finishTime);

@@ -46,10 +46,12 @@
 namespace WebCore {
 
 class Document;
+class LoadTiming;
 class PerformanceEntry;
 class ResourceRequest;
 class ResourceResponse;
 class UserTiming;
+class URL;
 
 class Performance final : public RefCounted<Performance>, public DOMWindowProperty, public EventTargetWithInlineData {
 public:
@@ -70,7 +72,7 @@ public:
     void clearResourceTimings();
     void setResourceTimingBufferSize(unsigned);
 
-    void addResourceTiming(const String& initiatorName, Document*, const ResourceRequest&, const ResourceResponse&, double initiationTime, double finishTime);
+    void addResourceTiming(const String& initiatorName, Document*, const URL& originalURL, const ResourceResponse&, LoadTiming);
 
     using RefCounted<Performance>::ref;
     using RefCounted<Performance>::deref;

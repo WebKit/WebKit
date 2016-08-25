@@ -44,5 +44,6 @@
     readonly attribute unrestricted double connectEnd;
     readonly attribute unrestricted double secureConnectionStart;
     readonly attribute unrestricted double requestStart;
+    readonly attribute unrestricted double responseStart;
     readonly attribute unrestricted double responseEnd;
 };

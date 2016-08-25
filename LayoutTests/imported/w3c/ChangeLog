@@ -1,3 +1,56 @@
+2016-08-25  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Update the Resource Timing implementation
+        https://bugs.webkit.org/show_bug.cgi?id=161068
+
+        Reviewed by Alex Christensen.
+
+        Added W3C Web Platform Tests for Resource Timing.
+
+        * web-platform-tests/resource-timing/OWNERS: Added.
+        * web-platform-tests/resource-timing/SyntheticResponse.py: Added.
+        (main):
+        * web-platform-tests/resource-timing/iframe-setdomain.sub.html: Added.
+        * web-platform-tests/resource-timing/resource-timing.html: Added.
+        * web-platform-tests/resource-timing/resource-timing.js: Added.
+        (testCases.test):
+        (test):
+        (runNextCase):
+        (assertInvariants):
+        (assertResourceEntryInvariants):
+        (canonicalize):
+        (createUniqueQueryArgument):
+        (getSyntheticUrl):
+        (initiateFetch):
+        (window.onload):
+        * web-platform-tests/resource-timing/resources/resource_timing_test0.css: Added.
+        (div#resource_link_css):
+        * web-platform-tests/resource-timing/resources/resource_timing_test0.html: Added.
+        * web-platform-tests/resource-timing/resources/resource_timing_test0.js: Added.
+        * web-platform-tests/resource-timing/resources/resource_timing_test0.png: Added.
+        * web-platform-tests/resource-timing/resources/resource_timing_test0.xml: Added.
+        * web-platform-tests/resource-timing/resources/webperftestharness.js: Added.
+        (wp_test):
+        (test_namespace):
+        (test_timing_order):
+        (test_timing_equals):
+        (sleep_milliseconds):
+        (test_true):
+        (test_equals):
+        (test_greater_than):
+        (test_greater_or_equals):
+        * web-platform-tests/resource-timing/test_resource_timing.html: Added.
+        * web-platform-tests/resource-timing/test_resource_timing.js: Added.
+        (setup):
+        (resolve):
+        (switch.):
+        (switch.case.string_appeared_here.xmlhttp.onload):
+        (switch.default.element.onload):
+        (onload):
+        (poll_for_stylesheet_load.inner):
+        (poll_for_stylesheet_load):
+        (resource_load):
+
 2016-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Import w3c URL tests

@@ -36,24 +36,6 @@
 
 namespace WebCore {
 
-LoadTiming::LoadTiming()
-    : m_referenceMonotonicTime(0.0)
-    , m_referenceWallTime(0.0)
-    , m_startTime(0.0)
-    , m_unloadEventStart(0.0)
-    , m_unloadEventEnd(0.0)
-    , m_redirectStart(0.0)
-    , m_redirectEnd(0.0)
-    , m_redirectCount(0)
-    , m_fetchStart(0.0)
-    , m_responseEnd(0.0)
-    , m_loadEventStart(0.0)
-    , m_loadEventEnd(0.0)
-    , m_hasCrossOriginRedirect(false)
-    , m_hasSameOriginAsPreviousDocument(false)
-{
-}
-
 double LoadTiming::monotonicTimeToZeroBasedDocumentTime(double monotonicTime) const
 {
     if (!monotonicTime)
