@@ -102,7 +102,6 @@ public:
     bool containsColor() const;
     bool containsFiles() const;
     unsigned numberOfFiles() const;
-    int modifierKeyState() const;
 #if PLATFORM(MAC)
     const String& pasteboardName() const { return m_pasteboardName; }
 #endif

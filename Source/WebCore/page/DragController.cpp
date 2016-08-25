@@ -97,11 +97,12 @@ bool isDraggableLink(const Element& element)
     
 static PlatformMouseEvent createMouseEvent(DragData& dragData)
 {
-    int keyState = dragData.modifierKeyState();
-    bool shiftKey = static_cast<bool>(keyState & PlatformEvent::ShiftKey);
-    bool ctrlKey = static_cast<bool>(keyState & PlatformEvent::CtrlKey);
-    bool altKey = static_cast<bool>(keyState & PlatformEvent::AltKey);
-    bool metaKey = static_cast<bool>(keyState & PlatformEvent::MetaKey);
+    bool shiftKey = false;
+    bool ctrlKey = false;
+    bool altKey = false;
+    bool metaKey = false;
+
+    PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
 
     return PlatformMouseEvent(dragData.clientPosition(), dragData.globalPosition(),
                               LeftButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey,

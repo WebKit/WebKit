@@ -53,24 +53,6 @@ DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint
 }
 #endif
 
-int DragData::modifierKeyState() const
-{
-    bool shiftKey, ctrlKey, altKey, metaKey;
-    shiftKey = ctrlKey = altKey = metaKey = false;
-    PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-    int keyState = 0;
-    if (shiftKey)
-        keyState = keyState | PlatformEvent::ShiftKey;
-    if (ctrlKey)
-        keyState = keyState | PlatformEvent::CtrlKey;
-    if (altKey)
-        keyState = keyState | PlatformEvent::AltKey;
-    if (metaKey)
-        keyState = keyState | PlatformEvent::MetaKey;
-    return keyState;
-}
-
 } // namespace WebCore
-
 
 #endif // ENABLE(DRAG_SUPPORT)
