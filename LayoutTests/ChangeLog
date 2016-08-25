@@ -1,3 +1,14 @@
+2016-08-24  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: contentSize >= 0 in WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax
+        https://bugs.webkit.org/show_bug.cgi?id=155700
+        <rdar://problem/27720727>
+
+        Reviewed by David Hyatt.
+
+        * fast/ruby/assert-when-content-size-is-negative-expected.txt: Added.
+        * fast/ruby/assert-when-content-size-is-negative.html: Added.
+
 2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rebase iOS simulator WK1 fast/text tests
