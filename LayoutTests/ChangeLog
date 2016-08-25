@@ -1,3 +1,12 @@
+2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 fast/css tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/fast/css/layerZOrderCrash-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/css/viewport-units-dynamic-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/css/word-space-extra-expected.txt: Added.
+
 2016-08-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r203378): [iOS] The PDF image is rendered stretched if a sub image of it is cached first
