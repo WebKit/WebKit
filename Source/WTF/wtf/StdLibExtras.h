@@ -71,6 +71,11 @@
 #define STRINGIZE(exp) #exp
 #define STRINGIZE_VALUE_OF(exp) STRINGIZE(exp)
 
+// WTF_CONCAT: concatenate two symbols into one, even expandable macros
+#define WTF_CONCAT_INTERNAL_DONT_USE(a, b) a ## b
+#define WTF_CONCAT(a, b) WTF_CONCAT_INTERNAL_DONT_USE(a, b)
+
+
 // Make "PRId64" format specifier work for Visual C++ on Windows.
 #if OS(WINDOWS) && !defined(PRId64)
 #define PRId64 "lld"

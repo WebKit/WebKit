@@ -1404,6 +1404,7 @@ public:
         case GetDirectPname:
         case GetById:
         case GetByIdFlush:
+        case TryGetById:
         case GetByVal:
         case Call:
         case TailCallInlinedCaller:

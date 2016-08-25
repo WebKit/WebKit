@@ -1,3 +1,18 @@
+2016-08-25  JF Bastien  <jfbastien@apple.com>
+
+        TryGetById should have a ValueProfile so that it can predict its output type
+        https://bugs.webkit.org/show_bug.cgi?id=160921
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/try-get-by-id-basic.js: Added.
+        (const.check):
+        (const.bench.f.const.fooPlusBar.createBuiltin):
+        * microbenchmarks/try-get-by-id-polymorphic.js: Added.
+        (const.check):
+        (fooPlusBar.createBuiltin):
+        (bench):
+
 2016-08-25  Caio Lima  <ticaiolima@gmail.com>
 
         NewRegexp should not prevent inlining

@@ -4153,6 +4153,8 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case GetById: {
+        // FIXME https://bugs.webkit.org/show_bug.cgi?id=161158
+        // dedup with SpeculativeJIT::compileTryGetById and 64-bit version of this.
         switch (node->child1().useKind()) {
         case CellUse: {
             SpeculateCellOperand base(this, node->child1());

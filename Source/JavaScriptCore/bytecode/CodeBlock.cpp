@@ -1141,6 +1141,7 @@ void CodeBlock::dumpBytecode(
             int id0 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "try_get_by_id");
             out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
+            dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
         case op_get_by_id:
@@ -2106,6 +2107,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
         case op_get_direct_pname:
         case op_get_by_id:
+        case op_try_get_by_id:
         case op_get_from_arguments:
         case op_to_number: {
             ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];

@@ -599,6 +599,7 @@ void JIT::emit_op_try_get_by_id(Instruction* currentInstruction)
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
     
+    emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
 }
 

@@ -2454,10 +2454,11 @@ RegisterID* BytecodeGenerator::emitTryGetById(RegisterID* dst, RegisterID* base,
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties are not supported with tryGetById.");
 
-    emitOpcode(op_try_get_by_id);
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_try_get_by_id);
     instructions().append(kill(dst));
     instructions().append(base->index());
     instructions().append(addConstant(property));
+    instructions().append(profile);
     return dst;
 }
 

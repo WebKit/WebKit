@@ -1,3 +1,38 @@
+2016-08-25  JF Bastien  <jfbastien@apple.com>
+
+        TryGetById should have a ValueProfile so that it can predict its output type
+        https://bugs.webkit.org/show_bug.cgi?id=160921
+
+        Reviewed by Saam Barati.
+
+        Add a ValueProfile to TryGetById, and make sure DFG picks it up.
+
+        A microbenchmark for perfectly predicted computation shows a 20%
+        runtime reduction with no hit if the prediction goes polymorphic.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitTryGetById):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_try_get_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_try_get_by_id):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+
 2016-08-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         generate-js-builtins.py should generate platform independent files

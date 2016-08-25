@@ -572,8 +572,9 @@ LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
     PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::VMInquiry);
 
     baseValue.getPropertySlot(exec, ident, slot);
+    JSValue result = slot.getPureResult();
 
-    LLINT_RETURN(slot.getPureResult());
+    LLINT_RETURN_PROFILED(op_try_get_by_id, result);
 }
 
 static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc, JSCell* baseCell, PropertySlot& slot, const Identifier& ident)

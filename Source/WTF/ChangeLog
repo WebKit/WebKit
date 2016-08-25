@@ -1,3 +1,14 @@
+2016-08-25  JF Bastien  <jfbastien@apple.com>
+
+        TryGetById should have a ValueProfile so that it can predict its output type
+        https://bugs.webkit.org/show_bug.cgi?id=160921
+
+        Reviewed by Saam Barati.
+
+        Add WTF_CONCAT to StdLibExtras.h
+
+        * wtf/StdLibExtras.h:
+
 2016-08-25  Johan K. Jensen  <johan_jensen@apple.com>
 
         Don't store networkLoadTiming in the disk cache
