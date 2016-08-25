@@ -1,3 +1,12 @@
+2016-08-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Make FRound work with any type
+        https://bugs.webkit.org/show_bug.cgi?id=161129
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/arith-fround-on-various-types.js: Added.
+
 2016-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r204901, r204897, r204866, r204856, r204854.

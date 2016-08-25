@@ -974,7 +974,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(static_cast<float>(child.asNumber())));
             break;
         }
-        forNode(node).setType(typeOfDoubleRounding(forNode(node->child1()).m_type));
+        SpeculatedType froundType = SpecFullNumber;
+        if (node->child1().useKind() == DoubleRepUse)
+            froundType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
+        forNode(node).setType(froundType);
         break;
     }
         

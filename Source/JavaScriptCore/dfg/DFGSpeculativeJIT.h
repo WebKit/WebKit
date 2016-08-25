@@ -2474,6 +2474,7 @@ public:
     void compileArithNegate(Node*);
     void compileArithMul(Node*);
     void compileArithDiv(Node*);
+    void compileArithFRound(Node*);
     void compileArithMod(Node*);
     void compileArithPow(Node*);
     void compileArithRounding(Node*);

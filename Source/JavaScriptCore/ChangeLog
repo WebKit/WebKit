@@ -1,3 +1,38 @@
+2016-08-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Make FRound work with any type
+        https://bugs.webkit.org/show_bug.cgi?id=161129
+
+        Reviewed by Geoffrey Garen.
+
+        Math.fround() does nothing with arguments past the first one
+        (https://tc39.github.io/ecma262/#sec-math.fround).
+        We can unify ArithFRound with the other single-input intrinsics.
+
+        Everything else is same old: if the input type is not a number,
+        be pessimistic about everything and do a C call.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithFRound):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithFRound):
+
 2016-08-24  Andreas Kling  <akling@apple.com>
 
         Shrink DFG::OSRExit a bit.

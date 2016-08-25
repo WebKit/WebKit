@@ -4538,6 +4538,26 @@ void SpeculativeJIT::compileArithDiv(Node* node)
     }
 }
 
+void SpeculativeJIT::compileArithFRound(Node* node)
+{
+    if (node->child1().useKind() == DoubleRepUse) {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRTemporary result(this, op1);
+        m_jit.convertDoubleToFloat(op1.fpr(), result.fpr());
+        m_jit.convertFloatToDouble(result.fpr(), result.fpr());
+        doubleResult(result.fpr(), node);
+        return;
+    }
+
+    JSValueOperand op1(this, node->child1());
+    JSValueRegs op1Regs = op1.jsValueRegs();
+    flushRegisters();
+    FPRResult result(this);
+    callOperation(operationArithFRound, result.fpr(), op1Regs);
+    m_jit.exceptionCheck();
+    doubleResult(result.fpr(), node);
+}
+
 void SpeculativeJIT::compileArithMod(Node* node)
 {
     switch (node->binaryUseKind()) {

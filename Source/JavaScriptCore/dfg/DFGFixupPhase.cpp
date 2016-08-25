@@ -387,6 +387,7 @@ private:
         }
 
         case ArithCos:
+        case ArithFRound:
         case ArithLog:
         case ArithSin:
         case ArithSqrt: {
@@ -395,11 +396,6 @@ private:
                 fixDoubleOrBooleanEdge(child1);
             else
                 fixEdge<UntypedUse>(child1);
-            break;
-        }
-        case ArithFRound: {
-            fixDoubleOrBooleanEdge(node->child1());
-            node->setResult(NodeResultDouble);
             break;
         }
             

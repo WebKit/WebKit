@@ -2367,16 +2367,9 @@ void SpeculativeJIT::compile(Node* node)
         compileArithSqrt(node);
         break;
 
-    case ArithFRound: {
-        SpeculateDoubleOperand op1(this, node->child1());
-        FPRTemporary result(this, op1);
-        
-        m_jit.convertDoubleToFloat(op1.fpr(), result.fpr());
-        m_jit.convertFloatToDouble(result.fpr(), result.fpr());
-        
-        doubleResult(result.fpr(), node);
+    case ArithFRound:
+        compileArithFRound(node);
         break;
-    }
 
     case ArithRandom:
         compileArithRandom(node);

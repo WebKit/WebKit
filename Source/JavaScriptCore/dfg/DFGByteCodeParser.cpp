@@ -2140,41 +2140,40 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
     case MaxIntrinsic:
         return handleMinMax(resultOperand, ArithMax, registerOffset, argumentCountIncludingThis, insertChecks);
 
-    case SqrtIntrinsic:
     case CosIntrinsic:
+    case FRoundIntrinsic:
+    case LogIntrinsic:
     case SinIntrinsic:
-    case LogIntrinsic: {
+    case SqrtIntrinsic: {
         if (argumentCountIncludingThis == 1) {
             insertChecks();
             set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
             return true;
         }
-        
-        switch (intrinsic) {
-        case SqrtIntrinsic:
-            insertChecks();
-            set(VirtualRegister(resultOperand), addToGraph(ArithSqrt, get(virtualRegisterForArgument(1, registerOffset))));
-            return true;
-            
-        case CosIntrinsic:
-            insertChecks();
-            set(VirtualRegister(resultOperand), addToGraph(ArithCos, get(virtualRegisterForArgument(1, registerOffset))));
-            return true;
-            
-        case SinIntrinsic:
-            insertChecks();
-            set(VirtualRegister(resultOperand), addToGraph(ArithSin, get(virtualRegisterForArgument(1, registerOffset))));
-            return true;
 
+        NodeType nodeType = Unreachable;
+        switch (intrinsic) {
+        case CosIntrinsic:
+            nodeType = ArithCos;
+            break;
+        case FRoundIntrinsic:
+            nodeType = ArithFRound;
+            break;
         case LogIntrinsic:
-            insertChecks();
-            set(VirtualRegister(resultOperand), addToGraph(ArithLog, get(virtualRegisterForArgument(1, registerOffset))));
-            return true;
-            
+            nodeType = ArithLog;
+            break;
+        case SinIntrinsic:
+            nodeType = ArithSin;
+            break;
+        case SqrtIntrinsic:
+            nodeType = ArithSqrt;
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            return false;
         }
+        insertChecks();
+        set(VirtualRegister(resultOperand), addToGraph(nodeType, get(virtualRegisterForArgument(1, registerOffset))));
+        return true;
     }
 
     case PowIntrinsic: {
@@ -2473,15 +2472,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
             return false;
         insertChecks();
         set(VirtualRegister(resultOperand), addToGraph(ArithRandom));
-        return true;
-    }
-        
-    case FRoundIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-        insertChecks();
-        VirtualRegister operand = virtualRegisterForArgument(1, registerOffset);
-        set(VirtualRegister(resultOperand), addToGraph(ArithFRound, get(operand)));
         return true;
     }
         
