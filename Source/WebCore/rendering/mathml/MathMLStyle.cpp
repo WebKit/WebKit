@@ -87,8 +87,6 @@ void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplaySty
         renderer->setNeedsLayoutAndPrefWidthsRecalc();
         if (is<RenderMathMLToken>(renderer))
             downcast<RenderMathMLToken>(renderer)->updateTokenContent();
-        else if (is<RenderMathMLRoot>(renderer))
-            downcast<RenderMathMLRoot>(renderer)->updateStyle();
         else if (is<RenderMathMLFraction>(renderer))
             downcast<RenderMathMLFraction>(renderer)->updateFromElement();
     }

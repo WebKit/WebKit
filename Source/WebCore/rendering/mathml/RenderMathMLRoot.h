@@ -41,7 +41,6 @@ class RenderMathMLRoot final : public RenderMathMLRow {
 
 public:
     RenderMathMLRoot(MathMLRowElement&, RenderStyle&&);
-    void updateFromElement() final;
     void updateStyle();
 
 private:
@@ -57,13 +56,20 @@ private:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
     void paint(PaintInfo&, const LayoutPoint&) final;
 
+    struct HorizontalParameters {
+        LayoutUnit kernBeforeDegree;
+        LayoutUnit kernAfterDegree;
+    };
+    HorizontalParameters horizontalParameters();
+    struct VerticalParameters {
+        LayoutUnit verticalGap;
+        LayoutUnit ruleThickness;
+        LayoutUnit extraAscender;
+        float degreeBottomRaisePercent;
+    };
+    VerticalParameters verticalParameters();
+
     MathOperator m_radicalOperator;
-    LayoutUnit m_verticalGap;
-    LayoutUnit m_ruleThickness;
-    LayoutUnit m_extraAscender;
-    LayoutUnit m_kernBeforeDegree;
-    LayoutUnit m_kernAfterDegree;
-    float m_degreeBottomRaisePercent;
     LayoutUnit m_radicalOperatorTop;
     LayoutUnit m_baseWidth;
 
