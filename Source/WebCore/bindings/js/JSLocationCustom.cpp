@@ -113,15 +113,6 @@ bool JSLocation::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
 }
 
-JSValue JSLocation::toStringFunction(ExecState& state)
-{
-    Frame* frame = wrapped().frame();
-    if (!frame || !shouldAllowAccessToFrame(&state, frame))
-        return jsUndefined();
-
-    return jsStringWithCache(&state, wrapped().toString());
-}
-
 bool JSLocationPrototype::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&, bool& putResult)
 {
     putResult = false;

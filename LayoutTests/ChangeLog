@@ -1,3 +1,18 @@
+2016-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Location.toString() should be enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=161179
+
+        Reviewed by Geoffrey Garen.
+
+        Update existing tests and add layout test coverage.
+
+        * fast/dom/Window/window-appendages-cleared-expected.txt:
+        * fast/dom/toString_attributes-expected.txt:
+        * fast/dom/toString_attributes.html:
+        * js/dom/toString-dontEnum-expected.txt:
+        * js/dom/toString-dontEnum.html:
+
 2016-08-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Implement `CSS.escape` as per CSSOM

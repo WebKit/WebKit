@@ -38,7 +38,7 @@
     JSCustomNamedGetterOnPrototype,
     Unforgeable,
 ] interface Location {
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString href;
+    [SetterCallWith=ActiveWindow&FirstWindow] stringifier attribute USVString href;
 
     [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void assign(USVString url);
     [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(USVString url);
@@ -57,8 +57,4 @@
 
     // FIXME: Add support for SameObject
     [Unforgeable, CachedAttribute] readonly attribute FrozenArray<USVString> ancestorOrigins;
-
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
-    [NotEnumerable, Custom, ImplementedAs=toStringFunction] DOMString toString();
-#endif
 };
