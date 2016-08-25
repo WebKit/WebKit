@@ -127,6 +127,7 @@ svg/animations/animate-path-animation-lL-vV-hH-inverse.html
 svg/animations/animate-path-animation-qQ-tT-inverse.html
 svg/animations/animate-path-nested-transforms.html
 svg/animations/animate-path-to-animation.html
+svg/animations/animate-text-nested-transforms.html
 svg/animations/animateTransform-pattern-transform.html
 svg/animations/animateTransform-translate-attributetype-auto.html
 svg/animations/animateTransform-translate-invalid-attributetype.html
