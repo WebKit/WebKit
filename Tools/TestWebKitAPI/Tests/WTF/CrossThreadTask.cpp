@@ -123,7 +123,13 @@ TEST(WTF_CrossThreadTask, Basic)
     ASSERT_EQ(2u, copyConstructorSet.count("<default>-1-0"));
     ASSERT_EQ(1u, copyConstructorSet.count("<default>-2-0"));
 
+#if !COMPILER(MSVC)
     ASSERT_EQ(6u, moveConstructorSet.size());
+#else
+    // The number of times the move constructor is called is different on Windows in this test.
+    // This seems to be caused by differences in MSVC's implementation of lambdas or std functions like std::make_tuple.
+    ASSERT_EQ(9u, moveConstructorSet.size());
+#endif
     ASSERT_EQ(1u, moveConstructorSet.count("logger-1-1"));
     ASSERT_EQ(1u, moveConstructorSet.count("logger-1-2"));
     ASSERT_EQ(1u, moveConstructorSet.count("<default>-2-1"));

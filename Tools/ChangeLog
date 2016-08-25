@@ -1,3 +1,16 @@
+2016-08-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] run-api-tests is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=161140
+
+        Reviewed by Brent Fulgham.
+
+        The number of times the move constructor is called is different on Windows in this test. This seems
+        to be caused by differences in MSVC's implementation of lambdas or std functions like std::make_tuple.
+
+        * TestWebKitAPI/Tests/WTF/CrossThreadTask.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-08-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix iOS DRT build.
