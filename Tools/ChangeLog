@@ -1,3 +1,20 @@
+2016-08-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix URLParserTest with GuardMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=161214
+        rdar://problem/28014390
+
+        Reviewed by Tim Horton.
+
+        The CString returned by String::utf8 was going out of scope before we were doing a string comparison on its data.
+        This just does the comparison of the CStrings instead to keep them in scope during the comparison.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::eq):
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::s): Deleted.
+
 2016-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Dragging against the end of the inline media scrubber causes the media scrubber to hide

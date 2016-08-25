@@ -50,31 +50,31 @@ struct ExpectedParts {
     String string;
 };
 
-static const char* s(const String& s) { return s.utf8().data(); }
+static bool eq(const String& s1, const String& s2) { return s1.utf8() == s2.utf8(); }
 static void checkURL(const String& urlString, const ExpectedParts& parts)
 {
     URLParser parser;
     auto url = parser.parse(urlString);
-    EXPECT_STREQ(s(parts.protocol), s(url->protocol()));
-    EXPECT_STREQ(s(parts.user), s(url->user()));
-    EXPECT_STREQ(s(parts.password), s(url->pass()));
-    EXPECT_STREQ(s(parts.host), s(url->host()));
+    EXPECT_TRUE(eq(parts.protocol, url->protocol()));
+    EXPECT_TRUE(eq(parts.user, url->user()));
+    EXPECT_TRUE(eq(parts.password, url->pass()));
+    EXPECT_TRUE(eq(parts.host, url->host()));
     EXPECT_EQ(parts.port, url->port());
-    EXPECT_STREQ(s(parts.path), s(url->path()));
-    EXPECT_STREQ(s(parts.query), s(url->query()));
-    EXPECT_STREQ(s(parts.fragment), s(url->fragmentIdentifier()));
-    EXPECT_STREQ(s(parts.string), s(url->string()));
+    EXPECT_TRUE(eq(parts.path, url->path()));
+    EXPECT_TRUE(eq(parts.query, url->query()));
+    EXPECT_TRUE(eq(parts.fragment, url->fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url->string()));
     
     auto oldURL = URL(URL(), urlString);
-    EXPECT_STREQ(s(parts.protocol), s(oldURL.protocol()));
-    EXPECT_STREQ(s(parts.user), s(oldURL.user()));
-    EXPECT_STREQ(s(parts.password), s(oldURL.pass()));
-    EXPECT_STREQ(s(parts.host), s(oldURL.host()));
+    EXPECT_TRUE(eq(parts.protocol, oldURL.protocol()));
+    EXPECT_TRUE(eq(parts.user, oldURL.user()));
+    EXPECT_TRUE(eq(parts.password, oldURL.pass()));
+    EXPECT_TRUE(eq(parts.host, oldURL.host()));
     EXPECT_EQ(parts.port, oldURL.port());
-    EXPECT_STREQ(s(parts.path), s(oldURL.path()));
-    EXPECT_STREQ(s(parts.query), s(oldURL.query()));
-    EXPECT_STREQ(s(parts.fragment), s(oldURL.fragmentIdentifier()));
-    EXPECT_STREQ(s(parts.string), s(oldURL.string()));
+    EXPECT_TRUE(eq(parts.path, oldURL.path()));
+    EXPECT_TRUE(eq(parts.query, oldURL.query()));
+    EXPECT_TRUE(eq(parts.fragment, oldURL.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, oldURL.string()));
     
     EXPECT_TRUE(URLParser::allValuesEqual(url.value(), oldURL));
 }
@@ -95,26 +95,26 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
 {
     URLParser parser;
     auto url = parser.parse(urlString);
-    EXPECT_STREQ(s(partsNew.protocol), s(url->protocol()));
-    EXPECT_STREQ(s(partsNew.user), s(url->user()));
-    EXPECT_STREQ(s(partsNew.password), s(url->pass()));
-    EXPECT_STREQ(s(partsNew.host), s(url->host()));
+    EXPECT_TRUE(eq(partsNew.protocol, url->protocol()));
+    EXPECT_TRUE(eq(partsNew.user, url->user()));
+    EXPECT_TRUE(eq(partsNew.password, url->pass()));
+    EXPECT_TRUE(eq(partsNew.host, url->host()));
     EXPECT_EQ(partsNew.port, url->port());
-    EXPECT_STREQ(s(partsNew.path), s(url->path()));
-    EXPECT_STREQ(s(partsNew.query), s(url->query()));
-    EXPECT_STREQ(s(partsNew.fragment), s(url->fragmentIdentifier()));
-    EXPECT_STREQ(s(partsNew.string), s(url->string()));
+    EXPECT_TRUE(eq(partsNew.path, url->path()));
+    EXPECT_TRUE(eq(partsNew.query, url->query()));
+    EXPECT_TRUE(eq(partsNew.fragment, url->fragmentIdentifier()));
+    EXPECT_TRUE(eq(partsNew.string, url->string()));
     
     auto oldURL = URL(URL(), urlString);
-    EXPECT_STREQ(s(partsOld.protocol), s(oldURL.protocol()));
-    EXPECT_STREQ(s(partsOld.user), s(oldURL.user()));
-    EXPECT_STREQ(s(partsOld.password), s(oldURL.pass()));
-    EXPECT_STREQ(s(partsOld.host), s(oldURL.host()));
+    EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol()));
+    EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
+    EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
+    EXPECT_TRUE(eq(partsOld.host, oldURL.host()));
     EXPECT_EQ(partsOld.port, oldURL.port());
-    EXPECT_STREQ(s(partsOld.path), s(oldURL.path()));
-    EXPECT_STREQ(s(partsOld.query), s(oldURL.query()));
-    EXPECT_STREQ(s(partsOld.fragment), s(oldURL.fragmentIdentifier()));
-    EXPECT_STREQ(s(partsOld.string), s(oldURL.string()));
+    EXPECT_TRUE(eq(partsOld.path, oldURL.path()));
+    EXPECT_TRUE(eq(partsOld.query, oldURL.query()));
+    EXPECT_TRUE(eq(partsOld.fragment, oldURL.fragmentIdentifier()));
+    EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
     
     EXPECT_FALSE(URLParser::allValuesEqual(url.value(), oldURL));
 }
