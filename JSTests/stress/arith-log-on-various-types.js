@@ -37,6 +37,26 @@ function isIdentical(result, expected)
 }
 
 
+// Test Math.log() without arguments.
+function opaqueLogNoArgument() {
+    return Math.log();
+}
+noInline(opaqueLogNoArgument);
+noOSRExitFuzzing(opaqueLogNoArgument);
+
+function testNoArgument() {
+    for (let i = 0; i < 1e4; ++i) {
+        let output = opaqueLogNoArgument();
+        if (output === output) {
+            throw "Failed opaqueLogNoArgument";
+        }
+    }
+    if (numberOfDFGCompiles(opaqueLogNoArgument) > 1)
+        throw "The call without arguments should never exit.";
+}
+testNoArgument();
+
+
 // Test Math.log() with a very polymorphic input. All test cases are seen at each iteration.
 function opaqueAllTypesLog(argument) {
     return Math.log(argument);
@@ -79,6 +99,29 @@ function testSingleTypeCall() {
     }
 }
 testSingleTypeCall();
+
+
+// Test Math.log() on constants
+function testConstant() {
+    for (let testCaseInput of validInputTestCases) {
+        eval(`
+            function opaqueLogOnConstant() {
+                return Math.log(${testCaseInput[0]});
+            }
+            noInline(opaqueLogOnConstant);
+            noOSRExitFuzzing(opaqueLogOnConstant);
+
+            for (let i = 0; i < 1e4; ++i) {
+                if (!isIdentical(opaqueLogOnConstant(), ${testCaseInput[1]})) {
+                    throw "Failed testConstant()";
+                }
+            }
+            if (numberOfDFGCompiles(opaqueLogOnConstant) > 1)
+                throw "We should have compiled a single log for the expected type.";
+        `);
+    }
+}
+testConstant();
 
 
 // Verify we call valueOf() exactly once per call.

@@ -34,6 +34,26 @@ function isIdentical(result, expected)
 }
 
 
+// Test Math.cos() without arguments.
+function opaqueCosNoArgument() {
+    return Math.cos();
+}
+noInline(opaqueCosNoArgument);
+noOSRExitFuzzing(opaqueCosNoArgument);
+
+function testNoArgument() {
+    for (let i = 0; i < 1e4; ++i) {
+        let output = opaqueCosNoArgument();
+        if (output === output) {
+            throw "Failed opaqueCosNoArgument";
+        }
+    }
+    if (numberOfDFGCompiles(opaqueCosNoArgument) > 1)
+        throw "The call without arguments should never exit.";
+}
+testNoArgument();
+
+
 // Test Math.cos() with a very polymorphic input. All test cases are seen at each iteration.
 function opaqueAllTypesCos(argument) {
     return Math.cos(argument);
@@ -76,6 +96,29 @@ function testSingleTypeCall() {
     }
 }
 testSingleTypeCall();
+
+
+// Test Math.cos() on constants
+function testConstant() {
+    for (let testCaseInput of validInputTestCases) {
+        eval(`
+            function opaqueCosOnConstant() {
+                return Math.cos(${testCaseInput[0]});
+            }
+            noInline(opaqueCosOnConstant);
+            noOSRExitFuzzing(opaqueCosOnConstant);
+
+            for (let i = 0; i < 1e4; ++i) {
+                if (!isIdentical(opaqueCosOnConstant(), ${testCaseInput[1]})) {
+                    throw "Failed testConstant()";
+                }
+            }
+            if (numberOfDFGCompiles(opaqueCosOnConstant) > 1)
+                throw "We should have compiled a single cos for the expected type.";
+        `);
+    }
+}
+testConstant();
 
 
 // Verify we call valueOf() exactly once per call.

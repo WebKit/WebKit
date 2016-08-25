@@ -261,6 +261,10 @@ public:
     // toNumber conversion is expected to be side effect free if an exception has
     // been set in the ExecState already.
     double toNumber(ExecState*) const;
+
+    // toNumber conversion if it can be done without side effects.
+    Optional<double> toNumberFromPrimitive() const;
+
     JSString* toString(ExecState*) const; // On exception, this returns the empty string.
     JSString* toStringOrNull(ExecState*) const; // On exception, this returns null, to make exception checks faster.
     Identifier toPropertyKey(ExecState*) const;

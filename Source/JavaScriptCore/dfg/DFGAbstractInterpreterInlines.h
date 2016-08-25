@@ -433,23 +433,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case DoubleRep: {
         JSValue child = forNode(node->child1()).value();
-        if (child) {
-            if (child.isNumber()) {
-                setConstant(node, jsDoubleNumber(child.asNumber()));
-                break;
-            }
-            if (child.isUndefined()) {
-                setConstant(node, jsDoubleNumber(PNaN));
-                break;
-            }
-            if (child.isNull() || child.isFalse()) {
-                setConstant(node, jsDoubleNumber(0));
-                break;
-            }
-            if (child.isTrue()) {
-                setConstant(node, jsDoubleNumber(1));
-                break;
-            }
+        if (Optional<double> number = child.toNumberFromPrimitive()) {
+            setConstant(node, jsDoubleNumber(*number));
+            break;
         }
 
         SpeculatedType type = forNode(node->child1()).m_type;
@@ -955,70 +941,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
             
-    case ArithSqrt: {
-        JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, jsDoubleNumber(sqrt(child.asNumber())));
-            break;
-        }
-        SpeculatedType sqrtType = SpecFullNumber;
-        if (node->child1().useKind() == DoubleRepUse)
-            sqrtType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
-        forNode(node).setType(sqrtType);
+    case ArithSqrt:
+        executeDoubleUnaryOpEffects(node, sqrt);
         break;
-    }
-        
-    case ArithFRound: {
-        JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, jsDoubleNumber(static_cast<float>(child.asNumber())));
-            break;
-        }
-        SpeculatedType froundType = SpecFullNumber;
-        if (node->child1().useKind() == DoubleRepUse)
-            froundType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
-        forNode(node).setType(froundType);
-        break;
-    }
-        
-    case ArithSin: {
-        JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, jsDoubleNumber(sin(child.asNumber())));
-            break;
-        }
-        SpeculatedType sinType = SpecFullNumber;
-        if (node->child1().useKind() == DoubleRepUse)
-            sinType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
-        forNode(node).setType(sinType);
-        break;
-    }
-    
-    case ArithCos: {
-        JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, jsDoubleNumber(cos(child.asNumber())));
-            break;
-        }
-        SpeculatedType cosType = SpecFullNumber;
-        if (node->child1().useKind() == DoubleRepUse)
-            cosType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
-        forNode(node).setType(cosType);
-        break;
-    }
 
-    case ArithLog: {
-        JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, jsDoubleNumber(log(child.asNumber())));
-            break;
-        }
-        SpeculatedType logType = SpecFullNumber;
-        if (node->child1().useKind() == DoubleRepUse)
-            logType = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
-        forNode(node).setType(logType);
+    case ArithFRound:
+        executeDoubleUnaryOpEffects(node, [](double value) -> double { return static_cast<float>(value); });
         break;
-    }
+        
+    case ArithSin:
+        executeDoubleUnaryOpEffects(node, sin);
+        break;
+    
+    case ArithCos:
+        executeDoubleUnaryOpEffects(node, cos);
+        break;
+
+    case ArithLog:
+        executeDoubleUnaryOpEffects(node, log);
+        break;
             
     case LogicalNot: {
         switch (booleanResult(node, forNode(node->child1()))) {
@@ -3100,6 +3041,20 @@ FiltrationResult AbstractInterpreter<AbstractStateType>::filterByValue(
         return FiltrationOK;
     m_state.setIsValid(false);
     return Contradiction;
+}
+
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, double(*equivalentFunction)(double))
+{
+    JSValue child = forNode(node->child1()).value();
+    if (Optional<double> number = child.toNumberFromPrimitive()) {
+        setConstant(node, jsDoubleNumber(equivalentFunction(*number)));
+        return;
+    }
+    SpeculatedType type = SpecFullNumber;
+    if (node->child1().useKind() == DoubleRepUse)
+        type = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
+    forNode(node).setType(type);
 }
 
 } } // namespace JSC::DFG

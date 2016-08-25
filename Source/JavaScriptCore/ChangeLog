@@ -1,3 +1,25 @@
+2016-08-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Clean up the abstract interpreter for cos/sin/sqrt/fround/log
+        https://bugs.webkit.org/show_bug.cgi?id=161181
+
+        Reviewed by Geoffrey Garen.
+
+        All the nodes are doing the exact same thing with a single
+        difference: how to process constants. I made that into a separate
+        function called from each node.
+
+        I also generalized the constant-to-number code of DoubleRep
+        to make it available for all those nodes.
+
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toNumberFromPrimitive):
+        * runtime/JSCJSValue.h:
+
 2016-08-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Implement ES6 Generators in DFG / FTL

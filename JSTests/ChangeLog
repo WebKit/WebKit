@@ -1,3 +1,19 @@
+2016-08-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Clean up the abstract interpreter for cos/sin/sqrt/fround/log
+        https://bugs.webkit.org/show_bug.cgi?id=161181
+
+        Reviewed by Geoffrey Garen.
+
+        Extend the tests to constants.
+        Add no-argument cases where needed.
+
+        * stress/arith-cos-on-various-types.js:
+        * stress/arith-fround-on-various-types.js:
+        * stress/arith-log-on-various-types.js:
+        * stress/arith-sin-on-various-types.js:
+        * stress/arith-sqrt-on-various-types.js:
+
 2016-08-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Implement ES6 Generators in DFG / FTL

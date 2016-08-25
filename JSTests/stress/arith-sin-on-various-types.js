@@ -34,6 +34,26 @@ function isIdentical(result, expected)
 }
 
 
+// Test Math.sin() without arguments.
+function opaqueSinNoArgument() {
+    return Math.sin();
+}
+noInline(opaqueSinNoArgument);
+noOSRExitFuzzing(opaqueSinNoArgument);
+
+function testNoArgument() {
+    for (let i = 0; i < 1e4; ++i) {
+        let output = opaqueSinNoArgument();
+        if (output === output) {
+            throw "Failed opaqueSinNoArgument";
+        }
+    }
+    if (numberOfDFGCompiles(opaqueSinNoArgument) > 1)
+        throw "The call without arguments should never exit.";
+}
+testNoArgument();
+
+
 // Test Math.sin() with a very polymorphic input. All test cases are seen at each iteration.
 function opaqueAllTypesSin(argument) {
     return Math.sin(argument);
@@ -76,6 +96,29 @@ function testSingleTypeCall() {
     }
 }
 testSingleTypeCall();
+
+
+// Test Math.sin() on constants
+function testConstant() {
+    for (let testCaseInput of validInputTestCases) {
+        eval(`
+            function opaqueSinOnConstant() {
+                return Math.sin(${testCaseInput[0]});
+            }
+            noInline(opaqueSinOnConstant);
+            noOSRExitFuzzing(opaqueSinOnConstant);
+
+            for (let i = 0; i < 1e4; ++i) {
+                if (!isIdentical(opaqueSinOnConstant(), ${testCaseInput[1]})) {
+                    throw "Failed testConstant()";
+                }
+            }
+            if (numberOfDFGCompiles(opaqueSinOnConstant) > 1)
+                throw "We should have compiled a single sin for the expected type.";
+        `);
+    }
+}
+testConstant();
 
 
 // Verify we call valueOf() exactly once per call.

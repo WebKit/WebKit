@@ -32,6 +32,26 @@ function isIdentical(result, expected)
 }
 
 
+// Test Math.sqrt() without arguments.
+function opaqueSqrtNoArgument() {
+    return Math.sqrt();
+}
+noInline(opaqueSqrtNoArgument);
+noOSRExitFuzzing(opaqueSqrtNoArgument);
+
+function testNoArgument() {
+    for (let i = 0; i < 1e4; ++i) {
+        let output = opaqueSqrtNoArgument();
+        if (output === output) {
+            throw "Failed opaqueSqrtNoArgument";
+        }
+    }
+    if (numberOfDFGCompiles(opaqueSqrtNoArgument) > 1)
+        throw "The call without arguments should never exit.";
+}
+testNoArgument();
+
+
 // Test Math.sqrt() with a very polymorphic input. All test cases are seen at each iteration.
 function opaqueAllTypesSqrt(argument) {
     return Math.sqrt(argument);
@@ -74,6 +94,29 @@ function testSingleTypeCall() {
     }
 }
 testSingleTypeCall();
+
+
+// Test Math.sqrt() on constants
+function testConstant() {
+    for (let testCaseInput of validInputTestCases) {
+        eval(`
+            function opaqueSqrtOnConstant() {
+                return Math.sqrt(${testCaseInput[0]});
+            }
+            noInline(opaqueSqrtOnConstant);
+            noOSRExitFuzzing(opaqueSqrtOnConstant);
+
+            for (let i = 0; i < 1e4; ++i) {
+                if (!isIdentical(opaqueSqrtOnConstant(), ${testCaseInput[1]})) {
+                    throw "Failed testConstant()";
+                }
+            }
+            if (numberOfDFGCompiles(opaqueSqrtOnConstant) > 1)
+                throw "We should have compiled a single sqrt for the expected type.";
+        `);
+    }
+}
+testConstant();
 
 
 // Verify we call valueOf() exactly once per call.

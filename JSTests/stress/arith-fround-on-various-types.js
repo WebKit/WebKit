@@ -100,6 +100,29 @@ function testSingleTypeCall() {
 testSingleTypeCall();
 
 
+// Test Math.fround() on constants
+function testConstant() {
+    for (let testCaseInput of validInputTestCases) {
+        eval(`
+            function opaqueFroundOnConstant() {
+                return Math.fround(${testCaseInput[0]});
+            }
+            noInline(opaqueFroundOnConstant);
+            noOSRExitFuzzing(opaqueFroundOnConstant);
+
+            for (let i = 0; i < 1e4; ++i) {
+                if (!isIdentical(opaqueFroundOnConstant(), ${testCaseInput[1]})) {
+                    throw "Failed testConstant()";
+                }
+            }
+            if (numberOfDFGCompiles(opaqueFroundOnConstant) > 1)
+                throw "We should have compiled a single fround for the expected type.";
+        `);
+    }
+}
+testConstant();
+
+
 // Verify we call valueOf() exactly once per call.
 function opaqueFroundForSideEffects(argument) {
     return Math.fround(argument);
