@@ -145,12 +145,25 @@ void ThreadedCoordinatedLayerTreeHost::setNativeSurfaceHandleForCompositing(uint
 
 void ThreadedCoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector, float scale)
 {
-    CoordinatedLayerTreeHost::setVisibleContentsRect(rect, trajectoryVector);
-    if (m_lastScrollPosition != roundedIntPoint(rect.location())) {
-        m_lastScrollPosition = roundedIntPoint(rect.location());
+    FloatRect visibleRect(rect);
 
-        if (!m_webPage.corePage()->mainFrame().view()->useFixedLayout())
-            m_webPage.corePage()->mainFrame().view()->notifyScrollPositionChanged(m_lastScrollPosition);
+    // When using non overlay scrollbars, the contents size doesn't include the scrollbars, but we need to include them
+    // in the visible area used by the compositor to ensure that the scrollbar layers are also updated.
+    // See https://bugs.webkit.org/show_bug.cgi?id=160450.
+    FrameView* view = m_webPage.corePage()->mainFrame().view();
+    Scrollbar* scrollbar = view->verticalScrollbar();
+    if (scrollbar && !scrollbar->isOverlayScrollbar())
+        visibleRect.expand(scrollbar->width(), 0);
+    scrollbar = view->horizontalScrollbar();
+    if (scrollbar && !scrollbar->isOverlayScrollbar())
+        visibleRect.expand(0, scrollbar->height());
+
+    CoordinatedLayerTreeHost::setVisibleContentsRect(visibleRect, trajectoryVector);
+    if (m_lastScrollPosition != roundedIntPoint(visibleRect.location())) {
+        m_lastScrollPosition = roundedIntPoint(visibleRect.location());
+
+        if (!view->useFixedLayout())
+            view->notifyScrollPositionChanged(m_lastScrollPosition);
     }
 
     if (m_lastScaleFactor != scale) {
