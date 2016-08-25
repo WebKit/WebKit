@@ -81,6 +81,7 @@
 #include "PageTransitionEvent.h"
 #include "Performance.h"
 #include "ResourceLoadInfo.h"
+#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
@@ -1403,6 +1404,19 @@ RefPtr<StyleMedia> DOMWindow::styleMedia() const
 RefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
 {
     return CSSComputedStyleDeclaration::create(element, false, pseudoElt);
+}
+
+// FIXME: Drop this overload once <rdar://problem/28016778> has been fixed.
+RefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Document&, const String&, ExceptionCode& ec)
+{
+#if PLATFORM(MAC)
+    if (MacApplication::isAppStore()) {
+        printErrorMessage(ASCIILiteral("Passing a non-Element as first parameter to window.getComputedStyle() is invalid and always returns null"));
+        return nullptr;
+    }
+#endif
+    ec = TypeError;
+    return nullptr;
 }
 
 RefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const

@@ -229,6 +229,7 @@ namespace WebCore {
         // DOM Level 2 Style Interface
 
         WEBCORE_EXPORT RefPtr<CSSStyleDeclaration> getComputedStyle(Element&, const String& pseudoElt) const;
+        RefPtr<CSSStyleDeclaration> getComputedStyle(Document&, const String& pseudoElt, ExceptionCode&);
 
         // WebKit extensions
 

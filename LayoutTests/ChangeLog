@@ -1,3 +1,16 @@
+2016-08-25  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r203623): Breaks App Store application
+        https://bugs.webkit.org/show_bug.cgi?id=161206
+        <rdar://problem/28015060>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing test as the exception message is slightly different.
+
+        * fast/dom/Window/getComputedStyle-missing-parameter-expected.txt:
+        * fast/dom/Window/getComputedStyle-missing-parameter.html:
+
 2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rebase iOS simulator WK1 fast/css tests

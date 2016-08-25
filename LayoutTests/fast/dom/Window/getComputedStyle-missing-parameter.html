@@ -5,8 +5,8 @@
 <script>
 description("Test that the first parameter to Window.getComputedStyle() is mandatory and not nullable.");
 
-shouldThrow("window.getComputedStyle()", "'TypeError: Not enough arguments'");
-shouldThrow("window.getComputedStyle(null)", "'TypeError: Argument 1 (\\'element\\') to Window.getComputedStyle must be an instance of Element'");
+shouldThrowErrorName("window.getComputedStyle()", "TypeError");
+shouldThrowErrorName("window.getComputedStyle(null)", "TypeError");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

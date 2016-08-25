@@ -154,6 +154,12 @@ bool MacApplication::isSolidStateNetworksDownloader()
     return isSolidStateNetworksDownloader;
 }
 
+bool MacApplication::isAppStore()
+{
+    static bool isAppStore = applicationBundleIsEqualTo("com.apple.appstore");
+    return isAppStore;
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)
