@@ -1,6 +1,6 @@
 layer at (0,0) size 892x600
   RenderView at (0,0) size 800x600
-layer at (-92,0) size 892x600 backgroundClip at (0,0) size 892x600 clip at (0,0) size 892x600 outlineClip at (0,0) size 892x600
+layer at (-92,0) size 892x600 backgroundClip at (0,0) size 892x600 clip at (0,0) size 892x600
   RenderBlock {HTML} at (0,0) size 892x600
     RenderBody {BODY} at (8,8) size 876x584
 layer at (362,8) size 430x584
@@ -85,10 +85,10 @@ layer at (287,13) size 500x279
       RenderText {#text} at (60,0) size 19x267
         text run at (60,0) width 267: "This text should be in the second column."
       RenderBR {BR} at (75,266) size 0x1
-layer at (-84,8) size 430x584 backgroundClip at (0,0) size 892x600 clip at (0,0) size 892x600 outlineClip at (0,0) size 892x600
+layer at (-84,8) size 430x584 backgroundClip at (0,0) size 892x600 clip at (0,0) size 892x600
   RenderBlock {DIV} at (446,0) size 430x584 [border: (5px solid #0000FF)]
     RenderMultiColumnSet at (5,5) size 420x574
-layer at (-499,13) size 840x279 backgroundClip at (0,0) size 892x600 clip at (0,0) size 892x600 outlineClip at (0,0) size 892x600
+layer at (-499,13) size 840x279 backgroundClip at (0,0) size 892x600 clip at (0,0) size 892x600
   RenderMultiColumnFlowThread at (5,5) size 840x279
     RenderBlock (anonymous) at (0,0) size 80x279
       RenderText {#text} at (0,0) size 19x248

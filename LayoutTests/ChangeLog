@@ -1,3 +1,21 @@
+2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 fast/multicol tests
+
+        * platform/ios-simulator-wk1/fast/multicol/overflow-unsplittable-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/multicol/pagination/BottomToTop-bt-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/pagination/BottomToTop-lr-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/pagination/BottomToTop-rl-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/pagination/BottomToTop-tb-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/pagination/RightToLeft-bt-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/pagination/RightToLeft-lr-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/pagination/RightToLeft-rl-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/pagination/RightToLeft-tb-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/vertical-rl/column-rules-expected.txt:
+        * platform/ios-simulator-wk1/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+
 2016-08-25  Simon Fraser  <simon.fraser@apple.com>
 
         TestExpectations cleanup
