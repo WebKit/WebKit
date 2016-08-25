@@ -30,7 +30,6 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "MessageReceiver.h"
-#include "ProcessType.h"
 #include <atomic>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
@@ -85,8 +84,6 @@ public:
     public:
         virtual void didClose(Connection&) = 0;
         virtual void didReceiveInvalidMessage(Connection&, StringReference messageReceiverName, StringReference messageName) = 0;
-        virtual IPC::ProcessType localProcessType() = 0;
-        virtual IPC::ProcessType remoteProcessType() = 0;
 
     protected:
         virtual ~Client() { }

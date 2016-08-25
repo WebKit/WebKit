@@ -62,8 +62,6 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    IPC::ProcessType localProcessType() override { return IPC::ProcessType::Web; }
-    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Database; }
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override { return m_connection.ptr(); }

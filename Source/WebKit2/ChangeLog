@@ -1,3 +1,30 @@
+2016-08-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove some more MessageRecorder gunk
+        https://bugs.webkit.org/show_bug.cgi?id=161209
+
+        Reviewed by Tim Horton.
+
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkProcess.h:
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/ProcessType.h: Removed.
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.h:
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebProcess.h:
+
 2016-08-25  Johan K. Jensen  <johan_jensen@apple.com>
 
         Don't store networkLoadTiming in the disk cache

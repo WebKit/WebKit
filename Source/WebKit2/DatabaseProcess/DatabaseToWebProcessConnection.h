@@ -52,8 +52,6 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    IPC::ProcessType localProcessType() override { return IPC::ProcessType::Database; }
-    IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Web; }
     void didReceiveDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncDatabaseToWebProcessConnectionMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
