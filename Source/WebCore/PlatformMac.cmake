@@ -603,6 +603,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     bridge/objc
     bridge/jsc
 
+    css/parser
+
     editing/cocoa
     editing/mac
 
