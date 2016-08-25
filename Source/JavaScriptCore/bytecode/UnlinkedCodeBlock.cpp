@@ -28,6 +28,7 @@
 #include "UnlinkedCodeBlock.h"
 
 #include "BytecodeGenerator.h"
+#include "BytecodeRewriter.h"
 #include "ClassInfo.h"
 #include "CodeCache.h"
 #include "Executable.h"
@@ -36,6 +37,7 @@
 #include "JSString.h"
 #include "JSCInlines.h"
 #include "Parser.h"
+#include "PreciseJumpTargetsInlines.h"
 #include "SourceProvider.h"
 #include "Structure.h"
 #include "SymbolTable.h"
@@ -365,6 +367,68 @@ const UnlinkedInstructionStream& UnlinkedCodeBlock::instructions() const
 {
     ASSERT(m_unlinkedInstructions.get());
     return *m_unlinkedInstructions;
+}
+
+UnlinkedHandlerInfo* UnlinkedCodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset, RequiredHandler requiredHandler)
+{
+    return handlerForIndex(bytecodeOffset, requiredHandler);
+}
+
+UnlinkedHandlerInfo* UnlinkedCodeBlock::handlerForIndex(unsigned index, RequiredHandler requiredHandler)
+{
+    if (!m_rareData)
+        return nullptr;
+    return UnlinkedHandlerInfo::handlerForIndex(m_rareData->m_exceptionHandlers, index, requiredHandler);
+}
+
+void UnlinkedCodeBlock::applyModification(BytecodeRewriter& rewriter)
+{
+    // Before applying the changes, we adjust the jumps based on the original bytecode offset, the offset to the jump target, and
+    // the insertion information.
+
+    BytecodeGraph<UnlinkedCodeBlock>& graph = rewriter.graph();
+    UnlinkedInstruction* instructionsBegin = graph.instructions().begin();
+
+    for (int bytecodeOffset = 0, instructionCount = graph.instructions().size(); bytecodeOffset < instructionCount;) {
+        UnlinkedInstruction* current = instructionsBegin + bytecodeOffset;
+        OpcodeID opcodeID = current[0].u.opcode;
+        extractStoredJumpTargetsForBytecodeOffset(this, vm()->interpreter, instructionsBegin, bytecodeOffset, [&](int32_t& relativeOffset) {
+            relativeOffset = rewriter.adjustJumpTarget(bytecodeOffset, bytecodeOffset + relativeOffset);
+        });
+        bytecodeOffset += opcodeLength(opcodeID);
+    }
+
+    // Then, exception handlers should be adjusted.
+    if (m_rareData) {
+        for (UnlinkedHandlerInfo& handler : m_rareData->m_exceptionHandlers) {
+            handler.target = rewriter.adjustAbsoluteOffset(handler.target);
+            handler.start = rewriter.adjustAbsoluteOffset(handler.start);
+            handler.end = rewriter.adjustAbsoluteOffset(handler.end);
+        }
+
+        for (size_t i = 0; i < m_rareData->m_opProfileControlFlowBytecodeOffsets.size(); ++i)
+            m_rareData->m_opProfileControlFlowBytecodeOffsets[i] = rewriter.adjustAbsoluteOffset(m_rareData->m_opProfileControlFlowBytecodeOffsets[i]);
+
+        if (!m_rareData->m_typeProfilerInfoMap.isEmpty()) {
+            HashMap<unsigned, RareData::TypeProfilerExpressionRange> adjustedTypeProfilerInfoMap;
+            for (auto& entry : m_rareData->m_typeProfilerInfoMap)
+                adjustedTypeProfilerInfoMap.set(rewriter.adjustAbsoluteOffset(entry.key), entry.value);
+            m_rareData->m_typeProfilerInfoMap.swap(adjustedTypeProfilerInfoMap);
+        }
+    }
+
+    for (size_t i = 0; i < m_propertyAccessInstructions.size(); ++i)
+        m_propertyAccessInstructions[i] = rewriter.adjustAbsoluteOffset(m_propertyAccessInstructions[i]);
+
+    for (size_t i = 0; i < m_expressionInfo.size(); ++i)
+        m_expressionInfo[i].instructionOffset = rewriter.adjustAbsoluteOffset(m_expressionInfo[i].instructionOffset);
+
+    // Then, modify the unlinked instructions.
+    rewriter.applyModification();
+
+    // And recompute the jump target based on the modified unlinked instructions.
+    m_jumpTargets.clear();
+    recomputePreciseJumpTargets(this, graph.instructions().begin(), graph.instructions().size(), m_jumpTargets);
 }
 
 }

@@ -33,6 +33,7 @@
 #include "ArithProfile.h"
 #include "BasicBlockLocation.h"
 #include "BytecodeGenerator.h"
+#include "BytecodeLivenessAnalysis.h"
 #include "BytecodeUseDef.h"
 #include "CallLinkStatus.h"
 #include "DFGCapabilities.h"
@@ -694,18 +695,6 @@ void CodeBlock::dumpBytecode(PrintStream& out)
             out.printf("      }\n");
             ++i;
         } while (i < m_rareData->m_stringSwitchJumpTables.size());
-    }
-
-    if (m_rareData && !m_rareData->m_liveCalleeLocalsAtYield.isEmpty()) {
-        out.printf("\nLive Callee Locals:\n");
-        unsigned i = 0;
-        do {
-            const FastBitVector& liveness = m_rareData->m_liveCalleeLocalsAtYield[i];
-            out.printf("  live%1u = ", i);
-            liveness.dump(out);
-            out.printf("\n");
-            ++i;
-        } while (i < m_rareData->m_liveCalleeLocalsAtYield.size());
     }
 
     out.printf("\n");
@@ -1672,31 +1661,6 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %d", debugHookName(debugHookID), hasBreakpointFlag);
             break;
         }
-        case op_save: {
-            int generator = (++it)->u.operand;
-            unsigned liveCalleeLocalsIndex = (++it)->u.unsignedValue;
-            int offset = (++it)->u.operand;
-            FastBitVector liveness;
-            if (liveCalleeLocalsIndex < m_rareData->m_liveCalleeLocalsAtYield.size())
-                liveness = m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex];
-            printLocationAndOp(out, exec, location, it, "save");
-            out.printf("%s, ", registerName(generator).data());
-            liveness.dump(out);
-            out.printf("(@live%1u), %d(->%d)", liveCalleeLocalsIndex, offset, location + offset);
-            break;
-        }
-        case op_resume: {
-            int generator = (++it)->u.operand;
-            unsigned liveCalleeLocalsIndex = (++it)->u.unsignedValue;
-            FastBitVector liveness;
-            if (liveCalleeLocalsIndex < m_rareData->m_liveCalleeLocalsAtYield.size())
-                liveness = m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex];
-            printLocationAndOp(out, exec, location, it, "resume");
-            out.printf("%s, ", registerName(generator).data());
-            liveness.dump(out);
-            out.printf("(@live%1u)", liveCalleeLocalsIndex);
-            break;
-        }
         case op_assert: {
             int condition = (++it)->u.operand;
             int line = (++it)->u.operand;
@@ -1908,7 +1872,6 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
         m_rareData->m_constantBuffers = other.m_rareData->m_constantBuffers;
         m_rareData->m_switchJumpTables = other.m_rareData->m_switchJumpTables;
         m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
-        m_rareData->m_liveCalleeLocalsAtYield = other.m_rareData->m_liveCalleeLocalsAtYield;
     }
     
     heap()->m_codeBlocks.add(this);
@@ -2030,7 +1993,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 UnlinkedStringJumpTable::StringOffsetTable::iterator end = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.end();
                 for (; ptr != end; ++ptr) {
                     OffsetLocation offset;
-                    offset.branchOffset = ptr->value;
+                    offset.branchOffset = ptr->value.branchOffset;
                     m_rareData->m_stringSwitchJumpTables[i].offsetTable.add(ptr->key, offset);
                 }
             }
@@ -2070,10 +2033,16 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // Bookkeep the strongly referenced module environments.
     HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
 
-    // Bookkeep the merge point bytecode offsets.
-    Vector<size_t> mergePointBytecodeOffsets;
-
     RefCountedArray<Instruction> instructions(instructionCount);
+
+    unsigned valueProfileCount = 0;
+    auto linkValueProfile = [&](unsigned bytecodeOffset, unsigned opLength) {
+        unsigned valueProfileIndex = valueProfileCount++;
+        ValueProfile* profile = &m_valueProfiles[valueProfileIndex];
+        ASSERT(profile->m_bytecodeOffset == -1);
+        profile->m_bytecodeOffset = bytecodeOffset;
+        instructions[bytecodeOffset + opLength - 1] = profile;
+    };
 
     for (unsigned i = 0; !instructionReader.atEnd(); ) {
         const UnlinkedInstruction* pc = instructionReader.next();
@@ -2110,10 +2079,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         case op_try_get_by_id:
         case op_get_from_arguments:
         case op_to_number: {
-            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
-            ASSERT(profile->m_bytecodeOffset == -1);
-            profile->m_bytecodeOffset = i;
-            instructions[i + opLength - 1] = profile;
+            linkValueProfile(i, opLength);
             break;
         }
         case op_put_by_val: {
@@ -2150,10 +2116,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         case op_call:
         case op_tail_call:
         case op_call_eval: {
-            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
-            ASSERT(profile->m_bytecodeOffset == -1);
-            profile->m_bytecodeOffset = i;
-            instructions[i + opLength - 1] = profile;
+            linkValueProfile(i, opLength);
             int arrayProfileIndex = pc[opLength - 2].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
@@ -2162,10 +2125,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
         case op_construct: {
             instructions[i + 5] = &m_llintCallLinkInfos[pc[5].u.operand];
-            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
-            ASSERT(profile->m_bytecodeOffset == -1);
-            profile->m_bytecodeOffset = i;
-            instructions[i + opLength - 1] = profile;
+            linkValueProfile(i, opLength);
             break;
         }
         case op_get_array_length:
@@ -2196,10 +2156,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
 
         case op_get_from_scope: {
-            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
-            ASSERT(profile->m_bytecodeOffset == -1);
-            profile->m_bytecodeOffset = i;
-            instructions[i + opLength - 1] = profile;
+            linkValueProfile(i, opLength);
 
             // get_from_scope dst, scope, id, GetPutInfo, Structure, Operand
 
@@ -2356,15 +2313,6 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             break;
         }
 
-        case op_save: {
-            unsigned liveCalleeLocalsIndex = pc[2].u.index;
-            int offset = pc[3].u.operand;
-            if (liveCalleeLocalsIndex >= mergePointBytecodeOffsets.size())
-                mergePointBytecodeOffsets.resize(liveCalleeLocalsIndex + 1);
-            mergePointBytecodeOffsets[liveCalleeLocalsIndex] = i + offset;
-            break;
-        }
-
         default:
             break;
         }
@@ -2375,20 +2323,6 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         insertBasicBlockBoundariesForControlFlowProfiler(instructions);
 
     m_instructions = WTFMove(instructions);
-
-    // Perform bytecode liveness analysis to determine which locals are live and should be resumed when executing op_resume.
-    if (unlinkedCodeBlock->parseMode() == SourceParseMode::GeneratorBodyMode) {
-        if (size_t count = mergePointBytecodeOffsets.size()) {
-            createRareDataIfNecessary();
-            BytecodeLivenessAnalysis liveness(this);
-            m_rareData->m_liveCalleeLocalsAtYield.grow(count);
-            size_t liveCalleeLocalsIndex = 0;
-            for (size_t bytecodeOffset : mergePointBytecodeOffsets) {
-                m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex] = liveness.getLivenessInfoAtBytecodeOffset(bytecodeOffset);
-                ++liveCalleeLocalsIndex;
-            }
-        }
-    }
 
     // Set optimization thresholds only after m_instructions is initialized, since these
     // rely on the instruction count (and are in theory permitted to also inspect the
@@ -3246,21 +3180,7 @@ HandlerInfo* CodeBlock::handlerForIndex(unsigned index, RequiredHandler required
 {
     if (!m_rareData)
         return 0;
-    
-    Vector<HandlerInfo>& exceptionHandlers = m_rareData->m_exceptionHandlers;
-    for (size_t i = 0; i < exceptionHandlers.size(); ++i) {
-        HandlerInfo& handler = exceptionHandlers[i];
-        if ((requiredHandler == RequiredHandler::CatchHandler) && !handler.isCatchHandler())
-            continue;
-
-        // Handlers are ordered innermost first, so the first handler we encounter
-        // that contains the source address is the correct handler to use.
-        // This index used is either the BytecodeOffset or a CallSiteIndex.
-        if (handler.start <= index && handler.end > index)
-            return &handler;
-    }
-
-    return 0;
+    return HandlerInfo::handlerForIndex(m_rareData->m_exceptionHandlers, index, requiredHandler);
 }
 
 CallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite)
@@ -3355,7 +3275,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         if (m_rareData) {
             m_rareData->m_switchJumpTables.shrinkToFit();
             m_rareData->m_stringSwitchJumpTables.shrinkToFit();
-            m_rareData->m_liveCalleeLocalsAtYield.shrinkToFit();
         }
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 }
@@ -4337,14 +4256,9 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
 
 ValueProfile* CodeBlock::valueProfileForBytecodeOffset(int bytecodeOffset)
 {
-    ValueProfile* result = binarySearch<ValueProfile, int>(
-        m_valueProfiles, m_valueProfiles.size(), bytecodeOffset,
-        getValueProfileBytecodeOffset<ValueProfile>);
-    ASSERT(result->m_bytecodeOffset != -1);
-    ASSERT(instructions()[bytecodeOffset + opcodeLength(
-        m_vm->interpreter->getOpcodeID(
-            instructions()[bytecodeOffset].u.opcode)) - 1].u.profile == result);
-    return result;
+    OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(instructions()[bytecodeOffset].u.opcode);
+    unsigned length = opcodeLength(opcodeID);
+    return instructions()[bytecodeOffset + length - 1].u.profile;
 }
 
 void CodeBlock::validate()
@@ -4672,5 +4586,17 @@ void CodeBlock::dumpMathICStats()
     dataLog("-----------------------\n");
 #endif
 }
+
+BytecodeLivenessAnalysis& CodeBlock::livenessAnalysisSlow()
+{
+    std::unique_ptr<BytecodeLivenessAnalysis> analysis = std::make_unique<BytecodeLivenessAnalysis>(this);
+    {
+        ConcurrentJITLocker locker(m_lock);
+        if (!m_livenessAnalysis)
+            m_livenessAnalysis = WTFMove(analysis);
+        return *m_livenessAnalysis;
+    }
+}
+
 
 } // namespace JSC

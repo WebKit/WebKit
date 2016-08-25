@@ -1426,7 +1426,7 @@ private:
     ALWAYS_INLINE bool isArrowFunctionParameters();
     
     template <class TreeBuilder, class FunctionInfoType> NEVER_INLINE typename TreeBuilder::FormalParameterList parseFunctionParameters(TreeBuilder&, SourceParseMode, FunctionInfoType&);
-    template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::FormalParameterList createGeneratorParameters(TreeBuilder&);
+    template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::FormalParameterList createGeneratorParameters(TreeBuilder&, unsigned& parameterCount);
 
     template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionNameRequirements, ParserClassInfo<TreeBuilder>&);
 

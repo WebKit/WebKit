@@ -3377,7 +3377,6 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         RefPtr<Label> done = generator.newLabel();
         generator.emitLabel(done.get());
         generator.emitReturn(generator.emitLoad(nullptr, jsUndefined()));
-        generator.endGenerator(done.get());
         break;
     }
 

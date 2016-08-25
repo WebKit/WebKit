@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,26 +21,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "CodeBlock.h"
+#include "Instruction.h"
+#include "Interpreter.h"
+#include "UnlinkedCodeBlock.h"
 
 namespace JSC {
 
-class UnlinkedCodeBlock;
-struct UnlinkedInstruction;
+inline OpcodeID Interpreter::getOpcodeID(const Instruction& instruction)
+{
+    return getOpcodeID(instruction.u.opcode);
+}
 
-// Return a sorted list of bytecode index that are the destination of a jump.
-void computePreciseJumpTargets(CodeBlock*, Vector<unsigned, 32>& out);
-void computePreciseJumpTargets(CodeBlock*, Instruction* instructionsBegin, unsigned instructionCount, Vector<unsigned, 32>& out);
-void computePreciseJumpTargets(UnlinkedCodeBlock*, UnlinkedInstruction* instructionsBegin, unsigned instructionCount, Vector<unsigned, 32>& out);
-
-void recomputePreciseJumpTargets(UnlinkedCodeBlock*, UnlinkedInstruction* instructionsBegin, unsigned instructionCount, Vector<unsigned>& out);
-
-void findJumpTargetsForBytecodeOffset(CodeBlock*, Instruction* instructionsBegin, unsigned bytecodeOffset, Vector<unsigned, 1>& out);
-void findJumpTargetsForBytecodeOffset(UnlinkedCodeBlock*, UnlinkedInstruction* instructionsBegin, unsigned bytecodeOffset, Vector<unsigned, 1>& out);
+inline OpcodeID Interpreter::getOpcodeID(const UnlinkedInstruction& instruction)
+{
+    return instruction.u.opcode;
+}
 
 } // namespace JSC

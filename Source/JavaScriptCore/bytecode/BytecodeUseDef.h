@@ -30,15 +30,9 @@
 
 namespace JSC {
 
-template<typename Functor>
-void computeUsesForBytecodeOffset(
-    CodeBlock* codeBlock, BytecodeBasicBlock* block, unsigned bytecodeOffset, const Functor& functor)
+template<typename Block, typename Functor, typename Instruction>
+void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instruction* instruction, const Functor& functor)
 {
-    Interpreter* interpreter = codeBlock->vm()->interpreter;
-    Instruction* instructionsBegin = codeBlock->instructions().begin();
-    Instruction* instruction = &instructionsBegin[bytecodeOffset];
-    OpcodeID opcodeID = interpreter->getOpcodeID(instruction->u.opcode);
-
     if (opcodeID != op_enter && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid())
         functor(codeBlock, instruction, opcodeID, codeBlock->scopeRegister().offset());
 
@@ -75,8 +69,7 @@ void computeUsesForBytecodeOffset(
     case op_jneq_null:
     case op_dec:
     case op_inc:
-    case op_log_shadow_chicken_prologue:
-    case op_resume: {
+    case op_log_shadow_chicken_prologue: {
         ASSERT(opcodeLengths[opcodeID] > 1);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
@@ -287,20 +280,9 @@ void computeUsesForBytecodeOffset(
             functor(codeBlock, instruction, opcodeID, codeBlock->scopeRegister().offset());
         return;
     }
-    case op_save: {
+    case op_yield: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
-        unsigned mergePointBytecodeOffset = bytecodeOffset + instruction[3].u.operand;
-        BytecodeBasicBlock* mergePointBlock = nullptr;
-        for (BytecodeBasicBlock* successor : block->successors()) {
-            if (successor->leaderBytecodeOffset() == mergePointBytecodeOffset) {
-                mergePointBlock = successor;
-                break;
-            }
-        }
-        ASSERT(mergePointBlock);
-        mergePointBlock->in().forEachSetBit([&](unsigned local) {
-            functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(local).offset());
-        });
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
     }
     default:
@@ -309,20 +291,15 @@ void computeUsesForBytecodeOffset(
     }
 }
 
-template<typename Functor>
-void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* block, unsigned bytecodeOffset, const Functor& functor)
+template<typename Block, typename Instruction, typename Functor>
+void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instruction* instruction, const Functor& functor)
 {
-    Interpreter* interpreter = codeBlock->vm()->interpreter;
-    Instruction* instructionsBegin = codeBlock->instructions().begin();
-    Instruction* instruction = &instructionsBegin[bytecodeOffset];
-    OpcodeID opcodeID = interpreter->getOpcodeID(instruction->u.opcode);
     switch (opcodeID) {
     // These don't define anything.
     case op_put_to_scope:
     case op_end:
     case op_throw:
     case op_throw_static_error:
-    case op_save:
     case op_assert:
     case op_debug:
     case op_ret:
@@ -362,6 +339,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_watchdog:
     case op_log_shadow_chicken_prologue:
     case op_log_shadow_chicken_tail:
+    case op_yield:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);
 #undef LLINT_HELPER_OPCODES
@@ -478,15 +456,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_enter: {
         for (unsigned i = codeBlock->m_numVars; i--;)
             functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(i).offset());
-        return;
-    }
-    case op_resume: {
-        RELEASE_ASSERT(block->successors().size() == 1);
-        // FIXME: This is really dirty.
-        // https://bugs.webkit.org/show_bug.cgi?id=159281
-        block->successors()[0]->in().forEachSetBit([&](unsigned local) {
-            functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(local).offset());
-        });
         return;
     }
     }

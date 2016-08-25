@@ -51,7 +51,7 @@ function generatorResume(generator, sentValue, resumeMode)
     } else {
         try {
             generator.@generatorState = @GeneratorStateExecuting;
-            value = generator.@generatorNext.@call(generator.@generatorThis, generator, state, sentValue, resumeMode);
+            value = generator.@generatorNext.@call(generator.@generatorThis, generator, state, sentValue, resumeMode, generator.@generatorFrame);
             if (generator.@generatorState === @GeneratorStateExecuting) {
                 generator.@generatorState = @GeneratorStateCompleted;
                 done = true;

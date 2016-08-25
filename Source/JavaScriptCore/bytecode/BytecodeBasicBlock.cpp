@@ -27,6 +27,7 @@
 #include "BytecodeBasicBlock.h"
 
 #include "CodeBlock.h"
+#include "InterpreterInlines.h"
 #include "JSCInlines.h"
 #include "PreciseJumpTargets.h"
 
@@ -34,67 +35,8 @@ namespace JSC {
 
 void BytecodeBasicBlock::shrinkToFit()
 {
-    m_bytecodeOffsets.shrinkToFit();
+    m_offsets.shrinkToFit();
     m_successors.shrinkToFit();
-}
-
-static bool isBranch(OpcodeID opcodeID)
-{
-    switch (opcodeID) {
-    case op_jmp:
-    case op_jtrue:
-    case op_jfalse:
-    case op_jeq_null:
-    case op_jneq_null:
-    case op_jneq_ptr:
-    case op_jless:
-    case op_jlesseq:
-    case op_jgreater:
-    case op_jgreatereq:
-    case op_jnless:
-    case op_jnlesseq:
-    case op_jngreater:
-    case op_jngreatereq:
-    case op_switch_imm:
-    case op_switch_char:
-    case op_switch_string:
-    case op_save:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isUnconditionalBranch(OpcodeID opcodeID)
-{
-    switch (opcodeID) {
-    case op_jmp:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isTerminal(OpcodeID opcodeID)
-{
-    switch (opcodeID) {
-    case op_ret:
-    case op_end:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isThrow(OpcodeID opcodeID)
-{
-    switch (opcodeID) {
-    case op_throw:
-    case op_throw_static_error:
-        return true;
-    default:
-        return false;
-    }
 }
 
 static bool isJumpTarget(OpcodeID opcodeID, const Vector<unsigned, 32>& jumpTargets, unsigned bytecodeOffset)
@@ -105,15 +47,20 @@ static bool isJumpTarget(OpcodeID opcodeID, const Vector<unsigned, 32>& jumpTarg
     return std::binary_search(jumpTargets.begin(), jumpTargets.end(), bytecodeOffset);
 }
 
-static void linkBlocks(BytecodeBasicBlock* predecessor, BytecodeBasicBlock* successor)
-{
-    predecessor->addSuccessor(successor);
-}
-
-void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks)
+template<typename Block, typename Instruction>
+void BytecodeBasicBlock::computeImpl(Block* codeBlock, Instruction* instructionsBegin, unsigned instructionCount, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks)
 {
     Vector<unsigned, 32> jumpTargets;
-    computePreciseJumpTargets(codeBlock, jumpTargets);
+    computePreciseJumpTargets(codeBlock, instructionsBegin, instructionCount, jumpTargets);
+
+    auto appendBlock = [&] (std::unique_ptr<BytecodeBasicBlock>&& block) {
+        block->m_index = basicBlocks.size();
+        basicBlocks.append(WTFMove(block));
+    };
+
+    auto linkBlocks = [&] (BytecodeBasicBlock* from, BytecodeBasicBlock* to) {
+        from->addSuccessor(to);
+    };
 
     // Create the entry and exit basic blocks.
     basicBlocks.reserveCapacity(jumpTargets.size() + 2);
@@ -122,19 +69,17 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
     auto firstBlock = std::make_unique<BytecodeBasicBlock>(0, 0);
     linkBlocks(entry.get(), firstBlock.get());
 
-    basicBlocks.append(WTFMove(entry));
+    appendBlock(WTFMove(entry));
     BytecodeBasicBlock* current = firstBlock.get();
-    basicBlocks.append(WTFMove(firstBlock));
+    appendBlock(WTFMove(firstBlock));
 
     auto exit = std::make_unique<BytecodeBasicBlock>(BytecodeBasicBlock::ExitBlock);
 
     bool nextInstructionIsLeader = false;
 
     Interpreter* interpreter = codeBlock->vm()->interpreter;
-    Instruction* instructionsBegin = codeBlock->instructions().begin();
-    unsigned instructionCount = codeBlock->instructions().size();
     for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount;) {
-        OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode);
+        OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset]);
         unsigned opcodeLength = opcodeLengths[opcodeID];
 
         bool createdBlock = false;
@@ -142,7 +87,7 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
         if (isJumpTarget(opcodeID, jumpTargets, bytecodeOffset) || nextInstructionIsLeader) {
             auto newBlock = std::make_unique<BytecodeBasicBlock>(bytecodeOffset, opcodeLength);
             current = newBlock.get();
-            basicBlocks.append(WTFMove(newBlock));
+            appendBlock(WTFMove(newBlock));
             createdBlock = true;
             nextInstructionIsLeader = false;
             bytecodeOffset += opcodeLength;
@@ -156,7 +101,7 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
             continue;
 
         // Otherwise, just add to the length of the current block.
-        current->addBytecodeLength(opcodeLength);
+        current->addLength(opcodeLength);
         bytecodeOffset += opcodeLength;
     }
 
@@ -168,13 +113,12 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
             continue;
 
         bool fallsThrough = true; 
-        for (unsigned bytecodeOffset = block->leaderBytecodeOffset(); bytecodeOffset < block->leaderBytecodeOffset() + block->totalBytecodeLength();) {
-            const Instruction& currentInstruction = instructionsBegin[bytecodeOffset];
-            OpcodeID opcodeID = interpreter->getOpcodeID(currentInstruction.u.opcode);
+        for (unsigned bytecodeOffset = block->leaderOffset(); bytecodeOffset < block->leaderOffset() + block->totalLength();) {
+            OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset]);
             unsigned opcodeLength = opcodeLengths[opcodeID];
             // If we found a terminal bytecode, link to the exit block.
             if (isTerminal(opcodeID)) {
-                ASSERT(bytecodeOffset + opcodeLength == block->leaderBytecodeOffset() + block->totalBytecodeLength());
+                ASSERT(bytecodeOffset + opcodeLength == block->leaderOffset() + block->totalLength());
                 linkBlocks(block, exit.get());
                 fallsThrough = false;
                 break;
@@ -184,8 +128,8 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
             // If there isn't one, treat this throw as a terminal. This is true even if we have a finally
             // block because the finally block will create its own catch, which will generate a HandlerInfo.
             if (isThrow(opcodeID)) {
-                ASSERT(bytecodeOffset + opcodeLength == block->leaderBytecodeOffset() + block->totalBytecodeLength());
-                HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset);
+                ASSERT(bytecodeOffset + opcodeLength == block->leaderOffset() + block->totalLength());
+                auto* handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset);
                 fallsThrough = false;
                 if (!handler) {
                     linkBlocks(block, exit.get());
@@ -193,7 +137,7 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
                 }
                 for (unsigned i = 0; i < basicBlocks.size(); i++) {
                     BytecodeBasicBlock* otherBlock = basicBlocks[i].get();
-                    if (handler->target == otherBlock->leaderBytecodeOffset()) {
+                    if (handler->target == otherBlock->leaderOffset()) {
                         linkBlocks(block, otherBlock);
                         break;
                     }
@@ -203,13 +147,13 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
 
             // If we found a branch, link to the block(s) that we jump to.
             if (isBranch(opcodeID)) {
-                ASSERT(bytecodeOffset + opcodeLength == block->leaderBytecodeOffset() + block->totalBytecodeLength());
+                ASSERT(bytecodeOffset + opcodeLength == block->leaderOffset() + block->totalLength());
                 Vector<unsigned, 1> bytecodeOffsetsJumpedTo;
-                findJumpTargetsForBytecodeOffset(codeBlock, bytecodeOffset, bytecodeOffsetsJumpedTo);
+                findJumpTargetsForBytecodeOffset(codeBlock, instructionsBegin, bytecodeOffset, bytecodeOffsetsJumpedTo);
 
                 for (unsigned i = 0; i < basicBlocks.size(); i++) {
                     BytecodeBasicBlock* otherBlock = basicBlocks[i].get();
-                    if (bytecodeOffsetsJumpedTo.contains(otherBlock->leaderBytecodeOffset()))
+                    if (bytecodeOffsetsJumpedTo.contains(otherBlock->leaderOffset()))
                         linkBlocks(block, otherBlock);
                 }
 
@@ -229,10 +173,20 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
         }
     }
 
-    basicBlocks.append(WTFMove(exit));
+    appendBlock(WTFMove(exit));
     
     for (auto& basicBlock : basicBlocks)
         basicBlock->shrinkToFit();
+}
+
+void BytecodeBasicBlock::compute(CodeBlock* codeBlock, Instruction* instructionsBegin, unsigned instructionCount, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks)
+{
+    computeImpl(codeBlock, instructionsBegin, instructionCount, basicBlocks);
+}
+
+void BytecodeBasicBlock::compute(UnlinkedCodeBlock* codeBlock, UnlinkedInstruction* instructionsBegin, unsigned instructionCount, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks)
+{
+    BytecodeBasicBlock::computeImpl(codeBlock, instructionsBegin, instructionCount, basicBlocks);
 }
 
 } // namespace JSC

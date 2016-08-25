@@ -497,8 +497,6 @@ namespace JSC {
         void emit_op_get_rest_length(Instruction*);
         void emit_op_check_tdz(Instruction*);
         void emit_op_assert(Instruction*);
-        void emit_op_save(Instruction*);
-        void emit_op_resume(Instruction*);
         void emit_op_debug(Instruction*);
         void emit_op_del_by_id(Instruction*);
         void emit_op_del_by_val(Instruction*);

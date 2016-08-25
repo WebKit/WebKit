@@ -1,3 +1,13 @@
+2016-08-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Implement ES6 Generators in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=152723
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVector::FastBitVector):
+
 2016-08-25  JF Bastien  <jfbastien@apple.com>
 
         TryGetById should have a ValueProfile so that it can predict its output type

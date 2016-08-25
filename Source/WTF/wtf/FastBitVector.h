@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FastBitVector_h
-#define FastBitVector_h
+#pragma once
 
 #include <string.h>
 #include <wtf/FastMalloc.h>
@@ -36,12 +35,14 @@ class PrintStream;
 
 class FastBitVector {
 public:
-    FastBitVector()
-        : m_array(0)
-        , m_numBits(0)
+    FastBitVector() = default;
+
+    FastBitVector(FastBitVector&& other)
+        : m_array(std::exchange(other.m_array, nullptr))
+        , m_numBits(std::exchange(other.m_numBits, 0))
     {
     }
-    
+
     FastBitVector(const FastBitVector& other)
         : m_array(0)
         , m_numBits(0)
@@ -202,13 +203,10 @@ private:
     static size_t arrayLength(size_t numBits) { return (numBits + 31) >> 5; }
     size_t arrayLength() const { return arrayLength(m_numBits); }
     
-    uint32_t* m_array; // No, this can't be an std::unique_ptr<uint32_t[]>.
-    size_t m_numBits;
+    uint32_t* m_array { nullptr }; // No, this can't be an std::unique_ptr<uint32_t[]>.
+    size_t m_numBits { 0 };
 };
 
 } // namespace WTF
 
 using WTF::FastBitVector;
-
-#endif // FastBitVector_h
-

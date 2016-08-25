@@ -181,6 +181,8 @@ set(JavaScriptCore_SOURCES
     bytecode/ArrayAllocationProfile.cpp
     bytecode/ArrayProfile.cpp
     bytecode/BytecodeBasicBlock.cpp
+    bytecode/BytecodeGeneratorification.cpp
+    bytecode/BytecodeRewriter.cpp
     bytecode/BytecodeIntrinsicRegistry.cpp
     bytecode/BytecodeLivenessAnalysis.cpp
     bytecode/CallEdge.cpp
@@ -661,7 +663,6 @@ set(JavaScriptCore_SOURCES
     runtime/FunctionHasExecutedCache.cpp
     runtime/FunctionPrototype.cpp
     runtime/FunctionRareData.cpp
-    runtime/GeneratorFrame.cpp
     runtime/GeneratorFunctionConstructor.cpp
     runtime/GeneratorFunctionPrototype.cpp
     runtime/GeneratorPrototype.cpp
@@ -978,6 +979,10 @@ add_custom_command(
     DEPENDS ${JAVASCRIPTCORE_DIR}/generate-bytecode-files bytecode/BytecodeList.json
     COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generate-bytecode-files --bytecodes_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h --init_bytecodes_asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.json
     VERBATIM)
+
+list(APPEND JavaScriptCore_HEADERS
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
+)
 
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h

@@ -65,6 +65,7 @@ namespace JSC {
     struct HandlerInfo;
     struct Instruction;
     struct ProtoCallFrame;
+    struct UnlinkedInstruction;
 
     enum UnwindStart { UnwindFromCurrentFrame, UnwindFromCallerFrame };
 
@@ -207,7 +208,10 @@ namespace JSC {
             return opcode;
 #endif
         }
-        
+
+        OpcodeID getOpcodeID(const Instruction&);
+        OpcodeID getOpcodeID(const UnlinkedInstruction&);
+
         bool isOpcode(Opcode);
 
         JSValue execute(ProgramExecutable*, CallFrame*, JSObject* thisObj);

@@ -1,3 +1,334 @@
+2016-08-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Implement ES6 Generators in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=152723
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces DFG and FTL support for ES6 generators.
+        ES6 generator is compiled by the BytecodeGenerator. But at the last phase, BytecodeGenerator performs "generatorification" onto the unlinked code.
+        In BytecodeGenerator phase, we just emit op_yield for each yield point. And we don't emit any generator related switch, save, and resume sequences
+        here. Those are emitted by the generatorification phase.
+
+        So the graph is super simple! Before the generatorification, the graph looks like this.
+
+             op_enter -> ...... -> op_yield -> ..... -> op_yield -> ...
+
+        Roughly speaking, in the generatorification phase, we turn out which variables should be saved and resumed at each op_yield.
+        This is done by liveness analysis. After that, we convert op_yield to the sequence of "op_put_to_scope", "op_ret", and "op_get_from_scope".
+        op_put_to_scope and op_get_from_scope sequences are corresponding to the save and resume sequences. We set up the scope for the generator frame and
+        perform op_put_to_scope and op_get_from_scope onto it. The live registers are saved and resumed over the generator's next() calls by using this
+        special generator frame scope. And we also set up the global switch for the generator.
+
+        In the generatorification phase,
+
+        1. We construct the BytecodeGraph from the unlinked instructions. This constructs the basic blocks, and it is used in the subsequent analysis.
+        2. We perform the analysis onto the unlinked code. We extract the live variables at each op_yield.
+        3. We insert the get_from_scope and put_to_scope at each op_yield. Which registers should be saved and resumed is offered by (2).
+           Then, clip the op_yield themselves. And we also insert the switch_imm. The jump targets of this switch are just after this op_switch_imm and each op_yield point.
+
+        One interesting point is the try-range. We split the try-range at the op_yield point in BytecodeGenerator phase.
+        This drops the hacky thing that is introduced in [1].
+        If the try-range covers the resume sequences, the exception handler's use-registers are incorrectly transferred to the entry block.
+        For example,
+
+            handler uses r2
+                                                             try-range
+            label:(entry block can jump here)                 ^
+                r1 = get_from_scope # resume sequence starts  | use r2 is transferred to the entry block!
+                r2 = get_from_scope                           |
+                starts usual sequences                        |
+                ...                                           |
+
+        Handler's r2 use should be considered at the `r1 = get_from_scope` point.
+        Previously, we handle this edge case by treating op_resume specially in the liveness analysis[1].
+        To drop this workaround, we split the try-range not to cover this resume sequence.
+
+            handler uses r2
+                                                             try-range
+            label:(entry block can jump here)
+                r1 = get_from_scope # resume sequence starts
+                r2 = get_from_scope
+                starts usual sequences                        ^ try-range should start from here.
+                ...                                           |
+
+        OK. Let's show the detailed example.
+
+            1. First, there is the normal bytecode sequence. Here, | represents the offsets, and [] represents the bytecodes.
+
+                bytecodes   | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+                try-range   <----------------------------------->
+
+            2. When we emit the op_yield in the bytecode generator, we carefully split the try-range.
+
+                bytecodes   | [ ] | [ ] | [op_yield] | [ ] | [ ] | [ ] |
+                try-range   <----------->            <----------------->
+
+            3. And in the generatorification phase, we insert the switch's jump target and save & resume sequences. And we also drop op_yield.
+
+                        Insert save seq  Insert resume seq
+                        before op_yield. after op_yield's point.
+                                       v v
+                bytecodes   | [ ] | [ ] | [op_yield] | [ ] | [ ] | [ ] |
+                try-range   <----------->     ^      <----------------->
+                                        ^     |
+                             Jump to here.    Drop this op_yield.
+
+            4. The final layout is the following.
+
+                bytecodes   | [ ] | [ ][save seq][op_ret] | [resume seq] | [ ] | [ ] | [ ] |
+                try-range   <----------------------------->               <---------------->
+                                                          ^
+                                              Jump to here.
+
+        The rewriting done by the BytecodeRewriter is executed in a batch manner. Since these modification changes the basic blocks and size of unlinked instructions,
+        BytecodeRewriter also performs the offset adjustment for UnlinkedCodeBlock. So, this rewriting is performed onto the BytecodeGraph rather than BytecodeBasicBlock.
+        The reason why we take this design is simple: we don't want to newly create the basic blocks and opcodes for this early phase like DFG. Instead, we perform the
+        modification and adjustment to the unlinked instructions and UnlinkedCodeBlock in a in-place manner.
+
+        Bytecode rewriting functionality is offered by BytecodeRewriter. BytecodeRewriter allows us to insert any bytecodes to any places
+        in a in-place manner. BytecodeRewriter handles the original bytecode offsets as labels. And you can insert bytecodes before and after
+        these labels. You can also insert any jumps to any places. When you insert jumps, you need to specify jump target with this labels.
+        These labels (original bytecode offsets) are automatically converted to the appropriate offsets by BytecodeRewriter.
+
+        After that phase, the data flow of the generator-saved-and-resumed-registers are explicitly represented by the get_from_scope and put_to_scope.
+        And the switch is inserted to represent the actual control flow for the generator. And op_yield is removed. Since we use the existing bytecodes (op_switch_imm, op_put_to_scope
+        op_ret, and op_get_from_scope), DFG and FTL changes are not necessary. This patch also drops data structures and implementations for the old generator,
+        op_resume, op_save implementations and GeneratorFrame.
+
+        Note that this patch does not leverage the recent multi entrypoints support in B3. After this patch is introduced, we will submit a new patch that leverages the multi
+        entrypoints for generator's resume and sees the performance gain.
+
+        Microbenchmarks related to generators show up to 2.9x improvements.
+
+                                                        Baseline                  Patched
+
+            generator-fib                          102.0116+-3.2880     ^     34.9670+-0.2221        ^ definitely 2.9174x faster
+            generator-sunspider-access-nsieve        5.8596+-0.0371     ^      4.9051+-0.0720        ^ definitely 1.1946x faster
+            generator-with-several-types           332.1478+-4.2425     ^    124.6642+-2.4826        ^ definitely 2.6643x faster
+
+            <geometric>                             58.2998+-0.7758     ^     27.7425+-0.2577        ^ definitely 2.1015x faster
+
+        In ES6SampleBench's Basic, we can observe 41% improvement (Macbook Pro).
+
+            Baseline:
+                Geometric Mean Result: 133.55 ms +- 4.49 ms
+
+                Benchmark    First Iteration        Worst 2%               Steady State
+                Air          54.03 ms +- 7.51 ms    29.06 ms +- 3.13 ms    2276.59 ms +- 61.17 ms
+                Basic        30.18 ms +- 1.86 ms    18.85 ms +- 0.45 ms    2851.16 ms +- 41.87 ms
+
+            Patched:
+                Geometric Mean Result: 121.78 ms +- 3.96 ms
+
+                Benchmark    First Iteration        Worst 2%               Steady State
+                Air          52.09 ms +- 6.89 ms    29.59 ms +- 3.16 ms    2239.90 ms +- 54.60 ms
+                Basic        29.28 ms +- 1.46 ms    16.26 ms +- 0.66 ms    2025.15 ms +- 38.56 ms
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=159281
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/GeneratorPrototype.js:
+        (globalPrivate.generatorResume):
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::BytecodeBasicBlock::shrinkToFit):
+        (JSC::BytecodeBasicBlock::computeImpl):
+        (JSC::BytecodeBasicBlock::compute):
+        (JSC::isBranch): Deleted.
+        (JSC::isUnconditionalBranch): Deleted.
+        (JSC::isTerminal): Deleted.
+        (JSC::isThrow): Deleted.
+        (JSC::linkBlocks): Deleted.
+        (JSC::computeBytecodeBasicBlocks): Deleted.
+        * bytecode/BytecodeBasicBlock.h:
+        (JSC::BytecodeBasicBlock::isEntryBlock):
+        (JSC::BytecodeBasicBlock::isExitBlock):
+        (JSC::BytecodeBasicBlock::leaderOffset):
+        (JSC::BytecodeBasicBlock::totalLength):
+        (JSC::BytecodeBasicBlock::offsets):
+        (JSC::BytecodeBasicBlock::successors):
+        (JSC::BytecodeBasicBlock::index):
+        (JSC::BytecodeBasicBlock::addSuccessor):
+        (JSC::BytecodeBasicBlock::BytecodeBasicBlock):
+        (JSC::BytecodeBasicBlock::addLength):
+        (JSC::BytecodeBasicBlock::leaderBytecodeOffset): Deleted.
+        (JSC::BytecodeBasicBlock::totalBytecodeLength): Deleted.
+        (JSC::BytecodeBasicBlock::bytecodeOffsets): Deleted.
+        (JSC::BytecodeBasicBlock::addBytecodeLength): Deleted.
+        * bytecode/BytecodeGeneratorification.cpp: Added.
+        (JSC::BytecodeGeneratorification::BytecodeGeneratorification):
+        (JSC::BytecodeGeneratorification::graph):
+        (JSC::BytecodeGeneratorification::yields):
+        (JSC::BytecodeGeneratorification::enterPoint):
+        (JSC::BytecodeGeneratorification::storageForGeneratorLocal):
+        (JSC::GeneratorLivenessAnalysis::GeneratorLivenessAnalysis):
+        (JSC::GeneratorLivenessAnalysis::computeDefsForBytecodeOffset):
+        (JSC::GeneratorLivenessAnalysis::computeUsesForBytecodeOffset):
+        (JSC::GeneratorLivenessAnalysis::run):
+        (JSC::BytecodeGeneratorification::run):
+        (JSC::performGeneratorification):
+        * bytecode/BytecodeGeneratorification.h: Copied from Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysisInlines.h.
+        * bytecode/BytecodeGraph.h: Added.
+        (JSC::BytecodeGraph::codeBlock):
+        (JSC::BytecodeGraph::instructions):
+        (JSC::BytecodeGraph::basicBlocksInReverseOrder):
+        (JSC::BytecodeGraph::blockContainsBytecodeOffset):
+        (JSC::BytecodeGraph::findBasicBlockForBytecodeOffset):
+        (JSC::BytecodeGraph::findBasicBlockWithLeaderOffset):
+        (JSC::BytecodeGraph::size):
+        (JSC::BytecodeGraph::at):
+        (JSC::BytecodeGraph::operator[]):
+        (JSC::BytecodeGraph::begin):
+        (JSC::BytecodeGraph::end):
+        (JSC::BytecodeGraph::first):
+        (JSC::BytecodeGraph::last):
+        (JSC::BytecodeGraph<Block>::BytecodeGraph):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::BytecodeLivenessAnalysis):
+        (JSC::BytecodeLivenessAnalysis::computeDefsForBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::computeUsesForBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        (JSC::BytecodeLivenessAnalysis::computeKills):
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        (JSC::BytecodeLivenessAnalysis::compute):
+        (JSC::isValidRegisterForLiveness): Deleted.
+        (JSC::getLeaderOffsetForBasicBlock): Deleted.
+        (JSC::findBasicBlockWithLeaderOffset): Deleted.
+        (JSC::blockContainsBytecodeOffset): Deleted.
+        (JSC::findBasicBlockForBytecodeOffset): Deleted.
+        (JSC::stepOverInstruction): Deleted.
+        (JSC::computeLocalLivenessForBytecodeOffset): Deleted.
+        (JSC::computeLocalLivenessForBlock): Deleted.
+        (JSC::BytecodeLivenessAnalysis::runLivenessFixpoint): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::isValidRegisterForLiveness):
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::stepOverInstruction):
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::computeLocalLivenessForBytecodeOffset):
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::computeLocalLivenessForBlock):
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::getLivenessInfoAtBytecodeOffset):
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::runLivenessFixpoint):
+        * bytecode/BytecodeRewriter.cpp: Added.
+        (JSC::BytecodeRewriter::applyModification):
+        (JSC::BytecodeRewriter::execute):
+        (JSC::BytecodeRewriter::adjustJumpTargetsInFragment):
+        (JSC::BytecodeRewriter::insertImpl):
+        (JSC::BytecodeRewriter::adjustJumpTarget):
+        * bytecode/BytecodeRewriter.h: Added.
+        (JSC::BytecodeRewriter::InsertionPoint::InsertionPoint):
+        (JSC::BytecodeRewriter::InsertionPoint::operator<):
+        (JSC::BytecodeRewriter::InsertionPoint::operator==):
+        (JSC::BytecodeRewriter::Insertion::length):
+        (JSC::BytecodeRewriter::Fragment::Fragment):
+        (JSC::BytecodeRewriter::Fragment::appendInstruction):
+        (JSC::BytecodeRewriter::BytecodeRewriter):
+        (JSC::BytecodeRewriter::insertFragmentBefore):
+        (JSC::BytecodeRewriter::insertFragmentAfter):
+        (JSC::BytecodeRewriter::removeBytecode):
+        (JSC::BytecodeRewriter::graph):
+        (JSC::BytecodeRewriter::adjustAbsoluteOffset):
+        (JSC::BytecodeRewriter::adjustJumpTarget):
+        (JSC::BytecodeRewriter::calculateDifference):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::handlerForIndex):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        (JSC::CodeBlock::livenessAnalysisSlow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isConstantRegisterIndex):
+        (JSC::CodeBlock::livenessAnalysis):
+        (JSC::CodeBlock::liveCalleeLocalsAtYield): Deleted.
+        * bytecode/HandlerInfo.h:
+        (JSC::HandlerInfoBase::handlerForIndex):
+        * bytecode/Opcode.h:
+        (JSC::isBranch):
+        (JSC::isUnconditionalBranch):
+        (JSC::isTerminal):
+        (JSC::isThrow):
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::getJumpTargetsForBytecodeOffset):
+        (JSC::computePreciseJumpTargetsInternal):
+        (JSC::computePreciseJumpTargets):
+        (JSC::recomputePreciseJumpTargets):
+        (JSC::findJumpTargetsForBytecodeOffset):
+        * bytecode/PreciseJumpTargets.h:
+        * bytecode/PreciseJumpTargetsInlines.h: Added.
+        (JSC::extractStoredJumpTargetsForBytecodeOffset):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::handlerForBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::handlerForIndex):
+        (JSC::UnlinkedCodeBlock::applyModification):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedStringJumpTable::offsetForValue):
+        (JSC::UnlinkedCodeBlock::numCalleeLocals):
+        * bytecode/VirtualRegister.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::prepareJumpTableForStringSwitch):
+        (JSC::BytecodeGenerator::emitYieldPoint):
+        (JSC::BytecodeGenerator::emitSave): Deleted.
+        (JSC::BytecodeGenerator::emitResume): Deleted.
+        (JSC::BytecodeGenerator::emitGeneratorStateLabel): Deleted.
+        (JSC::BytecodeGenerator::beginGenerator): Deleted.
+        (JSC::BytecodeGenerator::endGenerator): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generatorStateRegister):
+        (JSC::BytecodeGenerator::generatorValueRegister):
+        (JSC::BytecodeGenerator::generatorResumeModeRegister):
+        (JSC::BytecodeGenerator::generatorFrameRegister):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::findExceptionHandler):
+        (JSC::GetCatchHandlerFunctor::operator()):
+        (JSC::UnwindFunctor::operator()):
+        * interpreter/Interpreter.h:
+        * interpreter/InterpreterInlines.h: Copied from Source/JavaScriptCore/bytecode/PreciseJumpTargets.h.
+        (JSC::Interpreter::getOpcodeID):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_save): Deleted.
+        (JSC::JIT::emit_op_resume): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::createGeneratorParameters):
+        * parser/Parser.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL): Deleted.
+        * runtime/CommonSlowPaths.h:
+        * runtime/GeneratorFrame.cpp: Removed.
+        (JSC::GeneratorFrame::GeneratorFrame): Deleted.
+        (JSC::GeneratorFrame::finishCreation): Deleted.
+        (JSC::GeneratorFrame::createStructure): Deleted.
+        (JSC::GeneratorFrame::create): Deleted.
+        (JSC::GeneratorFrame::save): Deleted.
+        (JSC::GeneratorFrame::resume): Deleted.
+        (JSC::GeneratorFrame::visitChildren): Deleted.
+        * runtime/GeneratorFrame.h: Removed.
+        (JSC::GeneratorFrame::locals): Deleted.
+        (JSC::GeneratorFrame::localAt): Deleted.
+        (JSC::GeneratorFrame::offsetOfLocals): Deleted.
+        (JSC::GeneratorFrame::allocationSizeForLocals): Deleted.
+        * runtime/JSGeneratorFunction.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2016-08-25  JF Bastien  <jfbastien@apple.com>
 
         TryGetById should have a ValueProfile so that it can predict its output type

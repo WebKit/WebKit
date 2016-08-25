@@ -33,6 +33,7 @@
 
 #include "ArithProfile.h"
 #include "BuiltinExecutables.h"
+#include "BytecodeGeneratorification.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
@@ -155,6 +156,10 @@ ParserError BytecodeGenerator::generate()
         m_codeBlock->addExceptionHandler(info);
     }
     
+
+    if (m_codeBlock->parseMode() == SourceParseMode::GeneratorBodyMode)
+        performGeneratorification(m_codeBlock.get(), m_instructions, m_generatorFrameSymbolTable.get(), m_generatorFrameSymbolTableIndex);
+
     m_codeBlock->setInstructions(std::make_unique<UnlinkedInstructionStream>(m_instructions));
 
     m_codeBlock->shrinkToFit();
@@ -262,9 +267,13 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     bool shouldCaptureAllOfTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
     bool needsArguments = (functionNode->usesArguments() || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction()));
 
-    // Generator never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
-    if (parseMode == SourceParseMode::GeneratorBodyMode)
+    if (parseMode == SourceParseMode::GeneratorBodyMode) {
+        // Generator never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
         needsArguments = false;
+
+        // Generator uses the var scope to save and resume its variables. So the lexical scope is always instantiated.
+        shouldCaptureSomeOfTheThings = true;
+    }
 
     if (parseMode == SourceParseMode::GeneratorWrapperFunctionMode && needsArguments) {
         // Generator does not provide "arguments". Instead, wrapping GeneratorFunction provides "arguments".
@@ -274,7 +283,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         //    function *gen(a, b = hello())
         //    {
         //        return {
-        //            @generatorNext: function (@generator, @generatorState, @generatorValue, @generatorResumeMode)
+        //            @generatorNext: function (@generator, @generatorState, @generatorValue, @generatorResumeMode, @generatorFrame)
         //            {
         //                arguments;  // This `arguments` should reference to the gen's arguments.
         //                ...
@@ -303,28 +312,17 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         return captures(uid) ? VarKind::Scope : VarKind::Stack;
     };
 
-    emitEnter();
-
-    allocateAndEmitScope();
-
     m_calleeRegister.setIndex(CallFrameSlot::callee);
 
     initializeParameters(parameters);
     ASSERT(!(isSimpleParameterList && m_restParameter));
 
-    // Before emitting a scope creation, emit a generator prologue that contains jump based on a generator's state.
-    if (parseMode == SourceParseMode::GeneratorBodyMode) {
+    emitEnter();
+
+    if (parseMode == SourceParseMode::GeneratorBodyMode)
         m_generatorRegister = &m_parameters[1];
 
-        // Jump with switch_imm based on @generatorState. We don't take the coroutine styled generator implementation.
-        // When calling `next()`, we would like to enter the same prologue instead of jumping based on the saved instruction pointer.
-        // It's suitale for inlining, because it just inlines one `next` function implementation.
-
-        beginGenerator(generatorStateRegister());
-
-        // Initial state.
-        emitGeneratorStateLabel();
-    }
+    allocateAndEmitScope();
 
     if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())) {
         ASSERT(parseMode != SourceParseMode::GeneratorBodyMode);
@@ -641,6 +639,16 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
     }
     
+    // Set up the lexical environment scope as the generator frame. We store the saved and resumed generator registers into this scope with the symbol keys.
+    // Since they are symbol keyed, these variables cannot be reached from the usual code.
+    if (SourceParseMode::GeneratorBodyMode == parseMode) {
+        ASSERT(m_lexicalEnvironmentRegister);
+        m_generatorFrameSymbolTable.set(*m_vm, functionSymbolTable);
+        m_generatorFrameSymbolTableIndex = symbolTableConstantIndex;
+        emitMove(generatorFrameRegister(), m_lexicalEnvironmentRegister);
+        emitPutById(generatorRegister(), propertyNames().builtinNames().generatorFramePrivateName(), generatorFrameRegister());
+    }
+
     bool shouldInitializeBlockScopedFunctions = false; // We generate top-level function declarations in ::generate().
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
@@ -3673,8 +3681,7 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
             if (flipTries) {
                 while (m_tryContextStack.size() != finallyContext.tryContextStackSize) {
                     ASSERT(m_tryContextStack.size() > finallyContext.tryContextStackSize);
-                    TryContext context = m_tryContextStack.last();
-                    m_tryContextStack.removeLast();
+                    TryContext context = m_tryContextStack.takeLast();
                     TryRange range;
                     range.start = context.start;
                     range.end = beforeFinally;
@@ -3958,7 +3965,7 @@ static void prepareJumpTableForStringSwitch(UnlinkedStringJumpTable& jumpTable, 
         
         ASSERT(nodes[i]->isString());
         StringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
-        jumpTable.offsetTable.add(clause, labels[i]->bind(switchAddress, switchAddress + 3));
+        jumpTable.offsetTable.add(clause, UnlinkedStringJumpTable::OffsetLocation { labels[i]->bind(switchAddress, switchAddress + 3) });
     }
 }
 
@@ -4460,31 +4467,33 @@ void BytecodeGenerator::emitRequireObjectCoercible(RegisterID* value, const Stri
 void BytecodeGenerator::emitYieldPoint(RegisterID* argument)
 {
     RefPtr<Label> mergePoint = newLabel();
-    size_t yieldPointIndex = m_generatorResumeLabels.size();
-    emitGeneratorStateChange(yieldPointIndex);
-    // First yield point is used for initial sequence.
-    unsigned liveCalleeLocalsIndex = yieldPointIndex - 1;
-    emitSave(mergePoint.get(), liveCalleeLocalsIndex);
-    emitReturn(argument);
-    emitResume(mergePoint.get(), liveCalleeLocalsIndex);
-}
+    unsigned yieldPointIndex = m_yieldPoints++;
+    emitGeneratorStateChange(yieldPointIndex + 1);
 
-void BytecodeGenerator::emitSave(Label* mergePoint, unsigned liveCalleeLocalsIndex)
-{
-    size_t begin = instructions().size();
-    emitOpcode(op_save);
-    instructions().append(m_generatorRegister->index());
-    instructions().append(liveCalleeLocalsIndex);
-    instructions().append(mergePoint->bind(begin, instructions().size()));
-}
+    // Split the try range here.
+    RefPtr<Label> savePoint = emitLabel(newLabel().get());
+    for (unsigned i = m_tryContextStack.size(); i--;) {
+        TryContext& context = m_tryContextStack[i];
+        TryRange range;
+        range.start = context.start;
+        range.end = savePoint;
+        range.tryData = context.tryData;
+        m_tryRanges.append(range);
 
-void BytecodeGenerator::emitResume(Label* mergePoint, unsigned liveCalleeLocalsIndex)
-{
-    emitGeneratorStateLabel();
-    emitOpcode(op_resume);
-    instructions().append(m_generatorRegister->index());
-    instructions().append(liveCalleeLocalsIndex);
-    emitLabel(mergePoint);
+        // Try range will be restared at the merge point.
+        context.start = mergePoint;
+    }
+    Vector<TryContext> savedTryContextStack;
+    m_tryContextStack.swap(savedTryContextStack);
+
+    emitOpcode(op_yield);
+    instructions().append(generatorFrameRegister()->index());
+    instructions().append(yieldPointIndex);
+    instructions().append(argument->index());
+
+    // Restore the try contexts, which start offset is updated to the merge point.
+    m_tryContextStack.swap(savedTryContextStack);
+    emitLabel(mergePoint.get());
 }
 
 RegisterID* BytecodeGenerator::emitYield(RegisterID* argument)
@@ -4639,39 +4648,6 @@ void BytecodeGenerator::emitGeneratorStateChange(int32_t state)
 {
     RegisterID* completedState = emitLoad(nullptr, jsNumber(state));
     emitPutById(generatorRegister(), propertyNames().builtinNames().generatorStatePrivateName(), completedState);
-}
-
-void BytecodeGenerator::emitGeneratorStateLabel()
-{
-    RefPtr<Label> label = newLabel();
-    m_generatorResumeLabels.append(label.get());
-    emitLabel(label.get());
-}
-
-void BytecodeGenerator::beginGenerator(RegisterID* state)
-{
-    beginSwitch(state, SwitchInfo::SwitchImmediate);
-}
-
-void BytecodeGenerator::endGenerator(Label* defaultLabel)
-{
-    SwitchInfo switchInfo = m_switchContextStack.last();
-    m_switchContextStack.removeLast();
-
-    instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->numberOfSwitchJumpTables();
-    instructions()[switchInfo.bytecodeOffset + 2] = defaultLabel->bind(switchInfo.bytecodeOffset, switchInfo.bytecodeOffset + 3);
-
-    UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->addSwitchJumpTable();
-    int32_t switchAddress = switchInfo.bytecodeOffset;
-    jumpTable.min = 0;
-    jumpTable.branchOffsets.resize(m_generatorResumeLabels.size() + 1);
-    jumpTable.branchOffsets.fill(0);
-    for (uint32_t i = 0; i < m_generatorResumeLabels.size(); ++i) {
-        // We're emitting this after the clause labels should have been fixed, so
-        // the labels should not be "forward" references
-        ASSERT(!m_generatorResumeLabels[i]->isForward());
-        jumpTable.add(i, m_generatorResumeLabels[i]->bind(switchAddress, switchAddress + 3));
-    }
 }
 
 } // namespace JSC

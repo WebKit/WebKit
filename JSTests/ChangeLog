@@ -1,3 +1,28 @@
+2016-08-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Implement ES6 Generators in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=152723
+
+        Reviewed by Filip Pizlo.
+
+        * stress/generator-fib-ftl-and-array.js: Added.
+        (fib):
+        * stress/generator-fib-ftl-and-object.js: Added.
+        (fib):
+        * stress/generator-fib-ftl-and-string.js: Added.
+        (fib):
+        * stress/generator-fib-ftl.js: Added.
+        (fib):
+        * stress/generator-frame-empty.js: Added.
+        (shouldThrow):
+        (shouldThrow.fib):
+        * stress/generator-reduced-save-point-put-to-scope.js: Added.
+        (shouldBe):
+        (gen):
+        * stress/generator-transfer-register-beyond-mutiple-yields.js: Added.
+        (shouldBe):
+        (gen):
+
 2016-08-25  JF Bastien  <jfbastien@apple.com>
 
         TryGetById should have a ValueProfile so that it can predict its output type

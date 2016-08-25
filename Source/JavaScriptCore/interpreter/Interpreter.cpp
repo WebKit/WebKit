@@ -609,7 +609,7 @@ JSString* Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stac
     return jsString(&vm, builder.toString());
 }
 
-ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, CodeBlock* codeBlock, CodeBlock::RequiredHandler requiredHandler)
+ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, CodeBlock* codeBlock, RequiredHandler requiredHandler)
 {
     ASSERT(codeBlock);
 #if ENABLE(DFG_JIT)
@@ -643,7 +643,7 @@ public:
         if (!codeBlock)
             return StackVisitor::Continue;
 
-        m_handler = findExceptionHandler(visitor, codeBlock, CodeBlock::RequiredHandler::CatchHandler);
+        m_handler = findExceptionHandler(visitor, codeBlock, RequiredHandler::CatchHandler);
         if (m_handler)
             return StackVisitor::Done;
 
@@ -685,7 +685,7 @@ public:
         m_handler = nullptr;
         if (!m_isTermination) {
             if (m_codeBlock && !isWebAssemblyExecutable(m_codeBlock->ownerExecutable()))
-                m_handler = findExceptionHandler(visitor, m_codeBlock, CodeBlock::RequiredHandler::AnyHandler);
+                m_handler = findExceptionHandler(visitor, m_codeBlock, RequiredHandler::AnyHandler);
         }
 
         if (m_handler)

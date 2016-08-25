@@ -27,6 +27,7 @@
 #define HandlerInfo_h
 
 #include "CodeLocation.h"
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -35,6 +36,11 @@ enum class HandlerType {
     Catch = 1,
     Finally = 2,
     SynthesizedFinally = 3
+};
+
+enum class RequiredHandler {
+    CatchHandler,
+    AnyHandler
 };
 
 struct HandlerInfoBase {
@@ -57,6 +63,23 @@ struct HandlerInfoBase {
     }
 
     bool isCatchHandler() const { return type() == HandlerType::Catch; }
+
+    template<typename Handler>
+    static Handler* handlerForIndex(Vector<Handler>& exeptionHandlers, unsigned index, RequiredHandler requiredHandler)
+    {
+        for (Handler& handler : exeptionHandlers) {
+            if ((requiredHandler == RequiredHandler::CatchHandler) && !handler.isCatchHandler())
+                continue;
+
+            // Handlers are ordered innermost first, so the first handler we encounter
+            // that contains the source address is the correct handler to use.
+            // This index used is either the BytecodeOffset or a CallSiteIndex.
+            if (handler.start <= index && handler.end > index)
+                return &handler;
+        }
+
+        return nullptr;
+    }
 
     uint32_t start;
     uint32_t end;

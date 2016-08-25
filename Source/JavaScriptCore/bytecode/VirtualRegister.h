@@ -26,8 +26,8 @@
 #ifndef VirtualRegister_h
 #define VirtualRegister_h
 
+#include "BytecodeConventions.h"
 #include "CallFrame.h"
-
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -103,7 +103,7 @@ public:
 
 private:
     static const int s_invalidVirtualRegister = 0x3fffffff;
-    static const int s_firstConstantRegisterIndex = 0x40000000;
+    static const int s_firstConstantRegisterIndex = FirstConstantRegisterIndex;
 
     static int localToOperand(int local) { return -1 - local; }
     static int operandToLocal(int operand) { return -1 - operand; }

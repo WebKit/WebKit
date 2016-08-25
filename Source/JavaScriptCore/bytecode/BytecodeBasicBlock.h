@@ -33,6 +33,9 @@
 namespace JSC {
 
 class CodeBlock;
+class UnlinkedCodeBlock;
+struct Instruction;
+struct UnlinkedInstruction;
 
 class BytecodeBasicBlock {
     WTF_MAKE_FAST_ALLOCATED;
@@ -42,51 +45,59 @@ public:
     BytecodeBasicBlock(SpecialBlockType);
     void shrinkToFit();
 
-    bool isEntryBlock() { return !m_leaderBytecodeOffset && !m_totalBytecodeLength; }
-    bool isExitBlock() { return m_leaderBytecodeOffset == UINT_MAX && m_totalBytecodeLength == UINT_MAX; }
+    bool isEntryBlock() { return !m_leaderOffset && !m_totalLength; }
+    bool isExitBlock() { return m_leaderOffset == UINT_MAX && m_totalLength == UINT_MAX; }
 
-    unsigned leaderBytecodeOffset() { return m_leaderBytecodeOffset; }
-    unsigned totalBytecodeLength() { return m_totalBytecodeLength; }
+    unsigned leaderOffset() { return m_leaderOffset; }
+    unsigned totalLength() { return m_totalLength; }
 
-    Vector<unsigned>& bytecodeOffsets() { return m_bytecodeOffsets; }
-    void addBytecodeLength(unsigned);
+    const Vector<unsigned>& offsets() const { return m_offsets; }
 
-    Vector<BytecodeBasicBlock*>& successors() { return m_successors; }
-    void addSuccessor(BytecodeBasicBlock* block) { m_successors.append(block); }
+    const Vector<BytecodeBasicBlock*>& successors() const { return m_successors; }
 
     FastBitVector& in() { return m_in; }
     FastBitVector& out() { return m_out; }
 
-private:
-    unsigned m_leaderBytecodeOffset;
-    unsigned m_totalBytecodeLength;
+    unsigned index() const { return m_index; }
 
-    Vector<unsigned> m_bytecodeOffsets;
+    static void compute(CodeBlock*, Instruction* instructionsBegin, unsigned instructionCount, Vector<std::unique_ptr<BytecodeBasicBlock>>&);
+    static void compute(UnlinkedCodeBlock*, UnlinkedInstruction* instructionsBegin, unsigned instructionCount, Vector<std::unique_ptr<BytecodeBasicBlock>>&);
+
+private:
+    template<typename Block, typename Instruction> static void computeImpl(Block* codeBlock, Instruction* instructionsBegin, unsigned instructionCount, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks);
+
+    void addSuccessor(BytecodeBasicBlock* block) { m_successors.append(block); }
+
+    void addLength(unsigned);
+
+    unsigned m_leaderOffset;
+    unsigned m_totalLength;
+    unsigned m_index;
+
+    Vector<unsigned> m_offsets;
     Vector<BytecodeBasicBlock*> m_successors;
 
     FastBitVector m_in;
     FastBitVector m_out;
 };
 
-void computeBytecodeBasicBlocks(CodeBlock*, Vector<std::unique_ptr<BytecodeBasicBlock>>&);
-
 inline BytecodeBasicBlock::BytecodeBasicBlock(unsigned start, unsigned length)
-    : m_leaderBytecodeOffset(start)
-    , m_totalBytecodeLength(length)
+    : m_leaderOffset(start)
+    , m_totalLength(length)
 {
-    m_bytecodeOffsets.append(m_leaderBytecodeOffset);
+    m_offsets.append(m_leaderOffset);
 }
 
 inline BytecodeBasicBlock::BytecodeBasicBlock(BytecodeBasicBlock::SpecialBlockType blockType)
-    : m_leaderBytecodeOffset(blockType == BytecodeBasicBlock::EntryBlock ? 0 : UINT_MAX)
-    , m_totalBytecodeLength(blockType == BytecodeBasicBlock::EntryBlock ? 0 : UINT_MAX)
+    : m_leaderOffset(blockType == BytecodeBasicBlock::EntryBlock ? 0 : UINT_MAX)
+    , m_totalLength(blockType == BytecodeBasicBlock::EntryBlock ? 0 : UINT_MAX)
 {
 }
 
-inline void BytecodeBasicBlock::addBytecodeLength(unsigned bytecodeLength)
+inline void BytecodeBasicBlock::addLength(unsigned bytecodeLength)
 {
-    m_bytecodeOffsets.append(m_leaderBytecodeOffset + m_totalBytecodeLength);
-    m_totalBytecodeLength += bytecodeLength;
+    m_offsets.append(m_leaderOffset + m_totalLength);
+    m_totalLength += bytecodeLength;
 }
 
 } // namespace JSC

@@ -1492,18 +1492,6 @@ void JIT::emit_op_get_rest_length(Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_save(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_save);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_resume(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_resume);
-    slowPathCall.call();
-}
-
 } // namespace JSC
 
 #endif // ENABLE(JIT)

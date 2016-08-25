@@ -260,7 +260,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     if (m_lexer->isReparsingFunction()) {
         ParserFunctionInfo<ASTBuilder> functionInfo;
         if (parseMode == SourceParseMode::GeneratorBodyMode)
-            m_parameters = createGeneratorParameters(context);
+            m_parameters = createGeneratorParameters(context, functionInfo.parameterCount);
         else
             m_parameters = parseFunctionParameters(context, parseMode, functionInfo);
 
@@ -512,10 +512,9 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGenerato
 
     ParserFunctionInfo<TreeBuilder> info;
     info.name = &m_vm->propertyNames->nullIdentifier;
-    createGeneratorParameters(context);
+    createGeneratorParameters(context, info.parameterCount);
     info.startOffset = parametersStart;
     info.startLine = tokenLine();
-    info.parameterCount = 4; // generator, state, value, resume mode
 
     {
         AutoPopScopeRef generatorBodyScope(this, pushScope());
@@ -1903,32 +1902,30 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
 }
 
 template <typename LexerType>
-template <class TreeBuilder> typename TreeBuilder::FormalParameterList Parser<LexerType>::createGeneratorParameters(TreeBuilder& context)
+template <class TreeBuilder> typename TreeBuilder::FormalParameterList Parser<LexerType>::createGeneratorParameters(TreeBuilder& context, unsigned& parameterCount)
 {
     auto parameters = context.createFormalParameterList();
 
     JSTokenLocation location(tokenLocation());
     JSTextPosition position = tokenStartPosition();
 
+    auto addParameter = [&](const Identifier& name) {
+        declareParameter(&name);
+        auto binding = context.createBindingLocation(location, name, position, position, AssignmentContext::DeclarationStatement);
+        context.appendParameter(parameters, binding, 0);
+        ++parameterCount;
+    };
+
     // @generator
-    declareParameter(&m_vm->propertyNames->builtinNames().generatorPrivateName());
-    auto generator = context.createBindingLocation(location, m_vm->propertyNames->builtinNames().generatorPrivateName(), position, position, AssignmentContext::DeclarationStatement);
-    context.appendParameter(parameters, generator, 0);
-
+    addParameter(m_vm->propertyNames->builtinNames().generatorPrivateName());
     // @generatorState
-    declareParameter(&m_vm->propertyNames->builtinNames().generatorStatePrivateName());
-    auto generatorState = context.createBindingLocation(location, m_vm->propertyNames->builtinNames().generatorStatePrivateName(), position, position, AssignmentContext::DeclarationStatement);
-    context.appendParameter(parameters, generatorState, 0);
-
+    addParameter(m_vm->propertyNames->builtinNames().generatorStatePrivateName());
     // @generatorValue
-    declareParameter(&m_vm->propertyNames->builtinNames().generatorValuePrivateName());
-    auto generatorValue = context.createBindingLocation(location, m_vm->propertyNames->builtinNames().generatorValuePrivateName(), position, position, AssignmentContext::DeclarationStatement);
-    context.appendParameter(parameters, generatorValue, 0);
-
+    addParameter(m_vm->propertyNames->builtinNames().generatorValuePrivateName());
     // @generatorResumeMode
-    declareParameter(&m_vm->propertyNames->builtinNames().generatorResumeModePrivateName());
-    auto generatorResumeMode = context.createBindingLocation(location, m_vm->propertyNames->builtinNames().generatorResumeModePrivateName(), position, position, AssignmentContext::DeclarationStatement);
-    context.appendParameter(parameters, generatorResumeMode, 0);
+    addParameter(m_vm->propertyNames->builtinNames().generatorResumeModePrivateName());
+    // @generatorFrame
+    addParameter(m_vm->propertyNames->builtinNames().generatorFramePrivateName());
 
     return parameters;
 }

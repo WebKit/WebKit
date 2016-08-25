@@ -126,6 +126,64 @@ inline size_t opcodeLength(OpcodeID opcode)
     return 0;
 }
 
+inline bool isBranch(OpcodeID opcodeID)
+{
+    switch (opcodeID) {
+    case op_jmp:
+    case op_jtrue:
+    case op_jfalse:
+    case op_jeq_null:
+    case op_jneq_null:
+    case op_jneq_ptr:
+    case op_jless:
+    case op_jlesseq:
+    case op_jgreater:
+    case op_jgreatereq:
+    case op_jnless:
+    case op_jnlesseq:
+    case op_jngreater:
+    case op_jngreatereq:
+    case op_switch_imm:
+    case op_switch_char:
+    case op_switch_string:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isUnconditionalBranch(OpcodeID opcodeID)
+{
+    switch (opcodeID) {
+    case op_jmp:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isTerminal(OpcodeID opcodeID)
+{
+    switch (opcodeID) {
+    case op_ret:
+    case op_end:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isThrow(OpcodeID opcodeID)
+{
+    switch (opcodeID) {
+    case op_throw:
+    case op_throw_static_error:
+        return true;
+    default:
+        return false;
+    }
+}
+
 } // namespace JSC
 
 namespace WTF {
