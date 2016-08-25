@@ -57,11 +57,18 @@ void serializeIdentifier(const String& identifier, StringBuilder& appendTo)
     unsigned index = 0;
     while (index < identifier.length()) {
         UChar32 c = identifier.characterStartingAt(index);
+        if (!c) {
+            // Check for lone surrogate which characterStartingAt does not return.
+            c = identifier[index];
+        }
+
         index += U16_LENGTH(c);
 
-        if (c <= 0x1f || (0x30 <= c && c <= 0x39 && (isFirst || (isSecond && isFirstCharHyphen))))
+        if (!c)
+            appendTo.append(0xfffd);
+        else if (c <= 0x1f || c == 0x7f || (0x30 <= c && c <= 0x39 && (isFirst || (isSecond && isFirstCharHyphen))))
             serializeCharacterAsCodePoint(c, appendTo);
-        else if (c == 0x2d && isSecond && isFirstCharHyphen)
+        else if (c == 0x2d && isFirst && index == identifier.length())
             serializeCharacter(c, appendTo);
         else if (0x80 <= c || c == 0x2d || c == 0x5f || (0x30 <= c && c <= 0x39) || (0x41 <= c && c <= 0x5a) || (0x61 <= c && c <= 0x7a))
             appendTo.append(c);
@@ -72,9 +79,8 @@ void serializeIdentifier(const String& identifier, StringBuilder& appendTo)
             isFirst = false;
             isSecond = true;
             isFirstCharHyphen = (c == 0x2d);
-        } else if (isSecond) {
+        } else if (isSecond)
             isSecond = false;
-        }
     }
 }
 

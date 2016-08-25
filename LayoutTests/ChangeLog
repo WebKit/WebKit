@@ -1,3 +1,32 @@
+2016-08-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Implement `CSS.escape` as per CSSOM
+        https://bugs.webkit.org/show_bug.cgi?id=126337
+
+        Reviewed by Dean Jackson.
+
+        CSS.escape is part of the CSSOM Spec:
+        https://drafts.csswg.org/cssom/#the-css.escape%28%29-method
+
+        Tests:
+        https://github.com/mathiasbynens/CSS.escape/blob/master/tests/tests.js
+
+        Change is based on the Blink change (patch by <rob.buis@samsung.com>) and follow-ups:
+        <https://chromium.googlesource.com/chromium/blink/+/c1a5ffdc924b089e70cd33ad2726b58cc8312abe>
+
+        * css3/escape-dom-api-expected.txt: Added.
+        * css3/escape-dom-api.html: Added.
+        New tests, taken from the polyfill.
+
+        * fast/css/parsing-css-nonascii-expected.txt:
+        * fast/css/parsing-css-nonascii.html:
+        * fast/css/selector-text-escape.html:
+        Update existing tests now that 0x7f is escaped.
+
+        * js/dom/function-removed-after-parsing-expected.txt:
+        * js/dom/function-removed-after-parsing.html:
+        Rename use of `CSS.escape` here now that `CSS.escape` exists.
+
 2016-08-24  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: contentSize >= 0 in WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax

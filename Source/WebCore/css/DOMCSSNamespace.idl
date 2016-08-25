@@ -33,4 +33,5 @@
 ] interface DOMCSSNamespace {
     static boolean supports(DOMString property, DOMString value);
     static boolean supports(DOMString conditionText);
+    static DOMString escape(DOMString ident);
 };

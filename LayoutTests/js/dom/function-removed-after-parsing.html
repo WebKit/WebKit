@@ -2,6 +2,9 @@
 <!--
 NOTE: This intentionally does not use description() and does not include js-test-post because
 doing either of those things made the bug go away.
+
+NOTE: This intentionally does not use the name `CSS.escape` because that function exists now but
+did not when this test was added. The name was changed to `CSS.layoutTestEscape` for this test.
 -->
   <script src="../../resources/js-test-pre.js"></script>
   <script type='text/javascript'>
@@ -20,9 +23,9 @@ doing either of those things made the bug go away.
 	InvalidCharacterError.prototype = new Error;
 	InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
-	if (!CSS.escape) {
+	if (!CSS.layoutTestEscape) {
 		// https://drafts.csswg.org/cssom/#serialize-an-identifier
-		CSS.escape = function(value) {
+		CSS.layoutTestEscape = function(value) {
 			var string = String(value);
 			var length = string.length;
 			var index = -1;
@@ -107,14 +110,14 @@ doing either of those things made the bug go away.
       testRunner.dumpAsText(window.enablePixelTesting);
       testRunner.waitUntilDone();
     } catch (e) { }
-    if (!window.CSS.escape) {
-      debug('window.CSS.escape not loaded');
+    if (!window.CSS.layoutTestEscape) {
+      debug('window.CSS.layoutTestEscape not loaded');
     }
     setTimeout(function() {
-      if (window.CSS.escape)
-        debug("window.CSS.escape still here");
+      if (window.CSS.layoutTestEscape)
+        debug("window.CSS.layoutTestEscape still here");
       else
-        debug('window.CSS.escape missing in event');
+        debug('window.CSS.layoutTestEscape missing in event');
       try {
         testRunner.notifyDone();
       } catch (e) { }

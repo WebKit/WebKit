@@ -38,6 +38,7 @@ class DOMCSSNamespace : public RefCounted<DOMCSSNamespace> {
 public:
     static bool supports(const String& property, const String& value);
     static bool supports(const String& conditionText);
+    static String escape(const String& ident);
 };
 
 }

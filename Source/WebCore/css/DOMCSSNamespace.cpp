@@ -30,8 +30,10 @@
 #include "config.h"
 #include "DOMCSSNamespace.h"
 
+#include "CSSOMUtils.h"
 #include "CSSParser.h"
 #include "StyleProperties.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -75,6 +77,13 @@ bool DOMCSSNamespace::supports(const String& conditionText)
     CSSParserContext context(CSSStrictMode);
     CSSParser parser(context);
     return parser.parseSupportsCondition(conditionText);
+}
+
+String DOMCSSNamespace::escape(const String& ident)
+{
+    StringBuilder builder;
+    serializeIdentifier(ident, builder);
+    return builder.toString();
 }
 
 }

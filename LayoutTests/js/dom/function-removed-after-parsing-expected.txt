@@ -1,2 +1,2 @@
-window.CSS.escape still here
+window.CSS.layoutTestEscape still here
 
