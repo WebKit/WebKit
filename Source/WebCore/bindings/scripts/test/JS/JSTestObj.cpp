@@ -194,6 +194,49 @@ template<> inline const char* expectedEnumerationValues<TestObj::Optional>()
     return "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\"";
 }
 
+JSString* jsStringWithCache(ExecState*, AlternateEnumName);
+
+JSString* jsStringWithCache(ExecState* state, AlternateEnumName enumerationValue)
+{
+    static NeverDestroyed<const String> values[] = {
+        ASCIILiteral("enumValue1"),
+        ASCIILiteral("EnumValue2"),
+    };
+    static_assert(static_cast<size_t>(AlternateEnumName::EnumValue1) == 0, "AlternateEnumName::EnumValue1 is not 0 as expected");
+    static_assert(static_cast<size_t>(AlternateEnumName::EnumValue2) == 1, "AlternateEnumName::EnumValue2 is not 1 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+}
+
+template<> struct JSValueTraits<AlternateEnumName> {
+    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, AlternateEnumName value) { return jsStringWithCache(state, value); }
+};
+
+template<> Optional<AlternateEnumName> parse<AlternateEnumName>(ExecState& state, JSValue value)
+{
+    auto stringValue = value.toWTFString(&state);
+    if (stringValue == "enumValue1")
+        return AlternateEnumName::EnumValue1;
+    if (stringValue == "EnumValue2")
+        return AlternateEnumName::EnumValue2;
+    return Nullopt;
+}
+
+template<> AlternateEnumName convert<AlternateEnumName>(ExecState& state, JSValue value)
+{
+    auto result = parse<AlternateEnumName>(state, value);
+    if (UNLIKELY(!result)) {
+        throwTypeError(&state);
+        return { };
+    }
+    return result.value();
+}
+
+template<> inline const char* expectedEnumerationValues<AlternateEnumName>()
+{
+    return "\"enumValue1\", \"EnumValue2\"";
+}
+
 #if ENABLE(Condition1)
 
 JSString* jsStringWithCache(ExecState*, TestObj::EnumA);
@@ -594,6 +637,22 @@ template<> Optional<TestObj::DictionaryThatShouldTolerateNull> convertDictionary
     return TestObj::DictionaryThatShouldTolerateNull { WTFMove(enumerationValue), WTFMove(booleanWithoutDefault) };
 }
 
+template<> Optional<AlternateDictionaryName> convertDictionary<AlternateDictionaryName>(ExecState& state, JSValue value)
+{
+    if (value.isUndefinedOrNull())
+        return AlternateDictionaryName { { }, { } };
+    auto* object = value.getObject();
+    if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
+        throwTypeError(&state);
+        return Nullopt;
+    }
+    auto enumerationValue = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValue")));
+    if (UNLIKELY(state.hadException()))
+        return Nullopt;
+    auto booleanWithoutDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault")));
+    return AlternateDictionaryName { WTFMove(enumerationValue), WTFMove(booleanWithoutDefault) };
+}
+
 // Functions
 
 #if ENABLE(TEST_FEATURE)
@@ -774,6 +833,8 @@ JSC::EncodedJSValue jsTestObjStringAttrTreatingNullAsEmptyString(JSC::ExecState*
 bool setJSTestObjStringAttrTreatingNullAsEmptyString(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjUsvstringAttrTreatingNullAsEmptyString(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjUsvstringAttrTreatingNullAsEmptyString(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjImplementationEnumAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestObjImplementationEnumAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjXMLObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjXMLObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCreate(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -1096,6 +1157,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "lenientTestObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLenientTestObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjLenientTestObjAttr) } },
     { "stringAttrTreatingNullAsEmptyString", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrTreatingNullAsEmptyString), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrTreatingNullAsEmptyString) } },
     { "usvstringAttrTreatingNullAsEmptyString", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUsvstringAttrTreatingNullAsEmptyString), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjUsvstringAttrTreatingNullAsEmptyString) } },
+    { "implementationEnumAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjImplementationEnumAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjImplementationEnumAttr) } },
     { "XMLObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjXMLObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjXMLObjAttr) } },
     { "create", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCreate), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCreate) } },
     { "reflectedStringAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedStringAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjReflectedStringAttr) } },
@@ -1780,6 +1842,21 @@ EncodedJSValue jsTestObjUsvstringAttrTreatingNullAsEmptyString(ExecState* state,
     }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.usvstringAttrTreatingNullAsEmptyString());
+    return JSValue::encode(result);
+}
+
+
+EncodedJSValue jsTestObjImplementationEnumAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestObject", "implementationEnumAttr");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = jsStringWithCache(state, impl.implementationEnumAttr());
     return JSValue::encode(result);
 }
 
@@ -3107,6 +3184,25 @@ bool setJSTestObjUsvstringAttrTreatingNullAsEmptyString(ExecState* state, Encode
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setUsvstringAttrTreatingNullAsEmptyString(WTFMove(nativeValue));
+    return true;
+}
+
+
+bool setJSTestObjImplementationEnumAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        return throwSetterTypeError(*state, "TestObject", "implementationEnumAttr");
+    }
+    auto& impl = castedThis->wrapped();
+    auto nativeValue = parse<AlternateEnumName>(*state, value);
+    if (UNLIKELY(state->hadException()))
+        return false;
+    if (UNLIKELY(!nativeValue))
+        return false;
+    impl.setImplementationEnumAttr(nativeValue.value());
     return true;
 }
 

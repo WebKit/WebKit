@@ -70,8 +70,12 @@ my %webCoreTypeHash = (
     "SerializedScriptValue" => 1,
 );
 
-my %enumTypeHash = ();
 my %dictionaryTypes = ();
+my %dictionaryTypeImplementationNameOverrides = ();
+
+my %enumTypeHash = ();
+my %enumTypeImplementationNameOverrides = ();
+
 
 my %typedArrayTypes = (
     "ArrayBuffer" => 1,
@@ -163,8 +167,19 @@ sub ProcessDocument
     my $ifaceName = "CodeGenerator" . $useGenerator;
     require $ifaceName . ".pm";
 
-    %enumTypeHash = map { $_->name => $_->values } @{$useDocument->enumerations};
-    %dictionaryTypes = map { $_->name => 1 } @{$useDocument->dictionaries};
+    foreach my $dictionary (@{$useDocument->dictionaries}) {
+        $dictionaryTypes{$dictionary->name} = 1;
+        if ($dictionary->extendedAttributes->{"ImplementedAs"}) {
+            $dictionaryTypeImplementationNameOverrides{$dictionary->name} = $dictionary->extendedAttributes->{"ImplementedAs"};
+        }
+    }
+
+    foreach my $enumeration (@{$useDocument->enumerations}) {
+        $enumTypeHash{$enumeration->name} = $enumeration->values;
+        if ($enumeration->extendedAttributes->{"ImplementedAs"}) {
+            $enumTypeImplementationNameOverrides{$enumeration->name} = $enumeration->extendedAttributes->{"ImplementedAs"};
+        }
+    }
 
     # Dynamically load external code generation perl module
     $codeGenerator = $ifaceName->new($object, $writeDependencies, $verbose, $targetIdlFilePath);
@@ -395,8 +410,7 @@ sub IsPrimitiveType
 # Currently used outside WebKit in an internal Apple project; can be removed soon.
 sub IsStringType
 {
-    my $object = shift;
-    my $type = shift;
+    my ($object, $type) = @_;
 
     return 1 if $type eq "DOMString";
     return 1 if $type eq "USVString";
@@ -405,8 +419,7 @@ sub IsStringType
 
 sub IsEnumType
 {
-    my $object = shift;
-    my $type = shift;
+    my ($object, $type) = @_;
 
     return 1 if exists $enumTypeHash{$type};
     return 0;
@@ -414,17 +427,47 @@ sub IsEnumType
 
 sub ValidEnumValues
 {
-    my $object = shift;
-    my $type = shift;
+    my ($object, $type) = @_;
 
     return @{$enumTypeHash{$type}};
+}
+
+sub HasEnumImplementationNameOverride
+{
+    my ($object, $type) = @_;
+
+    return 1 if exists $enumTypeImplementationNameOverrides{$type};
+    return 0;
+}
+
+sub GetEnumImplementationNameOverride
+{
+    my ($object, $type) = @_;
+
+    return $enumTypeImplementationNameOverrides{$type};
 }
 
 sub IsDictionaryType
 {
     my ($object, $type) = @_;
 
-    return $dictionaryTypes{$type} || 0;
+    return 1 if exists $dictionaryTypes{$type};
+    return 0;
+}
+
+sub HasDictionaryImplementationNameOverride
+{
+    my ($object, $type) = @_;
+
+    return 1 if exists $dictionaryTypeImplementationNameOverrides{$type};
+    return 0;
+}
+
+sub GetDictionaryImplementationNameOverride
+{
+    my ($object, $type) = @_;
+
+    return $dictionaryTypeImplementationNameOverrides{$type};
 }
 
 sub IsNonPointerType

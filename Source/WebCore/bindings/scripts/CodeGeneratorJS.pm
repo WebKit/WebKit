@@ -807,6 +807,10 @@ sub GetEnumerationClassName
 {
     my ($interface, $name) = @_;
 
+    if ($codeGenerator->HasEnumImplementationNameOverride($name)) {
+        return $codeGenerator->GetEnumImplementationNameOverride($name);
+    }
+
     return GetNestedClassName($interface, $name);
 }
 
@@ -921,6 +925,10 @@ sub GenerateEnumerationImplementationContent
 sub GetDictionaryClassName
 {
     my ($interface, $name) = @_;
+
+    if ($codeGenerator->HasDictionaryImplementationNameOverride($name)) {
+        return $codeGenerator->GetDictionaryImplementationNameOverride($name);
+    }
 
     return GetNestedClassName($interface, $name);
 }
