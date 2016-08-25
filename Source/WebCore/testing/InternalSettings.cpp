@@ -80,7 +80,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::sharedFeatures().langAttributeAwareFormControlUIEnabled())
     , m_imagesEnabled(settings.areImagesEnabled())
     , m_preferMIMETypeForImages(settings.preferMIMETypeForImages())
-    , m_cachedPDFImageEnabled(settings.isCachedPDFImageEnabled())
     , m_minimumTimerInterval(settings.minimumDOMTimerInterval())
 #if ENABLE(VIDEO_TRACK)
     , m_shouldDisplaySubtitles(settings.shouldDisplaySubtitles())
@@ -113,6 +112,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #endif
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
+    , m_pdfImageCachingPolicy(settings.pdfImageCachingPolicy())
 {
 }
 
@@ -160,7 +160,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     RuntimeEnabledFeatures::sharedFeatures().setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
     settings.setImagesEnabled(m_imagesEnabled);
     settings.setPreferMIMETypeForImages(m_preferMIMETypeForImages);
-    settings.setCachedPDFImageEnabled(m_cachedPDFImageEnabled);
     settings.setMinimumDOMTimerInterval(m_minimumTimerInterval);
 #if ENABLE(VIDEO_TRACK)
     settings.setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
@@ -190,6 +189,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
+    settings.setPdfImageCachingPolicy(m_pdfImageCachingPolicy);
     Settings::setAllowsAnySSLCertificate(false);
 }
 
@@ -485,10 +485,19 @@ void InternalSettings::setImagesEnabled(bool enabled, ExceptionCode& ec)
     settings()->setImagesEnabled(enabled);
 }
 
-void InternalSettings::setCachedPDFImageEnabled(bool enabled, ExceptionCode& ec)
+void InternalSettings::setPDFImageCachingPolicy(const String& policy, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    settings()->setCachedPDFImageEnabled(enabled);
+    if (equalLettersIgnoringASCIICase(policy, "disabled"))
+        settings()->setPdfImageCachingPolicy(PDFImageCachingDisabled);
+    else if (equalLettersIgnoringASCIICase(policy, "belowmemorylimit"))
+        settings()->setPdfImageCachingPolicy(PDFImageCachingBelowMemoryLimit);
+    else if (equalLettersIgnoringASCIICase(policy, "clipboundsonly"))
+        settings()->setPdfImageCachingPolicy(PDFImageCachingClipBoundsOnly);
+    else if (equalLettersIgnoringASCIICase(policy, "enabled"))
+        settings()->setPdfImageCachingPolicy(PDFImageCachingEnabled);
+    else
+        ec = SYNTAX_ERR;
 }
 
 void InternalSettings::setMinimumTimerInterval(double intervalInSeconds, ExceptionCode& ec)

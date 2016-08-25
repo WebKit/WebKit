@@ -80,7 +80,6 @@ public:
         bool m_langAttributeAwareFormControlUIEnabled;
         bool m_imagesEnabled;
         bool m_preferMIMETypeForImages;
-        bool m_cachedPDFImageEnabled;
         std::chrono::milliseconds m_minimumTimerInterval;
 #if ENABLE(VIDEO_TRACK)
         bool m_shouldDisplaySubtitles;
@@ -113,6 +112,7 @@ public:
 #endif
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
+        PDFImageCachingPolicy m_pdfImageCachingPolicy;
     };
 
     static Ref<InternalSettings> create(Page* page)
@@ -142,7 +142,7 @@ public:
     void setAllowsAirPlayForMediaPlayback(bool);
     void setEditingBehavior(const String&, ExceptionCode&);
     void setPreferMIMETypeForImages(bool, ExceptionCode&);
-    void setCachedPDFImageEnabled(bool, ExceptionCode&);
+    void setPDFImageCachingPolicy(const String&, ExceptionCode&);
     void setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode&);
     bool shouldDisplayTrackKind(const String& kind, ExceptionCode&);
     void setStorageBlockingPolicy(const String&, ExceptionCode&);

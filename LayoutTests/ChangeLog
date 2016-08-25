@@ -1,3 +1,14 @@
+2016-08-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r203378): [iOS] The PDF image is rendered stretched if a sub image of it is cached first
+        https://bugs.webkit.org/show_bug.cgi?id=160617
+
+        Reviewed by Tim Horton.
+
+        * fast/images/cached-clipped-pdf-expected.html: Added.
+        * fast/images/cached-clipped-pdf.html: Added.
+        * fast/images/displaced-non-cached-pdf.html:
+
 2016-08-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping imported/w3c/web-platform-tests/url/url-setters.html because it asserts.

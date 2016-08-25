@@ -68,7 +68,7 @@
     // Other switches
     [RaisesException] void setStorageBlockingPolicy(DOMString policy);
     [RaisesException] void setImagesEnabled(boolean enabled);
-    [RaisesException] void setCachedPDFImageEnabled(boolean enabled);
+    [RaisesException] void setPDFImageCachingPolicy(DOMString policy);
     [RaisesException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
     [RaisesException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
     [RaisesException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
