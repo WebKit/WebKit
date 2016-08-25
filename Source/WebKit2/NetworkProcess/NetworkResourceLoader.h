@@ -134,7 +134,7 @@ private:
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
 
-    template<typename T> bool sendAbortingOnFailure(T&& message, unsigned messageSendFlags = 0);
+    template<typename T> bool sendAbortingOnFailure(T&& message, OptionSet<IPC::SendOption> sendOption = { });
 
     const NetworkResourceLoadParameters m_parameters;
 

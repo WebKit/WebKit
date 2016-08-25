@@ -32,11 +32,11 @@ MessageSender::~MessageSender()
 {
 }
 
-bool MessageSender::sendMessage(std::unique_ptr<Encoder> encoder, unsigned messageSendFlags)
+bool MessageSender::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOption> sendOptions)
 {
     ASSERT(messageSenderConnection());
 
-    return messageSenderConnection()->sendMessage(WTFMove(encoder), messageSendFlags);
+    return messageSenderConnection()->sendMessage(WTFMove(encoder), sendOptions);
 }
 
 } // namespace IPC

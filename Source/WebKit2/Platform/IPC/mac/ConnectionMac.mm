@@ -214,7 +214,7 @@ bool Connection::open()
         auto encoder = std::make_unique<Encoder>("IPC", "InitializeConnection", 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(WTFMove(encoder));
+        sendMessage(WTFMove(encoder), { });
 
         initializeDeadNameSource();
     }
@@ -237,7 +237,7 @@ bool Connection::open()
         auto encoder = std::make_unique<Encoder>("IPC", "SetExceptionPort", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(WTFMove(encoder));
+        sendMessage(WTFMove(encoder), { });
     }
 #endif
 
@@ -649,15 +649,15 @@ static void AccessibilityProcessSuspendedNotification(bool suspended)
 #endif
 }
     
-void Connection::willSendSyncMessage(unsigned flags)
+void Connection::willSendSyncMessage(OptionSet<SendSyncOption> sendSyncOptions)
 {
-    if ((flags & InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
+    if (sendSyncOptions.contains(IPC::SendSyncOption::InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
         AccessibilityProcessSuspendedNotification(true);
 }
 
-void Connection::didReceiveSyncReply(unsigned flags)
+void Connection::didReceiveSyncReply(OptionSet<SendSyncOption> sendSyncOptions)
 {
-    if ((flags & InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
+    if (sendSyncOptions.contains(IPC::SendSyncOption::InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
         AccessibilityProcessSuspendedNotification(false);
 }
 

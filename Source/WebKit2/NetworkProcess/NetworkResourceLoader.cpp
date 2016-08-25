@@ -419,7 +419,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
         m_synchronousLoadData->error = error;
         sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
     } else if (auto* connection = messageSenderConnection())
-        connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), messageSenderDestinationID(), 0);
+        connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), messageSenderDestinationID());
 
     cleanup();
 }
@@ -635,9 +635,9 @@ void NetworkResourceLoader::invalidateSandboxExtensions()
 }
 
 template<typename T>
-bool NetworkResourceLoader::sendAbortingOnFailure(T&& message, unsigned messageSendFlags)
+bool NetworkResourceLoader::sendAbortingOnFailure(T&& message, OptionSet<IPC::SendOption> sendOption)
 {
-    bool result = messageSenderConnection()->send(std::forward<T>(message), messageSenderDestinationID(), messageSendFlags);
+    bool result = messageSenderConnection()->send(std::forward<T>(message), messageSenderDestinationID(), sendOption);
     if (!result)
         abort();
     return result;

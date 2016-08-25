@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/OptionSet.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
@@ -53,19 +54,19 @@ namespace IPC {
 
 struct WaitForMessageState;
 
-enum MessageSendFlags {
+enum class SendOption {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.
     DispatchMessageEvenWhenWaitingForSyncReply = 1 << 0,
 };
 
-enum SyncMessageSendFlags {
+enum class SendSyncOption {
     // Use this to inform that this sync call will suspend this process until the user responds with input.
     InformPlatformProcessWillSuspend = 1 << 0,
     UseFullySynchronousModeForTesting = 1 << 1,
 };
 
-enum WaitForMessageFlags {
+enum class WaitForOption {
     // Use this to make waitForMessage be interrupted immediately by any incoming sync messages.
     InterruptWaitingIfSyncMessageArrives = 1 << 0,
 };
@@ -164,13 +165,13 @@ public:
 
     void postConnectionDidCloseOnConnectionWorkQueue();
 
-    template<typename T> bool send(T&& message, uint64_t destinationID, unsigned messageSendFlags = 0);
-    template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), unsigned syncSendFlags = 0);
-    template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags = 0);
+    template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { });
+    template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), OptionSet<SendSyncOption> sendSyncOptions = { });
+    template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<WaitForOption> waitForOptions = { });
 
     std::unique_ptr<Encoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
-    bool sendMessage(std::unique_ptr<Encoder>, unsigned messageSendFlags = 0);
-    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout, unsigned syncSendFlags = 0);
+    bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption> sendOptions);
+    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions);
     std::unique_ptr<Decoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout);
     bool sendSyncReply(std::unique_ptr<Encoder>);
 
@@ -207,9 +208,9 @@ private:
     void platformInitialize(Identifier);
     void platformInvalidate();
     
-    std::unique_ptr<Decoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags);
+    std::unique_ptr<Decoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<WaitForOption>);
     
-    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, std::chrono::milliseconds timeout, unsigned syncSendFlags);
+    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, std::chrono::milliseconds timeout, OptionSet<SendSyncOption>);
 
     // Called on the connection work queue.
     void processIncomingMessage(std::unique_ptr<Decoder>);
@@ -234,8 +235,8 @@ private:
     // Can be called on any thread.
     void enqueueIncomingMessage(std::unique_ptr<Decoder>);
 
-    void willSendSyncMessage(unsigned syncSendFlags);
-    void didReceiveSyncReply(unsigned syncSendFlags);
+    void willSendSyncMessage(OptionSet<SendSyncOption>);
+    void didReceiveSyncReply(OptionSet<SendSyncOption>);
 
     std::chrono::milliseconds timeoutRespectingIgnoreTimeoutsForTesting(std::chrono::milliseconds) const;
     
@@ -354,24 +355,24 @@ private:
 #endif
 };
 
-template<typename T> bool Connection::send(T&& message, uint64_t destinationID, unsigned messageSendFlags)
+template<typename T> bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
     auto encoder = std::make_unique<Encoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message.arguments());
     
-    return sendMessage(WTFMove(encoder), messageSendFlags);
+    return sendMessage(WTFMove(encoder), sendOptions);
 }
 
-template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned syncSendFlags)
+template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
 
     uint64_t syncRequestID = 0;
     std::unique_ptr<Encoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, syncRequestID);
 
-    if (syncSendFlags & SyncMessageSendFlags::UseFullySynchronousModeForTesting) {
+    if (sendSyncOptions.contains(SendSyncOption::UseFullySynchronousModeForTesting)) {
         encoder->setFullySynchronousModeForTesting();
         m_fullySynchronousModeIsAllowedForTesting = true;
     }
@@ -380,7 +381,7 @@ template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& 
     encoder->encode(message.arguments());
 
     // Now send the message and wait for a reply.
-    std::unique_ptr<Decoder> replyDecoder = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, syncSendFlags);
+    std::unique_ptr<Decoder> replyDecoder = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);
     if (!replyDecoder)
         return false;
 
@@ -388,9 +389,9 @@ template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& 
     return replyDecoder->decode(reply);
 }
 
-template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags)
+template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<WaitForOption> waitForOptions)
 {
-    std::unique_ptr<Decoder> decoder = waitForMessage(T::receiverName(), T::name(), destinationID, timeout, waitForMessageFlags);
+    std::unique_ptr<Decoder> decoder = waitForMessage(T::receiverName(), T::name(), destinationID, timeout, waitForOptions);
     if (!decoder)
         return false;
 

@@ -48,7 +48,7 @@ void PluginControllerProxy::pluginFocusOrWindowFocusChanged(bool pluginHasFocusA
 
 void PluginControllerProxy::setComplexTextInputState(PluginComplexTextInputState pluginComplexTextInputState)
 {
-    m_connection->connection()->send(Messages::PluginProxy::SetComplexTextInputState(pluginComplexTextInputState), m_pluginInstanceID, IPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_connection->connection()->send(Messages::PluginProxy::SetComplexTextInputState(pluginComplexTextInputState), m_pluginInstanceID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 const MachSendRight& PluginControllerProxy::compositingRenderServerPort()
