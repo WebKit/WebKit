@@ -876,10 +876,18 @@ fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-left.htm
 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-right.html [ ImageOnlyFailure ]
 fast/shapes/shape-outside-floats/shape-outside-insert-svg-shape.html [ ImageOnlyFailure ]
 fast/sub-pixel/simple-clipping.html [ ImageOnlyFailure ]
+fast/text/ascent-adjustment-webfont.html [ ImageOnlyFailure ]
+fast/text/crash-complex-unknown-font.html [ ImageOnlyFailure ]
+fast/text/decorations-with-text-combine.html [ Failure ]
 fast/text/delete-hard-break-character.html [ Failure ]
-fast/text/simple-lines-hover-after.html [ ImageOnlyFailure ]
-fast/text/small-line-height.html [ ImageOnlyFailure ]
+fast/text/hyphenate-limit-before-after.html [ Failure ]
+fast/text/international/text-combine-image-test.html [ Failure ]
+fast/text/khmer-lao-font.html [ Failure ]
+fast/text/multiple-text-shadow-overflow-layout-rect.html [ ImageOnlyFailure ]
+fast/text/svg-small-caps.html [ ImageOnlyFailure ]
+fast/text/text-combine-placement.html [ ImageOnlyFailure ]
 fast/text/text-rendering-with-input-selection.html [ ImageOnlyFailure ]
+fast/text/undefined-glyph-with-ligature.html [ ImageOnlyFailure ]
 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
 fast/transforms/transformed-caret.html [ Failure ]
 fast/transforms/transformed-focused-text-input.html [ Failure ]
@@ -1393,3 +1401,6 @@ webkit.org/b/158237 fast/scrolling/scroll-container-horizontally.html [ Timeout 
 
 # FIXME: Many media tests fail
 media
+
+# fast tests that pass
+fast/text/emoji-gender.html [ Pass ]

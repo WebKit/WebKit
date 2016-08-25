@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
                       RenderText at (0,0) size 76x14
                         text run at (0,0) width 76: "Search Froogle"
                   RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (515,1) size 160x23 [r=0 c=3 rs=2 cs=1]
+                RenderTableCell {TD} at (514,1) size 161x23 [r=0 c=3 rs=2 cs=1]
                   RenderInline {LABEL} at (0,0) size 119x12
                     RenderText {#text} at (0,0) size 0x0
                     RenderBlock {INPUT} at (12,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]

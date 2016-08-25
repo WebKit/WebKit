@@ -1,3 +1,21 @@
+2016-08-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 fast/text tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/ios-simulator-wk1/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/ios-simulator-wk1/fast/text/atsui-spacing-features-expected.txt:
+        * platform/ios-simulator-wk1/fast/text/font-weights-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/text/international/khmer-selection-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/text/system-font-weight-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/text/tatechuyoko-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/ios-simulator-wk1/fast/text/wbr-expected.txt:
+        * platform/ios-simulator-wk1/fast/text/word-space-expected.txt: Added.
+        * platform/ios-simulator-wk2/fast/text/decorations-with-text-combine-expected.txt: Removed.
+        * platform/ios-simulator/fast/text/decorations-with-text-combine-expected.txt:
+
 2016-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Import w3c URL tests

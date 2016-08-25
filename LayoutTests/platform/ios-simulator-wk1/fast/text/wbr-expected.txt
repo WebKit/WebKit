@@ -28,7 +28,7 @@ layer at (0,0) size 800x846
       RenderTable {TABLE} at (0,194) size 784x42
         RenderTableSection {TBODY} at (0,0) size 784x42
           RenderTableRow {TR} at (0,0) size 784x42
-            RenderTableCell {TD} at (0,0) size 259x42 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 258x42 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 228x19
                 text run at (1,1) width 228: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
               RenderWordBreak {WBR} at (0,0) size 0x0
@@ -48,7 +48,7 @@ layer at (0,0) size 800x846
       RenderTable {TABLE} at (0,340) size 784x42
         RenderTableSection {TBODY} at (0,0) size 784x42
           RenderTableRow {TR} at (0,0) size 784x42
-            RenderTableCell {TD} at (0,0) size 259x42 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 258x42 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderInline {NOBR} at (0,0) size 256x39
                 RenderText {#text} at (1,1) size 228x19
                   text run at (1,1) width 228: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -71,7 +71,7 @@ layer at (0,0) size 800x846
       RenderTable {TABLE} at (0,506) size 784x62
         RenderTableSection {TBODY} at (0,0) size 784x62
           RenderTableRow {TR} at (0,0) size 784x62
-            RenderTableCell {TD} at (0,0) size 195x62 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 194x62 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 171x19
                 text run at (1,1) width 171: "aaaaaaaaaaaaaaaaaaaaaaaa"
               RenderWordBreak {WBR} at (0,0) size 0x0
@@ -97,7 +97,7 @@ layer at (0,0) size 800x846
       RenderTable {TABLE} at (0,692) size 784x62
         RenderTableSection {TBODY} at (0,0) size 784x62
           RenderTableRow {TR} at (0,0) size 784x62
-            RenderTableCell {TD} at (0,0) size 195x62 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 194x62 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderInline {NOBR} at (0,0) size 192x59
                 RenderText {#text} at (1,1) size 171x19
                   text run at (1,1) width 171: "aaaaaaaaaaaaaaaaaaaaaaaa"
