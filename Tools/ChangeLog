@@ -1,5 +1,12 @@
 2016-08-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix iOS DRT build.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::zoomToScale):
+
+2016-08-24  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS DRT] Hook up uiController.zoomToScale() for DRT
         https://bugs.webkit.org/show_bug.cgi?id=161173
 

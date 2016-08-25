@@ -52,13 +52,13 @@ void UIScriptController::doAsyncTask(JSValueRef callback)
 void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 {
     RefPtr<UIScriptController> protectedThis(this);
-    unsigned callbackID = strongThis->context()->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    unsigned callbackID = protectedThis->context()->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         [gWebScrollView zoomToScale:scale animated:YES completionHandler:^{
-            if (!strongThis->context())
+            if (!protectedThis->context())
                 return;
-            strongThis->context()->asyncTaskComplete(callbackID);
+            protectedThis->context()->asyncTaskComplete(callbackID);
         }];
     });
 }
