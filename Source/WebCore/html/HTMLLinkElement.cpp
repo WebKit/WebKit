@@ -501,11 +501,6 @@ Optional<LinkIconType> HTMLLinkElement::iconType() const
     return m_relAttribute.iconType;
 }
 
-String HTMLLinkElement::iconSizes()
-{
-    return sizes().toString();
-}
-
 void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);

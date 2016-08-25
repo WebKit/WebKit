@@ -50,8 +50,6 @@ public:
     WEBCORE_EXPORT bool toggle(const AtomicString&, Optional<bool> force, ExceptionCode&);
     void replace(const AtomicString& token, const AtomicString& newToken, ExceptionCode&);
 
-    const AtomicString& toString() const { return value(); }
-
     Element& element() const { return m_element; }
 
     WEBCORE_EXPORT void setValue(const String&);

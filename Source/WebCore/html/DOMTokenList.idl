@@ -37,9 +37,5 @@
 
     iterable<DOMString>;
 
-    attribute DOMString value;
-
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
-    DOMString toString();
-#endif
+    stringifier attribute DOMString value;
 };

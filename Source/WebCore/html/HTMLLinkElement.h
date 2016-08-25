@@ -55,9 +55,6 @@ public:
 
     Optional<LinkIconType> iconType() const;
 
-    // the icon size string as parsed from the HTML attribute
-    String iconSizes();
-
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
     bool styleSheetIsLoading() const;
