@@ -1,3 +1,13 @@
+2016-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        TestExpectations cleanup
+        
+        Remove references to non-existant JS tests.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-08-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html for mac-wk1 after r204935

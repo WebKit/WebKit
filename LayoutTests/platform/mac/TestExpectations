@@ -1238,9 +1238,6 @@ webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
 
 webkit.org/b/150225 fast/custom-elements [ Pass ]
 
-# Times out in debug.
-[ Debug ] js/regress/getter-richards-try-catch.html [ Skip ]
-
 # Marking test as flaky in El Capitan
 webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ Pass Crash ]
 
