@@ -1,3 +1,15 @@
+2016-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        WK1 Sierra: LayoutTests fast/html/marquee-scroll.html and fast/inline-block/003.html failing
+        rdar://problem/28017216
+
+        This test is sensitive to how WK1 does layouts as a result of updateScrollbars(),
+        giving different results in WK1 and WK1. Land Sierra results, and mark the test
+        as failing on earlier OS versions.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/fast/inline-block/003-expected.txt: Added.
+
 2016-08-25  Chris Dumez  <cdumez@apple.com>
 
         Regression(r203623): Breaks App Store application

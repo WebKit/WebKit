@@ -225,8 +225,8 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 [ Sierra+ ] accessibility/mac/document-attributes.html [ Failure ]
 [ Sierra+ ] accessibility/parent-delete.html [ Failure ]
 
-# rdar://problem/26422051
-[ Sierra+ ] fast/inline-block/003.html [ Failure ]
+# rdar://problem/28017216
+[ Yosemite ElCapitan ] fast/inline-block/003.html [ Failure ]
 
 # rdar://problem/26478296
 [ Sierra+ ] svg/hixie/text/003.html [ Failure ]
