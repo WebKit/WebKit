@@ -84,6 +84,8 @@ public:
     Vector<Attachment> releaseAttachments();
     void reserve(size_t);
 
+    static const bool isIPCEncoder = true;
+
 private:
     uint8_t* grow(unsigned alignment, size_t);
 

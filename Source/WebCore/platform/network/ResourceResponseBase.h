@@ -232,7 +232,12 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_httpStatusText;
     encoder << m_httpVersion;
     encoder << m_httpHeaderFields;
-    encoder << m_networkLoadTiming;
+
+    // We don't want to put the networkLoadTiming info
+    // into the disk cache, because we will never use the old info.
+    if (Encoder::isIPCEncoder)
+        encoder << m_networkLoadTiming;
+
     encoder << m_httpStatusCode;
     encoder << m_certificateInfo;
     encoder.encodeEnum(m_source);
@@ -266,7 +271,8 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         return false;
     if (!decoder.decode(response.m_httpHeaderFields))
         return false;
-    if (!decoder.decode(response.m_networkLoadTiming))
+    // The networkLoadTiming info is only send over IPC and not stored in disk cache.
+    if (Decoder::isIPCDecoder && !decoder.decode(response.m_networkLoadTiming))
         return false;
     if (!decoder.decode(response.m_httpStatusCode))
         return false;

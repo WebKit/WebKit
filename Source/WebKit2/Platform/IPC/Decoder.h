@@ -127,6 +127,8 @@ public:
 
     bool removeAttachment(Attachment&);
 
+    static const bool isIPCDecoder = true;
+
 protected:
     void initialize(const uint8_t* buffer, size_t bufferSize);
 

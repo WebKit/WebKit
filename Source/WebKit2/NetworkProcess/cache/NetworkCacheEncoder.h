@@ -71,6 +71,8 @@ public:
     static void updateChecksumForData(SHA1&, const uint8_t*, size_t);
     template <typename Type> static void updateChecksumForNumber(SHA1&, Type);
 
+    static const bool isIPCEncoder = false;
+
 private:
     void encode(bool);
     void encode(uint8_t);

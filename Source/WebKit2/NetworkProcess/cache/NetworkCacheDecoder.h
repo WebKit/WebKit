@@ -85,6 +85,8 @@ public:
         return bufferIsLargeEnoughToContain(numElements * sizeof(T));
     }
 
+    static const bool isIPCDecoder = false;
+
 private:
     bool bufferIsLargeEnoughToContain(size_t) const;
     template<typename Type> bool decodeNumber(Type&);

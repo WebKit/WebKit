@@ -1,3 +1,13 @@
+2016-08-25  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Don't store networkLoadTiming in the disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=161161
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/Forward.h:
+        Remove Encode and Decode forward declarations.
+
 2016-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Move generic data structures out of B3
