@@ -1,3 +1,15 @@
+2016-08-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] run-api-tests is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=161140
+
+        Reviewed by Brent Fulgham.
+
+        Since the move constructor is called 3 more times on Windows, we will have 3 more destructor calls.
+
+        * TestWebKitAPI/Tests/WTF/CrossThreadTask.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-08-24  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] run-api-tests is failing.

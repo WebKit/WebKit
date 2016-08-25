@@ -137,7 +137,12 @@ TEST(WTF_CrossThreadTask, Basic)
     ASSERT_EQ(1u, moveConstructorSet.count("<default>-1-1"));
     ASSERT_EQ(1u, moveConstructorSet.count("<default>-1-2"));
 
+#if !COMPILER(MSVC)
     ASSERT_EQ(12u, totalDestructorCalls);
+#else
+    // Since the move constructor is called 3 more times on Windows (see above), we will have 3 more destructor calls.
+    ASSERT_EQ(15u, totalDestructorCalls);
+#endif
     ASSERT_EQ(3u, totalIsolatedCopyCalls);
 
 }
