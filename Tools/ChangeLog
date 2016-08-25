@@ -1,3 +1,17 @@
+2016-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Dragging against the end of the inline media scrubber causes the media scrubber to hide
+        https://bugs.webkit.org/show_bug.cgi?id=161207
+
+        Reviewed by Eric Carlson.
+
+        Tweaks an existing WebKit API test covering this behavior change. After some discussion, rather than hide media
+        controls in this case, we should actually continue showing them. This is because seeking due to user gestures
+        similar to "scrubbing" are indistinguishable from gestures that immediately seek to the end.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+
 2016-08-25  Daniel Bates  <dabates@apple.com>
 
         Watch more things.

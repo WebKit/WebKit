@@ -794,6 +794,8 @@ private:
     void updateUsesLTRUserInterfaceLayoutDirectionJSProperty();
     void setControllerJSProperty(const char*, JSC::JSValue);
 
+    void addBehaviorRestrictionsOnEndIfNecessary();
+
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;

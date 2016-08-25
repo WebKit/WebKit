@@ -299,7 +299,7 @@ TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAndPlay
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 }
 
-TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoHidesControlsAfterSeekingToEnd)
+TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoAfterSeekingToEnd)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
@@ -315,8 +315,9 @@ TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoHidesControl
     }]);
     [[configuration userContentController] addScriptMessageHandler:onloadHandler.get() name:@"onloadHandler"];
 
-    // Since the video has ended, the expectation is NO.
-    [handler setExpectedToHaveControlsManager:NO];
+    // We expect there to be media controls, since this is a user gestured seek to the end.
+    // This is akin to seeking to the end by scrubbing in the controls.
+    [handler setExpectedToHaveControlsManager:YES];
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"large-video-hides-controls-after-seek-to-end" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 

@@ -224,11 +224,6 @@ bool MediaElementSession::canControlControlsManager() const
         return false;
     }
 
-    if (m_element.ended()) {
-        LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: Ended");
-        return false;
-    }
-
     if (m_element.document().activeDOMObjectsAreSuspended()) {
         LOG(Media, "MediaElementSession::canControlControlsManager - returning FALSE: activeDOMObjectsAreSuspended()");
         return false;
