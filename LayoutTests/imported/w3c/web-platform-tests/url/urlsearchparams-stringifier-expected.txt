@@ -1,0 +1,14 @@
+
+FAIL Serialize space Can't find variable: URLSearchParams
+FAIL Serialize empty value Can't find variable: URLSearchParams
+FAIL Serialize empty name Can't find variable: URLSearchParams
+FAIL Serialize empty name and value Can't find variable: URLSearchParams
+FAIL Serialize + Can't find variable: URLSearchParams
+FAIL Serialize = Can't find variable: URLSearchParams
+FAIL Serialize & Can't find variable: URLSearchParams
+FAIL Serialize *-._ Can't find variable: URLSearchParams
+FAIL Serialize % Can't find variable: URLSearchParams
+FAIL Serialize \0 Can't find variable: URLSearchParams
+FAIL Serialize 💩 Can't find variable: URLSearchParams
+FAIL URLSearchParams.toString Can't find variable: URLSearchParams
+

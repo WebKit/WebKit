@@ -1,3 +1,53 @@
+2016-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        Import w3c URL tests
+        https://bugs.webkit.org/show_bug.cgi?id=161177
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/url: Added.
+        * web-platform-tests/url/OWNERS: Added.
+        * web-platform-tests/url/README.md: Added.
+        * web-platform-tests/url/a-element-expected.txt: Added.
+        * web-platform-tests/url/a-element-xhtml-expected.txt: Added.
+        * web-platform-tests/url/a-element-xhtml.xhtml: Added.
+        * web-platform-tests/url/a-element.html: Added.
+        * web-platform-tests/url/a-element.js: Added.
+        (setup.async_test.string_appeared_here.setup.step):
+        (setBase):
+        (bURL):
+        (runURLTests):
+        * web-platform-tests/url/historical-expected.txt: Added.
+        * web-platform-tests/url/historical.html: Added.
+        * web-platform-tests/url/historical.worker.js: Added.
+        (test):
+        * web-platform-tests/url/interfaces-expected.txt: Added.
+        * web-platform-tests/url/interfaces.html: Added.
+        * web-platform-tests/url/setters_tests.json: Added.
+        * web-platform-tests/url/url-constructor-expected.txt: Added.
+        * web-platform-tests/url/url-constructor.html: Added.
+        * web-platform-tests/url/url-domainToUnicode-expected.txt: Added.
+        * web-platform-tests/url/url-domainToUnicode.html: Added.
+        * web-platform-tests/url/url-setters-expected.txt: Added.
+        * web-platform-tests/url/url-setters.html: Added.
+        * web-platform-tests/url/urlsearchparams-append-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-append.html: Added.
+        * web-platform-tests/url/urlsearchparams-constructor-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-constructor.html: Added.
+        * web-platform-tests/url/urlsearchparams-delete-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-delete.html: Added.
+        * web-platform-tests/url/urlsearchparams-get-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-get.html: Added.
+        * web-platform-tests/url/urlsearchparams-getall-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-getall.html: Added.
+        * web-platform-tests/url/urlsearchparams-has-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-has.html: Added.
+        * web-platform-tests/url/urlsearchparams-set-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-set.html: Added.
+        * web-platform-tests/url/urlsearchparams-stringifier-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-stringifier.html: Added.
+        * web-platform-tests/url/urltestdata.json: Added.
+
 2016-08-23  Chris Dumez  <cdumez@apple.com>
 
         Add support for CanvasRenderingContext2D.resetTransform()

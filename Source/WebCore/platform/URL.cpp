@@ -1037,6 +1037,7 @@ void URL::setQuery(const String& query)
     // FIXME: '#' and non-ASCII characters must be encoded and escaped.
     // Usually, the query is encoded using document encoding, not UTF-8, but we don't have
     // access to the document in this function.
+    // https://webkit.org/b/161176
     if ((query.isEmpty() || query[0] != '?') && !query.isNull())
         parse(m_string.left(m_pathEnd) + "?" + query + m_string.substring(m_queryEnd));
     else

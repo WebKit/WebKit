@@ -500,6 +500,8 @@ imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.h
 
 imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Skip ]
 
+webkit.org/b/161176 [ Debug ] imported/w3c/web-platform-tests/url/url-setters.html [ Skip ]
+
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering-worker.html [ Skip ]

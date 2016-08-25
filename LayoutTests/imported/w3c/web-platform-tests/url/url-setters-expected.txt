@@ -1,0 +1,24 @@
+
+PASS Loading data… 
+FAIL Setting <a://example.net>.protocol = '' The empty string is not a valid scheme. Setter leaves the URL unchanged. assert_equals: expected "a://example.net/" but got "a://example.net"
+FAIL Setting <a://example.net>.protocol = 'b' assert_equals: expected "b://example.net/" but got "b://example.net"
+FAIL Setting <a://example.net>.protocol = 'B' Upper-case ASCII is lower-cased assert_equals: expected "b://example.net/" but got "b://example.net"
+FAIL Setting <a://example.net>.protocol = 'é' Non-ASCII is rejected assert_equals: expected "a://example.net/" but got "a://example.net"
+FAIL Setting <a://example.net>.protocol = '0b' No leading digit assert_equals: expected "a://example.net/" but got "a://example.net"
+FAIL Setting <a://example.net>.protocol = '+b' No leading punctuation assert_equals: expected "a://example.net/" but got "a://example.net"
+FAIL Setting <a://example.net>.protocol = 'bC0+-.' assert_equals: expected "bc0+-.://example.net/" but got "bc0+-.://example.net"
+FAIL Setting <a://example.net>.protocol = 'b,c' Only some punctuation is acceptable assert_equals: expected "a://example.net/" but got "a://example.net"
+FAIL Setting <a://example.net>.protocol = 'bé' Non-ASCII is rejected assert_equals: expected "a://example.net/" but got "a://example.net"
+FAIL Setting <http://example.net>.protocol = 'b' Can’t switch from special scheme to non-special. Note: this may change, see https://github.com/whatwg/url/issues/104 assert_equals: expected "http://example.net/" but got "b://example.net/"
+FAIL Setting <mailto:me@example.net>.protocol = 'http' Cannot-be-a-base URL doesn’t have a host, but URL in a special scheme must. assert_equals: expected "mailto:me@example.net" but got "http://me@example.net/"
+FAIL Setting <ssh://me@example.net>.protocol = 'http' Can’t switch from non-special scheme to special. Note: this may change, see https://github.com/whatwg/url/issues/104 assert_equals: expected "ssh://me@example.net/" but got "http://me@example.net/"
+PASS Setting <http://example.net>.protocol = 'https:foo : bar' Stuff after the first ':' is ignored 
+PASS Setting <data:text/html,<p>Test>.protocol = 'view-source+data:foo : bar' Stuff after the first ':' is ignored 
+FAIL Setting <file:///home/you/index.html>.username = 'me' No host means no username assert_equals: expected "file:///home/you/index.html" but got "file://me@/home/you/index.html"
+FAIL Setting <unix:/run/foo.socket>.username = 'me' No host means no username assert_equals: expected "unix:/run/foo.socket" but got "unix://me@/run/foo.socket"
+FAIL Setting <mailto:you@example.net>.username = 'me' Cannot-be-a-base means no username assert_equals: expected "mailto:you@example.net" but got "mailto://me@you@example.net"
+PASS Setting <http://example.net>.username = 'me' 
+PASS Setting <http://:secret@example.net>.username = 'me' 
+PASS Setting <http://me@example.net>.username = '' 
+PASS Setting <http://me:secret@example.net>.username = '' 
+FAIL Setting <http://example.net>.username = '

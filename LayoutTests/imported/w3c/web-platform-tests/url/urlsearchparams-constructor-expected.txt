@@ -1,0 +1,15 @@
+
+FAIL Basic URLSearchParams construction Can't find variable: URLSearchParams
+FAIL URLSearchParams constructor, empty. assert_throws: Calling 'URLSearchParams' without 'new' should throw. function "function () { URLSearchParams(); }" threw object "ReferenceError: Can't find variable: URLSearchParams" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL URLSearchParams constructor, string. Can't find variable: URLSearchParams
+FAIL URLSearchParams constructor, object. Can't find variable: URLSearchParams
+FAIL Parse + Can't find variable: URLSearchParams
+FAIL Parse space Can't find variable: URLSearchParams
+FAIL Parse %20 Can't find variable: URLSearchParams
+FAIL Parse \0 Can't find variable: URLSearchParams
+FAIL Parse %00 Can't find variable: URLSearchParams
+FAIL Parse ⎄ Can't find variable: URLSearchParams
+FAIL Parse %e2%8e%84 Can't find variable: URLSearchParams
+FAIL Parse 💩 Can't find variable: URLSearchParams
+FAIL Parse %f0%9f%92%a9 Can't find variable: URLSearchParams
+

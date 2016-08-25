@@ -1,0 +1,53 @@
+URL IDL tests
+
+
+PASS URL interface: existence and properties of interface object 
+PASS URL interface object length 
+PASS URL interface object name 
+PASS URL interface: existence and properties of interface prototype object 
+PASS URL interface: existence and properties of interface prototype object's "constructor" property 
+FAIL URL interface: operation domainToASCII(USVString) assert_own_property: interface object missing static operation expected property "domainToASCII" missing
+FAIL URL interface: operation domainToUnicode(USVString) assert_own_property: interface object missing static operation expected property "domainToUnicode" missing
+PASS URL interface: attribute href 
+PASS URL interface: attribute origin 
+PASS URL interface: attribute protocol 
+PASS URL interface: attribute username 
+PASS URL interface: attribute password 
+PASS URL interface: attribute host 
+PASS URL interface: attribute hostname 
+PASS URL interface: attribute port 
+PASS URL interface: attribute pathname 
+PASS URL interface: attribute search 
+FAIL URL interface: attribute searchParams assert_true: The prototype object must have a property "searchParams" expected true got false
+PASS URL interface: attribute hash 
+PASS URL must be primary interface of new URL("http://foo") 
+PASS Stringification of new URL("http://foo") 
+PASS URL interface: new URL("http://foo") must inherit property "domainToASCII" with the proper type (0) 
+PASS URL interface: calling domainToASCII(USVString) on new URL("http://foo") with too few arguments must throw TypeError 
+PASS URL interface: new URL("http://foo") must inherit property "domainToUnicode" with the proper type (1) 
+PASS URL interface: calling domainToUnicode(USVString) on new URL("http://foo") with too few arguments must throw TypeError 
+PASS URL interface: new URL("http://foo") must inherit property "href" with the proper type (2) 
+PASS URL interface: new URL("http://foo") must inherit property "origin" with the proper type (3) 
+PASS URL interface: new URL("http://foo") must inherit property "protocol" with the proper type (4) 
+PASS URL interface: new URL("http://foo") must inherit property "username" with the proper type (5) 
+PASS URL interface: new URL("http://foo") must inherit property "password" with the proper type (6) 
+PASS URL interface: new URL("http://foo") must inherit property "host" with the proper type (7) 
+PASS URL interface: new URL("http://foo") must inherit property "hostname" with the proper type (8) 
+PASS URL interface: new URL("http://foo") must inherit property "port" with the proper type (9) 
+PASS URL interface: new URL("http://foo") must inherit property "pathname" with the proper type (10) 
+PASS URL interface: new URL("http://foo") must inherit property "search" with the proper type (11) 
+FAIL URL interface: new URL("http://foo") must inherit property "searchParams" with the proper type (12) assert_inherits: property "searchParams" not found in prototype chain
+PASS URL interface: new URL("http://foo") must inherit property "hash" with the proper type (13) 
+FAIL URLSearchParams interface: existence and properties of interface object assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface object length assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface object name assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: existence and properties of interface prototype object assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: operation append(USVString,USVString) assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: operation delete(USVString) assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: operation get(USVString) assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: operation getAll(USVString) assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: operation has(USVString) assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: operation set(USVString,USVString) assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+FAIL URLSearchParams interface: stringifier assert_own_property: self does not have own property "URLSearchParams" expected property "URLSearchParams" missing
+

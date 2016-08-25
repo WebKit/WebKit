@@ -1,0 +1,6 @@
+
+FAIL Append same name Can't find variable: URLSearchParams
+FAIL Append empty strings Can't find variable: URLSearchParams
+FAIL Append null Can't find variable: URLSearchParams
+FAIL Append multiple Can't find variable: URLSearchParams
+
