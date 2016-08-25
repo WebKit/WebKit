@@ -1,3 +1,35 @@
+2016-08-25  Caio Lima  <ticaiolima@gmail.com>
+
+        NewRegexp should not prevent inlining
+        https://bugs.webkit.org/show_bug.cgi?id=154808
+
+        Reviewed by Geoffrey Garen.
+
+        In this patch we are changing the current mechanism used to represent
+        RegExp in NewRegexp nodes. We are changing the use of a index
+        pointing to RegExp in
+        CodeBlock->m_unlinkedCodeBlock->m_rareData->m_regexps as the operand of
+        NewRegexp node to RegExp address as the operand. To make sure that RegExp* is
+        pointing to a valid object, we are using m_graph.freezeStrong
+        mechanism.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::hasRegexpIndex): Deleted.
+        (JSC::DFG::Node::regexpIndex): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+
 2016-08-24  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Make FRound work with any type

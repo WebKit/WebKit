@@ -391,7 +391,7 @@ private:
             if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>())
                 regExp = regExpObject->regExp();
             else if (regExpObjectNode->op() == NewRegexp)
-                regExp = codeBlock()->regexp(regExpObjectNode->regexpIndex());
+                regExp = regExpObjectNode->castOperand<RegExp*>();
             else {
                 if (verbose)
                     dataLog("Giving up because the regexp is unknown.\n");
@@ -631,7 +631,7 @@ private:
             if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>())
                 regExp = regExpObject->regExp();
             else if (regExpObjectNode->op() == NewRegexp)
-                regExp = codeBlock()->regexp(regExpObjectNode->regexpIndex());
+                regExp = regExpObjectNode->castOperand<RegExp*>();
             else {
                 if (verbose)
                     dataLog("Giving up because the regexp is unknown.\n");

@@ -3933,10 +3933,8 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         
-        // FIXME: We really should be able to inline code that uses NewRegexp. That means not
-        // reaching into the CodeBlock here.
-        // https://bugs.webkit.org/show_bug.cgi?id=154808
-        callOperation(operationNewRegexp, result.gpr(), m_jit.codeBlock()->regexp(node->regexpIndex()));
+        RegExp* regexp = node->castOperand<RegExp*>();
+        callOperation(operationNewRegexp, result.gpr(), regexp);
         m_jit.exceptionCheck();
         
         cellResult(result.gpr(), node);

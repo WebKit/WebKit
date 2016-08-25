@@ -1,3 +1,21 @@
+2016-08-25  Caio Lima  <ticaiolima@gmail.com>
+
+        NewRegexp should not prevent inlining
+        https://bugs.webkit.org/show_bug.cgi?id=154808
+
+        Reviewed by Geoffrey Garen.
+
+        Added test where functions with NewRegExp can be inlined right now.
+
+        * stress/new-regex-inline.js: Added.
+        (assert):
+        (testRegexpInline):
+        (toInlineGlobal):
+        (withRegexp):
+        (inlineRegexpNotGlobal):
+        (toInlineRecursive):
+        (regexpContainsRecursive):
+
 2016-08-24  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Make FRound work with any type

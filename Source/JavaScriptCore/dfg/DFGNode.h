@@ -1100,20 +1100,6 @@ public:
         m_opInfo = indexingType;
     }
     
-    // FIXME: We really should be able to inline code that uses NewRegexp. That means
-    // using something other than the index into the CodeBlock here.
-    // https://bugs.webkit.org/show_bug.cgi?id=154808
-    bool hasRegexpIndex()
-    {
-        return op() == NewRegexp;
-    }
-    
-    unsigned regexpIndex()
-    {
-        ASSERT(hasRegexpIndex());
-        return m_opInfo;
-    }
-    
     bool hasScopeOffset()
     {
         return op() == GetClosureVar || op() == PutClosureVar;
@@ -1468,6 +1454,7 @@ public:
         case NewGeneratorFunction:
         case CreateActivation:
         case MaterializeCreateActivation:
+        case NewRegexp:
         case CompareEqPtr:
             return true;
         default:

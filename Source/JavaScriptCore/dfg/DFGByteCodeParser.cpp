@@ -3698,10 +3698,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_new_regexp: {
-            // FIXME: We really should be able to inline code that uses NewRegexp. That means
-            // using something other than the index into the CodeBlock here.
-            // https://bugs.webkit.org/show_bug.cgi?id=154808
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewRegexp, OpInfo(currentInstruction[2].u.operand)));
+            RegExp* regexp = m_inlineStackTop->m_codeBlock->regexp(currentInstruction[2].u.operand);
+            FrozenValue* frozen = m_graph.freezeStrong(regexp);
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewRegexp, OpInfo(frozen)));
             NEXT_OPCODE(op_new_regexp);
         }
 

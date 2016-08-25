@@ -7339,14 +7339,11 @@ private:
 
     void compileNewRegexp()
     {
-        // FIXME: We really should be able to inline code that uses NewRegexp. That means not
-        // reaching into the CodeBlock here.
-        // https://bugs.webkit.org/show_bug.cgi?id=154808
-
+        RegExp* regexp = m_node->castOperand<RegExp*>();
         LValue result = vmCall(
             pointerType(),
             m_out.operation(operationNewRegexp), m_callFrame,
-            m_out.constIntPtr(codeBlock()->regexp(m_node->regexpIndex())));
+            m_out.constIntPtr(regexp));
         
         setJSValue(result);
     }
