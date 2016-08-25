@@ -1,3 +1,15 @@
+2016-08-25  Anders Carlsson  <andersca@apple.com>
+
+        Re-export DOMException NSStrings after r204717
+        https://bugs.webkit.org/show_bug.cgi?id=161200
+        <rdar://problem/27959937>
+
+        Reviewed by Alex Christensen.
+
+        * DOM/ExceptionHandlers.mm:
+        (raiseDOMException):
+        * WebKit.exp:
+
 2016-08-22  Darin Adler  <darin@apple.com>
 
         Move Objective-C DOM bindings from WebCore to legacy WebKit

@@ -25,8 +25,17 @@
 
 #import "ExceptionHandlers.h"
 
+#import "DOMEventException.h"
+#import "DOMException.h"
+#import "DOMRangeException.h"
+#import "DOMXPathException.h"
 #import <WebCore/ExceptionCode.h>
 #import <WebCore/ExceptionCodeDescription.h>
+
+NSString * const DOMException = @"DOMException";
+NSString * const DOMRangeException = @"DOMRangeException";
+NSString * const DOMEventException = @"DOMEventException";
+NSString * const DOMXPathException = @"DOMXPathException";
 
 void raiseDOMException(WebCore::ExceptionCode ec)
 {
@@ -37,13 +46,13 @@ void raiseDOMException(WebCore::ExceptionCode ec)
     // FIXME: This should use type and code exclusively and not try to use typeName.
     NSString *exceptionName;
     if (strcmp(description.typeName, "DOM Range") == 0)
-        exceptionName = @"DOMRangeException";
+        exceptionName = DOMRangeException;
     else if (strcmp(description.typeName, "DOM Events") == 0)
-        exceptionName = @"DOMEventException";
+        exceptionName = DOMEventException;
     else if (strcmp(description.typeName, "DOM XPath") == 0)
-        exceptionName = @"DOMXPathException";
+        exceptionName = DOMXPathException;
     else
-        exceptionName = @"DOMException";
+        exceptionName = DOMException;
 
     NSString *reason;
     if (description.name)
