@@ -1,5 +1,17 @@
 2016-08-24  Chris Dumez  <cdumez@apple.com>
 
+        WorkerLocation.prototype.toString() should be enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=161183
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/workers/resources/worker-location.js:
+        * fast/workers/worker-location-expected.txt:
+
+2016-08-24  Chris Dumez  <cdumez@apple.com>
+
         Location.toString() should be enumerable
         https://bugs.webkit.org/show_bug.cgi?id=161179
 

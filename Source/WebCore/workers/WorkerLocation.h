@@ -55,8 +55,6 @@ namespace WebCore {
         String hash() const;
         String origin() const;
 
-        String toString() const { return href(); }
-
     private:
         explicit WorkerLocation(const URL& url) : m_url(url) { }
 

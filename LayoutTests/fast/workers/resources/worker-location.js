@@ -23,6 +23,7 @@ worker.postMessage("eval WorkerLocation");
 worker.postMessage("eval typeof location");
 worker.postMessage("eval location");
 worker.postMessage("eval location.href");
+worker.postMessage("eval location.href === location.toString()");
 worker.postMessage("eval location.protocol");
 worker.postMessage("eval location.host");
 worker.postMessage("eval location.hostname");
@@ -31,6 +32,9 @@ worker.postMessage("eval location.pathname");
 worker.postMessage("eval location.search");
 worker.postMessage("eval location.hash");
 worker.postMessage("eval location.origin");
+worker.postMessage("eval Object.getOwnPropertyDescriptor(location.__proto__, 'toString').writable === true");
+worker.postMessage("eval Object.getOwnPropertyDescriptor(location.__proto__, 'toString').enumerable === true");
+worker.postMessage("eval Object.getOwnPropertyDescriptor(location.__proto__, 'toString').configurable === true");
 worker.postMessage("eval foo//bar");
 
 worker.onmessage = function(evt) {
