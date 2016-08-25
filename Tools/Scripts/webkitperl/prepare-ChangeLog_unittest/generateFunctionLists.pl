@@ -25,7 +25,6 @@
 use strict;
 use warnings;
 
-use File::Slurp;
 use File::Temp;
 use FindBin;
 use Test::More;
@@ -355,6 +354,14 @@ sub discardOutput(&)
     open(STDERR, ">&", $savedStderr) or die "Cannot restore stderr: $!";
 }
 
+sub writeFileWithContent($$)
+{
+    my ($file, $content) = @_;
+    open(FILE, ">", $file) or die "Cannot open $file: $!";
+    print FILE $content;
+    close(FILE);
+}
+
 my $testCasesCount = @testCaseHashRefs;
 plan(tests => $testCasesCount);
 
@@ -364,8 +371,8 @@ my $originalFile = File::Spec->catfile($temporaryDirectory, $filename);
 my $patchedFile = File::Spec->catfile($temporaryDirectory, "patched-$filename");
 my $diffFile = File::Spec->catfile($temporaryDirectory, "a.diff");
 foreach my $testCase (@testCaseHashRefs) {
-    write_file($originalFile, $testCase->{inputText});
-    write_file($diffFile, $testCase->{diffToApply});
+    writeFileWithContent($originalFile, $testCase->{inputText});
+    writeFileWithContent($diffFile, $testCase->{diffToApply});
     my $exitCode = exitStatus(system("patch", "-s", "-d", $temporaryDirectory, "-i", $diffFile, "-o", $patchedFile));
     die "Failed to apply patch for $testCase->{testName}: $exitCode" if $exitCode;
 

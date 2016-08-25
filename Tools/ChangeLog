@@ -1,3 +1,14 @@
+2016-08-25  Daniel Bates  <dabates@apple.com>
+
+        Fix test failure on GTK Linux bots after <http://trac.webkit.org/changeset/204695>
+        (https://bugs.webkit.org/show_bug.cgi?id=148437)
+
+        Remove use of module File::Slurp as it is not part of the standard Perl 5 distribution
+        and is not installed on the GTK Linux bots.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/generateFunctionLists.pl:
+        (writeFileWithContent): Added.
+
 2016-08-25  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] run-api-tests is failing.
