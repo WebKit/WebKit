@@ -227,15 +227,16 @@ void ResourceUsageThread::platformThreadBody(JSC::VM* vm, ResourceUsageData& dat
     data.categories[MemoryCategory::GCOwned].dirtySize = currentGCOwnedExtra - currentGCOwnedExternal;
     data.categories[MemoryCategory::GCOwned].externalSize = currentGCOwnedExternal;
 
-    // Subtract known subchunks from the appropriate malloc bucket.
+    auto& mallocBucket = isFastMallocEnabled() ? data.categories[MemoryCategory::bmalloc] : data.categories[MemoryCategory::LibcMalloc];
+
+    // First subtract memory allocated by the GC heap, since we track that separately.
+    mallocBucket.dirtySize -= currentGCHeapCapacity;
+
+    // It would be nice to assert that the "GC owned" amount is smaller than the total dirty malloc size,
+    // but since the "GC owned" accounting is inexact, it's not currently feasible.
     size_t currentGCOwnedGenerallyInMalloc = currentGCOwnedExtra - currentGCOwnedExternal;
-    if (isFastMallocEnabled()) {
-        RELEASE_ASSERT(currentGCOwnedGenerallyInMalloc < data.categories[MemoryCategory::bmalloc].dirtySize);
-        data.categories[MemoryCategory::bmalloc].dirtySize -= currentGCHeapCapacity + currentGCOwnedGenerallyInMalloc;
-    } else {
-        RELEASE_ASSERT(currentGCOwnedGenerallyInMalloc < data.categories[MemoryCategory::LibcMalloc].dirtySize);
-        data.categories[MemoryCategory::LibcMalloc].dirtySize -= currentGCHeapCapacity + currentGCOwnedGenerallyInMalloc;
-    }
+    if (currentGCOwnedGenerallyInMalloc < mallocBucket.dirtySize)
+        mallocBucket.dirtySize -= currentGCOwnedGenerallyInMalloc;
 
     data.totalExternalSize = currentGCOwnedExternal;
 
