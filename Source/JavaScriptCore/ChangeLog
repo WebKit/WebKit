@@ -1,3 +1,12 @@
+2016-08-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        generate-js-builtins.py should generate platform independent files
+        https://bugs.webkit.org/show_bug.cgi?id=161196
+
+        Reviewed by Mark Lam.
+
+        * Scripts/generate-js-builtins.py: Files should be processed in fixed order.
+
 2016-08-25  Caio Lima  <ticaiolima@gmail.com>
 
         NewRegexp should not prevent inlining

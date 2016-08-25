@@ -146,7 +146,7 @@ if __name__ == '__main__':
         for filepath in os.listdir(arg_options.input_directory):
             input_filepaths.append(os.path.join(arg_options.input_directory, filepath))
 
-    input_filepaths = filter(lambda name: fnmatch.fnmatch(name, '*.js'), input_filepaths)
+    input_filepaths = sorted(filter(lambda name: fnmatch.fnmatch(name, '*.js'), input_filepaths))
 
     options = {
         'output_path': arg_options.output_directory,
