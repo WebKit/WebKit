@@ -1,3 +1,18 @@
+2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 fast tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/fast/attachment/attachment-select-on-click-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/clip/014-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/encoding/utf-16-big-endian-expected.txt:
+        * platform/ios-simulator-wk1/fast/encoding/utf-16-little-endian-expected.txt:
+        * platform/ios-simulator-wk1/fast/events/ghostly-mousemoves-in-subframe-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/forms/form-element-geometry-expected.txt:
+        * platform/ios-simulator-wk1/fast/replaced/width100percent-textarea-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/shadow-dom/trusted-event-scoped-flags-expected.txt: Added.
+
 2016-08-25  Simon Fraser  <simon.fraser@apple.com>
 
         WK1 Sierra: LayoutTests fast/html/marquee-scroll.html and fast/inline-block/003.html failing

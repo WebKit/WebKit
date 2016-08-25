@@ -93,15 +93,15 @@ layer at (0,0) size 800x1202
               RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,330) size 784x67
-        RenderTable {TABLE} at (0,0) size 585x66
-          RenderTableSection {TBODY} at (0,0) size 585x66
-            RenderTableRow {TR} at (0,2) size 585x62
-              RenderTableCell {TD} at (2,32) size 3x2 [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (6,2) size 3x2 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (10,20) size 152x26 [r=0 c=2 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 584x66
+          RenderTableSection {TBODY} at (0,0) size 584x66
+            RenderTableRow {TR} at (0,2) size 584x62
+              RenderTableCell {TD} at (2,32) size 2x2 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (6,2) size 2x2 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (10,20) size 151x26 [r=0 c=2 rs=1 cs=1]
                 RenderImage {IMG} at (1,1) size 149x23
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (163,2) size 420x62 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (163,2) size 419x62 [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 145x19
                   text run at (1,1) width 145: "TUR - Tour Package"
                 RenderBR {BR} at (145,16) size 1x0
@@ -128,9 +128,9 @@ layer at (0,0) size 800x1202
         RenderTable {TABLE} at (0,0) size 717x216
           RenderTableSection {TBODY} at (0,0) size 717x216
             RenderTableRow {TR} at (0,2) size 717x212
-              RenderTableCell {TD} at (2,107) size 3x2 [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (6,2) size 3x2 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (10,95) size 96x26 [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (2,107) size 2x2 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (6,2) size 2x2 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (10,95) size 95x26 [r=0 c=2 rs=1 cs=1]
                 RenderImage {IMG} at (1,1) size 93x23
                 RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (107,2) size 608x212 [r=0 c=3 rs=1 cs=1]
@@ -177,10 +177,10 @@ layer at (0,0) size 800x1202
                         RenderTableCell {TD} at (97,0) size 38x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 33x19
                             text run at (2,2) width 33: "Seat"
-                        RenderTableCell {TD} at (134,0) size 80x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                        RenderTableCell {TD} at (134,0) size 79x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 46x19
                             text run at (2,2) width 46: "Status"
-                        RenderTableCell {TD} at (213,0) size 318x24 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                        RenderTableCell {TD} at (212,0) size 318x24 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 35x19
                             text run at (2,2) width 35: "Type"
                         RenderTableCell {TD} at (530,0) size 74x24 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
@@ -193,10 +193,10 @@ layer at (0,0) size 800x1202
                         RenderTableCell {TD} at (97,24) size 38x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 29x19
                             text run at (2,2) width 29: "08A"
-                        RenderTableCell {TD} at (134,24) size 80x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                        RenderTableCell {TD} at (134,24) size 79x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 75x19
                             text run at (2,2) width 75: "confirmed "
-                        RenderTableCell {TD} at (213,24) size 318x24 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+                        RenderTableCell {TD} at (212,24) size 318x24 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 314x19
                             text run at (2,2) width 314: "Non-Smoking, Window Seat, Preferred Seat"
                         RenderTableCell {TD} at (530,24) size 74x24 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
@@ -224,9 +224,9 @@ layer at (0,0) size 800x1202
         RenderTable {TABLE} at (0,0) size 604x216
           RenderTableSection {TBODY} at (0,0) size 604x216
             RenderTableRow {TR} at (0,2) size 604x212
-              RenderTableCell {TD} at (2,107) size 3x2 [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (6,2) size 3x2 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (10,95) size 96x26 [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (2,107) size 2x2 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (6,2) size 2x2 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (10,95) size 95x26 [r=0 c=2 rs=1 cs=1]
                 RenderImage {IMG} at (1,1) size 93x23
                 RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (107,2) size 495x212 [r=0 c=3 rs=1 cs=1]
@@ -273,10 +273,10 @@ layer at (0,0) size 800x1202
                         RenderTableCell {TD} at (97,0) size 38x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 33x19
                             text run at (2,2) width 33: "Seat"
-                        RenderTableCell {TD} at (134,0) size 80x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                        RenderTableCell {TD} at (134,0) size 79x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 46x19
                             text run at (2,2) width 46: "Status"
-                        RenderTableCell {TD} at (213,0) size 205x24 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                        RenderTableCell {TD} at (212,0) size 206x24 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 35x19
                             text run at (2,2) width 35: "Type"
                         RenderTableCell {TD} at (417,0) size 74x24 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
@@ -289,10 +289,10 @@ layer at (0,0) size 800x1202
                         RenderTableCell {TD} at (97,24) size 38x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 28x19
                             text run at (2,2) width 28: "13F"
-                        RenderTableCell {TD} at (134,24) size 80x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                        RenderTableCell {TD} at (134,24) size 79x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 75x19
                             text run at (2,2) width 75: "confirmed "
-                        RenderTableCell {TD} at (213,24) size 205x24 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+                        RenderTableCell {TD} at (212,24) size 206x24 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                           RenderText {#text} at (2,2) size 201x19
                             text run at (2,2) width 201: "Non-Smoking, Window Seat"
                         RenderTableCell {TD} at (417,24) size 74x24 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
@@ -320,9 +320,9 @@ layer at (0,0) size 800x1202
         RenderTable {TABLE} at (0,0) size 618x126
           RenderTableSection {TBODY} at (0,0) size 618x126
             RenderTableRow {TR} at (0,2) size 618x122
-              RenderTableCell {TD} at (2,62) size 3x2 [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (6,2) size 3x2 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (10,50) size 96x26 [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (2,62) size 2x2 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (6,2) size 2x2 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (10,50) size 95x26 [r=0 c=2 rs=1 cs=1]
                 RenderImage {IMG} at (1,1) size 93x23
                 RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (107,2) size 509x122 [r=0 c=3 rs=1 cs=1]
