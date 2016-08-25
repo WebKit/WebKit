@@ -1,3 +1,14 @@
+2016-08-25  Zalan Bujtas  <zalan@apple.com>
+
+        Infinite recursion crash in WebCore::RenderBlockFlow::layoutBlock
+        https://bugs.webkit.org/show_bug.cgi?id=139474
+        <rdar://problem/27705190>
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/assert-on-small-page-height-with-widow-expected.txt: Added.
+        * fast/multicol/assert-on-small-page-height-with-widow.html: Added.
+
 2016-08-25  Johan K. Jensen  <johan_jensen@apple.com>
 
         Update the Resource Timing implementation
