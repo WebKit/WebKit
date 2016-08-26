@@ -1,0 +1,16 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (95,54) size 326x216
+      RenderSVGContainer {g} at (95,54) size 326x216 [transform={m=((1.20,0.00)(0.00,1.20)) t=(72.00,36.00)}]
+        RenderSVGPath {path} at (95,54) size 326x36 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [miter limit=20.00]}] [data="M 20 20 L 200 30 L 20 40"]
+        RenderSVGPath {path} at (95,90) size 326x36 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [miter limit=18.10]}] [data="M 20 50 L 200 60 L 20 70"]
+        RenderSVGPath {path} at (95,126) size 218x36 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [miter limit=17.90]}] [data="M 20 80 L 200 90 L 20 100"]
+        RenderSVGPath {path} at (95,162) size 218x36 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [miter limit=17.00]}] [data="M 20 110 L 200 120 L 20 130"]
+        RenderSVGPath {path} at (95,198) size 218x36 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00]}] [data="M 20 140 L 200 150 L 20 160"]
+        RenderSVGPath {path} at (95,234) size 218x36 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [miter limit=1.00]}] [data="M 20 170 L 200 180 L 20 190"]
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,163 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (0,0) size 450x498
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
+        [feGaussianBlur stdDeviation="2.00, 2.00"]
+          [SourceGraphic]
+    RenderSVGContainer {g} at (45,36) size 405x453
+      RenderSVGText {text} at (149,36) size 152x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 152x18
+          chunk 1 (middle anchor) text run 1 at (149.14,50.00) startOffset 0 endOffset 21 width 151.73: "Text Element Features"
+      RenderSVGContainer {g} at (45,73) size 405x416
+        RenderSVGText {text} at (45,73) size 319x34 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,13) size 103x17
+            chunk 1 text run 1 at (45.00,100.00) startOffset 0 endOffset 16 width 102.03: "Text can change "
+          RenderSVGTSpan {tspan} at (0,0) size 55x34
+            RenderSVGInlineText {#text} at (102,0) size 55x34
+              chunk 1 text run 1 at (147.03,100.00) startOffset 0 endOffset 5 width 54.14: "size,"
+          RenderSVGInlineText {#text} at (156,13) size 4x17
+            chunk 1 text run 1 at (201.17,100.00) startOffset 0 endOffset 1 width 3.75: " "
+          RenderSVGTSpan {tspan} at (0,0) size 74x23
+            RenderSVGInlineText {#text} at (159,9) size 73x23
+              chunk 1 text run 1 at (204.92,100.00) startOffset 0 endOffset 9 width 72.72: "typeface,"
+          RenderSVGInlineText {#text} at (232,13) size 4x17
+            chunk 1 text run 1 at (277.64,100.00) startOffset 0 endOffset 1 width 3.75: " "
+          RenderSVGTSpan {tspan} at (0,0) size 35x18
+            RenderSVGInlineText {#text} at (236,13) size 35x17
+              chunk 1 text run 1 at (281.39,100.00) startOffset 0 endOffset 6 width 34.57: "color,"
+          RenderSVGInlineText {#text} at (270,13) size 20x17
+            chunk 1 text run 1 at (315.96,100.00) startOffset 0 endOffset 1 width 3.75: " "
+            chunk 1 text run 1 at (319.71,100.00) startOffset 0 endOffset 3 width 16.25: "or "
+          RenderSVGTSpan {tspan} at (0,0) size 29x18
+            RenderSVGInlineText {#text} at (290,13) size 28x17
+              chunk 1 text run 1 at (335.96,100.00) startOffset 0 endOffset 5 width 27.49: "style"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (45,111) size 170x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 170x17
+            chunk 1 text run 1 at (45.00,125.00) startOffset 0 endOffset 29 width 169.54: "within a single text element."
+        RenderSVGText {text} at (45,161) size 329x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 147x17
+            chunk 1 text run 1 at (45.00,175.00) startOffset 0 endOffset 25 width 146.21: "Styling features include "
+          RenderSVGTSpan {tspan} at (0,0) size 47x17
+            RenderSVGInlineText {#text} at (146,0) size 47x17
+              chunk 1 text run 1 at (191.21,175.00) startOffset 0 endOffset 7 width 46.25: "weight,"
+          RenderSVGInlineText {#text} at (192,0) size 4x17
+            chunk 1 text run 1 at (237.46,175.00) startOffset 0 endOffset 1 width 3.75: " "
+          RenderSVGTSpan {tspan} at (0,0) size 49x17
+            RenderSVGInlineText {#text} at (196,0) size 49x17
+              chunk 1 text run 1 at (241.21,175.00) startOffset 0 endOffset 8 width 48.75: "posture,"
+          RenderSVGInlineText {#text} at (244,0) size 30x17
+            chunk 1 text run 1 at (289.96,175.00) startOffset 0 endOffset 5 width 29.16: " and "
+          RenderSVGTSpan {tspan} at (0,0) size 55x17
+            RenderSVGInlineText {#text} at (274,0) size 55x17
+              chunk 1 text run 1 at (319.12,175.00) startOffset 0 endOffset 9 width 54.54: "typeface."
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGRect {rect} at (45,200) size 203x50 [fill={[type=SOLID] [color=#1E90FF]}] [x=45.00] [y=200.00] [width=202.50] [height=50.00]
+        RenderSVGText {text} at (45,211) size 304x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 165x17
+            chunk 1 text run 1 at (45.00,225.00) startOffset 0 endOffset 28 width 164.96: "Graphics attributes such as "
+          RenderSVGTSpan {tspan} at (0,0) size 46x17
+            RenderSVGInlineText {#text} at (164,0) size 45x17
+              chunk 1 text run 1 at (209.96,225.00) startOffset 0 endOffset 7 width 44.15: "opacity"
+          RenderSVGInlineText {#text} at (209,0) size 95x17
+            chunk 1 text run 1 at (254.11,225.00) startOffset 0 endOffset 16 width 94.12: " can be applied."
+        RenderSVGText {text} at (45,261) size 321x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 179x17
+            chunk 1 text run 1 at (45.00,275.00) startOffset 0 endOffset 30 width 178.01: "\"text decoration\" can include "
+          RenderSVGTSpan {tspan} at (0,0) size 61x17
+            RenderSVGInlineText {#text} at (178,0) size 61x17
+              chunk 1 text run 1 at (223.01,275.00) startOffset 0 endOffset 10 width 60.40: "underline,"
+          RenderSVGInlineText {#text} at (238,0) size 4x17
+            chunk 1 text run 1 at (283.40,275.00) startOffset 0 endOffset 1 width 3.75: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (242,0) size 53x17
+              chunk 1 text run 1 at (287.15,275.00) startOffset 0 endOffset 9 width 52.90: "overline,"
+          RenderSVGInlineText {#text} at (295,0) size 26x17
+            chunk 1 text run 1 at (340.05,275.00) startOffset 0 endOffset 4 width 25.41: " and"
+        RenderSVGText {text} at (45,283) size 292x26 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 84x18
+            RenderSVGInlineText {#text} at (0,3) size 84x17
+              chunk 1 text run 1 at (45.00,300.00) startOffset 0 endOffset 14 width 83.74: "strikethrough."
+          RenderSVGInlineText {#text} at (83,3) size 4x17
+            chunk 1 text run 1 at (128.74,300.00) startOffset 0 endOffset 1 width 3.75: " "
+          RenderSVGTSpan {tspan} at (0,0) size 26x13
+            RenderSVGInlineText {#text} at (87,0) size 25x13
+              chunk 1 text run 1 at (132.49,293.50) startOffset 0 endOffset 5 width 24.91: "super"
+          RenderSVGInlineText {#text} at (112,3) size 36x17
+            chunk 1 text run 1 at (157.40,300.00) startOffset 0 endOffset 6 width 35.40: "-and- "
+          RenderSVGTSpan {tspan} at (0,0) size 17x13
+            RenderSVGInlineText {#text} at (147,13) size 16x13
+              chunk 1 text run 1 at (192.79,306.50) startOffset 0 endOffset 3 width 15.98: "sub"
+          RenderSVGInlineText {#text} at (163,3) size 128x17
+            chunk 1 text run 1 at (208.77,300.00) startOffset 0 endOffset 9 width 47.91: "-scripts "
+            chunk 1 text run 1 at (256.68,300.00) startOffset 0 endOffset 14 width 79.94: "are available."
+        RenderSVGText {text} at (45,309) size 328x24 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,2) size 171x17
+            chunk 1 text run 1 at (45.00,325.00) startOffset 0 endOffset 29 width 170.36: "Baseline can also be shifted "
+          RenderSVGTSpan {tspan} at (0,0) size 12x13
+            RenderSVGInlineText {#text} at (170,0) size 12x13
+              chunk 1 text run 1 at (215.36,319.50) startOffset 0 endOffset 2 width 11.50: "up"
+          RenderSVGInlineText {#text} at (181,2) size 30x17
+            chunk 1 text run 1 at (226.86,325.00) startOffset 0 endOffset 5 width 29.16: " and "
+          RenderSVGTSpan {tspan} at (0,0) size 26x13
+            RenderSVGInlineText {#text} at (211,11) size 26x13
+              chunk 1 text run 1 at (256.02,330.50) startOffset 0 endOffset 4 width 25.55: "down"
+          RenderSVGInlineText {#text} at (236,2) size 92x17
+            chunk 1 text run 1 at (281.57,325.00) startOffset 0 endOffset 1 width 3.75: " "
+            chunk 1 text run 1 at (285.32,325.00) startOffset 0 endOffset 14 width 87.45: "by percentage."
+        RenderSVGText {text} at (45,361) size 337x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 52x17
+            chunk 1 text run 1 at (45.00,375.00) startOffset 0 endOffset 8 width 51.24: "Various "
+          RenderSVGTSpan {tspan} at (0,0) size 46x17
+            RenderSVGInlineText {#text} at (51,0) size 46x17
+              chunk 1 text run 1 at (96.24,375.00) startOffset 0 endOffset 8 width 45.41: "outline "
+          RenderSVGInlineText {#text} at (96,0) size 42x17
+            chunk 1 text run 1 at (141.65,375.00) startOffset 0 endOffset 8 width 41.67: "styles, "
+          RenderSVGTSpan {tspan} at (0,0) size 62x17
+            RenderSVGInlineText {#text} at (138,0) size 62x17
+              chunk 1 text run 1 at (183.32,375.00) startOffset 0 endOffset 12 width 61.66: "fill colors "
+          RenderSVGInlineText {#text} at (199,0) size 26x17
+            chunk 1 text run 1 at (244.97,375.00) startOffset 0 endOffset 4 width 25.41: "and "
+          RenderSVGTSpan {tspan} at (0,0) size 73x17
+            RenderSVGInlineText {#text} at (225,0) size 73x17
+              chunk 1 text run 1 at (270.38,375.00) startOffset 0 endOffset 12 width 72.07: "thicknesses "
+          RenderSVGInlineText {#text} at (297,0) size 39x17
+            chunk 1 text run 1 at (342.45,375.00) startOffset 0 endOffset 6 width 38.72: "can be"
+        RenderSVGText {text} at (45,386) size 330x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 211x17
+            chunk 1 text run 1 at (45.00,400.00) startOffset 0 endOffset 36 width 210.77: "used, and the outline stroke can be "
+          RenderSVGTSpan {tspan} at (0,0) size 50x17
+            RenderSVGInlineText {#text} at (210,0) size 50x17
+              chunk 1 text run 1 at (255.77,400.00) startOffset 0 endOffset 7 width 49.15: "rounded"
+          RenderSVGInlineText {#text} at (259,0) size 20x17
+            chunk 1 text run 1 at (304.92,400.00) startOffset 0 endOffset 1 width 3.75: " "
+            chunk 1 text run 1 at (308.67,400.00) startOffset 0 endOffset 3 width 16.25: "or "
+          RenderSVGTSpan {tspan} at (0,0) size 51x17
+            RenderSVGInlineText {#text} at (279,0) size 50x17
+              chunk 1 text run 1 at (324.92,400.00) startOffset 0 endOffset 8 width 49.56: "mitered."
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (45,436) size 155x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 155x17
+            chunk 1 text run 1 at (45.00,450.00) startOffset 0 endOffset 25 width 154.94: "Text elements also can be"
+        RenderSVGText {text} at (45,461) size 149x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 149x17
+            chunk 1 text run 1 at (45.00,475.00) startOffset 0 endOffset 25 width 148.69: "filtered and transformed."
+        RenderSVGContainer {g} at (171,389) size 279x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,475.00)}]
+          RenderSVGText {text} at (0,-36) size 129x46 contains 1 chunk(s)
+            [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100
+            RenderSVGInlineText {#text} at (0,0) size 129x45
+              [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 128.86: "Shadow"
+          RenderSVGText {text} at (0,-36) size 129x45 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 129x45
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 128.89: "Shadow"
+    RenderSVGContainer {use} at (0,0) size 448x498
+      RenderSVGContainer {g} at (0,0) size 448x498
+        RenderSVGRect {rect} at (0,0) size 448x498 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+        RenderSVGContainer {g} at (418,466) size 28x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(418.00,467.00)}]
+          RenderSVGViewportContainer {svg} at (418,466) size 28x30
+            RenderSVGPath {path} at (418,468) size 14x19 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]
+            RenderSVGPath {path} at (432,466) size 14x17 [fill={[type=SOLID] [color=#FF0000]}] [data="M 400 0 C 382 3 351 31 351 31 C 322 54 308 89 323 126 C 310 140 294 170 294 193 C 294 221 314 245 344 222 C 351 230 365 238 381 227 C 376 256 384 275 407 276 C 408 286 420 307 443 293 C 459 283 501 254 522 237 C 547 214 547 143 504 148 C 537 89 501 52 477 64 C 467 68 431 89 425 94 C 424 87 420 82 414 80 C 436 45 436 -5 401 0 Z"]
+            RenderSVGPath {path} at (425,484) size 16x12 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]
