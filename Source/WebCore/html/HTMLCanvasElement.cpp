@@ -575,7 +575,7 @@ size_t HTMLCanvasElement::memoryCost() const
 {
     if (!m_imageBuffer)
         return 0;
-    return 4 * m_imageBuffer->internalSize().width() * m_imageBuffer->internalSize().height();
+    return m_imageBuffer->memoryCost();
 }
 
 size_t HTMLCanvasElement::externalMemoryCost() const
