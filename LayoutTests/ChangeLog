@@ -1,3 +1,9 @@
+2016-08-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update expectations of tests that can either crash or timeout on iOS simulator WK1
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-08-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping imported/w3c/web-platform-tests/html/dom/interfaces.html on Mac.
