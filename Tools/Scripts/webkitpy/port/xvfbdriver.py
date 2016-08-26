@@ -92,16 +92,13 @@ class XvfbDriver(Driver):
     def _xvfb_screen_depth(self):
         return os.environ.get('XVFB_SCREEN_DEPTH', '24')
 
-    def _start(self, pixel_tests, per_test_args):
-        self.stop()
-
-        server_name = self._port.driver_name()
-        environment = self._port.setup_environ_for_server(server_name)
+    def _setup_environ_for_test(self):
+        environment = self._port.setup_environ_for_server(self._server_name)
         display_id = self._xvfb_run(environment)
 
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % display_id
-        self._driver_tempdir = self._port.host.filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
+        self._driver_tempdir = self._port.host.filesystem.mkdtemp(prefix='%s-' % self._server_name)
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
 
@@ -110,10 +107,13 @@ class XvfbDriver(Driver):
         # cleaned afterwards, so we set it to inside the temporary folder by
         # prepending XDG_CACHE_HOME with DUMPRENDERTREE_TEMP.
         environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
+        return environment
 
+    def _start(self, pixel_tests, per_test_args):
+        self.stop()
         self._crashed_process_name = None
         self._crashed_pid = None
-        self._server_process = self._port._server_process_constructor(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
+        self._server_process = self._port._server_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), self._setup_environ_for_test())
         self._server_process.start()
 
     def stop(self):

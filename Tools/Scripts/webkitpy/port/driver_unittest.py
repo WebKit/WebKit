@@ -32,6 +32,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 from webkitpy.port import Port, Driver, DriverOutput
 from webkitpy.port.server_process_mock import MockServerProcess
+from webkitpy.thirdparty.mock import patch
 
 # FIXME: remove the dependency on TestWebKitPort
 from webkitpy.port.port_testcase import TestWebKitPort
@@ -311,3 +312,15 @@ class DriverTest(unittest.TestCase):
         environment[variable] = base_value
         driver._append_environment_variable_path(environment, variable, path)
         self.assertEqual(environment[variable], base_value + os.pathsep + path)
+
+    def test_setup_environ_for_test(self):
+        environment_user = {}
+        environment_user['WEBKIT_OUTPUTDIR'] = '/opt/webkit/WebKitBuild/Release'
+        environment_user['FOO'] = 'BAR'
+        with patch('os.environ', environment_user):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment_driver_test = driver._setup_environ_for_test()
+            self.assertNotIn('FOO', environment_driver_test)
+            self.assertIn('WEBKIT_OUTPUTDIR', environment_driver_test)
+            self.assertEqual(environment_user['WEBKIT_OUTPUTDIR'], environment_driver_test['WEBKIT_OUTPUTDIR'])

@@ -30,6 +30,7 @@ sys.path.append(os.path.join(top_level_directory, "Tools", "jhbuild"))
 sys.path.append(os.path.join(top_level_directory, "Tools", "gtk"))
 import common
 import jhbuildutils
+from webkitpy.common.host import Host
 
 class SkippedTest:
     ENTIRE_SUITE = None
@@ -97,6 +98,8 @@ class TestRunner:
 
         self._build_type = "Debug" if self._options.debug else "Release"
         common.set_build_types((self._build_type,))
+        self._port = Host().port_factory.get("gtk")
+        self._driver = self._create_driver()
 
         self._programs_path = common.binary_build_path()
         self._tests = self._get_tests(tests)
@@ -179,33 +182,21 @@ class TestRunner:
 
         return True
 
-    def _run_xvfb(self):
-        self._xvfb = None
-        if not self._options.use_xvfb:
-            return True
-
-        self._test_env["DISPLAY"] = self._options.display
-
-        try:
-            self._xvfb = subprocess.Popen(["Xvfb", self._options.display, "-screen", "0", "800x600x24", "-nolisten", "tcp"],
-                                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except Exception as e:
-            sys.stderr.write("Failed to run Xvfb: %s\n" % e)
-            sys.stderr.flush()
-            return False
-
-        return True
+    def _create_driver(self, port_options=[]):
+        if self._options.use_wayland:
+            self._port._wayland = True
+        else:
+            self._port._nativexorg = not self._options.use_xvfb
+        driver = self._port.create_driver(worker_number=0, no_timeout=True)._make_driver(pixel_tests=False)
+        if not driver.check_driver(self._port):
+            raise RuntimeError("Failed to check driver %s" %driver.__class__.__name__)
+        return driver
 
     def _setup_testing_environment(self):
-        self._test_env = os.environ
-        self._test_env['GSETTINGS_BACKEND'] = 'memory'
+        self._test_env = self._driver._setup_environ_for_test()
         self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
         self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
-        self._test_env["OWR_USE_TEST_SOURCES"] = '1'
-
-        if not self._run_xvfb():
-            return False
 
         # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
         if not self._start_accessibility_daemons():
@@ -218,8 +209,8 @@ class TestRunner:
             self._spi_registryd.terminate()
         if self._spi_bus_launcher:
             self._spi_bus_launcher.terminate()
-        if self._xvfb:
-            self._xvfb.terminate()
+        if self._driver:
+            self._driver.stop()
 
     def _test_cases_to_skip(self, test_program):
         if self._options.skipped_action != 'skip':
@@ -462,8 +453,6 @@ if __name__ == "__main__":
     option_parser.add_option('-v', '--verbose',
                              action='store_true', dest='verbose',
                              help='Run gtester in verbose mode')
-    option_parser.add_option('--display', action='store', dest='display', default=':55',
-                             help='Display to run Xvfb')
     option_parser.add_option('--skipped', action='store', dest='skipped_action',
                              choices=['skip', 'ignore', 'only'], default='skip',
                              metavar='skip|ignore|only',
@@ -473,6 +462,9 @@ if __name__ == "__main__":
                              help='Time in seconds until a test times out')
     option_parser.add_option('--no-xvfb', action='store_false', dest='use_xvfb', default=True,
                              help='Do not run tests under Xvfb')
+    option_parser.add_option('--wayland', action='store_true', dest='use_wayland', default=False,
+                             help='Run the layout tests inside a (virtualized) weston')
     options, args = option_parser.parse_args()
 
-    sys.exit(TestRunner(options, args).run_tests())
+    runner = TestRunner(options, args)
+    sys.exit(runner.run_tests())

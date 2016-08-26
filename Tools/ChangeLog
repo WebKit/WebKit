@@ -1,3 +1,48 @@
+2016-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] run-gtk-tests should use webkitpy.port.gtk and webkitpy.port.xvfbdriver
+        https://bugs.webkit.org/show_bug.cgi?id=160736
+
+        Reviewed by Carlos Garcia Campos.
+
+        This plugs run-gtk-tests into the webkitpy testing infrastructure.
+        As a benefit of this, run-gtk-tests now can be executed over any of
+        the existing supported gtk test display servers (xvfb, weston-over-xvfb,
+        or native xorg). A new command line switch --wayland is added for
+        run-gtk-tests.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__): Remove the --display command line switch, its not longer useful.
+        Add a --wayland command line switch.
+        (TestRunner._start_accessibility_daemons):
+        (TestRunner):
+        (TestRunner.__init__):
+        (TestRunner._run_xvfb): Deleted.
+        (TestRunner._create_driver):
+        (TestRunner._setup_testing_environment): Delete the environment variable definitions that
+        are now done by driver._setup_environ_for_test().
+        (TestRunner._tear_down_testing_environment):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__): Define self._server_name in the constructor of the base class.
+        It is used by several functions, so it makes sense to store once the value here.
+        (Driver._setup_environ_for_test): Factorize setting the environment for a given test.
+        (Driver._start): Get the environment from self._setup_environ_for_test()
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest):
+        (DriverTest.test_setup_environ_for_test): Add unittest for driver._setup_environ_for_test()
+        * Scripts/webkitpy/port/gtk.py: Move the inspection of the env var USE_NATIVE_XDISPLAY to the constructor.
+        (GtkPort.__init__):
+        (GtkPort._driver_class):
+        * Scripts/webkitpy/port/westondriver.py: Define and use self._setup_environ_for_test()
+        (WestonDriver._setup_environ_for_test):
+        (WestonDriver._start):
+        * Scripts/webkitpy/port/xorgdriver.py: Define and use self._setup_environ_for_test()
+        (XorgDriver._setup_environ_for_test):
+        (XorgDriver._start):
+        * Scripts/webkitpy/port/xvfbdriver.py: Define and use self._setup_environ_for_test()
+        (XvfbDriver._setup_environ_for_test):
+        (XvfbDriver._start):
+
 2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][GTK] REGRESSION(204877): Fix the clean build

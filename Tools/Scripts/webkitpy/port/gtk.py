@@ -53,6 +53,9 @@ class GtkPort(Port):
         super(GtkPort, self).__init__(*args, **kwargs)
         self._pulseaudio_sanitizer = PulseAudioSanitizer()
         self._wayland = self.get_option("wayland")
+        self._nativexorg = False
+        if os.environ.get("USE_NATIVE_XDISPLAY"):
+            self._nativexorg = True
 
         if self.get_option("leaks"):
             self._leakdetector = LeakDetectorValgrind(self._executive, self._filesystem, self.results_directory())
@@ -79,7 +82,7 @@ class GtkPort(Port):
     def _driver_class(self):
         if self._wayland:
             return WestonDriver
-        if os.environ.get("USE_NATIVE_XDISPLAY"):
+        if self._nativexorg:
             return XorgDriver
         return XvfbDriver
 
