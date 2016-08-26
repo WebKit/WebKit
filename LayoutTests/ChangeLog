@@ -1,3 +1,10 @@
+2016-08-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reinstate flakiness expectations for viewport tests, as they are still flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=153110
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-08-26  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Make custom constructors consistent with generated bindings code
