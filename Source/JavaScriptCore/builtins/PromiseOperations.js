@@ -50,8 +50,7 @@ function newPromiseCapability(constructor)
 {
     "use strict";
 
-    // FIXME: Check isConstructor(constructor).
-    if (typeof constructor !== "function")
+    if (!@isConstructor(constructor))
         throw new @TypeError("promise capability requires a constructor function");
 
     var promiseCapability = {

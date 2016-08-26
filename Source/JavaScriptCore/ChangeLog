@@ -1,3 +1,14 @@
+2016-08-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] newPromiseCapabilities should check the given argument is constructor
+        https://bugs.webkit.org/show_bug.cgi?id=161226
+
+        Reviewed by Mark Lam.
+
+        Use @isConstructor.
+
+        * builtins/PromiseOperations.js:
+
 2016-08-25  Keith Miller  <keith_miller@apple.com>
 
         toString called on proxies returns incorrect tag

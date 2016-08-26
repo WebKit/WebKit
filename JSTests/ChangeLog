@@ -1,3 +1,15 @@
+2016-08-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] newPromiseCapabilities should check the given argument is constructor
+        https://bugs.webkit.org/show_bug.cgi?id=161226
+
+        Reviewed by Mark Lam.
+
+        The arrow function should not be a constructor. So the error should be raised.
+
+        * stress/new-promise-capabilities-requires-constructor.js: Added.
+        (shouldThrow):
+
 2016-08-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Clean up the abstract interpreter for cos/sin/sqrt/fround/log
