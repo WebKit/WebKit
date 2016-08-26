@@ -1,3 +1,14 @@
+2016-08-26  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        Unreviewed EFL build fix since r204996.
+
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        (WebKit::WebPageProxy::setThemePath):
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::cancelComposition):
+
 2016-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r204986 and r204996.
