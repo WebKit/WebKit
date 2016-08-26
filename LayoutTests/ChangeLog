@@ -1,5 +1,12 @@
 2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unreviewed, rebase iOS simulator WK1 imported/blink tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/imported/blink/fast/shapes/shape-outside-floats/shape-outside-negative-height-crash-width-expected.txt: Added.
+
+2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, rebase iOS simulator WK1 fast tests
 
         * platform/ios-simulator-wk1/TestExpectations:
