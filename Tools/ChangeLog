@@ -1,3 +1,15 @@
+2016-08-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Warning fix.
+        https://bugs.webkit.org/show_bug.cgi?id=161236
+
+        Reviewed by Brent Fulgham.
+
+        The & operator in the Test struct has no body.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] run-gtk-tests should use webkitpy.port.gtk and webkitpy.port.xvfbdriver
