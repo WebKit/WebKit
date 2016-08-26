@@ -109,6 +109,12 @@ public:
     JS_EXPORT_PRIVATE static String className(const JSObject*);
     JS_EXPORT_PRIVATE static String calculatedClassName(JSObject*);
 
+    // This function is what Object.prototype.toString() will use to get the name of
+    // an object when using Symbol.toStringTag fails. For the most part there is no
+    // difference between this and className(). The main use case is for new JS language
+    // objects to set the default tag to "Object".
+    JS_EXPORT_PRIVATE static String toStringName(const JSObject*);
+
     // This is the fully virtual [[GetPrototypeOf]] internal function defined
     // in the ECMAScript 6 specification. Use this when doing a [[GetPrototypeOf]] 
     // operation as dictated in the specification.

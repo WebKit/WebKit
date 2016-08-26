@@ -308,6 +308,13 @@ String JSObject::className(const JSObject* object)
     return info->className;
 }
 
+String JSObject::toStringName(const JSObject* object)
+{
+    const ClassInfo* info = object->classInfo();
+    ASSERT(info);
+    return info->methodTable.className(object);
+}
+
 String JSObject::calculatedClassName(JSObject* object)
 {
     String prototypeFunctionName;

@@ -49,6 +49,14 @@ ProxyObject::ProxyObject(VM& vm, Structure* structure)
 {
 }
 
+String ProxyObject::toStringName(const JSObject* object)
+{
+    const JSObject* target = jsCast<const ProxyObject*>(object)->target();
+    if (isJSArray(target))
+        return target->classInfo()->methodTable.className(target);
+    return ASCIILiteral("Object");
+}
+
 Structure* ProxyObject::structureForTarget(JSGlobalObject* globalObject, JSValue target)
 {
     if (!target.isObject())

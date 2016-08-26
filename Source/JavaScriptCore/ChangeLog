@@ -1,3 +1,29 @@
+2016-08-25  Keith Miller  <keith_miller@apple.com>
+
+        toString called on proxies returns incorrect tag
+        https://bugs.webkit.org/show_bug.cgi?id=161111
+
+        Reviewed by Benjamin Poulain.
+
+        This patch adds a new Method table function toStringName. This function
+        is used by Object.prototype.toString to create the string tag that it
+        inserts. Right now it only changes the stringification of proxy objects.
+        In future patches I plan to make it work for other classes of objects as
+        well.
+
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toStringName):
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toStringName):
+        * runtime/JSObject.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::toStringName):
+        * runtime/ProxyObject.h:
+
 2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the ENABLE(WEBASSEMBLY) build on Linux

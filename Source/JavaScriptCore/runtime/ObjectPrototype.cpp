@@ -298,7 +298,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
             }
         }
 
-        String newString = WTF::tryMakeString("[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]");
+        String newString = WTF::tryMakeString("[object ", thisObject->methodTable(exec->vm())->toStringName(thisObject), "]");
         if (!newString)
             return throwOutOfMemoryError(exec);
 

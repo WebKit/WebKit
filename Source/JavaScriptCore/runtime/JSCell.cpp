@@ -222,6 +222,12 @@ String JSCell::className(const JSObject*)
     return String();
 }
 
+String JSCell::toStringName(const JSObject*)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return String();
+}
+
 const char* JSCell::className() const
 {
     return classInfo()->className;
