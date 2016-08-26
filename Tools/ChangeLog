@@ -1,3 +1,13 @@
+2016-08-26  Aakash Jain  <aakash_jain@apple.com>
+
+        webkit-queues queue-status page should should list more recent statuses
+        https://bugs.webkit.org/show_bug.cgi?id=161220
+
+        Reviewed by Daniel Bates.
+
+        * QueueStatusServer/handlers/queuestatus.py:
+        (QueueStatus._fetch_statuses): Increase the number of recent statuses from 15 to 50.
+
 2016-08-26  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Infinite recursion calling -charValue on a WKNSNumber

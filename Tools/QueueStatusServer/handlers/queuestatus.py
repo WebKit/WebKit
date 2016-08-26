@@ -62,7 +62,7 @@ class QueueStatus(webapp.RequestHandler):
         statuses.filter("queue_name =", queue.name())
         if bot_id:
             statuses.filter("bot_id =", bot_id)
-        return statuses.order("-date").fetch(15)
+        return statuses.order("-date").fetch(50)
 
     def _fetch_last_message_matching(self, queue, bot_id, message):
         statuses = queuestatus.QueueStatus.all()
