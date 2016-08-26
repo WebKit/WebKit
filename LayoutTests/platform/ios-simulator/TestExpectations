@@ -410,7 +410,6 @@ http/tests/canvas/webgl/origin-clean-conformance.html
 
 # HTTP tests that fail:
 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
-http/tests/download/inherited-encoding.html [ Failure ]
 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 http/tests/loading/sizes/preload-image-sizes.html [ Failure ]
@@ -438,8 +437,6 @@ http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
 http/tests/security/cross-origin-plugin.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
 http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
@@ -999,7 +996,6 @@ http/tests/webarchive/test-css-url-encoding.html
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 http/tests/xmlhttprequest/default-content-type-dashboard.html [ Failure ]
 http/tests/xmlhttprequest/head-redirection.html [ Failure ]
-http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
 
 # DeviceMotion tests that time out:
 fast/dom/DeviceMotion/no-page-cache.html

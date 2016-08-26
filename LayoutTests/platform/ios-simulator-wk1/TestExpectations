@@ -932,11 +932,9 @@ fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 http/tests/navigation/page-cache-iframe-no-current-historyItem.html [ Failure ]
 
 # XMLHttpRequest tests that fail
-http/tests/xmlhttprequest/cache-override.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
 webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
-http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 
 # JavaScripts tests that fail:
 js/dom/deep-recursion-test.html [ Failure ]
@@ -1059,6 +1057,7 @@ security/block-test.html
 # Animation tests that fail:
 animations/combo-transform-translate+scale.html [ Pass Failure ]
 animations/suspend-resume-animation-events.html [ Pass Failure ]
+animations/trigger-container-scroll-empty.html [ Failure ]
 
 # IndexedDB is not supported on iOS WK1.
 storage/indexeddb
@@ -1070,7 +1069,6 @@ crypto/subtle/rsa-indexeddb-private.html
 crypto/subtle/rsa-indexeddb.html
 fast/history/page-cache-indexed-closed-db.html
 fast/history/page-cache-indexed-opened-db.html
-http/tests/security/no-indexeddb-from-sandbox.html [ Failure ]
 
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
@@ -1129,16 +1127,12 @@ http/tests/incremental/frame-focus-before-load.html
 http/tests/incremental/pause-in-script-element.pl
 http/tests/navigation/metaredirect-frames.html
 http/tests/security/frameNavigation/context-for-location-assign.html
-http/tests/cache/cached-main-resource.html [ Timeout ]
-http/tests/cookies/simple-cookies-expired.html [ Timeout ]
-http/tests/cookies/simple-cookies-max-age.html [ Timeout ]
-http/tests/images/png-partial-load.html [ Timeout ]
-http/tests/images/png-progressive-load.html [ Timeout ]
 
 # HTTP tests that fail:
 http/tests/loading/preload-img-srcset-sizes.html [ Failure ]
 http/tests/loading/progress-finished-callback.html [ Failure ]
 http/tests/misc/acid3.html [ Failure ]
+http/tests/navigation/anchor-frames.html [ Failure ]
 http/tests/navigation/javascriptlink-frames.html [ Failure ]
 http/tests/navigation/postredirect-basic.html [ Failure ]
 http/tests/navigation/postredirect-goback1.html [ Failure ]
@@ -1152,7 +1146,6 @@ http/tests/security/aboutBlank/xss-DENIED-set-opener.html [ Failure ]
 http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Failure ]
 http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
-http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
 http/tests/security/cross-origin-indexeddb-allowed.html [ Failure ]
 http/tests/security/cross-origin-indexeddb.html [ Failure ]
 http/tests/security/cross-origin-local-storage-wk1.html [ Failure ]
@@ -1329,7 +1322,6 @@ fast/dom/timer-fire-after-page-pause.html [ Pass ]
 
 # Latest iOS failures as of Sept 1, 2015
 accessibility/ios-simulator/iframe-access.html [ Failure ]
-animations/simultaneous-start-transform.html [ Failure ]
 compositing/iframes/display-none-subframe.html [ Failure ]
 css3/blending/blend-mode-simple-composited.html [ Failure ]
 editing/selection/caret-mode-document-begin-end.html [ Failure ]
@@ -1337,7 +1329,6 @@ fast/events/onchange-passwordfield.html [ Failure ]
 fast/forms/input-text-option-delete.html [ Failure ]
 fast/xsl/xslt-extra-content-at-end.xml [ Failure ]
 fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
-http/tests/security/video-cross-origin-accesssameorigin.html [ Failure ]
 js/dom/JSON-stringify.html [ Failure ]
 fast/parser/external-entities-in-xslt.xml [ Failure ]
 editing/selection/update-selection-by-style-change.html [ ImageOnlyFailure ]

@@ -362,6 +362,8 @@ http/tests/navigation/relativeanchor-frames.html [ Failure ]
 http/tests/navigation/reload-subframe-object.html [ Failure ]
 http/tests/navigation/success200-subframeload.html [ Failure ]
 http/tests/navigation/timerredirect-subframeload.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
 http/tests/security/drag-drop-local-file.html [ Failure ]
 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
 http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
@@ -373,6 +375,7 @@ http/tests/security/no-referrer.html [ Failure ]
 http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
 http/tests/uri/css-href.php [ Failure ]
+http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
 
 # HTTP tests that assert:
 http/tests/navigation/new-window-redirect-history.html

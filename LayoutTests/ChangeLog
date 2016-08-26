@@ -1,3 +1,25 @@
+2016-08-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 http tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/animations/trigger-container-scroll-simple-expected.txt: Added.
+        * platform/ios-simulator-wk1/css2.1/t040302-c61-ex-len-00-b-a-expected.txt:
+        * platform/ios-simulator-wk1/http/tests/dom/window-open-about-blank-and-access-document-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/dom/window-open-about-uppercase-blank-and-access-document-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/dom/window-open-about-webkit-org-and-access-document-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-open-window-upgrades-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/cross-origin-modal-dialog-base-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/insecure-geolocation-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/mixedContent/insecure-form-in-main-frame-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/mixedContent/insecure-script-in-data-iframe-in-main-frame-blocked-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/mixedContent/insecure-xhr-sync-in-main-frame-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/mixedcontent-geolocation-block-insecure-content-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/mixedcontent-geolocation-expected.txt: Added.
+        * platform/ios-simulator-wk1/http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox-expected.txt: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-08-26  Chris Dumez  <cdumez@apple.com>
 
         Calling crossOriginWindow.toString() should not be allowed

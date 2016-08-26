@@ -1,0 +1,1 @@
+This test opens a window that loads a data: iframe that loads an insecure script, and that the script is still blocked. Although the data: frame has a separate origin, the script can still navigate top.
