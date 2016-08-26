@@ -1,5 +1,37 @@
 2016-08-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Show IndexedDB Database/ObjectStore/Index data in a details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=161180
+        <rdar://problem/28003417>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and file.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Instantiate the global details sidebar.
+
+        * UserInterface/Views/StorageTabContentView.js:
+        (WebInspector.StorageTabContentView):
+        Include the new details sidebar in the Storage tab.
+
+        * UserInterface/Controllers/StorageManager.js:
+        (WebInspector.StorageManager.prototype._addIndexedDBDatabasesIfNeeded.processKeyPath):
+        Use the protocol generated types.
+
+        * UserInterface/Views/IndexedDatabaseDetailsSidebarPanel.js: Added.
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel):
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel.prototype.inspect):
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel.prototype.layout):
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel.prototype._keyPathString):
+        Show the sidebar for an IndexedDatabase, ObjectStore, or Index.
+        Show each section if we can based on the objects we have.
+
+2016-08-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Provide a way to clear an IndexedDB object store
         https://bugs.webkit.org/show_bug.cgi?id=161167
         <rdar://problem/27996932>

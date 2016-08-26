@@ -365,6 +365,7 @@ WebInspector.contentLoaded = function()
     this.domNodeDetailsSidebarPanel = new WebInspector.DOMNodeDetailsSidebarPanel;
     this.cssStyleDetailsSidebarPanel = new WebInspector.CSSStyleDetailsSidebarPanel;
     this.applicationCacheDetailsSidebarPanel = new WebInspector.ApplicationCacheDetailsSidebarPanel;
+    this.indexedDatabaseDetailsSidebarPanel = new WebInspector.IndexedDatabaseDetailsSidebarPanel;
     this.scopeChainDetailsSidebarPanel = new WebInspector.ScopeChainDetailsSidebarPanel;
     this.probeDetailsSidebarPanel = new WebInspector.ProbeDetailsSidebarPanel;
 
