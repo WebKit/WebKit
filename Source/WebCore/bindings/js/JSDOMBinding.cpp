@@ -878,10 +878,9 @@ void throwAttributeTypeError(JSC::ExecState& state, const char* interfaceName, c
     throwTypeError(state, makeString("The ", interfaceName, '.', attributeName, " attribute must be an instance of ", expectedType));
 }
 
-JSC::EncodedJSValue throwConstructorDocumentUnavailableError(JSC::ExecState& state, const char* interfaceName)
+JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::ExecState& state, const char* interfaceName)
 {
-    // FIXME: This is confusing exception wording. Can we reword to be clearer and more specific?
-    return throwVMError(&state, createReferenceError(&state, makeString(interfaceName, " constructor associated document is unavailable")));
+    return throwVMError(&state, createReferenceError(&state, makeString(interfaceName, " constructor associated execution context is unavailable")));
 }
 
 void throwSequenceTypeError(JSC::ExecState& state)

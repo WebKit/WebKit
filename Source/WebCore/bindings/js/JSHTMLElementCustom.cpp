@@ -32,6 +32,7 @@
 #include "HTMLFormElement.h"
 #include "JSCustomElementInterface.h"
 #include "JSNodeCustom.h"
+#include "ScriptExecutionContext.h"
 #include <runtime/InternalFunction.h>
 #include <runtime/JSWithScope.h>
 
@@ -43,10 +44,13 @@ using namespace JSC;
 EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
 {
     auto* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
+    ASSERT(jsConstructor);
 
     auto* context = jsConstructor->scriptExecutionContext();
-    if (!is<Document>(context))
-        return throwConstructorDocumentUnavailableError(exec, "HTMLElement");
+    if (!context)
+        return throwConstructorScriptExecutionContextUnavailableError(exec, "HTMLElement");
+    ASSERT(context->isDocument());
+
     auto& document = downcast<Document>(*context);
 
     auto* window = document.domWindow();

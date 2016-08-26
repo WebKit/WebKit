@@ -47,15 +47,12 @@ namespace WebCore {
 EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState& exec)
 {
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
-    if (!jsConstructor)
-        return throwVMError(&exec, createReferenceError(&exec, "AudioContext constructor callee is unavailable"));
+    ASSERT(jsConstructor);
 
     ScriptExecutionContext* scriptExecutionContext = jsConstructor->scriptExecutionContext();
     if (!scriptExecutionContext)
-        return throwVMError(&exec, createReferenceError(&exec, "AudioContext constructor script execution context is unavailable"));
-
-    if (!is<Document>(*scriptExecutionContext))
-        return throwVMError(&exec, createReferenceError(&exec, "AudioContext constructor called in a script execution context which is not a document"));
+        return throwConstructorScriptExecutionContextUnavailableError(exec, "AudioContext");
+    ASSERT(scriptExecutionContext->isDocument());
 
     Document& document = downcast<Document>(*scriptExecutionContext);
 
@@ -69,7 +66,7 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState& exec)
             setDOMException(&exec, ec);
             return JSValue::encode(JSValue());
         }
-        if (!audioContext.get())
+        if (!audioContext)
             return throwVMError(&exec, createSyntaxError(&exec, "audio resources unavailable for AudioContext construction"));
     } else {
 #if ENABLE(LEGACY_WEB_AUDIO)
@@ -103,11 +100,9 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState& exec)
 #else
         return throwVMError(&exec, createSyntaxError(&exec, "Illegal AudioContext constructor"));
 #endif
+        if (!audioContext)
+            return throwVMError(&exec, createReferenceError(&exec, "Error creating AudioContext"));
     }
-
-    if (!audioContext)
-        return throwVMError(&exec, createReferenceError(&exec, "Error creating AudioContext"));
-
     return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), AudioContext, audioContext.releaseNonNull()));
 }
 

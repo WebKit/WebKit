@@ -80,8 +80,9 @@ typedef JSDOMConstructor<JSTestNode> JSTestNodeConstructor;
 template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestNodeConstructor*>(state->callee());
+    ASSERT(castedThis);
     auto object = TestNode::create();
-    return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));
+    return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
 }
 
 template<> JSValue JSTestNodeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

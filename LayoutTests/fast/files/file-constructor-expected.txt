@@ -10,15 +10,15 @@ PASS (new File(['hello'], 'world.html', {type:'text/html'})) instanceof window.F
 PASS (new File(['hello'], 'world.html', {type:'text/html', endings:'native'})) instanceof window.File is true
 PASS (new File(['hello'], 'world.html', {type:'text/html', endings:'transparent'})) instanceof window.File is true
 PASS (new File([], 'world.html')) instanceof window.File is true
-PASS (new File()) threw exception TypeError: First argument to File constructor must be a valid sequence, was undefined or null.
-PASS (new File([])) threw exception TypeError: Second argument to File constructor must be a valid string, was undefined.
+PASS (new File()) threw exception TypeError: Argument 1 ('fileBits') to the File constructor must be an instance of sequence.
+PASS (new File([])) threw exception TypeError: Argument 2 ('filename') to the File constructor must be an instance of DOMString.
 PASS (new File([], null)) instanceof window.File is true
 PASS (new File([], 1)) instanceof window.File is true
 PASS (new File([], '')) instanceof window.File is true
 PASS (new File([], document)) instanceof window.File is true
 PASS new File('hello', 'world.html') threw exception TypeError: Value is not a sequence.
 PASS new File(0, 'world.html') threw exception TypeError: Value is not a sequence.
-PASS new File(null, 'world.html') threw exception TypeError: First argument to File constructor must be a valid sequence, was undefined or null.
+PASS new File(null, 'world.html') threw exception TypeError: Argument 1 ('fileBits') to the File constructor must be an instance of sequence.
 PASS (new File([], 'world.html')) instanceof window.File is true
 PASS (new File(['stringPrimitive'], 'world.html')) instanceof window.File is true
 PASS (new File([String('stringObject')], 'world.html')) instanceof window.File is true
@@ -49,10 +49,10 @@ PASS (new File([], 'world.html', {lastModified: 555, type:'goodbye'})).lastModif
 PASS (new File([], 'world.html', {lastModified: 555, type:'goodbyeî'})).lastModified is not 555
 PASS (new File([], 'world.html', null)) instanceof window.File is true
 PASS (new File([], 'world.html', undefined)) instanceof window.File is true
-PASS (new File([], 'world.html', 123)) instanceof window.File threw exception TypeError: Third argument of the constructor is not of type Object.
-PASS (new File([], 'world.html', 123.4)) instanceof window.File threw exception TypeError: Third argument of the constructor is not of type Object.
-PASS (new File([], 'world.html', true)) instanceof window.File threw exception TypeError: Third argument of the constructor is not of type Object.
-PASS (new File([], 'world.html', 'abc')) instanceof window.File threw exception TypeError: Third argument of the constructor is not of type Object.
+PASS (new File([], 'world.html', 123)) instanceof window.File threw exception TypeError: Argument 3 ('options') to the File constructor must be an instance of FilePropertyBag.
+PASS (new File([], 'world.html', 123.4)) instanceof window.File threw exception TypeError: Argument 3 ('options') to the File constructor must be an instance of FilePropertyBag.
+PASS (new File([], 'world.html', true)) instanceof window.File threw exception TypeError: Argument 3 ('options') to the File constructor must be an instance of FilePropertyBag.
+PASS (new File([], 'world.html', 'abc')) instanceof window.File threw exception TypeError: Argument 3 ('options') to the File constructor must be an instance of FilePropertyBag.
 PASS (new File([], 'world.html', [])) instanceof window.File is true
 PASS (new File([], 'world.html', /abc/)) instanceof window.File is true
 PASS (new File([], 'world.html', function () {})) instanceof window.File is true

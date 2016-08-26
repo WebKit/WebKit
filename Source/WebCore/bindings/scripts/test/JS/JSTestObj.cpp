@@ -1099,6 +1099,7 @@ static_assert(TestObj::readonly == 0, "readonly in TestObj does not match value 
 template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestObjConstructor*>(state->callee());
+    ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     if (UNLIKELY(!state->argument(0).isObject()))
@@ -1109,11 +1110,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecStat
     auto testCallbackFunction = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (UNLIKELY(!context))
-        return throwConstructorDocumentUnavailableError(*state, "TestObject");
+        return throwConstructorScriptExecutionContextUnavailableError(*state, "TestObject");
     ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);
     auto object = TestObj::create(document, *testCallback, *testCallbackFunction);
-    return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));
+    return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
 }
 
 template<> JSValue JSTestObjConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

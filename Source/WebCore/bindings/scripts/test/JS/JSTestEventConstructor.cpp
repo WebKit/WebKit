@@ -74,14 +74,15 @@ typedef JSDOMConstructor<JSTestEventConstructor> JSTestEventConstructorConstruct
 template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::construct(ExecState* state)
 {
     auto* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(state->callee());
+    ASSERT(jsConstructor);
 
     if (!jsConstructor->scriptExecutionContext())
-        return throwVMError(state, createReferenceError(state, "Constructor associated execution context is unavailable"));
+        return throwConstructorScriptExecutionContextUnavailableError(*state, "TestEventConstructor");
 
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
 
-    AtomicString eventType = state->argument(0).toString(state)->toAtomicString(state);
+    AtomicString eventType = state->uncheckedArgument(0).toString(state)->toAtomicString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
 
@@ -102,7 +103,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     }
 
     Ref<TestEventConstructor> event = TestEventConstructor::createForBindings(eventType, eventInit);
-    return JSValue::encode(toJS(state, jsConstructor->globalObject(), event));
+    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), TestEventConstructor, WTFMove(event)));
 }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDictionary& dictionary)

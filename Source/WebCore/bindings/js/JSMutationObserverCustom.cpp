@@ -50,7 +50,7 @@ EncodedJSValue JSC_HOST_CALL constructJSMutationObserver(ExecState& exec)
     JSObject* object = exec.uncheckedArgument(0).getObject();
     CallData callData;
     if (!object || object->methodTable()->getCallData(object, callData) == CallType::None)
-        return throwVMTypeError(&exec, ASCIILiteral("Callback argument must be a function"));
+        return throwArgumentTypeError(exec, 0, "callback", "MutationObserver", nullptr, "MutationCallback");
 
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
     auto callback = JSMutationCallback::create(object, jsConstructor->globalObject());

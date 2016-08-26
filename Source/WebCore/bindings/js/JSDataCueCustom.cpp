@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -50,6 +50,7 @@ void JSDataCue::setValue(ExecState& state, JSValue value)
 EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState& exec)
 {
     DOMConstructorObject* castedThis = jsCast<DOMConstructorObject*>(exec.callee());
+    ASSERT(castedThis);
     if (exec.argumentCount() < 3)
         return throwVMError(&exec, createNotEnoughArgumentsError(&exec));
 
@@ -63,13 +64,13 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState& exec)
 
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (!context)
-        return throwConstructorDocumentUnavailableError(exec, "DataCue");
+        return throwConstructorScriptExecutionContextUnavailableError(exec, "DataCue");
 
     String type;
 #if ENABLE(DATACUE_VALUE)
     if (exec.argumentCount() > 3) {
         if (!exec.uncheckedArgument(3).isString())
-            return throwVMTypeError(&exec, ASCIILiteral("Second argument of the constructor is not of type String"));
+            return throwArgumentTypeError(exec, 3, "type", "DataCue", nullptr, "DOMString");
         type = exec.uncheckedArgument(3).getString(&exec);
     }
 #endif

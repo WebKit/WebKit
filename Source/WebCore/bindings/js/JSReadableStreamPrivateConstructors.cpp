@@ -43,7 +43,7 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultReader(ExecState& e
 {
     JSReadableStream* stream = jsDynamicCast<JSReadableStream*>(exec.argument(0));
     if (!stream)
-        return throwVMTypeError(&exec, ASCIILiteral("ReadableStreamDefaultReader constructor parameter is not a ReadableStream"));
+        return throwArgumentTypeError(exec, 0, "stream", "ReadableStreamReader", nullptr, "ReadableStream");
 
     JSValue jsFunction = stream->get(&exec, Identifier::fromString(&exec, "getReader"));
 

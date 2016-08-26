@@ -227,7 +227,7 @@ template<typename JSClass> inline JSC::EncodedJSValue JSBuiltinConstructor<JSCla
 template<typename JSClass> inline JSC::EncodedJSValue JSBuiltinConstructor<JSClass>::callConstructor(JSC::ExecState& state, JSC::JSObject* object)
 {
     if (!object)
-        return throwConstructorDocumentUnavailableError(state, info()->className);
+        return throwConstructorScriptExecutionContextUnavailableError(state, info()->className);
     return callConstructor(state, *object);
 }
 

@@ -28,6 +28,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSDictionary.h"
+#include "ScriptExecutionContext.h"
 #include "WebKitBlobBuilder.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
@@ -43,13 +44,16 @@ namespace WebCore {
 EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
 {
     auto* constructor = jsCast<DOMConstructorObject*>(exec.callee());
+    ASSERT(constructor);
+
     ScriptExecutionContext* context = constructor->scriptExecutionContext();
     if (!context)
-        return throwVMError(&exec, createReferenceError(&exec, "File constructor associated document is unavailable"));
+        return throwConstructorScriptExecutionContextUnavailableError(exec, "File");
+    ASSERT(context->isDocument());
 
     JSValue arg = exec.argument(0);
     if (arg.isUndefinedOrNull())
-        return throwVMTypeError(&exec, ASCIILiteral("First argument to File constructor must be a valid sequence, was undefined or null"));
+        return throwArgumentTypeError(exec, 0, "fileBits", "File", nullptr, "sequence");
 
     unsigned blobPartsLength = 0;
     JSObject* blobParts = toJSSequence(exec, arg, blobPartsLength);
@@ -59,7 +63,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
 
     arg = exec.argument(1);
     if (arg.isUndefined())
-        return throwVMTypeError(&exec, ASCIILiteral("Second argument to File constructor must be a valid string, was undefined"));
+        return throwArgumentTypeError(exec, 1, "filename", "File", nullptr, "DOMString");
 
     String filename = arg.toWTFString(&exec).replace('/', ':');
     if (exec.hadException())
@@ -72,7 +76,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
     if (!arg.isUndefinedOrNull()) {
         JSObject* filePropertyBagObject = arg.getObject();
         if (!filePropertyBagObject)
-            return throwVMTypeError(&exec, ASCIILiteral("Third argument of the constructor is not of type Object"));
+            return throwArgumentTypeError(exec, 2, "options", "File", nullptr, "FilePropertyBag");
 
         // Create the dictionary wrapper from the initializer object.
         JSDictionary dictionary(&exec, filePropertyBagObject);

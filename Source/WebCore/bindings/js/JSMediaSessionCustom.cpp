@@ -42,10 +42,11 @@ namespace WebCore {
 EncodedJSValue JSC_HOST_CALL constructJSMediaSession(ExecState& exec)
 {
     auto* castedThis = jsCast<DOMConstructorObject*>(exec.callee());
+    ASSERT(castedThis);
 
     auto* context = castedThis->scriptExecutionContext();
     if (!context)
-        return throwConstructorDocumentUnavailableError(exec, "MediaSession");
+        return throwConstructorScriptExecutionContextUnavailableError(exec, "MediaSession");
 
     String kind;
     if (exec.argumentCount() > 0) {

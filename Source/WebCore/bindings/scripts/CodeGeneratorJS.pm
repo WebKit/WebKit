@@ -4303,7 +4303,7 @@ sub GenerateCallbackImplementation
                 # https://heycam.github.io/webidl/#es-callback-function
                 $invokeMethod = "JSCallbackData::CallbackType::Function";
                 $propertyToLookup = "Identifier()";
-                push(@implContent, "    UNUSED_PARAM(state);\n");    
+                push(@implContent, "    UNUSED_PARAM(state);\n");
             } elsif ($numFunctions > 1) {
                 # The callback interface has more than one operation so we should not call the user object as a function.
                 # instead, we should look for a property with the same name as the operation on the user object.
@@ -4777,7 +4777,7 @@ sub NativeToJSValue
         if ($codeGenerator->IsRefPtrType($innerType)) {
             AddToImplIncludes("JS${innerType}.h", $conditional);
         }
-        
+
         return "jsArray(state, $globalObject, $value)" if $codeGenerator->IsSequenceType($type);
         return "jsFrozenArray(state, $globalObject, $value)" if $codeGenerator->IsFrozenArrayType($type);
     }
@@ -4879,7 +4879,7 @@ sub GenerateHashTableValueArray
             my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
             push(@implContent, "#if ${conditionalString}\n");
         }
-        
+
         if ("@$specials[$i]" =~ m/Function/) {
             $firstTargetType = "static_cast<NativeFunction>";
         } elsif ("@$specials[$i]" =~ m/Builtin/) {
@@ -5220,14 +5220,15 @@ sub GenerateConstructorDefinition
 template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecState* state)
 {
     auto* jsConstructor = jsCast<${constructorClassName}*>(state->callee());
+    ASSERT(jsConstructor);
 
     if (!jsConstructor->scriptExecutionContext())
-        return throwVMError(state, createReferenceError(state, "Constructor associated execution context is unavailable"));
+        return throwConstructorScriptExecutionContextUnavailableError(*state, \"${visibleInterfaceName}\");
 
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
 
-    AtomicString eventType = state->argument(0).toString(state)->toAtomicString(state);
+    AtomicString eventType = state->uncheckedArgument(0).toString(state)->toAtomicString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
 
@@ -5248,7 +5249,7 @@ template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecS
     }
 
     Ref<${interfaceName}> event = ${interfaceName}::createForBindings(eventType, eventInit);
-    return JSValue::encode(toJS(state, jsConstructor->globalObject(), event));
+    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), ${interfaceName}, WTFMove(event)));
 }
 
 bool fill${interfaceName}Init(${interfaceName}Init& eventInit, JSDictionary& dictionary)
@@ -5303,6 +5304,7 @@ END
 
             push(@$outputArray, "{\n");
             push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(state->callee());\n");
+            push(@$outputArray, "    ASSERT(castedThis);\n");
 
             my @constructorArgList;
 
@@ -5330,14 +5332,14 @@ END
                 push(@constructorArgList, "*context");
                 push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
                 push(@$outputArray, "    if (UNLIKELY(!context))\n");
-                push(@$outputArray, "        return throwConstructorDocumentUnavailableError(*state, \"${visibleInterfaceName}\");\n");
+                push(@$outputArray, "        return throwConstructorScriptExecutionContextUnavailableError(*state, \"${visibleInterfaceName}\");\n");
             }
             if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{"ConstructorCallWith"}, "Document")) {
                 $implIncludes{"Document.h"} = 1;
                 push(@constructorArgList, "document");
                 push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
                 push(@$outputArray, "    if (UNLIKELY(!context))\n");
-                push(@$outputArray, "        return throwConstructorDocumentUnavailableError(*state, \"${visibleInterfaceName}\");\n");
+                push(@$outputArray, "        return throwConstructorScriptExecutionContextUnavailableError(*state, \"${visibleInterfaceName}\");\n");
                 push(@$outputArray, "    ASSERT(context->isDocument());\n");
                 push(@$outputArray, "    auto& document = downcast<Document>(*context);\n");
             }
@@ -5380,7 +5382,7 @@ END
                  push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
 
-            push(@$outputArray, "    return JSValue::encode(asObject(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object))));\n");
+            push(@$outputArray, "    return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));\n");
             push(@$outputArray, "}\n\n");
         }
     }

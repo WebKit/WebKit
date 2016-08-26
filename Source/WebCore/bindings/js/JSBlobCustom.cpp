@@ -37,6 +37,7 @@
 #include "JSDOMBinding.h"
 #include "JSDictionary.h"
 #include "JSFile.h"
+#include "ScriptExecutionContext.h"
 #include "WebKitBlobBuilder.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
@@ -63,9 +64,11 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Blob& blob)
 EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 {
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
+    ASSERT(jsConstructor);
+
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return throwVMError(&exec, createReferenceError(&exec, "Blob constructor associated document is unavailable"));
+        return throwConstructorScriptExecutionContextUnavailableError(exec, "Blob");
 
     if (!exec.argumentCount()) {
         return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), Blob, Blob::create()));

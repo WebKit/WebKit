@@ -1,3 +1,22 @@
+2016-08-26  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Make custom constructors consistent with generated bindings code
+        https://bugs.webkit.org/show_bug.cgi?id=159550
+
+        Reviewed by Youenn Fablet.
+
+        Add assertion to check DOMConstructorObject* passed in ExecState is not null.
+        Rename throwConstructorDocumentUnavailableError to throwConstructorScriptExecutionContextUnavailableError since
+        ScriptExecutionContext is not necessarily a Document.
+        Modify error message in case of argument error to be consistent with generated binding code: replace calls to
+        throwVMError with calls to throwConstructorScriptExecutionContextUnavailableError and throwArgumentTypeError.
+
+        No new test required. Modify tests and tests expectations to align with new error messages.
+
+        * fast/dom/MutationObserver/mutation-observer-constructor-expected.txt:
+        * fast/files/file-constructor-expected.txt:
+        * fast/files/file-constructor.html:
+
 2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rebase iOS simulator WK1 imported/w3c tests

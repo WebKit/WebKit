@@ -49,7 +49,7 @@ static HTMLFormElement* toHTMLFormElementOrNull(JSC::JSValue value)
 EncodedJSValue JSC_HOST_CALL constructJSDOMFormData(ExecState& exec)
 {
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
-
+    ASSERT(jsConstructor);
     HTMLFormElement* form = toHTMLFormElementOrNull(exec.argument(0));
     auto domFormData = DOMFormData::create(form);
     return JSValue::encode(toJSNewlyCreated(&exec, jsConstructor->globalObject(), WTFMove(domFormData)));
