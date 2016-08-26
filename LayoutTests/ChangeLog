@@ -1,5 +1,11 @@
 2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unreviewed, rebase iOS simulator WK1 imported/mozilla tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
+2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, rebase iOS simulator WK1 imported/blink tests
 
         * platform/ios-simulator-wk1/TestExpectations:
