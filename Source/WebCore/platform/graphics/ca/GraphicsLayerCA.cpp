@@ -68,6 +68,11 @@
 #include "PlatformCALayerWin.h"
 #endif
 
+#if COMPILER(MSVC)
+// See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
+#pragma warning(disable: 4701)
+#endif
+
 namespace WebCore {
 
 // The threshold width or height above which a tiled layer will be used. This should be

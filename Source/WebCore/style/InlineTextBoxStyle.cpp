@@ -113,9 +113,9 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         return GlyphOverflow();
     
     float strokeThickness = textDecorationStrokeThickness(lineStyle.fontSize());
-    float controlPointDistance;
+    float controlPointDistance = 0;
     float step;
-    float wavyOffset;
+    float wavyOffset = 0;
         
     TextDecorationStyle decorationStyle = lineStyle.textDecorationStyle();
     float height = lineStyle.fontCascade().fontMetrics().floatHeight();

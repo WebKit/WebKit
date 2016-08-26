@@ -670,7 +670,7 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
     Vector<char> value;
 
     bool foundFirstNameChar = false;
-    const char* namePtr;
+    const char* namePtr = nullptr;
     size_t nameSize = 0;
 
     nameStr = StringView();

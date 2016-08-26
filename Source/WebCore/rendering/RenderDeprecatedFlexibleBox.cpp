@@ -60,7 +60,7 @@ public:
     void reset()
     {
         m_currentChild = nullptr;
-        m_ordinalIteration = -1;
+        m_ordinalIteration = std::numeric_limits<unsigned>::max();
     }
 
     RenderBox* first()

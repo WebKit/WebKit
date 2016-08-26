@@ -396,7 +396,7 @@ static void appendASCII(const String& base, const char* rel, size_t len, CharBuf
 // Returns the index of the first index in string |s| of any of the characters
 // in |toFind|. |toFind| should be a null-terminated string, all characters up
 // to the null will be searched. Returns int if not found.
-const unsigned notFoundUnsigned = -1;
+const unsigned notFoundUnsigned = std::numeric_limits<unsigned>::max();
 static unsigned findFirstOf(StringView string, unsigned startPosition, const char* target)
 {
     unsigned length = string.length();

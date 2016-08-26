@@ -79,7 +79,7 @@ public:
     void mediaEngineUpdated(const HTMLMediaElement&);
 
     // Restrictions to modify default behaviors.
-    enum BehaviorRestrictionFlags {
+    enum BehaviorRestrictionFlags : unsigned {
         NoRestrictions = 0,
         RequireUserGestureForLoad = 1 << 0,
         RequireUserGestureForVideoRateChange = 1 << 1,

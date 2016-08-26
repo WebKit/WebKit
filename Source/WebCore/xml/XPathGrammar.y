@@ -34,6 +34,11 @@
 #include "XPathPath.h"
 #include "XPathVariableReference.h"
 
+#if COMPILER(MSVC)
+// See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
+#pragma warning(disable: 4701)
+#endif
+
 #define YYMALLOC fastMalloc
 #define YYFREE fastFree
 

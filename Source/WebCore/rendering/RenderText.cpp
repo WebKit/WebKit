@@ -1201,7 +1201,7 @@ void RenderText::secureText(UChar maskingCharacter)
         return;
 
     UChar characterToReveal = 0;
-    unsigned revealedCharactersOffset;
+    unsigned revealedCharactersOffset = 0;
 
     if (SecureTextTimer* timer = secureTextTimers().get(this)) {
         // We take the offset out of the timer to make this one-shot. We count on this being called only once.

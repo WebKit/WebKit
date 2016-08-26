@@ -68,7 +68,7 @@ public:
     {
         setRenderer(nullptr);
         setOffset(0);
-        setNextBreakablePosition(-1);
+        setNextBreakablePosition(std::numeric_limits<unsigned>::max());
     }
     void moveToStartOf(RenderObject& object)
     {

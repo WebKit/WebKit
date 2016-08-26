@@ -2004,7 +2004,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
 
     if ((m_options & AtWordStarts) && targetLength) {
         UChar32 targetFirstCharacter;
-        U16_GET(m_target, 0, 0, targetLength, targetFirstCharacter);
+        U16_GET(m_target, 0, 0u, targetLength, targetFirstCharacter);
         // Characters in the separator category never really occur at the beginning of a word,
         // so if the target begins with such a character, we just ignore the AtWordStart option.
         if (isSeparator(targetFirstCharacter)) {

@@ -325,7 +325,7 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvar
 
     // The Unicode mathematical blocks are divided into four segments: Latin, Greek, numbers and Arabic.
     // In the case of the first three baseChar represents the relative order in which the characters are encoded in the Unicode mathematical block, normalised to the first character of that sequence.
-    UChar32 baseChar;
+    UChar32 baseChar = 0;
     enum CharacterType {
         Latin,
         Greekish,
@@ -446,7 +446,7 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvar
         return baseChar + mathBoldUpperAlpha + multiplier * (mathItalicUpperAlpha - mathBoldUpperAlpha);
     }
 
-    UChar32 tempChar;
+    UChar32 tempChar = 0;
     UChar32 newChar;
     if (varType == Arabic) {
         // The Arabic mathematical block is not continuous, nor does it have a monotonic mapping to the unencoded characters, requiring the use of a lookup table.

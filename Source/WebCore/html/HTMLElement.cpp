@@ -434,7 +434,7 @@ Ref<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionC
     for (unsigned start = 0, length = text.length(); start < length; ) {
 
         // Find next line break.
-        UChar c;
+        UChar c = 0;
         unsigned i;
         for (i = start; i < length; i++) {
             c = text[i];
