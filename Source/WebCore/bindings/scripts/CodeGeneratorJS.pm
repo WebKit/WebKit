@@ -1537,7 +1537,8 @@ sub GenerateHeader
                 $inAppleCopyright = 0;
             }
 
-            my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
+            my $conditionalAttribute = getConditionalForFunctionConsideringOverloads($function);
+            my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($interface, $className, $function);
             push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
@@ -1674,7 +1675,7 @@ sub GeneratePropertiesHashTable
 
         push(@$hashSpecials, ComputeFunctionSpecial($interface, $function));
 
-        my $conditional = $function->signature->extendedAttributes->{"Conditional"};
+        my $conditional = getConditionalForFunctionConsideringOverloads($function);
         if ($conditional) {
             $conditionals->{$name} = $conditional;
         }
@@ -1828,6 +1829,22 @@ sub GetOverloadThatMatches
     }
 }
 
+sub getConditionalForFunctionConsideringOverloads
+{
+    my $function = shift;
+
+    return $function->signature->extendedAttributes->{"Conditional"} unless $function->{overloads};
+
+    my %conditions;
+    foreach my $overload (@{$function->{overloads}}) {
+        if ($overload->signature->extendedAttributes->{"Conditional"}) {
+            $conditions{$overload->signature->extendedAttributes->{"Conditional"}} = 1;
+        }
+    }
+    return undef unless keys %conditions;
+    return join("|", keys %conditions);
+}
+
 # Implements the overload resolution algorithm, as defined in the Web IDL specification:
 # http://heycam.github.io/webidl/#es-overloads
 sub GenerateOverloadedFunctionOrConstructor
@@ -1913,6 +1930,9 @@ sub GenerateOverloadedFunctionOrConstructor
 
     my $maxArgCount = LengthOfLongestFunctionParameterList($function->{overloads});
 
+    my $conditionalAttribute = getConditionalForFunctionConsideringOverloads($function);
+    my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
+    push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
     if ($isConstructor) {
         push(@implContent, "template<> EncodedJSValue JSC_HOST_CALL ${className}Constructor::construct(ExecState* state)\n");
     } else {
@@ -1998,7 +2018,9 @@ END
     } else {
         push(@implContent, "    return throwVMTypeError(state);\n")
     }
-    push(@implContent, "}\n\n");
+    push(@implContent, "}\n");
+    push(@implContent, "#endif\n") if $conditionalString;
+    push(@implContent, "\n");
 }
 
 # As per Web IDL specification, the length of a function Object is its number of mandatory parameters.
@@ -2291,7 +2313,8 @@ sub GenerateImplementation
                 $inAppleCopyright = 0;
             }
 
-            my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
+            my $conditionalAttribute = getConditionalForFunctionConsideringOverloads($function);
+            my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($interface, $className, $function);
             push(@implContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");

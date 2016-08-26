@@ -397,6 +397,12 @@ enum TestConfidence { "high", "kinda-low" };
     [CEReactions] void methodWithNeedsCustomElementReactionStack();
 #endif
 
+#if defined(TESTING_JS)
+    // Overloading with conditionals.
+    [Conditional=CONDITION1] void conditionalOverload(DOMString str);
+    [Conditional=CONDITION2] void conditionalOverload(long a);
+#endif
+
     void attachShadowRoot(TestDictionary init);
 
     stringifier attribute USVString stringifierAttribute;
