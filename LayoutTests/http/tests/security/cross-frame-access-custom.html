@@ -38,9 +38,9 @@ window.onload = function()
     shouldBeFalse("canSet('targetWindow.objectPrototypeCustomProperty')");
 
     // window object itself
-    shouldBeTrue("canGet('targetWindow.toString')");
+    shouldBeFalse("canGet('targetWindow.toString')");
     shouldBeFalse("canSet('targetWindow.toString')");
-    shouldBe("toString('targetWindow', '')", "'[object Window]'");
+    shouldBe("toString('targetWindow', 'NOTALLOWED')", "'NOTALLOWED'");
 
     // Work around DRT bug that causes subsequent tests to fail.
     window.stop();

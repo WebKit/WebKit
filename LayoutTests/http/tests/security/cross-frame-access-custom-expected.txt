@@ -15,9 +15,13 @@ CONSOLE MESSAGE: line 84: Blocked a frame with origin "http://127.0.0.1:8000" fr
 CONSOLE MESSAGE: line 55: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 83: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 84: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 55: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 83: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 84: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 111: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 111: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 111: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 114: TypeError: No default value
 
 
 ----- tests for getting/setting interesting properties -----
@@ -33,7 +37,7 @@ PASS: canGet('targetWindow.windowPrototypeCustomProperty') should be 'false' and
 PASS: canSet('targetWindow.windowPrototypeCustomProperty') should be 'false' and is.
 PASS: canGet('targetWindow.objectPrototypeCustomProperty') should be 'false' and is.
 PASS: canSet('targetWindow.objectPrototypeCustomProperty') should be 'false' and is.
-PASS: canGet('targetWindow.toString') should be 'true' and is.
+PASS: canGet('targetWindow.toString') should be 'false' and is.
 PASS: canSet('targetWindow.toString') should be 'false' and is.
-PASS: toString('targetWindow', '') should be '[object Window]' and is.
+PASS: toString('targetWindow', 'NOTALLOWED') should be 'NOTALLOWED' and is.
 

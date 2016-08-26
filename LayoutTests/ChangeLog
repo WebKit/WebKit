@@ -1,3 +1,17 @@
+2016-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Calling crossOriginWindow.toString() should not be allowed
+        https://bugs.webkit.org/show_bug.cgi?id=161225
+
+        Reviewed by Andreas Kling.
+
+        Update existing tests to reflect the behavior change.
+
+        * http/tests/security/cross-frame-access-custom-expected.txt:
+        * http/tests/security/cross-frame-access-custom.html:
+        * http/tests/security/cross-frame-access-object-setPrototypeOf-expected.txt:
+        * http/tests/security/cross-frame-access-object-setPrototypeOf.html:
+
 2016-08-26  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Some CSS selectors in the UI aren't escaped

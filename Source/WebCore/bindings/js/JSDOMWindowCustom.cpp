@@ -75,12 +75,6 @@ static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, EncodedJSValue thisValu
 
 static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObject, Frame* frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot, String& errorMessage)
 {
-    // Allow access to toString() cross-domain, but always Object.prototype.toString.
-    if (propertyName == exec->propertyNames().toString) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<objectProtoFuncToString, 0>);
-        return true;
-    }
-
     // We don't want any properties other than "close" and "closed" on a frameless window
     // (i.e. one whose page got closed, or whose iframe got removed).
     // FIXME: This handling for frameless windows duplicates similar behaviour for cross-origin

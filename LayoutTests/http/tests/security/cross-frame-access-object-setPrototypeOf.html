@@ -19,7 +19,7 @@
 
             shouldBeFalse("targetWindow instanceof Array");
 
-            shouldBe("Object.setPrototypeOf(targetWindow, Array.prototype)", "targetWindow");
+            Object.setPrototypeOf(targetWindow, Array.prototype);
 
             shouldBeFalse("targetWindow instanceof Array");
 
