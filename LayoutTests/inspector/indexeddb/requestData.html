@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/utilities.js"></script>
+<script>
+function test()
+{
+    function objectPropertyPreview(remoteObject, name) {
+        for (let propertyPreview of remoteObject.preview.propertyPreviews) {
+            if (propertyPreview.name === name)
+                return propertyPreview;
+        }
+        return null;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("IndexedDB.requestData");
+
+    suite.addTestCase({
+        name: "ClearDatabases",
+        description: "Remove any existing IndexedDB databases.",
+        test: (resolve, reject) => {
+            // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
+            // <https://webkit.org/b/148006> Each test should run with its own clean data store
+            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")", resolve);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RequestDataBasic",
+        description: "Request data for an object store with different indexes.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createDatabaseWithStores('Database1', 1)");
+            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database1", (error, database) => {
+                InspectorTest.expectNoError(error);
+
+                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
+                const securityOrigin = WebInspector.frameResourceManager.mainFrame.securityOrigin;
+                const skipCount = 0;
+                const pageSize = 10;
+
+                let indexName = "";
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, (error, entries, hasMore) => {
+                    InspectorTest.log("-- No Index");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 4, "Should be 4 entries.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [1, 2, 3, 4];
+                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hampster", "Jamming Peacock", "Bustling Badger", "Monstrous Beaver"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                indexName = "Name Index";
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Name Index");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 4, "Should be 4 entries.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [3, 2, 4, 1];
+                    let expectedKeysOrderedByName = ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver", "Thirsty Hampster"];
+                    let expectedNamesOrderedByName = expectedKeysOrderedByName;
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let key = WebInspector.RemoteObject.fromPayload(entryPayload.key);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by name: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(key.value === expectedKeysOrderedByName[i], `Key should be ordered by name: '${expectedKeysOrderedByName[i]}'`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByName[i], `Value should be a remote object for: '${expectedNamesOrderedByName[i]}'`);
+                    }
+                });
+
+                indexName = "Email Index";
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Email Index");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 4, "Should be 4 entries.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [3, 4, 2, 1];
+                    let expectedKeysOrderedByEmail = ["badger@webkit.org", "beaver@webkit.org", "hampster@webkit.org", "peacock@webkit.org"];
+                    let expectedNamesOrderedByEmail = ["Bustling Badger", "Monstrous Beaver", "Thirsty Hampster", "Jamming Peacock"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let key = WebInspector.RemoteObject.fromPayload(entryPayload.key);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by email: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(key.value === expectedKeysOrderedByEmail[i], `Key should be ordered by email: '${expectedKeysOrderedByEmail[i]}'`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByEmail[i], `Value should be a remote object for: '${expectedNamesOrderedByEmail[i]}'`);
+                    }
+                });
+
+                InspectorBackend.runAfterPendingDispatches(resolve);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RequestDataPagination",
+        description: "Request data for an object store with paginated requests.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createDatabaseWithStores('Database2', 1)");
+            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database2", (error, database) => {
+                InspectorTest.expectNoError(error);
+
+                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
+                const securityOrigin = WebInspector.frameResourceManager.mainFrame.securityOrigin;
+                const indexName = "";
+                const pageSize = 2;
+
+                let skipCount = 0;
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Page 1");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 2, "Entries length should match page size.");
+                    InspectorTest.expectThat(hasMore, "Should have more entries.");
+
+                    let expectedPrimaryKeyOrder = [1, 2];
+                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hampster", "Jamming Peacock"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                skipCount = 2;
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Page 2");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 2, "Entries length should match page size.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [3, 4];
+                    let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Monstrous Beaver"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                InspectorBackend.runAfterPendingDispatches(resolve);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RequestDataKeyRangeBounds",
+        description: "Request key range bounded data for an object store.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createDatabaseWithStores('Database3', 1)");
+            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database3", (error, database) => {
+                InspectorTest.expectNoError(error);
+
+                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
+                const securityOrigin = WebInspector.frameResourceManager.mainFrame.securityOrigin;
+                const indexName = "Name Index";
+                const skipCount = 0;
+                const pageSize = 10;
+
+                function stringKeyWithString(string) {
+                    return {type: "string", string};
+                }
+
+                // Index: Name Index
+                // Keys: [3, 2, 4, 1]
+                // Values: ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver", "Thirsty Hampster"];
+
+                // Keys >= "M"
+                let keyRange = {lower: stringKeyWithString("M"), lowerOpen: false, upperOpen: true};
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Keys >= 'M'");
+                    InspectorTest.log("-- Lower Bound: 'M' (closed)");
+                    InspectorTest.log("-- Upper Bound: -");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [4, 1];
+                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hampster"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                // Keys > "M"
+                keyRange = {lower: stringKeyWithString("M"), lowerOpen: true, upperOpen: true};
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Keys > 'M'");
+                    InspectorTest.log("-- Lower Bound: 'M' (open)");
+                    InspectorTest.log("-- Upper Bound: -");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [4, 1];
+                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hampster"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                // Keys > "Monstrous Beaver"
+                keyRange = {lower: stringKeyWithString("Monstrous Beaver"), lowerOpen: true, upperOpen: true};
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Keys > 'Monstrous Beaver'");
+                    InspectorTest.log("-- Lower Bound: 'Monstrous Beaver' (open)");
+                    InspectorTest.log("-- Upper Bound: -");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 1, "Should be 1 entry.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [1];
+                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hampster"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                // Keys <= "M"
+                keyRange = {upper: stringKeyWithString("M"), lowerOpen: true, upperOpen: false};
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Keys <= 'M'");
+                    InspectorTest.log("-- Lower Bound: -");
+                    InspectorTest.log("-- Upper Bound: 'M' (closed)");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [3, 2];
+                    let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                // Keys <= "Monstrous Beaver"
+                keyRange = {upper: stringKeyWithString("Monstrous Beaver"), lowerOpen: true, upperOpen: false};
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Keys <= 'Monstrous Beaver'");
+                    InspectorTest.log("-- Lower Bound: -");
+                    InspectorTest.log("-- Upper Bound: 'Monstrous Beaver' (closed)");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 3, "Should be 3 entries.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [3, 2, 4];
+                    let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                // Keys < "M"
+                keyRange = {upper: stringKeyWithString("M"), lowerOpen: true, upperOpen: true};
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
+                    InspectorTest.log("-- Keys < 'M'");
+                    InspectorTest.log("-- Lower Bound: -");
+                    InspectorTest.log("-- Upper Bound: 'M' (open)");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [3, 2];
+                    let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                // "Monstrous Beaver" <= Key <= "Monstrous Beaver"
+                keyRange = {lower: stringKeyWithString("Monstrous Beaver"), upper: stringKeyWithString("Monstrous Beaver"), lowerOpen: false, upperOpen: false};
+                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
+                    InspectorTest.log("-- 'Monstrous Beaver' <= Key <= 'Monstrous Beaver'");
+                    InspectorTest.log("-- Lower Bound: 'Monstrous Beaver' (closed)");
+                    InspectorTest.log("-- Upper Bound: 'Monstrous Beaver' (closed)");
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(entries.length === 1, "Should be 1 entry.");
+                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                    let expectedPrimaryKeyOrder = [4];
+                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver"];
+                    for (let i = 0; i < entries.length; ++i) {
+                        let entryPayload = entries[i];
+                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                    }
+                });
+
+                InspectorBackend.runAfterPendingDispatches(resolve);
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

@@ -335,19 +335,21 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
 
 static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const InspectorObject* keyRange)
 {
+    RefPtr<IDBKey> idbLower;
     RefPtr<InspectorObject> lower;
-    if (!keyRange->getObject(ASCIILiteral("lower"), lower))
-        return nullptr;
-    RefPtr<IDBKey> idbLower = idbKeyFromInspectorObject(lower.get());
-    if (!idbLower)
-        return nullptr;
+    if (keyRange->getObject(ASCIILiteral("lower"), lower)) {
+        idbLower = idbKeyFromInspectorObject(lower.get());
+        if (!idbLower)
+            return nullptr;
+    }
 
+    RefPtr<IDBKey> idbUpper;
     RefPtr<InspectorObject> upper;
-    if (!keyRange->getObject(ASCIILiteral("upper"), upper))
-        return nullptr;
-    RefPtr<IDBKey> idbUpper = idbKeyFromInspectorObject(upper.get());
-    if (!idbUpper)
-        return nullptr;
+    if (keyRange->getObject(ASCIILiteral("upper"), upper)) {
+        idbUpper = idbKeyFromInspectorObject(upper.get());
+        if (!idbUpper)
+            return nullptr;
+    }
 
     bool lowerOpen;
     if (!keyRange->getBoolean(ASCIILiteral("lowerOpen"), lowerOpen))
@@ -504,7 +506,7 @@ public:
             return;
         }
 
-        Ref<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_injectedScript, m_requestCallback.copyRef(), 0, m_pageSize);
+        Ref<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_injectedScript, m_requestCallback.copyRef(), m_skipCount, m_pageSize);
         idbRequest->addEventListener(eventNames().successEvent, WTFMove(openCursorCallback), false);
     }
 
