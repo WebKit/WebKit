@@ -471,7 +471,8 @@ class StyleQueueTest(QueuesTest):
     def test_style_queue_with_style_exception(self):
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
-            "process_work_item": """Running: webkit-patch --status-host=example.com clean
+            "process_work_item": """MOCK: update_status: style-queue Started processing patch
+Running: webkit-patch --status-host=example.com clean
 MOCK: update_status: style-queue Cleaned working directory
 Running: webkit-patch --status-host=example.com update
 MOCK: update_status: style-queue Updated working directory
@@ -493,7 +494,8 @@ MOCK: release_work_item: style-queue 10000
     def test_style_queue_with_watch_list_exception(self):
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
-            "process_work_item": """Running: webkit-patch --status-host=example.com clean
+            "process_work_item": """MOCK: update_status: style-queue Started processing patch
+Running: webkit-patch --status-host=example.com clean
 MOCK: update_status: style-queue Cleaned working directory
 Running: webkit-patch --status-host=example.com update
 MOCK: update_status: style-queue Updated working directory
@@ -520,7 +522,8 @@ MOCK: release_work_item: style-queue 10000
         patch = tool.bugs.fetch_attachment(10007)  # _patch8, resolved bug, without review flag, not marked obsolete (maybe already landed)
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
-            "process_work_item": """MOCK: update_status: style-queue Error: style-queue did not process patch. Reason: Bug is already closed.
+            "process_work_item": """MOCK: update_status: style-queue Started processing patch
+MOCK: update_status: style-queue Error: style-queue did not process patch. Reason: Bug is already closed.
 MOCK: release_work_item: style-queue 10007
 """,
         }

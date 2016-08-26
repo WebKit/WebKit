@@ -77,7 +77,8 @@ class EarlyWarningSystemTest(QueuesTest):
 
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs(ews.name),
-            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s%(architecture)s
+            "process_work_item": """MOCK: update_status: %(name)s Started processing patch
+Running: webkit-patch --status-host=example.com clean --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com update --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=%(build_style)s --port=%(port)s%(architecture)s

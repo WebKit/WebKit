@@ -445,6 +445,7 @@ class AbstractReviewQueue(PatchProcessingQueue, StepSequenceErrorHandler):
         return self._next_patch()
 
     def process_work_item(self, patch):
+        self._update_status("Started processing patch", patch)
         passed = self.review_patch(patch)
         if passed:
             self._did_pass(patch)
