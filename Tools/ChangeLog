@@ -1,3 +1,12 @@
+2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the ENABLE(WEBASSEMBLY) build on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=161197
+
+        Reviewed by Mark Lam.
+
+        * Scripts/build-jsc:
+
 2016-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] run-gtk-tests should use the driver environment for checking the accessibility bus

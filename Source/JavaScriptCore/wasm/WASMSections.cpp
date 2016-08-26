@@ -26,10 +26,10 @@
 #include "config.h"
 #include "WASMSections.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include <wtf/DataLog.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 

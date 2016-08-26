@@ -774,8 +774,8 @@
 #define ENABLE_CONCURRENT_JIT 1
 #endif
 
-/* This controls whether B3 is built. It will not be used unless FTL_USES_B3 is enabled. */
-#if ENABLE(FTL_JIT)
+/* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
+#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY)
 #define ENABLE_B3_JIT 1
 #endif
 

@@ -1,3 +1,12 @@
+2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the ENABLE(WEBASSEMBLY) build on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=161197
+
+        Reviewed by Mark Lam.
+
+        * wtf/Platform.h:
+
 2016-08-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Implement ES6 Generators in DFG / FTL

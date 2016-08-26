@@ -26,12 +26,12 @@
 #include "config.h"
 #include "WASMPlan.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "B3Compilation.h"
 #include "WASMB3IRGenerator.h"
 #include "WASMModuleParser.h"
 #include <wtf/DataLog.h>
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 

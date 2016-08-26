@@ -25,12 +25,12 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "CompilationResult.h"
 #include "VM.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 

@@ -1,3 +1,28 @@
+2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the ENABLE(WEBASSEMBLY) build on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=161197
+
+        Reviewed by Mark Lam.
+
+        * CMakeLists.txt:
+        * b3/B3Common.cpp:
+        (JSC::B3::shouldDumpIR):
+        * shell/CMakeLists.txt:
+        * wasm/JSWASMModule.h:
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::toB3Op):
+        * wasm/WASMB3IRGenerator.h:
+        * wasm/WASMFormat.h:
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASM::WASMModuleParser::parseFunctionTypes):
+        * wasm/WASMModuleParser.h:
+        * wasm/WASMParser.h:
+        * wasm/WASMPlan.cpp:
+        * wasm/WASMPlan.h:
+        * wasm/WASMSections.cpp:
+
 2016-08-26  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile fix.

@@ -26,11 +26,11 @@
 #include "config.h"
 #include "WASMModuleParser.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "WASMFormat.h"
 #include "WASMOps.h"
 #include "WASMSections.h"
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 
@@ -180,6 +180,7 @@ bool WASMModuleParser::parseFunctionTypes()
             returnType = WASMFunctionReturnType::Void;
 
         // TODO: Actually do something with this data...
+        UNUSED_PARAM(returnType);
     }
     return true;
 }

@@ -40,8 +40,7 @@
  * limitations under the License.
  */
 
-#ifndef WASMFormat_h
-#define WASMFormat_h
+#pragma once
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -101,5 +100,3 @@ struct WASMFunctionInformation {
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)
-
-#endif // WASMFormat_h

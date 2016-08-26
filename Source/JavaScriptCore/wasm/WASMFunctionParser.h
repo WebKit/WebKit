@@ -25,10 +25,10 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "WASMParser.h"
 #include <wtf/DataLog.h>
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 

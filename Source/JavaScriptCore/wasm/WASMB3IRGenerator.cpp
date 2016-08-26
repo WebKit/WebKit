@@ -26,14 +26,14 @@
 #include "config.h"
 #include "WASMB3IRGenerator.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "B3BasicBlockInlines.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "B3VariableValue.h"
 #include "WASMFunctionParser.h"
 #include <wtf/Optional.h>
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 
@@ -48,6 +48,7 @@ inline B3::Opcode toB3Op(WASMBinaryOpType op)
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline B3::Opcode toB3Op(WASMUnaryOpType op)
@@ -57,6 +58,7 @@ inline B3::Opcode toB3Op(WASMUnaryOpType op)
     FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 class B3IRGenerator {

@@ -25,14 +25,14 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "B3Compilation.h"
 #include "B3Procedure.h"
 #include "WASMFormat.h"
 #include "WASMOps.h"
 #include "WASMSections.h"
 #include <wtf/LEBDecoder.h>
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 

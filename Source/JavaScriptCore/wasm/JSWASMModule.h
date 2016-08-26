@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSWASMModule_h
-#define JSWASMModule_h
+#pragma once
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -114,5 +113,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)
-
-#endif // JSWASMModule_h

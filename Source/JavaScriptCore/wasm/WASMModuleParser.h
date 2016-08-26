@@ -25,11 +25,11 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "WASMOps.h"
 #include "WASMParser.h"
 #include <wtf/Vector.h>
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 

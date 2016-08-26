@@ -841,6 +841,10 @@ set(JavaScriptCore_SOURCES
     tools/JSDollarVMPrototype.cpp
 
     wasm/JSWASMModule.cpp
+    wasm/WASMB3IRGenerator.cpp
+    wasm/WASMModuleParser.cpp
+    wasm/WASMPlan.cpp
+    wasm/WASMSections.cpp
 
     yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp

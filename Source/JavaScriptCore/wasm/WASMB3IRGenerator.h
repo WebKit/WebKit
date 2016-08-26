@@ -25,11 +25,11 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "B3Compilation.h"
 #include "VM.h"
 #include "WASMFormat.h"
-
-#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 
