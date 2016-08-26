@@ -1,3 +1,12 @@
+2016-08-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Change homepage url to www.ewebkit.org on MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=161184
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/efl/main.c: Set www.ewebkit.org.
+
 2016-08-25  Aakash Jain  <aakash_jain@apple.com>
 
         ews queues should update status server when they start processing patch

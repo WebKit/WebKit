@@ -28,7 +28,7 @@
 
 extern int efreet_cache_update;
 
-static const char DEFAULT_URL[] = "http://www.google.com/";
+static const char DEFAULT_URL[] = "http://www.ewebkit.org/";
 static const char APP_NAME[] = "EFL MiniBrowser";
 static const int TOOL_BAR_ICON_SIZE = 24;
 static const int TOOL_BAR_BUTTON_SIZE = 32;
