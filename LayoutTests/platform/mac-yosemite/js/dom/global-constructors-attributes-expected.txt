@@ -1113,6 +1113,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').hasOwnPrope
 PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedErrorEvent').value is OverconstrainedErrorEvent
+PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedErrorEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedErrorEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedErrorEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedErrorEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'OverflowEvent').value is OverflowEvent
 PASS Object.getOwnPropertyDescriptor(global, 'OverflowEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'OverflowEvent').hasOwnProperty('set') is false

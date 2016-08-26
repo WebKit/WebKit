@@ -52,6 +52,7 @@ class FetchHeaders;
 class MediaKeyError;
 class MediaStream;
 class MediaStreamTrack;
+class OverconstrainedError;
 class RTCRtpReceiver;
 class RTCRtpTransceiver;
 class Node;
@@ -151,6 +152,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStream>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStreamTrack>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<OverconstrainedError>& result);
 #endif
 #if ENABLE(WEB_RTC)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<RTCRtpReceiver>& result);

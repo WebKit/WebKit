@@ -229,6 +229,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/MediaTrackSupportedConstraints.idl
     Modules/mediastream/NavigatorMediaDevices.idl
     Modules/mediastream/NavigatorUserMedia.idl
+    Modules/mediastream/OverconstrainedError.idl
+    Modules/mediastream/OverconstrainedErrorEvent.idl
     Modules/mediastream/RTCConfiguration.idl
     Modules/mediastream/RTCDTMFSender.idl
     Modules/mediastream/RTCDTMFToneChangeEvent.idl

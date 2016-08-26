@@ -82,6 +82,8 @@
 		0704A4081D6DE9F10086DCDB /* OverconstrainedError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0704A4051D6DE9F10086DCDB /* OverconstrainedError.h */; };
 		0704A40B1D6DFC690086DCDB /* JSOverconstrainedError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0704A4091D6DFC690086DCDB /* JSOverconstrainedError.cpp */; };
 		0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */; };
+		0704A4151D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0704A4131D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp */; };
+		0704A4161D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0704A4141D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h */; };
 		0705852117FDC140005F2BCB /* MediaTrackConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0705851D17FDC140005F2BCB /* MediaTrackConstraint.h */; };
 		0705852317FDC140005F2BCB /* MediaTrackConstraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0705851F17FDC140005F2BCB /* MediaTrackConstraints.cpp */; };
 		0705852417FDC140005F2BCB /* MediaTrackConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0705852017FDC140005F2BCB /* MediaTrackConstraints.h */; };
@@ -136,6 +138,7 @@
 		07277E5517D018CC0015534D /* JSMediaStreamTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */; };
 		07297FA71C1881C5003F0735 /* UserMediaPermissionCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */; };
 		07297FA81C1881C5003F0735 /* UserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		072A70401D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */; };
 		072AE1E5183C0741000A5988 /* PluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1DF183C0741000A5988 /* PluginReplacement.h */; };
 		072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */; };
 		072AE1E8183C0741000A5988 /* QuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1E2183C0741000A5988 /* QuickTimePluginReplacement.h */; };
@@ -6789,6 +6792,8 @@
 		0704A4051D6DE9F10086DCDB /* OverconstrainedError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverconstrainedError.h; sourceTree = "<group>"; };
 		0704A4091D6DFC690086DCDB /* JSOverconstrainedError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOverconstrainedError.cpp; sourceTree = "<group>"; };
 		0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOverconstrainedError.h; sourceTree = "<group>"; };
+		0704A4131D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSOverconstrainedErrorEvent.cpp; path = JSOverconstrainedErrorEvent.cpp; sourceTree = "<group>"; };
+		0704A4141D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSOverconstrainedErrorEvent.h; path = JSOverconstrainedErrorEvent.h; sourceTree = "<group>"; };
 		0705851C17FDB23C005F2BCB /* MediaTrackConstraints.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaTrackConstraints.idl; sourceTree = "<group>"; };
 		0705851D17FDC140005F2BCB /* MediaTrackConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackConstraint.h; sourceTree = "<group>"; };
 		0705851E17FDC140005F2BCB /* MediaTrackConstraint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaTrackConstraint.idl; sourceTree = "<group>"; };
@@ -6917,6 +6922,8 @@
 		072847E216EBC5B00043CFA4 /* PlatformTextTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformTextTrack.h; sourceTree = "<group>"; };
 		07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaPermissionCheck.cpp; sourceTree = "<group>"; };
 		07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionCheck.h; sourceTree = "<group>"; };
+		072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverconstrainedErrorEvent.h; sourceTree = "<group>"; };
+		072A703F1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OverconstrainedErrorEvent.idl; sourceTree = "<group>"; };
 		072AE1DF183C0741000A5988 /* PluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginReplacement.h; sourceTree = "<group>"; };
 		072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickTimePluginReplacement.mm; sourceTree = "<group>"; };
 		072AE1E1183C0741000A5988 /* QuickTimePluginReplacement.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = QuickTimePluginReplacement.css; sourceTree = "<group>"; };
@@ -14415,6 +14422,8 @@
 				419BE75A1BCBD3ED00E1C85B /* NavigatorUserMedia.js */,
 				0704A4031D6DE9F10086DCDB /* OverconstrainedError.idl */,
 				0704A4051D6DE9F10086DCDB /* OverconstrainedError.h */,
+				072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */,
+				072A703F1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.idl */,
 				5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */,
 				5E2C434E1BCEE2E50001E2BC /* PeerConnectionStates.h */,
 				5E2C434F1BCEE2E50001E2BC /* RTCConfiguration.cpp */,
@@ -14637,6 +14646,8 @@
 				073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */,
 				0704A4091D6DFC690086DCDB /* JSOverconstrainedError.cpp */,
 				0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */,
+				0704A4131D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp */,
+				0704A4141D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h */,
 				073794E319EE2FF200E5A045 /* JSRTCConfiguration.cpp */,
 				073794E419EE2FF200E5A045 /* JSRTCConfiguration.h */,
 				07969D9117D14151007FF842 /* JSRTCDataChannel.cpp */,
@@ -24076,7 +24087,6 @@
 				81AC5999131636E60009A7E0 /* DataTransferItem.h in Headers */,
 				81AC599A131636E60009A7E0 /* DataTransferItemList.h in Headers */,
 				E4A007831B820EC8002C5A6E /* DataURLDecoder.h in Headers */,
-				0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */,
 				E4A007831B820EC8002C5A6E /* DataURLDecoder.h in Headers */,
 				A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */,
 				F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */,
@@ -24915,6 +24925,7 @@
 				1AE2AB220A1CE63B00B42B25 /* JSHTMLLabelElement.h in Headers */,
 				1AE2AB240A1CE63B00B42B25 /* JSHTMLLegendElement.h in Headers */,
 				1AE2AB260A1CE63B00B42B25 /* JSHTMLLIElement.h in Headers */,
+				072A70401D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h in Headers */,
 				A80E7B0D0A19D606007FB8C5 /* JSHTMLLinkElement.h in Headers */,
 				1AE2AB280A1CE63B00B42B25 /* JSHTMLMapElement.h in Headers */,
 				BC491B790C023EFD009D6316 /* JSHTMLMarqueeElement.h in Headers */,
@@ -25028,6 +25039,8 @@
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
 				FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */,
+				0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */,
+				0704A4161D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h in Headers */,
 				1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */,
 				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
 				FDA15EB212B03EE1003A583A /* JSPannerNode.h in Headers */,
@@ -28701,6 +28714,8 @@
 				FDA9326616703BA9008982DC /* JSOfflineAudioContext.cpp in Sources */,
 				FDEA6242152102E200479DF0 /* JSOscillatorNode.cpp in Sources */,
 				FDBD1DFC167FE27D0051A11E /* JSOscillatorNodeCustom.cpp in Sources */,
+				0704A40B1D6DFC690086DCDB /* JSOverconstrainedError.cpp in Sources */,
+				0704A4151D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
@@ -29658,7 +29673,6 @@
 				0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */,
 				1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */,
 				0FC4E40E187F82E10045882C /* ScrollingCoordinatorIOS.mm in Sources */,
-				0704A40B1D6DFC690086DCDB /* JSOverconstrainedError.cpp in Sources */,
 				1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */,
 				93C38BFE164473C700091EB2 /* ScrollingStateFixedNode.cpp in Sources */,
 				0FEA3E7C191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.cpp in Sources */,

@@ -67,4 +67,4 @@ UIRequestEvent conditional=INDIE_UI
 GestureEvent conditional=IOS_GESTURE_EVENTS|MAC_GESTURE_EVENTS
 WebKitPlaybackTargetAvailabilityEvent conditional=WIRELESS_PLAYBACK_TARGET
 GamepadEvent conditional=GAMEPAD
-
+OverconstrainedErrorEvent conditional=MEDIA_STREAM

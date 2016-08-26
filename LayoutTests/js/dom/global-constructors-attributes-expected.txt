@@ -923,11 +923,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'OscillatorNode').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'OscillatorNode').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'OscillatorNode').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'OscillatorNode').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').value is OverconstrainedError
-PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'OverconstrainedError').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'OverflowEvent').value is OverflowEvent
 PASS Object.getOwnPropertyDescriptor(global, 'OverflowEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'OverflowEvent').hasOwnProperty('set') is false

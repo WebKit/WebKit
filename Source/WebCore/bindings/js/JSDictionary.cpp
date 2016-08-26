@@ -55,6 +55,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "JSMediaStream.h"
 #include "JSMediaStreamTrack.h"
+#include "JSOverconstrainedError.h"
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -271,6 +272,11 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Medi
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaStreamTrack>& result)
 {
     result = JSMediaStreamTrack::toWrapped(value);
+}
+
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<OverconstrainedError>& result)
+{
+    result = JSOverconstrainedError::toWrapped(value);
 }
 #endif
 
