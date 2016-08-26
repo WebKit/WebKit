@@ -42,7 +42,6 @@ class ConsoleClient;
 class Exception;
 class ExecState;
 class JSGlobalObject;
-class JSValue;
 }
 
 namespace Inspector {
@@ -53,7 +52,6 @@ class InjectedScriptManager;
 class InspectorAgent;
 class InspectorConsoleAgent;
 class InspectorDebuggerAgent;
-class InspectorHeapAgent;
 class InspectorScriptProfilerAgent;
 class JSGlobalObjectConsoleClient;
 class ScriptCallStack;
@@ -72,7 +70,6 @@ public:
 
     void connectFrontend(FrontendChannel*, bool isAutomaticInspection);
     void disconnectFrontend(FrontendChannel*);
-    void disconnectAllFrontends();
 
     void dispatchMessageFromFrontend(const String&);
 
@@ -120,6 +117,10 @@ private:
 
     Ref<FrontendRouter> m_frontendRouter;
     Ref<BackendDispatcher> m_backendDispatcher;
+
+    // Used to keep the JSGlobalObject and VM alive while we are debugging it.
+    JSC::Strong<JSC::JSGlobalObject> m_strongGlobalObject;
+    RefPtr<JSC::VM> m_strongVM;
 
     bool m_includeNativeCallStackWithExceptions { true };
     bool m_isAutomaticInspection { false };

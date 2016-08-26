@@ -1,3 +1,27 @@
+2016-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HeapProfiler/ScriptProfiler do not destruct safely when JSContext is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=161027
+        <rdar://problem/27871349>
+
+        Reviewed by Mark Lam.
+
+        For JSContext inspection, when a frontend connects keep the target alive.
+        This means ref'ing the JSGlobalObject / VM when the first frontend
+        connects and deref'ing when the last frontend disconnects.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::globalObjectDestroyed):
+        (Inspector::JSGlobalObjectInspectorController::disconnectAllFrontends): Deleted.
+        Now that frontends keep the global object alive, when the global object
+        is destroyed that must mean that no frontends exist. Remove the now
+        stale code path.
+
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::disconnectFrontend):
+        Ref the target when the first frontend connects, deref when the last disconnects.
+
 2016-08-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] newPromiseCapabilities should check the given argument is constructor
