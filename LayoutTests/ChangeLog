@@ -1,3 +1,23 @@
+2016-08-26  Beth Dakin  <bdakin@apple.com>
+
+        charactersAroundPosition can be wrong because it crosses editing boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=161215
+        -and corresponding-
+        rdar://problem/27933564
+
+        Reviewed by Ryosuke Niwa.
+
+        New test.
+        * editing/mac/spelling/accept-candidate-without-crossing-editing-boundary-expected.txt: Added.
+        * editing/mac/spelling/accept-candidate-without-crossing-editing-boundary.html: Added.
+
+        This test is going back to its pre-https://trac.webkit.org/changeset/195078 state. 
+        That change caused this test to have a different layout because it caused more 
+        layouts to happen. Now that we don’t allow the call to charactersAroundPosition() 
+        to cross editing boundaries, those layouts don’t happen, and we have the old 
+        behavior back.
+        * platform/mac/fast/dom/focus-contenteditable-expected.txt:
+
 2016-08-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Test and address issues in IndexedDB.requestData
