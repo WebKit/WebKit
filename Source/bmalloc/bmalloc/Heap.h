@@ -29,6 +29,7 @@
 #include "AsyncTask.h"
 #include "BumpRange.h"
 #include "Environment.h"
+#include "LargeMap.h"
 #include "LineMetadata.h"
 #include "List.h"
 #include "Map.h"
@@ -38,7 +39,6 @@
 #include "SmallPage.h"
 #include "VMHeap.h"
 #include "Vector.h"
-#include "XLargeMap.h"
 #include <array>
 #include <mutex>
 
@@ -94,7 +94,7 @@ private:
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
 
-    XLargeRange splitAndAllocate(XLargeRange&, size_t alignment, size_t);
+    LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t);
 
     void concurrentScavenge();
     void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
@@ -108,7 +108,7 @@ private:
     std::array<List<SmallPage>, pageClassCount> m_smallPages;
 
     Map<void*, size_t, LargeObjectHash> m_largeAllocated;
-    XLargeMap m_largeFree;
+    LargeMap m_largeFree;
 
     Map<Chunk*, ObjectType, ChunkHash> m_objectTypes;
 

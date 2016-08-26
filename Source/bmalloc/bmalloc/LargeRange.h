@@ -23,26 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef XLargeRange_h
-#define XLargeRange_h
+#ifndef LargeRange_h
+#define LargeRange_h
+
+#include "BAssert.h"
+#include "Range.h"
 
 namespace bmalloc {
 
-class XLargeRange : public Range {
+class LargeRange : public Range {
 public:
-    XLargeRange()
+    LargeRange()
         : Range()
         , m_physicalSize(0)
     {
     }
 
-    XLargeRange(const Range& other, size_t physicalSize)
+    LargeRange(const Range& other, size_t physicalSize)
         : Range(other)
         , m_physicalSize(physicalSize)
     {
     }
 
-    XLargeRange(void* begin, size_t size, size_t physicalSize)
+    LargeRange(void* begin, size_t size, size_t physicalSize)
         : Range(begin, size)
         , m_physicalSize(physicalSize)
     {
@@ -51,16 +54,16 @@ public:
     size_t physicalSize() const { return m_physicalSize; }
     void setPhysicalSize(size_t physicalSize) { m_physicalSize = physicalSize; }
 
-    std::pair<XLargeRange, XLargeRange> split(size_t) const;
+    std::pair<LargeRange, LargeRange> split(size_t) const;
 
     bool operator<(const void* other) const { return begin() < other; }
-    bool operator<(const XLargeRange& other) const { return begin() < other.begin(); }
+    bool operator<(const LargeRange& other) const { return begin() < other.begin(); }
 
 private:
     size_t m_physicalSize;
 };
 
-inline bool canMerge(const XLargeRange& a, const XLargeRange& b)
+inline bool canMerge(const LargeRange& a, const LargeRange& b)
 {
     if (a.end() == b.begin())
         return true;
@@ -71,37 +74,37 @@ inline bool canMerge(const XLargeRange& a, const XLargeRange& b)
     return false;
 }
 
-inline XLargeRange merge(const XLargeRange& a, const XLargeRange& b)
+inline LargeRange merge(const LargeRange& a, const LargeRange& b)
 {
-    const XLargeRange& left = std::min(a, b);
+    const LargeRange& left = std::min(a, b);
     if (left.size() == left.physicalSize()) {
-        return XLargeRange(
+        return LargeRange(
             left.begin(),
             a.size() + b.size(),
             a.physicalSize() + b.physicalSize());
     }
 
-    return XLargeRange(
+    return LargeRange(
         left.begin(),
         a.size() + b.size(),
         left.physicalSize());
 }
 
-inline std::pair<XLargeRange, XLargeRange> XLargeRange::split(size_t size) const
+inline std::pair<LargeRange, LargeRange> LargeRange::split(size_t size) const
 {
     BASSERT(size <= this->size());
     
     if (size <= physicalSize()) {
-        XLargeRange left(begin(), size, size);
-        XLargeRange right(left.end(), this->size() - size, physicalSize() - size);
+        LargeRange left(begin(), size, size);
+        LargeRange right(left.end(), this->size() - size, physicalSize() - size);
         return std::make_pair(left, right);
     }
 
-    XLargeRange left(begin(), size, physicalSize());
-    XLargeRange right(left.end(), this->size() - size, 0);
+    LargeRange left(begin(), size, physicalSize());
+    LargeRange right(left.end(), this->size() - size, 0);
     return std::make_pair(left, right);
 }
 
 } // namespace bmalloc
 
-#endif // XLargeRange_h
+#endif // LargeRange_h

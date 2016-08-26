@@ -7,51 +7,16 @@ $binDir = "#{File.expand_path(File.dirname(__FILE__))}"
 $productDir = `perl -e 'use lib \"#{$binDir}/../../Tools/Scripts\"; use webkitdirs; print productDir()'`
 
 $benchmarks_all = [
-    # Single-threaded benchmarks.
-    "churn",
-    "list_allocate",
-    "tree_allocate",
-    "tree_churn",
-    "fragment",
-    "fragment_iterate",
-    "medium",
-    "big",
-
-    # Benchmarks based on browser recordings.
-    "facebook",
-    "reddit",
-    "flickr",
-    "theverge",
-    "nimlang",
-
-    # Multi-threaded benchmark variants.
     "message_one",
     "message_many",
     "churn --parallel",
     "list_allocate --parallel",
     "tree_allocate --parallel",
     "tree_churn --parallel",
-    # "facebook --parallel",
-    # "reddit --parallel",
-    # "flickr --parallel",
-    # "theverge --parallel",
-    # "nimlang --use-thread-id",
-    "fragment --parallel",
-    "fragment_iterate --parallel",
-
-    # These tests often crash TCMalloc: <rdar://problem/13657137>.
-    "medium --parallel",
-    "big --parallel",
-
-    # Enable these tests to test memory footprint. The way they run is not
-    # really compatible with throughput testing.
-    # "reddit_memory_warning --runs 0",
-    # "flickr_memory_warning --runs 0",
-    # "theverge_memory_warning --runs 0",
-
-    # Enable this test to test shrinking back down from a large heap while a process remains active.
-    # The way it runs is not really compatible with throughput testing.
-    # "balloon"
+    "facebook --parallel",
+    "reddit --parallel",
+    "flickr --parallel",
+    "theverge --parallel",
 ]
 
 $benchmarks_memory = [

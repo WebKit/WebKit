@@ -23,57 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "XLargeMap.h"
-#include <utility>
+#ifndef LargeMap_h
+#define LargeMap_h
+
+#include "LargeRange.h"
+#include "Vector.h"
+#include <algorithm>
 
 namespace bmalloc {
 
-XLargeRange XLargeMap::remove(size_t alignment, size_t size)
-{
-    size_t alignmentMask = alignment - 1;
+class LargeMap {
+public:
+    void add(const LargeRange&);
+    LargeRange remove(size_t alignment, size_t);
+    Vector<LargeRange>& ranges() { return m_free; }
 
-    XLargeRange* candidate = m_free.end();
-    for (XLargeRange* it = m_free.begin(); it != m_free.end(); ++it) {
-        if (it->size() < size)
-            continue;
-
-        if (candidate != m_free.end() && candidate->begin() < it->begin())
-            continue;
-
-        if (test(it->begin(), alignmentMask)) {
-            char* aligned = roundUpToMultipleOf(alignment, it->begin());
-            if (aligned < it->begin()) // Check for overflow.
-                continue;
-
-            char* alignedEnd = aligned + size;
-            if (alignedEnd < aligned) // Check for overflow.
-                continue;
-
-            if (alignedEnd > it->end())
-                continue;
-        }
-
-        candidate = it;
-    }
-    
-    if (candidate == m_free.end())
-        return XLargeRange();
-
-    return m_free.pop(candidate);
-}
-
-void XLargeMap::add(const XLargeRange& range)
-{
-    XLargeRange merged = range;
-
-    for (size_t i = 0; i < m_free.size(); ++i) {
-        if (!canMerge(merged, m_free[i]))
-            continue;
-
-        merged = merge(merged, m_free.pop(i--));
-    }
-    
-    m_free.push(merged);
-}
+private:
+    Vector<LargeRange> m_free;
+};
 
 } // namespace bmalloc
+
+#endif // LargeMap_h

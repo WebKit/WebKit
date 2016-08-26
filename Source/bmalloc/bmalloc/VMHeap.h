@@ -28,9 +28,9 @@
 
 #include "Chunk.h"
 #include "FixedVector.h"
+#include "LargeRange.h"
 #include "Map.h"
 #include "Vector.h"
-#include "XLargeRange.h"
 #if BOS(DARWIN)
 #include "Zone.h"
 #endif
@@ -46,7 +46,7 @@ public:
     SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t);
     void deallocateSmallPage(std::unique_lock<StaticMutex>&, size_t, SmallPage*);
 
-    XLargeRange tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
+    LargeRange tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
     
 private:
     void allocateSmallChunk(std::lock_guard<StaticMutex>&, size_t);

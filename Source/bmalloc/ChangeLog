@@ -1,3 +1,43 @@
+2016-08-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Renamed XLarge* => Large*
+        https://bugs.webkit.org/show_bug.cgi?id=161261
+
+        Reviewed by Andreas Kling.
+
+        XLarge is not a thing anymore: We just have Small and Large.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h:
+        * bmalloc/LargeMap.cpp: Copied from Source/bmalloc/bmalloc/XLargeMap.cpp.
+        (bmalloc::LargeMap::remove):
+        (bmalloc::LargeMap::add):
+        (bmalloc::XLargeMap::remove): Deleted.
+        (bmalloc::XLargeMap::add): Deleted.
+        * bmalloc/LargeMap.h: Copied from Source/bmalloc/bmalloc/XLargeMap.h.
+        (bmalloc::LargeMap::ranges):
+        (bmalloc::XLargeMap::ranges): Deleted.
+        * bmalloc/LargeRange.h: Copied from Source/bmalloc/bmalloc/XLargeRange.h.
+        (bmalloc::LargeRange::LargeRange):
+        (bmalloc::LargeRange::operator<):
+        (bmalloc::canMerge):
+        (bmalloc::merge):
+        (bmalloc::LargeRange::split):
+        (bmalloc::XLargeRange::XLargeRange): Deleted.
+        (bmalloc::XLargeRange::operator<): Deleted.
+        (bmalloc::XLargeRange::split): Deleted.
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::tryAllocateLargeChunk):
+        * bmalloc/VMHeap.h:
+        * bmalloc/XLargeMap.cpp: Removed.
+        * bmalloc/XLargeMap.h: Removed.
+        * bmalloc/XLargeRange.h: Removed.
+
 2016-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         bmalloc: speed up the lock slow path

@@ -29,23 +29,23 @@
 
 namespace bmalloc {
 
-XLargeRange VMHeap::tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t alignment, size_t size)
+LargeRange VMHeap::tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t alignment, size_t size)
 {
     // We allocate VM in aligned multiples to increase the chances that
     // the OS will provide contiguous ranges that we can merge.
     size_t roundedAlignment = roundUpToMultipleOf<chunkSize>(alignment);
     if (roundedAlignment < alignment) // Check for overflow
-        return XLargeRange();
+        return LargeRange();
     alignment = roundedAlignment;
 
     size_t roundedSize = roundUpToMultipleOf<chunkSize>(size);
     if (roundedSize < size) // Check for overflow
-        return XLargeRange();
+        return LargeRange();
     size = roundedSize;
 
     void* memory = tryVMAllocate(alignment, size);
     if (!memory)
-        return XLargeRange();
+        return LargeRange();
 
     Chunk* chunk = static_cast<Chunk*>(memory);
     
@@ -53,7 +53,7 @@ XLargeRange VMHeap::tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t 
     m_zone.addRange(Range(chunk->bytes(), size));
 #endif
 
-    return XLargeRange(chunk->bytes(), size, 0);
+    return LargeRange(chunk->bytes(), size, 0);
 }
 
 void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageClass)
