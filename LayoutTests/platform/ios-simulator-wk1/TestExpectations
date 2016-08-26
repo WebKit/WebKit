@@ -1445,6 +1445,14 @@ media
 fast/text/emoji-gender.html [ Pass ]
 fast/css/ancestor-of-hovered-element-removed.html [ Pass ]
 
+# w3c tests that fail
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html [ Failure ]
+
+# w3c tests that pass
+imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
+
 webkit.org/b/161191 imported/w3c/web-platform-tests/url/url-setters.html [ Skip ]
 
 # import tests that pass

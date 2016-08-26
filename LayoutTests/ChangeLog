@@ -1,3 +1,14 @@
+2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 imported/w3c tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin-expected.txt: Added.
+        * platform/ios-simulator-wk1/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc-expected.txt: Added.
+        * platform/ios-simulator-wk1/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-percent-encoded-expected.txt: Added.
+        * platform/ios-simulator-wk1/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/001-expected.txt: Added.
+        * platform/ios-simulator-wk1/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name-expected.txt: Added.
+
 2016-08-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS Simulator] Rebaseline many tests under LayoutTests/svg/ for ios-simulator and enable them for testing
