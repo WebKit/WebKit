@@ -35,6 +35,9 @@
       location = "group:Tools/MiniBrowser/MiniBrowser.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Tools/MobileMiniBrowser/MobileMiniBrowser.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Tools/TestWebKitAPI/TestWebKitAPI.xcodeproj">
    </FileRef>
    <FileRef

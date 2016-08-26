@@ -1,3 +1,72 @@
+2016-08-26  Jer Noble  <jer.noble@apple.com>
+
+        Add a test harness for running UI tests on the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=161265
+
+        Reviewed by Simon Fraser.
+
+        Add a new iOS Simulator application which uses WKWebView to implement a basic browser, and which
+        can serve as a test harness for WebKit UI tests.
+
+        Also add a basic media playback test which verifies that a <video> element will begin playing in
+        fullscreen on an iPhone device, but will play inline on an iPad device.
+
+        * Makefile: Add MobileMiniBrowser as a Module for iOS builds.
+        * MobileMiniBrowser/Configurations/Base.xcconfig: Added.
+        * MobileMiniBrowser/Configurations/DebugRelease.xcconfig: Added.
+        * MobileMiniBrowser/Configurations/MobileMiniBrowser.xcconfig: Added.
+        * MobileMiniBrowser/Makefile: Added.
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj: Added.
+        * MobileMiniBrowser/MobileMiniBrowser/AppDelegate.h: Added.
+        * MobileMiniBrowser/MobileMiniBrowser/AppDelegate.m: Added.
+        (-[AppDelegate application:didFinishLaunchingWithOptions:]):
+        (-[AppDelegate applicationWillResignActive:]):
+        (-[AppDelegate applicationDidEnterBackground:]):
+        (-[AppDelegate applicationWillEnterForeground:]):
+        (-[AppDelegate applicationDidBecomeActive:]):
+        (-[AppDelegate applicationWillTerminate:]):
+        * MobileMiniBrowser/MobileMiniBrowser/Assets.xcassets/AppIcon.appiconset/Contents.json: Added.
+        * MobileMiniBrowser/MobileMiniBrowser/Base.lproj/LaunchScreen.storyboard: Added.
+        * MobileMiniBrowser/MobileMiniBrowser/Base.lproj/Main.storyboard: Added.
+        * MobileMiniBrowser/MobileMiniBrowser/Info.plist: Added.
+        * MobileMiniBrowser/MobileMiniBrowser/TabViewController.h: Added.
+        * MobileMiniBrowser/MobileMiniBrowser/TabViewController.m: Added.
+        (-[TabViewController dealloc]):
+        (-[TabViewController viewDidLoad]):
+        (-[TabViewController observeValueForKeyPath:ofObject:change:context:]):
+        (-[TabViewController tableView:cellForRowAtIndexPath:]):
+        (-[TabViewController tableView:numberOfRowsInSection:]):
+        (-[TabViewController numberOfSectionsInTableView:]):
+        (-[TabViewController tableView:canEditRowAtIndexPath:]):
+        (-[TabViewController tableView:canMoveRowAtIndexPath:]):
+        (-[TabViewController tableView:commitEditingStyle:forRowAtIndexPath:]):
+        (-[TabViewController tableView:didSelectRowAtIndexPath:]):
+        * MobileMiniBrowser/MobileMiniBrowser/WebViewController.h: Added.
+        * MobileMiniBrowser/MobileMiniBrowser/WebViewController.m: Added.
+        (-[WebViewController viewDidLoad]):
+        (-[WebViewController didReceiveMemoryWarning]):
+        (-[WebViewController reload:]):
+        (-[WebViewController goBack:]):
+        (-[WebViewController goForward:]):
+        (-[WebViewController urlFieldEditingBegan:]):
+        (-[WebViewController navigateTo:]):
+        (-[WebViewController showTabs:]):
+        (-[WebViewController selectWebViewAtIndex:]):
+        (-[WebViewController removeWebViewAtIndex:]):
+        (-[WebViewController addWebView]):
+        (-[WebViewController createWebView]):
+        (-[WebViewController removeWebView:]):
+        (-[WebViewController setCurrentWebView:]):
+        (-[WebViewController webView:didFailNavigation:withError:]):
+        (-[WebViewController observeValueForKeyPath:ofObject:change:context:]):
+        * MobileMiniBrowser/MobileMiniBrowser/main.m: Added.
+        (main):
+        * MobileMiniBrowser/MobileMiniBrowserUITests/Info.plist: Added.
+        * MobileMiniBrowser/MobileMiniBrowserUITests/MobileMiniBrowserUITests.m: Added.
+        (-[MobileMiniBrowserUITests setUp]):
+        (-[MobileMiniBrowserUITests tearDown]):
+        (-[MobileMiniBrowserUITests testBasicVideoPlayback]):
+
 2016-08-26  Aakash Jain  <aakash_jain@apple.com>
 
         webkit-queues queue-status page should should list more recent statuses

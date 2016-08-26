@@ -1,0 +1,445 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CD1DAF971D709E3600017CF0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF961D709E3600017CF0 /* main.m */; };
+		CD1DAF9A1D709E3600017CF0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF991D709E3600017CF0 /* AppDelegate.m */; };
+		CD1DAFA01D709E3600017CF0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAF9E1D709E3600017CF0 /* Main.storyboard */; };
+		CD1DAFA21D709E3600017CF0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAFA11D709E3600017CF0 /* Assets.xcassets */; };
+		CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAFA31D709E3600017CF0 /* LaunchScreen.storyboard */; };
+		CD1DAFB01D709E3600017CF0 /* MobileMiniBrowserUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */; };
+		CD1DAFBE1D709EF200017CF0 /* TabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFBB1D709EF200017CF0 /* TabViewController.m */; };
+		CD1DAFBF1D709EF200017CF0 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFBD1D709EF200017CF0 /* WebViewController.m */; };
+		CD1DAFC21D70E12D00017CF0 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CD1DAFAC1D709E3600017CF0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD1DAF8A1D709E3600017CF0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CD1DAF911D709E3600017CF0;
+			remoteInfo = MobileMiniBrowser;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CD1DAF921D709E3600017CF0 /* MobileMiniBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileMiniBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD1DAF961D709E3600017CF0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CD1DAF981D709E3600017CF0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		CD1DAF991D709E3600017CF0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		CD1DAF9F1D709E3600017CF0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CD1DAFA11D709E3600017CF0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CD1DAFA41D709E3600017CF0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		CD1DAFA61D709E3600017CF0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CD1DAFAB1D709E3600017CF0 /* MobileMiniBrowserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileMiniBrowserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MobileMiniBrowserUITests.m; sourceTree = "<group>"; };
+		CD1DAFB11D709E3600017CF0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CD1DAFBA1D709EF200017CF0 /* TabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabViewController.h; sourceTree = "<group>"; };
+		CD1DAFBB1D709EF200017CF0 /* TabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabViewController.m; sourceTree = "<group>"; };
+		CD1DAFBC1D709EF200017CF0 /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
+		CD1DAFBD1D709EF200017CF0 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
+		CD1DAFC11D70E12D00017CF0 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = "../../WebKitBuild/Debug-iphonesimulator/WebKit.framework"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CD1DAF8F1D709E3600017CF0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD1DAFC21D70E12D00017CF0 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD1DAFA81D709E3600017CF0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CD1DAF891D709E3600017CF0 = {
+			isa = PBXGroup;
+			children = (
+				CD1DAF941D709E3600017CF0 /* MobileMiniBrowser */,
+				CD1DAFAE1D709E3600017CF0 /* MobileMiniBrowserUITests */,
+				CD1DAF931D709E3600017CF0 /* Products */,
+				CD1DAFC01D70E12D00017CF0 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CD1DAF931D709E3600017CF0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CD1DAF921D709E3600017CF0 /* MobileMiniBrowser.app */,
+				CD1DAFAB1D709E3600017CF0 /* MobileMiniBrowserUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CD1DAF941D709E3600017CF0 /* MobileMiniBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				CD1DAFBA1D709EF200017CF0 /* TabViewController.h */,
+				CD1DAFBB1D709EF200017CF0 /* TabViewController.m */,
+				CD1DAFBC1D709EF200017CF0 /* WebViewController.h */,
+				CD1DAFBD1D709EF200017CF0 /* WebViewController.m */,
+				CD1DAF981D709E3600017CF0 /* AppDelegate.h */,
+				CD1DAF991D709E3600017CF0 /* AppDelegate.m */,
+				CD1DAF9E1D709E3600017CF0 /* Main.storyboard */,
+				CD1DAFA11D709E3600017CF0 /* Assets.xcassets */,
+				CD1DAFA31D709E3600017CF0 /* LaunchScreen.storyboard */,
+				CD1DAFA61D709E3600017CF0 /* Info.plist */,
+				CD1DAF951D709E3600017CF0 /* Supporting Files */,
+			);
+			path = MobileMiniBrowser;
+			sourceTree = "<group>";
+		};
+		CD1DAF951D709E3600017CF0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CD1DAF961D709E3600017CF0 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CD1DAFAE1D709E3600017CF0 /* MobileMiniBrowserUITests */ = {
+			isa = PBXGroup;
+			children = (
+				CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */,
+				CD1DAFB11D709E3600017CF0 /* Info.plist */,
+			);
+			path = MobileMiniBrowserUITests;
+			sourceTree = "<group>";
+		};
+		CD1DAFC01D70E12D00017CF0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CD1DAFC11D70E12D00017CF0 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CD1DAF911D709E3600017CF0 /* MobileMiniBrowser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD1DAFB41D709E3600017CF0 /* Build configuration list for PBXNativeTarget "MobileMiniBrowser" */;
+			buildPhases = (
+				CD1DAF8E1D709E3600017CF0 /* Sources */,
+				CD1DAF8F1D709E3600017CF0 /* Frameworks */,
+				CD1DAF901D709E3600017CF0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MobileMiniBrowser;
+			productName = MobileMiniBrowser;
+			productReference = CD1DAF921D709E3600017CF0 /* MobileMiniBrowser.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CD1DAFAA1D709E3600017CF0 /* MobileMiniBrowserUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD1DAFB71D709E3600017CF0 /* Build configuration list for PBXNativeTarget "MobileMiniBrowserUITests" */;
+			buildPhases = (
+				CD1DAFA71D709E3600017CF0 /* Sources */,
+				CD1DAFA81D709E3600017CF0 /* Frameworks */,
+				CD1DAFA91D709E3600017CF0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CD1DAFAD1D709E3600017CF0 /* PBXTargetDependency */,
+			);
+			name = MobileMiniBrowserUITests;
+			productName = MobileMiniBrowserUITests;
+			productReference = CD1DAFAB1D709E3600017CF0 /* MobileMiniBrowserUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CD1DAF8A1D709E3600017CF0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = WebKit;
+				TargetAttributes = {
+					CD1DAF911D709E3600017CF0 = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
+					CD1DAFAA1D709E3600017CF0 = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = CD1DAF911D709E3600017CF0;
+					};
+				};
+			};
+			buildConfigurationList = CD1DAF8D1D709E3600017CF0 /* Build configuration list for PBXProject "MobileMiniBrowser" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CD1DAF891D709E3600017CF0;
+			productRefGroup = CD1DAF931D709E3600017CF0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CD1DAF911D709E3600017CF0 /* MobileMiniBrowser */,
+				CD1DAFAA1D709E3600017CF0 /* MobileMiniBrowserUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CD1DAF901D709E3600017CF0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */,
+				CD1DAFA21D709E3600017CF0 /* Assets.xcassets in Resources */,
+				CD1DAFA01D709E3600017CF0 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD1DAFA91D709E3600017CF0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CD1DAF8E1D709E3600017CF0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD1DAFBE1D709EF200017CF0 /* TabViewController.m in Sources */,
+				CD1DAF9A1D709E3600017CF0 /* AppDelegate.m in Sources */,
+				CD1DAF971D709E3600017CF0 /* main.m in Sources */,
+				CD1DAFBF1D709EF200017CF0 /* WebViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD1DAFA71D709E3600017CF0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD1DAFB01D709E3600017CF0 /* MobileMiniBrowserUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CD1DAFAD1D709E3600017CF0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CD1DAF911D709E3600017CF0 /* MobileMiniBrowser */;
+			targetProxy = CD1DAFAC1D709E3600017CF0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		CD1DAF9E1D709E3600017CF0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD1DAF9F1D709E3600017CF0 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		CD1DAFA31D709E3600017CF0 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD1DAFA41D709E3600017CF0 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CD1DAFB21D709E3600017CF0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CD1DAFB31D709E3600017CF0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CD1DAFB51D709E3600017CF0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = MobileMiniBrowser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.webkit.MobileMiniBrowser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CD1DAFB61D709E3600017CF0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = MobileMiniBrowser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.webkit.MobileMiniBrowser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		CD1DAFB81D709E3600017CF0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = MobileMiniBrowserUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.webkit.MobileMiniBrowserUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = MobileMiniBrowser;
+			};
+			name = Debug;
+		};
+		CD1DAFB91D709E3600017CF0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = MobileMiniBrowserUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.webkit.MobileMiniBrowserUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = MobileMiniBrowser;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CD1DAF8D1D709E3600017CF0 /* Build configuration list for PBXProject "MobileMiniBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD1DAFB21D709E3600017CF0 /* Debug */,
+				CD1DAFB31D709E3600017CF0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD1DAFB41D709E3600017CF0 /* Build configuration list for PBXNativeTarget "MobileMiniBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD1DAFB51D709E3600017CF0 /* Debug */,
+				CD1DAFB61D709E3600017CF0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD1DAFB71D709E3600017CF0 /* Build configuration list for PBXNativeTarget "MobileMiniBrowserUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD1DAFB81D709E3600017CF0 /* Debug */,
+				CD1DAFB91D709E3600017CF0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CD1DAF8A1D709E3600017CF0 /* Project object */;
+}

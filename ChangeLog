@@ -1,3 +1,14 @@
+2016-08-26  Jer Noble  <jer.noble@apple.com>
+
+        Add a test harness for running UI tests on the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=161265
+
+        Add the new MobileMiniBrowser project to the WebKit workspace.
+
+        Reviewed by Simon Fraser.
+
+        * WebKit.xcworkspace/contents.xcworkspacedata:
+
 2016-08-24  Alexey Proskuryakov  <ap@apple.com>
 
         Add svn:global-ignores to the root to ignore *.pyc files everythere in the repository.
