@@ -1,3 +1,14 @@
+2016-08-26  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Infinite recursion calling -charValue on a WKNSNumber
+        https://bugs.webkit.org/show_bug.cgi?id=161258
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/WKNSNumber.mm:
+        (-[WKNSNumber charValue]): Override this…
+        (-[WKNSNumber boolValue]): …not this.
+
 2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][GTK] REGRESSION(204877): Fix the clean build

@@ -106,12 +106,12 @@ using namespace WebKit;
 
 // MARK: NSNumber primitive methods
 
-- (BOOL)boolValue
+- (char)charValue
 {
     if (_type == API::Object::Type::Boolean)
         return _number._boolean->value();
 
-    return super.boolValue;
+    return super.charValue;
 }
 
 - (double)doubleValue

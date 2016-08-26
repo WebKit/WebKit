@@ -45,6 +45,7 @@ TEST(WebKit2, WKNSNumber)
     NSNumber *doubleNumber = (NSNumber *)doubleRef.get();
 
     EXPECT_EQ(YES, booleanNumber.boolValue);
+    EXPECT_EQ(YES, booleanNumber.charValue);
     EXPECT_EQ(39UL, uint64Number.unsignedLongLongValue);
     EXPECT_EQ(39, uint64Number.intValue);
     EXPECT_EQ(-16.2, doubleNumber.doubleValue);
