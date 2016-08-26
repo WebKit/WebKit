@@ -51,16 +51,16 @@ ALWAYS_INLINE bool matchesDefaultPseudoClass(const Element& element)
     return element.matchesDefaultPseudoClass();
 }
 
-ALWAYS_INLINE bool isDisabled(const Element& element)
+// https://html.spec.whatwg.org/multipage/scripting.html#selector-disabled
+ALWAYS_INLINE bool matchesDisabledPseudoClass(const Element& element)
 {
-    return (is<HTMLFormControlElement>(element) || is<HTMLOptionElement>(element) || is<HTMLOptGroupElement>(element))
-        && element.isDisabledFormControl();
+    return is<HTMLElement>(element) && downcast<HTMLElement>(element).isActuallyDisabled();
 }
 
-ALWAYS_INLINE bool isEnabled(const Element& element)
+// https://html.spec.whatwg.org/multipage/scripting.html#selector-enabled
+ALWAYS_INLINE bool matchesEnabledPseudoClass(const Element& element)
 {
-    return (is<HTMLFormControlElement>(element) || is<HTMLOptionElement>(element) || is<HTMLOptGroupElement>(element))
-        && !element.isDisabledFormControl();
+    return is<HTMLElement>(element) && downcast<HTMLElement>(element).canBeActuallyDisabled() && !element.isDisabledFormControl();
 }
 
 #if ENABLE(CUSTOM_ELEMENTS)

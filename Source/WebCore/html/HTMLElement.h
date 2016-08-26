@@ -95,6 +95,10 @@ public:
 
     static const AtomicString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName);
 
+    // Only some element types can be disabled: https://html.spec.whatwg.org/multipage/scripting.html#concept-element-disabled
+    bool canBeActuallyDisabled() const;
+    bool isActuallyDisabled() const;
+
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);
 

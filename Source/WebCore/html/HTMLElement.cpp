@@ -41,12 +41,19 @@
 #include "FrameView.h"
 #include "HTMLBDIElement.h"
 #include "HTMLBRElement.h"
+#include "HTMLButtonElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
+#include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
+#include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLSelectElement.h"
+#include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "NodeTraversal.h"
 #include "RenderElement.h"
@@ -1057,6 +1064,22 @@ bool HTMLElement::willRespondToMouseWheelEvents()
 bool HTMLElement::willRespondToMouseClickEvents()
 {
     return !isDisabledFormControl() && Element::willRespondToMouseClickEvents();
+}
+
+bool HTMLElement::canBeActuallyDisabled() const
+{
+    return is<HTMLButtonElement>(*this)
+        || is<HTMLInputElement>(*this)
+        || is<HTMLSelectElement>(*this)
+        || is<HTMLTextAreaElement>(*this)
+        || is<HTMLOptGroupElement>(*this)
+        || is<HTMLOptionElement>(*this)
+        || is<HTMLFieldSetElement>(*this);
+}
+
+bool HTMLElement::isActuallyDisabled() const
+{
+    return canBeActuallyDisabled() && isDisabledFormControl();
 }
 
 } // namespace WebCore

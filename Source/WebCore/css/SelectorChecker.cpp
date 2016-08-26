@@ -982,13 +982,13 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             }
             break;
         case CSSSelector::PseudoClassEnabled:
-            return isEnabled(element);
+            return matchesEnabledPseudoClass(element);
         case CSSSelector::PseudoClassFullPageMedia:
             return isMediaDocument(element);
         case CSSSelector::PseudoClassDefault:
             return matchesDefaultPseudoClass(element);
         case CSSSelector::PseudoClassDisabled:
-            return isDisabled(element);
+            return matchesDisabledPseudoClass(element);
         case CSSSelector::PseudoClassReadOnly:
             return matchesReadOnlyPseudoClass(element);
         case CSSSelector::PseudoClassReadWrite:

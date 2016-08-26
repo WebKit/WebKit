@@ -539,10 +539,10 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesDefaultPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassDisabled:
-        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDisabled));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesDisabledPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassEnabled:
-        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isEnabled));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesEnabledPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #if ENABLE(CUSTOM_ELEMENTS)
     case CSSSelector::PseudoClassDefined:

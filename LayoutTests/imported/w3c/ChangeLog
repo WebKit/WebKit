@@ -1,3 +1,12 @@
+2016-08-26  Andreas Kling  <akling@apple.com>
+
+        The :enabled/:disabled selectors should only match elements that can be disabled.
+        <https://webkit.org/b/161255>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/disabled-expected.txt:
+
 2016-08-26  Chris Dumez  <cdumez@apple.com>
 
         HTMLAreaElement's coords attributes parsing does not comply with the HTML specification
