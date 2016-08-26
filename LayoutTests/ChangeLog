@@ -1,3 +1,11 @@
+2016-08-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/dom/focus-contenteditable.html for ios-simulator after r205044.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/fast/dom/focus-contenteditable-expected.txt:
+
 2016-08-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update expectations of tests that can either crash or timeout on iOS simulator WK1
