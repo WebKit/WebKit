@@ -127,8 +127,10 @@ void InspectorHeapAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDis
 
 void InspectorHeapAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
+    // Stop tracking without taking a snapshot.
+    m_tracking = false;
+
     ErrorString ignored;
-    stopTracking(ignored);
     disable(ignored);
 }
 

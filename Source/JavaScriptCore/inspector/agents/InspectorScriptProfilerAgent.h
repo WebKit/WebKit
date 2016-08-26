@@ -69,6 +69,7 @@ private:
 
     void addEvent(double startTime, double endTime, JSC::ProfilingReason);
     void trackingComplete();
+    void stopSamplingWhenDisconnecting();
 
     std::unique_ptr<ScriptProfilerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<ScriptProfilerBackendDispatcher> m_backendDispatcher;

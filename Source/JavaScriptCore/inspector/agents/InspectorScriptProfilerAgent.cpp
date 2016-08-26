@@ -53,8 +53,15 @@ void InspectorScriptProfilerAgent::didCreateFrontendAndBackend(FrontendRouter*, 
 
 void InspectorScriptProfilerAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    ErrorString ignored;
-    stopTracking(ignored);
+    // Stop tracking without sending results.
+    if (m_tracking) {
+        m_tracking = false;
+        m_activeEvaluateScript = false;
+        m_environment.scriptDebugServer().setProfilingClient(nullptr);
+
+        // Stop sampling without processing the samples.
+        stopSamplingWhenDisconnecting();
+    }
 }
 
 void InspectorScriptProfilerAgent::startTracking(ErrorString&, const bool* includeSamples)
@@ -214,6 +221,23 @@ void InspectorScriptProfilerAgent::trackingComplete()
 #else
     m_frontendDispatcher->trackingComplete(nullptr);
 #endif // ENABLE(SAMPLING_PROFILER)
+}
+
+void InspectorScriptProfilerAgent::stopSamplingWhenDisconnecting()
+{
+#if ENABLE(SAMPLING_PROFILER)
+    if (!m_enabledSamplingProfiler)
+        return;
+
+    JSLockHolder lock(m_environment.scriptDebugServer().vm());
+    SamplingProfiler* samplingProfiler = m_environment.scriptDebugServer().vm().samplingProfiler();
+    RELEASE_ASSERT(samplingProfiler);
+    LockHolder locker(samplingProfiler->getLock());
+    samplingProfiler->pause(locker);
+    samplingProfiler->clearData(locker);
+
+    m_enabledSamplingProfiler = false;
+#endif
 }
 
 void InspectorScriptProfilerAgent::programmaticCaptureStarted()
