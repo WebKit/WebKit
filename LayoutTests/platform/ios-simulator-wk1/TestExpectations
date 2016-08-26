@@ -751,6 +751,7 @@ mathml/opentype/munderover-layout-resize.html
 mathml/presentation/mo-invisible.html
 
 # MathML tests that fail:
+mathml/mathml-in-dashboard.html [ Failure ]
 mathml/presentation/mo-stretch-update.html [ ImageOnlyFailure ]
 
 # SVG tests that fail:

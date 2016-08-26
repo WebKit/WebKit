@@ -1,3 +1,14 @@
+2016-08-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rebase iOS simulator WK1 tables tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/ios-simulator-wk1/tables/mozilla_expected_failures/bugs/bug128876-expected.txt:
+        * platform/ios-simulator-wk1/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Added.
+        * platform/ios-simulator-wk1/tables/mozilla_expected_failures/bugs/bug8499-expected.txt:
+        * platform/ios-simulator-wk1/transitions/default-timing-function-expected.txt: Added.
+
 2016-08-26  Beth Dakin  <bdakin@apple.com>
 
         charactersAroundPosition can be wrong because it crosses editing boundaries
