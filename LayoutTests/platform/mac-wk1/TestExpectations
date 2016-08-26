@@ -251,3 +251,5 @@ webkit.org/b/160227 [ ElCapitan Debug ] inspector/memory/tracking.html [ Pass Cr
 webkit.org/b/161056 gamepad [ Skip ]
 
 webkit.org/b/161191 imported/w3c/web-platform-tests/url/url-setters.html [ Skip ]
+
+webkit.org/b/161144 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Pass Timeout ]
