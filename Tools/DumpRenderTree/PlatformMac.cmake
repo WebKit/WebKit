@@ -109,6 +109,7 @@ list(APPEND DumpRenderTree_ObjCpp_SOURCES
     mac/ResourceLoadDelegate.mm
     mac/TestRunnerMac.mm
     mac/UIDelegate.mm
+    mac/UIScriptControllerMac.mm
     mac/WebArchiveDumpSupportMac.mm
     mac/WorkQueueItemMac.mm
 )

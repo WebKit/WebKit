@@ -1,5 +1,11 @@
 2016-08-25  Alex Christensen  <achristensen@webkit.org>
 
+        CMake build fix.
+
+        * DumpRenderTree/PlatformMac.cmake:
+
+2016-08-25  Alex Christensen  <achristensen@webkit.org>
+
         Fix URLParserTest with GuardMalloc
         https://bugs.webkit.org/show_bug.cgi?id=161214
         rdar://problem/28014390

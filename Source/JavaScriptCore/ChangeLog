@@ -1,3 +1,10 @@
+2016-08-25  Alex Christensen  <achristensen@webkit.org>
+
+        CMake build fix.
+
+        * ForwardingHeaders/JavaScriptCore/JSObjectRefPrivate.h: Added.
+        This is needed for the internal Windows build.
+
 2016-08-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Clean up the abstract interpreter for cos/sin/sqrt/fround/log

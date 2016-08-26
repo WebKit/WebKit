@@ -482,7 +482,7 @@ WEBKIT_CREATE_FORWARDING_HEADERS(WebKit DIRECTORIES ${DERIVED_SOURCES_DIR}/Forwa
 # FIXME: Forwarding headers should be copies of actual headers.
 file(GLOB ObjCHeaders ${WEBCORE_DIR}/plugins/*.h)
 list(APPEND ObjCHeaders
-    WebKitAvailiability.h
+    WebKitAvailability.h
     WebScriptObject.h
 )
 foreach (_file ${ObjCHeaders})
