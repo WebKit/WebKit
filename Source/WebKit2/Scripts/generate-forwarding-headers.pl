@@ -44,12 +44,12 @@ my $frameworkDirectoryName;
 my %neededHeaders;
 my $verbose = 0; # enable it for debugging purpose
 
-my $incFromRoot;
+my @incFromRoot;
 my $outputDirectory;
 my @platform;
 
 my %options = (
-    'include-path=s' => \$incFromRoot,
+    'include-path=s' => \@incFromRoot,
     'output=s' => \$outputDirectory,
     'platform=s' => \@platform
 );
@@ -66,7 +66,7 @@ foreach (@frameworks) {
     @frameworkHeaders = ();
     %neededHeaders = ();
 
-    find(\&collectNeededHeaders, abs_path($incFromRoot) );
+    foreach (@incFromRoot) { find(\&collectNeededHeaders, abs_path($_) ); };
     find(\&collectFrameworkHeaderPaths, File::Spec->catfile($srcRoot, $frameworkDirectoryName));
     createForwardingHeadersForFramework();
 }

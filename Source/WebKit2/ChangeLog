@@ -1,3 +1,12 @@
+2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] REGRESSION(204877): Fix the clean build
+        https://bugs.webkit.org/show_bug.cgi?id=161240
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/generate-forwarding-headers.pl: Added back multiple include-path support. (removed by r183389)
+
 2016-08-26  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         Unreviewed EFL build fix since r204996.

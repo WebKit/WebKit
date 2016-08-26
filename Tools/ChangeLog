@@ -1,3 +1,13 @@
+2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] REGRESSION(204877): Fix the clean build
+        https://bugs.webkit.org/show_bug.cgi?id=161240
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/PlatformEfl.cmake:
+        * WebKitTestRunner/PlatformGTK.cmake:
+
 2016-08-26  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should indicate which bot processed the patch
