@@ -543,15 +543,13 @@ Connection::SocketPair Connection::createPlatformConnection(unsigned options)
     SocketPair socketPair = { sockets[0], sockets[1] };
     return socketPair;
 }
-    
-void Connection::willSendSyncMessage(unsigned flags)
+
+void Connection::willSendSyncMessage(OptionSet<SendSyncOption>)
 {
-    UNUSED_PARAM(flags);
 }
-    
-void Connection::didReceiveSyncReply(unsigned flags)
+
+void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
 {
-    UNUSED_PARAM(flags);    
 }
 
 } // namespace IPC

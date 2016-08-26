@@ -147,8 +147,10 @@
 
     // DOM Level 2 Style Interface
     [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional DOMString? pseudoElement = null);
+#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     // FIXME: Drop this overload once <rdar://problem/28016778> has been fixed.
     [NewObject, RaisesException] CSSStyleDeclaration getComputedStyle(Document document, optional DOMString? pseudoElement = null);
+#endif
 
     // WebKit extensions
 #if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)

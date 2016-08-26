@@ -1,3 +1,13 @@
+2016-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r204986 and r204996.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::willSendSyncMessage):
+        (IPC::Connection::didReceiveSyncReply):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::drawPagesForPrinting):
+
 2016-08-25  Anders Carlsson  <andersca@apple.com>
 
         Replace all IPC message send flags with OptionSet
