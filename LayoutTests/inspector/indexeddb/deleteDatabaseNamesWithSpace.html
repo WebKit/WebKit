@@ -2,20 +2,8 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/utilities.js"></script>
 <script>
-function createDatabase(name) {
-    let request = window.indexedDB.open(name, 1);
-    request.addEventListener('success', function(event) {
-        console.log(`Created Database '${name}'`);
-        event.target.result.close();
-    });
-}
-
-function deleteDatabaseNames(names) {
-    for (let name of names)
-        window.indexedDB.deleteDatabase(name);
-}
-
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("IndexedDB.requestDatabaseNames.spaces");
@@ -48,7 +36,7 @@ function test()
         name: "CreateDatabaseWithSpacesInName",
         description: "Create a database with spaces in the name.",
         test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createDatabase('Database With Space')");
+            InspectorTest.evaluateInPage("createEmptyDatabase('Database With Space')");
             IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.expectNoError(error);
                 InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist.");

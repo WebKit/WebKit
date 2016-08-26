@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("IndexedDB.requestDatabase");
+
+    suite.addTestCase({
+        name: "ClearDatabases",
+        description: "Remove any existing IndexedDB databases.",
+        test: (resolve, reject) => {
+            // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
+            // <https://webkit.org/b/148006> Each test should run with its own clean data store
+            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")", resolve);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateAndRequestEmptyDatabase",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createEmptyDatabase('EmptyDatabase', 123)");
+            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "EmptyDatabase", (error, databaseWithObjectStores) => {
+                InspectorTest.expectNoError(error);
+                InspectorTest.expectThat(databaseWithObjectStores.name === "EmptyDatabase", "Database name should be 'EmptyDatabase'.");
+                InspectorTest.expectThat(databaseWithObjectStores.version === 123, "Database version should be 123.");
+                InspectorTest.expectThat(databaseWithObjectStores.objectStores.length === 0, "Database should not have any object stores.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateAndRequestDatabaseWithStores",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createDatabaseWithStores('CompleteDatabase', 456)");
+            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "CompleteDatabase", (error, databaseWithObjectStores) => {
+                InspectorTest.expectNoError(error);
+                let objectStores = databaseWithObjectStores.objectStores;
+                InspectorTest.expectThat(databaseWithObjectStores.name === "CompleteDatabase", "Database name should be 'EmptyDatabase'.");
+                InspectorTest.expectThat(databaseWithObjectStores.version === 456, "Database version should be 456.");
+                InspectorTest.expectThat(databaseWithObjectStores.objectStores.length === 3, "Database should have 3 object stores.");
+
+                InspectorTest.expectThat(objectStores[0].name === "Empty", "Object store should have name 'Empty'.");
+                InspectorTest.expectThat(objectStores[0].keyPath.type === "null", "Object store keypath is null.");
+                InspectorTest.expectThat(!objectStores[0].autoIncrement, "Object store should not autoIncrement.");
+                InspectorTest.expectThat(!objectStores[0].indexes.length, "Object store should have no indexes.");
+
+                InspectorTest.expectThat(objectStores[1].name === "Reviewers", "Object store should have name 'Reviewers'.");
+                InspectorTest.expectThat(objectStores[1].keyPath.type === "null", "Object store keypath is null.");
+                InspectorTest.expectThat(objectStores[1].autoIncrement, "Object store should autoIncrement.");
+                InspectorTest.expectThat(objectStores[1].indexes.length === 2, "Object store should have 2 indexes.");
+                InspectorTest.log("INDEX: " + JSON.stringify(objectStores[1].indexes[0]));
+                InspectorTest.log("INDEX: " + JSON.stringify(objectStores[1].indexes[1]));
+
+                InspectorTest.expectThat(objectStores[2].name === "Stats", "Object store should have name 'Stats'.");
+                InspectorTest.expectThat(objectStores[2].keyPath.type === "string", "Object store keypath is string type.");
+                InspectorTest.expectThat(objectStores[2].keyPath.string === "name", "Object store keypath is 'name''.");
+                InspectorTest.expectThat(!objectStores[2].autoIncrement, "Object store should not autoIncrement.");
+                InspectorTest.expectThat(objectStores[2].indexes.length === 2, "Object store should have 2 indexes.");
+                InspectorTest.log("INDEX: " + JSON.stringify(objectStores[2].indexes[0]));
+                InspectorTest.log("INDEX: " + JSON.stringify(objectStores[2].indexes[1]));
+
+                resolve();
+            });
+        }
+    });
+
+    // FIXME: <https://webkit.org/b/161121> Web Inspector: IndexedDB.requestDatabase() should not create a database if one did not exist
+    // suite.addTestCase({
+    //     name: "NoSuchDatabase",
+    //     description: "Request a database that does not exist.",
+    //     test: (resolve, reject) => {
+    //         IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "NameDoesNotExist", (error, databaseWithObjectStores) => {
+    //             InspectorTest.expectThat(error, "Should be an error trying to request a database that does not exist.");
+    //             InspectorTest.log(JSON.stringify(databaseWithObjectStores));
+    //             resolve();
+    //         });
+    //     }
+    // });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

@@ -2,20 +2,8 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/utilities.js"></script>
 <script>
-function createDatabase(name) {
-    let request = window.indexedDB.open(name, 1);
-    request.addEventListener('success', function(event) {
-        console.log(`Created Database '${name}'`);
-        event.target.result.close();
-    });
-}
-
-function deleteDatabaseNames(names) {
-    for (let name of names)
-        window.indexedDB.deleteDatabase(name);
-}
-
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("IndexedDB.requestDatabaseNames");
@@ -48,7 +36,7 @@ function test()
         name: "CreateDatabase1",
         description: "Create a first database.",
         test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createDatabase('Database1')");
+            InspectorTest.evaluateInPage("createEmptyDatabase('Database1')");
             IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.expectNoError(error);
                 InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist.");
@@ -62,7 +50,7 @@ function test()
         name: "CreateDatabase2",
         description: "Create a second database.",
         test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createDatabase('Database2')");
+            InspectorTest.evaluateInPage("createEmptyDatabase('Database2')");
             IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.expectNoError(error);
                 InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist.");
@@ -76,7 +64,7 @@ function test()
         name: "CreateDatabase3",
         description: "Create a third database with a unicode name.",
         test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createDatabase('\u124d')");
+            InspectorTest.evaluateInPage("createEmptyDatabase('\u124d')");
             IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.expectNoError(error);
                 InspectorTest.expectThat(names.length === 3, "Three IndexedDB databases should exist.");
@@ -90,7 +78,7 @@ function test()
         name: "CreateDatabase4",
         description: "Create a fourth database with a unicode name.",
         test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createDatabase('\ud800\udf46')");
+            InspectorTest.evaluateInPage("createEmptyDatabase('\ud800\udf46')");
             IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.expectNoError(error);
                 InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist.");
