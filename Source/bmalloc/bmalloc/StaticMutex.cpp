@@ -23,31 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "ScopeExit.h"
 #include "StaticMutex.h"
-#include "ThreadSwitch.h"
+#include <thread>
 
 namespace bmalloc {
 
 void StaticMutex::lockSlowCase()
 {
-    // The longest critical section in bmalloc is much shorter than the
-    // time it takes to make a system call to yield to the OS scheduler.
-    // So, we try again a lot before we yield.
-    static const size_t aLot = 256;
-    
-    if (!m_isSpinning.test_and_set()) {
-        auto clear = makeScopeExit([&] { m_isSpinning.clear(); });
-
-        for (size_t i = 0; i < aLot; ++i) {
-            if (try_lock())
-                return;
-        }
-    }
-
-    // Avoid spinning pathologically.
     while (!try_lock())
-        threadSwitch();
+        std::this_thread::yield();
 }
 
 } // namespace bmalloc

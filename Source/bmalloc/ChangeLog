@@ -1,3 +1,18 @@
+2016-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        bmalloc: speed up the lock slow path
+        https://bugs.webkit.org/show_bug.cgi?id=161058
+
+        Unreviewed rollout - this caused regressions <rdar://problem/28026089>.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/ScopeExit.h: Removed.
+        * bmalloc/StaticMutex.cpp:
+        (bmalloc::StaticMutex::lockSlowCase):
+        * bmalloc/StaticMutex.h:
+        (bmalloc::StaticMutex::init):
+        * bmalloc/ThreadSwitch.h: Removed.
+
 2016-08-24  Andreas Kling  <akling@apple.com>
 
         Add bmalloc::api::isEnabled().
