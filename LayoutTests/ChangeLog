@@ -1,3 +1,19 @@
+2016-08-26  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Some CSS selectors in the UI aren't escaped
+        https://bugs.webkit.org/show_bug.cgi?id=151378
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/dom/content-node-region-info.html:
+        * inspector/dom/content-node-region-info-expected.txt:
+        Use DOMNode.prototype.displayName instead of WebInspector.displayNameForNode.
+
+        * inspector/dom/highlightNode-expected.txt:
+        * inspector/dom/highlightSelector.html:
+        * inspector/dom/highlightSelector-expected.txt:
+        Changed result to replace className with new classes array.
+
 2016-08-26  Chris Dumez  <cdumez@apple.com>
 
         HTMLAreaElement's coords attributes parsing does not comply with the HTML specification

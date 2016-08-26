@@ -58,7 +58,6 @@
 #include <bindings/ScriptValue.h>
 #include <inspector/InspectorProtocolObjects.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/text/StringBuilder.h>
 
 using namespace Inspector;
 
@@ -713,28 +712,27 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
         .setIdValue(element.getIdAttribute())
         .release();
 
-    StringBuilder classNames;
     if (element.hasClass() && is<StyledElement>(element)) {
+        auto classes = Inspector::Protocol::Array<String>::create();
         HashSet<AtomicString> usedClassNames;
         const SpaceSplitString& classNamesString = downcast<StyledElement>(element).classNames();
-        size_t classNameCount = classNamesString.size();
-        for (size_t i = 0; i < classNameCount; ++i) {
+        for (size_t i = 0; i < classNamesString.size(); ++i) {
             const AtomicString& className = classNamesString[i];
             if (usedClassNames.contains(className))
                 continue;
+
             usedClassNames.add(className);
-            classNames.append('.');
-            classNames.append(className);
+            classes->addItem(className);
         }
+        elementData->setClasses(WTFMove(classes));
     }
+
     if (node->isPseudoElement()) {
         if (node->pseudoId() == BEFORE)
-            classNames.appendLiteral("::before");
+            elementData->setPseudoElement("before");
         else if (node->pseudoId() == AFTER)
-            classNames.appendLiteral("::after");
+            elementData->setPseudoElement("after");
     }
-    if (!classNames.isEmpty())
-        elementData->setClassName(classNames.toString());
 
     RenderElement* renderer = element.renderer();
     if (!renderer)

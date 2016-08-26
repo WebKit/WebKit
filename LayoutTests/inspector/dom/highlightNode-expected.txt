@@ -8,7 +8,7 @@ PASS: Should not be a highlight yet.
 
 -- Running test case: MainFrameNodeViaNodeId
 PASS: Should be one highlighted node.
-Highlighted Element Data: {"tagName":"div","idValue":"id-one","className":".class-two","size":{"width":100,"height":200},"role":""}
+Highlighted Element Data: {"tagName":"div","idValue":"id-one","classes":["class-two"],"size":{"width":100,"height":200},"role":""}
 
 -- Running test case: ChildFrameNodeViaNodeId
 PASS: Should be one highlighted node.
@@ -16,7 +16,7 @@ Highlighted Element Data: {"tagName":"div","idValue":"id-one","size":{"width":15
 
 -- Running test case: MainFrameNodeViaObjectId
 PASS: Should be one highlighted node.
-Highlighted Element Data: {"tagName":"div","idValue":"id-one","className":".class-two","size":{"width":100,"height":200},"role":""}
+Highlighted Element Data: {"tagName":"div","idValue":"id-one","classes":["class-two"],"size":{"width":100,"height":200},"role":""}
 
 -- Running test case: ChildFrameNodeViaObjectId
 PASS: Should be one highlighted node.

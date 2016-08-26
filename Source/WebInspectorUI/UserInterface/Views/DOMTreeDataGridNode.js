@@ -53,7 +53,7 @@ WebInspector.DOMTreeDataGridNode = class DOMTreeDataGridNode extends WebInspecto
     _createNameCellDocumentFragment()
     {
         let fragment = document.createDocumentFragment();
-        let mainTitle = WebInspector.displayNameForNode(this._domNode);
+        let mainTitle = this._domNode.displayName;
         fragment.append(mainTitle);
 
         let goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());

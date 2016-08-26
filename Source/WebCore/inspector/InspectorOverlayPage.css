@@ -59,7 +59,8 @@ body.platform-linux {
     position: absolute;
 }
 
-.tag-name {
+.tag-name,
+.pseudo-type {
     /* Keep this in sync with XMLViewer.css (.tag) */
     color: rgb(136, 18, 128);
 }

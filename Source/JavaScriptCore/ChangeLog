@@ -1,3 +1,15 @@
+2016-08-26  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Some CSS selectors in the UI aren't escaped
+        https://bugs.webkit.org/show_bug.cgi?id=151378
+
+        Reviewed by Joseph Pecoraro.
+
+        Change ElementData from sending a className string to using an array of
+        classes, allowing for proper escaping of each class value.
+
+        * inspector/protocol/OverlayTypes.json:
+
 2016-08-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ScriptProfilerAgent and HeapAgent should do less work when frontend disconnects

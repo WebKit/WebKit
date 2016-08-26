@@ -39,7 +39,7 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
                 title = "::" + node.pseudoType();
             } else {
                 className = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
-                title = WebInspector.displayNameForNode(node);
+                title = node.displayName;
             }
             break;
 
@@ -75,7 +75,7 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
             if (node.shadowRootType())
                 title = WebInspector.UIString("Shadow Content");
             else
-                title = WebInspector.displayNameForNode(node);
+                title = node.displayName;
             break;
 
         case Node.PROCESSING_INSTRUCTION_NODE:

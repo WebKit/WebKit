@@ -261,12 +261,12 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             break;
 
         case WebInspector.CSSStyleDeclaration.Type.Inline:
-            appendSelectorTextKnownToMatch.call(this, WebInspector.displayNameForNode(this._style.node));
+            appendSelectorTextKnownToMatch.call(this, this._style.node.displayName);
             this._originElement.append(WebInspector.UIString("Style Attribute"));
             break;
 
         case WebInspector.CSSStyleDeclaration.Type.Attribute:
-            appendSelectorTextKnownToMatch.call(this, WebInspector.displayNameForNode(this._style.node));
+            appendSelectorTextKnownToMatch.call(this, this._style.node.displayName);
             this._originElement.append(WebInspector.UIString("HTML Attributes"));
             break;
         }

@@ -30,6 +30,12 @@ function test()
             expectedElements: 2,
         },
         {
+            name: "MainFrameWithMultipleClassSelector",
+            frameId: mainFrameId,
+            selector: ".class-one.\\.escaped",
+            expectedElements: 1,
+        },
+        {
             name: "MainFrameIdSelector",
             frameId: mainFrameId,
             selector: "#id-one",
@@ -133,7 +139,7 @@ function test()
 <body onload="runTest()">
     <p>Tests for the DOM.highlightSelector command.</p>
     <div style="width: 500px; height: 500px">
-        <div class="class-one" style="width: 10px; height: 20px"></div>
+        <div class="class-one .escaped" style="width: 10px; height: 20px"></div>
         <div id="id-one" class="class-two" style="width:100px; height: 200px"></div>
         <iframe class="class-one" src="resources/highlight-iframe.html"></iframe>
     </div>

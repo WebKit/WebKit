@@ -29,36 +29,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.displayNameForNode = function(node)
-{
-    var title = node.nodeNameInCorrectCase();
-
-    var idAttribute = node.getAttribute("id");
-    if (idAttribute) {
-        if (/[\s'"]/.test(idAttribute)) {
-            idAttribute = idAttribute.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"");
-            title += "[id=\"" + idAttribute + "\"]";
-        } else
-            title += "#" + idAttribute;
-    }
-
-    var classAttribute = node.getAttribute("class");
-    if (classAttribute) {
-        var classes = classAttribute.trim().split(/\s+/);
-        var foundClasses = {};
-
-        for (var i = 0; i < classes.length; ++i) {
-            var className = classes[i];
-            if (className && !(className in foundClasses)) {
-                title += "." + className;
-                foundClasses[className] = true;
-            }
-        }
-    }
-
-    return title;
-};
-
 WebInspector.roleSelectorForNode = function(node)
 {
     // This is proposed syntax for CSS 4 computed role selector :role(foo) and subject to change.
@@ -89,7 +59,7 @@ WebInspector.linkifyAccessibilityNodeReference = function(node)
 
 WebInspector.linkifyNodeReference = function(node, maxLength)
 {
-    let displayName = WebInspector.displayNameForNode(node);
+    let displayName = node.displayName;
     if (!isNaN(maxLength))
         displayName = displayName.truncate(maxLength);
 

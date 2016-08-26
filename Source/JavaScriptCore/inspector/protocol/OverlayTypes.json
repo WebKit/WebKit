@@ -83,9 +83,10 @@
             "properties": [
                 { "name": "tagName", "type": "string" },
                 { "name": "idValue", "type": "string", "description": "The value of the element's 'id' attribute." },
-                { "name": "className", "type": "string", "optional": true },
+                { "name": "classes", "type": "array", "items": { "type": "string" }, "optional": true },
                 { "name": "size", "$ref": "Size", "optional": true },
                 { "name": "role", "type": "string", "description": "Computed accessibility role for the element.", "optional": true },
+                { "name": "pseudoElement", "type": "string", "optional": true },
                 { "name": "regionFlowData", "$ref": "RegionFlowData", "optional": true },
                 { "name": "contentFlowData", "$ref": "ContentFlowData", "optional": true },
                 { "name": "shapeOutsideData", "$ref": "ShapeOutsideData", "optional": true }

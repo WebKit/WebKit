@@ -27,14 +27,20 @@
 <script>
 function test()
 {
-    var queryList = ["#flow", ".contentNode1", ".contentNode2", "body", "#region1", "#region2"];
-    var documentNodeId;
+    let displayNameGetter = Object.getOwnPropertyDescriptor(WebInspector.DOMNode.prototype, "displayName").get;
+    let queryList = ["#flow", ".contentNode1", ".contentNode2", "body", "#region1", "#region2"];
+    let documentNodeId = null;
 
     WebInspector.domTreeManager.requestDocument(function(documentNode) {
         documentNodeId = documentNode.id;
         WebInspector.domTreeManager.getNamedFlowCollection(documentNodeId);
         next();
     });
+
+    function regionMapFunction(region)
+    {
+        return displayNameGetter.call(region);
+    }
 
     function query(selector, callback)
     {
@@ -44,14 +50,14 @@ function test()
                 InspectorTest.log("DOM node not found.");
                 callback();
             }
-            var domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+            let domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
             WebInspector.domTreeManager.getNodeContentFlowInfo(domNode, function(error, result) {
                 console.assert(!error);
                 if (result) {
                     InspectorTest.log("Region flow name: " + (result.regionFlow ? result.regionFlow.name : "none"));
                     InspectorTest.log("Content flow name: " + (result.contentFlow ? result.contentFlow.name : "none"));
                     InspectorTest.log("Regions count: " + (result.regions ? result.regions.length : "N/A"));
-                    InspectorTest.log("Regions: " + (result.regions ? result.regions.map(WebInspector.displayNameForNode).join(", ") : "N/A"));
+                    InspectorTest.log("Regions: " + (result.regions ? result.regions.map(regionMapFunction).join(", ") : "N/A"));
                 } else
                     InspectorTest.log("No region flow information.");
                 callback();

@@ -520,28 +520,62 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         return path.join(",");
     }
 
+    get escapedIdSelector()
+    {
+        let id = this.getAttribute("id");
+        if (!id)
+            return "";
+
+        id = id.trim();
+        if (!id.length)
+            return "";
+
+        id = CSS.escape(id);
+        if (/[\s'"]/.test(id))
+            return `[id=\"${id}\"]`;
+
+        return `#${id}`;
+    }
+
+    get escapedClassSelector()
+    {
+        let classes = this.getAttribute("class");
+        if (!classes)
+            return "";
+
+        classes = classes.trim();
+        if (!classes.length)
+            return "";
+
+        let foundClasses = new Set;
+        return classes.split(/\s+/).reduce((selector, className) => {
+            if (!className.length || foundClasses.has(className))
+                return selector;
+
+            foundClasses.add(className);
+            return `${selector}.${CSS.escape(className)}`;
+        }, "");
+    }
+
+    get displayName()
+    {
+        return this.nodeNameInCorrectCase() + this.escapedIdSelector + this.escapedClassSelector;
+    }
+
     appropriateSelectorFor(justSelector)
     {
         if (this.isPseudoElement())
             return this.parentNode.appropriateSelectorFor() + "::" + this._pseudoType;
 
-        var lowerCaseName = this.localName() || this.nodeName().toLowerCase();
+        let lowerCaseName = this.localName() || this.nodeName().toLowerCase();
 
-        var id = this.getAttribute("id");
-        if (id) {
-            if (/[\s'"]/.test(id)) {
-                id = id.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"");
-                selector = lowerCaseName + "[id=\"" + id + "\"]";
-            } else
-                selector = "#" + id;
-            return (justSelector ? selector : lowerCaseName + selector);
-        }
+        let id = this.escapedIdSelector;
+        if (id.length)
+            return justSelector ? id : lowerCaseName + id;
 
-        var className = this.getAttribute("class");
-        if (className) {
-            var selector = "." + className.trim().replace(/\s+/g, ".");
-            return (justSelector ? selector : lowerCaseName + selector);
-        }
+        let classes = this.escapedClassSelector;
+        if (classes.length)
+            return justSelector ? classes : lowerCaseName + classes;
 
         if (lowerCaseName === "input" && this.getAttribute("type"))
             return lowerCaseName + "[type=\"" + this.getAttribute("type") + "\"]";
