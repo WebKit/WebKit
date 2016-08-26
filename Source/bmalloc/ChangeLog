@@ -1,5 +1,13 @@
 2016-08-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Unreviewed build fix.
+
+        Fix the CMake build.
+
+        * CMakeLists.txt:
+
+2016-08-26  Geoffrey Garen  <ggaren@apple.com>
+
         Renamed XLarge* => Large*
         https://bugs.webkit.org/show_bug.cgi?id=161261
 
