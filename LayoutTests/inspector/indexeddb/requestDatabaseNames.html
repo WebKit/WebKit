@@ -3,101 +3,104 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
-function createDatabase(name)
-{
+function createDatabase(name) {
     let request = window.indexedDB.open(name, 1);
-    request.addEventListener('success', function() {
+    request.addEventListener('success', function(event) {
         console.log(`Created Database '${name}'`);
+        event.target.result.close();
     });
 }
 
-function deleteDatabaseNames(names)
-{
+function deleteDatabaseNames(names) {
     for (let name of names)
         window.indexedDB.deleteDatabase(name);
 }
 
 function test()
 {
-    var steps = [
-        {
-            action: function() {
-                // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
-                // <https://webkit.org/b/148006> Each test should run with its own clean data store
-                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
-                    InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")");
-                    next();
-                });
-            }
-        },
-        {
-            action: function() {
-                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist initially");
-                    InspectorTest.log(JSON.stringify(names));
-                    InspectorTest.evaluateInPage("createDatabase('Database1')");
-                });
-            }
-        },
-        {
-            action: function() {
-                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist");
-                    InspectorTest.log(JSON.stringify(names));
-                    InspectorTest.evaluateInPage("createDatabase('Database2')");
-                });
-            }
-        },
-        {
-            action: function() {
-                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist");
-                    InspectorTest.log(JSON.stringify(names));
-                    InspectorTest.evaluateInPage("createDatabase('\u124d')");
-                });
-            }
-        },
-        {
-            action: function() {
-                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(names.length === 3, "Two IndexedDB databases should exist");
-                    InspectorTest.log(JSON.stringify(names));
-                    InspectorTest.evaluateInPage("createDatabase('\ud800\udf46')");
-                });
-            }
-        },
-        {
-            action: function() {
-                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist");
-                    InspectorTest.log(JSON.stringify(names));
-                    next();
-                });
-            }
-        }
-    ];
+    let suite = InspectorTest.createAsyncSuite("IndexedDB.requestDatabaseNames");
 
-    function next() {
-        let step = steps.shift();
-        if (!step) {
-            InspectorTest.completeTest();
-            return;
+    suite.addTestCase({
+        name: "ClearDatabases",
+        description: "Remove any existing IndexedDB databases.",
+        test: (resolve, reject) => {
+            // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
+            // <https://webkit.org/b/148006> Each test should run with its own clean data store
+            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")", resolve);
+            });
         }
-        step.action();
-    }
-
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
-        InspectorTest.log(event.data.message.messageText);
-        next();
     });
 
-    InspectorTest.log("");
-    next();
+    suite.addTestCase({
+        name: "EnsureNoDatabases",
+        description: "Ensure no databases exist at the start.",
+        test: (resolve, reject) => {
+            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.expectNoError(error);
+                InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist initially.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateDatabase1",
+        description: "Create a first database.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createDatabase('Database1')");
+            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.expectNoError(error);
+                InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist.");
+                InspectorTest.log(JSON.stringify(names));
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateDatabase2",
+        description: "Create a second database.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createDatabase('Database2')");
+            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.expectNoError(error);
+                InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist.");
+                InspectorTest.log(JSON.stringify(names));
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateDatabase3",
+        description: "Create a third database with a unicode name.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createDatabase('\u124d')");
+            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.expectNoError(error);
+                InspectorTest.expectThat(names.length === 3, "Three IndexedDB databases should exist.");
+                InspectorTest.log(JSON.stringify(names));
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateDatabase4",
+        description: "Create a fourth database with a unicode name.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createDatabase('\ud800\udf46')");
+            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.expectNoError(error);
+                InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist.");
+                InspectorTest.log(JSON.stringify(names));
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>

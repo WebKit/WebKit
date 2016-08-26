@@ -1,20 +1,26 @@
-CONSOLE MESSAGE: line 10: Created Database 'Database1'
-CONSOLE MESSAGE: line 10: Created Database 'Database2'
-CONSOLE MESSAGE: line 10: Created Database 'ቍ'
-CONSOLE MESSAGE: line 10: Created Database '𐍆'
+CONSOLE MESSAGE: line 9: Created Database 'Database1'
+CONSOLE MESSAGE: line 9: Created Database 'Database2'
+CONSOLE MESSAGE: line 9: Created Database 'ቍ'
+CONSOLE MESSAGE: line 9: Created Database '𐍆'
 
-PASS: No IndexedDB databases should exist initially
-[]
-Created Database 'Database1'
-PASS: A single IndexedDB database should exist
+== Running test suite: IndexedDB.requestDatabaseNames
+-- Running test case: ClearDatabases
+-- Running test case: EnsureNoDatabases
+PASS: No IndexedDB databases should exist initially.
+
+-- Running test case: CreateDatabase1
+PASS: A single IndexedDB database should exist.
 ["Database1"]
-Created Database 'Database2'
-PASS: Two IndexedDB databases should exist
+
+-- Running test case: CreateDatabase2
+PASS: Two IndexedDB databases should exist.
 ["Database1","Database2"]
-Created Database 'ቍ'
-PASS: Two IndexedDB databases should exist
+
+-- Running test case: CreateDatabase3
+PASS: Three IndexedDB databases should exist.
 ["Database1","Database2","ቍ"]
-Created Database '𐍆'
-PASS: Four IndexedDB databases should exist
+
+-- Running test case: CreateDatabase4
+PASS: Four IndexedDB databases should exist.
 ["Database1","Database2","ቍ","𐍆"]
 
