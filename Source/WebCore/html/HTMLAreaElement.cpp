@@ -26,6 +26,7 @@
 #include "Frame.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"
+#include "HTMLParserIdioms.h"
 #include "HitTestResult.h"
 #include "Path.h"
 #include "RenderImage.h"
@@ -37,7 +38,6 @@ using namespace HTMLNames;
 
 inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document& document)
     : HTMLAnchorElement(tagName, document)
-    , m_coordsLen(0)
     , m_lastSize(-1, -1)
     , m_shape(Unknown)
 {
@@ -62,7 +62,7 @@ void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomicStri
             m_shape = Rect;
         invalidateCachedRegion();
     } else if (name == coordsAttr) {
-        m_coords = newCoordsArray(value.string(), m_coordsLen);
+        m_coords = parseHTMLListOfOfFloatingPointNumberValues(value.string());
         invalidateCachedRegion();
     } else if (name == altAttr || name == accesskeyAttr) {
         // Do nothing.
@@ -129,7 +129,7 @@ LayoutRect HTMLAreaElement::computeRect(RenderObject* obj) const
 
 Path HTMLAreaElement::getRegion(const LayoutSize& size) const
 {
-    if (!m_coords && m_shape != Default)
+    if (m_coords.isEmpty() && m_shape != Default)
         return Path();
 
     LayoutUnit width = size.width();
@@ -138,38 +138,37 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
     // If element omits the shape attribute, select shape based on number of coordinates.
     Shape shape = m_shape;
     if (shape == Unknown) {
-        if (m_coordsLen == 3)
+        if (m_coords.size() == 3)
             shape = Circle;
-        else if (m_coordsLen == 4)
+        else if (m_coords.size() == 4)
             shape = Rect;
-        else if (m_coordsLen >= 6)
+        else if (m_coords.size() >= 6)
             shape = Poly;
     }
 
     Path path;
     switch (shape) {
         case Poly:
-            if (m_coordsLen >= 6) {
-                int numPoints = m_coordsLen / 2;
-                path.moveTo(FloatPoint(minimumValueForLength(m_coords[0], width), minimumValueForLength(m_coords[1], height)));
+            if (m_coords.size() >= 6) {
+                int numPoints = m_coords.size() / 2;
+                path.moveTo(FloatPoint(m_coords[0], m_coords[1]));
                 for (int i = 1; i < numPoints; ++i)
-                    path.addLineTo(FloatPoint(minimumValueForLength(m_coords[i * 2], width), minimumValueForLength(m_coords[i * 2 + 1], height)));
+                    path.addLineTo(FloatPoint(m_coords[i * 2], m_coords[i * 2 + 1]));
                 path.closeSubpath();
             }
             break;
         case Circle:
-            if (m_coordsLen >= 3) {
-                Length radius = m_coords[2];
-                int r = std::min(minimumValueForLength(radius, width), minimumValueForLength(radius, height));
-                path.addEllipse(FloatRect(minimumValueForLength(m_coords[0], width) - r, minimumValueForLength(m_coords[1], height) - r, 2 * r, 2 * r));
+            if (m_coords.size() >= 3) {
+                double r = m_coords[2];
+                path.addEllipse(FloatRect(m_coords[0] - r, m_coords[1] - r, 2 * r, 2 * r));
             }
             break;
         case Rect:
-            if (m_coordsLen >= 4) {
-                int x0 = minimumValueForLength(m_coords[0], width);
-                int y0 = minimumValueForLength(m_coords[1], height);
-                int x1 = minimumValueForLength(m_coords[2], width);
-                int y1 = minimumValueForLength(m_coords[3], height);
+            if (m_coords.size() >= 4) {
+                double x0 = m_coords[0];
+                double y0 = m_coords[1];
+                double x1 = m_coords[2];
+                double y1 = m_coords[3];
                 path.addRect(FloatRect(x0, y0, x1 - x0, y1 - y0));
             }
             break;

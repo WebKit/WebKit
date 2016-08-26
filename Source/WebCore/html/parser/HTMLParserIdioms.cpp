@@ -31,6 +31,7 @@
 #include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -213,6 +214,64 @@ Optional<int> parseHTMLNonNegativeInteger(const String& input)
         return Nullopt;
 
     return signedValue;
+}
+
+template <typename CharacterType>
+static inline bool isHTMLSpaceOrDelimiter(CharacterType character)
+{
+    return isHTMLSpace(character) || character == ',' || character == ';';
+}
+
+template <typename CharacterType>
+static inline bool isNumberStart(CharacterType character)
+{
+    return isASCIIDigit(character) || character == '.' || character == '-';
+}
+
+// https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-floating-point-number-values
+template <typename CharacterType>
+static Vector<double> parseHTMLListOfOfFloatingPointNumberValuesInternal(const CharacterType* position, const CharacterType* end)
+{
+    Vector<double> numbers;
+
+    // This skips past any leading delimiters.
+    while (position < end && isHTMLSpaceOrDelimiter(*position))
+        ++position;
+
+    while (position < end) {
+        // This skips past leading garbage.
+        while (position < end && !(isHTMLSpaceOrDelimiter(*position) || isNumberStart(*position)))
+            ++position;
+
+        const CharacterType* numberStart = position;
+        while (position < end && !isHTMLSpaceOrDelimiter(*position))
+            ++position;
+
+        size_t parsedLength = 0;
+        double number = parseDouble(numberStart, position - numberStart, parsedLength);
+        numbers.append(parsedLength > 0 && std::isfinite(number) ? number : 0);
+
+        // This skips past the delimiter.
+        while (position < end && isHTMLSpaceOrDelimiter(*position))
+            ++position;
+    }
+
+    return numbers;
+}
+
+Vector<double> parseHTMLListOfOfFloatingPointNumberValues(const String& input)
+{
+    unsigned length = input.length();
+    if (!length)
+        return { };
+
+    if (LIKELY(input.is8Bit())) {
+        auto* start = input.characters8();
+        return parseHTMLListOfOfFloatingPointNumberValuesInternal(start, start + length);
+    }
+
+    auto* start = input.characters16();
+    return parseHTMLListOfOfFloatingPointNumberValuesInternal(start, start + length);
 }
 
 static bool threadSafeEqual(const StringImpl& a, const StringImpl& b)

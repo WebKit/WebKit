@@ -1,3 +1,14 @@
+2016-08-26  Chris Dumez  <cdumez@apple.com>
+
+        HTMLAreaElement's coords attributes parsing does not comply with the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=161216
+
+        Reviewed by Andreas Kling.
+
+        Rebaseline W3C test now that all checks are passing. Chrome is also passing all the checks.
+
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords-expected.txt:
+
 2016-08-25  Johan K. Jensen  <johan_jensen@apple.com>
 
         Update the Resource Timing implementation

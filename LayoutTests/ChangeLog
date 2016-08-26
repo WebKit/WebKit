@@ -1,5 +1,17 @@
 2016-08-26  Chris Dumez  <cdumez@apple.com>
 
+        HTMLAreaElement's coords attributes parsing does not comply with the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=161216
+
+        Reviewed by Andreas Kling.
+
+        Unskip web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html
+        as it is now passing and not longer crashing in debug builds.
+
+        * TestExpectations:
+
+2016-08-26  Chris Dumez  <cdumez@apple.com>
+
         Trying to access cross-origin Location properties should throw a SecurityError
         https://bugs.webkit.org/show_bug.cgi?id=161248
 

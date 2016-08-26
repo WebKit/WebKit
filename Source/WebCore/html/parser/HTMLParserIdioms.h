@@ -28,6 +28,7 @@
 #include <unicode/uchar.h>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -65,6 +66,9 @@ WEBCORE_EXPORT Optional<int> parseHTMLInteger(const String&);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
 WEBCORE_EXPORT Optional<int> parseHTMLNonNegativeInteger(const String&);
+
+// https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-floating-point-number-values
+Vector<double> parseHTMLListOfOfFloatingPointNumberValues(const String&);
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-settings-attribute
 String parseCORSSettingsAttribute(const AtomicString&);
