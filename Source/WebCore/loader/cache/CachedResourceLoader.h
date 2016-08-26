@@ -140,7 +140,9 @@ public:
 
     void documentDidFinishLoadEvent();
 
+#if ENABLE(WEB_TIMING)
     ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
+#endif
 
 private:
     explicit CachedResourceLoader(DocumentLoader*);

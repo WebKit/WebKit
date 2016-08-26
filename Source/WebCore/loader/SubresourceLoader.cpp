@@ -463,8 +463,10 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     finishTime = monotonicallyIncreasingTime();
     m_loadTiming.setResponseEnd(finishTime);
 
+#if ENABLE(WEB_TIMING)
     if (m_documentLoader->cachedResourceLoader().document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         m_documentLoader->cachedResourceLoader().resourceTimingInformation().addResourceTiming(m_resource, *m_documentLoader->cachedResourceLoader().document(), m_resource->loader()->loadTiming());
+#endif
 
     m_state = Finishing;
     m_resource->setLoadFinishTime(finishTime);
