@@ -15,7 +15,9 @@ function checkframe()
     try {
       var ref = document.getElementById("frame").contentDocument.referrer;
       alert('Referrer is "' + ref + '"'); 
-    } catch (e1) {}
+    } catch (e1) {
+        console.log(e1);
+    }
     checkIfFrameLocationMatchesSrcAndCallDone('frame');
 }
 </script>

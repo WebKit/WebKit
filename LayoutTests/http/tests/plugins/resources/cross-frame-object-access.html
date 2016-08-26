@@ -14,9 +14,12 @@ function checkLocationObject(l)
         return false;
     }
 
-    if (l.href) {
+    try {
+        l.href;
         debug('could access top.location.href');
         return false;
+    } catch (e) {
+        console.log(e);
     }
     
     return true;

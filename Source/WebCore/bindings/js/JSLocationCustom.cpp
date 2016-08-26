@@ -55,7 +55,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
         return true;
     }
 
-    printErrorMessageForFrame(frame, message);
+    throwSecurityError(*exec, message);
     slot.setUndefined();
     return true;
 }

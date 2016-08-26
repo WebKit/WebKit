@@ -54,6 +54,7 @@ function canGet(keyPath)
     try {
         return eval("window." + keyPath) !== undefined;
     } catch(e) {
+        console.log(e);
         return false;
     }
 }
@@ -66,6 +67,7 @@ function canGetDescriptor(target, property)
         // slot and descriptor delegates we also allow descriptor with undefined value/getter/setter
         return  desc !== undefined && (desc.value !== undefined || desc.get !== undefined || desc.set !== undefined);
     } catch(e) {
+        console.log(e);
         return false;
     }
 }
@@ -81,6 +83,7 @@ function canSet(keyPath, valuePath)
         eval("window." + keyPath + " = " + valuePath);
         return eval("window." + keyPath) === eval("window." + valuePath);
     } catch(e) {
+        console.log(e);
         return false;
     }
 }
@@ -91,6 +94,7 @@ function canCall(keyPath, argumentString)
         eval("window." + keyPath + "(" + (argumentString === undefined ? "" : "'" + argumentString + "'") + ")");
         return true;
     } catch(e) {
+        console.log(e);
         return false;
     }
 }
@@ -106,6 +110,8 @@ function toString(expression, valueForException)
             throw null;
         return String(evalExpression);
     } catch(e) {
+        if (e)
+            console.log(e);
         return valueForException;
     }
 }

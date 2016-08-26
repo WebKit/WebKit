@@ -842,6 +842,12 @@ void throwInvalidStateError(JSC::ExecState& state, const char* message)
     state.vm().throwException(&state, createDOMException(&state, INVALID_STATE_ERR, &messageString));
 }
 
+void throwSecurityError(JSC::ExecState& state, const String& message)
+{
+    ASSERT(!state.hadException());
+    state.vm().throwException(&state, createDOMException(&state, SECURITY_ERR, message));
+}
+
 JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState& state, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues)
 {
     StringBuilder builder;

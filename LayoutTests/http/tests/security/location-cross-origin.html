@@ -8,20 +8,19 @@ description("Test security checking for access to Location.");
 jsTestIsAsync = true;
 
 onload = function() {
-    shouldBeUndefined("frames[0].location.protocol");
-    shouldBeUndefined("frames[0].location.host");
-    shouldBeUndefined("frames[0].location.hostname");
-    shouldBeUndefined("frames[0].location.port");
-    shouldBeUndefined("frames[0].location.pathname");
-    shouldBeUndefined("frames[0].location.search");
-    shouldBeUndefined("frames[0].location.hash");
-    shouldBeUndefined("frames[0].location.origin");
-    shouldBeUndefined("frames[0].location.ancestorOrigins");
-    shouldThrow("frames[0].location.toString()");
-    shouldThrow("frames[0].location.reload()");
-    shouldThrow("frames[0].location.assign('about:blank')");
-    // The specification seems to allow access to href but Firefox does not.
-    shouldBeUndefined("frames[0].location.href");
+    shouldThrowErrorName("frames[0].location.protocol", "SecurityError");
+    shouldThrowErrorName("frames[0].location.host", "SecurityError");
+    shouldThrowErrorName("frames[0].location.hostname", "SecurityError");
+    shouldThrowErrorName("frames[0].location.port", "SecurityError");
+    shouldThrowErrorName("frames[0].location.pathname", "SecurityError");
+    shouldThrowErrorName("frames[0].location.search", "SecurityError");
+    shouldThrowErrorName("frames[0].location.hash", "SecurityError");
+    shouldThrowErrorName("frames[0].location.origin", "SecurityError");
+    shouldThrowErrorName("frames[0].location.ancestorOrigins", "SecurityError");
+    shouldThrowErrorName("frames[0].location.toString()", "SecurityError");
+    shouldThrowErrorName("frames[0].location.reload()", "SecurityError");
+    shouldThrowErrorName("frames[0].location.assign('about:blank')", "SecurityError");
+    shouldThrowErrorName("frames[0].location.href", "SecurityError");
 
     shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'protocol').get.call(frames[0].location)");
     shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'host').get.call(frames[0].location)");

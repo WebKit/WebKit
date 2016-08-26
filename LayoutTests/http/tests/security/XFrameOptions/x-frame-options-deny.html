@@ -7,12 +7,13 @@
     }
 
     function checkIfDone() {
-        var url = document.querySelector('iframe').contentWindow.location.href;
-
-        if (!url)
-            console.log("PASS: Could not read contentWindow.location.href");
-        else
+        try {
+            var url = document.querySelector('iframe').contentWindow.location.href;
             console.log("FAIL: Could read contentWindow.location.href");
+        } catch (e) {
+            console.log(e);
+            console.log("PASS: Could not read contentWindow.location.href");
+        }
         testRunner.notifyDone();
     }
 </script>

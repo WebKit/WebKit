@@ -120,6 +120,7 @@ void throwAttributeTypeError(JSC::ExecState&, const char* interfaceName, const c
 WEBCORE_EXPORT void throwSequenceTypeError(JSC::ExecState&);
 WEBCORE_EXPORT bool throwSetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
 WEBCORE_EXPORT void throwNonFiniteTypeError(JSC::ExecState&);
+void throwSecurityError(JSC::ExecState&, const String& message);
 
 WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues);
 JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName);

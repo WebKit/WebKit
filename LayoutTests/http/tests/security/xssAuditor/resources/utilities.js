@@ -7,7 +7,9 @@ function checkIfFrameLocationMatchesSrcAndCallDone(frameId)
     try {
         actualURL = frame.contentWindow.location.href;
     } 
-    catch (e) {}
+    catch (e) {
+        console.log(e);
+    }
     
     if (actualURL != frame.src)
         alert('URL mismatch: ' + actualURL + ' vs. ' + frame.src);
