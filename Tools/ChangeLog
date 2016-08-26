@@ -1,3 +1,23 @@
+2016-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] run-gtk-tests should use the driver environment for checking the accessibility bus
+        https://bugs.webkit.org/show_bug.cgi?id=161149
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new function for waiting for the accesibility bus. It sets
+        the test environment variables before starting the GLib mainloop.
+        And restores the previous environment after it has finished.
+        It also adds a timeout (5 seconds) to abort in case it has not
+        been able to detect the accesibility bus before the timeout expires.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+        (TestRunner._wait_for_accessibility_bus):
+        (TestRunner._wait_for_accessibility_bus.timeout_accessibility_bus):
+        (TestRunner._start_accessibility_daemons):
+        (TestRunner._get_tests_from_google_test_suite): Run this command also with the driver test environment.
+
 2016-08-26  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Warning fix.

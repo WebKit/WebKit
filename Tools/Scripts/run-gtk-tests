@@ -153,6 +153,28 @@ class TestRunner:
 
         return None
 
+    def _wait_for_accessibility_bus(self):
+        def timeout_accessibility_bus():
+            self._accessibility_bus_found = False
+            sys.stderr.write("Timeout waiting for the accesibility bus.\n")
+            sys.stderr.flush()
+            loop.quit()
+        # Backup current environment, and temporally set the test one.
+        oldenv = dict(os.environ)
+        os.environ.clear()
+        os.environ.update(self._test_env)
+        # We spin a main loop until the bus name appears on DBus.
+        self._accessibility_bus_found = True
+        loop = GLib.MainLoop()
+        Gio.bus_watch_name(Gio.BusType.SESSION, 'org.a11y.Bus', Gio.BusNameWatcherFlags.NONE,
+                           lambda *args: loop.quit(), None)
+        GLib.timeout_add_seconds(5, timeout_accessibility_bus)
+        loop.run()
+        # Restore previous environment.
+        os.environ.clear()
+        os.environ.update(oldenv)
+        return self._accessibility_bus_found
+
     def _start_accessibility_daemons(self):
         spi_bus_launcher_path = self._lookup_atspi2_binary('at-spi-bus-launcher')
         spi_registryd_path = self._lookup_atspi2_binary('at-spi2-registryd')
@@ -166,12 +188,11 @@ class TestRunner:
             sys.stderr.flush()
             return False
 
-        # We need to wait until the SPI bus is launched before trying to start the SPI
-        # registry, so we spin a main loop until the bus name appears on DBus.
-        loop = GLib.MainLoop()
-        Gio.bus_watch_name(Gio.BusType.SESSION, 'org.a11y.Bus', Gio.BusNameWatcherFlags.NONE,
-                           lambda *args: loop.quit(), None)
-        loop.run()
+        # We need to wait until the SPI bus is launched before trying to start the SPI registry.
+        if not self._wait_for_accessibility_bus():
+            sys.stderr.write("Failed checking the accessibility bus within D-Bus\n")
+            sys.stderr.flush()
+            return False
 
         try:
             self._spi_registryd = subprocess.Popen([spi_registryd_path], env=self._test_env)
@@ -330,7 +351,7 @@ class TestRunner:
 
     def _get_tests_from_google_test_suite(self, test_program):
         try:
-            output = subprocess.check_output([test_program, '--gtest_list_tests'])
+            output = subprocess.check_output([test_program, '--gtest_list_tests'], env=self._test_env)
         except subprocess.CalledProcessError:
             sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
             sys.stderr.flush()
