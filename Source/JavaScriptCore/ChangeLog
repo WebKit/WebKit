@@ -1,3 +1,14 @@
+2016-08-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Provide a way to clear an IndexedDB object store
+        https://bugs.webkit.org/show_bug.cgi?id=161167
+        <rdar://problem/27996932>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/IndexedDB.json:
+        Cleanup the protocol file.
+
 2016-08-26  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Some CSS selectors in the UI aren't escaped

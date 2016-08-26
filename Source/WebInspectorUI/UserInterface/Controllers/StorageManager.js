@@ -138,8 +138,6 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, {domStorage});
     }
 
-    // Protected
-
     requestIndexedDatabaseData(objectStore, objectStoreIndex, startEntryIndex, maximumEntryCount, callback)
     {
         console.assert(window.IndexedDBAgent);
@@ -176,6 +174,15 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         };
 
         IndexedDBAgent.requestData.invoke(requestArguments, processData);
+    }
+
+    clearObjectStore(objectStore)
+    {
+        let securityOrigin = objectStore.parentDatabase.securityOrigin;
+        let databaseName = objectStore.parentDatabase.name;
+        let objectStoreName = objectStore.name;
+
+        IndexedDBAgent.clearObjectStore(securityOrigin, databaseName, objectStoreName);
     }
 
     // Private

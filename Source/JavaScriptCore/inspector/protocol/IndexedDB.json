@@ -90,17 +90,18 @@
         },
         {
             "name": "requestDatabaseNames",
+            "description": "Requests database names for given security origin.",
             "async": true,
             "parameters": [
                 { "name": "securityOrigin", "type": "string", "description": "Security origin." }
             ],
             "returns": [
                 { "name": "databaseNames", "type": "array", "items": { "type": "string" }, "description": "Database names for origin." }
-            ],
-            "description": "Requests database names for given security origin."
+            ]
         },
         {
             "name": "requestDatabase",
+            "description": "Requests database with given name in given frame.",
             "async": true,
             "parameters": [
                 { "name": "securityOrigin", "type": "string", "description": "Security origin." },
@@ -108,11 +109,11 @@
             ],
             "returns": [
                 { "name": "databaseWithObjectStores", "$ref": "DatabaseWithObjectStores", "description": "Database with an array of object stores." }
-            ],
-            "description": "Requests database with given name in given frame."
+            ]
         },
         {
             "name": "requestData",
+            "description": "Requests data from object store or index.",
             "async": true,
             "parameters": [
                 { "name": "securityOrigin", "type": "string", "description": "Security origin." },
@@ -126,20 +127,17 @@
             "returns": [
                 { "name": "objectStoreDataEntries", "type": "array", "items": { "$ref": "DataEntry" }, "description": "Array of object store data entries." },
                 { "name": "hasMore", "type": "boolean", "description": "If true, there are more entries to fetch in the given range." }
-            ],
-            "description": "Requests data from object store or index."
+            ]
         },
         {
             "name": "clearObjectStore",
+            "description": "Clears all entries from an object store.",
             "async": true,
             "parameters": [
                 { "name": "securityOrigin", "type": "string", "description": "Security origin." },
                 { "name": "databaseName", "type": "string", "description": "Database name." },
                 { "name": "objectStoreName", "type": "string", "description": "Object store name." }
-            ],
-            "returns": [
-            ],
-            "description": "Clears all entries from an object store."
+            ]
         }
     ]
 }

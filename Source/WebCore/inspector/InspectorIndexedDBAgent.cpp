@@ -477,6 +477,7 @@ public:
             m_requestCallback->sendFailure("Could not get transaction");
             return;
         }
+
         RefPtr<IDBObjectStore> idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
         if (!idbObjectStore) {
             m_requestCallback->sendFailure("Could not get object store");
@@ -706,7 +707,7 @@ public:
         if (!requestCallback().isActive())
             return;
 
-        RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(&database, m_objectStoreName);
+        RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(&database, m_objectStoreName, IDBTransaction::modeReadWrite());
         if (!idbTransaction) {
             m_requestCallback->sendFailure("Could not get transaction");
             return;
@@ -718,6 +719,7 @@ public:
             return;
         }
 
+        TransactionActivator activator(idbTransaction.get());
         ExceptionCodeWithMessage ec;
         JSC::ExecState* exec = context() ? context()->execState() : nullptr;
         RefPtr<IDBRequest> idbRequest = exec ? idbObjectStore->clear(*exec, ec) : nullptr;
@@ -726,6 +728,7 @@ public:
             m_requestCallback->sendFailure(String::format("Could not clear object store '%s': %d", m_objectStoreName.utf8().data(), ec.code));
             return;
         }
+
         idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback.copyRef()), false);
     }
 

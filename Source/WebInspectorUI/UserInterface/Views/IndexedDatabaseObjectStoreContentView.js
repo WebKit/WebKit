@@ -79,13 +79,16 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
 
         this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("indexed-database-object-store-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+
+        this._clearButtonNavigationItem = new WebInspector.ButtonNavigationItem("indexed-database-object-store-clear", WebInspector.UIString("Clear object store"), "Images/NavigationItemTrash.svg", 15, 15);
+        this._clearButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearButtonClicked, this);
     }
 
     // Public
 
     get navigationItems()
     {
-        return [this._refreshButtonNavigationItem];
+        return [this._refreshButtonNavigationItem, this._clearButtonNavigationItem];
     }
 
     closed()
@@ -159,5 +162,11 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
     {
         this._reset();
         this._fetchMoreData();
+    }
+
+    _clearButtonClicked()
+    {
+        WebInspector.storageManager.clearObjectStore(this._objectStore);
+        this._reset();
     }
 };
