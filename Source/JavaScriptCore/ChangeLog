@@ -1,3 +1,14 @@
+2016-08-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=161235
+
+        Reviewed by Brent Fulgham.
+
+        YarrPattern::errorMessage has inconsistent dll linkage.
+
+        * yarr/YarrPattern.h:
+
 2016-08-25  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix.
