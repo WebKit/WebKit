@@ -1,5 +1,14 @@
 2016-08-26  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking webgl/max-active-contexts-webglcontextlost-prevent-default.html as flaky on mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=161205
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-08-26  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking http/tests/media/hls/hls-accessiblity-describes-video-menu.html as flaky on mac-wk1.
         https://bugs.webkit.org/show_bug.cgi?id=161144
 
