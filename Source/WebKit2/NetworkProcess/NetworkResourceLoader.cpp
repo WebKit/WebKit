@@ -323,10 +323,7 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
             m_synchronousLoadData->response = m_response;
         else {
             RELEASE_LOG_IF_ALLOWED("Sending didReceiveResponse message to the WebContent process: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d", this, static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
-            if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(m_response, shouldWaitContinueDidReceiveResponse))) {
-                RELEASE_LOG_ERROR_IF_ALLOWED("Failed to send the didReceiveResponse IPC message to the WebContent process: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d", this, static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
-                return ShouldContinueDidReceiveResponse::No;
-            }
+            send(Messages::WebResourceLoader::DidReceiveResponse(m_response, shouldWaitContinueDidReceiveResponse));
         }
     }
 
@@ -369,7 +366,7 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
         startBufferingTimerIfNeeded();
         return;
     }
-    sendBufferMaybeAborting(buffer, encodedDataLength);
+    sendBuffer(buffer, encodedDataLength);
 }
 
 void NetworkResourceLoader::didFinishLoading(double finishTime)
@@ -391,9 +388,7 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
     else {
         if (m_bufferedData && !m_bufferedData->isEmpty()) {
             // FIXME: Pass a real value or remove the encoded data size feature.
-            bool shouldContinue = sendBufferMaybeAborting(*m_bufferedData, -1);
-            if (!shouldContinue)
-                return;
+            sendBuffer(*m_bufferedData, -1);
         }
         send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
     }
@@ -441,7 +436,7 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
         continueWillSendRequest(WTFMove(overridenRequest));
         return;
     }
-    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(redirectRequest, redirectResponse));
+    send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, redirectResponse));
 
 #if ENABLE(NETWORK_CACHE)
     if (canUseCachedRedirect(request))
@@ -510,15 +505,15 @@ void NetworkResourceLoader::bufferingTimerFired()
     m_bufferedData = SharedBuffer::create();
     m_bufferedDataEncodedDataLength = 0;
 
-    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedLength));
+    send(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedLength));
 }
 
-bool NetworkResourceLoader::sendBufferMaybeAborting(SharedBuffer& buffer, size_t encodedDataLength)
+void NetworkResourceLoader::sendBuffer(SharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(!isSynchronous());
 
     IPC::SharedBufferDataReference dataReference(&buffer);
-    return sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
+    send(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
 
 #if ENABLE(NETWORK_CACHE)
@@ -546,16 +541,14 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
     } else {
         bool needsContinueDidReceiveResponseMessage = isMainResource();
-        sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
+        send(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
 
 #if ENABLE(SHAREABLE_RESOURCE)
         if (!entry->shareableResourceHandle().isNull())
             send(Messages::WebResourceLoader::DidReceiveResource(entry->shareableResourceHandle(), currentTime()));
         else {
 #endif
-            bool shouldContinue = sendBufferMaybeAborting(*entry->buffer(), entry->buffer()->size());
-            if (!shouldContinue)
-                return;
+            sendBuffer(*entry->buffer(), entry->buffer()->size());
             send(Messages::WebResourceLoader::DidFinishResourceLoad(currentTime()));
 #if ENABLE(SHAREABLE_RESOURCE)
         }
@@ -592,7 +585,7 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr
     LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
 
     ++m_redirectCount;
-    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(*entry->redirectRequest(), entry->response()));
+    send(Messages::WebResourceLoader::WillSendRequest(*entry->redirectRequest(), entry->response()));
     m_isWaitingContinueWillSendRequestForCachedRedirect = true;
 }
 #endif
@@ -632,15 +625,6 @@ void NetworkResourceLoader::invalidateSandboxExtensions()
     }
 
     m_fileReferences.clear();
-}
-
-template<typename T>
-bool NetworkResourceLoader::sendAbortingOnFailure(T&& message, OptionSet<IPC::SendOption> sendOption)
-{
-    bool result = messageSenderConnection()->send(std::forward<T>(message), messageSenderDestinationID(), sendOption);
-    if (!result)
-        abort();
-    return result;
 }
 
 void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(const ProtectionSpace& protectionSpace)

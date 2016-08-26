@@ -1,3 +1,51 @@
+2016-08-26  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of NetworkResourceLoader::sendAbortingOnFailure
+        https://bugs.webkit.org/show_bug.cgi?id=161267
+
+        Reviewed by Dan Bernstein.
+
+        NetworkResourceLoader::sendAbortingOnFailure sends an IPC message, and if IPC::Connection::send returns false,
+        it will abort the network resource load.
+
+        IPC::Connection::send will only return false if the connection is invalid, and when it becomes invalidated the
+        connection client member function "didClose" is invoked. For the network process, this will call abort on all outstanding
+        network loads.
+
+        Auditing all the sendAbortingOnFailure call sites, shows that none of them can be called with an invalid connection,
+        so replace sendAbortingOnFailure with send.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        This is a NetworkLoadClient function which won't be called if the load has been aborted.
+
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        Ditto.
+
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        Ditto. Also, update a call to sendBufferMaybeAborting to sendBuffer.
+
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        This is another NetworkLoadClient function.
+
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        The buffering timer is stopped when abort() is called.
+
+        (WebKit::NetworkResourceLoader::sendBuffer):
+        Rename this from sendBufferMaybeAborting. It has three call sites:
+        - didReceiveBuffer and didFinishLoading are both NetworkLoadClient functions.
+        - didRetrieveCacheEntry is called from didFinishLoading (a NetworkLoadClient function) and from
+          the completion function of retrieveCacheEntry, which has an early return for when the loader has been aborted.
+
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        This is called from the retrieveCacheEntry completion function, which has an early return for when the loader has been aborted.
+
+        (WebKit::NetworkResourceLoader::dispatchWillSendRequestForCacheEntry):
+        Ditto.
+
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure): Deleted.
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2016-08-26  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Infinite recursion calling -charValue on a WKNSNumber

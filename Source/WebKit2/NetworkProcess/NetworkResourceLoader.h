@@ -129,12 +129,10 @@ private:
 
     void startBufferingTimerIfNeeded();
     void bufferingTimerFired();
-    bool sendBufferMaybeAborting(WebCore::SharedBuffer&, size_t encodedDataLength);
+    void sendBuffer(WebCore::SharedBuffer&, size_t encodedDataLength);
 
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
-
-    template<typename T> bool sendAbortingOnFailure(T&& message, OptionSet<IPC::SendOption> sendOption = { });
 
     const NetworkResourceLoadParameters m_parameters;
 
