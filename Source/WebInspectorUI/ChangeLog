@@ -1,3 +1,24 @@
+2016-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add protocol version for iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=161266
+        <rdar://problem/28036594>
+
+        Rubber-stamped by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Update missing localized strings.
+
+        * Versions/Inspector-iOS-10.0.json: Added.
+        Protocol for iOS 10.
+
+        * UserInterface/Protocol/Legacy/10.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js:
+        Re-generate the legacy backend commands files.
+
 2016-08-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show IndexedDB Database/ObjectStore/Index data in a details sidebar

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
