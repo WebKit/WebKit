@@ -1,3 +1,16 @@
+2016-08-26  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should indicate which bot processed the patch
+        https://bugs.webkit.org/show_bug.cgi?id=161222
+
+        Reviewed by Daniel Bates.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._build_bubble): Display the bot id in status bubble. Also removed "Started processing" message since
+        after bug fix of 161223, bots send the "Started processing patch" message and it would be displayed in Recent messages.
+        Also added "Started processing patch" message to progress_statuses.
+        I might consider displaying bot id in other statuses as well later on.
+
 2016-08-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Change homepage url to www.ewebkit.org on MiniBrowser
