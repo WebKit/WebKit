@@ -1,3 +1,9 @@
+2016-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        js/regress/polymorphic-put-by-id.html does not exist.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-08-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rebase iOS simulator WK1 imported/mozilla tests

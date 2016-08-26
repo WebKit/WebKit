@@ -1402,7 +1402,6 @@ js/promises-tests/promises-tests-2-3-1.html
 js/promises-tests/promises-tests-2-3-2.html
 js/promises-tests/promises-tests-2-3-3.html
 js/promises-tests/promises-tests-2-3-4.html 
-js/regress/polymorphic-put-by-id.html
 sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html
 sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html
 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html
