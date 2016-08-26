@@ -5,8 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 AXRole: AXMath 
     AXRole: AXGroup 
-        AXRole: AXGroup 
-            AXRole: AXSection AXValue: SVG
+        AXRole: AXSection AXValue: SVG
     AXRole: AXStatic AXValue: HTML
 PASS successfullyParsed is true
 

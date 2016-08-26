@@ -33,7 +33,7 @@
 #include "MathMLMathElement.h"
 #include "MathMLNames.h"
 #include "MathMLSelectElement.h"
-#include "RenderMathMLRow.h"
+#include "RenderMathMLBlock.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
@@ -41,7 +41,7 @@ namespace WebCore {
 using namespace MathMLNames;
 
 MathMLAnnotationElement::MathMLAnnotationElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document)
+    : MathMLPresentationElement(tagName, document)
 {
     ASSERT(hasTagName(annotationTag) || hasTagName(annotation_xmlTag));
 }
@@ -56,9 +56,8 @@ RenderPtr<RenderElement> MathMLAnnotationElement::createElementRenderer(RenderSt
     if (hasTagName(MathMLNames::annotationTag))
         return MathMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 
-    // FIXME: Do we really need to create a RenderMathMLRow?
     ASSERT(hasTagName(annotation_xmlTag));
-    return createRenderer<RenderMathMLRow>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLBlock>(*this, WTFMove(style));
 }
 
 bool MathMLAnnotationElement::childShouldCreateRenderer(const Node& child) const
@@ -100,7 +99,7 @@ void MathMLAnnotationElement::attributeChanged(const QualifiedName& name, const 
         if (is<MathMLElement>(parent) && parent->hasTagName(semanticsTag))
             downcast<MathMLElement>(*parent).updateSelectedChild();
     }
-    MathMLRowElement::attributeChanged(name, oldValue, newValue, reason);
+    MathMLPresentationElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 }
