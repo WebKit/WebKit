@@ -1,3 +1,16 @@
+2016-08-26  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Web Inspector: Frontend should have access to Resource Timing information
+        https://bugs.webkit.org/show_bug.cgi?id=160095
+
+        Reviewed by Alex Christensen.
+
+        Add method to get elapsed time for any monotonic time.
+        Used by InspectorNetworkAgent.
+
+        * wtf/Stopwatch.h:
+        (WTF::Stopwatch::elapsedTimeSinceMonotonicTime):
+
 2016-08-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the ENABLE(WEBASSEMBLY) build on Linux

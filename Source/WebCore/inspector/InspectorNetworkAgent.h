@@ -48,6 +48,7 @@ class CachedResource;
 class Document;
 class DocumentLoader;
 class InspectorPageAgent;
+class NetworkLoadTiming;
 class NetworkResourcesData;
 class ResourceError;
 class ResourceLoader;
@@ -115,6 +116,10 @@ public:
 
 private:
     void enable();
+
+    Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadTiming&, ResourceLoader&);
+    RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse&, ResourceLoader*);
+    Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedResource(CachedResource*);
 
     double timestamp();
 

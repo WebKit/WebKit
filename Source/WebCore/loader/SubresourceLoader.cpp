@@ -460,8 +460,13 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     Ref<SubresourceLoader> protectedThis(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
 
-    finishTime = monotonicallyIncreasingTime();
-    m_loadTiming.setResponseEnd(finishTime);
+    // FIXME: The finishTime that is passed in is from the NetworkProcess and is more accurate.
+    // However, all other load times are generated from the web process or offsets.
+    // Mixing times from different processes can cause the finish time to be earlier than
+    // the response received time due to inter-process communication lag.
+    UNUSED_PARAM(finishTime);
+    double responseEndTime = monotonicallyIncreasingTime();
+    m_loadTiming.setResponseEnd(responseEndTime);
 
 #if ENABLE(WEB_TIMING)
     if (m_documentLoader->cachedResourceLoader().document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
@@ -469,14 +474,14 @@ void SubresourceLoader::didFinishLoading(double finishTime)
 #endif
 
     m_state = Finishing;
-    m_resource->setLoadFinishTime(finishTime);
+    m_resource->setLoadFinishTime(responseEndTime); // FIXME: Users of the loadFinishTime should use the LoadTiming struct instead.
     m_resource->finishLoading(resourceData());
 
     if (wasCancelled())
         return;
     m_resource->finish();
     ASSERT(!reachedTerminalState());
-    didFinishLoadingOnePart(finishTime);
+    didFinishLoadingOnePart(responseEndTime);
     notifyDone();
     if (reachedTerminalState())
         return;

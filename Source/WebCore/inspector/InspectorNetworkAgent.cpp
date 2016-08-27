@@ -184,10 +184,13 @@ static Ref<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
     return headersObject;
 }
 
-static Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadTiming& timing, DocumentLoader* loader)
+Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadTiming& timing, ResourceLoader& resourceLoader)
 {
+    double monotonicTime = resourceLoader.loadTiming().startTime();
+    double startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSinceMonotonicTime(monotonicTime);
+
     return Inspector::Protocol::Network::ResourceTiming::create()
-        .setNavigationStart(loader->timing().startTime())
+        .setStartTime(startTimeInInspector)
         .setDomainLookupStart(timing.domainLookupStart)
         .setDomainLookupEnd(timing.domainLookupEnd)
         .setConnectStart(timing.connectStart)
@@ -213,7 +216,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
     return requestObject;
 }
 
-static RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse& response, DocumentLoader* loader)
+RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourceResponse(const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (response.isNull())
         return nullptr;
@@ -230,12 +233,13 @@ static RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResp
         .release();
 
     responseObject->setFromDiskCache(response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation);
-    responseObject->setTiming(buildObjectForTiming(response.networkLoadTiming(), loader));
+    if (resourceLoader)
+        responseObject->setTiming(buildObjectForTiming(response.networkLoadTiming(), *resourceLoader));
 
     return WTFMove(responseObject);
 }
 
-static Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedResource(CachedResource* cachedResource, DocumentLoader* loader)
+Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildObjectForCachedResource(CachedResource* cachedResource)
 {
     auto resourceObject = Inspector::Protocol::Network::CachedResource::create()
         .setUrl(cachedResource->url())
@@ -243,7 +247,7 @@ static Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedRes
         .setBodySize(cachedResource->encodedSize())
         .release();
 
-    auto resourceResponse = buildObjectForResourceResponse(cachedResource->response(), loader);
+    auto resourceResponse = buildObjectForResourceResponse(cachedResource->response(), cachedResource->loader());
     resourceObject->setResponse(WTFMove(resourceResponse));
 
     String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
@@ -305,7 +309,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     Inspector::Protocol::Page::ResourceType resourceType = InspectorPageAgent::resourceTypeJson(type);
 
     RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject = buildInitiatorObject(loader.frame() ? loader.frame()->document() : nullptr);
-    m_frontendDispatcher->requestWillBeSent(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), loader.url().string(), buildObjectForResourceRequest(request), timestamp(), initiatorObject, buildObjectForResourceResponse(redirectResponse, &loader), type != InspectorPageAgent::OtherResource ? &resourceType : nullptr);
+    m_frontendDispatcher->requestWillBeSent(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), loader.url().string(), buildObjectForResourceRequest(request), timestamp(), initiatorObject, buildObjectForResourceResponse(redirectResponse, nullptr), type != InspectorPageAgent::OtherResource ? &resourceType : nullptr);
 }
 
 void InspectorNetworkAgent::markResourceAsCached(unsigned long identifier)
@@ -322,7 +326,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
         return;
 
     String requestId = IdentifiersFactory::requestId(identifier);
-    RefPtr<Inspector::Protocol::Network::Response> resourceResponse = buildObjectForResourceResponse(response, &loader);
+    RefPtr<Inspector::Protocol::Network::Response> resourceResponse = buildObjectForResourceResponse(response, resourceLoader);
 
     bool isNotModified = response.httpStatusCode() == 304;
 
@@ -390,18 +394,14 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
 
     m_resourcesData->maybeDecodeDataToContent(requestId);
 
-    // FIXME: The finishTime that is passed in is from the NetworkProcess and is more accurate.
-    // However, all other times passed to the Inspector are generated from the web process. Mixing
-    // times from different processes can cause the finish time to be earlier than the response
-    // received time due to inter-process communication lag.
-    finishTime = timestamp();
+    double elapsedFinishTime = finishTime ? m_environment.executionStopwatch()->elapsedTimeSinceMonotonicTime(finishTime) : timestamp();
 
     String sourceMappingURL;
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (resourceData && resourceData->cachedResource())
         sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(resourceData->cachedResource());
 
-    m_frontendDispatcher->loadingFinished(requestId, finishTime, !sourceMappingURL.isEmpty() ? &sourceMappingURL : nullptr);
+    m_frontendDispatcher->loadingFinished(requestId, elapsedFinishTime, !sourceMappingURL.isEmpty() ? &sourceMappingURL : nullptr);
 }
 
 void InspectorNetworkAgent::didFailLoading(unsigned long identifier, DocumentLoader& loader, const ResourceError& error)
@@ -435,7 +435,7 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader& loade
 
     RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject = buildInitiatorObject(loader.frame() ? loader.frame()->document() : nullptr);
 
-    m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameId, loaderId, loader.url().string(), timestamp(), initiatorObject, buildObjectForCachedResource(&resource, &loader));
+    m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameId, loaderId, loader.url().string(), timestamp(), initiatorObject, buildObjectForCachedResource(&resource));
 }
 
 void InspectorNetworkAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)

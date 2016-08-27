@@ -33,7 +33,7 @@
             "type": "object",
             "description": "Timing information for the request.",
             "properties": [
-                { "name": "navigationStart", "type": "number", "description": "Timing's navigationStart is a baseline in seconds, while the other numbers are ticks in milliseconds relatively to this navigationStart." },
+                { "name": "startTime", "type": "number", "description": "Timing's startTime is a baseline in seconds, while the other numbers are ticks in milliseconds relatively to this." },
                 { "name": "domainLookupStart", "type": "number", "description": "Started DNS address resolve." },
                 { "name": "domainLookupEnd", "type": "number", "description": "Finished DNS address resolve." },
                 { "name": "connectStart", "type": "number", "description": "Started connecting to the remote host." },
