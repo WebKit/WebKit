@@ -1,5 +1,17 @@
 2016-08-26  Dan Bernstein  <mitz@apple.com>
 
+        Keep trying to fix the build after r205057.
+
+        * MobileMiniBrowser/MobileMiniBrowser/AppDelegate.m: Don’t try to import nonexistent
+          config.h. This file is only meant to be built with Xcode anyway.
+        * MobileMiniBrowser/MobileMiniBrowser/Base.lproj/LaunchScreen.storyboard: Make this compile
+          with Xcode 7.3 and deploy to iOS 9.0.
+        * MobileMiniBrowser/MobileMiniBrowser/Base.lproj/Main.storyboard: Ditto.
+        * MobileMiniBrowser/MobileMiniBrowser/TabViewController.m: Don’t try to import config.h.
+        * MobileMiniBrowser/MobileMiniBrowser/WebViewController.m: Ditto.
+
+2016-08-26  Dan Bernstein  <mitz@apple.com>
+
         Start trying to fix the build after r205057.
 
         * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:

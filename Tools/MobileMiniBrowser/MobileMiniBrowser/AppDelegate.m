@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
 #import "AppDelegate.h"
 
 @interface AppDelegate ()

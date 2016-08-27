@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
 #import "WebViewController.h"
 
 #import "TabViewController.h"
