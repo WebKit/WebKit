@@ -115,6 +115,8 @@ void ResourceHandle::cancel()
     ResourceHandleManager::sharedInstance()->cancel(this);
 }
 
+#if PLATFORM(WIN)
+
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
     allowsAnyHTTPSCertificateHosts(host);
@@ -127,6 +129,8 @@ void ResourceHandle::setClientCertificateInfo(const String& host, const String& 
     else
         LOG(Network, "Invalid client certificate file: %s!\n", certificate.latin1().data());
 }
+
+#endif
 
 #if PLATFORM(WIN) && USE(CF)
 
