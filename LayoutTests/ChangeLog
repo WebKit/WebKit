@@ -1,3 +1,12 @@
+2016-08-27  Youenn Fablet  <youenn@apple.com>
+
+        html/dom/interfaces.html is flaky due to WebSocket test
+        https://bugs.webkit.org/show_bug.cgi?id=161290
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations: Making html/dom/interfaces.html expectation specific to Release.
+
 2016-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Add run-webkit-tests --print-expectations to show expectations for all or a subset of tests
