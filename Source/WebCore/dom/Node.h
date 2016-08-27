@@ -267,7 +267,6 @@ public:
 
     bool isUnresolvedCustomElement() const { return isElementNode() && getFlag(IsEditingTextOrUnresolvedCustomElementFlag); }
     void setIsUnresolvedCustomElement() { setFlag(IsEditingTextOrUnresolvedCustomElementFlag); }
-    void setCustomElementIsResolved();
 #endif
 
     // Returns null, a child of ShadowRoot, or a legacy shadow root.
@@ -768,16 +767,6 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     ASSERT(!isShadowRoot());
     return parentNode();
 }
-
-#if ENABLE(CUSTOM_ELEMENTS)
-
-inline void Node::setCustomElementIsResolved()
-{
-    clearFlag(IsEditingTextOrUnresolvedCustomElementFlag);
-    setFlag(IsCustomElement);
-}
-
-#endif
 
 } // namespace WebCore
 

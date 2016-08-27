@@ -44,6 +44,7 @@ class DOMTokenList;
 class ElementRareData;
 class HTMLDocument;
 class IntSize;
+class JSCustomElementInterface;
 class KeyboardEvent;
 class Locale;
 class PlatformKeyboardEvent;
@@ -271,6 +272,11 @@ public:
 
     ShadowRoot* userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    void setCustomElementIsResolved(JSCustomElementInterface&);
+    JSCustomElementInterface* customElementInterface() const;
+#endif
 
     // FIXME: this should not be virtual, do not override this.
     virtual const AtomicString& shadowPseudoId() const;

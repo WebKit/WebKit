@@ -1574,7 +1574,8 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
     // This element is new to the shadow tree (and its tree scope) only if the parent into which this element
     // or its ancestor is inserted belongs to the same tree scope as this element's.
     TreeScope* newScope = &insertionPoint.treeScope();
-    HTMLDocument* newDocument = !wasInDocument && inDocument() && is<HTMLDocument>(newScope->documentScope()) ? &downcast<HTMLDocument>(newScope->documentScope()) : nullptr;
+    bool becomeConnected = !wasInDocument && inDocument();
+    HTMLDocument* newDocument = becomeConnected && is<HTMLDocument>(newScope->documentScope()) ? &downcast<HTMLDocument>(newScope->documentScope()) : nullptr;
     if (newScope != &treeScope())
         newScope = nullptr;
 
@@ -1600,7 +1601,7 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
     }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (newDocument && UNLIKELY(isCustomElement()))
+    if (becomeConnected && UNLIKELY(isCustomElement()))
         CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
 #endif
 
@@ -1622,7 +1623,8 @@ void Element::removedFrom(ContainerNode& insertionPoint)
 
     if (insertionPoint.isInTreeScope()) {
         TreeScope* oldScope = &insertionPoint.treeScope();
-        HTMLDocument* oldDocument = inDocument() && is<HTMLDocument>(oldScope->documentScope()) ? &downcast<HTMLDocument>(oldScope->documentScope()) : nullptr;
+        bool becomeDisconnected = inDocument();
+        HTMLDocument* oldDocument = becomeDisconnected && is<HTMLDocument>(oldScope->documentScope()) ? &downcast<HTMLDocument>(oldScope->documentScope()) : nullptr;
 
         // ContainerNode::removeBetween always sets the removed chid's tree scope to Document's but InTreeScope flag is unset in Node::removedFrom.
         // So this element has been removed from the old tree scope only if InTreeScope flag is set and this element's tree scope is Document's.
@@ -1651,7 +1653,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
         }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-        if (oldDocument && UNLIKELY(isCustomElement()))
+        if (becomeDisconnected && UNLIKELY(isCustomElement()))
             CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(*this);
 #endif
     }
@@ -1820,6 +1822,27 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
     }
     return *shadowRoot;
 }
+
+    
+#if ENABLE(CUSTOM_ELEMENTS)
+
+void Element::setCustomElementIsResolved(JSCustomElementInterface& elementInterface)
+{
+    clearFlag(IsEditingTextOrUnresolvedCustomElementFlag);
+    setFlag(IsCustomElement);
+    ensureElementRareData().setCustomElementInterface(elementInterface);
+}
+
+JSCustomElementInterface* Element::customElementInterface() const
+{
+    ASSERT(isCustomElement());
+    if (!hasRareData())
+        return nullptr;
+    return elementRareData()->customElementInterface();
+}
+
+#endif
+
 
 const AtomicString& Element::shadowPseudoId() const
 {

@@ -1,3 +1,21 @@
+2016-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Adopted custom element's callbacks should continue to work
+        https://bugs.webkit.org/show_bug.cgi?id=161065
+
+        Reviewed by Andreas Kling.
+
+        Added test cases for adopting custom elements into various kinds of documents.
+
+        * fast/custom-elements/connected-callbacks-expected.txt:
+        * fast/custom-elements/connected-callbacks.html:
+        * fast/custom-elements/defined-pseudo-class-expected.txt:
+        * fast/custom-elements/defined-pseudo-class.html:
+        * fast/custom-elements/disconnected-callbacks-expected.txt:
+        * fast/custom-elements/disconnected-callbacks.html:
+        * fast/custom-elements/resources/document-types.js: Added.
+        * fast/custom-elements/resources/empty-html-document.html: Added.
+
 2016-08-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking webgl/max-active-contexts-webglcontextlost-prevent-default.html as flaky on mac-wk1.

@@ -1,5 +1,5 @@
 
-PASS The defined flag of a custom element must be set if a custom element has not been upgraded yet 
+PASS The defined flag of a custom element must not be set if a custom element has not been upgraded yet 
 PASS The defined flag of a custom element must be set when a custom element is successfully upgraded 
 PASS The defined flag of a custom element must be set if there is a matching definition 
 PASS The defined flag of a custom element created by HTML parser must be unset if there is no matching definition 

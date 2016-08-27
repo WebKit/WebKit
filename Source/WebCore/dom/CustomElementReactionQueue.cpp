@@ -106,23 +106,9 @@ void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, JSCusto
         queue->m_items.append({CustomElementReactionQueueItem::Type::ElementUpgrade, element, elementInterface});
 }
 
-static JSCustomElementInterface* findInterfaceForCustomElement(Element& element)
-{
-    ASSERT(element.isCustomElement());
-    auto* window = element.document().domWindow();
-    if (!window)
-        return nullptr;
-
-    auto* registry = window->customElementRegistry();
-    if (!registry)
-        return nullptr;
-
-    return registry->findInterface(element.tagQName());
-}
-
 void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& element)
 {
-    auto* elementInterface = findInterfaceForCustomElement(element);
+    auto* elementInterface = element.customElementInterface();
     if (!elementInterface)
         return;
 
@@ -132,7 +118,7 @@ void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& eleme
 
 void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
 {
-    auto* elementInterface = findInterfaceForCustomElement(element);
+    auto* elementInterface = element.customElementInterface();
     if (!elementInterface)
         return;
 
@@ -142,7 +128,7 @@ void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& el
 
 void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
-    auto* elementInterface = findInterfaceForCustomElement(element);
+    auto* elementInterface = element.customElementInterface();
     if (!elementInterface || !elementInterface->observesAttribute(attributeName.localName()))
         return;
 

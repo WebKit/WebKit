@@ -1,10 +1,43 @@
 
 PASS Removing a custom element from a document must enqueue and invoke disconnectedCallback 
-PASS Removing a custom element from a detahed node must not enqueue and invoke connectedCallback 
-FAIL Removing a custom element from a window-less document must enqueue and invoke disconnectedCallback assert_array_equals: lengths differ, expected 2 got 0
-PASS Removing an ancestor of a custom element from a document must enqueue and invoke disconnectedCallback 
-FAIL Removing an ancestor of custom element from a a window-less document must enqueue and invoke disconnectedCallback assert_array_equals: lengths differ, expected 2 got 0
-PASS Removing a custom element from a connected shadow tree must enqueue and invoke disconnectedCallback 
-PASS Removing the shadow host of a shadow tree with a custom element from a document must enqueue and invoke disconnectedCallback 
-PASS Removing a custom element from a detached shadow tree must not enqueue and invoke disconnectedCallback 
+PASS Removing an ancestor of custom element from a document must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a shadow tree in a document must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a custom element from adocument must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree that belongs to a document must not enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a document of a template element must enqueue and invoke disconnectedCallback 
+PASS Removing an ancestor of custom element from a document of a template element must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a shadow tree in a document of a template element must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a custom element from adocument of a template element must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree that belongs to a document of a template element must not enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a new document must enqueue and invoke disconnectedCallback 
+PASS Removing an ancestor of custom element from a new document must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a shadow tree in a new document must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a custom element from anew document must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree that belongs to a new document must not enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a cloned document must enqueue and invoke disconnectedCallback 
+PASS Removing an ancestor of custom element from a cloned document must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a shadow tree in a cloned document must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a custom element from acloned document must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree that belongs to a cloned document must not enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a document created by createHTMLDocument must enqueue and invoke disconnectedCallback 
+PASS Removing an ancestor of custom element from a document created by createHTMLDocument must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a shadow tree in a document created by createHTMLDocument must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a custom element from adocument created by createHTMLDocument must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree that belongs to a document created by createHTMLDocument must not enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a HTML document created by createDocument must enqueue and invoke disconnectedCallback 
+PASS Removing an ancestor of custom element from a HTML document created by createDocument must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a shadow tree in a HTML document created by createDocument must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a custom element from aHTML document created by createDocument must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree that belongs to a HTML document created by createDocument must not enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a document in an iframe must enqueue and invoke disconnectedCallback 
+PASS Removing an ancestor of custom element from a document in an iframe must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a shadow tree in a document in an iframe must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a custom element from adocument in an iframe must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree that belongs to a document in an iframe must not enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a HTML document fetched by XHR must enqueue and invoke disconnectedCallback 
+PASS Removing an ancestor of custom element from a HTML document fetched by XHR must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a shadow tree in a HTML document fetched by XHR must enqueue and invoke disconnectedCallback 
+PASS Removing the shadow host of a custom element from aHTML document fetched by XHR must enqueue and invoke disconnectedCallback 
+PASS Removing a custom element from a detached shadow tree that belongs to a HTML document fetched by XHR must not enqueue and invoke disconnectedCallback 
+
 

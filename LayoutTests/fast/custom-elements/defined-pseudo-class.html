@@ -16,7 +16,7 @@ var upgradeCandidate = document.createElement('my-element');
 
 test(function () {
     assert_false(upgradeCandidate.matches(':defined'));
-}, 'The defined flag of a custom element must be set if a custom element has not been upgraded yet');
+}, 'The defined flag of a custom element must not be set if a custom element has not been upgraded yet');
 
 var matchInsideConstructor;
 class MyElement extends HTMLElement {
