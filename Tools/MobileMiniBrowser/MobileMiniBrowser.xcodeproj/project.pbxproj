@@ -177,11 +177,9 @@
 				TargetAttributes = {
 					CD1DAF911D709E3600017CF0 = {
 						CreatedOnToolsVersion = 8.0;
-						ProvisioningStyle = Automatic;
 					};
 					CD1DAFAA1D709E3600017CF0 = {
 						CreatedOnToolsVersion = 8.0;
-						ProvisioningStyle = Automatic;
 						TestTargetID = CD1DAF911D709E3600017CF0;
 					};
 				};
@@ -296,7 +294,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -343,7 +340,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;

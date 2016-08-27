@@ -2,6 +2,12 @@
 
         Keep trying to fix the build after r205057.
 
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+
+2016-08-26  Dan Bernstein  <mitz@apple.com>
+
+        Keep trying to fix the build after r205057.
+
         * MobileMiniBrowser/MobileMiniBrowser/AppDelegate.m: Don’t try to import nonexistent
           config.h. This file is only meant to be built with Xcode anyway.
         * MobileMiniBrowser/MobileMiniBrowser/Base.lproj/LaunchScreen.storyboard: Make this compile
