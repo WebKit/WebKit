@@ -119,10 +119,11 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     if (disconnectedCallback)
         elementInterface->setDisconnectedCallback(disconnectedCallback);
 
-    // FIXME: Add the support for adoptedCallback.
-    getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback"));
+    auto* adoptedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback"));
     if (state.hadException())
         return jsUndefined();
+    if (adoptedCallback)
+        elementInterface->setAdoptedCallback(adoptedCallback);
 
     auto* attributeChangedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
     if (state.hadException())

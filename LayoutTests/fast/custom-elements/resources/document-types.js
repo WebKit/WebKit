@@ -1,7 +1,8 @@
 const DocumentTypes = [
     {
         name: 'document',
-        create: function () { return Promise.resolve(document); }
+        create: function () { return Promise.resolve(document); },
+        isOwner: true,
     },
     {
         name: 'document of a template element',

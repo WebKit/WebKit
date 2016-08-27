@@ -150,7 +150,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     wrappedElement->setCustomElementIsResolved(*this);
 }
 
-void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const WTF::Function<void(ExecState*, MarkedArgumentBuffer&)>& addArguments)
+void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const WTF::Function<void(ExecState*, JSDOMGlobalObject*, MarkedArgumentBuffer&)>& addArguments)
 {
     if (!canInvokeCallback())
         return;
@@ -174,7 +174,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer args;
-    addArguments(state, args);
+    addArguments(state, globalObject, args);
 
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 
@@ -207,6 +207,19 @@ void JSCustomElementInterface::invokeDisconnectedCallback(Element& element)
     invokeCallback(element, m_disconnectedCallback.get());
 }
 
+void JSCustomElementInterface::setAdoptedCallback(JSC::JSObject* callback)
+{
+    m_adoptedCallback = callback;
+}
+
+void JSCustomElementInterface::invokeAdoptedCallback(Element& element, Document& oldDocument, Document& newDocument)
+{
+    invokeCallback(element, m_adoptedCallback.get(), [&](ExecState* state, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
+        args.append(toJS(state, globalObject, oldDocument));
+        args.append(toJS(state, globalObject, newDocument));
+    });
+}
+
 void JSCustomElementInterface::setAttributeChangedCallback(JSC::JSObject* callback, const Vector<String>& observedAttributes)
 {
     m_attributeChangedCallback = callback;
@@ -217,7 +230,7 @@ void JSCustomElementInterface::setAttributeChangedCallback(JSC::JSObject* callba
 
 void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
-    invokeCallback(element, m_attributeChangedCallback.get(), [&](ExecState* state, MarkedArgumentBuffer& args) {
+    invokeCallback(element, m_attributeChangedCallback.get(), [&](ExecState* state, JSDOMGlobalObject*, MarkedArgumentBuffer& args) {
         args.append(jsStringWithCache(state, attributeName.localName()));
         args.append(jsStringOrNull(state, oldValue));
         args.append(jsStringOrNull(state, newValue));

@@ -1493,6 +1493,11 @@ void Element::didMoveToNewDocument(Document* oldDocument)
         if (hasClass())
             attributeChanged(classAttr, nullAtom, getAttribute(classAttr));
     }
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (UNLIKELY(isCustomElement()))
+        CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, *oldDocument, document());
+#endif
 }
 
 bool Element::hasAttributes() const

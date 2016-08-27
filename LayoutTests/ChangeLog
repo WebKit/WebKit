@@ -1,3 +1,17 @@
+2016-08-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        adoptcallback
+
+        Add adopted callback for custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=161284
+
+        Reviewed by Antti Koivisto.
+
+        * fast/custom-elements/adopted-callback-expected.txt: Added.
+        * fast/custom-elements/adopted-callback.html: Added.
+        * fast/custom-elements/resources/document-types.js:
+        (const.DocumentTypes.create):
+
 2016-08-27  Youenn Fablet  <youenn@apple.com>
 
         html/dom/interfaces.html is flaky due to WebSocket test
