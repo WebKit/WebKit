@@ -35,11 +35,19 @@
 /* COMPILER_QUIRK() - whether the compiler being used to build the project requires a given quirk. */
 #define COMPILER_QUIRK(WTF_COMPILER_QUIRK) (defined WTF_COMPILER_QUIRK_##WTF_COMPILER_QUIRK  && WTF_COMPILER_QUIRK_##WTF_COMPILER_QUIRK)
 
-/* COMPILER_HAS_CLANG_BUILTIN() - wether the compiler supports a particular clang builtin. */
+/* COMPILER_HAS_CLANG_BUILTIN() - whether the compiler supports a particular clang builtin. */
 #ifdef __has_builtin
 #define COMPILER_HAS_CLANG_BUILTIN(x) __has_builtin(x)
 #else
 #define COMPILER_HAS_CLANG_BUILTIN(x) 0
+#endif
+
+/* COMPILER_HAS_CLANG_HEATURE() - whether the compiler supports a particular language or library feature. */
+/* http://clang.llvm.org/docs/LanguageExtensions.html#has-feature-and-has-extension */
+#ifdef __has_feature
+#define COMPILER_HAS_CLANG_FEATURE(x) __has_feature(x)
+#else
+#define COMPILER_HAS_CLANG_FEATURE(x) 0
 #endif
 
 /* ==== COMPILER() - primary detection of the compiler being used to build the project, in alphabetical order ==== */
@@ -48,12 +56,13 @@
 
 #if defined(__clang__)
 #define WTF_COMPILER_CLANG 1
-#define WTF_COMPILER_SUPPORTS_BLOCKS __has_feature(blocks)
-#define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_feature(c_static_assert)
-#define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_feature(cxx_reference_qualified_functions)
-#define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS __has_feature(cxx_user_literals)
-#define WTF_COMPILER_SUPPORTS_FALLTHROUGH_WARNINGS __has_feature(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
-#define WTF_COMPILER_SUPPORTS_CXX_EXCEPTIONS __has_feature(cxx_exceptions)
+#define WTF_COMPILER_SUPPORTS_BLOCKS COMPILER_HAS_CLANG_FEATURE(blocks)
+#define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT COMPILER_HAS_CLANG_FEATURE(c_static_assert)
+#define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS COMPILER_HAS_CLANG_FEATURE(cxx_reference_qualified_functions)
+#define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS COMPILER_HAS_CLANG_FEATURE(cxx_user_literals)
+#define WTF_COMPILER_SUPPORTS_FALLTHROUGH_WARNINGS COMPILER_HAS_CLANG_FEATURE(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
+#define WTF_COMPILER_SUPPORTS_CXX_EXCEPTIONS COMPILER_HAS_CLANG_FEATURE(cxx_exceptions)
+#define WTF_COMPILER_SUPPORTS_BUILTIN_IS_TRIVIALLY_COPYABLE COMPILER_HAS_CLANG_FEATURE(is_trivially_copyable)
 
 #ifdef __cplusplus
 #if __cplusplus <= 201103L
@@ -135,11 +144,7 @@
 #define WTF_COMPILER_SUPPORTS_EABI 1
 #endif
 
-#if defined(__has_feature)
-#define ASAN_ENABLED __has_feature(address_sanitizer)
-#else
-#define ASAN_ENABLED 0
-#endif
+#define ASAN_ENABLED COMPILER_HAS_CLANG_FEATURE(address_sanitizer)
 
 #if ASAN_ENABLED
 #define SUPPRESS_ASAN __attribute__((no_sanitize_address))

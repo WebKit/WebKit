@@ -28,10 +28,11 @@
 #define WTF_StdLibExtras_h
 
 #include <chrono>
+#include <cstring>
 #include <memory>
-#include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/Compiler.h>
 
 // This was used to declare and define a static local variable (static T;) so that
 //  it was leaked so that its destructors were not called at exit.
@@ -145,12 +146,14 @@ template<typename ToType, typename FromType>
 inline ToType bitwise_cast(FromType from)
 {
     static_assert(sizeof(FromType) == sizeof(ToType), "bitwise_cast size of FromType and ToType must be equal!");
-    union {
-        FromType from;
-        ToType to;
-    } u;
-    u.from = from;
-    return u.to;
+#if COMPILER_SUPPORTS(BUILTIN_IS_TRIVIALLY_COPYABLE)
+    // Not all recent STL implementations support the std::is_trivially_copyable type trait. Work around this by only checking on toolchains which have the equivalent compiler intrinsic.
+    static_assert(__is_trivially_copyable(ToType), "bitwise_cast of non-trivially-copyable type!");
+    static_assert(__is_trivially_copyable(FromType), "bitwise_cast of non-trivially-copyable type!");
+#endif
+    ToType to;
+    std::memcpy(&to, &from, sizeof(to));
+    return to;
 }
 
 template<typename ToType, typename FromType>

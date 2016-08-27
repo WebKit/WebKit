@@ -1,3 +1,59 @@
+2016-08-26  JF Bastien  <jfbastien@apple.com>
+
+        bitwise_cast uses inactive member of union
+        https://bugs.webkit.org/show_bug.cgi?id=161244
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/Compiler.h:
+        Add COMPILER_HAS_CLANG_FEATURE
+        * wtf/StdLibExtras.h:
+        (WTF::bitwise_cast):
+        Fix C++ UB, add trivially-copyable check.
+
+        bitwise_cast stores into a union with one type and reads with
+        another, which is technically C++ undefined behavior because it's
+        accessing the wrong active member of the union. The better way to
+        do this is through memcpy, which compilers optimize as well
+        because it's known-size in known-not-to-escape storage (for small
+        types they'll inline and then convert stack memory access to SSA
+        values which may be in-register if that makes sense, which would
+        be a move between int/FP registers at worst).
+
+        The C++ Standard's section [basic.types] explicitly blesses memcpy:
+
+          For any trivially copyable type T, if two pointers to T point to
+          distinct T objects obj1 and obj2, where neither obj1 nor obj2 is a
+          base-class subobject, if the underlying bytes (1.7) making up obj1
+          are copied into obj2, 42 obj2 shall subsequently hold the same
+          value as obj1.
+
+          [Example:
+            T* t1p;
+            T* t2p;
+            // provided that t2p points to an initialized object ...
+            std::memcpy(t1p, t2p, sizeof(T));
+            // at this point, every subobject of trivially copyable type in *t1p contains
+            // the same value as the corresponding subobject in *t2p
+          — end example ]
+
+        Whereas section [class.union] says:
+
+          In a union, at most one of the non-static data members can be
+          active at any time, that is, the value of at most one of the
+          non-static data members can be stored in a union at any time.
+
+        While we're at it, checking that sizeof(To) == sizeof(From) is
+        good, but we should also check that both types are trivially
+        copyable (can have a ctor, no dtor, and copy is defaulted as if by
+        memcpy for type and all subtypes). Unfortunately that trait isn't
+        implemented consistently in all recent compiler+stdlib
+        implementations, but recent clang has an equivalent builtin
+        (other compilers simply won't do the check, and will break on bots
+        with the right compilers which is better than the current silent
+        breakage). This builtin hack also avoids #include <type_traits>
+        which really doesn't save much.
+
 2016-08-26  Johan K. Jensen  <johan_jensen@apple.com>
 
         Web Inspector: Frontend should have access to Resource Timing information
