@@ -1,3 +1,14 @@
+2016-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: inspector/indexeddb/deleteDatabaseNamesWithSpace.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=161283
+
+        Reviewed by Alex Christensen.
+
+        * inspector/indexeddb/deleteDatabaseNamesWithSpace.html:
+        Add a short timeout between deleting a database and requesting database names
+        to reduce flakey results.
+
 2016-08-26  Sam Weinig  <sam@webkit.org>
 
         Remove support for ENABLE_LEGACY_WEB_AUDIO

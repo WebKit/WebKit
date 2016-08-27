@@ -24,11 +24,14 @@ function test()
         name: "EnsureNoDatabases",
         description: "Ensure no databases exist at the start.",
         test: (resolve, reject) => {
-            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
-                InspectorTest.expectNoError(error);
-                InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist initially.");
-                resolve();
-            });
+            // FIXME: <https://webkit.org/b/161285> Race between deleting a database and requesting database names seen in test
+            setTimeout(() => {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist initially.");
+                    resolve();
+                });
+            }, 50);
         }
     });
 
@@ -51,12 +54,15 @@ function test()
         description: "Delete the database.",
         test: (resolve, reject) => {
             InspectorTest.evaluateInPage("deleteDatabaseNames(['Database With Space'])");
-            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
-                InspectorTest.expectNoError(error);
-                InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist because we just deleted them.");
-                InspectorTest.log(JSON.stringify(names));
-                resolve();
-            });
+            // FIXME: <https://webkit.org/b/161285> Race between deleting a database and requesting database names seen in test
+            setTimeout(() => {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist because we just deleted them.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
+            }, 50);
         }
     });
 
