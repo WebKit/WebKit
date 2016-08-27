@@ -1,8 +1,8 @@
 
 PASS Getter 
 PASS Setter (non-empty string) 
-FAIL Setter (empty string) assert_equals: expected null but got Text node ""
+PASS Setter (empty string) 
 PASS Setter (null) 
 PASS Setter (undefined) 
-FAIL Setter (text node reuse) assert_not_equals: got disallowed value Text node "two"
+PASS Setter (text node reuse) 
 

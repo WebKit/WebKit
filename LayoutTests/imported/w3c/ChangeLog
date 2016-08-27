@@ -1,3 +1,12 @@
+2016-08-27  Andreas Kling  <akling@apple.com>
+
+        script.text should behave like script.textContent on setting
+        <https://webkit.org/b/148852>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-expected.txt:
+
 2016-08-27  Youenn Fablet  <youenn@apple.com>
 
         Sync web-platform-tests up to revision e827374

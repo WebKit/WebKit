@@ -79,19 +79,10 @@ void HTMLScriptElement::finishedInsertingSubtree()
     ScriptElement::finishedInsertingSubtree();
 }
 
+// https://html.spec.whatwg.org/multipage/scripting.html#dom-script-text
 void HTMLScriptElement::setText(const String& value)
 {
-    Ref<HTMLScriptElement> protectedThis(*this);
-
-    if (hasOneChild() && is<Text>(*firstChild())) {
-        downcast<Text>(*firstChild()).setData(value);
-        return;
-    }
-
-    if (hasChildNodes())
-        removeChildren();
-
-    appendChild(document().createTextNode(value), IGNORE_EXCEPTION);
+    setTextContent(value, ASSERT_NO_EXCEPTION);
 }
 
 void HTMLScriptElement::setAsync(bool async)
