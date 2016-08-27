@@ -268,12 +268,8 @@ void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRe
         request->setDisturbed();
     }
 
-    String type = m_headers->fastGet(HTTPHeaderName::ContentType);
-    if (!body.isUndefined() && type.isEmpty() && !m_body.mimeType().isEmpty()) {
-        type = m_body.mimeType();
-        m_headers->fastSet(HTTPHeaderName::ContentType, type);
-    }
-    m_body.setMimeType(type);
+    m_body.updateContentType(m_headers);
+
     if (!validateBodyAndMethod(m_body, m_internalRequest))
         ec = TypeError;
 }

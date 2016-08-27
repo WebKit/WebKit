@@ -45,6 +45,7 @@ class JSValue;
 namespace WebCore {
 
 class FetchBodyOwner;
+class FetchHeaders;
 class FetchResponseSource;
 class FormData;
 
@@ -62,8 +63,9 @@ public:
 
     bool isEmpty() const { return m_type == Type::None; }
 
-    void setMimeType(const String& mimeType) { m_mimeType = mimeType; }
-    String mimeType() const { return m_mimeType; }
+    void updateContentType(FetchHeaders&);
+    void setContentType(const String& contentType) { m_contentType = contentType; }
+    String contentType() const { return m_contentType; }
 
     static FetchBody extract(JSC::ExecState&, JSC::JSValue);
     static FetchBody extractFromBody(FetchBody*);
@@ -96,7 +98,7 @@ private:
     void consumeBlob(FetchBodyOwner&, DeferredWrapper&&);
 
     Type m_type { Type::None };
-    String m_mimeType;
+    String m_contentType;
 
     // FIXME: Add support for BufferSource and URLSearchParams.
     RefPtr<Blob> m_blob;

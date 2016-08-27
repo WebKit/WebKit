@@ -34,6 +34,7 @@
 #include "DOMRequestState.h"
 #include "Dictionary.h"
 #include "FetchBodyOwner.h"
+#include "FetchHeaders.h"
 #include "FetchResponseSource.h"
 #include "FormData.h"
 #include "HTTPParsers.h"
@@ -46,14 +47,14 @@ namespace WebCore {
 
 FetchBody::FetchBody(Ref<Blob>&& blob)
     : m_type(Type::Blob)
-    , m_mimeType(blob->type())
+    , m_contentType(blob->type())
     , m_blob(WTFMove(blob))
 {
 }
 
 FetchBody::FetchBody(Ref<DOMFormData>&& formData)
     : m_type(Type::FormData)
-    , m_mimeType(ASCIILiteral("multipart/form-data"))
+    , m_contentType(ASCIILiteral("multipart/form-data"))
     , m_formData(WTFMove(formData))
 {
     // FIXME: Handle the boundary parameter of multipart/form-data MIME type.
@@ -61,7 +62,7 @@ FetchBody::FetchBody(Ref<DOMFormData>&& formData)
 
 FetchBody::FetchBody(String&& text)
     : m_type(Type::Text)
-    , m_mimeType(ASCIILiteral("text/plain;charset=UTF-8"))
+    , m_contentType(ASCIILiteral("text/plain;charset=UTF-8"))
     , m_text(WTFMove(text))
 {
 }
@@ -88,6 +89,17 @@ FetchBody FetchBody::extractFromBody(FetchBody* body)
     return FetchBody(WTFMove(*body));
 }
 
+void FetchBody::updateContentType(FetchHeaders& headers)
+{
+    String contentType = headers.fastGet(HTTPHeaderName::ContentType);
+    if (!contentType.isNull()) {
+        m_contentType = contentType;
+        return;
+    }
+    if (!m_contentType.isNull())
+        headers.fastSet(HTTPHeaderName::ContentType, m_contentType);
+}
+
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, DeferredWrapper&& promise)
 {
     ASSERT(m_type != Type::None);
@@ -99,7 +111,7 @@ void FetchBody::blob(FetchBodyOwner& owner, DeferredWrapper&& promise)
 {
     ASSERT(m_type != Type::None);
     m_consumer.setType(FetchBodyConsumer::Type::Blob);
-    m_consumer.setContentType(Blob::normalizedContentType(extractMIMETypeFromMediaType(m_mimeType)));
+    m_consumer.setContentType(Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType)));
     consume(owner, WTFMove(promise));
 }
 

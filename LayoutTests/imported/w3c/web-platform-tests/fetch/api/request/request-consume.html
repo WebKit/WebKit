@@ -19,8 +19,11 @@
       });
     }
 
-    function checkBodyBlob(request, expectedBody) {
+    function checkBodyBlob(request, expectedBody, checkContentType) {
       return request.blob().then(function(bodyAsBlob) {
+        if (checkContentType)
+          assert_equals(bodyAsBlob.type, "text/plain", "Blob body type should be computed from the request Content-Type");
+
         var promise = new Promise(function (resolve, reject) {
           var reader = new FileReader();
           reader.onload = function(evt) {
@@ -62,7 +65,7 @@
 
     function checkRequestBody(body, bodyType, checkFunction) {
       promise_test(function(test) {
-        var request = new Request("", {"method": "POST", "body": body });
+        var request = new Request("", {"method": "POST", "body": body, "headers": [["Content-Type", "text/PLAIN"]] });
         assert_false(request.bodyUsed, "bodyUsed is false at init");
         return checkFunction(request, body);
       }, "Consume request's body as " + bodyType);
@@ -74,7 +77,7 @@
     var blob = new Blob([textData], { "type" : "text/plain" });
 
     checkRequestBody(textData, "text", checkBodyText);
-    checkRequestBody(textData, "blob", checkBodyBlob);
+    checkRequestBody(textData, "blob", function(request, body) { checkBodyBlob(request, body, true); });
     checkRequestBody(textData, "arrayBuffer", checkBodyArrayBuffer);
     checkRequestBody(textData, "json", checkBodyJSON);
     checkRequestBody(formData, "formData", checkBodyFormData);

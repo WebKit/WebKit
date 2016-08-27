@@ -83,8 +83,7 @@ void FetchResponse::setStatus(int status, const String& statusText, ExceptionCod
 void FetchResponse::initializeWith(JSC::ExecState& execState, JSC::JSValue body)
 {
     m_body = FetchBody::extract(execState, body);
-    if (m_headers->fastGet(HTTPHeaderName::ContentType).isEmpty() && !m_body.mimeType().isEmpty())
-        m_headers->fastSet(HTTPHeaderName::ContentType, m_body.mimeType());
+    m_body.updateContentType(m_headers);
 }
 
 FetchResponse::FetchResponse(ScriptExecutionContext& context, FetchBody&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
@@ -176,6 +175,7 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
 
     m_response.m_response = resourceResponse;
     m_response.m_headers->filterAndFill(resourceResponse.httpHeaderFields(), FetchHeaders::Guard::Response);
+    m_response.m_body.setContentType(m_response.m_headers->fastGet(HTTPHeaderName::ContentType));
 
     std::exchange(m_promise, Nullopt)->resolve(m_response);
 }

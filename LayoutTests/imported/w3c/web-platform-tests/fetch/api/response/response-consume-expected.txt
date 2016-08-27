@@ -12,4 +12,7 @@ PASS Consume stream response's body as blob
 PASS Consume stream response's body as text 
 PASS Consume stream response's body as json 
 PASS Consume stream response's body as arrayBuffer 
+PASS Consume fetched response's body as blob 
+PASS Consume fetched response's body as text 
+PASS Consume fetched response's body as arrayBuffer 
 
