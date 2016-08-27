@@ -1,3 +1,14 @@
+2016-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Add run-webkit-tests --print-expectations to show expectations for all or a subset of tests
+        https://bugs.webkit.org/show_bug.cgi?id=161217
+
+        Reviewed by Ryosuke Niwa.
+        
+        Explicitly skip fast/viewport
+
+        * platform/mac/TestExpectations:
+
 2016-08-27  Youenn Fablet  <youenn@apple.com>
 
         html/dom/interfaces.html is flaky due to WebSocket test

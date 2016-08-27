@@ -73,6 +73,9 @@ def main(argv, stdout, stderr):
         print >> stderr, str(e)
         return EXCEPTIONAL_EXIT_STATUS
 
+    if options.print_expectations:
+        return _print_expectations(port, options, args, stderr)
+
     try:
         # Force all tests to use a smaller stack so that stack overflow tests can run faster.
         stackSizeInBytes = int(1.5 * 1024 * 1024)
@@ -299,6 +302,9 @@ def parse_args(args):
         optparse.make_option("--lint-test-files", action="store_true",
         default=False, help=("Makes sure the test files parse for all "
                             "configurations. Does not run any tests.")),
+        optparse.make_option("--print-expectations", action="store_true",
+        default=False, help=("Print the expected outcome for the given test, or all tests listed in TestExpectations. "
+                            "Does not run any tests.")),
     ]))
 
     option_group_definitions.append(("Web Platform Test Server Options", [
@@ -337,6 +343,24 @@ def parse_args(args):
 
     return option_parser.parse_args(args)
 
+
+def _print_expectations(port, options, args, logging_stream):
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
+    try:
+        printer = printing.Printer(port, options, logging_stream, logger=logger)
+
+        _set_up_derived_options(port, options)
+        manager = Manager(port, options, printer)
+
+        exit_code = manager.print_expectations(args)
+        _log.debug("Printing expectations completed, Exit status: %d", exit_code)
+        return exit_code
+    except Exception as error:
+        _log.error('Error printing expectations: {}'.format(error))
+    finally:
+        printer.cleanup()
+        return -1
 
 def _set_up_derived_options(port, options):
     """Sets the options values that depend on other options values."""

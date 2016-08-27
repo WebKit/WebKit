@@ -1,3 +1,40 @@
+2016-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Add run-webkit-tests --print-expectations to show expectations for all or a subset of tests
+        https://bugs.webkit.org/show_bug.cgi?id=161217
+
+        Reviewed by Ryosuke Niwa.
+
+        "run-webkit-tests --print-expectations" runs the same logic as running the tests, but
+        dumps out the lists of tests that would be run and skipped, and, for each, the entry
+        in TestExpectations that determines the expected outcome of the test.
+
+        This is an improved version of webkit-patch print-expectations.
+
+        See bug for sample output.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._print_expectations_for_subset): Print out the list of tests and expected
+        outcome for some subset of tests.
+        (Manager.print_expectations): Do the same splitting by device class that running tests
+        does, and for each subset of tests, call _print_expectations_for_subset.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser.expectation_for_skipped_test): Set the flag
+        expectation_line.not_applicable_to_current_platform
+        (TestExpectationLine.__init__): Init not_applicable_to_current_platform to False
+        (TestExpectationLine.expected_behavior): line.expectation is ['PASS'] by default,
+        even for skipped tests. This function returns a list relevant for display, taking the skipped
+        modifier into account.
+        (TestExpectationLine.create_passing_expectation): expectations is normally a list, not a set.
+        (TestExpectations.readable_filename_and_line_number): Return something printable for 
+        lines with and without filenames
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main): Handle options.print_expectations
+        (parse_args): Add support for --print-expectations
+        (_print_expectations):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_child_processes): Make this a debug log.
+
 2016-08-26  Dan Bernstein  <mitz@apple.com>
 
         Keep trying to fix the build after r205057.

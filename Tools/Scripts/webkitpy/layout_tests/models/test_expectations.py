@@ -108,6 +108,7 @@ class TestExpectationParser(object):
         expectation_line.filename = '<Skipped file>'
         expectation_line.line_number = 0
         expectation_line.expectations = [TestExpectationParser.PASS_EXPECTATION]
+        expectation_line.not_applicable_to_current_platform = True
         self._parse_line(expectation_line)
         return expectation_line
 
@@ -380,6 +381,7 @@ class TestExpectationLine(object):
         self.comment = None
         self.matching_tests = []
         self.warnings = []
+        self.not_applicable_to_current_platform = False
 
     def is_invalid(self):
         return self.warnings and self.warnings != [TestExpectationParser.MISSING_BUG_WARNING]
@@ -387,13 +389,28 @@ class TestExpectationLine(object):
     def is_flaky(self):
         return len(self.parsed_expectations) > 1
 
+    @property
+    def expected_behavior(self):
+        expectations = self.expectations
+        if "SLOW" in self.modifiers:
+            expectations += ["SLOW"]
+
+        if "SKIP" in self.modifiers:
+            expectations = ["SKIP"]
+        elif "WONTFIX" in self.modifiers:
+            expectations = ["WONTFIX"]
+        elif "CRASH" in self.modifiers:
+            expectations += ["CRASH"]
+
+        return expectations
+
     @staticmethod
     def create_passing_expectation(test):
         expectation_line = TestExpectationLine()
         expectation_line.name = test
         expectation_line.path = test
         expectation_line.parsed_expectations = set([PASS])
-        expectation_line.expectations = set(['PASS'])
+        expectation_line.expectations = ['PASS']
         expectation_line.matching_tests = [test]
         return expectation_line
 
@@ -843,6 +860,15 @@ class TestExpectations(object):
         self._include_generic = include_generic
         self._include_overrides = include_overrides
         self._expectations_to_lint = expectations_to_lint
+
+    def readable_filename_and_line_number(self, line):
+        if line.not_applicable_to_current_platform:
+            return "(skipped for this platform)"
+        if not line.filename:
+            return ''
+        if line.filename.startswith(self._port.path_from_webkit_base()):
+            return '{}:{}'.format(self._port.host.filesystem.relpath(line.filename, self._port.path_from_webkit_base()), line.line_number)
+        return '{}:{}'.format(line.filename, line.line_number)
 
     def parse_generic_expectations(self):
         if self._port.path_to_generic_test_expectations_file() in self._expectations_dict:

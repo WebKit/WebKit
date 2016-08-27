@@ -524,3 +524,60 @@ class Manager(object):
         for name, value in stats.iteritems():
             json_results_generator.add_path_to_trie(name, value, stats_trie)
         return stats_trie
+
+    def _print_expectation_line_for_test(self, format_string, test):
+        line = self._expectations.model().get_expectation_line(test)
+        print format_string.format(test, line.expected_behavior, self._expectations.readable_filename_and_line_number(line), line.original_string or '')
+    
+    def _print_expectations_for_subset(self, device_class, test_col_width, tests_to_run, tests_to_skip={}):
+        format_string = '{{:{width}}} {{}} {{}} {{}}'.format(width=test_col_width)
+        if tests_to_skip:
+            print ''
+            print 'Tests to skip ({})'.format(len(tests_to_skip))
+            for test in sorted(tests_to_skip):
+                self._print_expectation_line_for_test(format_string, test)
+
+        print ''
+        print 'Tests to run{} ({})'.format(' for ' + device_class if device_class else '', len(tests_to_run))
+        for test in sorted(tests_to_run):
+            self._print_expectation_line_for_test(format_string, test)
+
+    def print_expectations(self, args):
+        self._printer.write_update("Collecting tests ...")
+        try:
+            paths, test_names = self._collect_tests(args)
+        except IOError:
+            # This is raised if --test-list doesn't exist
+            return -1
+
+        self._printer.write_update("Parsing expectations ...")
+        self._expectations = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force)
+        self._expectations.parse_all_expectations()
+
+        tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names)
+        self._printer.print_found(len(test_names), len(tests_to_run), self._options.repeat_each, self._options.iterations)
+
+        test_col_width = len(max(tests_to_run + list(tests_to_skip), key=len)) + 1
+
+        default_device_tests = []
+
+        # Look for tests with custom device requirements.
+        custom_device_tests = defaultdict(list)
+        for test_file in tests_to_run:
+            custom_device = self._custom_device_for_test(test_file)
+            if custom_device:
+                custom_device_tests[custom_device].append(test_file)
+            else:
+                default_device_tests.append(test_file)
+
+        if custom_device_tests:
+            for device_class in custom_device_tests:
+                _log.debug('{} tests use device {}'.format(len(custom_device_tests[device_class]), device_class))
+
+        self._print_expectations_for_subset(None, test_col_width, tests_to_run, tests_to_skip)
+
+        for device_class in custom_device_tests:
+            device_tests = custom_device_tests[device_class]
+            self._print_expectations_for_subset(device_class, test_col_width, device_tests)
+
+        return 0
