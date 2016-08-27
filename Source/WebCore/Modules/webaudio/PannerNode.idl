@@ -23,6 +23,7 @@
  */
 
 [
+    Conditional=WEB_AUDIO,
     ImplementedAs=PanningModelType
 ] enum PanningModelType {
     "equalpower",
@@ -30,6 +31,7 @@
 };
 
 [
+    Conditional=WEB_AUDIO,
     ImplementedAs=DistanceModelType
 ] enum DistanceModelType {
     "linear",

@@ -24,6 +24,7 @@
  */
 
 [
+    Conditional=WEB_AUDIO,
     ImplementedAs=BiquadFilterType
 ] enum BiquadFilterType {
     "lowpass",
