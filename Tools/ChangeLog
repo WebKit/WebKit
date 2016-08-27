@@ -1,3 +1,9 @@
+2016-08-26  Dan Bernstein  <mitz@apple.com>
+
+        Start trying to fix the build after r205057.
+
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+
 2016-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         Remove Yosemite Leaks from the flakiness dashboard
