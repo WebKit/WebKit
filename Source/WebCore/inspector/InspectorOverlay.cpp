@@ -921,11 +921,18 @@ void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameVi
     evaluateInOverlay("reset", WTFMove(configObject));
 }
 
+static void evaluateCommandInOverlay(Page* page, Ref<InspectorArray>&& command)
+{
+    JSC::JSValue result = page->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
+    ASSERT_UNUSED(result, result); // There should never be exceptions when evaluating in the overlay page.
+}
+
 void InspectorOverlay::evaluateInOverlay(const String& method)
 {
     Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
-    overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
+
+    evaluateCommandInOverlay(overlayPage(), WTFMove(command));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)
@@ -933,7 +940,8 @@ void InspectorOverlay::evaluateInOverlay(const String& method, const String& arg
     Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     command->pushString(argument);
-    overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
+
+    evaluateCommandInOverlay(overlayPage(), WTFMove(command));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<InspectorValue>&& argument)
@@ -941,7 +949,8 @@ void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<InspectorV
     Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     command->pushValue(WTFMove(argument));
-    overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
+
+    evaluateCommandInOverlay(overlayPage(), WTFMove(command));
 }
 
 void InspectorOverlay::freePage()

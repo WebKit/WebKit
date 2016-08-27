@@ -221,8 +221,7 @@ function DOMBuilder(tagName, className)
 
 DOMBuilder.prototype.appendTextNode = function(content)
 {
-    var node = document.createTextNode();
-    node.textContent = content;
+    let node = document.createTextNode(content);
     this.element.appendChild(node);
     return node;
 }
