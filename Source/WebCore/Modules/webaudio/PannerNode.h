@@ -49,21 +49,6 @@ namespace WebCore {
 
 class PannerNode : public AudioNode {
 public:
-    // These must be defined as in the .idl file and must match those in the Panner class.
-    enum {
-        EQUALPOWER = 0,
-        HRTF = 1,
-        SOUNDFIELD = 2,
-    };
-
-    // These must be defined as in the .idl file and must match those
-    // in the DistanceEffect class.
-    enum {
-        LINEAR_DISTANCE = 0,
-        INVERSE_DISTANCE = 1,
-        EXPONENTIAL_DISTANCE = 2,
-    };
-
     static Ref<PannerNode> create(AudioContext& context, float sampleRate)
     {
         return adoptRef(*new PannerNode(context, sampleRate));
@@ -82,9 +67,8 @@ public:
     AudioListener* listener();
 
     // Panning model
-    String panningModel() const;
-    bool setPanningModel(unsigned); // Returns true on success.
-    void setPanningModel(const String&);
+    PanningModelType panningModel() const { return m_panningModel; }
+    void setPanningModel(PanningModelType);
 
     // Position
     FloatPoint3D position() const { return m_position; }
@@ -99,9 +83,8 @@ public:
     void setVelocity(float x, float y, float z) { m_velocity = FloatPoint3D(x, y, z); }
 
     // Distance parameters
-    String distanceModel() const;
-    bool setDistanceModel(unsigned); // Returns true on success.
-    void setDistanceModel(const String&);
+    DistanceModelType distanceModel() const;
+    void setDistanceModel(DistanceModelType);
 
     double refDistance() { return m_distanceEffect.refDistance(); }
     void setRefDistance(double refDistance) { m_distanceEffect.setRefDistance(refDistance); }
@@ -143,7 +126,7 @@ private:
     void notifyAudioSourcesConnectedToNode(AudioNode*, HashSet<AudioNode*>& visitedNodes);
 
     std::unique_ptr<Panner> m_panner;
-    unsigned m_panningModel;
+    PanningModelType m_panningModel;
 
     FloatPoint3D m_position;
     FloatPoint3D m_orientation;

@@ -63,9 +63,16 @@ public:
     float sampleRate() const { return m_sampleRate; }
 
 private:
+    enum class Type {
+        Sine,
+        Square,
+        Sawtooth,
+        Triangle,
+    };
+
     explicit PeriodicWave(float sampleRate);
 
-    void generateBasicWaveform(int);
+    void generateBasicWaveform(Type);
 
     float m_sampleRate;
     unsigned m_periodicWaveSize;

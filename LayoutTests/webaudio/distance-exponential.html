@@ -24,9 +24,9 @@
           // Create offline audio context.
           context = new webkitOfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
 
-          // Temp panner node so we can get the EXPONENTIAL_DISTANCE value.
+          // Temp panner node so we can get the exponential value.
           var tempPanner = context.createPanner();
-          createTestAndRun(context, tempPanner.EXPONENTIAL_DISTANCE, 2);
+          createTestAndRun(context, "exponential");
       }
 
       runTest();

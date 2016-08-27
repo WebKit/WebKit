@@ -34,7 +34,7 @@ namespace WebCore {
     
 BiquadProcessor::BiquadProcessor(AudioContext& context, float sampleRate, size_t numberOfChannels, bool autoInitialize)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
-    , m_type(LowPass)
+    , m_type(BiquadFilterType::Lowpass)
     , m_parameter1(0)
     , m_parameter2(0)
     , m_parameter3(0)
@@ -111,7 +111,7 @@ void BiquadProcessor::process(const AudioBus* source, AudioBus* destination, siz
         m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
 }
 
-void BiquadProcessor::setType(FilterType type)
+void BiquadProcessor::setType(BiquadFilterType type)
 {
     if (type != m_type) {
         m_type = type;
@@ -119,10 +119,7 @@ void BiquadProcessor::setType(FilterType type)
     }
 }
 
-void BiquadProcessor::getFrequencyResponse(int nFrequencies,
-                                           const float* frequencyHz,
-                                           float* magResponse,
-                                           float* phaseResponse)
+void BiquadProcessor::getFrequencyResponse(int nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse)
 {
     // Compute the frequency response on a separate temporary kernel
     // to avoid interfering with the processing running in the audio

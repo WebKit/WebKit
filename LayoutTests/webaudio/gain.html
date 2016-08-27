@@ -51,7 +51,7 @@ function playNote(time, gain) {
     source.connect(gainNode);
     gainNode.connect(context.destination);
 
-    source.noteOn(time);
+    source.start(time);
 }
 
 function init() {

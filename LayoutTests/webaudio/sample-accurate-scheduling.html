@@ -43,7 +43,7 @@ function playNote(time) {
     var bufferSource = context.createBufferSource();
     bufferSource.buffer = impulse;
     bufferSource.connect(context.destination);
-    bufferSource.noteOn(time);
+    bufferSource.start(time);
 }
 
 function checkSampleAccuracy(event) {

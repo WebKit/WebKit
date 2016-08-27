@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012, Google Inc. All rights reserved.
+ * Copyright (C) 2016, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,20 +23,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// OscillatorNode is an audio generator of periodic waveforms.
+enum OscillatorType {
+    "sine",
+    "square",
+    "sawtooth",
+    "triangle",
+    "custom"
+};
+
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
 ] interface OscillatorNode : AudioNode {
-
-    // Type constants.
-    const unsigned short SINE = 0;
-    const unsigned short SQUARE = 1;
-    const unsigned short SAWTOOTH = 2;
-    const unsigned short TRIANGLE = 3;
-    const unsigned short CUSTOM = 4;
-
-    [CustomSetter] attribute DOMString type;
+    [SetterRaisesException] attribute OscillatorType type;
 
     // Playback state constants.
     const unsigned short UNSCHEDULED_STATE = 0;
@@ -50,9 +50,6 @@
 
     [RaisesException] void start(optional unrestricted double when = 0);
     [RaisesException] void stop(optional unrestricted double when = 0);
-
-    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOn(unrestricted double when);
-    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOff(unrestricted double when);
 
     void setPeriodicWave(PeriodicWave? wave); // FIXME: The parameter should not be nullable.
 

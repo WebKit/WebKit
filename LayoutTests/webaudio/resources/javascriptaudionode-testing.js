@@ -72,13 +72,13 @@ function runJSNodeTest()
     var bufferSource = context.createBufferSource();
     bufferSource.buffer = sourceBuffer;
 
-    var jsnode = context.createJavaScriptNode(bufferSize, inputChannels, outputChannels);
+    var jsnode = context.createScriptProcessor(bufferSize, inputChannels, outputChannels);
 
     bufferSource.connect(jsnode);
     jsnode.connect(context.destination);
     jsnode.onaudioprocess = processAudioData;
 
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
     context.oncomplete = finishJSTest;
     context.startRendering();
 }

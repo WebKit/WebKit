@@ -112,10 +112,8 @@ function runTest() {
         testFailed("PannerNode should default to 'inverse' distanceModel.");
 
     // Check that the .panningModel attribute can be set to all legal values.
-    var panningModels = [{value: "equalpower", integerValue: panner.EQUALPOWER},
-                         {value: "HRTF", integerValue: panner.HRTF},
-                         // FIXME: enable "soundfield" once feature is implemented: https://bugs.webkit.org/show_bug.cgi?id=77367
-                         // {value: "soundfield", integerValue: panner.SOUNDFIELD}
+    var panningModels = [{value: "equalpower"},
+                         {value: "HRTF"},
                         ];
 
     for (var i = 0; i < panningModels.length; ++i) {
@@ -134,29 +132,10 @@ function runTest() {
         }
     }
 
-    // For legacy support, verify that we can set the .panningModel attribute as an integer value and
-    // verify that this translates correctly to the WebIDL enum value.
-    for (var i = 0; i < panningModels.length; ++i) {
-        try {
-            panner.panningModel = panningModels[i].integerValue;
-            if (panner.panningModel === panningModels[i].value && panningModels[i].integerValue === i) {
-                var message = "panningModel: " + panningModels[i].integerValue + " is settable using legacy integer value.";
-                testPassed(message);
-            } else {
-                var message = "panningModel: " + panningModels[i].integerValue + " was not correctly set using legacy integer value.";
-                testFailed(message);
-            }
-        } catch(e) {
-            var message = "Setting panningModel to " + panningModels[i].integerValue + " should not throw exception using legacy integer value.";
-            testFailed(message);
-        }
-    }
-
     // Check that the .distanceModel attribute can be set to all legal values.
-    var distanceModels = [{value: "linear", integerValue: panner.LINEAR_DISTANCE},
-                          {value: "inverse", integerValue: panner.INVERSE_DISTANCE},
-                          {value: "exponential", integerValue: panner.EXPONENTIAL_DISTANCE}
-                        ];
+    var distanceModels = [{value: "linear"},
+                          {value: "inverse"},
+                          {value: "exponential"}];
 
     for (var i = 0; i < distanceModels.length; ++i) {
         try {
@@ -174,27 +153,9 @@ function runTest() {
         }
     }
 
-    // For legacy support, verify that we can set the .distanceModel attribute as an integer value and
-    // verify that this translates correctly to the WebIDL enum value.
-    for (var i = 0; i < distanceModels.length; ++i) {
-        try {
-            panner.distanceModel = distanceModels[i].integerValue;
-            if (panner.distanceModel === distanceModels[i].value && distanceModels[i].integerValue === i) {
-                var message = "distanceModel: " + distanceModels[i].integerValue + " is settable using legacy integer value.";
-                testPassed(message);
-            } else {
-                var message = "distanceModel: " + distanceModels[i].integerValue + " was not correctly set using legacy integer value.";
-                testFailed(message);
-            }
-        } catch(e) {
-            var message = "Setting distanceModel to " + distanceModels[i].integerValue + " should not throw exception using legacy integer value.";
-            testFailed(message);
-        }
-    }
-
-    // Check that we throw a TypeError for illegal .distanceModel values.
-    shouldThrowTypeError(function() { panner.distanceModel = "xyz12349jfksd"; }, "Setting .type to illegal string value");
-    shouldThrowTypeError(function() { panner.distanceModel = new Float32Array(1); }, "Setting .type to illegal type of Float32Array");
+    // Check that we don't throw an exception for illegal .distanceModel values as per WebIDL.
+    shouldNotThrowException(function() { panner.distanceModel = "xyz12349jfksd"; }, "Setting .distanceModel to illegal string value");
+    shouldNotThrowException(function() { panner.distanceModel = new Float32Array(1); }, "Setting .distanceModel to illegal type");
 
     finishJSTest();
 }

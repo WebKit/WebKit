@@ -161,7 +161,7 @@ function timeToSampleFrame(time, sampleRate) {
     return Math.floor(0.5 + time * sampleRate);
 }
 
-// Compute the number of sample frames consumed by noteGrainOn with
+// Compute the number of sample frames consumed by start with
 // the specified |grainOffset|, |duration|, and |sampleRate|.
 function grainLengthInSampleFrames(grainOffset, duration, sampleRate) {
     var startFrame = timeToSampleFrame(grainOffset, sampleRate);
@@ -173,6 +173,20 @@ function grainLengthInSampleFrames(grainOffset, duration, sampleRate) {
 // True if the number is not an infinity or NaN
 function isValidNumber(x) {
     return !isNaN(x) && (x != Infinity) && (x != -Infinity);
+}
+
+function shouldNotThrowException(func, text) {
+    var ok = true;
+    try {
+        func();
+    } catch (e) {
+        ok = false;
+    }
+    if (ok) {
+        testPassed(text + " did not throw an exception.");
+    } else {
+        testFailed(text + " did throw an exception.");
+    }
 }
 
 function shouldThrowTypeError(func, text) {

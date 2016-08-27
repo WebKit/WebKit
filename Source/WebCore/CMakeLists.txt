@@ -1115,7 +1115,6 @@ set(WebCore_SOURCES
     bindings/js/JSAudioContextCustom.cpp
     bindings/js/JSAudioTrackCustom.cpp
     bindings/js/JSAudioTrackListCustom.cpp
-    bindings/js/JSBiquadFilterNodeCustom.cpp
     bindings/js/JSBlobCustom.cpp
     bindings/js/JSCSSRuleCustom.cpp
     bindings/js/JSCSSRuleListCustom.cpp
@@ -1220,8 +1219,6 @@ set(WebCore_SOURCES
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSNodeOrString.cpp
     bindings/js/JSNodeListCustom.cpp
-    bindings/js/JSOscillatorNodeCustom.cpp
-    bindings/js/JSPannerNodeCustom.cpp
     bindings/js/JSPerformanceEntryCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp

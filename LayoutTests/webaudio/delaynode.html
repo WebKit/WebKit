@@ -45,7 +45,7 @@ function runTest() {
 
     bufferSource.connect(delay);
     delay.connect(context.destination);
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
     
     context.oncomplete = checkDelayedResult(toneBuffer);
     context.startRendering();

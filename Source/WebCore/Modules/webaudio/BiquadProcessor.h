@@ -37,19 +37,19 @@ namespace WebCore {
 
 // BiquadProcessor is an AudioDSPKernelProcessor which uses Biquad objects to implement several common filters.
 
+enum class BiquadFilterType {
+    Lowpass,
+    Highpass,
+    Bandpass,
+    Lowshelf,
+    Highshelf,
+    Peaking,
+    Notch,
+    Allpass
+};
+
 class BiquadProcessor : public AudioDSPKernelProcessor {
 public:
-    enum FilterType {
-        LowPass = 0,
-        HighPass = 1,
-        BandPass = 2,
-        LowShelf = 3,
-        HighShelf = 4,
-        Peaking = 5,
-        Notch = 6,
-        Allpass = 7
-    };
-
     BiquadProcessor(AudioContext&, float sampleRate, size_t numberOfChannels, bool autoInitialize);
 
     virtual ~BiquadProcessor();
@@ -75,11 +75,11 @@ public:
     AudioParam* parameter3() { return m_parameter3.get(); }
     AudioParam* parameter4() { return m_parameter4.get(); }
 
-    FilterType type() const { return m_type; }
-    void setType(FilterType);
+    BiquadFilterType type() const { return m_type; }
+    void setType(BiquadFilterType);
 
 private:
-    FilterType m_type;
+    BiquadFilterType m_type;
 
     RefPtr<AudioParam> m_parameter1;
     RefPtr<AudioParam> m_parameter2;

@@ -121,49 +121,32 @@ function runTest()
                bufferSource.UNSCHEDULED_STATE,
                "Source has been created");
 
-    // Test noteOn.
+    // Test start.
 
     createTest(3,
-               function(s) { s.noteOn(renderTime + 1); },
+               function(s) { s.start(renderTime + 1); },
                bufferSource.SCHEDULED_STATE,
                "3 second source scheduled to start at time " + (renderTime + 1));
 
     createTest(2,
-               function(s) { s.noteOn(1); },
+               function(s) { s.start(1); },
                bufferSource.PLAYING_STATE,
                "2 second source starting at time 1");
       
     createTest(1.25,
-               function(s) { s.noteOn(0); },
+               function(s) { s.start(0); },
                bufferSource.FINISHED_STATE,
                "1.25 second source starting at time 0");
-
-    // Test noteGrainOn.
-
-    createTest(3,
-               function(s) { s.noteGrainOn(renderTime + 1, 0, 1); },
-               bufferSource.SCHEDULED_STATE,
-               "1 second grain scheduled to start at time " + (renderTime + 1));
-  
-    createTest(3,
-               function(s) { s.noteGrainOn(0.5, 0, 2); },
-               bufferSource.PLAYING_STATE,
-               "2 second grain starting at time 0.5");
-      
-    createTest(3,
-               function(s) { s.noteGrainOn(0.5, 0, 1); },
-               bufferSource.FINISHED_STATE,
-               "1 second grain starting at time 0.5");
 
     // Test looping source
 
     createTest(0.5,
-               function(s) { s.loop = true; s.noteOn(renderTime + 1); },
+               function(s) { s.loop = true; s.start(renderTime + 1); },
                bufferSource.SCHEDULED_STATE,
                "a looping 0.5 second source scheduled at time " + (renderTime + 1));
 
     createTest(0.5,
-               function(s) { s.loop = true; s.noteOn(1.25); },
+               function(s) { s.loop = true; s.start(1.25); },
                bufferSource.PLAYING_STATE,
                "a looping 0.5 second source starting at time 1.25");
 

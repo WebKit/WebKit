@@ -27,10 +27,6 @@ function runTest() {
     context = new webkitAudioContext();
     window.audioNode = context.createBufferSource();
 
-    shouldThrow("audioNode.noteOn()");
-    shouldThrow("audioNode.noteGrainOn()");
-    shouldThrow("audioNode.noteOff()");
-
     // Check input and output numbers of AudioSourceNode.
     if (audioNode.numberOfInputs === 0)
         testPassed("Source AudioNode has no inputs.");
@@ -93,12 +89,12 @@ function runTest() {
         testPassed("exception thrown when connecting to other context's node.");
     }
 
-    // Create a new context with not enough arguments
+    // Create a new context with too many arguments
     try {
         context2 = new webkitAudioContext(0, 0);
-        testFailed("exception should be thrown when creating audio context with not enough arguments.");
+        testFailed("exception should be thrown when creating audio context with too many arguments.");
     } catch(e) {
-        testPassed("exception thrown when creating audio context with not enough arguments.");
+        testPassed("exception thrown when creating audio context with too many arguments.");
     }
 
     // Ensure it is an EventTarget

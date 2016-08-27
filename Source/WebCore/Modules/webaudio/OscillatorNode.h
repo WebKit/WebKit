@@ -41,13 +41,12 @@ class PeriodicWave;
 class OscillatorNode : public AudioScheduledSourceNode {
 public:
     // The waveform type.
-    // These must be defined as in the .idl file.
-    enum {
-        SINE = 0,
-        SQUARE = 1,
-        SAWTOOTH = 2,
-        TRIANGLE = 3,
-        CUSTOM = 4
+    enum class Type {
+        Sine,
+        Square,
+        Sawtooth,
+        Triangle,
+        Custom
     };
 
     static Ref<OscillatorNode> create(AudioContext&, float sampleRate);
@@ -58,10 +57,8 @@ public:
     void process(size_t framesToProcess) override;
     void reset() override;
 
-    String type() const;
-
-    bool setType(unsigned); // Returns true on success.
-    void setType(const String&);
+    Type type() const { return m_type; }
+    void setType(Type, ExceptionCode&);
 
     AudioParam* frequency() { return m_frequency.get(); }
     AudioParam* detune() { return m_detune.get(); }
@@ -80,7 +77,7 @@ private:
     bool propagatesSilence() const override;
 
     // One of the waveform types defined in the enum.
-    unsigned short m_type;
+    Type m_type { Type::Sine };
     
     // Frequency value in Hertz.
     RefPtr<AudioParam> m_frequency;

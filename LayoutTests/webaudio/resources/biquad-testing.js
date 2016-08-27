@@ -349,32 +349,23 @@ function createAllpassFilter(freq, q, gain) {
 
 // Array of functions to compute the filter coefficients.  This must
 // be arraned in the same order as the filter types in the idl file.
-var filterCreatorFunction = [createLowpassFilter,
-                             createHighpassFilter,
-                             createBandpassFilter,
-                             createLowShelfFilter,
-                             createHighShelfFilter,
-                             createPeakingFilter,
-                             createNotchFilter,
-                             createAllpassFilter];
+var filterCreatorFunction = {"lowpass": createLowpassFilter,
+                             "highpass": createHighpassFilter,
+                             "bandpass": createBandpassFilter,
+                             "lowshelf": createLowShelfFilter,
+                             "highshelf": createHighShelfFilter,
+                             "peaking": createPeakingFilter,
+                             "notch": createNotchFilter,
+                             "allpass": createAllpassFilter};
 
-var filterTypeName = ["Lowpass filter",
-                      "Highpass filter",
-                      "Bandpass filter",
-                      "Lowshelf filter",
-                      "Highshelf filter",
-                      "Peaking filter",
-                      "Notch filter",
-                      "Allpass filter"];
-
-var filterTypeIndex = {"lowpass": 0,
-                       "highpass": 1,
-                       "bandpass": 2,
-                       "lowshelf": 3,
-                       "highshelf": 4,
-                       "peaking": 5,
-                       "notch": 6,
-                       "allpass": 7};
+var filterTypeName = {"lowpass": "Lowpass filter",
+                      "highpass": "Highpass filter",
+                      "bandpass": "Bandpass filter",
+                      "lowshelf": "Lowshelf filter",
+                      "highshelf": "Highshelf filter",
+                      "peaking": "Peaking filter",
+                      "notch": "Notch filter",
+                      "allpass": "Allpass filter"};
 
 function createFilter(filterType, freq, q, gain) {
     return filterCreatorFunction[filterType](freq, q, gain);
@@ -450,7 +441,7 @@ function createTestAndRun(context, filterType, filterParameters) {
         signal[k].connect(filter[k]);
         filter[k].connect(context.destination);
 
-        signal[k].noteOn(timeStep * k);
+        signal[k].start(timeStep * k);
     }
 
     context.oncomplete = checkFilterResponse(filterType, filterParameters);

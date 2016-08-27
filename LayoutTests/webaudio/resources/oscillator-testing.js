@@ -17,20 +17,12 @@ var lowFrequency = 10;
 var highFrequency = nyquist + 2000; // go slightly higher than nyquist to make sure we generate silence there
 var context = 0;
 
-var OSC = {
-    SINE: 0,
-    SQUARE: 1,
-    SAWTOOTH: 2,
-    TRIANGLE: 3,
-    CUSTOM: 4,
-};
-
 function generateExponentialOscillatorSweep(oscillatorType) {
     // Create offline audio context.
     context = new webkitOfflineAudioContext(1, sampleRate * lengthInSeconds, sampleRate);
 
     var osc = context.createOscillator();
-    if (oscillatorType == OSC.CUSTOM) {
+    if (oscillatorType == "custom") {
         // Create a simple waveform with three Fourier coefficients.
         // Note the first values are expected to be zero (DC for coeffA and Nyquist for coeffB).
         var coeffA = new Float32Array([0, 1, 0.5]);
@@ -42,7 +34,7 @@ function generateExponentialOscillatorSweep(oscillatorType) {
     }
 
     // Scale by 1/2 to better visualize the waveform and to avoid clipping past full scale.
-    var gainNode = context.createGainNode();
+    var gainNode = context.createGain();
     gainNode.gain.value = 0.5;
     osc.connect(gainNode);
     gainNode.connect(context.destination);

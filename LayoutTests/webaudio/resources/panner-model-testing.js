@@ -58,7 +58,7 @@ function createGraph(context, nodeCount) {
 
         // Start the source
         time[k] = k * timeStep;
-        bufferSource[k].noteOn(time[k]);
+        bufferSource[k].start(time[k]);
     }
 }
 

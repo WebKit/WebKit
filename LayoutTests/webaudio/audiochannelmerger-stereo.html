@@ -99,8 +99,8 @@ function runTest() {
     channelMerger.connect(context.destination);
 
     // Trigger both sources to start at the beginning.
-    bufferSource1.noteOn(0);
-    bufferSource2.noteOn(0);
+    bufferSource1.start(0);
+    bufferSource2.start(0);
     
     context.oncomplete = checkResult;
     context.startRendering();

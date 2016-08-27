@@ -147,7 +147,7 @@ function runTest() {
     jsnode.connect(context.destination);
     jsnode.onaudioprocess = processAudioData;
 
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
     context.oncomplete = finishJSTest;
     context.startRendering();
 }

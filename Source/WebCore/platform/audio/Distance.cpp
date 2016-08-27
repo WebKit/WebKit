@@ -38,7 +38,7 @@
 namespace WebCore {
 
 DistanceEffect::DistanceEffect()
-    : m_model(ModelInverse)
+    : m_model(DistanceModelType::Inverse)
     , m_isClamped(true)
     , m_refDistance(1.0)
     , m_maxDistance(10000.0)
@@ -56,11 +56,11 @@ double DistanceEffect::gain(double distance)
         distance = std::max(distance, m_refDistance);
 
     switch (m_model) {
-    case ModelLinear:
+    case DistanceModelType::Linear:
         return linearGain(distance);
-    case ModelInverse:
+    case DistanceModelType::Inverse:
         return inverseGain(distance);
-    case ModelExponential:
+    case DistanceModelType::Exponential:
         return exponentialGain(distance);
     }
     ASSERT_NOT_REACHED();

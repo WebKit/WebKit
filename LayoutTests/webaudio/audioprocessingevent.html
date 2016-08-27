@@ -59,7 +59,7 @@ function runTest() {
     oscillator.connect(scriptProcessorNode);
     scriptProcessorNode.onaudioprocess = processAudioData;
 
-    var gainNode = context.createGainNode();
+    var gainNode = context.createGain();
 
     scriptProcessorNode.connect(gainNode);
     gainNode.connect(context.destination);

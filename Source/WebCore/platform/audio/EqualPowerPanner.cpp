@@ -39,7 +39,7 @@ const float SmoothingTimeConstant = 0.050f;
 namespace WebCore {
 
 EqualPowerPanner::EqualPowerPanner(float sampleRate)
-    : Panner(PanningModelEqualPower)
+    : Panner(PanningModelType::Equalpower)
     , m_isFirstRender(true)
     , m_gainL(0.0)
     , m_gainR(0.0)

@@ -48,7 +48,7 @@ static void fixNANs(double &x)
 
 PannerNode::PannerNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
-    , m_panningModel(Panner::PanningModelHRTF)
+    , m_panningModel(PanningModelType::HRTF)
     , m_lastGain(-1.0)
     , m_connectionCount(0)
 {
@@ -111,7 +111,7 @@ void PannerNode::process(size_t framesToProcess)
     }
 
     // HRTFDatabase should be loaded before proceeding for offline audio context when panningModel() is "HRTF".
-    if (panningModel() == "HRTF" && !m_hrtfDatabaseLoader->isLoaded()) {
+    if (panningModel() == PanningModelType::HRTF && !m_hrtfDatabaseLoader->isLoaded()) {
         if (context().isOfflineContext())
             m_hrtfDatabaseLoader->waitForLoaderThreadCompletion();
         else {
@@ -176,97 +176,25 @@ AudioListener* PannerNode::listener()
     return context().listener();
 }
 
-String PannerNode::panningModel() const
+void PannerNode::setPanningModel(PanningModelType model)
 {
-    switch (m_panningModel) {
-    case EQUALPOWER:
-        return "equalpower";
-    case HRTF:
-        return "HRTF";
-    case SOUNDFIELD:
-        return "soundfield";
-    default:
-        ASSERT_NOT_REACHED();
-        return "HRTF";
+    if (!m_panner.get() || model != m_panningModel) {
+        // This synchronizes with process().
+        std::lock_guard<Lock> lock(m_pannerMutex);
+
+        m_panner = Panner::create(model, sampleRate(), m_hrtfDatabaseLoader.get());
+        m_panningModel = model;
     }
 }
 
-void PannerNode::setPanningModel(const String& model)
+DistanceModelType PannerNode::distanceModel() const
 {
-    if (model == "equalpower")
-        setPanningModel(EQUALPOWER);
-    else if (model == "HRTF")
-        setPanningModel(HRTF);
-    else if (model == "soundfield")
-        setPanningModel(SOUNDFIELD);
-    else
-        ASSERT_NOT_REACHED();
+    return const_cast<PannerNode*>(this)->m_distanceEffect.model();
 }
 
-bool PannerNode::setPanningModel(unsigned model)
+void PannerNode::setDistanceModel(DistanceModelType model)
 {
-    switch (model) {
-    case EQUALPOWER:
-    case HRTF:
-        if (!m_panner.get() || model != m_panningModel) {
-            // This synchronizes with process().
-            std::lock_guard<Lock> lock(m_pannerMutex);
-
-            m_panner = Panner::create(model, sampleRate(), m_hrtfDatabaseLoader.get());
-            m_panningModel = model;
-        }
-        break;
-    case SOUNDFIELD:
-        // FIXME: Implement sound field model. See // https://bugs.webkit.org/show_bug.cgi?id=77367.
-        context().scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("'soundfield' panning model not implemented."));
-        break;
-    default:
-        return false;
-    }
-    
-    return true;
-}
-
-String PannerNode::distanceModel() const
-{
-    switch (const_cast<PannerNode*>(this)->m_distanceEffect.model()) {
-    case DistanceEffect::ModelLinear:
-        return "linear";
-    case DistanceEffect::ModelInverse:
-        return "inverse";
-    case DistanceEffect::ModelExponential:
-        return "exponential";
-    default:
-        ASSERT_NOT_REACHED();
-        return "inverse";
-    }
-}
-
-void PannerNode::setDistanceModel(const String& model)
-{
-    if (model == "linear")
-        setDistanceModel(DistanceEffect::ModelLinear);
-    else if (model == "inverse")
-        setDistanceModel(DistanceEffect::ModelInverse);
-    else if (model == "exponential")
-        setDistanceModel(DistanceEffect::ModelExponential);
-    else
-        ASSERT_NOT_REACHED();
-}
-
-bool PannerNode::setDistanceModel(unsigned model)
-{
-    switch (model) {
-    case DistanceEffect::ModelLinear:
-    case DistanceEffect::ModelInverse:
-    case DistanceEffect::ModelExponential:
-        m_distanceEffect.setModel(static_cast<DistanceEffect::ModelType>(model), true);
-        break;
-    default:
-        return false;
-    }
-
-    return true;
+    m_distanceEffect.setModel(model, true);
 }
 
 void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)

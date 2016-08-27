@@ -49,7 +49,7 @@ function playNote(time, duration, playbackRate) {
     source.buffer = sinWaveBuffer;
     source.playbackRate.value = playbackRate;
     
-    var gainNode = context.createGainNode();
+    var gainNode = context.createGain();
     source.connect(gainNode);
     gainNode.connect(context.destination);
 

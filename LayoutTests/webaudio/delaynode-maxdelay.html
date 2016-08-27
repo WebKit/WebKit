@@ -31,7 +31,7 @@ function runTest() {
     bufferSource.buffer = toneBuffer;
 
     // Create a delay node with an explicit max delay time (greater than the default of 1 second).
-    var delay = context.createDelayNode(2);
+    var delay = context.createDelay(2);
     // Set the delay time to a value greater than the default max delay so we can verify the delay
     // is working for this case.
     delayTimeSeconds = 1.5;
@@ -39,7 +39,7 @@ function runTest() {
 
     bufferSource.connect(delay);
     delay.connect(context.destination);
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
     
     context.oncomplete = checkDelayedResult(toneBuffer);
     context.startRendering();

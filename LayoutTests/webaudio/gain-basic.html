@@ -24,7 +24,7 @@ function runTest() {
     var context = new webkitAudioContext();
 
     // Create gain node.
-    var gainNode = context.createGainNode();
+    var gainNode = context.createGain();
 
     if (gainNode.gain.toString().indexOf("AudioParam") > -1)
         testPassed("gain is of AudioParam type.");

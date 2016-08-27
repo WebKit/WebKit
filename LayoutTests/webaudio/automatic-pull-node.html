@@ -59,7 +59,7 @@ function test1Finished() {
 function test1() {
     constructCommonGraph();
 
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
 
     context.oncomplete = test1Finished;
     context.startRendering();
@@ -84,7 +84,7 @@ function test2() {
 
     analyser.connect(context.destination);
 
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
 
     context.oncomplete = test2Finished;
     context.startRendering();
@@ -108,10 +108,10 @@ function test3Finished() {
 function test3() {
     constructCommonGraph();
 
-    var gain = context.createGainNode();
+    var gain = context.createGain();
     analyser.connect(gain);
 
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
 
     context.oncomplete = test3Finished;
     context.startRendering();

@@ -6537,8 +6537,6 @@
 		FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */; };
 		FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */; };
 		FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */; };
-		FD8AA63C1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8AA63B1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp */; };
-		FD8AA63E169514A700D2EA68 /* JSPannerNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */; };
 		FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */; };
 		FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */; };
 		FDA15E9D12B03EE1003A583A /* JSAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */; };
@@ -6587,7 +6585,6 @@
 		FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */; };
 		FDB1700514A2BAB200A2B5D9 /* MultiChannelResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */; };
 		FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */; };
-		FDBD1DFC167FE27D0051A11E /* JSOscillatorNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */; };
 		FDBD480C159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */; };
 		FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */; };
 		FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */; };
@@ -14150,8 +14147,6 @@
 		FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveShaperProcessor.h; sourceTree = "<group>"; };
 		FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWaveShaperNode.cpp; sourceTree = "<group>"; };
 		FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveShaperNode.h; sourceTree = "<group>"; };
-		FD8AA63B1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBiquadFilterNodeCustom.cpp; sourceTree = "<group>"; };
-		FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPannerNodeCustom.cpp; sourceTree = "<group>"; };
 		FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioScheduledSourceNode.cpp; sourceTree = "<group>"; };
 		FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioScheduledSourceNode.h; sourceTree = "<group>"; };
 		FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBuffer.cpp; sourceTree = "<group>"; };
@@ -14202,7 +14197,6 @@
 		FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSummingJunction.h; sourceTree = "<group>"; };
 		FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiChannelResampler.cpp; sourceTree = "<group>"; };
 		FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiChannelResampler.h; sourceTree = "<group>"; };
-		FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOscillatorNodeCustom.cpp; sourceTree = "<group>"; };
 		FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamAudioSourceNode.h; sourceTree = "<group>"; };
 		FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadFilterNode.cpp; sourceTree = "<group>"; };
@@ -20955,7 +20949,6 @@
 				FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */,
 				BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */,
 				BE6DF710171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp */,
-				FD8AA63B1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp */,
 				8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				4659D2701D6B909F0096FD86 /* JSCanvasRenderingContext.h */,
@@ -21045,8 +21038,6 @@
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
 				AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */,
-				FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */,
-				FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
 				07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */,
@@ -28351,7 +28342,6 @@
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
 				70F546E8B8B5D7DC54EE144E /* JSBeforeUnloadEvent.cpp in Sources */,
 				FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */,
-				FD8AA63C1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp in Sources */,
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
 				8931DE5B14C44C44000DC9D2 /* JSBlobCustom.cpp in Sources */,
 				14DCF3B21B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.cpp in Sources */,
@@ -28713,13 +28703,11 @@
 				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
 				FDA9326616703BA9008982DC /* JSOfflineAudioContext.cpp in Sources */,
 				FDEA6242152102E200479DF0 /* JSOscillatorNode.cpp in Sources */,
-				FDBD1DFC167FE27D0051A11E /* JSOscillatorNodeCustom.cpp in Sources */,
 				0704A40B1D6DFC690086DCDB /* JSOverconstrainedError.cpp in Sources */,
 				0704A4151D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
-				FD8AA63E169514A700D2EA68 /* JSPannerNodeCustom.cpp in Sources */,
 				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
 				CB38FD511CCF938900592A3F /* JSPerformanceEntry.cpp in Sources */,
 				CB38FD571CD21E2A00592A3F /* JSPerformanceEntryCustom.cpp in Sources */,

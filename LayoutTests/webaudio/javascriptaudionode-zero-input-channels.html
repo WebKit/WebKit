@@ -37,7 +37,7 @@ function runTest()
     var node;
 
     try {  
-        node = context.createJavaScriptNode(bufferSize, 0, 1);
+        node = context.createScriptProcessor(bufferSize, 0, 1);
         testPassed("Successfully created JavaScriptAudioNode.");
     } catch (e) {
         testFailed("Failed to create JavaScriptAudioNode.");
@@ -53,7 +53,7 @@ function runTest()
     node.onaudioprocess = function(e) { };
     source.connect(node);
     node.connect(context.destination);
-    source.noteOn(0);
+    source.start(0);
 
     context.oncomplete = checkResult;
     context.startRendering();

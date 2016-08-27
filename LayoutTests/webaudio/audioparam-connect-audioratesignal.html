@@ -85,7 +85,7 @@ function runTest() {
     gainChangingSource.buffer = linearRampBuffer;
 
     // Create a gain node controlling the gain of constantSource and make the connections.
-    var gainNode = context.createGainNode();
+    var gainNode = context.createGain();
 
     // Intrinsic baseline gain of zero.
     gainNode.gain.value = 0;
@@ -98,8 +98,8 @@ function runTest() {
     gainChangingSource.connect(gainNode.gain);
 
     // Start both sources at time 0.
-    constantSource.noteOn(0);
-    gainChangingSource.noteOn(0);
+    constantSource.start(0);
+    gainChangingSource.start(0);
 
     context.oncomplete = checkResult;
     context.startRendering();

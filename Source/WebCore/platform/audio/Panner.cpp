@@ -37,24 +37,18 @@
 
 namespace WebCore {
 
-std::unique_ptr<Panner> Panner::create(PanningModel model, float sampleRate, HRTFDatabaseLoader* databaseLoader)
+std::unique_ptr<Panner> Panner::create(PanningModelType model, float sampleRate, HRTFDatabaseLoader* databaseLoader)
 {
     std::unique_ptr<Panner> panner;
 
     switch (model) {
-    case PanningModelEqualPower:
+    case PanningModelType::Equalpower:
         panner = std::make_unique<EqualPowerPanner>(sampleRate);
         break;
 
-    case PanningModelHRTF:
+    case PanningModelType::HRTF:
         panner = std::make_unique<HRTFPanner>(sampleRate, databaseLoader);
         break;
-
-    // FIXME: sound field panning is not yet implemented...
-    case PanningModelSoundField:
-    default:
-        ASSERT_NOT_REACHED();
-        return nullptr;
     }
 
     return panner;

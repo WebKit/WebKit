@@ -107,7 +107,7 @@ function frequencyResponseReference(filter, frequencies)
 {
     var sampleRate = filter.context.sampleRate;
     var normalizedFreq = normalizedFrequency(filter.frequency.value, sampleRate);
-    var filterCoefficients = createFilter(filterTypeIndex[filter.type], normalizedFreq, filter.Q.value, filter.gain.value);
+    var filterCoefficients = createFilter(filter.type, normalizedFreq, filter.Q.value, filter.gain.value);
 
     var magnitudes = [];
     var phases = [];

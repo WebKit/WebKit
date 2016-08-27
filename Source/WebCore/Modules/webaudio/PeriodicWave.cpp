@@ -33,7 +33,6 @@
 #include "PeriodicWave.h"
 
 #include "FFTFrame.h"
-#include "OscillatorNode.h"
 #include "VectorMath.h"
 #include <algorithm>
 
@@ -57,28 +56,28 @@ Ref<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array& real, Flo
 Ref<PeriodicWave> PeriodicWave::createSine(float sampleRate)
 {
     Ref<PeriodicWave> waveTable = adoptRef(*new PeriodicWave(sampleRate));
-    waveTable->generateBasicWaveform(OscillatorNode::SINE);
+    waveTable->generateBasicWaveform(Type::Sine);
     return waveTable;
 }
 
 Ref<PeriodicWave> PeriodicWave::createSquare(float sampleRate)
 {
     Ref<PeriodicWave> waveTable = adoptRef(*new PeriodicWave(sampleRate));
-    waveTable->generateBasicWaveform(OscillatorNode::SQUARE);
+    waveTable->generateBasicWaveform(Type::Square);
     return waveTable;
 }
 
 Ref<PeriodicWave> PeriodicWave::createSawtooth(float sampleRate)
 {
     Ref<PeriodicWave> waveTable = adoptRef(*new PeriodicWave(sampleRate));
-    waveTable->generateBasicWaveform(OscillatorNode::SAWTOOTH);
+    waveTable->generateBasicWaveform(Type::Sawtooth);
     return waveTable;
 }
 
 Ref<PeriodicWave> PeriodicWave::createTriangle(float sampleRate)
 {
     Ref<PeriodicWave> waveTable = adoptRef(*new PeriodicWave(sampleRate));
-    waveTable->generateBasicWaveform(OscillatorNode::TRIANGLE);
+    waveTable->generateBasicWaveform(Type::Triangle);
     return waveTable;
 }
 
@@ -213,7 +212,7 @@ void PeriodicWave::createBandLimitedTables(const float* realData, const float* i
     }
 }
 
-void PeriodicWave::generateBasicWaveform(int shape)
+void PeriodicWave::generateBasicWaveform(Type shape)
 {
     unsigned fftSize = periodicWaveSize();
     unsigned halfSize = fftSize / 2;
@@ -238,29 +237,24 @@ void PeriodicWave::generateBasicWaveform(int shape)
         // Calculate Fourier coefficients depending on the shape.
         // Note that the overall scaling (magnitude) of the waveforms is normalized in createBandLimitedTables().
         switch (shape) {
-        case OscillatorNode::SINE:
+        case Type::Sine:
             // Standard sine wave function.
             a = 0;
             b = (n == 1) ? 1 : 0;
             break;
-        case OscillatorNode::SQUARE:
+        case Type::Square:
             // Square-shaped waveform with the first half its maximum value and the second half its minimum value.
             a = 0;
             b = invOmega * ((n & 1) ? 2 : 0);
             break;
-        case OscillatorNode::SAWTOOTH:
+        case Type::Sawtooth:
             // Sawtooth-shaped waveform with the first half ramping from zero to maximum and the second half from minimum to zero.
             a = 0;
             b = -invOmega * cos(0.5 * omega);
             break;
-        case OscillatorNode::TRIANGLE:
+        case Type::Triangle:
             // Triangle-shaped waveform going from its maximum value to its minimum value then back to the maximum value.
             a = (4 - 4 * cos(0.5 * omega)) / (n * n * piFloat * piFloat);
-            b = 0;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            a = 0;
             b = 0;
             break;
         }

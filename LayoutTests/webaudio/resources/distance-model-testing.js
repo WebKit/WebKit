@@ -95,14 +95,13 @@ function createGraph(context, distanceModel, nodeCount) {
         panner[k].connect(context.destination);
 
         time[k] = k * timeStep;
-        bufferSource[k].noteOn(time[k]);
+        bufferSource[k].start(time[k]);
     }
 }
 
 // distanceModel should be the distance model constant like
-// LINEAR_DISTANCE, INVERSE_DISTANCE, and EXPONENTIAL_DISTANCE.  The
-// expectedModel is the expected actual numeric value of the constant.
-function createTestAndRun(context, distanceModel, expectedModel) {
+// linear, inverse, and exponential.
+function createTestAndRun(context, distanceModel) {
     // To test the distance models, we create a number of panners at
     // uniformly spaced intervals on the z-axis.  Each of these are
     // started at equally spaced time intervals.  After rendering the
@@ -112,7 +111,7 @@ function createTestAndRun(context, distanceModel, expectedModel) {
 
     createGraph(context, distanceModel, nodesToCreate);
 
-    context.oncomplete = checkDistanceResult(distanceModel, expectedModel);
+    context.oncomplete = checkDistanceResult(distanceModel);
     context.startRendering();
 }
 
@@ -122,7 +121,7 @@ function equalPowerGain() {
     return Math.SQRT1_2;
 }
 
-function checkDistanceResult(model, expectedModel) {
+function checkDistanceResult(model) {
     return function(event) {
         renderedBuffer = event.renderedBuffer;
         renderedData = renderedBuffer.getChannelData(0);
@@ -173,13 +172,6 @@ function checkDistanceResult(model, expectedModel) {
                 ++impulseCount;
             }
         }
-
-        if (model == expectedModel) {
-            testPassed("Distance model value matched expected value.");
-        } else {
-            testFailed("Distance model value does not match expected value.");
-            success = false;
-        }    
 
         if (impulseCount == nodesToCreate) {
             testPassed("Number of impulses found matches number of panner nodes.");

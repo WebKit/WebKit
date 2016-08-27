@@ -41,7 +41,7 @@ public:
     // These are the possible states an AudioScheduledSourceNode can be in:
     //
     // UNSCHEDULED_STATE - Initial playback state. Created, but not yet scheduled.
-    // SCHEDULED_STATE - Scheduled to play (via noteOn() or noteGrainOn()), but not yet playing.
+    // SCHEDULED_STATE - Scheduled to play but not yet playing.
     // PLAYING_STATE - Generating sound.
     // FINISHED_STATE - Finished generating sound.
     //
@@ -60,11 +60,6 @@ public:
     // Scheduling.
     void start(double when, ExceptionCode&);
     void stop(double when, ExceptionCode&);
-
-#if ENABLE(LEGACY_WEB_AUDIO)
-    void noteOn(double when, ExceptionCode&);
-    void noteOff(double when, ExceptionCode&);
-#endif
 
     unsigned short playbackState() const { return static_cast<unsigned short>(m_playbackState); }
     bool isPlayingOrScheduled() const { return m_playbackState == PLAYING_STATE || m_playbackState == SCHEDULED_STATE; }

@@ -47,18 +47,18 @@ function runTest() {
     bufferSource.buffer = toneBuffer;
     bufferSource.connect(context.destination);
 
-    var delay = context.createDelayNode();
+    var delay = context.createDelay();
     delay.delayTime.value = delayTimeSeconds;
 
     // We connect delay node to gain node before anything is connected to delay node itself.
     // We do this because we try to trigger the ASSERT which might be fired due to AudioNode connection order,
     // especially when gain node and delay node is involved e.g. https://bugs.webkit.org/show_bug.cgi?id=76685.
 
-    var gain = context.createGainNode();
+    var gain = context.createGain();
     gain.connect(context.destination);
     delay.connect(gain);
 
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
 
     context.oncomplete = finishJSTest;
     context.startRendering();

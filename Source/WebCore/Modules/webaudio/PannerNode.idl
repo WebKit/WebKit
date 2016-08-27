@@ -23,22 +23,27 @@
  */
 
 [
+    ImplementedAs=PanningModelType
+] enum PanningModelType {
+    "equalpower",
+    "HRTF"
+};
+
+[
+    ImplementedAs=DistanceModelType
+] enum DistanceModelType {
+    "linear",
+    "inverse",
+    "exponential"
+};
+
+[
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
     InterfaceName=webkitAudioPannerNode,
 ] interface PannerNode : AudioNode {
-    // Panning model
-    const unsigned short EQUALPOWER = 0;
-    const unsigned short HRTF = 1;
-    const unsigned short SOUNDFIELD = 2;
-
-    // Distance model
-    const unsigned short LINEAR_DISTANCE = 0;
-    const unsigned short INVERSE_DISTANCE = 1;
-    const unsigned short EXPONENTIAL_DISTANCE = 2;
-
     // Default model for stereo is HRTF 
-    [CustomSetter] attribute DOMString panningModel;
+    attribute PanningModelType panningModel;
 
     // Uses a 3D cartesian coordinate system 
     void setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
@@ -46,7 +51,7 @@
     void setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
 
     // Distance model
-    [CustomSetter] attribute DOMString distanceModel;
+    attribute DistanceModelType distanceModel;
 
     attribute unrestricted double refDistance;
     attribute unrestricted double maxDistance;

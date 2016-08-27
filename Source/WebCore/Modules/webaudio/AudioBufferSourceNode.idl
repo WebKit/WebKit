@@ -39,7 +39,7 @@
     readonly attribute AudioParam gain;
     readonly attribute AudioParam playbackRate;
 
-    attribute boolean loop; // This is the proper attribute name from the specification.
+    attribute boolean loop;
 
     attribute unrestricted double loopStart;
     attribute unrestricted double loopEnd;
@@ -47,11 +47,5 @@
     [RaisesException] void start(optional unrestricted double when = 0, optional unrestricted double grainOffset = 0, optional unrestricted double grainDuration);
     [RaisesException] void stop(optional unrestricted double when = 0);
 
-    [Conditional=LEGACY_WEB_AUDIO] attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
-
-    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOn(unrestricted double when);
-    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteGrainOn(unrestricted double when, unrestricted double grainOffset, unrestricted double grainDuration);
-    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOff(unrestricted double when);
-    
     attribute EventHandler onended;
 };

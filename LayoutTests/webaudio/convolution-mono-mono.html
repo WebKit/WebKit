@@ -49,7 +49,7 @@ function runTest() {
     bufferSource.connect(convolver);
     convolver.connect(context.destination);
 
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
     
     context.oncomplete = checkConvolvedResult(trianglePulse);
     context.startRendering();

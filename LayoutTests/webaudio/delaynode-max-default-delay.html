@@ -30,13 +30,13 @@ function runTest() {
     var bufferSource = context.createBufferSource();
     bufferSource.buffer = toneBuffer;
 
-    var delay = context.createDelayNode();
+    var delay = context.createDelay();
     delayTimeSeconds = 1;
     delay.delayTime.value = delayTimeSeconds;
 
     bufferSource.connect(delay);
     delay.connect(context.destination);
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
     
     context.oncomplete = checkDelayedResult(toneBuffer);
     context.startRendering();

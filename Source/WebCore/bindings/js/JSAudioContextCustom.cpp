@@ -68,41 +68,9 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState& exec)
         }
         if (!audioContext)
             return throwVMError(&exec, createSyntaxError(&exec, "audio resources unavailable for AudioContext construction"));
-    } else {
-#if ENABLE(LEGACY_WEB_AUDIO)
-        // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
-        // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
-        document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Deprecated AudioContext constructor: use OfflineAudioContext instead"));
-
-        if (exec.argumentCount() < 3)
-            return throwVMError(&exec, createNotEnoughArgumentsError(&exec));
-
-        int32_t numberOfChannels = exec.uncheckedArgument(0).toInt32(&exec);
-        int32_t numberOfFrames = exec.uncheckedArgument(1).toInt32(&exec);
-        float sampleRate = exec.uncheckedArgument(2).toFloat(&exec);
-
-        if (numberOfChannels <= 0 || numberOfChannels > 10)
-            return throwVMError(&exec, createSyntaxError(&exec, "Invalid number of channels"));
-
-        if (numberOfFrames <= 0)
-            return throwVMError(&exec, createSyntaxError(&exec, "Invalid number of frames"));
-
-        if (sampleRate <= 0)
-            return throwVMError(&exec, createSyntaxError(&exec, "Invalid sample rate"));
-
-
-        ExceptionCode ec = 0;
-        audioContext = OfflineAudioContext::create(document, numberOfChannels, numberOfFrames, sampleRate, ec);
-        if (ec) {
-            setDOMException(&exec, ec);
-            return throwVMError(&exec, createSyntaxError(&exec, "Error creating OfflineAudioContext"));
-        }
-#else
+    } else
         return throwVMError(&exec, createSyntaxError(&exec, "Illegal AudioContext constructor"));
-#endif
-        if (!audioContext)
-            return throwVMError(&exec, createReferenceError(&exec, "Error creating AudioContext"));
-    }
+
     return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), AudioContext, audioContext.releaseNonNull()));
 }
 

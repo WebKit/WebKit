@@ -32,6 +32,7 @@
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
 #include "PeriodicWave.h"
 #include "VectorMath.h"
 #include <algorithm>
@@ -53,7 +54,6 @@ Ref<OscillatorNode> OscillatorNode::create(AudioContext& context, float sampleRa
 
 OscillatorNode::OscillatorNode(AudioContext& context, float sampleRate)
     : AudioScheduledSourceNode(context, sampleRate)
-    , m_type(SINE)
     , m_firstRender(true)
     , m_virtualReadIndex(0)
     , m_phaseIncrements(AudioNode::ProcessingSizeInFrames)
@@ -67,7 +67,7 @@ OscillatorNode::OscillatorNode(AudioContext& context, float sampleRate)
     m_detune = AudioParam::create(context, "detune", 0, -4800, 4800);
 
     // Sets up default wave.
-    setType(m_type);
+    setType(m_type, ASSERT_NO_EXCEPTION);
 
     // An oscillator is always mono.
     addOutput(std::make_unique<AudioNodeOutput>(this, 1));
@@ -80,75 +80,40 @@ OscillatorNode::~OscillatorNode()
     uninitialize();
 }
 
-String OscillatorNode::type() const
-{
-    switch (m_type) {
-    case SINE:
-        return "sine";
-    case SQUARE:
-        return "square";
-    case SAWTOOTH:
-        return "sawtooth";
-    case TRIANGLE:
-        return "triangle";
-    case CUSTOM:
-        return "custom";
-    default:
-        ASSERT_NOT_REACHED();
-        return "custom";
-    }
-}
-
-void OscillatorNode::setType(const String& type)
-{
-    if (type == "sine")
-        setType(SINE);
-    else if (type == "square")
-        setType(SQUARE);
-    else if (type == "sawtooth")
-        setType(SAWTOOTH);
-    else if (type == "triangle")
-        setType(TRIANGLE);
-    else
-        ASSERT_NOT_REACHED();
-}
-
-bool OscillatorNode::setType(unsigned type)
+void OscillatorNode::setType(Type type, ExceptionCode& ec)
 {
     PeriodicWave* periodicWave = nullptr;
     float sampleRate = this->sampleRate();
 
     switch (type) {
-    case SINE:
+    case Type::Sine:
         if (!s_periodicWaveSine)
             s_periodicWaveSine = &PeriodicWave::createSine(sampleRate).leakRef();
         periodicWave = s_periodicWaveSine;
         break;
-    case SQUARE:
+    case Type::Square:
         if (!s_periodicWaveSquare)
             s_periodicWaveSquare = &PeriodicWave::createSquare(sampleRate).leakRef();
         periodicWave = s_periodicWaveSquare;
         break;
-    case SAWTOOTH:
+    case Type::Sawtooth:
         if (!s_periodicWaveSawtooth)
             s_periodicWaveSawtooth = &PeriodicWave::createSawtooth(sampleRate).leakRef();
         periodicWave = s_periodicWaveSawtooth;
         break;
-    case TRIANGLE:
+    case Type::Triangle:
         if (!s_periodicWaveTriangle)
             s_periodicWaveTriangle = &PeriodicWave::createTriangle(sampleRate).leakRef();
         periodicWave = s_periodicWaveTriangle;
         break;
-    case CUSTOM:
-    default:
-        // Return error for invalid types, including CUSTOM since setPeriodicWave() method must be
-        // called explicitly.
-        return false;
+    case Type::Custom:
+        if (m_type != Type::Custom)
+            ec = INVALID_STATE_ERR;
+        return;
     }
 
     setPeriodicWave(periodicWave);
     m_type = type;
-    return true;
 }
 
 bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
@@ -342,7 +307,7 @@ void OscillatorNode::setPeriodicWave(PeriodicWave* periodicWave)
     // This synchronizes with process().
     std::lock_guard<Lock> lock(m_processMutex);
     m_periodicWave = periodicWave;
-    m_type = CUSTOM;
+    m_type = Type::Custom;
 }
 
 bool OscillatorNode::propagatesSilence() const

@@ -509,16 +509,6 @@ void AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbackMode, double
     m_playbackState = SCHEDULED_STATE;
 }
 
-#if ENABLE(LEGACY_WEB_AUDIO)
-void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double grainDuration, ExceptionCode& ec)
-{
-    // Handle unspecified duration where 0 means the rest of the buffer.
-    if (!grainDuration)
-        grainDuration = buffer()->duration();
-    startPlaying(Partial, when, grainOffset, grainDuration, ec);
-}
-#endif
-
 double AudioBufferSourceNode::totalPitchRate()
 {
     double dopplerRate = 1.0;

@@ -1,3 +1,13 @@
+2016-08-26  Sam Weinig  <sam@webkit.org>
+
+        Remove support for ENABLE_LEGACY_WEB_AUDIO
+        https://bugs.webkit.org/show_bug.cgi?id=161262
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Remove ENABLE_LEGACY_WEB_AUDIO
+
 2016-08-25  Anders Carlsson  <andersca@apple.com>
 
         Re-export DOMException NSStrings after r204717
