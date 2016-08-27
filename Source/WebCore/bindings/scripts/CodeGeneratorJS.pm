@@ -1839,9 +1839,10 @@ sub getConditionalForFunctionConsideringOverloads
     foreach my $overload (@{$function->{overloads}}) {
         if ($overload->signature->extendedAttributes->{"Conditional"}) {
             $conditions{$overload->signature->extendedAttributes->{"Conditional"}} = 1;
+        } else {
+            return;
         }
     }
-    return undef unless keys %conditions;
     return join("|", keys %conditions);
 }
 

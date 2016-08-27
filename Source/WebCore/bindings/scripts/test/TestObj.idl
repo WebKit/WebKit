@@ -401,6 +401,9 @@ enum TestConfidence { "high", "kinda-low" };
     // Overloading with conditionals.
     [Conditional=CONDITION1] void conditionalOverload(DOMString str);
     [Conditional=CONDITION2] void conditionalOverload(long a);
+
+    void singleConditionalOverload(DOMString str);
+    [Conditional=CONDITION] void singleConditionalOverload(long a);
 #endif
 
     void attachShadowRoot(TestDictionary init);
