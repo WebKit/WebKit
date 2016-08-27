@@ -13,7 +13,6 @@ LOAD_BUILDBOT_DATA([
                     "Apple El Capitan Release WK2 (Tests)", 
                     "Apple Win 7 Debug (Tests)", 
                     "Apple Win 7 Release (Tests)", 
-                    "Apple Yosemite (Leaks)", 
                     "Apple Yosemite Debug WK1 (Tests)", 
                     "Apple Yosemite Debug WK2 (Tests)", 
                     "Apple Yosemite Release WK1 (Tests)", 
