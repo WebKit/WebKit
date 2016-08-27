@@ -36,6 +36,10 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
 
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -185,6 +189,72 @@ void DrawingAreaProxyImpl::discardBackingStore()
 {
     m_backingStore = nullptr;
     backingStoreStateDidChange(DoNotRespondImmediately);
+}
+
+DrawingAreaProxyImpl::DrawingMonitor::DrawingMonitor(WebPageProxy& webPage)
+    : m_webPage(webPage)
+    , m_timer(RunLoop::main(), this, &DrawingMonitor::stop)
+{
+}
+
+DrawingAreaProxyImpl::DrawingMonitor::~DrawingMonitor()
+{
+    m_callback = nullptr;
+    stop();
+}
+
+int DrawingAreaProxyImpl::DrawingMonitor::webViewDrawCallback(DrawingAreaProxyImpl::DrawingMonitor* monitor)
+{
+    monitor->didDraw();
+    return FALSE;
+}
+
+void DrawingAreaProxyImpl::DrawingMonitor::start(std::function<void (CallbackBase::Error)> callback)
+{
+    m_startTime = monotonicallyIncreasingTimeMS();
+    m_callback = callback;
+#if PLATFORM(GTK)
+    g_signal_connect_swapped(m_webPage.viewWidget(), "draw", reinterpret_cast<GCallback>(webViewDrawCallback), this);
+    m_timer.startOneShot(1);
+#else
+    m_timer.startOneShot(0);
+#endif
+}
+
+void DrawingAreaProxyImpl::DrawingMonitor::stop()
+{
+    m_timer.stop();
+#if PLATFORM(GTK)
+    g_signal_handlers_disconnect_by_func(m_webPage.viewWidget(), reinterpret_cast<gpointer>(webViewDrawCallback), this);
+#endif
+    m_startTime = 0;
+    if (m_callback) {
+        m_callback(CallbackBase::Error::None);
+        m_callback = nullptr;
+    }
+}
+
+void DrawingAreaProxyImpl::DrawingMonitor::didDraw()
+{
+    // We wait up to 1 second for draw events. If there are several draw events queued quickly,
+    // we want to wait until all of them have been processed, so after receiving a draw, we wait
+    // up to 100ms for the next one or stop.
+    if (monotonicallyIncreasingTimeMS() - m_startTime > 1000)
+        stop();
+    else
+        m_timer.startOneShot(0.100);
+}
+
+void DrawingAreaProxyImpl::dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)> callbackFunction)
+{
+    if (!m_webPageProxy.isValid()) {
+        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
+    if (!m_drawingMonitor)
+        m_drawingMonitor = std::make_unique<DrawingAreaProxyImpl::DrawingMonitor>(m_webPageProxy);
+    m_drawingMonitor->start(callbackFunction);
 }
 
 } // namespace WebKit

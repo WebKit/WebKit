@@ -1,3 +1,30 @@
+2016-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Threaded Compositor] Several flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=161242
+
+        Reviewed by Michael Catanzaro.
+
+        We still have a lot of flaky tests since we switched to the threaded compositor. The UI process might
+        take the screenshot too early, before everything is actually painted. I can't reproduce the problem, so this is
+        actually a speculative fix or workaround. Our implementation of DrawingArea::dispatchAfterEnsuringDrawing() is
+        quite simple, we just dispatch the callback in the next run loop iteration, which doesn't really ensures any
+        drawing at all. So, we can wait for draw events before dispatching the given callback. Since we don't really
+        know if draw events were already processed before dispatchAfterEnsuringDrawing() is called, or if there will be
+        more than one damage event in a short time, this patch waits up to 1 second for draw events, and if a draw
+        happens it stops if there isn't another draw event in the next 100ms. This should ensure a drawing if it was
+        really needed.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::DrawingMonitor):
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::~DrawingMonitor):
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::webViewDrawCallback):
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::start):
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::stop):
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::didDraw):
+        (WebKit::DrawingAreaProxyImpl::dispatchAfterEnsuringDrawing):
+        * UIProcess/DrawingAreaProxyImpl.h:
+
 2016-08-26  Sam Weinig  <sam@webkit.org>
 
         Remove support for ENABLE_LEGACY_WEB_AUDIO

@@ -60,9 +60,32 @@ private:
     void discardBackingStoreSoon();
     void discardBackingStore();
 
+    void dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)>) override;
+
+    class DrawingMonitor {
+        WTF_MAKE_NONCOPYABLE(DrawingMonitor); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        DrawingMonitor(WebPageProxy&);
+        ~DrawingMonitor();
+
+        void start(std::function<void (CallbackBase::Error)>);
+
+    private:
+        static int webViewDrawCallback(DrawingMonitor*);
+
+        void stop();
+        void didDraw();
+
+        WebPageProxy& m_webPage;
+        double m_startTime { 0 };
+        std::function<void (CallbackBase::Error)> m_callback;
+        RunLoop::Timer<DrawingMonitor> m_timer;
+    };
+
     bool m_isBackingStoreDiscardable { true };
     std::unique_ptr<BackingStore> m_backingStore;
     RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
+    std::unique_ptr<DrawingMonitor> m_drawingMonitor;
 };
 
 } // namespace WebKit
