@@ -246,6 +246,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetDynamicVar:
     case PutDynamicVar:
     case CompareEqPtr:
+    case CompareStrictEq:
         // These are OK.
         break;
 
@@ -386,42 +387,6 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse))
             break;
         if (node->child1().useKind() == OtherUse || node->child2().useKind() == OtherUse)
-            break;
-        return CannotCompile;
-    case CompareStrictEq:
-        if (node->isBinaryUseKind(Int32Use))
-            break;
-        if (node->isBinaryUseKind(Int52RepUse))
-            break;
-        if (node->isBinaryUseKind(DoubleRepUse))
-            break;
-        if (node->isBinaryUseKind(StringIdentUse))
-            break;
-        if (node->isBinaryUseKind(StringUse))
-            break;
-        if (node->isBinaryUseKind(ObjectUse, UntypedUse))
-            break;
-        if (node->isBinaryUseKind(UntypedUse, ObjectUse))
-            break;
-        if (node->isBinaryUseKind(ObjectUse))
-            break;
-        if (node->isBinaryUseKind(BooleanUse))
-            break;
-        if (node->isBinaryUseKind(UntypedUse))
-            break;
-        if (node->isBinaryUseKind(SymbolUse))
-            break;
-        if (node->isBinaryUseKind(SymbolUse, UntypedUse))
-            break;
-        if (node->isBinaryUseKind(UntypedUse, SymbolUse))
-            break;
-        if (node->isBinaryUseKind(MiscUse, UntypedUse))
-            break;
-        if (node->isBinaryUseKind(UntypedUse, MiscUse))
-            break;
-        if (node->isBinaryUseKind(StringIdentUse, NotStringVarUse))
-            break;
-        if (node->isBinaryUseKind(NotStringVarUse, StringIdentUse))
             break;
         return CannotCompile;
     case CompareLess:

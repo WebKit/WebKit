@@ -5102,15 +5102,6 @@ private:
             return;
         }
 
-        if (m_node->isBinaryUseKind(UntypedUse)) {
-            nonSpeculativeCompare(
-                [&] (LValue left, LValue right) {
-                    return m_out.equal(left, right);
-                },
-                operationCompareStrictEq);
-            return;
-        }
-
         if (m_node->isBinaryUseKind(SymbolUse)) {
             LValue leftSymbol = lowSymbol(m_node->child1());
             LValue rightSymbol = lowSymbol(m_node->child2());
@@ -5175,10 +5166,63 @@ private:
             setBoolean(m_out.phi(Int32, notCellResult, notStringResult, isStringResult));
             return;
         }
-        
-        DFG_CRASH(m_graph, m_node, "Bad use kinds");
+
+        if (m_node->isBinaryUseKind(StringUse, UntypedUse)) {
+            compileStringToUntypedStrictEquality(m_node->child1(), m_node->child2());
+            return;
+        }
+        if (m_node->isBinaryUseKind(UntypedUse, StringUse)) {
+            compileStringToUntypedStrictEquality(m_node->child2(), m_node->child1());
+            return;
+        }
+
+        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse));
+        nonSpeculativeCompare(
+            [&] (LValue left, LValue right) {
+                return m_out.equal(left, right);
+            },
+            operationCompareStrictEq);
     }
-    
+
+    void compileStringToUntypedStrictEquality(Edge stringEdge, Edge untypedEdge)
+    {
+        ASSERT(stringEdge.useKind() == StringUse);
+        ASSERT(untypedEdge.useKind() == UntypedUse);
+
+        LValue leftString = lowCell(stringEdge);
+        LValue rightValue = lowJSValue(untypedEdge);
+        SpeculatedType rightValueType = provenType(untypedEdge);
+
+        // Verify left is string.
+        speculateString(stringEdge, leftString);
+
+        LBasicBlock testUntypedEdgeIsCell = m_out.newBlock();
+        LBasicBlock testUntypedEdgeIsString = m_out.newBlock();
+        LBasicBlock testStringEquality = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        // Given left is string. If the value are strictly equal, rightValue has to be the same string.
+        ValueFromBlock fastTrue = m_out.anchor(m_out.booleanTrue);
+        m_out.branch(m_out.equal(leftString, rightValue), unsure(continuation), unsure(testUntypedEdgeIsCell));
+
+        LBasicBlock lastNext = m_out.appendTo(testUntypedEdgeIsCell, testUntypedEdgeIsString);
+        ValueFromBlock fastFalse = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(isNotCell(rightValue, rightValueType), unsure(continuation), unsure(testUntypedEdgeIsString));
+
+        // Check if the untyped edge is a string.
+        m_out.appendTo(testUntypedEdgeIsString, testStringEquality);
+        m_out.branch(isNotString(rightValue, rightValueType), unsure(continuation), unsure(testStringEquality));
+
+        // Full String compare.
+        m_out.appendTo(testStringEquality, continuation);
+        ValueFromBlock slowResult = m_out.anchor(stringsEqual(leftString, rightValue));
+        m_out.jump(continuation);
+
+        // Continuation.
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, fastTrue, fastFalse, slowResult));
+    }
+
     void compileCompareEqPtr()
     {
         setBoolean(
@@ -8142,10 +8186,10 @@ private:
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
-        m_out.branch(isNotInt32(left), rarely(slowPath), usually(leftIsInt));
+        m_out.branch(isNotInt32(left, provenType(m_node->child1())), rarely(slowPath), usually(leftIsInt));
         
         LBasicBlock lastNext = m_out.appendTo(leftIsInt, fastPath);
-        m_out.branch(isNotInt32(right), rarely(slowPath), usually(fastPath));
+        m_out.branch(isNotInt32(right, provenType(m_node->child2())), rarely(slowPath), usually(fastPath));
         
         m_out.appendTo(fastPath, slowPath);
         ValueFromBlock fastResult = m_out.anchor(intFunctor(unboxInt32(left), unboxInt32(right)));

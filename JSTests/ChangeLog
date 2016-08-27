@@ -1,3 +1,12 @@
+2016-08-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Implement CompareStrictEq(String, Untyped) in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=161229
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/compare-strict-eq-on-various-types.js: Added.
+
 2016-08-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] newPromiseCapabilities should check the given argument is constructor
