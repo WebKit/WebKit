@@ -5692,38 +5692,6 @@ PASS WebSocket interface: operation send(USVString)
 PASS WebSocket interface: operation send(Blob) 
 PASS WebSocket interface: operation send(ArrayBuffer) 
 PASS WebSocket interface: operation send(ArrayBufferView) 
-PASS WebSocket must be primary interface of new WebSocket("ws://foo") 
-PASS Stringification of new WebSocket("ws://foo") 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "url" with the proper type (0) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CONNECTING" with the proper type (1) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "OPEN" with the proper type (2) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CLOSING" with the proper type (3) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CLOSED" with the proper type (4) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "readyState" with the proper type (5) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "bufferedAmount" with the proper type (6) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onopen" with the proper type (7) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onerror" with the proper type (8) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onclose" with the proper type (9) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "extensions" with the proper type (10) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "protocol" with the proper type (11) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "close" with the proper type (12) 
-PASS WebSocket interface: calling close(unsigned short,USVString) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onmessage" with the proper type (13) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "binaryType" with the proper type (14) 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send" with the proper type (15) 
-PASS WebSocket interface: calling send(USVString) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send" with the proper type (16) 
-PASS WebSocket interface: calling send(Blob) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send" with the proper type (17) 
-PASS WebSocket interface: calling send(ArrayBuffer) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
-PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send" with the proper type (18) 
-PASS WebSocket interface: calling send(ArrayBufferView) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
-PASS EventTarget interface: new WebSocket("ws://foo") must inherit property "addEventListener" with the proper type (0) 
-PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
-PASS EventTarget interface: new WebSocket("ws://foo") must inherit property "removeEventListener" with the proper type (1) 
-PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
-PASS EventTarget interface: new WebSocket("ws://foo") must inherit property "dispatchEvent" with the proper type (2) 
-PASS EventTarget interface: calling dispatchEvent(Event) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
 PASS CloseEvent interface: existence and properties of interface object 
 PASS CloseEvent interface object length 
 PASS CloseEvent interface object name 

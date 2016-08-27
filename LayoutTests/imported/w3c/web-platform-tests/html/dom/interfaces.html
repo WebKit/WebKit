@@ -3374,7 +3374,8 @@ window.onload = function() {
     PeerConnection: [],
     MediaStreamEvent: [],
     ErrorEvent: [],
-    WebSocket: ['new WebSocket("ws://foo")'],
+// WEBKIT Hack: we disable this WebSocket test to limit flakiness. We should remove that hack asap. See https://bugs.webkit.org/show_bug.cgi?id=161142.
+//    WebSocket: ['new WebSocket("ws://foo")'],
     CloseEvent: ['new CloseEvent("close")'],
     AbstractWorker: [],
     Worker: [],

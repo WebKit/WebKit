@@ -475,6 +475,7 @@ webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflectio
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub.html [ Pass Failure ]
 
 # W3C XMLHttpRequest tests
 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted.html [ Slow ]

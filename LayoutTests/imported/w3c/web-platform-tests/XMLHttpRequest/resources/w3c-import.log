@@ -49,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/win-1252-xml.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/workerxhr-origin-referrer.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/workerxhr-simple.js
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-event-order.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-aborted.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-abortedonmain.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-overrides.js

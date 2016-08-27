@@ -27,6 +27,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/referrer-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/referrer.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/referrer.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.js

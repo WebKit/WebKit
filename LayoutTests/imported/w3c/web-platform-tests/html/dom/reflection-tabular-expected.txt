@@ -2729,8 +2729,9 @@ PASS colgroup.span: setAttribute() to object "2" followed by getAttribute()
 PASS colgroup.span: setAttribute() to object "2" followed by IDL get 
 PASS colgroup.span: setAttribute() to object "3" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to object "3" followed by IDL get 
-FAIL colgroup.span: IDL set to 0 must throw INDEX_SIZE_ERR assert_throws: function "function () {
-                idlObj[idlName] = idlTests[..." did not throw
+PASS colgroup.span: IDL set to 0 should not throw 
+PASS colgroup.span: IDL set to 0 followed by getAttribute() 
+PASS colgroup.span: IDL set to 0 followed by IDL get 
 PASS colgroup.span: IDL set to 1 should not throw 
 PASS colgroup.span: IDL set to 1 followed by getAttribute() 
 PASS colgroup.span: IDL set to 1 followed by IDL get 
@@ -3825,8 +3826,9 @@ PASS col.span: setAttribute() to object "2" followed by getAttribute()
 PASS col.span: setAttribute() to object "2" followed by IDL get 
 PASS col.span: setAttribute() to object "3" followed by getAttribute() 
 PASS col.span: setAttribute() to object "3" followed by IDL get 
-FAIL col.span: IDL set to 0 must throw INDEX_SIZE_ERR assert_throws: function "function () {
-                idlObj[idlName] = idlTests[..." did not throw
+PASS col.span: IDL set to 0 should not throw 
+PASS col.span: IDL set to 0 followed by getAttribute() 
+PASS col.span: IDL set to 0 followed by IDL get 
 PASS col.span: IDL set to 1 should not throw 
 PASS col.span: IDL set to 1 followed by getAttribute() 
 PASS col.span: IDL set to 1 followed by IDL get 

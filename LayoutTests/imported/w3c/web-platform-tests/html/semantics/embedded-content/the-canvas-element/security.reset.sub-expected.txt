@@ -1,8 +1,6 @@
-Blocked access to external URL http://www2.localhost:8800/images/yellow.png
-Blocked access to external URL http://www2.localhost:8800/images/yellow.png
 security.reset.sub
 Resetting the canvas state does not reset the origin-clean flag
 Actual output:
 
-FAIL Resetting the canvas state does not reset the origin-clean flag assert_throws: function "function () { canvas.toDataURL(); }" did not throw
+PASS Resetting the canvas state does not reset the origin-clean flag 
 

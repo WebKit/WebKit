@@ -3,6 +3,7 @@
 <title>Canvas test: security.pattern.canvas.strokeStyle.sub</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
 <script src="/common/canvas-tests.js"></script>
 <link rel="stylesheet" href="/common/canvas-tests.css">
 <body class="show_output">
@@ -33,5 +34,7 @@ assert_throws("SECURITY_ERR", function() { ctx.getImageData(0, 0, 1, 1); });
 
 });
 </script>
-<img src="http://{{domains[www2]}}:{{ports[http][0]}}/images/yellow.png" id="yellow.png" class="resource">
-
+<img id="yellow.png" class="resource">
+<script>
+document.getElementById('yellow.png').setAttribute("src", get_host_info().HTTP_REMOTE_ORIGIN + "/images/yellow.png");
+</script>

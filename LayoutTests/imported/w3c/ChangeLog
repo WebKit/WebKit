@@ -1,5 +1,124 @@
 2016-08-27  Youenn Fablet  <youenn@apple.com>
 
+        Sync web-platform-tests up to revision e827374
+        https://bugs.webkit.org/show_bug.cgi?id=161231
+
+        Reviewed by Sam Weinig.
+
+        * resources/ImportExpectations: Skipped some new test suites. Added 'url' test suite as Import.
+        * resources/TestRepositories: Updated revision to e827374
+        * resources/web-platform-tests-modules.json:
+        * web-platform-tests/XMLHttpRequest/abort-during-upload-expected.txt:
+        * web-platform-tests/XMLHttpRequest/abort-during-upload.htm:
+        * web-platform-tests/XMLHttpRequest/abort-event-order.htm:
+        * web-platform-tests/XMLHttpRequest/event-error-expected.txt:
+        * web-platform-tests/XMLHttpRequest/event-error-order.sub-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-error-order.sub.html: Added.
+        * web-platform-tests/XMLHttpRequest/event-error.html:
+        * web-platform-tests/XMLHttpRequest/event-error.sub-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-error.sub.html: Copied from LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-error.html.
+        * web-platform-tests/XMLHttpRequest/event-progress.htm:
+        * web-platform-tests/XMLHttpRequest/resources/trickle.py:
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/w3c-import.log:
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-event-order.js: Added.
+        (global.prepare_xhr_for_event_order_test):
+        (global.assert_xhr_event_order_matches):
+        * web-platform-tests/XMLHttpRequest/response-data-progress-expected.txt:
+        * web-platform-tests/XMLHttpRequest/response-data-progress.htm:
+        * web-platform-tests/XMLHttpRequest/response-method-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties-expected.txt:
+        * web-platform-tests/XMLHttpRequest/security-consideration.sub.html:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-order-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-order.htm:
+        * web-platform-tests/XMLHttpRequest/send-sync-response-event-order-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-sync-response-event-order.htm:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/common/get-host-info.sub.js: Added.
+        (get_host_info):
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/dom/nodes/attributes-expected.txt:
+        * web-platform-tests/dom/nodes/attributes.html:
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter.html:
+        * web-platform-tests/dom/traversal/TreeWalker-basic.html:
+        * web-platform-tests/dom/traversal/TreeWalker-currentNode.html:
+        * web-platform-tests/dom/traversal/TreeWalker-previousNodeLastChildReject.html:
+        * web-platform-tests/dom/traversal/TreeWalker-previousSiblingLastChildSkip.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-reject.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-skip-most.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-skip.html:
+        * web-platform-tests/domparsing/w3c-import.log:
+        * web-platform-tests/fetch/api/basic/scheme-about-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about.js:
+        (checkFetchResponse):
+        (checkKoUrl): Deleted.
+        * web-platform-tests/fetch/api/basic/w3c-import.log:
+        * web-platform-tests/fetch/api/cors/cors-cookies.js:
+        (corsCookies):
+        * web-platform-tests/fetch/api/cors/cors-redirect.js:
+        (corsRedirect):
+        * web-platform-tests/fetch/api/headers/headers-basic-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-basic.html:
+        * web-platform-tests/fetch/api/redirect/w3c-import.log:
+        * web-platform-tests/fetch/api/request/request-cache-expected.txt:
+        * web-platform-tests/html/browsers/history/the-location-interface/security_location_0.sub.htm:
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub.html:
+        * web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub.html:
+        * web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub-expected.txt:
+        * web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub.html:
+        * web-platform-tests/html/dom/elements-forms.js:
+        * web-platform-tests/html/dom/elements-tabular.js:
+        * web-platform-tests/html/dom/elements/global-attributes/dataset-expected.txt:
+        * web-platform-tests/html/dom/elements/global-attributes/dataset.html:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt:
+        * web-platform-tests/html/dom/reflection.js:
+        (ReflectionTests.typeMap.string_appeared_here.toString):
+        (ReflectionTests.typeMap.string_appeared_here.valueOf):
+        (ReflectionTests.typeMap.string_appeared_here.string_appeared_here):
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-event.html:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.canvas.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.canvas.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.image.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.image.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.fillStyle.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.fillStyle.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.strokeStyle.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.strokeStyle.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.timing.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.timing.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-tooShort.html:
+        * web-platform-tests/html/semantics/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/interfaces.html:
+        * web-platform-tests/html/semantics/interfaces.js:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/valid-invalid-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/valid-invalid.html:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/url/w3c-import.log: Added.
+
+2016-08-27  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Blob type should be set from Response/Request contentType header
         https://bugs.webkit.org/show_bug.cgi?id=161228
 

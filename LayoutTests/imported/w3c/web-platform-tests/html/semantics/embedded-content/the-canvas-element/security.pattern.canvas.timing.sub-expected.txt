@@ -1,5 +1,3 @@
-Blocked access to external URL http://www2.localhost:8800/images/yellow.png
-Blocked access to external URL http://www2.localhost:8800/images/yellow.png
 security.pattern.canvas.timing.sub
 Pattern safety depends on whether the source was origin-clean, not on whether it still is clean
 Disagrees with spec on "is" vs "was"

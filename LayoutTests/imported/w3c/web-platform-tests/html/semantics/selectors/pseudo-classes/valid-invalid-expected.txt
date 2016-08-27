@@ -13,6 +13,22 @@ PASS ':valid' matches new elements that satisfy their constraints
 PASS ':invalid' doesn't match new elements that satisfy their constraints 
 PASS ':valid' doesn't match new elements that do not satisfy their constraints 
 PASS ':invalid' matches new elements that do not satisfy their constraints 
+PASS :valid/:invalid styling for <form> 
+PASS empty form correctly styled on page-load 
+PASS valid form correctly styled on page-load 
+PASS invalid form correctly styled on page-load 
+PASS programmatically adding valid to empty form results in correct style 
+PASS programmatically adding invalid to empty form results in correct style 
+PASS programmatically-invalidated form correctly styled 
+PASS programmatically-validated form correctly styled 
+PASS :valid/:invalid styling for <fieldset> 
+PASS empty fieldset correctly styled on page-load 
+PASS valid fieldset correctly styled on page-load 
+PASS invalid fieldset correctly styled on page-load 
+PASS programmatically adding valid to empty fieldset results in correct style 
+PASS programmatically adding invalid to empty fieldset results in correct style 
+PASS programmatically-invalidated fieldset correctly styled 
+PASS programmatically-validated fieldset correctly styled 
   
 
 
@@ -20,3 +36,10 @@ PASS ':invalid' matches new elements that do not satisfy their constraints
 
   
   
+
+
+
+
+
+
+

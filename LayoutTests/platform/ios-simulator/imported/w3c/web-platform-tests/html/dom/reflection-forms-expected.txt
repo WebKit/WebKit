@@ -12901,8 +12901,9 @@ PASS textarea.cols: setAttribute() to object "2" followed by getAttribute()
 PASS textarea.cols: setAttribute() to object "2" followed by IDL get 
 PASS textarea.cols: setAttribute() to object "3" followed by getAttribute() 
 PASS textarea.cols: setAttribute() to object "3" followed by IDL get 
-FAIL textarea.cols: IDL set to 0 must throw INDEX_SIZE_ERR assert_throws: function "function () {
-                idlObj[idlName] = idlTests[..." did not throw
+PASS textarea.cols: IDL set to 0 should not throw 
+PASS textarea.cols: IDL set to 0 followed by getAttribute() 
+PASS textarea.cols: IDL set to 0 followed by IDL get 
 PASS textarea.cols: IDL set to 1 should not throw 
 PASS textarea.cols: IDL set to 1 followed by getAttribute() 
 PASS textarea.cols: IDL set to 1 followed by IDL get 
@@ -13960,8 +13961,9 @@ PASS textarea.rows: setAttribute() to object "2" followed by getAttribute()
 PASS textarea.rows: setAttribute() to object "2" followed by IDL get 
 PASS textarea.rows: setAttribute() to object "3" followed by getAttribute() 
 PASS textarea.rows: setAttribute() to object "3" followed by IDL get 
-FAIL textarea.rows: IDL set to 0 must throw INDEX_SIZE_ERR assert_throws: function "function () {
-                idlObj[idlName] = idlTests[..." did not throw
+PASS textarea.rows: IDL set to 0 should not throw 
+PASS textarea.rows: IDL set to 0 followed by getAttribute() 
+PASS textarea.rows: IDL set to 0 followed by IDL get 
 PASS textarea.rows: IDL set to 1 should not throw 
 PASS textarea.rows: IDL set to 1 followed by getAttribute() 
 PASS textarea.rows: IDL set to 1 followed by IDL get 

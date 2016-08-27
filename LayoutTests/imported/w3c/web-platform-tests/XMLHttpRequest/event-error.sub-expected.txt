@@ -1,0 +1,5 @@
+Blocked access to external URL http://nonexistent-origin.localhost:8800/
+CONSOLE MESSAGE: line 22: XMLHttpRequest cannot load http://nonexistent-origin.localhost:8800/ due to access control checks.
+
+PASS XMLHttpRequest Test: event - error 
+

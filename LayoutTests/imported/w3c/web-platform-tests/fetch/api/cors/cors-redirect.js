@@ -14,7 +14,7 @@ function corsRedirect(desc, redirectUrl, redirectLocation, redirectStatus, expec
 
   var requestInit = {"mode": "cors", "redirect": "follow"};
 
-  promise_test(function(test) {
+  return promise_test(function(test) {
     fetch(RESOURCES_DIR + "clean-stash.py?token=" + uuid_token).then(function(resp) {
       return fetch(url + urlParameters, requestInit).then(function(resp) {
         assert_equals(resp.status, 200, "Response's status is 200");

@@ -1,3 +1,5 @@
 
-PASS XMLHttpRequest: abort() while sending data 
+FAIL XMLHttpRequest: abort() while sending data assert_array_equals: property 2, expected "upload.loadstart(0,9999,true)" but got "upload.loadstart(0,0,false)"
+Recorded events were:1, loadstart(0,0,false), upload.loadstart(0,0,false), 4, upload.progress(0,0,false), upload.abort(0,0,false), upload.loadend(0,0,false), progress(0,0,false), abort(0,0,false), loadend(0,0,false)
+Expected events were:1, loadstart(0,0,false), upload.loadstart(0,9999,true), 4, upload.progress(0,0,false), upload.abort(0,0,false), upload.loadend(0,0,false), progress(0,0,false), abort(0,0,false), loadend(0,0,false)
 

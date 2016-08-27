@@ -1,8 +1,7 @@
-Blocked access to external URL http://www2.localhost:8800/images/yellow.png
-Blocked access to external URL http://www2.localhost:8800/images/yellow.png
+CONSOLE MESSAGE: line 32: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 security.pattern.canvas.strokeStyle.sub
 Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean
 Actual output:
 
-FAIL Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean assert_throws: function "function () { canvas.toDataURL(); }" did not throw
+PASS Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean 
 
