@@ -13,6 +13,9 @@ function cors(desc, origin) {
       assert_equals(resp.status, 0, "Opaque filter: status is 0");
       assert_equals(resp.statusText, "", "Opaque filter: statusText is \"\"");
       assert_equals(resp.type , "opaque", "Opaque filter: response's type is opaque");
+      return resp.text().then(function(value) {
+        assert_equals(value, "", "Opaque response should have an empty body");
+      });
     });
   }, desc + " [no-cors mode]");
 

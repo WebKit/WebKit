@@ -281,9 +281,14 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     }
 
     ASSERT(response.type() != ResourceResponse::Type::Error);
-    if (response.type() == ResourceResponse::Type::Default)
+    if (response.type() == ResourceResponse::Type::Default) {
         m_client->didReceiveResponse(identifier, ResourceResponse::filterResponse(response, tainting));
-    else {
+        if (tainting == ResourceResponse::Tainting::Opaque && options().opaqueResponse == OpaqueResponseBodyPolicy::DoNotReceive) {
+            clearResource();
+            if (m_client)
+                m_client->didFinishLoading(identifier, 0.0);
+        }
+    } else {
         ASSERT(response.type() == ResourceResponse::Type::Opaqueredirect);
         m_client->didReceiveResponse(identifier, response);
     }

@@ -1,5 +1,15 @@
 2016-08-27  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Opaque responses should not have any body
+        https://bugs.webkit.org/show_bug.cgi?id=161130
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/fetch/api/cors/cors-basic.js:
+        (cors): Adding response body checking.
+
+2016-08-27  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] opaqueredirect responses should have their URL set to the original URL
         https://bugs.webkit.org/show_bug.cgi?id=161194
 
