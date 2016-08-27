@@ -1,3 +1,14 @@
+2016-08-27  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] opaqueredirect responses should have their URL set to the original URL
+        https://bugs.webkit.org/show_bug.cgi?id=161194
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/fetch/api/redirect/redirect-mode.html:
+        * web-platform-tests/fetch/api/redirect/redirect-mode.js:
+        (redirectMode): Updating test to ease the computation of the absolute URL.
+
 2016-08-27  Andreas Kling  <akling@apple.com>
 
         script.text should behave like script.textContent on setting

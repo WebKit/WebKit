@@ -182,6 +182,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
             }
 
             ResourceResponse opaqueRedirectedResponse;
+            opaqueRedirectedResponse.setURL(redirectResponse.url());
             opaqueRedirectedResponse.setType(ResourceResponse::Type::Opaqueredirect);
             m_resource->responseReceived(opaqueRedirectedResponse);
             didFinishLoading(currentTime());

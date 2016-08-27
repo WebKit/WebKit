@@ -284,7 +284,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     if (response.type() == ResourceResponse::Type::Default)
         m_client->didReceiveResponse(identifier, ResourceResponse::filterResponse(response, tainting));
     else {
-        ASSERT(response.isNull() && response.type() == ResourceResponse::Type::Opaqueredirect);
+        ASSERT(response.type() == ResourceResponse::Type::Opaqueredirect);
         m_client->didReceiveResponse(identifier, response);
     }
 }
