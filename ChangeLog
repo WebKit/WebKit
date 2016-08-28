@@ -1,3 +1,12 @@
+2016-08-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Enable 'warning as error' compiler setting.
+        https://bugs.webkit.org/show_bug.cgi?id=161243
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2016-08-26  Jer Noble  <jer.noble@apple.com>
 
         Add a test harness for running UI tests on the iOS Simulator
