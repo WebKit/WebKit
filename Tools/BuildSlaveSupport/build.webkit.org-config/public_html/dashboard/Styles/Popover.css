@@ -54,16 +54,14 @@
 }
 
 .popover.step-in {
-    transition: opacity 0ms;
-    /* This is a delay after popover creation. Popover tracking code may add a delay of its own before it decides to create the popover. */
+    /* The delay is after popover creation. Popover tracking code may add a delay of its own before it decides to create the popover. */
     /* It is useful to separate the delays because popover creation can be costly, e.g. it can lazily load data from network during the transition. */
-    transition-delay: 800ms;
+    transition: opacity 0ms 800ms;
     opacity: 1;
 }
 
 .popover.fade-out {
-    transition: opacity 500ms;
-    transition-delay: 200ms;
+    transition: opacity 500ms 200ms;
     opacity: 0;
 }
 

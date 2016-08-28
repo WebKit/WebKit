@@ -1,3 +1,15 @@
+2016-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r204052): Popovers on bot watcher's dashboard are broken
+        https://bugs.webkit.org/show_bug.cgi?id=161254
+
+        Reviewed by Darin Adler.
+
+        Simplify the CSS. My understanding that the CSS was correct, and the root cause
+        is tracked in bug 160478.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Popover.css:
+
 2016-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Add run-webkit-tests --print-expectations to show expectations for all or a subset of tests
