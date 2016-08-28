@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 18: Created Database 'Database1'
-CONSOLE MESSAGE: line 18: Created Database 'Database2'
-CONSOLE MESSAGE: line 18: Created Database 'Database3'
+CONSOLE MESSAGE: line 19: Created Database 'Database1'
+CONSOLE MESSAGE: line 19: Created Database 'Database2'
+CONSOLE MESSAGE: line 19: Created Database 'Database3'
 
 == Running test suite: IndexedDB.requestData
 -- Running test case: ClearDatabases

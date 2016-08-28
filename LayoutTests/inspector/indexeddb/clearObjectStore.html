@@ -71,10 +71,12 @@ function test()
         name: "NoSuchObjectStore",
         test: (resolve, reject) => {
             InspectorTest.evaluateInPage("createEmptyDatabase('EmptyDatabase', 1)");
-            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "EmptyDatabase", (error, database) => {
-                IndexedDBAgent.clearObjectStore(WebInspector.frameResourceManager.mainFrame.securityOrigin, database.name, "NoSuchObjectStore", (error) => {
-                    InspectorTest.expectThat(error, "Should be an error attempting to clear an object store that does not exist.");
-                    resolve();
+            InspectorTest.singleFireEventListener("DatabaseCreated", (event) => {
+                IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "EmptyDatabase", (error, database) => {
+                    IndexedDBAgent.clearObjectStore(WebInspector.frameResourceManager.mainFrame.securityOrigin, database.name, "NoSuchObjectStore", (error) => {
+                        InspectorTest.expectThat(error, "Should be an error attempting to clear an object store that does not exist.");
+                        resolve();
+                    });
                 });
             });
         }

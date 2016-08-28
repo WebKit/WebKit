@@ -1,3 +1,30 @@
+2016-08-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Race between creating/deleting a database in test
+        https://bugs.webkit.org/show_bug.cgi?id=161285
+
+        Reviewed by Darin Adler.
+
+        Because IndexedDB creation is asynchronous, we were not waiting for the
+        database to be completely open before sending more commands. These
+        could race and give unexpected results. Wait for the database to be
+        successfully created before interacting with it.
+
+        * inspector/indexeddb/resources/utilities.js:
+        (createEmptyDatabase):
+        (createDatabaseWithStores):
+        Send a single when the database creation is completed.
+
+        * inspector/indexeddb/clearObjectStore-expected.txt:
+        * inspector/indexeddb/clearObjectStore.html:
+        * inspector/indexeddb/deleteDatabaseNamesWithSpace.html:
+        * inspector/indexeddb/requestData-expected.txt:
+        * inspector/indexeddb/requestDatabase-expected.txt:
+        * inspector/indexeddb/requestDatabase.html:
+        * inspector/indexeddb/requestDatabaseNames.html:
+        Listen for the database created signal before proceeding
+        with the test.
+
 2016-08-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         adoptcallback

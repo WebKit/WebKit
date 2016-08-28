@@ -9,6 +9,7 @@ function createEmptyDatabase(name, version=1) {
         console.log(`Created Database '${name}'`);
         let db = event.target.result;
         db.close();
+        TestPage.dispatchEventToFrontend("DatabaseCreated");
     });
 }
 
@@ -16,6 +17,7 @@ function createDatabaseWithStores(name, version) {
     let request = window.indexedDB.open(name, version);
     request.addEventListener("success", function(event) {
         console.log(`Created Database '${name}'`);
+        TestPage.dispatchEventToFrontend("DatabaseCreated");
     });
 
     request.addEventListener("upgradeneeded", function(event) {

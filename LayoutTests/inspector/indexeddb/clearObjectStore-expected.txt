@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 18: Created Database 'CompleteDatabase'
+CONSOLE MESSAGE: line 19: Created Database 'CompleteDatabase'
 CONSOLE MESSAGE: line 9: Created Database 'EmptyDatabase'
 
 == Running test suite: IndexedDB.clearObjectStore

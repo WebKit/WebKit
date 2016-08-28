@@ -37,11 +37,13 @@ function test()
         description: "Create a first database.",
         test: (resolve, reject) => {
             InspectorTest.evaluateInPage("createEmptyDatabase('Database1')");
-            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
-                InspectorTest.expectNoError(error);
-                InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist.");
-                InspectorTest.log(JSON.stringify(names));
-                resolve();
+            InspectorTest.singleFireEventListener("DatabaseCreated", (event) => {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
             });
         }
     });
@@ -51,11 +53,13 @@ function test()
         description: "Create a second database.",
         test: (resolve, reject) => {
             InspectorTest.evaluateInPage("createEmptyDatabase('Database2')");
-            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
-                InspectorTest.expectNoError(error);
-                InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist.");
-                InspectorTest.log(JSON.stringify(names));
-                resolve();
+            InspectorTest.singleFireEventListener("DatabaseCreated", (event) => {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
             });
         }
     });
@@ -65,11 +69,13 @@ function test()
         description: "Create a third database with a unicode name.",
         test: (resolve, reject) => {
             InspectorTest.evaluateInPage("createEmptyDatabase('\u124d')");
-            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
-                InspectorTest.expectNoError(error);
-                InspectorTest.expectThat(names.length === 3, "Three IndexedDB databases should exist.");
-                InspectorTest.log(JSON.stringify(names));
-                resolve();
+            InspectorTest.singleFireEventListener("DatabaseCreated", (event) => {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 3, "Three IndexedDB databases should exist.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
             });
         }
     });
@@ -79,11 +85,13 @@ function test()
         description: "Create a fourth database with a unicode name.",
         test: (resolve, reject) => {
             InspectorTest.evaluateInPage("createEmptyDatabase('\ud800\udf46')");
-            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
-                InspectorTest.expectNoError(error);
-                InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist.");
-                InspectorTest.log(JSON.stringify(names));
-                resolve();
+            InspectorTest.singleFireEventListener("DatabaseCreated", (event) => {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
             });
         }
     });
