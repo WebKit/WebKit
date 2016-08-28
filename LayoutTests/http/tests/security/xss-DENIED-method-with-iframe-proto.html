@@ -36,17 +36,23 @@ window.onload = function() {
   try {
     targetWindow.setTimeout(callback, 0, this);
     needsCheck = true;
-  } catch (e) { }
+  } catch (e) {
+    console.log(e);
+  }
 
   try {
     setTimeout.call(targetWindow, callback, 0, this);
     needsCheck = true;
-  } catch(e) { }
+  } catch(e) {
+    console.log(e);
+  }
 
   try {
     originalSetTimeout.call(targetWindow, callback, 0, this);
     needsCheck = true;
-  } catch(e) { }
+  } catch(e) {
+    console.log(e);
+  }
 
   if (needsCheck) {
     originalSetTimeout(check, 10);

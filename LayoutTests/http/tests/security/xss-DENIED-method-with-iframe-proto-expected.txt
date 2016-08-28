@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 37: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 42: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 47: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 40: TypeError: targetWindow.setTimeout is not a function. (In 'targetWindow.setTimeout(callback, 0, this)', 'targetWindow.setTimeout' is undefined)
+CONSOLE MESSAGE: line 47: SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 54: SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 
 Tests that making other frame window a prototype doesn't expose that window methods
-PASS: this.wasInvoked should be 'false' and is.
 

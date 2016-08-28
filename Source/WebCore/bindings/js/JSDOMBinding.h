@@ -297,13 +297,17 @@ bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*);
 bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, String& message);
 bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, String& message);
 
-enum SecurityReportingOption { DoNotReportSecurityError, ReportSecurityError };
+enum SecurityReportingOption {
+    DoNotReportSecurityError,
+    LogSecurityError, // Legacy behavior.
+    ThrowSecurityError
+};
 
 class BindingSecurity {
 public:
     static bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
-    static bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, SecurityReportingOption = ReportSecurityError);
-    static bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption = ReportSecurityError);
+    static bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, SecurityReportingOption = LogSecurityError);
+    static bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption = LogSecurityError);
 };
 
 void printErrorMessageForFrame(Frame*, const String& message);

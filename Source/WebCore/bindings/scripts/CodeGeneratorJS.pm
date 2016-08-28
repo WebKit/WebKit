@@ -2863,9 +2863,9 @@ sub GenerateImplementation
                 !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} &&
                 !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
                 if ($interfaceName eq "DOMWindow") {
-                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
                 } else {
-                    push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))\n");
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToFrame(state, castedThis->wrapped().frame(), ThrowSecurityError))\n");
                 }
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
@@ -3127,9 +3127,9 @@ sub GenerateImplementation
             }
             if ($interface->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                 if ($interfaceName eq "DOMWindow") {
-                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
                 } else {
-                    push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))\n");
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToFrame(state, castedThis->wrapped().frame(), ThrowSecurityError))\n");
                 }
                 push(@implContent, "        return false;\n");
             }
@@ -3425,9 +3425,9 @@ END
 
                 if ($interface->extendedAttributes->{"CheckSecurity"} and !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                     if ($interfaceName eq "DOMWindow") {
-                        push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
+                        push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
                     } else {
-                        push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))\n");
+                        push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToFrame(state, castedThis->wrapped().frame(), ThrowSecurityError))\n");
                     }
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                 }
@@ -3449,7 +3449,7 @@ END
                     if ($interface->name eq "EventTarget") {
                         $implIncludes{"DOMWindow.h"} = 1;
                         push(@implContent, "    if (auto* window = castedThis->wrapped().toDOMWindow()) {\n");
-                        push(@implContent, "        if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(state, *window))\n");
+                        push(@implContent, "        if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(state, *window, ThrowSecurityError))\n");
                         push(@implContent, "            return JSValue::encode(jsUndefined());\n");
                         push(@implContent, "    }\n");
                     }

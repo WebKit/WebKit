@@ -22,18 +22,17 @@ onload = function() {
     shouldThrowErrorName("frames[0].location.assign('about:blank')", "SecurityError");
     shouldThrowErrorName("frames[0].location.href", "SecurityError");
 
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'protocol').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'host').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'hostname').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'port').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'pathname').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'search').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'hash').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'origin').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'ancestorOrigins').get.call(frames[0].location)");
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'toString').value.call(frames[0].location)");
-    // The specification seems to allow access to href but Firefox does not.
-    shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'href').get.call(frames[0].location)");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'protocol').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'host').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hostname').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'port').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'pathname').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'search').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hash').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'origin').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'ancestorOrigins').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'toString').value.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'href').get.call(frames[0].location)", "SecurityError");
 
     finishJSTest();
 };

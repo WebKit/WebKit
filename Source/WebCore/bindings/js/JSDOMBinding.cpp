@@ -760,7 +760,7 @@ DOMWindow& firstDOMWindow(ExecState* exec)
     return asJSDOMWindow(exec->vmEntryGlobalObject())->wrapped();
 }
 
-static inline bool canAccessDocument(JSC::ExecState* state, Document* targetDocument, SecurityReportingOption reportingOption = ReportSecurityError)
+static inline bool canAccessDocument(JSC::ExecState* state, Document* targetDocument, SecurityReportingOption reportingOption)
 {
     if (!targetDocument)
         return false;
@@ -770,8 +770,16 @@ static inline bool canAccessDocument(JSC::ExecState* state, Document* targetDocu
     if (active.document()->securityOrigin()->canAccess(targetDocument->securityOrigin()))
         return true;
 
-    if (reportingOption == ReportSecurityError)
+    switch (reportingOption) {
+    case ThrowSecurityError:
+        throwSecurityError(*state, targetDocument->domWindow()->crossDomainAccessErrorMessage(active));
+        break;
+    case LogSecurityError:
         printErrorMessageForFrame(targetDocument->frame(), targetDocument->domWindow()->crossDomainAccessErrorMessage(active));
+        break;
+    case DoNotReportSecurityError:
+        break;
+    }
 
     return false;
 }
@@ -788,7 +796,7 @@ bool BindingSecurity::shouldAllowAccessToFrame(JSC::ExecState* state, Frame* tar
 
 bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState* state, Node* target)
 {
-    return target && canAccessDocument(state, &target->document());
+    return target && canAccessDocument(state, &target->document(), LogSecurityError);
 }
     
 static EncodedJSValue throwTypeError(JSC::ExecState& state, const String& errorMessage)
