@@ -1,5 +1,15 @@
 2016-08-28  Andreas Kling  <akling@apple.com>
 
+        document.title setter can't throw.
+        <https://webkit.org/b/161302>
+
+        Reviewed by Antti Koivisto.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument setTitle:]):
+
+2016-08-28  Andreas Kling  <akling@apple.com>
+
         Clean up some .text attribute setters that don't throw.
         <https://webkit.org/b/161292>
 

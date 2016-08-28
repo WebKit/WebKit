@@ -191,9 +191,7 @@
 - (void)setTitle:(NSString *)newTitle
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setTitle(newTitle, ec);
-    raiseOnDOMError(ec);
+    IMPL->setTitle(newTitle);
 }
 
 - (NSString *)dir

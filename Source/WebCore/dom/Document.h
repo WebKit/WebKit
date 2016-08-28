@@ -857,7 +857,7 @@ public:
 
     // Used by DOM bindings; no direction known.
     String title() const { return m_title.string(); }
-    WEBCORE_EXPORT void setTitle(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void setTitle(const String&);
 
     WEBCORE_EXPORT const AtomicString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomicString&);

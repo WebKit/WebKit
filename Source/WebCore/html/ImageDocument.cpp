@@ -164,7 +164,7 @@ void ImageDocument::finishedParsing()
             String name = decodeURLEscapeSequences(url().lastPathComponent());
             if (name.isEmpty())
                 name = url().host();
-            setTitle(imageTitle(name, size), IGNORE_EXCEPTION);
+            setTitle(imageTitle(name, size));
         }
 
         imageUpdated();

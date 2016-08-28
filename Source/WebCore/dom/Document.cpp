@@ -1631,7 +1631,7 @@ void Document::updateTitleFromTitleElement()
     }
 }
 
-void Document::setTitle(const String& title, ExceptionCode& ec)
+void Document::setTitle(const String& title)
 {
     if (!m_titleElement) {
         if (isHTMLDocument() || isXHTMLDocument()) {
@@ -1654,9 +1654,9 @@ void Document::setTitle(const String& title, ExceptionCode& ec)
     updateTitle(StringWithDirection(title, LTR));
 
     if (is<HTMLTitleElement>(m_titleElement.get()))
-        downcast<HTMLTitleElement>(*m_titleElement).setTextContent(title, ec);
+        downcast<HTMLTitleElement>(*m_titleElement).setTextContent(title, ASSERT_NO_EXCEPTION);
     else if (is<SVGTitleElement>(m_titleElement.get()))
-        downcast<SVGTitleElement>(*m_titleElement).setTextContent(title, ec);
+        downcast<SVGTitleElement>(*m_titleElement).setTextContent(title, ASSERT_NO_EXCEPTION);
 }
 
 void Document::updateTitleElement(Element* newTitleElement)

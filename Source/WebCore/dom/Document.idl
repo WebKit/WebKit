@@ -115,7 +115,7 @@
     boolean queryCommandSupported(DOMString command);
     DOMString queryCommandValue(DOMString command);
 
-    [SetterRaisesException] attribute DOMString title;
+    attribute DOMString title;
     attribute DOMString dir;
     attribute DOMString designMode;
 
