@@ -41,7 +41,6 @@ private:
     const char* renderName() const final { return "RenderMathMLMenclose"; }
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
-    Optional<int> firstLineBaseline() const final;
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     LayoutUnit ruleThickness() const;
@@ -49,7 +48,6 @@ private:
 
     void getSpaceAroundContent(LayoutUnit contentWidth, LayoutUnit contentHeight, LayoutUnit& leftSpace, LayoutUnit& rightSpace, LayoutUnit& topSpace, LayoutUnit& bottomSpace) const;
 
-    LayoutUnit m_ascent;
     LayoutRect m_contentRect;
 };
 

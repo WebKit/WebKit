@@ -44,7 +44,6 @@ const unsigned short longDivLeftSpace = 10;
 
 RenderMathMLMenclose::RenderMathMLMenclose(MathMLMencloseElement& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))
-    , m_ascent(0)
 {
 }
 
@@ -175,22 +174,15 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit leftSpace, rightSpace, topSpace, bottomSpace;
     getSpaceAroundContent(contentWidth, contentAscent + contentDescent, leftSpace, rightSpace, topSpace, bottomSpace);
     setLogicalWidth(leftSpace + contentWidth + rightSpace);
-    m_ascent = topSpace + contentAscent;
-    LayoutUnit descent = contentDescent + bottomSpace;
-    LayoutPoint contentLocation(leftSpace, m_ascent - contentAscent);
+    setLogicalHeight(topSpace + contentAscent + contentDescent + bottomSpace);
+
+    LayoutPoint contentLocation(leftSpace, topSpace);
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
         child->setLocation(child->location() + contentLocation);
-
-    setLogicalHeight(m_ascent + descent);
 
     m_contentRect = LayoutRect(leftSpace, topSpace, contentWidth, contentAscent + contentDescent);
 
     clearNeedsLayout();
-}
-
-Optional<int> RenderMathMLMenclose::firstLineBaseline() const
-{
-    return Optional<int>(static_cast<int>(lroundf(m_ascent)));
 }
 
 // GraphicsContext::drawLine does not seem appropriate to draw menclose lines.
