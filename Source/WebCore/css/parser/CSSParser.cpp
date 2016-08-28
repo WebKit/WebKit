@@ -819,6 +819,18 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueBalance)
             return true;
         break;
+    case CSSPropertyAlignItems:
+        // FIXME: Per CSS alignment, this property should accept the same arguments as 'justify-self' so we should share its parsing code.
+        // FIXME: For now, we will do it behind the GRID_LAYOUT compile flag.
+        if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
+            return true;
+        break;
+    case CSSPropertyAlignSelf:
+        // FIXME: Per CSS alignment, this property should accept the same arguments as 'justify-self' so we should share its parsing code.
+        // FIXME: For now, we will do it behind the GRID_LAYOUT compile flag.
+        if (valueID == CSSValueAuto || valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
+            return true;
+        break;
     case CSSPropertyFlexDirection:
         if (valueID == CSSValueRow || valueID == CSSValueRowReverse || valueID == CSSValueColumn || valueID == CSSValueColumnReverse)
             return true;
@@ -1143,6 +1155,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantAlternates:
         return true;
+    case CSSPropertyAlignItems:
+    case CSSPropertyAlignSelf:
+        return !RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
     default:
         return false;
     }
@@ -2723,8 +2738,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseContentDistributionOverflowPosition();
         break;
     case CSSPropertyJustifySelf:
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         return parseItemPositionOverflowPosition(propId, important);
     case CSSPropertyJustifyItems:
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         if (parseLegacyPosition(propId, important))
             return true;
         m_valueList->setCurrentIndex(0);
@@ -3143,9 +3160,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseContentDistributionOverflowPosition();
         break;
     case CSSPropertyAlignSelf:
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         return parseItemPositionOverflowPosition(propId, important);
 
     case CSSPropertyAlignItems:
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         return parseItemPositionOverflowPosition(propId, important);
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<div id="flexContainer" style="display: flex">
+    <div id="flexItem"></div>
+</div>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Test to verify that the new alignment values are parsed as invalid if Grid Layout is disabled and in any case they do not cause a crash because assertions in flexbox layout code.');
+
+function checkAlignSelfValue(value, computedValue, gridEnabled)
+{
+    item.style.webkitAlignSelf = value;
+    alignSelf = getComputedStyle(item, '').getPropertyValue('-webkit-align-self');
+    if (gridEnabled)
+        shouldBe("alignSelf", computedValue);
+    else
+        shouldBe("alignSelf", "'flex-start'");
+}
+
+function checkAlignItemsValue(value, computedValue, gridEnabled)
+{
+    container.style.webkitAlignItems = value;
+    alignItems = getComputedStyle(container, '').getPropertyValue('-webkit-align-items');
+    alignSelf = getComputedStyle(item, '').getPropertyValue('-webkit-align-self');
+    if (gridEnabled) {
+        shouldBe("alignItems", computedValue);
+        shouldBe("alignSelf", computedValue);
+    } else {
+        shouldBe("alignItems", "'flex-end'");
+        shouldBe("alignSelf", "'flex-end'");
+    }
+}
+
+function checkAlignmentValues(gridEnabled)
+{
+    if (window.internals)
+        internals.setCSSGridLayoutEnabled(gridEnabled);
+
+    debug('<br>Testing Self-Alignment values.');
+    checkAlignSelfValue("start unsafe", "'start unsafe'", gridEnabled)
+    checkAlignSelfValue("start", "'start'", gridEnabled)
+    checkAlignSelfValue("end", "'end'", gridEnabled)
+    checkAlignSelfValue("flex-start safe", "'flex-start safe'", gridEnabled)
+    checkAlignSelfValue("self-start", "'self-start'", gridEnabled)
+    checkAlignSelfValue("self-end", "'self-end'", gridEnabled)
+
+    item.style.webkitAlignSelf = "auto";
+
+    debug('<br>Testing Default-Alignment values.');
+    checkAlignItemsValue("start unsafe", "'start unsafe'", gridEnabled)
+    checkAlignItemsValue("start", "'start'", gridEnabled)
+    checkAlignItemsValue("end", "'end'", gridEnabled)
+    checkAlignItemsValue("flex-start safe", "'flex-start safe'", gridEnabled)
+    checkAlignItemsValue("self-start", "'self-start'", gridEnabled)
+    checkAlignItemsValue("self-end", "'self-end'", gridEnabled)
+
+    item.style.webkitAlignSelf = "flex-start";
+}
+
+var container = document.getElementById("flexContainer");
+var item = document.getElementById("flexItem");
+
+container.style.webkitAlignItems = "flex-end";
+item.style.webkitAlignSelf = "flex-start";
+var alignSelf = "flex-start";
+var alignItems = "flex-start";
+
+debug('<br>New alignment values should be invalid when grid layout is disabled');
+checkAlignmentValues(false);
+
+debug('<br>Even when grid layout is enabled, new values should not violate assertions in FlexibleBox layout logic.');
+checkAlignmentValues(true);
+
+</script>

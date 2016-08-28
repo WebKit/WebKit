@@ -34,6 +34,7 @@
 #include "LayoutRepainter.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 
@@ -1397,6 +1398,8 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
                 // yet for FlexibleBox.
                 // Defaulting to Stretch for now, as it what most of FlexBox based renders
                 // expect as default.
+                ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
+                FALLTHROUGH;
             case ItemPositionStretch: {
                 applyStretchAlignmentToChild(*child, lineCrossAxisExtent);
                 // Since wrap-reverse flips cross start and cross end, strech children should be aligned with the cross end.
@@ -1431,6 +1434,8 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
             case ItemPositionRight:
                 // FIXME: https://webkit.org/b/135460 - The extended grammar is not supported
                 // yet for FlexibleBox.
+                ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
+                break;
             default:
                 ASSERT_NOT_REACHED();
                 break;
