@@ -1,3 +1,12 @@
+2016-08-27  Don Olmstead  <don.olmstead@am.sony.com>
+
+        Unused cxxabi.h include in JSGlobalObjectInspectorController.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=161120
+
+        Reviewed by Darin Adler.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+
 2016-08-26  Sam Weinig  <sam@webkit.org>
 
         Remove support for ENABLE_LEGACY_WEB_AUDIO

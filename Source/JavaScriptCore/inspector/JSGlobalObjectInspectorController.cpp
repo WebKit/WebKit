@@ -48,8 +48,8 @@
 #include "ScriptCallStackFactory.h"
 #include <wtf/Stopwatch.h>
 
-#include <cxxabi.h>
 #if OS(DARWIN) || (OS(LINUX) && !PLATFORM(GTK))
+#include <cxxabi.h>
 #include <dlfcn.h>
 #include <execinfo.h>
 #endif
