@@ -1,3 +1,16 @@
+2016-08-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make localizedString.js diff and commit friendly (UTF16 -> UTF8)
+        https://bugs.webkit.org/show_bug.cgi?id=28685
+        <rdar://problem/16460975>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/extract-localizable-js-strings:
+        * Scripts/update-webkit-localizable-strings:
+        WebInspectorUI localizedStrings.js is now UTF-8. Other clients of
+        this script still use UTF-16, so keep that the default.
+
 2016-08-27  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r204052): Popovers on bot watcher's dashboard are broken

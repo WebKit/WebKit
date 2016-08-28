@@ -1,3 +1,15 @@
+2016-08-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make localizedString.js diff and commit friendly (UTF16 -> UTF8)
+        https://bugs.webkit.org/show_bug.cgi?id=28685
+        <rdar://problem/16460975>
+
+        Reviewed by Darin Adler.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+        Convert the file to UTF-8. Future diffs should display as text.
+
 2016-08-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add protocol version for iOS 10

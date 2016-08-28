@@ -46,4 +46,4 @@ my $webInspectorUIFileToUpdate = "Source/WebInspectorUI/Localizations/en.lproj/l
 chdirWebKit();
 
 system "Source/WebCore/extract-localizable-strings.pl", $webCoreFileToUpdate, @webKitDirectoriesToScan;
-system "Tools/Scripts/extract-localizable-js-strings", $webInspectorUIFileToUpdate, @webInspectorUIDirectoriesToScan;
+system "Tools/Scripts/extract-localizable-js-strings", "--utf8", $webInspectorUIFileToUpdate, @webInspectorUIDirectoriesToScan;

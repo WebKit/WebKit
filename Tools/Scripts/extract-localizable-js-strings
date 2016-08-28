@@ -24,8 +24,17 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 use strict;
+use Getopt::Long;
 
-@ARGV >= 1 or die "Usage: extract-localizable-js-strings <file to update> [ directory... ]\nDid you mean to run update-webkit-localizable-strings instead?\n";
+my $utf8 = 0;
+
+my %options = (
+    'utf8' => \$utf8,
+);
+
+GetOptions(%options);
+
+@ARGV >= 1 or die "Usage: extract-localizable-js-strings [--utf8] <file to update> [ directory... ]\nDid you mean to run update-webkit-localizable-strings instead?\n";
 
 my $fileToUpdate = shift @ARGV;
 -f $fileToUpdate or die "Couldn't find file to update $fileToUpdate\n";
@@ -144,13 +153,17 @@ for my $key (sort keys %commentByKey) {
     $localizedStrings .= "localizedStrings[\"$key\"] = \"$stringByKey{$key}\";\n";
 }
 
-# Write out the strings file in UTF-16 with a BOM.
-utf8::decode($localizedStrings) if $^V ge v5.8;
-my $output = pack "n*", (0xFEFF, unpack "U*", $localizedStrings);
-
 if (-e "$fileToUpdate") {
     open STRINGS, ">", "$fileToUpdate" or die;
-    print STRINGS $output;
+    if ($utf8) {
+        # Write out the strings file in UTF-8.
+        print STRINGS $localizedStrings;
+    } else {
+        # Write out the strings file in UTF-16 with a BOM.
+        utf8::decode($localizedStrings) if $^V ge v5.8;
+        my $output = pack "n*", (0xFEFF, unpack "U*", $localizedStrings);
+        print STRINGS $output;
+    }    
     close STRINGS;
 } else {
     print "$fileToUpdate does not exist\n";

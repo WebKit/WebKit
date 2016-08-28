@@ -19,7 +19,7 @@
 		1C60FE3214E5F3CD006CD77D /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebInspectorUIFramework.xcconfig; sourceTree = "<group>"; };
 		1C60FF1014E6D992006CD77D /* UserInterface */ = {isa = PBXFileReference; lastKnownFileType = folder; path = UserInterface; sourceTree = "<group>"; };
-		1C60FF1414E6E35D006CD77D /* en */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = en; path = Localizations/en.lproj/localizedStrings.js; sourceTree = "<group>"; };
+		1C60FF1414E6E35D006CD77D /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = en; path = Localizations/en.lproj/localizedStrings.js; sourceTree = "<group>"; };
 		1C60FF1914E73C64006CD77D /* combine-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "combine-resources.pl"; sourceTree = "<group>"; };
 		1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "remove-console-asserts.pl"; sourceTree = "<group>"; };
 		1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "copy-user-interface-resources.pl"; sourceTree = "<group>"; };
