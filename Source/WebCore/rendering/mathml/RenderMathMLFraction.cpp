@@ -81,50 +81,56 @@ void RenderMathMLFraction::updateLineThickness()
         m_lineThickness = 0;
 }
 
-void RenderMathMLFraction::getFractionParameters(LayoutUnit& numeratorGapMin, LayoutUnit& denominatorGapMin, LayoutUnit& numeratorMinShiftUp, LayoutUnit& denominatorMinShiftDown)
+RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameters()
 {
     ASSERT(!isStack());
+    FractionParameters parameters;
 
     // We try and read constants to draw the fraction from the OpenType MATH and use fallback values otherwise.
     const auto& primaryFont = style().fontCascade().primaryFont();
     const auto* mathData = style().fontCascade().primaryFont().mathData();
     bool display = mathMLStyle()->displayStyle();
     if (mathData) {
-        numeratorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionNumDisplayStyleGapMin : OpenTypeMathData::FractionNumeratorGapMin);
-        denominatorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionDenomDisplayStyleGapMin : OpenTypeMathData::FractionDenominatorGapMin);
-        numeratorMinShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionNumeratorDisplayStyleShiftUp : OpenTypeMathData::FractionNumeratorShiftUp);
-        denominatorMinShiftDown = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionDenominatorDisplayStyleShiftDown : OpenTypeMathData::FractionDenominatorShiftDown);
+        parameters.numeratorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionNumDisplayStyleGapMin : OpenTypeMathData::FractionNumeratorGapMin);
+        parameters.denominatorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionDenomDisplayStyleGapMin : OpenTypeMathData::FractionDenominatorGapMin);
+        parameters.numeratorMinShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionNumeratorDisplayStyleShiftUp : OpenTypeMathData::FractionNumeratorShiftUp);
+        parameters.denominatorMinShiftDown = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionDenominatorDisplayStyleShiftDown : OpenTypeMathData::FractionDenominatorShiftDown);
     } else {
         // The MATH table specification suggests default rule thickness or (in displaystyle) 3 times default rule thickness for the gaps.
-        numeratorGapMin = display ? 3 * ruleThicknessFallback() : ruleThicknessFallback();
-        denominatorGapMin = numeratorGapMin;
+        parameters.numeratorGapMin = display ? 3 * ruleThicknessFallback() : ruleThicknessFallback();
+        parameters.denominatorGapMin = parameters.numeratorGapMin;
 
         // The MATH table specification does not suggest any values for shifts, so we leave them at zero.
-        numeratorMinShiftUp = 0;
-        denominatorMinShiftDown = 0;
+        parameters.numeratorMinShiftUp = 0;
+        parameters.denominatorMinShiftDown = 0;
     }
+
+    return parameters;
 }
 
-void RenderMathMLFraction::getStackParameters(LayoutUnit& gapMin, LayoutUnit& topShiftUp, LayoutUnit& bottomShiftDown)
+RenderMathMLFraction::StackParameters RenderMathMLFraction::stackParameters()
 {
     ASSERT(isStack());
-
+    StackParameters parameters;
+    
     // We try and read constants to draw the stack from the OpenType MATH and use fallback values otherwise.
     const auto& primaryFont = style().fontCascade().primaryFont();
     const auto* mathData = style().fontCascade().primaryFont().mathData();
     bool display = mathMLStyle()->displayStyle();
     if (mathData) {
-        gapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackDisplayStyleGapMin : OpenTypeMathData::StackGapMin);
-        topShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackTopDisplayStyleShiftUp : OpenTypeMathData::StackTopShiftUp);
-        bottomShiftDown = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackBottomDisplayStyleShiftDown : OpenTypeMathData::StackBottomShiftDown);
+        parameters.gapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackDisplayStyleGapMin : OpenTypeMathData::StackGapMin);
+        parameters.topShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackTopDisplayStyleShiftUp : OpenTypeMathData::StackTopShiftUp);
+        parameters.bottomShiftDown = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackBottomDisplayStyleShiftDown : OpenTypeMathData::StackBottomShiftDown);
     } else {
         // We use the values suggested in the MATH table specification.
-        gapMin = display ? 7 * ruleThicknessFallback() : 3 * ruleThicknessFallback();
+        parameters.gapMin = display ? 7 * ruleThicknessFallback() : 3 * ruleThicknessFallback();
 
         // The MATH table specification does not suggest any values for shifts, so we leave them at zero.
-        topShiftUp = 0;
-        bottomShiftDown = 0;
+        parameters.topShiftUp = 0;
+        parameters.bottomShiftDown = 0;
     }
+
+    return parameters;
 }
 
 RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator()
@@ -195,24 +201,22 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit denominatorAscent = ascentForChild(denominator());
     LayoutUnit denominatorDescent = denominator().logicalHeight() - denominatorAscent;
     if (isStack()) {
-        LayoutUnit gapMin, topShiftUp, bottomShiftDown;
-        getStackParameters(gapMin, topShiftUp, bottomShiftDown);
-        LayoutUnit gap = topShiftUp - numeratorDescent + bottomShiftDown - denominatorAscent;
-        if (gap < gapMin) {
+        StackParameters parameters = stackParameters();
+        LayoutUnit gap = parameters.topShiftUp - numeratorDescent + parameters.bottomShiftDown - denominatorAscent;
+        if (gap < parameters.gapMin) {
             // If the gap is not large enough, we increase the shifts by the same value.
-            LayoutUnit delta = (gapMin - gap) / 2;
-            topShiftUp += delta;
-            bottomShiftDown += delta;
+            LayoutUnit delta = (parameters.gapMin - gap) / 2;
+            parameters.topShiftUp += delta;
+            parameters.bottomShiftDown += delta;
         }
-        verticalOffset += numeratorAscent + topShiftUp; // This is the middle of the stack gap.
+        verticalOffset += numeratorAscent + parameters.topShiftUp; // This is the middle of the stack gap.
         m_ascent = verticalOffset + mathAxisHeight();
-        verticalOffset += bottomShiftDown - denominatorAscent;
+        verticalOffset += parameters.bottomShiftDown - denominatorAscent;
     } else {
-        LayoutUnit numeratorGapMin, denominatorGapMin, numeratorMinShiftUp, denominatorMinShiftDown;
-        getFractionParameters(numeratorGapMin, denominatorGapMin, numeratorMinShiftUp, denominatorMinShiftDown);
-        verticalOffset += std::max(numerator().logicalHeight() + numeratorGapMin + m_lineThickness / 2, numeratorAscent + numeratorMinShiftUp); // This is the middle of the fraction bar.
+        FractionParameters parameters = fractionParameters();
+        verticalOffset += std::max(numerator().logicalHeight() + parameters.numeratorGapMin + m_lineThickness / 2, numeratorAscent + parameters.numeratorMinShiftUp); // This is the middle of the fraction bar.
         m_ascent = verticalOffset + mathAxisHeight();
-        verticalOffset += std::max(m_lineThickness / 2 + denominatorGapMin, denominatorMinShiftDown - denominatorAscent);
+        verticalOffset += std::max(m_lineThickness / 2 + parameters.denominatorGapMin, parameters.denominatorMinShiftDown - denominatorAscent);
     }
 
     LayoutPoint denominatorLocation(horizontalOffset(denominator(), element().denominatorAlignment()), verticalOffset);

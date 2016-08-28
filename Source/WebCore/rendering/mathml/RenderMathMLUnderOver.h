@@ -56,7 +56,17 @@ private:
     LayoutUnit horizontalOffset(const RenderBox&) const;
     bool hasAccent(bool accentUnder = false) const;
     bool hasAccentUnder() const { return hasAccent(true); };
-    bool getVerticalParameters(LayoutUnit& underGapMin, LayoutUnit& overGapMin, LayoutUnit& underShiftMin, LayoutUnit& overShiftMin, LayoutUnit& underExtraDescender, LayoutUnit& overExtraAscender, LayoutUnit& accentBaseHeight) const;
+    struct VerticalParameters {
+        bool useUnderOverBarFallBack;
+        LayoutUnit underGapMin;
+        LayoutUnit overGapMin;
+        LayoutUnit underShiftMin;
+        LayoutUnit overShiftMin;
+        LayoutUnit underExtraDescender;
+        LayoutUnit overExtraAscender;
+        LayoutUnit accentBaseHeight;
+    };
+    VerticalParameters verticalParameters() const;
 };
 
 }

@@ -56,7 +56,13 @@ private:
     bool getBaseAndScripts(RenderBox*& base, RenderBox*& firstPostScript, RenderBox*& firstPreScript);
     LayoutUnit spaceAfterScript();
     LayoutUnit italicCorrection(RenderBox* base);
-    void getScriptMetricsAndLayoutIfNeeded(RenderBox* base, RenderBox* script, LayoutUnit& minSubScriptShift, LayoutUnit& minSupScriptShift, LayoutUnit& maxScriptDescent, LayoutUnit& maxScriptAscent);
+    struct ScriptMetrics {
+        LayoutUnit subShift;
+        LayoutUnit supShift;
+        LayoutUnit ascent;
+        LayoutUnit descent;
+    };
+    void getScriptMetricsAndLayoutIfNeeded(RenderBox* base, RenderBox* script, ScriptMetrics&);
 };
 
 } // namespace WebCore

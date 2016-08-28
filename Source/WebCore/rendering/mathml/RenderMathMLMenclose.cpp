@@ -59,25 +59,28 @@ LayoutUnit RenderMathMLMenclose::ruleThickness() const
     return 0.05f * style().fontCascade().size();
 }
 
-void RenderMathMLMenclose::getSpaceAroundContent(LayoutUnit contentWidth, LayoutUnit contentHeight, LayoutUnit& leftSpace, LayoutUnit& rightSpace, LayoutUnit& topSpace, LayoutUnit& bottomSpace) const
+RenderMathMLMenclose::SpaceAroundContent RenderMathMLMenclose::spaceAroundContent(LayoutUnit contentWidth, LayoutUnit contentHeight) const
 {
-    leftSpace = rightSpace = topSpace = bottomSpace = 0;
+    SpaceAroundContent space;
+    space.right = 0;
+    space.top = 0;
+    space.bottom = 0;
+    space.left = 0;
 
     LayoutUnit thickness = ruleThickness();
-
     // In the MathML in HTML5 implementation note, the "left" notation is described as follows:
     // - left side is 3\xi_8 padding + \xi_8 border + \xi_8 margin = 5\xi_8
     // - top space is Overbar Vertical Gap + Overbar Rule Thickness = 3\xi_8 + \xi_8 = 4\xi_8
     // - bottom space is Underbar Vertical Gap + Underbar Rule Thickness = 3\xi_8 + \xi_8 = 4\xi_8
     // The "right" notation is symmetric.
     if (hasNotation(MathMLMencloseElement::Left))
-        leftSpace = std::max(leftSpace, 5 * thickness);
+        space.left = std::max(space.left, 5 * thickness);
     if (hasNotation(MathMLMencloseElement::Right))
-        rightSpace = std::max(rightSpace, 5 * thickness);
+        space.right = std::max(space.right, 5 * thickness);
     if (hasNotation(MathMLMencloseElement::Left) || hasNotation(MathMLMencloseElement::Right)) {
         LayoutUnit extraSpace = 4 * thickness;
-        topSpace = std::max(topSpace, extraSpace);
-        bottomSpace = std::max(bottomSpace, extraSpace);
+        space.top = std::max(space.top, extraSpace);
+        space.bottom = std::max(space.bottom, extraSpace);
     }
 
     // In the MathML in HTML5 implementation note, the "top" notation is described as follows:
@@ -85,13 +88,13 @@ void RenderMathMLMenclose::getSpaceAroundContent(LayoutUnit contentWidth, Layout
     // - top side is Vertical Gap + Rule Thickness + Extra Ascender = 3\xi_8 + \xi_8 + \xi_8 = 5\xi_8
     // The "bottom" notation is symmetric.
     if (hasNotation(MathMLMencloseElement::Top))
-        topSpace = std::max(topSpace, 5 * thickness);
+        space.top = std::max(space.top, 5 * thickness);
     if (hasNotation(MathMLMencloseElement::Bottom))
-        bottomSpace = std::max(bottomSpace, 5 * thickness);
+        space.bottom = std::max(space.bottom, 5 * thickness);
     if (hasNotation(MathMLMencloseElement::Top) || hasNotation(MathMLMencloseElement::Bottom)) {
         LayoutUnit extraSpace = 4 * thickness;
-        leftSpace = std::max(leftSpace, extraSpace);
-        rightSpace = std::max(rightSpace, extraSpace);
+        space.left = std::max(space.left, extraSpace);
+        space.right = std::max(space.right, extraSpace);
     }
 
     // For longdiv, we use our own rules for now:
@@ -100,30 +103,30 @@ void RenderMathMLMenclose::getSpaceAroundContent(LayoutUnit contentWidth, Layout
     // - right space is like "right" notation
     // - left space is longDivLeftSpace * \xi_8
     if (hasNotation(MathMLMencloseElement::LongDiv)) {
-        topSpace = std::max(topSpace, 5 * thickness);
-        bottomSpace = std::max(bottomSpace, 5 * thickness);
-        leftSpace = std::max(leftSpace, longDivLeftSpace * thickness);
-        rightSpace = std::max(rightSpace, 4 * thickness);
+        space.top = std::max(space.top, 5 * thickness);
+        space.bottom = std::max(space.bottom, 5 * thickness);
+        space.left = std::max(space.left, longDivLeftSpace * thickness);
+        space.right = std::max(space.right, 4 * thickness);
     }
 
     // In the MathML in HTML5 implementation note, the "rounded" notation is described as follows:
     // - top/bottom/left/right side have 3\xi_8 padding + \xi_8 border + \xi_8 margin = 5\xi_8
     if (hasNotation(MathMLMencloseElement::RoundedBox)) {
         LayoutUnit extraSpace = 5 * thickness;
-        leftSpace = std::max(leftSpace, extraSpace);
-        rightSpace = std::max(rightSpace, extraSpace);
-        topSpace = std::max(topSpace, extraSpace);
-        bottomSpace = std::max(bottomSpace, extraSpace);
+        space.left = std::max(space.left, extraSpace);
+        space.right = std::max(space.right, extraSpace);
+        space.top = std::max(space.top, extraSpace);
+        space.bottom = std::max(space.bottom, extraSpace);
     }
 
     // In the MathML in HTML5 implementation note, the "rounded" notation is described as follows:
     // - top/bottom/left/right spaces are \xi_8/2
     if (hasNotation(MathMLMencloseElement::UpDiagonalStrike) || hasNotation(MathMLMencloseElement::DownDiagonalStrike)) {
         LayoutUnit extraSpace = thickness / 2;
-        leftSpace = std::max(leftSpace, extraSpace);
-        rightSpace = std::max(rightSpace, extraSpace);
-        topSpace = std::max(topSpace, extraSpace);
-        bottomSpace = std::max(bottomSpace, extraSpace);
+        space.left = std::max(space.left, extraSpace);
+        space.right = std::max(space.right, extraSpace);
+        space.top = std::max(space.top, extraSpace);
+        space.bottom = std::max(space.bottom, extraSpace);
     }
 
     // In the MathML in HTML5 implementation note, the "circle" notation is described as follows:
@@ -134,14 +137,16 @@ void RenderMathMLMenclose::getSpaceAroundContent(LayoutUnit contentWidth, Layout
     // Then for example the top space is \sqrt{2}contentHeight/2 - contentHeight/2 + \xi_8/2 + \xi_8.
     if (hasNotation(MathMLMencloseElement::Circle)) {
         LayoutUnit extraSpace = (contentWidth * (sqrtOfTwoFloat - 1) + 3 * thickness) / 2;
-        leftSpace = std::max(leftSpace, extraSpace);
-        rightSpace = std::max(rightSpace, extraSpace);
+        space.left = std::max(space.left, extraSpace);
+        space.right = std::max(space.right, extraSpace);
         extraSpace = (contentHeight * (sqrtOfTwoFloat - 1) + 3 * thickness) / 2;
-        topSpace = std::max(topSpace, extraSpace);
-        bottomSpace = std::max(bottomSpace, extraSpace);
+        space.top = std::max(space.top, extraSpace);
+        space.bottom = std::max(space.bottom, extraSpace);
     }
 
     // In the MathML in HTML5 implementation note, the "vertical" and "horizontal" notations do not add space around the content.
+
+    return space;
 }
 
 void RenderMathMLMenclose::computePreferredLogicalWidths()
@@ -151,9 +156,9 @@ void RenderMathMLMenclose::computePreferredLogicalWidths()
     RenderMathMLRow::computePreferredLogicalWidths();
 
     LayoutUnit preferredWidth = m_maxPreferredLogicalWidth;
-    LayoutUnit leftSpace, rightSpace, dummy;
-    getSpaceAroundContent(preferredWidth, 0, leftSpace, rightSpace, dummy, dummy);
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = leftSpace + preferredWidth + rightSpace;
+    SpaceAroundContent space = spaceAroundContent(preferredWidth, 0);
+    m_maxPreferredLogicalWidth = space.left + preferredWidth + space.right;
+    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -171,16 +176,15 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
     RenderMathMLRow::layoutRowItems(contentAscent, contentDescent);
     LayoutUnit contentWidth = logicalWidth();
 
-    LayoutUnit leftSpace, rightSpace, topSpace, bottomSpace;
-    getSpaceAroundContent(contentWidth, contentAscent + contentDescent, leftSpace, rightSpace, topSpace, bottomSpace);
-    setLogicalWidth(leftSpace + contentWidth + rightSpace);
-    setLogicalHeight(topSpace + contentAscent + contentDescent + bottomSpace);
+    SpaceAroundContent space = spaceAroundContent(contentWidth, contentAscent + contentDescent);
+    setLogicalWidth(space.left + contentWidth + space.right);
+    setLogicalHeight(space.top + contentAscent + contentDescent + space.bottom);
 
-    LayoutPoint contentLocation(leftSpace, topSpace);
+    LayoutPoint contentLocation(space.left, space.top);
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
         child->setLocation(child->location() + contentLocation);
 
-    m_contentRect = LayoutRect(leftSpace, topSpace, contentWidth, contentAscent + contentDescent);
+    m_contentRect = LayoutRect(space.left, space.top, contentWidth, contentAscent + contentDescent);
 
     clearNeedsLayout();
 }

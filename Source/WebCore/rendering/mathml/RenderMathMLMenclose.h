@@ -46,7 +46,13 @@ private:
     LayoutUnit ruleThickness() const;
     bool hasNotation(MathMLMencloseElement::MencloseNotationFlag notationFlag) const { return downcast<MathMLMencloseElement>(element()).hasNotation(notationFlag); }
 
-    void getSpaceAroundContent(LayoutUnit contentWidth, LayoutUnit contentHeight, LayoutUnit& leftSpace, LayoutUnit& rightSpace, LayoutUnit& topSpace, LayoutUnit& bottomSpace) const;
+    struct SpaceAroundContent {
+        LayoutUnit left;
+        LayoutUnit right;
+        LayoutUnit top;
+        LayoutUnit bottom;
+    };
+    SpaceAroundContent spaceAroundContent(LayoutUnit contentWidth, LayoutUnit contentHeight) const;
 
     LayoutRect m_contentRect;
 };
