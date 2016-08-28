@@ -216,14 +216,12 @@ Optional<int> parseHTMLNonNegativeInteger(const String& input)
     return signedValue;
 }
 
-template <typename CharacterType>
-static inline bool isHTMLSpaceOrDelimiter(CharacterType character)
+static inline bool isHTMLSpaceOrDelimiter(UChar character)
 {
     return isHTMLSpace(character) || character == ',' || character == ';';
 }
 
-template <typename CharacterType>
-static inline bool isNumberStart(CharacterType character)
+static inline bool isNumberStart(UChar character)
 {
     return isASCIIDigit(character) || character == '.' || character == '-';
 }
@@ -259,19 +257,15 @@ static Vector<double> parseHTMLListOfOfFloatingPointNumberValuesInternal(const C
     return numbers;
 }
 
-Vector<double> parseHTMLListOfOfFloatingPointNumberValues(const String& input)
+Vector<double> parseHTMLListOfOfFloatingPointNumberValues(StringView input)
 {
-    unsigned length = input.length();
-    if (!length)
-        return { };
-
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();
-        return parseHTMLListOfOfFloatingPointNumberValuesInternal(start, start + length);
+        return parseHTMLListOfOfFloatingPointNumberValuesInternal(start, start + input.length());
     }
 
     auto* start = input.characters16();
-    return parseHTMLListOfOfFloatingPointNumberValuesInternal(start, start + length);
+    return parseHTMLListOfOfFloatingPointNumberValuesInternal(start, start + input.length());
 }
 
 static bool threadSafeEqual(const StringImpl& a, const StringImpl& b)
