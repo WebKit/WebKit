@@ -129,6 +129,19 @@ TEST(WTF, StringViewIterators)
     ++codePointsIterator;
     ++codePointsIterator;
     EXPECT_EQ(*codePointsIterator, 'l');
+    auto savedIterator = codePointsIterator;
+    codePointsIterator = codePoints.begin();
+    EXPECT_EQ(*codePointsIterator, 'h');
+    codePointsIterator = savedIterator;
+    EXPECT_EQ(*codePointsIterator, 'l');
+    String webkit("webkit");
+    auto webkitCodePoints = StringView(webkit).codePoints();
+    codePointsIterator = webkitCodePoints.begin();
+    ++codePointsIterator;
+    ++codePointsIterator;
+    EXPECT_EQ(*codePointsIterator, 'b');
+    while (codePointsIterator != webkitCodePoints.end())
+        ++codePointsIterator;
 
     EXPECT_TRUE(compareLoopIterations(heloView.codePoints(), {'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(heloView.codeUnits(), {'h', 'e', 'l', 'o'}));

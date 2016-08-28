@@ -1,3 +1,13 @@
+2016-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should parse relative URLs
+        https://bugs.webkit.org/show_bug.cgi?id=161282
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringView.h:
+        Use a std::reference_wrapper for the StringView& to make it reassignable so we can add an operator=.
+
 2016-08-26  JF Bastien  <jfbastien@apple.com>
 
         bitwise_cast uses inactive member of union

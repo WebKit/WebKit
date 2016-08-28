@@ -55,15 +55,15 @@ static void checkURL(const String& urlString, const ExpectedParts& parts)
 {
     URLParser parser;
     auto url = parser.parse(urlString);
-    EXPECT_TRUE(eq(parts.protocol, url->protocol()));
-    EXPECT_TRUE(eq(parts.user, url->user()));
-    EXPECT_TRUE(eq(parts.password, url->pass()));
-    EXPECT_TRUE(eq(parts.host, url->host()));
-    EXPECT_EQ(parts.port, url->port());
-    EXPECT_TRUE(eq(parts.path, url->path()));
-    EXPECT_TRUE(eq(parts.query, url->query()));
-    EXPECT_TRUE(eq(parts.fragment, url->fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, url->string()));
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
+    EXPECT_TRUE(eq(parts.user, url.user()));
+    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.host, url.host()));
+    EXPECT_EQ(parts.port, url.port());
+    EXPECT_TRUE(eq(parts.path, url.path()));
+    EXPECT_TRUE(eq(parts.query, url.query()));
+    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url.string()));
     
     auto oldURL = URL(URL(), urlString);
     EXPECT_TRUE(eq(parts.protocol, oldURL.protocol()));
@@ -76,7 +76,7 @@ static void checkURL(const String& urlString, const ExpectedParts& parts)
     EXPECT_TRUE(eq(parts.fragment, oldURL.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, oldURL.string()));
     
-    EXPECT_TRUE(URLParser::allValuesEqual(url.value(), oldURL));
+    EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
 }
 
 TEST_F(URLParserTest, Parse)
@@ -89,21 +89,62 @@ TEST_F(URLParserTest, Parse)
     checkURL("http://user:pass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
     checkURL("http://webkit.org", {"http", "", "", "webkit.org", 0, "/", "", "", "http://webkit.org/"});
     checkURL("http://127.0.0.1", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
+    checkURL("http://webkit.org/", {"http", "", "", "webkit.org", 0, "/", "", "", "http://webkit.org/"});
+    checkURL("http://webkit.org/path1/path2/index.html", {"http", "", "", "webkit.org", 0, "/path1/path2/index.html", "", "", "http://webkit.org/path1/path2/index.html"});
+
+}
+
+static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts)
+{
+    URLParser baseParser;
+    auto base = baseParser.parse(baseURLString);
+
+    URLParser parser;
+    auto url = parser.parse(urlString, base);
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
+    EXPECT_TRUE(eq(parts.user, url.user()));
+    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.host, url.host()));
+    EXPECT_EQ(parts.port, url.port());
+    EXPECT_TRUE(eq(parts.path, url.path()));
+    EXPECT_TRUE(eq(parts.query, url.query()));
+    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url.string()));
+
+    auto oldURL = URL(URL(URL(), baseURLString), urlString);
+    EXPECT_TRUE(eq(parts.protocol, oldURL.protocol()));
+    EXPECT_TRUE(eq(parts.user, oldURL.user()));
+    EXPECT_TRUE(eq(parts.password, oldURL.pass()));
+    EXPECT_TRUE(eq(parts.host, oldURL.host()));
+    EXPECT_EQ(parts.port, oldURL.port());
+    EXPECT_TRUE(eq(parts.path, oldURL.path()));
+    EXPECT_TRUE(eq(parts.query, oldURL.query()));
+    EXPECT_TRUE(eq(parts.fragment, oldURL.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, oldURL.string()));
+
+    EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
+}
+
+TEST_F(URLParserTest, ParseRelative)
+{
+    checkRelativeURL("/index.html", "http://webkit.org/path1/path2/", {"http", "", "", "webkit.org", 0, "/index.html", "", "", "http://webkit.org/index.html"});
+    checkRelativeURL("http://whatwg.org/index.html", "http://webkit.org/path1/path2/", {"http", "", "", "whatwg.org", 0, "/index.html", "", "", "http://whatwg.org/index.html"});
+    checkRelativeURL("index.html", "http://webkit.org/path1/path2/page.html?query#fragment", {"http", "", "", "webkit.org", 0, "/path1/path2/index.html", "", "", "http://webkit.org/path1/path2/index.html"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
 {
     URLParser parser;
     auto url = parser.parse(urlString);
-    EXPECT_TRUE(eq(partsNew.protocol, url->protocol()));
-    EXPECT_TRUE(eq(partsNew.user, url->user()));
-    EXPECT_TRUE(eq(partsNew.password, url->pass()));
-    EXPECT_TRUE(eq(partsNew.host, url->host()));
-    EXPECT_EQ(partsNew.port, url->port());
-    EXPECT_TRUE(eq(partsNew.path, url->path()));
-    EXPECT_TRUE(eq(partsNew.query, url->query()));
-    EXPECT_TRUE(eq(partsNew.fragment, url->fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsNew.string, url->string()));
+    EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
+    EXPECT_TRUE(eq(partsNew.user, url.user()));
+    EXPECT_TRUE(eq(partsNew.password, url.pass()));
+    EXPECT_TRUE(eq(partsNew.host, url.host()));
+    EXPECT_EQ(partsNew.port, url.port());
+    EXPECT_TRUE(eq(partsNew.path, url.path()));
+    EXPECT_TRUE(eq(partsNew.query, url.query()));
+    EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(partsNew.string, url.string()));
     
     auto oldURL = URL(URL(), urlString);
     EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol()));
@@ -116,7 +157,7 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     EXPECT_TRUE(eq(partsOld.fragment, oldURL.fragmentIdentifier()));
     EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
     
-    EXPECT_FALSE(URLParser::allValuesEqual(url.value(), oldURL));
+    EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
 }
 
 TEST_F(URLParserTest, ParserDifferences)
@@ -133,7 +174,7 @@ static void shouldFail(const String& urlString)
 {
     URLParser parser;
     auto invalidURL = parser.parse(urlString);
-    EXPECT_TRUE(invalidURL == Nullopt);
+    EXPECT_TRUE(URLParser::allValuesEqual(invalidURL, { }));
 }
     
 TEST_F(URLParserTest, ParserFailures)

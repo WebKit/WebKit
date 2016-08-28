@@ -1,3 +1,23 @@
+2016-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should parse relative URLs
+        https://bugs.webkit.org/show_bug.cgi?id=161282
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+        Added some tests for the new operator=.
+        Test saving iterators, restoring iterators, and even assigning iterators to new CodePoints objects.
+        Using the same iterator to iterate multiple objects is bad practice, but it's possible and now tested.
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::shouldFail):
+        Add some relative URL tests.
+
 2016-08-27  Jonathan Bedard  <jbedard@apple.com>
 
         WTR needs an implementation of setAutomaticLinkDetectionEnabled

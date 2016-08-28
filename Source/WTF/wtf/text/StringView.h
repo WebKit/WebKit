@@ -656,9 +656,10 @@ public:
 
     bool operator==(const Iterator&) const;
     bool operator!=(const Iterator&) const;
+    Iterator& operator=(const Iterator&);
 
 private:
-    const StringView& m_stringView;
+    std::reference_wrapper<const StringView> m_stringView;
     Optional<unsigned> m_nextCodePointOffset;
     UChar32 m_codePoint;
 };
@@ -723,15 +724,23 @@ inline StringView::CodePoints::Iterator::Iterator(const StringView& stringView, 
 inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
 {
     ASSERT(m_nextCodePointOffset);
-    if (m_nextCodePointOffset.value() == m_stringView.length()) {
+    if (m_nextCodePointOffset.value() == m_stringView.get().length()) {
         m_nextCodePointOffset = Nullopt;
         return *this;
     }
-    if (m_stringView.is8Bit())
-        m_codePoint = m_stringView.characters8()[m_nextCodePointOffset.value()++];
+    if (m_stringView.get().is8Bit())
+        m_codePoint = m_stringView.get().characters8()[m_nextCodePointOffset.value()++];
     else
-        U16_NEXT(m_stringView.characters16(), m_nextCodePointOffset.value(), m_stringView.length(), m_codePoint);
-    ASSERT(m_nextCodePointOffset.value() <= m_stringView.length());
+        U16_NEXT(m_stringView.get().characters16(), m_nextCodePointOffset.value(), m_stringView.get().length(), m_codePoint);
+    ASSERT(m_nextCodePointOffset.value() <= m_stringView.get().length());
+    return *this;
+}
+
+inline auto StringView::CodePoints::Iterator::operator=(const Iterator& other) -> Iterator&
+{
+    m_stringView = other.m_stringView;
+    m_nextCodePointOffset = other.m_nextCodePointOffset;
+    m_codePoint = other.m_codePoint;
     return *this;
 }
 
@@ -743,7 +752,7 @@ inline UChar32 StringView::CodePoints::Iterator::operator*() const
 
 inline bool StringView::CodePoints::Iterator::operator==(const Iterator& other) const
 {
-    ASSERT(&m_stringView == &other.m_stringView);
+    ASSERT(&m_stringView.get() == &other.m_stringView.get());
     return m_nextCodePointOffset == other.m_nextCodePointOffset;
 }
 
