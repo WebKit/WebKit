@@ -1,3 +1,12 @@
+2016-08-27  Jonathan Bedard  <jbedard@apple.com>
+
+        WTR needs an implementation of setAutomaticLinkDetectionEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=87162
+
+        Reviewed by Darin Adler.
+
+        * platform/wk2/TestExpectations: Removed 2 now passing tests.
+
 2016-08-27  Sam Weinig  <sam@webkit.org>
 
         Remove more custom JavaScript bindings

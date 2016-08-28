@@ -62,6 +62,7 @@ interface TestRunner {
     void setAllowFileAccessFromFileURLs(boolean value);
     void setPluginsEnabled(boolean value);
     void setJavaScriptCanAccessClipboard(boolean value);
+    void setAutomaticLinkDetectionEnabled(boolean value);
     void setPrivateBrowsingEnabled(boolean value);
     void setPopupBlockingEnabled(boolean value);
     void setAuthorAndUserStylesEnabled(boolean value);

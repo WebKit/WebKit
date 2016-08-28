@@ -149,6 +149,7 @@ public:
 #endif
     
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
+    void setTextCheckerState(const TextCheckerState&);
 
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
@@ -266,8 +267,6 @@ private:
     
     void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
     void stopMemorySampler();
-
-    void setTextCheckerState(const TextCheckerState&);
     
     void getWebCoreStatistics(uint64_t callbackID);
     void garbageCollectJavaScriptObjects();

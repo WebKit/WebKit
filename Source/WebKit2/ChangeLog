@@ -1,3 +1,18 @@
+2016-08-27  Jonathan Bedard  <jbedard@apple.com>
+
+        WTR needs an implementation of setAutomaticLinkDetectionEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=87162
+
+        Reviewed by Darin Adler
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetAutomaticLinkDetectionEnabled): Added WKBundleSetAutomaticLinkDetectionEnabled definition.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Added WKBundleSetAutomaticLinkDetectionEnabled declaration.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAutomaticLinkDetectionEnabled): Added setAutomaticLinkDetectionEnabled definition.
+        * WebProcess/InjectedBundle/InjectedBundle.h: Added setAutomaticLinkDetectionEnabled declaration.
+        * WebProcess/WebProcess.h: Declared setTextCheckerState public.
+
 2016-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Threaded Compositor] Several flaky tests
