@@ -171,25 +171,6 @@ webkit_dom_element_get_elements_by_class_name(WebKitDOMElement* self, const gcha
 WEBKIT_DEPRECATED_FOR(webkit_dom_node_clone_node_with_error) WebKitDOMNode*
 webkit_dom_node_clone_node(WebKitDOMNode* self, gboolean deep, GError** error);
 
-/**
- * webkit_dom_document_set_title:
- * @self: A #WebKitDOMDocument
- * @title: A #gchar
- *
- * Deprecated: 2.14: Use webkit_dom_document_set_title_with_error() instead.
- */
-WEBKIT_DEPRECATED_FOR(webkit_dom_document_set_title_with_error) void
-webkit_dom_document_set_title(WebKitDOMDocument* self, const gchar* title);
-
-/**
- * webkit_dom_html_title_element_set_text:
- * @self: A #WebKitDOMHTMLTitleElement
- * @text: A #gchar
- *
- * Deprecated: 2.14: Use webkit_dom_html_title_element_set_text_with_error() instead.
- */
-WEBKIT_DEPRECATED_FOR(webkit_dom_html_title_element_set_text_with_error) void
-webkit_dom_html_title_element_set_text(WebKitDOMHTMLTitleElement* self, const gchar* text);
 
 /**
  * webkit_dom_document_get_default_charset:

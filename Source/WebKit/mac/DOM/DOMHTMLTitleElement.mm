@@ -47,9 +47,7 @@
 - (void)setText:(NSString *)newText
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setText(newText, ec);
-    raiseOnDOMError(ec);
+    IMPL->setText(newText);
 }
 
 @end

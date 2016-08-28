@@ -142,16 +142,6 @@ WebKitDOMNode* webkit_dom_node_clone_node(WebKitDOMNode* self, gboolean deep)
     return webkit_dom_node_clone_node_with_error(self, deep, nullptr);
 }
 
-void webkit_dom_document_set_title(WebKitDOMDocument* self, const gchar* title)
-{
-    webkit_dom_document_set_title_with_error(self, title, nullptr);
-}
-
-void webkit_dom_html_title_element_set_text(WebKitDOMHTMLTitleElement* self, const gchar* text)
-{
-    webkit_dom_html_title_element_set_text_with_error(self, text, nullptr);
-}
-
 gchar* webkit_dom_document_get_default_charset(WebKitDOMDocument* self)
 {
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), nullptr);

@@ -31,7 +31,7 @@
     attribute DOMString value;
 
 #if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
-    [SetterRaisesException] attribute DOMString text;
+    attribute DOMString text;
 #else
     readonly attribute DOMString text;
 #endif

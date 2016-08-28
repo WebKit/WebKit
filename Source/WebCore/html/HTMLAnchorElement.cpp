@@ -332,9 +332,9 @@ String HTMLAnchorElement::text()
     return textContent();
 }
 
-void HTMLAnchorElement::setText(const String& text, ExceptionCode& ec)
+void HTMLAnchorElement::setText(const String& text)
 {
-    setTextContent(text, ec);
+    setTextContent(text, ASSERT_NO_EXCEPTION);
 }
 
 bool HTMLAnchorElement::isLiveLink() const

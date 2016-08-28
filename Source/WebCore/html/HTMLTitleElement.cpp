@@ -92,9 +92,9 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
     return StringWithDirection(text(), direction);
 }
 
-void HTMLTitleElement::setText(const String& value, ExceptionCode& ec)
+void HTMLTitleElement::setText(const String& value)
 {
-    setTextContent(value, ec);
+    setTextContent(value, ASSERT_NO_EXCEPTION);
 }
 
 }

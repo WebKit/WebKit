@@ -39,7 +39,7 @@ public:
        bool defaultSelected, bool selected, ExceptionCode&);
 
     WEBCORE_EXPORT String text() const;
-    void setText(const String&, ExceptionCode&);
+    void setText(const String&);
 
     WEBCORE_EXPORT int index() const;
 

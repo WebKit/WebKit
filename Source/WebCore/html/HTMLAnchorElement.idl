@@ -34,7 +34,7 @@ interface HTMLAnchorElement : HTMLElement {
     [Reflect] attribute DOMString target;
     [Reflect] attribute DOMString type;
 
-    [SetterRaisesException] attribute DOMString text;
+    attribute DOMString text;
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
 };

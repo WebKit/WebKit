@@ -1057,9 +1057,7 @@ sub FunctionUsedToRaiseException {
 sub FunctionUsedToNotRaiseException {
     my $functionName = shift;
 
-    return $functionName eq "webkit_dom_document_set_title"
-        || $functionName eq "webkit_dom_html_title_element_set_text"
-        || $functionName eq "webkit_dom_node_clone_node";
+    return $functionName eq "webkit_dom_node_clone_node";
 }
 
 sub GenerateFunction {
