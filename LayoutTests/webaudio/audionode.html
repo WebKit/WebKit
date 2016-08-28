@@ -92,9 +92,9 @@ function runTest() {
     // Create a new context with too many arguments
     try {
         context2 = new webkitAudioContext(0, 0);
-        testFailed("exception should be thrown when creating audio context with too many arguments.");
+        testPassed("exception should not be thrown when creating audio context with too many arguments.");
     } catch(e) {
-        testPassed("exception thrown when creating audio context with too many arguments.");
+        testFailed("exception thrown when creating audio context with too many arguments.");
     }
 
     // Ensure it is an EventTarget

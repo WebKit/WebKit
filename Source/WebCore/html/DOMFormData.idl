@@ -29,7 +29,7 @@
  */
 
 [
-    CustomConstructor(optional HTMLFormElement form),
+    Constructor(optional HTMLFormElement? form),
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     InterfaceName=FormData,

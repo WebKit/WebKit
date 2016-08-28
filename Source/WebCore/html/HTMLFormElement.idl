@@ -21,6 +21,7 @@
 [
     CustomNamedGetter,
     OverrideBuiltins,
+    JSGenerateToNativeObject,
 ] interface HTMLFormElement : HTMLElement {
     [Reflect=accept_charset] attribute DOMString acceptCharset;
     [Reflect, URL] attribute USVString action;

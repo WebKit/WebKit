@@ -1,3 +1,14 @@
+2016-08-27  Sam Weinig  <sam@webkit.org>
+
+        Remove more custom JavaScript bindings
+        https://bugs.webkit.org/show_bug.cgi?id=161293
+
+        Reviewed by Darin Adler.
+
+        * webaudio/audionode-expected.txt:
+        * webaudio/audionode.html:
+        Update test for correct behavior of the constructor.
+
 2016-08-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Race between creating/deleting a database in test

@@ -33,7 +33,8 @@ enum AudioContextState {
 [
     ActiveDOMObject,
     Conditional=WEB_AUDIO,
-    CustomConstructor,
+    Constructor,
+    ConstructorCallWith=Document,
     EnabledBySetting=WebAudio,
     ExportMacro=WEBCORE_EXPORT,
     InterfaceName=webkitAudioContext,

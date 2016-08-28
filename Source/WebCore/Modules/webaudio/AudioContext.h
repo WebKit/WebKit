@@ -77,7 +77,7 @@ class WaveShaperNode;
 class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public MediaProducer, private PlatformMediaSessionClient {
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static RefPtr<AudioContext> create(Document&, ExceptionCode&);
+    static RefPtr<AudioContext> create(Document&);
 
     virtual ~AudioContext();
 

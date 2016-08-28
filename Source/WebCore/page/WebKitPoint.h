@@ -30,33 +30,37 @@
 
 namespace WebCore {
 
-    class WebKitPoint : public RefCounted<WebKitPoint> {
-    public:
+class WebKitPoint : public RefCounted<WebKitPoint> {
+public:
+    static Ref<WebKitPoint> create()
+    {
+        return adoptRef(*new WebKitPoint);
+    }
+    static Ref<WebKitPoint> create(float x, float y)
+    {
+        return adoptRef(*new WebKitPoint(x, y));
+    }
 
-        static Ref<WebKitPoint> create()
-        {
-            return adoptRef(*new WebKitPoint);
-        }
-        static Ref<WebKitPoint> create(float x, float y)
-        {
-            return adoptRef(*new WebKitPoint(x, y));
-        }
+    float x() const { return m_x; }
+    float y() const { return m_y; }
+    
+    void setX(float x) { m_x = x; }
+    void setY(float y) { m_y = y; }
 
-        float x() const { return m_x; }
-        float y() const { return m_y; }
-        
-        void setX(float x) { m_x = x; }
-        void setY(float y) { m_y = y; }
+private:
+    WebKitPoint(float x, float y)
+        : m_x(std::isnan(x) ? 0 : x)
+        , m_y(std::isnan(y) ? 0 : y)
+    {
+    }
 
-    private:
-        WebKitPoint(float x=0, float y=0)
-            : m_x(x)
-            , m_y(y)
-        {
-        }
+    WebKitPoint()
+    {
+    }
 
-        float m_x, m_y;
-    };
+    float m_x { 0 };
+    float m_y { 0 };
+};
 
 } // namespace WebCore
 

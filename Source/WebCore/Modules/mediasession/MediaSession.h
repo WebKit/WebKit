@@ -41,9 +41,9 @@ public:
     enum class Kind { Content, Transient, TransientSolo, Ambient };
     enum class State { Idle, Active, Interrupted };
 
-    static Ref<MediaSession> create(ScriptExecutionContext& context, Kind kind)
+    static Ref<MediaSession> create(Document& document, Kind kind)
     {
-        return adoptRef(*new MediaSession(context, kind));
+        return adoptRef(*new MediaSession(document, kind));
     }
 
     ~MediaSession();
@@ -76,7 +76,7 @@ public:
 private:
     friend class HTMLMediaElement;
 
-    MediaSession(ScriptExecutionContext&, const String&);
+    MediaSession(Document&, const String&);
 
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
