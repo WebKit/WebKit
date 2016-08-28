@@ -1337,9 +1337,9 @@ set(WebCore_SOURCES
     css/CSSKeyframeRule.cpp
     css/CSSKeyframesRule.cpp
     css/CSSLineBoxContainValue.cpp
+    css/CSSMarkup.cpp
     css/CSSMediaRule.cpp
     css/CSSNamedImageValue.cpp
-    css/CSSOMUtils.cpp
     css/CSSPageRule.cpp
     css/CSSPrimitiveValue.cpp
     css/CSSProperty.cpp
@@ -1406,7 +1406,15 @@ set(WebCore_SOURCES
     css/WebKitCSSViewportRule.cpp
 
     css/parser/CSSParser.cpp
+    css/parser/CSSParserFastPaths.cpp
+    css/parser/CSSParserObserverWrapper.cpp
+    css/parser/CSSParserToken.cpp
+    css/parser/CSSParserTokenRange.cpp
     css/parser/CSSParserValues.cpp
+    css/parser/CSSPropertyParser.cpp
+    css/parser/CSSPropertyParserHelpers.cpp
+    css/parser/CSSTokenizer.cpp
+    css/parser/CSSTokenizerInputStream.cpp
     css/parser/SVGCSSParser.cpp
 
     cssjit/SelectorCompiler.cpp

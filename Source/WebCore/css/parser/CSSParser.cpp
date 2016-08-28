@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -13707,7 +13707,7 @@ CSSValueID cssValueKeywordID(const CSSParserString& string)
 }
 
 template <typename CharacterType>
-static inline bool isCSSTokenizerIdentifier(const CharacterType* characters, unsigned length)
+static inline bool isCSSTokenizerIdent(const CharacterType* characters, unsigned length)
 {
     const CharacterType* end = characters + length;
 
@@ -13730,7 +13730,7 @@ static inline bool isCSSTokenizerIdentifier(const CharacterType* characters, uns
 }
 
 // "ident" from the CSS tokenizer, minus backslash-escape sequences
-static bool isCSSTokenizerIdentifier(const String& string)
+static bool isCSSTokenizerIdent(const String& string)
 {
     unsigned length = string.length();
 
@@ -13738,8 +13738,8 @@ static bool isCSSTokenizerIdentifier(const String& string)
         return false;
 
     if (string.is8Bit())
-        return isCSSTokenizerIdentifier(string.characters8(), length);
-    return isCSSTokenizerIdentifier(string.characters16(), length);
+        return isCSSTokenizerIdent(string.characters8(), length);
+    return isCSSTokenizerIdent(string.characters16(), length);
 }
 
 template <typename CharacterType>
@@ -13853,7 +13853,7 @@ String quoteCSSString(const String& string)
 
 String quoteCSSStringIfNeeded(const String& string)
 {
-    return isCSSTokenizerIdentifier(string) ? string : quoteCSSString(string);
+    return isCSSTokenizerIdent(string) ? string : quoteCSSString(string);
 }
 
 String quoteCSSURLIfNeeded(const String& string)

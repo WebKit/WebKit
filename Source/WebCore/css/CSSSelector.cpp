@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CSSSelector.h"
 
-#include "CSSOMUtils.h"
+#include "CSSMarkup.h"
 #include "CSSSelectorList.h"
 #include "HTMLNames.h"
 #include "SelectorPseudoTypeMap.h"

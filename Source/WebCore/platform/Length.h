@@ -40,6 +40,11 @@ enum LengthType {
     Undefined
 };
 
+enum ValueRange {
+    ValueRangeAll,
+    ValueRangeNonNegative
+};
+
 class CalculationValue;
 class TextStream;
 

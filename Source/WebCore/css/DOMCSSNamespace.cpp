@@ -30,7 +30,7 @@
 #include "config.h"
 #include "DOMCSSNamespace.h"
 
-#include "CSSOMUtils.h"
+#include "CSSMarkup.h"
 #include "CSSParser.h"
 #include "StyleProperties.h"
 #include <wtf/text/StringBuilder.h>
