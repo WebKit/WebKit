@@ -63,6 +63,7 @@
 #include "Image.h"
 #include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
+#include "Logging.h"
 #include "MainFrame.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
@@ -3013,6 +3014,8 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
     RefPtr<FrameView> protector(m_frame.view());
 
+    LOG(Editing, "EventHandler %p keyEvent (text %s keyIdentifier %s)", this, initialKeyEvent.text().utf8().data(), initialKeyEvent.keyIdentifier().utf8().data());
+
 #if ENABLE(FULLSCREEN_API)
     if (m_frame.document()->webkitIsFullScreen() && !isKeyEventAllowedInFullScreen(initialKeyEvent))
         return false;
@@ -3536,6 +3539,8 @@ bool EventHandler::mouseMovementExceedsThreshold(const FloatPoint& viewportLocat
 
 bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEvent, TextEventInputType inputType)
 {
+    LOG(Editing, "EventHandler %p handleTextInputEvent (text %s)", this, text.utf8().data());
+
     // Platforms should differentiate real commands like selectAll from text input in disguise (like insertNewline),
     // and avoid dispatching text input events from keydown default handlers.
     ASSERT(!is<KeyboardEvent>(underlyingEvent) || downcast<KeyboardEvent>(*underlyingEvent).type() == eventNames().keypressEvent);

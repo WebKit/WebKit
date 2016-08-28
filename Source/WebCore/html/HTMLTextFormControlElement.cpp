@@ -38,6 +38,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "Logging.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderBlockFlow.h"
@@ -108,6 +109,8 @@ void HTMLTextFormControlElement::didEditInnerTextValue()
 {
     if (!isTextFormControl())
         return;
+
+    LOG(Editing, "HTMLTextFormControlElement %p didEditInnerTextValue", this);
 
     m_lastChangeWasUserEdit = true;
     subtreeHasChanged();

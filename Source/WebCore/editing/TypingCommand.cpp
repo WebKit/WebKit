@@ -38,6 +38,7 @@
 #include "InsertLineBreakCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
+#include "Logging.h"
 #include "MathMLElement.h"
 #include "RenderElement.h"
 #include "TextIterator.h"
@@ -166,6 +167,8 @@ void TypingCommand::insertText(Document& document, const String& text, const Vis
 {
     RefPtr<Frame> frame = document.frame();
     ASSERT(frame);
+
+    LOG(Editing, "TypingCommand::insertText (text %s)", text.utf8().data());
 
     VisibleSelection currentSelection = frame->selection().selection();
 
@@ -380,6 +383,8 @@ void TypingCommand::insertText(const String &text, bool selectInsertedText)
 
 void TypingCommand::insertTextAndNotifyAccessibility(const String &text, bool selectInsertedText)
 {
+    LOG(Editing, "TypingCommand %p insertTextAndNotifyAccessibility (text %s, selectInsertedText %d)", this, text.utf8().data(), selectInsertedText);
+
     AccessibilityReplacedText replacedText(frame().selection().selection());
     insertText(text, selectInsertedText);
     replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, text, frame().selection().selection());

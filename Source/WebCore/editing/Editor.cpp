@@ -62,6 +62,7 @@
 #include "InsertListCommand.h"
 #include "KeyboardEvent.h"
 #include "KillRing.h"
+#include "Logging.h"
 #include "MainFrame.h"
 #include "ModifySelectionListLevel.h"
 #include "NodeList.h"
@@ -197,6 +198,8 @@ void Editor::handleInputMethodKeydown(KeyboardEvent* event)
 
 bool Editor::handleTextEvent(TextEvent* event)
 {
+    LOG(Editing, "Editor %p handleTextEvent (data %s)", this, event->data().utf8().data());
+
     // Default event handling for Drag and Drop will be handled by DragController
     // so we leave the event for it.
     if (event->isDrop())
@@ -1033,6 +1036,8 @@ static void dispatchEditableContentChangedEvents(PassRefPtr<Element> prpStartRoo
 
 void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
 {
+    LOG(Editing, "Editor %p appliedEditing", this);
+
     document().updateLayout();
 
     EditCommandComposition* composition = cmd->composition();

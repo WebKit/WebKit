@@ -1958,8 +1958,10 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     m_keyEventQueue.append(event);
 
     m_process->responsivenessTimer().start();
-    if (m_keyEventQueue.size() == 1) // Otherwise, sent from DidReceiveEvent message handler.
+    if (m_keyEventQueue.size() == 1) { // Otherwise, sent from DidReceiveEvent message handler.
+        LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
         m_process->send(Messages::WebPage::KeyEvent(event), m_pageID);
+    }
 }
 
 WebPreferencesStore WebPageProxy::preferencesStore() const
@@ -4857,16 +4859,17 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::KeyUp:
     case WebEvent::RawKeyDown:
     case WebEvent::Char: {
-        LOG(KeyHandling, "WebPageProxy::didReceiveEvent: %s", webKeyboardEventTypeString(type));
+        LOG(KeyHandling, "WebPageProxy::didReceiveEvent: %s (queue empty %d)", webKeyboardEventTypeString(type), m_keyEventQueue.isEmpty());
 
         MESSAGE_CHECK(!m_keyEventQueue.isEmpty());
         NativeWebKeyboardEvent event = m_keyEventQueue.takeFirst();
 
         MESSAGE_CHECK(type == event.type());
 
-        if (!m_keyEventQueue.isEmpty())
+        if (!m_keyEventQueue.isEmpty()) {
+            LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
             m_process->send(Messages::WebPage::KeyEvent(m_keyEventQueue.first()), m_pageID);
-        else {
+        } else {
             if (auto* automationSession = process().processPool().automationSession())
                 automationSession->keyboardEventsFlushedForPage(*this);
         }
