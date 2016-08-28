@@ -1,0 +1,29 @@
+<!doctype html>
+<html class="reftest-wait">
+  <head>
+    <title>mpadded style change</title>
+    <meta charset="utf-8"/>
+    <style>
+      math.normal { font-size: 1px; }
+      math.large { font-size: 2px; }
+    </style>
+    <script type="text/javascript">
+      function doTest() {
+        document.getElementById("math").setAttribute("class", "large")
+        document.documentElement.removeAttribute("class");
+      }
+      window.addEventListener("load", doTest, false);
+    </script>
+  </head>
+  <body>
+    <math id="math" class="normal">
+      <mspace width="10em" height="5em" depth="5em" mathbackground="green"/>
+      <mpadded mathbackground="blue"
+               width="40em" depth="30em" height="20em"
+               lspace="5em" voffset="-15em">
+        <mspace width="10em" height="5em" depth="5em" mathbackground="red"/>
+      </mpadded>
+      <mspace width="10em" height="5em" depth="5em" mathbackground="green"/>
+    </math>
+  </body>
+</html>

@@ -37,29 +37,31 @@ RenderMathMLPadded::RenderMathMLPadded(MathMLPaddedElement& element, RenderStyle
 {
 }
 
-void RenderMathMLPadded::resolveWidth(LayoutUnit& width)
+LayoutUnit RenderMathMLPadded::voffset() const
 {
-    auto& paddedElement = element();
-    width = toUserUnits(paddedElement.width(), style(), width);
-    if (width < 0)
-        width = 0;
+    return toUserUnits(element().voffset(), style(), 0);
 }
 
-void RenderMathMLPadded::resolveAttributes(LayoutUnit& width, LayoutUnit& height, LayoutUnit& depth, LayoutUnit& lspace, LayoutUnit& voffset)
+LayoutUnit RenderMathMLPadded::lspace() const
 {
-    resolveWidth(width);
-    auto& paddedElement = element();
-    height = toUserUnits(paddedElement.height(), style(), height);
-    depth = toUserUnits(paddedElement.depth(), style(), depth);
-    lspace = toUserUnits(paddedElement.lspace(), style(), lspace);
-    voffset = toUserUnits(paddedElement.voffset(), style(), voffset);
-    if (height < 0)
-        height = 0;
-    if (depth < 0)
-        depth = 0;
+    LayoutUnit lspace = toUserUnits(element().lspace(), style(), 0);
     // FIXME: Negative lspace values are not supported yet (https://bugs.webkit.org/show_bug.cgi?id=85730).
-    if (lspace < 0)
-        lspace = 0;
+    return std::max<LayoutUnit>(0, lspace);
+}
+
+LayoutUnit RenderMathMLPadded::mpaddedWidth(LayoutUnit contentWidth) const
+{
+    return std::max<LayoutUnit>(0, toUserUnits(element().width(), style(), contentWidth));
+}
+
+LayoutUnit RenderMathMLPadded::mpaddedHeight(LayoutUnit contentHeight) const
+{
+    return std::max<LayoutUnit>(0, toUserUnits(element().height(), style(), contentHeight));
+}
+
+LayoutUnit RenderMathMLPadded::mpaddedDepth(LayoutUnit contentDepth) const
+{
+    return std::max<LayoutUnit>(0, toUserUnits(element().depth(), style(), contentDepth));
 }
 
 void RenderMathMLPadded::computePreferredLogicalWidths()
@@ -71,9 +73,8 @@ void RenderMathMLPadded::computePreferredLogicalWidths()
 
     // Only the width attribute should modify the width.
     // We parse it using the preferred width of the content as its default value.
-    LayoutUnit width = m_maxPreferredLogicalWidth;
-    resolveWidth(width);
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = width;
+    m_maxPreferredLogicalWidth = mpaddedWidth(m_maxPreferredLogicalWidth);
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -93,41 +94,31 @@ void RenderMathMLPadded::layoutBlock(bool relayoutChildren, LayoutUnit)
     contentWidth = logicalWidth();
 
     // We parse the mpadded attributes using the content metrics as the default value.
-    LayoutUnit width = contentWidth;
-    LayoutUnit ascent = contentAscent;
-    LayoutUnit descent = contentDescent;
-    LayoutUnit lspace = 0;
-    LayoutUnit voffset = 0;
-    resolveAttributes(width, ascent, descent, lspace, voffset);
+    LayoutUnit width = mpaddedWidth(contentWidth);
+    LayoutUnit ascent = mpaddedHeight(contentAscent);
+    LayoutUnit descent = mpaddedDepth(contentDescent);
 
     // Align children on the new baseline and shift them by (lspace, -voffset)
-    LayoutPoint contentLocation(lspace, ascent - contentAscent - voffset);
+    LayoutPoint contentLocation(lspace(), ascent - contentAscent - voffset());
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
         child->setLocation(child->location() + contentLocation);
 
     // Set the final metrics.
     setLogicalWidth(width);
-    m_ascent = ascent;
     setLogicalHeight(ascent + descent);
 
     clearNeedsLayout();
 }
 
-void RenderMathMLPadded::updateFromElement()
-{
-    RenderMathMLRow::updateFromElement();
-    setNeedsLayoutAndPrefWidthsRecalc();
-}
-
-void RenderMathMLPadded::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderMathMLRow::styleDidChange(diff, oldStyle);
-    setNeedsLayoutAndPrefWidthsRecalc();
-}
-
 Optional<int> RenderMathMLPadded::firstLineBaseline() const
 {
-    return Optional<int>(std::lround(static_cast<float>(m_ascent)));
+    // We try and calculate the baseline from the position of the first child.
+    LayoutUnit ascent;
+    if (auto* baselineChild = firstChildBox())
+        ascent = ascentForChild(*baselineChild) + baselineChild->logicalTop() + voffset();
+    else
+        ascent = mpaddedHeight(0);
+    return Optional<int>(std::lround(static_cast<float>(ascent)));
 }
 
 }

@@ -1,3 +1,15 @@
+2016-08-28  Frederic Wang  <fwang@igalia.com>
+
+        More cleanup for the mpadded implementation
+        https://bugs.webkit.org/show_bug.cgi?id=161136
+
+        We add a test for style change in mpadded.
+
+        Reviewed by Darin Adler.
+
+        * mathml/presentation/mpadded-style-change-expected.html: Added.
+        * mathml/presentation/mpadded-style-change.html: Added.
+
 2016-08-27  Chris Dumez  <cdumez@apple.com>
 
         Update generated bindings to throw a SecurityError when denying cross-origin access to properties
