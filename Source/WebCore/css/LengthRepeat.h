@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class LengthRepeat : public RefCounted<LengthRepeat> {
+class LengthRepeat final : public RefCounted<LengthRepeat> {
 public:
     static Ref<LengthRepeat> create(PassRefPtr<CSSValue> interval) { return adoptRef(*new LengthRepeat(interval)); }
 

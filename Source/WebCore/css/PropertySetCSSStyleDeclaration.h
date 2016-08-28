@@ -91,20 +91,20 @@ public:
 
     void clearParentRule() { m_parentRule = 0; }
     
-    void ref() override;
-    void deref() override;
+    void ref() final;
+    void deref() final;
 
     void reattach(MutableStyleProperties&);
 
 private:
     StyleRuleCSSStyleDeclaration(MutableStyleProperties&, CSSRule&);
 
-    CSSStyleSheet* parentStyleSheet() const override;
+    CSSStyleSheet* parentStyleSheet() const final;
 
-    CSSRule* parentRule() const override { return m_parentRule;  }
+    CSSRule* parentRule() const final { return m_parentRule;  }
 
-    bool willMutate() override WARN_UNUSED_RETURN;
-    void didMutate(MutationType) override;
+    bool willMutate() final WARN_UNUSED_RETURN;
+    void didMutate(MutationType) final;
 
     unsigned m_refCount;
     CSSRule* m_parentRule;
@@ -120,11 +120,11 @@ public:
     }
     
 private:
-    CSSStyleSheet* parentStyleSheet() const override;
-    StyledElement* parentElement() const override { return m_parentElement; }
-    void clearParentElement() override { m_parentElement = 0; }
+    CSSStyleSheet* parentStyleSheet() const final;
+    StyledElement* parentElement() const final { return m_parentElement; }
+    void clearParentElement() final { m_parentElement = 0; }
 
-    void didMutate(MutationType) override;
+    void didMutate(MutationType) final;
 
     StyledElement* m_parentElement;
 };

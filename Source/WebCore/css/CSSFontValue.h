@@ -28,7 +28,7 @@ namespace WebCore {
 class CSSPrimitiveValue;
 class CSSValueList;
 
-class CSSFontValue : public CSSValue {
+class CSSFontValue final : public CSSValue {
 public:
     static Ref<CSSFontValue> create()
     {

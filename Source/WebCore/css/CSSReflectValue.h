@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 
-class CSSReflectValue : public CSSValue {
+class CSSReflectValue final : public CSSValue {
 public:
     static Ref<CSSReflectValue> create(Ref<CSSPrimitiveValue>&& direction, Ref<CSSPrimitiveValue>&& offset, RefPtr<CSSValue>&& mask)
     {

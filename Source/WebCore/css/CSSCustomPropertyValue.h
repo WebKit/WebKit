@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CSSCustomPropertyValue : public CSSValue {
+class CSSCustomPropertyValue final : public CSSValue {
 public:
     static Ref<CSSCustomPropertyValue> create(const AtomicString& name, Ref<CSSValue>&& value)
     {

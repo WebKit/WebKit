@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class DOMCSSNamespace : public RefCounted<DOMCSSNamespace> {
+class DOMCSSNamespace final : public RefCounted<DOMCSSNamespace> {
 public:
     static bool supports(const String& property, const String& value);
     static bool supports(const String& conditionText);

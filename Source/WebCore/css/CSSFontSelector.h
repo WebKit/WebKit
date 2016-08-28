@@ -56,12 +56,12 @@ public:
     }
     virtual ~CSSFontSelector();
     
-    unsigned version() const override { return m_version; }
-    unsigned uniqueId() const override { return m_uniqueId; }
+    unsigned version() const final { return m_version; }
+    unsigned uniqueId() const final { return m_uniqueId; }
 
-    FontRanges fontRangesForFamily(const FontDescription&, const AtomicString&) override;
-    size_t fallbackFontCount() override;
-    RefPtr<Font> fallbackFontAt(const FontDescription&, size_t) override;
+    FontRanges fontRangesForFamily(const FontDescription&, const AtomicString&) final;
+    size_t fallbackFontCount() final;
+    RefPtr<Font> fallbackFontAt(const FontDescription&, size_t) final;
 
     void clearDocument();
     void buildStarted();
@@ -70,12 +70,12 @@ public:
     void addFontFaceRule(StyleRuleFontFace&, bool isInitiatingElementInUserAgentShadowTree);
 
     void fontLoaded();
-    void fontCacheInvalidated() override;
+    void fontCacheInvalidated() final;
 
     bool isEmpty() const;
 
-    void registerForInvalidationCallbacks(FontSelectorClient&) override;
-    void unregisterForInvalidationCallbacks(FontSelectorClient&) override;
+    void registerForInvalidationCallbacks(FontSelectorClient&) final;
+    void unregisterForInvalidationCallbacks(FontSelectorClient&) final;
 
     Document* document() const { return m_document; }
 
@@ -88,7 +88,7 @@ private:
 
     void dispatchInvalidationCallbacks();
 
-    void fontModified() override;
+    void fontModified() final;
 
     void beginLoadTimerFired();
 

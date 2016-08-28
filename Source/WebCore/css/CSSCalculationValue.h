@@ -85,7 +85,7 @@ private:
     bool m_isInteger;
 };
 
-class CSSCalcValue : public CSSValue {
+class CSSCalcValue final : public CSSValue {
 public:
     static RefPtr<CSSCalcValue> create(CSSParserString name, CSSParserValueList& arguments, CalculationPermittedValueRange);
     static RefPtr<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);

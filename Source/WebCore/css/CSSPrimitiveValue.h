@@ -77,7 +77,7 @@ template<> inline float roundForImpreciseConversion(double value)
     return static_cast<float>(value);
 }
 
-class CSSPrimitiveValue : public CSSValue {
+class CSSPrimitiveValue final : public CSSValue {
 public:
     enum UnitTypes {
         CSS_UNKNOWN = 0,

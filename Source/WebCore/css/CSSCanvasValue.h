@@ -33,7 +33,7 @@ namespace WebCore {
 class Document;
 class HTMLCanvasElement;
 
-class CSSCanvasValue : public CSSImageGeneratorValue {
+class CSSCanvasValue final : public CSSImageGeneratorValue {
 public:
     static Ref<CSSCanvasValue> create(const String& name) { return adoptRef(*new CSSCanvasValue(name)); }
     ~CSSCanvasValue();
@@ -71,15 +71,15 @@ private:
         }
 
     private:
-        void canvasChanged(HTMLCanvasElement& canvas, const FloatRect& changedRect) override
+        void canvasChanged(HTMLCanvasElement& canvas, const FloatRect& changedRect) final
         {
             m_ownerValue.canvasChanged(canvas, changedRect);
         }
-        void canvasResized(HTMLCanvasElement& canvas) override
+        void canvasResized(HTMLCanvasElement& canvas) final
         {
             m_ownerValue.canvasResized(canvas);
         }
-        void canvasDestroyed(HTMLCanvasElement& canvas) override
+        void canvasDestroyed(HTMLCanvasElement& canvas) final
         {
             m_ownerValue.canvasDestroyed(canvas);
         }

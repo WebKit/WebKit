@@ -112,9 +112,9 @@ public:
 private:
     CSSBasicShapeInset() { }
 
-    Type type() const override { return CSSBasicShapeInsetType; }
-    String cssText() const override;
-    bool equals(const CSSBasicShape&) const override;
+    Type type() const final { return CSSBasicShapeInsetType; }
+    String cssText() const final;
+    bool equals(const CSSBasicShape&) const final;
 
     RefPtr<CSSPrimitiveValue> m_top;
     RefPtr<CSSPrimitiveValue> m_right;
@@ -142,9 +142,9 @@ public:
 private:
     CSSBasicShapeCircle() { }
 
-    Type type() const override { return CSSBasicShapeCircleType; }
-    String cssText() const override;
-    bool equals(const CSSBasicShape&) const override;
+    Type type() const final { return CSSBasicShapeCircleType; }
+    String cssText() const final;
+    bool equals(const CSSBasicShape&) const final;
 
     RefPtr<CSSPrimitiveValue> m_centerX;
     RefPtr<CSSPrimitiveValue> m_centerY;
@@ -168,9 +168,9 @@ public:
 private:
     CSSBasicShapeEllipse() { }
 
-    Type type() const override { return CSSBasicShapeEllipseType; }
-    String cssText() const override;
-    bool equals(const CSSBasicShape&) const override;
+    Type type() const final { return CSSBasicShapeEllipseType; }
+    String cssText() const final;
+    bool equals(const CSSBasicShape&) const final;
 
     RefPtr<CSSPrimitiveValue> m_centerX;
     RefPtr<CSSPrimitiveValue> m_centerY;
@@ -199,9 +199,9 @@ private:
     {
     }
 
-    Type type() const override { return CSSBasicShapePolygonType; }
-    String cssText() const override;
-    bool equals(const CSSBasicShape&) const override;
+    Type type() const final { return CSSBasicShapePolygonType; }
+    String cssText() const final;
+    bool equals(const CSSBasicShape&) const final;
 
     Vector<Ref<CSSPrimitiveValue>> m_values;
     WindRule m_windRule;
@@ -225,9 +225,9 @@ public:
 private:
     CSSBasicShapePath(std::unique_ptr<SVGPathByteStream>&&);
 
-    Type type() const override { return CSSBasicShapePathType; }
-    String cssText() const override;
-    bool equals(const CSSBasicShape&) const override;
+    Type type() const final { return CSSBasicShapePathType; }
+    String cssText() const final;
+    bool equals(const CSSBasicShape&) const final;
 
     std::unique_ptr<SVGPathByteStream> m_byteStream;
     WindRule m_windRule { RULE_NONZERO };

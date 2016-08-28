@@ -44,7 +44,7 @@ class Document;
 class MutableStyleProperties;
 class StyleRuleViewport;
 
-class ViewportStyleResolver : public RefCounted<ViewportStyleResolver> {
+class ViewportStyleResolver final : public RefCounted<ViewportStyleResolver> {
 public:
     static Ref<ViewportStyleResolver> create(Document* document)
     {

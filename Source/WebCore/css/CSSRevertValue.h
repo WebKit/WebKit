@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class CSSRevertValue : public CSSValue {
+class CSSRevertValue final : public CSSValue {
 public:
     String customCSSText() const;
 

@@ -32,7 +32,7 @@ namespace WebCore {
 
 class Rect;
 
-class CSSBorderImageSliceValue : public CSSValue {
+class CSSBorderImageSliceValue final : public CSSValue {
 public:
     static Ref<CSSBorderImageSliceValue> create(RefPtr<CSSPrimitiveValue>&& slices, bool fill)
     {

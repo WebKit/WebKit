@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class CSSAnimationTriggerScrollValue : public CSSValue {
+class CSSAnimationTriggerScrollValue final : public CSSValue {
 public:
     static Ref<CSSAnimationTriggerScrollValue> create(Ref<CSSValue>&& startValue, RefPtr<CSSValue>&& endValue = nullptr)
     {

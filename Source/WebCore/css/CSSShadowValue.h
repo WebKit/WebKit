@@ -29,7 +29,7 @@ namespace WebCore {
 class CSSPrimitiveValue;
 
 // Used for text-shadow and box-shadow
-class CSSShadowValue : public CSSValue {
+class CSSShadowValue final : public CSSValue {
 public:
     static Ref<CSSShadowValue> create(RefPtr<CSSPrimitiveValue>&& x,
         RefPtr<CSSPrimitiveValue>&& y,

@@ -33,7 +33,7 @@ class CSSValueList;
 struct CSSParserFunction;
 struct CSSParserValue;
 
-class CSSFunctionValue : public CSSValue {
+class CSSFunctionValue final : public CSSValue {
 public:
     static Ref<CSSFunctionValue> create(CSSParserFunction* function)
     {

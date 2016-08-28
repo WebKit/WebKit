@@ -33,7 +33,7 @@ class StyleImage;
 class RenderElement;
 struct ResourceLoaderOptions;
 
-class CSSImageValue : public CSSValue {
+class CSSImageValue final : public CSSValue {
 public:
     static Ref<CSSImageValue> create(const String& url) { return adoptRef(*new CSSImageValue(url)); }
     static Ref<CSSImageValue> create(const String& url, StyleImage* image) { return adoptRef(*new CSSImageValue(url, image)); }

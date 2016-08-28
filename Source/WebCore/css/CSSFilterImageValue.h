@@ -43,7 +43,7 @@ class RenderElement;
 class Document;
 class StyleResolver;
 
-class CSSFilterImageValue : public CSSImageGeneratorValue {
+class CSSFilterImageValue final : public CSSImageGeneratorValue {
     friend class FilterSubimageObserverProxy;
 public:
     static Ref<CSSFilterImageValue> create(Ref<CSSValue>&& imageValue, Ref<CSSValue>&& filterValue)
@@ -97,7 +97,7 @@ private:
         }
 
         virtual ~FilterSubimageObserverProxy() { }
-        void imageChanged(CachedImage*, const IntRect* = nullptr) override;
+        void imageChanged(CachedImage*, const IntRect* = nullptr) final;
         void setReady(bool ready) { m_ready = ready; }
     private:
         CSSFilterImageValue* m_ownerValue;

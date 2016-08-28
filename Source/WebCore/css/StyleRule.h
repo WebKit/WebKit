@@ -99,7 +99,7 @@ private:
     signed m_sourceLine : 27;
 };
 
-class StyleRule : public StyleRuleBase {
+class StyleRule final : public StyleRuleBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<StyleRule> create(int sourceLine, Ref<StyleProperties>&& properties)
@@ -133,7 +133,7 @@ private:
     CSSSelectorList m_selectorList;
 };
 
-class StyleRuleFontFace : public StyleRuleBase {
+class StyleRuleFontFace final : public StyleRuleBase {
 public:
     static Ref<StyleRuleFontFace> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleFontFace(WTFMove(properties))); }
     
@@ -152,7 +152,7 @@ private:
     Ref<StyleProperties> m_properties;
 };
 
-class StyleRulePage : public StyleRuleBase {
+class StyleRulePage final : public StyleRuleBase {
 public:
     static Ref<StyleRulePage> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRulePage(WTFMove(properties))); }
 
@@ -190,7 +190,7 @@ private:
     Vector<RefPtr<StyleRuleBase>> m_childRules;
 };
 
-class StyleRuleMedia : public StyleRuleGroup {
+class StyleRuleMedia final : public StyleRuleGroup {
 public:
     static Ref<StyleRuleMedia> create(Ref<MediaQuerySet>&& media, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
@@ -208,7 +208,7 @@ private:
     RefPtr<MediaQuerySet> m_mediaQueries;
 };
 
-class StyleRuleSupports : public StyleRuleGroup {
+class StyleRuleSupports final : public StyleRuleGroup {
 public:
     static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
@@ -227,7 +227,7 @@ private:
     bool m_conditionIsSupported;
 };
 
-class StyleRuleRegion : public StyleRuleGroup {
+class StyleRuleRegion final : public StyleRuleGroup {
 public:
     static Ref<StyleRuleRegion> create(Vector<std::unique_ptr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
@@ -246,7 +246,7 @@ private:
 };
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-class StyleRuleViewport : public StyleRuleBase {
+class StyleRuleViewport final : public StyleRuleBase {
 public:
     static Ref<StyleRuleViewport> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleViewport(WTFMove(properties))); }
 

@@ -213,17 +213,17 @@ public:
     }
 
 private:
-    bool isZero() const override
+    bool isZero() const final
     {
         return !m_value->getDoubleValue();
     }
 
-    String customCSSText() const override
+    String customCSSText() const final
     {
         return m_value->cssText();
     }
 
-    std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData& conversionData) const override
+    std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData& conversionData) const final
     {
         switch (category()) {
         case CalcNumber:
@@ -247,7 +247,7 @@ private:
         return nullptr;
     }
 
-    double doubleValue() const override
+    double doubleValue() const final
     {
         if (hasDoubleValue(primitiveType()))
             return m_value->getDoubleValue();
@@ -255,7 +255,7 @@ private:
         return 0;
     }
 
-    double computeLengthPx(const CSSToLengthConversionData& conversionData) const override
+    double computeLengthPx(const CSSToLengthConversionData& conversionData) const final
     {
         switch (category()) {
         case CalcLength:
@@ -276,7 +276,7 @@ private:
         return 0;
     }
 
-    bool equals(const CSSCalcExpressionNode& other) const override
+    bool equals(const CSSCalcExpressionNode& other) const final
     {
         if (type() != other.type())
             return false;
@@ -284,8 +284,8 @@ private:
         return compareCSSValue(m_value, static_cast<const CSSCalcPrimitiveValue&>(other).m_value);
     }
 
-    Type type() const override { return CssCalcPrimitiveValue; }
-    CSSPrimitiveValue::UnitTypes primitiveType() const override
+    Type type() const final { return CssCalcPrimitiveValue; }
+    CSSPrimitiveValue::UnitTypes primitiveType() const final
     {
         return CSSPrimitiveValue::UnitTypes(m_value->primitiveType());
     }
@@ -420,12 +420,12 @@ public:
     }
 
 private:
-    bool isZero() const override
+    bool isZero() const final
     {
         return !doubleValue();
     }
 
-    std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData& conversionData) const override
+    std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData& conversionData) const final
     {
         std::unique_ptr<CalcExpressionNode> left(m_leftSide->createCalcExpression(conversionData));
         if (!left)
@@ -436,12 +436,12 @@ private:
         return std::make_unique<CalcExpressionBinaryOperation>(WTFMove(left), WTFMove(right), m_operator);
     }
 
-    double doubleValue() const override
+    double doubleValue() const final
     {
         return evaluate(m_leftSide->doubleValue(), m_rightSide->doubleValue());
     }
 
-    double computeLengthPx(const CSSToLengthConversionData& conversionData) const override
+    double computeLengthPx(const CSSToLengthConversionData& conversionData) const final
     {
         const double leftValue = m_leftSide->computeLengthPx(conversionData);
         const double rightValue = m_rightSide->computeLengthPx(conversionData);
@@ -462,12 +462,12 @@ private:
         return result.toString();
     }
 
-    String customCSSText() const override
+    String customCSSText() const final
     {
         return buildCssText(m_leftSide->customCSSText(), m_rightSide->customCSSText(), m_operator);
     }
 
-    bool equals(const CSSCalcExpressionNode& exp) const override
+    bool equals(const CSSCalcExpressionNode& exp) const final
     {
         if (type() != exp.type())
             return false;
@@ -478,9 +478,9 @@ private:
             && m_operator == other.m_operator;
     }
 
-    Type type() const override { return CssCalcBinaryOperation; }
+    Type type() const final { return CssCalcBinaryOperation; }
 
-    CSSPrimitiveValue::UnitTypes primitiveType() const override
+    CSSPrimitiveValue::UnitTypes primitiveType() const final
     {
         switch (category()) {
         case CalcNumber:

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CSSAspectRatioValue : public CSSValue {
+class CSSAspectRatioValue final : public CSSValue {
 public:
     static Ref<CSSAspectRatioValue> create(float numeratorValue, float denominatorValue)
     {

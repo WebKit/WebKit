@@ -38,7 +38,7 @@ class RenderStyle;
 // whenever it is needed and to call the listeners if the corresponding query has changed.
 // The listeners must be called in the order in which they were added.
 
-class MediaQueryMatcher : public RefCounted<MediaQueryMatcher> {
+class MediaQueryMatcher final : public RefCounted<MediaQueryMatcher> {
 public:
     static Ref<MediaQueryMatcher> create(Document& document) { return adoptRef(*new MediaQueryMatcher(document)); }
     ~MediaQueryMatcher();

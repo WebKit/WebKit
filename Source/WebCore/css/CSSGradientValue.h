@@ -130,7 +130,7 @@ protected:
     bool m_repeating;
 };
 
-class CSSLinearGradientValue : public CSSGradientValue {
+class CSSLinearGradientValue final : public CSSGradientValue {
 public:
 
     static Ref<CSSLinearGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSLinearGradient)
@@ -167,7 +167,7 @@ private:
     RefPtr<CSSPrimitiveValue> m_angle; // may be null.
 };
 
-class CSSRadialGradientValue : public CSSGradientValue {
+class CSSRadialGradientValue final : public CSSGradientValue {
 public:
     static Ref<CSSRadialGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSRadialGradient)
     {

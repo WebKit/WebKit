@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class CSSUnsetValue : public CSSValue {
+class CSSUnsetValue final : public CSSValue {
 public:
     String customCSSText() const;
 

@@ -35,7 +35,7 @@ class MediaQuery;
 
 using ExceptionCode = int;
 
-class MediaQuerySet : public RefCounted<MediaQuerySet> {
+class MediaQuerySet final : public RefCounted<MediaQuerySet> {
 public:
     static Ref<MediaQuerySet> create()
     {
@@ -81,7 +81,7 @@ private:
     Vector<MediaQuery> m_queries;
 };
 
-class MediaList : public RefCounted<MediaList> {
+class MediaList final : public RefCounted<MediaList> {
 public:
     static Ref<MediaList> create(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
     {

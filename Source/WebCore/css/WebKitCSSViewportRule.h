@@ -49,15 +49,15 @@ public:
     }
     virtual ~WebKitCSSViewportRule();
 
-    String cssText() const override;
-    void reattach(StyleRuleBase&) override;
+    String cssText() const final;
+    void reattach(StyleRuleBase&) final;
 
     CSSStyleDeclaration& style();
 
 private:
     WebKitCSSViewportRule(StyleRuleViewport&, CSSStyleSheet*);
 
-    CSSRule::Type type() const override { return WEBKIT_VIEWPORT_RULE; }
+    CSSRule::Type type() const final { return WEBKIT_VIEWPORT_RULE; }
 
     Ref<StyleRuleViewport> m_viewportRule;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;

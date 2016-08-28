@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class CSSInheritedValue : public CSSValue {
+class CSSInheritedValue final : public CSSValue {
 public:
     String customCSSText() const;
 

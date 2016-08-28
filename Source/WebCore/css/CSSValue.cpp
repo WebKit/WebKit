@@ -78,7 +78,7 @@ struct SameSizeAsCSSValue : public RefCounted<SameSizeAsCSSValue> {
 
 COMPILE_ASSERT(sizeof(CSSValue) == sizeof(SameSizeAsCSSValue), CSS_value_should_stay_small);
 
-class TextCloneCSSValue : public CSSValue {
+class TextCloneCSSValue final : public CSSValue {
 public:
     static Ref<TextCloneCSSValue> create(ClassType classType, const String& text)
     {

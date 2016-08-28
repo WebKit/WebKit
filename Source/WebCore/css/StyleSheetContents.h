@@ -42,7 +42,7 @@ class SecurityOrigin;
 class StyleRuleBase;
 class StyleRuleImport;
 
-class StyleSheetContents : public RefCounted<StyleSheetContents> {
+class StyleSheetContents final : public RefCounted<StyleSheetContents> {
 public:
     static Ref<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(CSSStrictMode))
     {

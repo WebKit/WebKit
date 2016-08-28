@@ -33,7 +33,7 @@ class CachedCSSStyleSheet;
 class MediaQuerySet;
 class StyleSheetContents;
 
-class StyleRuleImport : public StyleRuleBase {
+class StyleRuleImport final : public StyleRuleBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<StyleRuleImport> create(const String& href, Ref<MediaQuerySet>&&);
@@ -55,7 +55,7 @@ public:
 private:
     // NOTE: We put the CachedStyleSheetClient in a member instead of inheriting from it
     // to avoid adding a vptr to StyleRuleImport.
-    class ImportedStyleSheetClient : public CachedStyleSheetClient {
+class ImportedStyleSheetClient final : public CachedStyleSheetClient {
     public:
         ImportedStyleSheetClient(StyleRuleImport* ownerRule) : m_ownerRule(ownerRule) { }
         virtual ~ImportedStyleSheetClient() { }

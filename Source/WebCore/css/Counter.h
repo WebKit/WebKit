@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class Counter : public RefCounted<Counter> {
+class Counter final : public RefCounted<Counter> {
 public:
     static Ref<Counter> create(Ref<CSSPrimitiveValue>&& identifier, Ref<CSSPrimitiveValue>&& listStyle, Ref<CSSPrimitiveValue>&& separator)
     {

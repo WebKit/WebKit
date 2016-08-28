@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class CSSFontFeatureValue : public CSSValue {
+class CSSFontFeatureValue final : public CSSValue {
 public:
     static Ref<CSSFontFeatureValue> create(FontFeatureTag&& tag, int value)
     {

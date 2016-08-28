@@ -65,7 +65,7 @@ private:
     RefPtr<CSSPrimitiveValue> m_left;
 };
 
-class Rect : public RectBase, public RefCounted<Rect> {
+class Rect final : public RectBase, public RefCounted<Rect> {
 public:
     static Ref<Rect> create() { return adoptRef(*new Rect); }
     
@@ -85,7 +85,7 @@ private:
     }
 };
 
-class Quad : public RectBase, public RefCounted<Quad> {
+class Quad final : public RectBase, public RefCounted<Quad> {
 public:
     static Ref<Quad> create() { return adoptRef(*new Quad); }
     

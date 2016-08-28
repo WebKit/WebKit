@@ -30,7 +30,7 @@ class Document;
 class HTMLStyleElement;
 class StyleSheet;
 
-class StyleSheetList : public RefCounted<StyleSheetList> {
+class StyleSheetList final : public RefCounted<StyleSheetList> {
 public:
     static Ref<StyleSheetList> create(Document* document) { return adoptRef(*new StyleSheetList(document)); }
     WEBCORE_EXPORT ~StyleSheetList();

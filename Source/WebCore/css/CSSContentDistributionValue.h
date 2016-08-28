@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CSSContentDistributionValue : public CSSValue {
+class CSSContentDistributionValue final : public CSSValue {
 public:
     static Ref<CSSContentDistributionValue> create(CSSValueID distribution, CSSValueID position, CSSValueID overflow)
     {

@@ -36,7 +36,7 @@ class StyleCachedImage;
 class StyleImage;
 struct ResourceLoaderOptions;
 
-class CSSImageSetValue : public CSSValueList {
+class CSSImageSetValue final : public CSSValueList {
 public:
 
     static Ref<CSSImageSetValue> create()

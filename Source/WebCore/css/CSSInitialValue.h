@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class CSSInitialValue : public CSSValue {
+class CSSInitialValue final : public CSSValue {
 public:
     static Ref<CSSInitialValue> createExplicit()
     {

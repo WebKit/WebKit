@@ -35,7 +35,7 @@ class MediaQuerySet;
 // retrieve the current value of the given media query and to add/remove listeners that
 // will be called whenever the value of the query changes.
 
-class MediaQueryList : public RefCounted<MediaQueryList> {
+class MediaQueryList final : public RefCounted<MediaQueryList> {
 public:
     static Ref<MediaQueryList> create(MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool);
     ~MediaQueryList();

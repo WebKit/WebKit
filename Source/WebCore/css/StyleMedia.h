@@ -35,7 +35,7 @@ namespace WebCore {
 
 class Frame;
 
-class StyleMedia : public RefCounted<StyleMedia>, public DOMWindowProperty {
+class StyleMedia final : public RefCounted<StyleMedia>, public DOMWindowProperty {
 public:
     static Ref<StyleMedia> create(Frame* frame) { return adoptRef(*new StyleMedia(frame)); }
 

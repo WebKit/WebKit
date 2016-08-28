@@ -49,7 +49,7 @@ namespace WebCore {
 // better but the CSSWG has left the door open to allow more than one track in the
 // future. That's why we're using a list, it's prepared for future changes and it also
 // allows us to keep the parsing algorithm almost intact.
-class CSSGridAutoRepeatValue : public CSSValueList {
+class CSSGridAutoRepeatValue final : public CSSValueList {
 public:
     static Ref<CSSGridAutoRepeatValue> create(CSSValueID id)
     {

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class CSSCubicBezierTimingFunctionValue : public CSSValue {
+class CSSCubicBezierTimingFunctionValue final : public CSSValue {
 public:
     static Ref<CSSCubicBezierTimingFunctionValue> create(double x1, double y1, double x2, double y2)
     {
@@ -62,7 +62,7 @@ private:
     double m_y2;
 };
 
-class CSSStepsTimingFunctionValue : public CSSValue {
+class CSSStepsTimingFunctionValue final : public CSSValue {
 public:
     static Ref<CSSStepsTimingFunctionValue> create(int steps, bool stepAtStart)
     {
@@ -88,7 +88,7 @@ private:
     bool m_stepAtStart;
 };
 
-class CSSSpringTimingFunctionValue : public CSSValue {
+class CSSSpringTimingFunctionValue final : public CSSValue {
 public:
     static Ref<CSSSpringTimingFunctionValue> create(double mass, double stiffness, double damping, double initialVelocity)
     {

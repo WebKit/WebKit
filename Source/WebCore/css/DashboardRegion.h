@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class DashboardRegion : public RectBase, public RefCounted<DashboardRegion> {
+class DashboardRegion final : public RectBase, public RefCounted<DashboardRegion> {
 public:
     static Ref<DashboardRegion> create() { return adoptRef(*new DashboardRegion); }
     bool equals(const DashboardRegion& other) const

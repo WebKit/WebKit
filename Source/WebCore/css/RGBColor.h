@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 
-class RGBColor : public RefCounted<RGBColor> {
+class RGBColor final : public RefCounted<RGBColor> {
 public:
     static Ref<RGBColor> create(unsigned rgbColor);
 

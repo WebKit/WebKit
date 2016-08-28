@@ -74,7 +74,7 @@ public:
     CSSFontFaceRule* fontface() const { return m_fontface.get(); }
     DOMError* error() const { return m_error.get(); }
 
-    EventInterface eventInterface() const override;
+    EventInterface eventInterface() const final;
 
 private:
     CSSFontFaceLoadEvent();

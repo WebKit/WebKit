@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CSSVariableDependentValue : public CSSValue {
+class CSSVariableDependentValue final : public CSSValue {
 public:
     static Ref<CSSVariableDependentValue> create(Ref<CSSValueList>&& valueList, CSSPropertyID propId)
     {

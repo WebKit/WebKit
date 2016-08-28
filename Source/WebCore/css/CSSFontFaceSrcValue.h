@@ -36,7 +36,7 @@ class CachedFont;
 class Document;
 class SVGFontFaceElement;
 
-class CSSFontFaceSrcValue : public CSSValue {
+class CSSFontFaceSrcValue final : public CSSValue {
 public:
     static Ref<CSSFontFaceSrcValue> create(const String& resource)
     {

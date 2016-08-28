@@ -32,7 +32,7 @@ class Element;
 class SVGCursorElement;
 class SVGElement;
 
-class CSSCursorImageValue : public CSSValue {
+class CSSCursorImageValue final : public CSSValue {
 public:
     static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, bool hasHotSpot, const IntPoint& hotSpot)
     {

@@ -34,7 +34,7 @@ class CSSValueList;
 class CSSParserValueList;
 struct CSSParserVariable;
 
-class CSSVariableValue : public CSSValue {
+class CSSVariableValue final : public CSSValue {
 public:
     static Ref<CSSVariableValue> create(CSSParserVariable* Variable)
     {
