@@ -1,3 +1,89 @@
+2016-08-28  Saam Barati  <sbarati@apple.com>
+
+        Make SpeculatedType a 64-bit integer
+        https://bugs.webkit.org/show_bug.cgi?id=161268
+
+        Reviewed by Filip Pizlo and Benjamin Poulain.
+
+        I'm going to introduce two new types into this and we only
+        have room for one in 32-bits. So, this patch widens SpeculatedType
+        to 64 bits. This also pulls this information through the DFG where
+        we needed to change DFGNode to support this.
+
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToPutHint):
+        (JSC::DFG::Node::promotedLocationDescriptor):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::convertToCheckStructure):
+        (JSC::DFG::Node::constant):
+        (JSC::DFG::Node::convertToConstant):
+        (JSC::DFG::Node::convertToConstantStoragePointer):
+        (JSC::DFG::Node::convertToPutStack):
+        (JSC::DFG::Node::convertToGetStack):
+        (JSC::DFG::Node::convertToGetByOffset):
+        (JSC::DFG::Node::convertToMultiGetByOffset):
+        (JSC::DFG::Node::convertToPutByOffset):
+        (JSC::DFG::Node::convertToMultiPutByOffset):
+        (JSC::DFG::Node::convertToPhantomNewObject):
+        (JSC::DFG::Node::convertToPhantomNewFunction):
+        (JSC::DFG::Node::convertToPhantomNewGeneratorFunction):
+        (JSC::DFG::Node::convertToPhantomCreateActivation):
+        (JSC::DFG::Node::convertToGetLocal):
+        (JSC::DFG::Node::lazyJSValue):
+        (JSC::DFG::Node::initializationValueForActivation):
+        (JSC::DFG::Node::tryGetVariableAccessData):
+        (JSC::DFG::Node::variableAccessData):
+        (JSC::DFG::Node::unlinkedLocal):
+        (JSC::DFG::Node::unlinkedMachineLocal):
+        (JSC::DFG::Node::stackAccessData):
+        (JSC::DFG::Node::phi):
+        (JSC::DFG::Node::identifierNumber):
+        (JSC::DFG::Node::getPutInfo):
+        (JSC::DFG::Node::accessorAttributes):
+        (JSC::DFG::Node::newArrayBufferData):
+        (JSC::DFG::Node::indexingType):
+        (JSC::DFG::Node::typedArrayType):
+        (JSC::DFG::Node::inlineCapacity):
+        (JSC::DFG::Node::scopeOffset):
+        (JSC::DFG::Node::capturedArgumentsOffset):
+        (JSC::DFG::Node::variablePointer):
+        (JSC::DFG::Node::callVarargsData):
+        (JSC::DFG::Node::loadVarargsData):
+        (JSC::DFG::Node::targetBytecodeOffsetDuringParsing):
+        (JSC::DFG::Node::targetBlock):
+        (JSC::DFG::Node::branchData):
+        (JSC::DFG::Node::switchData):
+        (JSC::DFG::Node::getHeapPrediction):
+        (JSC::DFG::Node::cellOperand):
+        (JSC::DFG::Node::watchpointSet):
+        (JSC::DFG::Node::storagePointer):
+        (JSC::DFG::Node::uidOperand):
+        (JSC::DFG::Node::typeInfoOperand):
+        (JSC::DFG::Node::transition):
+        (JSC::DFG::Node::structureSet):
+        (JSC::DFG::Node::structure):
+        (JSC::DFG::Node::storageAccessData):
+        (JSC::DFG::Node::multiGetByOffsetData):
+        (JSC::DFG::Node::multiPutByOffsetData):
+        (JSC::DFG::Node::objectMaterializationData):
+        (JSC::DFG::Node::arrayMode):
+        (JSC::DFG::Node::arithMode):
+        (JSC::DFG::Node::arithRoundingMode):
+        (JSC::DFG::Node::setArithRoundingMode):
+        (JSC::DFG::Node::executionCounter):
+        (JSC::DFG::Node::typeLocation):
+        (JSC::DFG::Node::basicBlockLocation):
+        (JSC::DFG::Node::numberOfArgumentsToSkip):
+        (JSC::DFG::Node::OpInfoWrapper::OpInfoWrapper):
+        (JSC::DFG::Node::OpInfoWrapper::operator=):
+        * dfg/DFGOpInfo.h:
+        (JSC::DFG::OpInfo::OpInfo):
+        * dfg/DFGPromotedHeapLocation.h:
+        (JSC::DFG::PromotedLocationDescriptor::imm1):
+        (JSC::DFG::PromotedLocationDescriptor::imm2):
+
 2016-08-27  Don Olmstead  <don.olmstead@am.sony.com>
 
         Unused cxxabi.h include in JSGlobalObjectInspectorController.cpp
