@@ -25,5 +25,13 @@
     <!-- menclose notations are independent of overall directionality -->
     <math dir="rtl"><mrow><menclose notation="left updiagonalstrike"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
 
+    <!-- menclose notations can be separated by any sequence of whitespace. -->
+    <p>
+      <math><mrow><menclose notation="&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+      <math><mrow><menclose notation="&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;top&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+      <math><mrow><menclose notation="&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;top&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;circle&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+      <math><mrow><menclose notation="&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;top&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;circle&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;horizontalstrike&#x20;&#x9;&#xA;&#xD;&#x20;&#x9;&#xA;&#xD;"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+    </p>
+
   </body>
 </html>

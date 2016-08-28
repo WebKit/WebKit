@@ -1,5 +1,18 @@
 2016-08-28  Frederic Wang  <fwang@igalia.com>
 
+        Improve parsing of the menclose notation attribute value
+        https://bugs.webkit.org/show_bug.cgi?id=161045
+
+        Reviewed by Darin Adler.
+
+        We add some cases in menclose-notation-equivalence to verify that one can use any sequence of
+        whitespace to separate notation values. We try with 0, 1, 2 or 3 notation values.
+
+        * mathml/presentation/menclose-notation-equivalence-expected.html:
+        * mathml/presentation/menclose-notation-equivalence.html:
+
+2016-08-28  Frederic Wang  <fwang@igalia.com>
+
         More cleanup for the mpadded implementation
         https://bugs.webkit.org/show_bug.cgi?id=161136
 

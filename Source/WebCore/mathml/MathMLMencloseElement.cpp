@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "HTMLParserIdioms.h"
 #include "MathMLNames.h"
 #include "RenderMathMLMenclose.h"
 
@@ -54,6 +55,49 @@ RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(RenderStyl
     return createRenderer<RenderMathMLMenclose>(*this, WTFMove(style));
 }
 
+void MathMLMencloseElement::addNotationFlags(StringView notation)
+{
+    ASSERT(m_notationFlags);
+    if (notation == "longdiv") {
+        addNotation(LongDiv);
+    } else if (notation == "roundedbox") {
+        addNotation(RoundedBox);
+    } else if (notation == "circle") {
+        addNotation(Circle);
+    } else if (notation == "left") {
+        addNotation(Left);
+    } else if (notation == "right") {
+        addNotation(Right);
+    } else if (notation == "top") {
+        addNotation(Top);
+    } else if (notation == "bottom") {
+        addNotation(Bottom);
+    } else if (notation == "updiagonalstrike") {
+        addNotation(UpDiagonalStrike);
+    } else if (notation == "downdiagonalstrike") {
+        addNotation(DownDiagonalStrike);
+    } else if (notation == "verticalstrike") {
+        addNotation(VerticalStrike);
+    } else if (notation == "horizontalstrike") {
+        addNotation(HorizontalStrike);
+    } else if (notation == "updiagonalarrow") {
+        addNotation(UpDiagonalArrow);
+    } else if (notation == "phasorangle") {
+        addNotation(PhasorAngle);
+    } else if (notation == "box") {
+        addNotation(Left);
+        addNotation(Right);
+        addNotation(Top);
+        addNotation(Bottom);
+    } else if (notation == "actuarial") {
+        addNotation(Right);
+        addNotation(Top);
+    } else if (notation == "madruwb") {
+        addNotation(Right);
+        addNotation(Bottom);
+    }
+}
+
 void MathMLMencloseElement::parseNotationAttribute()
 {
     clearNotations();
@@ -61,48 +105,20 @@ void MathMLMencloseElement::parseNotationAttribute()
         addNotation(LongDiv); // The default value is longdiv.
         return;
     }
-    auto& value = attributeWithoutSynchronization(notationAttr);
-    Vector<String> notationsList;
-    String(value).split(' ', notationsList);
-    for (auto& notation : notationsList) {
-        if (notation == "longdiv") {
-            addNotation(LongDiv);
-        } else if (notation == "roundedbox") {
-            addNotation(RoundedBox);
-        } else if (notation == "circle") {
-            addNotation(Circle);
-        } else if (notation == "left") {
-            addNotation(Left);
-        } else if (notation == "right") {
-            addNotation(Right);
-        } else if (notation == "top") {
-            addNotation(Top);
-        } else if (notation == "bottom") {
-            addNotation(Bottom);
-        } else if (notation == "updiagonalstrike") {
-            addNotation(UpDiagonalStrike);
-        } else if (notation == "downdiagonalstrike") {
-            addNotation(DownDiagonalStrike);
-        } else if (notation == "verticalstrike") {
-            addNotation(VerticalStrike);
-        } else if (notation == "horizontalstrike") {
-            addNotation(HorizontalStrike);
-        } else if (notation == "updiagonalarrow") {
-            addNotation(UpDiagonalArrow);
-        } else if (notation == "phasorangle") {
-            addNotation(PhasorAngle);
-        } else if (notation == "box") {
-            addNotation(Left);
-            addNotation(Right);
-            addNotation(Top);
-            addNotation(Bottom);
-        } else if (notation == "actuarial") {
-            addNotation(Right);
-            addNotation(Top);
-        } else if (notation == "madruwb") {
-            addNotation(Right);
-            addNotation(Bottom);
+    // We parse the list of whitespace-separated notation names.
+    StringView value = attributeWithoutSynchronization(notationAttr).string();
+    unsigned length = value.length();
+    unsigned start = 0;
+    while (start < length) {
+        if (isHTMLSpace(value[start])) {
+            start++;
+            continue;
         }
+        unsigned end = start + 1;
+        while (end < length && !isHTMLSpace(value[end]))
+            end++;
+        addNotationFlags(value.substring(start, end - start));
+        start = end;
     }
 }
 
