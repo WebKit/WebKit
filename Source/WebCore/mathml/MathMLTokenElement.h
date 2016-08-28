@@ -29,11 +29,11 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLElement.h"
+#include "MathMLPresentationElement.h"
 
 namespace WebCore {
 
-class MathMLTokenElement : public MathMLElement {
+class MathMLTokenElement : public MathMLPresentationElement {
 public:
     static Ref<MathMLTokenElement> create(const QualifiedName& tagName, Document&);
 
@@ -42,7 +42,6 @@ public:
 protected:
     MathMLTokenElement(const QualifiedName& tagName, Document&);
     void childrenChanged(const ChildChange&) override;
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
@@ -51,8 +50,8 @@ private:
     void didAttachRenderers() final;
 
     bool isMathMLToken() const final { return true; }
-    bool isPresentationMathML() const final { return true; }
     bool acceptsMathVariantAttribute() final { return true; }
+    bool acceptsDisplayStyleAttribute() final { return false; }
 };
 
 }

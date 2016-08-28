@@ -27,11 +27,11 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLElement.h"
+#include "MathMLPresentationElement.h"
 
 namespace WebCore {
 
-class MathMLSpaceElement final : public MathMLElement {
+class MathMLSpaceElement final : public MathMLPresentationElement {
 public:
     static Ref<MathMLSpaceElement> create(const QualifiedName& tagName, Document&);
     const Length& width();
@@ -39,9 +39,10 @@ public:
     const Length& depth();
 private:
     MathMLSpaceElement(const QualifiedName& tagName, Document&);
-    bool isPresentationMathML() const final { return true; }
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
+
+    bool acceptsDisplayStyleAttribute() final { return false; }
 
     Optional<Length> m_width;
     Optional<Length> m_height;

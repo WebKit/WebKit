@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace MathMLNames;
 
 MathMLTokenElement::MathMLTokenElement(const QualifiedName& tagName, Document& document)
-    : MathMLElement(tagName, document)
+    : MathMLPresentationElement(tagName, document)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -50,7 +50,7 @@ Ref<MathMLTokenElement> MathMLTokenElement::create(const QualifiedName& tagName,
 
 void MathMLTokenElement::didAttachRenderers()
 {
-    MathMLElement::didAttachRenderers();
+    MathMLPresentationElement::didAttachRenderers();
     auto* mathmlRenderer = renderer();
     if (is<RenderMathMLToken>(mathmlRenderer))
         downcast<RenderMathMLToken>(*mathmlRenderer).updateTokenContent();
@@ -58,21 +58,10 @@ void MathMLTokenElement::didAttachRenderers()
 
 void MathMLTokenElement::childrenChanged(const ChildChange& change)
 {
-    MathMLElement::childrenChanged(change);
+    MathMLPresentationElement::childrenChanged(change);
     auto* mathmlRenderer = renderer();
     if (is<RenderMathMLToken>(mathmlRenderer))
         downcast<RenderMathMLToken>(*mathmlRenderer).updateTokenContent();
-}
-
-void MathMLTokenElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
-{
-    if (name == mathvariantAttr) {
-        m_mathVariant = Nullopt;
-        if (renderer())
-            MathMLStyle::resolveMathMLStyleTree(renderer());
-    }
-
-    MathMLElement::parseAttribute(name, value);
 }
 
 RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
