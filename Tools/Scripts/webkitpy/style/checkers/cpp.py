@@ -2507,7 +2507,9 @@ def check_braces(clean_lines, line_number, file_state, error):
                   'An else should appear on the same line as the preceding }')
 
     # Likewise, an else should never have the else clause on the same line
-    if search(r'\belse [^\s{]', line) and not search(r'\belse if\b', line):
+    if (search(r'\belse [^\s{]', line)
+        and not search(r'\belse if\b', line)
+        and not search(r'\belse\s*\\$', line)):
         error(line_number, 'whitespace/newline', 4,
               'Else clause should never be on same line as else (use 2 lines)')
 

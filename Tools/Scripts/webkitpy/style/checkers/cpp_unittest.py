@@ -2271,6 +2271,7 @@ class CppStyleTest(CppStyleTestBase):
                          '(use 2 lines)  [whitespace/newline] [4]')
         self.assert_lint('    else if (blah) {', '')
         self.assert_lint('    variable_ends_in_else = true;', '')
+        self.assert_lint('    else \\', '')
 
     def test_comma(self):
         self.assert_lint('a = f(1,2);',
