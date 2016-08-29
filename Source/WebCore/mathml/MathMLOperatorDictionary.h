@@ -44,15 +44,16 @@ enum Flag {
     Symmetric = 0x40
 };
 const unsigned allFlags = Accent | Fence | LargeOp | MovableLimits | Separator | Stretchy | Symmetric;
-struct Entry {
-    UChar character;
-    unsigned form : 2;
-    unsigned lspace : 3;
-    unsigned rspace : 3;
-    unsigned flags : 8;
+struct Property {
+    MathMLOperatorDictionary::Form form;
+    // Default leading and trailing spaces are "thickmathspace".
+    unsigned short leadingSpaceInMathUnit { 5 };
+    unsigned short trailingSpaceInMathUnit { 5 };
+    // Default operator properties are all set to "false".
+    unsigned short flags { 0 };
 };
-Optional<Entry> search(UChar, Form, bool explicitForm);
-bool isVertical(UChar);
+Optional<Property> search(UChar32, Form, bool explicitForm);
+bool isVertical(UChar32);
 }
 
 }

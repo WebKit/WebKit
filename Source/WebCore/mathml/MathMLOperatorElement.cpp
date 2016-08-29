@@ -52,15 +52,12 @@ MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(con
     OperatorChar operatorChar;
     // FIXME: This operator dictionary does not accept multiple characters (https://webkit.org/b/124828).
     if (auto codePoint = convertToSingleCodePoint(string)) {
-        // FIXME: MathMLOperatorDictionary/RenderMathMLOperator/MathOperator do not support non-BMP characters (https://webkit.org/b/122296).
-        if (U_IS_BMP(codePoint.value())) {
-            UChar character = codePoint.value();
-            // The minus sign renders better than the hyphen sign used in some MathML formulas.
-            if (character == hyphenMinus)
-                character = minusSign;
-            operatorChar.character = character;
-            operatorChar.isVertical = MathMLOperatorDictionary::isVertical(operatorChar.character);
-        }
+        auto character = codePoint.value();
+        // The minus sign renders better than the hyphen sign used in some MathML formulas.
+        if (character == hyphenMinus)
+            character = minusSign;
+        operatorChar.character = character;
+        operatorChar.isVertical = isVertical(operatorChar.character);
     }
     return operatorChar;
 }
@@ -72,9 +69,9 @@ const MathMLOperatorElement::OperatorChar& MathMLOperatorElement::operatorChar()
     return m_operatorChar.value();
 }
 
-MathMLOperatorElement::DictionaryProperty MathMLOperatorElement::computeDictionaryProperty()
+Property MathMLOperatorElement::computeDictionaryProperty()
 {
-    DictionaryProperty dictionaryProperty;
+    Property dictionaryProperty;
 
     // We first determine the form attribute and use the default spacing and properties.
     const auto& value = attributeWithoutSynchronization(formAttr);
@@ -97,17 +94,13 @@ MathMLOperatorElement::DictionaryProperty MathMLOperatorElement::computeDictiona
     }
 
     // We then try and find an entry in the operator dictionary to override the default values.
-    if (auto entry = search(operatorChar().character, dictionaryProperty.form, explicitForm)) {
-        dictionaryProperty.form = static_cast<MathMLOperatorDictionary::Form>(entry.value().form);
-        dictionaryProperty.leadingSpaceInMathUnit = entry.value().lspace;
-        dictionaryProperty.trailingSpaceInMathUnit = entry.value().rspace;
-        dictionaryProperty.flags = entry.value().flags;
-    }
+    if (auto entry = search(operatorChar().character, dictionaryProperty.form, explicitForm))
+        dictionaryProperty = entry.value();
 
     return dictionaryProperty;
 }
 
-const MathMLOperatorElement::DictionaryProperty& MathMLOperatorElement::dictionaryProperty()
+const Property& MathMLOperatorElement::dictionaryProperty()
 {
     if (!m_dictionaryProperty)
         m_dictionaryProperty = computeDictionaryProperty();

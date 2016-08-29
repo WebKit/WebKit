@@ -32,13 +32,29 @@ namespace WebCore {
 
 using namespace MathMLOperatorDictionary;
 
-typedef std::pair<UChar, Form> Key;
+typedef std::pair<UChar32, Form> Key;
+struct Entry {
+    UChar32 character;
+    unsigned form : 2;
+    unsigned lspace : 3;
+    unsigned rspace : 3;
+    unsigned flags : 8;
+};
 static inline Key ExtractKey(const Entry* entry) { return Key(entry->character, static_cast<Form>(entry->form)); }
-static inline UChar ExtractChar(const Entry* entry) { return entry->character; }
+static inline UChar32 ExtractChar(const Entry* entry) { return entry->character; }
+static inline Property ExtractProperty(const Entry& entry)
+{
+    Property property;
+    property.form = static_cast<Form>(entry.form);
+    property.leadingSpaceInMathUnit = entry.lspace;
+    property.trailingSpaceInMathUnit = entry.rspace;
+    property.flags = entry.flags;
+    return property;
+}
 
 // This table has been automatically generated from the Operator Dictionary of the MathML3 specification (appendix C).
 // Some people use the binary operator "U+2225 PARALLEL TO" as an opening and closing delimiter, so we add the corresponding stretchy prefix and postfix forms.
-static const unsigned dictionarySize = 1041;
+static const unsigned dictionarySize = 1043;
 static const Entry dictionary[dictionarySize] = {
     { 0x21, Postfix, 1, 0, 0}, // EXCLAMATION MARK
     { 0x25, Infix, 3, 3, 0}, // PERCENT SIGN
@@ -1080,44 +1096,46 @@ static const Entry dictionary[dictionarySize] = {
     { 0x2AFE, Infix, 3, 3, 0}, // WHITE VERTICAL BAR
     { 0x2AFF, Prefix, 1, 2, Symmetric | LargeOp | MovableLimits}, // N-ARY WHITE VERTICAL BAR
     { 0x2B45, Infix, 5, 5, Stretchy}, // LEFTWARDS QUADRUPLE ARROW
-    { 0x2B46, Infix, 5, 5, Stretchy} // RIGHTWARDS QUADRUPLE ARROW
+    { 0x2B46, Infix, 5, 5, Stretchy}, // RIGHTWARDS QUADRUPLE ARROW
+    { 0x1EEF0, Prefix, 0, 0, Stretchy }, // ARABIC MATHEMATICAL OPERATOR MEEM WITH HAH WITH TATWEEL
+    { 0x1EEF1, Prefix, 0, 0, Stretchy } // ARABIC MATHEMATICAL OPERATOR HAH WITH DAL
 };
 
 // A list of operators that stretch in the horizontal direction. This has been generated from Mozilla's MathML operator dictionary.
-static inline UChar ExtractKeyHorizontal(const UChar* entry) { return *entry; }
-static const UChar horizontalOperators[] = {
-    0x003D, 0x005E, 0x005F, 0x007E, 0x00AF, 0x02C6, 0x02C7, 0x02C9, 0x02CD, 0x02DC, 0x02F7, 0x0302, 0x0332, 0x203E, 0x20D0, 0x20D1, 0x20D6, 0x20D7, 0x20E1, 0x2190, 0x2192, 0x2194, 0x2198, 0x2199, 0x219C, 0x219D, 0x219E, 0x21A0, 0x21A2, 0x21A3, 0x21A4, 0x21A6, 0x21A9, 0x21AA, 0x21AB, 0x21AC, 0x21AD, 0x21B4, 0x21B9, 0x21BC, 0x21BD, 0x21C0, 0x21C1, 0x21C4, 0x21C6, 0x21C7, 0x21C9, 0x21CB, 0x21CC, 0x21D0, 0x21D2, 0x21D4, 0x21DA, 0x21DB, 0x21DC, 0x21DD, 0x21E0, 0x21E2, 0x21E4, 0x21E5, 0x21E6, 0x21E8, 0x21F0, 0x21F6, 0x21FD, 0x21FE, 0x21FF, 0x23B4, 0x23B5, 0x23DC, 0x23DD, 0x23DE, 0x23DF, 0x23E0, 0x23E1, 0x2500, 0x27F5, 0x27F6, 0x27F7, 0x27F8, 0x27F9, 0x27FA, 0x27FB, 0x27FC, 0x27FD, 0x27FE, 0x27FF, 0x290C, 0x290D, 0x290E, 0x290F, 0x2910, 0x294E, 0x2950, 0x2952, 0x2953, 0x2956, 0x2957, 0x295A, 0x295B, 0x295E, 0x295F, 0x2B45, 0x2B46, 0xFE35, 0xFE36, 0xFE37, 0xFE38
+static inline UChar32 ExtractKeyHorizontal(const UChar32* entry) { return *entry; }
+static const UChar32 horizontalOperators[] = {
+    0x003D, 0x005E, 0x005F, 0x007E, 0x00AF, 0x02C6, 0x02C7, 0x02C9, 0x02CD, 0x02DC, 0x02F7, 0x0302, 0x0332, 0x203E, 0x20D0, 0x20D1, 0x20D6, 0x20D7, 0x20E1, 0x2190, 0x2192, 0x2194, 0x2198, 0x2199, 0x219C, 0x219D, 0x219E, 0x21A0, 0x21A2, 0x21A3, 0x21A4, 0x21A6, 0x21A9, 0x21AA, 0x21AB, 0x21AC, 0x21AD, 0x21B4, 0x21B9, 0x21BC, 0x21BD, 0x21C0, 0x21C1, 0x21C4, 0x21C6, 0x21C7, 0x21C9, 0x21CB, 0x21CC, 0x21D0, 0x21D2, 0x21D4, 0x21DA, 0x21DB, 0x21DC, 0x21DD, 0x21E0, 0x21E2, 0x21E4, 0x21E5, 0x21E6, 0x21E8, 0x21F0, 0x21F6, 0x21FD, 0x21FE, 0x21FF, 0x23B4, 0x23B5, 0x23DC, 0x23DD, 0x23DE, 0x23DF, 0x23E0, 0x23E1, 0x2500, 0x27F5, 0x27F6, 0x27F7, 0x27F8, 0x27F9, 0x27FA, 0x27FB, 0x27FC, 0x27FD, 0x27FE, 0x27FF, 0x290C, 0x290D, 0x290E, 0x290F, 0x2910, 0x294E, 0x2950, 0x2952, 0x2953, 0x2956, 0x2957, 0x295A, 0x295B, 0x295E, 0x295F, 0x2B45, 0x2B46, 0xFE35, 0xFE36, 0xFE37, 0xFE38, 0x1EEF0, 0x1EEF1
 };
 
-Optional<Entry> MathMLOperatorDictionary::search(UChar character, Form form, bool explicitForm)
+Optional<Property> MathMLOperatorDictionary::search(UChar32 character, Form form, bool explicitForm)
 {
     if (!character)
         return Nullopt;
 
     // We try and find the default values from the operator dictionary.
     if (auto* entry = tryBinarySearch<const Entry, Key>(dictionary, dictionarySize, Key(character, form), ExtractKey))
-        return *entry;
+        return ExtractProperty(*entry);
 
     if (explicitForm)
         return Nullopt;
 
     // If we did not find the desired operator form and if it was not set explicitely, we use the first one in the following order: Infix, Prefix, Postfix.
     // This is to handle bad MathML markup without explicit <mrow> delimiters like "<mo>(</mo><mi>a</mi><mo>)</mo><mo>(</mo><mi>b</mi><mo>)</mo>" where innerfences should not be considered infix.
-    if (auto* entry = tryBinarySearch<const Entry, UChar>(dictionary, dictionarySize, character, ExtractChar)) {
+    if (auto* entry = tryBinarySearch<const Entry, UChar32>(dictionary, dictionarySize, character, ExtractChar)) {
         // There are at most two other entries before the one found.
         if (entry != dictionary && (entry - 1)->character == character)
             entry--;
         if (entry != dictionary && (entry - 1)->character == character)
             entry--;
-        return *entry;
+        return ExtractProperty(*entry);
     }
 
     return Nullopt;
 }
 
-bool MathMLOperatorDictionary::isVertical(UChar textContent)
+bool MathMLOperatorDictionary::isVertical(UChar32 textContent)
 {
-    return !tryBinarySearch<const UChar, UChar>(horizontalOperators, WTF_ARRAY_LENGTH(horizontalOperators), textContent, ExtractKeyHorizontal);
+    return !tryBinarySearch<const UChar32, UChar32>(horizontalOperators, WTF_ARRAY_LENGTH(horizontalOperators), textContent, ExtractKeyHorizontal);
 }
 
 }

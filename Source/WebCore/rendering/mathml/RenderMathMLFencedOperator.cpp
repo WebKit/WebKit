@@ -50,8 +50,8 @@ void RenderMathMLFencedOperator::updateOperatorContent(const String& operatorStr
     // We try and read spacing and boolean properties from the operator dictionary.
     // However we preserve the Fence and Separator properties specified in the constructor.
     if (auto entry = search(m_operatorChar.character, m_operatorForm, true)) {
-        m_leadingSpaceInMathUnit = entry.value().lspace;
-        m_trailingSpaceInMathUnit = entry.value().rspace;
+        m_leadingSpaceInMathUnit = entry.value().leadingSpaceInMathUnit;
+        m_trailingSpaceInMathUnit = entry.value().trailingSpaceInMathUnit;
         m_operatorFlags = (m_operatorFlags & (MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator)) | entry.value().flags;
     } else {
         m_operatorFlags &= MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator; // Flags are disabled by default.

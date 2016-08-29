@@ -60,7 +60,7 @@ static inline float advanceWidthForGlyph(const GlyphData& data)
 
 // FIXME: This hardcoded data can be removed when OpenType MATH font are widely available (http://wkbug/156837).
 struct StretchyCharacter {
-    UChar character;
+    UChar32 character;
     UChar topChar;
     UChar extensionChar;
     UChar bottomChar;
@@ -85,7 +85,7 @@ static const StretchyCharacter stretchyCharacters[14] = {
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-void MathOperator::setOperator(const RenderStyle& style, UChar baseCharacter, Type operatorType)
+void MathOperator::setOperator(const RenderStyle& style, UChar32 baseCharacter, Type operatorType)
 {
     m_baseCharacter = baseCharacter;
     m_operatorType = operatorType;
@@ -121,7 +121,7 @@ LayoutUnit MathOperator::stretchSize() const
     return m_operatorType == Type::VerticalOperator ? m_ascent + m_descent : m_width;
 }
 
-bool MathOperator::getGlyph(const RenderStyle& style, UChar character, GlyphData& glyph) const
+bool MathOperator::getGlyph(const RenderStyle& style, UChar32 character, GlyphData& glyph) const
 {
     glyph = style.fontCascade().glyphDataForCharacter(character, !style.isLeftToRightDirection());
     return glyph.font && glyph.font == &style.fontCascade().primaryFont();
@@ -171,7 +171,7 @@ void MathOperator::setGlyphAssembly(const GlyphAssemblyData& assemblyData)
 // See https://www.w3.org/TR/MathML/chapter7.html#chars.comb-chars
 // However, many math fonts do not provide constructions for the non-combining equivalent.
 const unsigned maxFallbackPerCharacter = 3;
-static const UChar characterFallback[][maxFallbackPerCharacter] = {
+static const UChar32 characterFallback[][maxFallbackPerCharacter] = {
     { 0x005E, 0x0302, 0 }, // CIRCUMFLEX ACCENT
     { 0x005F, 0x0332, 0 }, // LOW LINE
     { 0x007E, 0x0303, 0 }, // TILDE

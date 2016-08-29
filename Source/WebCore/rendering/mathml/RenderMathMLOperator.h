@@ -55,7 +55,7 @@ public:
 
     void updateTokenContent() final;
     void updateFromElement() final;
-    virtual UChar textContent() const;
+    virtual UChar32 textContent() const;
 
 protected:
     virtual void updateMathOperator();
