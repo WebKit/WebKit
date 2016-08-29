@@ -64,26 +64,6 @@ Ref<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document&
     return adoptRef(*new MathMLElement(tagName, document));
 }
 
-bool MathMLElement::isPresentationMathML() const
-{
-    return hasTagName(MathMLNames::mtrTag)
-        || hasTagName(MathMLNames::mtdTag)
-        || hasTagName(MathMLNames::maligngroupTag)
-        || hasTagName(MathMLNames::malignmarkTag)
-        || hasTagName(MathMLNames::mencloseTag)
-        || hasTagName(MathMLNames::mglyphTag)
-        || hasTagName(MathMLNames::mlabeledtrTag)
-        || hasTagName(MathMLNames::mlongdivTag)
-        || hasTagName(MathMLNames::mpaddedTag)
-        || hasTagName(MathMLNames::msTag)
-        || hasTagName(MathMLNames::mscarriesTag)
-        || hasTagName(MathMLNames::mscarryTag)
-        || hasTagName(MathMLNames::msgroupTag)
-        || hasTagName(MathMLNames::mslineTag)
-        || hasTagName(MathMLNames::msrowTag)
-        || hasTagName(MathMLNames::mstackTag);
-}
-
 bool MathMLElement::isPhrasingContent(const Node& node) const
 {
     // Phrasing content is described in the HTML 5 specification:

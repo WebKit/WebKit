@@ -44,7 +44,7 @@ public:
 
     virtual bool isMathMLToken() const { return false; }
     virtual bool isSemanticAnnotation() const { return false; }
-    virtual bool isPresentationMathML() const;
+    virtual bool isPresentationMathML() const { return false; }
 
     bool hasTagName(const MathMLQualifiedName& name) const { return hasLocalName(name.localName()); }
 

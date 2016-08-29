@@ -47,12 +47,12 @@ Ref<MathMLPresentationElement> MathMLPresentationElement::create(const Qualified
     return adoptRef(*new MathMLPresentationElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLPresentationElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLPresentationElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     if (hasTagName(mtableTag))
         return createRenderer<RenderMathMLTable>(*this, WTFMove(style));
 
-    return createRenderer<RenderMathMLBlock>(*this, WTFMove(style));
+    return MathMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 
 bool MathMLPresentationElement::acceptsDisplayStyleAttribute()
