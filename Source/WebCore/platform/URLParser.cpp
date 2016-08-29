@@ -428,7 +428,6 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
     switch (state) {
     case State::SchemeStart:
         LOG_FINAL_STATE("SchemeStart");
-        ASSERT_NOT_REACHED();
         return { };
     case State::Scheme:
         LOG_FINAL_STATE("Scheme");

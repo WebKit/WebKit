@@ -180,6 +180,7 @@ static void shouldFail(const String& urlString)
 TEST_F(URLParserTest, ParserFailures)
 {
     shouldFail("    ");
+    shouldFail("");
 }
 
 } // namespace TestWebKitAPI
