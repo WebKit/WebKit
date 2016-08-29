@@ -264,12 +264,13 @@
                 shouldBeTrue("canGetDescriptor(targetLocation, '" + locationPropertiesAllowed[i] + "')");
 
             log("----- tests access to cross domain history object -----");
-            window.targetHistory = targetWindow.history;
-            var historyPropertiesNotAllowed = [
-                "length", "pushState", "replaceState", "customProperty", "back", "forward", "go"
-            ];
-            for (var i = 0; i < historyPropertiesNotAllowed.length; i++)
-                shouldBeFalse("canGetDescriptor(targetHistory, '" + historyPropertiesNotAllowed[i] + "')");
+            try {
+                window.targetHistory = targetWindow.history;
+                log("FAIL: Could access targetWindow.history");
+            } catch (e) {
+                console.log(e);
+                log("PASS: Could not access targetWindow.history");
+            }
         }
     </script>
 </head>

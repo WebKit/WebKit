@@ -1,15 +1,13 @@
 CONSOLE MESSAGE: line 39: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 40: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 
 
 ----- test getting values cross-frame using Object.prototype -----
 
-PASS: Object.prototype.__lookupGetter__.call(targetFrame, 'myGetter'); should be 'undefined' and is.
-PASS: Object.prototype.__lookupSetter__.call(targetFrame, 'mySetter'); should be 'undefined' and is.
-PASS: Object.prototype.propertyIsEnumerable.call(targetFrame, 'myProp'); should be 'false' and is.
+PASS Object.prototype.__lookupGetter__.call(targetFrame, 'myGetter'); threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS Object.prototype.__lookupSetter__.call(targetFrame, 'mySetter'); threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS Object.prototype.propertyIsEnumerable.call(targetFrame, 'myProp'); threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS Object.prototype.hasOwnProperty.call(targetFrame, 'myProp'); threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
 
 
 --------

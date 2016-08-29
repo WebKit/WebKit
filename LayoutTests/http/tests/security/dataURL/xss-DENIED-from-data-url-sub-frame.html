@@ -15,6 +15,7 @@
                 +             "try {"
                 +                 "parent.document.getElementById('accessMe').innerHTML = 'FAIL: Cross frame access from a data: URL was allowed.';"
                 +             "} catch (e) {"
+                +                 "console.log(e);"
                 +             "}"
                 +             "if (window.testRunner)"
                 +                 "testRunner.notifyDone();"

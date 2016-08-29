@@ -64,7 +64,7 @@ window.onload = function()
     shouldThrowErrorName("window.location.toString.call(targetWindow.location)", "SecurityError");
 
     // - Tests for the History object -
-    shouldBeUndefined("targetWindow.history");
+    shouldThrowErrorName("targetWindow.history", "SecurityError");
 
     // Work around DRT bug that causes subsequent tests to fail.
     window.stop();

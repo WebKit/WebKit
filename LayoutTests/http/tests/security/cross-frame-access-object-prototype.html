@@ -1,12 +1,12 @@
 <html>
 <head>
+    <script src="/js-test-resources/js-test-pre.js"></script>
     <script src="resources/cross-frame-access.js"></script>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
+        jsTestIsAsync = true;
+
+        if (window.testRunner)
             testRunner.dumpChildFramesAsText();
-            testRunner.waitUntilDone();
-        }
 
         onload = function()
         {
@@ -42,12 +42,11 @@
             log("\n----- test getting values cross-frame using Object.prototype -----\n");
 
             // Attempt to detect values set on the target frame.
-            try { shouldBe("Object.prototype.__lookupGetter__.call(targetFrame, 'myGetter');", "undefined"); } catch(e) { log(e); }
-            try { shouldBe("Object.prototype.__lookupSetter__.call(targetFrame, 'mySetter');", "undefined"); } catch(e) { log(e); }
+            shouldThrowErrorName("Object.prototype.__lookupGetter__.call(targetFrame, 'myGetter');", "SecurityError");
+            shouldThrowErrorName("Object.prototype.__lookupSetter__.call(targetFrame, 'mySetter');", "SecurityError");
 
-            try { shouldBe("Object.prototype.propertyIsEnumerable.call(targetFrame, 'myProp');", "false"); } catch(e) { log(e); }
-            // FIXME: Unfortunatly, all cross-cross frame calls hasOwnProperty will return true so there is no way to test this right now.
-            // try { shouldBe("Object.prototype.hasOwnProperty.call(targetFrame, 'myProp');", "false"); } catch(e) { log(e); }
+            shouldThrowErrorName("Object.prototype.propertyIsEnumerable.call(targetFrame, 'myProp');", "SecurityError");
+            shouldThrowErrorName("Object.prototype.hasOwnProperty.call(targetFrame, 'myProp');", "SecurityError");
 
             if (window.postMessage)
                 targetFrame.postMessage("settingValuesComplete", "*");
@@ -59,5 +58,6 @@
 <body>
     <iframe name="target" src="http://localhost:8000/security/resources/cross-frame-iframe-for-object-prototype-test.html"></iframe>
     <pre id="console"></pre>
+    <script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>

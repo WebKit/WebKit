@@ -135,7 +135,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
         // For any other entries in the static property table, deny access. (Early return also prevents
         // named getter from returning frames with matching names - this seems a little questionable, see
         // FIXME comment on prototype search below.)
-        thisObject->printErrorMessage(errorMessage);
+        throwSecurityError(*exec, errorMessage);
         slot.setUndefined();
         return true;
     }
@@ -149,7 +149,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
         return true;
     }
 
-    thisObject->printErrorMessage(errorMessage);
+    throwSecurityError(*exec, errorMessage);
     slot.setUndefined();
     return true;
 }

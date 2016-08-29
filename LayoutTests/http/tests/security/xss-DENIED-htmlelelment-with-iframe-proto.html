@@ -1,5 +1,6 @@
 <html>
 <head>
+<script src="/js-test-resources/js-test-pre.js"></script>
 <script src="resources/cross-frame-access.js"></script>
 </head>
 <body>
@@ -7,17 +8,17 @@
 </iframe>
 <pre id="console"></pre>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-
-log("Tests that making other frame window a prototype doesn't expose that window subframe");
+description("Tests that making other frame window a prototype doesn't expose that window subframe");
+jsTestIsAsync = true;
 
 targetWindow = frames[0];
 
 window.onload = function() {
   __proto__ = targetWindow;
-  shouldBeUndefined('targetWindow.myinput');
+  shouldThrowErrorName('targetWindow.myinput', 'SecurityError');
+  finishJSTest();
 }
 </script>
+<script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>

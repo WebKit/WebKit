@@ -12,6 +12,7 @@
             +                 "parent.opener.document.getElementById('accessMe').innerHTML = 'FAIL: Cross frame access from a data: URL on a different domain was allowed';"
             +                 "alert('FAIL: No exception thrown.');" 
             +             "} catch (e) {"
+            +                 "console.log(e);"
             +                 "alert('PASS: Exception thrown successfully.');"
             +             "}"
             +             "if (window.testRunner)"

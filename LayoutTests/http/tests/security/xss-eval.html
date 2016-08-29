@@ -42,7 +42,7 @@ addEventListener("message", function()
     shouldBe("childEvalCaller('document').testExpando",
         (function() { try {
             return childEvalCaller('document').testExpando;
-        } catch(e) { return e.name; } })(), "TypeError");
+        } catch(e) { return e.name; } })(), "SecurityError");
 
     shouldBe("childLocalEvalCaller('document').testExpando",
         (function() { try { return childLocalEvalCaller('document').testExpando; } catch(e) { return e.name; } })(), "It's me too!");

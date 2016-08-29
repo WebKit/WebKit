@@ -46,6 +46,7 @@
             try {
                 openedWindow.document.getElementById('accessMe').innerHTML = 'FAIL: Access to a window opened with a data: URL was allowed.';
             } catch (e) {
+                console.log(e);
             }
 
             if (window.testRunner)

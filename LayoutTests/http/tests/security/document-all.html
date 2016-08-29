@@ -21,7 +21,11 @@ window.onload = function()
             window.name = "alert";
             obj = document.all;
             obj.__proto__ = parent;
-            alert(obj.alert.constructor("return document.body.innerHTML")());
+            try {
+                alert(obj.alert.constructor("return document.body.innerHTML")());
+            } catch (e) {
+                console.log(e);
+            }
         } + ")()</scr" + "ipt>";
     }
 }

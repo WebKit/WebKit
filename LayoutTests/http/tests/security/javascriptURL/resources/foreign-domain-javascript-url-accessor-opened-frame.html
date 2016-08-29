@@ -11,6 +11,7 @@
             +             "try {"
             +                 "parent.opener.document.getElementById('accessMe').innerHTML = 'FAIL: Cross frame access from a javascript: URL on a different domain was allowed';"
             +             "} catch(e) {"
+            +                 "console.log(e);"
             +             "}"
             +             "if (window.testRunner)"
             +                 "testRunner.globalFlag = true;"

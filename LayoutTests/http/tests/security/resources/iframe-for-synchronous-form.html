@@ -6,6 +6,7 @@ window.onload = function() {
   try {
     parent.attacked();
   } catch(ex) {
+    console.log(ex);
   }
   parent.postMessage('Done.', '*');
 };

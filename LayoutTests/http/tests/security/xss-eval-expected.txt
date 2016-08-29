@@ -1,10 +1,9 @@
-CONSOLE MESSAGE: line 44: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 This page verifies that you can't use eval to subvert cross-domain checks.
 
 If the test passes, you'll see a pass message below.
 
 PASS: eval.call(frames[0], 'document').testExpando should be It's me! and is.
 PASS: childEval.call(frames[0], 'document').testExpando should be It's me too! and is.
-PASS: childEvalCaller('document').testExpando should be TypeError and is.
+PASS: childEvalCaller('document').testExpando should be SecurityError and is.
 PASS: childLocalEvalCaller('document').testExpando should be It's me too! and is.
 

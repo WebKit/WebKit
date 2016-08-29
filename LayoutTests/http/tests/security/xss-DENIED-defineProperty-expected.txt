@@ -16,12 +16,6 @@ CONSOLE MESSAGE: line 24: Blocked a frame with origin "http://localhost:8000" fr
 CONSOLE MESSAGE: line 24: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 24: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 24: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 40: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 40: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 40: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 40: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 40: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 40: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 
 PASS: cross-site assignment of Object constructor not allowed
 PASS: cross-site assignment of new property not allowed
@@ -76,10 +70,10 @@ SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:
 SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-TypeError: undefined is not an object (evaluating 'parent.Object.prototype')
-TypeError: undefined is not an object (evaluating 'parent.Object.prototype')
-TypeError: undefined is not an object (evaluating 'parent.Object.prototype')
-TypeError: undefined is not an object (evaluating 'parent.Object.prototype')
-TypeError: undefined is not an object (evaluating 'parent.Object.prototype')
-TypeError: undefined is not an object (evaluating 'parent.Object.prototype')
+SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 

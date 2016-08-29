@@ -13,7 +13,7 @@
         }
 
         function checkNewWindowDocumentIsUndefined () {
-            shouldBeUndefined("newWindow.document");
+            shouldThrowErrorName("newWindow.document", "SecurityError");
             if (window.testRunner)
                 testRunner.notifyDone();
         }
@@ -26,6 +26,7 @@
                 if (window.testRunner)
                     testRunner.notifyDone();
             } catch (e) {
+                console.log(e);
                 setTimeout(checkNewWindowDocumentIsUndefined, 500);
             }
         }

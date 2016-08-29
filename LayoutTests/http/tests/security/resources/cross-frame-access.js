@@ -191,6 +191,7 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage)
                 return;
             }
         } catch (e) {
+            console.log(e);
         }
 
         log(passMessage);

@@ -27,7 +27,7 @@ window.onload = function()
     try {
         doc = frames[0].document;
     } catch (e) {
-        log("Exception thrown trying to get cross-domain document: " + e);
+        log("PASS: Exception thrown trying to get cross-domain document: " + e);
     }
 
     log("canGet(frames[0], 'document'): " + (doc !== undefined));

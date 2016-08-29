@@ -3,6 +3,7 @@ window.addEventListener("message", function (evt) {
     try {
         top.fail();
     } catch(e) {
+        console.log(e);
         top.postMessage("step1-done", "*");
     }
 }, false);

@@ -14,6 +14,7 @@ try {
   // change own domain to an invalid one
   document.domain = 'apple.com';
 } catch (e) {
+  console.log(e);
 }
 
 window.onload = cross_frame_access;

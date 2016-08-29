@@ -48,6 +48,7 @@
                 +             "try {"
                 +                 "parent.frames['firstSubFrame'].document.getElementById('accessMe').innerHTML = 'FAIL: Cross frame access from a sibling data: URL was allowed.';"
                 +             "} catch (e) {"
+                +                 "console.log(e);"
                 +             "}"
                 +             "if (window.testRunner)"
                 +                 "testRunner.notifyDone();"

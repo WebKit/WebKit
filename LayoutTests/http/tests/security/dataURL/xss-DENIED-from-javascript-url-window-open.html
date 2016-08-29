@@ -15,6 +15,7 @@
                 +             "try {"
                 +                 "opener.document.getElementById(\"accessMe\").innerHTML = \"FAIL: Access from a window opened with a data: URL was allowed!\";"
                 +             "} catch (e) {"
+                +                 "console.log(e);"
                 +             "}"
                 +             "if (window.testRunner)"
                 +                 "testRunner.globalFlag = true;" // Flag that the test has completed and we can close the window now

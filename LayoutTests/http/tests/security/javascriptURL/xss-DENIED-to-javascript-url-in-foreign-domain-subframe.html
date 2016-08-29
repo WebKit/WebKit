@@ -38,6 +38,7 @@
                 log("FAIL: Cross frame access to a javascript: URL embed in a frame on a foreign domain allowed.");
                 return;
             } catch (e) {
+                console.log(e);
             }
 
             log("PASS: Cross frame access to a javascript: URL embed in a frame on a foreign domain denied!");

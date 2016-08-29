@@ -7,6 +7,15 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
+function getSubframeHistory()
+{
+    try {
+      return window.frames[0].history;
+    } catch (e) {
+      console.log(e);
+    }
+}
+
 window.onmessage = function(evt)
 {
     if (evt.data != "done") {
@@ -15,13 +24,13 @@ window.onmessage = function(evt)
         return;
     }
 
-    alert("Child window's history object after attempt to clear: " + window.frames[0].history);
+    alert("Child window's history object after attempt to clear: " + getSubframeHistory());
     testRunner.notifyDone();
 }
 
 function setHistoryLength()
 {
-    alert("Child window's history object before attempt to clear: " + window.frames[0].history);
+    alert("Child window's history object before attempt to clear: " + getSubframeHistory());
     window.frames[0].postMessage("setHistoryLength", "*");
 }
 

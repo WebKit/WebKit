@@ -1,11 +1,9 @@
 <html>
 <head>
+    <script src="/js-test-resources/js-test-pre.js"></script>
     <script src="resources/cross-frame-access.js"></script>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        jsTestIsAsync = true;
 
         // Set up listener for message from iframe
         addEventListener('message', function(event) {
@@ -19,10 +17,9 @@
             targetWindow = document.getElementById("target").contentWindow;
 
             shouldBeUndefined("Object.getPrototypeOf(targetWindow)");
-            shouldBeUndefined("targetWindow.history");
+            shouldThrowErrorName("targetWindow.history", "SecurityError");
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     </script>
 </head>
@@ -30,5 +27,6 @@
     <div>This tests that you can't get the prototype of the window or history objects cross-origin using Object.getPrototypeOf().</div>
     <iframe id="target" src="http://localhost:8000/security/resources/cross-frame-iframe-for-object-getPrototypeOf-test.html"></iframe>
     <pre id="console"></pre>
+    <script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>

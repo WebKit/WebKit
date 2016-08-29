@@ -1,3 +1,2 @@
-CONSOLE MESSAGE: line 2: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-ALERT: undefined
+CONSOLE MESSAGE: line 2: SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
    This test passes if it doesn't alert fail.

@@ -1,14 +1,12 @@
 <html>
 <head>
+    <script src="/js-test-resources/js-test-pre.js"></script>
     <script src="resources/cross-frame-access.js"></script>
     <script>
+        jsTestIsAsync = true;
+
         window.onload = function()
         {
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
-
             if (window.testRunner) {
                 setTimeout(pollForTest, 1);
             } else {
@@ -27,7 +25,7 @@
                 return;
             }
             runTest();
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         function getCustomProperty(o)
@@ -39,9 +37,9 @@
         {
             window.targetWindow = frames[0];
 
-            shouldBeUndefined("getCustomProperty(targetWindow)");
-            shouldBeUndefined("getCustomProperty(targetWindow)");
-            shouldBeUndefined("getCustomProperty(targetWindow)");
+            shouldThrowErrorName("getCustomProperty(targetWindow)", "SecurityError");
+            shouldThrowErrorName("getCustomProperty(targetWindow)", "SecurityError");
+            shouldThrowErrorName("getCustomProperty(targetWindow)", "SecurityError");
         }
     </script>
 </head>
@@ -49,5 +47,6 @@
 <p>This test checks that caching of property accesses doesn't allow for illegal cross-frame access of a custom property. It also checks for an assertion failure that once occurred in this situation.</p>
 <iframe src="http://localhost:8000/security/resources/cross-frame-access-get-custom-property-cached-iframe.html" style=""></iframe>
 <pre id="console"></pre>
+<script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>
