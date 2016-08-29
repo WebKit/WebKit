@@ -243,7 +243,7 @@ bool JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
                 return putResult;
             return false;
         }
-        thisObject->printErrorMessage(errorMessage);
+        throwSecurityError(*exec, errorMessage);
         return false;
     }
 
