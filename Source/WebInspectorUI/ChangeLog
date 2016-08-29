@@ -1,3 +1,29 @@
+2016-08-29  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Unify Resource entry context menus
+        https://bugs.webkit.org/show_bug.cgi?id=161301
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Main.html:
+        Add ContextMenuUtilities.
+
+        * UserInterface/Views/ContextMenuUtilities.js: Added.
+        (WebInspector.appendContextMenuItemsForResource):
+        Appends the following items to the given WebInspector.ContextMenu object with a WebInspector.Resource:
+         - Open in New Tab
+         - Copy Link Address
+         - Copy as cURL (only if the resource is not from a data URL)
+         - Save File
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.appendContextMenuItems):
+        Make use of new WebInspector.appendContextMenuItemsForResource.
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._handleContextMenuEvent):
+        Make use of new WebInspector.appendContextMenuItemsForResource.
+
 2016-08-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make localizedString.js diff and commit friendly (UTF16 -> UTF8)

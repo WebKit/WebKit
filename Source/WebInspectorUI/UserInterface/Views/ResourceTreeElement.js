@@ -162,14 +162,7 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
     {
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
-        contextMenu.appendItem(WebInspector.UIString("Save File"), () => {
-            this._resource.requestContent().then(() => {
-                WebInspector.saveDataToFile({
-                    url: this._resource.url,
-                    content: this._resource.content
-                });
-            });
-        });
+        WebInspector.appendContextMenuItemsForResource(contextMenu, this._resource);
     }
 
     // Private
