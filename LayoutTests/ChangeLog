@@ -1,5 +1,19 @@
 2016-08-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r205140.
+
+        The changelog entry for this commit is incorrect and
+        misattributed.
+
+        Reverted changeset:
+
+        "Marking media/track/text-track-cue-is-reachable.html as flaky
+        on ios-simulator-wk2."
+        https://bugs.webkit.org/show_bug.cgi?id=161323
+        http://trac.webkit.org/changeset/205140
+
+2016-08-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking media/track/text-track-cue-is-reachable.html as flaky on ios-simulator-wk2.
         https://bugs.webkit.org/show_bug.cgi?id=161323
 
