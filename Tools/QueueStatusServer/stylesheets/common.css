@@ -72,6 +72,12 @@ tr:hover, li:hover {
   font-size: 8pt;
 }
 
+.status-bot {
+  color: #AAA;
+  float: left;
+  font-size: 11pt;
+}
+
 .queue_bubble {
     border: 1px solid black;
     margin-bottom: 10px;

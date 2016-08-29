@@ -12,6 +12,7 @@
   <h2>{{ queue_name }}</h2>
   <ul>{% for status in statuses %}
     <li>
+      <span class="status-bot">({{ status.bot_id }}): </span>
       <span class="status-message">{{ status.message|force_escape|urlize|webkit_linkify|safe }}</span>{% if status.results_file %}
       <span class="status-results">[{{ status.key.id|results_link|safe }}]</span>{% endif %}
       <span class="status-date">{{ status.date|timesince }} ago</span>

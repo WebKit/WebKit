@@ -1,3 +1,15 @@
+2016-08-29  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS patch status page should indicate bot corresponding to each status message
+        https://bugs.webkit.org/show_bug.cgi?id=161280
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/templates/patch.html: Added bot_id in the template so that bot id is displayed
+        for each status message.
+        * QueueStatusServer/stylesheets/common.css:
+        (.status-bot): Added corresponding stylesheet class.
+
 2016-08-29  Per Arne Vollan  <pvollan@apple.com>
 
         Attempt to fix Windows build after r205090.
