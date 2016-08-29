@@ -1281,24 +1281,44 @@ class _EnumState(object):
         return True
 
 
-def regex_for_lambda_functions(line, line_number, error):
-    result = search(r'\s\[.*?\]\s', line)
-    if result:
-        group = result.group()
-
+def regex_for_lambdas_and_blocks(line, line_number, file_state, error):
+    cpp_result = search(r'\s\[.*?\]\s', line)
+    objc_result = search(r'(\s\^\s?\(.*?\)\s|\^\s?\{)', line)
+    if cpp_result:
+        group = cpp_result.group()
         targ_error = None
 
         if search(r'(\[\s|\s\]|\s,)', group):
             targ_error = [line_number, 'whitespace/brackets', 4,
               'Extra space in capture list.']
 
-        if targ_error and regex_for_lambda_functions.__last_error != targ_error:
+        if targ_error and regex_for_lambdas_and_blocks.__last_error != targ_error:
             error(targ_error[0], targ_error[1], targ_error[2], targ_error[3])
-        regex_for_lambda_functions.__last_error = targ_error
+        regex_for_lambdas_and_blocks.__last_error = targ_error
         return True
+
+    if objc_result and file_state.is_objective_c_or_objective_cpp():
+        group = objc_result.group()
+        targ_error = None
+
+        if search(r'(\(\s|\s\)|\s,)', group):
+            targ_error = [line_number, 'whitespace/brackets', 4,
+              'Extra space in block arguments.']
+        if search(r'\^\{', group):
+            targ_error = [line_number, 'whitespace/brackets', 4,
+              'No space between ^ and block definition.']
+        if search(r'\^\s\(', group):
+            targ_error = [line_number, 'whitespace/brackets', 4,
+              'Extra space between ^ and block arguments.']
+
+        if targ_error and regex_for_lambdas_and_blocks.__last_error != targ_error:
+            error(targ_error[0], targ_error[1], targ_error[2], targ_error[3])
+        regex_for_lambdas_and_blocks.__last_error = targ_error
+        return True
+
     return False
 
-regex_for_lambda_functions.__last_error = None
+regex_for_lambdas_and_blocks.__last_error = None
 
 
 def check_for_non_standard_constructs(clean_lines, line_number,
@@ -1451,7 +1471,7 @@ def check_for_non_standard_constructs(clean_lines, line_number,
         classinfo.brace_depth = brace_depth
 
 
-def check_spacing_for_function_call(line, line_number, error):
+def check_spacing_for_function_call(line, line_number, file_state, error):
     """Checks for the correctness of various spacing around function calls.
 
     Args:
@@ -1490,7 +1510,7 @@ def check_spacing_for_function_call(line, line_number, error):
     if (  # Ignore control structures.
         not search(r'\b(if|for|while|switch|return|new|delete)\b', function_call)
         # Ignore lambda functions
-        and not regex_for_lambda_functions(function_call, line_number, error)
+        and not regex_for_lambdas_and_blocks(function_call, line_number, file_state, error)
         # Ignore pointers/references to functions.
         and not search(r' \([^)]+\)\([^)]*(\)|,$)', function_call)
         # Ignore pointers/references to arrays.
@@ -1749,7 +1769,7 @@ def check_for_leaky_patterns(clean_lines, line_number, function_state, error):
               'memory leaks.' % matched_create_dc.group('function_name'))
 
 
-def check_spacing(file_extension, clean_lines, line_number, error):
+def check_spacing(file_extension, clean_lines, line_number, file_state, error):
     """Checks for the correctness of various spacing issues in the code.
 
     Things we check for: spaces around operators, spaces after
@@ -1989,7 +2009,7 @@ def check_spacing(file_extension, clean_lines, line_number, error):
                   'Declaration has space between * and variable name in %s' % matched.group(0).strip())
 
     # Next we will look for issues with function calls.
-    check_spacing_for_function_call(line, line_number, error)
+    check_spacing_for_function_call(line, line_number, file_state, error)
 
     # Except after an opening paren, ^ for blocks, or @ for Objective-C
     # literal NSDictionary, you should have spaces before your braces.
@@ -2430,7 +2450,7 @@ def check_switch_indentation(clean_lines, line_number, error):
             break
 
 
-def check_braces(clean_lines, line_number, error):
+def check_braces(clean_lines, line_number, file_state, error):
     """Looks for misplaced braces (e.g. at the end of line).
 
     Args:
@@ -2454,7 +2474,7 @@ def check_braces(clean_lines, line_number, error):
         previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
         if ((not search(r'[;:}{)=]\s*$|\)\s*((const|override|const override)\s*)?(->\s*\S+)?\s*$', previous_line)
              or search(r'\b(if|for|while|switch|else|NS_ENUM)\b', previous_line)
-             or regex_for_lambda_functions(previous_line, line_number, error))
+             or regex_for_lambdas_and_blocks(previous_line, line_number, file_state, error))
             and previous_line.find('#') < 0
             and previous_line.find('- (') != 0
             and previous_line.find('+ (') != 0):
@@ -2463,7 +2483,7 @@ def check_braces(clean_lines, line_number, error):
     elif (search(r'\)\s*(((const|override)\s*)*\s*)?{\s*$', line)
           and line.count('(') == line.count(')')
           and not search(r'(\s*(if|for|while|switch|NS_ENUM|@synchronized)|} @catch)\b', line)
-          and not regex_for_lambda_functions(line, line_number, error)
+          and not regex_for_lambdas_and_blocks(line, line_number, file_state, error)
           and line.find("](") < 0
           and not match(r'\s+[A-Z_][A-Z_0-9]+\b', line)):
         error(line_number, 'whitespace/braces', 4,
@@ -2835,9 +2855,9 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
-    check_braces(clean_lines, line_number, error)
+    check_braces(clean_lines, line_number, file_state, error)
     check_exit_statement_simplifications(clean_lines, line_number, error)
-    check_spacing(file_extension, clean_lines, line_number, error)
+    check_spacing(file_extension, clean_lines, line_number, file_state, error)
     check_member_initialization_list(clean_lines, line_number, error)
     check_check(clean_lines, line_number, error)
     check_for_comparisons_to_zero(clean_lines, line_number, error)
