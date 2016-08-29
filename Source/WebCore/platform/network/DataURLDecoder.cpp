@@ -115,10 +115,10 @@ static Result parseMediaType(const String& mediaType)
         if (charset.isEmpty())
             charset = ASCIILiteral("US-ASCII");
     }
-    return { mimeType, charset, nullptr };
+    return { mimeType, charset, !mediaType.isEmpty() ? mediaType : "text/plain;charset=US-ASCII", nullptr };
 }
 
-static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler completionHandler)
+static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
 {
     const char dataString[] = "data:";
     const char base64String[] = ";base64";

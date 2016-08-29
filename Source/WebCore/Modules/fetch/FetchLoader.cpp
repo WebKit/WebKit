@@ -77,7 +77,8 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     ThreadableLoaderOptions options(request.fetchOptions(), ConsiderPreflight,
         context.shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective,
         String(cachedResourceRequestInitiators().fetch),
-        OpaqueResponseBodyPolicy::DoNotReceive);
+        OpaqueResponseBodyPolicy::DoNotReceive,
+        SameOriginDataURLFlag::Set);
     options.sendLoadCallbacks = SendCallbacks;
     options.dataBufferingPolicy = DoNotBufferData;
 

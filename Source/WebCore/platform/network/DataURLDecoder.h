@@ -45,6 +45,7 @@ namespace DataURLDecoder {
 struct Result {
     String mimeType;
     String charset;
+    String contentType;
     RefPtr<SharedBuffer> data;
 };
 

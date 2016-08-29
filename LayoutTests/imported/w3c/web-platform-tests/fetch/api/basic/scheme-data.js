@@ -9,6 +9,7 @@ function checkFetchResponse(url, data, mime) {
   promise_test(function(test) {
     return fetch(url).then(function(resp) {
       assert_equals(resp.status, 200, "HTTP status is 200");
+      assert_equals(resp.statusText, "OK", "HTTP statusText is OK");
       assert_equals(resp.type, "basic", "response type is basic");
       assert_equals(resp.headers.get("Content-Type"), mime, "Content-Type is " + resp.headers.get("Content-Type"));
      return resp.text();
