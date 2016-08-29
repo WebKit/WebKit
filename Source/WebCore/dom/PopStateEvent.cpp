@@ -60,6 +60,11 @@ Ref<PopStateEvent> PopStateEvent::createForBindings(const AtomicString& type, co
     return adoptRef(*new PopStateEvent(type, initializer));
 }
 
+Ref<PopStateEvent> PopStateEvent::createForBindings()
+{
+    return adoptRef(*new PopStateEvent);
+}
+
 RefPtr<SerializedScriptValue> PopStateEvent::trySerializeState(JSC::ExecState* exec)
 {
     ASSERT(!m_state.hasNoValue());

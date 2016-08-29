@@ -43,6 +43,7 @@ public:
     virtual ~PopStateEvent();
     static Ref<PopStateEvent> create(RefPtr<SerializedScriptValue>&&, PassRefPtr<History>);
     static Ref<PopStateEvent> createForBindings(const AtomicString&, const PopStateEventInit&);
+    static Ref<PopStateEvent> createForBindings();
 
     JSC::JSValue state() const { return m_state; }
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
@@ -54,6 +55,7 @@ public:
     EventInterface eventInterface() const override;
 
 private:
+    PopStateEvent() = default;
     PopStateEvent(const AtomicString&, const PopStateEventInit&);
     explicit PopStateEvent(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
 

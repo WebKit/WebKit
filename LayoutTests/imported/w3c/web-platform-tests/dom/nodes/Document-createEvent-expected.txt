@@ -135,12 +135,12 @@ FAIL createEvent('pagetransitionevent') should be initialized correctly. undefin
 FAIL PAGETRANSITIONEVENT should be an alias for PageTransitionEvent. The operation is not supported.
 FAIL createEvent('PAGETRANSITIONEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "PageTransitionEvents" 
-FAIL PopStateEvent should be an alias for PopStateEvent. The operation is not supported.
-FAIL createEvent('PopStateEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL popstateevent should be an alias for PopStateEvent. The operation is not supported.
-FAIL createEvent('popstateevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL POPSTATEEVENT should be an alias for PopStateEvent. The operation is not supported.
-FAIL createEvent('POPSTATEEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS PopStateEvent should be an alias for PopStateEvent. 
+PASS createEvent('PopStateEvent') should be initialized correctly. 
+PASS popstateevent should be an alias for PopStateEvent. 
+PASS createEvent('popstateevent') should be initialized correctly. 
+PASS POPSTATEEVENT should be an alias for PopStateEvent. 
+PASS createEvent('POPSTATEEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "PopStateEvents" 
 FAIL ProgressEvent should be an alias for ProgressEvent. The operation is not supported.
 FAIL createEvent('ProgressEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')

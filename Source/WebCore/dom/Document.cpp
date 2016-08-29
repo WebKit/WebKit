@@ -4303,6 +4303,8 @@ RefPtr<Event> Document::createEvent(const String& type, ExceptionCode& ec)
         return MouseEvent::createForBindings();
     if (equalLettersIgnoringASCIICase(type, "uievent") || equalLettersIgnoringASCIICase(type, "uievents"))
         return UIEvent::createForBindings();
+    if (equalLettersIgnoringASCIICase(type, "popstateevent"))
+        return PopStateEvent::createForBindings();
 
 #if ENABLE(TOUCH_EVENTS)
     if (equalLettersIgnoringASCIICase(type, "touchevent"))
