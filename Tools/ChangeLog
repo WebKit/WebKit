@@ -1,3 +1,13 @@
+2016-08-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Attempt to fix Windows build after r205090.
+
+        Unreviewed build fix.
+
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        (cfFileNameWFormat):
+        (cfUrlWFormat):
+
 2016-08-27  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should parse relative URLs

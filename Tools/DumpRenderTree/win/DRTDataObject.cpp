@@ -36,14 +36,14 @@ FORMATETC* cfHDropFormat()
 FORMATETC* cfFileNameWFormat()
 {
     static UINT cf = RegisterClipboardFormat(L"FileNameW");
-    static FORMATETC urlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
+    static FORMATETC urlFormat = {static_cast<CLIPFORMAT>(cf), 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &urlFormat;
 }
 
 FORMATETC* cfUrlWFormat()
 {
     static UINT cf = RegisterClipboardFormat(L"UniformResourceLocatorW");
-    static FORMATETC urlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
+    static FORMATETC urlFormat = {static_cast<CLIPFORMAT>(cf), 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &urlFormat;
 }
 
