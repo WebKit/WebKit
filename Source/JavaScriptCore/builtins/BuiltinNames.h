@@ -36,13 +36,14 @@ namespace JSC {
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
-    macro(iteratedObject) \
     macro(arrayIteratorNextIndex) \
     macro(arrayIterationKind) \
     macro(arrayIteratorNext) \
     macro(arrayIteratorIsDone) \
     macro(arrayIteratorKind) \
     macro(charCodeAt) \
+    macro(isView) \
+    macro(iteratedObject) \
     macro(iteratedString) \
     macro(stringIteratorNextIndex) \
     macro(promise) \
@@ -55,6 +56,7 @@ namespace JSC {
     macro(ownEnumerablePropertyKeys) \
     macro(Number) \
     macro(Array) \
+    macro(ArrayBuffer) \
     macro(String) \
     macro(RegExp) \
     macro(Map) \

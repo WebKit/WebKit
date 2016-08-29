@@ -1,5 +1,15 @@
 2016-08-29  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Response cloning should structureClone when teeing Response stream
+        https://bugs.webkit.org/show_bug.cgi?id=161147
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/response/response-clone-expected.txt:
+        * web-platform-tests/fetch/api/response/response-clone.html:
+
+2016-08-29  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Add support for BufferSource bodies
         https://bugs.webkit.org/show_bug.cgi?id=161087
 

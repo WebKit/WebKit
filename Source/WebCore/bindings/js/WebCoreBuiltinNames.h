@@ -90,6 +90,8 @@ namespace WebCore {
     macro(streamReadable) \
     macro(streamWaiting) \
     macro(streamWritable) \
+    macro(structuredCloneArrayBuffer) \
+    macro(structuredCloneArrayBufferView) \
     macro(underlyingSink) \
     macro(underlyingSource) \
     macro(writing) \

@@ -1513,6 +1513,8 @@
 		413C2C341BC29A8F0075204C /* JSDOMConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 413C2C331BC29A7B0075204C /* JSDOMConstructor.h */; };
 		4147E2B71C89912C00A7E715 /* FetchLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4147E2B41C89912600A7E715 /* FetchLoader.cpp */; };
 		4147E2B81C89912F00A7E715 /* FetchBodyOwner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4147E2B31C89912600A7E715 /* FetchBodyOwner.cpp */; };
+		414B82041D6DF0DF0077EBE3 /* StructuredClone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414B82021D6DF0D90077EBE3 /* StructuredClone.cpp */; };
+		414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B82031D6DF0D90077EBE3 /* StructuredClone.h */; };
 		415071571685067300C3C7B3 /* SelectorFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415071551685067300C3C7B3 /* SelectorFilter.cpp */; };
 		415071581685067300C3C7B3 /* SelectorFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 415071561685067300C3C7B3 /* SelectorFilter.h */; };
 		4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */; };
@@ -8404,6 +8406,8 @@
 		4147E2B41C89912600A7E715 /* FetchLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchLoader.cpp; sourceTree = "<group>"; };
 		4147E2B51C89912600A7E715 /* FetchLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchLoader.h; sourceTree = "<group>"; };
 		4147E2B61C89912600A7E715 /* FetchLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchLoaderClient.h; sourceTree = "<group>"; };
+		414B82021D6DF0D90077EBE3 /* StructuredClone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructuredClone.cpp; sourceTree = "<group>"; };
+		414B82031D6DF0D90077EBE3 /* StructuredClone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructuredClone.h; sourceTree = "<group>"; };
 		415071551685067300C3C7B3 /* SelectorFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorFilter.cpp; sourceTree = "<group>"; };
 		415071561685067300C3C7B3 /* SelectorFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorFilter.h; sourceTree = "<group>"; };
 		4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderThumbElement.h; sourceTree = "<group>"; };
@@ -20970,6 +20974,8 @@
 				1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */,
 				A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */,
 				A75E497410752ACB00C9B896 /* SerializedScriptValue.h */,
+				414B82021D6DF0D90077EBE3 /* StructuredClone.cpp */,
+				414B82031D6DF0D90077EBE3 /* StructuredClone.h */,
 				419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */,
 				BC53D910114310CC000D817E /* WebCoreJSClientData.h */,
 				0F099D0617B968A100FF84B9 /* WebCoreTypedArrayController.cpp */,
@@ -26927,6 +26933,7 @@
 				A5DEBDA416FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h in Headers */,
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
 				5709E8CF1D413D9A003244AC /* WebKitSubtleCrypto.h in Headers */,
+				414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
 				0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */,
 				0709D78F1AE55554004E42F8 /* WebMediaSessionManager.h in Headers */,
@@ -28668,6 +28675,7 @@
 				511EF2C417F0FD3500E4FA16 /* JSIDBFactory.cpp in Sources */,
 				511EF2C517F0FD3500E4FA16 /* JSIDBIndex.cpp in Sources */,
 				5141299B1C6C16740059E714 /* JSIDBIndexCustom.cpp in Sources */,
+				414B82041D6DF0DF0077EBE3 /* StructuredClone.cpp in Sources */,
 				511EF2C617F0FD3500E4FA16 /* JSIDBKeyRange.cpp in Sources */,
 				511EF2C717F0FD3500E4FA16 /* JSIDBObjectStore.cpp in Sources */,
 				511EF2D117F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp in Sources */,

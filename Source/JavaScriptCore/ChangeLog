@@ -1,3 +1,15 @@
+2016-08-29  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Response cloning should structureClone when teeing Response stream
+        https://bugs.webkit.org/show_bug.cgi?id=161147
+
+        Reviewed by Darin Adler.
+
+        * builtins/BuiltinNames.h: Adding ArrayBuffer and isView identifiers.
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation): Adding @isView as private method.
+        * runtime/JSDataView.h: Exporting create method.
+
 2016-08-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve ArithAbs with polymorphic input

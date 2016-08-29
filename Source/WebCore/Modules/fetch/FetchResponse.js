@@ -96,7 +96,7 @@ function clone()
     }
 
     if (this.@body) {
-        var teedReadableStreams = @teeReadableStream(this.@body, false);
+        var teedReadableStreams = @teeReadableStream(this.@body, true);
         this.@body = teedReadableStreams[0];
         cloned.@body = teedReadableStreams[1];
     }

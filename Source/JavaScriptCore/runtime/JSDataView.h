@@ -40,7 +40,7 @@ protected:
     JSDataView(VM&, ConstructionContext&, ArrayBuffer*);
     
 public:
-    static JSDataView* create(
+    JS_EXPORT_PRIVATE static JSDataView* create(
         ExecState*, Structure*, PassRefPtr<ArrayBuffer>, unsigned byteOffset,
         unsigned byteLength);
     

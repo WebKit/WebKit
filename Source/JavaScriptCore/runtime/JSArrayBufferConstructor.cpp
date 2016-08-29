@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSArrayBufferConstructor.h"
 
+#include "BuiltinNames.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
@@ -57,6 +58,7 @@ void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* pr
 
     JSGlobalObject* globalObject = this->globalObject();
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isView, arrayBufferFuncIsView, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().isViewPrivateName(), arrayBufferFuncIsView, DontEnum, 1);
 }
 
 JSArrayBufferConstructor* JSArrayBufferConstructor::create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype, GetterSetter* speciesSymbol)

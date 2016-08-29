@@ -38,8 +38,10 @@
 #include "JSReadableStreamPrivateConstructors.h"
 #include "JSWorkerGlobalScope.h"
 #include "RuntimeEnabledFeatures.h"
+#include "StructuredClone.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
+#include <builtins/BuiltinNames.h>
 
 using namespace JSC;
 
@@ -105,9 +107,14 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().makeThisTypeErrorPrivateName(),
-                JSFunction::create(vm, this, 2, String(), makeThisTypeErrorForBuiltins), DontDelete | ReadOnly),
+            JSFunction::create(vm, this, 2, String(), makeThisTypeErrorForBuiltins), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().makeGetterTypeErrorPrivateName(),
-                JSFunction::create(vm, this, 2, String(), makeGetterTypeErrorForBuiltins), DontDelete | ReadOnly),
+            JSFunction::create(vm, this, 2, String(), makeGetterTypeErrorForBuiltins), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().structuredCloneArrayBufferPrivateName(),
+            JSFunction::create(vm, this, 1, String(), structuredCloneArrayBuffer), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().structuredCloneArrayBufferViewPrivateName(),
+            JSFunction::create(vm, this, 1, String(), structuredCloneArrayBufferView), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(vm.propertyNames->builtinNames().ArrayBufferPrivateName(), getDirect(vm, vm.propertyNames->ArrayBuffer), DontDelete | ReadOnly),
 #if ENABLE(STREAMS_API)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
