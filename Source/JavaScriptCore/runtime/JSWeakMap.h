@@ -72,6 +72,7 @@ private:
 
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
+    static String toStringName(const JSObject*, ExecState*);
 
     WriteBarrier<WeakMapData> m_weakMapData;
 };

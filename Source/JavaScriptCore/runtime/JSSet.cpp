@@ -43,6 +43,11 @@ void JSSet::destroy(JSCell* cell)
     thisObject->JSSet::~JSSet();
 }
 
+String JSSet::toStringName(const JSObject*, ExecState*)
+{
+    return ASCIILiteral("Object");
+}
+
 size_t JSSet::estimatedSize(JSCell* cell)
 {
     JSSet* thisObject = jsCast<JSSet*>(cell);

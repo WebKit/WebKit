@@ -49,4 +49,9 @@ void JSWeakMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObj->m_weakMapData);
 }
 
+String JSWeakMap::toStringName(const JSObject*, ExecState*)
+{
+    return ASCIILiteral("Object");
+}
+
 }

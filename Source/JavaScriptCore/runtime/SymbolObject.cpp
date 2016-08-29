@@ -47,6 +47,11 @@ void SymbolObject::finishCreation(VM& vm, Symbol* symbol)
     setInternalValue(vm, symbol);
 }
 
+String SymbolObject::toStringName(const JSObject*, ExecState*)
+{
+    return ASCIILiteral("Object");
+}
+
 JSValue SymbolObject::defaultValue(const JSObject* object, ExecState*, PreferredPrimitiveType)
 {
     const SymbolObject* symbolObject = jsCast<const SymbolObject*>(object);

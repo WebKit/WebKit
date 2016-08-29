@@ -48,7 +48,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    Symbol* internalValue() const { return asSymbol(JSWrapperObject::internalValue());}
+    Symbol* internalValue() const { return asSymbol(JSWrapperObject::internalValue()); }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -56,6 +56,8 @@ public:
     }
 
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+
+    static String toStringName(const JSObject*, ExecState*);
 
 protected:
     JS_EXPORT_PRIVATE void finishCreation(VM&, Symbol*);

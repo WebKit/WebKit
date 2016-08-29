@@ -308,7 +308,7 @@ String JSObject::className(const JSObject* object)
     return info->className;
 }
 
-String JSObject::toStringName(const JSObject* object)
+String JSObject::toStringName(const JSObject* object, ExecState*)
 {
     const ClassInfo* info = object->classInfo();
     ASSERT(info);

@@ -50,6 +50,11 @@ size_t JSMap::estimatedSize(JSCell* cell)
     return Base::estimatedSize(cell) + mapDataSize;
 }
 
+String JSMap::toStringName(const JSObject*, ExecState*)
+{
+    return ASCIILiteral("Object");
+}
+
 void JSMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);

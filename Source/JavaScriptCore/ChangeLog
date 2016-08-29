@@ -1,3 +1,47 @@
+2016-08-29  Keith Miller  <keith_miller@apple.com>
+
+        Fix toStringName for Proxies and add support for normal instances
+        https://bugs.webkit.org/show_bug.cgi?id=161275
+
+        Reviewed by Saam Barati.
+
+        toStringName on proxies needs to follow the chain of proxies until it finds a non-proxy target.
+        Additionally, there are a couple of other classes that need to return "Object" for their
+        toStringName. Since this isn't tested by test262 I will propose a new test there.
+
+        * runtime/ClassInfo.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::toStringName):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toStringName):
+        * runtime/JSCell.h:
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::toStringName):
+        * runtime/JSMap.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toStringName):
+        * runtime/JSObject.h:
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::destroy):
+        (JSC::JSSet::toStringName):
+        * runtime/JSSet.h:
+        * runtime/JSWeakMap.cpp:
+        (JSC::JSWeakMap::toStringName):
+        * runtime/JSWeakMap.h:
+        * runtime/JSWeakSet.cpp:
+        (JSC::JSWeakSet::toStringName):
+        * runtime/JSWeakSet.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::toStringName):
+        * runtime/ProxyObject.h:
+        * runtime/SymbolObject.cpp:
+        (JSC::SymbolObject::toStringName):
+        * runtime/SymbolObject.h:
+        (JSC::SymbolObject::internalValue):
+
 2016-08-29  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Response cloning should structureClone when teeing Response stream

@@ -75,7 +75,7 @@ private:
     void finishCreation(VM&, ExecState*, JSValue target, JSValue handler);
     static Structure* structureForTarget(JSGlobalObject*, JSValue target);
 
-    static String toStringName(const JSObject*);
+    static String toStringName(const JSObject*, ExecState*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
     static CallType getCallData(JSCell*, CallData&);

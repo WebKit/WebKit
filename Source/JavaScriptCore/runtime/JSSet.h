@@ -120,6 +120,7 @@ private:
     static size_t estimatedSize(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
     static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
+    static String toStringName(const JSObject*, ExecState*);
 
     SetData m_setData;
 };

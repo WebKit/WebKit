@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProxyObject.h"
 
+#include "ArrayConstructor.h"
 #include "Error.h"
 #include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
@@ -49,11 +50,19 @@ ProxyObject::ProxyObject(VM& vm, Structure* structure)
 {
 }
 
-String ProxyObject::toStringName(const JSObject* object)
+String ProxyObject::toStringName(const JSObject* object, ExecState* exec)
 {
-    const JSObject* target = jsCast<const ProxyObject*>(object)->target();
-    if (isJSArray(target))
-        return target->classInfo()->methodTable.className(target);
+    VM& vm = exec->vm();
+    const ProxyObject* proxy = jsCast<const ProxyObject*>(object);
+    while (proxy) {
+        const JSObject* target = proxy->target();
+        if (isArray(exec, target))
+            return target->classInfo()->methodTable.toStringName(target, exec);
+        if (vm.exception())
+            break;
+
+        proxy = jsDynamicCast<const ProxyObject*>(target);
+    }
     return ASCIILiteral("Object");
 }
 

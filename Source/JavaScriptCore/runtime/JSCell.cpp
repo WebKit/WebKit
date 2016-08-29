@@ -222,7 +222,7 @@ String JSCell::className(const JSObject*)
     return String();
 }
 
-String JSCell::toStringName(const JSObject*)
+String JSCell::toStringName(const JSObject*, ExecState*)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return String();

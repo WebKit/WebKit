@@ -91,7 +91,9 @@ struct MethodTable {
 
     typedef String (*ClassNameFunctionPtr)(const JSObject*);
     ClassNameFunctionPtr className;
-    ClassNameFunctionPtr toStringName;
+
+    typedef String (*ToStringNameFunctionPtr)(const JSObject*, ExecState*);
+    ToStringNameFunctionPtr toStringName;
 
     typedef bool (*CustomHasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue);
     CustomHasInstanceFunctionPtr customHasInstance;
