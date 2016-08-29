@@ -100,10 +100,10 @@ public:
     {
     }
     
-    virtual void didPostMessage(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, const WebCore::SecurityOriginData& securityOriginData, WebCore::SerializedScriptValue& serializedScriptValue)
+    void didPostMessage(WebKit::WebPageProxy& page, const WebKit::FrameInfoData& frameInfoData, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
         @autoreleasepool {
-            RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(frame, securityOriginData.securityOrigin()));
+            RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(frameInfoData));
             id body = API::SerializedScriptValue::deserialize(serializedScriptValue, 0);
             auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:body webView:fromWebPageProxy(page) frameInfo:frameInfo.get() name:m_name.get()]);
         

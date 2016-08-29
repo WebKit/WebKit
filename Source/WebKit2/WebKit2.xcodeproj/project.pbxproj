@@ -150,6 +150,8 @@
 		1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */; };
 		1A0F29E3120B44420053D1B9 /* VisitedLinkStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkStore.cpp */; };
 		1A0F29E4120B44420053D1B9 /* VisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29E2120B44420053D1B9 /* VisitedLinkStore.h */; };
+		1A14F8E11D74C834006CBEC6 /* FrameInfoData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A14F8DF1D74C834006CBEC6 /* FrameInfoData.cpp */; };
+		1A14F8E21D74C834006CBEC6 /* FrameInfoData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A14F8E01D74C834006CBEC6 /* FrameInfoData.h */; };
 		1A158419189044F50017616C /* WKProcessPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A158417189044F50017616C /* WKProcessPool.mm */; };
 		1A15841A189044F50017616C /* WKProcessPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A158418189044F50017616C /* WKProcessPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A17977F137EE82C00F97D45 /* PluginCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */; };
@@ -2114,6 +2116,8 @@
 		1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTable.h; sourceTree = "<group>"; };
 		1A0F29E1120B44420053D1B9 /* VisitedLinkStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkStore.cpp; sourceTree = "<group>"; };
 		1A0F29E2120B44420053D1B9 /* VisitedLinkStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkStore.h; sourceTree = "<group>"; };
+		1A14F8DF1D74C834006CBEC6 /* FrameInfoData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameInfoData.cpp; sourceTree = "<group>"; };
+		1A14F8E01D74C834006CBEC6 /* FrameInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameInfoData.h; sourceTree = "<group>"; };
 		1A158417189044F50017616C /* WKProcessPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessPool.mm; sourceTree = "<group>"; };
 		1A158418189044F50017616C /* WKProcessPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessPool.h; sourceTree = "<group>"; };
 		1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
@@ -4512,6 +4516,8 @@
 				BCE81D8A1319F7EF00241910 /* FontInfo.cpp */,
 				BCE81D8B1319F7EF00241910 /* FontInfo.h */,
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
+				1A14F8DF1D74C834006CBEC6 /* FrameInfoData.cpp */,
+				1A14F8E01D74C834006CBEC6 /* FrameInfoData.h */,
 				1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */,
 				F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
@@ -8158,6 +8164,7 @@
 				371A19421824D29300F32A5E /* WKNSDictionary.h in Headers */,
 				372CAF0B1833FD910040AC27 /* WKNSError.h in Headers */,
 				378E1A4A18208CD60031007A /* WKNSString.h in Headers */,
+				1A14F8E21D74C834006CBEC6 /* FrameInfoData.h in Headers */,
 				378E1A4E18208D700031007A /* WKNSURL.h in Headers */,
 				37FC194B18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h in Headers */,
 				37183D57182F4E700080C811 /* WKNSURLExtras.h in Headers */,
@@ -9103,6 +9110,7 @@
 				E47D1E981B0649FB002676A8 /* NetworkCacheData.cpp in Sources */,
 				E42E06141AA75B7000B11699 /* NetworkCacheDataCocoa.mm in Sources */,
 				E489D28D1A0A2DB80078C06A /* NetworkCacheDecoder.cpp in Sources */,
+				1A14F8E11D74C834006CBEC6 /* FrameInfoData.cpp in Sources */,
 				E489D28F1A0A2DB80078C06A /* NetworkCacheEncoder.cpp in Sources */,
 				E413F59F1AC1AF9D00345360 /* NetworkCacheEntry.cpp in Sources */,
 				E4697CCD1B25EB8F001B0A6C /* NetworkCacheFileSystem.cpp in Sources */,

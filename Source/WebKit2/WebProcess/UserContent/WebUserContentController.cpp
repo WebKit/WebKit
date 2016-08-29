@@ -27,6 +27,7 @@
 #include "WebUserContentController.h"
 
 #include "DataReference.h"
+#include "FrameInfoData.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WebCompiledContentExtension.h"
 #include "WebFrame.h"
@@ -241,7 +242,7 @@ private:
         if (!webPage)
             return;
 
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->frameID(), SecurityOriginData::fromFrame(frame), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->info(), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
     }
 
     RefPtr<WebUserContentController> m_controller;

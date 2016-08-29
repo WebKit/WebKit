@@ -1,5 +1,36 @@
 2016-08-29  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of another use of WebProcessProxy::fromConnection
+        https://bugs.webkit.org/show_bug.cgi?id=161331
+
+        Reviewed by Dan Bernstein.
+
+        WebUserContentControllerProxy::didPostMessage uses WebProcessProxy::fromConnection to be able to find a WebFrameProxy from
+        a given frame ID. Since the WebFrameProxy is only used to construct an API::FrameInfo object from, introduce a FrameInfoData object
+        and fill it in on the web process side and send it over to the UI process where an API::FrameInfo object can be created.
+
+        * Shared/FrameInfoData.cpp: Added.
+        (WebKit::FrameInfoData::encode):
+        (WebKit::FrameInfoData::decode):
+        * Shared/FrameInfoData.h: Added.
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::create):
+        (API::FrameInfo::FrameInfo):
+        * UIProcess/API/APIFrameInfo.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::info):
+        * WebProcess/WebPage/WebFrame.h:
+
+2016-08-29  Anders Carlsson  <andersca@apple.com>
+
         Stop using WebProcessProxy::fromConnection in WebPageProxy
         https://bugs.webkit.org/show_bug.cgi?id=161322
 

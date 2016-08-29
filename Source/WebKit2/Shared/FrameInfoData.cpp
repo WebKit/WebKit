@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "FrameInfoData.h"
 
-#include "APIObject.h"
-#include <WebCore/ResourceRequest.h>
-
-namespace WebCore {
-class SecurityOrigin;
-}
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
-class WebFrameProxy;
-struct FrameInfoData;
+
+void FrameInfoData::encode(IPC::Encoder& encoder) const
+{
+    encoder << isMainFrame;
+    encoder << request;
+    encoder << securityOrigin;
+    encoder << frameID;
 }
 
-namespace API {
+bool FrameInfoData::decode(IPC::Decoder& decoder, FrameInfoData& result)
+{
+    if (!decoder.decode(result.isMainFrame))
+        return false;
+    if (!decoder.decode(result.request))
+        return false;
+    if (!decoder.decode(result.securityOrigin))
+        return false;
+    if (!decoder.decode(result.frameID))
+        return false;
 
-class FrameHandle;
-class SecurityOrigin;
+    return true;
+}
 
-class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
-public:
-    static Ref<FrameInfo> create(const WebKit::FrameInfoData&);
-    static Ref<FrameInfo> create(const WebKit::WebFrameProxy&, const WebCore::SecurityOrigin&);
-    virtual ~FrameInfo();
-
-    bool isMainFrame() const { return m_isMainFrame; }
-    const WebCore::ResourceRequest& request() const { return m_request; }
-    SecurityOrigin& securityOrigin() { return m_securityOrigin.get(); }
-    API::FrameHandle& handle() { return m_handle.get(); }
-
-private:
-    FrameInfo(const WebKit::FrameInfoData&);
-
-    bool m_isMainFrame;
-    WebCore::ResourceRequest m_request;
-    Ref<SecurityOrigin> m_securityOrigin;
-    Ref<FrameHandle> m_handle;
-};
-
-} // namespace API
+}

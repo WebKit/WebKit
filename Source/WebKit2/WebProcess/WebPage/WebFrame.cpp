@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "DownloadManager.h"
+#include "FrameInfoData.h"
 #include "InjectedBundleFileHandle.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
@@ -192,6 +193,19 @@ WebFrame* WebFrame::fromCoreFrame(Frame& frame)
         return nullptr;
 
     return webFrameLoaderClient->webFrame();
+}
+
+FrameInfoData WebFrame::info() const
+{
+    FrameInfoData info;
+
+    info.isMainFrame = isMainFrame();
+    // FIXME: This should use the full request.
+    info.request = ResourceRequest(URL(URL(), url()));
+    info.securityOrigin = SecurityOriginData::fromFrame(m_coreFrame);
+    info.frameID = m_frameID;
+    
+    return info;
 }
 
 void WebFrame::invalidate()

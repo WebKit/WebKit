@@ -62,6 +62,7 @@ class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
 class WebPage;
+struct FrameInfoData;
 
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame> {
 public:
@@ -77,6 +78,7 @@ public:
     static WebFrame* fromCoreFrame(WebCore::Frame&);
     WebCore::Frame* coreFrame() const { return m_coreFrame; }
 
+    FrameInfoData info() const;
     uint64_t frameID() const { return m_frameID; }
 
     uint64_t setUpPolicyListener(WebCore::FramePolicyFunction);

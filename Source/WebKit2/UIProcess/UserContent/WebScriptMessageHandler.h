@@ -44,13 +44,14 @@ namespace WebKit {
 
 class WebPageProxy;
 class WebFrameProxy;
+struct FrameInfoData;
 
 class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler> {
 public:
     class Client {
     public:
         virtual ~Client() { }
-        virtual void didPostMessage(WebPageProxy&, WebFrameProxy&, const WebCore::SecurityOriginData&, WebCore::SerializedScriptValue&) = 0;
+        virtual void didPostMessage(WebPageProxy&, const FrameInfoData&, WebCore::SerializedScriptValue&) = 0;
     };
 
     static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name, API::UserContentWorld&);
