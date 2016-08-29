@@ -13,7 +13,7 @@
   <body>
     <script>
     function checkBodyText(request, expectedBody) {
-      return request.text().then( function(bodyAsText) {
+      return request.text().then(function(bodyAsText) {
         assert_equals(bodyAsText, expectedBody, "Retrieve and verify request's body");
         assert_true(request.bodyUsed, "body as text: bodyUsed turned true");
       });
@@ -63,24 +63,64 @@
      });
     }
 
-    function checkRequestBody(body, bodyType, checkFunction) {
+    function checkRequestBody(body, expected, bodyType) {
       promise_test(function(test) {
         var request = new Request("", {"method": "POST", "body": body, "headers": [["Content-Type", "text/PLAIN"]] });
         assert_false(request.bodyUsed, "bodyUsed is false at init");
-        return checkFunction(request, body);
-      }, "Consume request's body as " + bodyType);
+        return checkBodyText(request, expected);
+      }, "Consume " + bodyType  + " request's body as text");
+      promise_test(function(test) {
+        var request = new Request("", {"method": "POST", "body": body });
+        assert_false(request.bodyUsed, "bodyUsed is false at init");
+        return checkBodyBlob(request, expected);
+      }, "Consume " + bodyType  + " request's body as blob");
+      promise_test(function(test) {
+        var request = new Request("", {"method": "POST", "body": body });
+        assert_false(request.bodyUsed, "bodyUsed is false at init");
+        return checkBodyArrayBuffer(request, expected);
+      }, "Consume " + bodyType  + " request's body as arrayBuffer");
+      promise_test(function(test) {
+        var request = new Request("", {"method": "POST", "body": body });
+        assert_false(request.bodyUsed, "bodyUsed is false at init");
+        return checkBodyJSON(request, expected);
+      }, "Consume " + bodyType  + " request's body as JSON");
     }
 
-    var formData = new FormData();
-    formData.append("name", "value")
     var textData = JSON.stringify("This is response's body");
     var blob = new Blob([textData], { "type" : "text/plain" });
 
-    checkRequestBody(textData, "text", checkBodyText);
-    checkRequestBody(textData, "blob", function(request, body) { checkBodyBlob(request, body, true); });
-    checkRequestBody(textData, "arrayBuffer", checkBodyArrayBuffer);
-    checkRequestBody(textData, "json", checkBodyJSON);
-    checkRequestBody(formData, "formData", checkBodyFormData);
+    checkRequestBody(textData, textData, "String");
+
+    var string = "\"123456\"";
+    function getArrayBuffer() {
+        var arrayBuffer = new ArrayBuffer(8);
+        var int8Array = new Int8Array(arrayBuffer);
+        for (var cptr = 0; cptr < 8; cptr++)
+            int8Array[cptr] = string.charCodeAt(cptr);
+        return arrayBuffer;
+    }
+
+    function getArrayBufferWithZeros() {
+        var arrayBuffer = new ArrayBuffer(10);
+        var int8Array = new Int8Array(arrayBuffer);
+        for (var cptr = 0; cptr < 8; cptr++)
+            int8Array[cptr + 1] = string.charCodeAt(cptr);
+        return arrayBuffer;
+    }
+
+    checkRequestBody(getArrayBuffer(), string, "ArrayBuffer");
+    checkRequestBody(new Uint8Array(getArrayBuffer()), string, "Uint8Array");
+    checkRequestBody(new Int8Array(getArrayBufferWithZeros(), 1, 8), string, "Int8Array");
+    checkRequestBody(new Float32Array(getArrayBuffer()), string, "Float32Array");
+    checkRequestBody(new DataView(getArrayBufferWithZeros(), 1, 8), string, "DataView");
+
+    promise_test(function(test) {
+      var formData = new FormData();
+      formData.append("name", "value")
+      var request = new Request("", {"method": "POST", "body": formData });
+      assert_false(request.bodyUsed, "bodyUsed is false at init");
+      return checkBodyFormData(request, formData);
+    }, "Consume FormData request's body as FormData");
 
     function checkBlobResponseBody(blobBody, blobData, bodyType, checkFunction) {
       promise_test(function(test) {

@@ -32,9 +32,9 @@
 #if ENABLE(FETCH_API)
 
 #include "Blob.h"
-#include "DOMFormData.h"
 #include "FetchBodyConsumer.h"
 #include "FetchLoader.h"
+#include "FormData.h"
 #include "JSDOMPromise.h"
 
 namespace JSC {
@@ -44,10 +44,11 @@ class JSValue;
 
 namespace WebCore {
 
+class DOMFormData;
 class FetchBodyOwner;
 class FetchHeaders;
 class FetchResponseSource;
-class FormData;
+class ScriptExecutionContext;
 
 class FetchBody {
 public:
@@ -67,7 +68,7 @@ public:
     void setContentType(const String& contentType) { m_contentType = contentType; }
     String contentType() const { return m_contentType; }
 
-    static FetchBody extract(JSC::ExecState&, JSC::JSValue);
+    static FetchBody extract(ScriptExecutionContext&, JSC::ExecState&, JSC::JSValue);
     static FetchBody extractFromBody(FetchBody*);
     static FetchBody loadingBody() { return { Type::Loading }; }
     FetchBody() = default;
@@ -75,9 +76,9 @@ public:
     void loadingFailed();
     void loadingSucceeded();
 
-    RefPtr<FormData> bodyForInternalRequest() const;
+    RefPtr<FormData> bodyForInternalRequest(ScriptExecutionContext&) const;
 
-    enum class Type { None, ArrayBuffer, Blob, FormData, Text, Loading, Loaded, ReadableStream };
+    enum class Type { None, ArrayBuffer, ArrayBufferView, Blob, FormData, Text, Loading, Loaded, ReadableStream };
     Type type() const { return m_type; }
 
     FetchBodyConsumer& consumer() { return m_consumer; }
@@ -86,7 +87,9 @@ public:
 
 private:
     FetchBody(Ref<Blob>&&);
-    FetchBody(Ref<DOMFormData>&&);
+    FetchBody(Ref<ArrayBuffer>&&);
+    FetchBody(Ref<ArrayBufferView>&&);
+    FetchBody(DOMFormData&, Document&);
     FetchBody(String&&);
     FetchBody(Type type) : m_type(type) { }
 
@@ -94,16 +97,18 @@ private:
 
     Vector<uint8_t> extractFromText() const;
     void consumeArrayBuffer(DeferredWrapper&);
+    void consumeArrayBufferView(DeferredWrapper&);
     void consumeText(DeferredWrapper&);
     void consumeBlob(FetchBodyOwner&, DeferredWrapper&&);
 
     Type m_type { Type::None };
     String m_contentType;
 
-    // FIXME: Add support for BufferSource and URLSearchParams.
+    // FIXME: Add support for URLSearchParams.
     RefPtr<Blob> m_blob;
-    RefPtr<DOMFormData> m_formData;
+    RefPtr<FormData> m_formData;
     RefPtr<ArrayBuffer> m_data;
+    RefPtr<ArrayBufferView> m_dataView;
     String m_text;
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };

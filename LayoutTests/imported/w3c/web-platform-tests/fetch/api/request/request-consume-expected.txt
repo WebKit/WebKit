@@ -1,9 +1,29 @@
 
-PASS Consume request's body as text 
-PASS Consume request's body as blob 
-PASS Consume request's body as arrayBuffer 
-PASS Consume request's body as json 
-FAIL Consume request's body as formData promise_test: Unhandled rejection with value: undefined
+PASS Consume String request's body as text 
+PASS Consume String request's body as blob 
+PASS Consume String request's body as arrayBuffer 
+PASS Consume String request's body as JSON 
+PASS Consume ArrayBuffer request's body as text 
+PASS Consume ArrayBuffer request's body as blob 
+PASS Consume ArrayBuffer request's body as arrayBuffer 
+PASS Consume ArrayBuffer request's body as JSON 
+PASS Consume Uint8Array request's body as text 
+PASS Consume Uint8Array request's body as blob 
+PASS Consume Uint8Array request's body as arrayBuffer 
+PASS Consume Uint8Array request's body as JSON 
+PASS Consume Int8Array request's body as text 
+PASS Consume Int8Array request's body as blob 
+PASS Consume Int8Array request's body as arrayBuffer 
+PASS Consume Int8Array request's body as JSON 
+PASS Consume Float32Array request's body as text 
+PASS Consume Float32Array request's body as blob 
+PASS Consume Float32Array request's body as arrayBuffer 
+PASS Consume Float32Array request's body as JSON 
+PASS Consume DataView request's body as text 
+PASS Consume DataView request's body as blob 
+PASS Consume DataView request's body as arrayBuffer 
+PASS Consume DataView request's body as JSON 
+FAIL Consume FormData request's body as FormData promise_test: Unhandled rejection with value: undefined
 PASS Consume blob response's body as blob 
 PASS Consume blob response's body as text 
 PASS Consume blob response's body as json 

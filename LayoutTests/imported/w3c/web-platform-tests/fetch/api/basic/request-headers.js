@@ -11,7 +11,7 @@ function checkContentType(contentType, body)
     }
 
     var expectedContentType = "text/plain;charset=UTF-8";
-    if(body === null || body instanceof ArrayBuffer)
+    if(body === null || body instanceof ArrayBuffer || body.buffer instanceof ArrayBuffer)
         expectedContentType = null;
     else if (body instanceof Blob)
         expectedContentType = body.type ? body.type : null;
@@ -28,12 +28,12 @@ function requestHeaders(desc, url, method, body, expectedOrigin, expectedContent
     return fetch(url + urlParameters, requestInit).then(function(resp) {
       assert_equals(resp.status, 200, "HTTP status is 200");
       assert_equals(resp.type , "basic", "Response's type is basic");
-      checkContentType(resp.headers.get("x-request-content-type"), body);
-      if (expectedContentLength !== undefined)
-        assert_equals(resp.headers.get("x-request-content-length") , expectedContentLength, "Request should have header content-length: " + expectedContentLength);
       assert_true(resp.headers.has("x-request-user-agent"), "Request has header user-agent");
       assert_false(resp.headers.has("accept-charset"), "Request has header accept-charset");
       assert_equals(resp.headers.get("x-request-origin") , expectedOrigin, "Request should have header origin: " + expectedOrigin);
+      if (expectedContentLength !== undefined)
+        assert_equals(resp.headers.get("x-request-content-length") , expectedContentLength, "Request should have header content-length: " + expectedContentLength);
+      checkContentType(resp.headers.get("x-request-content-type"), body);
     });
   }, desc);
 }
@@ -50,6 +50,11 @@ if (self.FormData)
     requestHeaders("Fetch with POST with FormData body", url, "POST", new FormData(), location.origin);
 requestHeaders("Fetch with POST with Blob body", url, "POST", new Blob(["Test"]), location.origin, "4");
 requestHeaders("Fetch with POST with ArrayBuffer body", url, "POST", new ArrayBuffer(4), location.origin, "4");
+requestHeaders("Fetch with POST with Uint8Array body", url, "POST", new Uint8Array(4), location.origin, "4");
+requestHeaders("Fetch with POST with Int8Array body", url, "POST", new Int8Array(4), location.origin, "4");
+requestHeaders("Fetch with POST with Float32Array body", url, "POST", new Float32Array(1), location.origin, "4");
+requestHeaders("Fetch with POST with Float64Array body", url, "POST", new Float64Array(1), location.origin, "8");
+requestHeaders("Fetch with POST with DataView body", url, "POST", new DataView(new ArrayBuffer(8), 0, 4), location.origin, "4");
 requestHeaders("Fetch with POST with Blob body with mime type", url, "POST", new Blob(["Test"], { type: "text/maybe" }), location.origin, "4");
 requestHeaders("Fetch with Chicken", url, "Chicken", null, location.origin, null);
 requestHeaders("Fetch with Chicken with body", url, "Chicken", "Request's body", location.origin, "14");

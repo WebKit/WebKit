@@ -257,7 +257,8 @@ FetchHeaders* FetchRequest::initializeWith(FetchRequest& input, const Dictionary
 void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRequest* request, ExceptionCode& ec)
 {
     if (!body.isNull()) {
-        m_body = FetchBody::extract(execState, body);
+        ASSERT(scriptExecutionContext());
+        m_body = FetchBody::extract(*scriptExecutionContext(), execState, body);
         if (m_body.type() == FetchBody::Type::None) {
             ec = TypeError;
             return;
@@ -292,9 +293,11 @@ const String& FetchRequest::url() const
 
 ResourceRequest FetchRequest::internalRequest() const
 {
+    ASSERT(scriptExecutionContext());
+
     ResourceRequest request = m_internalRequest.request;
     request.setHTTPHeaderFields(m_headers->internalHeaders());
-    request.setHTTPBody(body().bodyForInternalRequest());
+    request.setHTTPBody(body().bodyForInternalRequest(*scriptExecutionContext()));
 
     // FIXME: Support no-referrer and client. Ensure this case-sensitive comparison is ok.
     if (m_internalRequest.referrer != "no-referrer" && m_internalRequest.referrer != "client")

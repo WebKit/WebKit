@@ -42,6 +42,7 @@
 #include "JSDOMFormData.h"
 #include "JSReadableStream.h"
 #include "ReadableStreamSource.h"
+#include <runtime/ArrayBufferView.h>
 
 namespace WebCore {
 
@@ -52,12 +53,12 @@ FetchBody::FetchBody(Ref<Blob>&& blob)
 {
 }
 
-FetchBody::FetchBody(Ref<DOMFormData>&& formData)
+FetchBody::FetchBody(DOMFormData& formData, Document& document)
     : m_type(Type::FormData)
     , m_contentType(ASCIILiteral("multipart/form-data"))
-    , m_formData(WTFMove(formData))
 {
-    // FIXME: Handle the boundary parameter of multipart/form-data MIME type.
+    m_formData = FormData::createMultiPart(formData, formData.encoding(), &document);
+    m_contentType = makeString("multipart/form-data;boundary=", m_formData->boundary().data());
 }
 
 FetchBody::FetchBody(String&& text)
@@ -67,17 +68,40 @@ FetchBody::FetchBody(String&& text)
 {
 }
 
-FetchBody FetchBody::extract(JSC::ExecState& state, JSC::JSValue value)
+FetchBody::FetchBody(Ref<ArrayBuffer>&& data)
+    : m_type(Type::ArrayBuffer)
+    , m_data(WTFMove(data))
+{
+}
+
+FetchBody::FetchBody(Ref<ArrayBufferView>&& dataView)
+    : m_type(Type::ArrayBufferView)
+    , m_dataView(WTFMove(dataView))
+{
+}
+
+FetchBody FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& state, JSC::JSValue value)
 {
     if (value.inherits(JSBlob::info()))
         return FetchBody(*JSBlob::toWrapped(value));
-    if (value.inherits(JSDOMFormData::info()))
-        return FetchBody(*JSDOMFormData::toWrapped(value));
+    if (value.inherits(JSDOMFormData::info())) {
+        ASSERT(!context.isWorkerGlobalScope());
+        return FetchBody(*JSDOMFormData::toWrapped(value), static_cast<Document&>(context));
+    }
     if (value.isString())
         return FetchBody(value.toWTFString(&state));
     if (value.inherits(JSReadableStream::info()))
         return { Type::ReadableStream };
-    // FIXME: Implement BufferSource extraction.
+    if (value.inherits(JSC::JSArrayBuffer::info())) {
+        ArrayBuffer* data = toArrayBuffer(value);
+        ASSERT(data);
+        return { *data };
+    }
+    if (value.inherits(JSC::JSArrayBufferView::info())) {
+        RefPtr<JSC::ArrayBufferView> data = toArrayBufferView(value);
+        ASSERT(data);
+        return { data.releaseNonNull() };
+    }
     return { };
 }
 
@@ -150,6 +174,9 @@ void FetchBody::consume(FetchBodyOwner& owner, DeferredWrapper&& promise)
     case Type::ArrayBuffer:
         consumeArrayBuffer(promise);
         return;
+    case Type::ArrayBufferView:
+        consumeArrayBufferView(promise);
+        return;
     case Type::Text:
         consumeText(promise);
         return;
@@ -162,9 +189,12 @@ void FetchBody::consume(FetchBodyOwner& owner, DeferredWrapper&& promise)
     case Type::Loaded:
         m_consumer.resolve(promise);
         return;
-    default:
-        // FIXME: Support other types.
+    case Type::FormData:
+        // FIXME: Support consuming FormData.
         promise.reject(0);
+        return;
+    default:
+        ASSERT_NOT_REACHED();
     }
 }
 
@@ -180,16 +210,25 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
     switch (m_type) {
     case Type::ArrayBuffer:
         ASSERT(m_data);
-        closeStream = source.enqueue(RefPtr<JSC::ArrayBuffer>(m_data));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(m_data->data(), m_data->byteLength()));
+        m_data = nullptr;
         break;
+    case Type::ArrayBufferView: {
+        ASSERT(m_dataView);
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(m_dataView->baseAddress(), m_dataView->byteLength()));
+        m_dataView = nullptr;
+        break;
+    }
     case Type::Text: {
         Vector<uint8_t> data = extractFromText();
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        m_text = { };
         break;
     }
     case Type::Blob:
         ASSERT(m_blob);
         owner.loadBlob(*m_blob, nullptr);
+        m_blob = nullptr;
         break;
     case Type::None:
         closeStream = true;
@@ -209,13 +248,23 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
 
 void FetchBody::consumeArrayBuffer(DeferredWrapper& promise)
 {
+    ASSERT(m_data);
     m_consumer.resolveWithData(promise, static_cast<const uint8_t*>(m_data->data()), m_data->byteLength());
+    m_data = nullptr;
+}
+
+void FetchBody::consumeArrayBufferView(DeferredWrapper& promise)
+{
+    ASSERT(m_dataView);
+    m_consumer.resolveWithData(promise, static_cast<const uint8_t*>(m_dataView->baseAddress()), m_dataView->byteLength());
+    m_dataView = nullptr;
 }
 
 void FetchBody::consumeText(DeferredWrapper& promise)
 {
     Vector<uint8_t> data = extractFromText();
     m_consumer.resolveWithData(promise, data.data(), data.size());
+    m_text = { };
 }
 
 void FetchBody::consumeBlob(FetchBodyOwner& owner, DeferredWrapper&& promise)
@@ -224,6 +273,7 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, DeferredWrapper&& promise)
 
     m_consumePromise = WTFMove(promise);
     owner.loadBlob(*m_blob, &m_consumer);
+    m_blob = nullptr;
 }
 
 Vector<uint8_t> FetchBody::extractFromText() const
@@ -253,19 +303,36 @@ void FetchBody::loadingSucceeded()
     }
 }
 
-RefPtr<FormData> FetchBody::bodyForInternalRequest() const
+RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& context) const
 {
-    if (m_type == Type::None)
+    switch (m_type) {
+    case Type::None:
         return nullptr;
-    if (m_type == Type::Text)
+    case Type::Text:
         return FormData::create(UTF8Encoding().encode(m_text, EntitiesForUnencodables));
-    if (m_type == Type::Blob) {
+    case Type::Blob: {
+        ASSERT(m_blob);
         RefPtr<FormData> body = FormData::create();
         body->appendBlob(m_blob->url());
         return body;
     }
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    case Type::ArrayBuffer:
+        ASSERT(m_data);
+        return FormData::create(m_data->data(), m_data->byteLength());
+    case Type::ArrayBufferView:
+        ASSERT(m_dataView);
+        return FormData::create(m_dataView->baseAddress(), m_dataView->byteLength());
+    case Type::FormData: {
+        ASSERT(m_formData);
+        ASSERT(!context.isWorkerGlobalScope());
+        auto body = m_formData;
+        body->generateFiles(static_cast<Document*>(&context));
+        return body;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 }
 
 }

@@ -82,7 +82,8 @@ void FetchResponse::setStatus(int status, const String& statusText, ExceptionCod
 
 void FetchResponse::initializeWith(JSC::ExecState& execState, JSC::JSValue body)
 {
-    m_body = FetchBody::extract(execState, body);
+    ASSERT(scriptExecutionContext());
+    m_body = FetchBody::extract(*scriptExecutionContext(), execState, body);
     m_body.updateContentType(m_headers);
 }
 
@@ -104,11 +105,6 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
 {
     auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
-    // FIXME: Implement form data upload.
-    if (request.bodyType() == FetchBody::Type::FormData) {
-        promise.reject(TypeError, "Uploading FormData is not yet implemented");
-        return;
-    }
     // Setting pending activity until BodyLoader didFail or didSucceed callback is called.
     response->setPendingActivity(response.ptr());
 
