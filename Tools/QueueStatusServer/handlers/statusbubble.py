@@ -132,7 +132,7 @@ class StatusBubble(webapp.RequestHandler):
                 statuses))
             if not latest_resultative_status:
                 bubble["state"] = "started"
-                bubble["details_message"] = (statuses[0].bot_id + ", recent messages:\n\n"
+                bubble["details_message"] = ("Recent messages:\n\n"
                     + "\n".join([status.message for status in statuses]) + "\n\n" + self._iso_time(statuses[0].date))
             elif statuses[0].message == "Pass":
                 bubble["state"] = "pass"

@@ -1,3 +1,14 @@
+2016-08-29  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should indicate which bot processed the patch
+        https://bugs.webkit.org/show_bug.cgi?id=161222
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._build_bubble): Remove the bot id from bubbles as it is confusing.
+        bot ids are now displayed in patch status page.
+
 2016-08-29  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should parse about:blank
