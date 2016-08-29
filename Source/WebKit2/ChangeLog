@@ -1,3 +1,19 @@
+2016-08-26  Anders Carlsson  <andersca@apple.com>
+
+        Remove sync message sending from secondary threads
+        https://bugs.webkit.org/show_bug.cgi?id=161277
+
+        Reviewed by Sam Weinig.
+
+        This codepath hasn't been used for some time, and removing it will make it easier to make IPC::Connection backed by libxpc.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::processIncomingSyncReply):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::sendSyncMessageFromSecondaryThread): Deleted.
+        * Platform/IPC/Connection.h:
+
 2016-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Accelerated compositing does not work in Wayland

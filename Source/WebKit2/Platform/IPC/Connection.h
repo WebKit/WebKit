@@ -172,7 +172,6 @@ public:
     std::unique_ptr<Encoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
     bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption> sendOptions);
     std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions);
-    std::unique_ptr<Decoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout);
     bool sendSyncReply(std::unique_ptr<Encoder>);
 
     void wakeUpRunLoop();
@@ -305,10 +304,6 @@ private:
     Lock m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
     Vector<PendingSyncReply> m_pendingSyncReplies;
-
-    class SecondaryThreadPendingSyncReply;
-    typedef HashMap<uint64_t, SecondaryThreadPendingSyncReply*> SecondaryThreadPendingSyncReplyMap;
-    SecondaryThreadPendingSyncReplyMap m_secondaryThreadPendingSyncReplyMap;
 
     Lock m_incomingSyncMessageCallbackMutex;
     HashMap<uint64_t, std::function<void ()>> m_incomingSyncMessageCallbacks;
