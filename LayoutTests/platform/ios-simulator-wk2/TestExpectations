@@ -1859,6 +1859,7 @@ webkit.org/b/159427 http/tests/loading/basic-credentials-sent-automatically.html
 webkit.org/b/160368 [ Release ] http/tests/xmlhttprequest/workers/methods-async.html [ Pass Timeout ]
 
 webkit.org/b/160367 media/track/media-element-enqueue-event-crash.html [ Pass Crash ]
+webkit.org/b/161323 media/track/text-track-cue-is-reachable.html [ Pass Crash ]
 webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Failure ]
 webkit.org/b/160367 media/track/track-remove-crash.html [ Skip ]
 
