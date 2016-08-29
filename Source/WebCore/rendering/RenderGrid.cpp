@@ -440,7 +440,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     updateLogicalWidth();
     bool logicalHeightWasIndefinite = !computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt);
 
-    placeItemsOnGrid();
+    placeItemsOnGrid(TrackSizing);
 
     GridSizingData sizingData(gridColumnCount(), gridRowCount());
 
@@ -581,7 +581,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 {
     bool wasPopulated = !m_gridIsDirty;
     if (!wasPopulated)
-        const_cast<RenderGrid*>(this)->placeItemsOnGrid();
+        const_cast<RenderGrid*>(this)->placeItemsOnGrid(IntrinsicSizeComputation);
 
     GridSizingData sizingData(gridColumnCount(), gridRowCount());
     sizingData.setFreeSpaceForDirection(ForColumns, Nullopt);
@@ -1412,7 +1412,7 @@ void RenderGrid::insertItemIntoGrid(RenderBox& child, const GridArea& area)
     }
 }
 
-unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direction) const
+unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direction, SizingOperation sizingOperation) const
 {
     bool isRowAxis = direction == ForColumns;
     const auto& autoRepeatTracks = isRowAxis ? style().gridAutoRepeatColumns() : style().gridAutoRepeatRows();
@@ -1421,19 +1421,18 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
     if (!autoRepeatTrackListLength)
         return 0;
 
-    Optional<LayoutUnit> availableSize = isRowAxis ? availableLogicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt);
-    if (!isRowAxis || containingBlock()) {
+    Optional<LayoutUnit> availableSize;
+    if (isRowAxis) {
+        if (sizingOperation != IntrinsicSizeComputation)
+            availableSize =  availableLogicalWidth();
+    } else {
+        availableSize = computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), LayoutUnit(-1));
         if (!availableSize) {
-            const Length& maxLength = isRowAxis ? style().logicalMaxWidth() : style().logicalMaxHeight();
-            if (!maxLength.isUndefined()) {
-                availableSize = isRowAxis
-                    ? computeLogicalWidthInRegionUsing(MaxSize, maxLength, containingBlockLogicalWidthForContent(), *containingBlock(), nullptr)
-                    : computeContentLogicalHeight(MaxSize, maxLength, Nullopt);
-            }
+            const Length& maxLength = style().logicalMaxHeight();
+            if (!maxLength.isUndefined())
+                availableSize = computeContentLogicalHeight(MaxSize, maxLength, LayoutUnit(-1));
         } else {
-            availableSize = isRowAxis
-                ? constrainLogicalWidthInRegionByMinMax(availableSize.value(), availableLogicalWidth(), *containingBlock())
-                : constrainLogicalHeightByMinMax(availableSize.value(), Nullopt);
+            availableSize = constrainLogicalHeightByMinMax(availableSize.value(), LayoutUnit(-1));
         }
     }
 
@@ -1520,13 +1519,13 @@ std::unique_ptr<RenderGrid::OrderedTrackIndexSet> RenderGrid::computeEmptyTracks
     return emptyTrackIndexes;
 }
 
-void RenderGrid::placeItemsOnGrid()
+void RenderGrid::placeItemsOnGrid(SizingOperation sizingOperation)
 {
     ASSERT(m_gridIsDirty);
     ASSERT(m_gridItemArea.isEmpty());
 
-    m_autoRepeatColumns = computeAutoRepeatTracksCount(ForColumns);
-    m_autoRepeatRows = computeAutoRepeatTracksCount(ForRows);
+    m_autoRepeatColumns = computeAutoRepeatTracksCount(ForColumns, sizingOperation);
+    m_autoRepeatRows = computeAutoRepeatTracksCount(ForRows, sizingOperation);
 
     populateExplicitGridAndOrderIterator();
     m_gridIsDirty = false;

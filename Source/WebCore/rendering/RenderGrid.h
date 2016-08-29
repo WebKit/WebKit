@@ -82,7 +82,7 @@ private:
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
     void insertItemIntoGrid(RenderBox&, const GridArea&);
 
-    unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection) const;
+    unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, SizingOperation) const;
 
     typedef ListHashSet<size_t> OrderedTrackIndexSet;
     std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(GridTrackSizingDirection) const;
@@ -90,7 +90,7 @@ private:
     bool hasAutoRepeatEmptyTracks(GridTrackSizingDirection) const;
     bool isEmptyAutoRepeatTrack(GridTrackSizingDirection, unsigned track) const;
 
-    void placeItemsOnGrid();
+    void placeItemsOnGrid(SizingOperation);
     void populateExplicitGridAndOrderIterator();
     std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);

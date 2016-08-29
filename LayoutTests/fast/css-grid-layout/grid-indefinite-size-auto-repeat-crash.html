@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<link href="resources/grid.css" rel="stylesheet">
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel=stylesheet>
+<link href="../css-intrinsic-dimensions/resources/height-keyword-classes.css" rel=stylesheet>
+<style>
+.autoFill { grid: repeat(auto-fill, 100px) / repeat(auto-fill, 100px); }
+.autoFit { grid: repeat(auto-fit, 100px) / repeat(auto-fit, 100px); }
+</style>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+
+<div class="grid autoFill"></div>
+<div class="grid autoFit"></div>
+
+<div class="grid autoFill min-content"></div>
+<div class="grid autoFit min-content"></div>
+
+<div class="grid autoFill max-content"></div>
+<div class="grid autoFit max-content"></div>
+
+<div class="grid autoFill min-width-min-content min-height-min-content"></div>
+<div class="grid autoFit min-width-min-content min-height-min-content"></div>
+
+<div class="grid autoFill min-width-max-content min-height-max-content"></div>
+<div class="grid autoFit min-width-max-content min-height-max-content"></div>
+
+<div class="grid autoFill">item</div>
+<div class="grid autoFit">item</div>
+
+<div class="grid autoFill min-content">item</div>
+<div class="grid autoFit min-content">item</div>
+
+<div class="grid autoFill max-content">item</div>
+<div class="grid autoFit max-content">item</div>
+
+<div class="grid autoFill min-width-min-content min-height-min-content">item</div>
+<div class="grid autoFit min-width-min-content min-height-min-content">item</div>
+
+<div class="grid autoFill min-width-max-content min-height-max-content">item</div>
+<div class="grid autoFit min-width-max-content min-height-max-content">item</div>
+
+<p>This test checks that the computation of auto repeat tracks works when the grid container width is indefinite.</p>
+<p>This test has PASSED if it didn't CRASH.</p>

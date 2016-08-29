@@ -1,3 +1,19 @@
+2016-08-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Do not recursively call layout during auto repeat computation
+        https://bugs.webkit.org/show_bug.cgi?id=161234
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Added a new test case and fixed a few tests inside the imported
+        grid-repeat-auto-fill-fit-001.html which were wrong due to a bug in Firefox. The intrinsic
+        size computation was not considering the existence of definite minimum sizes for some of the
+        grids so the outcome was narrower than expected.
+
+        * fast/css-grid-layout/grid-indefinite-size-auto-repeat-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-indefinite-size-auto-repeat-crash.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-001-expected.html:
+
 2016-08-25  Frederic Wang  <fwang@igalia.com>
 
         Add support for non-BMP operators U+1EEF0 and U+1EEF1
