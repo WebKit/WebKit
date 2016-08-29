@@ -54,6 +54,7 @@ namespace WebCore {
     macro(getTracks) \
     macro(initializeWith) \
     macro(isDisturbed) \
+    macro(isLoading) \
     macro(localStreams) \
     macro(makeThisTypeError) \
     macro(makeGetterTypeError) \

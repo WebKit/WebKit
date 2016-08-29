@@ -1,3 +1,13 @@
+2016-08-28  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Ensure response cloning works when data is loading
+        https://bugs.webkit.org/show_bug.cgi?id=161137
+
+        Reviewed by Darin Adler.
+
+        * http/tests/fetch/clone-response-body-expected.txt: Added.
+        * http/tests/fetch/clone-response-body.html: Added.
+
 2016-08-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update iOS simulator WK1 flaky tests.

@@ -85,6 +85,7 @@ public:
     void consumeBodyAsStream();
     void cancel();
 #endif
+    bool isLoading() const { return body().type() == FetchBody::Type::Loading; }
 
 private:
     FetchResponse(ScriptExecutionContext&, FetchBody&&, Ref<FetchHeaders>&&, ResourceResponse&&);

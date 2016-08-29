@@ -343,7 +343,7 @@ function readFromReadableStreamDefaultReader(reader)
     @assert(!!stream);
 
     // Native sources may want to start enqueueing at the time of the first read request.
-    if (!stream.@disturbed && stream.@underlyingSource.@firstReadCallback)
+    if (!stream.@disturbed && stream.@state === @streamReadable && stream.@underlyingSource.@firstReadCallback)
         stream.@underlyingSource.@firstReadCallback();
 
     stream.@disturbed = true;

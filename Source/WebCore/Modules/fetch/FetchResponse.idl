@@ -70,6 +70,7 @@ interface FetchResponse {
     [Conditional=STREAMS_API, PrivateIdentifier] Promise finishConsumingStream();
 
     [PrivateIdentifier] Promise consume(unsigned short type);
+    [PrivateIdentifier] boolean isLoading();
     [PrivateIdentifier, RaisesException] void setStatus(unsigned short status, DOMString statusText);
     [CallWith=ScriptState, PrivateIdentifier] void initializeWith(any body);
     [PrivateIdentifier, NewObject] ReadableStreamSource createReadableStreamSource();

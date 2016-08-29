@@ -127,13 +127,16 @@ const String& FetchResponse::url() const
 void FetchResponse::BodyLoader::didSucceed()
 {
     ASSERT(m_response.hasPendingActivity());
+    m_response.m_body.loadingSucceeded();
+
 #if ENABLE(STREAMS_API)
-    if (m_response.m_readableStreamSource) {
+    if (m_response.m_readableStreamSource && m_response.m_body.type() != FetchBody::Type::Loaded) {
+        // We only close the stream if FetchBody already enqueued data.
+        // Otherwise, FetchBody will close the stream when enqueuing data.
         m_response.m_readableStreamSource->close();
         m_response.m_readableStreamSource = nullptr;
     }
 #endif
-    m_response.m_body.loadingSucceeded();
 
     if (m_loader->isStarted())
         m_response.m_bodyLoader = Nullopt;
