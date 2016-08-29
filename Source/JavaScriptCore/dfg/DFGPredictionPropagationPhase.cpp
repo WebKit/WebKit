@@ -330,12 +330,12 @@ private:
         }
 
         case ArithAbs: {
-            SpeculatedType child = node->child1()->prediction();
-            if (isInt32OrBooleanSpeculationForArithmetic(child)
+            SpeculatedType childPrediction = node->child1()->prediction();
+            if (isInt32OrBooleanSpeculation(childPrediction)
                 && node->canSpeculateInt32(m_pass))
                 changed |= mergePrediction(SpecInt32Only);
             else
-                changed |= mergePrediction(speculatedDoubleTypeForPrediction(child));
+                changed |= mergePrediction(SpecBytecodeDouble);
             break;
         }
 

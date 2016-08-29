@@ -146,7 +146,7 @@ function testSideEffect() {
 testSideEffect();
 
 
-// Verify SQRT is not subject to CSE if the argument has side effects.
+// Verify cos() is not subject to CSE if the argument has side effects.
 function opaqueCosForCSE(argument) {
     return Math.cos(argument) + Math.cos(argument) + Math.cos(argument);
 }
@@ -170,6 +170,29 @@ function testCSE() {
         throw "opaqueCosForCSE() is predictable, it should only be compiled once.";
 }
 testCSE();
+
+
+// Verify cos() is not subject to DCE if the argument has side effects.
+function opaqueCosForDCE(argument) {
+    Math.cos(argument);
+}
+noInline(opaqueCosForDCE);
+noOSRExitFuzzing(opaqueCosForDCE);
+
+function testDCE() {
+    let testObject = {
+        counter: 0,
+        valueOf: function() { ++this.counter; return 16; }
+    };
+    for (let i = 0; i < 1e4; ++i) {
+        opaqueCosForDCE(testObject);
+    }
+    if (testObject.counter !== 1e4)
+        throw "Failed testDCE()";
+    if (numberOfDFGCompiles(opaqueCosForDCE) > 1)
+        throw "opaqueCosForDCE() is predictable, it should only be compiled once.";
+}
+testDCE();
 
 
 // Test exceptions in the argument.

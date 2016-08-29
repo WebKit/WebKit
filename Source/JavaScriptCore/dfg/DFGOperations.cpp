@@ -322,6 +322,18 @@ EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue e
     return JSValue::encode(jsNumber(a / b));
 }
 
+double JIT_OPERATION operationArithAbs(ExecState* exec, EncodedJSValue encodedOp1)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    double a = op1.toNumber(exec);
+    if (UNLIKELY(vm->exception()))
+        return JSValue::encode(JSValue());
+    return fabs(a);
+}
+
 double JIT_OPERATION operationArithCos(ExecState* exec, EncodedJSValue encodedOp1)
 {
     VM* vm = &exec->vm();

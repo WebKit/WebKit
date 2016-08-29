@@ -149,7 +149,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case ArithIMul:
-    case ArithAbs:
     case ArithClz32:
     case ArithMin:
     case ArithMax:
@@ -191,6 +190,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithSin:
     case ArithSqrt:
         if (node->child1().useKind() == DoubleRepUse)
+            def(PureValue(node));
+        else {
+            read(World);
+            write(Heap);
+        }
+        return;
+
+    case ArithAbs:
+        if (node->child1().useKind() == Int32Use || node->child1().useKind() == DoubleRepUse)
             def(PureValue(node));
         else {
             read(World);

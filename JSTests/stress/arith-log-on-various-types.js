@@ -149,7 +149,7 @@ function testSideEffect() {
 testSideEffect();
 
 
-// Verify SQRT is not subject to CSE if the argument has side effects.
+// Verify log() is not subject to CSE if the argument has side effects.
 function opaqueLogForCSE(argument) {
     return Math.log(argument) + Math.log(argument) + Math.log(argument);
 }
@@ -173,6 +173,29 @@ function testCSE() {
         throw "opaqueLogForCSE() is predictable, it should only be compiled once.";
 }
 testCSE();
+
+
+// Verify log() is not subject to DCE if the argument has side effects.
+function opaqueLogForDCE(argument) {
+    Math.log(argument);
+}
+noInline(opaqueLogForDCE);
+noOSRExitFuzzing(opaqueLogForDCE);
+
+function testDCE() {
+    let testObject = {
+        counter: 0,
+        valueOf: function() { ++this.counter; return 16; }
+    };
+    for (let i = 0; i < 1e4; ++i) {
+        opaqueLogForDCE(testObject);
+    }
+    if (testObject.counter !== 1e4)
+        throw "Failed testDCE()";
+    if (numberOfDFGCompiles(opaqueLogForDCE) > 1)
+        throw "opaqueLogForDCE() is predictable, it should only be compiled once.";
+}
+testDCE();
 
 
 // Test exceptions in the argument.

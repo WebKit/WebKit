@@ -852,8 +852,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue child = forNode(node->child1()).value();
         switch (node->child1().useKind()) {
         case Int32Use:
-            if (child && child.isInt32()) {
-                JSValue result = jsNumber(fabs(child.asNumber()));
+            if (Optional<double> number = child.toNumberFromPrimitive()) {
+                JSValue result = jsNumber(fabs(*number));
                 if (result.isInt32()) {
                     setConstant(node, result);
                     break;
@@ -862,14 +862,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(SpecInt32Only);
             break;
         case DoubleRepUse:
-            if (child && child.isNumber()) {
-                setConstant(node, jsDoubleNumber(fabs(child.asNumber())));
+            if (Optional<double> number = child.toNumberFromPrimitive()) {
+                setConstant(node, jsDoubleNumber(fabs(*number)));
                 break;
             }
             forNode(node).setType(typeOfDoubleAbs(forNode(node->child1()).m_type));
             break;
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
+            forNode(node).setType(SpecFullNumber);
             break;
         }
         break;

@@ -2014,9 +2014,13 @@ private:
             break;
         }
             
-        default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+        default: {
+            DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+            LValue argument = lowJSValue(m_node->child1());
+            LValue result = vmCall(Double, m_out.operation(operationArithAbs), m_callFrame, argument);
+            setDouble(result);
             break;
+        }
         }
     }
 

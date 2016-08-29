@@ -2383,38 +2383,9 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case ArithAbs: {
-        switch (node->child1().useKind()) {
-        case Int32Use: {
-            SpeculateStrictInt32Operand op1(this, node->child1());
-            GPRTemporary result(this);
-            GPRTemporary scratch(this);
-            
-            m_jit.move(op1.gpr(), result.gpr());
-            m_jit.rshift32(result.gpr(), MacroAssembler::TrustedImm32(31), scratch.gpr());
-            m_jit.add32(scratch.gpr(), result.gpr());
-            m_jit.xor32(scratch.gpr(), result.gpr());
-            if (shouldCheckOverflow(node->arithMode()))
-                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Signed, result.gpr()));
-            int32Result(result.gpr(), node);
-            break;
-        }
-        
-        case DoubleRepUse: {
-            SpeculateDoubleOperand op1(this, node->child1());
-            FPRTemporary result(this);
-            
-            m_jit.absDouble(op1.fpr(), result.fpr());
-            doubleResult(result.fpr(), node);
-            break;
-        }
-            
-        default:
-            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
-            break;
-        }
+    case ArithAbs:
+        compileArithAbs(node);
         break;
-    }
         
     case ArithMin:
     case ArithMax: {

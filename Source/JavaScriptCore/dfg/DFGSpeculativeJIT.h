@@ -2468,6 +2468,7 @@ public:
     void compileValueAdd(Node*);
     void compileArithAdd(Node*);
     void compileMakeRope(Node*);
+    void compileArithAbs(Node*);
     void compileArithClz32(Node*);
     void compileArithCos(Node*);
     void compileArithSub(Node*);

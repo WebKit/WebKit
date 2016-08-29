@@ -1,3 +1,51 @@
+2016-08-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Improve ArithAbs with polymorphic input
+        https://bugs.webkit.org/show_bug.cgi?id=161286
+
+        Reviewed by Saam Barati.
+
+        This is similar to the previous patches: if we have polymorphic
+        input, do a function call.
+
+        I also discovered a few problems with the tests and fixed them:
+        -I forgot to add NodeMustGenerate to the previous nodes I changed.
+         They could have been eliminated by DCE.
+        -ArithAbs was always exiting if the input types do not include numbers.
+         The cause was the node was using isInt32OrBooleanSpeculationForArithmetic()
+         instead of isInt32OrBooleanSpeculation(). The test of
+         isInt32OrBooleanSpeculationForArithmetic() only verify the input does not
+         contains double or int52. If we were in that case, we were always speculating
+         Int32. That always fails and we were recompiling the same code over and over.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        Now that we have toNumberFromPrimitive(), we can improve constant folding here :)
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasResult):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasInt32Result): Deleted.
+        The accessor hasInt32Result() was unused.
+
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithAbs):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAbs):
+
 2016-08-28  Saam Barati  <sbarati@apple.com>
 
         Make SpeculatedType a 64-bit integer

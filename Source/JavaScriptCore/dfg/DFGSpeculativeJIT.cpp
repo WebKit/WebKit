@@ -3874,6 +3874,47 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileArithAbs(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case Int32Use: {
+        SpeculateStrictInt32Operand op1(this, node->child1());
+        GPRTemporary result(this, Reuse, op1);
+        GPRTemporary scratch(this);
+
+        m_jit.move(op1.gpr(), result.gpr());
+        m_jit.rshift32(result.gpr(), MacroAssembler::TrustedImm32(31), scratch.gpr());
+        m_jit.add32(scratch.gpr(), result.gpr());
+        m_jit.xor32(scratch.gpr(), result.gpr());
+        if (shouldCheckOverflow(node->arithMode()))
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Signed, result.gpr()));
+        int32Result(result.gpr(), node);
+        break;
+    }
+
+    case DoubleRepUse: {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRTemporary result(this);
+
+        m_jit.absDouble(op1.fpr(), result.fpr());
+        doubleResult(result.fpr(), node);
+        break;
+    }
+
+    default: {
+        DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse);
+        JSValueOperand op1(this, node->child1());
+        JSValueRegs op1Regs = op1.jsValueRegs();
+        flushRegisters();
+        FPRResult result(this);
+        callOperation(operationArithAbs, result.fpr(), op1Regs);
+        m_jit.exceptionCheck();
+        doubleResult(result.fpr(), node);
+        break;
+    }
+    }
+}
+
 void SpeculativeJIT::compileArithClz32(Node* node)
 {
     ASSERT_WITH_MESSAGE(node->child1().useKind() == Int32Use || node->child1().useKind() == KnownInt32Use, "The Fixup phase should have enforced a Int32 operand.");

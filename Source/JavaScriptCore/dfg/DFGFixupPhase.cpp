@@ -331,15 +331,23 @@ private:
         }
             
         case ArithAbs: {
-            if (m_graph.unaryArithShouldSpeculateInt32(node, FixupPass)) {
+            if (node->child1()->shouldSpeculateInt32OrBoolean()
+                && node->canSpeculateInt32(FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
                 if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
                 else
                     node->setArithMode(Arith::CheckOverflow);
+                node->clearFlags(NodeMustGenerate);
+                node->setResult(NodeResultInt32);
                 break;
             }
-            fixDoubleOrBooleanEdge(node->child1());
+
+            if (node->child1()->shouldSpeculateNumberOrBoolean()) {
+                fixDoubleOrBooleanEdge(node->child1());
+                node->clearFlags(NodeMustGenerate);
+            } else
+                fixEdge<UntypedUse>(node->child1());
             node->setResult(NodeResultDouble);
             break;
         }
@@ -392,9 +400,10 @@ private:
         case ArithSin:
         case ArithSqrt: {
             Edge& child1 = node->child1();
-            if (child1->shouldSpeculateNumberOrBoolean())
+            if (child1->shouldSpeculateNumberOrBoolean()) {
                 fixDoubleOrBooleanEdge(child1);
-            else
+                node->clearFlags(NodeMustGenerate);
+            } else
                 fixEdge<UntypedUse>(child1);
             break;
         }

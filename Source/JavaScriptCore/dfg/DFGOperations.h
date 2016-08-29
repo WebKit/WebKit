@@ -53,6 +53,7 @@ EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState*, EncodedJSValue 
 EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueDiv(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+double JIT_OPERATION operationArithAbs(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 double JIT_OPERATION operationArithCos(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 double JIT_OPERATION operationArithFRound(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 double JIT_OPERATION operationArithLog(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
