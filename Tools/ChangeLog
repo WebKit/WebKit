@@ -1,5 +1,14 @@
 2016-08-29  Aakash Jain  <aakash_jain@apple.com>
 
+        EWS patch status page should indicate bot corresponding to each status message
+        https://bugs.webkit.org/show_bug.cgi?id=161280
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/templates/patch.html: Formatting changes.
+
+2016-08-29  Aakash Jain  <aakash_jain@apple.com>
+
         EWS should indicate which bot processed the patch
         https://bugs.webkit.org/show_bug.cgi?id=161222
 
