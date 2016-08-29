@@ -1,3 +1,15 @@
+2016-08-29  Anders Carlsson  <andersca@apple.com>
+
+        Move some structs into Connection.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=161320
+
+        Reviewed by Darin Adler.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::PendingSyncReply::PendingSyncReply):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::PendingSyncReply::PendingSyncReply): Deleted.
+
 2016-08-26  Anders Carlsson  <andersca@apple.com>
 
         Remove sync message sending from secondary threads

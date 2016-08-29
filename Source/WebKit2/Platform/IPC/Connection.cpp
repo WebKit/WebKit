@@ -36,7 +36,7 @@
 
 namespace IPC {
 
-struct WaitForMessageState {
+struct Connection::WaitForMessageState {
     WaitForMessageState(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
         : messageReceiverName(messageReceiverName)
         , messageName(messageName)
@@ -182,6 +182,26 @@ void Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMes
 
     dispatchMessages(&connection);
 }
+
+// Represents a sync request for which we're waiting on a reply.
+struct Connection::PendingSyncReply {
+    // The request ID.
+    uint64_t syncRequestID { 0 };
+
+    // The reply decoder, will be null if there was an error processing the sync
+    // message on the other side.
+    std::unique_ptr<Decoder> replyDecoder;
+
+    // Will be set to true once a reply has been received.
+    bool didReceiveReply { false };
+
+    PendingSyncReply() = default;
+
+    explicit PendingSyncReply(uint64_t syncRequestID)
+        : syncRequestID(syncRequestID)
+    {
+    }
+};
 
 Ref<Connection> Connection::createServerConnection(Identifier identifier, Client& client)
 {

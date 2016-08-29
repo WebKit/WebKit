@@ -52,8 +52,6 @@
 
 namespace IPC {
 
-struct WaitForMessageState;
-
 enum class SendOption {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.
@@ -271,38 +269,14 @@ private:
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageMutex;
 
+    struct WaitForMessageState;
     WaitForMessageState* m_waitingForMessage;
 
-    // Represents a sync request for which we're waiting on a reply.
-    struct PendingSyncReply {
-        // The request ID.
-        uint64_t syncRequestID;
-
-        // The reply decoder, will be null if there was an error processing the sync
-        // message on the other side.
-        std::unique_ptr<Decoder> replyDecoder;
-
-        // Will be set to true once a reply has been received.
-        bool didReceiveReply;
-    
-        PendingSyncReply()
-            : syncRequestID(0)
-            , didReceiveReply(false)
-        {
-        }
-
-        explicit PendingSyncReply(uint64_t syncRequestID)
-            : syncRequestID(syncRequestID)
-            , didReceiveReply(0)
-        {
-        }
-    };
-
     class SyncMessageState;
-    friend class SyncMessageState;
 
     Lock m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
+    struct PendingSyncReply;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 
     Lock m_incomingSyncMessageCallbackMutex;
