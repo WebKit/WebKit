@@ -1,5 +1,18 @@
 2016-08-29  Anders Carlsson  <andersca@apple.com>
 
+        Stop using WebProcessProxy::fromConnection in WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=161322
+
+        Reviewed by Dan Bernstein.
+
+        The WebPageProxy already knows its WebProcessProxy - no need to look it up from the connection.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMessage):
+        (WebKit::WebPageProxy::handleSynchronousMessage):
+
+2016-08-29  Anders Carlsson  <andersca@apple.com>
+
         Move some structs into Connection.cpp
         https://bugs.webkit.org/show_bug.cgi?id=161320
 
