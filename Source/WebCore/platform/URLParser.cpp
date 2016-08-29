@@ -220,8 +220,15 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
                 m_buffer.append('/');
                 state = State::PathOrAuthority;
                 ++c;
-            } else
+            } else {
+                m_url.m_userStart = m_buffer.length();
+                m_url.m_userEnd = m_url.m_userStart;
+                m_url.m_passwordEnd = m_url.m_userStart;
+                m_url.m_hostEnd = m_url.m_userStart;
+                m_url.m_portEnd = m_url.m_userStart;
+                m_url.m_pathAfterLastSlash = m_url.m_userStart,
                 state = State::CannotBeABaseURLPath;
+            }
             break;
         case State::NoScheme:
             LOG_STATE("NoScheme");
@@ -404,8 +411,17 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
             break;
         case State::CannotBeABaseURLPath:
             LOG_STATE("CannotBeABaseURLPath");
-            notImplemented();
-            ++c;
+            if (*c == '?') {
+                m_url.m_pathEnd = m_buffer.length();
+                state = State::Query;
+            } else if (*c == '#') {
+                m_url.m_pathEnd = m_buffer.length();
+                m_url.m_queryEnd = m_url.m_pathEnd;
+                state = State::Fragment;
+            } else {
+                m_buffer.append(*c);
+                ++c;
+            }
             break;
         case State::Query:
             LOG_STATE("Query");
@@ -492,6 +508,9 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
         break;
     case State::CannotBeABaseURLPath:
         LOG_FINAL_STATE("CannotBeABaseURLPath");
+        m_url.m_pathEnd = m_buffer.length();
+        m_url.m_queryEnd = m_url.m_pathEnd;
+        m_url.m_fragmentEnd = m_url.m_pathEnd;
         break;
     case State::Query:
         LOG_FINAL_STATE("Query");

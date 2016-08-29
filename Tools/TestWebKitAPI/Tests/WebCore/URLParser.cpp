@@ -91,7 +91,9 @@ TEST_F(URLParserTest, Parse)
     checkURL("http://127.0.0.1", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
     checkURL("http://webkit.org/", {"http", "", "", "webkit.org", 0, "/", "", "", "http://webkit.org/"});
     checkURL("http://webkit.org/path1/path2/index.html", {"http", "", "", "webkit.org", 0, "/path1/path2/index.html", "", "", "http://webkit.org/path1/path2/index.html"});
-
+    checkURL("about:blank", {"about", "", "", "", 0, "blank", "", "", "about:blank"});
+    checkURL("about:blank?query", {"about", "", "", "", 0, "blank", "query", "", "about:blank?query"});
+    checkURL("about:blank#fragment", {"about", "", "", "", 0, "blank", "", "fragment", "about:blank#fragment"});
 }
 
 static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts)
