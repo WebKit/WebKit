@@ -1,3 +1,9 @@
+2016-08-29  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; only build MiniBrowser against iOS SDK targets.
+
+        * Makefile:
+
 2016-08-29  Jonathan Bedard  <jbedard@apple.com>
 
         Sample Process on notifyDone timed out

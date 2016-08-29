@@ -2,7 +2,10 @@ MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest
 
 ifneq (,$(SDKROOT))
 	ifeq (,$(findstring macosx,$(SDKROOT)))
-		MODULES = DumpRenderTree WebKitTestRunner MobileMiniBrowser ../Source/ThirdParty/gtest/xcode TestWebKitAPI
+		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
+	endif
+	ifneq (,$(findstring iphone,$(SDKROOT)))
+		MODULES += MobileMiniBrowser
 	endif
 	ifeq (,$(DO_NOT_BUILD_LAYOUT_TEST_RELAY))
 		MODULES += LayoutTestRelay
