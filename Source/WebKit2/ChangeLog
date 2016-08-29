@@ -1,5 +1,18 @@
 2016-08-29  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of ChildProcessProxy::fromConnection
+        https://bugs.webkit.org/show_bug.cgi?id=161357
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::fromConnection): Deleted.
+        * UIProcess/ChildProcessProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::fromConnection): Deleted.
+
+2016-08-29  Anders Carlsson  <andersca@apple.com>
+
         Remove the last uses of WebProcessProxy::fromConnection
         https://bugs.webkit.org/show_bug.cgi?id=161355
 

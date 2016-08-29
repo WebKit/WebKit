@@ -40,9 +40,6 @@ public:
     ChildProcessProxy();
     virtual ~ChildProcessProxy();
 
-    // FIXME: This function does an unchecked upcast, and it is only used in a deprecated code path. Would like to get rid of it.
-    static ChildProcessProxy* fromConnection(IPC::Connection*);
-
     void connect();
     void terminate();
 

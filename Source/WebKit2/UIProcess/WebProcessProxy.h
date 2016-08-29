@@ -73,11 +73,6 @@ public:
     static Ref<WebProcessProxy> create(WebProcessPool&);
     ~WebProcessProxy();
 
-    static WebProcessProxy* fromConnection(IPC::Connection* connection)
-    {
-        return static_cast<WebProcessProxy*>(ChildProcessProxy::fromConnection(connection));
-    }
-
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
     WebProcessPool& processPool() { return m_processPool; }

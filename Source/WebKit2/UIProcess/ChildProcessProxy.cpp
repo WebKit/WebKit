@@ -46,16 +46,6 @@ ChildProcessProxy::~ChildProcessProxy()
     }
 }
 
-ChildProcessProxy* ChildProcessProxy::fromConnection(IPC::Connection* connection)
-{
-    ASSERT(connection);
-
-    ChildProcessProxy* childProcessProxy = static_cast<ChildProcessProxy*>(connection->client());
-    ASSERT(childProcessProxy->connection() == connection);
-
-    return childProcessProxy;
-}
-
 void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX"))
