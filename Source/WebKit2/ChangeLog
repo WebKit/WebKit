@@ -1,5 +1,19 @@
 2016-08-29  Anders Carlsson  <andersca@apple.com>
 
+        Remove the last uses of WebProcessProxy::fromConnection
+        https://bugs.webkit.org/show_bug.cgi?id=161355
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::webProcessProxyFromConnection):
+        (WebKit::WebProcessPool::handleMessage):
+        (WebKit::WebProcessPool::handleSynchronousMessage):
+        (WebKit::WebProcessPool::startedUsingGamepads):
+        (WebKit::WebProcessPool::stoppedUsingGamepads):
+
+2016-08-29  Anders Carlsson  <andersca@apple.com>
+
         Get rid of another use of WebProcessProxy::fromConnection
         https://bugs.webkit.org/show_bug.cgi?id=161331
 
