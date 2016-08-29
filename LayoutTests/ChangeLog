@@ -1,3 +1,11 @@
+2016-08-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html for ios-simulator after r205138.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+
 2016-08-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, mark editing tests of iOS simulator WK1 release build that have different delegate callback order than those of debug build as failure
