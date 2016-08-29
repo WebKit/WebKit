@@ -22,7 +22,6 @@
 #if USE(EGL)
 
 #include "GraphicsContext3D.h"
-#include "PlatformDisplay.h"
 
 #if USE(CAIRO)
 #include <cairo.h>
@@ -40,6 +39,11 @@
 #include <X11/Xlib.h>
 #endif
 
+#if PLATFORM(WAYLAND)
+#include "PlatformDisplayWayland.h"
+#include <wayland-egl.h>
+#endif
+
 #if ENABLE(ACCELERATED_2D_CANVAS)
 // cairo-gl.h includes some definitions from GLX that conflict with
 // the ones provided by us. Since GLContextEGL doesn't use any GLX
@@ -50,11 +54,6 @@
 
 namespace WebCore {
 
-static EGLDisplay sharedEGLDisplay()
-{
-    return PlatformDisplay::sharedDisplay().eglDisplay();
-}
-
 static const EGLint gContextAttributes[] = {
 #if USE(OPENGL_ES_2)
     EGL_CONTEXT_CLIENT_VERSION, 2,
@@ -62,7 +61,13 @@ static const EGLint gContextAttributes[] = {
     EGL_NONE
 };
 
-static bool getEGLConfig(EGLConfig* config, GLContextEGL::EGLSurfaceType surfaceType)
+#if USE(OPENGL_ES_2)
+static const EGLenum gEGLAPIVersion = EGL_OPENGL_ES_API;
+#else
+static const EGLenum gEGLAPIVersion = EGL_OPENGL_API;
+#endif
+
+bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceType surfaceType)
 {
     EGLint attributeList[] = {
 #if USE(OPENGL_ES_2)
@@ -87,27 +92,23 @@ static bool getEGLConfig(EGLConfig* config, GLContextEGL::EGLSurfaceType surface
         attributeList[13] = EGL_PIXMAP_BIT;
         break;
     case GLContextEGL::WindowSurface:
+    case GLContextEGL::Surfaceless:
         attributeList[13] = EGL_WINDOW_BIT;
         break;
     }
 
     EGLint numberConfigsReturned;
-    return eglChooseConfig(sharedEGLDisplay(), attributeList, config, 1, &numberConfigsReturned) && numberConfigsReturned;
+    return eglChooseConfig(display, attributeList, config, 1, &numberConfigsReturned) && numberConfigsReturned;
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowType window, GLContext* sharingContext, std::unique_ptr<GLContext::Data>&& contextData)
+std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowType window, PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    EGLContext eglSharingContext = sharingContext ? static_cast<GLContextEGL*>(sharingContext)->m_context : 0;
-
-    EGLDisplay display = sharedEGLDisplay();
-    if (display == EGL_NO_DISPLAY)
-        return nullptr;
-
+    EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(&config, WindowSurface))
+    if (!getEGLConfig(display, &config, WindowSurface))
         return nullptr;
 
-    EGLContext context = eglCreateContext(display, config, eglSharingContext, gContextAttributes);
+    EGLContext context = eglCreateContext(display, config, sharingContext, gContextAttributes);
     if (context == EGL_NO_CONTEXT)
         return nullptr;
 
@@ -117,19 +118,14 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowT
         return nullptr;
     }
 
-    auto glContext = std::make_unique<GLContextEGL>(context, surface, WindowSurface);
-    glContext->m_contextData = WTFMove(contextData);
-    return glContext;
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, WindowSurface));
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createPbufferContext(EGLContext sharingContext)
+std::unique_ptr<GLContextEGL> GLContextEGL::createPbufferContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    EGLDisplay display = sharedEGLDisplay();
-    if (display == EGL_NO_DISPLAY)
-        return nullptr;
-
+    EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(&config, PbufferSurface))
+    if (!getEGLConfig(display, &config, PbufferSurface))
         return nullptr;
 
     EGLContext context = eglCreateContext(display, config, sharingContext, gContextAttributes);
@@ -143,18 +139,36 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPbufferContext(EGLContext shar
         return nullptr;
     }
 
-    return std::make_unique<GLContextEGL>(context, surface, PbufferSurface);
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, PbufferSurface));
 }
 
-#if PLATFORM(X11)
-std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext sharingContext)
+std::unique_ptr<GLContextEGL> GLContextEGL::createSurfacelessContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    EGLDisplay display = sharedEGLDisplay();
+    EGLDisplay display = platformDisplay.eglDisplay();
     if (display == EGL_NO_DISPLAY)
         return nullptr;
 
+    const char* extensions = eglQueryString(display, EGL_EXTENSIONS);
+    if (!strstr(extensions, "EGL_KHR_surfaceless_context") && !strstr(extensions, "EGL_KHR_surfaceless_opengl"))
+        return nullptr;
+
     EGLConfig config;
-    if (!getEGLConfig(&config, PixmapSurface))
+    if (!getEGLConfig(display, &config, Surfaceless))
+        return nullptr;
+
+    EGLContext context = eglCreateContext(display, config, sharingContext, gContextAttributes);
+    if (context == EGL_NO_CONTEXT)
+        return nullptr;
+
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, EGL_NO_SURFACE, Surfaceless));
+}
+
+#if PLATFORM(X11)
+std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
+{
+    EGLDisplay display = platformDisplay.eglDisplay();
+    EGLConfig config;
+    if (!getEGLConfig(display, &config, PixmapSurface))
         return nullptr;
 
     EGLContext context = eglCreateContext(display, config, sharingContext, gContextAttributes);
@@ -167,7 +181,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext shari
         return nullptr;
     }
 
-    Display* x11Display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
+    Display* x11Display = downcast<PlatformDisplayX11>(platformDisplay).native();
     XUniquePixmap pixmap = XCreatePixmap(x11Display, DefaultRootWindow(x11Display), 1, 1, depth);
     if (!pixmap) {
         eglDestroyContext(display, context);
@@ -180,52 +194,122 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext shari
         return nullptr;
     }
 
-    return std::make_unique<GLContextEGL>(context, surface, WTFMove(pixmap));
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, WTFMove(pixmap)));
 }
 #endif // PLATFORM(X11)
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType window, GLContext* sharingContext)
+#if PLATFORM(WAYLAND)
+std::unique_ptr<GLContextEGL> GLContextEGL::createWaylandContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    if (!sharedEGLDisplay())
+    EGLDisplay display = platformDisplay.eglDisplay();
+    EGLConfig config;
+    if (!getEGLConfig(display, &config, WindowSurface))
         return nullptr;
 
-    static bool initialized = false;
-    static bool success = true;
-    if (!initialized) {
-#if !USE(OPENGL_ES_2)
-        success = initializeOpenGLShims();
-#endif
-        initialized = true;
+    EGLContext context = eglCreateContext(display, config, sharingContext, gContextAttributes);
+    if (context == EGL_NO_CONTEXT)
+        return nullptr;
+
+    WlUniquePtr<struct wl_surface> wlSurface(downcast<PlatformDisplayWayland>(platformDisplay).createSurface());
+    if (!wlSurface) {
+        eglDestroyContext(display, context);
+        return nullptr;
     }
-    if (!success)
+
+    EGLNativeWindowType window = wl_egl_window_create(wlSurface.get(), 1, 1);
+    EGLSurface surface = eglCreateWindowSurface(display, config, window, 0);
+    if (surface == EGL_NO_SURFACE) {
+        eglDestroyContext(display, context);
+        wl_egl_window_destroy(window);
+        return nullptr;
+    }
+
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, WTFMove(wlSurface), window));
+}
+#endif
+
+std::unique_ptr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType window, PlatformDisplay& platformDisplay)
+{
+    if (platformDisplay.eglDisplay() == EGL_NO_DISPLAY)
         return nullptr;
 
-    EGLContext eglSharingContext = sharingContext ? static_cast<GLContextEGL*>(sharingContext)->m_context : 0;
-    auto context = window ? createWindowContext(window, sharingContext) : nullptr;
+    if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE)
+        return nullptr;
+
+    EGLContext eglSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContextEGL*>(platformDisplay.sharingGLContext())->m_context : EGL_NO_CONTEXT;
+    auto context = window ? createWindowContext(window, platformDisplay, eglSharingContext) : nullptr;
+    if (!context)
+        context = createSurfacelessContext(platformDisplay, eglSharingContext);
+    if (!context) {
 #if PLATFORM(X11)
-    if (!context)
-        context = createPixmapContext(eglSharingContext);
+        if (platformDisplay.type() == PlatformDisplay::Type::X11)
+            context = createPixmapContext(platformDisplay, eglSharingContext);
 #endif
+#if PLATFORM(WAYLAND)
+        if (platformDisplay.type() == PlatformDisplay::Type::Wayland)
+            context = createWaylandContext(platformDisplay, eglSharingContext);
+#endif
+    }
     if (!context)
-        context = createPbufferContext(eglSharingContext);
+        context = createPbufferContext(platformDisplay, eglSharingContext);
 
     return context;
 }
 
-GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, EGLSurfaceType type)
-    : m_context(context)
+std::unique_ptr<GLContextEGL> GLContextEGL::createSharingContext(PlatformDisplay& platformDisplay)
+{
+    if (platformDisplay.eglDisplay() == EGL_NO_DISPLAY)
+        return nullptr;
+
+    if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE)
+        return nullptr;
+
+    auto context = createSurfacelessContext(platformDisplay);
+    if (!context) {
+#if PLATFORM(X11)
+        if (platformDisplay.type() == PlatformDisplay::Type::X11)
+            context = createPixmapContext(platformDisplay);
+#endif
+#if PLATFORM(WAYLAND)
+        if (platformDisplay.type() == PlatformDisplay::Type::Wayland)
+            context = createWaylandContext(platformDisplay);
+#endif
+    }
+    if (!context)
+        context = createPbufferContext(platformDisplay);
+
+    return context;
+}
+
+GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLSurfaceType type)
+    : GLContext(display)
+    , m_context(context)
     , m_surface(surface)
     , m_type(type)
 {
     ASSERT(type != PixmapSurface);
+    ASSERT(type == Surfaceless || surface != EGL_NO_SURFACE);
 }
 
 #if PLATFORM(X11)
-GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, XUniquePixmap&& pixmap)
-    : m_context(context)
+GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, XUniquePixmap&& pixmap)
+    : GLContext(display)
+    , m_context(context)
     , m_surface(surface)
     , m_type(PixmapSurface)
     , m_pixmap(WTFMove(pixmap))
+{
+}
+#endif
+
+#if PLATFORM(WAYLAND)
+GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, WlUniquePtr<struct wl_surface>&& wlSurface, EGLNativeWindowType wlWindow)
+    : GLContext(display)
+    , m_context(context)
+    , m_surface(surface)
+    , m_type(WindowSurface)
+    , m_wlSurface(WTFMove(wlSurface))
+    , m_wlWindow(wlWindow)
 {
 }
 #endif
@@ -237,7 +321,7 @@ GLContextEGL::~GLContextEGL()
         cairo_device_destroy(m_cairoDevice);
 #endif
 
-    EGLDisplay display = sharedEGLDisplay();
+    EGLDisplay display = m_display.eglDisplay();
     if (m_context) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -246,6 +330,11 @@ GLContextEGL::~GLContextEGL()
 
     if (m_surface)
         eglDestroySurface(display, m_surface);
+
+#if PLATFORM(WAYLAND)
+    if (m_wlWindow)
+        wl_egl_window_destroy(m_wlWindow);
+#endif
 }
 
 bool GLContextEGL::canRenderToDefaultFramebuffer()
@@ -258,9 +347,10 @@ IntSize GLContextEGL::defaultFrameBufferSize()
     if (!canRenderToDefaultFramebuffer())
         return IntSize();
 
+    EGLDisplay display = m_display.eglDisplay();
     EGLint width, height;
-    if (!eglQuerySurface(sharedEGLDisplay(), m_surface, EGL_WIDTH, &width)
-        || !eglQuerySurface(sharedEGLDisplay(), m_surface, EGL_HEIGHT, &height))
+    if (!eglQuerySurface(display, m_surface, EGL_WIDTH, &width)
+        || !eglQuerySurface(display, m_surface, EGL_HEIGHT, &height))
         return IntSize();
 
     return IntSize(width, height);
@@ -268,24 +358,30 @@ IntSize GLContextEGL::defaultFrameBufferSize()
 
 bool GLContextEGL::makeContextCurrent()
 {
-    ASSERT(m_context && m_surface);
+    ASSERT(m_context);
 
     GLContext::makeContextCurrent();
     if (eglGetCurrentContext() == m_context)
         return true;
 
-    return eglMakeCurrent(sharedEGLDisplay(), m_surface, m_surface, m_context);
+    return eglMakeCurrent(m_display.eglDisplay(), m_surface, m_surface, m_context);
 }
 
 void GLContextEGL::swapBuffers()
 {
     ASSERT(m_surface);
-    eglSwapBuffers(sharedEGLDisplay(), m_surface);
+    eglSwapBuffers(m_display.eglDisplay(), m_surface);
 }
 
 void GLContextEGL::waitNative()
 {
     eglWaitNative(EGL_CORE_NATIVE_ENGINE);
+}
+
+void GLContextEGL::swapInterval(int interval)
+{
+    ASSERT(m_surface);
+    eglSwapInterval(m_display.eglDisplay(), interval);
 }
 
 #if USE(CAIRO)
@@ -295,7 +391,7 @@ cairo_device_t* GLContextEGL::cairoDevice()
         return m_cairoDevice;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    m_cairoDevice = cairo_egl_device_create(sharedEGLDisplay(), m_context);
+    m_cairoDevice = cairo_egl_device_create(m_display.eglDisplay(), m_context);
 #endif
 
     return m_cairoDevice;

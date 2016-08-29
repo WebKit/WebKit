@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
 #include "CompositingRunLoop.h"
+#include <WebCore/PlatformDisplay.h>
 #include <WebCore/TransformationMatrix.h>
 
 #if USE(OPENGL_ES_2)
@@ -41,14 +42,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client, uint64_t nativeSurfaceHandle)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync)
 {
-    return adoptRef(*new ThreadedCompositor(client, nativeSurfaceHandle));
+    return adoptRef(*new ThreadedCompositor(client, nativeSurfaceHandle, doFrameSync));
 }
 
-ThreadedCompositor::ThreadedCompositor(Client* client, uint64_t nativeSurfaceHandle)
+ThreadedCompositor::ThreadedCompositor(Client* client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync)
     : m_client(client)
     , m_nativeSurfaceHandle(nativeSurfaceHandle)
+    , m_doFrameSync(doFrameSync)
     , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
 {
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
@@ -164,34 +166,25 @@ void ThreadedCompositor::scheduleDisplayImmediately()
     m_compositingRunLoop->startUpdateTimer(CompositingRunLoop::Immediate);
 }
 
-bool ThreadedCompositor::tryEnsureGLContext()
-{
-    if (!glContext())
-        return false;
-
-    glContext()->makeContextCurrent();
-    // The window size may be out of sync with the page size at this point, and getting
-    // the viewport parameters incorrect, means that the content will be misplaced. Thus
-    // we set the viewport parameters directly from the window size.
-    IntSize contextSize = glContext()->defaultFrameBufferSize();
-    if (m_viewportSize != contextSize) {
-        glViewport(0, 0, contextSize.width(), contextSize.height());
-        m_viewportSize = contextSize;
-    }
-
-    return true;
-}
-
-GLContext* ThreadedCompositor::glContext()
+bool ThreadedCompositor::makeContextCurrent()
 {
     if (m_context)
-        return m_context.get();
+        return m_context->makeContextCurrent();
 
     if (!m_nativeSurfaceHandle)
-        return nullptr;
+        return false;
 
-    m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(m_nativeSurfaceHandle), GLContext::sharingContext());
-    return m_context.get();
+    m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(m_nativeSurfaceHandle), &PlatformDisplay::sharedDisplayForCompositing());
+    if (!m_context)
+        return false;
+
+    if (!m_context->makeContextCurrent())
+        return false;
+
+    if (m_doFrameSync == ShouldDoFrameSync::No)
+        m_context->swapInterval(0);
+
+    return true;
 }
 
 void ThreadedCompositor::forceRepaint()
@@ -216,8 +209,17 @@ void ThreadedCompositor::renderLayerTree()
     if (!m_scene || !m_scene->isActive())
         return;
 
-    if (!tryEnsureGLContext())
+    if (!makeContextCurrent())
         return;
+
+    // The window size may be out of sync with the page size at this point, and getting
+    // the viewport parameters incorrect, means that the content will be misplaced. Thus,
+    // we set the viewport parameters directly from the window size.
+    IntSize contextSize = m_context->defaultFrameBufferSize();
+    if (m_viewportSize != contextSize) {
+        glViewport(0, 0, contextSize.width(), contextSize.height());
+        m_viewportSize = contextSize;
+    }
 
     FloatRect clipRect(0, 0, m_viewportSize.width(), m_viewportSize.height());
 
@@ -232,7 +234,7 @@ void ThreadedCompositor::renderLayerTree()
     }
     m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::transparent, !m_drawsBackground, scrollPostion);
 
-    glContext()->swapBuffers();
+    m_context->swapBuffers();
 }
 
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)

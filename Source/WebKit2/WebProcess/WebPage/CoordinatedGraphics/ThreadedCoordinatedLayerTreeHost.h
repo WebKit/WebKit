@@ -41,7 +41,7 @@ struct CoordinatedGraphicsState;
 
 namespace WebKit {
 
-class RedirectedXCompositeWindow;
+class AcceleratedSurface;
 class WebPage;
 
 class ThreadedCoordinatedLayerTreeHost final : public CoordinatedLayerTreeHost {
@@ -105,9 +105,7 @@ private:
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
 
     CompositorClient m_compositorClient;
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    std::unique_ptr<RedirectedXCompositeWindow> m_redirectedWindow;
-#endif
+    std::unique_ptr<AcceleratedSurface> m_surface;
     RefPtr<ThreadedCompositor> m_compositor;
     float m_lastScaleFactor { 1 };
     WebCore::IntPoint m_prevScrollPosition;

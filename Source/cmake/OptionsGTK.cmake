@@ -389,8 +389,12 @@ if (ENABLE_WAYLAND_TARGET)
         message(FATAL_ERROR "Recompile GTK+ with Wayland backend to use ENABLE_WAYLAND_TARGET")
     endif ()
 
-    if (ENABLE_WAYLAND_TARGET AND GTK3_VERSION VERSION_LESS 3.12)
+    if (GTK3_VERSION VERSION_LESS 3.12)
         message(FATAL_ERROR "GTK+ 3.12 is required to use ENABLE_WAYLAND_TARGET")
+    endif ()
+
+    if (NOT EGL_FOUND)
+        message(FATAL_ERROR "EGL is required to use ENABLE_WAYLAND_TARGET")
     endif ()
 
     find_package(Wayland REQUIRED)

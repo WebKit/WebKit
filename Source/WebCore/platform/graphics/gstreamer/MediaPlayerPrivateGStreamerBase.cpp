@@ -235,8 +235,8 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
     if (m_glContext)
         return true;
 
+    const auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
     if (!m_glDisplay) {
-        const auto& sharedDisplay = PlatformDisplay::sharedDisplay();
 #if PLATFORM(X11)
         m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
 #elif PLATFORM(WAYLAND)
@@ -244,7 +244,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 #endif
     }
 
-    GLContext* webkitContext = GLContext::sharingContext();
+    GLContext* webkitContext = sharedDisplay.sharingGLContext();
     // EGL and GLX are mutually exclusive, no need for ifdefs here.
     GstGLPlatform glPlatform = webkitContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
 
@@ -702,7 +702,7 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
     if (!gst_video_frame_map(&videoFrame, &videoInfo, buffer, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL)))
         return nullptr;
 
-    GLContext* context = GLContext::sharingContext();
+    GLContext* context = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext();
     context->makeContextCurrent();
     cairo_device_t* device = context->cairoDevice();
 

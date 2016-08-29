@@ -30,6 +30,7 @@
 #include "WebKitWebViewBase.h"
 
 #include "APIPageConfiguration.h"
+#include "AcceleratedBackingStore.h"
 #include "DrawingAreaProxyImpl.h"
 #include "InputMethodFilter.h"
 #include "KeyBindingTranslator.h"
@@ -72,21 +73,8 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-#include "XDamageNotifier.h"
-#include <WebCore/PlatformDisplayX11.h>
-#include <WebCore/XUniqueResource.h>
-#include <X11/Xlib.h>
-#include <X11/extensions/Xdamage.h>
-#include <cairo-xlib.h>
-#endif
-
 #if PLATFORM(X11)
 #include <gdk/gdkx.h>
-#endif
-
-#if PLATFORM(WAYLAND)
-#include <gdk/gdkwayland.h>
 #endif
 
 // gtk_widget_get_scale_factor() appeared in GTK 3.10, but we also need
@@ -211,10 +199,7 @@ struct _WebKitWebViewBasePrivate {
     unsigned screenSaverCookie;
 #endif
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    RefPtr<cairo_surface_t> acceleratedCompositingSurface;
-    XUniqueDamage acceleratedCompositingSurfaceDamage;
-#endif
+    std::unique_ptr<AcceleratedBackingStore> acceleratedBackingStore;
 
 #if ENABLE(DRAG_SUPPORT)
     std::unique_ptr<DragAndDropHandler> dragAndDropHandler;
@@ -350,50 +335,6 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     else
         priv->toplevelWindowRealizedID = g_signal_connect_swapped(window, "realize", G_CALLBACK(toplevelWindowRealized), webViewBase);
 }
-
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-static void webkitWebViewBaseSetAcceleratedCompositingPixmap(WebKitWebViewBase* webView, Pixmap pixmap)
-{
-    if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
-        return;
-
-    WebKitWebViewBasePrivate* priv = webView->priv;
-    if (priv->acceleratedCompositingSurface
-        && cairo_xlib_surface_get_drawable(priv->acceleratedCompositingSurface.get()) == pixmap)
-        return;
-
-    if (priv->acceleratedCompositingSurface) {
-        if (priv->acceleratedCompositingSurfaceDamage) {
-            XDamageNotifier::singleton().remove(priv->acceleratedCompositingSurfaceDamage.get());
-            priv->acceleratedCompositingSurfaceDamage.reset();
-        }
-        priv->acceleratedCompositingSurface = nullptr;
-    }
-
-    if (!pixmap)
-        return;
-
-    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
-    if (!drawingArea)
-        return;
-
-    IntSize size = drawingArea->size();
-    float deviceScaleFactor = priv->pageProxy->deviceScaleFactor();
-    size.scale(deviceScaleFactor);
-
-    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-    ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == GDK_DISPLAY_XDISPLAY(gdk_display_get_default()));
-    GdkVisual* visual = gdk_screen_get_rgba_visual(gdk_screen_get_default());
-    if (!visual)
-        visual = gdk_screen_get_system_visual(gdk_screen_get_default());
-    priv->acceleratedCompositingSurface = adoptRef(cairo_xlib_surface_create(display, pixmap, GDK_VISUAL_XVISUAL(visual), size.width(), size.height()));
-    cairoSurfaceSetDeviceScale(priv->acceleratedCompositingSurface.get(), deviceScaleFactor, deviceScaleFactor);
-    priv->acceleratedCompositingSurfaceDamage = XDamageCreate(display, pixmap, XDamageReportNonEmpty);
-    XDamageNotifier::singleton().add(priv->acceleratedCompositingSurfaceDamage.get(), [webView] {
-        gtk_widget_queue_draw(GTK_WIDGET(webView));
-    });
-}
-#endif
 
 static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
@@ -564,9 +505,7 @@ static void webkitWebViewBaseDispose(GObject* gobject)
     g_cancellable_cancel(webView->priv->screenSaverInhibitCancellable.get());
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
     webView->priv->pageProxy->close();
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    webkitWebViewBaseSetAcceleratedCompositingPixmap(webView, 0);
-#endif
+    webView->priv->acceleratedBackingStore = nullptr;
     G_OBJECT_CLASS(webkit_web_view_base_parent_class)->dispose(gobject);
 }
 
@@ -585,55 +524,6 @@ static void webkitWebViewBaseConstructed(GObject* object)
     priv->authenticationDialog = 0;
 }
 
-static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* webViewBase, DrawingAreaProxyImpl* drawingArea, cairo_t* cr, GdkRectangle* clipRect)
-{
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    ASSERT(drawingArea);
-
-    if (!drawingArea->isInAcceleratedCompositingMode())
-        return false;
-
-    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(webViewBase)->priv;
-    cairo_surface_t* surface = priv->acceleratedCompositingSurface.get();
-    cairo_save(cr);
-
-    if (!surface || !priv->pageProxy->drawsBackground()) {
-        const WebCore::Color& color = priv->pageProxy->backgroundColor();
-        if (color.hasAlpha()) {
-            cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
-            cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-            cairo_fill(cr);
-        }
-
-        if (color.alpha() > 0) {
-            setSourceRGBAFromColor(cr, color);
-            cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
-            cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
-            cairo_fill(cr);
-        }
-    }
-
-    if (surface) {
-        // The surface can be modified by the web process at any time, so we mark it
-        // as dirty to ensure we always render the updated contents as soon as possible.
-        cairo_surface_mark_dirty(surface);
-        cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
-        cairo_set_source_surface(cr, surface, 0, 0);
-        cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-        cairo_fill(cr);
-    }
-
-    cairo_restore(cr);
-
-    return true;
-#else
-    UNUSED_PARAM(webViewBase);
-    UNUSED_PARAM(cr);
-    UNUSED_PARAM(clipRect);
-    return false;
-#endif
-}
-
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
@@ -645,7 +535,9 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-    if (!webkitWebViewRenderAcceleratedCompositingResults(webViewBase, drawingArea, cr, &clipRect)) {
+    if (webViewBase->priv->acceleratedBackingStore && drawingArea->isInAcceleratedCompositingMode())
+        webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
+    else {
         WebCore::Region unpaintedRegion; // This is simply unused.
         drawingArea->paint(cr, clipRect, unpaintedRegion);
     }
@@ -1286,6 +1178,8 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     priv->pageProxy = context->createWebPage(*priv->pageClient, WTFMove(configuration));
     priv->pageProxy->initializeWebPage();
 
+    priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
+
     priv->inputMethodFilter.setPage(priv->pageProxy.get());
 
 #if HAVE(GTK_SCALE_FACTOR)
@@ -1566,29 +1460,20 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
 
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase, const LayerTreeContext& layerTreeContext)
 {
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    webkitWebViewBaseSetAcceleratedCompositingPixmap(webkitWebViewBase, layerTreeContext.contextID);
-#else
-    UNUSED_PARAM(webkitWebViewBase);
-#endif
+    if (webkitWebViewBase->priv->acceleratedBackingStore)
+        webkitWebViewBase->priv->acceleratedBackingStore->update(layerTreeContext);
 }
 
 void webkitWebViewBaseUpdateAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase, const LayerTreeContext& layerTreeContext)
 {
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    webkitWebViewBaseSetAcceleratedCompositingPixmap(webkitWebViewBase, layerTreeContext.contextID);
-#else
-    UNUSED_PARAM(webkitWebViewBase);
-#endif
+    if (webkitWebViewBase->priv->acceleratedBackingStore)
+        webkitWebViewBase->priv->acceleratedBackingStore->update(layerTreeContext);
 }
 
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
 {
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    webkitWebViewBaseSetAcceleratedCompositingPixmap(webkitWebViewBase, 0);
-#else
-    UNUSED_PARAM(webkitWebViewBase);
-#endif
+    if (webkitWebViewBase->priv->acceleratedBackingStore)
+        webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
 }
 
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase)
@@ -1616,9 +1501,9 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
 
 void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
 {
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    webkitWebViewBaseSetAcceleratedCompositingPixmap(webkitWebViewBase, 0);
-#elif PLATFORM(X11) && USE(TEXTURE_MAPPER)
+    if (webkitWebViewBase->priv->acceleratedBackingStore)
+        webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
+#if PLATFORM(X11) && USE(TEXTURE_MAPPER) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
         return;
 

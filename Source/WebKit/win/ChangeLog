@@ -1,3 +1,16 @@
+2016-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Accelerated compositing does not work in Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=115803
+
+        Reviewed by Michael Catanzaro.
+
+        Update to the new GLContext API.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+        (AcceleratedCompositingContext::acceleratedCompositingAvailable):
+
 2016-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Use Document& instead of Document* when getting cookies

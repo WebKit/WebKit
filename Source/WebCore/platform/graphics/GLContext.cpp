@@ -19,10 +19,7 @@
 #include "config.h"
 
 #if ENABLE(GRAPHICS_CONTEXT_3D)
-
 #include "GLContext.h"
-
-#include "PlatformDisplay.h"
 #include <wtf/ThreadSpecific.h>
 
 #if USE(EGL)
@@ -55,12 +52,6 @@ inline ThreadGlobalGLContext* currentContext()
     if (!ThreadGlobalGLContext::staticGLContext)
         ThreadGlobalGLContext::staticGLContext = new ThreadSpecific<ThreadGlobalGLContext>;
     return *ThreadGlobalGLContext::staticGLContext;
-}
-
-GLContext* GLContext::sharingContext()
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(std::unique_ptr<GLContext>, sharing, (createOffscreenContext()));
-    return sharing.get();
 }
 
 #if PLATFORM(X11)
@@ -111,12 +102,30 @@ void GLContext::cleanupActiveContextsAtExit()
 }
 #endif // PLATFORM(X11)
 
-
-std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType windowHandle, GLContext* sharingContext)
+static bool initializeOpenGLShimsIfNeeded()
 {
-#if PLATFORM(WAYLAND) && USE(EGL)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
-        if (auto eglContext = GLContextEGL::createContext(windowHandle, sharingContext))
+#if USE(OPENGL_ES_2)
+    return true;
+#else
+    static bool initialized = false;
+    static bool success = true;
+    if (!initialized) {
+        success = initializeOpenGLShims();
+        initialized = true;
+    }
+    return success;
+#endif
+}
+
+std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType windowHandle, PlatformDisplay* platformDisplay)
+{
+    if (!initializeOpenGLShimsIfNeeded())
+        return nullptr;
+
+    PlatformDisplay& display = platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay();
+#if PLATFORM(WAYLAND)
+    if (display.type() == PlatformDisplay::Type::Wayland) {
+        if (auto eglContext = GLContextEGL::createContext(windowHandle, display))
             return WTFMove(eglContext);
         return nullptr;
     }
@@ -128,34 +137,60 @@ std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType 
 #else
     XID GLXWindowHandle = static_cast<XID>(windowHandle);
 #endif
-    if (auto glxContext = GLContextGLX::createContext(GLXWindowHandle, sharingContext))
+    if (auto glxContext = GLContextGLX::createContext(GLXWindowHandle, display))
         return WTFMove(glxContext);
 #endif
 #if USE(EGL)
-    if (auto eglContext = GLContextEGL::createContext(windowHandle, sharingContext))
+    if (auto eglContext = GLContextEGL::createContext(windowHandle, display))
         return WTFMove(eglContext);
 #endif
     return nullptr;
 }
 
-GLContext::GLContext()
+std::unique_ptr<GLContext> GLContext::createOffscreenContext(PlatformDisplay* platformDisplay)
 {
-#if PLATFORM(X11)
-    addActiveContext(this);
-#endif
+    if (!initializeOpenGLShimsIfNeeded())
+        return nullptr;
+
+    return createContextForWindow(0, platformDisplay ? platformDisplay : &PlatformDisplay::sharedDisplay());
 }
 
-std::unique_ptr<GLContext> GLContext::createOffscreenContext(GLContext* sharingContext)
+std::unique_ptr<GLContext> GLContext::createSharingContext(PlatformDisplay& display)
 {
-    return createContextForWindow(0, sharingContext);
+    if (!initializeOpenGLShimsIfNeeded())
+        return nullptr;
+
+#if USE(GLX)
+    if (display.type() == PlatformDisplay::Type::X11) {
+        if (auto glxContext = GLContextGLX::createSharingContext(display))
+            return WTFMove(glxContext);
+    }
+#endif
+
+#if USE(EGL) || PLATFORM(WAYLAND)
+    if (auto eglContext = GLContextEGL::createSharingContext(display))
+        return WTFMove(eglContext);
+#endif
+
+    return nullptr;
+}
+
+GLContext::GLContext(PlatformDisplay& display)
+    : m_display(display)
+{
+#if PLATFORM(X11)
+    if (display.type() == PlatformDisplay::Type::X11)
+        addActiveContext(this);
+#endif
 }
 
 GLContext::~GLContext()
 {
     if (this == currentContext()->context())
-        currentContext()->setContext(0);
+        currentContext()->setContext(nullptr);
 #if PLATFORM(X11)
-    removeActiveContext(this);
+    if (m_display.type() == PlatformDisplay::Type::X11)
+        removeActiveContext(this);
 #endif
 }
 
@@ -165,7 +200,7 @@ bool GLContext::makeContextCurrent()
     return true;
 }
 
-GLContext* GLContext::getCurrent()
+GLContext* GLContext::current()
 {
     return currentContext()->context();
 }

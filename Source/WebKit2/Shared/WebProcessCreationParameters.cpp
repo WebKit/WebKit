@@ -145,6 +145,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if OS(LINUX)
     encoder << memoryPressureMonitorHandle;
 #endif
+
+#if PLATFORM(WAYLAND)
+    encoder << waylandCompositorDisplayName;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -302,6 +306,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if OS(LINUX)
     if (!decoder.decode(parameters.memoryPressureMonitorHandle))
+        return false;
+#endif
+
+#if PLATFORM(WAYLAND)
+    if (!decoder.decode(parameters.waylandCompositorDisplayName))
         return false;
 #endif
 

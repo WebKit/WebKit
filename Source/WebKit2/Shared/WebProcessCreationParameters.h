@@ -170,6 +170,10 @@ struct WebProcessCreationParameters {
 #if OS(LINUX)
     IPC::Attachment memoryPressureMonitorHandle;
 #endif
+
+#if PLATFORM(WAYLAND)
+    String waylandCompositorDisplayName;
+#endif
 };
 
 } // namespace WebKit

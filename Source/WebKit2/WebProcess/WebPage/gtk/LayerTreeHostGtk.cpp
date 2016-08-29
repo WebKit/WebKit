@@ -29,6 +29,7 @@
 
 #if USE(TEXTURE_MAPPER_GL)
 
+#include "AcceleratedSurface.h"
 #include "DrawingAreaImpl.h"
 #include "TextureMapperGL.h"
 #include "WebPage.h"
@@ -46,20 +47,8 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
-#include <wtf/CurrentTime.h>
-
 #include <gdk/gdk.h>
-#if defined(GDK_WINDOWING_X11)
-#define Region XRegion
-#define Font XFont
-#define Cursor XCursor
-#define Screen XScreen
-#include <gdk/gdkx.h>
-#endif
-
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-#include "RedirectedXCompositeWindow.h"
-#endif
+#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 
@@ -137,9 +126,7 @@ Ref<LayerTreeHostGtk> LayerTreeHostGtk::create(WebPage& webPage)
 
 LayerTreeHostGtk::LayerTreeHostGtk(WebPage& webPage)
     : LayerTreeHost(webPage)
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    , m_redirectedWindow(RedirectedXCompositeWindow::create(webPage))
-#endif
+    , m_surface(AcceleratedSurface::create(webPage))
     , m_renderFrameScheduler(std::bind(&LayerTreeHostGtk::renderFrame, this))
 {
     m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
@@ -167,34 +154,37 @@ LayerTreeHostGtk::LayerTreeHostGtk(WebPage& webPage)
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
     m_nonCompositedContentLayer->setNeedsDisplay();
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (m_redirectedWindow) {
+    if (m_surface) {
         createTextureMapper();
-        m_layerTreeContext.contextID = m_redirectedWindow->pixmap();
+        m_layerTreeContext.contextID = m_surface->surfaceID();
     }
-#endif
 }
 
 bool LayerTreeHostGtk::makeContextCurrent()
 {
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    uint64_t nativeHandle = m_redirectedWindow ? m_redirectedWindow->window() : m_layerTreeContext.contextID;
-#else
-    uint64_t nativeHandle = m_layerTreeContext.contextID;
-#endif
-
+    uint64_t nativeHandle = m_surface ? m_surface->window() : m_layerTreeContext.contextID;
     if (!nativeHandle) {
         m_context = nullptr;
         return false;
     }
 
-    if (!m_context) {
-        m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(nativeHandle), GLContext::sharingContext());
-        if (!m_context)
-            return false;
-    }
+    if (m_context)
+        return m_context->makeContextCurrent();
 
-    return m_context->makeContextCurrent();
+    m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(nativeHandle), &PlatformDisplay::sharedDisplayForCompositing());
+    if (!m_context)
+        return false;
+
+    if (!m_context->makeContextCurrent())
+        return false;
+
+    // Do not do frame sync when rendering offscreen in the web process to ensure that SwapBuffers never blocks.
+    // Rendering to the actual screen will happen later anyway since the UI process schedules a redraw for every update,
+    // the compositor will take care of syncing to vblank.
+    if (m_surface)
+        m_context->swapInterval(0);
+
+    return true;
 }
 
 LayerTreeHostGtk::~LayerTreeHostGtk()
@@ -229,9 +219,7 @@ void LayerTreeHostGtk::invalidate()
     m_context = nullptr;
     LayerTreeHost::invalidate();
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    m_redirectedWindow = nullptr;
-#endif
+    m_surface = nullptr;
 }
 
 void LayerTreeHostGtk::setNonCompositedContentsNeedDisplay()
@@ -271,24 +259,16 @@ void LayerTreeHostGtk::sizeDidChange(const IntSize& newSize)
         m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(0, oldSize.height(), newSize.width(), newSize.height() - oldSize.height()));
     m_nonCompositedContentLayer->setNeedsDisplay();
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (m_redirectedWindow) {
-        m_redirectedWindow->resize(newSize);
-        m_layerTreeContext.contextID = m_redirectedWindow->pixmap();
-    }
-#endif
+    if (m_surface && m_surface->resize(newSize))
+        m_layerTreeContext.contextID = m_surface->surfaceID();
 
     compositeLayersToContext(ForResize);
 }
 
 void LayerTreeHostGtk::deviceOrPageScaleFactorChanged()
 {
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (m_redirectedWindow) {
-        m_redirectedWindow->resize(m_webPage.size());
-        m_layerTreeContext.contextID = m_redirectedWindow->pixmap();
-    }
-#endif
+    if (m_surface && m_surface->resize(m_webPage.size()))
+        m_layerTreeContext.contextID = m_surface->surfaceID();
 
     // Other layers learn of the scale factor change via WebPage::setDeviceScaleFactor.
     m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();

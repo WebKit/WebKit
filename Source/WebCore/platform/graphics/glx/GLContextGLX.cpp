@@ -32,9 +32,30 @@
 
 namespace WebCore {
 
-std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLContext* sharingContext)
+#if !defined(PFNGLXSWAPINTERVALSGIPROC)
+typedef int (*PFNGLXSWAPINTERVALSGIPROC) (int);
+#endif
+
+static PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
+
+static bool hasSGISwapControlExtension(Display* display)
 {
-    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
+    static bool initialized = false;
+    if (initialized)
+        return !!glXSwapIntervalSGI;
+
+    initialized = true;
+    const char* extensions = glXQueryExtensionsString(display, 0);
+    if (!strstr(extensions, "GLX_SGI_swap_control"))
+        return false;
+
+    glXSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(reinterpret_cast<const unsigned char*>("glXSwapIntervalSGI")));
+    return !!glXSwapIntervalSGI;
+}
+
+std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(XID window, PlatformDisplay& platformDisplay, GLXContext sharingContext)
+{
+    Display* display = downcast<PlatformDisplayX11>(platformDisplay).native();
     XWindowAttributes attributes;
     if (!XGetWindowAttributes(display, window, &attributes))
         return nullptr;
@@ -45,15 +66,14 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLCo
     int numReturned = 0;
     XUniquePtr<XVisualInfo> visualInfoList(XGetVisualInfo(display, VisualIDMask, &visualInfo, &numReturned));
 
-    GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context.get() : nullptr;
-    XUniqueGLXContext context(glXCreateContext(display, visualInfoList.get(), glxSharingContext, True));
+    XUniqueGLXContext context(glXCreateContext(display, visualInfoList.get(), sharingContext, True));
     if (!context)
         return nullptr;
 
-    return std::make_unique<GLContextGLX>(WTFMove(context), window);
+    return std::unique_ptr<GLContextGLX>(new GLContextGLX(platformDisplay, WTFMove(context), window));
 }
 
-std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext sharingContext)
+std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(PlatformDisplay& platformDisplay, GLXContext sharingContext)
 {
     static const int fbConfigAttributes[] = {
         GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
@@ -67,7 +87,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext shar
     };
 
     int returnedElements;
-    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
+    Display* display = downcast<PlatformDisplayX11>(platformDisplay).native();
     XUniquePtr<GLXFBConfig> configs(glXChooseFBConfig(display, 0, fbConfigAttributes, &returnedElements));
     if (!returnedElements)
         return nullptr;
@@ -82,10 +102,10 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext shar
     if (!context)
         return nullptr;
 
-    return std::make_unique<GLContextGLX>(WTFMove(context), WTFMove(pbuffer));
+    return std::unique_ptr<GLContextGLX>(new GLContextGLX(platformDisplay, WTFMove(context), WTFMove(pbuffer)));
 }
 
-std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext sharingContext)
+std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(PlatformDisplay& platformDisplay, GLXContext sharingContext)
 {
     static int visualAttributes[] = {
         GLX_RGBA,
@@ -96,7 +116,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext shari
         0
     };
 
-    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
+    Display* display = downcast<PlatformDisplayX11>(platformDisplay).native();
     XUniquePtr<XVisualInfo> visualInfo(glXChooseVisual(display, DefaultScreen(display), visualAttributes));
     if (!visualInfo)
         return nullptr;
@@ -113,46 +133,46 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext shari
     if (!glxPixmap)
         return nullptr;
 
-    return std::make_unique<GLContextGLX>(WTFMove(context), WTFMove(pixmap), WTFMove(glxPixmap));
+    return std::unique_ptr<GLContextGLX>(new GLContextGLX(platformDisplay, WTFMove(context), WTFMove(pixmap), WTFMove(glxPixmap)));
 }
 
-std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* sharingContext)
+std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, PlatformDisplay& platformDisplay)
 {
-    static bool initialized = false;
-    static bool success = true;
-    if (!initialized) {
-        success = initializeOpenGLShims();
-        initialized = true;
-    }
-    if (!success)
-        return nullptr;
-
-    GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context.get() : nullptr;
-    auto context = window ? createWindowContext(window, sharingContext) : nullptr;
+    GLXContext glxSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContextGLX*>(platformDisplay.sharingGLContext())->m_context.get() : nullptr;
+    auto context = window ? createWindowContext(window, platformDisplay, glxSharingContext) : nullptr;
     if (!context)
-        context = createPbufferContext(glxSharingContext);
+        context = createPbufferContext(platformDisplay, glxSharingContext);
     if (!context)
-        context = createPixmapContext(glxSharingContext);
-    if (!context)
-        return nullptr;
+        context = createPixmapContext(platformDisplay, glxSharingContext);
 
     return context;
 }
 
-GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XID window)
-    : m_context(WTFMove(context))
+std::unique_ptr<GLContextGLX> GLContextGLX::createSharingContext(PlatformDisplay& platformDisplay)
+{
+    auto context = createPbufferContext(platformDisplay);
+    if (!context)
+        context = createPixmapContext(platformDisplay);
+    return context;
+}
+
+GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, XID window)
+    : GLContext(display)
+    , m_context(WTFMove(context))
     , m_window(window)
 {
 }
 
-GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XUniqueGLXPbuffer&& pbuffer)
-    : m_context(WTFMove(context))
+GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, XUniqueGLXPbuffer&& pbuffer)
+    : GLContext(display)
+    , m_context(WTFMove(context))
     , m_pbuffer(WTFMove(pbuffer))
 {
 }
 
-GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XUniquePixmap&& pixmap, XUniqueGLXPixmap&& glxPixmap)
-    : m_context(WTFMove(context))
+GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, XUniquePixmap&& pixmap, XUniqueGLXPixmap&& glxPixmap)
+    : GLContext(display)
+    , m_context(WTFMove(context))
     , m_pixmap(WTFMove(pixmap))
     , m_glxPixmap(WTFMove(glxPixmap))
 {
@@ -166,9 +186,8 @@ GLContextGLX::~GLContextGLX()
     if (m_context) {
         // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
         // from Mozilla's 3D canvas implementation at: http://bitbucket.org/ilmari/canvas3d/
-        Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        glXMakeCurrent(display, None, None);
+        glXMakeCurrent(downcast<PlatformDisplayX11>(m_display).native(), None, None);
     }
 }
 
@@ -185,8 +204,7 @@ IntSize GLContextGLX::defaultFrameBufferSize()
     int x, y;
     Window rootWindow;
     unsigned int width, height, borderWidth, depth;
-    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-    if (!XGetGeometry(display, m_window, &rootWindow, &x, &y, &width, &height, &borderWidth, &depth))
+    if (!XGetGeometry(downcast<PlatformDisplayX11>(m_display).native(), m_window, &rootWindow, &x, &y, &width, &height, &borderWidth, &depth))
         return IntSize();
 
     return IntSize(width, height);
@@ -200,7 +218,7 @@ bool GLContextGLX::makeContextCurrent()
     if (glXGetCurrentContext() == m_context.get())
         return true;
 
-    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
+    Display* display = downcast<PlatformDisplayX11>(m_display).native();
     if (m_window)
         return glXMakeCurrent(display, m_window, m_context.get());
 
@@ -213,12 +231,19 @@ bool GLContextGLX::makeContextCurrent()
 void GLContextGLX::swapBuffers()
 {
     if (m_window)
-        glXSwapBuffers(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), m_window);
+        glXSwapBuffers(downcast<PlatformDisplayX11>(m_display).native(), m_window);
 }
 
 void GLContextGLX::waitNative()
 {
     glXWaitX();
+}
+
+void GLContextGLX::swapInterval(int interval)
+{
+    if (!hasSGISwapControlExtension(downcast<PlatformDisplayX11>(m_display).native()))
+        return;
+    glXSwapIntervalSGI(interval);
 }
 
 cairo_device_t* GLContextGLX::cairoDevice()
@@ -227,7 +252,7 @@ cairo_device_t* GLContextGLX::cairoDevice()
         return m_cairoDevice;
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && CAIRO_HAS_GLX_FUNCTIONS
-    m_cairoDevice = cairo_glx_device_create(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), m_context.get());
+    m_cairoDevice = cairo_glx_device_create(downcast<PlatformDisplayX11>(m_display).native(), m_context.get());
 #endif
 
     return m_cairoDevice;

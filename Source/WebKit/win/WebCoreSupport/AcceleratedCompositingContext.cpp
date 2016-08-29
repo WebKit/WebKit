@@ -102,7 +102,7 @@ void AcceleratedCompositingContext::initialize()
 
     // The creation of the TextureMapper needs an active OpenGL context.
     if (!m_context)
-        m_context = GLContext::createContextForWindow(m_window, GLContext::sharingContext());
+        m_context = GLContext::createContextForWindow(m_window);
 
     if (!m_context)
         return;
@@ -282,7 +282,7 @@ bool AcceleratedCompositingContext::acceleratedCompositingAvailable()
         return false;
 
     // Create GL context.
-    std::unique_ptr<WebCore::GLContext> context = GLContext::createContextForWindow(testWindow, GLContext::sharingContext());
+    std::unique_ptr<WebCore::GLContext> context = GLContext::createContextForWindow(testWindow);
 
     if (!context) {
         ::DestroyWindow(testWindow);

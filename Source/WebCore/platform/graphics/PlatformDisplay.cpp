@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformDisplay.h"
 
+#include "GLContext.h"
 #include <cstdlib>
 #include <mutex>
 
@@ -59,6 +60,8 @@
 
 #if USE(EGL)
 #include <EGL/egl.h>
+#include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #endif
 
 namespace WebCore {
@@ -76,7 +79,7 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 #endif
 #if PLATFORM(WAYLAND)
     if (GDK_IS_WAYLAND_DISPLAY(display))
-        return PlatformDisplayWayland::create();
+        return std::make_unique<PlatformDisplayWayland>(gdk_wayland_display_get_wl_display(display));
 #endif
 #endif
 #elif PLATFORM(EFL) && defined(HAVE_ECORE_X)
@@ -103,6 +106,18 @@ PlatformDisplay& PlatformDisplay::sharedDisplay()
     return *display;
 }
 
+static PlatformDisplay* s_sharedDisplayForCompositing;
+
+PlatformDisplay& PlatformDisplay::sharedDisplayForCompositing()
+{
+    return s_sharedDisplayForCompositing ? *s_sharedDisplayForCompositing : sharedDisplay();
+}
+
+void PlatformDisplay::setSharedDisplayForCompositing(PlatformDisplay& display)
+{
+    s_sharedDisplayForCompositing = &display;
+}
+
 PlatformDisplay::PlatformDisplay()
 #if USE(EGL)
     : m_eglDisplay(EGL_NO_DISPLAY)
@@ -117,7 +132,22 @@ PlatformDisplay::~PlatformDisplay()
 #endif
 }
 
+#if !PLATFORM(EFL)
+GLContext* PlatformDisplay::sharingGLContext()
+{
+    if (!m_sharingGLContext)
+        m_sharingGLContext = GLContext::createSharingContext(*this);
+    return m_sharingGLContext.get();
+}
+#endif
+
 #if USE(EGL)
+static HashSet<PlatformDisplay*>& eglDisplays()
+{
+    static NeverDestroyed<HashSet<PlatformDisplay*>> displays;
+    return displays;
+}
+
 EGLDisplay PlatformDisplay::eglDisplay() const
 {
     if (!m_eglDisplayInitialized)
@@ -125,12 +155,20 @@ EGLDisplay PlatformDisplay::eglDisplay() const
     return m_eglDisplay;
 }
 
+bool PlatformDisplay::eglCheckVersion(int major, int minor) const
+{
+    if (!m_eglDisplayInitialized)
+        const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
+
+    return (m_eglMajorVersion > major) || ((m_eglMajorVersion == major) && (m_eglMinorVersion >= minor));
+}
+
 void PlatformDisplay::initializeEGLDisplay()
 {
     m_eglDisplayInitialized = true;
 
     if (m_eglDisplay == EGL_NO_DISPLAY) {
-// EGL is optionally soft linked on Windows.
+        // EGL is optionally soft linked on Windows.
 #if PLATFORM(WIN)
         auto eglGetDisplay = eglGetDisplayPtr();
         if (!eglGetDisplay)
@@ -141,36 +179,41 @@ void PlatformDisplay::initializeEGLDisplay()
             return;
     }
 
-    if (eglInitialize(m_eglDisplay, 0, 0) == EGL_FALSE) {
+    EGLint majorVersion, minorVersion;
+    if (eglInitialize(m_eglDisplay, &majorVersion, &minorVersion) == EGL_FALSE) {
         LOG_ERROR("EGLDisplay Initialization failed.");
         terminateEGLDisplay();
         return;
     }
 
-#if USE(OPENGL_ES_2)
-    static const EGLenum eglAPIVersion = EGL_OPENGL_ES_API;
-#else
-    static const EGLenum eglAPIVersion = EGL_OPENGL_API;
-#endif
-    if (eglBindAPI(eglAPIVersion) == EGL_FALSE) {
-        LOG_ERROR("Failed to set EGL API(%d).", eglGetError());
-        terminateEGLDisplay();
-        return;
-    }
+    m_eglMajorVersion = majorVersion;
+    m_eglMinorVersion = minorVersion;
 
-    // EGL registers atexit handlers to cleanup its global display list.
-    // Since the global PlatformDisplay instance is created before,
-    // when the PlatformDisplay destructor is called, EGL has already removed the
-    // display from the list, causing eglTerminate() to crash. So, here we register
-    // our own atexit handler, after EGL has been initialized and after the global
-    // instance has been created to ensure we call eglTerminate() before the other
-    // EGL atexit handlers and the PlatformDisplay destructor.
-    // See https://bugs.webkit.org/show_bug.cgi?id=157973.
-    std::atexit([] { PlatformDisplay::sharedDisplay().terminateEGLDisplay(); });
+    eglDisplays().add(this);
+
+    static bool eglAtexitHandlerInitialized = false;
+    if (!eglAtexitHandlerInitialized) {
+        // EGL registers atexit handlers to cleanup its global display list.
+        // Since the global PlatformDisplay instance is created before,
+        // when the PlatformDisplay destructor is called, EGL has already removed the
+        // display from the list, causing eglTerminate() to crash. So, here we register
+        // our own atexit handler, after EGL has been initialized and after the global
+        // instance has been created to ensure we call eglTerminate() before the other
+        // EGL atexit handlers and the PlatformDisplay destructor.
+        // See https://bugs.webkit.org/show_bug.cgi?id=157973.
+        eglAtexitHandlerInitialized = true;
+        std::atexit([] {
+            while (!eglDisplays().isEmpty()) {
+                auto* display = eglDisplays().takeAny();
+                display->terminateEGLDisplay();
+            }
+        });
+    }
 }
 
 void PlatformDisplay::terminateEGLDisplay()
 {
+    m_sharingGLContext = nullptr;
     ASSERT(m_eglDisplayInitialized);
     if (m_eglDisplay == EGL_NO_DISPLAY)
         return;

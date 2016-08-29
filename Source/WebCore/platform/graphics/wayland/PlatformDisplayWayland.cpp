@@ -29,126 +29,55 @@
 #if PLATFORM(WAYLAND)
 
 #include "GLContextEGL.h"
-#include "WaylandSurface.h"
 #include <cstring>
-#include <glib.h>
+#include <wayland-egl.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-const struct wl_registry_listener PlatformDisplayWayland::m_registryListener = {
-    PlatformDisplayWayland::globalCallback,
-    PlatformDisplayWayland::globalRemoveCallback
+const struct wl_registry_listener PlatformDisplayWayland::s_registryListener = {
+    // globalCallback
+    [](void* data, struct wl_registry*, uint32_t name, const char* interface, uint32_t) {
+        static_cast<PlatformDisplayWayland*>(data)->registryGlobal(interface, name);
+    },
+    // globalRemoveCallback
+    [](void*, struct wl_registry*, uint32_t)
+    {
+    }
 };
 
-void PlatformDisplayWayland::globalCallback(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t)
+PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display)
 {
-    auto display = static_cast<PlatformDisplayWayland*>(data);
-    if (!std::strcmp(interface, "wl_compositor"))
-        display->m_compositor = static_cast<struct wl_compositor*>(wl_registry_bind(registry, name, &wl_compositor_interface, 1));
-    else if (!std::strcmp(interface, "wl_webkitgtk"))
-        display->m_webkitgtk = static_cast<struct wl_webkitgtk*>(wl_registry_bind(registry, name, &wl_webkitgtk_interface, 1));
-}
-
-void PlatformDisplayWayland::globalRemoveCallback(void*, struct wl_registry*, uint32_t)
-{
-    // FIXME: if this can happen without the UI Process getting shut down
-    // we should probably destroy our cached display instance.
-}
-
-std::unique_ptr<PlatformDisplayWayland> PlatformDisplayWayland::create()
-{
-    struct wl_display* wlDisplay = wl_display_connect(nullptr);
-    if (!wlDisplay) {
-        WTFLogAlways("PlatformDisplayWayland initialization: failed to connect to the Wayland server socket. Check your WAYLAND_DISPLAY or WAYLAND_SOCKET environment variables.");
-        return nullptr;
-    }
-
-    auto display = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(wlDisplay));
-    if (!display->isInitialized()) {
-        WTFLogAlways("PlatformDisplayWayland initialization: failed to complete the initialization of the display.");
-        return nullptr;
-    }
-
-    return display;
-}
-
-PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* wlDisplay)
-    : m_display(wlDisplay)
-    , m_registry(wl_display_get_registry(m_display))
-    , m_eglConfigChosen(false)
-{
-    wl_registry_add_listener(m_registry, &m_registryListener, this);
-    wl_display_roundtrip(m_display);
-
-    static const EGLint configAttributes[] = {
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-        EGL_RED_SIZE, 1,
-        EGL_GREEN_SIZE, 1,
-        EGL_BLUE_SIZE, 1,
-        EGL_ALPHA_SIZE, 1,
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        EGL_NONE
-    };
-
-    m_eglDisplay = eglGetDisplay(m_display);
-    PlatformDisplay::initializeEGLDisplay();
-    if (m_eglDisplay == EGL_NO_DISPLAY)
-        return;
-
-    EGLint numberOfConfigs;
-    if (!eglChooseConfig(m_eglDisplay, configAttributes, &m_eglConfig, 1, &numberOfConfigs) || numberOfConfigs != 1) {
-        g_warning("PlatformDisplayWayland initialization: failed to find the desired EGL configuration.");
-        return;
-    }
-
-    m_eglConfigChosen = true;
+    initialize(display);
 }
 
 PlatformDisplayWayland::~PlatformDisplayWayland()
 {
-    if (m_webkitgtk)
-        wl_webkitgtk_destroy(m_webkitgtk);
-    if (m_compositor)
-        wl_compositor_destroy(m_compositor);
-    if (m_registry)
-        wl_registry_destroy(m_registry);
-    if (m_display)
-        wl_display_disconnect(m_display);
 }
 
-std::unique_ptr<WaylandSurface> PlatformDisplayWayland::createSurface(const IntSize& size, int widgetId)
+void PlatformDisplayWayland::initialize(wl_display* display)
 {
-    struct wl_surface* wlSurface = wl_compositor_create_surface(m_compositor);
-    // We keep the minimum size at 1x1px since Mesa returns null values in wl_egl_window_create() for zero width or height.
-    EGLNativeWindowType nativeWindow = wl_egl_window_create(wlSurface, std::max(1, size.width()), std::max(1, size.height()));
-
-    wl_webkitgtk_set_surface_for_widget(m_webkitgtk, wlSurface, widgetId);
+    m_display = display;
+    m_registry.reset(wl_display_get_registry(m_display));
+    wl_registry_add_listener(m_registry.get(), &s_registryListener, this);
     wl_display_roundtrip(m_display);
 
-    return std::make_unique<WaylandSurface>(wlSurface, nativeWindow);
+    m_eglDisplay = eglGetDisplay(m_display);
+    PlatformDisplay::initializeEGLDisplay();
 }
 
-std::unique_ptr<GLContextEGL> PlatformDisplayWayland::createSharingGLContext()
+void PlatformDisplayWayland::registryGlobal(const char* interface, uint32_t name)
 {
-    class OffscreenContextData : public GLContext::Data {
-    public:
-        virtual ~OffscreenContextData()
-        {
-            wl_egl_window_destroy(nativeWindow);
-            wl_surface_destroy(surface);
-        }
+    if (!std::strcmp(interface, "wl_compositor"))
+        m_compositor.reset(static_cast<struct wl_compositor*>(wl_registry_bind(m_registry.get(), name, &wl_compositor_interface, 1)));
+}
 
-        struct wl_surface* surface;
-        EGLNativeWindowType nativeWindow;
-    };
+WlUniquePtr<struct wl_surface> PlatformDisplayWayland::createSurface() const
+{
+    if (!m_compositor)
+        return nullptr;
 
-    auto contextData = std::make_unique<OffscreenContextData>();
-    contextData->surface = wl_compositor_create_surface(m_compositor);
-    contextData->nativeWindow = wl_egl_window_create(contextData->surface, 1, 1);
-
-    auto nativeWindow = contextData->nativeWindow;
-    return GLContextEGL::createWindowContext(nativeWindow, nullptr, WTFMove(contextData));
+    return WlUniquePtr<struct wl_surface>(wl_compositor_create_surface(m_compositor.get()));
 }
 
 } // namespace WebCore

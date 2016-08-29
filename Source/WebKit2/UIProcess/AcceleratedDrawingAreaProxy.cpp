@@ -41,6 +41,11 @@
 #include "CoordinatedLayerTreeHostProxy.h"
 #endif
 
+#if PLATFORM(WAYLAND)
+#include "WaylandCompositor.h"
+#include <WebCore/PlatformDisplay.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -215,6 +220,13 @@ void AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
         return;
     if (m_webPageProxy.process().state() == WebProcessProxy::State::Launching)
         return;
+
+#if PLATFORM(WAYLAND)
+    // Never block the UI process in Wayland when waiting for DidUpdateBackingStoreState after a resize,
+    // because the nested compositor needs to handle the web process requests that happens while resizing.
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && WaylandCompositor::singleton().isRunning())
+        return;
+#endif
 
     // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateBackingStoreState message that
     // hasn't yet been processed. But it might be better to skip ahead to some other DidUpdateBackingStoreState

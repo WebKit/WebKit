@@ -300,6 +300,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     m_applicationCacheStorage->setDefaultOriginQuota(25ULL * 1024 * 1024);
 #endif
 
+#if PLATFORM(WAYLAND)
+    m_waylandCompositorDisplayName = parameters.waylandCompositorDisplayName;
+#endif
+
 #if ENABLE(VIDEO)
     if (!parameters.mediaCacheDirectory.isEmpty())
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);

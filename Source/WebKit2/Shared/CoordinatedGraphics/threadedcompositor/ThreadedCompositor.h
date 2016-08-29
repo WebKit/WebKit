@@ -57,7 +57,9 @@ public:
         virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) = 0;
     };
 
-    static Ref<ThreadedCompositor> create(Client*, uint64_t nativeSurfaceHandle = 0);
+    enum class ShouldDoFrameSync { No, Yes };
+
+    static Ref<ThreadedCompositor> create(Client*, uint64_t nativeSurfaceHandle = 0, ShouldDoFrameSync = ShouldDoFrameSync::Yes);
     virtual ~ThreadedCompositor();
 
     void setNativeSurfaceHandleForCompositing(uint64_t);
@@ -77,7 +79,7 @@ public:
     void forceRepaint();
 
 private:
-    ThreadedCompositor(Client*, uint64_t nativeSurfaceHandle);
+    ThreadedCompositor(Client*, uint64_t nativeSurfaceHandle, ShouldDoFrameSync);
 
     // CoordinatedGraphicsSceneClient
     void renderNextFrame() override;
@@ -90,8 +92,7 @@ private:
     void renderLayerTree();
     void scheduleDisplayImmediately();
 
-    bool tryEnsureGLContext();
-    WebCore::GLContext* glContext();
+    bool makeContextCurrent();
 
     Client* m_client { nullptr };
     RefPtr<CoordinatedGraphicsScene> m_scene;
@@ -102,6 +103,7 @@ private:
     float m_deviceScaleFactor { 1 };
     bool m_drawsBackground { true };
     uint64_t m_nativeSurfaceHandle;
+    ShouldDoFrameSync m_doFrameSync;
 
     std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;
 };

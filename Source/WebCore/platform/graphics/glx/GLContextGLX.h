@@ -32,31 +32,35 @@ typedef void* ContextKeyType;
 
 namespace WebCore {
 
-class GLContextGLX : public GLContext {
+class GLContextGLX final : public GLContext {
     WTF_MAKE_NONCOPYABLE(GLContextGLX);
 public:
-    static std::unique_ptr<GLContextGLX> createContext(XID window, GLContext* sharingContext);
-    static std::unique_ptr<GLContextGLX> createWindowContext(XID window, GLContext* sharingContext);
+    static std::unique_ptr<GLContextGLX> createContext(XID window, PlatformDisplay&);
+    static std::unique_ptr<GLContextGLX> createSharingContext(PlatformDisplay&);
 
-    GLContextGLX(XUniqueGLXContext&&, XID);
-    GLContextGLX(XUniqueGLXContext&&, XUniqueGLXPbuffer&&);
-    GLContextGLX(XUniqueGLXContext&&, XUniquePixmap&&, XUniqueGLXPixmap&&);
     virtual ~GLContextGLX();
-    virtual bool makeContextCurrent();
-    virtual void swapBuffers();
-    virtual void waitNative();
-    virtual bool canRenderToDefaultFramebuffer();
-    virtual IntSize defaultFrameBufferSize();
-    virtual cairo_device_t* cairoDevice();
-    virtual bool isEGLContext() const { return false; }
+
+    bool makeContextCurrent() override;
+    void swapBuffers() override;
+    void waitNative() override;
+    bool canRenderToDefaultFramebuffer() override;
+    IntSize defaultFrameBufferSize() override;
+    void swapInterval(int) override;
+    cairo_device_t* cairoDevice() override;
+    bool isEGLContext() const override { return false; }
 
 #if ENABLE(GRAPHICS_CONTEXT_3D)
-    virtual PlatformGraphicsContext3D platformContext();
+    PlatformGraphicsContext3D platformContext() override;
 #endif
 
 private:
-    static std::unique_ptr<GLContextGLX> createPbufferContext(GLXContext sharingContext);
-    static std::unique_ptr<GLContextGLX> createPixmapContext(GLXContext sharingContext);
+    GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XID);
+    GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XUniqueGLXPbuffer&&);
+    GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XUniquePixmap&&, XUniqueGLXPixmap&&);
+
+    static std::unique_ptr<GLContextGLX> createWindowContext(XID window, PlatformDisplay&, GLXContext sharingContext = nullptr);
+    static std::unique_ptr<GLContextGLX> createPbufferContext(PlatformDisplay&, GLXContext sharingContext = nullptr);
+    static std::unique_ptr<GLContextGLX> createPixmapContext(PlatformDisplay&, GLXContext sharingContext = nullptr);
 
     XUniqueGLXContext m_context;
     XID m_window { 0 };

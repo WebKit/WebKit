@@ -29,48 +29,67 @@
 #include "XUniqueResource.h"
 #endif
 
+#if PLATFORM(WAYLAND)
+#include "WlUniquePtr.h"
+#endif
+
 namespace WebCore {
 
-class GLContextEGL : public GLContext {
+class GLContextEGL final : public GLContext {
     WTF_MAKE_NONCOPYABLE(GLContextEGL);
 public:
-    enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface };
-    static std::unique_ptr<GLContextEGL> createContext(EGLNativeWindowType, GLContext* sharingContext = 0);
-    static std::unique_ptr<GLContextEGL> createWindowContext(EGLNativeWindowType, GLContext* sharingContext, std::unique_ptr<GLContext::Data>&& = nullptr);
+    static std::unique_ptr<GLContextEGL> createContext(EGLNativeWindowType, PlatformDisplay&);
+    static std::unique_ptr<GLContextEGL> createSharingContext(PlatformDisplay&);
 
-    GLContextEGL(EGLContext, EGLSurface, EGLSurfaceType);
-#if PLATFORM(X11)
-    GLContextEGL(EGLContext, EGLSurface, XUniquePixmap&&);
-#endif
     virtual ~GLContextEGL();
-    virtual bool makeContextCurrent();
-    virtual void swapBuffers();
-    virtual void waitNative();
-    virtual bool canRenderToDefaultFramebuffer();
-    virtual IntSize defaultFrameBufferSize();
+
+    bool makeContextCurrent() override;
+    void swapBuffers() override;
+    void waitNative() override;
+    bool canRenderToDefaultFramebuffer() override;
+    IntSize defaultFrameBufferSize() override;
+    void swapInterval(int) override;
 #if USE(CAIRO)
-    virtual cairo_device_t* cairoDevice();
+    cairo_device_t* cairoDevice() override;
 #endif
-    virtual bool isEGLContext() const { return true; }
+    bool isEGLContext() const override { return true; }
 
 #if ENABLE(GRAPHICS_CONTEXT_3D)
-    virtual PlatformGraphicsContext3D platformContext();
+    PlatformGraphicsContext3D platformContext() override;
 #endif
 
 private:
-    static std::unique_ptr<GLContextEGL> createPbufferContext(EGLContext sharingContext);
+    enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };
+
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, EGLSurfaceType);
 #if PLATFORM(X11)
-    static std::unique_ptr<GLContextEGL> createPixmapContext(EGLContext sharingContext);
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, XUniquePixmap&&);
+#endif
+#if PLATFORM(WAYLAND)
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, WlUniquePtr<struct wl_surface>&&, EGLNativeWindowType);
 #endif
 
-    static void addActiveContext(GLContextEGL*);
-    static void cleanupSharedEGLDisplay(void);
+    static std::unique_ptr<GLContextEGL> createWindowContext(EGLNativeWindowType, PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
+    static std::unique_ptr<GLContextEGL> createPbufferContext(PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
+    static std::unique_ptr<GLContextEGL> createSurfacelessContext(PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
+#if PLATFORM(X11)
+    static std::unique_ptr<GLContextEGL> createPixmapContext(PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
+#endif
+#if PLATFORM(WAYLAND)
+    static std::unique_ptr<GLContextEGL> createWaylandContext(PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
+#endif
 
-    EGLContext m_context;
-    EGLSurface m_surface;
+    static bool getEGLConfig(EGLDisplay, EGLConfig*, EGLSurfaceType);
+
+    EGLContext m_context { EGL_NO_CONTEXT };
+    EGLSurface m_surface { EGL_NO_SURFACE };
     EGLSurfaceType m_type;
 #if PLATFORM(X11)
     XUniquePixmap m_pixmap;
+#endif
+#if PLATFORM(WAYLAND)
+    WlUniquePtr<struct wl_surface> m_wlSurface;
+    struct wl_egl_window* m_wlWindow { nullptr };
 #endif
 #if USE(CAIRO)
     cairo_device_t* m_cairoDevice { nullptr };

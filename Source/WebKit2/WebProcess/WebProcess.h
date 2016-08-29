@@ -198,6 +198,10 @@ public:
     void resetAllGeolocationPermissions();
 #endif
 
+#if PLATFORM(WAYLAND)
+    String waylandCompositorDisplayName() const { return m_waylandCompositorDisplayName; }
+#endif
+
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
     static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
 
@@ -401,6 +405,10 @@ private:
     bool m_suppressMemoryPressureHandler { false };
 
     HashMap<WebCore::UserGestureToken *, uint64_t> m_userGestureTokens;
+
+#if PLATFORM(WAYLAND)
+    String m_waylandCompositorDisplayName;
+#endif
 };
 
 } // namespace WebKit

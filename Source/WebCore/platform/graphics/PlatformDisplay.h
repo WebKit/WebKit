@@ -35,10 +35,13 @@ typedef void *EGLDisplay;
 
 namespace WebCore {
 
+class GLContext;
+
 class PlatformDisplay {
     WTF_MAKE_NONCOPYABLE(PlatformDisplay); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PlatformDisplay& sharedDisplay();
+    static PlatformDisplay& sharedDisplayForCompositing();
     virtual ~PlatformDisplay();
 
     enum class Type {
@@ -55,12 +58,21 @@ public:
 
     virtual Type type() const = 0;
 
+#if !PLATFORM(EFL)
+    // FIXME: This should not have any platform ifdef, but EFL has its own EGLContext class
+    // instead of using the GLContext common API.
+    GLContext* sharingGLContext();
+#endif
+
 #if USE(EGL)
     EGLDisplay eglDisplay() const;
+    bool eglCheckVersion(int major, int minor) const;
 #endif
 
 protected:
     PlatformDisplay();
+
+    static void setSharedDisplayForCompositing(PlatformDisplay&);
 
 #if USE(EGL)
     virtual void initializeEGLDisplay();
@@ -75,7 +87,10 @@ private:
     void terminateEGLDisplay();
 
     bool m_eglDisplayInitialized { false };
+    int m_eglMajorVersion { 0 };
+    int m_eglMinorVersion { 0 };
 #endif
+    std::unique_ptr<GLContext> m_sharingGLContext;
 };
 
 } // namespace WebCore

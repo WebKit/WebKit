@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-class RedirectedXCompositeWindow;
+class AcceleratedSurface;
 
 class LayerTreeHostGtk final : public LayerTreeHost, WebCore::GraphicsLayerClient {
 public:
@@ -109,9 +109,7 @@ private:
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     std::unique_ptr<WebCore::GLContext> m_context;
     WebCore::TransformationMatrix m_scaleMatrix;
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    std::unique_ptr<RedirectedXCompositeWindow> m_redirectedWindow;
-#endif
+    std::unique_ptr<AcceleratedSurface> m_surface;
     RenderFrameScheduler m_renderFrameScheduler;
 };
 

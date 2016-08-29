@@ -100,6 +100,11 @@
 #include "MemoryPressureMonitor.h"
 #endif
 
+#if PLATFORM(WAYLAND)
+#include "WaylandCompositor.h"
+#include <WebCore/PlatformDisplay.h>
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -637,6 +642,11 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     parameters.shouldEnableMemoryPressureReliefLogging = true;
     if (MemoryPressureMonitor::isEnabled())
         parameters.memoryPressureMonitorHandle = MemoryPressureMonitor::singleton().createHandle();
+#endif
+
+#if PLATFORM(WAYLAND)
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
+        parameters.waylandCompositorDisplayName = WaylandCompositor::singleton().displayName();
 #endif
 
     parameters.resourceLoadStatisticsEnabled = resourceLoadStatisticsEnabled();

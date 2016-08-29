@@ -88,8 +88,8 @@ ImageBufferData::~ImageBufferData()
         return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    GLContext* previousActiveContext = GLContext::getCurrent();
-    GLContext::sharingContext()->makeContextCurrent();
+    GLContext* previousActiveContext = GLContext::current();
+    PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->makeContextCurrent();
 
     if (m_texture)
         glDeleteTextures(1, &m_texture);
@@ -108,7 +108,8 @@ ImageBufferData::~ImageBufferData()
 #if USE(COORDINATED_GRAPHICS_THREADED)
 void ImageBufferData::createCompositorBuffer()
 {
-    GLContext::sharingContext()->makeContextCurrent();
+    auto* context = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext();
+    context->makeContextCurrent();
 
     glGenTextures(1, &m_compositorTexture);
     glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
@@ -119,15 +120,14 @@ void ImageBufferData::createCompositorBuffer()
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexImage2D(GL_TEXTURE_2D, 0 , GL_RGBA, m_size.width(), m_size.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-    cairo_device_t* device = GLContext::sharingContext()->cairoDevice();
-    m_compositorSurface = adoptRef(cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, m_compositorTexture, m_size.width(), m_size.height()));
+    m_compositorSurface = adoptRef(cairo_gl_surface_create_for_texture(context->cairoDevice(), CAIRO_CONTENT_COLOR_ALPHA, m_compositorTexture, m_size.width(), m_size.height()));
     m_compositorCr = adoptRef(cairo_create(m_compositorSurface.get()));
     cairo_set_antialias(m_compositorCr.get(), CAIRO_ANTIALIAS_NONE);
 }
 
 void ImageBufferData::swapBuffersIfNeeded()
 {
-    GLContext* previousActiveContext = GLContext::getCurrent();
+    GLContext* previousActiveContext = GLContext::current();
 
     if (!m_compositorTexture) {
         createCompositorBuffer();
@@ -159,7 +159,8 @@ void clearSurface(cairo_surface_t* surface)
 
 void ImageBufferData::createCairoGLSurface()
 {
-    GLContext::sharingContext()->makeContextCurrent();
+    auto* context = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext();
+    context->makeContextCurrent();
 
     // We must generate the texture ourselves, because there is no Cairo API for extracting it
     // from a pre-existing surface.
@@ -174,7 +175,6 @@ void ImageBufferData::createCairoGLSurface()
 
     glTexImage2D(GL_TEXTURE_2D, 0 /* level */, GL_RGBA, m_size.width(), m_size.height(), 0 /* border */, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-    GLContext* context = GLContext::sharingContext();
     cairo_device_t* device = context->cairoDevice();
 
     // Thread-awareness is a huge performance hit on non-Intel drivers.
@@ -563,7 +563,7 @@ void ImageBufferData::paintToTextureMapper(TextureMapper& textureMapper, const F
     ASSERT(m_texture);
 
     // Cairo may change the active context, so we make sure to change it back after flushing.
-    GLContext* previousActiveContext = GLContext::getCurrent();
+    GLContext* previousActiveContext = GLContext::current();
     cairo_surface_flush(m_surface.get());
     previousActiveContext->makeContextCurrent();
 
@@ -609,7 +609,7 @@ bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, GC3Denum target, Pla
 
     cairo_surface_flush(m_data.m_surface.get());
 
-    std::unique_ptr<GLContext> context = GLContext::createContextForWindow(0, GLContext::sharingContext());
+    std::unique_ptr<GLContext> context = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
     context->makeContextCurrent();
     uint32_t fbo;
     glGenFramebuffers(1, &fbo);

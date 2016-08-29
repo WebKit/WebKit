@@ -55,7 +55,7 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, G
 {
     switch (renderStyle) {
     case GraphicsContext3D::RenderOffscreen:
-        m_glContext = GLContext::createOffscreenContext(GLContext::sharingContext());
+        m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
         break;
     case GraphicsContext3D::RenderToCurrentGLContext:
         break;
@@ -85,7 +85,7 @@ bool GraphicsContext3DPrivate::makeContextCurrent()
 
 PlatformGraphicsContext3D GraphicsContext3DPrivate::platformContext()
 {
-    return m_glContext ? m_glContext->platformContext() : GLContext::getCurrent()->platformContext();
+    return m_glContext ? m_glContext->platformContext() : GLContext::current()->platformContext();
 }
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
@@ -123,7 +123,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper& textureMapper
 
 #if USE(TEXTURE_MAPPER_GL)
     if (m_context->m_attrs.antialias && m_context->m_state.boundFBO == m_context->m_multisampleFBO) {
-        GLContext* previousActiveContext = GLContext::getCurrent();
+        GLContext* previousActiveContext = GLContext::current();
         if (previousActiveContext != m_glContext.get())
             m_context->makeContextCurrent();
 
