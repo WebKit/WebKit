@@ -2692,16 +2692,6 @@ fast/text/emoji-gender.html [ Pass ]
 
 webkit.org/b/160119 accessibility/media-element.html [ Timeout Crash Pass ]
 
-webkit.org/b/160119 animations/negative-delay.html [ Failure Pass ]
-webkit.org/b/160119 animations/trigger-container-scroll-empty.html [ Failure Pass ]
-
-webkit.org/b/160119 css2.1/20110323/word-spacing-characters-002.htm [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 css3/calc/simple-composited-mask.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 css3/calc/table-empty-cells.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 css3/masking/mask-base64.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/160119 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
 webkit.org/b/160119 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
 
@@ -2710,99 +2700,46 @@ webkit.org/b/160119 editing/input/reveal-caret-of-multiline-contenteditable.html
 webkit.org/b/160119 editing/selection/caret-at-bidi-boundary.html [ Failure Pass Timeout ]
 webkit.org/b/160119 editing/selection/select-bidi-run.html [ Timeout Pass ]
 
-webkit.org/b/160119 fast/backgrounds/size/backgroundSize-in-background-shorthand.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/160119 fast/block/basic/020.html [ Failure ]
 
-webkit.org/b/160119 fast/block/margin-collapse/empty-clear-blocks-complex.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 fast/block/positioning/016.html [ Failure ]
 webkit.org/b/160119 fast/block/positioning/025.html [ Failure ]
 webkit.org/b/160119 fast/block/positioning/fixed-position-stacking-context.html [ Failure ]
 
-webkit.org/b/160119 fast/borders/0px-borders.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 fast/css/case-insensitive-attribute-with-svg.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 fast/css/text-input-with-webkit-border-radius.html [ Crash Pass ]
-webkit.org/b/160119 fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ Failure Pass ]
 webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ Failure ]
 webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ Failure ]
 
 webkit.org/b/160119 fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html [ Failure ]
 
-webkit.org/b/160119 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure Pass ]
-
 webkit.org/b/160119 fast/dynamic/012.html [ Failure ]
 webkit.org/b/160119 fast/dynamic/layer-hit-test-crash.html [ Failure ]
 
-webkit.org/b/160119 fast/flexbox/012.html [ Failure Pass ]
-webkit.org/b/160119 fast/flexbox/aspect-ratio-intrinsic-adjust.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 fast/flexbox/flex-hang.html [ Failure Pass ]
-webkit.org/b/160119 fast/flexbox/image-percent-max-height.html [ Failure Pass ]
-
-webkit.org/b/160119 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 fast/forms/enter-clicks-buttons.html [ Failure Pass ]
-webkit.org/b/160119 fast/forms/focus-selection-textarea.html [ Failure Pass ]
-
 webkit.org/b/160119 fast/forms/search/search-cancel-button-visible-when-input-becomes-disabled.html [ Crash Pass ]
-
-webkit.org/b/160119 fast/forms/select/listbox-disabled-no-autoscroll.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 fast/forms/select/select-painting.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 fast/gradients/viewport-units-gradient.html [ ImageOnlyFailure Pass ]
 
 # This one has its own bug because the crashes were preexisting; only the
 # timeout is caused by the switch to threaded compositor.
 webkit.org/b/160139 fast/history/page-cache-geolocation-active-oneshot.html [ Crash Timeout Pass ]
 
-webkit.org/b/160119 fast/images/animated-png.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 fast/images/background-position.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 fast/images/composited-animated-gif-outside-viewport.html [ Timeout Pass ]
 
 webkit.org/b/160119 fast/layers/layer-visibility-sublayer.html [ Failure ]
 webkit.org/b/160119 fast/layers/layer-visibility.html [ Failure ]
 
-webkit.org/b/160119 fast/media/mq-relative-constraints-08.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 fast/multicol/border-radius-overflow-columns.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 fast/multicol/mixed-opacity-fixed-test.html [ Failure ]
 
-webkit.org/b/160119 fast/multicol/newmulticol/compare-with-old-impl/BottomToTop-tb.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 fast/multicol/newmulticol/compare-with-old-impl/column-rules-stacking.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 fast/regions/counters/extract-list-items-012.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 fast/regions/frame-view-overflow-scroll.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 fast/regions/fullscreen/full-screen-video-from-region.html [ Crash Pass ]
-webkit.org/b/160119 fast/regions/regions-overflow-tile.html [ Failure Pass ]
-webkit.org/b/160119 fast/regions/scrolling/scroll-into-view.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 fast/regions/writing-mode/changing-writing-mode-2.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/160119 fast/repaint/backgroundSizeRepaint.html [ Failure Pass ]
-webkit.org/b/160119 fast/repaint/fixed.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 fast/repaint/selection-gap-fixed-child.html [ Failure ]
 webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
 
-webkit.org/b/160119 fast/scrolling/iframe-scrollable-after-back.html [ Failure Pass ]
 webkit.org/b/160119 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
-webkit.org/b/160119 fast/scrolling/rtl-scrollbars-sticky-document.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 fast/scrolling/rtl-scrollbars-sticky-document-2.html [ Failure ]
 
-webkit.org/b/160119 fast/text/crash-complex-unknown-font.html [ Failure Pass ]
 webkit.org/b/160119 fast/text/orthogonal-writing-mode-containing-block-frameView-resize-relayout.html [ ImageOnlyFailure ]
-webkit.org/b/160119 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/160119 fast/text/whitespace/028.html [ Failure ]
-
-webkit.org/b/160119 http/tests/css/vertical-align-baseline-after-image-load-2.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 http/tests/security/svg-image-with-cached-remote-image.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 imported/blink/animations/display-inline-style-adjust.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 imported/blink/compositing/child-transform-layer-rounding.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 imported/blink/compositing/squashing/squash-above-fixed-subpixel-2.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/160119 imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure ]
 
@@ -2811,33 +2748,10 @@ webkit.org/b/160119 imported/blink/css3/filters/effect-reference-source-alpha-hw
 webkit.org/b/160119 imported/blink/fast/css/first-letter-range-insert.html [ Crash Pass ]
 webkit.org/b/160119 imported/blink/fast/css/first-letter-render-quote.html [ Crash Pass ]
 
-webkit.org/b/160119 imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 imported/blink/fast/pagination/body-make-unpaginated.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 imported/blink/fast/multicol/span/block-with-top-border-and-margin-around-spanner-extra-space.html [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 imported/blink/fast/multicol/span/overflow-on-viewport.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 imported/blink/fast/overflow/scroll-html-hidden-body.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 imported/blink/svg/animations/viewspec-animated-viewbox.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/160119 imported/blink/transforms/inline-transform-and-clipping-roots.html [ Crash Pass ]
-
-webkit.org/b/160119 imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/160119 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160119 imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Failure Pass ]
-
-webkit.org/b/160119 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure Pass ]
 
 webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html [ Timeout Pass ]
 webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html [ Timeout Crash Pass ]
-webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate.html [ Failure Pass ]
-
-webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-to-other-document.html [ Failure Pass ]
-
-webkit.org/b/160119 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/160119 media/broken-video.html [ Crash Pass ]
 webkit.org/b/160119 media/click-volume-bar-not-pausing.html [ Timeout Failure Pass ]
@@ -2854,7 +2768,6 @@ webkit.org/b/160119 media/media-fullscreen-inline.html [ Crash Pass ]
 webkit.org/b/160119 media/restore-from-page-cache.html [ Timeout Pass Failure ]
 webkit.org/b/160119 media/video-playbackrate.html [ Crash Pass ]
 webkit.org/b/160119 media/video-poster.html [ Crash Pass ]
-webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure Pass ]
 webkit.org/b/160119 media/webkit-media-controls-display.html [ Crash Pass ]
 
 webkit.org/b/160119 media/media-fragments/TC0068.html [ Crash Pass ]
@@ -2874,8 +2787,6 @@ webkit.org/b/160131 plugins/return-error-from-new-stream-doesnt-invoke-destroy-s
 
 webkit.org/b/160119 storage/indexeddb/index-cursor.html [ Timeout Pass ]
 webkit.org/b/160119 storage/indexeddb/objectstore-cursor.html [ Timeout Pass ]
-
-webkit.org/b/160119 svg/custom/symbol-zoom.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/160119 svg/repaint/add-outline-property-on-root.html [ ImageOnlyFailure ]
 webkit.org/b/160119 svg/repaint/remove-outline-property-on-root.html [ ImageOnlyFailure ]

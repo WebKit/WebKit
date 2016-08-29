@@ -1,3 +1,16 @@
+2016-08-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove flakiness expectations from switch to threaded compositor
+
+        This is completely hopeless, since there is a seemingly-unlimited number of tests that have
+        been broken. Suppressing an arbitrary subset of the failures is not helping anything. Keep
+        only records for tests that are really flaky.
+
+        Retain expectations for flaky timeouts and crashes.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2016-08-28  Javier Fernandez  <jfernandez@igalia.com>
 
         Should never be reached failure in WebCore::RenderFlexibleBox::alignChildren
