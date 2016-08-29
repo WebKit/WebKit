@@ -1,3 +1,17 @@
+2016-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r204923): It should be possible to set 'Location.href' cross origin
+        https://bugs.webkit.org/show_bug.cgi?id=161343
+        <rdar://problem/28063361>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * http/tests/security/location-cross-origin-expected.txt:
+        * http/tests/security/location-cross-origin.html:
+        * http/tests/security/xss-DENIED-assign-location-href-javascript-expected.txt:
+
 2016-08-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update iOS simulator WK1 flaky tests.

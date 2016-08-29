@@ -34,7 +34,12 @@ onload = function() {
     shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'toString').value.call(frames[0].location)", "SecurityError");
     shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'href').get.call(frames[0].location)", "SecurityError");
 
-    finishJSTest();
+    // Setting 'href' cross origin should be allowed.
+    shouldNotThrow("frames[0].location.href = 'about:blank'");
+    setTimeout(function() {
+        shouldBeEqualToString("frames[0].location.href", "about:blank");
+        finishJSTest();
+    }, 100);
 };
 </script>
 <script src="../../../resources/js-test-post.js"></script>

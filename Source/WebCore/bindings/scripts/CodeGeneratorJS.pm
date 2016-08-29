@@ -3125,7 +3125,7 @@ sub GenerateImplementation
                 }
                 push(@implContent, "    }\n");
             }
-            if ($interface->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
+            if ($interface->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnSetter"}) {
                 if ($interfaceName eq "DOMWindow") {
                     push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
                 } else {

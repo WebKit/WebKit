@@ -70,13 +70,19 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
     if (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf)
         return true;
 
-    if (shouldAllowAccessToFrame(exec, frame))
+    String errorMessage;
+    if (shouldAllowAccessToFrame(exec, frame, errorMessage))
         return false;
 
     // Cross-domain access to the location is allowed when assigning the whole location,
-    //but not when assigning the individual pieces, since that might inadvertently
+    // but not when assigning the individual pieces, since that might inadvertently
     // disclose other parts of the original location.
-    return propertyName != exec->propertyNames().href;
+    if (propertyName != exec->propertyNames().href) {
+        // FIXME: We should throw a SecurityError.
+        printErrorMessageForFrame(frame, errorMessage);
+        return true;
+    }
+    return false;
 }
 
 bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

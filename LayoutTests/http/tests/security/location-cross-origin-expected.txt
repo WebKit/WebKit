@@ -27,6 +27,8 @@ PASS Object.getOwnPropertyDescriptor(window.location, 'origin').get.call(frames[
 PASS Object.getOwnPropertyDescriptor(window.location, 'ancestorOrigins').get.call(frames[0].location) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
 PASS Object.getOwnPropertyDescriptor(window.location, 'toString').value.call(frames[0].location) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
 PASS Object.getOwnPropertyDescriptor(window.location, 'href').get.call(frames[0].location) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS frames[0].location.href = 'about:blank' did not throw exception.
+PASS frames[0].location.href is "about:blank"
 PASS successfullyParsed is true
 
 TEST COMPLETE

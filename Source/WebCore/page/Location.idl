@@ -38,7 +38,7 @@
     JSCustomNamedGetterOnPrototype,
     Unforgeable,
 ] interface Location {
-    [SetterCallWith=ActiveWindow&FirstWindow] stringifier attribute USVString href;
+    [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 
     [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void assign(USVString url);
     [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(USVString url);
