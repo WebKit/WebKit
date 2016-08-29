@@ -422,6 +422,15 @@ class Driver(object):
         return cmd
 
     def _check_for_driver_timeout(self, out_line):
+        if out_line.startswith("#PID UNRESPONSIVE - "):
+            match = re.match('#PID UNRESPONSIVE - (\S+)', out_line)
+            child_process_name = match.group(1) if match else 'WebProcess'
+            match = re.search('pid (\d+)', out_line)
+            child_process_pid = int(match.group(1)) if match else None
+            err_line = 'Wait on notifyDone timed out, process ' + child_process_name + ' pid = ' + str(child_process_pid)
+            self.error_from_test += err_line
+            _log.debug(err_line)
+            self._port.sample_process(child_process_name, child_process_pid)
         if out_line == "FAIL: Timed out waiting for notifyDone to be called\n":
             self._driver_timed_out = True
 

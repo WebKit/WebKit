@@ -1,5 +1,18 @@
 2016-08-29  Jonathan Bedard  <jbedard@apple.com>
 
+        Sample Process on notifyDone timed out
+        https://bugs.webkit.org/show_bug.cgi?id=161063
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._check_for_driver_timeout): 
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp: Call sample_process during notifyDone timeouts.
+        (WTR::TestRunner::waitToDumpWatchdogTimerFired):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm: Log pid and name for testing harness.
+
+2016-08-29  Jonathan Bedard  <jbedard@apple.com>
+
         Check-webkit-style does not work with Objective-C blocks
         https://bugs.webkit.org/show_bug.cgi?id=161247
 
