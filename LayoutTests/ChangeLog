@@ -1,5 +1,11 @@
 2016-08-29  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unreviewed, mark editing tests of iOS simulator WK1 release build that have different delegate callback order than those of debug build as failure
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
+2016-08-29  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, rolling out r205143.
 
         Needs better description
