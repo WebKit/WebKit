@@ -1,3 +1,9 @@
+2016-08-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r205150.
+
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp:
+
 2016-08-29  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         Unreviewed EFL/GTK build fix since r205150
