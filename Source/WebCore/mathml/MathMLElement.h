@@ -56,7 +56,6 @@ public:
         LengthType type { LengthType::ParsingFailed };
         float value { 0 };
     };
-    static Length parseMathMLLength(const String&);
 
     enum class BooleanValue { True, False, Default };
 
@@ -85,8 +84,8 @@ public:
         Stretched = 18
     };
 
-    virtual Optional<bool> specifiedDisplayStyle();
-    Optional<MathVariant> specifiedMathVariant();
+    virtual Optional<bool> specifiedDisplayStyle() { return Nullopt; }
+    virtual Optional<MathVariant> specifiedMathVariant() { return Nullopt; }
 
     virtual void updateSelectedChild() { }
 
@@ -101,27 +100,10 @@ protected:
     bool isPresentationAttribute(const QualifiedName&) const override;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    bool isPhrasingContent(const Node&) const;
-    bool isFlowContent(const Node&) const;
-
     bool willRespondToMouseClickEvents() override;
     void defaultEventHandler(Event*) override;
 
-    const Length& cachedMathMLLength(const QualifiedName&, Optional<Length>&);
-    const BooleanValue& cachedBooleanAttribute(const QualifiedName&, Optional<BooleanValue>&);
-
-    virtual bool acceptsDisplayStyleAttribute() { return false; }
-    virtual bool acceptsMathVariantAttribute() { return false; }
-
-    static Optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? Nullopt : Optional<bool>(value == BooleanValue::True); }
-    Optional<BooleanValue> m_displayStyle;
-    Optional<MathVariant> m_mathVariant;
-
 private:
-    static Length parseNumberAndUnit(const StringView&);
-    static Length parseNamedSpace(const StringView&);
-    static MathVariant parseMathVariantAttribute(const AtomicString& attributeValue);
-
     bool canStartSelection() const final;
     bool isFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;

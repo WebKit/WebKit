@@ -41,11 +41,31 @@ protected:
     MathMLPresentationElement(const QualifiedName& tagName, Document&);
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    bool acceptsDisplayStyleAttribute() override;
+    static bool isPhrasingContent(const Node&);
+    static bool isFlowContent(const Node&);
+
+    static Optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? Nullopt : Optional<bool>(value == BooleanValue::True); }
+    const BooleanValue& cachedBooleanAttribute(const QualifiedName&, Optional<BooleanValue>&);
+
+    static Length parseMathMLLength(const String&);
+    const Length& cachedMathMLLength(const QualifiedName&, Optional<Length>&);
+
+    virtual bool acceptsDisplayStyleAttribute();
+    Optional<bool> specifiedDisplayStyle() override;
+
+    virtual bool acceptsMathVariantAttribute() { return false; }
+    Optional<MathVariant> specifiedMathVariant() final;
+
+    Optional<BooleanValue> m_displayStyle;
+    Optional<MathVariant> m_mathVariant;
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool isPresentationMathML() const final { return true; }
+
+    static Length parseNumberAndUnit(const StringView&);
+    static Length parseNamedSpace(const StringView&);
+    static MathVariant parseMathVariantAttribute(const AtomicString& attributeValue);
 };
 
 }
