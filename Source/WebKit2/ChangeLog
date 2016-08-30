@@ -1,5 +1,18 @@
 2016-08-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r194846): [GTK] UI process crash visiting sites protected with HTTP auth when using GTK+ < 3.14
+        https://bugs.webkit.org/show_bug.cgi?id=161385
+
+        Reviewed by Antonio Gomes.
+
+        Since r194846, we are chaining up webkitWebViewBaseMotionNotifyEvent, but before GTK+ 3.14
+        GtkWidget::motion_notify_event was nullptr, so it can't be used unconditionally.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseMotionNotifyEvent):
+
+2016-08-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build after r205150.
 
         * UIProcess/API/gtk/WebKitUserContentManager.cpp:
