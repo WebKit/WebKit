@@ -1,3 +1,17 @@
+2016-08-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Clean up the remaining compare nodes in FTLCapabilities
+        https://bugs.webkit.org/show_bug.cgi?id=161400
+
+        Reviewed by Geoffrey Garen.
+
+        It looks like we implemented all the cases without realizing it.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compare):
+
 2016-08-30  Mark Lam  <mark.lam@apple.com>
 
         Introduce the ThrowScope and force every throw site to instantiate a ThrowScope.

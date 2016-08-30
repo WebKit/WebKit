@@ -8089,12 +8089,8 @@ private:
             return;
         }
 
-        if (m_node->isBinaryUseKind(UntypedUse)) {
-            nonSpeculativeCompare(intFunctor, fallbackFunction);
-            return;
-        }
-        
-        DFG_CRASH(m_graph, m_node, "Bad use kinds");
+        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse));
+        nonSpeculativeCompare(intFunctor, fallbackFunction);
     }
 
     void compileResolveScope()
