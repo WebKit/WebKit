@@ -1,3 +1,28 @@
+2016-08-29  Anders Carlsson  <andersca@apple.com>
+
+        Stop using m_client to indicate whether an IPC::Connection is valid
+        https://bugs.webkit.org/show_bug.cgi?id=161362
+
+        Reviewed by Andreas Kling.
+
+        Instead, add an std::atomic<bool> so we can reliably check the state from other threads.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        (IPC::Connection::invalidate):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::dispatchSyncMessage):
+        (IPC::Connection::dispatchDidReceiveInvalidMessage):
+        (IPC::Connection::dispatchMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::client):
+        (IPC::Connection::isValid):
+        (IPC::Connection::waitForAndDispatchImmediately):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::startUpdating):
+        (WebKit::WebGeolocationManagerProxy::stopUpdating):
+        (WebKit::WebGeolocationManagerProxy::setEnableHighAccuracy):
+
 2016-08-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r194846): [GTK] UI process crash visiting sites protected with HTTP auth when using GTK+ < 3.14

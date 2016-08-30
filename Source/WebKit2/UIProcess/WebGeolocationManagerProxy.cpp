@@ -106,7 +106,7 @@ void WebGeolocationManagerProxy::resetPermissions()
 void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection)
 {
     bool wasUpdating = isUpdating();
-    m_updateRequesters.add(connection.client());
+    m_updateRequesters.add(&connection.client());
     if (!wasUpdating) {
         m_provider.setEnableHighAccuracy(this, isHighAccuracyEnabled());
         m_provider.startUpdating(this);
@@ -115,7 +115,7 @@ void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection)
 
 void WebGeolocationManagerProxy::stopUpdating(IPC::Connection& connection)
 {
-    removeRequester(connection.client());
+    removeRequester(&connection.client());
 }
 
 void WebGeolocationManagerProxy::removeRequester(const IPC::Connection::Client* client)
@@ -140,9 +140,9 @@ void WebGeolocationManagerProxy::setEnableHighAccuracy(IPC::Connection& connecti
     bool highAccuracyWasEnabled = isHighAccuracyEnabled();
 
     if (enabled)
-        m_highAccuracyRequesters.add(connection.client());
+        m_highAccuracyRequesters.add(&connection.client());
     else
-        m_highAccuracyRequesters.remove(connection.client());
+        m_highAccuracyRequesters.remove(&connection.client());
 
     bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled();
     if (isUpdating() && highAccuracyWasEnabled != highAccuracyShouldBeEnabled)

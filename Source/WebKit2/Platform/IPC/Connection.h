@@ -137,7 +137,7 @@ public:
     static Ref<Connection> createClientConnection(Identifier, Client&);
     ~Connection();
 
-    Client* client() const { return m_client; }
+    Client& client() const { return m_client; }
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     void setShouldCloseConnectionOnMachExceptions();
@@ -186,7 +186,7 @@ public:
     void terminateSoon(double intervalInSeconds);
 #endif
 
-    bool isValid() const { return m_client; }
+    bool isValid() const { return m_isValid; }
 
 #if HAVE(QOS_CLASSES)
     void setShouldBoostMainThreadOnSyncMessage(bool b) { m_shouldBoostMainThreadOnSyncMessage = b; }
@@ -237,8 +237,9 @@ private:
 
     std::chrono::milliseconds timeoutRespectingIgnoreTimeoutsForTesting(std::chrono::milliseconds) const;
     
-    Client* m_client;
+    Client& m_client;
     bool m_isServer;
+    std::atomic<bool> m_isValid { true };
     std::atomic<uint64_t> m_syncRequestID;
 
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage;
@@ -365,7 +366,7 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
         return false;
 
     ASSERT(decoder->destinationID() == destinationID);
-    m_client->didReceiveMessage(*this, *decoder);
+    m_client.didReceiveMessage(*this, *decoder);
     return true;
 }
 
