@@ -4998,15 +4998,6 @@ private:
             compareEqObjectOrOtherToObject(m_node->child1(), m_node->child2());
             return;
         }
-        
-        if (m_node->isBinaryUseKind(UntypedUse)) {
-            nonSpeculativeCompare(
-                [&] (LValue left, LValue right) {
-                    return m_out.equal(left, right);
-                },
-                operationCompareEq);
-            return;
-        }
 
         if (m_node->child1().useKind() == OtherUse) {
             ASSERT(!m_interpreter.needsTypeCheck(m_node->child1(), SpecOther));
@@ -5020,7 +5011,12 @@ private:
             return;
         }
 
-        DFG_CRASH(m_graph, m_node, "Bad use kinds");
+        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse));
+        nonSpeculativeCompare(
+            [&] (LValue left, LValue right) {
+                return m_out.equal(left, right);
+            },
+            operationCompareEq);
     }
     
     void compileCompareStrictEq()

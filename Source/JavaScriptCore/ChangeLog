@@ -1,3 +1,19 @@
+2016-08-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Clean up FTL Capabilities for CompareEq
+        https://bugs.webkit.org/show_bug.cgi?id=161353
+
+        Reviewed by Geoffrey Garen.
+
+        It looks like we already have code for every case.
+        This patch removes the tests from FTLCapabilities
+        and move the generic case last as usual.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareEq):
+
 2016-08-29  Keith Miller  <keith_miller@apple.com>
 
         Fix toStringName for Proxies and add support for normal instances
