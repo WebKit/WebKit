@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSPerformanceTiming.h"
 
+#include "DOMWrapperWorld.h"
 #include <runtime/IdentifierInlines.h>
 #include <runtime/JSObject.h>
 #include <runtime/ObjectConstructor.h>
