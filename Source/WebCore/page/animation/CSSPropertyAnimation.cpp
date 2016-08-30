@@ -225,8 +225,7 @@ static inline PassRefPtr<StyleImage> blendFilter(const AnimationBase* anim, Cach
     ASSERT(image);
     FilterOperations filterResult = blendFilterOperations(anim, from, to, progress);
 
-    RefPtr<StyleCachedImage> styledImage = StyleCachedImage::create(image);
-    auto imageValue = CSSImageValue::create(image->url(), styledImage.get());
+    auto imageValue = CSSImageValue::create(*image);
     auto filterValue = ComputedStyleExtractor::valueForFilter(anim->renderer()->style(), filterResult, DoNotAdjustPixelValues);
 
     auto result = CSSFilterImageValue::create(WTFMove(imageValue), WTFMove(filterValue));
@@ -290,8 +289,8 @@ static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleC
     if (progress == 1)
         return toStyleImage;
 
-    auto fromImageValue = CSSImageValue::create(fromStyleImage->cachedImage()->url(), fromStyleImage);
-    auto toImageValue = CSSImageValue::create(toStyleImage->cachedImage()->url(), toStyleImage);
+    auto fromImageValue = CSSImageValue::create(*fromStyleImage->cachedImage());
+    auto toImageValue = CSSImageValue::create(*toStyleImage->cachedImage());
     auto percentageValue = CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER);
 
     auto crossfadeValue = CSSCrossfadeValue::create(WTFMove(fromImageValue), WTFMove(toImageValue), WTFMove(percentageValue));

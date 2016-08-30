@@ -30,44 +30,63 @@
 
 namespace WebCore {
 
-StyleCachedImage::StyleCachedImage(CachedImage* image, float scaleFactor, CSSImageSetValue* cssValue)
-    : m_image(image)
-    , m_scaleFactor(scaleFactor)
-    , m_cssImageSetValue(cssValue)
+StyleCachedImage::StyleCachedImage(CSSValue& cssValue)
+    : m_cssValue(&cssValue)
 {
     m_isCachedImage = true;
-    m_image->addClient(this);
 }
 
 StyleCachedImage::~StyleCachedImage()
 {
-    m_image->removeClient(this);
+    if (m_image)
+        m_image->removeClient(this);
+}
+
+void StyleCachedImage::setCachedImage(CachedImage& image, float scaleFactor)
+{
+    ASSERT(!m_image);
+    m_image = &image;
+    m_image->addClient(this);
+    m_scaleFactor = scaleFactor;
 }
 
 PassRefPtr<CSSValue> StyleCachedImage::cssValue() const
 {
-    if (m_cssImageSetValue)
-        return const_cast<CSSImageSetValue*>(m_cssImageSetValue);
+    if (m_cssValue)
+        return m_cssValue;
     return CSSPrimitiveValue::create(m_image->url(), CSSPrimitiveValue::CSS_URI);
 }
 
 bool StyleCachedImage::canRender(const RenderObject* renderer, float multiplier) const
 {
+    if (!m_image)
+        return false;
     return m_image->canRender(renderer, multiplier);
+}
+
+bool StyleCachedImage::isPending() const
+{
+    return !m_image;
 }
 
 bool StyleCachedImage::isLoaded() const
 {
+    if (!m_image)
+        return false;
     return m_image->isLoaded();
 }
 
 bool StyleCachedImage::errorOccurred() const
 {
+    if (!m_image)
+        return false;
     return m_image->errorOccurred();
 }
 
 FloatSize StyleCachedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
+    if (!m_image)
+        return { };
     FloatSize size = m_image->imageSizeForRenderer(renderer, multiplier);
     size.scale(1 / m_scaleFactor);
     return size;
@@ -75,41 +94,57 @@ FloatSize StyleCachedImage::imageSize(const RenderElement* renderer, float multi
 
 bool StyleCachedImage::imageHasRelativeWidth() const
 {
+    if (!m_image)
+        return false;
     return m_image->imageHasRelativeWidth();
 }
 
 bool StyleCachedImage::imageHasRelativeHeight() const
 {
+    if (!m_image)
+        return false;
     return m_image->imageHasRelativeHeight();
 }
 
 void StyleCachedImage::computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
+    if (!m_image)
+        return;
     m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
 bool StyleCachedImage::usesImageContainerSize() const
 {
+    if (!m_image)
+        return false;
     return m_image->usesImageContainerSize();
 }
 
 void StyleCachedImage::setContainerSizeForRenderer(const RenderElement* renderer, const FloatSize& imageContainerSize, float imageContainerZoomFactor)
 {
+    if (!m_image)
+        return;
     m_image->setContainerSizeForRenderer(renderer, LayoutSize(imageContainerSize), imageContainerZoomFactor);
 }
 
 void StyleCachedImage::addClient(RenderElement* renderer)
 {
+    if (!m_image)
+        return;
     m_image->addClient(renderer);
 }
 
 void StyleCachedImage::removeClient(RenderElement* renderer)
 {
+    if (!m_image)
+        return;
     m_image->removeClient(renderer);
 }
 
 RefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const
 {
+    if (!m_image)
+        return nullptr;
     return m_image->imageForRenderer(renderer);
 }
 
@@ -120,6 +155,8 @@ float StyleCachedImage::imageScaleFactor() const
 
 bool StyleCachedImage::knownToBeOpaque(const RenderElement* renderer) const
 {
+    if (!m_image)
+        return false;
     return m_image->currentFrameKnownToBeOpaque(renderer);
 }
 

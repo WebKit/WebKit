@@ -31,6 +31,7 @@ class Document;
 class Element;
 class SVGCursorElement;
 class SVGElement;
+class StyleCachedImage;
 
 class CSSCursorImageValue final : public CSSValue {
 public:
@@ -52,9 +53,8 @@ public:
 
     String customCSSText() const;
 
-    SVGCursorElement* updateCursorElement(const Document&);
-    StyleImage* cachedImage(CachedResourceLoader&, const ResourceLoaderOptions&);
-    StyleImage* cachedOrPendingImage(const Document&);
+    void loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
+    StyleCachedImage& styleImage(const Document&);
 
     void removeReferencedElement(SVGElement*);
 
@@ -66,18 +66,13 @@ public:
 private:
     CSSCursorImageValue(Ref<CSSValue>&& imageValue, bool hasHotSpot, const IntPoint& hotSpot);
 
-    void detachPendingImage();
+    SVGCursorElement* updateCursorElement(const Document&);
 
-    bool isSVGCursor() const;
-    String cachedImageURL();
-    void clearCachedImage();
-
+    URL m_originalURL;
     Ref<CSSValue> m_imageValue;
 
     bool m_hasHotSpot;
     IntPoint m_hotSpot;
-    RefPtr<StyleImage> m_image;
-    bool m_isImageValid { false };
     HashSet<SVGCursorElement*> m_cursorElements;
 };
 

@@ -45,6 +45,7 @@ private:
 
     PassRefPtr<CSSValue> cssValue() const override;
 
+    bool isPending() const override;
     FloatSize imageSize(const RenderElement*, float multiplier) const override;
     bool imageHasRelativeWidth() const override { return !m_fixedSize; }
     bool imageHasRelativeHeight() const override { return !m_fixedSize; }

@@ -156,7 +156,7 @@ std::unique_ptr<Shape> ShapeOutsideInfo::createShapeForImage(StyleImage* styleIm
         ? downcast<RenderImage>(m_renderer).replacedContentRect(m_renderer.intrinsicSize())
         : LayoutRect(LayoutPoint(), imageSize);
 
-    ASSERT(!styleImage->isPendingImage());
+    ASSERT(!styleImage->isPending());
     RefPtr<Image> image = styleImage->image(const_cast<RenderBox*>(&m_renderer), imageSize);
     return Shape::createRasterShape(image.get(), shapeImageThreshold, imageRect, marginRect, writingMode, margin);
 }

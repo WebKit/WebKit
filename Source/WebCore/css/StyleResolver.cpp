@@ -123,7 +123,6 @@
 #include "StyleCachedImage.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
-#include "StylePendingImage.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleRule.h"
@@ -1723,8 +1722,8 @@ RefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue& v
 
 Ref<StyleImage> StyleResolver::cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue& value)
 {
-    Ref<StyleImage> image = value.cachedOrPendingImage();
-    if (image->isPendingImage())
+    Ref<StyleImage> image = value.styleImage();
+    if (image->isPending())
         m_state.ensurePendingResources().pendingImages.set(property, &value);
     return image;
 }
@@ -1735,28 +1734,26 @@ Ref<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID propert
         // FilterImage needs to calculate FilterOperations.
         downcast<CSSFilterImageValue>(value).createFilterOperations(this);
     }
-
-    if (value.isPending()) {
+    if (value.isPending())
         m_state.ensurePendingResources().pendingImages.set(property, &value);
-        return StylePendingImage::create(&value);
-    }
+
     return StyleGeneratedImage::create(value);
 }
 
 RefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue& value)
 {
-    RefPtr<StyleImage> image = value.cachedOrPendingImageSet(document());
-    if (image && image->isPendingImage())
+    auto& image = value.styleImage(document());
+    if (image.isPending())
         m_state.ensurePendingResources().pendingImages.set(property, &value);
-    return image;
+    return &image;
 }
 
 RefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID property, CSSCursorImageValue& value)
 {
-    RefPtr<StyleImage> image = value.cachedOrPendingImage(document());
-    if (image && image->isPendingImage())
+    auto& image = value.styleImage(document());
+    if (image.isPending())
         m_state.ensurePendingResources().pendingImages.set(property, &value);
-    return image;
+    return &image;
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
