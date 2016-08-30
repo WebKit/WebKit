@@ -1,3 +1,12 @@
+2016-08-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking editing/pasteboard/5478250.html as flaky on mac-wk2 debug.
+        https://bugs.webkit.org/show_bug.cgi?id=161366
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-08-30  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: opportunitiesInRun <= expansionOpportunityCount in WebCore::computeExpansionForJustifiedText
