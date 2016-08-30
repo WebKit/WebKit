@@ -1,5 +1,12 @@
 2016-08-30  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix build after r205205.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+
+2016-08-30  Chris Dumez  <cdumez@apple.com>
+
         Object.setPrototypeOf() should throw when used on a cross-origin Window / Location object
         https://bugs.webkit.org/show_bug.cgi?id=161396
 
