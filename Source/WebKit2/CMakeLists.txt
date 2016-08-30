@@ -240,6 +240,7 @@ set(WebKit2_SOURCES
     Shared/ContextMenuContextData.cpp
     Shared/EditorState.cpp
     Shared/FontInfo.cpp
+    Shared/FrameInfoData.cpp
     Shared/LayerTreeContext.cpp
     Shared/LoadParameters.cpp
     Shared/NavigationActionData.cpp
