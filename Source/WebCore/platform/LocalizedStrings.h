@@ -286,6 +286,7 @@ namespace WebCore {
     WEBCORE_EXPORT String insertListTypeBulletedAccessibilityTitle();
     WEBCORE_EXPORT String insertListTypeNumbered();
     WEBCORE_EXPORT String insertListTypeNumberedAccessibilityTitle();
+    WEBCORE_EXPORT String exitFullScreenButtonAccessibilityTitle();
 #endif
 
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)

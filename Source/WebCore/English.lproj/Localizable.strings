@@ -133,6 +133,9 @@
 /* Option in segmented control for inserting a bulleted list in text editing */
 "Bulleted list" = "Bulleted list";
 
+/* Exit fullscreen button in fullscreen media controls */
+"Exit Fullscreen" = "Exit Fullscreen";
+
 /* menu item title for phone number */
 "Call Using iPhone:" = "Call Using iPhone:";
 
