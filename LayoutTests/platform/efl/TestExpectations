@@ -2648,3 +2648,23 @@ webkit.org/b/158649 fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure 
 webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/159754 workers/bomb.html [ Slow ]
+
+webkit.org/b/161374 storage/indexeddb/modern/blob-simple-workers.html [ Failure ]
+webkit.org/b/161374 storage/indexeddb/modern/idbversionchangeevent-constructor.html [ Failure ]
+webkit.org/b/161374 storage/indexeddb/modern/workers-enable.html [ Failure ]
+webkit.org/b/161374 storage/indexeddb/pending-version-change-on-exit-private.html [ Failure ]
+webkit.org/b/161374 storage/indexeddb/pending-version-change-stuck-private.html [ Failure ]
+webkit.org/b/161374 storage/indexeddb/pending-version-change-stuck-works-with-terminate-private.html [ Failure ]
+webkit.org/b/161374 storage/indexeddb/transaction-complete-workers-private.html [ Failure ]
+
+webkit.org/b/161376 media/controls-right-click-on-timebar.html [ Failure ]
+webkit.org/b/161376 media/media-controls-accessibility.html [ Failure ]
+webkit.org/b/161376 media/tab-focus-inside-media-elements.html [ Failure ]
+webkit.org/b/161376 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure ]
+webkit.org/b/161376 media/video-canvas-drawing-output.html [ Failure ]
+webkit.org/b/161376 media/video-controls-drop-and-restore-timeline.html [ Failure ]
+webkit.org/b/161376 media/video-controls-show-on-kb-or-ax-event.html [ Failure ]
+webkit.org/b/161376 media/video-controls-to-not-scroll-page-on-load.html [ Failure ]
+webkit.org/b/161376 media/video-playback-restriction-play-before-load.html [ Failure ]
+webkit.org/b/161376 media/video-restricted-no-preload-auto.html [ Failure ]
+webkit.org/b/161376 media/volume-bar-empty-when-muted.html [ Failure ]
