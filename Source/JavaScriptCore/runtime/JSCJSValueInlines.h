@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -633,8 +633,11 @@ inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType pref
 
 inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue value)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isString()) {
-        throwTypeError(exec, ASCIILiteral("Primitive hint is not a string."));
+        throwTypeError(exec, scope, ASCIILiteral("Primitive hint is not a string."));
         return NoPreference;
     }
 
@@ -649,7 +652,7 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue 
     if (WTF::equal(hintString, "string"))
         return PreferString;
 
-    throwTypeError(exec, ASCIILiteral("Expected primitive hint to match one of 'default', 'number', 'string'."));
+    throwTypeError(exec, scope, ASCIILiteral("Expected primitive hint to match one of 'default', 'number', 'string'."));
     return NoPreference;
 }
 
@@ -1031,9 +1034,12 @@ inline TriState JSValue::pureToBoolean() const
 
 ALWAYS_INLINE bool JSValue::requireObjectCoercible(ExecState* exec) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!isUndefinedOrNull())
         return true;
-    exec->vm().throwException(exec, createNotAnObjectError(exec, *this));
+    throwException(exec, scope, createNotAnObjectError(exec, *this));
     return false;
 }
 

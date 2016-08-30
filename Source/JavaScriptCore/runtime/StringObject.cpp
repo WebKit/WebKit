@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2008, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -63,6 +63,9 @@ bool StringObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, 
 
 bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     StringObject* thisObject = jsCast<StringObject*>(cell);
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
@@ -70,7 +73,7 @@ bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
 
     if (propertyName == exec->propertyNames().length) {
         if (slot.isStrictMode())
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
         return false;
     }
     if (Optional<uint32_t> index = parseIndex(propertyName))
@@ -80,10 +83,13 @@ bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
 
 bool StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     StringObject* thisObject = jsCast<StringObject*>(cell);
     if (thisObject->internalValue()->canGetIndex(propertyName)) {
         if (shouldThrow)
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
         return false;
     }
     return JSObject::putByIndex(cell, exec, propertyName, value, shouldThrow);

@@ -84,13 +84,16 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSValue thisValue)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!thisValue.isObject()) {
-        throwVMError(callFrame, createNotAnObjectError(callFrame, thisValue));
+        throwVMError(callFrame, scope, createNotAnObjectError(callFrame, thisValue));
         return nullptr;
     }
     JSSet* set = jsDynamicCast<JSSet*>(thisValue);
     if (!set) {
-        throwTypeError(callFrame, ASCIILiteral("Set operation called on non-Set object"));
+        throwTypeError(callFrame, scope, ASCIILiteral("Set operation called on non-Set object"));
         return nullptr;
     }
     return set;
@@ -141,18 +144,24 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncSize(CallFrame* callFrame)
     
 EncodedJSValue JSC_HOST_CALL setProtoFuncValues(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSSet* thisObj = jsDynamicCast<JSSet*>(callFrame->thisValue());
     if (!thisObj)
-        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Set value iterator for a non-Set object.")));
-    return JSValue::encode(JSSetIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, IterateValue));
+        return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Set value iterator for a non-Set object.")));
+    return JSValue::encode(JSSetIterator::create(vm, callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, IterateValue));
 }
 
 EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSSet* thisObj = jsDynamicCast<JSSet*>(callFrame->thisValue());
     if (!thisObj)
-        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Set entry iterator for a non-Set object.")));
-    return JSValue::encode(JSSetIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, IterateKeyValue));
+        return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Set entry iterator for a non-Set object.")));
+    return JSValue::encode(JSSetIterator::create(vm, callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, IterateKeyValue));
 }
 
 EncodedJSValue JSC_HOST_CALL privateFuncIsSet(ExecState* exec)

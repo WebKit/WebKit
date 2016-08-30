@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2016 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -47,13 +48,16 @@ JSValue JSSVGLength::value(ExecState& state) const
 
 void JSSVGLength::setValue(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (wrapped().isReadOnly()) {
         setDOMException(&state, NO_MODIFICATION_ALLOWED_ERR);
         return;
     }
 
     if (!value.isUndefinedOrNull() && !value.isNumber() && !value.isBoolean()) {
-        throwVMTypeError(&state);
+        throwVMTypeError(&state, scope);
         return;
     }
 
@@ -72,6 +76,9 @@ void JSSVGLength::setValue(ExecState& state, JSValue value)
 
 JSValue JSSVGLength::convertToSpecifiedUnits(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (wrapped().isReadOnly()) {
         setDOMException(&state, NO_MODIFICATION_ALLOWED_ERR);
         return jsUndefined();
@@ -80,7 +87,7 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState& state)
     SVGLength& podImp = wrapped().propertyReference();
 
     if (state.argumentCount() < 1)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     unsigned short unitType = state.uncheckedArgument(0).toUInt32(&state);
     if (state.hadException())

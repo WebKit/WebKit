@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2009, 2011, 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -130,12 +130,15 @@ JSValue JSDocument::append(ExecState& state)
 #if ENABLE(TOUCH_EVENTS)
 JSValue JSDocument::createTouchList(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto touchList = TouchList::create();
 
     for (size_t i = 0; i < state.argumentCount(); ++i) {
         auto* item = JSTouch::toWrapped(state.uncheckedArgument(i));
         if (!item)
-            return JSValue::decode(throwArgumentTypeError(state, i, "touches", "Document", "createTouchList", "Touch"));
+            return JSValue::decode(throwArgumentTypeError(state, scope, i, "touches", "Document", "createTouchList", "Touch"));
 
         touchList->append(*item);
     }
@@ -145,8 +148,11 @@ JSValue JSDocument::createTouchList(ExecState& state)
 
 JSValue JSDocument::getCSSCanvasContext(JSC::ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 4))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
     auto contextId = state.uncheckedArgument(0).toWTFString(&state);
     if (UNLIKELY(state.hadException()))
         return jsUndefined();

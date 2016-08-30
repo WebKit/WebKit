@@ -100,6 +100,9 @@ void JSModuleNamespaceObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getownproperty-p
 
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
@@ -129,7 +132,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec
         JSModuleEnvironment* targetEnvironment = targetModule->moduleEnvironment();
 
         PropertySlot trampolineSlot(targetEnvironment, PropertySlot::InternalMethodType::Get);
-        bool found = targetEnvironment->methodTable(exec->vm())->getOwnPropertySlot(targetEnvironment, exec, resolution.localName, trampolineSlot);
+        bool found = targetEnvironment->methodTable(vm)->getOwnPropertySlot(targetEnvironment, exec, resolution.localName, trampolineSlot);
         ASSERT_UNUSED(found, found);
 
         JSValue value = trampolineSlot.getValue(exec, propertyName);
@@ -137,7 +140,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec
 
         // If the value is filled with TDZ value, throw a reference error.
         if (!value) {
-            throwVMError(exec, createTDZError(exec));
+            throwVMError(exec, scope, createTDZError(exec));
             return false;
         }
 
@@ -162,16 +165,22 @@ bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec
 
 bool JSModuleNamespaceObject::put(JSCell*, ExecState* exec, PropertyName, JSValue, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-set-p-v-receiver
     if (slot.isStrictMode())
-        throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+        throwTypeError(exec, scope, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
     return false;
 }
 
 bool JSModuleNamespaceObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue, bool shouldThrow)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (shouldThrow)
-        throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+        throwTypeError(exec, scope, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
     return false;
 }
 
@@ -193,17 +202,23 @@ void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, ExecState* exe
 
 bool JSModuleNamespaceObject::defineOwnProperty(JSObject*, ExecState* exec, PropertyName, const PropertyDescriptor&, bool shouldThrow)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-defineownproperty-p-desc
     if (shouldThrow)
-        throwTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible."));
+        throwTypeError(exec, scope, ASCIILiteral("Attempting to define property on object that is not extensible."));
     return false;
 }
 
 EncodedJSValue JSC_HOST_CALL moduleNamespaceObjectSymbolIterator(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSModuleNamespaceObject* object = jsDynamicCast<JSModuleNamespaceObject*>(exec->thisValue());
     if (!object)
-        return throwVMTypeError(exec, ASCIILiteral("|this| should be a module namespace object"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("|this| should be a module namespace object"));
     return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), object));
 }
 

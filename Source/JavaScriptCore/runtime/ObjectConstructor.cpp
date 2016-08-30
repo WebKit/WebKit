@@ -217,13 +217,16 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue objectValue = exec->argument(0);
     if (objectValue.isUndefinedOrNull())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     JSValue protoValue = exec->argument(1);
     if (!protoValue.isObject() && !protoValue.isNull())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     JSObject* object = objectValue.toObject(exec);
     if (exec->hadException())
@@ -232,7 +235,6 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
     if (!checkProtoSetterAccessAllowed(exec, object))
         return JSValue::encode(objectValue);
 
-    VM& vm = exec->vm();
     bool shouldThrowIfCantSet = true;
     bool didSetPrototype = object->setPrototype(vm, exec, protoValue, shouldThrowIfCantSet);
     ASSERT_UNUSED(didSetPrototype, vm.exception() || didSetPrototype);
@@ -344,8 +346,10 @@ EncodedJSValue JSC_HOST_CALL ownEnumerablePropertyKeys(ExecState* exec)
 bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!in.isObject()) {
-        throwTypeError(exec, ASCIILiteral("Property description must be an object."));
+        throwTypeError(exec, scope, ASCIILiteral("Property description must be an object."));
         return false;
     }
     JSObject* description = asObject(in);
@@ -390,7 +394,7 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
         if (!get.isUndefined()) {
             CallData callData;
             if (getCallData(get, callData) == CallType::None) {
-                throwTypeError(exec, ASCIILiteral("Getter must be a function."));
+                throwTypeError(exec, scope, ASCIILiteral("Getter must be a function."));
                 return false;
             }
         }
@@ -405,7 +409,7 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
         if (!set.isUndefined()) {
             CallData callData;
             if (getCallData(set, callData) == CallType::None) {
-                throwTypeError(exec, ASCIILiteral("Setter must be a function."));
+                throwTypeError(exec, scope, ASCIILiteral("Setter must be a function."));
                 return false;
             }
         }
@@ -417,12 +421,12 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
         return true;
 
     if (desc.value()) {
-        throwTypeError(exec, ASCIILiteral("Invalid property.  'value' present on property with getter or setter."));
+        throwTypeError(exec, scope, ASCIILiteral("Invalid property.  'value' present on property with getter or setter."));
         return false;
     }
 
     if (desc.writablePresent()) {
-        throwTypeError(exec, ASCIILiteral("Invalid property.  'writable' present on property with getter or setter."));
+        throwTypeError(exec, scope, ASCIILiteral("Invalid property.  'writable' present on property with getter or setter."));
         return false;
     }
     return true;
@@ -430,19 +434,25 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!exec->argument(0).isObject())
-        return throwVMTypeError(exec, ASCIILiteral("Properties can only be defined on Objects."));
-    JSObject* O = asObject(exec->argument(0));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Properties can only be defined on Objects."));
+    JSObject* obj = asObject(exec->argument(0));
     auto propertyName = exec->argument(1).toPropertyKey(exec);
     if (exec->hadException())
         return JSValue::encode(jsNull());
     PropertyDescriptor descriptor;
-    if (!toPropertyDescriptor(exec, exec->argument(2), descriptor))
+    auto success = toPropertyDescriptor(exec, exec->argument(2), descriptor);
+    ASSERT(!scope.exception() == success);
+    if (!success)
         return JSValue::encode(jsNull());
     ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
     ASSERT(!exec->hadException());
-    O->methodTable(exec->vm())->defineOwnProperty(O, exec, propertyName, descriptor, true);
-    return JSValue::encode(O);
+    obj->methodTable(vm)->defineOwnProperty(obj, exec, propertyName, descriptor, true);
+    scope.release();
+    return JSValue::encode(obj);
 }
 
 static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* properties)
@@ -485,8 +495,11 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
 
 EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!exec->argument(0).isObject())
-        return throwVMTypeError(exec, ASCIILiteral("Properties can only be defined on Objects."));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Properties can only be defined on Objects."));
     JSObject* targetObj = asObject(exec->argument(0));
     JSObject* props = exec->argument(1).toObject(exec);
     if (!props)
@@ -496,16 +509,19 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue proto = exec->argument(0);
     if (!proto.isObject() && !proto.isNull())
-        return throwVMTypeError(exec, ASCIILiteral("Object prototype may only be an Object or null."));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Object prototype may only be an Object or null."));
     JSObject* newObject = proto.isObject()
         ? constructEmptyObject(exec, asObject(proto))
         : constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());
     if (exec->argument(1).isUndefined())
         return JSValue::encode(newObject);
     if (!exec->argument(1).isObject())
-        return throwVMTypeError(exec, ASCIILiteral("Property descriptor list must be an Object."));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Property descriptor list must be an Object."));
     return JSValue::encode(defineProperties(exec, newObject, asObject(exec->argument(1))));
 }
 

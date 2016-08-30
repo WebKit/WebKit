@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2011-2012, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,9 @@ namespace JSC {
 
 JSValue StringRecursionChecker::throwStackOverflowError()
 {
-    return JSC::throwStackOverflowError(m_exec);
+    VM& vm = m_exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return JSC::throwStackOverflowError(m_exec, scope);
 }
 
 JSValue StringRecursionChecker::emptyString()

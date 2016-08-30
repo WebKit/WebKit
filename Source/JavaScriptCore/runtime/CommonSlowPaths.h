@@ -73,8 +73,10 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind 
 
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (!baseVal.isObject()) {
-        exec->vm().throwException(exec, createInvalidInParameterError(exec, baseVal));
+        throwException(exec, scope, createInvalidInParameterError(exec, baseVal));
         return false;
     }
 
@@ -85,7 +87,7 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
         return baseObj->hasProperty(exec, i);
 
     auto property = propName.toPropertyKey(exec);
-    if (exec->vm().exception())
+    if (vm.exception())
         return false;
     return baseObj->hasProperty(exec, property);
 }

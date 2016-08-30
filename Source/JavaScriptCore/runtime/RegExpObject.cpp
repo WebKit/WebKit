@@ -171,6 +171,8 @@ MatchResult RegExpObject::match(ExecState* exec, JSGlobalObject* globalObject, J
 template<typename FixEndFunc>
 JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& s, RegExpConstructor* constructor, RegExp* regExp, const FixEndFunc& fixEnd)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     MatchResult result = constructor->performMatch(vm, regExp, string, s, 0);
     if (!result)
         return jsNull();
@@ -197,7 +199,7 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
             MatchResult savedResult = result;
             do {
                 if (array->length() + matchCount >= MAX_STORAGE_VECTOR_LENGTH) {
-                    throwOutOfMemoryError(exec);
+                    throwOutOfMemoryError(exec, scope);
                     return jsUndefined();
                 }
                 

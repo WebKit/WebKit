@@ -96,7 +96,7 @@ private:
 
     static JSC::EncodedJSValue propertyGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
     static JSC::EncodedJSValue methodGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-    static JSC::JSObject* throwInvalidAccessError(JSC::ExecState*);
+    static JSC::JSObject* throwInvalidAccessError(JSC::ExecState*, JSC::ThrowScope&);
 
     NPRuntimeObjectMap* m_objectMap;
     NPObject* m_npObject;

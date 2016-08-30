@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2009, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -152,6 +152,9 @@ static Document* findCallingDocument(ExecState& state)
 
 JSValue JSHTMLDocument::open(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
     if (state.argumentCount() > 2) {
         if (Frame* frame = wrapped().frame()) {
@@ -161,7 +164,7 @@ JSValue JSHTMLDocument::open(ExecState& state)
                 CallData callData;
                 CallType callType = ::getCallData(function, callData);
                 if (callType == CallType::None)
-                    return throwTypeError(&state);
+                    return throwTypeError(&state, scope);
                 return JSC::call(&state, function, callType, callData, wrapper, ArgList(&state));
             }
         }

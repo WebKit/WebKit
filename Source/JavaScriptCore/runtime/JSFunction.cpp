@@ -50,7 +50,9 @@ namespace JSC {
 
 EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
 {
-    return throwVMError(exec, createNotAConstructorError(exec, exec->callee()));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return throwVMError(exec, scope, createNotAConstructorError(exec, exec->callee()));
 }
 
 const ClassInfo JSFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(JSFunction) };
@@ -321,6 +323,9 @@ static JSValue retrieveCallerFunction(ExecState* exec, JSFunction* functionObj)
 
 EncodedJSValue JSFunction::callerGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSFunction* thisObj = jsCast<JSFunction*>(JSValue::decode(thisValue));
     ASSERT(!thisObj->isHostFunction());
     JSValue caller = retrieveCallerFunction(exec, thisObj);
@@ -335,7 +340,7 @@ EncodedJSValue JSFunction::callerGetter(ExecState* exec, EncodedJSValue thisValu
     JSFunction* function = jsCast<JSFunction*>(caller);
     if (function->isHostOrBuiltinFunction() || !function->jsExecutable()->isStrictMode())
         return JSValue::encode(caller);
-    return JSValue::encode(throwTypeError(exec, ASCIILiteral("Function.caller used to retrieve strict caller")));
+    return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Function.caller used to retrieve strict caller")));
 }
 
 bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -423,6 +428,9 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, 
 
 bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
@@ -437,25 +445,28 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
-        thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         if (thisObject->m_rareData)
             thisObject->m_rareData->clear("Store to prototype property of a function");
         // Don't allow this to be cached, since a [[Put]] must clear m_rareData.
         PutPropertySlot dontCache(thisObject);
+        scope.release();
         return Base::put(thisObject, exec, propertyName, value, dontCache);
     }
     if (thisObject->jsExecutable()->isStrictMode() && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
         // This will trigger the property to be reified, if this is not already the case!
         bool okay = thisObject->hasProperty(exec, propertyName);
         ASSERT_UNUSED(okay, okay);
+        scope.release();
         return Base::put(thisObject, exec, propertyName, value, slot);
     }
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller) {
         if (slot.isStrictMode())
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
         return false;
     }
     thisObject->reifyLazyPropertyIfNeeded(exec, propertyName);
+    scope.release();
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
@@ -480,6 +491,9 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
 
 bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (thisObject->isHostOrBuiltinFunction()) {
         thisObject->reifyBoundNameIfNeeded(exec, propertyName);
@@ -490,7 +504,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
-        thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         if (thisObject->m_rareData)
             thisObject->m_rareData->clear("Store to prototype property of a function");
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
@@ -520,27 +534,27 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
      
     if (descriptor.configurablePresent() && descriptor.configurable()) {
         if (throwException)
-            throwTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property."));
+            throwTypeError(exec, scope, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property."));
         return false;
     }
     if (descriptor.enumerablePresent() && descriptor.enumerable()) {
         if (throwException)
-            throwTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property."));
+            throwTypeError(exec, scope, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property."));
         return false;
     }
     if (descriptor.isAccessorDescriptor()) {
         if (throwException)
-            throwTypeError(exec, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+            throwTypeError(exec, scope, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
         return false;
     }
     if (descriptor.writablePresent() && descriptor.writable()) {
         if (throwException)
-            throwTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property."));
+            throwTypeError(exec, scope, ASCIILiteral("Attempting to change writable attribute of unconfigurable property."));
         return false;
     }
     if (!valueCheck) {
         if (throwException)
-            throwTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property."));
+            throwTypeError(exec, scope, ASCIILiteral("Attempting to change value of a readonly property."));
         return false;
     }
     return true;

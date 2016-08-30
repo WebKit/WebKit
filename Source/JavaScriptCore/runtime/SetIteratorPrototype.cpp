@@ -50,10 +50,13 @@ void SetIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue result;
     JSSetIterator* iterator = jsDynamicCast<JSSetIterator*>(callFrame->thisValue());
     if (!iterator)
-        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot call SetIterator.next() on a non-SetIterator object")));
+        return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot call SetIterator.next() on a non-SetIterator object")));
 
     if (iterator->next(callFrame, result))
         return JSValue::encode(createIteratorResultObject(callFrame, result, false));

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2012, 2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -76,11 +76,14 @@ static Bitmap<256> makeCharacterBitmap(const char (&characters)[charactersCount]
 template<typename CharacterType>
 static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape, const CharacterType* characters, unsigned length)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 18.2.6.1.1 Runtime Semantics: Encode ( string, unescapedSet )
     // https://tc39.github.io/ecma262/#sec-encode
 
-    auto throwException = [exec] {
-        return exec->vm().throwException(exec, createURIError(exec, ASCIILiteral("String contained an illegal UTF-16 sequence.")));
+    auto throwException = [&scope, exec] {
+        return JSC::throwException(exec, scope, createURIError(exec, ASCIILiteral("String contained an illegal UTF-16 sequence.")));
     };
 
     StringBuilder builder;
@@ -163,6 +166,9 @@ template <typename CharType>
 ALWAYS_INLINE
 static JSValue decode(ExecState* exec, const CharType* characters, int length, const Bitmap<256>& doNotUnescape, bool strict)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSStringBuilder builder;
     int k = 0;
     UChar u = 0;
@@ -203,7 +209,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
             }
             if (charLen == 0) {
                 if (strict)
-                    return exec->vm().throwException(exec, createURIError(exec, ASCIILiteral("URI error")));
+                    return throwException(exec, scope, createURIError(exec, ASCIILiteral("URI error")));
                 // The only case where we don't use "strict" mode is the "unescape" function.
                 // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
                 if (k <= length - 6 && p[1] == 'u'
@@ -640,13 +646,16 @@ static double parseFloat(StringView s)
 
 EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue x = exec->argument(0);
     if (!x.isString())
         return JSValue::encode(x);
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (!globalObject->evalEnabled()) {
-        exec->vm().throwException(exec, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
+        throwException(exec, scope, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
         return JSValue::encode(jsUndefined());
     }
 
@@ -845,12 +854,16 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
 {
-    return throwVMTypeError(exec);
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return throwVMTypeError(exec, scope);
 }
     
 EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(ExecState* exec)
 {
-    return throwVMTypeError(exec, "'arguments', 'callee', and 'caller' cannot be accessed in strict mode.");
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return throwVMTypeError(exec, scope, "'arguments', 'callee', and 'caller' cannot be accessed in strict mode.");
 }
 
 class GlobalFuncProtoGetterFunctor {
@@ -887,8 +900,11 @@ private:
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
 {
-    if (exec->thisValue().isUndefinedOrNull()) 
-        return throwVMTypeError(exec, ASCIILiteral("Can't convert undefined or null to object"));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (exec->thisValue().isUndefinedOrNull())
+        return throwVMTypeError(exec, scope, ASCIILiteral("Can't convert undefined or null to object"));
 
     JSObject* thisObject = jsDynamicCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode));
 
@@ -944,8 +960,11 @@ bool checkProtoSetterAccessAllowed(ExecState* exec, JSObject* object)
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 {
-    if (exec->thisValue().isUndefinedOrNull()) 
-        return throwVMTypeError(exec, ASCIILiteral("Can't convert undefined or null to object"));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (exec->thisValue().isUndefinedOrNull())
+        return throwVMTypeError(exec, scope, ASCIILiteral("Can't convert undefined or null to object"));
 
     JSValue value = exec->argument(0);
 
@@ -962,7 +981,6 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (!value.isObject() && !value.isNull())
         return JSValue::encode(jsUndefined());
 
-    VM& vm = exec->vm();
     bool shouldThrowIfCantSet = true;
     thisObject->setPrototype(vm, exec, value, shouldThrowIfCantSet);
     return JSValue::encode(jsUndefined());

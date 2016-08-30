@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008, 2009, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008-2009, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +79,9 @@ void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* excep
 
 void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!s_exception) {
         ASSERT(!s_exceptionEnvironment);
         return;
@@ -86,7 +89,7 @@ void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
 
     if (!s_exceptionEnvironment || s_exceptionEnvironment == exec->vmEntryGlobalObject()) {
         JSLockHolder lock(exec);
-        throwError(exec, s_exception);
+        throwError(exec, scope, s_exception);
     }
 
     [s_exception release];
@@ -205,8 +208,11 @@ JSC::JSValue ObjcInstance::getMethod(ExecState* exec, PropertyName propertyName)
 
 JSC::JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
+    JSC::VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!asObject(runtimeMethod)->inherits(ObjCRuntimeMethod::info()))
-        return throwTypeError(exec, ASCIILiteral("Attempt to invoke non-plug-in method on plug-in object."));
+        return throwTypeError(exec, scope, ASCIILiteral("Attempt to invoke non-plug-in method on plug-in object."));
 
     ObjcMethod *method = static_cast<ObjcMethod*>(runtimeMethod->method());
     ASSERT(method);

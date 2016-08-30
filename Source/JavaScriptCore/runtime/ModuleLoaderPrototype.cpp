@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,6 +109,8 @@ ModuleLoaderPrototype::ModuleLoaderPrototype(VM& vm, Structure* structure)
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     const Identifier moduleKey = exec->argument(0).toPropertyKey(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -127,7 +129,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
         JSParserStrictMode::Strict, JSParserCommentMode::Module, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
 
     if (error.isValid()) {
-        throwVMError(exec, error.toErrorObject(exec->lexicalGlobalObject(), sourceCode));
+        throwVMError(exec, scope, error.toErrorObject(exec->lexicalGlobalObject(), sourceCode));
         return JSValue::encode(jsUndefined());
     }
     ASSERT(moduleProgramNode);

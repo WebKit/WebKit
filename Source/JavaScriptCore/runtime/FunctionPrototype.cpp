@@ -83,6 +83,8 @@ CallType FunctionPrototype::getCallData(JSCell*, CallData& callData)
 EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue thisValue = exec->thisValue();
     if (thisValue.inherits(JSFunction::info())) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
@@ -112,19 +114,21 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         JSObject* object = asObject(thisValue);
         if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
             CallData callData;
-            if (object->methodTable(exec->vm())->getCallData(object, callData) != CallType::None) {
+            if (object->methodTable(vm)->getCallData(object, callData) != CallType::None) {
                 if (auto* classInfo = object->classInfo())
                     return JSValue::encode(jsMakeNontrivialString(exec, "function ", classInfo->className, "() {\n    [native code]\n}"));
             }
         }
     }
 
-    return throwVMTypeError(exec);
+    return throwVMTypeError(exec, scope);
 }
 
 // 15.3.4.5 Function.prototype.bind (thisArg [, arg1 [, arg2, ...]])
 EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* globalObject = exec->callee()->globalObject();
 
     // Let Target be the this value.
@@ -134,11 +138,10 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(target, callData);
     if (callType == CallType::None)
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
     // Primitive values are not callable.
     ASSERT(target.isObject());
     JSObject* targetObject = asObject(target);
-    VM& vm = exec->vm();
 
     // Let A be a new (possibly empty) internal list of all of the argument values provided after thisArg (arg1, arg2 etc), in order.
     size_t numBoundArgs = exec->argumentCount() > 1 ? exec->argumentCount() - 1 : 0;
@@ -146,7 +149,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
     if (numBoundArgs) {
         boundArgs = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), numBoundArgs);
         if (!boundArgs)
-            return JSValue::encode(throwOutOfMemoryError(exec));
+            return JSValue::encode(throwOutOfMemoryError(exec, scope));
         
         for (size_t i = 0; i < numBoundArgs; ++i)
             boundArgs->initializeIndex(vm, i, exec->argument(i + 1));

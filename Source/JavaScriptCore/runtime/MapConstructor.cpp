@@ -50,11 +50,16 @@ void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype, GetterSe
 
 static EncodedJSValue JSC_HOST_CALL callMap(ExecState* exec)
 {
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, "Map"));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "Map"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
     Structure* mapStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->mapStructure());
     if (exec->hadException())
@@ -71,11 +76,11 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(adderFunction, adderFunctionCallData);
     if (adderFunctionCallType == CallType::None)
-        return JSValue::encode(throwTypeError(exec));
+        return JSValue::encode(throwTypeError(exec, scope));
 
     forEachInIterable(exec, iterable, [&](VM& vm, ExecState* exec, JSValue nextItem) {
         if (!nextItem.isObject()) {
-            throwTypeError(exec);
+            throwTypeError(exec, scope);
             return;
         }
 

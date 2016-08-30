@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Michael Pruett <michael@68k.org>
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -47,8 +48,11 @@ namespace WebCore {
 
 JSValue JSIDBDatabase::createObjectStore(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 1)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     String name = state.argument(0).toString(&state)->value(&state);
     if (state.hadException())
@@ -56,7 +60,7 @@ JSValue JSIDBDatabase::createObjectStore(ExecState& state)
 
     JSValue optionsValue = state.argument(1);
     if (!optionsValue.isUndefinedOrNull() && !optionsValue.isObject())
-        return throwTypeError(&state, "Not an object.");
+        return throwTypeError(&state, scope, "Not an object.");
 
     IDBKeyPath keyPath;
     bool autoIncrement = false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2013, 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -310,10 +310,10 @@ ObjcValueType objcValueTypeForType(const char *type)
     return objcValueType;
 }
 
-JSObject *throwError(ExecState *exec, NSString *message)
+JSObject *throwError(ExecState *exec, ThrowScope& scope, NSString *message)
 {
     ASSERT(message);
-    JSObject *error = exec->vm().throwException(exec, JSC::createError(exec, String(message)));
+    JSObject *error = throwException(exec, scope, JSC::createError(exec, String(message)));
     return error;
 }
 

@@ -90,13 +90,16 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 ALWAYS_INLINE static JSMap* getMap(CallFrame* callFrame, JSValue thisValue)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!thisValue.isObject()) {
-        throwVMError(callFrame, createNotAnObjectError(callFrame, thisValue));
+        throwVMError(callFrame, scope, createNotAnObjectError(callFrame, thisValue));
         return nullptr;
     }
     JSMap* map = jsDynamicCast<JSMap*>(thisValue);
     if (!map) {
-        throwTypeError(callFrame, ASCIILiteral("Map operation called on non-Map object"));
+        throwTypeError(callFrame, scope, ASCIILiteral("Map operation called on non-Map object"));
         return nullptr;
     }
     return map;
@@ -155,26 +158,35 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncSize(CallFrame* callFrame)
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncValues(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSMap* thisObj = jsDynamicCast<JSMap*>(callFrame->thisValue());
     if (!thisObj)
-        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Map value iterator for a non-Map object.")));
-    return JSValue::encode(JSMapIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateValue));
+        return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Map value iterator for a non-Map object.")));
+    return JSValue::encode(JSMapIterator::create(vm, callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateValue));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncEntries(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSMap* thisObj = jsDynamicCast<JSMap*>(callFrame->thisValue());
     if (!thisObj)
-        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Map entry iterator for a non-Map object.")));
-    return JSValue::encode(JSMapIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateKeyValue));
+        return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Map entry iterator for a non-Map object.")));
+    return JSValue::encode(JSMapIterator::create(vm, callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateKeyValue));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncKeys(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSMap* thisObj = jsDynamicCast<JSMap*>(callFrame->thisValue());
     if (!thisObj)
-        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Map key iterator for a non-Map object.")));
-    return JSValue::encode(JSMapIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateKey));
+        return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Map key iterator for a non-Map object.")));
+    return JSValue::encode(JSMapIterator::create(vm, callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateKey));
 }
 
 EncodedJSValue JSC_HOST_CALL privateFuncIsMap(ExecState* exec)

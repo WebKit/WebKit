@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -63,12 +64,15 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Blob& blob)
 
 EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 {
+    VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
     ASSERT(jsConstructor);
 
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return throwConstructorScriptExecutionContextUnavailableError(exec, "Blob");
+        return throwConstructorScriptExecutionContextUnavailableError(exec, scope, "Blob");
 
     if (!exec.argumentCount()) {
         return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), Blob, Blob::create()));
@@ -87,7 +91,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
         JSValue blobPropertyBagValue = exec.uncheckedArgument(1);
 
         if (!blobPropertyBagValue.isObject())
-            return throwVMTypeError(&exec, "Second argument of the constructor is not of type Object");
+            return throwVMTypeError(&exec, scope, "Second argument of the constructor is not of type Object");
 
         // Given the above test, this will always yield an object.
         JSObject* blobPropertyBagObject = blobPropertyBagValue.toObject(&exec);
@@ -102,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
-                return throwVMTypeError(&exec, "The endings property must be either \"transparent\" or \"native\"");
+                return throwVMTypeError(&exec, scope, "The endings property must be either \"transparent\" or \"native\"");
         }
 
         // Attempt to get the type property.

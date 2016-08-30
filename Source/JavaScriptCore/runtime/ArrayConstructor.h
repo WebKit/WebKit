@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2008, 2011, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 
 #include "InternalFunction.h"
 #include "ProxyObject.h"
+#include "ThrowScope.h"
 
 namespace JSC {
 
@@ -60,7 +61,7 @@ private:
     static CallType getCallData(JSCell*, CallData&);
 };
 
-JSObject* constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue length, JSValue prototype = JSValue());
+JSValue constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue length, JSValue prototype = JSValue());
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecState*);
 
@@ -68,6 +69,9 @@ EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecS
 // https://tc39.github.io/ecma262/#sec-isarray
 inline bool isArray(ExecState* exec, JSValue argumentValue)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!argumentValue.isObject())
         return false;
 
@@ -81,7 +85,7 @@ inline bool isArray(ExecState* exec, JSValue argumentValue)
 
         ProxyObject* proxy = jsCast<ProxyObject*>(argument);
         if (proxy->isRevoked()) {
-            throwTypeError(exec, ASCIILiteral("Array.isArray cannot be called on a Proxy that has been revoked"));
+            throwTypeError(exec, scope, ASCIILiteral("Array.isArray cannot be called on a Proxy that has been revoked"));
             return false;
         }
         argument = proxy->target();

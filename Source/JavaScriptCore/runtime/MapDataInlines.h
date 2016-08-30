@@ -204,6 +204,9 @@ inline void MapDataImpl<Entry, JSIterator>::replaceBackingStore(Entry* destinati
 template<typename Entry, typename JSIterator>
 inline CheckedBoolean MapDataImpl<Entry, JSIterator>::ensureSpaceForAppend(ExecState* exec, JSCell* owner)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (m_capacity > m_size)
         return true;
 
@@ -211,7 +214,7 @@ inline CheckedBoolean MapDataImpl<Entry, JSIterator>::ensureSpaceForAppend(ExecS
     void* newStorage = nullptr;
     DeferGC defer(*exec->heap());
     if (!exec->heap()->tryAllocateStorage(owner, requiredSize * sizeof(Entry), &newStorage)) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(exec, scope);
         return false;
     }
     Entry* newEntries = static_cast<Entry*>(newStorage);

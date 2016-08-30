@@ -265,6 +265,9 @@ static inline unsigned argumentClampedIndexFromStartOrEnd(ExecState* exec, int a
 template<JSArray::ShiftCountMode shiftCountMode>
 void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned currentCount, unsigned resultCount, unsigned length)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RELEASE_ASSERT(currentCount > resultCount);
     unsigned count = currentCount - resultCount;
 
@@ -286,14 +289,14 @@ void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned current
             thisObj->putByIndexInline(exec, to, value, true);
             if (exec->hadException())
                 return;
-        } else if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, to)) {
-            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+        } else if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to)) {
+            throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
             return;
         }
     }
     for (unsigned k = length; k > length - count; --k) {
-        if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, k - 1)) {
-            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+        if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, k - 1)) {
+            throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
             return;
         }
     }
@@ -302,6 +305,9 @@ void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned current
 template<JSArray::ShiftCountMode shiftCountMode>
 void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned currentCount, unsigned resultCount, unsigned length)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RELEASE_ASSERT(resultCount > currentCount);
     unsigned count = resultCount - currentCount;
 
@@ -310,7 +316,7 @@ void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned curre
 
     // Guard against overflow.
     if (count > (UINT_MAX - length)) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(exec, scope);
         return;
     }
 
@@ -327,8 +333,8 @@ void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned curre
             if (exec->hadException())
                 return;
             thisObj->putByIndexInline(exec, to, value, true);
-        } else if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, to)) {
-            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+        } else if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to)) {
+            throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
             return;
         }
         if (exec->hadException())
@@ -361,7 +367,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         customJoinCase = true;
 
     if (UNLIKELY(customJoinCase))
-        return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]"));
+        return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(vm)->className(thisObject), "]"));
 
     // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
     if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin)
@@ -674,6 +680,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
 
     if (isJSArray(thisValue))
@@ -694,8 +703,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
         result = thisObj->get(exec, length - 1);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
-        if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, length - 1)) {
-            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+        if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, length - 1)) {
+            throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
         putLength(exec, thisObj, jsNumber(length - 1));
@@ -740,11 +749,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     if (!thisObject)
         return JSValue::encode(JSValue());
 
-    VM& vm = exec->vm();
     unsigned length = getLength(exec, thisObject);
     if (vm.exception())
         return JSValue::encode(jsUndefined());
@@ -812,7 +823,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
                 return JSValue::encode(JSValue());
         } else if (!thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, lower)) {
             if (!vm.exception())
-                throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+                throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(JSValue());
         }
 
@@ -822,7 +833,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
                 return JSValue::encode(JSValue());
         } else if (!thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, upper)) {
             if (!vm.exception())
-                throwTypeError(exec, ASCIILiteral("Unable to delete property."));
+                throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(JSValue());
         }
     }
@@ -902,6 +913,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     // 15.4.4.12
 
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     if (!thisObj)
@@ -966,7 +978,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         } else {
             result = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
             if (!result)
-                return JSValue::encode(throwOutOfMemoryError(exec));
+                return JSValue::encode(throwOutOfMemoryError(exec, scope));
             
             for (unsigned k = 0; k < deleteCount; ++k) {
                 JSValue v = getProperty(exec, thisObj, k + begin);
@@ -1123,6 +1135,8 @@ static bool moveElements(ExecState* exec, VM& vm, JSArray* target, unsigned targ
 
 static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, JSValue second)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     ASSERT(!isJSArray(second));
     ASSERT(!shouldUseSlowPut(first->indexingType()));
     Butterfly* firstButterfly = first->butterfly();
@@ -1135,7 +1149,7 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
     Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
     JSArray* result = JSArray::create(vm, resultStructure, firstArraySize + 1);
     if (!result)
-        return JSValue::encode(throwOutOfMemoryError(exec));
+        return JSValue::encode(throwOutOfMemoryError(exec, scope));
 
     if (!result->appendMemcpy(exec, vm, 0, first)) {
         if (!moveElements(exec, vm, result, 0, first, firstArraySize)) {
@@ -1154,6 +1168,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
 {
     ASSERT(exec->argumentCount() == 2);
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSArray* firstArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
 
@@ -1197,7 +1212,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
     Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
     JSArray* result = JSArray::tryCreateUninitialized(vm, resultStructure, firstArraySize + secondArraySize);
     if (!result)
-        return JSValue::encode(throwOutOfMemoryError(exec));
+        return JSValue::encode(throwOutOfMemoryError(exec, scope));
 
     if (type == ArrayWithDouble) {
         double* buffer = result->butterfly()->contiguousDouble().data();

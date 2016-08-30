@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,9 @@ uint16_t JSNodeFilter::acceptNode(Node* node)
 {
     Ref<JSNodeFilter> protectedThis(*this);
 
-    JSLockHolder lock(m_data->globalObject()->vm());
+    VM& vm = m_data->globalObject()->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
@@ -54,7 +56,7 @@ uint16_t JSNodeFilter::acceptNode(Node* node)
     JSValue value = m_data->invokeCallback(args, JSCallbackData::CallbackType::FunctionOrObject, Identifier::fromString(state, "acceptNode"), returnedException);
     if (returnedException) {
         // Rethrow exception.
-        state->vm().throwException(state, returnedException);
+        throwException(state, scope, returnedException);
 
         return NodeFilter::FILTER_REJECT;
     }

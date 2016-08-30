@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,17 +71,19 @@ public:
 
     JSValue build(ExecState* exec)
     {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         if (!m_okay)
-            return throwOutOfMemoryError(exec);
+            return throwOutOfMemoryError(exec, scope);
         if (m_is8Bit) {
             buffer8.shrinkToFit();
             if (!buffer8.data())
-                return throwOutOfMemoryError(exec);
+                return throwOutOfMemoryError(exec, scope);
             return jsString(exec, String::adopt(buffer8));
         }
         buffer16.shrinkToFit();
         if (!buffer16.data())
-            return throwOutOfMemoryError(exec);
+            return throwOutOfMemoryError(exec, scope);
         return jsString(exec, String::adopt(buffer16));
     }
 
@@ -127,9 +129,11 @@ inline JSValue jsMakeNontrivialString(ExecState* exec, StringType&& string)
 template<typename StringType, typename... StringTypes>
 inline JSValue jsMakeNontrivialString(ExecState* exec, const StringType& string, const StringTypes&... strings)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     String result = WTF::tryMakeString(string, strings...);
     if (!result)
-        return throwOutOfMemoryError(exec);
+        return throwOutOfMemoryError(exec, scope);
     return jsNontrivialString(exec, WTFMove(result));
 }
 

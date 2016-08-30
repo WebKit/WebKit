@@ -1,5 +1,6 @@
 /*
- *  Copyright (C) 2015 Canon Inc. All rights reserved.
+ *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
+ *  Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -45,7 +46,9 @@ private:
 
     static JSC::EncodedJSValue JSC_HOST_CALL callThrowTypeError(JSC::ExecState* exec)
     {
-        JSC::throwTypeError(exec, ASCIILiteral("Illegal constructor"));
+        JSC::VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        JSC::throwTypeError(exec, scope, ASCIILiteral("Illegal constructor"));
         return JSC::JSValue::encode(JSC::jsNull());
     }
 
@@ -226,8 +229,10 @@ template<typename JSClass> inline JSC::EncodedJSValue JSBuiltinConstructor<JSCla
 
 template<typename JSClass> inline JSC::EncodedJSValue JSBuiltinConstructor<JSClass>::callConstructor(JSC::ExecState& state, JSC::JSObject* object)
 {
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (!object)
-        return throwConstructorScriptExecutionContextUnavailableError(state, info()->className);
+        return throwConstructorScriptExecutionContextUnavailableError(state, scope, info()->className);
     return callConstructor(state, *object);
 }
 

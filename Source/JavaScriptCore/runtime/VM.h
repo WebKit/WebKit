@@ -48,6 +48,7 @@
 #include "SmallStrings.h"
 #include "SourceCode.h"
 #include "Strong.h"
+#include "ThrowScopeLocation.h"
 #include "ThunkGenerators.h"
 #include "TypedArrayController.h"
 #include "VMEntryRecord.h"
@@ -108,6 +109,7 @@ class Structure;
 class RegExp;
 #endif
 class Symbol;
+class ThrowScope;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
 class UnlinkedFunctionExecutable;
@@ -449,10 +451,6 @@ public:
     Exception* lastException() const { return m_lastException; }
     JSCell** addressOfLastException() { return reinterpret_cast<JSCell**>(&m_lastException); }
 
-    JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
-    JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
-
     void setFailNextNewCodeBlock() { m_failNextNewCodeBlock = true; }
     bool getAndClearFailNextNewCodeBlock()
     {
@@ -644,6 +642,10 @@ private:
         m_lastException = exception;
     }
 
+    JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
+    JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
+    JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
+
 #if ENABLE(ASSEMBLER)
     bool m_canUseAssembler;
 #endif
@@ -668,6 +670,13 @@ private:
 
     Exception* m_exception { nullptr };
     Exception* m_lastException { nullptr };
+#if ENABLE(THROW_SCOPE_VERIFICATION)
+    ThrowScope* m_topThrowScope { nullptr };
+    ThrowScopeLocation m_simulatedThrowPointLocation;
+    unsigned m_simulatedThrowPointDepth { 0 };
+    mutable bool m_needExceptionCheck { false };
+#endif
+
     bool m_failNextNewCodeBlock { false };
     DeletePropertyMode m_deletePropertyMode { DeletePropertyMode::Default };
     bool m_globalConstRedeclarationShouldThrow { true };
@@ -690,6 +699,8 @@ private:
 #endif
     std::unique_ptr<ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
+
+    friend class ThrowScope;
 };
 
 #if ENABLE(GC_VALIDATION)

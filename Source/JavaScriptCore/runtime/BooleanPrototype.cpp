@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2008, 2011, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -68,6 +68,7 @@ void BooleanPrototype::finishCreation(VM& vm, JSGlobalObject*)
 EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
 {
     VM* vm = &exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(*vm);
     JSValue thisValue = exec->thisValue();
     if (thisValue == jsBoolean(false))
         return JSValue::encode(vm->smallStrings.falseString());
@@ -76,7 +77,7 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
         return JSValue::encode(vm->smallStrings.trueString());
 
     if (!thisValue.inherits(BooleanObject::info()))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     if (asBooleanObject(thisValue)->internalValue() == jsBoolean(false))
         return JSValue::encode(vm->smallStrings.falseString());
@@ -87,12 +88,13 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState* exec)
 {
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
     JSValue thisValue = exec->thisValue();
     if (thisValue.isBoolean())
         return JSValue::encode(thisValue);
 
     if (!thisValue.inherits(BooleanObject::info()))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     return JSValue::encode(asBooleanObject(thisValue)->internalValue());
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2008, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,9 +56,12 @@ void RuntimeMethod::finishCreation(VM& vm, const String& ident)
 
 EncodedJSValue RuntimeMethod::lengthGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeMethod* thisObject = jsDynamicCast<RuntimeMethod*>(JSValue::decode(thisValue));
     if (!thisObject)
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
     return JSValue::encode(jsNumber(thisObject->m_method->numParameters()));
 }
 
@@ -75,6 +78,9 @@ bool RuntimeMethod::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
 
 static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeMethod* method = static_cast<RuntimeMethod*>(exec->callee());
 
     if (!method->method())
@@ -87,13 +93,13 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
         RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
         instance = runtimeObject->getInternalInstance();
         if (!instance) 
-            return JSValue::encode(RuntimeObject::throwInvalidAccessError(exec));
+            return JSValue::encode(RuntimeObject::throwInvalidAccessError(exec, scope));
     } else {
         // Calling a runtime object of a plugin element?
         if (thisValue.inherits(JSHTMLElement::info()))
             instance = pluginInstance(jsCast<JSHTMLElement*>(asObject(thisValue))->wrapped());
         if (!instance)
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, scope);
     }
     ASSERT(instance);
 

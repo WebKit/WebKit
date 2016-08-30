@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,10 +41,13 @@ namespace WebCore {
 
 JSC::JSValue JSMediaStreamTrack::getSettings(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue thisValue = state.thisValue();
     JSMediaStreamTrack* castedThis = jsDynamicCast<JSMediaStreamTrack*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return JSValue::decode(throwThisTypeError(state, "MediaStreamTrack", "getSettings"));
+        return JSValue::decode(throwThisTypeError(state, scope, "MediaStreamTrack", "getSettings"));
 
     JSObject* object = constructEmptyObject(&state);
     auto& impl = castedThis->wrapped();
@@ -102,10 +105,13 @@ static JSValue capabilityValue(const CapabilityValueOrRange& value, ExecState& s
 
 JSC::JSValue JSMediaStreamTrack::getCapabilities(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue thisValue = state.thisValue();
     JSMediaStreamTrack* castedThis = jsDynamicCast<JSMediaStreamTrack*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return JSValue::decode(throwThisTypeError(state, "MediaStreamTrack", "getSettings"));
+        return JSValue::decode(throwThisTypeError(state, scope, "MediaStreamTrack", "getSettings"));
 
     JSObject* object = constructEmptyObject(&state);
     auto& impl = castedThis->wrapped();

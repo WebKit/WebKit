@@ -1,3 +1,27 @@
+2016-08-30  Mark Lam  <mark.lam@apple.com>
+
+        Introduce the ThrowScope and force every throw site to instantiate a ThrowScope.
+        https://bugs.webkit.org/show_bug.cgi?id=161171
+
+        Reviewed by Filip Pizlo and Geoffrey Garen.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::callMethod):
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::callMethod):
+        (WebKit::JSNPObject::callObject):
+        (WebKit::JSNPObject::callConstructor):
+        (WebKit::JSNPObject::getOwnPropertySlot):
+        (WebKit::JSNPObject::put):
+        (WebKit::JSNPObject::deleteProperty):
+        (WebKit::JSNPObject::getOwnPropertyNames):
+        (WebKit::JSNPObject::propertyGetter):
+        (WebKit::JSNPObject::methodGetter):
+        (WebKit::JSNPObject::throwInvalidAccessError):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::moveGlobalExceptionToExecState):
+
 2016-08-29  Anders Carlsson  <andersca@apple.com>
 
         Stop using m_client to indicate whether an IPC::Connection is valid

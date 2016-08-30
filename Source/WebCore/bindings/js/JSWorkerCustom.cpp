@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2009, 2016 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,10 +47,13 @@ JSC::JSValue JSWorker::postMessage(JSC::ExecState& state)
 
 EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState& exec)
 {
+    VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
 
     if (!exec.argumentCount())
-        return throwVMError(&exec, createNotEnoughArgumentsError(&exec));
+        return throwVMError(&exec, scope, createNotEnoughArgumentsError(&exec));
 
     String scriptURL = exec.uncheckedArgument(0).toWTFString(&exec);
     if (exec.hadException())

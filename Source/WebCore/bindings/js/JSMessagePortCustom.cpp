@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2009, 2016 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,6 +59,9 @@ JSC::JSValue JSMessagePort::postMessage(JSC::ExecState& state)
 
 void fillMessagePortArray(JSC::ExecState& state, JSC::JSValue value, MessagePortArray& portArray, ArrayBufferArray& arrayBuffers)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Convert from the passed-in JS array-like object to a MessagePortArray.
     // Also validates the elements per sections 4.1.13 and 4.1.15 of the WebIDL spec and section 8.3.3 of the HTML5 spec.
     if (value.isUndefinedOrNull()) {
@@ -95,7 +98,7 @@ void fillMessagePortArray(JSC::ExecState& state, JSC::JSValue value, MessagePort
             if (RefPtr<ArrayBuffer> arrayBuffer = toArrayBuffer(value))
                 arrayBuffers.append(WTFMove(arrayBuffer));
             else {
-                throwTypeError(&state);
+                throwTypeError(&state, scope);
                 return;
             }
         }

@@ -364,15 +364,18 @@ static String toStringWithRadix(int32_t number, unsigned radix)
 // to argument-plus-one significant figures).
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double x;
     if (!toThisNumber(exec->thisValue(), x))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     // Get the argument. 
     int decimalPlacesInExponent;
     bool isUndefined;
     if (!getIntegerArgumentInRange(exec, 0, 20, decimalPlacesInExponent, isUndefined))
-        return throwVMError(exec, createRangeError(exec, ASCIILiteral("toExponential() argument must be between 0 and 20")));
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toExponential() argument must be between 0 and 20")));
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
@@ -395,15 +398,18 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 // method will instead fallback to calling ToString. 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double x;
     if (!toThisNumber(exec->thisValue(), x))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     // Get the argument. 
     int decimalPlaces;
     bool isUndefined; // This is ignored; undefined treated as 0.
     if (!getIntegerArgumentInRange(exec, 0, 20, decimalPlaces, isUndefined))
-        return throwVMError(exec, createRangeError(exec, ASCIILiteral("toFixed() argument must be between 0 and 20")));
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toFixed() argument must be between 0 and 20")));
 
     // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
     // This also covers Ininity, and structure the check so that NaN
@@ -428,15 +434,18 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 // with smaller values converted to exponential representation.
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double x;
     if (!toThisNumber(exec->thisValue(), x))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     // Get the argument. 
     int significantFigures;
     bool isUndefined;
     if (!getIntegerArgumentInRange(exec, 1, 21, significantFigures, isUndefined))
-        return throwVMError(exec, createRangeError(exec, ASCIILiteral("toPrecision() argument must be between 1 and 21")));
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toPrecision() argument must be between 1 and 21")));
 
     // To precision called with no argument is treated as ToString.
     if (isUndefined)
@@ -485,22 +494,23 @@ static inline EncodedJSValue integerValueToString(ExecState* exec, int32_t radix
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double doubleValue;
     if (!toThisNumber(exec->thisValue(), doubleValue))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     int32_t radix = extractRadixFromArgs(exec);
     if (radix < 2 || radix > 36)
-        return throwVMError(exec, createRangeError(exec, ASCIILiteral("toString() radix argument must be between 2 and 36")));
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toString() radix argument must be between 2 and 36")));
 
     int32_t integerValue = static_cast<int32_t>(doubleValue);
     if (integerValue == doubleValue)
         return integerValueToString(exec, radix, integerValue);
 
-    if (radix == 10) {
-        VM* vm = &exec->vm();
-        return JSValue::encode(jsString(vm, vm->numericStrings.add(doubleValue)));
-    }
+    if (radix == 10)
+        return JSValue::encode(jsString(&vm, vm.numericStrings.add(doubleValue)));
 
     if (!std::isfinite(doubleValue))
         return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(doubleValue)));
@@ -511,19 +521,25 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double x;
     if (!toThisNumber(exec->thisValue(), x))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     return JSValue::encode(jsNumber(x).toString(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double x;
     JSValue thisValue = exec->thisValue();
     if (!toThisNumber(thisValue, x))
-        return throwVMTypeError(exec, WTF::makeString("thisNumberValue called on incompatible ", jsCast<JSString*>(jsTypeStringForValue(exec, thisValue))->value(exec)));
+        return throwVMTypeError(exec, scope, WTF::makeString("thisNumberValue called on incompatible ", jsCast<JSString*>(jsTypeStringForValue(exec, thisValue))->value(exec)));
     return JSValue::encode(jsNumber(x));
 }
 

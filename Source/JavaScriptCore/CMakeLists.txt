@@ -814,6 +814,7 @@ set(JavaScriptCore_SOURCES
     runtime/SymbolObject.cpp
     runtime/SymbolPrototype.cpp
     runtime/SymbolTable.cpp
+    runtime/ThrowScope.cpp
     runtime/TemplateRegistry.cpp
     runtime/TestRunnerUtils.cpp
     runtime/TypeLocationCache.cpp

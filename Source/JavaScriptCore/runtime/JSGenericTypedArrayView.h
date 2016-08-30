@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define JSGenericTypedArrayView_h
 
 #include "JSArrayBufferView.h"
+#include "ThrowScope.h"
 #include "ToNativeFromValue.h"
 
 namespace JSC {
@@ -168,12 +169,15 @@ public:
     
     bool setIndex(ExecState* exec, unsigned i, JSValue jsValue)
     {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
         typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
         if (exec->hadException())
             return false;
 
         if (isNeutered()) {
-            throwTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
+            throwTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
             return false;
         }
 

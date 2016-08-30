@@ -297,6 +297,8 @@ JSValue Stringifier::toJSONImpl(JSValue value, JSValue toJSONFunction, const Pro
 Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& builder, JSValue value, JSObject* holder, const PropertyNameForFunctionCall& propertyName)
 {
     VM& vm = m_exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Call the toJSON function.
     value = toJSON(value, propertyName);
     if (vm.exception())
@@ -368,7 +370,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     // Handle cycle detection, and put the holder on the stack.
     for (unsigned i = 0; i < m_holderStack.size(); i++) {
         if (m_holderStack[i].object() == object) {
-            throwTypeError(m_exec, ASCIILiteral("JSON.stringify cannot serialize cyclic structures."));
+            throwTypeError(m_exec, scope, ASCIILiteral("JSON.stringify cannot serialize cyclic structures."));
             return StringifyFailed;
         }
     }
@@ -589,10 +591,13 @@ enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEn
                                  ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember };
 NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 {
+    VM& vm = m_exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     Vector<PropertyNameArray, 16, UnsafeVectorOverflow> propertyStack;
     Vector<uint32_t, 16, UnsafeVectorOverflow> indexStack;
-    LocalStack<JSObject, 16> objectStack(m_exec->vm());
-    LocalStack<JSArray, 16> arrayStack(m_exec->vm());
+    LocalStack<JSObject, 16> objectStack(vm);
+    LocalStack<JSArray, 16> arrayStack(vm);
     Vector<unsigned, 16, UnsafeVectorOverflow> arrayLengthStack;
     
     Vector<WalkerState, 16, UnsafeVectorOverflow> stateStack;
@@ -607,7 +612,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 ASSERT(inValue.isObject());
                 ASSERT(isJSArray(asObject(inValue)) || asObject(inValue)->inherits(JSArray::info()));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
-                    return throwStackOverflowError(m_exec);
+                    return throwStackOverflowError(m_exec, scope);
 
                 JSArray* array = asArray(inValue);
                 arrayStack.push(array);
@@ -663,7 +668,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 ASSERT(inValue.isObject());
                 ASSERT(!isJSArray(asObject(inValue)) && !asObject(inValue)->inherits(JSArray::info()));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
-                    return throwStackOverflowError(m_exec);
+                    return throwStackOverflowError(m_exec, scope);
 
                 JSObject* object = asObject(inValue);
                 objectStack.push(object);
@@ -736,31 +741,34 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     }
     JSObject* finalHolder = constructEmptyObject(m_exec);
     PutPropertySlot slot(finalHolder);
-    finalHolder->methodTable()->put(finalHolder, m_exec, m_exec->vm().propertyNames->emptyIdentifier, outValue, slot);
+    finalHolder->methodTable()->put(finalHolder, m_exec, vm.propertyNames->emptyIdentifier, outValue, slot);
     return callReviver(finalHolder, jsEmptyString(m_exec), outValue);
 }
 
 // ECMA-262 v5 15.12.2
 EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!exec->argumentCount())
-        return throwVMError(exec, createError(exec, ASCIILiteral("JSON.parse requires at least one parameter")));
+        return throwVMError(exec, scope, createError(exec, ASCIILiteral("JSON.parse requires at least one parameter")));
     JSString::SafeView source = exec->uncheckedArgument(0).toString(exec)->view(exec);
     if (exec->hadException())
         return JSValue::encode(jsNull());
 
     JSValue unfiltered;
-    LocalScope scope(exec->vm());
+    LocalScope localScope(vm);
     if (source.is8Bit()) {
         LiteralParser<LChar> jsonParser(exec, source.characters8(), source.length(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
         if (!unfiltered)
-            return throwVMError(exec, createSyntaxError(exec, jsonParser.getErrorMessage()));
+            return throwVMError(exec, scope, createSyntaxError(exec, jsonParser.getErrorMessage()));
     } else {
         LiteralParser<UChar> jsonParser(exec, source.characters16(), source.length(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
         if (!unfiltered)
-            return throwVMError(exec, createSyntaxError(exec, jsonParser.getErrorMessage()));        
+            return throwVMError(exec, scope, createSyntaxError(exec, jsonParser.getErrorMessage()));
     }
     
     if (exec->argumentCount() < 2)
@@ -771,18 +779,21 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     CallType callType = getCallData(function, callData);
     if (callType == CallType::None)
         return JSValue::encode(unfiltered);
-    return JSValue::encode(Walker(exec, Local<JSObject>(exec->vm(), asObject(function)), callType, callData).walk(unfiltered));
+    return JSValue::encode(Walker(exec, Local<JSObject>(vm, asObject(function)), callType, callData).walk(unfiltered));
 }
 
 // ECMA-262 v5 15.12.3
 EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!exec->argumentCount())
-        return throwVMError(exec, createError(exec, ASCIILiteral("No input to stringify")));
-    LocalScope scope(exec->vm());
-    Local<Unknown> value(exec->vm(), exec->uncheckedArgument(0));
-    Local<Unknown> replacer(exec->vm(), exec->argument(1));
-    Local<Unknown> space(exec->vm(), exec->argument(2));
+        return throwVMError(exec, scope, createError(exec, ASCIILiteral("No input to stringify")));
+    LocalScope localScope(vm);
+    Local<Unknown> value(vm, exec->uncheckedArgument(0));
+    Local<Unknown> replacer(vm, exec->argument(1));
+    Local<Unknown> space(vm, exec->argument(2));
     JSValue result = Stringifier(exec, replacer, space).stringify(value).get();
     return JSValue::encode(result);
 }

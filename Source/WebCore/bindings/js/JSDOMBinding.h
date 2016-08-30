@@ -113,25 +113,25 @@ DOMWindow& firstDOMWindow(JSC::ExecState*);
 WEBCORE_EXPORT JSC::EncodedJSValue reportDeprecatedGetterError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
 WEBCORE_EXPORT void reportDeprecatedSetterError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
 
-void throwNotSupportedError(JSC::ExecState&, const char* message);
-void throwInvalidStateError(JSC::ExecState&, const char* message);
-void throwArrayElementTypeError(JSC::ExecState&);
-void throwAttributeTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName, const char* expectedType);
-WEBCORE_EXPORT void throwSequenceTypeError(JSC::ExecState&);
-WEBCORE_EXPORT bool throwSetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
-WEBCORE_EXPORT void throwNonFiniteTypeError(JSC::ExecState&);
-void throwSecurityError(JSC::ExecState&, const String& message);
+void throwNotSupportedError(JSC::ExecState&, JSC::ThrowScope&, const char* message);
+void throwInvalidStateError(JSC::ExecState&, JSC::ThrowScope&, const char* message);
+void throwArrayElementTypeError(JSC::ExecState&, JSC::ThrowScope&);
+void throwAttributeTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName, const char* expectedType);
+WEBCORE_EXPORT void throwSequenceTypeError(JSC::ExecState&, JSC::ThrowScope&);
+WEBCORE_EXPORT bool throwSetterTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT void throwNonFiniteTypeError(JSC::ExecState&, JSC::ThrowScope&);
+void throwSecurityError(JSC::ExecState&, JSC::ThrowScope&, const String& message);
 
-WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues);
-JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName);
-WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType);
-JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::ExecState&, const char* interfaceName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues);
+JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType);
+JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName);
 
 String makeGetterTypeErrorMessage(const char* interfaceName, const char* attributeName);
 String makeThisTypeErrorMessage(const char* interfaceName, const char* attributeName);
 
-WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
-WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, const char* interfaceName, const char* functionName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* functionName);
 
 WEBCORE_EXPORT JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject&, const JSC::ClassInfo*);
 WEBCORE_EXPORT JSC::Structure* cacheDOMStructure(JSDOMGlobalObject&, JSC::Structure*, const JSC::ClassInfo*);
@@ -490,9 +490,12 @@ inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& 
 // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.
 inline JSC::JSObject* toJSSequence(JSC::ExecState& exec, JSC::JSValue value, unsigned& length)
 {
+    JSC::VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSC::JSObject* object = value.getObject();
     if (!object) {
-        throwSequenceTypeError(exec);
+        throwSequenceTypeError(exec, scope);
         return nullptr;
     }
 
@@ -501,7 +504,7 @@ inline JSC::JSObject* toJSSequence(JSC::ExecState& exec, JSC::JSValue value, uns
         return nullptr;
 
     if (lengthValue.isUndefinedOrNull()) {
-        throwSequenceTypeError(exec);
+        throwSequenceTypeError(exec, scope);
         return nullptr;
     }
 
@@ -718,25 +721,33 @@ template<> struct NativeValueTraits<double> {
 
 template<typename T, typename JST> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState& exec, JSC::JSValue value)
 {
+    JSC::VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwSequenceTypeError(exec);
+        throwSequenceTypeError(exec, scope);
         return Vector<RefPtr<T>>();
     }
 
     Vector<RefPtr<T>> result;
-    forEachInIterable(&exec, value, [&result](JSC::VM&, JSC::ExecState* state, JSC::JSValue jsValue) {
+    forEachInIterable(&exec, value, [&result](JSC::VM& vm, JSC::ExecState* state, JSC::JSValue jsValue) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
         if (jsValue.inherits(JST::info()))
             result.append(JST::toWrapped(jsValue));
         else
-            throwArrayElementTypeError(*state);
+            throwArrayElementTypeError(*state, scope);
     });
     return result;
 }
 
 template<typename T> Vector<T> toNativeArray(JSC::ExecState& exec, JSC::JSValue value)
 {
+    JSC::VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwSequenceTypeError(exec);
+        throwSequenceTypeError(exec, scope);
         return Vector<T>();
     }
 

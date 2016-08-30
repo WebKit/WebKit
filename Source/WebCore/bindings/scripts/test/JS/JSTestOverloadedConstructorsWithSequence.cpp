@@ -66,6 +66,9 @@ typedef JSDOMConstructor<JSTestOverloadedConstructorsWithSequence> JSTestOverloa
 
 static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(state->callee());
     ASSERT(castedThis);
     auto sequenceOfStrings = state->argument(0).isUndefined() ? Vector<String>() : toNativeArray<String>(*state, state->uncheckedArgument(0));
@@ -77,10 +80,13 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
 
 static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(state->callee());
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
-        return throwVMError(state, createNotEnoughArgumentsError(state));
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto string = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
@@ -90,6 +96,9 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
 
 template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsWithSequenceConstructor::construct(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 0) {
         return constructJSTestOverloadedConstructorsWithSequence1(state);
@@ -102,7 +111,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsWithSequence
             return constructJSTestOverloadedConstructorsWithSequence1(state);
         return constructJSTestOverloadedConstructorsWithSequence2(state);
     }
-    return throwVMTypeError(state);
+    return throwVMTypeError(state, throwScope);
 }
 
 template<> JSValue JSTestOverloadedConstructorsWithSequenceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -160,18 +169,22 @@ void JSTestOverloadedConstructorsWithSequence::destroy(JSC::JSCell* cell)
 
 EncodedJSValue jsTestOverloadedConstructorsWithSequenceConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSTestOverloadedConstructorsWithSequencePrototype* domObject = jsDynamicCast<JSTestOverloadedConstructorsWithSequencePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
-        return throwVMTypeError(state);
+        return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestOverloadedConstructorsWithSequence::getConstructor(state->vm(), domObject->globalObject()));
 }
 
 bool setJSTestOverloadedConstructorsWithSequenceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
     JSTestOverloadedConstructorsWithSequencePrototype* domObject = jsDynamicCast<JSTestOverloadedConstructorsWithSequencePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
-        throwVMTypeError(state);
+        throwVMTypeError(state, throwScope);
         return false;
     }
     // Shadowing a built-in constructor

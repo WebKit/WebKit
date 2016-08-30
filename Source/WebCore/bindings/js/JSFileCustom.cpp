@@ -43,17 +43,20 @@ namespace WebCore {
 
 EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
 {
+    VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto* constructor = jsCast<DOMConstructorObject*>(exec.callee());
     ASSERT(constructor);
 
     ScriptExecutionContext* context = constructor->scriptExecutionContext();
     if (!context)
-        return throwConstructorScriptExecutionContextUnavailableError(exec, "File");
+        return throwConstructorScriptExecutionContextUnavailableError(exec, scope, "File");
     ASSERT(context->isDocument());
 
     JSValue arg = exec.argument(0);
     if (arg.isUndefinedOrNull())
-        return throwArgumentTypeError(exec, 0, "fileBits", "File", nullptr, "sequence");
+        return throwArgumentTypeError(exec, scope, 0, "fileBits", "File", nullptr, "sequence");
 
     unsigned blobPartsLength = 0;
     JSObject* blobParts = toJSSequence(exec, arg, blobPartsLength);
@@ -63,7 +66,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
 
     arg = exec.argument(1);
     if (arg.isUndefined())
-        return throwArgumentTypeError(exec, 1, "filename", "File", nullptr, "DOMString");
+        return throwArgumentTypeError(exec, scope, 1, "filename", "File", nullptr, "DOMString");
 
     String filename = arg.toWTFString(&exec).replace('/', ':');
     if (exec.hadException())
@@ -76,7 +79,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
     if (!arg.isUndefinedOrNull()) {
         JSObject* filePropertyBagObject = arg.getObject();
         if (!filePropertyBagObject)
-            return throwArgumentTypeError(exec, 2, "options", "File", nullptr, "FilePropertyBag");
+            return throwArgumentTypeError(exec, scope, 2, "options", "File", nullptr, "FilePropertyBag");
 
         // Create the dictionary wrapper from the initializer object.
         JSDictionary dictionary(&exec, filePropertyBagObject);

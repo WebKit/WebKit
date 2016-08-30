@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,16 +110,19 @@ const char* SymbolKeyForTypeError = "Symbol.keyFor requires that the first argum
 
 EncodedJSValue JSC_HOST_CALL symbolConstructorKeyFor(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue symbolValue = exec->argument(0);
     if (!symbolValue.isSymbol())
-        return JSValue::encode(throwTypeError(exec, SymbolKeyForTypeError));
+        return JSValue::encode(throwTypeError(exec, scope, SymbolKeyForTypeError));
 
     SymbolImpl* uid = asSymbol(symbolValue)->privateName().uid();
     if (!uid->symbolRegistry())
         return JSValue::encode(jsUndefined());
 
-    ASSERT(uid->symbolRegistry() == &exec->vm().symbolRegistry());
-    return JSValue::encode(jsString(exec, exec->vm().symbolRegistry().keyForSymbol(*uid)));
+    ASSERT(uid->symbolRegistry() == &vm.symbolRegistry());
+    return JSValue::encode(jsString(exec, vm.symbolRegistry().keyForSymbol(*uid)));
 }
 
 } // namespace JSC

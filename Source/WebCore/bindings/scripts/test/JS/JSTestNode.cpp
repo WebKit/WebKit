@@ -79,6 +79,9 @@ typedef JSDOMConstructor<JSTestNode> JSTestNodeConstructor;
 
 template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestNodeConstructor*>(state->callee());
     ASSERT(castedThis);
     auto object = TestNode::create();
@@ -161,12 +164,14 @@ JSObject* JSTestNode::prototype(VM& vm, JSGlobalObject* globalObject)
 
 EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(state);
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
     UNUSED_PARAM(thisValue);
     JSValue decodedThisValue = JSValue::decode(thisValue);
     auto* castedThis = jsDynamicCast<JSTestNode*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, "TestNode", "name");
+        return throwGetterTypeError(*state, throwScope, "TestNode", "name");
     }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.name());
@@ -176,18 +181,22 @@ EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, Proper
 
 EncodedJSValue jsTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSTestNodePrototype* domObject = jsDynamicCast<JSTestNodePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
-        return throwVMTypeError(state);
+        return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNode::getConstructor(state->vm(), domObject->globalObject()));
 }
 
 bool setJSTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
     JSTestNodePrototype* domObject = jsDynamicCast<JSTestNodePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
-        throwVMTypeError(state);
+        throwVMTypeError(state, throwScope);
         return false;
     }
     // Shadowing a built-in constructor
@@ -196,11 +205,13 @@ bool setJSTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, Encode
 
 bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    JSValue value = JSValue::decode(encodedValue);
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestNode* castedThis = jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        return throwSetterTypeError(*state, "TestNode", "name");
+        return throwSetterTypeError(*state, throwScope, "TestNode", "name");
     }
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);

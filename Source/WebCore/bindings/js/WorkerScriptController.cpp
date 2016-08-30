@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011, 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -126,11 +126,12 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
     initScriptIfNeeded();
 
     ExecState* exec = m_workerGlobalScopeWrapper->globalExec();
-    JSLockHolder lock(exec);
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), returnedException);
 
-    VM& vm = exec->vm();
     if ((returnedException && isTerminatedExecutionException(returnedException)) || isTerminatingExecution()) {
         forbidExecution();
         return;
@@ -143,7 +144,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
         String sourceURL = sourceCode.url().string();
         Deprecated::ScriptValue error;
         if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, error, sourceCode.cachedScript())) {
-            vm.throwException(exec, createError(exec, errorMessage.impl()));
+            throwException(exec, scope, createError(exec, errorMessage.impl()));
             returnedException = vm.exception();
             vm.clearException();
         }
@@ -153,7 +154,9 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
 void WorkerScriptController::setException(JSC::Exception* exception)
 {
     JSC::ExecState* exec = m_workerGlobalScopeWrapper->globalExec();
-    exec->vm().throwException(exec, exception);
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    throwException(exec, scope, exception);
 }
 
 void WorkerScriptController::scheduleExecutionTermination()

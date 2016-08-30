@@ -162,6 +162,9 @@ bool intlBooleanOption(ExecState& state, JSValue options, PropertyName property,
 
 String intlStringOption(ExecState& state, JSValue options, PropertyName property, std::initializer_list<const char*> values, const char* notFound, const char* fallback)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 9.2.9 GetOption (options, property, type, values, fallback)
     // For type="string".
 
@@ -195,7 +198,7 @@ String intlStringOption(ExecState& state, JSValue options, PropertyName property
         // d. If values is not undefined, then
         // i. If values does not contain an element equal to value, throw a RangeError exception.
         if (values.size() && std::find(values.begin(), values.end(), stringValue) == values.end()) {
-            state.vm().throwException(&state, createRangeError(&state, notFound));
+            throwException(&state, scope, createRangeError(&state, notFound));
             return { };
         }
 
@@ -209,6 +212,9 @@ String intlStringOption(ExecState& state, JSValue options, PropertyName property
 
 unsigned intlNumberOption(ExecState& state, JSValue options, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 9.2.9 GetNumberOption (options, property, minimum, maximum, fallback) (ECMA-402 2.0)
     // 1. Let opts be ToObject(options).
     JSObject* opts = options.toObject(&state);
@@ -233,7 +239,7 @@ unsigned intlNumberOption(ExecState& state, JSValue options, PropertyName proper
             return 0;
         // 1. If value is NaN or less than minimum or greater than maximum, throw a RangeError exception.
         if (!(doubleValue >= minimum && doubleValue <= maximum)) {
-            state.vm().throwException(&state, createRangeError(&state, *property.publicName() + " is out of range"));
+            throwException(&state, scope, createRangeError(&state, *property.publicName() + " is out of range"));
             return 0;
         }
 
@@ -524,6 +530,8 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
 {
     // 9.2.1 CanonicalizeLocaleList (locales)
     VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSGlobalObject* globalObject = state.callee()->globalObject();
     Vector<String> seen;
 
@@ -587,7 +595,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
 
             // iii. If Type(kValue) is not String or Object, throw a TypeError exception.
             if (!kValue.isString() && !kValue.isObject()) {
-                throwTypeError(&state, ASCIILiteral("locale value must be a string or object"));
+                throwTypeError(&state, scope, ASCIILiteral("locale value must be a string or object"));
                 return Vector<String>();
             }
 
@@ -602,7 +610,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
             // vii. Let canonicalizedTag be CanonicalizeLanguageTag(tag).
             String canonicalizedTag = canonicalizeLanguageTag(tag->value(&state));
             if (canonicalizedTag.isNull()) {
-                state.vm().throwException(&state, createRangeError(&state, String::format("invalid language tag: %s", tag->value(&state).utf8().data())));
+                throwException(&state, scope, createRangeError(&state, String::format("invalid language tag: %s", tag->value(&state).utf8().data())));
                 return Vector<String>();
             }
 
@@ -870,6 +878,9 @@ HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& a
 
 static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 9.2.6 LookupSupportedLocales (availableLocales, requestedLocales)
 
     // 1. Let rLocales be CreateArrayFromList(requestedLocales).
@@ -879,11 +890,10 @@ static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& 
     size_t len = requestedLocales.size();
 
     // 3. Let subset be an empty List.
-    VM& vm = state.vm();
     JSGlobalObject* globalObject = state.callee()->globalObject();
     JSArray* subset = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
     if (!subset) {
-        throwOutOfMemoryError(&state);
+        throwOutOfMemoryError(&state, scope);
         return nullptr;
     }
 

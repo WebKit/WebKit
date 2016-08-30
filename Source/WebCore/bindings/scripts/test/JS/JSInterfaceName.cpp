@@ -117,18 +117,22 @@ void JSInterfaceName::destroy(JSC::JSCell* cell)
 
 EncodedJSValue jsInterfaceNameConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSInterfaceNamePrototype* domObject = jsDynamicCast<JSInterfaceNamePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
-        return throwVMTypeError(state);
+        return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSInterfaceName::getConstructor(state->vm(), domObject->globalObject()));
 }
 
 bool setJSInterfaceNameConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
     JSInterfaceNamePrototype* domObject = jsDynamicCast<JSInterfaceNamePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
-        throwVMTypeError(state);
+        throwVMTypeError(state, throwScope);
         return false;
     }
     // Shadowing a built-in constructor

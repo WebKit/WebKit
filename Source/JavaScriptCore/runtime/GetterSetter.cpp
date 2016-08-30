@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004, 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2007-2009, 2014, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -87,11 +87,14 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
 
 bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     GetterSetter* getterSetterObj = jsCast<GetterSetter*>(getterSetter);
 
     if (getterSetterObj->isSetterNull()) {
         if (ecmaMode == StrictMode)
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
         return false;
     }
 
@@ -101,7 +104,7 @@ bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue val
     args.append(value);
 
     CallData callData;
-    CallType callType = setter->methodTable(exec->vm())->getCallData(setter, callData);
+    CallType callType = setter->methodTable(vm)->getCallData(setter, callData);
     call(exec, setter, callType, callData, base, args);
     return true;
 }
