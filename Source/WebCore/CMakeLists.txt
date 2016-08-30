@@ -1218,6 +1218,7 @@ set(WebCore_SOURCES
     bindings/js/JSNodeOrString.cpp
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSPerformanceEntryCustom.cpp
+    bindings/js/JSPerformanceTimingCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSReadableStreamPrivateConstructors.cpp

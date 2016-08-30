@@ -1,3 +1,21 @@
+2016-08-29  Dean Jackson  <dino@apple.com>
+
+        JSON.stringify returns empty when used with performance.timing.
+        https://bugs.webkit.org/show_bug.cgi?id=151813
+        <rdar://problem/28066067>
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/Window/window-properties-performance-expected.txt:
+        * fast/dom/Window/window-properties-performance-resource-timing-expected.txt:
+        * fast/dom/webtiming-document-open-expected.txt:
+        * fast/dom/webtiming-navigate-within-document-expected.txt:
+        * fast/dom/webtiming-performance-timing-stringify-expected.txt: Added.
+        * fast/dom/webtiming-performance-timing-stringify.html: Added.
+        * http/tests/misc/webtiming-cross-origin-and-back1-expected.txt:
+        * http/tests/misc/webtiming-cross-origin-redirect-expected.txt:
+        * http/tests/misc/webtiming-no-origin-expected.txt:
+
 2016-08-29  Chris Dumez  <cdumez@apple.com>
 
         Regression(r204923): It should be possible to set 'Location.href' cross origin

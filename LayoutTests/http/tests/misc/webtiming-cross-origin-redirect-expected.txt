@@ -22,6 +22,7 @@ PASS timing.requestStart is non-zero.
 PASS timing.responseEnd is non-zero.
 PASS timing.responseStart is non-zero.
 PASS timing.secureConnectionStart is 0
+PASS timing.toJSON is non-zero.
 PASS timing.unloadEventEnd is 0
 PASS timing.unloadEventStart is 0
 PASS navigation.redirectCount is 0

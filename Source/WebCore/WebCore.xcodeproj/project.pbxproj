@@ -1372,6 +1372,7 @@
 		31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF3A0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h */; };
 		31C0FF3F0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF3B0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp */; };
 		31C0FF400E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF3C0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h */; };
+		31C422461D74EB9A00F12342 /* JSPerformanceTimingCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C422451D74EB9A00F12342 /* JSPerformanceTimingCustom.cpp */; };
 		31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D591B116697A6C00E6BF02 /* PlugInClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DCD29C1AB4FBDE0072E817 /* AnimationTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31DEA4551B39F4D900F77178 /* WebSystemBackdropLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */; };
@@ -8269,6 +8270,7 @@
 		31C0FF3A0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitAnimationEvent.h; sourceTree = "<group>"; };
 		31C0FF3B0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitTransitionEvent.cpp; sourceTree = "<group>"; };
 		31C0FF3C0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitTransitionEvent.h; sourceTree = "<group>"; };
+		31C422451D74EB9A00F12342 /* JSPerformanceTimingCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceTimingCustom.cpp; sourceTree = "<group>"; };
 		31D591B116697A6C00E6BF02 /* PlugInClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInClient.h; sourceTree = "<group>"; };
 		31DCD29C1AB4FBDE0072E817 /* AnimationTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationTrigger.h; sourceTree = "<group>"; };
 		31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemBackdropLayer.mm; sourceTree = "<group>"; };
@@ -21083,6 +21085,7 @@
 				83F1206A1B8C103600D75F63 /* JSNodeFilterCustom.cpp */,
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
+				31C422451D74EB9A00F12342 /* JSPerformanceTimingCustom.cpp */,
 				AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
@@ -27445,6 +27448,7 @@
 				FD3160BC12B0272A00C1A359 /* AudioDestinationMac.cpp in Sources */,
 				FD31600712B0267600C1A359 /* AudioDestinationNode.cpp in Sources */,
 				FD31608112B026F700C1A359 /* AudioDSPKernelProcessor.cpp in Sources */,
+				31C422461D74EB9A00F12342 /* JSPerformanceTimingCustom.cpp in Sources */,
 				CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */,
 				FD3160BE12B0272A00C1A359 /* AudioFileReaderMac.cpp in Sources */,
 				CD2F4A2318D89F700063746D /* AudioHardwareListener.cpp in Sources */,

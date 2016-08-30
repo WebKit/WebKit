@@ -22,6 +22,7 @@ PASS timing.requestStart is originalTiming.requestStart
 PASS timing.responseEnd is originalTiming.responseEnd
 PASS timing.responseStart is originalTiming.responseStart
 PASS timing.secureConnectionStart is originalTiming.secureConnectionStart
+PASS timing.toJSON is originalTiming.toJSON
 PASS timing.unloadEventEnd is originalTiming.unloadEventEnd
 PASS timing.unloadEventStart is originalTiming.unloadEventStart
 PASS successfullyParsed is true
