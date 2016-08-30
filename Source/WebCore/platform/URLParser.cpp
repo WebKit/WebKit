@@ -297,6 +297,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
             LOG_STATE("RelativeSlash");
             if (*c == '/' || *c == '\\') {
                 ++c;
+                copyURLPartsUntil(base, URLPart::SchemeEnd);
+                m_buffer.append("://");
                 state = State::SpecialAuthorityIgnoreSlashes;
             } else {
                 copyURLPartsUntil(base, URLPart::PortEnd);
