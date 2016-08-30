@@ -1,3 +1,14 @@
+2016-08-30  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: opportunitiesInRun <= expansionOpportunityCount in WebCore::computeExpansionForJustifiedText
+        https://bugs.webkit.org/show_bug.cgi?id=139393
+        <rdar://problem/27704243>
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/text/assert-on-expansion-opportunity-expected.txt: Added.
+        * fast/text/assert-on-expansion-opportunity.html: Added.
+
 2016-08-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/unit-tests/yieldable-task.html as a flaky failure.

@@ -958,7 +958,7 @@ bool FontCascade::isCJKIdeographOrSymbol(UChar32 c)
     return isCJKIdeograph(c);
 }
 
-std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const LChar* characters, size_t length, TextDirection direction, ExpansionBehavior expansionBehavior)
+std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const LChar* characters, unsigned length, TextDirection direction, ExpansionBehavior expansionBehavior)
 {
     unsigned count = 0;
     bool isAfterExpansion = (expansionBehavior & LeadingExpansionMask) == ForbidLeadingExpansion;
@@ -967,7 +967,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const L
         isAfterExpansion = true;
     }
     if (direction == LTR) {
-        for (size_t i = 0; i < length; ++i) {
+        for (unsigned i = 0; i < length; ++i) {
             if (treatAsSpace(characters[i])) {
                 count++;
                 isAfterExpansion = true;
@@ -975,7 +975,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const L
                 isAfterExpansion = false;
         }
     } else {
-        for (size_t i = length; i > 0; --i) {
+        for (unsigned i = length; i > 0; --i) {
             if (treatAsSpace(characters[i - 1])) {
                 count++;
                 isAfterExpansion = true;
@@ -987,13 +987,14 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const L
         ++count;
         isAfterExpansion = true;
     } else if (isAfterExpansion && (expansionBehavior & TrailingExpansionMask) == ForbidTrailingExpansion) {
+        ASSERT(count);
         --count;
         isAfterExpansion = false;
     }
     return std::make_pair(count, isAfterExpansion);
 }
 
-std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const UChar* characters, size_t length, TextDirection direction, ExpansionBehavior expansionBehavior)
+std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const UChar* characters, unsigned length, TextDirection direction, ExpansionBehavior expansionBehavior)
 {
     static bool expandAroundIdeographs = canExpandAroundIdeographsInComplexText();
     unsigned count = 0;
@@ -1003,7 +1004,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
         isAfterExpansion = true;
     }
     if (direction == LTR) {
-        for (size_t i = 0; i < length; ++i) {
+        for (unsigned i = 0; i < length; ++i) {
             UChar32 character = characters[i];
             if (treatAsSpace(character)) {
                 count++;
@@ -1024,7 +1025,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
             isAfterExpansion = false;
         }
     } else {
-        for (size_t i = length; i > 0; --i) {
+        for (unsigned i = length; i > 0; --i) {
             UChar32 character = characters[i - 1];
             if (treatAsSpace(character)) {
                 count++;
@@ -1049,6 +1050,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
         ++count;
         isAfterExpansion = true;
     } else if (isAfterExpansion && (expansionBehavior & TrailingExpansionMask) == ForbidTrailingExpansion) {
+        ASSERT(count);
         --count;
         isAfterExpansion = false;
     }
