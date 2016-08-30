@@ -1,5 +1,20 @@
 2016-08-29  Chris Dumez  <cdumez@apple.com>
 
+        Unskip several web-platform-tests that are now passing
+        https://bugs.webkit.org/show_bug.cgi?id=161367
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline those tests and update window-security.sub.html as per:
+        https://github.com/w3c/web-platform-tests/pull/3607
+
+        * web-platform-tests/html/browsers/history/the-location-interface/security_location_0.sub-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub.html:
+        * web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub-expected.txt:
+
+2016-08-29  Chris Dumez  <cdumez@apple.com>
+
         document.createEvent("popstateevent") should create a PopStateEvent
         https://bugs.webkit.org/show_bug.cgi?id=161321
 

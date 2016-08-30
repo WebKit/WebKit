@@ -475,6 +475,7 @@ webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflectio
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub.html [ Pass Failure ]
 
 # W3C XMLHttpRequest tests
@@ -1210,12 +1211,6 @@ imported/w3c/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.html [ Sk
 imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
 
 editing/deleting/delete-emoji.html [ Slow ]
-
-# W3C tests what are trying to access www1.localhost.
-webkit.org/b/161142 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/security_location_0.sub.htm [ Skip ]
-webkit.org/b/161142 imported/w3c/web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub.html [ Skip ]
-webkit.org/b/161142 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub.html [ Skip ]
-webkit.org/b/161142 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.html [ Skip ]
 
 # New emoji requires system support.
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Failure ]
