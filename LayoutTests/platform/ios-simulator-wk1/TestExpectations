@@ -3,11 +3,6 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
 # Selectively re-enable viewport tests that work
-fast/viewport/ios/width-is-device-width.html [ Pass ]
-fast/viewport/ios/width-is-device-width-overflowing.html [ Pass ]
-fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit.html [ Pass ]
-fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden.html [ Pass ]
-fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Pass ]
 fast/viewport/ios/ipad/width-is-device-width.html [ Pass ]
 
 # <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
@@ -690,9 +685,6 @@ css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
 css3/flexbox/image-percent-max-height.html [ Pass ]
 
-# Perf tests that fail:
-perf/show-hide-table-rows.html [ Failure ]
-
 # Perf tests that are flaky:
 perf/typing-at-end-of-line.html [ Failure Pass ]
 
@@ -724,7 +716,6 @@ imported/mozilla/svg/dynamic-stroke-opacity-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/dynamic-stroke-width-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/dynamic-use-02.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/dynamic-use-05.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/dynamic-use-06.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/dynamic-use-nested-01b.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/path-04.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/pattern-live-01b.svg [ ImageOnlyFailure ]
@@ -987,7 +978,7 @@ imported/mozilla/svg/image/image-x-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/image/image-xy-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/image/image-y-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/non-scaling-stroke-03.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/outer-svg-border-and-padding-01.svg [ ImageOnlyFailure Pass ]
+imported/mozilla/svg/outer-svg-border-and-padding-01.svg [ ImageOnlyFailure Pass Timeout ]
 imported/mozilla/svg/pattern-live-01a.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/smil/anim-feConvolveMatrix-order-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/smil/motion/animateMotion-values-paced-1a.svg [ ImageOnlyFailure ]
@@ -1256,9 +1247,6 @@ fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 fast/text/hidpi-text-selection-gap-between-words.html [ ImageOnlyFailure ]
 svg/animations/animate-keytimes-crash.html [ ImageOnlyFailure ]
 svg/filters/feMorphology-radius-cases.svg [ ImageOnlyFailure ]
-
-# Crashes as of 06/08/2015
-http/tests/navigation/metaredirect-subframeload.html [ Crash ]
 
 # Time outs as of 06/08/2015
 fast/fixed-layout/fixed-layout.html
@@ -1603,10 +1591,6 @@ fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ Pass ImageOn
 fast/sub-pixel/simple-clipping.html [ Pass ImageOnlyFailure ]
 fast/text-autosizing/constrained-out-of-flow.html [ Pass ImageOnlyFailure ]
 fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Failure Pass ]
-fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden.html [ Failure Pass ]
-fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit.html [ Failure Pass ]
-fast/viewport/ios/width-is-device-width-overflowing.html [ Failure Pass ]
-fast/viewport/ios/width-is-device-width.html [ Failure Pass ]
 fonts/cursive.html [ Pass Crash ]
 http/tests/dom/window-open-about-webkit-org-and-access-document.html [ Failure Pass ]
 http/tests/fetch/fetch-in-worker-crash.html [ Failure Pass ]
@@ -1742,3 +1726,18 @@ transitions/svg-text-shadow-transition.html [ Failure Pass ]
 [ Release ] editing/style/style-3998892-fix.html [ Failure ]
 [ Release ] editing/style/style-boundary-004.html [ Failure ]
 [ Release ] editing/undo/undo-delete.html [ Failure ]
+
+# Flaky as of 08/30/2016
+css3/device-adapt/viewport-width-not-affecting-next-page.html [ Pass Failure ]
+editing/inserting/insert-html-crash-01.html [ Pass Failure ]
+imported/blink/fast/multicol/hit-test-translate-z.html [ Pass Failure ]
+http/tests/navigation/metaredirect-subframeload.html [ Crash Pass ]
+imported/mozilla/svg/dynamic-use-01.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-use-06.svg [ Pass ImageOnlyFailure ]
+fetch/fetch-error-messages.html [ Crash Pass ]
+imported/blink/fast/animation/last-child-assert.html [ Crash Pass Failure ]
+editing/execCommand/insertHTML.html [ Pass Failure ]
+fast/forms/textarea/textarea-placeholder-paint-order-2.html [ Pass ImageOnlyFailure ]
+fast/masking/parsing-clip-path-shape.html [ Pass Failure ]
+fast/overflow/horizontal-scroll-after-back.html [ Pass Failure ]
+svg/text/hidpi-text-selection-rect-position.html [ Pass ImageOnlyFailure ]

@@ -1,3 +1,9 @@
+2016-08-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+         Unreviewed, update iOS simulator WK1 flaky tests.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-08-29  Chris Dumez  <cdumez@apple.com>
 
         We should throw a SecurityError when denying setting a cross-origin Location property
