@@ -1431,3 +1431,5 @@ webkit.org/b/160488 [ Yosemite ] fast/text/flag-emoji-line-break.html [ ImageOnl
 webkit.org/b/161142 [ Release ] imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure ]
 
 webkit.org/b/161144 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
+
+webkit.org/b/161156 js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-5.html [ Pass Failure ]
