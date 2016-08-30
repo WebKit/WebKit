@@ -1,5 +1,13 @@
 2016-08-30  Brady Eidson  <beidson@apple.com>
 
+        Fix runtime error caused by missing export after https://bugs.webkit.org/show_bug.cgi?id=160846
+
+        Rubberstamped by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm:
+
+2016-08-30  Brady Eidson  <beidson@apple.com>
+
         GameController.framework backend for gamepad API.
         https://bugs.webkit.org/show_bug.cgi?id=161086
 
