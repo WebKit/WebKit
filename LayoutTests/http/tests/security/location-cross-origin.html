@@ -34,6 +34,28 @@ onload = function() {
     shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'toString').value.call(frames[0].location)", "SecurityError");
     shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'href').get.call(frames[0].location)", "SecurityError");
 
+    shouldThrowErrorName("frames[0].location.protocol = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.host = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.hostname = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.port = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.pathname = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.search = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.hash = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.origin = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.ancestorOrigins = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.toString = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.reload = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.replace = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.assign = 1", "SecurityError");
+
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'protocol').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'host').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hostname').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'port').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'pathname').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'search').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hash').set.call(frames[0].location, 1)", "SecurityError");
+
     // Setting 'href' cross origin should be allowed.
     shouldNotThrow("frames[0].location.href = 'about:blank'");
     setTimeout(function() {

@@ -78,8 +78,7 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
     // but not when assigning the individual pieces, since that might inadvertently
     // disclose other parts of the original location.
     if (propertyName != exec->propertyNames().href) {
-        // FIXME: We should throw a SecurityError.
-        printErrorMessageForFrame(frame, errorMessage);
+        throwSecurityError(*exec, errorMessage);
         return true;
     }
     return false;
