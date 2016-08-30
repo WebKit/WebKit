@@ -1216,6 +1216,7 @@ webkit.org/b/148636 inspector/model/remote-object-weak-collection.html [ Pass Fa
 webkit.org/b/153108 [ Debug ] inspector/model/scope-chain-node.html [ Pass Timeout ]
 webkit.org/b/155607 inspector/unit-tests/heap-snapshot.html [ Pass Timeout ]
 webkit.org/b/157999 inspector/unit-tests/heap-snapshot-collection-event.html [ Pass Timeout ]
+webkit.org/b/161361 inspector/unit-tests/yieldable-task.html [ Pass Failure ]
 webkit.org/b/155607 inspector/heap/snapshot.html [ Pass Timeout ]
 webkit.org/b/143719 inspector/console/console-api.html [ Pass Timeout ]
 webkit.org/b/156078 inspector/console/heapSnapshot.html [ Pass Timeout ]
