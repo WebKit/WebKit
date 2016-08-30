@@ -1,3 +1,15 @@
+2016-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Object.setPrototypeOf() should throw when used on a cross-origin Window / Location object
+        https://bugs.webkit.org/show_bug.cgi?id=161396
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline existing test to reflect behavior change.
+
+        * http/tests/security/cross-frame-access-object-setPrototypeOf-expected.txt:
+        * http/tests/security/cross-frame-access-object-setPrototypeOf.html:
+
 2016-08-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update iOS simulator WK1 flaky tests.

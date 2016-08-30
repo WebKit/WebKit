@@ -232,8 +232,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(objectValue);
 
-    if (!checkProtoSetterAccessAllowed(exec, object))
+    if (!checkProtoSetterAccessAllowed(exec, object)) {
+        throwTypeError(exec, ASCIILiteral("Permission denied"));
         return JSValue::encode(objectValue);
+    }
 
     bool shouldThrowIfCantSet = true;
     bool didSetPrototype = object->setPrototype(vm, exec, protoValue, shouldThrowIfCantSet);
