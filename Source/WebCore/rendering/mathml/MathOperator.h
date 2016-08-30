@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L. All rights reserved.
+ * Copyright (C) 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +40,7 @@ class RenderStyle;
 
 class MathOperator {
 public:
-    MathOperator() { }
+    MathOperator();
     enum class Type { NormalOperator, DisplayOperator, VerticalOperator, HorizontalOperator };
     void setOperator(const RenderStyle&, UChar32 baseCharacter, Type);
     void reset(const RenderStyle&);
@@ -57,10 +58,18 @@ public:
 
 private:
     struct GlyphAssemblyData {
-        GlyphData topOrRight;
-        GlyphData extension;
-        GlyphData bottomOrLeft;
-        GlyphData middle;
+        UChar32 topOrRightCodePoint { 0 };
+        Glyph topOrRightFallbackGlyph { 0 };
+        UChar32 extensionCodePoint { 0 };
+        Glyph extensionFallbackGlyph { 0 };
+        UChar32 bottomOrLeftCodePoint { 0 };
+        Glyph bottomOrLeftFallbackGlyph { 0 };
+        UChar32 middleCodePoint { 0 };
+        Glyph middleFallbackGlyph { 0 };
+
+        bool hasExtension() const { return extensionCodePoint || extensionFallbackGlyph; }
+        bool hasMiddle() const { return middleCodePoint || middleFallbackGlyph; }
+        void initialize();
     };
     enum class StretchType { Unstretched, SizeVariant, GlyphAssembly };
     enum GlyphPaintTrimming {
@@ -76,11 +85,11 @@ private:
     bool getGlyph(const RenderStyle&, UChar32 character, GlyphData&) const;
     bool getBaseGlyph(const RenderStyle& style, GlyphData& baseGlyph) const { return getGlyph(style, m_baseCharacter, baseGlyph); }
     void setSizeVariant(const GlyphData&);
-    void setGlyphAssembly(const GlyphAssemblyData&);
+    void setGlyphAssembly(const RenderStyle&, const GlyphAssemblyData&);
     void getMathVariantsWithFallback(const RenderStyle&, bool isVertical, Vector<Glyph>&, Vector<OpenTypeMathData::AssemblyPart>&);
     void calculateDisplayStyleLargeOperator(const RenderStyle&);
     void calculateStretchyData(const RenderStyle&, bool calculateMaxPreferredWidth, LayoutUnit targetSize = 0);
-    bool calculateGlyphAssemblyFallback(const RenderStyle&, const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
+    bool calculateGlyphAssemblyFallback(const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
 
     LayoutRect paintGlyph(const RenderStyle&, PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
     void fillWithVerticalExtensionGlyph(const RenderStyle&, PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
@@ -92,7 +101,7 @@ private:
     Type m_operatorType { Type::NormalOperator };
     StretchType m_stretchType { StretchType::Unstretched };
     union {
-        GlyphData m_variant;
+        Glyph m_variantGlyph;
         GlyphAssemblyData m_assembly;
     };
     LayoutUnit m_maxPreferredWidth { 0 };
