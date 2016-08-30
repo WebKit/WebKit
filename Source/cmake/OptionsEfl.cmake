@@ -231,7 +231,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         add_definitions(-DUSE_WEBAUDIO_GSTREAMER=1)
     endif ()
 
-    find_package(GStreamer 1.0.5 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+    find_package(GStreamer 1.2.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 
     if (PC_GSTREAMER_MPEGTS_FOUND)
         add_definitions(-DUSE_GSTREAMER_MPEGTS)

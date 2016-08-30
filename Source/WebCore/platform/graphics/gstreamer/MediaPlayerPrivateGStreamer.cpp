@@ -1943,24 +1943,22 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     g_signal_connect_swapped(m_pipeline.get(), "video-changed", G_CALLBACK(videoChangedCallback), this);
     g_signal_connect_swapped(m_pipeline.get(), "audio-changed", G_CALLBACK(audioChangedCallback), this);
 #if ENABLE(VIDEO_TRACK)
-    if (webkitGstCheckVersion(1, 1, 2)) {
-        g_signal_connect_swapped(m_pipeline.get(), "text-changed", G_CALLBACK(textChangedCallback), this);
+    g_signal_connect_swapped(m_pipeline.get(), "text-changed", G_CALLBACK(textChangedCallback), this);
 
-        GstElement* textCombiner = webkitTextCombinerNew();
-        ASSERT(textCombiner);
-        g_object_set(m_pipeline.get(), "text-stream-combiner", textCombiner, nullptr);
+    GstElement* textCombiner = webkitTextCombinerNew();
+    ASSERT(textCombiner);
+    g_object_set(m_pipeline.get(), "text-stream-combiner", textCombiner, nullptr);
 
-        m_textAppSink = webkitTextSinkNew();
-        ASSERT(m_textAppSink);
+    m_textAppSink = webkitTextSinkNew();
+    ASSERT(m_textAppSink);
 
-        m_textAppSinkPad = adoptGRef(gst_element_get_static_pad(m_textAppSink.get(), "sink"));
-        ASSERT(m_textAppSinkPad);
+    m_textAppSinkPad = adoptGRef(gst_element_get_static_pad(m_textAppSink.get(), "sink"));
+    ASSERT(m_textAppSinkPad);
 
-        g_object_set(m_textAppSink.get(), "emit-signals", true, "enable-last-sample", false, "caps", gst_caps_new_empty_simple("text/vtt"), NULL);
-        g_signal_connect_swapped(m_textAppSink.get(), "new-sample", G_CALLBACK(newTextSampleCallback), this);
+    g_object_set(m_textAppSink.get(), "emit-signals", true, "enable-last-sample", false, "caps", gst_caps_new_empty_simple("text/vtt"), nullptr);
+    g_signal_connect_swapped(m_textAppSink.get(), "new-sample", G_CALLBACK(newTextSampleCallback), this);
 
-        g_object_set(m_pipeline.get(), "text-sink", m_textAppSink.get(), NULL);
-    }
+    g_object_set(m_pipeline.get(), "text-sink", m_textAppSink.get(), nullptr);
 #endif
 
     g_object_set(m_pipeline.get(), "video-sink", createVideoSink(), "audio-sink", createAudioSink(), nullptr);

@@ -1,3 +1,13 @@
+2016-08-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] bump required version to 1.2.3
+        https://bugs.webkit.org/show_bug.cgi?id=159667
+
+        Reviewed by Xabier Rodriguez Calvar.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-08-29  Per Arne Vollan  <pvollan@apple.com>
 
         Attempt to fix WinCairo build after r205090.
