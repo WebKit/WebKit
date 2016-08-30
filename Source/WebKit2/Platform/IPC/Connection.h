@@ -29,6 +29,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include "HandleMessage.h"
 #include "MessageReceiver.h"
 #include <atomic>
 #include <wtf/Condition.h>
@@ -164,11 +165,13 @@ public:
     void postConnectionDidCloseOnConnectionWorkQueue();
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { });
+    template<typename T> void sendWithReply(T&& message, uint64_t destinationID, FunctionDispatcher& replyDispatcher, Function<void (Optional<typename CodingType<typename T::Reply>::Type>)>&& replyHandler);
     template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), OptionSet<SendSyncOption> sendSyncOptions = { });
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<WaitForOption> waitForOptions = { });
 
-    std::unique_ptr<Encoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
     bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption> sendOptions);
+    void sendMessageWithReply(uint64_t requestID, std::unique_ptr<Encoder>, FunctionDispatcher& replyDispatcher, Function<void (std::unique_ptr<Decoder>)>&& replyHandler);
+    std::unique_ptr<Encoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
     std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions);
     bool sendSyncReply(std::unique_ptr<Encoder>);
 
@@ -270,6 +273,11 @@ private:
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageMutex;
 
+    struct ReplyHandler;
+
+    Lock m_replyHandlersLock;
+    HashMap<uint64_t, ReplyHandler> m_replyHandlers;
+
     struct WaitForMessageState;
     WaitForMessageState* m_waitingForMessage;
 
@@ -325,7 +333,8 @@ private:
 #endif
 };
 
-template<typename T> bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions)
+template<typename T>
+bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
@@ -333,6 +342,27 @@ template<typename T> bool Connection::send(T&& message, uint64_t destinationID, 
     encoder->encode(message.arguments());
     
     return sendMessage(WTFMove(encoder), sendOptions);
+}
+
+template<typename T>
+void Connection::sendWithReply(T&& message, uint64_t destinationID, FunctionDispatcher& replyDispatcher, Function<void (Optional<typename CodingType<typename T::Reply>::Type>)>&& replyHandler)
+{
+    uint64_t requestID = 0;
+    std::unique_ptr<Encoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, requestID);
+
+    encoder->encode(message.arguments());
+
+    sendMessageWithReply(requestID, WTFMove(encoder), replyDispatcher, [replyHandler = WTFMove(replyHandler)](std::unique_ptr<Decoder> decoder) {
+        if (decoder) {
+            typename CodingType<typename T::Reply>::Type reply;
+            if (decoder->decode(reply)) {
+                replyHandler(WTFMove(reply));
+                return;
+            }
+        }
+
+        replyHandler(Nullopt);
+    });
 }
 
 template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout, OptionSet<SendSyncOption> sendSyncOptions)

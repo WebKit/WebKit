@@ -5,6 +5,8 @@
 
 namespace IPC {
 
+class Connection;
+
 // Dispatch functions with no reply arguments.
 
 template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex>

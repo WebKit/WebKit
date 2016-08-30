@@ -31,7 +31,6 @@ messages -> WebProcessProxy LegacyReceiver {
     EnableSuddenTermination()
     DisableSuddenTermination()
 
-    DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(uint64_t callbackID)
     DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
 

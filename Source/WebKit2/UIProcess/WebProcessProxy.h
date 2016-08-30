@@ -62,7 +62,8 @@ class WebPageGroup;
 class WebProcessPool;
 enum class WebsiteDataType;
 struct WebNavigationDataStore;
-    
+struct WebsiteData;
+
 class WebProcessProxy : public ChildProcessProxy, ResponsivenessTimer::Client, private ProcessThrottlerClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem>> WebBackForwardListItemMap;
@@ -118,7 +119,7 @@ public:
     void didSaveToPageCache();
     void releasePageCache();
 
-    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::function<void (WebsiteData)> completionHandler);
+    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, Function<void (WebsiteData)> completionHandler);
     void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType>, const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, std::function<void ()> completionHandler);
 
@@ -169,7 +170,6 @@ private:
 
     void shouldTerminate(bool& shouldTerminate);
 
-    void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
 
@@ -238,7 +238,6 @@ private:
 
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
 
-    HashMap<uint64_t, std::function<void (WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
     HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataCallbacks;
     HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataForOriginsCallbacks;
 

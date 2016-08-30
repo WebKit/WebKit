@@ -36,6 +36,11 @@
 
 namespace IPC {
 
+struct Connection::ReplyHandler {
+    RefPtr<FunctionDispatcher> dispatcher;
+    Function<void (std::unique_ptr<Decoder>)> handler;
+};
+
 struct Connection::WaitForMessageState {
     WaitForMessageState(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
         : messageReceiverName(messageReceiverName)
@@ -324,6 +329,17 @@ void Connection::invalidate()
     
     m_isValid = false;
 
+    {
+        std::lock_guard<Lock> lock(m_replyHandlersLock);
+        for (auto& replyHandler : m_replyHandlers.values()) {
+            replyHandler.dispatcher->dispatch([handler = WTFMove(replyHandler.handler)] {
+                handler(nullptr);
+            });
+        }
+
+        m_replyHandlers.clear();
+    }
+
     m_connectionQueue->dispatch([protectedThis = makeRef(*this)]() mutable {
         protectedThis->platformInvalidate();
     });
@@ -377,6 +393,25 @@ bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOpt
         protectedThis->sendOutgoingMessages();
     });
     return true;
+}
+
+void Connection::sendMessageWithReply(uint64_t requestID, std::unique_ptr<Encoder> encoder, FunctionDispatcher& replyDispatcher, Function<void (std::unique_ptr<Decoder>)>&& replyHandler)
+{
+    {
+        std::lock_guard<Lock> lock(m_replyHandlersLock);
+
+        if (!isValid()) {
+            replyDispatcher.dispatch([replyHandler = WTFMove(replyHandler)] {
+                replyHandler(nullptr);
+            });
+            return;
+        }
+
+        ASSERT(!m_replyHandlers.contains(requestID));
+        m_replyHandlers.set(requestID, ReplyHandler { &replyDispatcher, WTFMove(replyHandler) });
+    }
+
+    sendMessage(WTFMove(encoder), { });
 }
 
 bool Connection::sendSyncReply(std::unique_ptr<Encoder> encoder)
@@ -557,26 +592,44 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, st
 
 void Connection::processIncomingSyncReply(std::unique_ptr<Decoder> decoder)
 {
-    LockHolder locker(m_syncReplyStateMutex);
+    {
+        LockHolder locker(m_syncReplyStateMutex);
 
-    // Go through the stack of sync requests that have pending replies and see which one
-    // this reply is for.
-    for (size_t i = m_pendingSyncReplies.size(); i > 0; --i) {
-        PendingSyncReply& pendingSyncReply = m_pendingSyncReplies[i - 1];
+        // Go through the stack of sync requests that have pending replies and see which one
+        // this reply is for.
+        for (size_t i = m_pendingSyncReplies.size(); i > 0; --i) {
+            PendingSyncReply& pendingSyncReply = m_pendingSyncReplies[i - 1];
 
-        if (pendingSyncReply.syncRequestID != decoder->destinationID())
-            continue;
+            if (pendingSyncReply.syncRequestID != decoder->destinationID())
+                continue;
 
-        ASSERT(!pendingSyncReply.replyDecoder);
+            ASSERT(!pendingSyncReply.replyDecoder);
 
-        pendingSyncReply.replyDecoder = WTFMove(decoder);
-        pendingSyncReply.didReceiveReply = true;
+            pendingSyncReply.replyDecoder = WTFMove(decoder);
+            pendingSyncReply.didReceiveReply = true;
 
-        // We got a reply to the last send message, wake up the client run loop so it can be processed.
-        if (i == m_pendingSyncReplies.size())
-            SyncMessageState::singleton().wakeUpClientRunLoop();
+            // We got a reply to the last send message, wake up the client run loop so it can be processed.
+            if (i == m_pendingSyncReplies.size())
+                SyncMessageState::singleton().wakeUpClientRunLoop();
 
-        return;
+            return;
+        }
+    }
+
+    {
+        LockHolder locker(m_replyHandlersLock);
+
+        auto replyHandler = m_replyHandlers.take(decoder->destinationID());
+        if (replyHandler.dispatcher) {
+            replyHandler.dispatcher->dispatch([protectedThis = makeRef(*this), handler = WTFMove(replyHandler.handler), decoder = WTFMove(decoder)] () mutable {
+                if (!protectedThis->isValid()) {
+                    handler(nullptr);
+                    return;
+                }
+
+                handler(WTFMove(decoder));
+            });
+        }
     }
 
     // If we get here, it means we got a reply for a message that wasn't in the sync request stack or map.
@@ -701,6 +754,17 @@ void Connection::connectionDidClose()
 {
     // The connection is now invalid.
     platformInvalidate();
+
+    {
+        LockHolder locker(m_replyHandlersLock);
+        for (auto& replyHandler : m_replyHandlers.values()) {
+            replyHandler.dispatcher->dispatch([handler = WTFMove(replyHandler.handler)] {
+                handler(nullptr);
+            });
+        }
+
+        m_replyHandlers.clear();
+    }
 
     {
         LockHolder locker(m_syncReplyStateMutex);

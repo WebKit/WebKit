@@ -73,6 +73,7 @@ struct SecurityOriginData;
 namespace WebKit {
 
 class EventDispatcher;
+class GamepadData;
 class InjectedBundle;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
@@ -86,11 +87,11 @@ class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
 enum class WebsiteDataType;
-class GamepadData;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
 struct WebProcessCreationParameters;
+struct WebsiteData;
 
 #if ENABLE(DATABASE_PROCESS)
 class WebToDatabaseProcessConnection;
@@ -286,7 +287,7 @@ private:
 
     void releasePageCache();
 
-    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, uint64_t callbackID);
+    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, WebsiteData&);
     void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
 

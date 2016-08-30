@@ -43,6 +43,7 @@ namespace WebKit {
 
 class WebProcessPool;
 enum class WebsiteDataType;
+struct WebsiteData;
 
 class DatabaseProcessProxy : public ChildProcessProxy {
 public:

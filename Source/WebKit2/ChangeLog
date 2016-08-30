@@ -1,3 +1,61 @@
+2016-08-30  Anders Carlsson  <andersca@apple.com>
+
+        Add Connection::sendWithReply
+        https://bugs.webkit.org/show_bug.cgi?id=161399
+
+        Reviewed by Tim Horton.
+
+        Connection::sendWithReply makes it easy to send a message and process its reply asynchronously on a given WorkQueue or RunLoop.
+        The reply handler is guaranteed to be called. If the reply is successfully received, it will consist of an std::tuple with the arguments,
+        otherwise it will be called with Nullopt.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::invalidate):
+        Go through all reply handlers and dispatch them with a null Decoder.
+
+        (IPC::Connection::sendMessageWithReply):
+        Add the reply handler to the m_replyHandlers hash map, and send the message.
+
+        (IPC::Connection::processIncomingSyncReply):
+        Check if the incoming reply has an entry in m_replyHandlers. If it does, dispatch its handler using the given dispatcher.
+
+        (IPC::Connection::connectionDidClose):
+        Go through all reply handlers and dispatch them with a null Decoder.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendWithReply):
+        Encode the message (we use the sync message ID infrastructure for this), then call sendMessageWithReply with a reply handler that
+        decodes the reply and calls the real reply handler.
+
+        * Platform/IPC/HandleMessage.h:
+        Forward declare Connection.
+
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        Forward declare WebsiteData.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::processWillShutDown):
+        Remove m_pendingFetchWebsiteDataCallbacks.
+
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        Use Connection::sendWithReply.
+
+        (WebKit::WebProcessProxy::didFetchWebsiteData): Deleted.
+
+        * UIProcess/WebProcessProxy.h:
+        Remove members.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        Remove DidFetchWebsiteData.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::fetchWebsiteData):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Update the FetchWebsiteData message to have a reply parameter.
+
 2016-08-30  Brady Eidson  <beidson@apple.com>
 
         Fix runtime error caused by missing export after https://bugs.webkit.org/show_bug.cgi?id=160846

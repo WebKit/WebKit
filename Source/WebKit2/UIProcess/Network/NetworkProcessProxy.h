@@ -51,6 +51,7 @@ class WebProcessPool;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct NetworkProcessCreationParameters;
+struct WebsiteData;
 
 class NetworkProcessProxy : public ChildProcessProxy, private ProcessThrottlerClient {
 public:
