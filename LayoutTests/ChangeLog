@@ -1,3 +1,11 @@
+2016-08-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Gardening on Aug 30
+
+        Unreviewed gardening. Mark unexpecting passing tests to PASS.
+
+        * platform/efl/TestExpectations:
+
 2016-08-29  Chris Dumez  <cdumez@apple.com>
 
         Unskip several web-platform-tests that are now passing

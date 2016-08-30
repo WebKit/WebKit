@@ -835,7 +835,7 @@ webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Ski
 webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
@@ -1280,6 +1280,14 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-elemen
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol.html [ Pass ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Pass ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Pass ]
+imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html [ Pass ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/001.html [ Pass ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/002.html [ Pass ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/003.html [ Pass ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/005.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Pass ]
 css3/conditional/w3c/at-supports-010.html [ Pass ]
 css3/conditional/w3c/at-supports-014.html [ Pass ]
 fast/borders/border-painting-dashed.html [ Pass ]
@@ -1354,6 +1362,37 @@ fast/scrolling/rtl-scrollbars-text-selection.html
 fast/scrolling/rtl-scrollbars.html
 
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
+
+Bug(EFL) fast/text/emoji-gender-2-3.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-2-4.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-2-5.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-2-6.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-2-7.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-2-8.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-2-9.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-3.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-4.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-5.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-6.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-8.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-9.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-fe0f-3.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-fe0f-4.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-fe0f-5.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-fe0f-6.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-fe0f-7.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-fe0f-8.html [ Pass ]
+Bug(EFL) fast/text/emoji-gender-fe0f-9.html [ Pass ]
+
+Bug(EFL) fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
+Bug(EFL) fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
+Bug(EFL) fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Pass ]
+Bug(EFL) fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
+Bug(EFL) fast/scrolling/rtl-scrollbars-listbox-select-left.html [ Pass ]
+Bug(EFL) fast/scrolling/rtl-scrollbars-listbox-select-right.html [ Pass ]
+Bug(EFL) fast/scrolling/rtl-scrollbars-listbox.html [ Pass ]
+Bug(EFL) fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html [ Pass ]
+Bug(EFL) fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
@@ -1611,7 +1650,7 @@ webkit.org/b/84037 fast/text/international/spaces-combined-in-vertical-text.html
 # Failed table/mozilla test, fields are not on the same line
 webkit.org/b/97109 tables/mozilla/bugs/bug99948.html [ Pass ]
 
-# Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests. 
+# Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 
 # Started failing on JSC ports after r127202.
