@@ -1,3 +1,12 @@
+2016-08-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking svg/animations/reinserting-svg-into-document.html as flaky on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=161395
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-08-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update iOS simulator WK1 flaky tests.
