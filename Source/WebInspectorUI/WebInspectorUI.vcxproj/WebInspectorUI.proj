@@ -35,6 +35,7 @@
   <Target Name="PreBuild" BeforeTargets="Build">
     <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
     <Error Text="OBJROOT property or environment variable must be defined." Condition="'$(OBJROOT)' == ''" />
+    <Error Text="Use /p:Configuration=Debug or /p:Configuration=Release" Condition="'$(CONFIG)' == ''" />
     <Message Text="Copying necessary headers to $(ConfigurationBuildDir)" />
     <MakeDir Directories="$(DSTROOT);$(OBJROOT)" />
  

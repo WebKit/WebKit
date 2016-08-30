@@ -1,3 +1,13 @@
+2016-08-30  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WebInspectorUI in internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=161221
+        rdar://problem/28019023
+
+        Reviewed by Brent Fulgham and Joseph Pecoraro.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+
 2016-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r202568): Web Inspector: Expanding Array Prototype in Console shows no properties

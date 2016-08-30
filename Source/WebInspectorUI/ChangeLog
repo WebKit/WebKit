@@ -1,3 +1,14 @@
+2016-08-30  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WebInspectorUI in internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=161221
+        rdar://problem/28019023
+
+        Reviewed by Brent Fulgham and Joseph Pecoraro.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.make:
+        * WebInspectorUI.vcxproj/WebInspectorUI.proj:
+
 2016-08-29  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Unify Resource entry context menus
