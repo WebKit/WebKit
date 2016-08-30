@@ -66,6 +66,12 @@ enum {
 {
     NSMenuItem *item = [[NSMenuItem alloc] init];
     [item setSubmenu:[[SettingsController shared] menu]];
+
+#if WK_API_ENABLED
+    if ([[SettingsController shared] usesGameControllerFramework])
+        [WKProcessPool _forceGameControllerFramework];
+#endif
+
     [[NSApp mainMenu] insertItem:[item autorelease] atIndex:[[NSApp mainMenu] indexOfItemWithTitle:@"Debug"]];
 }
 

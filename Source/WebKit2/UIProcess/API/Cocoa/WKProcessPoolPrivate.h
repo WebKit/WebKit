@@ -64,6 +64,9 @@
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateDatabaseProcess;
 
+// Test only. Should be called before any web content processes are launched.
++ (void)_forceGameControllerFramework;
+
 @property (nonatomic, getter=_isCookieStoragePartitioningEnabled, setter=_setCookieStoragePartitioningEnabled:) BOOL _cookieStoragePartitioningEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end

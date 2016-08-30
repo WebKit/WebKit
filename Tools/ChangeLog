@@ -1,3 +1,20 @@
+2016-08-30  Brady Eidson  <beidson@apple.com>
+
+        GameController.framework backend for gamepad API.
+        https://bugs.webkit.org/show_bug.cgi?id=161086
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate awakeFromNib]):
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController usesGameControllerFramework]):
+        (-[SettingsController toggleUsesGameControllerFramework:]):
+
 2016-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         Use of uninitialised memory in TransformationMatrx::blend4()

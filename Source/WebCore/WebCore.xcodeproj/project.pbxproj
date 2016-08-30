@@ -2174,6 +2174,7 @@
 		51ABAE1E103C1913008C5260 /* SocketStreamHandleImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABAE1C103C1913008C5260 /* SocketStreamHandleImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51ABAE1F103C1913008C5260 /* SocketStreamHandleImplCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABAE1D103C1913008C5260 /* SocketStreamHandleImplCFNet.cpp */; };
 		51ABF64D16392E2800132A7A /* LoaderStrategy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */; };
+		51AEA4C91D6E3CC900E0269D /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51AEA4C81D6E3CC100E0269D /* GameController.framework */; };
 		51AF503616F100F60095B2E8 /* ResourceLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */; };
 		51B454EA1B4DAE7D0085EAA6 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B454E91B4DAE7D0085EAA6 /* PingHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2211,6 +2212,10 @@
 		51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBB0C91C90400DC255B /* IconRecord.h */; };
 		51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */; };
 		51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBD0C91C90400DC255B /* PageURLRecord.h */; };
+		51E399001D6E4750009C8831 /* GameControllerGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FC1D6E474B009C8831 /* GameControllerGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51E399011D6E4750009C8831 /* GameControllerGamepad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E398FD1D6E474B009C8831 /* GameControllerGamepad.mm */; };
+		51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51E399031D6E4750009C8831 /* GameControllerGamepadProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E398FF1D6E474B009C8831 /* GameControllerGamepadProvider.mm */; };
 		51E3AA0A1B98BCAB0036AD81 /* SecurityOriginData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3AA081B98BC9A0036AD81 /* SecurityOriginData.cpp */; };
 		51E3AA0B1B98BCAB0036AD81 /* SecurityOriginData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E3AA091B98BC9A0036AD81 /* SecurityOriginData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E3F9C70DA059DC00250911 /* Storage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3F9C50DA059DC00250911 /* Storage.cpp */; };
@@ -9130,6 +9135,7 @@
 		51ABAE1C103C1913008C5260 /* SocketStreamHandleImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandleImpl.h; sourceTree = "<group>"; };
 		51ABAE1D103C1913008C5260 /* SocketStreamHandleImplCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandleImplCFNet.cpp; sourceTree = "<group>"; };
 		51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoaderStrategy.cpp; sourceTree = "<group>"; };
+		51AEA4C81D6E3CC100E0269D /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = ../../../../../../System/Library/Frameworks/GameController.framework; sourceTree = "<group>"; };
 		51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderTypes.h; sourceTree = "<group>"; };
 		51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyWebArchiveMac.mm; sourceTree = "<group>"; };
 		51B454E91B4DAE7D0085EAA6 /* PingHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingHandle.h; sourceTree = "<group>"; };
@@ -9196,6 +9202,10 @@
 		51E1ECBB0C91C90400DC255B /* IconRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconRecord.h; sourceTree = "<group>"; };
 		51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageURLRecord.cpp; sourceTree = "<group>"; };
 		51E1ECBD0C91C90400DC255B /* PageURLRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageURLRecord.h; sourceTree = "<group>"; };
+		51E398FC1D6E474B009C8831 /* GameControllerGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameControllerGamepad.h; sourceTree = "<group>"; };
+		51E398FD1D6E474B009C8831 /* GameControllerGamepad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameControllerGamepad.mm; sourceTree = "<group>"; };
+		51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameControllerGamepadProvider.h; sourceTree = "<group>"; };
+		51E398FF1D6E474B009C8831 /* GameControllerGamepadProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameControllerGamepadProvider.mm; sourceTree = "<group>"; };
 		51E3AA081B98BC9A0036AD81 /* SecurityOriginData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOriginData.cpp; sourceTree = "<group>"; };
 		51E3AA091B98BC9A0036AD81 /* SecurityOriginData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginData.h; sourceTree = "<group>"; };
 		51E3F9C40DA059DC00250911 /* Storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Storage.h; sourceTree = "<group>"; };
@@ -14317,6 +14327,7 @@
 				93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */,
 				93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */,
 				1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */,
+				51AEA4C91D6E3CC900E0269D /* GameController.framework in Frameworks */,
 				DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */,
 				379919B21200DE5000EA041C /* libz.dylib in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
@@ -14791,6 +14802,7 @@
 				FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */,
 				FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */,
 				AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */,
+				51AEA4C81D6E3CC100E0269D /* GameController.framework */,
 				1AB33DA412551E320024457A /* IOKit.framework */,
 				F8216299029F4FB501000131 /* JavaScriptCore.framework */,
 				93F1D31A0558CC5C00821BC0 /* libicucore.dylib */,
@@ -16503,6 +16515,7 @@
 		515BE1871D54F5DB00DD7C68 /* gamepad */ = {
 			isa = PBXGroup;
 			children = (
+				51AEA4BF1D6E3C2300E0269D /* cocoa */,
 				515BE1961D54F64500DD7C68 /* mac */,
 				515BE1881D54F5F600DD7C68 /* EmptyGamepadProvider.cpp */,
 				515BE1891D54F5F600DD7C68 /* EmptyGamepadProvider.h */,
@@ -16597,6 +16610,17 @@
 				516C62241950E2B900337E75 /* JSGamepadEvent.h */,
 			);
 			name = Gamepad;
+			sourceTree = "<group>";
+		};
+		51AEA4BF1D6E3C2300E0269D /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				51E398FC1D6E474B009C8831 /* GameControllerGamepad.h */,
+				51E398FD1D6E474B009C8831 /* GameControllerGamepad.mm */,
+				51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */,
+				51E398FF1D6E474B009C8831 /* GameControllerGamepadProvider.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		51C4AA5118B28357007BFE9B /* mac */ = {
@@ -25187,6 +25211,7 @@
 				B2FA3D670AB75A6F000E5AC4 /* JSSVGDocument.h in Headers */,
 				B222F69D0AB771B80022EFAD /* JSSVGElement.h in Headers */,
 				8542A7990AE5C94400DF58DF /* JSSVGElementWrapperFactory.h in Headers */,
+				51E399001D6E4750009C8831 /* GameControllerGamepad.h in Headers */,
 				B2FA3D690AB75A6F000E5AC4 /* JSSVGEllipseElement.h in Headers */,
 				B266CD4E0C3AEC6500EB08D2 /* JSSVGException.h in Headers */,
 				B2FA3D6B0AB75A6F000E5AC4 /* JSSVGFEBlendElement.h in Headers */,
@@ -26640,6 +26665,7 @@
 				CDA07FBE18E0A16A004699FA /* SystemSleepListener.h in Headers */,
 				CDA07FC218E0A22B004699FA /* SystemSleepListenerMac.h in Headers */,
 				5D5975B319635F1100D00878 /* SystemVersion.h in Headers */,
+				51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
 				463EB6231B8789E00096ED51 /* TagCollection.h in Headers */,
 				F55B3DD61251F12D003EF269 /* TelephoneInputType.h in Headers */,
@@ -28879,6 +28905,7 @@
 				B2FA3D680AB75A6F000E5AC4 /* JSSVGEllipseElement.cpp in Sources */,
 				B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */,
 				B2FA3D6A0AB75A6F000E5AC4 /* JSSVGFEBlendElement.cpp in Sources */,
+				51E399031D6E4750009C8831 /* GameControllerGamepadProvider.mm in Sources */,
 				B2FA3D6C0AB75A6F000E5AC4 /* JSSVGFEColorMatrixElement.cpp in Sources */,
 				B2FA3D6E0AB75A6F000E5AC4 /* JSSVGFEComponentTransferElement.cpp in Sources */,
 				B2FA3D700AB75A6F000E5AC4 /* JSSVGFECompositeElement.cpp in Sources */,
@@ -29335,6 +29362,7 @@
 				E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */,
 				33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */,
 				3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */,
+				51E399011D6E4750009C8831 /* GameControllerGamepad.mm in Sources */,
 				3128CA68147331520074C72A /* NotificationController.cpp in Sources */,
 				E1513D511677F08800149FCB /* NotImplemented.cpp in Sources */,
 				1A569D0A0D7E2B82007C3983 /* NP_jsobject.cpp in Sources */,

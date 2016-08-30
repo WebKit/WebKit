@@ -52,6 +52,10 @@ public:
 
     Vector<GamepadData> gamepadStates() const;
 
+#if PLATFORM(COCOA)
+    static void setUsesGameControllerFramework();
+#endif
+
 private:
     friend NeverDestroyed<UIGamepadProvider>;
     UIGamepadProvider();

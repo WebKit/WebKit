@@ -50,6 +50,7 @@
 @property (nonatomic, readonly) BOOL displayListDrawingEnabled;
 @property (nonatomic, readonly) BOOL resourceLoadStatisticsEnabled;
 @property (nonatomic, readonly) BOOL visualViewportEnabled;
+@property (nonatomic, readonly) BOOL usesGameControllerFramework;
 
 @property (nonatomic, readonly) NSString *defaultURL;
 
