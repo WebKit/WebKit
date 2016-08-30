@@ -1,3 +1,20 @@
+2016-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r202568): Web Inspector: Expanding Array Prototype in Console shows no properties
+        https://bugs.webkit.org/show_bug.cgi?id=161263
+        <rdar://problem/28035849>
+
+        Reviewed by Matt Baker.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._propertyDescriptors):
+        Previously we only took the "numeric index fast path" if an object was
+        array like with length > 100. When we dropped the length check we
+        ended up breaking our display of Array prototype, because [].__proto__
+        is an array instance. Get it back by just doing a check of length > 0.
+        We may want to address this differently in the future by knowing if
+        we are getting properties for a prototype or not.
+
 2016-08-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Clean up FTL Capabilities for CompareEq

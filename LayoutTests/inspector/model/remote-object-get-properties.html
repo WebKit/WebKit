@@ -39,6 +39,8 @@ ClassWithBadGetter.prototype = {
 
 // window.loadEvent is set inside of <body onload="..."> below.
 var simpleObject = {a:1, b:"string"};
+var simpleArray = [1, "two", /three/];
+var arrayProto = [].__proto__;
 var complexObject = new SuperFoo;
 var badGetterObject = new ClassWithBadGetter;
 var unboundFunction = function() { console.log(arguments); }
@@ -54,6 +56,8 @@ function test()
     var currentStepIndex = 0;
     var steps = [
         {expression: "window.simpleObject"},
+        {expression: "window.simpleArray"},
+        {expression: "window.arrayProto"},
         {expression: "window.loadEvent"},
         {expression: "window.complexObject"},
         {expression: "window.badGetterObject"},

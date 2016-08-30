@@ -675,7 +675,7 @@ InjectedScript.prototype = {
         // For array types with a large length we attempt to skip getOwnPropertyNames and instead just sublist of indexes.
         var isArrayLike = false;
         try {
-            isArrayLike = injectedScript._subtype(object) === "array" && isFinite(object.length);
+            isArrayLike = injectedScript._subtype(object) === "array" && isFinite(object.length) && object.length > 0;
         } catch(e) {}
 
         for (var o = object; this._isDefined(o); o = o.__proto__) {
