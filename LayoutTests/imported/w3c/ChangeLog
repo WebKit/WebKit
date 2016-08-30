@@ -1,3 +1,15 @@
+2016-08-30  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Body mix-in text() should decode data as UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=161372
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/fetch/api/basic/text-utf8-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/text-utf8.html: Added.
+        * web-platform-tests/fetch/api/resources/status.py: Added.
+        (main):
+
 2016-08-29  Chris Dumez  <cdumez@apple.com>
 
         Unskip several web-platform-tests that are now passing

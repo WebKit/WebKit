@@ -33,6 +33,7 @@
 
 #include "JSBlob.h"
 #include "JSDOMPromise.h"
+#include "TextResourceDecoder.h"
 
 namespace WebCore {
 
@@ -41,6 +42,21 @@ static inline Ref<Blob> blobFromData(const unsigned char* data, unsigned length,
     Vector<uint8_t> value(length);
     memcpy(value.data(), data, length);
     return Blob::create(WTFMove(value), contentType);
+}
+
+static inline bool shouldPrependBOM(const unsigned char* data, unsigned length)
+{
+    if (length < 3)
+        return true;
+    return data[0] != 0xef || data[1] != 0xbb || data[2] != 0xbf;
+}
+
+static String textFromUTF8(const unsigned char* data, unsigned length)
+{
+    auto decoder = TextResourceDecoder::create("text/plain", "UTF-8");
+    if (shouldPrependBOM(data, length))
+        decoder->decode("\xef\xbb\xbf", 3);
+    return decoder->decodeAndFlush(reinterpret_cast<const char*>(data), length);
 }
 
 void FetchBodyConsumer::resolveWithData(DeferredWrapper& promise, const unsigned char* data, unsigned length)
@@ -53,10 +69,10 @@ void FetchBodyConsumer::resolveWithData(DeferredWrapper& promise, const unsigned
         promise.resolveWithNewlyCreated(blobFromData(data, length, m_contentType));
         return;
     case Type::JSON:
-        fulfillPromiseWithJSON(promise, String(data, length));
+        fulfillPromiseWithJSON(promise, textFromUTF8(data, length));
         return;
     case Type::Text:
-        promise.resolve(String(data, length));
+        promise.resolve(textFromUTF8(data, length));
         return;
     case Type::None:
         ASSERT_NOT_REACHED();
@@ -126,10 +142,11 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob()
 
 String FetchBodyConsumer::takeAsText()
 {
+    // FIXME: We could probably text decode on the fly as soon as m_type is set to JSON or Text.
     if (!m_buffer)
         return String();
 
-    auto text = String(m_buffer->data(), m_buffer->size());
+    auto text = textFromUTF8(reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size());
     m_buffer = nullptr;
     return text;
 }
