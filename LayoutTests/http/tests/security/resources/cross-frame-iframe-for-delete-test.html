@@ -32,8 +32,7 @@
             shouldBe("window.location.existingProperty", "'test value'");
             shouldBe("window.location[1]", "'test value'");
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+             window.parent.postMessage("checkValuesComplete", "*");
         }
     </script>
 </head>

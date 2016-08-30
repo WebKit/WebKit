@@ -1,3 +1,16 @@
+2016-08-30  Chris Dumez  <cdumez@apple.com>
+
+        [[Delete]] should throw for cross-origin Window / Location objects
+        https://bugs.webkit.org/show_bug.cgi?id=161397
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline existing test to reflect behavior change.
+
+        * http/tests/security/cross-frame-access-delete-expected.txt:
+        * http/tests/security/cross-frame-access-delete.html:
+        * http/tests/security/resources/cross-frame-iframe-for-delete-test.html:
+
 2016-08-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-5.html as flaky on mac.
