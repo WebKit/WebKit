@@ -1,3 +1,16 @@
+2016-08-30  Frederic Wang  <fwang@igalia.com>
+
+        Introduce a MathMLUnknownElement class
+        https://bugs.webkit.org/show_bug.cgi?id=161298
+
+        Reviewed by Darin Adler.
+
+        We add a test to check that non-standard or content MathML elements
+        are handled by MathMLUnknownElement and so do not create renderers.
+
+        * mathml/mathml-unknown-expected.txt: Added.
+        * mathml/mathml-unknown.xhtml: Added.
+
 2016-08-30  Chris Dumez  <cdumez@apple.com>
 
         [[Delete]] should throw for cross-origin Window / Location objects

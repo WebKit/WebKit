@@ -1,7 +1,7 @@
 namespace="MathML"
 namespaceURI="http://www.w3.org/1998/Math/MathML"
 guardFactoryWith="ENABLE(MATHML)"
-fallbackInterfaceName="MathMLElement"
+fallbackInterfaceName="MathMLUnknownElement"
 
 annotation interfaceName=MathMLAnnotationElement
 annotation-xml interfaceName=MathMLAnnotationElement
