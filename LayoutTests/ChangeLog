@@ -1,5 +1,17 @@
 2016-08-31  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r205055. rdar://problem/27933564
+
+    2016-08-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline fast/dom/focus-contenteditable.html for ios-simulator after r205044.
+
+            Unreviewed test gardening.
+
+            * platform/ios-simulator-wk2/fast/dom/focus-contenteditable-expected.txt:
+
+2016-08-31  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205044. rdar://problem/27933564
 
     2016-08-26  Beth Dakin  <bdakin@apple.com>
