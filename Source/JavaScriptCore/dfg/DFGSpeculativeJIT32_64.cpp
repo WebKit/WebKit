@@ -4173,8 +4173,6 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case GetById: {
-        ASSERT(node->prediction());
-        
         switch (node->child1().useKind()) {
         case CellUse: {
             SpeculateCellOperand base(this, node->child1());
