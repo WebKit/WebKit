@@ -1,3 +1,13 @@
+2016-08-31  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Streams API] Align getReader() with spec
+        https://bugs.webkit.org/show_bug.cgi?id=160508
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * streams/readable-stream-getReader-expected.txt: Added.
+        * streams/readable-stream-getReader.html: Added.
+
 2016-08-31  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r201701): Unable to copy from CodeMirror editor version used in Jenkins install website

@@ -1,3 +1,16 @@
+2016-08-31  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Streams API] Align getReader() with spec
+        https://bugs.webkit.org/show_bug.cgi?id=160508
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Changed 2 expectations, 1 that passes thanks to patch, the other that
+        now fails as getReader() has 1 parameter (0 expected, bug to be filed).
+
+        * web-platform-tests/streams/readable-streams/general.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/templated.https-expected.txt:
+
 2016-08-30  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Blob not found URL should result in a network error

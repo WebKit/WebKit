@@ -79,14 +79,25 @@ function cancel(reason)
     return @cancelReadableStream(this, reason);
 }
 
-function getReader()
+function getReader(options)
 {
     "use strict";
 
     if (!@isReadableStream(this))
         throw @makeThisTypeError("ReadableStream", "getReader");
 
-    return new @ReadableStreamDefaultReader(this);
+    if (options === @undefined)
+         options = { };
+
+    if (options.mode === 'byob') {
+        // FIXME: Update once ReadableByteStreamContoller and ReadableStreamBYOBReader are implemented.
+        throw new @TypeError("ReadableStreamBYOBReader is not implemented");
+    }
+
+    if (options.mode === @undefined)
+        return new @ReadableStreamDefaultReader(this);
+
+    throw new @RangeError("Invalid mode is specified");
 }
 
 function pipeThrough(streams, options)
