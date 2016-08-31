@@ -1,3 +1,15 @@
+2016-08-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: XHR with text but responseType = "blob" shows blank content
+        https://bugs.webkit.org/show_bug.cgi?id=161422
+        <rdar://problem/28066869>
+
+        Reviewed by Brian Burg.
+
+        * inspector/network/resources/data.json: Added.
+        * inspector/network/xhr-json-blob-has-content-expected.txt: Added.
+        * inspector/network/xhr-json-blob-has-content.html: Added.
+
 2016-08-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTML constructor must throw when newTarget is itself

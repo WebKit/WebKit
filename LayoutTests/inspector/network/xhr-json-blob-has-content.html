@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function createJSONXHR() {
+    let xhr = new XMLHttpRequest;
+    xhr.open("GET", "resources/data.json?" + Math.random(), true);
+    xhr.send();
+}
+
+function createJSONBlobXHR() {
+    let xhr = new XMLHttpRequest;
+    xhr.open("GET", "resources/data.json?" + Math.random(), true);
+    xhr.responseType = "blob";
+    xhr.send();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("XHR.Blob");
+
+    const jsonContent = `{"alpha":"beta","gamma":12345}\n`;
+
+    suite.addTestCase({
+        name: "XHR.JSONContent",
+        description: "Ensure an XMLHttpRequest with JSON content still gives us text.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createJSONXHR()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFinish, (event) => {
+                    InspectorTest.pass("Resource should complete loading.");
+                    resource.requestContent().then(() => {
+                        InspectorTest.expectThat(resource.content === jsonContent, "Resource has expected content.");
+                    }).then(resolve, reject);
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "XHR.JSONContent.Blob",
+        description: "Ensure an XMLHttpRequest with JSON content and a responseType of blob still gives us text.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createJSONBlobXHR()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFinish, (event) => {
+                    InspectorTest.pass("Resource should complete loading.");
+                    resource.requestContent().then(() => {
+                        InspectorTest.expectThat(resource.content === jsonContent, "Resource has expected content.");
+                    }).then(resolve, reject);
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that an XMLHttpRequest resource gives us JSON text even if it is marked as having blob content.</p>
+</body>
+</html>

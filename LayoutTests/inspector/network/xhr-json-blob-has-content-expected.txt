@@ -1,0 +1,14 @@
+Tests that an XMLHttpRequest resource gives us JSON text even if it is marked as having blob content.
+
+
+== Running test suite: XHR.Blob
+-- Running test case: XHR.JSONContent
+PASS: Resource should be created.
+PASS: Resource should complete loading.
+PASS: Resource has expected content.
+
+-- Running test case: XHR.JSONContent.Blob
+PASS: Resource should be created.
+PASS: Resource should complete loading.
+PASS: Resource has expected content.
+
