@@ -290,6 +290,12 @@ function runTest()
 
     shouldBe("concatenateArray(objCArrayOfString())", "'onetwothree'");
 
+    shouldBe("let arr = objCArrayOfString(); arr.length", "3");
+    shouldThrow("let arr = objCArrayOfString(); arr.length = 0");
+    shouldThrow("let arr = objCArrayOfString(); arr.length = 5");
+    shouldThrow("let arr = objCArrayOfString(); arr.length = 0x40000000");
+    shouldBe("let arr = objCArrayOfString(); try { arr.length = 0 } catch(e) { } arr.length", "3");
+
     // Not yet tested:
 
     // CSSCharsetRule
