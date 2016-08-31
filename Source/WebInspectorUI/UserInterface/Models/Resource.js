@@ -59,6 +59,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._size = NaN;
         this._transferSize = NaN;
         this._cached = false;
+        this._timingData = new WebInspector.ResourceTimingData(this);
 
         if (this._initiatorSourceCodeLocation && this._initiatorSourceCodeLocation.sourceCode instanceof WebInspector.Resource)
             this._initiatorSourceCodeLocation.sourceCode.addInitiatedResource(this);
@@ -125,6 +126,8 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     }
 
     // Public
+
+    get timingData() { return this._timingData; }
 
     get url()
     {
@@ -317,27 +320,27 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
     get firstTimestamp()
     {
-        return this.requestSentTimestamp || this.lastRedirectReceivedTimestamp || this.responseReceivedTimestamp || this.lastDataReceivedTimestamp || this.finishedOrFailedTimestamp;
+        return this.timingData.startTime || this.lastRedirectReceivedTimestamp || this.responseReceivedTimestamp || this.lastDataReceivedTimestamp || this.finishedOrFailedTimestamp;
     }
 
     get lastTimestamp()
     {
-        return this.finishedOrFailedTimestamp || this.lastDataReceivedTimestamp || this.responseReceivedTimestamp || this.lastRedirectReceivedTimestamp || this.requestSentTimestamp;
+        return this.timingData.responseEnd || this.lastDataReceivedTimestamp || this.responseReceivedTimestamp || this.lastRedirectReceivedTimestamp || this.requestSentTimestamp;
     }
 
     get duration()
     {
-        return this._finishedOrFailedTimestamp - this._requestSentTimestamp;
+        return this.timingData.responseEnd - this.timingData.requestStart;
     }
 
     get latency()
     {
-        return this._responseReceivedTimestamp - this._requestSentTimestamp;
+        return this.timingData.responseStart - this.timingData.requestStart;
     }
 
     get receiveDuration()
     {
-        return this._finishedOrFailedTimestamp - this._responseReceivedTimestamp;
+        return this.timingData.responseEnd - this.timingData.responseStart;
     }
 
     get cached()
@@ -447,7 +450,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
     }
 
-    updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime)
+    updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime, timingData)
     {
         console.assert(!this._finished);
         console.assert(!this._failed);
@@ -467,6 +470,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._statusText = statusText;
         this._responseHeaders = responseHeaders || {};
         this._responseReceivedTimestamp = elapsedTime || NaN;
+        this._timingData = WebInspector.ResourceTimingData.fromPayload(timingData, this);
 
         this._responseHeadersSize = String(this._statusCode).length + this._statusText.length + 12; // Extra length is for "HTTP/1.1 ", " ", and "\r\n".
         for (var name in this._responseHeaders)
@@ -572,6 +576,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
         this._finished = true;
         this._finishedOrFailedTimestamp = elapsedTime || NaN;
+        this._timingData.markResponseEndTime(elapsedTime || NaN);
 
         if (this._finishThenRequestContentPromise)
             this._finishThenRequestContentPromise = null;

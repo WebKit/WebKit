@@ -1,0 +1,19 @@
+Tests that a resource has timing information.
+
+
+== Running test suite: ResourceTimingData
+-- Running test case: CheckResourceTimingInformationForResource
+PASS: Newly added resource should have a resource timing model.
+PASS: Newly added resource should have a start time.
+PASS: Resource should now contain timing information.
+PASS: Resource should have a start time.
+PASS: Resource should have a request start time.
+PASS: Resource should have a response start time.
+PASS: domainLookupStart and domainLookupEnd should both be NaN or a number.
+PASS: connectStart and connectEnd should both be NaN or a number.
+PASS: requestStart should come after startTime.
+PASS: A secure connection should be reused or secureConnectionStart should come after connectStart.
+PASS: responseStart should come after requestStart.
+PASS: responseEnd should not be available yet.
+PASS: responseEnd should come after responseStart.
+

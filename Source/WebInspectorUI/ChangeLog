@@ -1,3 +1,60 @@
+2016-08-30  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Web Inspector: Add resource timing model with timing information
+        https://bugs.webkit.org/show_bug.cgi?id=161314
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a resource timing data model and populate it with info from the
+        response from the backend.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidReceiveResponse):
+        Forward timing data from response to Resource.js.
+
+        * UserInterface/Main.html: Add new ResourceTimingData.js.
+        * UserInterface/Test.html: Add new ResourceTimingData.js.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource): Instantiate ResourceTimingData object.
+
+        (WebInspector.Resource.prototype.get timing):
+        (WebInspector.Resource.prototype.get firstTimestamp):
+        (WebInspector.Resource.prototype.get lastTimestamp):
+        (WebInspector.Resource.prototype.get duration):
+        (WebInspector.Resource.prototype.get latency):
+        (WebInspector.Resource.prototype.get receiveDuration):
+        Update getters to use new timing model.
+
+        (WebInspector.Resource.prototype.updateForResponse):
+        Update timing object with info from response.
+
+        (WebInspector.Resource.prototype.markAsFinished):
+        Log response end time.
+
+        * UserInterface/Models/ResourceTimelineRecord.js:
+        (WebInspector.ResourceTimelineRecord.prototype.get startTime):
+        (WebInspector.ResourceTimelineRecord.prototype.get activeStartTime):
+        (WebInspector.ResourceTimelineRecord.prototype.get endTime):
+        Update getters to use new timing model.
+
+        * UserInterface/Models/ResourceTimingData.js: Added.
+        (WebInspector.ResourceTimingData):
+        (WebInspector.ResourceTimingData.fromPayload):
+        (WebInspector.ResourceTimingData.prototype.get startTime):
+        (WebInspector.ResourceTimingData.prototype.get domainLookupStart):
+        (WebInspector.ResourceTimingData.prototype.get domainLookupEnd):
+        (WebInspector.ResourceTimingData.prototype.get connectStart):
+        (WebInspector.ResourceTimingData.prototype.get connectEnd):
+        (WebInspector.ResourceTimingData.prototype.get secureConnectionStart):
+        (WebInspector.ResourceTimingData.prototype.get requestStart):
+        (WebInspector.ResourceTimingData.prototype.get responseStart):
+        (WebInspector.ResourceTimingData.prototype.get responseEnd):
+        (WebInspector.ResourceTimingData.prototype.markResponseEndTime):
+        Add new ResourceTimingData model and fall back on old timestamps
+        for when data is unavailable.
+
 2016-08-30  Alex Christensen  <achristensen@webkit.org>
 
         Fix WebInspectorUI in internal Windows build

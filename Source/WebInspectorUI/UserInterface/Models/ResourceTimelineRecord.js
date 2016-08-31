@@ -52,17 +52,17 @@ WebInspector.ResourceTimelineRecord = class ResourceTimelineRecord extends WebIn
 
     get startTime()
     {
-        return this._resource.requestSentTimestamp;
+        return this._resource.timingData.startTime;
     }
 
     get activeStartTime()
     {
-        return this._resource.responseReceivedTimestamp;
+        return this._resource.timingData.responseStart;
     }
 
     get endTime()
     {
-        return this._resource.finishedOrFailedTimestamp;
+        return this._resource.timingData.responseEnd;
     }
 
     // Private

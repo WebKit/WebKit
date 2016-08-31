@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createRequest() {
+    let img = document.createElement("img");
+    img.src = "https://localhost:8443/resources/square100.png";
+    document.body.appendChild(img);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("ResourceTimingData");
+    InspectorTest.debug();
+    suite.addTestCase({
+        name: "CheckResourceTimingInformationForResource",
+        description: "Check if a resource has timing information.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("createRequest()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+
+                InspectorTest.expectThat(resource.timingData instanceof WebInspector.ResourceTimingData, "Newly added resource should have a resource timing model.");
+                InspectorTest.expectThat(resource.timingData.startTime, "Newly added resource should have a start time.");
+
+                resource.singleFireEventListener(WebInspector.Resource.Event.ResponseReceived, (event) => {
+                    let timingData = resource.timingData;
+
+                    InspectorTest.expectThat(timingData, "Resource should now contain timing information.");
+                    InspectorTest.expectThat(timingData.startTime > 0, "Resource should have a start time.");
+                    InspectorTest.expectThat(timingData.requestStart > 0, "Resource should have a request start time.");
+                    InspectorTest.expectThat(timingData.responseStart > 0, "Resource should have a response start time.");
+
+                    InspectorTest.expectThat(typeof timingData.domainLookupStart === "number" && typeof timingData.domainLookupEnd === "number", "domainLookupStart and domainLookupEnd should both be NaN or a number.");
+                    InspectorTest.expectThat(typeof timingData.connectStart === "number" && typeof timingData.connectStart === "number", "connectStart and connectEnd should both be NaN or a number.");
+
+                    InspectorTest.expectThat(timingData.startTime <= timingData.requestStart, "requestStart should come after startTime.");
+                    InspectorTest.expectThat(isNaN(timingData.secureConnectionStart) || timingData.connectStart <= timingData.secureConnectionStart, "A secure connection should be reused or secureConnectionStart should come after connectStart.");
+                    InspectorTest.expectThat(timingData.requestStart <= timingData.responseStart, "responseStart should come after requestStart.");
+                    InspectorTest.expectThat(isNaN(timingData.responseEnd), "responseEnd should not be available yet.");
+                });
+
+                resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFinish, (event) => {
+                    let timingData = resource.timingData;
+                    InspectorTest.expectThat(timingData.responseStart <= timingData.responseEnd, "responseEnd should come after responseStart.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that a resource has timing information.</p>
+</body>
+</html>

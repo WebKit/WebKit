@@ -1,3 +1,15 @@
+2016-08-30  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Web Inspector: Add resource timing model with timing information
+        https://bugs.webkit.org/show_bug.cgi?id=161314
+
+        Reviewed by Joseph Pecoraro.
+
+        Add tests for the Resource Timing Data model.
+
+        * http/tests/inspector/network/resource-timing-expected.txt: Added.
+        * http/tests/inspector/network/resource-timing.html: Added.
+
 2016-08-30  Chris Dumez  <cdumez@apple.com>
 
         Object.setPrototypeOf() should throw when used on a cross-origin Window / Location object
