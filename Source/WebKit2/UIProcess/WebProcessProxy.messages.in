@@ -31,9 +31,6 @@ messages -> WebProcessProxy LegacyReceiver {
     EnableSuddenTermination()
     DisableSuddenTermination()
 
-    DidDeleteWebsiteData(uint64_t callbackID)
-    DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
-
     # Plugin messages.
 #if ENABLE(NETSCAPE_PLUGIN_API)
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins, Vector<WebCore::PluginInfo> applicationPlugins)

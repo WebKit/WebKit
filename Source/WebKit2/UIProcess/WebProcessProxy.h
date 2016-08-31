@@ -170,9 +170,6 @@ private:
 
     void shouldTerminate(bool& shouldTerminate);
 
-    void didDeleteWebsiteData(uint64_t callbackID);
-    void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
-
     // Plugins
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void getPlugins(bool refresh, Vector<WebCore::PluginInfo>& plugins, Vector<WebCore::PluginInfo>& applicationPlugins);
@@ -237,9 +234,6 @@ private:
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
-
-    HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataCallbacks;
-    HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataForOriginsCallbacks;
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
     ProcessThrottler m_throttler;
