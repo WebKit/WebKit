@@ -391,7 +391,7 @@ JSValue JSMediaDevices::getUserMedia(ExecState& state)
     auto audioConstraints = MediaConstraintsImpl::create(WTFMove(mandatoryAudioConstraints), WTFMove(advancedAudioConstraints), areAudioConstraintsValid);
     auto videoConstraints = MediaConstraintsImpl::create(WTFMove(mandatoryVideoConstraints), WTFMove(advancedVideoConstraints), areVideoConstraintsValid);
     JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
-    wrapped().getUserMedia(WTFMove(audioConstraints), WTFMove(videoConstraints), DeferredWrapper(&state, globalObject(), promiseDeferred), ec);
+    wrapped().getUserMedia(WTFMove(audioConstraints), WTFMove(videoConstraints), DeferredWrapper::create(&state, globalObject(), promiseDeferred), ec);
     setDOMException(&state, ec);
     return promiseDeferred->promise();
 }

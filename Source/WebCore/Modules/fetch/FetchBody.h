@@ -52,11 +52,11 @@ class ScriptExecutionContext;
 
 class FetchBody {
 public:
-    void arrayBuffer(FetchBodyOwner&, DeferredWrapper&&);
-    void blob(FetchBodyOwner&, DeferredWrapper&&);
-    void json(FetchBodyOwner&, DeferredWrapper&&);
-    void text(FetchBodyOwner&, DeferredWrapper&&);
-    void formData(FetchBodyOwner&, DeferredWrapper&& promise) { promise.reject(0); }
+    void arrayBuffer(FetchBodyOwner&, Ref<DeferredWrapper>&&);
+    void blob(FetchBodyOwner&, Ref<DeferredWrapper>&&);
+    void json(FetchBodyOwner&, Ref<DeferredWrapper>&&);
+    void text(FetchBodyOwner&, Ref<DeferredWrapper>&&);
+    void formData(FetchBodyOwner&, Ref<DeferredWrapper>&& promise) { promise.get().reject(0); }
 
 #if ENABLE(STREAMS_API)
     void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);
@@ -83,7 +83,7 @@ public:
 
     FetchBodyConsumer& consumer() { return m_consumer; }
 
-    void cleanConsumePromise() { m_consumePromise = Nullopt; }
+    void cleanConsumePromise() { m_consumePromise = nullptr; }
 
 private:
     FetchBody(Ref<Blob>&&);
@@ -93,13 +93,13 @@ private:
     FetchBody(String&&);
     FetchBody(Type type) : m_type(type) { }
 
-    void consume(FetchBodyOwner&, DeferredWrapper&&);
+    void consume(FetchBodyOwner&, Ref<DeferredWrapper>&&);
 
     Vector<uint8_t> extractFromText() const;
-    void consumeArrayBuffer(DeferredWrapper&);
-    void consumeArrayBufferView(DeferredWrapper&);
-    void consumeText(DeferredWrapper&);
-    void consumeBlob(FetchBodyOwner&, DeferredWrapper&&);
+    void consumeArrayBuffer(Ref<DeferredWrapper>&&);
+    void consumeArrayBufferView(Ref<DeferredWrapper>&&);
+    void consumeText(Ref<DeferredWrapper>&&);
+    void consumeBlob(FetchBodyOwner&, Ref<DeferredWrapper>&&);
 
     Type m_type { Type::None };
     String m_contentType;
@@ -112,7 +112,7 @@ private:
     String m_text;
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
-    Optional<DeferredWrapper> m_consumePromise;
+    RefPtr<DeferredWrapper> m_consumePromise;
 };
 
 } // namespace WebCore

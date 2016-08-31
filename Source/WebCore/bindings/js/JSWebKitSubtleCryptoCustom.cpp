@@ -174,12 +174,12 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
 
     
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
+        fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     ExceptionCode ec = 0;
@@ -229,12 +229,12 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
     }
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
+        fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     ExceptionCode ec = 0;
@@ -284,12 +284,12 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
     }
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
+        fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     ExceptionCode ec = 0;
@@ -345,12 +345,12 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
     }
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](bool result) mutable {
-        wrapper.resolve(result);
+        wrapper->resolve(result);
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     ExceptionCode ec = 0;
@@ -390,12 +390,12 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
     }
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
+        fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     ExceptionCode ec = 0;
@@ -444,17 +444,17 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
     }
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](CryptoKey* key, CryptoKeyPair* keyPair) mutable {
         ASSERT(key || keyPair);
         ASSERT(!key || !keyPair);
         if (key)
-            wrapper.resolve(key);
+            wrapper->resolve(key);
         else
-            wrapper.resolve(keyPair);
+            wrapper->resolve(keyPair);
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     ExceptionCode ec = 0;
@@ -581,12 +581,12 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
     }
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](CryptoKey& result) mutable {
-        wrapper.resolve(result);
+        wrapper->resolve(result);
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     WebCore::importKey(state, keyFormat, data, WTFMove(algorithm), WTFMove(parameters), extractable, keyUsages, WTFMove(successCallback), WTFMove(failureCallback));
@@ -650,12 +650,12 @@ JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
         return throwTypeError(&state, scope);
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
-        fulfillPromiseWithArrayBuffer(wrapper, result.data(), result.size());
+        fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     WebCore::exportKey(state, keyFormat, *key, WTFMove(successCallback), WTFMove(failureCallback));
@@ -706,25 +706,25 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
     }
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
 
     auto exportSuccessCallback = [keyFormat, algorithm, parameters, wrappingKey, wrapper](const Vector<uint8_t>& exportedKeyData) mutable {
         auto encryptSuccessCallback = [wrapper](const Vector<uint8_t>& encryptedData) mutable {
-            fulfillPromiseWithArrayBuffer(wrapper, encryptedData.data(), encryptedData.size());
+            fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), encryptedData.data(), encryptedData.size());
         };
         auto encryptFailureCallback = [wrapper]() mutable {
-            wrapper.reject(nullptr);
+            wrapper->reject(nullptr);
         };
         ExceptionCode ec = 0;
         algorithm->encryptForWrapKey(*parameters, *wrappingKey, std::make_pair(exportedKeyData.data(), exportedKeyData.size()), WTFMove(encryptSuccessCallback), WTFMove(encryptFailureCallback), ec);
         if (ec) {
             // FIXME: Report failure details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
-            wrapper.reject(nullptr);
+            wrapper->reject(nullptr);
         }
     };
 
     auto exportFailureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     ExceptionCode ec = 0;
@@ -809,27 +809,27 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
     }
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
     Strong<JSDOMGlobalObject> domGlobalObject(state.vm(), globalObject());
 
     auto decryptSuccessCallback = [domGlobalObject, keyFormat, unwrappedKeyAlgorithm, unwrappedKeyAlgorithmParameters, extractable, keyUsages, wrapper](const Vector<uint8_t>& result) mutable {
         auto importSuccessCallback = [wrapper](CryptoKey& key) mutable {
-            wrapper.resolve(key);
+            wrapper->resolve(key);
         };
         auto importFailureCallback = [wrapper]() mutable {
-            wrapper.reject(nullptr);
+            wrapper->reject(nullptr);
         };
         ExecState& state = *domGlobalObject->globalExec();
         WebCore::importKey(state, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithm, unwrappedKeyAlgorithmParameters, extractable, keyUsages, WTFMove(importSuccessCallback), WTFMove(importFailureCallback));
         if (state.hadException()) {
             // FIXME: Report exception details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
             state.clearException();
-            wrapper.reject(nullptr);
+            wrapper->reject(nullptr);
         }
     };
 
     auto decryptFailureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+        wrapper->reject(nullptr);
     };
 
     ExceptionCode ec = 0;

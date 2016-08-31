@@ -44,7 +44,7 @@ JSValue JSReadableStreamSource::start(ExecState& state)
     m_controller.set(state.vm(), jsSource, state.argument(0));
 
     JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
-    wrapped().start(ReadableStreamDefaultController(controller), DeferredWrapper(&state, globalObject(), promiseDeferred));
+    wrapped().start(ReadableStreamDefaultController(controller), DeferredWrapper::create(&state, globalObject(), promiseDeferred));
     return promiseDeferred->promise();
 }
 

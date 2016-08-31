@@ -30,7 +30,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
-#include "MediaDevices.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

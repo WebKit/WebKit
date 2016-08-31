@@ -57,8 +57,8 @@ public:
 
     void clean() { m_buffer = nullptr; }
 
-    void resolve(DeferredWrapper&);
-    void resolveWithData(DeferredWrapper&, const unsigned char*, unsigned);
+    void resolve(Ref<DeferredWrapper>&&);
+    void resolveWithData(Ref<DeferredWrapper>&&, const unsigned char*, unsigned);
 
     bool hasData() const { return !!m_buffer; }
 

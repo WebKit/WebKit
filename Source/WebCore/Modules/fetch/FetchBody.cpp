@@ -124,14 +124,14 @@ void FetchBody::updateContentType(FetchHeaders& headers)
         headers.fastSet(HTTPHeaderName::ContentType, m_contentType);
 }
 
-void FetchBody::arrayBuffer(FetchBodyOwner& owner, DeferredWrapper&& promise)
+void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredWrapper>&& promise)
 {
     ASSERT(m_type != Type::None);
     m_consumer.setType(FetchBodyConsumer::Type::ArrayBuffer);
     consume(owner, WTFMove(promise));
 }
 
-void FetchBody::blob(FetchBodyOwner& owner, DeferredWrapper&& promise)
+void FetchBody::blob(FetchBodyOwner& owner, Ref<DeferredWrapper>&& promise)
 {
     ASSERT(m_type != Type::None);
     m_consumer.setType(FetchBodyConsumer::Type::Blob);
@@ -139,31 +139,31 @@ void FetchBody::blob(FetchBodyOwner& owner, DeferredWrapper&& promise)
     consume(owner, WTFMove(promise));
 }
 
-void FetchBody::json(FetchBodyOwner& owner, DeferredWrapper&& promise)
+void FetchBody::json(FetchBodyOwner& owner, Ref<DeferredWrapper>&& promise)
 {
     ASSERT(m_type != Type::None);
 
     if (m_type == Type::Text) {
-        fulfillPromiseWithJSON(promise, m_text);
+        fulfillPromiseWithJSON(WTFMove(promise), m_text);
         return;
     }
     m_consumer.setType(FetchBodyConsumer::Type::JSON);
     consume(owner, WTFMove(promise));
 }
 
-void FetchBody::text(FetchBodyOwner& owner, DeferredWrapper&& promise)
+void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredWrapper>&& promise)
 {
     ASSERT(m_type != Type::None);
 
     if (m_type == Type::Text) {
-        promise.resolve(m_text);
+        promise->resolve(m_text);
         return;
     }
     m_consumer.setType(FetchBodyConsumer::Type::Text);
     consume(owner, WTFMove(promise));
 }
 
-void FetchBody::consume(FetchBodyOwner& owner, DeferredWrapper&& promise)
+void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredWrapper>&& promise)
 {
     // This should be handled by FetchBodyOwner
     ASSERT(m_type != Type::None);
@@ -172,13 +172,13 @@ void FetchBody::consume(FetchBodyOwner& owner, DeferredWrapper&& promise)
 
     switch (m_type) {
     case Type::ArrayBuffer:
-        consumeArrayBuffer(promise);
+        consumeArrayBuffer(WTFMove(promise));
         return;
     case Type::ArrayBufferView:
-        consumeArrayBufferView(promise);
+        consumeArrayBufferView(WTFMove(promise));
         return;
     case Type::Text:
-        consumeText(promise);
+        consumeText(WTFMove(promise));
         return;
     case Type::Blob:
         consumeBlob(owner, WTFMove(promise));
@@ -187,11 +187,11 @@ void FetchBody::consume(FetchBodyOwner& owner, DeferredWrapper&& promise)
         m_consumePromise = WTFMove(promise);
         return;
     case Type::Loaded:
-        m_consumer.resolve(promise);
+        m_consumer.resolve(WTFMove(promise));
         return;
     case Type::FormData:
         // FIXME: Support consuming FormData.
-        promise.reject(0);
+        promise->reject(0);
         return;
     default:
         ASSERT_NOT_REACHED();
@@ -246,28 +246,28 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
 }
 #endif
 
-void FetchBody::consumeArrayBuffer(DeferredWrapper& promise)
+void FetchBody::consumeArrayBuffer(Ref<DeferredWrapper>&& promise)
 {
     ASSERT(m_data);
-    m_consumer.resolveWithData(promise, static_cast<const uint8_t*>(m_data->data()), m_data->byteLength());
+    m_consumer.resolveWithData(WTFMove(promise), static_cast<const uint8_t*>(m_data->data()), m_data->byteLength());
     m_data = nullptr;
 }
 
-void FetchBody::consumeArrayBufferView(DeferredWrapper& promise)
+void FetchBody::consumeArrayBufferView(Ref<DeferredWrapper>&& promise)
 {
     ASSERT(m_dataView);
-    m_consumer.resolveWithData(promise, static_cast<const uint8_t*>(m_dataView->baseAddress()), m_dataView->byteLength());
+    m_consumer.resolveWithData(WTFMove(promise), static_cast<const uint8_t*>(m_dataView->baseAddress()), m_dataView->byteLength());
     m_dataView = nullptr;
 }
 
-void FetchBody::consumeText(DeferredWrapper& promise)
+void FetchBody::consumeText(Ref<DeferredWrapper>&& promise)
 {
     Vector<uint8_t> data = extractFromText();
-    m_consumer.resolveWithData(promise, data.data(), data.size());
+    m_consumer.resolveWithData(WTFMove(promise), data.data(), data.size());
     m_text = { };
 }
 
-void FetchBody::consumeBlob(FetchBodyOwner& owner, DeferredWrapper&& promise)
+void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredWrapper>&& promise)
 {
     ASSERT(m_blob);
 
@@ -290,17 +290,15 @@ void FetchBody::loadingFailed()
 {
     if (m_consumePromise) {
         m_consumePromise->reject(0);
-        m_consumePromise = Nullopt;
+        m_consumePromise = nullptr;
     }
 }
 
 void FetchBody::loadingSucceeded()
 {
     m_type = m_consumer.hasData() ? Type::Loaded : Type::None;
-    if (m_consumePromise) {
-        m_consumer.resolve(*m_consumePromise);
-        m_consumePromise = Nullopt;
-    }
+    if (m_consumePromise)
+        m_consumer.resolve(m_consumePromise.releaseNonNull());
 }
 
 RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& context) const

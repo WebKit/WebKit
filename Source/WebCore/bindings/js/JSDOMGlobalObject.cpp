@@ -28,6 +28,7 @@
 #include "JSDOMGlobalObject.h"
 
 #include "Document.h"
+#include "JSDOMPromise.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
 #include "JSMediaStream.h"
@@ -58,6 +59,10 @@ JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrappe
     , m_world(WTFMove(world))
     , m_worldIsNormal(m_world->isNormal())
     , m_builtinInternalFunctions(vm)
+{
+}
+
+JSDOMGlobalObject::~JSDOMGlobalObject()
 {
 }
 
@@ -166,6 +171,9 @@ void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     for (auto& constructor : thisObject->constructors().values())
         visitor.append(&constructor);
+
+    for (auto& deferredWrapper : thisObject->deferredWrappers())
+        deferredWrapper->visitAggregate(visitor);
 
     thisObject->m_builtinInternalFunctions.visit(visitor);
 }

@@ -60,11 +60,11 @@ public:
     using FetchPromise = DOMPromise<FetchResponse>;
     static void fetch(ScriptExecutionContext&, FetchRequest&, FetchPromise&&);
 
-    void consume(unsigned, DeferredWrapper&&);
+    void consume(unsigned, Ref<DeferredWrapper>&&);
 #if ENABLE(STREAMS_API)
     void startConsumingStream(unsigned);
     void consumeChunk(Ref<JSC::Uint8Array>&&);
-    void finishConsumingStream(DeferredWrapper&&);
+    void finishConsumingStream(Ref<DeferredWrapper>&&);
 #endif
 
     void setStatus(int, const String&, ExceptionCode&);

@@ -71,70 +71,70 @@ bool FetchBodyOwner::isDisturbedOrLocked() const
     return false;
 }
 
-void FetchBodyOwner::arrayBuffer(DeferredWrapper&& promise)
+void FetchBodyOwner::arrayBuffer(Ref<DeferredWrapper>&& promise)
 {
     if (m_body.isEmpty()) {
-        fulfillPromiseWithArrayBuffer(promise, nullptr, 0);
+        fulfillPromiseWithArrayBuffer(WTFMove(promise), nullptr, 0);
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise.reject(TypeError);
+        promise->reject(TypeError);
         return;
     }
     m_isDisturbed = true;
     m_body.arrayBuffer(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::blob(DeferredWrapper&& promise)
+void FetchBodyOwner::blob(Ref<DeferredWrapper>&& promise)
 {
     if (m_body.isEmpty()) {
-        promise.resolve(Blob::create(Vector<uint8_t>(), Blob::normalizedContentType(extractMIMETypeFromMediaType(m_body.contentType()))));
+        promise->resolve(Blob::create(Vector<uint8_t>(), Blob::normalizedContentType(extractMIMETypeFromMediaType(m_body.contentType()))));
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise.reject(TypeError);
+        promise->reject(TypeError);
         return;
     }
     m_isDisturbed = true;
     m_body.blob(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::formData(DeferredWrapper&& promise)
+void FetchBodyOwner::formData(Ref<DeferredWrapper>&& promise)
 {
     if (m_body.isEmpty()) {
-        promise.reject(0);
+        promise->reject(0);
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise.reject(TypeError);
+        promise->reject(TypeError);
         return;
     }
     m_isDisturbed = true;
     m_body.formData(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::json(DeferredWrapper&& promise)
+void FetchBodyOwner::json(Ref<DeferredWrapper>&& promise)
 {
     if (m_body.isEmpty()) {
-        promise.reject(SYNTAX_ERR);
+        promise->reject(SYNTAX_ERR);
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise.reject(TypeError);
+        promise->reject(TypeError);
         return;
     }
     m_isDisturbed = true;
     m_body.json(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::text(DeferredWrapper&& promise)
+void FetchBodyOwner::text(Ref<DeferredWrapper>&& promise)
 {
     if (m_body.isEmpty()) {
-        promise.resolve(String());
+        promise->resolve(String());
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise.reject(TypeError);
+        promise->reject(TypeError);
         return;
     }
     m_isDisturbed = true;

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest& request, DeferredWrapper&& promise)
+void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest& request, Ref<DeferredWrapper>&& promise)
 {
     if (!scope.scriptExecutionContext())
         return;

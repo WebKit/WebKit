@@ -733,7 +733,7 @@ bool ApplePaySession::canMakePayments(ScriptExecutionContext& scriptExecutionCon
     return paymentCoordinator.canMakePayments();
 }
 
-void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scriptExecutionContext, const String& merchantIdentifier, DeferredWrapper&& promise, ExceptionCode& ec)
+void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scriptExecutionContext, const String& merchantIdentifier, Ref<DeferredWrapper>&& passedPromise, ExceptionCode& ec)
 {
     auto& document = downcast<Document>(scriptExecutionContext);
     DOMWindow& window = *document.domWindow();
@@ -745,12 +745,13 @@ void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scri
         return;
     }
 
+    RefPtr<DeferredWrapper> promise(WTFMove(passedPromise));
     if (!shouldDiscloseApplePayCapability(document)) {
         auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
         bool canMakePayments = paymentCoordinator.canMakePayments();
 
         RunLoop::main().dispatch([promise, canMakePayments]() mutable {
-            promise.resolve(canMakePayments);
+            promise->resolve(canMakePayments);
         });
         return;
     }
@@ -758,7 +759,7 @@ void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scri
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
 
     paymentCoordinator.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [promise](bool canMakePayments) mutable {
-        promise.resolve(canMakePayments);
+        promise->resolve(canMakePayments);
     });
 }
 

@@ -41,7 +41,7 @@ class FetchRequest;
 
 class WorkerGlobalScopeFetch {
 public:
-    static void fetch(WorkerGlobalScope&, FetchRequest&, DeferredWrapper&&);
+    static void fetch(WorkerGlobalScope&, FetchRequest&, Ref<DeferredWrapper>&&);
 };
 
 } // namespace WebCore

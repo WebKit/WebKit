@@ -59,20 +59,20 @@ static String textFromUTF8(const unsigned char* data, unsigned length)
     return decoder->decodeAndFlush(reinterpret_cast<const char*>(data), length);
 }
 
-void FetchBodyConsumer::resolveWithData(DeferredWrapper& promise, const unsigned char* data, unsigned length)
+void FetchBodyConsumer::resolveWithData(Ref<DeferredWrapper>&& promise, const unsigned char* data, unsigned length)
 {
     switch (m_type) {
     case Type::ArrayBuffer:
-        fulfillPromiseWithArrayBuffer(promise, data, length);
+        fulfillPromiseWithArrayBuffer(WTFMove(promise), data, length);
         return;
     case Type::Blob:
-        promise.resolveWithNewlyCreated(blobFromData(data, length, m_contentType));
+        promise->resolveWithNewlyCreated(blobFromData(data, length, m_contentType));
         return;
     case Type::JSON:
-        fulfillPromiseWithJSON(promise, textFromUTF8(data, length));
+        fulfillPromiseWithJSON(WTFMove(promise), textFromUTF8(data, length));
         return;
     case Type::Text:
-        promise.resolve(textFromUTF8(data, length));
+        promise->resolve(textFromUTF8(data, length));
         return;
     case Type::None:
         ASSERT_NOT_REACHED();
@@ -80,21 +80,21 @@ void FetchBodyConsumer::resolveWithData(DeferredWrapper& promise, const unsigned
     }
 }
 
-void FetchBodyConsumer::resolve(DeferredWrapper& promise)
+void FetchBodyConsumer::resolve(Ref<DeferredWrapper>&& promise)
 {
     ASSERT(m_type != Type::None);
     switch (m_type) {
     case Type::ArrayBuffer:
-        fulfillPromiseWithArrayBuffer(promise, takeAsArrayBuffer().get());
+        fulfillPromiseWithArrayBuffer(WTFMove(promise), takeAsArrayBuffer().get());
         return;
     case Type::Blob:
-        promise.resolveWithNewlyCreated(takeAsBlob());
+        promise->resolveWithNewlyCreated(takeAsBlob());
         return;
     case Type::JSON:
-        fulfillPromiseWithJSON(promise, takeAsText());
+        fulfillPromiseWithJSON(WTFMove(promise), takeAsText());
         return;
     case Type::Text:
-        promise.resolve(takeAsText());
+        promise->resolve(takeAsText());
         return;
     case Type::None:
         ASSERT_NOT_REACHED();
