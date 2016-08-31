@@ -1,5 +1,14 @@
 2016-08-30  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the 32-bit build.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/WebProcessProxy.h:
+
+2016-08-30  Anders Carlsson  <andersca@apple.com>
+
         Switch more messages over to Connection::sendWithReply
         https://bugs.webkit.org/show_bug.cgi?id=161415
 
