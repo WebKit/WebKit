@@ -1050,7 +1050,6 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] http/tests/media/media-source/mediasource-append-buffer.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-closed.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-endofstream-invaliderror.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-is-type-supported.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-multiple-attach.html [ Pass ]
@@ -1061,6 +1060,7 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 
 # Flaky Media Source tests
 webkit.org/b/149816 [ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-updating.html [ Pass Timeout ]
+webkit.org/b/161391 [ Yosemite+ ] http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure ]
 
 # These two tests have "InvalidStateError (DOM Exception 11): The object is in an invalid state." in output.
 [ Yosemite+ ] media/media-source/media-source-duplicate-seeked.html [ Failure ]
