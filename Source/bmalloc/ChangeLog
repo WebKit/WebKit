@@ -1,3 +1,11 @@
+2016-08-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for GCC ports
+
+        std::forward is declared in <utility> header.
+
+        * bmalloc/ScopeExit.h:
+
 2016-08-30  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: speed up the lock slow path
