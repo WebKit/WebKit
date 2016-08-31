@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebKit2Initialize.h"
+#import "config.h"
+#import "WebKit2Initialize.h"
 
-#include "LogInitialization.h"
-#include <WebCore/LogInitialization.h>
-#include <WebCore/URLParser.h>
-#include <runtime/InitializeThreading.h>
-#include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
+#import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/URLParser.h>
 
-#if PLATFORM(COCOA)
-#include "WebSystemInterface.h"
-#endif
-#if PLATFORM(IOS)
-#import <WebCore/WebCoreThreadSystemInterface.h>
-#endif
+using namespace WebCore;
 
 namespace WebKit {
 
-void InitializeWebKit2(ProcessType processType)
+void platformInitializeWebKit2(ProcessType processType)
 {
-#if PLATFORM(COCOA)
-    InitWebCoreSystemInterface();
-#endif
-    platformInitializeWebKit2(processType);
-#if PLATFORM(IOS)
-    InitWebCoreThreadSystemInterface();
-#endif
-
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
-
-#if !LOG_DISABLED
-    WebCore::initializeLogChannelsIfNecessary();
-    WebKit::initializeLogChannelsIfNecessary();
-#endif // !LOG_DISABLED
+    static dispatch_once_t initOnce;
+    
+    // We don't want to use NSUserDefaults in the child processes.
+    if (processType == UIProcess) {
+        dispatch_once(&initOnce, ^ {
+            URLParser::setEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"URLParserEnabled"]);
+        });
+    }
 }
 
-} // namespace WebKit
+}

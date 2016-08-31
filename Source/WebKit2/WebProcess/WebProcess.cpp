@@ -100,6 +100,7 @@
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+#include <WebCore/URLParser.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
@@ -260,6 +261,8 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 
 void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 {
+    URLParser::setEnabled(parameters.urlParserEnabled);
+    
     ASSERT(m_pageMap.isEmpty());
 
 #if OS(LINUX)

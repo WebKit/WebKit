@@ -63,6 +63,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << shouldSuppressMemoryPressureHandler;
     encoder << shouldUseTestingNetworkSession;
+    encoder << urlParserEnabled;
     encoder << urlSchemesRegisteredForCustomProtocols;
 #if PLATFORM(COCOA)
     encoder << parentProcessName;
@@ -127,6 +128,8 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.shouldSuppressMemoryPressureHandler))
         return false;
     if (!decoder.decode(result.shouldUseTestingNetworkSession))
+        return false;
+    if (!decoder.decode(result.urlParserEnabled))
         return false;
     if (!decoder.decode(result.urlSchemesRegisteredForCustomProtocols))
         return false;

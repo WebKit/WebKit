@@ -130,6 +130,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part)
     
 URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
 {
+    LOG(URLParser, "Parsing URL <%s> base <%s>", input.utf8().data(), base.string().utf8().data());
     m_url = { };
     m_buffer.clear();
     m_authorityOrHostBuffer.clear();
@@ -527,6 +528,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
 
     m_url.m_string = m_buffer.toString();
     m_url.m_isValid = true;
+    LOG(URLParser, "Parsed URL <%s>", m_url.m_string.utf8().data());
     return m_url;
 }
 
@@ -743,6 +745,18 @@ bool URLParser::allValuesEqual(const URL& a, const URL& b)
         && a.m_pathEnd == b.m_pathEnd
         && a.m_queryEnd == b.m_queryEnd
         && a.m_fragmentEnd == b.m_fragmentEnd;
+}
+
+static bool urlParserEnabled = false;
+
+void URLParser::setEnabled(bool enabled)
+{
+    urlParserEnabled = enabled;
+}
+
+bool URLParser::enabled()
+{
+    return urlParserEnabled;
 }
 
 } // namespace WebCore

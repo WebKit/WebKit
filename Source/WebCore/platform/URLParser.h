@@ -36,6 +36,9 @@ class URLParser {
 public:
     WEBCORE_EXPORT URL parse(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
     WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
+
+    WEBCORE_EXPORT static bool enabled();
+    WEBCORE_EXPORT static void setEnabled(bool);
 private:
     URL m_url;
     StringBuilder m_buffer;

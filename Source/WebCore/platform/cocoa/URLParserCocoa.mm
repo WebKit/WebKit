@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebKit2Initialize.h"
+#import "config.h"
+#import "URLParser.h"
 
-#include "LogInitialization.h"
-#include <WebCore/LogInitialization.h>
-#include <WebCore/URLParser.h>
-#include <runtime/InitializeThreading.h>
-#include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
-
-#if PLATFORM(COCOA)
-#include "WebSystemInterface.h"
-#endif
-#if PLATFORM(IOS)
-#import <WebCore/WebCoreThreadSystemInterface.h>
-#endif
-
-namespace WebKit {
-
-void InitializeWebKit2(ProcessType processType)
+namespace WebCore {
+    
+bool URLParser::URLParserEnabled()
 {
-#if PLATFORM(COCOA)
-    InitWebCoreSystemInterface();
-#endif
-    platformInitializeWebKit2(processType);
-#if PLATFORM(IOS)
-    InitWebCoreThreadSystemInterface();
-#endif
-
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
-
-#if !LOG_DISABLED
-    WebCore::initializeLogChannelsIfNecessary();
-    WebKit::initializeLogChannelsIfNecessary();
-#endif // !LOG_DISABLED
+    static bool use = [[NSUserDefaults standardUserDefaults] boolForKey:@"URLParserEnabled"];
+    return use;
 }
 
-} // namespace WebKit
+}

@@ -74,6 +74,7 @@ list(APPEND WebKit2_SOURCES
     Shared/gtk/ProcessExecutablePathGtk.cpp
     Shared/gtk/WebContextMenuItemGtk.cpp
     Shared/gtk/WebEventFactory.cpp
+    Shared/gtk/WebKit2InitializeGTK.cpp
 
     Shared/linux/WebMemorySamplerLinux.cpp
 
@@ -773,6 +774,7 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         Shared/gtk/NativeWebWheelEventGtk.cpp
         Shared/gtk/ProcessExecutablePathGtk.cpp
         Shared/gtk/WebEventFactory.cpp
+        Shared/gtk/WebKit2InitializeGTK.cpp
 
         Shared/soup/WebCoreArgumentCodersSoup.cpp
 

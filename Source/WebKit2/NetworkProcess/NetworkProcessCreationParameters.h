@@ -72,6 +72,7 @@ struct NetworkProcessCreationParameters {
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
     bool shouldUseTestingNetworkSession;
+    bool urlParserEnabled { false };
 
     Vector<String> urlSchemesRegisteredForCustomProtocols;
 

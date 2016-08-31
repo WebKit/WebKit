@@ -1,3 +1,41 @@
+2016-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add runtime flag for using URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=161363
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm: Added.
+        (WebKit::platformInitializeWebKit2):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+        * Shared/WebKit2Initialize.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/efl/WebKit2InitializeEFL.cpp: Added.
+        (WebKit::platformInitializeWebKit2):
+        * Shared/gtk/WebKit2InitializeGTK.cpp: Added.
+        (WebKit::platformInitializeWebKit2):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2016-08-30  Anders Carlsson  <andersca@apple.com>
 
         Use Connection::sendWithReply for the SecItem shim messages

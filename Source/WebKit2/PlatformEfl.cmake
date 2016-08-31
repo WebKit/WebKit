@@ -47,6 +47,7 @@ list(APPEND WebKit2_SOURCES
     Shared/efl/NativeWebWheelEventEfl.cpp
     Shared/efl/ProcessExecutablePathEfl.cpp
     Shared/efl/WebEventFactory.cpp
+    Shared/efl/WebKit2InitializeEFL.cpp
 
     Shared/linux/WebMemorySamplerLinux.cpp
 

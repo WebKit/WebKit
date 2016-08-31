@@ -59,6 +59,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SessionID.h>
+#include <WebCore/URLParser.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
@@ -196,6 +197,8 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
 
 void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)
 {
+    URLParser::setEnabled(parameters.urlParserEnabled);
+
     platformInitializeNetworkProcess(parameters);
 
     WTF::setCurrentThreadIsUserInitiated();

@@ -69,6 +69,7 @@
 #include <WebCore/LogInitialization.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
+#include <WebCore/URLParser.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -386,6 +387,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
+    parameters.urlParserEnabled = URLParser::enabled();
+    
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
 
@@ -547,6 +550,8 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
 
     WebProcessCreationParameters parameters;
 
+    parameters.urlParserEnabled = URLParser::enabled();
+    
     parameters.injectedBundlePath = injectedBundlePath();
     if (!parameters.injectedBundlePath.isEmpty())
         SandboxExtension::createHandle(parameters.injectedBundlePath, SandboxExtension::ReadOnly, parameters.injectedBundlePathExtensionHandle);

@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2Initialize_h
-#define WebKit2Initialize_h
+#pragma once
 
 namespace WebKit {
 
-void InitializeWebKit2();
-
+enum ProcessType {
+    ChildProcess,
+    UIProcess,
 };
 
-#endif // WebKit2Initialize_h
+void InitializeWebKit2(ProcessType = UIProcess);
+void platformInitializeWebKit2(ProcessType);
+
+};

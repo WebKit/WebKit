@@ -115,6 +115,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << uiProcessBundleResourcePathExtensionHandle;
     encoder << shouldEnableJIT;
     encoder << shouldEnableFTLJIT;
+    encoder << urlParserEnabled;
     encoder << !!bundleParameterData;
     if (bundleParameterData)
         encoder << bundleParameterData->dataReference();
@@ -258,6 +259,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.shouldEnableJIT))
         return false;
     if (!decoder.decode(parameters.shouldEnableFTLJIT))
+        return false;
+    if (!decoder.decode(parameters.urlParserEnabled))
         return false;
 
     bool hasBundleParameterData;
