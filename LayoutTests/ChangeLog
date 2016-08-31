@@ -1,3 +1,9 @@
+2016-08-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update iOS simulator WK1 flaky tests.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-08-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html as flaky.
