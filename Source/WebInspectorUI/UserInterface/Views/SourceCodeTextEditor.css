@@ -168,8 +168,14 @@
 }
 
 .popover .debugger-popover-content.function > .body {
+    min-width: 200px;
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.popover .debugger-popover-content.function > .body .CodeMirror {
+    height: auto;
+    background-color: inherit;
 }
 
 /* Custom styling for the hover menu attached to color tokens */

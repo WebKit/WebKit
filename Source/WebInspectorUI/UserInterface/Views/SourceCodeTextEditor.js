@@ -1473,24 +1473,37 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             if (candidate !== this.tokenTrackingController.candidate)
                 return;
 
-            let wrapper = document.createElement("div");
-            wrapper.classList.add("body", "formatted-function");
-            wrapper.textContent = data.description;
-
             let content = document.createElement("div");
             content.classList.add("function");
+
+            let title = document.createElement("div");
+            title.classList.add("title");
+            title.textContent = response.name || response.displayName || WebInspector.UIString("(anonymous function)");
+            content.appendChild(title);
 
             let location = response.location;
             let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
             let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
             let functionSourceCodeLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation);
-
-            let title = content.appendChild(document.createElement("div"));
-            title.classList.add("title");
-            title.textContent = response.name || response.displayName || WebInspector.UIString("(anonymous function)");
             title.appendChild(functionSourceCodeLink);
 
+            let wrapper = document.createElement("div");
+            wrapper.classList.add("body");
             content.appendChild(wrapper);
+
+            let codeMirror = WebInspector.CodeMirrorEditor.create(wrapper, {
+                mode: "text/javascript",
+                readOnly: "nocursor",
+            });
+            codeMirror.on("update", () => {
+                this._popover.update();
+            });
+
+            // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+            let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
+            workerProxy.formatJavaScript(data.description, "    ", false, ({formattedText}) => {
+                codeMirror.setValue(formattedText || data.description);
+            });
 
             this._showPopover(content);
         }

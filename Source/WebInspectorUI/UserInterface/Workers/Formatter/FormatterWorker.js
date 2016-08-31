@@ -68,18 +68,19 @@ FormatterWorker = class FormatterWorker
             return result;
         } catch (e) {}
 
-        // Format invalid JSON.
+        // Format invalid JSON and anonymous functions.
         // Some applications do not use JSON.parse but eval on JSON content. That is more permissive
         // so try to format invalid JSON. Again no source map data since it is not code.
-        if (/^\s*\{/.test(sourceText)) {
-            let invalidJSONFormatter = new EsprimaFormatter("(" + sourceText + ")", indentString);
-            if (invalidJSONFormatter.success) {
-                let formattedTextWithParens = invalidJSONFormatter.formattedText;
-                let result = {formattedText: formattedTextWithParens.substring(1, formattedTextWithParens.length - 2)}; // Remove "(" and ")\n".
-                if (includeSourceMapData)
-                    result.sourceMapData = {mapping: {original: [], formatted: []}, originalLineEndings:[], formattedLineEndings: []};
-                return result;
-            }
+        // Likewise, an unnamed function's toString() produces a "function() { ... }", which is not
+        // a valid program on its own. Wrap it in parenthesis to make it a function expression,
+        // which is a valid program.
+        let invalidJSONFormatter = new EsprimaFormatter("(" + sourceText + ")", indentString);
+        if (invalidJSONFormatter.success) {
+            let formattedTextWithParens = invalidJSONFormatter.formattedText;
+            let result = {formattedText: formattedTextWithParens.substring(1, formattedTextWithParens.length - 2)}; // Remove "(" and ")\n".
+            if (includeSourceMapData)
+                result.sourceMapData = {mapping: {original: [], formatted: []}, originalLineEndings:[], formattedLineEndings: []};
+            return result;
         }
 
         return {formattedText: null};

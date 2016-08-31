@@ -1,3 +1,23 @@
+2016-08-30  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Remove largest common indentation spacing in debugger popover
+        https://bugs.webkit.org/show_bug.cgi?id=161417
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .debugger-popover-content.function > .body):
+        (.popover .debugger-popover-content.function > .body .CodeMirror):
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction.didGetDetails):
+        Use CodeMirror and FormatterWorker to display a non-editable popover.
+
+        * UserInterface/Workers/Formatter/FormatterWorker.js:
+        (FormatterWorker.prototype.formatJavaScript):
+        Reworked logic to always attempt to format by wrapping content in "(...)".  This is
+        necessary for unnamed functions, since they are not valid programs by themselves.
+
 2016-08-30  Johan K. Jensen  <johan_jensen@apple.com>
 
         Web Inspector: Add resource timing model with timing information
