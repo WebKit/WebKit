@@ -1,3 +1,9 @@
+2016-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Bump GTK+ versions numbers.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-08-30  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] bump required version to 1.2.3
