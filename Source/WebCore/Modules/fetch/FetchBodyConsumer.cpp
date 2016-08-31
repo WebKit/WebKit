@@ -134,7 +134,7 @@ RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::takeAsArrayBuffer()
 Ref<Blob> FetchBodyConsumer::takeAsBlob()
 {
     if (!m_buffer)
-        return Blob::create();
+        return Blob::create(Vector<uint8_t>(), m_contentType);
 
     // FIXME: We should try to move m_buffer to Blob without doing extra copy.
     return blobFromData(reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size(), m_contentType);

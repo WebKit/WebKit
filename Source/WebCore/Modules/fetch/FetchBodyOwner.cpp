@@ -34,6 +34,7 @@
 #include "ExceptionCode.h"
 #include "FetchLoader.h"
 #include "FetchResponseSource.h"
+#include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "ResourceResponse.h"
 
@@ -87,7 +88,7 @@ void FetchBodyOwner::arrayBuffer(DeferredWrapper&& promise)
 void FetchBodyOwner::blob(DeferredWrapper&& promise)
 {
     if (m_body.isEmpty()) {
-        promise.resolve(Blob::create());
+        promise.resolve(Blob::create(Vector<uint8_t>(), Blob::normalizedContentType(extractMIMETypeFromMediaType(m_body.contentType()))));
         return;
     }
     if (isDisturbed()) {

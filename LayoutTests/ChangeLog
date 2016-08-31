@@ -1,3 +1,17 @@
+2016-08-31  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Blob type should be correctly set in case of empty body
+        https://bugs.webkit.org/show_bug.cgi?id=161431
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/fetch/fetch-as-blob-expected.txt: Added.
+        * http/tests/fetch/fetch-as-blob-worker-expected.txt: Added.
+        * http/tests/fetch/fetch-as-blob-worker.html: Added.
+        * http/tests/fetch/fetch-as-blob.html: Added.
+        * http/tests/fetch/fetch-as-blob.js: Added.
+        (promise_test):
+
 2016-08-31  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Streams API] Align getReader() with spec
