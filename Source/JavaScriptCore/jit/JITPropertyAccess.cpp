@@ -1332,6 +1332,8 @@ void JIT::privateCompileGetByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     patchBuffer.link(slowCases, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
     patchBuffer.link(fastDoneCase, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
     patchBuffer.link(slowDoneCase, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToNextHotPath));
+    if (!m_exceptionChecks.empty())
+        patchBuffer.link(m_exceptionChecks, byValInfo->exceptionHandler);
 
     for (const auto& callSite : m_calls) {
         if (callSite.to)
@@ -1420,6 +1422,9 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock);
     patchBuffer.link(slowCases, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
     patchBuffer.link(doneCases, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
+    if (!m_exceptionChecks.empty())
+        patchBuffer.link(m_exceptionChecks, byValInfo->exceptionHandler);
+
     for (const auto& callSite : m_calls) {
         if (callSite.to)
             patchBuffer.link(callSite.from, FunctionPtr(callSite.to));

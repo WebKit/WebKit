@@ -724,27 +724,33 @@ CompilationResult JIT::link()
     for (unsigned i = m_putByIds.size(); i--;)
         m_putByIds[i].finalize(patchBuffer);
 
-    for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
-        PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
-        CodeLocationJump notIndexJump = CodeLocationJump();
-        if (Jump(patchableNotIndexJump).isSet())
-            notIndexJump = CodeLocationJump(patchBuffer.locationOf(patchableNotIndexJump));
-        CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(byValCompilationInfo.badTypeJump));
-        CodeLocationLabel doneTarget = patchBuffer.locationOf(byValCompilationInfo.doneTarget);
-        CodeLocationLabel nextHotPathTarget = patchBuffer.locationOf(byValCompilationInfo.nextHotPathTarget);
-        CodeLocationLabel slowPathTarget = patchBuffer.locationOf(byValCompilationInfo.slowPathTarget);
-        CodeLocationCall returnAddress = patchBuffer.locationOf(byValCompilationInfo.returnAddress);
+    if (m_byValCompilationInfo.size()) {
+        CodeLocationLabel exceptionHandler = patchBuffer.locationOf(m_exceptionHandler);
 
-        *byValCompilationInfo.byValInfo = ByValInfo(
-            byValCompilationInfo.bytecodeIndex,
-            notIndexJump,
-            badTypeJump,
-            byValCompilationInfo.arrayMode,
-            byValCompilationInfo.arrayProfile,
-            differenceBetweenCodePtr(badTypeJump, doneTarget),
-            differenceBetweenCodePtr(badTypeJump, nextHotPathTarget),
-            differenceBetweenCodePtr(returnAddress, slowPathTarget));
+        for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
+            PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
+            CodeLocationJump notIndexJump = CodeLocationJump();
+            if (Jump(patchableNotIndexJump).isSet())
+                notIndexJump = CodeLocationJump(patchBuffer.locationOf(patchableNotIndexJump));
+            CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(byValCompilationInfo.badTypeJump));
+            CodeLocationLabel doneTarget = patchBuffer.locationOf(byValCompilationInfo.doneTarget);
+            CodeLocationLabel nextHotPathTarget = patchBuffer.locationOf(byValCompilationInfo.nextHotPathTarget);
+            CodeLocationLabel slowPathTarget = patchBuffer.locationOf(byValCompilationInfo.slowPathTarget);
+            CodeLocationCall returnAddress = patchBuffer.locationOf(byValCompilationInfo.returnAddress);
+
+            *byValCompilationInfo.byValInfo = ByValInfo(
+                byValCompilationInfo.bytecodeIndex,
+                notIndexJump,
+                badTypeJump,
+                exceptionHandler,
+                byValCompilationInfo.arrayMode,
+                byValCompilationInfo.arrayProfile,
+                differenceBetweenCodePtr(badTypeJump, doneTarget),
+                differenceBetweenCodePtr(badTypeJump, nextHotPathTarget),
+                differenceBetweenCodePtr(returnAddress, slowPathTarget));
+        }
     }
+
     for (unsigned i = 0; i < m_callCompilationInfo.size(); ++i) {
         CallCompilationInfo& compilationInfo = m_callCompilationInfo[i];
         CallLinkInfo& info = *compilationInfo.callLinkInfo;
@@ -824,7 +830,8 @@ void JIT::privateCompileExceptionHandlers()
         jumpToExceptionHandler();
     }
 
-    if (!m_exceptionChecks.empty()) {
+    if (!m_exceptionChecks.empty() || m_byValCompilationInfo.size()) {
+        m_exceptionHandler = label();
         m_exceptionChecks.link(this);
 
         copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
