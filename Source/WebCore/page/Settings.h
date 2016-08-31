@@ -77,6 +77,18 @@ enum class UserInterfaceDirectionPolicy {
     System
 };
 
+enum PDFImageCachingPolicy {
+    PDFImageCachingEnabled,
+    PDFImageCachingBelowMemoryLimit,
+    PDFImageCachingDisabled,
+    PDFImageCachingClipBoundsOnly,
+#if PLATFORM(IOS)
+    PDFImageCachingDefault = PDFImageCachingBelowMemoryLimit
+#else
+    PDFImageCachingDefault = PDFImageCachingEnabled
+#endif
+};
+
 typedef unsigned DebugOverlayRegions;
 
 class Settings : public RefCounted<Settings> {
@@ -145,9 +157,6 @@ public:
 
     WEBCORE_EXPORT void setPreferMIMETypeForImages(bool);
     bool preferMIMETypeForImages() const { return m_preferMIMETypeForImages; }
-
-    WEBCORE_EXPORT void setCachedPDFImageEnabled(bool);
-    bool isCachedPDFImageEnabled() const { return m_isCachedPDFImageEnabled; }
 
     WEBCORE_EXPORT void setPluginsEnabled(bool);
     bool arePluginsEnabled() const { return m_arePluginsEnabled; }
@@ -331,7 +340,6 @@ private:
     bool m_loadsImagesAutomatically : 1;
     bool m_areImagesEnabled : 1;
     bool m_preferMIMETypeForImages : 1;
-    bool m_isCachedPDFImageEnabled : 1;
     bool m_arePluginsEnabled : 1;
     bool m_isScriptEnabled : 1;
     bool m_needsAdobeFrameReloadingQuirk : 1;
