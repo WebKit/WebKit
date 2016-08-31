@@ -187,6 +187,8 @@ public:
 
         if (m_object->allowsAccessFrom(visitor->callFrame()))
             m_result = m_object->getPrototype(m_exec->vm(), m_exec);
+        else
+            m_result = jsNull();
         return StackVisitor::Done;
     }
 

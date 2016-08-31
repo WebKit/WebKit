@@ -16,7 +16,8 @@
         {
             targetWindow = document.getElementById("target").contentWindow;
 
-            shouldBeUndefined("Object.getPrototypeOf(targetWindow)");
+            shouldBeNull("Object.getPrototypeOf(targetWindow)");
+            shouldBeNull("Object.getPrototypeOf(targetWindow.location)");
             shouldThrowErrorName("targetWindow.history", "SecurityError");
 
             finishJSTest();
