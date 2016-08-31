@@ -1,5 +1,25 @@
 2016-08-30  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203853. rdar://problem/27991580
+
+    2016-07-28  Mark Lam  <mark.lam@apple.com>
+
+            ASSERTION FAILED in errorProtoFuncToString() when Error name is a single char string.
+            https://bugs.webkit.org/show_bug.cgi?id=160324
+            <rdar://problem/27389572>
+
+            Reviewed by Keith Miller.
+
+            The issue is that errorProtoFuncToString() was using jsNontrivialString() to
+            generate the error string even when the name string can be a single character
+            string.  This is incorrect.  We should be using jsString() instead.
+
+            * runtime/ErrorPrototype.cpp:
+            (JSC::errorProtoFuncToString):
+            * tests/stress/errors-with-simple-names-or-messages-should-not-crash-toString.js: Added.
+
+2016-08-30  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r203834. rdar://problem/27991582
 
     2016-07-28  Mark Lam  <mark.lam@apple.com>
