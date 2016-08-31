@@ -54,7 +54,7 @@ interface FetchResponse {
     [JSBuiltin] readonly attribute ReadableStream? body;
 
     // Copy of FetchBody IDL as we want to implement some of these as built-ins.
-    [ImplementedAs=isDisturbed] readonly attribute boolean bodyUsed;
+    [JSBuiltin] readonly attribute boolean bodyUsed;
     [JSBuiltin] Promise arrayBuffer();
     [JSBuiltin] Promise blob();
     [JSBuiltin] Promise formData();

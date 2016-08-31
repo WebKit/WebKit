@@ -1,5 +1,18 @@
 2016-08-31  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Response bodyUsed should check for its body disturbed state
+        https://bugs.webkit.org/show_bug.cgi?id=161429
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/fetch/bodyUsed-expected.txt: Added.
+        * http/tests/fetch/bodyUsed-worker-expected.txt: Added.
+        * http/tests/fetch/bodyUsed-worker.html: Added.
+        * http/tests/fetch/bodyUsed.js: Added.
+        * http/tests/fetch/window/body-mixin-expected.txt:
+
+2016-08-31  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Blob type should be correctly set in case of empty body
         https://bugs.webkit.org/show_bug.cgi?id=161431
 

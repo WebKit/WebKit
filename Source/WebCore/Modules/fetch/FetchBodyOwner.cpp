@@ -58,7 +58,7 @@ void FetchBodyOwner::stop()
     ASSERT(!m_blobLoader);
 }
 
-bool FetchBodyOwner::isDisturbed() const
+bool FetchBodyOwner::isDisturbedOrLocked() const
 {
     if (m_isDisturbed)
         return true;
@@ -77,7 +77,7 @@ void FetchBodyOwner::arrayBuffer(DeferredWrapper&& promise)
         fulfillPromiseWithArrayBuffer(promise, nullptr, 0);
         return;
     }
-    if (isDisturbed()) {
+    if (isDisturbedOrLocked()) {
         promise.reject(TypeError);
         return;
     }
@@ -91,7 +91,7 @@ void FetchBodyOwner::blob(DeferredWrapper&& promise)
         promise.resolve(Blob::create(Vector<uint8_t>(), Blob::normalizedContentType(extractMIMETypeFromMediaType(m_body.contentType()))));
         return;
     }
-    if (isDisturbed()) {
+    if (isDisturbedOrLocked()) {
         promise.reject(TypeError);
         return;
     }
@@ -105,7 +105,7 @@ void FetchBodyOwner::formData(DeferredWrapper&& promise)
         promise.reject(0);
         return;
     }
-    if (isDisturbed()) {
+    if (isDisturbedOrLocked()) {
         promise.reject(TypeError);
         return;
     }
@@ -119,7 +119,7 @@ void FetchBodyOwner::json(DeferredWrapper&& promise)
         promise.reject(SYNTAX_ERR);
         return;
     }
-    if (isDisturbed()) {
+    if (isDisturbedOrLocked()) {
         promise.reject(TypeError);
         return;
     }
@@ -133,7 +133,7 @@ void FetchBodyOwner::text(DeferredWrapper&& promise)
         promise.resolve(String());
         return;
     }
-    if (isDisturbed()) {
+    if (isDisturbedOrLocked()) {
         promise.reject(TypeError);
         return;
     }

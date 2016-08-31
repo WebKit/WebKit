@@ -243,7 +243,7 @@ FetchHeaders* FetchRequest::initializeWith(const String& url, const Dictionary& 
 
 FetchHeaders* FetchRequest::initializeWith(FetchRequest& input, const Dictionary& init, ExceptionCode& ec)
 {
-    if (input.isDisturbed()) {
+    if (input.isDisturbedOrLocked()) {
         ec = TypeError;
         return nullptr;
     }
@@ -308,7 +308,7 @@ ResourceRequest FetchRequest::internalRequest() const
 
 RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext& context, ExceptionCode& ec)
 {
-    if (isDisturbed()) {
+    if (isDisturbedOrLocked()) {
         ec = TypeError;
         return nullptr;
     }

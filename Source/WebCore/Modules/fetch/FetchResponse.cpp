@@ -97,7 +97,7 @@ FetchResponse::FetchResponse(ScriptExecutionContext& context, FetchBody&& body, 
 Ref<FetchResponse> FetchResponse::cloneForJS()
 {
     ASSERT(scriptExecutionContext());
-    ASSERT(!isDisturbed());
+    ASSERT(!isDisturbedOrLocked());
     return adoptRef(*new FetchResponse(*scriptExecutionContext(), FetchBody(m_body), FetchHeaders::create(headers()), ResourceResponse(m_response)));
 }
 
@@ -270,7 +270,7 @@ void FetchResponse::consumeBodyAsStream()
 ReadableStreamSource* FetchResponse::createReadableStreamSource()
 {
     ASSERT(!m_readableStreamSource);
-    ASSERT(!isDisturbed());
+    ASSERT(!m_isDisturbed);
 
     if (body().isEmpty())
         return nullptr;

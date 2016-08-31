@@ -44,13 +44,15 @@ public:
     FetchBodyOwner(ScriptExecutionContext&, FetchBody&&);
 
     // Exposed Body API
-    bool isDisturbed() const;
+    bool isDisturbed() const { return m_isDisturbed; };
 
     void arrayBuffer(DeferredWrapper&&);
     void blob(DeferredWrapper&&);
     void formData(DeferredWrapper&&);
     void json(DeferredWrapper&&);
     void text(DeferredWrapper&&);
+
+    bool isDisturbedOrLocked() const;
 
     void loadBlob(Blob&, FetchBodyConsumer*);
 

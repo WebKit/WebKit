@@ -60,6 +60,17 @@ function initializeFetchResponse(body, init)
     return this;
 }
 
+function bodyUsed()
+{
+   if (!(this instanceof @Response))
+        throw @makeGetterTypeError("Response", "bodyUsed");
+
+    if (this.@body)
+        return @isReadableStreamDisturbed(this.@body);
+
+    return @Response.prototype.@isDisturbed.@call(this);
+}
+
 function body()
 {
     if (!(this instanceof @Response))
@@ -83,7 +94,7 @@ function clone()
     if (!(this instanceof @Response))
         throw @makeThisTypeError("Response", "clone");
 
-    if (@Response.prototype.@isDisturbed.@call(this))
+    if (@Response.prototype.@isDisturbed.@call(this) || (this.@body && @isReadableStreamLocked(this.@body)))
         throw new @TypeError("Cannot clone a disturbed Response");
 
     var cloned = @Response.prototype.@cloneForJS.@call(this);
