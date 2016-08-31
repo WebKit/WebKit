@@ -71,6 +71,7 @@ public:
             // It's now possible to simplify basic blocks by placing an Unreachable terminator right
             // after anything that invalidates AI.
             bool didClipBlock = false;
+            Vector<Node*> nodesToDelete;
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 m_state.beginBasicBlock(block);
                 for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
@@ -83,7 +84,7 @@ public:
                     if (!m_state.isValid()) {
                         NodeOrigin origin = block->at(nodeIndex)->origin;
                         for (unsigned killIndex = nodeIndex; killIndex < block->size(); ++killIndex)
-                            m_graph.m_allocator.free(block->at(killIndex));
+                            nodesToDelete.append(block->at(killIndex));
                         block->resize(nodeIndex);
                         block->appendNode(m_graph, SpecNone, Unreachable, origin);
                         didClipBlock = true;
@@ -96,6 +97,12 @@ public:
 
             if (didClipBlock) {
                 changed = true;
+
+                m_graph.invalidateNodeLiveness();
+
+                for (Node* node : nodesToDelete)
+                    m_graph.m_allocator.free(node);
+
                 m_graph.invalidateCFG();
                 m_graph.resetReachability();
                 m_graph.killUnreachableBlocks();
