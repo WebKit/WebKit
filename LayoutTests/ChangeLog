@@ -1,5 +1,20 @@
 2016-08-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        HTML constructor must throw when newTarget is itself
+        https://bugs.webkit.org/show_bug.cgi?id=161430
+
+        Reviewed by Antti Koivisto.
+
+        Added test cases for defining a custom element with the HTMLElement constructor,
+        and making sure the HTMLElement constructor throws an exception when newTarget is itself.
+
+        * fast/custom-elements/CustomElementRegistry-expected.txt:
+        * fast/custom-elements/CustomElementRegistry.html:
+        * fast/custom-elements/HTMLElement-constructor-expected.txt:
+        * fast/custom-elements/HTMLElement-constructor.html:
+
+2016-08-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add the check for reentrancy to CustomElementRegistry
         https://bugs.webkit.org/show_bug.cgi?id=161423
 

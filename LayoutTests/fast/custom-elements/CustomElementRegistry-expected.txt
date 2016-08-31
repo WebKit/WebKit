@@ -1,6 +1,7 @@
 
 PASS CustomElementRegistry interface must have define as a method 
 PASS customElements.define must throw when the element interface is not a constructor 
+PASS customElements.define must not throw the constructor is HTMLElement 
 PASS customElements.define must throw with an invalid name 
 PASS customElements.define must throw when there is already a custom element of the same name 
 PASS customElements.define must throw a NotSupportedError when there is already a custom element with the same class 

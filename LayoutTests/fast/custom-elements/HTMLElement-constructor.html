@@ -4,6 +4,7 @@
 <title>Custom Elements: HTMLElement must allow subclassing</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="HTMLElement must allow subclassing">
+<link rel="help" href="https://html.spec.whatwg.org/#html-element-constructors">
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
 <link rel='stylesheet' href='../../resources/testharness.css'>
@@ -13,16 +14,19 @@
 <script>
 
 test(function () {
-    class SomeDefinedElement extends HTMLElement {};
-    customElements.define('defined-element', SomeDefinedElement);
-    assert_throws({'name': 'TypeError'}, function () { new HTMLElement('defined-element'); });
-}, 'HTMLElement constructor must throw a TypeError when there is no derived class');
+    customElements.define('html-custom-element', HTMLElement);
+    assert_throws({'name': 'TypeError'}, function () { new HTMLElement(); });
+}, 'HTMLElement constructor must throw a TypeError when NewTarget is equal to itself');
+
+test(function () {
+    customElements.define('html-proxy-custom-element', new Proxy(HTMLElement, {}));
+    assert_throws({'name': 'TypeError'}, function () { new HTMLElement(); });
+}, 'HTMLElement constructor must throw a TypeError when NewTarget is equal to itself via a Proxy object');
 
 test(function () {
     class SomeCustomElement extends HTMLElement {};
-    assert_throws({'name': 'TypeError'}, function () { new SomeCustomElement; },
-        'Instantiating a custom element without calling customElements.define must throw TypeError');
-}, 'HTMLElement constructor must throw TypeError when custom element is not well defined');
+    assert_throws({'name': 'TypeError'}, function () { new SomeCustomElement; });
+}, 'HTMLElement constructor must throw TypeError when it has not been defined by customElements.define');
 
 test(function () {
     class CustomElementWithInferredTagName extends HTMLElement {};

@@ -29,6 +29,10 @@ test(function () {
 }, 'customElements.define must throw when the element interface is not a constructor');
 
 test(function () {
+    customElements.define('custom-html-element', HTMLElement);
+}, 'customElements.define must not throw the constructor is HTMLElement');
+
+test(function () {
     class MyCustomElement extends HTMLElement {};
 
     assert_throws({'name': 'SyntaxError'}, function () { customElements.define(null, MyCustomElement); },

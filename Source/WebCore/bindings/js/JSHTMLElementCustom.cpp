@@ -54,6 +54,12 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
         return throwConstructorScriptExecutionContextUnavailableError(exec, scope, "HTMLElement");
     ASSERT(context->isDocument());
 
+    JSValue newTargetValue = exec.thisValue();
+    auto* globalObject = jsConstructor->globalObject();
+    JSValue htmlElementConstructorValue = JSHTMLElement::getConstructor(vm, globalObject);
+    if (newTargetValue == htmlElementConstructorValue)
+        return throwVMTypeError(&exec, scope, ASCIILiteral("new.target is not a valid custom element constructor"));
+
     auto& document = downcast<Document>(*context);
 
     auto* window = document.domWindow();
@@ -64,14 +70,12 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
     if (!registry)
         return throwVMTypeError(&exec, scope, ASCIILiteral("new.target is not a valid custom element constructor"));
 
-    JSValue newTargetValue = exec.thisValue();
     JSObject* newTarget = newTargetValue.getObject();
     auto* elementInterface = registry->findInterface(newTarget);
     if (!elementInterface)
         return throwVMTypeError(&exec, scope, ASCIILiteral("new.target does not define a custom element"));
 
     if (!elementInterface->isUpgradingElement()) {
-        auto* globalObject = jsConstructor->globalObject();
         Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *globalObject);
         auto* newElementStructure = InternalFunction::createSubclassStructure(&exec, newTargetValue, baseStructure);
         if (UNLIKELY(exec.hadException()))
