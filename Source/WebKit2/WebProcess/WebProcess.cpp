@@ -246,10 +246,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
     m_pluginProcessConnectionManager->initializeConnection(connection);
 #endif
 
-#if ENABLE(SEC_ITEM_SHIM)
-    SecItemShim::singleton().initializeConnection(connection);
-#endif
-
     for (auto& supplement : m_supplements.values())
         supplement->initializeConnection(connection);
 

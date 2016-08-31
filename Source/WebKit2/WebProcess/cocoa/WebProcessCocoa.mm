@@ -249,7 +249,7 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 #endif
 
 #if ENABLE(SEC_ITEM_SHIM)
-    SecItemShim::singleton().initialize(this);
+    initializeSecItemShim(*this);
 #endif
 }
 

@@ -23,39 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecItemShim_h
-#define SecItemShim_h
-
 #if ENABLE(SEC_ITEM_SHIM)
-
-#include "Connection.h"
 
 namespace WebKit {
 
 class ChildProcess;
-class SecItemResponseData;
 
-class SecItemShim : public IPC::Connection::WorkQueueMessageReceiver {
-WTF_MAKE_NONCOPYABLE(SecItemShim);
-public:
-    static SecItemShim& singleton();
-
-    void initialize(ChildProcess*);
-    void initializeConnection(IPC::Connection*);
-
-private:
-    SecItemShim();
-
-    // IPC::Connection::WorkQueueMessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    void secItemResponse(uint64_t requestID, const SecItemResponseData&);
-
-    Ref<WorkQueue> m_queue;
-};
+void initializeSecItemShim(ChildProcess&);
 
 } // namespace WebKit
 
 #endif // ENABLE(SEC_ITEM_SHIM)
-
-#endif // SecItemShim_h

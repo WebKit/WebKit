@@ -245,10 +245,6 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
 {
     ChildProcess::initializeConnection(connection);
 
-#if ENABLE(SEC_ITEM_SHIM)
-    SecItemShim::singleton().initializeConnection(connection);
-#endif
-
     NetworkProcessSupplementMap::const_iterator it = m_supplements.begin();
     NetworkProcessSupplementMap::const_iterator end = m_supplements.end();
     for (; it != end; ++it)

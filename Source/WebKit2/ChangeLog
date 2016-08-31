@@ -1,3 +1,43 @@
+2016-08-30  Anders Carlsson  <andersca@apple.com>
+
+        Use Connection::sendWithReply for the SecItem shim messages
+        https://bugs.webkit.org/show_bug.cgi?id=161419
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeConnection):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::workQueue):
+        (WebKit::sendSecItemRequest):
+        (WebKit::webSecItemCopyMatching):
+        (WebKit::webSecItemAdd):
+        (WebKit::webSecItemUpdate):
+        (WebKit::webSecItemDelete):
+        (WebKit::initializeSecItemShim):
+        (WebKit::responseMap): Deleted.
+        (WebKit::SecItemShim::singleton): Deleted.
+        (WebKit::SecItemShim::SecItemShim): Deleted.
+        (WebKit::generateSecItemRequestID): Deleted.
+        (WebKit::SecItemShim::secItemResponse): Deleted.
+        (WebKit::SecItemShim::initialize): Deleted.
+        (WebKit::SecItemShim::initializeConnection): Deleted.
+        * Shared/mac/SecItemShim.h:
+        * Shared/mac/SecItemShim.messages.in: Removed.
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::didReceiveMessage):
+        (WebKit::SecItemShimProxy::secItemRequest):
+        * UIProcess/mac/SecItemShimProxy.h:
+        * UIProcess/mac/SecItemShimProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2016-08-31  Andreas Kling  <akling@apple.com>
 
         DOM event handling should pass Event around by reference.

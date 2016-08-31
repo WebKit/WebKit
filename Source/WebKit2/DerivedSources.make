@@ -110,7 +110,6 @@ MESSAGE_RECEIVERS = \
     RemoteLayerTreeDrawingAreaProxy \
     RemoteObjectRegistry \
     RemoteScrollingCoordinator \
-    SecItemShim \
     SecItemShimProxy \
     SmartMagnificationController \
     StorageAreaMap \

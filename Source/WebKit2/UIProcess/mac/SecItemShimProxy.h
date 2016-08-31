@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecItemShimProxy_h
-#define SecItemShimProxy_h
+#pragma once
 
 #if ENABLE(SEC_ITEM_SHIM)
 
@@ -33,6 +32,7 @@
 namespace WebKit {
 
 class SecItemRequestData;
+class SecItemResponseData;
 
 class SecItemShimProxy : public IPC::Connection::WorkQueueMessageReceiver {
 WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
@@ -46,8 +46,9 @@ private:
 
     // IPC::Connection::WorkQueueMessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
-    void secItemRequest(IPC::Connection&, uint64_t requestID, const SecItemRequestData&);
+    void secItemRequest(const SecItemRequestData&, SecItemResponseData&);
 
     Ref<WorkQueue> m_queue;
 };
@@ -55,5 +56,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(SEC_ITEM_SHIM)
-
-#endif // SecItemShimProxy_h

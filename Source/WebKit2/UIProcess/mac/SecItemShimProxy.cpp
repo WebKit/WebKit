@@ -30,7 +30,6 @@
 
 #include "SecItemRequestData.h"
 #include "SecItemResponseData.h"
-#include "SecItemShimMessages.h"
 #include "SecItemShimProxyMessages.h"
 #include <Security/SecBase.h>
 #include <Security/SecItem.h>
@@ -57,10 +56,12 @@ void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
     connection.addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), &m_queue.get(), this);
 }
 
-void SecItemShimProxy::secItemRequest(IPC::Connection& connection, uint64_t requestID, const SecItemRequestData& request)
+void SecItemShimProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder&)
 {
-    SecItemResponseData response;
+}
 
+void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, SecItemResponseData& response)
+{
     switch (request.type()) {
     case SecItemRequestData::Invalid:
         LOG_ERROR("SecItemShimProxy::secItemRequest received an invalid data request. Please file a bug if you know how you caused this.");
@@ -93,8 +94,6 @@ void SecItemShimProxy::secItemRequest(IPC::Connection& connection, uint64_t requ
         break;
     }
     }
-
-    connection.send(Messages::SecItemShim::SecItemResponse(requestID, response), 0);
 }
 
 } // namespace WebKit

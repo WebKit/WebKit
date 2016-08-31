@@ -33,7 +33,6 @@
 #include "SecItemRequestData.h"
 #include "SecItemResponseData.h"
 #include "SecItemShimLibrary.h"
-#include "SecItemShimMessages.h"
 #include "SecItemShimProxyMessages.h"
 #include <Security/Security.h>
 #include <atomic>
@@ -58,54 +57,41 @@ extern "C" void _CFURLConnectionSetFrameworkStubs(const struct _CFNFrameworksStu
 
 namespace WebKit {
 
-static BlockingResponseMap<SecItemResponseData>& responseMap()
-{
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<BlockingResponseMap<SecItemResponseData>> responseMap;
-
-    std::call_once(onceFlag, [] {
-        responseMap.construct();
-    });
-
-    return responseMap;
-}
-
 static ChildProcess* sharedProcess;
 
-SecItemShim& SecItemShim::singleton()
+static WorkQueue& workQueue()
 {
-    static SecItemShim* shim;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        shim = adoptRef(new SecItemShim).leakRef();
+    static WorkQueue* workQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        workQueue = &WorkQueue::create("com.apple.WebKit.SecItemShim").leakRef();
+
     });
 
-    return *shim;
+    return *workQueue;
 }
 
-SecItemShim::SecItemShim()
-    : m_queue(WorkQueue::create("com.apple.WebKit.SecItemShim"))
+static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
-}
+    Optional<SecItemResponseData> response;
 
-static uint64_t generateSecItemRequestID()
-{
-    static std::atomic<int64_t> uniqueSecItemRequestID;
-    return ++uniqueSecItemRequestID;
-}
+    auto semaphore = adoptOSObject(dispatch_semaphore_create(0));
 
-static std::unique_ptr<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
-{
-    uint64_t requestID = generateSecItemRequestID();
-    if (!sharedProcess->parentProcessConnection()->send(Messages::SecItemShimProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
-        return nullptr;
+    sharedProcess->parentProcessConnection()->sendWithReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), 0, workQueue(), [&response, &semaphore](auto reply) {
+        if (reply)
+            response = WTFMove(std::get<0>(*reply));
 
-    return responseMap().waitForResponse(requestID);
+        dispatch_semaphore_signal(semaphore.get());
+    });
+
+    dispatch_semaphore_wait(semaphore.get(), DISPATCH_TIME_FOREVER);
+
+    return response;
 }
 
 static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 {
-    std::unique_ptr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::CopyMatching, query);
+    auto response = sendSecItemRequest(SecItemRequestData::CopyMatching, query);
     if (!response)
         return errSecInteractionNotAllowed;
 
@@ -115,7 +101,7 @@ static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 
 static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
 {
-    std::unique_ptr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Add, query);
+    auto response = sendSecItemRequest(SecItemRequestData::Add, query);
     if (!response)
         return errSecInteractionNotAllowed;
 
@@ -126,7 +112,7 @@ static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
 
 static OSStatus webSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
 {
-    std::unique_ptr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Update, query, attributesToUpdate);
+    auto response = sendSecItemRequest(SecItemRequestData::Update, query, attributesToUpdate);
     if (!response)
         return errSecInteractionNotAllowed;
     
@@ -135,21 +121,16 @@ static OSStatus webSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attribut
 
 static OSStatus webSecItemDelete(CFDictionaryRef query)
 {
-    std::unique_ptr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Delete, query);
+    auto response = sendSecItemRequest(SecItemRequestData::Delete, query);
     if (!response)
         return errSecInteractionNotAllowed;
     
     return response->resultCode();
 }
 
-void SecItemShim::secItemResponse(uint64_t requestID, const SecItemResponseData& response)
+void initializeSecItemShim(ChildProcess& process)
 {
-    responseMap().didReceiveResponse(requestID, std::make_unique<SecItemResponseData>(response));
-}
-
-void SecItemShim::initialize(ChildProcess* process)
-{
-    sharedProcess = process;
+    sharedProcess = &process;
 
 #if PLATFORM(IOS)
     struct _CFNFrameworksStubs stubs = {
@@ -174,11 +155,6 @@ void SecItemShim::initialize(ChildProcess* process)
     SecItemShimInitializeFunc func = reinterpret_cast<SecItemShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitSecItemShimInitialize"));
     func(callbacks);
 #endif
-}
-
-void SecItemShim::initializeConnection(IPC::Connection* connection)
-{
-    connection->addWorkQueueMessageReceiver(Messages::SecItemShim::messageReceiverName(), &m_queue.get(), this);
 }
 
 } // namespace WebKit
