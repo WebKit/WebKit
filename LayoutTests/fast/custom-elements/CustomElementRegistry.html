@@ -18,6 +18,17 @@ test(function () {
 }, 'CustomElementRegistry interface must have define as a method');
 
 test(function () {
+    assert_throws({'name': 'TypeError'}, function () { customElements.define('badname', 1); },
+        'customElements.define must throw a TypeError when the element interface is a number');
+    assert_throws({'name': 'TypeError'}, function () { customElements.define('badname', '123'); },
+        'customElements.define must throw a TypeError when the element interface is a string');
+    assert_throws({'name': 'TypeError'}, function () { customElements.define('badname', {}); },
+        'customElements.define must throw a TypeError when the element interface is an object');
+    assert_throws({'name': 'TypeError'}, function () { customElements.define('badname', []); },
+        'customElements.define must throw a TypeError when the element interface is an array');
+}, 'customElements.define must throw when the element interface is not a constructor');
+
+test(function () {
     class MyCustomElement extends HTMLElement {};
 
     assert_throws({'name': 'SyntaxError'}, function () { customElements.define(null, MyCustomElement); },
@@ -49,11 +60,19 @@ test(function () {
 
 test(function () {
     class SomeCustomElement extends HTMLElement {};
-    class OtherCustomElement extends HTMLElement {};
+
+    var calls = [];
+    var OtherCustomElement = new Proxy(class extends HTMLElement {}, {
+        get: function (target, name) {
+            calls.push(name);
+            return target[name];
+        }
+    })
 
     customElements.define('some-custom-element', SomeCustomElement);
     assert_throws({'name': 'NotSupportedError'}, function () { customElements.define('some-custom-element', OtherCustomElement); },
         'customElements.define must throw a NotSupportedError if the specified tag name is already used');
+    assert_array_equals(calls, [], 'customElements.define must validate the custom element name before getting the prototype of the constructor');
 
 }, 'customElements.define must throw when there is already a custom element of the same name');
 
@@ -64,18 +83,111 @@ test(function () {
     assert_throws({'name': 'NotSupportedError'}, function () { customElements.define('some-other-element', AnotherCustomElement); },
         'customElements.define must throw a NotSupportedError if the specified class already defines an element');
 
-}, 'customElements.define must throw when there is already a custom element with the same class');
+}, 'customElements.define must throw a NotSupportedError when there is already a custom element with the same class');
 
 test(function () {
-    assert_throws({'name': 'TypeError'}, function () { customElements.define('invalid-element', 1); },
-        'customElements.define must throw a TypeError when the element interface is a number');
-    assert_throws({'name': 'TypeError'}, function () { customElements.define('invalid-element', '123'); },
-        'customElements.define must throw a TypeError when the element interface is a string');
-    assert_throws({'name': 'TypeError'}, function () { customElements.define('invalid-element', {}); },
-        'customElements.define must throw a TypeError when the element interface is an object');
-    assert_throws({'name': 'TypeError'}, function () { customElements.define('invalid-element', []); },
-        'customElements.define must throw a TypeError when the element interface is an array');
-}, 'customElements.define must throw when the element interface is not a constructor');
+    var outerCalls = [];
+    var OuterCustomElement = new Proxy(class extends HTMLElement { }, {
+        get: function (target, name) {
+            outerCalls.push(name);
+            customElements.define('inner-custom-element', InnerCustomElement);
+            return target[name];
+        }
+    });
+    var innerCalls = [];
+    var InnerCustomElement = new Proxy(class extends HTMLElement { }, {
+        get: function (target, name) {
+            outerCalls.push(name);
+            return target[name];
+        }
+    });
+
+    assert_throws({'name': 'NotSupportedError'}, function () { customElements.define('outer-custom-element', OuterCustomElement); },
+        'customElements.define must throw a NotSupportedError if the specified class already defines an element');
+    assert_array_equals(outerCalls, ['prototype'], 'customElements.define must get "prototype"');
+    assert_array_equals(innerCalls, [],
+        'customElements.define must throw a NotSupportedError when element definition is running flag is set'
+        + ' before getting the prototype of the constructor');
+
+}, 'customElements.define must throw a NotSupportedError when element definition is running flag is set');
+
+test(function () {
+    var calls = [];
+    var ElementWithBadInnerConstructor = new Proxy(class extends HTMLElement { }, {
+        get: function (target, name) {
+            calls.push(name);
+            customElements.define('inner-custom-element', 1);
+            return target[name];
+        }
+    });
+
+    assert_throws({'name': 'TypeError'}, function () {
+        customElements.define('element-with-bad-inner-constructor', ElementWithBadInnerConstructor);
+    }, 'customElements.define must throw a NotSupportedError if IsConstructor(constructor) is false');
+
+    assert_array_equals(calls, ['prototype'], 'customElements.define must get "prototype"');
+}, 'customElements.define must check IsConstructor on the constructor before checking the element definition is running flag');
+
+test(function () {
+    var calls = [];
+    var ElementWithBadInnerName = new Proxy(class extends HTMLElement { }, {
+        get: function (target, name) {
+            calls.push(name);
+            customElements.define('badname', class extends HTMLElement {});
+            return target[name];
+        }
+    });
+
+    assert_throws({'name': 'SyntaxError'}, function () {
+        customElements.define('element-with-bad-inner-name', ElementWithBadInnerName);
+    }, 'customElements.define must throw a SyntaxError if the specified name is not a valid custom element name');
+
+    assert_array_equals(calls, ['prototype'], 'customElements.define must get "prototype"');
+}, 'customElements.define must validate the custom element name before checking the element definition is running flag');
+
+(function () {
+    var testCase = async_test('customElements.define must not throw'
+        +' when defining another custom element in a different global object during Get(constructor, "prototype")', {timeout: 100});
+
+    var iframe = document.createElement('iframe');
+    iframe.onload = function () {
+        testCase.step(function () {
+            var InnerCustomElement = class extends iframe.contentWindow.HTMLElement {};
+            var calls = [];
+            var proxy = new Proxy(class extends HTMLElement { }, {
+                get: function (target, name) {
+                    calls.push(name);
+                    iframe.contentWindow.customElements.define('another-custom-element', InnerCustomElement);
+                    return target[name];
+                }
+            })
+            customElements.define('element-with-inner-element-define', proxy);
+            assert_array_equals(calls, ['prototype'], 'customElements.define must get "prototype"');
+            assert_true(iframe.contentDocument.createElement('another-custom-element') instanceof InnerCustomElement);
+        });
+        document.body.removeChild(iframe);
+        testCase.done();
+    }
+
+    document.body.appendChild(iframe);
+})();
+
+test(function () {
+    var calls = [];
+    var ElementWithBadInnerName = new Proxy(class extends HTMLElement { }, {
+        get: function (target, name) {
+            calls.push(name);
+            customElements.define('badname', class extends HTMLElement {});
+            return target[name];
+        }
+    });
+
+    assert_throws({'name': 'SyntaxError'}, function () {
+        customElements.define('element-with-bad-inner-name', ElementWithBadInnerName);
+    }, 'customElements.define must throw a SyntaxError if the specified name is not a valid custom element name');
+
+    assert_array_equals(calls, ['prototype'], 'customElements.define must get "prototype"');
+}, '');
 
 test(function () {
     var calls = [];

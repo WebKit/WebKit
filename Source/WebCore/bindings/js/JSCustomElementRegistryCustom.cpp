@@ -92,6 +92,13 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     // https://github.com/w3c/webcomponents/issues/545
 
     CustomElementRegistry& registry = wrapped();
+
+    if (registry.elementDefinitionIsRunning()) {
+        throwNotSupportedError(state, scope, ASCIILiteral("Cannot define a custom element while defining another custom element"));
+        return jsUndefined();
+    }
+    TemporaryChange<bool> change(registry.elementDefinitionIsRunning(), true);
+
     if (registry.findInterface(localName)) {
         throwNotSupportedError(state, scope, ASCIILiteral("Cannot define multiple custom elements with the same tag name"));
         return jsUndefined();
