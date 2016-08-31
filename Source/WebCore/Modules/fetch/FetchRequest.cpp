@@ -193,10 +193,8 @@ static bool buildOptions(FetchRequest::InternalRequest& request, ScriptExecution
     return true;
 }
 
-static bool validateBodyAndMethod(const FetchBody& body, const FetchRequest::InternalRequest& internalRequest)
+static bool methodCanHaveBody(const FetchRequest::InternalRequest& internalRequest)
 {
-    if (body.isEmpty())
-        return true;
     return internalRequest.request.httpMethod() != "GET" && internalRequest.request.httpMethod() != "HEAD";
 }
 
@@ -257,6 +255,11 @@ FetchHeaders* FetchRequest::initializeWith(FetchRequest& input, const Dictionary
 void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRequest* request, ExceptionCode& ec)
 {
     if (!body.isNull()) {
+        if (!methodCanHaveBody(m_internalRequest)) {
+            ec = TypeError;
+            return;
+        }
+
         ASSERT(scriptExecutionContext());
         m_body = FetchBody::extract(*scriptExecutionContext(), execState, body);
         if (m_body.type() == FetchBody::Type::None) {
@@ -265,14 +268,16 @@ void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRe
         }
     }
     else if (request && !request->m_body.isEmpty()) {
+        if (!methodCanHaveBody(m_internalRequest)) {
+            ec = TypeError;
+            return;
+        }
+
         m_body = FetchBody::extractFromBody(&request->m_body);
         request->setDisturbed();
     }
 
     m_body.updateContentType(m_headers);
-
-    if (!validateBodyAndMethod(m_body, m_internalRequest))
-        ec = TypeError;
 }
 
 String FetchRequest::referrer() const

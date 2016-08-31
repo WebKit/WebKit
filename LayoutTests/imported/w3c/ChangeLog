@@ -1,3 +1,13 @@
+2016-08-31  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Request construction failure should not set "bodyUsed"
+        https://bugs.webkit.org/show_bug.cgi?id=161432
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/request/request-disturbed-expected.txt:
+        * web-platform-tests/fetch/api/request/request-disturbed.html:
+
 2016-08-31  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Streams API] Align getReader() with spec
