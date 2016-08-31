@@ -80,6 +80,11 @@ enum class ClientCredentialPolicy {
     MayAskClientForCredentials
 };
 
+enum class SameOriginDataURLFlag {
+    Set,
+    Unset
+};
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions() { }
 
@@ -110,6 +115,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     ContentSecurityPolicyImposition contentSecurityPolicyImposition { ContentSecurityPolicyImposition::DoPolicyCheck };
     DefersLoadingPolicy defersLoadingPolicy { DefersLoadingPolicy::AllowDefersLoading };
     CachingPolicy cachingPolicy { CachingPolicy::AllowCaching };
+    SameOriginDataURLFlag sameOriginDataURLFlag { SameOriginDataURLFlag::Unset };
 
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
 };

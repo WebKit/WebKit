@@ -309,7 +309,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
             m_origin = cachedResourceLoader.document()->securityOrigin();
         ASSERT(m_origin);
 
-        if (!m_resourceRequest.url().protocolIsData() && m_origin && !m_origin->canRequest(m_resourceRequest.url()))
+        if (!(m_resourceRequest.url().protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set)  && m_origin && !m_origin->canRequest(m_resourceRequest.url()))
             setCrossOrigin();
 
         addAdditionalRequestHeaders(cachedResourceLoader);

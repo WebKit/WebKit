@@ -175,6 +175,7 @@ void ImageLoader::updateFromElement()
     if (!attr.isNull() && !stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.contentSecurityPolicyImposition = element().isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+        options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
         CachedResourceRequest request(ResourceRequest(document.completeURL(sourceURI(attr))), options);
         request.setInitiator(&element());

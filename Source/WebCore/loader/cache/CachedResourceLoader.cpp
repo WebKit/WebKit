@@ -382,6 +382,11 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     return true;
 }
 
+static inline bool isSameOriginDataURL(const URL& url, const ResourceLoaderOptions& options, bool didReceiveRedirectResponse)
+{
+    return !didReceiveRedirectResponse && url.protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set;
+}
+
 bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, bool forPreload, bool didReceiveRedirectResponse)
 {
     if (document() && !document()->securityOrigin()->canDisplay(url)) {
@@ -394,9 +399,8 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     bool skipContentSecurityPolicyCheck = options.contentSecurityPolicyImposition == ContentSecurityPolicyImposition::SkipPolicyCheck;
     ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
 
-    // Some types of resources can be loaded only from the same origin.  Other
-    // types of resources, like Images, Scripts, and CSS, can be loaded from
-    // any URL.
+    // Some types of resources can be loaded only from the same origin. Other types of resources, like Images, Scripts, and CSS, can be loaded from any URL.
+    // FIXME: We should remove that check and handle it by setting the correct ResourceLoaderOptions::mode.
     switch (type) {
     case CachedResource::MainResource:
     case CachedResource::ImageResource:
@@ -416,7 +420,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif
-        if (options.mode == FetchOptions::Mode::SameOrigin && !m_document->securityOrigin()->canRequest(url)) {
+        if (options.mode == FetchOptions::Mode::SameOrigin && !isSameOriginDataURL(url, options, didReceiveRedirectResponse) &&!m_document->securityOrigin()->canRequest(url)) {
             printAccessDeniedMessage(url);
             return false;
         }

@@ -63,21 +63,15 @@ namespace WebCore {
         DoNotReceive
     };
 
-    enum class SameOriginDataURLFlag {
-        Set,
-        Unset
-    };
-
     struct ThreadableLoaderOptions : ResourceLoaderOptions {
         ThreadableLoaderOptions();
-        ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, ContentSecurityPolicyEnforcement, String&& initiator, OpaqueResponseBodyPolicy, SameOriginDataURLFlag);
+        ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, ContentSecurityPolicyEnforcement, String&& initiator, OpaqueResponseBodyPolicy);
         ~ThreadableLoaderOptions();
 
         PreflightPolicy preflightPolicy { ConsiderPreflight };
         ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
         String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
         OpaqueResponseBodyPolicy opaqueResponse { OpaqueResponseBodyPolicy::Receive };
-        SameOriginDataURLFlag sameOriginDataURLFlag { SameOriginDataURLFlag::Unset };
     };
 
     // Useful for doing loader operations from any thread (not threadsafe,

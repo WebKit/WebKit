@@ -92,7 +92,7 @@ struct LoaderTaskOptions {
 };
 
 LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, const String& referrer, const SecurityOrigin& origin)
-    : options(options, options.preflightPolicy, options.contentSecurityPolicyEnforcement, options.initiator.isolatedCopy(), options.opaqueResponse, options.sameOriginDataURLFlag)
+    : options(options, options.preflightPolicy, options.contentSecurityPolicyEnforcement, options.initiator.isolatedCopy(), options.opaqueResponse)
     , referrer(referrer.isolatedCopy())
     , origin(origin.isolatedCopy())
 {

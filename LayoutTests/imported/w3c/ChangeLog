@@ -1,5 +1,23 @@
 2016-08-31  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Fetch API should be able to load data URL in Same Origin mode
+        https://bugs.webkit.org/show_bug.cgi?id=161434
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/fetch/api/basic/scheme-data-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-data-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-data.js:
+        (checkFetchResponse):
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl-expected.txt: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl-worker.html: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl.html: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl.js: Added.
+        (redirectDataURL):
+
+2016-08-31  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Request construction failure should not set "bodyUsed"
         https://bugs.webkit.org/show_bug.cgi?id=161432
 
