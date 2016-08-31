@@ -56,9 +56,9 @@ private:
     void timerFired();
 
     Document& m_document;
-    Vector<PendingScript> m_scriptsToExecuteInOrder;
-    Vector<PendingScript> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
-    HashMap<ScriptElement*, PendingScript> m_pendingAsyncScripts;
+    Vector<Ref<PendingScript>> m_scriptsToExecuteInOrder;
+    Vector<RefPtr<PendingScript>> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
+    HashMap<ScriptElement*, Ref<PendingScript>> m_pendingAsyncScripts;
     Timer m_timer;
 };
 

@@ -61,11 +61,11 @@ void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, CachedR
 
     switch (executionType) {
     case ASYNC_EXECUTION:
-        m_pendingAsyncScripts.add(scriptElement, PendingScript(&element, cachedScript.get()));
+        m_pendingAsyncScripts.add(scriptElement, PendingScript::create(element, *cachedScript));
         break;
 
     case IN_ORDER_EXECUTION:
-        m_scriptsToExecuteInOrder.append(PendingScript(&element, cachedScript.get()));
+        m_scriptsToExecuteInOrder.append(PendingScript::create(element, *cachedScript));
         break;
     }
 }
@@ -86,7 +86,7 @@ void ScriptRunner::notifyScriptReady(ScriptElement* scriptElement, ExecutionType
     switch (executionType) {
     case ASYNC_EXECUTION:
         ASSERT(m_pendingAsyncScripts.contains(scriptElement));
-        m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(scriptElement));
+        m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(scriptElement)->ptr());
         break;
 
     case IN_ORDER_EXECUTION:
@@ -100,23 +100,24 @@ void ScriptRunner::timerFired()
 {
     Ref<Document> protect(m_document);
 
-    Vector<PendingScript> scripts;
+    Vector<RefPtr<PendingScript>> scripts;
     scripts.swap(m_scriptsToExecuteSoon);
 
     size_t numInOrderScriptsToExecute = 0;
-    for (; numInOrderScriptsToExecute < m_scriptsToExecuteInOrder.size() && m_scriptsToExecuteInOrder[numInOrderScriptsToExecute].cachedScript()->isLoaded(); ++numInOrderScriptsToExecute)
-        scripts.append(m_scriptsToExecuteInOrder[numInOrderScriptsToExecute]);
+    for (; numInOrderScriptsToExecute < m_scriptsToExecuteInOrder.size() && m_scriptsToExecuteInOrder[numInOrderScriptsToExecute]->isLoaded(); ++numInOrderScriptsToExecute)
+        scripts.append(m_scriptsToExecuteInOrder[numInOrderScriptsToExecute].ptr());
     if (numInOrderScriptsToExecute)
         m_scriptsToExecuteInOrder.remove(0, numInOrderScriptsToExecute);
 
-    for (auto& script : scripts) {
-        CachedScript* cachedScript = script.cachedScript();
-        RefPtr<Element> element = script.releaseElementAndClear();
-        ASSERT(element);
+    for (auto& currentScript : scripts) {
+        auto script = WTFMove(currentScript);
+        ASSERT(script);
         // Paper over https://bugs.webkit.org/show_bug.cgi?id=144050
-        if (!element)
+        if (!script)
             continue;
-        toScriptElementIfPossible(element.get())->execute(cachedScript);
+        auto* scriptElement = toScriptElementIfPossible(&script->element());
+        ASSERT(scriptElement);
+        scriptElement->execute(script->cachedScript());
         m_document.decrementLoadEventDelayCount();
     }
 }

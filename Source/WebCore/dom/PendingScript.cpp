@@ -28,8 +28,33 @@
 
 #include "CachedScript.h"
 #include "Element.h"
+#include "PendingScriptClient.h"
 
 namespace WebCore {
+
+Ref<PendingScript> PendingScript::create(Element& element, CachedScript& cachedScript)
+{
+    Ref<PendingScript> pendingScript = adoptRef(*new PendingScript(element, cachedScript));
+    cachedScript.addClient(&pendingScript.get());
+    return pendingScript;
+}
+
+Ref<PendingScript> PendingScript::create(Element& element, TextPosition scriptStartPosition)
+{
+    return adoptRef(*new PendingScript(element, scriptStartPosition));
+}
+
+PendingScript::PendingScript(Element& element, TextPosition startingPosition)
+    : m_element(element)
+    , m_startingPosition(startingPosition)
+{
+}
+
+PendingScript::PendingScript(Element& element, CachedScript& cachedScript)
+    : m_element(element)
+    , m_cachedScript(&cachedScript)
+{
+}
 
 PendingScript::~PendingScript()
 {
@@ -37,32 +62,40 @@ PendingScript::~PendingScript()
         m_cachedScript->removeClient(this);
 }
 
-RefPtr<Element> PendingScript::releaseElementAndClear()
-{
-    setCachedScript(nullptr);
-    m_watchingForLoad = false;
-    m_startingPosition = TextPosition::belowRangePosition();
-    return WTFMove(m_element);
-}
-
-void PendingScript::setCachedScript(CachedScript* cachedScript)
-{
-    if (m_cachedScript == cachedScript)
-        return;
-    if (m_cachedScript)
-        m_cachedScript->removeClient(this);
-    m_cachedScript = cachedScript;
-    if (m_cachedScript)
-        m_cachedScript->addClient(this);
-}
-
 CachedScript* PendingScript::cachedScript() const
 {
     return m_cachedScript.get();
 }
 
+void PendingScript::notifyClientFinished()
+{
+    Ref<PendingScript> protectedThis(*this);
+    if (m_client)
+        m_client->notifyFinished(*this);
+}
+
 void PendingScript::notifyFinished(CachedResource*)
 {
+    notifyClientFinished();
+}
+
+bool PendingScript::isLoaded() const
+{
+    return m_cachedScript && m_cachedScript->isLoaded();
+}
+
+void PendingScript::setClient(PendingScriptClient* client)
+{
+    ASSERT(!m_client);
+    m_client = client;
+    if (isLoaded())
+        notifyClientFinished();
+}
+
+void PendingScript::clearClient()
+{
+    ASSERT(m_client);
+    m_client = nullptr;
 }
 
 }

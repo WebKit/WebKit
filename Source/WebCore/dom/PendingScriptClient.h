@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,37 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLScriptRunnerHost_h
-#define HTMLScriptRunnerHost_h
-
-#include <wtf/Forward.h>
+#pragma once
 
 namespace WebCore {
 
-class Element;
-class HTMLInputStream;
 class PendingScript;
-class ScriptSourceCode;
 
-class HTMLScriptRunnerHost {
+class PendingScriptClient {
 public:
-    virtual ~HTMLScriptRunnerHost() { }
+    virtual ~PendingScriptClient() { }
 
-    // Implementors should call cachedResource->addClient() here or soon after.
-    virtual void watchForLoad(PendingScript&) = 0;
-    // Implementors must call cachedResource->removeClient() immediately.
-    virtual void stopWatchingForLoad(PendingScript&) = 0;
-
-    virtual HTMLInputStream& inputStream() = 0;
-
-    virtual bool hasPreloadScanner() const = 0;
-    virtual void appendCurrentInputStreamToPreloadScannerAndScan() = 0;
-    
+    virtual void notifyFinished(PendingScript&) = 0;
 };
 
 }
-
-#endif

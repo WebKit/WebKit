@@ -23,85 +23,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PendingScript_h
-#define PendingScript_h
+#pragma once
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CachedScript;
 class Element;
+class PendingScriptClient;
 
 // A container for an external script which may be loaded and executed.
 //
 // A CachedResourceHandle alone does not prevent the underlying CachedResource
 // from purging its data buffer. This class holds a dummy client open for its
 // lifetime in order to guarantee that the data buffer will not be purged.
-class PendingScript final : public CachedResourceClient {
+class PendingScript final : public RefCounted<PendingScript>, public CachedResourceClient {
 public:
-    PendingScript()
-        : m_watchingForLoad(false)
-        , m_startingPosition(TextPosition::belowRangePosition())
-    {
-    }
-
-    PendingScript(Element* element, CachedScript* cachedScript)
-        : m_watchingForLoad(false)
-        , m_element(element)
-    {
-        setCachedScript(cachedScript);
-    }
-
-    PendingScript(const PendingScript& other)
-        : CachedResourceClient(other)
-        , m_watchingForLoad(other.m_watchingForLoad)
-        , m_element(other.m_element)
-        , m_startingPosition(other.m_startingPosition)
-    {
-        setCachedScript(other.cachedScript());
-    }
+    static Ref<PendingScript> create(Element&, CachedScript&);
+    static Ref<PendingScript> create(Element&, TextPosition scriptStartPosition);
 
     virtual ~PendingScript();
-
-    PendingScript& operator=(const PendingScript& other)
-    {
-        if (this == &other)
-            return *this;
-
-        m_watchingForLoad = other.m_watchingForLoad;
-        m_element = other.m_element;
-        m_startingPosition = other.m_startingPosition;
-        setCachedScript(other.cachedScript());
-
-        return *this;
-    }
 
     TextPosition startingPosition() const { return m_startingPosition; }
     void setStartingPosition(const TextPosition& position) { m_startingPosition = position; }
 
-    bool watchingForLoad() const { return m_watchingForLoad; }
-    void setWatchingForLoad(bool b) { m_watchingForLoad = b; }
+    bool watchingForLoad() const { return needsLoading() && m_client; }
 
-    Element* element() const { return m_element.get(); }
-    void setElement(Element* element) { m_element = element; }
-    RefPtr<Element> releaseElementAndClear();
+    Element& element() { return m_element.get(); }
+    const Element& element() const { return m_element.get(); }
 
     CachedScript* cachedScript() const;
-    void setCachedScript(CachedScript*);
+    bool needsLoading() const { return cachedScript(); }
+
+    bool isLoaded() const;
 
     void notifyFinished(CachedResource*) override;
 
+    void setClient(PendingScriptClient*);
+    void clearClient();
+
 private:
-    bool m_watchingForLoad;
-    RefPtr<Element> m_element;
+    PendingScript(Element&, CachedScript&);
+    PendingScript(Element&, TextPosition startingPosition);
+
+    void notifyClientFinished();
+
+    Ref<Element> m_element;
     TextPosition m_startingPosition; // Only used for inline script tags.
-    CachedResourceHandle<CachedScript> m_cachedScript; 
+    CachedResourceHandle<CachedScript> m_cachedScript;
+    PendingScriptClient* m_client { nullptr };
 };
 
 }
-
-#endif
