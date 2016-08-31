@@ -88,7 +88,6 @@ private:
     String m_path;
     String m_name;
 
-    Optional<String> m_overrideFilename;
     Optional<int64_t> m_overrideLastModifiedDate;
 };
 
