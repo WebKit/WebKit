@@ -374,7 +374,7 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
 
 bool HTMLPlugInElement::requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().pluginReplacementEnabled())
+    if (!document().settings()->pluginReplacementEnabled())
         return false;
 
     if (m_pluginReplacement)
