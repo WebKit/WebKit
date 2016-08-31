@@ -1,3 +1,17 @@
+2016-08-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Some arith nodes are too pessimistic with the types supported on the fast path
+        https://bugs.webkit.org/show_bug.cgi?id=161410
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        DoubleRep is able to convert numbers, undefined, booleans and null.
+        I was too pessimistic when I gated the double implementations
+        on number-or-boolean speculation. We can just let DoubleRep convert
+        the other cases as long as it is not a Cell.
+
 2016-08-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix build after r205205.
