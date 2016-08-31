@@ -1,3 +1,21 @@
+2016-08-31  Ricky Mondello  <rmondello@apple.com>
+
+        Break pluginReplacementEnabled into youTubeFlashPluginReplacementEnabled and quickTimePluginReplacementEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=161424
+        <rdar://problem/28050847>
+
+        Reviewed by Dean Jackson.
+
+        * plugins/quicktime-plugin-replacement.html: Updated for the internal setting rename.
+        * security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement.html: Ditto.
+        * security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html: Ditto.
+        * security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html: Ditto.
+        * security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html: Ditto.
+        * security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html: Ditto.
+        * security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html: Ditto.
+        * security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html: Ditto.
+        * security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html: Ditto.
+
 2016-08-31  Mark Lam  <mark.lam@apple.com>
 
         Gardening: skipping a flaky test from the JSC test suite.

@@ -32,6 +32,7 @@
 #include "HTMLPlugInElement.h"
 #include "Page.h"
 #include "RenderElement.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "YouTubeEmbedShadowElement.h"
 #include <wtf/text/StringBuilder.h>
@@ -40,7 +41,7 @@ namespace WebCore {
 
 void YouTubePluginReplacement::registerPluginReplacement(PluginReplacementRegistrar registrar)
 {
-    registrar(ReplacementPlugin(create, supportsMimeType, supportsFileExtension, supportsURL));
+    registrar(ReplacementPlugin(create, supportsMimeType, supportsFileExtension, supportsURL, isEnabledBySettings));
 }
 
 Ref<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
@@ -343,6 +344,11 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
 bool YouTubePluginReplacement::supportsURL(const URL& url)
 {
     return isYouTubeURL(url);
+}
+
+bool YouTubePluginReplacement::isEnabledBySettings(const Settings* settings)
+{
+    return settings->youTubeFlashPluginReplacementEnabled();
 }
     
 }

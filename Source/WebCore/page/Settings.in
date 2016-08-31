@@ -280,4 +280,5 @@ treatIPAddressAsDomain initial=false
 # Runtime-enabled features
 visualViewportEnabled initial=false
 
-pluginReplacementEnabled initial=defaultPluginReplacementEnabled
+quickTimePluginReplacementEnabled initial=defaultQuickTimePluginReplacementEnabled
+youTubeFlashPluginReplacementEnabled initial=defaultYouTubeFlashPluginReplacementEnabled

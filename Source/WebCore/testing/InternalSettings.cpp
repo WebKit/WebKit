@@ -91,7 +91,8 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings.timeWithoutMouseMovementBeforeHidingControls())
     , m_useLegacyBackgroundSizeShorthandBehavior(settings.useLegacyBackgroundSizeShorthandBehavior())
     , m_autoscrollForDragAndDropEnabled(settings.autoscrollForDragAndDropEnabled())
-    , m_pluginReplacementEnabled(settings.pluginReplacementEnabled())
+    , m_quickTimePluginReplacementEnabled(settings.quickTimePluginReplacementEnabled())
+    , m_youTubeFlashPluginReplacementEnabled(settings.youTubeFlashPluginReplacementEnabled())
     , m_shouldConvertPositionStyleOnCopy(settings.shouldConvertPositionStyleOnCopy())
     , m_fontFallbackPrefersPictographs(settings.fontFallbackPrefersPictographs())
     , m_webFontsAlwaysFallBack(settings.webFontsAlwaysFallBack())
@@ -183,7 +184,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setAllowsInlineMediaPlayback(m_allowsInlineMediaPlayback);
     settings.setAllowsInlineMediaPlaybackAfterFullscreen(m_allowsInlineMediaPlaybackAfterFullscreen);
     settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackRequiresPlaysInlineAttribute);
-    settings.setPluginReplacementEnabled(m_pluginReplacementEnabled);
+    settings.setQuickTimePluginReplacementEnabled(m_quickTimePluginReplacementEnabled);
+    settings.setYouTubeFlashPluginReplacementEnabled(m_youTubeFlashPluginReplacementEnabled);
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
 #endif
@@ -548,10 +550,16 @@ void InternalSettings::setWebFontsAlwaysFallBack(bool enable, ExceptionCode& ec)
     settings()->setWebFontsAlwaysFallBack(enable);
 }
 
-void InternalSettings::setPluginReplacementEnabled(bool enabled, ExceptionCode& ec)
+void InternalSettings::setQuickTimePluginReplacementEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    settings()->setPluginReplacementEnabled(enabled);
+    settings()->setQuickTimePluginReplacementEnabled(enabled);
+}
+
+void InternalSettings::setYouTubeFlashPluginReplacementEnabled(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setYouTubeFlashPluginReplacementEnabled(enabled);
 }
 
 void InternalSettings::setBackgroundShouldExtendBeyondPage(bool hasExtendedBackground, ExceptionCode& ec)

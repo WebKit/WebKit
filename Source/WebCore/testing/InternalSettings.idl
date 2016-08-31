@@ -57,7 +57,8 @@
 
     [RaisesException] void setForcePendingWebGLPolicy(boolean forced);
 
-    [RaisesException] void setPluginReplacementEnabled(boolean enabled);
+    [RaisesException] void setQuickTimePluginReplacementEnabled(boolean enabled);
+    [RaisesException] void setYouTubeFlashPluginReplacementEnabled(boolean enabled);
 
     // Editing, forms
     [RaisesException] void setEditingBehavior(DOMString behavior);
