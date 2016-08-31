@@ -7113,7 +7113,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromis
         return throwThisTypeError(*state, throwScope, "TestObject", "testPromiseFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    impl.testPromiseFunction(DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
+    impl.testPromiseFunction(DeferredWrapper::create(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7139,7 +7139,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
     auto a = convert<float>(*state, state->argument(0), ShouldAllowNonFinite::No);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.testPromiseFunctionWithFloatArgument(WTFMove(a), DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
+    impl.testPromiseFunctionWithFloatArgument(WTFMove(a), DeferredWrapper::create(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7161,7 +7161,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithEx
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
-    impl.testPromiseFunctionWithException(DeferredWrapper(state, castedThis->globalObject(), promiseDeferred), ec);
+    impl.testPromiseFunctionWithException(DeferredWrapper::create(state, castedThis->globalObject(), promiseDeferred), ec);
     setDOMException(state, ec);
     return JSValue::encode(jsUndefined());
 }
@@ -7186,7 +7186,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOp
     auto a = state->argument(0).isUndefined() ? Optional<int32_t>() : convert<int32_t>(*state, state->uncheckedArgument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.testPromiseFunctionWithOptionalIntArgument(WTFMove(a), DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
+    impl.testPromiseFunctionWithOptionalIntArgument(WTFMove(a), DeferredWrapper::create(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7212,7 +7212,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     auto a = convert<float>(*state, state->argument(0), ShouldAllowNonFinite::No);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.testPromiseOverloadedFunction(WTFMove(a), DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
+    impl.testPromiseOverloadedFunction(WTFMove(a), DeferredWrapper::create(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7238,7 +7238,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     auto request = JSFetchRequest::toWrapped(state->argument(0));
     if (UNLIKELY(!request))
         return throwArgumentTypeError(*state, throwScope, 0, "request", "TestObject", "testPromiseOverloadedFunction", "FetchRequest");
-    impl.testPromiseOverloadedFunction(*request, DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
+    impl.testPromiseOverloadedFunction(*request, DeferredWrapper::create(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7270,7 +7270,7 @@ static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFuncti
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    TestObj::testStaticPromiseFunction(DeferredWrapper(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), promiseDeferred));
+    TestObj::testStaticPromiseFunction(DeferredWrapper::create(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7286,7 +7286,7 @@ static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFuncti
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     ExceptionCode ec = 0;
-    TestObj::testStaticPromiseFunctionWithException(DeferredWrapper(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), promiseDeferred), ec);
+    TestObj::testStaticPromiseFunctionWithException(DeferredWrapper::create(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), promiseDeferred), ec);
     setDOMException(state, ec);
     return JSValue::encode(jsUndefined());
 }
