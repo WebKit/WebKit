@@ -1,3 +1,10 @@
+2016-08-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove incorrect assert causing crashes in debug builds.
+
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::AbstractValue):
+
 2016-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r202568): Web Inspector: Expanding Array Prototype in Console shows no properties
