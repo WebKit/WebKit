@@ -1,3 +1,13 @@
+2016-08-31  Andreas Kling  <akling@apple.com>
+
+        DOM event handling should pass Event around by reference.
+        <https://webkit.org/b/161398>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performNonEditingBehaviorForSelector):
+
 2016-08-31  Brady Eidson  <beidson@apple.com>
 
         WK2 Gamepad provider on iOS.

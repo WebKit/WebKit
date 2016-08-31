@@ -57,7 +57,7 @@ public:
 private:
     explicit MediaControlPanelElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
     void startDrag(const LayoutPoint& eventLocation);
     void continueDrag(const LayoutPoint& eventLocation);
@@ -126,7 +126,7 @@ public:
 private:
     explicit MediaControlVolumeSliderContainerElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 };
@@ -159,7 +159,7 @@ public:
 private:
     explicit MediaControlPanelMuteButtonElement(Document&, MediaControls*);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
     MediaControls* m_controls;
 };
@@ -190,7 +190,7 @@ public:
 private:
     explicit MediaControlPlayButtonElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 };
 
 // ----------------------------
@@ -204,7 +204,7 @@ public:
 private:
     explicit MediaControlOverlayPlayButtonElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 };
 
 // ----------------------------
@@ -244,7 +244,7 @@ public:
 private:
     explicit MediaControlRewindButtonElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 };
 
 // ----------------------------
@@ -260,7 +260,7 @@ public:
 private:
     explicit MediaControlReturnToRealtimeButtonElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 };
 
 // ----------------------------
@@ -278,7 +278,7 @@ public:
 private:
     explicit MediaControlToggleClosedCaptionsButtonElement(Document&, MediaControls*);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK)
     MediaControls* m_controls;
@@ -316,7 +316,7 @@ private:
 
     void rebuildTrackListMenu();
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
     typedef Vector<RefPtr<Element>> TrackMenuItems;
     TrackMenuItems m_menuItems;
@@ -343,7 +343,7 @@ public:
 private:
     explicit MediaControlTimelineElement(Document&, MediaControls*);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
     MediaControls* m_controls;
 };
@@ -363,7 +363,7 @@ public:
 private:
     explicit MediaControlFullscreenButtonElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 };
 
 // ----------------------------
@@ -397,7 +397,7 @@ public:
 
 private:
     explicit MediaControlFullscreenVolumeMinButtonElement(Document&);
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 };
 
 // ----------------------------
@@ -413,7 +413,7 @@ public:
 private:
     explicit MediaControlFullscreenVolumeMaxButtonElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 };
 
 

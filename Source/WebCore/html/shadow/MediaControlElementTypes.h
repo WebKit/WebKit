@@ -151,7 +151,7 @@ public:
 protected:
     explicit MediaControlMuteButtonElement(Document&, MediaControlElementType);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
 private:
     void updateDisplayType() override;
@@ -166,7 +166,7 @@ public:
 protected:
     explicit MediaControlSeekButtonElement(Document&, MediaControlElementType);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
     virtual bool isForwardButton() const = 0;
 
 private:
@@ -185,7 +185,7 @@ public:
 protected:
     explicit MediaControlVolumeSliderElement(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
 private:
     bool m_clearMutedOnUserInteraction;

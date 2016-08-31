@@ -51,7 +51,7 @@ private:
     float decorationWidth() const override;
     bool isSteppable() const override;
     StepRange createStepRange(AnyStepHandling) const override;
-    void handleKeydownEvent(KeyboardEvent*) override;
+    void handleKeydownEvent(KeyboardEvent&) override;
     Decimal parseToNumber(const String&, const Decimal&) const override;
     String serialize(const Decimal&) const override;
     String localizeValue(const String&) const override;

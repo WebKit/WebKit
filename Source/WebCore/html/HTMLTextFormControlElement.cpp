@@ -116,9 +116,9 @@ void HTMLTextFormControlElement::didEditInnerTextValue()
     subtreeHasChanged();
 }
 
-void HTMLTextFormControlElement::forwardEvent(Event* event)
+void HTMLTextFormControlElement::forwardEvent(Event& event)
 {
-    if (event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)
+    if (event.type() == eventNames().blurEvent || event.type() == eventNames().focusEvent)
         return;
     innerTextElement()->defaultEventHandler(event);
 }

@@ -60,9 +60,9 @@ bool BaseCheckableInputType::appendFormData(FormDataList& encoding, bool) const
     return true;
 }
 
-void BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
+void BaseCheckableInputType::handleKeydownEvent(KeyboardEvent& event)
 {
-    const String& key = event->keyIdentifier();
+    const String& key = event.keyIdentifier();
     if (key == "U+0020") {
         element().setActive(true, true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
@@ -70,11 +70,11 @@ void BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
     }
 }
 
-void BaseCheckableInputType::handleKeypressEvent(KeyboardEvent* event)
+void BaseCheckableInputType::handleKeypressEvent(KeyboardEvent& event)
 {
-    if (event->charCode() == ' ') {
+    if (event.charCode() == ' ') {
         // Prevent scrolling down the page.
-        event->setDefaultHandled();
+        event.setDefaultHandled();
     }
 }
 

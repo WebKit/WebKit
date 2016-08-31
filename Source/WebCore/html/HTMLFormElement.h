@@ -84,14 +84,14 @@ public:
     void registerImgElement(HTMLImageElement*);
     void removeImgElement(HTMLImageElement*);
 
-    void prepareForSubmission(Event*); // FIXME: This function doesn't only prepare, it sometimes calls submit() itself.
+    void prepareForSubmission(Event&); // FIXME: This function doesn't only prepare, it sometimes calls submit() itself.
     WEBCORE_EXPORT void submit();
     void submitFromJavaScript();
     WEBCORE_EXPORT void reset();
 
     void setDemoted(bool demoted) { m_wasDemoted = demoted; }
 
-    void submitImplicitly(Event*, bool fromImplicitSubmissionTrigger);
+    void submitImplicitly(Event&, bool fromImplicitSubmissionTrigger);
     bool formWouldHaveSecureSubmission(const String& url);
 
     String name() const;
@@ -162,7 +162,7 @@ private:
     unsigned formElementIndex(FormAssociatedElement*);
 
     // Returns true if the submission should proceed.
-    bool validateInteractively(Event*);
+    bool validateInteractively(Event&);
 
     // Validates each of the controls, and stores controls of which 'invalid'
     // event was not canceled to the specified vector. Returns true if there

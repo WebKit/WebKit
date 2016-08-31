@@ -287,26 +287,26 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
     }
 }
 
-static inline bool didScrollInScrollableArea(ScrollableArea* scrollableArea, WheelEvent* wheelEvent)
+static inline bool didScrollInScrollableArea(ScrollableArea* scrollableArea, WheelEvent& wheelEvent)
 {
-    ScrollGranularity scrollGranularity = wheelGranularityToScrollGranularity(wheelEvent->deltaMode());
+    ScrollGranularity scrollGranularity = wheelGranularityToScrollGranularity(wheelEvent.deltaMode());
     bool didHandleWheelEvent = false;
-    if (float absoluteDelta = std::abs(wheelEvent->deltaX()))
-        didHandleWheelEvent |= scrollableArea->scroll(wheelEvent->deltaX() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
+    if (float absoluteDelta = std::abs(wheelEvent.deltaX()))
+        didHandleWheelEvent |= scrollableArea->scroll(wheelEvent.deltaX() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
     
-    if (float absoluteDelta = std::abs(wheelEvent->deltaY()))
-        didHandleWheelEvent |= scrollableArea->scroll(wheelEvent->deltaY() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
+    if (float absoluteDelta = std::abs(wheelEvent.deltaY()))
+        didHandleWheelEvent |= scrollableArea->scroll(wheelEvent.deltaY() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
     
     return didHandleWheelEvent;
 }
 
-static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, WheelEvent* wheelEvent, Element** stopElement, const FloatSize& filteredPlatformDelta)
+static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, WheelEvent& wheelEvent, Element** stopElement, const FloatSize& filteredPlatformDelta)
 {
-    bool shouldHandleEvent = wheelEvent->deltaX() || wheelEvent->deltaY();
+    bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
 #if PLATFORM(MAC)
-    shouldHandleEvent |= wheelEvent->phase() == PlatformWheelEventPhaseEnded;
+    shouldHandleEvent |= wheelEvent.phase() == PlatformWheelEventPhaseEnded;
 #if ENABLE(CSS_SCROLL_SNAP)
-    shouldHandleEvent |= wheelEvent->momentumPhase() == PlatformWheelEventPhaseEnded;
+    shouldHandleEvent |= wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded;
 #endif
 #endif
     if (!startNode->renderer() || !shouldHandleEvent)
@@ -319,7 +319,7 @@ static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, Wh
     RenderBox* currentEnclosingBox = &initialEnclosingBox;
     while (currentEnclosingBox) {
         if (RenderLayer* boxLayer = currentEnclosingBox->layer()) {
-            const PlatformWheelEvent* platformEvent = wheelEvent->wheelEvent();
+            const PlatformWheelEvent* platformEvent = wheelEvent.wheelEvent();
             bool scrollingWasHandled;
             if (platformEvent != nullptr)
                 scrollingWasHandled = boxLayer->handleWheelEvent(platformEvent->copyWithDeltas(filteredPlatformDelta.width(), filteredPlatformDelta.height()));
@@ -338,7 +338,7 @@ static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, Wh
 
         currentEnclosingBox = currentEnclosingBox->containingBlock();
         if (currentEnclosingBox && currentEnclosingBox->isRenderNamedFlowThread())
-            currentEnclosingBox = RenderNamedFlowThread::fragmentFromRenderBoxAsRenderBlock(currentEnclosingBox, roundedIntPoint(wheelEvent->absoluteLocation()), initialEnclosingBox);
+            currentEnclosingBox = RenderNamedFlowThread::fragmentFromRenderBoxAsRenderBlock(currentEnclosingBox, roundedIntPoint(wheelEvent.absoluteLocation()), initialEnclosingBox);
         if (!currentEnclosingBox || currentEnclosingBox->isRenderView())
             return false;
     }
@@ -2717,13 +2717,13 @@ void EventHandler::clearLatchedState()
         filter->endFilteringDeltas();
 }
 
-void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEvent)
+void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEvent)
 {
-    if (!startNode || !wheelEvent)
+    if (!startNode)
         return;
     
-    FloatSize filteredPlatformDelta(wheelEvent->deltaX(), wheelEvent->deltaY());
-    if (const PlatformWheelEvent* platformWheelEvent = wheelEvent->wheelEvent()) {
+    FloatSize filteredPlatformDelta(wheelEvent.deltaX(), wheelEvent.deltaY());
+    if (const PlatformWheelEvent* platformWheelEvent = wheelEvent.wheelEvent()) {
         filteredPlatformDelta.setWidth(platformWheelEvent->deltaX());
         filteredPlatformDelta.setHeight(platformWheelEvent->deltaY());
     }
@@ -2740,7 +2740,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     
     
     if (handleWheelEventInAppropriateEnclosingBox(startNode, wheelEvent, &stopElement, filteredPlatformDelta))
-        wheelEvent->setDefaultHandled();
+        wheelEvent.setDefaultHandled();
     
 #if PLATFORM(MAC)
     if (latchedState && !latchedState->wheelEventElement())
@@ -3089,7 +3089,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     // in order to match IE:
     // 1. preventing default handling of keydown and keypress events has no effect on IM input;
     // 2. if an input method handles the event, its keyCode is set to 229 in keydown event.
-    m_frame.editor().handleInputMethodKeydown(keydown.ptr());
+    m_frame.editor().handleInputMethodKeydown(keydown.get());
     
     bool handledByInputMethod = keydown->defaultHandled();
     
@@ -3190,22 +3190,19 @@ static void setInitialKeyboardSelection(Frame& frame, SelectionDirection directi
     selection.setSelection(visiblePosition, FrameSelection::defaultSetSelectionOptions(UserTriggered), intent);
 }
 
-static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent* event)
+static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent& event)
 {
-    if (!event)
-        return;
-
     FrameSelection& selection = frame.selection();
 
-    bool isCommanded = event->getModifierState("Meta");
-    bool isOptioned = event->getModifierState("Alt");
+    bool isCommanded = event.getModifierState("Meta");
+    bool isOptioned = event.getModifierState("Alt");
     bool isSelection = !selection.isNone();
 
-    FrameSelection::EAlteration alternation = event->getModifierState("Shift") ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
+    FrameSelection::EAlteration alternation = event.getModifierState("Shift") ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
     SelectionDirection direction = DirectionForward;
     TextGranularity granularity = CharacterGranularity;
 
-    switch (focusDirectionForKey(event->keyIdentifier())) {
+    switch (focusDirectionForKey(event.keyIdentifier())) {
     case FocusDirectionNone:
         return;
     case FocusDirectionForward:
@@ -3235,12 +3232,12 @@ static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent* event)
     else
         setInitialKeyboardSelection(frame, direction);
 
-    event->setDefaultHandled();
+    event.setDefaultHandled();
 }
 
-void EventHandler::handleKeyboardSelectionMovementForAccessibility(KeyboardEvent* event)
+void EventHandler::handleKeyboardSelectionMovementForAccessibility(KeyboardEvent& event)
 {
-    if (event->type() == eventNames().keydownEvent) {
+    if (event.type() == eventNames().keydownEvent) {
         if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
             handleKeyboardSelectionMovement(m_frame, event);
     }
@@ -3267,29 +3264,29 @@ bool EventHandler::accessibilityPreventsEventPropogation(KeyboardEvent& event)
     return false;
 }
 
-void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
+void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
 {
-    if (event->type() == eventNames().keydownEvent) {
+    if (event.type() == eventNames().keydownEvent) {
         m_frame.editor().handleKeyboardEvent(event);
-        if (event->defaultHandled())
+        if (event.defaultHandled())
             return;
-        if (event->keyIdentifier() == "U+0009")
+        if (event.keyIdentifier() == "U+0009")
             defaultTabEventHandler(event);
-        else if (event->keyIdentifier() == "U+0008")
+        else if (event.keyIdentifier() == "U+0008")
             defaultBackspaceEventHandler(event);
         else {
-            FocusDirection direction = focusDirectionForKey(event->keyIdentifier());
+            FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
             if (direction != FocusDirectionNone)
                 defaultArrowEventHandler(direction, event);
         }
 
         handleKeyboardSelectionMovementForAccessibility(event);
     }
-    if (event->type() == eventNames().keypressEvent) {
+    if (event.type() == eventNames().keypressEvent) {
         m_frame.editor().handleKeyboardEvent(event);
-        if (event->defaultHandled())
+        if (event.defaultHandled())
             return;
-        if (event->charCode() == ' ')
+        if (event.charCode() == ' ')
             defaultSpaceEventHandler(event);
     }
 }
@@ -3593,23 +3590,23 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
     return eventInvertsTabsToLinksClientCallResult(event) ? !tabsToLinksClientCallResult : tabsToLinksClientCallResult;
 }
 
-void EventHandler::defaultTextInputEventHandler(TextEvent* event)
+void EventHandler::defaultTextInputEventHandler(TextEvent& event)
 {
     if (m_frame.editor().handleTextEvent(event))
-        event->setDefaultHandled();
+        event.setDefaultHandled();
 }
 
 
-void EventHandler::defaultSpaceEventHandler(KeyboardEvent* event)
+void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
 {
-    ASSERT(event->type() == eventNames().keypressEvent);
+    ASSERT(event.type() == eventNames().keypressEvent);
 
-    if (event->ctrlKey() || event->metaKey() || event->altKey() || event->altGraphKey())
+    if (event.ctrlKey() || event.metaKey() || event.altKey() || event.altGraphKey())
         return;
 
-    ScrollLogicalDirection direction = event->shiftKey() ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward;
+    ScrollLogicalDirection direction = event.shiftKey() ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward;
     if (logicalScrollOverflow(direction, ScrollByPage)) {
-        event->setDefaultHandled();
+        event.setDefaultHandled();
         return;
     }
 
@@ -3618,14 +3615,14 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent* event)
         return;
 
     if (view->logicalScroll(direction, ScrollByPage))
-        event->setDefaultHandled();
+        event.setDefaultHandled();
 }
 
-void EventHandler::defaultBackspaceEventHandler(KeyboardEvent* event)
+void EventHandler::defaultBackspaceEventHandler(KeyboardEvent& event)
 {
-    ASSERT(event->type() == eventNames().keydownEvent);
+    ASSERT(event.type() == eventNames().keydownEvent);
 
-    if (event->ctrlKey() || event->metaKey() || event->altKey() || event->altGraphKey())
+    if (event.ctrlKey() || event.metaKey() || event.altKey() || event.altGraphKey())
         return;
 
     if (!m_frame.editor().behavior().shouldNavigateBackOnBackspace())
@@ -3640,21 +3637,21 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent* event)
     
     bool handledEvent = false;
 
-    if (event->shiftKey())
+    if (event.shiftKey())
         handledEvent = page->backForward().goForward();
     else
         handledEvent = page->backForward().goBack();
 
     if (handledEvent)
-        event->setDefaultHandled();
+        event.setDefaultHandled();
 }
 
 
-void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, KeyboardEvent* event)
+void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, KeyboardEvent& event)
 {
-    ASSERT(event->type() == eventNames().keydownEvent);
+    ASSERT(event.type() == eventNames().keydownEvent);
 
-    if (event->ctrlKey() || event->metaKey() || event->altGraphKey() || event->shiftKey())
+    if (event.ctrlKey() || event.metaKey() || event.altGraphKey() || event.shiftKey())
         return;
 
     Page* page = m_frame.page();
@@ -3669,16 +3666,16 @@ void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, Keybo
     if (m_frame.document()->inDesignMode())
         return;
 
-    if (page->focusController().advanceFocus(focusDirection, event))
-        event->setDefaultHandled();
+    if (page->focusController().advanceFocus(focusDirection, &event))
+        event.setDefaultHandled();
 }
 
-void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
+void EventHandler::defaultTabEventHandler(KeyboardEvent& event)
 {
-    ASSERT(event->type() == eventNames().keydownEvent);
+    ASSERT(event.type() == eventNames().keydownEvent);
 
     // We should only advance focus on tabs if no special modifier keys are held down.
-    if (event->ctrlKey() || event->metaKey() || event->altGraphKey())
+    if (event.ctrlKey() || event.metaKey() || event.altGraphKey())
         return;
 
     Page* page = m_frame.page();
@@ -3687,14 +3684,14 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
     if (!page->tabKeyCyclesThroughElements())
         return;
 
-    FocusDirection focusDirection = event->shiftKey() ? FocusDirectionBackward : FocusDirectionForward;
+    FocusDirection focusDirection = event.shiftKey() ? FocusDirectionBackward : FocusDirectionForward;
 
     // Tabs can be used in design mode editing.
     if (m_frame.document()->inDesignMode())
         return;
 
-    if (page->focusController().advanceFocus(focusDirection, event))
-        event->setDefaultHandled();
+    if (page->focusController().advanceFocus(focusDirection, &event))
+        event.setDefaultHandled();
 }
 
 void EventHandler::sendScrollEvent()

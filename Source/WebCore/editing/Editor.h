@@ -114,9 +114,9 @@ public:
 
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
-    void handleKeyboardEvent(KeyboardEvent*);
-    void handleInputMethodKeydown(KeyboardEvent*);
-    bool handleTextEvent(TextEvent*);
+    void handleKeyboardEvent(KeyboardEvent&);
+    void handleInputMethodKeydown(KeyboardEvent&);
+    bool handleTextEvent(TextEvent&);
 
     WEBCORE_EXPORT bool canEdit() const;
     WEBCORE_EXPORT bool canEditRichly() const;

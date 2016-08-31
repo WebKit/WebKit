@@ -238,7 +238,7 @@ bool HTMLTextAreaElement::hasCustomFocusLogic() const
     return true;
 }
 
-bool HTMLTextAreaElement::isKeyboardFocusable(KeyboardEvent*) const
+bool HTMLTextAreaElement::isKeyboardFocusable(KeyboardEvent&) const
 {
     // If a given text area can be focused at all, then it will always be keyboard focusable.
     return isFocusable();
@@ -263,11 +263,11 @@ void HTMLTextAreaElement::updateFocusAppearance(SelectionRestorationMode restora
         document().frame()->selection().revealSelection(revealMode);
 }
 
-void HTMLTextAreaElement::defaultEventHandler(Event* event)
+void HTMLTextAreaElement::defaultEventHandler(Event& event)
 {
-    if (renderer() && (event->isMouseEvent() || event->type() == eventNames().blurEvent))
+    if (renderer() && (event.isMouseEvent() || event.type() == eventNames().blurEvent))
         forwardEvent(event);
-    else if (renderer() && is<BeforeTextInsertedEvent>(*event))
+    else if (renderer() && is<BeforeTextInsertedEvent>(event))
         handleBeforeTextInsertedEvent(downcast<BeforeTextInsertedEvent>(event));
 
     HTMLTextFormControlElement::defaultEventHandler(event);
@@ -288,9 +288,8 @@ void HTMLTextAreaElement::subtreeHasChanged()
     calculateAndAdjustDirectionality();
 }
 
-void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event) const
+void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& event) const
 {
-    ASSERT(event);
     ASSERT(renderer());
     int signedMaxLength = effectiveMaxLength();
     if (signedMaxLength < 0)
@@ -300,7 +299,7 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*
     const String& currentValue = innerTextValue();
     unsigned numberOfLineBreaksInCurrentValue = numberOfLineBreaks(currentValue);
     if (upperBoundForLengthForSubmission(currentValue, numberOfLineBreaksInCurrentValue)
-        + upperBoundForLengthForSubmission(event->text(), numberOfLineBreaks(event->text())) < unsignedMaxLength)
+        + upperBoundForLengthForSubmission(event.text(), numberOfLineBreaks(event.text())) < unsignedMaxLength)
         return;
 
     unsigned currentLength = computeLengthForSubmission(currentValue, numberOfLineBreaksInCurrentValue);
@@ -313,7 +312,7 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*
     ASSERT(currentLength >= selectionLength);
     unsigned baseLength = currentLength - selectionLength;
     unsigned appendableLength = unsignedMaxLength > baseLength ? unsignedMaxLength - baseLength : 0;
-    event->setText(sanitizeUserInputValue(event->text(), appendableLength));
+    event.setText(sanitizeUserInputValue(event.text(), appendableLength));
 }
 
 String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, unsigned maxLength)

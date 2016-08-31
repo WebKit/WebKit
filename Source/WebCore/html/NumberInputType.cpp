@@ -219,10 +219,10 @@ bool NumberInputType::isSteppable() const
     return true;
 }
 
-void NumberInputType::handleKeydownEvent(KeyboardEvent* event)
+void NumberInputType::handleKeydownEvent(KeyboardEvent& event)
 {
     handleKeydownEventForSpinButton(event);
-    if (!event->defaultHandled())
+    if (!event.defaultHandled())
         TextFieldInputType::handleKeydownEvent(event);
 }
 

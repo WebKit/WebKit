@@ -143,7 +143,7 @@ protected:
     void didMoveToNewDocument(Document* oldDocument) override;
 
     bool supportsFocus() const override;
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
+    bool isKeyboardFocusable(KeyboardEvent&) const override;
     bool isMouseFocusable() const override;
 
     void didRecalcStyle(Style::Change) override;

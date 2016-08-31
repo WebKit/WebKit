@@ -55,7 +55,7 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
-    void defaultEventHandler(Event*) final;
+    void defaultEventHandler(Event&) final;
 
     bool appendFormData(FormDataList&, bool) final;
 

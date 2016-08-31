@@ -508,7 +508,7 @@ public:
     virtual void handleLocalEvents(Event&);
 
     void dispatchSubtreeModifiedEvent();
-    bool dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent);
+    bool dispatchDOMActivateEvent(int detail, Event& underlyingEvent);
 
 #if ENABLE(TOUCH_EVENTS)
     virtual bool allowsDoubleTapGesture() const { return true; }
@@ -526,7 +526,7 @@ public:
     virtual void dispatchInputEvent();
 
     // Perform the default action for an event.
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event&);
 
     void ref();
     void deref();

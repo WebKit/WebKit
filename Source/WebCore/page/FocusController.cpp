@@ -291,17 +291,17 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
 
 static inline bool isFocusableElementOrScopeOwner(Element& element, KeyboardEvent* event)
 {
-    return element.isKeyboardFocusable(event) || isFocusScopeOwner(element);
+    return element.isKeyboardFocusable(*event) || isFocusScopeOwner(element);
 }
 
 static inline bool isNonFocusableScopeOwner(Element& element, KeyboardEvent* event)
 {
-    return !element.isKeyboardFocusable(event) && isFocusScopeOwner(element);
+    return !element.isKeyboardFocusable(*event) && isFocusScopeOwner(element);
 }
 
 static inline bool isFocusableScopeOwner(Element& element, KeyboardEvent* event)
 {
-    return element.isKeyboardFocusable(event) && isFocusScopeOwner(element);
+    return element.isKeyboardFocusable(*event) && isFocusScopeOwner(element);
 }
 
 static inline int shadowAdjustedTabIndex(Element& element, KeyboardEvent* event)
@@ -464,7 +464,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         return true;
     }
 
-    if (is<HTMLFrameOwnerElement>(*element) && (!is<HTMLPlugInElement>(*element) || !element->isKeyboardFocusable(event))) {
+    if (is<HTMLFrameOwnerElement>(*element) && (!is<HTMLPlugInElement>(*element) || !element->isKeyboardFocusable(*event))) {
         // We focus frames rather than frame owners.
         // FIXME: We should not focus frames that have no scrollbars, as focusing them isn't useful to the user.
         HTMLFrameOwnerElement& owner = downcast<HTMLFrameOwnerElement>(*element);
@@ -954,7 +954,7 @@ void FocusController::findFocusCandidateInContainer(Node& container, const Layou
         if (element == focusedNode)
             continue;
 
-        if (!element->isKeyboardFocusable(event) && !element->isFrameOwnerElement() && !canScrollInDirection(element, direction))
+        if (!element->isKeyboardFocusable(*event) && !element->isFrameOwnerElement() && !canScrollInDirection(element, direction))
             continue;
 
         FocusCandidate candidate = FocusCandidate(element, direction);

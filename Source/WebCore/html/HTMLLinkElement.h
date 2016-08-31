@@ -97,7 +97,7 @@ private:
 
     bool isURLAttribute(const Attribute&) const final;
 
-    void defaultEventHandler(Event*) final;
+    void defaultEventHandler(Event&) final;
     void handleClick(Event&);
 
     HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);

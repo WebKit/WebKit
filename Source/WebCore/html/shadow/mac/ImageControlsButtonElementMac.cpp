@@ -107,9 +107,9 @@ RefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::tryCreate(D
     return WTFMove(button);
 }
 
-void ImageControlsButtonElementMac::defaultEventHandler(Event* event)
+void ImageControlsButtonElementMac::defaultEventHandler(Event& event)
 {
-    if (event->type() == eventNames().clickEvent) {
+    if (event.type() == eventNames().clickEvent) {
         Frame* frame = document().frame();
         if (!frame)
             return;
@@ -118,8 +118,8 @@ void ImageControlsButtonElementMac::defaultEventHandler(Event* event)
         if (!page)
             return;
 
-        page->contextMenuController().showImageControlsMenu(event);
-        event->setDefaultHandled();
+        page->contextMenuController().showImageControlsMenu(&event);
+        event.setDefaultHandled();
         return;
     }
 

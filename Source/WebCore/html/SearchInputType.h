@@ -56,7 +56,7 @@ private:
     void destroyShadowSubtree() override;
     HTMLElement* resultsButtonElement() const override;
     HTMLElement* cancelButtonElement() const override;
-    void handleKeydownEvent(KeyboardEvent*) override;
+    void handleKeydownEvent(KeyboardEvent&) override;
     void didSetValueByUserEdit() override;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const override;
     float decorationWidth() const override;

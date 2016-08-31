@@ -64,7 +64,7 @@ public:
     bool willRespondToMouseMoveEvents() override;
     bool willRespondToMouseClickEvents() override;
 
-    void forwardEvent(Event*);
+    void forwardEvent(Event&);
 
 private:
     SpinButtonElement(Document&, SpinButtonOwner&);
@@ -73,7 +73,7 @@ private:
     bool isSpinButtonElement() const override { return true; }
     bool isDisabledFormControl() const override { return shadowHost() && shadowHost()->isDisabledFormControl(); }
     bool matchesReadWritePseudoClass() const override;
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
     void willOpenPopup() override;
     void doStepAction(int);
     void startRepeatingTimer();

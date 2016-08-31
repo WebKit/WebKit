@@ -137,20 +137,20 @@ bool MathMLElement::willRespondToMouseClickEvents()
     return isLink() || StyledElement::willRespondToMouseClickEvents();
 }
 
-void MathMLElement::defaultEventHandler(Event* event)
+void MathMLElement::defaultEventHandler(Event& event)
 {
     if (isLink()) {
         if (focused() && isEnterKeyKeydownEvent(event)) {
-            event->setDefaultHandled();
-            dispatchSimulatedClick(event);
+            event.setDefaultHandled();
+            dispatchSimulatedClick(&event);
             return;
         }
-        if (MouseEvent::canTriggerActivationBehavior(*event)) {
+        if (MouseEvent::canTriggerActivationBehavior(event)) {
             auto& href = attributeWithoutSynchronization(hrefAttr);
             const auto& url = stripLeadingAndTrailingHTMLSpaces(href);
-            event->setDefaultHandled();
+            event.setDefaultHandled();
             if (auto* frame = document().frame())
-                frame->loader().urlSelected(document().completeURL(url), "_self", event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
+                frame->loader().urlSelected(document().completeURL(url), "_self", &event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }
@@ -174,13 +174,13 @@ bool MathMLElement::isFocusable() const
     return StyledElement::isFocusable();
 }
 
-bool MathMLElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool MathMLElement::isKeyboardFocusable(KeyboardEvent& event) const
 {
     if (isFocusable() && StyledElement::supportsFocus())
         return StyledElement::isKeyboardFocusable(event);
 
     if (isLink())
-        return document().frame()->eventHandler().tabsToLinks(event);
+        return document().frame()->eventHandler().tabsToLinks(&event);
 
     return StyledElement::isKeyboardFocusable(event);
 }

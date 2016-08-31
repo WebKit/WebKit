@@ -50,12 +50,12 @@ bool ResetInputType::supportsValidation() const
     return false;
 }
 
-void ResetInputType::handleDOMActivateEvent(Event* event)
+void ResetInputType::handleDOMActivateEvent(Event& event)
 {
     if (element().isDisabledFormControl() || !element().form())
         return;
     element().form()->reset();
-    event->setDefaultHandled();
+    event.setDefaultHandled();
 }
 
 String ResetInputType::defaultValue() const

@@ -110,22 +110,22 @@ void HTMLLabelElement::setHovered(bool over)
         element->setHovered(over);
 }
 
-void HTMLLabelElement::defaultEventHandler(Event* evt)
+void HTMLLabelElement::defaultEventHandler(Event& event)
 {
     static bool processingClick = false;
 
-    if (evt->type() == eventNames().clickEvent && !processingClick) {
+    if (event.type() == eventNames().clickEvent && !processingClick) {
         RefPtr<LabelableElement> element = control();
 
         // If we can't find a control or if the control received the click
         // event, then there's no need for us to do anything.
-        if (!element || (evt->target() && element->containsIncludingShadowDOM(evt->target()->toNode())))
+        if (!element || (event.target() && element->containsIncludingShadowDOM(event.target()->toNode())))
             return;
 
         processingClick = true;
 
         // Click the corresponding control.
-        element->dispatchSimulatedClick(evt);
+        element->dispatchSimulatedClick(&event);
 
         document().updateLayoutIgnorePendingStylesheets();
         if (element->isMouseFocusable())
@@ -133,10 +133,10 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
 
         processingClick = false;
         
-        evt->setDefaultHandled();
+        event.setDefaultHandled();
     }
     
-    HTMLElement::defaultEventHandler(evt);
+    HTMLElement::defaultEventHandler(event);
 }
 
 bool HTMLLabelElement::willRespondToMouseClickEvents()

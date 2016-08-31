@@ -38,7 +38,7 @@ private:
     HTMLSummaryElement(const QualifiedName&, Document&);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    void defaultEventHandler(Event*) final;
+    void defaultEventHandler(Event&) final;
 
     void didAddUserAgentShadowRoot(ShadowRoot*) final;
 

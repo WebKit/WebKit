@@ -43,7 +43,7 @@ private:
     const AtomicString& formControlType() const override;
     bool valueMissing(const String&) const override;
     String valueMissingText() const override;
-    void handleKeyupEvent(KeyboardEvent*) override;
+    void handleKeyupEvent(KeyboardEvent&) override;
     void willDispatchClick(InputElementClickState&) override;
     void didDispatchClick(Event*, const InputElementClickState&) override;
     bool isCheckbox() const override;

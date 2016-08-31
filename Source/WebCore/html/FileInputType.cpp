@@ -169,7 +169,7 @@ String FileInputType::valueMissingText() const
     return element().multiple() ? validationMessageValueMissingForMultipleFileText() : validationMessageValueMissingForFileText();
 }
 
-void FileInputType::handleDOMActivateEvent(Event* event)
+void FileInputType::handleDOMActivateEvent(Event& event)
 {
     if (element().isDisabledFormControl())
         return;
@@ -192,7 +192,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         chrome->runOpenPanel(input.document().frame(), m_fileChooser);
     }
 
-    event->setDefaultHandled();
+    event.setDefaultHandled();
 }
 
 RenderPtr<RenderElement> FileInputType::createInputRenderer(RenderStyle&& style)

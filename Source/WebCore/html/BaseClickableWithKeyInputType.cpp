@@ -39,9 +39,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement& element, KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement& element, KeyboardEvent& event)
 {
-    const String& key = event->keyIdentifier();
+    const String& key = event.keyIdentifier();
     if (key == "U+0020") {
         element.setActive(true, true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
@@ -49,23 +49,23 @@ void BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement& element
     }
 }
 
-void BaseClickableWithKeyInputType::handleKeypressEvent(HTMLInputElement& element, KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeypressEvent(HTMLInputElement& element, KeyboardEvent& event)
 {
-    int charCode = event->charCode();
+    int charCode = event.charCode();
     if (charCode == '\r') {
-        element.dispatchSimulatedClick(event);
-        event->setDefaultHandled();
+        element.dispatchSimulatedClick(&event);
+        event.setDefaultHandled();
         return;
     }
     if (charCode == ' ') {
         // Prevent scrolling down the page.
-        event->setDefaultHandled();
+        event.setDefaultHandled();
     }
 }
 
-void BaseClickableWithKeyInputType::handleKeyupEvent(InputType& inputType, KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeyupEvent(InputType& inputType, KeyboardEvent& event)
 {
-    const String& key = event->keyIdentifier();
+    const String& key = event.keyIdentifier();
     if (key != "U+0020")
         return;
     // Simulate mouse click for spacebar for button types.
@@ -78,17 +78,17 @@ void BaseClickableWithKeyInputType::accessKeyAction(HTMLInputElement& element, b
     element.dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
-void BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent& event)
 {
     handleKeydownEvent(element(), event);
 }
 
-void BaseClickableWithKeyInputType::handleKeypressEvent(KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeypressEvent(KeyboardEvent& event)
 {
     handleKeypressEvent(element(), event);
 }
 
-void BaseClickableWithKeyInputType::handleKeyupEvent(KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeyupEvent(KeyboardEvent& event)
 {
     handleKeyupEvent(*this, event);
 }

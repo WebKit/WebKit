@@ -209,12 +209,12 @@ void MathMLSelectElement::updateSelectedChild()
     setNeedsStyleRecalc();
 }
 
-void MathMLSelectElement::defaultEventHandler(Event* event)
+void MathMLSelectElement::defaultEventHandler(Event& event)
 {
-    if (event->type() == eventNames().clickEvent) {
+    if (event.type() == eventNames().clickEvent) {
         if (attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle") {
             toggle();
-            event->setDefaultHandled();
+            event.setDefaultHandled();
             return;
         }
     }

@@ -42,7 +42,7 @@ public:
 private:
     const AtomicString& formControlType() const override;
     bool supportsValidation() const override;
-    void handleDOMActivateEvent(Event*) override;
+    void handleDOMActivateEvent(Event&) override;
     String defaultValue() const override;
     bool isTextButton() const override;
 };

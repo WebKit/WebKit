@@ -74,7 +74,7 @@ private:
 
     void maxLengthAttributeChanged(const AtomicString& newValue);
 
-    void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) const;
+    void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) const;
     static String sanitizeUserInputValue(const String&, unsigned maxLength);
     void updateValue() const;
     void setNonDirtyValue(const String&);
@@ -88,7 +88,7 @@ private:
     bool isOptionalFormControl() const final { return !isRequiredFormControl(); }
     bool isRequiredFormControl() const final { return isRequired(); }
 
-    void defaultEventHandler(Event*) final;
+    void defaultEventHandler(Event&) final;
     
     void subtreeHasChanged() final;
 
@@ -111,7 +111,7 @@ private:
     void reset() final;
     bool hasCustomFocusLogic() const final;
     bool isMouseFocusable() const final;
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(KeyboardEvent&) const final;
     void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;
 
     void accessKeyAction(bool sendMouseEvents) final;

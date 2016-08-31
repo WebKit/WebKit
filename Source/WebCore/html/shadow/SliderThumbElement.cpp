@@ -343,9 +343,9 @@ void SliderThumbElement::stopDragging()
 }
 
 #if !PLATFORM(IOS)
-void SliderThumbElement::defaultEventHandler(Event* event)
+void SliderThumbElement::defaultEventHandler(Event& event)
 {
-    if (!is<MouseEvent>(*event)) {
+    if (!is<MouseEvent>(event)) {
         HTMLDivElement::defaultEventHandler(event);
         return;
     }
@@ -359,7 +359,7 @@ void SliderThumbElement::defaultEventHandler(Event* event)
         return;
     }
 
-    MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
+    MouseEvent& mouseEvent = downcast<MouseEvent>(event);
     bool isLeftButton = mouseEvent.button() == LeftButton;
     const AtomicString& eventType = mouseEvent.type();
 
@@ -378,7 +378,7 @@ void SliderThumbElement::defaultEventHandler(Event* event)
         return;
     }
 
-    HTMLDivElement::defaultEventHandler(&mouseEvent);
+    HTMLDivElement::defaultEventHandler(mouseEvent);
 }
 #endif
 
@@ -441,9 +441,9 @@ static Touch* findTouchWithIdentifier(TouchList& list, unsigned identifier)
     return nullptr;
 }
 
-void SliderThumbElement::handleTouchStart(TouchEvent* touchEvent)
+void SliderThumbElement::handleTouchStart(TouchEvent& touchEvent)
 {
-    TouchList* targetTouches = touchEvent->targetTouches();
+    TouchList* targetTouches = touchEvent.targetTouches();
     if (!targetTouches)
         return;
 
@@ -461,16 +461,16 @@ void SliderThumbElement::handleTouchStart(TouchEvent* touchEvent)
     setExclusiveTouchIdentifier(touch->identifier());
 
     startDragging();
-    touchEvent->setDefaultHandled();
+    touchEvent.setDefaultHandled();
 }
 
-void SliderThumbElement::handleTouchMove(TouchEvent* touchEvent)
+void SliderThumbElement::handleTouchMove(TouchEvent& touchEvent)
 {
     unsigned identifier = exclusiveTouchIdentifier();
     if (identifier == NoIdentifier)
         return;
 
-    TouchList* targetTouches = touchEvent->targetTouches();
+    TouchList* targetTouches = touchEvent.targetTouches();
     if (!targetTouches)
         return;
 
@@ -480,16 +480,16 @@ void SliderThumbElement::handleTouchMove(TouchEvent* touchEvent)
 
     if (m_inDragMode)
         setPositionFromPoint(IntPoint(touch->pageX(), touch->pageY()));
-    touchEvent->setDefaultHandled();
+    touchEvent.setDefaultHandled();
 }
 
-void SliderThumbElement::handleTouchEndAndCancel(TouchEvent* touchEvent)
+void SliderThumbElement::handleTouchEndAndCancel(TouchEvent& touchEvent)
 {
     unsigned identifier = exclusiveTouchIdentifier();
     if (identifier == NoIdentifier)
         return;
 
-    TouchList* targetTouches = touchEvent->targetTouches();
+    TouchList* targetTouches = touchEvent.targetTouches();
     if (!targetTouches)
         return;
     // If our exclusive touch still exists, it was not the touch
@@ -509,19 +509,19 @@ void SliderThumbElement::didAttachRenderers()
         registerForTouchEvents();
 }
 
-void SliderThumbElement::handleTouchEvent(TouchEvent* touchEvent)
+void SliderThumbElement::handleTouchEvent(TouchEvent& touchEvent)
 {
     HTMLInputElement* input = hostInput();
     ASSERT(input);
     if (input->isReadOnly() || input->isDisabledFormControl()) {
         clearExclusiveTouchIdentifier();
         stopDragging();
-        touchEvent->setDefaultHandled();
+        touchEvent.setDefaultHandled();
         HTMLDivElement::defaultEventHandler(touchEvent);
         return;
     }
 
-    const AtomicString& eventType = touchEvent->type();
+    const AtomicString& eventType = touchEvent.type();
     if (eventType == eventNames().touchstartEvent) {
         handleTouchStart(touchEvent);
         return;

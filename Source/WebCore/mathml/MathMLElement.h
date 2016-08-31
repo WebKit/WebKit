@@ -101,12 +101,12 @@ protected:
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     bool willRespondToMouseClickEvents() override;
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
 private:
     bool canStartSelection() const final;
     bool isFocusable() const final;
-    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isKeyboardFocusable(KeyboardEvent&) const final;
     bool isMouseFocusable() const final;
     bool isURLAttribute(const Attribute&) const final;
     bool supportsFocus() const final;

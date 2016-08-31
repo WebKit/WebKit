@@ -59,7 +59,7 @@ bool SubmitInputType::supportsRequired() const
     return false;
 }
 
-void SubmitInputType::handleDOMActivateEvent(Event* event)
+void SubmitInputType::handleDOMActivateEvent(Event& event)
 {
     Ref<HTMLInputElement> element(this->element());
     if (element->isDisabledFormControl() || !element->form())
@@ -67,7 +67,7 @@ void SubmitInputType::handleDOMActivateEvent(Event* event)
     element->setActivatedSubmit(true);
     element->form()->prepareForSubmission(event); // Event handlers can run.
     element->setActivatedSubmit(false);
-    event->setDefaultHandled();
+    event.setDefaultHandled();
 }
 
 bool SubmitInputType::canBeSuccessfulSubmitButton()

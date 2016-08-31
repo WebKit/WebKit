@@ -184,51 +184,51 @@ TextCheckerClient* Editor::textChecker() const
     return 0;
 }
 
-void Editor::handleKeyboardEvent(KeyboardEvent* event)
+void Editor::handleKeyboardEvent(KeyboardEvent& event)
 {
     if (EditorClient* c = client())
-        c->handleKeyboardEvent(event);
+        c->handleKeyboardEvent(&event);
 }
 
-void Editor::handleInputMethodKeydown(KeyboardEvent* event)
+void Editor::handleInputMethodKeydown(KeyboardEvent& event)
 {
     if (EditorClient* c = client())
-        c->handleInputMethodKeydown(event);
+        c->handleInputMethodKeydown(&event);
 }
 
-bool Editor::handleTextEvent(TextEvent* event)
+bool Editor::handleTextEvent(TextEvent& event)
 {
-    LOG(Editing, "Editor %p handleTextEvent (data %s)", this, event->data().utf8().data());
+    LOG(Editing, "Editor %p handleTextEvent (data %s)", this, event.data().utf8().data());
 
     // Default event handling for Drag and Drop will be handled by DragController
     // so we leave the event for it.
-    if (event->isDrop())
+    if (event.isDrop())
         return false;
 
-    if (event->isPaste()) {
-        if (event->pastingFragment())
+    if (event.isPaste()) {
+        if (event.pastingFragment())
 #if PLATFORM(IOS)
         {
-            if (client()->performsTwoStepPaste(event->pastingFragment()))
+            if (client()->performsTwoStepPaste(event.pastingFragment()))
                 return true;
 #endif
-            replaceSelectionWithFragment(event->pastingFragment(), false, event->shouldSmartReplace(), event->shouldMatchStyle(), EditActionPaste, event->mailBlockquoteHandling());
+            replaceSelectionWithFragment(event.pastingFragment(), false, event.shouldSmartReplace(), event.shouldMatchStyle(), EditActionPaste, event.mailBlockquoteHandling());
 #if PLATFORM(IOS)
         }
 #endif
         else 
-            replaceSelectionWithText(event->data(), false, event->shouldSmartReplace(), EditActionPaste);
+            replaceSelectionWithText(event.data(), false, event.shouldSmartReplace(), EditActionPaste);
         return true;
     }
 
-    String data = event->data();
+    String data = event.data();
     if (data == "\n") {
-        if (event->isLineBreak())
+        if (event.isLineBreak())
             return insertLineBreak();
         return insertParagraphSeparator();
     }
 
-    return insertTextWithoutSendingTextEvent(data, false, event);
+    return insertTextWithoutSendingTextEvent(data, false, &event);
 }
 
 bool Editor::canEdit() const
