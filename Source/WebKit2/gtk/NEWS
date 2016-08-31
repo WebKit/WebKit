@@ -1,3 +1,15 @@
+==================
+WebKitGTK+ 2.13.90
+==================
+
+What's new in WebKitGTK+ 2.13.90?
+
+  - Add initial implementation of accelerating compositing support under Wayland.
+  - Fix performance with the modesetting intel driver and DRI3 enabled.
+  - Improved performance when resizing the web view on X11.
+  - Fix several crashes and rendering issues.
+  - Translation updates: German, Polish.
+
 =================
 WebKitGTK+ 2.13.4
 =================
