@@ -570,8 +570,14 @@ private:
     {
         flushDirect(operand, findArgumentPosition(operand));
     }
-    
+
     void flushDirect(VirtualRegister operand, ArgumentPosition* argumentPosition)
+    {
+        addFlushOrPhantomLocal<Flush>(operand, argumentPosition);
+    }
+
+    template<NodeType nodeType>
+    void addFlushOrPhantomLocal(VirtualRegister operand, ArgumentPosition* argumentPosition)
     {
         ASSERT(!operand.isConstant());
         
@@ -584,12 +590,17 @@ private:
         else
             variable = newVariableAccessData(operand);
         
-        node = addToGraph(Flush, OpInfo(variable));
+        node = addToGraph(nodeType, OpInfo(variable));
         m_currentBlock->variablesAtTail.operand(operand) = node;
         if (argumentPosition)
             argumentPosition->addVariable(variable);
     }
-    
+
+    void phantomLocalDirect(VirtualRegister operand)
+    {
+        addFlushOrPhantomLocal<PhantomLocal>(operand, findArgumentPosition(operand));
+    }
+
     void flush(InlineStackEntry* inlineStackEntry)
     {
         int numArguments;
@@ -610,8 +621,32 @@ private:
 
     void flushForTerminal()
     {
-        for (InlineStackEntry* inlineStackEntry = m_inlineStackTop; inlineStackEntry; inlineStackEntry = inlineStackEntry->m_caller)
+        CodeOrigin origin = currentCodeOrigin();
+        unsigned bytecodeIndex = origin.bytecodeIndex;
+
+        for (InlineStackEntry* inlineStackEntry = m_inlineStackTop; inlineStackEntry; inlineStackEntry = inlineStackEntry->m_caller) {
             flush(inlineStackEntry);
+
+            ASSERT(origin.inlineCallFrame == inlineStackEntry->m_inlineCallFrame);
+            InlineCallFrame* inlineCallFrame = inlineStackEntry->m_inlineCallFrame;
+            CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
+            FullBytecodeLiveness& fullLiveness = m_graph.livenessFor(codeBlock);
+            const FastBitVector& livenessAtBytecode = fullLiveness.getLiveness(bytecodeIndex);
+
+            for (unsigned local = codeBlock->m_numCalleeLocals; local--;) {
+                if (livenessAtBytecode.get(local)) {
+                    VirtualRegister reg = virtualRegisterForLocal(local);
+                    if (inlineCallFrame)
+                        reg = inlineStackEntry->remapOperand(reg);
+                    phantomLocalDirect(reg);
+                }
+            }
+
+            if (inlineCallFrame) {
+                bytecodeIndex = inlineCallFrame->directCaller.bytecodeIndex;
+                origin = inlineCallFrame->directCaller;
+            }
+        }
     }
 
     void flushForReturn()

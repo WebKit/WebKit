@@ -1,3 +1,17 @@
+2016-08-30  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r204360. rdar://problem/27991577
+
+    2016-08-10  Mark Lam  <mark.lam@apple.com>
+
+            DFG's flushForTerminal() needs to add PhantomLocals for bytecode live locals.
+            https://bugs.webkit.org/show_bug.cgi?id=160755
+            <rdar://problem/27488507>
+
+            Reviewed by Filip Pizlo.
+
+            * stress/need-bytecode-liveness-for-unreachable-blocks-at-dfg-time.js: Added.
+
 2016-08-02  Saam Barati  <sbarati@apple.com>
 
         Rename Changelog to ChangeLog
