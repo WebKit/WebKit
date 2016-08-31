@@ -1,3 +1,9 @@
+2016-08-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update iOS simulator WK1 flaky tests.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add "get" to CustomElementsRegistry
