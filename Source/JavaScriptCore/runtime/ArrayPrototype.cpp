@@ -1125,7 +1125,7 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
 
     IndexingType type = first->mergeIndexingTypeForCopying(indexingTypeForValue(second) | IsArray);
     if (type == NonArray)
-        type = ArrayWithUndecided;
+        type = first->indexingType();
 
     Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
     JSArray* result = JSArray::create(vm, resultStructure, firstArraySize + 1);
