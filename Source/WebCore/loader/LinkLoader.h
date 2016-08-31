@@ -36,12 +36,14 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "LinkLoaderClient.h"
-#include "Timer.h"
+
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Document;
 class URL;
+class LinkPreloadResourceClient;
 
 struct LinkRelAttribute;
 
@@ -53,16 +55,17 @@ public:
     bool loadLink(const LinkRelAttribute&, const URL&, const String& as, const String& crossOrigin, Document&);
     static Optional<CachedResource::Type> resourceTypeFromAsAttribute(const String& as);
 
+    WeakPtr<LinkLoader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    void triggerEvents(const CachedResource*);
+
 private:
     void notifyFinished(CachedResource*) override;
-
-    void linkLoadTimerFired();
-    void linkLoadingErrorTimerFired();
+    void preloadIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& as, const String& crossOriginMode);
 
     LinkLoaderClient& m_client;
     CachedResourceHandle<CachedResource> m_cachedLinkResource;
-    Timer m_linkLoadTimer;
-    Timer m_linkLoadingErrorTimer;
+    std::unique_ptr<LinkPreloadResourceClient> m_preloadResourceClient;
+    WeakPtrFactory<LinkLoader> m_weakPtrFactory;
 };
     
 }

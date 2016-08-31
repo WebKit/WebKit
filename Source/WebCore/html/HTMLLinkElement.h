@@ -134,7 +134,7 @@ private:
     bool m_createdByParser;
     bool m_isInShadowTree;
     bool m_firedLoad;
-    bool m_loadedSheet;
+    bool m_loadedResource;
 
     PendingSheetType m_pendingSheetType;
 

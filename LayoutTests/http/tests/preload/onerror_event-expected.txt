@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 29: <link rel=preload> must have a valid `as` value
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS styleFailed is true
+PASS scriptFailed is true
+PASS imageFailed is true
+PASS fontFailed is true
+PASS trackFailed is true
+PASS gibrishFailed is true
+PASS noTypeFailed is true
+

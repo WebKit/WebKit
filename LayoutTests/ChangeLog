@@ -1,3 +1,33 @@
+2016-08-31  Yoav Weiss  <yoav@yoav.ws>
+
+        Add event support for link preload.
+        https://bugs.webkit.org/show_bug.cgi?id=158466
+
+        Reviewed by Alex Christensen.
+
+        Add tests that make sure that event handling with regarding to link preload
+        is working as it should.
+
+        * http/tests/misc/script_onload_delays_window_onload-expected.txt: Added.
+        * http/tests/misc/script_onload_delays_window_onload.html: Added.
+        * http/tests/preload/delaying_onload_link_preload_after_discovery-expected.txt: Added.
+        * http/tests/preload/delaying_onload_link_preload_after_discovery.html: Added.
+        * http/tests/preload/delaying_onload_link_preload_after_discovery_image-expected.txt: Added.
+        * http/tests/preload/delaying_onload_link_preload_after_discovery_image.html: Added.
+        * http/tests/preload/dynamic_remove_preload_href-expected.txt:
+        * http/tests/preload/dynamic_remove_preload_href.html:
+        * http/tests/preload/not_delaying_window_onload_before_discovery-expected.txt: Added.
+        * http/tests/preload/not_delaying_window_onload_before_discovery.html: Added.
+        * http/tests/preload/onerror_event-expected.txt: Added.
+        * http/tests/preload/onerror_event.html: Added.
+        * http/tests/preload/onload_event-expected.txt: Added.
+        * http/tests/preload/onload_event.html: Added.
+        * http/tests/preload/resources/single_download_preload.html:
+        * http/tests/resources/dummy.css: Added.
+        * http/tests/resources/dummy.js: Added.
+        * http/tests/resources/dummy.xml: Added.
+        * http/tests/resources/slow-image.php: Added.
+
 2016-08-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: XHR with text but responseType = "blob" shows blank content

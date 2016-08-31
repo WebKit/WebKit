@@ -130,7 +130,8 @@ public:
     WEBCORE_EXPORT bool isPreloaded(const String& urlString) const;
     void clearPreloads();
     void clearPendingPreloads();
-    void preload(CachedResource::Type, CachedResourceRequest&, const String& charset);
+    enum PreloadType { ImplicitPreload, ExplicitPreload };
+    CachedResourceHandle<CachedResource> preload(CachedResource::Type, CachedResourceRequest&, const String& charset, PreloadType);
     void checkForPendingPreloads();
     void printPreloadStats();
 
@@ -150,7 +151,7 @@ private:
     CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(const CachedResourceRequest&, CachedResource*);
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&);
-    void requestPreload(CachedResource::Type, CachedResourceRequest&, const String& charset);
+    CachedResourceHandle<CachedResource> requestPreload(CachedResource::Type, CachedResourceRequest&, const String& charset);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, CachedResourceRequest&, CachedResource* existingResource) const;

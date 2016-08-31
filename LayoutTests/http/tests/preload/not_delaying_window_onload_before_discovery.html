@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<script>
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    finishedScript = false;
+    finishedImage = false;
+    windowOnLoad = false;
+    function test() {
+        shouldBeTrue("windowOnLoad");
+        if (finishedImage && finishedScript) {
+            if (window.internals)
+                window.internals.setLinkPreloadSupport(false);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    };
+
+</script>
+<link rel=preload href="../resources/slow-script.pl?delay=200" as=script onload="window.finishedScript = true; test();">
+<link rel=preload href="../resources/slow-image.php" as=image onload="window.finishedImage = true; test();">
+<body>
+<script>
+    window.addEventListener("load", function() {
+        shouldBeFalse("finishedScript");
+        shouldBeFalse("finishedImage");
+        windowOnLoad = true;
+    });
+</script>
+</body>

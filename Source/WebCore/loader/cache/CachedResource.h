@@ -76,7 +76,6 @@ public:
 #if ENABLE(XSLT)
         , XSLStyleSheet
 #endif
-        , LinkPreload
 #if ENABLE(LINK_PREFETCH)
         , LinkPrefetch
         , LinkSubresource
@@ -167,7 +166,8 @@ public:
     bool isMainOrMediaOrRawResource() const { return type() == MainResource || type() == MediaResource || type() == RawResource; }
     bool ignoreForRequestCount() const
     {
-        return type() == MainResource
+        return m_resourceRequest.ignoreForRequestCount()
+            || type() == MainResource
 #if ENABLE(LINK_PREFETCH)
             || type() == LinkPrefetch
             || type() == LinkSubresource

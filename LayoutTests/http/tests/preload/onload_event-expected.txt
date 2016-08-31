@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 35: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 36: <link rel=preload> must have a valid `as` value
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS styleLoaded is true
+PASS scriptLoaded is true
+PASS imageLoaded is true
+PASS fontLoaded is true
+PASS mediaLoaded is true
+PASS trackLoaded is true
+PASS gibberishLoaded is false
+PASS gibberishErrored is true
+PASS xsltLoaded is false
+PASS xsltErrored is true
+PASS noTypeLoaded is true
+PASS emptyTypeLoaded is true
+

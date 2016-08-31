@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<script>
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    var scriptLoaded = false;
+    var styleLoaded = false;
+    var imageLoaded = false;
+    var fontLoaded = false;
+    var mediaLoaded = false;
+    var trackLoaded = false;
+    var gibberishLoaded = false;
+    var gibberishErrored = false;
+    var xsltLoaded = false;
+    var xsltErrored = false;
+    var noTypeLoaded = false;
+    var emptyTypeLoaded = false;
+    var counter = 0;
+    function count() {
+        ++window.counter;
+    };
+</script>
+<link rel=preload href="../resources/dummy.js" as=script onload="count(); scriptLoaded = true;" onerror="count()">
+<link rel=preload href="../resources/dummy.css" as=style onload="count(); styleLoaded = true;" onerror="count()">
+<link rel=preload href="../resources/square100.png" as=image onload="count(); imageLoaded = true;" onerror="count()">
+<link rel=preload href="../resources/Ahem.woff" as=font crossorigin onload="count(); fontLoaded = true;" onerror="count()">
+<link rel=preload href="../resources/test.ogv" as=media onload="count(); mediaLoaded = true;" onerror="count()">
+<link rel=preload href="../security/resources/captions.vtt" as=track onload="count(); trackLoaded = true;" onerror="count()">
+<link rel=preload href="../resources/dummy.xml" as=foobarxmlthing onload="count(); gibberishLoaded = true;" onerror="count(); gibberishErrored = true;">
+<link rel=preload href="../resources/dummy.xslt" as=xslt onload="count(); xsltLoaded = true;" onerror="count(); xsltErrored = true;">
+<link rel=preload href="../resources/dummy.xml" onload="count(); noTypeLoaded = true;" onerror="count()">
+<link rel=preload href="../resources/dummy.xml?empty" as onload="count(); emptyTypeLoaded = true;" onerror="count()">
+<script>
+    function test() {
+        shouldBeTrue("styleLoaded");
+        shouldBeTrue("scriptLoaded");
+        shouldBeTrue("imageLoaded");
+        shouldBeTrue("fontLoaded");
+        shouldBeTrue("mediaLoaded");
+        shouldBeTrue("trackLoaded");
+        shouldBeFalse("gibberishLoaded");
+        shouldBeTrue("gibberishErrored");
+        shouldBeFalse("xsltLoaded");
+        shouldBeTrue("xsltErrored");
+        shouldBeTrue("noTypeLoaded");
+        shouldBeTrue("emptyTypeLoaded");
+        if (window.internals)
+            window.internals.setLinkPreloadSupport(false);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+     addEventListener("load", function(){
+        setInterval(function() {
+            if (window.counter >= 10)
+                test();
+        }, 100);
+    });
+</script>
+

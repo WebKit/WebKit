@@ -5530,7 +5530,9 @@
 		CB38FD571CD21E2A00592A3F /* JSPerformanceEntryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */; };
 		CB38FD5A1CD2325800592A3F /* JSPerformanceResourceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */; };
 		CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */; };
+		CB61C7931D755207001ADC7D /* LinkPreloadResourceClients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBB6B2D11CB7ADC6009EDE1A /* LinkPreloadResourceClients.cpp */; };
 		CB8CF0181A9358D4000D510B /* Microtasks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB8CF0151A934B43000D510B /* Microtasks.cpp */; };
+		CBB6B2D41CB7AE51009EDE1A /* LinkPreloadResourceClients.h in Headers */ = {isa = PBXBuildFile; fileRef = CBB6B2D21CB7ADD0009EDE1A /* LinkPreloadResourceClients.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CBC2D22F1CE5B89D00D1880B /* ResourceTimingInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBC2D22D1CE5B77400D1880B /* ResourceTimingInformation.cpp */; };
 		CBC2D2301CE5B8A100D1880B /* ResourceTimingInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = CBC2D22E1CE5B77D00D1880B /* ResourceTimingInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCC2B51415F613060048CDD6 /* DeviceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51015F613060048CDD6 /* DeviceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13007,6 +13009,8 @@
 		CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceResourceTiming.cpp; sourceTree = "<group>"; };
 		CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceResourceTiming.h; sourceTree = "<group>"; };
 		CB8CF0151A934B43000D510B /* Microtasks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Microtasks.cpp; sourceTree = "<group>"; };
+		CBB6B2D11CB7ADC6009EDE1A /* LinkPreloadResourceClients.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkPreloadResourceClients.cpp; sourceTree = "<group>"; };
+		CBB6B2D21CB7ADD0009EDE1A /* LinkPreloadResourceClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPreloadResourceClients.h; sourceTree = "<group>"; };
 		CBC2D22D1CE5B77400D1880B /* ResourceTimingInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceTimingInformation.cpp; sourceTree = "<group>"; };
 		CBC2D22E1CE5B77D00D1880B /* ResourceTimingInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceTimingInformation.h; sourceTree = "<group>"; };
 		CCC2B51015F613060048CDD6 /* DeviceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceClient.h; sourceTree = "<group>"; };
@@ -21356,6 +21360,8 @@
 				089582540E857A7E00F82C83 /* ImageLoader.h */,
 				98CE4325129E00BD005821DC /* LinkLoader.cpp */,
 				98CE4329129E00E5005821DC /* LinkLoader.h */,
+				CBB6B2D11CB7ADC6009EDE1A /* LinkPreloadResourceClients.cpp */,
+				CBB6B2D21CB7ADD0009EDE1A /* LinkPreloadResourceClients.h */,
 				984264EF12D5280A000D88A4 /* LinkLoaderClient.h */,
 				51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */,
 				51E6820F16387302003BBF3C /* LoaderStrategy.h */,
@@ -26326,6 +26332,7 @@
 				1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */,
 				7E474E1F12494DC900235364 /* SQLiteDatabaseTracker.h in Headers */,
 				7E474E1E12494DC900235364 /* SQLiteDatabaseTrackerClient.h in Headers */,
+				CBB6B2D41CB7AE51009EDE1A /* LinkPreloadResourceClients.h in Headers */,
 				B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */,
 				512BDB4B1C456FFA006494DF /* SQLiteIDBBackingStore.h in Headers */,
 				511EC1301C50ABF50032F983 /* SQLiteIDBCursor.h in Headers */,
@@ -29878,6 +29885,7 @@
 				FE8A674716CDD19E00930BF8 /* SQLStatement.cpp in Sources */,
 				97BC6A4F1505F081001B74AC /* SQLTransaction.cpp in Sources */,
 				FEE1811316C319E800084849 /* SQLTransactionBackend.cpp in Sources */,
+				CB61C7931D755207001ADC7D /* LinkPreloadResourceClients.cpp in Sources */,
 				97BC6A541505F081001B74AC /* SQLTransactionClient.cpp in Sources */,
 				97BC6A561505F081001B74AC /* SQLTransactionCoordinator.cpp in Sources */,
 				FE36FD1616C7826500F887C1 /* SQLTransactionStateMachine.cpp in Sources */,

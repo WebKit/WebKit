@@ -69,7 +69,7 @@ void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
         return;
 
     CachedResourceRequest request = preload->resourceRequest(m_document);
-    m_document.cachedResourceLoader().preload(preload->resourceType(), request, preload->charset());
+    m_document.cachedResourceLoader().preload(preload->resourceType(), request, preload->charset(), CachedResourceLoader::ImplicitPreload);
 }
 
 

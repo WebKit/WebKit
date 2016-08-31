@@ -2,22 +2,32 @@
 <html>
 <head>
 <script>
-    if (window.internals)
+    if (window.internals) {
         window.internals.setLinkPreloadSupport(true);
+        window.internals.setResourceTimingSupport(true);
+    }
 </script>
 <script src="/js-test-resources/js-test.js"></script>
 <body>
 <script>
     var link = document.createElement("link");
-    link.as = "script";
+    link.as = "image";
     link.rel = "preload";
-    link.href = "../resources/dummy.js";
+    link.href = "../resources/slow-image.php";
+    var downloadedImage = false;
     document.body.appendChild(link);
     link.href = "";
     window.addEventListener("load", function() {
-        shouldBeFalse("internals.isPreloaded('../resources/dummy.js');");
-        if (window.internals)
+        var entries = performance.getEntriesByType("resource");
+        for (var i = 0; i < entries.length; ++i) {
+            if (entries[i].name.indexOf("slow-image.php") != -1)
+                downloadedImage = true;
+        }
+        shouldBeFalse("downloadedImage");
+        if (window.internals) {
             window.internals.setLinkPreloadSupport(false);
+            window.internals.setResourceTimingSupport(false);
+        }
     });
 </script>
 </body>

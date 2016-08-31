@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script>
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+    var finishedScript = false;
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<link rel=preload href="../resources/slow-script.pl?delay=400" as=script onload="finishedScript = true;">
+<body>
+<script>
+    window.addEventListener("load", function() {
+        shouldBeTrue("finishedScript");
+        if (window.internals)
+            window.internals.setLinkPreloadSupport(false);
+        setTimeout(function() { testRunner.notifyDone(); }, 0);
+    });
+    var scr = document.createElement("script");
+    scr.src = "../resources/slow-script.pl?delay=400";
+    document.body.appendChild(scr);
+</script>
+</body>

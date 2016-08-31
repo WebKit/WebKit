@@ -1,3 +1,13 @@
+2016-08-31  Yoav Weiss  <yoav@yoav.ws>
+
+        Add event support for link preload.
+        https://bugs.webkit.org/show_bug.cgi?id=158466
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime): Removed LinkPreload.
+
 2016-08-31  Alex Christensen  <achristensen@webkit.org>
 
         Add runtime flag for using URLParser

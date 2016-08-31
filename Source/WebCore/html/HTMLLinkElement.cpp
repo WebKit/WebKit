@@ -68,6 +68,12 @@ static LinkEventSender& linkLoadEventSender()
     return sharedLoadEventSender;
 }
 
+static LinkEventSender& linkErrorEventSender()
+{
+    static NeverDestroyed<LinkEventSender> sharedErrorEventSender(eventNames().errorEvent);
+    return sharedErrorEventSender;
+}
+
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , m_linkLoader(*this)
@@ -76,7 +82,7 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& 
     , m_createdByParser(createdByParser)
     , m_isInShadowTree(false)
     , m_firedLoad(false)
-    , m_loadedSheet(false)
+    , m_loadedResource(false)
     , m_pendingSheetType(Unknown)
 {
     ASSERT(hasTagName(linkTag));
@@ -99,6 +105,7 @@ HTMLLinkElement::~HTMLLinkElement()
         document().authorStyleSheets().removeStyleSheetCandidateNode(*this);
 
     linkLoadEventSender().cancelEvent(*this);
+    linkErrorEventSender().cancelEvent(*this);
 }
 
 void HTMLLinkElement::setDisabledState(bool disabled)
@@ -395,12 +402,13 @@ DOMTokenList& HTMLLinkElement::sizes()
 
 void HTMLLinkElement::linkLoaded()
 {
-    dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+    m_loadedResource = true;
+    linkLoadEventSender().dispatchEventSoon(*this);
 }
 
 void HTMLLinkElement::linkLoadingErrored()
 {
-    dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    linkErrorEventSender().dispatchEventSoon(*this);
 }
 
 bool HTMLLinkElement::sheetLoaded()
@@ -419,11 +427,11 @@ void HTMLLinkElement::dispatchPendingLoadEvents()
 
 void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
 {
-    ASSERT_UNUSED(eventSender, eventSender == &linkLoadEventSender());
-    if (m_loadedSheet)
-        linkLoaded();
+    ASSERT_UNUSED(eventSender, eventSender == &linkLoadEventSender() || eventSender == &linkErrorEventSender());
+    if (m_loadedResource)
+        dispatchEvent(Event::create(eventNames().loadEvent, false, false));
     else
-        linkLoadingErrored();
+        dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
 DOMTokenList& HTMLLinkElement::relList()
@@ -437,7 +445,7 @@ void HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccu
 {
     if (m_firedLoad)
         return;
-    m_loadedSheet = !errorOccurred;
+    m_loadedResource = !errorOccurred;
     linkLoadEventSender().dispatchEventSoon(*this);
     m_firedLoad = true;
 }

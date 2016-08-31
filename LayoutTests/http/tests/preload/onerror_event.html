@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<script>
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    var scriptFailed = false;
+    var styleFailed = false;
+    var imageFailed = false;
+    var fontFailed = false;
+    var trackFailed = false;
+    var gibrishFailed = false;
+    var noTypeFailed = false;
+    var counter = 0;
+    function count() {
+        ++window.counter;
+    };
+</script>
+<link rel=preload href="../non-existent/dummy.js" as=script onerror="count();scriptFailed = true;" onload="count();">
+<link rel=preload href="../non-existent/dummy.css" as=style onerror="count();styleFailed = true;" onload="count();">
+<link rel=preload href="../non-existent/square.png" as=image onerror="count();imageFailed = true;" onload="count();">
+<link rel=preload href="../non-existent/Ahem.ttf" as=font crossorigin onerror="count();fontFailed = true;" onload="count();">
+<link rel=preload href="../non-existent/security/captions.vtt" as=track onerror="count();trackFailed = true;" onload="count();">
+<link rel=preload href="../non-existent/dummy.xml" as=foobarxmlthing onerror="count();gibrishFailed = true;" onload="count();">
+<link rel=preload href="http://127.0.0.1:9999/non-existent/dummy.xml" onerror="count();noTypeFailed = true;" onload="count();">
+<script>
+    function test() {
+        shouldBeTrue("styleFailed");
+        shouldBeTrue("scriptFailed");
+        shouldBeTrue("imageFailed");
+        shouldBeTrue("fontFailed");
+        shouldBeTrue("trackFailed");
+        shouldBeTrue("gibrishFailed");
+        shouldBeTrue("noTypeFailed");
+        if (window.internals)
+            window.internals.setLinkPreloadSupport(false);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    setInterval(function() {
+        if (window.counter >= 7)
+            test();
+    }, 100);
+</script>
+
