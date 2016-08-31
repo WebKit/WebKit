@@ -140,6 +140,7 @@
 #import <WebCore/FrameTree.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GCController.h>
+#import <WebCore/GameControllerGamepadProvider.h>
 #import <WebCore/GeolocationController.h>
 #import <WebCore/GeolocationError.h>
 #import <WebCore/HTMLNames.h>
@@ -910,7 +911,12 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     if (initialized)
         return;
 
+#if PLATFORM(MAC)
     GamepadProvider::singleton().setSharedProvider(HIDGamepadProvider::singleton());
+#else
+    GamepadProvider::singleton().setSharedProvider(GameControllerGamepadProvider::singleton());
+#endif
+
     initialized = true;
 }
 #endif
@@ -1419,7 +1425,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     ASSERT(WebThreadIsCurrent());
     WebKit::MemoryMeasure measurer("Memory warning: Calling JavaScript GC.");
-    GCController::singleton().garbageCollectNow();
+    WebCore::GCController::singleton().garbageCollectNow();
 }
 
 + (void)purgeInactiveFontData
@@ -1440,7 +1446,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     ASSERT(WebThreadIsCurrent());
     WebKit::MemoryMeasure measurer("Memory warning: Discarding JIT'ed code.");
-    GCController::singleton().deleteAllCode();
+    WebCore::GCController::singleton().deleteAllCode();
 }
 
 + (BOOL)isCharacterSmartReplaceExempt:(unichar)character isPreviousCharacter:(BOOL)b
@@ -1877,7 +1883,7 @@ static bool fastDocumentTeardownEnabled()
 #ifndef NDEBUG
     // Need this to make leak messages accurate.
     if (applicationIsTerminating) {
-        GCController::singleton().garbageCollectNow();
+        WebCore::GCController::singleton().garbageCollectNow();
         [WebCache setDisabled:YES];
     }
 #endif

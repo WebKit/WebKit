@@ -26,7 +26,7 @@
 #import "config.h"
 #import "UIGamepadProvider.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
 #import "WebPageProxy.h"
 #import "WKAPICast.h"
@@ -52,4 +52,4 @@ WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
 
 }
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)

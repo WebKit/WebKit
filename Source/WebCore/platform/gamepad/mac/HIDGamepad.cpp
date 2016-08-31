@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HIDGamepad.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
 #include <IOKit/hid/IOHIDElement.h>
 #include <IOKit/hid/IOHIDUsageTables.h>
@@ -187,4 +187,4 @@ void HIDGamepad::valueChanged(IOHIDValueRef value)
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)

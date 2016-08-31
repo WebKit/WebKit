@@ -825,6 +825,10 @@ typedef enum {
 - (CGRect)accessibilityConvertRectToSceneReferenceCoordinates:(CGRect)rect;
 @end
 
+@interface UIResponder ()
+- (UIResponder *)firstResponder;
+@end
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts();

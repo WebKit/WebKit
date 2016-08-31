@@ -1,3 +1,23 @@
+2016-08-31  Brady Eidson  <beidson@apple.com>
+
+        WK2 Gamepad provider on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=161412
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+
+        * UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm: Copied from Source/WebKit2/UIProcess/Gamepad/mac/UIGamepadProviderMac.mm.
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput):
+
+        * UIProcess/Gamepad/mac/UIGamepadProviderMac.mm:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-08-30  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the 32-bit build.
