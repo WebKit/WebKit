@@ -1,3 +1,25 @@
+2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] AbstractValue can contain padding which is not zero-filled
+        https://bugs.webkit.org/show_bug.cgi?id=161427
+
+        Reviewed by Saam Barati.
+
+        We checked that AbstractValue is zero-filled when initializing it to ensure
+        that zero-filled memory can be used as the initialized AbstractValue.
+        However, since the size of SpeculatedType becomes 64bit, AbstractValue can have
+        padding now. And this padding is not ensured that it is initialized with zeros.
+        So debug assertion fails when building with GCC.
+
+        This patch changes the strategy. Instead of checking the initialized
+        AbstractValue is zero-filled, we ensure that zero-filled AbstractValue can be
+        considered to be equal to the initialized AbstractValue.
+
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::ensureCanInitializeWithZeros):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::AbstractValue):
+
 2016-08-31  Brady Eidson  <beidson@apple.com>
 
         WK2 Gamepad provider on iOS.

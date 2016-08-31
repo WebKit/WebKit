@@ -539,6 +539,15 @@ void AbstractValue::validateReferences(const TrackedReferences& trackedReference
     m_structure.validateReferences(trackedReferences);
 }
 
+#if USE(JSVALUE64) && !defined(NDEBUG)
+void AbstractValue::ensureCanInitializeWithZeros()
+{
+    std::aligned_storage<sizeof(AbstractValue), alignof(AbstractValue)>::type zeroFilledStorage;
+    memset(static_cast<void*>(&zeroFilledStorage), 0, sizeof(AbstractValue));
+    ASSERT(*this == *static_cast<AbstractValue*>(static_cast<void*>(&zeroFilledStorage)));
+}
+#endif
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
