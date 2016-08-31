@@ -35,6 +35,7 @@
 namespace JSC {
 
 class JSObject;
+class JSValue;
     
 }
 
@@ -57,6 +58,8 @@ public:
     JSCustomElementInterface* findInterface(const JSC::JSObject*) const;
     bool containsConstructor(const JSC::JSObject*) const;
 
+    JSC::JSValue get(const AtomicString&);
+
 private:
     CustomElementRegistry();
 
@@ -64,7 +67,7 @@ private:
     HashMap<AtomicString, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap;
 };
-    
+
 }
 
 #endif

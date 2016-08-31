@@ -1,3 +1,15 @@
+2016-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add "get" to CustomElementsRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=161421
+
+        Reviewed by Yusuke Suzuki.
+
+        Added test cases for "get" method on CustomElementsRegistry.
+
+        * fast/custom-elements/CustomElementRegistry-expected.txt:
+        * fast/custom-elements/CustomElementRegistry.html:
+
 2016-08-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update iOS simulator WK1 flaky tests.

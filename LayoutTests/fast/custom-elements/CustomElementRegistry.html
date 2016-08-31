@@ -267,6 +267,30 @@ test(function () {
 
 }, 'customElements.define must define an instantiatable custom element');
 
+test(function () {
+    assert_true('get' in CustomElementRegistry.prototype, '"get" exists on CustomElementRegistry.prototype');
+    assert_true('get' in customElements, '"get" exists on window.customElements');
+}, 'CustomElementRegistry interface must have get as a method');
+
+test(function () {
+    assert_equals(customElements.get('a-b'), undefined);
+}, '"get" must return undefined when the registry does not contain an entry with the given name');
+
+test(function () {
+    assert_equals(customElements.get('html'), undefined);
+    assert_equals(customElements.get('span'), undefined);
+    assert_equals(customElements.get('div'), undefined);
+    assert_equals(customElements.get('g'), undefined);
+    assert_equals(customElements.get('ab'), undefined);
+}, '"get" must return undefined when the registry does not contain an entry with the given name even if the name was not a valid custom element name');
+
+test(function () {
+    assert_equals(customElements.get('existing-custom-element'), undefined);
+    class ExistingCustomElement extends HTMLElement {};
+    customElements.define('existing-custom-element', ExistingCustomElement);
+    assert_equals(customElements.get('existing-custom-element'), ExistingCustomElement);
+}, '"get" return the constructor of the entry with the given name when there is a matching entry.');
+
 </script>
 </body>
 </html>

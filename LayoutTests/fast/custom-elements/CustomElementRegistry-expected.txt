@@ -17,4 +17,8 @@ PASS customElements.define must rethrow an exception thrown while iterating over
 PASS customElements.define must rethrow an exception thrown while retrieving Symbol.iterator on observedAttributes 
 PASS customElements.define must not throw even if "observedAttributes" fails to convert if "attributeChangedCallback" is not defined 
 PASS customElements.define must define an instantiatable custom element 
+PASS CustomElementRegistry interface must have get as a method 
+PASS "get" must return undefined when the registry does not contain an entry with the given name 
+PASS "get" must return undefined when the registry does not contain an entry with the given name even if the name was not a valid custom element name 
+PASS "get" return the constructor of the entry with the given name when there is a matching entry. 
 
