@@ -178,17 +178,6 @@ void WebInspectorProxy::close()
     didClose();
 }
 
-void WebInspectorProxy::didRelaunchInspectorPageProcess()
-{
-    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
-    m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
-
-    // When didRelaunchInspectorPageProcess is called we can assume it is during a load request.
-    // Any messages we would have sent to a terminated process need to be re-sent.
-
-    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_inspectedPage->pageID(), m_underTest, inspectionLevel()), m_inspectorPage->pageID());
-}
-
 void WebInspectorProxy::showConsole()
 {
     if (!m_inspectedPage)

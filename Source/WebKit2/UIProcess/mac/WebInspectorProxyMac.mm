@@ -71,7 +71,6 @@ static const unsigned webViewCloseTimeout = 60;
 
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
 - (void)close;
-- (void)didRelaunchProcess;
 
 @end
 
@@ -97,11 +96,6 @@ static const unsigned webViewCloseTimeout = 60;
 - (void)close
 {
     _inspectorProxy = nullptr;
-}
-
-- (void)didRelaunchProcess
-{
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->didRelaunchInspectorPageProcess();
 }
 
 - (void)windowDidMove:(NSNotification *)notification
@@ -160,11 +154,6 @@ static const unsigned webViewCloseTimeout = 60;
 - (NSInteger)tag
 {
     return WKInspectorViewTag;
-}
-
-- (void)_didRelaunchProcess
-{
-    [self.inspectorProxyObjCAdapter didRelaunchProcess];
 }
 
 @end

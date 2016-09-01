@@ -92,8 +92,6 @@ public:
     void hide();
     void close();
 
-    void didRelaunchInspectorPageProcess();
-
 #if PLATFORM(MAC) && WK_API_ENABLED
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;

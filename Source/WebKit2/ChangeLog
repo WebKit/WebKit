@@ -1,3 +1,22 @@
+2016-09-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Web Inspector: Remove stale inspector process termination code
+        https://bugs.webkit.org/show_bug.cgi?id=161465
+        <rdar://problem/28106584>
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::didRelaunchInspectorPageProcess): Deleted.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter didRelaunchProcess]): Deleted.
+        (-[WKWebInspectorWKWebView _didRelaunchProcess]): Deleted.
+        This code doesn't appear to be run when the WebContent process inside
+        of an Inspector process crashes. The general WebInspectorProxy has its
+        own handling of when the page inside an inspector process crashes, so
+        this Mac specific path appears to be unused and stale.
+
 2016-09-01  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         [GTK] Fix configuration without wayland support
