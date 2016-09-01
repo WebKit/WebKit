@@ -3868,6 +3868,7 @@ endif ()
 # files on OS X.
 add_library(WebCoreDerivedSources STATIC ${WebCore_DERIVED_SOURCES})
 set_target_properties(WebCoreDerivedSources PROPERTIES OUTPUT_NAME WebCoreDerivedSources${DEBUG_SUFFIX})
+add_dependencies(WebCoreDerivedSources JavaScriptCore)
 if (NOT WIN32)
     list(APPEND WebCore_LIBRARIES WebCoreDerivedSources)
 endif ()
