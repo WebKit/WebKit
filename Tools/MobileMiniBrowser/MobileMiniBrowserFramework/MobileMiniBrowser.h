@@ -23,11 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <MobileMiniBrowser/MobileMiniBrowser.h>
-
-int main(int argc, char * argv[])
-{
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
-    }
-}
+#import <MobileMiniBrowser/AppDelegate.h>

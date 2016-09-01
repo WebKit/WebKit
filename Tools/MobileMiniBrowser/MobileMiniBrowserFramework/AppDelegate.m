@@ -23,18 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "AppDelegate.h"
 
-@interface AppDelegate ()
+#import "WebViewController.h"
 
+@interface AppDelegate ()
 @end
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    UIStoryboard *frameworkMainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle bundleForClass:[AppDelegate class]]];
+    WebViewController *viewController = [frameworkMainStoryboard instantiateInitialViewController];
+    if (!viewController)
+        return NO;
+
+    if (!self.window)
+        self.window = [[UIWindow alloc] init];
+    self.window.rootViewController = viewController;
+    [self.window makeKeyAndVisible];
+
     return YES;
 }
 
