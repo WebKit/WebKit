@@ -3249,6 +3249,11 @@ public:
         return ARM64Assembler::maxJumpReplacementSize();
     }
 
+    static ptrdiff_t patchableJumpSize()
+    {
+        return ARM64Assembler::patchableJumpSize();
+    }
+
     RegisterID scratchRegisterForBlinding()
     {
         // We *do not* have a scratch register for blinding.

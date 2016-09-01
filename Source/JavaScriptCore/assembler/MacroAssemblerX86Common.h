@@ -2633,6 +2633,11 @@ public:
         return X86Assembler::maxJumpReplacementSize();
     }
 
+    static ptrdiff_t patchableJumpSize()
+    {
+        return X86Assembler::patchableJumpSize();
+    }
+
     static bool supportsFloatingPointRounding()
     {
         if (s_sse4_1CheckState == CPUIDCheckState::NotChecked)
