@@ -1,3 +1,13 @@
+2016-09-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        arith-abs-on-various-types.js is flaky
+
+        Unreviewed.
+
+        * stress/arith-abs-on-various-types.js:
+        Two compilation is too small for the worst case.
+        Math.abs() can be typed integer->number->untyped if we are very unlucky.
+
 2016-09-01  Filip Pizlo  <fpizlo@apple.com>
 
         ObjectAllocationSinkingPhase::insertOSRHintsForUpdate() fails to emit updated hints in some cases

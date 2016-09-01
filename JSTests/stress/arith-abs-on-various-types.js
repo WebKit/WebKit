@@ -73,7 +73,7 @@ function testAllTypesCall() {
                 throw "Failed testAllTypesCall for input " + testCaseInput[0] + " expected " + testCaseInput[1] + " got " + output;
         }
     }
-    if (numberOfDFGCompiles(opaqueAllTypesAbs) > 2)
+    if (numberOfDFGCompiles(opaqueAllTypesAbs) > 3)
         throw "We should have detected abs() was polymorphic and generated a generic version.";
 }
 testAllTypesCall();
