@@ -1,3 +1,12 @@
+2016-09-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add ios-simulator baseline for compositing/layer-creation/will-change-on-normal-flow-content.html.
+        https://bugs.webkit.org/show_bug.cgi?id=161490
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/compositing/layer-creation/will-change-on-normal-flow-content-expected.txt: Added.
+
 2016-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Skip fixed layout tests in GTK+
