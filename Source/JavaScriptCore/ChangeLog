@@ -1,3 +1,25 @@
+2016-09-01  Filip Pizlo  <fpizlo@apple.com>
+
+        ObjectAllocationSinkingPhase::insertOSRHintsForUpdate() fails to emit updated hints in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=161492
+
+        Reviewed by Mark Lam.
+        
+        If you materialize a sunken object that is referenced from another sunken object, then you
+        have to emit a PutHint to tell OSR that the latter object now refers to a materialized
+        object rather than to the old sunken one.
+        
+        The ObjectAllocationSinkingPhase totally knows how to do this, but for some reason it only
+        did it when the PromotedLocationDescriptor for the field used for referring to the other
+        object is !neededForMaterialization(), i.e. it's a NamedPropertyPLoc or a ClosureVarPLoc.
+        I can sort of imagine why we thought that would be right - neededForMaterialization() means
+        it's a special meta-data field initialized on construction. But just because it's immutable
+        and special doesn't mean that materialization can't change its physical representation.
+        Removing the requirement that it's !neededForMaterialization() fixes the test and doesn't
+        regress anything.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2016-09-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r205297.

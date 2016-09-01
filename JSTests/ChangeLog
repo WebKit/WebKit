@@ -1,3 +1,25 @@
+2016-09-01  Filip Pizlo  <fpizlo@apple.com>
+
+        ObjectAllocationSinkingPhase::insertOSRHintsForUpdate() fails to emit updated hints in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=161492
+
+        Reviewed by Mark Lam.
+        
+        This bug affected function->activation references but not object->object field references,
+        because object->object field references are !neededForMaterialization(). So, the object
+        test always passed but the activation/function test used to always fail. It passes now.
+
+        * stress/materialize-activation-referenced-from-phantom-function.js: Added.
+        (bar):
+        (inc):
+        (dec):
+        (foo):
+        (test):
+        * stress/materialize-object-referenced-from-phantom-object.js: Added.
+        (bar):
+        (foo):
+        (test):
+
 2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         stress/random-53bit.js.ftl-no-cjit-no-inline-validate sometimes fails

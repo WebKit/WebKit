@@ -1242,7 +1242,7 @@ private:
 
             for (const auto& field : entry.value.fields()) {
                 ASSERT(m_sinkCandidates.contains(entry.key) || !escapees.contains(field.value));
-                if (escapees.contains(field.value) && !field.key.neededForMaterialization())
+                if (escapees.contains(field.value))
                     hints.append(PromotedHeapLocation(entry.key, field.key));
             }
         }
@@ -1692,6 +1692,8 @@ private:
                     m_localMapping.set(location, m_bottom);
 
                     if (m_sinkCandidates.contains(node)) {
+                        if (verbose)
+                            dataLog("For sink candidate ", node, " found location ", location, "\n");
                         m_insertionSet.insert(
                             nodeIndex + 1,
                             location.createHint(
@@ -1758,6 +1760,8 @@ private:
 
                         doLower = true;
 
+                        if (verbose)
+                            dataLog("Creating hint with value ", nodeValue, " before ", node, "\n");
                         m_insertionSet.insert(
                             nodeIndex + 1,
                             location.createHint(
@@ -1893,6 +1897,13 @@ private:
 
     void insertOSRHintsForUpdate(unsigned nodeIndex, NodeOrigin origin, bool& canExit, AvailabilityMap& availability, Node* escapee, Node* materialization)
     {
+        if (verbose) {
+            dataLog("Inserting OSR hints at ", origin, ":\n");
+            dataLog("    Escapee: ", escapee, "\n");
+            dataLog("    Materialization: ", materialization, "\n");
+            dataLog("    Availability: ", availability, "\n");
+        }
+        
         // We need to follow() the value in the heap.
         // Consider the following graph:
         //
