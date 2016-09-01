@@ -327,13 +327,6 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
     if (query.isEmpty())
         query = possibleMalformedQuery;
 
-    // By default, the iframe will display information like the video title and uploader on top of the video. Don't display
-    // them if the embeding html doesn't specify it.
-    if (!query.isEmpty() && !query.contains("showinfo"))
-        query.append("&showinfo=0");
-    else
-        query = "showinfo=0";
-    
     // Append the query string if it is valid.
     StringBuilder finalURL;
     if (isYouTubeShortenedURL)
