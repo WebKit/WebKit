@@ -558,5 +558,10 @@ function linkAndEvaluateModule(key)
 {
     "use strict";
 
-    return this.requestReady(key);
+    var entry = this.ensureRegistered(key);
+    if (entry.state < @ModuleLink)
+        throw new @TypeError("Requested module is not instantiated yet.");
+
+    this.link(entry);
+    return this.moduleEvaluation(entry.module);
 }

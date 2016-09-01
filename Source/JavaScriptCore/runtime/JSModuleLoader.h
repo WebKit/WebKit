@@ -65,7 +65,7 @@ public:
     JSValue provide(ExecState*, JSValue key, Status, const String&);
     JSInternalPromise* loadAndEvaluateModule(ExecState*, JSValue moduleName, JSValue referrer);
     JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer);
-    JSInternalPromise* linkAndEvaluateModule(ExecState*, JSValue moduleKey);
+    JSValue linkAndEvaluateModule(ExecState*, JSValue moduleKey);
 
     // Platform dependent hooked APIs.
     JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer);

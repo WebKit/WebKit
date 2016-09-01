@@ -1,5 +1,25 @@
 2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] linking and evaluating the modules are done in a sync manner
+        https://bugs.webkit.org/show_bug.cgi?id=161467
+
+        Reviewed by Saam Barati.
+
+        While the fetching and the other stages are done in an asynchronous manner,
+        linking and evaluating are done in a sync manner.
+        Just return the result value and do not wrap them with the internal promise.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (linkAndEvaluateModule):
+        * runtime/Completion.cpp:
+        (JSC::linkAndEvaluateModule):
+        * runtime/Completion.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        * runtime/JSModuleLoader.h:
+
+2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         stress/random-53bit.js.ftl-no-cjit-no-inline-validate sometimes fails
         https://bugs.webkit.org/show_bug.cgi?id=161436
 
