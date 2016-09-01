@@ -1,3 +1,10 @@
+2016-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix webkitpy unit tests after r205280.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_path_rules_specifier):
+
 2016-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GObject DOM bindings to WebKit2 layer and stop auto generating them

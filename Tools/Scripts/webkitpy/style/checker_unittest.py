@@ -223,10 +223,6 @@ class GlobalVariablesTest(unittest.TestCase):
                       "readability/naming")
         assertCheck("random_path.cpp",
                     "readability/naming")
-        assertNoCheck(os.path.join('Source', 'WebKit', 'gtk', 'webkit', 'webkit.h'),
-                      "readability/naming")
-        assertNoCheck(os.path.join('Tools', 'DumpRenderTree', 'gtk', 'DumpRenderTree.cpp'),
-                      "readability/null")
         assertNoCheck(os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'efl', 'ewk_view.h'),
                       "readability/naming")
         assertNoCheck(os.path.join('Source', 'WebCore', 'css', 'CSSParser.cpp'),
