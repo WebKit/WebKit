@@ -618,6 +618,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _recordingReset(event)
     {
+        for (let timelineView of this._timelineViewMap.values())
+            timelineView.reset();
+
         this._currentTime = NaN;
         this._discontinuityStartTime = NaN;
 
@@ -635,8 +638,6 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         this._timelineOverview.reset();
         this._overviewTimelineView.reset();
-        for (var timelineView of this._timelineViewMap.values())
-            timelineView.reset();
         this._clearTimelineNavigationItem.enabled = false;
     }
 
