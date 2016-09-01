@@ -1,3 +1,12 @@
+2016-09-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed ARM buildfix after r205283.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::patchableJumpSize):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::patchableJumpSize):
+
 2016-09-01  Saam Barati  <sbarati@apple.com>
 
         JITMathIC was misusing maxJumpReplacementSize

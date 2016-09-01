@@ -1463,6 +1463,11 @@ public:
         return ARMAssembler::maxJumpReplacementSize();
     }
 
+    static ptrdiff_t patchableJumpSize()
+    {
+        return ARMAssembler::patchableJumpSize();
+    }
+
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
     static bool canJumpReplacePatchableBranch32WithPatch() { return false; }
 
