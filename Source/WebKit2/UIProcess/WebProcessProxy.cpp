@@ -32,6 +32,7 @@
 #include "CustomProtocolManagerProxyMessages.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
+#include "Logging.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
 #include "TextChecker.h"
@@ -709,7 +710,7 @@ void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
     ASSERT(canSendMessage());
 
     auto token = throttler().backgroundActivityToken();
-    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), "%p - WebProcessProxy is taking a background assertion because the Web process is fetching Website data", this);
+    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is fetching Website data", this);
 
     connection()->sendWithReply(Messages::WebProcess::FetchWebsiteData(sessionID, dataTypes), 0, RunLoop::main(), [this, token, completionHandler = WTFMove(completionHandler), sessionID](auto reply) {
         if (!reply) {
@@ -718,7 +719,7 @@ void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
         }
 
         completionHandler(WTFMove(std::get<0>(*reply)));
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), "%p - WebProcessProxy is releasing a background assertion because the Web process is done fetching Website data", this);
+        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done fetching Website data", this);
     });
 }
 
@@ -727,11 +728,11 @@ void WebProcessProxy::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDa
     ASSERT(canSendMessage());
 
     auto token = throttler().backgroundActivityToken();
-    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data", this);
+    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data", this);
 
     connection()->sendWithReply(Messages::WebProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince), 0, RunLoop::main(), [this, token, completionHandler = WTFMove(completionHandler), sessionID](auto reply) {
         completionHandler();
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data", this);
+        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data", this);
     });
 }
 
@@ -740,7 +741,7 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet
     ASSERT(canSendMessage());
 
     auto token = throttler().backgroundActivityToken();
-    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data for several origins", this);
+    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data for several origins", this);
 
     Vector<SecurityOriginData> originData;
     for (auto& origin : origins)
@@ -748,7 +749,7 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet
 
     connection()->sendWithReply(Messages::WebProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, originData), 0, RunLoop::main(), [this, token, completionHandler = WTFMove(completionHandler), sessionID](auto reply) {
         completionHandler();
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data for several origins", this);
+        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data for several origins", this);
     });
 }
 
@@ -945,7 +946,7 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
 
     switch (state) {
     case AssertionState::Suspended:
-        RELEASE_LOG("%p - WebProcessProxy::didSetAssertionState(Suspended) release all assertions for network process", this);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(Suspended) release all assertions for network process", this);
         m_foregroundTokenForNetworkProcess = nullptr;
         m_backgroundTokenForNetworkProcess = nullptr;
         for (auto& page : m_pageMap.values())
@@ -953,13 +954,13 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
         break;
 
     case AssertionState::Background:
-        RELEASE_LOG("%p - WebProcessProxy::didSetAssertionState(Background) taking background assertion for network process", this);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(Background) taking background assertion for network process", this);
         m_backgroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().backgroundActivityToken();
         m_foregroundTokenForNetworkProcess = nullptr;
         break;
     
     case AssertionState::Foreground:
-        RELEASE_LOG("%p - WebProcessProxy::didSetAssertionState(Foreground) taking foreground assertion for network process", this);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(Foreground) taking foreground assertion for network process", this);
         m_foregroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().foregroundActivityToken();
         m_backgroundTokenForNetworkProcess = nullptr;
         for (auto& page : m_pageMap.values())
@@ -976,12 +977,12 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
 void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
     if (!isHoldingLockedFiles) {
-        RELEASE_LOG("UIProcess is releasing a background assertion because the WebContent process is no longer holding locked files");
+        RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because the WebContent process is no longer holding locked files");
         m_tokenForHoldingLockedFiles = nullptr;
         return;
     }
     if (!m_tokenForHoldingLockedFiles) {
-        RELEASE_LOG("UIProcess is taking a background assertion because the WebContent process is holding locked files");
+        RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the WebContent process is holding locked files");
         m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
     }
 }

@@ -30,7 +30,7 @@
 
 #include <wtf/Assertions.h>
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX WebKitLog
@@ -62,15 +62,12 @@
     M(Timing) \
     M(View) \
 
-#define DECLARE_LOG_CHANNEL(name) \
-extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
-
 WEBKIT_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #undef DECLARE_LOG_CHANNEL
 
 void WebKitInitializeLogChannelsIfNecessary(void);
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #endif

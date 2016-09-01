@@ -135,7 +135,31 @@ typedef enum { WTFLogChannelOff, WTFLogChannelOn, WTFLogChannelOnWithAccumulatio
 typedef struct {
     WTFLogChannelState state;
     const char* name;
+#if !RELEASE_LOG_DISABLED
+    const char* subsystem;
+    __unsafe_unretained os_log_t osLogChannel;
+#endif
 } WTFLogChannel;
+
+#define LOG_CHANNEL(name) JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name)
+#define LOG_CHANNEL_ADDRESS(name) &LOG_CHANNEL(name),
+#define JOIN_LOG_CHANNEL_WITH_PREFIX(prefix, channel) JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel)
+#define JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel) prefix ## channel
+
+#define LOG_CHANNEL_WEBKIT_SUBSYSTEM "com.apple.WebKit"
+
+#define DECLARE_LOG_CHANNEL(name) \
+    extern WTFLogChannel LOG_CHANNEL(name);
+
+#if !defined(DEFINE_LOG_CHANNEL)
+#if RELEASE_LOG_DISABLED
+#define DEFINE_LOG_CHANNEL(name, subsystem) \
+    WTFLogChannel LOG_CHANNEL(name) = { WTFLogChannelOff, #name };
+#else
+#define DEFINE_LOG_CHANNEL(name, subsystem) \
+    WTFLogChannel LOG_CHANNEL(name) = { WTFLogChannelOff, #name, subsystem, OS_LOG_DEFAULT };
+#endif
+#endif
 
 WTF_EXPORT_PRIVATE void WTFReportAssertionFailure(const char* file, int line, const char* function, const char* assertion);
 WTF_EXPORT_PRIVATE void WTFReportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* assertion, const char* format, ...) WTF_ATTRIBUTE_PRINTF(5, 6);
@@ -367,9 +391,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication()
 #if LOG_DISABLED
 #define LOG(channel, ...) ((void)0)
 #else
-#define LOG(channel, ...) WTFLog(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
-#define JOIN_LOG_CHANNEL_WITH_PREFIX(prefix, channel) JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel)
-#define JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel) prefix ## channel
+#define LOG(channel, ...) WTFLog(&LOG_CHANNEL(channel), __VA_ARGS__)
 #endif
 
 /* LOG_VERBOSE */
@@ -377,22 +399,25 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication()
 #if LOG_DISABLED
 #define LOG_VERBOSE(channel, ...) ((void)0)
 #else
-#define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
+#define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &LOG_CHANNEL(channel), __VA_ARGS__)
 #endif
 
 /* RELEASE_LOG */
 
-#define WTF_LOGGING_PREFIX "#WK: "
 #if RELEASE_LOG_DISABLED
-#define RELEASE_LOG(format, ...)       ((void)0)
-#define RELEASE_LOG_ERROR(format, ...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, format, ##__VA_ARGS__)
+#define RELEASE_LOG(      channel, format, ...) ((void)0)
+#define RELEASE_LOG_ERROR(channel, format, ...) LOG_ERROR(format, ##__VA_ARGS__)
+
+#define RELEASE_LOG_IF(      isAllowed, channel, format, ...) ((void)0)
+#define RELEASE_LOG_ERROR_IF(isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, format, ##__VA_ARGS__); } while (0)
 #else
-#define WTF_LOG_DEFAULT OS_LOG_DEFAULT
-#define RELEASE_LOG(format, ...)       os_log(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__)
-#define RELEASE_LOG_ERROR(format, ...) os_log_error(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__)
+#define RELEASE_LOG(      channel, format, ...) os_log(      LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR(channel, format, ...) os_log_error(LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__)
+
+#define RELEASE_LOG_IF(      isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG(      channel, format, ##__VA_ARGS__); } while (0)
+#define RELEASE_LOG_ERROR_IF(isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, format, ##__VA_ARGS__); } while (0)
 #endif
-#define RELEASE_LOG_IF(isAllowed, format, ...)       do { if (isAllowed) RELEASE_LOG(format, ##__VA_ARGS__); } while (0)
-#define RELEASE_LOG_ERROR_IF(isAllowed, format, ...) do { if (isAllowed) RELEASE_LOG_ERROR(format, ##__VA_ARGS__); } while (0)
+
 
 /* RELEASE_ASSERT */
 

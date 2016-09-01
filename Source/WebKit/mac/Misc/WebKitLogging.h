@@ -36,7 +36,7 @@
 extern "C" {
 #endif
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #define WEBKIT_LOG_CHANNELS(M) \
     M(BackForward) \
@@ -64,15 +64,12 @@ extern "C" {
     M(Timing) \
     M(View) \
 
-#define DECLARE_LOG_CHANNEL(name) \
-extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
-
 WEBKIT_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #undef DECLARE_LOG_CHANNEL
 
 void WebKitInitializeLogChannelsIfNecessary(void);
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 void ReportDiscardedDelegateException(SEL delegateSelector, id exception);
 

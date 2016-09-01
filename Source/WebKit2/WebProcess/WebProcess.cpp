@@ -1272,10 +1272,10 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
     setAllLayerTreeStatesFrozen(true);
 
     markAllLayersVolatile([this, shouldAcknowledgeWhenReadyToSuspend] {
-        RELEASE_LOG("%p - WebProcess::markAllLayersVolatile() Successfuly marked all layers as volatile", this);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Successfuly marked all layers as volatile", this);
 
         if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes) {
-            RELEASE_LOG("%p - WebProcess::actualPrepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
+            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::actualPrepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
             parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
         }
     });
@@ -1291,7 +1291,7 @@ void WebProcess::processWillSuspendImminently(bool& handled)
         return;
     }
 
-    RELEASE_LOG("%p - WebProcess::processWillSuspendImminently()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processWillSuspendImminently()", this);
     DatabaseTracker::tracker().closeAllDatabases(CurrentQueryBehavior::Interrupt);
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
     handled = true;
@@ -1299,13 +1299,13 @@ void WebProcess::processWillSuspendImminently(bool& handled)
 
 void WebProcess::prepareToSuspend()
 {
-    RELEASE_LOG("%p - WebProcess::prepareToSuspend()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend()", this);
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::Yes);
 }
 
 void WebProcess::cancelPrepareToSuspend()
 {
-    RELEASE_LOG("%p - WebProcess::cancelPrepareToSuspend()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend()", this);
     setAllLayerTreeStatesFrozen(false);
 
     // If we've already finished cleaning up and sent ProcessReadyToSuspend, we
@@ -1315,13 +1315,13 @@ void WebProcess::cancelPrepareToSuspend()
 
     cancelMarkAllLayersVolatile();
 
-    RELEASE_LOG("%p - WebProcess::cancelPrepareToSuspend() Sending DidCancelProcessSuspension IPC message", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend() Sending DidCancelProcessSuspension IPC message", this);
     parentProcessConnection()->send(Messages::WebProcessProxy::DidCancelProcessSuspension(), 0);
 }
 
 void WebProcess::markAllLayersVolatile(std::function<void()> completionHandler)
 {
-    RELEASE_LOG("%p - WebProcess::markAllLayersVolatile()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile()", this);
     m_pagesMarkingLayersAsVolatile = m_pageMap.size();
     if (!m_pagesMarkingLayersAsVolatile) {
         completionHandler();
@@ -1354,7 +1354,7 @@ void WebProcess::setAllLayerTreeStatesFrozen(bool frozen)
     
 void WebProcess::processDidResume()
 {
-    RELEASE_LOG("%p - WebProcess::processDidResume()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processDidResume()", this);
 
     cancelMarkAllLayersVolatile();
     setAllLayerTreeStatesFrozen(false);

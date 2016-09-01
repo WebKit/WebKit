@@ -175,7 +175,7 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
         return;
     }
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     double startTime = currentTime();
 #endif
     RetainPtr<CGImageRef> subImage(image);

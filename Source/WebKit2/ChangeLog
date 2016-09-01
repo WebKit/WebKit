@@ -1,3 +1,72 @@
+2016-08-31  Keith Rollin  <krollin@apple.com>
+
+        WebKit should set a subsystem for os_log so it's easier to filter for WebKit log messages
+        https://bugs.webkit.org/show_bug.cgi?id=160969
+        <rdar://problem/26068734>
+
+        Reviewed by Simon Fraser.
+
+        - Specify a channel when using RELEASE_LOG macros.
+        - Add some new channels so that we have something to pass to the
+          RELEASE_LOG macros (ProcessSuspension, IPC, Layers).
+        - Enable subsystem- and channel-related data and functions when using
+          RELEASE_LOG macros.
+        - Use the DECLARE_LOG_CHANNEL, DEFINE_LOG_CHANNEL, and
+          LOG_CHANNEL_ADDRESS macros that are now defined in WTF.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::cancelPrepareToSuspend):
+        (WebKit::NetworkProcess::processDidResume):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForSyncReply):
+        * Platform/LogInitialization.h:
+        * Platform/Logging.cpp:
+        (WebKit::initializeLogChannelsIfNecessary):
+        * Platform/Logging.h:
+        * Platform/foundation/LoggingFoundation.mm:
+        * Platform/unix/LoggingUnix.cpp:
+        * Shared/ChildProcess.cpp:
+        (WebKit::didCloseOnConnectionWorkQueue):
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::releaseNetworkActivityToken):
+        (WebKit::NavigationState::didChangeIsLoading):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcessProxy::setIsHoldingLockedFiles):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertionNow):
+        (WebKit::ProcessThrottler::updateAssertion):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_hiddenPageThrottlingTimer):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::WebProcessProxy::didSetAssertionState):
+        (WebKit::WebProcessProxy::setIsHoldingLockedFiles):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::actualPrepareToSuspend):
+        (WebKit::WebProcess::processWillSuspendImminently):
+        (WebKit::WebProcess::prepareToSuspend):
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+        (WebKit::WebProcess::markAllLayersVolatile):
+        (WebKit::WebProcess::processDidResume):
+
 2016-08-31  Yoav Weiss  <yoav@yoav.ws>
 
         Add event support for link preload.

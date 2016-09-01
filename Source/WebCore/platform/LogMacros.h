@@ -27,7 +27,7 @@
 
 #include <functional>
 
-#if LOG_DISABLED
+#if LOG_DISABLED && RELEASE_LOG_DISABLED
 
 #define LOG_RESULT(channel, function) ((void)0)
 #define LOG_WITH_STREAM(channel, commands) ((void)0)
@@ -47,4 +47,4 @@ WEBCORE_EXPORT void logFunctionResult(WTFLogChannel*, std::function<const char*(
         return stream.release().utf8().data(); \
     });
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

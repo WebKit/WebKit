@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 String logLevelString();
 bool isLogChannelEnabled(const String& name);
 WEBCORE_EXPORT void setLogChannelToAccumulate(const String& name);
 WEBCORE_EXPORT void initializeLogChannelsIfNecessary();
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 } // namespace WebCore

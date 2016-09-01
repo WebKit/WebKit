@@ -2906,9 +2906,9 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
 
     static bool didOneTimeInitialization;
     if (!didOneTimeInitialization) {
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
         initializeLogChannelsIfNecessary();
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
         // Initialize our platform strategies first before invoking the rest
         // of the initialization code which may depend on the strategies.

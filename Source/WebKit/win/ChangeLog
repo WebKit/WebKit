@@ -1,3 +1,20 @@
+2016-08-31  Keith Rollin  <krollin@apple.com>
+
+        WebKit should set a subsystem for os_log so it's easier to filter for WebKit log messages
+        https://bugs.webkit.org/show_bug.cgi?id=160969
+        <rdar://problem/26068734>
+
+        Reviewed by Simon Fraser.
+
+        Enable subsystem- and channel-related data and functions when using
+        RELEASE_LOG macros. Use the DECLARE_LOG_CHANNEL, DEFINE_LOG_CHANNEL,
+        and LOG_CHANNEL_ADDRESS macros that are now defined in WTF.
+
+        * WebKitLogging.cpp:
+        * WebKitLogging.h:
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2016-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Accelerated compositing does not work in Wayland

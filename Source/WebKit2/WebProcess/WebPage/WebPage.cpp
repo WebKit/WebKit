@@ -255,8 +255,8 @@ static const double pageScrollHysteresisSeconds = 0.3;
 static const std::chrono::milliseconds initialLayerVolatilityTimerInterval { 20 };
 static const std::chrono::seconds maximumLayerVolatilityTimerInterval { 2 };
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Layers, __VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), Layers, __VA_ARGS__)
 
 class SendStopResponsivenessTimer {
 public:
@@ -2064,7 +2064,7 @@ void WebPage::layerVolatilityTimerFired()
     bool didSucceed = markLayersVolatileImmediatelyIfPossible();
     if (didSucceed || newInterval > maximumLayerVolatilityTimerInterval) {
         m_layerVolatilityTimer.stop();
-        RELEASE_LOG_IF_ALLOWED("%p - WebPage - Attempted to mark surfaces as volatile, success? %d", this, didSucceed);
+        RELEASE_LOG_IF_ALLOWED("%p - WebPage - Attempted to mark layers as volatile, success? %d", this, didSucceed);
         callVolatilityCompletionHandlers();
         return;
     }

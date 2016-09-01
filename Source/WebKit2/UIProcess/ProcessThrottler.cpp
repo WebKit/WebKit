@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProcessThrottler.h"
 
+#include "Logging.h"
 #include "ProcessThrottlerClient.h"
 
 namespace WebKit {
@@ -57,7 +58,7 @@ void ProcessThrottler::updateAssertionNow()
     m_suspendTimer.stop();
     if (m_assertion) {
         if (m_assertion->state() != assertionState())
-            RELEASE_LOG("%p - ProcessThrottler::updateAssertionNow() updating process assertion state to %u (foregroundActivities: %lu, backgroundActivities: %lu)", this, assertionState(), m_foregroundCounter.value(), m_backgroundCounter.value());
+            RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottler::updateAssertionNow() updating process assertion state to %u (foregroundActivities: %lu, backgroundActivities: %lu)", this, assertionState(), m_foregroundCounter.value(), m_backgroundCounter.value());
         m_assertion->setState(assertionState());
         m_process.didSetAssertionState(assertionState());
     }
@@ -70,7 +71,7 @@ void ProcessThrottler::updateAssertion()
     // in the background for too long.
     if (m_assertion && m_assertion->state() != AssertionState::Suspended && !m_foregroundCounter.value() && !m_backgroundCounter.value()) {
         ++m_suspendMessageCount;
-        RELEASE_LOG("%p - ProcessThrottler::updateAssertion() sending PrepareToSuspend IPC", this);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottler::updateAssertion() sending PrepareToSuspend IPC", this);
         m_process.sendPrepareToSuspend();
         m_suspendTimer.startOneShot(processSuspensionTimeout);
         m_assertion->setState(AssertionState::Background);

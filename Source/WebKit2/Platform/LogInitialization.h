@@ -27,7 +27,7 @@
 
 #include <wtf/text/WTFString.h>
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 namespace WebKit {
 
@@ -36,4 +36,4 @@ String logLevelString();
 
 } // namespace WebKit
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

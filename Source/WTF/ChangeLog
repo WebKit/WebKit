@@ -1,3 +1,29 @@
+2016-08-31  Keith Rollin  <krollin@apple.com>
+
+        WebKit should set a subsystem for os_log so it's easier to filter for WebKit log messages
+        https://bugs.webkit.org/show_bug.cgi?id=160969
+        <rdar://problem/26068734>
+
+        Reviewed by Simon Fraser.
+
+        Add support for attaching a subsystem and category when logging via
+        the RELEASE_LOG macros. This support is provided by adding subsystem
+        and category information to WTFLogChannel. An os_log_t object is then
+        created to enacpsulate that information. When using RELEASE_LOG to log
+        through that channel, the associated log object is used when calling
+        os_log.
+
+        To help support the inclusion of the subsystem and category
+        information in WTFLogChannel, the DECLARE_LOG_CHANNEL,
+        DEFINE_LOG_CHANNEL, and LOG_CHANNEL_ADDRESS macros that were defined
+        in various modules are consolidated and moved to Assertions.h.
+        DEFINE_LOG_CHANNEL is now defined to initialize the subsystem and
+        category.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/RefCountedLeakCounter.cpp:
+
 2016-08-31  Alex Christensen  <achristensen@webkit.org>
 
         Implement IPv6 parsing in URLParser

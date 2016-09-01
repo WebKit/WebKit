@@ -34,6 +34,7 @@
 #import "IOSurfaceSPI.h"
 #import "ImageBuffer.h"
 #import "ImageBufferDataCG.h"
+#import "Logging.h"
 #import "MachSendRight.h"
 #import <wtf/Assertions.h>
 #import <wtf/MathExtras.h>
@@ -211,7 +212,7 @@ WebCore::IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef
     if (success)
         m_totalBytes = IOSurfaceGetAllocSize(m_surface.get());
     else
-        RELEASE_LOG_ERROR("Surface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
+        RELEASE_LOG_ERROR(Layers, "Surface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
 }
 
 WebCore::IOSurface::IOSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)

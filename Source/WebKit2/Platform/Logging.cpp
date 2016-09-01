@@ -30,20 +30,18 @@
 
 #include <wtf/text/CString.h>
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-#define DEFINE_LOG_CHANNEL(name) \
-    WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name) = { WTFLogChannelOff, #name };
-WEBKIT2_LOG_CHANNELS(DEFINE_LOG_CHANNEL)
+#define DEFINE_WEBKIT2_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
+WEBKIT2_LOG_CHANNELS(DEFINE_WEBKIT2_LOG_CHANNEL)
 
-#define LOG_CHANNEL_ADDRESS(name)  &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name),
 static WTFLogChannel* logChannels[] = {
     WEBKIT2_LOG_CHANNELS(LOG_CHANNEL_ADDRESS)
 };
 
 namespace WebKit {
 
-const size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
+static const size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
 
 void initializeLogChannelsIfNecessary()
 {
@@ -62,4 +60,4 @@ void initializeLogChannelsIfNecessary()
 
 } // namespace WebKit
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

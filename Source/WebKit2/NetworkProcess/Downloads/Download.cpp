@@ -31,14 +31,15 @@
 #include "DataReference.h"
 #include "DownloadManager.h"
 #include "DownloadProxyMessages.h"
+#include "Logging.h"
 #include "SandboxExtension.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
 
 namespace WebKit {
 

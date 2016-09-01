@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Logging.h"
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #include <windows.h>
 #include <wtf/StdLibExtras.h>
@@ -52,4 +52,4 @@ String logLevelString()
 
 } // namespace WebCore
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

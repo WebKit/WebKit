@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ChildProcess.h"
 
+#include "Logging.h"
 #include "SandboxInitializationParameters.h"
 #include <unistd.h>
 
@@ -53,7 +54,7 @@ static void didCloseOnConnectionWorkQueue(IPC::Connection*)
         // We use _exit here since the watchdog callback is called from another thread and we don't want
         // global destructors or atexit handlers to be called from this thread while the main thread is busy
         // doing its thing.
-        RELEASE_LOG_ERROR("Exiting process early due to unacknowledged closed-connection");
+        RELEASE_LOG_ERROR(IPC, "Exiting process early due to unacknowledged closed-connection");
         _exit(EXIT_FAILURE);
     });
 }

@@ -28,7 +28,7 @@
 
 #include <wtf/text/WTFString.h>
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 namespace WebCore {
 
@@ -41,4 +41,4 @@ String logLevelString()
 
 }
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

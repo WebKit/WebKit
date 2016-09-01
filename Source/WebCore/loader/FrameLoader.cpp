@@ -142,7 +142,7 @@
 #include "WKContentObservation.h"
 #endif
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
 
 namespace WebCore {
 

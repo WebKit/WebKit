@@ -29,13 +29,13 @@
 
 namespace WebKit {
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 String logLevelString()
 {
     return getenv("WEBKIT_DEBUG");
 }
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 }

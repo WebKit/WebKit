@@ -967,7 +967,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     static bool didOneTimeInitialization = false;
 #endif
     if (!didOneTimeInitialization) {
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
         WebKitInitializeLogChannelsIfNecessary();
         WebCore::initializeLogChannelsIfNecessary();
 #endif

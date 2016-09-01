@@ -623,10 +623,10 @@ void NetworkProcess::processWillSuspendImminently(bool& handled)
 
 void NetworkProcess::prepareToSuspend()
 {
-    RELEASE_LOG("%p - NetworkProcess::prepareToSuspend()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend()", this);
     lowMemoryHandler(Critical::Yes);
 
-    RELEASE_LOG("%p - NetworkProcess::prepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
 }
 
@@ -636,12 +636,12 @@ void NetworkProcess::cancelPrepareToSuspend()
     // we do not because prepareToSuspend() already replied with a NetworkProcessProxy::ProcessReadyToSuspend
     // message. And NetworkProcessProxy expects to receive either a NetworkProcessProxy::ProcessReadyToSuspend-
     // or NetworkProcessProxy::DidCancelProcessSuspension- message, but not both.
-    RELEASE_LOG("%p - NetworkProcess::cancelPrepareToSuspend()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::cancelPrepareToSuspend()", this);
 }
 
 void NetworkProcess::processDidResume()
 {
-    RELEASE_LOG("%p - NetworkProcess::processDidResume()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume()", this);
 }
 
 void NetworkProcess::prefetchDNS(const String& hostname)

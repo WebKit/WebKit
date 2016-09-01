@@ -31,7 +31,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX WebKit2Log
@@ -44,19 +44,22 @@ extern "C" {
 #define WEBKIT2_LOG_CHANNELS(M) \
     M(ContextMenu) \
     M(Gamepad) \
-    M(IDB) \
     M(IconDatabase) \
+    M(IDB) \
     M(IndexedDB) \
     M(InspectorServer) \
+    M(IPC) \
     M(KeyHandling) \
+    M(Layers) \
     M(Network) \
     M(NetworkCache) \
-    M(NetworkCacheStorage) \
     M(NetworkCacheSpeculativePreloading) \
-    M(NetworkSession) \
+    M(NetworkCacheStorage) \
     M(NetworkScheduling) \
+    M(NetworkSession) \
     M(Plugins) \
     M(Printing) \
+    M(ProcessSuspension) \
     M(RemoteLayerTree) \
     M(Resize) \
     M(Selection) \
@@ -66,9 +69,6 @@ extern "C" {
     M(ViewGestures) \
     M(VisibleRects) \
 
-#define DECLARE_LOG_CHANNEL(name) \
-    extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
-
 WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #undef DECLARE_LOG_CHANNEL
@@ -77,6 +77,6 @@ WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 }
 #endif
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #endif // Logging_h

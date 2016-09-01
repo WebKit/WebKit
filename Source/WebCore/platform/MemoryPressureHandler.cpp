@@ -34,6 +34,7 @@
 #include "GCController.h"
 #include "HTMLMediaElement.h"
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -220,7 +221,7 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
 {
 #if !RELEASE_LOG_DISABLED
 #define STRING_SPECIFICATION "%{public}s"
-#define MEMORYPRESSURE_LOG(...) RELEASE_LOG(__VA_ARGS__)
+#define MEMORYPRESSURE_LOG(...) RELEASE_LOG(MemoryPressure, __VA_ARGS__)
 #else
 #define STRING_SPECIFICATION "%s"
 #define MEMORYPRESSURE_LOG(...) WTFLogAlways(__VA_ARGS__)

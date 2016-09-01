@@ -35,6 +35,7 @@
 #import "APIURL.h"
 #import "AuthenticationDecisionListener.h"
 #import "CompletionHandlerCallChecker.h"
+#import "Logging.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
 #import "WKBackForwardListInternal.h"
@@ -825,7 +826,7 @@ void NavigationState::willChangeIsLoading()
 #if PLATFORM(IOS)
 void NavigationState::releaseNetworkActivityToken()
 {
-    RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), "%p UIProcess is releasing a background assertion because a page load completed", this);
+    RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p UIProcess is releasing a background assertion because a page load completed", this);
     ASSERT(m_activityToken);
     m_activityToken = nullptr;
 }
@@ -838,7 +839,7 @@ void NavigationState::didChangeIsLoading()
         if (m_releaseActivityTimer.isActive())
             m_releaseActivityTimer.stop();
         else {
-            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), "%p - UIProcess is taking a background assertion because a page load started", this);
+            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because a page load started", this);
             ASSERT(!m_activityToken);
             m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
         }

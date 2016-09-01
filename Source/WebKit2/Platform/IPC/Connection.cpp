@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Connection.h"
 
+#include "Logging.h"
 #include <memory>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
@@ -573,7 +574,7 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, st
         // If that happens, we need to stop waiting, or we'll hang since we won't get
         // any more incoming messages.
         if (!isValid()) {
-            RELEASE_LOG_ERROR("Connection::waitForSyncReply: Connection no longer valid, id = %" PRIu64, syncRequestID);
+            RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Connection no longer valid, id = %" PRIu64, syncRequestID);
             didReceiveSyncReply(sendSyncOptions);
             return nullptr;
         }
@@ -584,7 +585,7 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, st
         timedOut = !SyncMessageState::singleton().wait(absoluteTime);
     }
 
-    RELEASE_LOG_ERROR("Connection::waitForSyncReply: Timed-out while waiting for reply, id = %" PRIu64, syncRequestID);
+    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply, id = %" PRIu64, syncRequestID);
     didReceiveSyncReply(sendSyncOptions);
 
     return nullptr;

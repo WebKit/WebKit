@@ -27,13 +27,11 @@
  */
 #include "WebKitLogging.h"
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-#define DEFINE_LOG_CHANNEL(name) \
-    WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name) = { WTFLogChannelOff, #name };
-WEBKIT_LOG_CHANNELS(DEFINE_LOG_CHANNEL)
+#define DEFINE_WEBKIT_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
+WEBKIT_LOG_CHANNELS(DEFINE_WEBKIT_LOG_CHANNEL)
 
-#define LOG_CHANNEL_ADDRESS(name)  &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name),
 static WTFLogChannel* logChannels[] = {
     WEBKIT_LOG_CHANNELS(LOG_CHANNEL_ADDRESS)
 };
@@ -51,4 +49,4 @@ void WebKitInitializeLogChannelsIfNecessary()
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, "");
 }
 
-#endif // !LOG_DISABLED
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
