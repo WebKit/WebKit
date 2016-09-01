@@ -1,3 +1,12 @@
+2016-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip fixed layout tests in GTK+
+
+        They are causing a lot of flaky tests because of changes in the viewport controller that are never reset. Once
+        the actual bug is properly fixed I'll unskip these tests again.
+
+        * platform/gtk/TestExpectations:
+
 2016-09-01  Youenn Fablet  <youenn@apple.com>
 
         Calling then on promise in Workers may crash in Debug builds
