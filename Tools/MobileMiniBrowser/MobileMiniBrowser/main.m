@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <MobileMiniBrowser/MobileMiniBrowser.h>
+#import "AppDelegate.h"
+#import <UIKit/UIKit.h>
 
 int main(int argc, char * argv[])
 {
