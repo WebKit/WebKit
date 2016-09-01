@@ -1206,8 +1206,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         var classes = [ "html-tag" ];
         if (isClosingTag && isDistinctTreeElement)
             classes.push("close");
-        if (node.isInShadowTree())
-            classes.push("shadow");
         var tagElement = parentElement.createChild("span", classes.join(" "));
         tagElement.append("<");
         var tagNameElement = tagElement.createChild("span", isClosingTag ? "" : "html-tag-name");
@@ -1241,11 +1239,14 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 var fragmentElement = info.titleDOM.createChild("span", "html-fragment");
                 if (node.shadowRootType()) {
                     fragmentElement.textContent = WebInspector.UIString("Shadow Content (%s)").format(WebInspector.DOMTreeElement.shadowRootTypeDisplayName(node.shadowRootType()));
-                    fragmentElement.classList.add("shadow");
-                } else if (node.parentNode && node.parentNode.templateContent() === node)
+                    this._listItemNode.classList.add("shadow");
+                } else if (node.parentNode && node.parentNode.templateContent() === node) {
                     fragmentElement.textContent = WebInspector.UIString("Template Content");
-                else
+                    this._listItemNode.classList.add("template");
+                } else {
                     fragmentElement.textContent = WebInspector.UIString("Document Fragment");
+                    this._listItemNode.classList.add("fragment");
+                }
                 break;
 
             case Node.ATTRIBUTE_NODE:
