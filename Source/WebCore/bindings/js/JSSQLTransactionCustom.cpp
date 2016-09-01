@@ -36,6 +36,7 @@
 #include "JSDOMWindowCustom.h"
 #include "SQLTransaction.h"
 #include "SQLValue.h"
+#include <runtime/JSObjectInlines.h>
 
 using namespace JSC;
 

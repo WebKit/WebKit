@@ -31,6 +31,7 @@
 #include "Executable.h"
 #include "GetterSetter.h"
 #include "IndexingHeaderInlines.h"
+#include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"
 #include "Reject.h"

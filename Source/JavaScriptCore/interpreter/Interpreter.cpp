@@ -43,7 +43,7 @@
 #include "Exception.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "JSArray.h"
+#include "JSArrayInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"

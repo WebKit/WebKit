@@ -39,6 +39,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSONObject.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/CurrentTime.h>

@@ -31,6 +31,7 @@
 #include "Exception.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
+#include "JSObjectInlines.h"
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
 #include "SlotVisitorInlines.h"

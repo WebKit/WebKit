@@ -32,6 +32,7 @@
 #include "JSCellInlines.h"
 #include "JSFunction.h"
 #include "JSGenericTypedArrayViewPrototypeFunctions.h"
+#include "JSObjectInlines.h"
 #include "TypedArrayAdaptors.h"
 
 namespace JSC {

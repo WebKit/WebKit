@@ -31,6 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
+#include "JSObjectInlines.h"
 #include "JSWeakSet.h"
 #include "StructureInlines.h"
 #include "WeakSetPrototype.h"
