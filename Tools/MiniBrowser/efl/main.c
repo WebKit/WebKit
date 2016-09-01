@@ -30,6 +30,9 @@ extern int efreet_cache_update;
 
 static const char DEFAULT_URL[] = "http://www.ewebkit.org/";
 static const char APP_NAME[] = "EFL MiniBrowser";
+static const char JAVASCRIPT_SCHEME[] = "javascript:";
+static const char FILE_SCHEME[] = "file://";
+static const char HTTP_SCHEME[] = "http://";
 static const int TOOL_BAR_ICON_SIZE = 24;
 static const int TOOL_BAR_BUTTON_SIZE = 32;
 static const int SEARCH_FIELD_SIZE = 200;
@@ -55,8 +58,8 @@ static Eina_Bool touch_events_enabled = EINA_FALSE;
 static Eina_Bool fixed_layout_enabled = EINA_TRUE;
 static Eina_Bool separated_process_enabled = EINA_FALSE;
 static Eina_Bool longpress_enabled = EINA_FALSE;
-static int window_width = 800;
-static int window_height = 600;
+static int window_width = 1000;
+static int window_height = 800;
 static int search_flags = EWK_FIND_OPTIONS_SHOW_HIGHLIGHT | EWK_FIND_OPTIONS_WRAP_AROUND | EWK_FIND_OPTIONS_CASE_INSENSITIVE;
 /* Default value of device_pixel_ratio is '0' so that we don't set custom device
  * scale factor unless it's required by the User. */
@@ -126,7 +129,7 @@ typedef struct _Browser_Window {
         Evas_Object *history_list;
         Eina_List *history_list_items;
     } history;
-    int current_zoom_level; 
+    int current_zoom_level;
     Tooltip_Information tooltip;
     Color_Selector color_selector;
     struct {
@@ -316,7 +319,7 @@ on_mouse_wheel(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info
             elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(ewk_view));
         } else if (ev->z == 1 && ewk_view_back_possible(ewk_view)) {
             ewk_view_back(ewk_view);
-            elm_object_disabled_set(window->back_button, !ewk_view_back_possible(ewk_view));       
+            elm_object_disabled_set(window->back_button, !ewk_view_back_possible(ewk_view));
         }
     } else if (ctrlPressed) {
         if (ev->z == -1 && zoom_level_set(ewk_view, window->current_zoom_level + 1)) {
@@ -466,21 +469,21 @@ search_box_hide(Browser_Window *window)
     evas_object_focus_set(window->ewk_view, EINA_TRUE);
 }
 
-static void 
+static void
 history_list_hide(Browser_Window *window)
 {
     /* Hide history list */
     evas_object_hide(window->history.history_box);
     evas_object_hide(window->history.history_list);
-    
+
     /* Dereference the list items and clear the history list */
-    void *data;    
+    void *data;
     EINA_LIST_FREE(window->history.history_list_items, data) {
         ewk_object_unref(data);
     }
 
     elm_genlist_clear(window->history.history_list);
-    
+
     /* Give focus back to the view */
     elm_object_focus_set(window->history.history_box, EINA_FALSE);
     elm_object_focus_set(window->history.history_list, EINA_FALSE);
@@ -488,7 +491,7 @@ history_list_hide(Browser_Window *window)
 
     /* Reset flags */
     longpress_enabled = EINA_FALSE;
-} 
+}
 
 static void save_page_contents_callback(Ewk_Page_Contents_Type type, const char *data, void *user_data)
 {
@@ -518,7 +521,7 @@ static void save_page_contents_callback(Ewk_Page_Contents_Type type, const char 
     eina_stringshare_del(fileName);
 }
 
-static void 
+static void
 script_execute_callback(Evas_Object *ewk_view, const char *return_value, void *user_data)
 {
     Browser_Window *window = (Browser_Window *)user_data;
@@ -528,7 +531,7 @@ script_execute_callback(Evas_Object *ewk_view, const char *return_value, void *u
     if (return_value) {
         eina_strbuf_append(text_buffer, return_value);
         INFO("selected text is: %s", eina_strbuf_string_get(text_buffer));
-        elm_entry_entry_set(window->search.search_field, eina_strbuf_string_get(text_buffer));   
+        elm_entry_entry_set(window->search.search_field, eina_strbuf_string_get(text_buffer));
     }
     eina_strbuf_free(text_buffer);
     search_box_show(window);
@@ -650,7 +653,7 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         if (!open_file_name)
             return;
         Eina_Strbuf *uri_path = eina_strbuf_new();
-        eina_strbuf_append_printf(uri_path, "file://%s", open_file_name);
+        eina_strbuf_append_printf(uri_path, "%s%s", FILE_SCHEME, open_file_name);
         INFO("pressed (CTRL + L) : Loading Page %s", eina_strbuf_string_get(uri_path));
         ewk_view_url_set(ewk_view, eina_strbuf_string_get(uri_path));
         eina_strbuf_free(uri_path);
@@ -719,7 +722,7 @@ on_url_changed(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
     const char *url = ewk_view_url_get(window->ewk_view);
-    char *converted_url = elm_entry_utf8_to_markup(url); 
+    char *converted_url = elm_entry_utf8_to_markup(url);
     elm_entry_entry_set(window->url_bar, converted_url);
 
     on_icon_changed_cb(ewk_context_favicon_database_get(ewk_view_context_get(ewk_view)), url, user_data);
@@ -759,7 +762,8 @@ on_error(void *user_data, Evas_Object *ewk_view, void *event_info)
         return;
 
     buffer = eina_strbuf_new();
-    eina_strbuf_append_printf(buffer, "<html><body><div style=\"color:#ff0000\">ERROR!</div><br><div>Code: %d<br>Description: %s<br>URL: %s</div></body</html>",
+    eina_strbuf_append_printf(buffer,
+        "<html><body><div style=\"color:#ff0000\">ERROR!</div><br><div>Code: %d<br>Description: %s<br>URL: %s</div></body</html>",
         ewk_error_code_get(error), ewk_error_description_get(error), ewk_error_url_get(error));
 
     ewk_view_html_string_load(ewk_view, eina_strbuf_string_get(buffer), 0, ewk_error_url_get(error));
@@ -1004,10 +1008,13 @@ on_color_picker_request(Ewk_View_Smart_Data *sd, Ewk_Color_Picker *color_picker)
     evas_object_show(cancel_button);
 
     evas_object_smart_callback_add(ok_button, "clicked", on_color_picker_ok_clicked, &(window->color_selector));
-    evas_object_smart_callback_add(cancel_button, "clicked", on_color_picker_cancel_clicked, window->color_selector.ewk_picker);
-    evas_object_smart_callback_add(window->color_selector.elm_selector_window, "delete,request", on_color_picker_cancel_clicked, window->color_selector.ewk_picker);
+    evas_object_smart_callback_add(cancel_button, "clicked", on_color_picker_cancel_clicked,
+        window->color_selector.ewk_picker);
+    evas_object_smart_callback_add(window->color_selector.elm_selector_window, "delete,request",
+        on_color_picker_cancel_clicked, window->color_selector.ewk_picker);
     evas_object_smart_callback_add(window->color_selector.elm_selector, "changed", on_color_changed, rect);
-    evas_object_smart_callback_add(window->color_selector.elm_selector, "color,item,selected", on_color_item_selected, rect);
+    evas_object_smart_callback_add(window->color_selector.elm_selector, "color,item,selected", on_color_item_selected,
+        rect);
 
     elm_win_center(window->color_selector.elm_selector_window, EINA_TRUE, EINA_TRUE);
     evas_object_resize(window->color_selector.elm_selector_window, 350, 500);
@@ -1043,7 +1050,7 @@ static char *
 url_from_user_input(const char *arg)
 {
     /* If it is already a URL, return the argument as is. */
-    if (has_scheme(arg) || eina_str_has_prefix(arg, "javascript:") || !strcasecmp(arg, "about:blank"))
+    if (has_scheme(arg) || eina_str_has_prefix(arg, JAVASCRIPT_SCHEME) || !strcasecmp(arg, "about:blank"))
         return strdup(arg);
 
     Eina_Strbuf *buf = eina_strbuf_manage_new(eina_file_path_sanitize(arg));
@@ -1051,13 +1058,13 @@ url_from_user_input(const char *arg)
     /* Check if the path exists. */
     if (ecore_file_exists(eina_strbuf_string_get(buf))) {
         /* File exists, convert local path to a URL. */
-        eina_strbuf_prepend(buf, "file://");
+        eina_strbuf_prepend(buf, FILE_SCHEME);
     } else {
         /* The path does not exist, convert it to a URL by
            prepending http:// scheme:
            www.google.com -> http://www.google.com */
         eina_strbuf_string_free(buf);
-        eina_strbuf_append_printf(buf, "http://%s", arg);
+        eina_strbuf_append_printf(buf, "%s%s", HTTP_SCHEME, arg);
     }
     char *url = eina_strbuf_string_steal(buf);
     eina_strbuf_free(buf);
@@ -1071,8 +1078,8 @@ url_load_from_user_input(Evas_Object *ewk_view, const char *url)
     if (!ewk_view || !url)
         return EINA_FALSE;
 
-    if (eina_str_has_prefix(url, "javascript:"))
-        return ewk_view_script_execute(ewk_view, strstr(url, "javascript:"), 0, 0);
+    if (eina_str_has_prefix(url, JAVASCRIPT_SCHEME))
+        return ewk_view_script_execute(ewk_view, strstr(url, JAVASCRIPT_SCHEME), 0, 0);
 
     return ewk_view_url_set(ewk_view, url);
 }
@@ -1144,7 +1151,7 @@ on_back_button_clicked(void *user_data, Evas_Object *back_button, void *event_in
 {
     if (longpress_enabled)
         return;
-    
+
     Browser_Window *window = (Browser_Window *)user_data;
 
     ewk_view_back(window->ewk_view);
@@ -1190,10 +1197,10 @@ on_search_case_option_changed(void *user_data, Evas_Object *search_case_check_bo
 {
     Browser_Window *window = (Browser_Window *)user_data;
     char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
-    
+
     /* Bit toggle the case sensitive flag */
     search_flags = search_flags ^ EWK_FIND_OPTIONS_CASE_INSENSITIVE;
-    
+
     ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
     free(text);
 }
@@ -1203,10 +1210,10 @@ on_search_word_start_option_changed(void *user_data, Evas_Object *search_word_st
 {
     Browser_Window *window = (Browser_Window *)user_data;
     char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
-    
+
     /* Bit toggle the word start flag */
     search_flags = search_flags ^ EWK_FIND_OPTIONS_AT_WORD_STARTS;
-    
+
     ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
     free(text);
 }
@@ -1257,7 +1264,7 @@ static void
 on_list_item_select(void *user_data, Evas_Object *obj, void *event_info)
 {
     Browser_Window *window = evas_object_data_get(obj, "Browser_Window");
-    ewk_view_navigate_to(window->ewk_view, user_data); 
+    ewk_view_navigate_to(window->ewk_view, user_data);
     history_list_hide(window);
     evas_object_data_del(obj, "Browser_Window");
 }
@@ -1270,7 +1277,7 @@ navigation_button_longpress_process(void *user_data, Eina_Bool forward_navigatio
 
     longpress_enabled = EINA_TRUE;
     Browser_Window *window = (Browser_Window *)user_data;
-    
+
     Ewk_Back_Forward_List *list = ewk_view_back_forward_list_get(window->ewk_view);
     const Eina_List *l;
     void *data;
@@ -1282,11 +1289,11 @@ navigation_button_longpress_process(void *user_data, Eina_Bool forward_navigatio
     int width;
     int height;
     size_t index;
-    
+
     evas_object_data_set(window->history.history_list, "Browser_Window", window);
 
     if (forward_navigation_enabled)
-        window->history.history_list_items = ewk_back_forward_list_forward_items_copy(list); 
+        window->history.history_list_items = ewk_back_forward_list_forward_items_copy(list);
     else
         window->history.history_list_items = ewk_back_forward_list_back_items_copy(list);
 
@@ -1307,7 +1314,7 @@ navigation_button_longpress_process(void *user_data, Eina_Bool forward_navigatio
         INFO(" title = %s", title);
         elm_genlist_item_append(window->history.history_list, list_item, (void *)(title), NULL, ELM_GENLIST_ITEM_NONE, on_list_item_select, data);
     }
-    
+
     if (item_count > 0) {
         evas_object_geometry_get(window->elm_window, &x, &y, &width, &height);
         elm_list_go(window->history.history_list);
@@ -1315,12 +1322,12 @@ navigation_button_longpress_process(void *user_data, Eina_Bool forward_navigatio
 
         if (forward_navigation_enabled) {
             evas_object_move(window->history.history_box , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);
-            evas_object_move(window->history.history_list , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);  
+            evas_object_move(window->history.history_list , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);
         } else {
             evas_object_move(window->history.history_box , x, y + TOOL_BAR_BUTTON_SIZE);
-            evas_object_move(window->history.history_list , x, y + TOOL_BAR_BUTTON_SIZE);  
+            evas_object_move(window->history.history_list , x, y + TOOL_BAR_BUTTON_SIZE);
         }
-    
+
         elm_genlist_mode_set(window->history.history_list, ELM_LIST_COMPRESS);
         evas_object_show(window->history.history_box);
         evas_object_show(window->history.history_list);
@@ -2027,7 +2034,7 @@ on_navigation_policy_decision(void *user_data, Evas_Object *obj, void *event_inf
         windows = eina_list_append(windows, window);
         INFO("Mouse middle button pressed, open link in new window");
 
-        ewk_navigation_policy_decision_reject(decision); 
+        ewk_navigation_policy_decision_reject(decision);
     }
 }
 
@@ -2256,7 +2263,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
     evas_object_size_hint_align_set(window->history.history_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_win_resize_object_add(window->elm_window, window->history.history_box);
     elm_box_pack_end(window->history.history_box, window->history.history_list);
-    
+
     /* Create ewk_view */
     Ewk_View_Smart_Class *ewkViewClass = miniBrowserViewSmartClass();
     ewkViewClass->run_javascript_alert = on_javascript_alert;
@@ -2340,7 +2347,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_MOVE, on_mouse_move, window);
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_WHEEL, on_mouse_wheel, window);
     evas_object_event_callback_add(window->elm_window, EVAS_CALLBACK_RESIZE, on_window_resize, window);
-    
+
     elm_button_autorepeat_set(window->back_button, EINA_TRUE);
     elm_button_autorepeat_set(window->forward_button, EINA_TRUE);
     elm_button_autorepeat_initial_timeout_set(window->back_button, LONGPRESS_INTERVAL_SECONDS);
@@ -2376,7 +2383,7 @@ static Ewk_View_Configuration* configuration()
 static Ewk_Cookie_Accept_Policy
 parse_cookies_policy(const char *input_string)
 {
-    if (!strcmp(input_string, "always")) 
+    if (!strcmp(input_string, "always"))
         return EWK_COOKIE_ACCEPT_POLICY_ALWAYS;
     if (!strcmp(input_string, "never"))
         return EWK_COOKIE_ACCEPT_POLICY_NEVER;
