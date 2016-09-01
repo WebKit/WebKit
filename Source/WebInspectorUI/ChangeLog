@@ -1,5 +1,24 @@
 2016-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Minification detection produces false positives for small resources
+        https://bugs.webkit.org/show_bug.cgi?id=161159
+        <rdar://problem/27995306>
+
+        Reviewed by Brian Burg.
+
+        Improve minification detection algorithm. Minified resources rarely have tabs and usually
+        have a very few line breaks. Counting tabs as 4 spaces and line breaks as 8 makes minification
+        detection heuristic more accurate. Increase ratio thresholds to accommodate for the changes in
+        whitespaceScore.
+
+        * UserInterface/Base/Utilities.js:
+        (isTextLikelyMinified):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._prepareEditorForInitialContent):
+        (WebInspector.SourceCodeTextEditor.prototype._isLikelyMinified): Deleted.
+
+2016-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
         REGRESSION (r201454): Web Inspector: Text caret isn't visible when editing an attribute
         https://bugs.webkit.org/show_bug.cgi?id=160986
         <rdar://problem/27916207>

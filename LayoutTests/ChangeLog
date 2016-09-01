@@ -1,3 +1,14 @@
+2016-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Minification detection produces false positives for small resources
+        https://bugs.webkit.org/show_bug.cgi?id=161159
+        <rdar://problem/27995306>
+
+        Reviewed by Brian Burg.
+
+        * inspector/formatting/is-text-likely-minified-expected.txt: Added.
+        * inspector/formatting/is-text-likely-minified.html: Added.
+
 2016-09-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r205297.

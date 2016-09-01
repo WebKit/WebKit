@@ -1,0 +1,13 @@
+Test minification detection.
+
+
+== Running test suite: Formatting.isLikelyMinified
+-- Running test case: JavaScriptShortSnippet.Unminified
+PASS: This small JavaScript snippet should be classified as unminified.
+
+-- Running test case: JQuerySnippet.Unminified
+PASS: jQuery snippet should be classified as unminified.
+
+-- Running test case: JQuerySnippet.Minified
+PASS: jQuery snippet should be classified as minified.
+

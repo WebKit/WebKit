@@ -1402,6 +1402,29 @@ function isFunctionStringNativeCode(str)
     return str.endsWith("{\n    [native code]\n}");
 }
 
+function isTextLikelyMinified(content)
+{
+    const autoFormatMaxCharactersToCheck = 5000;
+    const autoFormatWhitespaceRatio = 0.2;
+
+    let whitespaceScore = 0;
+    let size = Math.min(autoFormatMaxCharactersToCheck, content.length);
+
+    for (let i = 0; i < size; i++) {
+        let char = content[i];
+
+        if (char === " ")
+            whitespaceScore++;
+        else if (char === "\t")
+            whitespaceScore += 4;
+        else if (char === "\n")
+            whitespaceScore += 8;
+    }
+
+    let ratio = whitespaceScore / size;
+    return ratio < autoFormatWhitespaceRatio;
+}
+
 function doubleQuotedString(str)
 {
     return "\"" + str.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + "\"";
