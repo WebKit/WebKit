@@ -1,3 +1,17 @@
+2016-09-01  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        [GTK] Fix configuration without wayland support
+        https://bugs.webkit.org/show_bug.cgi?id=161475
+
+        WebKit2WaylandClientProtocol.c is a derived source that is created
+        conditionally on ENABLE_WAYLAND_TARGET.  It was being included
+        in the sources list unconditionally, so configure failed whenever
+        wayland support was unavailable.
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformGTK.cmake: Include WebKit2WaylandClientProtocol.c in source list conditional on ENABLE_WAYLAND_TARGET
+
 2016-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GObject DOM bindings to WebKit2 layer and stop auto generating them

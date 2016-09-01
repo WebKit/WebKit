@@ -555,11 +555,16 @@ list(APPEND WebKit2_DERIVED_SOURCES
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.c
-    ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2WaylandClientProtocol.c
 
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
 )
+
+if (ENABLE_WAYLAND_TARGET)
+    list(APPEND WebKit2_DERIVED_SOURCES
+        ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2WaylandClientProtocol.c
+    )
+endif ()
 
 set(WebKit2GTK_INSTALLED_HEADERS
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
