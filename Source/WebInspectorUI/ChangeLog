@@ -1,3 +1,18 @@
+2016-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: tweak one UIString for "reasons for compositing"
+        https://bugs.webkit.org/show_bug.cgi?id=161495
+        <rdar://problem/13718387>
+
+        Reviewed by Simon Fraser.
+
+        Change "Element establishes a stacking context" to "Element may overlap other compositing element".
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._populateListOfCompositingReasons):
+        (WebInspector.LayerTreeDetailsSidebarPanel):
+
 2016-08-30  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Remove largest common indentation spacing in debugger popover

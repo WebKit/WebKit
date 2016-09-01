@@ -271,7 +271,6 @@ localizedStrings["Edit “%s”"] = "Edit “%s”";
 localizedStrings["Effects"] = "Effects";
 localizedStrings["Element"] = "Element";
 localizedStrings["Element clips compositing descendants"] = "Element clips compositing descendants";
-localizedStrings["Element establishes a stacking context"] = "Element establishes a stacking context";
 localizedStrings["Element has CSS blending applied and composited descendants"] = "Element has CSS blending applied and composited descendants";
 localizedStrings["Element has CSS filters applied"] = "Element has CSS filters applied";
 localizedStrings["Element has CSS filters applied and composited descendants"] = "Element has CSS filters applied and composited descendants";
@@ -296,6 +295,7 @@ localizedStrings["Element is a stacking context and has composited descendants w
 localizedStrings["Element is animated"] = "Element is animated";
 localizedStrings["Element is masked and composited descendants"] = "Element is masked and composited descendants";
 localizedStrings["Element is the root element"] = "Element is the root element";
+localizedStrings["Element may overlap another compositing element"] = "Element may overlap another compositing element";
 localizedStrings["Element overlaps other compositing element"] = "Element overlaps other compositing element";
 localizedStrings["Elements"] = "Elements";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";

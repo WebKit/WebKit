@@ -398,7 +398,7 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
         if (compositingReasons.overflowScrollingTouch)
             addReason(WebInspector.UIString("Element has “-webkit-overflow-scrolling: touch” style"));
         if (compositingReasons.stacking)
-            addReason(WebInspector.UIString("Element establishes a stacking context"));
+            addReason(WebInspector.UIString("Element may overlap another compositing element"));
         if (compositingReasons.overlap)
             addReason(WebInspector.UIString("Element overlaps other compositing element"));
         if (compositingReasons.negativeZIndexChildren)
