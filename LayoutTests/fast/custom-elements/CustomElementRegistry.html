@@ -424,7 +424,7 @@ promise_test(function () {
         assert_false(rejected, 'The promise returned by "whenDefined" must not be rejected until a custom element is defined');
     });    
 }, '"whenDefined" must return an unresolved promise when the registry does not contain the entry with the given name')
-/*
+
 promise_test(function () {
     var promise = customElements.whenDefined('badname');
     promise.then(function (value) { promise.resolved = value; }, function (value) { promise.rejected = value; });
@@ -437,7 +437,7 @@ promise_test(function () {
         assert_true('rejected' in promise, 'The promise returned by "whenDefined" must not be rejected when a custom element is defined');
     });
 }, '"whenDefined" must return a rejected promise when the given name is not a valid custom element name');
-*/
+
 promise_test(function () {
     customElements.define('preexisting-custom-element', class extends HTMLElement { });
 
