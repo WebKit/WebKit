@@ -1,3 +1,15 @@
+2016-09-01  Ricky Mondello  <rmondello@apple.com>
+
+        YouTube Flash plug-in replacement facility should more gracefully handle malformed queries
+        https://bugs.webkit.org/show_bug.cgi?id=161476
+        <rdar://problem/28050847>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebCore/YouTubePluginReplacement.cpp:
+        (TestWebKitAPI::TEST_F): New tests. The first two and second-to-last test cases cover the "malformed" query
+            logic. A few other tests are added, too.
+
 2016-09-01  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build-fix; don't specify an explicit deployment target.

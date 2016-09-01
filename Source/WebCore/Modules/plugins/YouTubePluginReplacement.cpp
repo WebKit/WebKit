@@ -200,7 +200,7 @@ static const String& valueForKey(const YouTubePluginReplacement::KeyValueMap& di
     return value->value;
 }
 
-static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedURL)
+static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedURL, String& outPathAfterFirstAmpersand)
 {
     if (!url.protocolIsInHTTPFamily())
         return URL();
@@ -266,16 +266,22 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             }
         }
     } else if (hasCaseInsensitivePrefix(path, "/v/") || hasCaseInsensitivePrefix(path, "/e/")) {
-        String videoID = url.lastPathComponent();
-        
-        // These URLs are funny - they don't have a ? for the first query parameter.
-        // Strip all characters after and including '&' to remove extraneous parameters after the video ID.
-        size_t ampersand = videoID.find('&');
-        if (ampersand != notFound)
-            videoID = videoID.substring(0, ampersand);
-        
-        if (!videoID.isEmpty())
+        String lastPathComponent = url.lastPathComponent();
+        String videoID;
+        String pathAfterFirstAmpersand;
+
+        size_t ampersandLocation = lastPathComponent.find('&');
+        if (ampersandLocation != notFound) {
+            // Some URLs we care about use & in place of ? for the first query parameter.
+            videoID = lastPathComponent.substring(0, ampersandLocation);
+            pathAfterFirstAmpersand = lastPathComponent.substring(ampersandLocation + 1, lastPathComponent.length() - ampersandLocation);
+        } else
+            videoID = lastPathComponent;
+
+        if (!videoID.isEmpty()) {
+            outPathAfterFirstAmpersand = pathAfterFirstAmpersand;
             return createYouTubeURL(videoID, emptyString());
+        }
     }
     
     return URL();
@@ -290,7 +296,8 @@ String YouTubePluginReplacement::youTubeURL(const String& srcString)
 String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, const String& srcString)
 {
     bool isYouTubeShortenedURL = false;
-    URL youTubeURL = processAndCreateYouTubeURL(srcURL, isYouTubeShortenedURL);
+    String possibleMalformedQuery;
+    URL youTubeURL = processAndCreateYouTubeURL(srcURL, isYouTubeShortenedURL, possibleMalformedQuery);
     if (srcURL.isEmpty() || youTubeURL.isEmpty())
         return srcString;
 
@@ -316,6 +323,9 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
 
     const String& srcURLPrefix = srcString.substring(0, locationOfPathBeforeVideoID);
     String query = srcURL.query();
+    // If the URL has no query, use the possibly malformed query we found.
+    if (query.isEmpty())
+        query = possibleMalformedQuery;
 
     // By default, the iframe will display information like the video title and uploader on top of the video. Don't display
     // them if the embeding html doesn't specify it.
@@ -324,9 +334,7 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
     else
         query = "showinfo=0";
     
-    // Append the query string if it is valid. Some sites apparently forget to add "?" for the query string, in that case,
-    // we will discard the parameters in the url.
-    // See: <rdar://problem/11535155>
+    // Append the query string if it is valid.
     StringBuilder finalURL;
     if (isYouTubeShortenedURL)
         finalURL.appendLiteral("http://www.youtube.com");
