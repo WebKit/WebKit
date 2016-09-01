@@ -1,3 +1,15 @@
+2016-09-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add "whenDefined" to CustomElementRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=161425
+
+        Reviewed by Yusuke Suzuki.
+
+        Added test cases for "whenDefined" method.
+
+        * fast/custom-elements/CustomElementRegistry-expected.txt:
+        * fast/custom-elements/CustomElementRegistry.html:
+
 2016-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Minification detection produces false positives for small resources

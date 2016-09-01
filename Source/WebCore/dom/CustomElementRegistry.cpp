@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "JSCustomElementInterface.h"
+#include "JSDOMPromise.h"
 #include "MathMLNames.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"

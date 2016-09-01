@@ -43,6 +43,7 @@ class JSValue;
 namespace WebCore {
 
 class CustomElementRegistry;
+class DeferredWrapper;
 class Element;
 class JSCustomElementInterface;
 class QualifiedName;
@@ -64,12 +65,15 @@ public:
 
     JSC::JSValue get(const AtomicString&);
 
+    HashMap<AtomicString, Ref<DeferredWrapper>>& promiseMap() { return m_promiseMap; }
+
 private:
     CustomElementRegistry();
 
     HashMap<AtomicString, Vector<RefPtr<Element>>> m_upgradeCandidatesMap;
     HashMap<AtomicString, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap;
+    HashMap<AtomicString, Ref<DeferredWrapper>> m_promiseMap;
 
     bool m_elementDefinitionIsRunning { false };
 

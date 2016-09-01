@@ -27,4 +27,10 @@ PASS CustomElementRegistry interface must have get as a method
 PASS "get" must return undefined when the registry does not contain an entry with the given name 
 PASS "get" must return undefined when the registry does not contain an entry with the given name even if the name was not a valid custom element name 
 PASS "get" return the constructor of the entry with the given name when there is a matching entry. 
+PASS "whenDefined" must return a promise for a valid custom element name 
+PASS "whenDefined" must return the same promise each time invoked for a valid custom element name which has not been defined 
+PASS "whenDefined" must return an unresolved promise when the registry does not contain the entry with the given name 
+PASS "whenDefined" must return a resolved promise when the registry contains the entry with the given name 
+PASS "whenDefined" must return a new resolved promise each time invoked when the registry contains the entry with the given name 
+PASS A promise returned by "whenDefined" must be resolved by "define" 
 

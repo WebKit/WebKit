@@ -32,6 +32,7 @@
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvert.h"
+#include "JSDOMPromise.h"
 
 using namespace JSC;
 
@@ -56,6 +57,27 @@ static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype,
     return callback.getObject();
 }
 
+static bool validateCustomElementNameAndThrowIfNeeded(ExecState& state, const AtomicString& name)
+{
+    auto scope = DECLARE_THROW_SCOPE(state.vm());
+
+    switch (Document::validateCustomElementName(name)) {
+    case CustomElementNameValidationStatus::Valid:
+        return true;
+    case CustomElementNameValidationStatus::ConflictsWithBuiltinNames:
+        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot be same as one of the builtin elements"));
+        return false;
+    case CustomElementNameValidationStatus::NoHyphen:
+        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name must contain a hyphen"));
+        return false;
+    case CustomElementNameValidationStatus::ContainsUpperCase:
+        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot contain an upper case letter"));
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 // https://html.spec.whatwg.org/#dom-customelementregistry-define
 JSValue JSCustomElementRegistry::define(ExecState& state)
 {
@@ -74,22 +96,8 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
         return throwTypeError(&state, scope, ASCIILiteral("The second argument must be a constructor"));
     JSObject* constructor = constructorValue.getObject();
 
-    // FIXME: Throw a TypeError if constructor doesn't inherit from HTMLElement.
-    // https://github.com/w3c/webcomponents/issues/541
-
-    switch (Document::validateCustomElementName(localName)) {
-    case CustomElementNameValidationStatus::Valid:
-        break;
-    case CustomElementNameValidationStatus::ConflictsWithBuiltinNames:
-        return throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot be same as one of the builtin elements"));
-    case CustomElementNameValidationStatus::NoHyphen:
-        return throwSyntaxError(&state, scope, ASCIILiteral("Custom element name must contain a hyphen"));
-    case CustomElementNameValidationStatus::ContainsUpperCase:
-        return throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot contain an upper case letter"));
-    }
-
-    // FIXME: Check re-entrancy here.
-    // https://github.com/w3c/webcomponents/issues/545
+    if (!validateCustomElementNameAndThrowIfNeeded(state, localName))
+        return jsUndefined();
 
     CustomElementRegistry& registry = wrapped();
 
@@ -155,10 +163,58 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
 
     // FIXME: 17. Let map be registry's upgrade candidates map.
     // FIXME: 18. Upgrade a newly-defined element given map and definition.
-    // FIXME: 19. Resolve whenDefined promise.
+
+    auto& promiseMap = registry.promiseMap();
+    auto promise = promiseMap.take(localName);
+    if (promise)
+        promise.value()->resolve(nullptr);
 
     return jsUndefined();
 }
+
+// https://html.spec.whatwg.org/#dom-customelementregistry-whendefined
+static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry)
+{
+    auto scope = DECLARE_THROW_SCOPE(state.vm());
+
+    if (UNLIKELY(state.argumentCount() < 1))
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
+
+    AtomicString localName(state.uncheckedArgument(0).toString(&state)->toAtomicString(&state));
+    if (UNLIKELY(state.hadException()))
+        return jsUndefined();
+
+    if (!validateCustomElementNameAndThrowIfNeeded(state, localName))
+        return jsUndefined();
+
+    if (registry.findInterface(localName)) {
+        auto& jsPromise = *JSPromiseDeferred::create(&state, &globalObject);
+        DeferredWrapper::create(&state, &globalObject, &jsPromise)->resolve(nullptr);
+        return jsPromise.promise();
+    }
+
+    auto result = registry.promiseMap().ensure(localName, [&] {
+        return DeferredWrapper::create(&state, &globalObject, JSPromiseDeferred::create(&state, &globalObject));
+    });
+
+    return result.iterator->value->promise();
+}
+
+JSValue JSCustomElementRegistry::whenDefined(ExecState& state)
+{
+    JSDOMGlobalObject& globalObject = *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
+    auto& promiseDeferred = *JSPromiseDeferred::create(&state, &globalObject);
+    JSValue promise = whenDefinedPromise(state, globalObject, wrapped());
+
+    if (state.hadException()) {
+        rejectPromiseWithExceptionIfAny(state, globalObject, promiseDeferred);
+        ASSERT(!state.hadException());
+        return promiseDeferred.promise();
+    }
+
+    return promise;
+}
+
 #endif
 
 }
