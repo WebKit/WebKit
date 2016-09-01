@@ -452,7 +452,7 @@ LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, unsigned caretOffset
     return box.root().computeCaretRect(left, caretWidth, extraWidthToEndOfLine);
 }
 
-ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, int start, int len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
+ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, unsigned start, unsigned len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
 {
     if (style.hasTextCombine() && is<RenderCombineText>(*this)) {
         const RenderCombineText& combineText = downcast<RenderCombineText>(*this);
@@ -466,7 +466,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, int start, 
         bool isSpace;
         ASSERT(m_text);
         StringImpl& text = *m_text.impl();
-        for (int i = start; i < start + len; i++) {
+        for (unsigned i = start; i < start + len; i++) {
             char c = text[i];
             if (c <= ' ') {
                 if (c == ' ' || c == '\n') {
@@ -492,7 +492,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, int start, 
         return w;
     }
 
-    TextRun run = RenderBlock::constructTextRun(this, start, len, style);
+    TextRun run = RenderBlock::constructTextRun(*this, start, len, style);
     run.setCharactersLength(textLength() - start);
     ASSERT(run.charactersLength() >= run.length());
 
@@ -608,7 +608,7 @@ void RenderText::trimmedPrefWidths(float leadWidth,
     beginWS = !stripFrontSpaces && m_hasBeginWS;
     endWS = m_hasEndWS;
 
-    int len = textLength();
+    unsigned len = textLength();
 
     if (!len || (stripFrontSpaces && text()->containsOnlyWhitespace())) {
         beginMinW = 0;
@@ -632,10 +632,9 @@ void RenderText::trimmedPrefWidths(float leadWidth,
 
     ASSERT(m_text);
     StringImpl& text = *m_text.impl();
-    if (text[0] == ' ' || (text[0] == '\n' && !style.preserveNewline()) || text[0] == '\t') {
+    if (text[0] == space || (text[0] == newlineCharacter && !style.preserveNewline()) || text[0] == '\t') {
         const FontCascade& font = style.fontCascade(); // FIXME: This ignores first-line.
         if (stripFrontSpaces) {
-            const UChar space = ' ';
             float spaceWidth = font.width(RenderBlock::constructTextRun(&space, 1, style));
             maxW -= spaceWidth;
         } else
@@ -653,8 +652,8 @@ void RenderText::trimmedPrefWidths(float leadWidth,
         bool firstLine = true;
         beginMaxW = maxW;
         endMaxW = maxW;
-        for (int i = 0; i < len; i++) {
-            int linelen = 0;
+        for (unsigned i = 0; i < len; i++) {
+            unsigned linelen = 0;
             while (i + linelen < len && text[i + linelen] != '\n')
                 linelen++;
 
@@ -726,20 +725,22 @@ void RenderText::computePreferredLogicalWidths(float leadWidth)
         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
 }
 
-static inline float hyphenWidth(RenderText* renderer, const FontCascade& font)
+static inline float hyphenWidth(RenderText& renderer, const FontCascade& font)
 {
-    const RenderStyle& style = renderer->style();
-    return font.width(RenderBlock::constructTextRun(style.hyphenString().string(), style));
+    const RenderStyle& style = renderer.style();
+    auto textRun = RenderBlock::constructTextRun(style.hyphenString().string(), style);
+    return font.width(textRun);
 }
 
-static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style, const FontCascade& font, StringView word, int minimumPrefixLength, unsigned minimumSuffixLength, int& suffixStart, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+static float maxWordFragmentWidth(RenderText& renderer, const RenderStyle& style, const FontCascade& font, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, unsigned& suffixStart, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     suffixStart = 0;
     if (word.length() <= minimumSuffixLength)
         return 0;
 
     Vector<int, 8> hyphenLocations;
-    int hyphenLocation = word.length() - minimumSuffixLength;
+    ASSERT(word.length() >= minimumSuffixLength);
+    unsigned hyphenLocation = word.length() - minimumSuffixLength;
     while ((hyphenLocation = lastHyphenLocation(word, hyphenLocation, style.locale())) >= minimumPrefixLength)
         hyphenLocations.append(hyphenLocation);
 
@@ -758,7 +759,7 @@ static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style
 
         TextRun run = RenderBlock::constructTextRun(fragmentWithHyphen.toString(), style);
         run.setCharactersLength(fragmentWithHyphen.length());
-        run.setCharacterScanForCodePath(!renderer->canUseSimpleFontCodePath());
+        run.setCharacterScanForCodePath(!renderer.canUseSimpleFontCodePath());
         float fragmentWidth = font.width(run, &fallbackFonts, &glyphOverflow);
 
         // Narrow prefixes are ignored. See tryHyphenating in RenderBlockLineLayout.cpp.
@@ -807,19 +808,17 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     // If automatic hyphenation is allowed, we keep track of the width of the widest word (or word
     // fragment) encountered so far, and only try hyphenating words that are wider.
     float maxWordWidth = std::numeric_limits<float>::max();
-    int minimumPrefixLength = 0;
-    int minimumSuffixLength = 0;
+    unsigned minimumPrefixLength = 0;
+    unsigned minimumSuffixLength = 0;
     if (style.hyphens() == HyphensAuto && canHyphenate(style.locale())) {
         maxWordWidth = 0;
 
         // Map 'hyphenate-limit-{before,after}: auto;' to 2.
-        minimumPrefixLength = style.hyphenationLimitBefore();
-        if (minimumPrefixLength < 0)
-            minimumPrefixLength = 2;
+        auto before = style.hyphenationLimitBefore();
+        minimumPrefixLength = before < 0 ? 2 : before;
 
-        minimumSuffixLength = style.hyphenationLimitAfter();
-        if (minimumSuffixLength < 0)
-            minimumSuffixLength = 2;
+        auto after = style.hyphenationLimitAfter();
+        minimumSuffixLength = after < 0 ? 2 : after;
     }
 
     Optional<int> firstGlyphLeftOverflow;
@@ -906,12 +905,12 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             else {
                 w = widthFromCache(font, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
                 if (c == softHyphen && style.hyphens() != HyphensNone)
-                    currMinWidth = hyphenWidth(this, font);
+                    currMinWidth = hyphenWidth(*this, font);
             }
 
             if (w > maxWordWidth) {
-                int suffixStart;
-                float maxFragmentWidth = maxWordFragmentWidth(this, style, font, StringView(m_text).substring(i, wordLen), minimumPrefixLength, minimumSuffixLength, suffixStart, fallbackFonts, glyphOverflow);
+                unsigned suffixStart;
+                float maxFragmentWidth = maxWordFragmentWidth(*this, style, font, StringView(m_text).substring(i, wordLen), minimumPrefixLength, minimumSuffixLength, suffixStart, fallbackFonts, glyphOverflow);
 
                 if (suffixStart) {
                     float suffixWidth;
@@ -985,7 +984,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
                     m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             } else {
-                TextRun run = RenderBlock::constructTextRun(this, i, 1, style);
+                TextRun run = RenderBlock::constructTextRun(*this, i, 1, style);
                 run.setCharactersLength(len - i);
                 ASSERT(run.charactersLength() >= run.length());
                 run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
@@ -1325,7 +1324,7 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
         } else
             w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow, style);
     } else {
-        TextRun run = RenderBlock::constructTextRun(this, from, len, style);
+        TextRun run = RenderBlock::constructTextRun(*this, from, len, style);
         run.setCharactersLength(textLength() - from);
         ASSERT(run.charactersLength() >= run.length());
 

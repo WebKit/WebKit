@@ -644,7 +644,7 @@ ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, con
     if (layout)
         return FontCascade::width(*layout, from, len, &fallbackFonts);
 
-    TextRun run = RenderBlock::constructTextRun(&text, from, len, style);
+    TextRun run = RenderBlock::constructTextRun(text, from, len, style);
     run.setCharactersLength(text.textLength() - from);
     ASSERT(run.charactersLength() >= run.length());
 
@@ -693,7 +693,7 @@ inline void tryHyphenating(RenderText& text, const FontCascade& font, const Atom
         return;
 
     const RenderStyle& style = text.style();
-    TextRun run = RenderBlock::constructTextRun(&text, lastSpace, pos - lastSpace, style);
+    TextRun run = RenderBlock::constructTextRun(text, lastSpace, pos - lastSpace, style);
     run.setCharactersLength(text.textLength() - lastSpace);
     ASSERT(run.charactersLength() >= run.length());
 

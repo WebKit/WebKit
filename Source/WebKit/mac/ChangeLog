@@ -1,3 +1,15 @@
+2016-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Clean up TextRun-related code
+        https://bugs.webkit.org/show_bug.cgi?id=161473
+
+        Reviewed by Simon Fraser.
+
+        Remove unused #includes.
+
+        * WebCoreSupport/WebDragClient.mm:
+        * WebView/WebView.mm:
+
 2016-08-31  Keith Rollin  <krollin@apple.com>
 
         WebKit should set a subsystem for os_log so it's easier to filter for WebKit log messages

@@ -45,7 +45,7 @@ struct WidthIterator;
 class TextRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TextRun(StringView text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+    explicit TextRun(StringView text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : m_text(text)
         , m_charactersLength(text.length())
         , m_tabSize(0)

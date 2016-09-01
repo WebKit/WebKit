@@ -52,6 +52,8 @@ enum ExpansionBehaviorFlags {
     AllowLeadingExpansion = 1 << 2,
     ForceLeadingExpansion = 2 << 2,
     LeadingExpansionMask = 3 << 2,
+
+    DefaultExpansion = AllowTrailingExpansion | ForbidLeadingExpansion,
 };
 typedef unsigned ExpansionBehavior;
 

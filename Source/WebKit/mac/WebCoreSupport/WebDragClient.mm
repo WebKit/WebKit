@@ -38,7 +38,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSURLExtras.h"
-#import "WebStringTruncator.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"

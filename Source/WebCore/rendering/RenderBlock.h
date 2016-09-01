@@ -204,17 +204,17 @@ public:
     }
 
     static TextRun constructTextRun(StringView, const RenderStyle&,
-        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextRunFlags = DefaultTextRunFlags);
+        ExpansionBehavior = DefaultExpansion, TextRunFlags = DefaultTextRunFlags);
     static TextRun constructTextRun(const String&, const RenderStyle&,
-        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const RenderText*, const RenderStyle&,
-        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
-    static TextRun constructTextRun(const RenderText*, unsigned offset, unsigned length, const RenderStyle&,
-        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
-    static TextRun constructTextRun(const LChar* characters, int length, const RenderStyle&,
-        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
-    static TextRun constructTextRun(const UChar* characters, int length, const RenderStyle&,
-        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
+        ExpansionBehavior = DefaultExpansion, TextRunFlags = DefaultTextRunFlags);
+    static TextRun constructTextRun(const RenderText&, const RenderStyle&,
+        ExpansionBehavior = DefaultExpansion);
+    static TextRun constructTextRun(const RenderText&, unsigned offset, unsigned length, const RenderStyle&,
+        ExpansionBehavior = DefaultExpansion);
+    static TextRun constructTextRun(const LChar* characters, unsigned length, const RenderStyle&,
+        ExpansionBehavior = DefaultExpansion);
+    static TextRun constructTextRun(const UChar* characters, unsigned length, const RenderStyle&,
+        ExpansionBehavior = DefaultExpansion);
     
     LayoutUnit paginationStrut() const;
     void setPaginationStrut(LayoutUnit);
