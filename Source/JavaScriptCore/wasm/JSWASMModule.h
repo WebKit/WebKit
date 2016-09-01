@@ -75,12 +75,12 @@ public:
     Vector<uint32_t>& i32Constants() { return m_i32Constants; }
     Vector<float>& f32Constants() { return m_f32Constants; }
     Vector<double>& f64Constants() { return m_f64Constants; }
-    Vector<WASMSignature>& signatures() { return m_signatures; }
-    Vector<WASMFunctionImport>& functionImports() { return m_functionImports; }
-    Vector<WASMFunctionImportSignature>& functionImportSignatures() { return m_functionImportSignatures; }
-    Vector<WASMValueType>& globalVariableTypes() { return m_globalVariableTypes; }
-    Vector<WASMFunctionDeclaration>& functionDeclarations() { return m_functionDeclarations; }
-    Vector<WASMFunctionPointerTable>& functionPointerTables() { return m_functionPointerTables; }
+    Vector<WASM::Signature>& signatures() { return m_signatures; }
+    Vector<WASM::FunctionImport>& functionImports() { return m_functionImports; }
+    Vector<WASM::FunctionImportSignature>& functionImportSignatures() { return m_functionImportSignatures; }
+    Vector<WASM::Type>& globalVariableTypes() { return m_globalVariableTypes; }
+    Vector<WASM::FunctionDeclaration>& functionDeclarations() { return m_functionDeclarations; }
+    Vector<WASM::FunctionPointerTable>& functionPointerTables() { return m_functionPointerTables; }
 
     const JSArrayBuffer* arrayBuffer() const { return m_arrayBuffer.get(); }
     Vector<WriteBarrier<JSFunction>>& functions() { return m_functions; }
@@ -95,12 +95,12 @@ private:
     Vector<uint32_t> m_i32Constants;
     Vector<float> m_f32Constants;
     Vector<double> m_f64Constants;
-    Vector<WASMSignature> m_signatures;
-    Vector<WASMFunctionImport> m_functionImports;
-    Vector<WASMFunctionImportSignature> m_functionImportSignatures;
-    Vector<WASMValueType> m_globalVariableTypes;
-    Vector<WASMFunctionDeclaration> m_functionDeclarations;
-    Vector<WASMFunctionPointerTable> m_functionPointerTables;
+    Vector<WASM::Signature> m_signatures;
+    Vector<WASM::FunctionImport> m_functionImports;
+    Vector<WASM::FunctionImportSignature> m_functionImportSignatures;
+    Vector<WASM::Type> m_globalVariableTypes;
+    Vector<WASM::FunctionDeclaration> m_functionDeclarations;
+    Vector<WASM::FunctionPointerTable> m_functionPointerTables;
 
     WriteBarrier<JSArrayBuffer> m_arrayBuffer;
     Vector<WriteBarrier<JSFunction>> m_functions;

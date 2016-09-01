@@ -38,8 +38,8 @@ namespace WASM {
     macro(Definitions, "code") \
     macro(End, "end")
 
-struct WASMSections {
-    enum class Section {
+struct Sections {
+    enum Section {
 #define CREATE_SECTION_ENUM(name, str) name,
         FOR_EACH_WASM_SECTION_TYPE(CREATE_SECTION_ENUM)
 #undef CREATE_SECTION_ENUM
@@ -50,7 +50,7 @@ struct WASMSections {
     {
         // This allows unknown sections after End, which I doubt will ever be supported but
         // there is no reason to potentially break backwards compatability.
-        if (previous == Section::Unknown)
+        if (previous == Unknown)
             return true;
         return previous < next;
     }

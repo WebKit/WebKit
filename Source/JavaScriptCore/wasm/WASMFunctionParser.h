@@ -35,11 +35,11 @@ namespace JSC {
 namespace WASM {
 
 template<typename Context>
-class WASMFunctionParser : public WASMParser {
+class FunctionParser : public Parser {
 public:
     typedef typename Context::ExpressionType ExpressionType;
 
-    WASMFunctionParser(Context&, const Vector<uint8_t>& sourceBuffer, const WASMFunctionInformation&);
+    FunctionParser(Context&, const Vector<uint8_t>& sourceBuffer, const FunctionInformation&);
 
     bool WARN_UNUSED_RETURN parse();
 
@@ -47,7 +47,7 @@ private:
     static const bool verbose = false;
 
     bool WARN_UNUSED_RETURN parseBlock();
-    bool WARN_UNUSED_RETURN parseExpression(WASMOpType);
+    bool WARN_UNUSED_RETURN parseExpression(OpType);
     bool WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
 
     Optional<Vector<ExpressionType>>& stackForControlLevel(unsigned level);
@@ -57,14 +57,14 @@ private:
 };
 
 template<typename Context>
-WASMFunctionParser<Context>::WASMFunctionParser(Context& context, const Vector<uint8_t>& sourceBuffer, const WASMFunctionInformation& info)
-    : WASMParser(sourceBuffer, info.start, info.end)
+FunctionParser<Context>::FunctionParser(Context& context, const Vector<uint8_t>& sourceBuffer, const FunctionInformation& info)
+    : Parser(sourceBuffer, info.start, info.end)
     , m_context(context)
 {
 }
 
 template<typename Context>
-bool WASMFunctionParser<Context>::parse()
+bool FunctionParser<Context>::parse()
 {
     uint32_t localCount;
     if (!parseVarUInt32(localCount))
@@ -75,31 +75,30 @@ bool WASMFunctionParser<Context>::parse()
         if (!parseUInt32(numberOfLocalsWithType))
             return false;
 
-        WASMValueType typeOfLocal;
+        Type typeOfLocal;
         if (!parseValueType(typeOfLocal))
             return false;
 
-        m_context.addLocal(typeOfLocal, numberOfLocalsWithType);
     }
 
     return parseBlock();
 }
 
 template<typename Context>
-bool WASMFunctionParser<Context>::parseBlock()
+bool FunctionParser<Context>::parseBlock()
 {
     while (true) {
         uint8_t op;
         if (!parseUInt7(op))
             return false;
 
-        if (!parseExpression(static_cast<WASMOpType>(op))) {
+        if (!parseExpression(static_cast<OpType>(op))) {
             if (verbose)
                 dataLogLn("failed to process op:", op);
             return false;
         }
 
-        if (op == WASMOpType::End)
+        if (op == OpType::End)
             break;
     }
 
@@ -107,7 +106,7 @@ bool WASMFunctionParser<Context>::parseBlock()
 }
 
 template<typename Context>
-bool WASMFunctionParser<Context>::parseExpression(WASMOpType op)
+bool FunctionParser<Context>::parseExpression(OpType op)
 {
     switch (op) {
 #define CREATE_CASE(name, id, b3op) case name:
@@ -115,7 +114,7 @@ bool WASMFunctionParser<Context>::parseExpression(WASMOpType op)
         ExpressionType left = m_expressionStack.takeLast();
         ExpressionType right = m_expressionStack.takeLast();
         ExpressionType result;
-        if (!m_context.binaryOp(static_cast<WASMBinaryOpType>(op), left, right, result))
+        if (!m_context.binaryOp(static_cast<BinaryOpType>(op), left, right, result))
             return false;
         m_expressionStack.append(result);
         return true;
@@ -124,28 +123,28 @@ bool WASMFunctionParser<Context>::parseExpression(WASMOpType op)
     FOR_EACH_WASM_UNARY_OP(CREATE_CASE) {
         ExpressionType arg = m_expressionStack.takeLast();
         ExpressionType result;
-        if (!m_context.unaryOp(static_cast<WASMUnaryOpType>(op), arg, result))
+        if (!m_context.unaryOp(static_cast<UnaryOpType>(op), arg, result))
             return false;
         m_expressionStack.append(result);
         return true;
     }
 #undef CREATE_CASE
 
-    case WASMOpType::I32Const: {
+    case OpType::I32Const: {
         uint32_t constant;
         if (!parseVarUInt32(constant))
             return false;
-        m_expressionStack.append(m_context.addConstant(WASMValueType::I32, constant));
+        m_expressionStack.append(m_context.addConstant(Int32, constant));
         return true;
     }
 
-    case WASMOpType::Block: {
+    case OpType::Block: {
         if (!m_context.addBlock())
             return false;
         return parseBlock();
     }
 
-    case WASMOpType::Return: {
+    case OpType::Return: {
         uint8_t returnCount;
         if (!parseVarUInt1(returnCount))
             return false;
@@ -156,7 +155,7 @@ bool WASMFunctionParser<Context>::parseExpression(WASMOpType op)
         return m_context.addReturn(returnValues);
     }
 
-    case WASMOpType::End:
+    case OpType::End:
         return m_context.endBlock(m_expressionStack);
 
     }

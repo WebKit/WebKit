@@ -43,7 +43,7 @@ Plan::Plan(VM& vm, Vector<uint8_t> source)
 {
     if (verbose)
         dataLogLn("Starting plan.");
-    WASMModuleParser moduleParser(source);
+    ModuleParser moduleParser(source);
     if (!moduleParser.parse()) {
         dataLogLn("Parsing module failed.");
         return;
@@ -52,7 +52,7 @@ Plan::Plan(VM& vm, Vector<uint8_t> source)
     if (verbose)
         dataLogLn("Parsed module.");
 
-    for (const WASMFunctionInformation& info : moduleParser.functionInformation()) {
+    for (const FunctionInformation& info : moduleParser.functionInformation()) {
         if (verbose)
             dataLogLn("Processing funcion starting at: ", info.start, " and ending at: ", info.end);
         result.append(parseAndCompile(vm, source, info));

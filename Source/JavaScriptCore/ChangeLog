@@ -1,3 +1,81 @@
+2016-09-01  Keith Miller  <keith_miller@apple.com>
+
+        Rename WASM classes dropping the WASM prefix
+        https://bugs.webkit.org/show_bug.cgi?id=161500
+
+        Reviewed by Mark Lam.
+
+        Having to write WASM::WASMModule seems silly. Also, this patch
+        merges WASMFunctionReturnType and WASMValueType into one type
+        that is a typedef of B3::Type. Using B3::Type as the WASM
+        primitive type makes it trivial to convert a Vector of WASM
+        types into a Vector of B3 types.
+
+        * b3/B3Type.h:
+        * wasm/JSWASMModule.h:
+        (JSC::JSWASMModule::signatures):
+        (JSC::JSWASMModule::functionImports):
+        (JSC::JSWASMModule::functionImportSignatures):
+        (JSC::JSWASMModule::globalVariableTypes):
+        (JSC::JSWASMModule::functionDeclarations):
+        (JSC::JSWASMModule::functionPointerTables):
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::toB3Op):
+        (JSC::WASM::B3IRGenerator::addLocal):
+        (JSC::WASM::B3IRGenerator::unaryOp):
+        (JSC::WASM::B3IRGenerator::binaryOp):
+        (JSC::WASM::B3IRGenerator::addConstant):
+        (JSC::WASM::parseAndCompile):
+        * wasm/WASMB3IRGenerator.h:
+        * wasm/WASMFormat.h:
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::FunctionParser):
+        (JSC::WASM::FunctionParser<Context>::parse):
+        (JSC::WASM::FunctionParser<Context>::parseBlock):
+        (JSC::WASM::FunctionParser<Context>::parseExpression):
+        (JSC::WASM::WASMFunctionParser<Context>::WASMFunctionParser): Deleted.
+        (JSC::WASM::WASMFunctionParser<Context>::parse): Deleted.
+        (JSC::WASM::WASMFunctionParser<Context>::parseBlock): Deleted.
+        (JSC::WASM::WASMFunctionParser<Context>::parseExpression): Deleted.
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASM::ModuleParser::parse):
+        (JSC::WASM::ModuleParser::parseFunctionTypes):
+        (JSC::WASM::ModuleParser::parseFunctionSignatures):
+        (JSC::WASM::ModuleParser::parseFunctionDefinitions):
+        (JSC::WASM::WASMModuleParser::parse): Deleted.
+        (JSC::WASM::WASMModuleParser::parseFunctionTypes): Deleted.
+        (JSC::WASM::WASMModuleParser::parseFunctionSignatures): Deleted.
+        (JSC::WASM::WASMModuleParser::parseFunctionDefinitions): Deleted.
+        * wasm/WASMModuleParser.h:
+        (JSC::WASM::ModuleParser::ModuleParser):
+        (JSC::WASM::ModuleParser::functionInformation):
+        (JSC::WASM::WASMModuleParser::WASMModuleParser): Deleted.
+        (JSC::WASM::WASMModuleParser::functionInformation): Deleted.
+        * wasm/WASMOps.h:
+        * wasm/WASMParser.h:
+        (JSC::WASM::Parser::Parser):
+        (JSC::WASM::Parser::consumeCharacter):
+        (JSC::WASM::Parser::consumeString):
+        (JSC::WASM::Parser::parseUInt32):
+        (JSC::WASM::Parser::parseUInt7):
+        (JSC::WASM::Parser::parseVarUInt1):
+        (JSC::WASM::Parser::parseValueType):
+        (JSC::WASM::WASMParser::WASMParser): Deleted.
+        (JSC::WASM::WASMParser::consumeCharacter): Deleted.
+        (JSC::WASM::WASMParser::consumeString): Deleted.
+        (JSC::WASM::WASMParser::parseUInt32): Deleted.
+        (JSC::WASM::WASMParser::parseUInt7): Deleted.
+        (JSC::WASM::WASMParser::parseVarUInt1): Deleted.
+        (JSC::WASM::WASMParser::parseValueType): Deleted.
+        * wasm/WASMPlan.cpp:
+        (JSC::WASM::Plan::Plan):
+        * wasm/WASMSections.cpp:
+        (JSC::WASM::Sections::lookup):
+        (JSC::WASM::WASMSections::lookup): Deleted.
+        * wasm/WASMSections.h:
+        (JSC::WASM::Sections::validateOrder):
+        (JSC::WASM::WASMSections::validateOrder): Deleted.
+
 2016-09-01  Filip Pizlo  <fpizlo@apple.com>
 
         ObjectAllocationSinkingPhase::insertOSRHintsForUpdate() fails to emit updated hints in some cases
