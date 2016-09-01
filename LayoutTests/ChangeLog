@@ -1,3 +1,9 @@
+2016-09-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update iOS simulator WK1 flaky tests.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-09-01  Chris Dumez  <cdumez@apple.com>
 
         Align cross-origin proto getter / setter behavior with the specification
