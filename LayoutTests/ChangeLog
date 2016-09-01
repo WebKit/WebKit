@@ -1,3 +1,12 @@
+2016-09-01  Youenn Fablet  <youenn@apple.com>
+
+        Calling then on promise in Workers may crash in Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=156737
+
+        Unreviewed.
+
+        * TestExpectations: Activating previously skipped fetch api tests in Debug bots
+
 2016-08-31  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !flow->layer() && !flow->isInlineElementContinuation() in WebCore::RenderBlock::addContinuationWithOutline
