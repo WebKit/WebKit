@@ -102,6 +102,43 @@ TEST_F(URLParserTest, Parse)
     checkURL("http://[0:f::f:f:0:0]", {"http", "", "", "[0:f::f:f:0:0]", 0, "/", "", "", "http://[0:f::f:f:0:0]/"});
     checkURL("http://[0:f:0:0:f::]", {"http", "", "", "[0:f:0:0:f::]", 0, "/", "", "", "http://[0:f:0:0:f::]/"});
     checkURL("http://[::f:0:0:f:0:0]", {"http", "", "", "[::f:0:0:f:0:0]", 0, "/", "", "", "http://[::f:0:0:f:0:0]/"});
+    checkURL("http://example.com/path1/path2/.", {"http", "", "", "example.com", 0, "/path1/path2/", "", "", "http://example.com/path1/path2/"});
+    checkURL("http://example.com/path1/path2/..", {"http", "", "", "example.com", 0, "/path1/", "", "", "http://example.com/path1/"});
+    checkURL("http://example.com/path1/path2/./path3", {"http", "", "", "example.com", 0, "/path1/path2/path3", "", "", "http://example.com/path1/path2/path3"});
+    checkURL("http://example.com/path1/path2/.\\path3", {"http", "", "", "example.com", 0, "/path1/path2/path3", "", "", "http://example.com/path1/path2/path3"});
+    checkURL("http://example.com/path1/path2/../path3", {"http", "", "", "example.com", 0, "/path1/path3", "", "", "http://example.com/path1/path3"});
+    checkURL("http://example.com/path1/path2/..\\path3", {"http", "", "", "example.com", 0, "/path1/path3", "", "", "http://example.com/path1/path3"});
+    checkURL("http://example.com/.", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkURL("http://example.com/..", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkURL("http://example.com/./path1", {"http", "", "", "example.com", 0, "/path1", "", "", "http://example.com/path1"});
+    checkURL("http://example.com/../path1", {"http", "", "", "example.com", 0, "/path1", "", "", "http://example.com/path1"});
+    checkURL("http://example.com/../path1/../../path2/path3/../path4", {"http", "", "", "example.com", 0, "/path2/path4", "", "", "http://example.com/path2/path4"});
+    checkURL("http://example.com/path1/.%2", {"http", "", "", "example.com", 0, "/path1/.%2", "", "", "http://example.com/path1/.%2"});
+    checkURL("http://example.com/path1/%2", {"http", "", "", "example.com", 0, "/path1/%2", "", "", "http://example.com/path1/%2"});
+    checkURL("http://example.com/path1/%", {"http", "", "", "example.com", 0, "/path1/%", "", "", "http://example.com/path1/%"});
+    checkURL("http://example.com/path1/.%", {"http", "", "", "example.com", 0, "/path1/.%", "", "", "http://example.com/path1/.%"});
+    checkURL("http://example.com//.", {"http", "", "", "example.com", 0, "//", "", "", "http://example.com//"});
+    checkURL("http://example.com//./", {"http", "", "", "example.com", 0, "//", "", "", "http://example.com//"});
+    checkURL("http://example.com//.//", {"http", "", "", "example.com", 0, "///", "", "", "http://example.com///"});
+    checkURL("http://example.com//..", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkURL("http://example.com//../", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkURL("http://example.com//..//", {"http", "", "", "example.com", 0, "//", "", "", "http://example.com//"});
+    checkURL("http://example.com//..", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkURL("http://example.com/.//", {"http", "", "", "example.com", 0, "//", "", "", "http://example.com//"});
+    checkURL("http://example.com/..//", {"http", "", "", "example.com", 0, "//", "", "", "http://example.com//"});
+    checkURL("http://example.com/./", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkURL("http://example.com/../", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkURL("http://example.com/path1/.../path3", {"http", "", "", "example.com", 0, "/path1/.../path3", "", "", "http://example.com/path1/.../path3"});
+    checkURL("http://example.com/path1/...", {"http", "", "", "example.com", 0, "/path1/...", "", "", "http://example.com/path1/..."});
+    checkURL("http://example.com/path1/.../", {"http", "", "", "example.com", 0, "/path1/.../", "", "", "http://example.com/path1/.../"});
+    checkURL("http://example.com/.path1/", {"http", "", "", "example.com", 0, "/.path1/", "", "", "http://example.com/.path1/"});
+    checkURL("http://example.com/..path1/", {"http", "", "", "example.com", 0, "/..path1/", "", "", "http://example.com/..path1/"});
+    checkURL("http://example.com/path1/.path2", {"http", "", "", "example.com", 0, "/path1/.path2", "", "", "http://example.com/path1/.path2"});
+    checkURL("http://example.com/path1/..path2", {"http", "", "", "example.com", 0, "/path1/..path2", "", "", "http://example.com/path1/..path2"});
+    checkURL("http://example.com/path1/path2/.?query", {"http", "", "", "example.com", 0, "/path1/path2/", "query", "", "http://example.com/path1/path2/?query"});
+    checkURL("http://example.com/path1/path2/..?query", {"http", "", "", "example.com", 0, "/path1/", "query", "", "http://example.com/path1/?query"});
+    checkURL("http://example.com/path1/path2/.#fragment", {"http", "", "", "example.com", 0, "/path1/path2/", "", "fragment", "http://example.com/path1/path2/#fragment"});
+    checkURL("http://example.com/path1/path2/..#fragment", {"http", "", "", "example.com", 0, "/path1/", "", "fragment", "http://example.com/path1/#fragment"});
 }
 
 static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts)
@@ -202,6 +239,7 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
 }
 
+// These are differences between the new URLParser and the old URL::parse which make URLParser more standards compliant.
 TEST_F(URLParserTest, ParserDifferences)
 {
     checkURLDifferences("http://127.0.1",
@@ -222,6 +260,42 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://[0:0:f:0:0:f:0:0]",
         {"http", "", "", "[::f:0:0:f:0:0]", 0, "/", "", "", "http://[::f:0:0:f:0:0]/"},
         {"http", "", "", "[0:0:f:0:0:f:0:0]", 0, "/", "", "", "http://[0:0:f:0:0:f:0:0]/"});
+    checkURLDifferences("http://example.com/path1/.%2e",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/.%2e", "", "", "http://example.com/path1/.%2e"});
+    checkURLDifferences("http://example.com/path1/.%2E",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/.%2E", "", "", "http://example.com/path1/.%2E"});
+    checkURLDifferences("http://example.com/path1/.%2E/",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/.%2E/", "", "", "http://example.com/path1/.%2E/"});
+    checkURLDifferences("http://example.com/path1/%2e.",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/%2e.", "", "", "http://example.com/path1/%2e."});
+    checkURLDifferences("http://example.com/path1/%2E%2e",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/%2E%2e", "", "", "http://example.com/path1/%2E%2e"});
+    checkURLDifferences("http://example.com/path1/%2e",
+        {"http", "", "", "example.com", 0, "/path1/", "", "", "http://example.com/path1/"},
+        {"http", "", "", "example.com", 0, "/path1/%2e", "", "", "http://example.com/path1/%2e"});
+    checkURLDifferences("http://example.com/path1/%2E",
+        {"http", "", "", "example.com", 0, "/path1/", "", "", "http://example.com/path1/"},
+        {"http", "", "", "example.com", 0, "/path1/%2E", "", "", "http://example.com/path1/%2E"});
+    checkURLDifferences("http://example.com/path1/%2E/",
+        {"http", "", "", "example.com", 0, "/path1/", "", "", "http://example.com/path1/"},
+        {"http", "", "", "example.com", 0, "/path1/%2E/", "", "", "http://example.com/path1/%2E/"});
+    checkURLDifferences("http://example.com/path1/path2/%2e?query",
+        {"http", "", "", "example.com", 0, "/path1/path2/", "query", "", "http://example.com/path1/path2/?query"},
+        {"http", "", "", "example.com", 0, "/path1/path2/%2e", "query", "", "http://example.com/path1/path2/%2e?query"});
+    checkURLDifferences("http://example.com/path1/path2/%2e%2e?query",
+        {"http", "", "", "example.com", 0, "/path1/", "query", "", "http://example.com/path1/?query"},
+        {"http", "", "", "example.com", 0, "/path1/path2/%2e%2e", "query", "", "http://example.com/path1/path2/%2e%2e?query"});
+    checkURLDifferences("http://example.com/path1/path2/%2e#fragment",
+        {"http", "", "", "example.com", 0, "/path1/path2/", "", "fragment", "http://example.com/path1/path2/#fragment"},
+        {"http", "", "", "example.com", 0, "/path1/path2/%2e", "", "fragment", "http://example.com/path1/path2/%2e#fragment"});
+    checkURLDifferences("http://example.com/path1/path2/%2e%2e#fragment",
+        {"http", "", "", "example.com", 0, "/path1/", "", "fragment", "http://example.com/path1/#fragment"},
+        {"http", "", "", "example.com", 0, "/path1/path2/%2e%2e", "", "fragment", "http://example.com/path1/path2/%2e%2e#fragment"});
 
     // FIXME: This behavior ought to be specified in the standard.
     // With the existing URL::parse, WebKit returns "https:/", Firefox returns "https:///", and Chrome throws an error.

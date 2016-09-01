@@ -49,6 +49,7 @@ private:
     enum class URLPart;
     void copyURLPartsUntil(const URL& base, URLPart);
     static size_t urlLengthUntilPart(const URL&, URLPart);
+    void popPath();
 };
 
 }
