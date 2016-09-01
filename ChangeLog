@@ -1,3 +1,12 @@
+2016-09-01  Brian Burg  <bburg@apple.com>
+
+        Update root .gitignore for latest WebKitLibraries
+        https://bugs.webkit.org/show_bug.cgi?id=161501
+
+        Reviewed by Alex Christensen.
+
+        * .gitignore:
+
 2016-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GObject DOM bindings to WebKit2 layer and stop auto generating them
