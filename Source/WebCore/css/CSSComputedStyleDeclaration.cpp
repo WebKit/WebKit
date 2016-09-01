@@ -312,8 +312,10 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFlexDirection,
     CSSPropertyFlexWrap,
     CSSPropertyJustifyContent,
+#if ENABLE(CSS_GRID_LAYOUT)
     CSSPropertyJustifySelf,
     CSSPropertyJustifyItems,
+#endif
 #if ENABLE(FILTERS_LEVEL_2)
     CSSPropertyWebkitBackdropFilter,
 #endif
@@ -2291,6 +2293,7 @@ static StyleSelfAlignmentData resolveLegacyJustifyItems(const StyleSelfAlignment
     return data;
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 static StyleSelfAlignmentData resolveJustifyItemsAuto(const StyleSelfAlignmentData& data, Node* parent)
 {
     if (data.position() != ItemPositionAuto)
@@ -2315,6 +2318,7 @@ static StyleSelfAlignmentData resolveJustifySelfAuto(const StyleSelfAlignmentDat
         return { ItemPositionNormal, OverflowAlignmentDefault };
     return resolveLegacyJustifyItems(resolveJustifyItemsAuto(parent->computedStyle()->justifyItems(), parent->parentNode()));
 }
+#endif
 
 static StyleSelfAlignmentData resolveAlignSelfAuto(const StyleSelfAlignmentData& data, Node* parent)
 {
@@ -2830,10 +2834,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return cssValuePool.createValue(style->flexWrap());
         case CSSPropertyJustifyContent:
             return valueForContentPositionAndDistributionWithOverflowAlignment(style->justifyContent());
+#if ENABLE(CSS_GRID_LAYOUT)
         case CSSPropertyJustifyItems:
             return valueForItemPositionWithOverflowAlignment(resolveJustifyItemsAuto(style->justifyItems(), styledNode->parentNode()));
         case CSSPropertyJustifySelf:
             return valueForItemPositionWithOverflowAlignment(resolveJustifySelfAuto(style->justifySelf(), styledNode->parentNode()));
+#endif
         case CSSPropertyOrder:
             return cssValuePool.createValue(style->order(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyFloat:

@@ -1157,7 +1157,11 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
         return true;
     case CSSPropertyAlignItems:
     case CSSPropertyAlignSelf:
+#if ENABLE(CSS_GRID_LAYOUT)
         return !RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
+#else
+        return true;
+#endif
     default:
         return false;
     }
@@ -2737,16 +2741,18 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyJustifyContent:
         parsedValue = parseContentDistributionOverflowPosition();
         break;
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyJustifySelf:
-        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
+        if (!isCSSGridLayoutEnabled())
+            return false;
         return parseItemPositionOverflowPosition(propId, important);
     case CSSPropertyJustifyItems:
-        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
+        if (!isCSSGridLayoutEnabled())
+            return false;
         if (parseLegacyPosition(propId, important))
             return true;
         m_valueList->setCurrentIndex(0);
         return parseItemPositionOverflowPosition(propId, important);
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyGridAutoColumns:
     case CSSPropertyGridAutoRows:
         if (!isCSSGridLayoutEnabled())
@@ -3159,6 +3165,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyAlignContent:
         parsedValue = parseContentDistributionOverflowPosition();
         break;
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyAlignSelf:
         ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         return parseItemPositionOverflowPosition(propId, important);
@@ -3166,6 +3173,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyAlignItems:
         ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         return parseItemPositionOverflowPosition(propId, important);
+#endif
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:
     case CSSPropertyBorderLeftStyle:
