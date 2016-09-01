@@ -90,7 +90,7 @@ public:
         new (&block->f) F { std::move(function) };
 
         BlockPtr blockPtr;
-        blockPtr.m_block = static_cast<BlockType>(block);
+        blockPtr.m_block = reinterpret_cast<BlockType>(block);
 
         return blockPtr;
     }

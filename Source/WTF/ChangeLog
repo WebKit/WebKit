@@ -1,5 +1,20 @@
 2016-09-01  Anders Carlsson  <andersca@apple.com>
 
+        Use BlockPtr::fromCallable in WorkQueue::dispatch and WorkQueue::dispatchAfter
+        https://bugs.webkit.org/show_bug.cgi?id=161512
+
+        Reviewed by Chris Dumez.
+
+        This lets us get rid of leakCallable and adoptCallable.
+
+        * wtf/BlockPtr.h:
+        * wtf/Function.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+
+2016-09-01  Anders Carlsson  <andersca@apple.com>
+
         add BlockPtr::fromCallable
         https://bugs.webkit.org/show_bug.cgi?id=161504
 

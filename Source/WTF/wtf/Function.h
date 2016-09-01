@@ -66,6 +66,7 @@ public:
         return *this;
     }
 
+private:
     class CallableWrapperBase {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -74,19 +75,6 @@ public:
         virtual Out call(In...) = 0;
     };
 
-    CallableWrapperBase* leakCallable() WARN_UNUSED_RETURN
-    {
-        return m_callableWrapper.release();
-    }
-
-    static Function adoptCallable(CallableWrapperBase* callable)
-    {
-        Function function;
-        function.m_callableWrapper.reset(callable);
-        return function;
-    }
-
-private:
     template<typename CallableType>
     class CallableWrapper : public CallableWrapperBase {
     public:
