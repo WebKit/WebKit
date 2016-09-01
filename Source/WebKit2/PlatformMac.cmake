@@ -466,8 +466,6 @@ set(WebKit2_FORWARDING_HEADERS_FILES
 list(APPEND WebKit2_MESSAGES_IN_FILES
     Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 
-    Shared/mac/SecItemShim.messages.in
-
     UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in
 
     UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in
