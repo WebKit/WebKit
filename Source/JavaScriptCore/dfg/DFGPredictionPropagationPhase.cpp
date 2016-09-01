@@ -680,11 +680,6 @@ private:
             break;
         }
 
-        case GetByValWithThis:
-        case GetByIdWithThis: {
-            setPrediction(SpecBytecodeTop);
-            break;
-        }
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:
@@ -693,7 +688,9 @@ private:
         case StringReplaceRegExp:
         case GetById:
         case GetByIdFlush:
+        case GetByIdWithThis:
         case TryGetById:
+        case GetByValWithThis:
         case GetByOffset:
         case MultiGetByOffset:
         case GetDirectPname:

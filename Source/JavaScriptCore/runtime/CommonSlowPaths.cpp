@@ -828,7 +828,7 @@ SLOW_PATH_DECL(slow_path_get_by_id_with_this)
     JSValue thisVal = OP_C(3).jsValue();
     PropertySlot slot(thisVal, PropertySlot::PropertySlot::InternalMethodType::Get);
     JSValue result = baseValue.get(exec, ident, slot);
-    RETURN(result);
+    RETURN_PROFILED(op_get_by_id_with_this, result);
 }
 
 SLOW_PATH_DECL(slow_path_get_by_val_with_this)
@@ -845,7 +845,7 @@ SLOW_PATH_DECL(slow_path_get_by_val_with_this)
         if (JSCell::canUseFastGetOwnProperty(structure)) {
             if (RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec)) {
                 if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomicString.get()))
-                    RETURN(result); 
+                    RETURN_PROFILED(op_get_by_val_with_this, result);
             }
         }
     }
@@ -854,16 +854,16 @@ SLOW_PATH_DECL(slow_path_get_by_val_with_this)
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();
         if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
-            RETURN(asString(baseValue)->getIndex(exec, i));
+            RETURN_PROFILED(op_get_by_val_with_this, asString(baseValue)->getIndex(exec, i));
         
-        RETURN(baseValue.get(exec, i, slot));
+        RETURN_PROFILED(op_get_by_val_with_this, baseValue.get(exec, i, slot));
     }
 
     baseValue.requireObjectCoercible(exec);
     CHECK_EXCEPTION();
     auto property = subscript.toPropertyKey(exec);
     CHECK_EXCEPTION();
-    RETURN(baseValue.get(exec, property, slot));
+    RETURN_PROFILED(op_get_by_val_with_this, baseValue.get(exec, property, slot));
 }
 
 SLOW_PATH_DECL(slow_path_put_by_id_with_this)

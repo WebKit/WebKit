@@ -4129,10 +4129,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_get_by_val_with_this: {
+            SpeculatedType prediction = getPrediction();
+
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* thisValue = get(VirtualRegister(currentInstruction[3].u.operand));
             Node* property = get(VirtualRegister(currentInstruction[4].u.operand));
-            Node* getByValWithThis = addToGraph(GetByValWithThis, base, thisValue, property);
+            Node* getByValWithThis = addToGraph(GetByValWithThis, OpInfo(prediction), base, thisValue, property);
             set(VirtualRegister(currentInstruction[1].u.operand), getByValWithThis);
 
             NEXT_OPCODE(op_get_by_val_with_this);
@@ -4226,12 +4228,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 NEXT_OPCODE(op_get_by_id);
         }
         case op_get_by_id_with_this: {
+            SpeculatedType prediction = getPrediction();
+
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* thisValue = get(VirtualRegister(currentInstruction[3].u.operand));
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[4].u.operand];
 
             set(VirtualRegister(currentInstruction[1].u.operand),
-                addToGraph(GetByIdWithThis, OpInfo(identifierNumber), base, thisValue));
+                addToGraph(GetByIdWithThis, OpInfo(identifierNumber), OpInfo(prediction), base, thisValue));
 
             NEXT_OPCODE(op_get_by_id_with_this);
         }
