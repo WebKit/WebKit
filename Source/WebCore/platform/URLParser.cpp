@@ -237,11 +237,11 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
     LOG(URLParser, "Parsing URL <%s> base <%s>", input.utf8().data(), base.string().utf8().data());
     m_url = { };
     m_buffer.clear();
-    m_authorityOrHostBuffer.clear();
 
     auto codePoints = StringView(input).codePoints();
     auto c = codePoints.begin();
     auto end = codePoints.end();
+    auto authorityOrHostBegin = codePoints.begin();
     while (c != end && isC0ControlOrSpace(*c))
         ++c;
     
@@ -371,6 +371,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
             if (*c == '/') {
                 state = State::AuthorityOrHost;
                 ++c;
+                authorityOrHostBegin = c;
             } else
                 state = State::Path;
             break;
@@ -436,30 +437,31 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
             }
             m_url.m_userStart = m_buffer.length();
             state = State::AuthorityOrHost;
+            authorityOrHostBegin = c;
             break;
         case State::AuthorityOrHost:
             LOG_STATE("AuthorityOrHost");
             if (*c == '@') {
-                authorityEndReached();
+                parseAuthority(authorityOrHostBegin, c);
+                ++c;
+                authorityOrHostBegin = c;
                 state = State::Host;
             } else if (*c == '/' || *c == '?' || *c == '#') {
                 m_url.m_userEnd = m_buffer.length();
                 m_url.m_passwordEnd = m_url.m_userEnd;
-                hostEndReached();
+                parseHost(authorityOrHostBegin, c);
                 state = State::Path;
                 break;
-            } else
-                m_authorityOrHostBuffer.append(*c);
+            }
             ++c;
             break;
         case State::Host:
             LOG_STATE("Host");
             if (*c == '/' || *c == '?' || *c == '#') {
-                hostEndReached();
+                parseHost(authorityOrHostBegin, c);
                 state = State::Path;
                 break;
             }
-            m_authorityOrHostBuffer.append(*c);
             ++c;
             break;
         case State::File:
@@ -589,7 +591,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
     case State::Host:
         if (state == State::Host)
             LOG_FINAL_STATE("Host");
-        hostEndReached();
+        parseHost(authorityOrHostBegin, end);
         m_buffer.append('/');
         m_url.m_pathEnd = m_url.m_portEnd + 1;
         m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
@@ -637,11 +639,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
     return m_url;
 }
 
-void URLParser::authorityEndReached()
+void URLParser::parseAuthority(StringView::CodePoints::Iterator& iterator, const StringView::CodePoints::Iterator& end)
 {
-    auto codePoints = StringView(m_authorityOrHostBuffer.toString()).codePoints();
-    auto iterator = codePoints.begin();
-    auto end = codePoints.end();
     for (; iterator != end; ++iterator) {
         m_buffer.append(*iterator);
         if (*iterator == ':') {
@@ -654,7 +653,6 @@ void URLParser::authorityEndReached()
         m_buffer.append(*iterator);
     m_url.m_passwordEnd = m_buffer.length();
     m_buffer.append('@');
-    m_authorityOrHostBuffer.clear();
 }
 
 static void serializeIPv4(uint32_t address, StringBuilder& buffer)
@@ -925,11 +923,8 @@ static Optional<std::array<uint16_t, 8>> parseIPv6Host(StringView::CodePoints::I
     return address;
 }
 
-void URLParser::hostEndReached()
+void URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const StringView::CodePoints::Iterator& end)
 {
-    auto codePoints = StringView(m_authorityOrHostBuffer.toString()).codePoints();
-    auto iterator = codePoints.begin();
-    auto end = codePoints.end();
     if (iterator == end)
         return;
     if (*iterator == '[') {
@@ -966,7 +961,6 @@ void URLParser::hostEndReached()
     }
     m_url.m_hostEnd = m_buffer.length();
     m_url.m_portEnd = m_url.m_hostEnd;
-    m_authorityOrHostBuffer.clear();
 }
 
 bool URLParser::allValuesEqual(const URL& a, const URL& b)

@@ -42,9 +42,8 @@ public:
 private:
     URL m_url;
     StringBuilder m_buffer;
-    StringBuilder m_authorityOrHostBuffer; // FIXME: Save the iterator at the end of the scheme instead of using a second buffer.
-    void authorityEndReached();
-    void hostEndReached();
+    void parseAuthority(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
+    void parseHost(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
 
     enum class URLPart;
     void copyURLPartsUntil(const URL& base, URLPart);
