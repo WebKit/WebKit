@@ -1528,7 +1528,7 @@ namespace WebKit {
 
 class RunBeforeUnloadConfirmPanelResultListener : public API::ObjectImpl<API::Object::Type::RunBeforeUnloadConfirmPanelResultListener> {
 public:
-    static PassRefPtr<RunBeforeUnloadConfirmPanelResultListener> create(std::function<void (bool)>&& completionHandler)
+    static PassRefPtr<RunBeforeUnloadConfirmPanelResultListener> create(Function<void (bool)>&& completionHandler)
     {
         return adoptRef(new RunBeforeUnloadConfirmPanelResultListener(WTFMove(completionHandler)));
     }
@@ -1543,17 +1543,17 @@ public:
     }
 
 private:
-    explicit RunBeforeUnloadConfirmPanelResultListener(std::function<void (bool)>&& completionHandler)
+    explicit RunBeforeUnloadConfirmPanelResultListener(Function<void (bool)>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
     {
     }
 
-    std::function<void (bool)> m_completionHandler;
+    Function<void (bool)> m_completionHandler;
 };
 
 class RunJavaScriptAlertResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptAlertResultListener> {
 public:
-    static PassRefPtr<RunJavaScriptAlertResultListener> create(std::function<void ()>&& completionHandler)
+    static PassRefPtr<RunJavaScriptAlertResultListener> create(Function<void ()>&& completionHandler)
     {
         return adoptRef(new RunJavaScriptAlertResultListener(WTFMove(completionHandler)));
     }
@@ -1568,17 +1568,17 @@ public:
     }
 
 private:
-    explicit RunJavaScriptAlertResultListener(std::function<void ()>&& completionHandler)
+    explicit RunJavaScriptAlertResultListener(Function<void ()>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
     {
     }
     
-    std::function<void ()> m_completionHandler;
+    Function<void ()> m_completionHandler;
 };
 
 class RunJavaScriptConfirmResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptConfirmResultListener> {
 public:
-    static PassRefPtr<RunJavaScriptConfirmResultListener> create(std::function<void (bool)>&& completionHandler)
+    static PassRefPtr<RunJavaScriptConfirmResultListener> create(Function<void (bool)>&& completionHandler)
     {
         return adoptRef(new RunJavaScriptConfirmResultListener(WTFMove(completionHandler)));
     }
@@ -1593,17 +1593,17 @@ public:
     }
 
 private:
-    explicit RunJavaScriptConfirmResultListener(std::function<void (bool)>&& completionHandler)
+    explicit RunJavaScriptConfirmResultListener(Function<void (bool)>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
     {
     }
 
-    std::function<void (bool)> m_completionHandler;
+    Function<void (bool)> m_completionHandler;
 };
 
 class RunJavaScriptPromptResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptPromptResultListener> {
 public:
-    static PassRefPtr<RunJavaScriptPromptResultListener> create(std::function<void (const String&)>&& completionHandler)
+    static PassRefPtr<RunJavaScriptPromptResultListener> create(Function<void (const String&)>&& completionHandler)
     {
         return adoptRef(new RunJavaScriptPromptResultListener(WTFMove(completionHandler)));
     }
@@ -1618,12 +1618,12 @@ public:
     }
 
 private:
-    explicit RunJavaScriptPromptResultListener(std::function<void (const String&)>&& completionHandler)
+    explicit RunJavaScriptPromptResultListener(Function<void (const String&)>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
     {
     }
 
-    std::function<void (const String&)> m_completionHandler;
+    Function<void (const String&)> m_completionHandler;
 };
 
 WK_ADD_API_MAPPING(WKPageRunBeforeUnloadConfirmPanelResultListenerRef, RunBeforeUnloadConfirmPanelResultListener)
@@ -1787,7 +1787,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.unfocus(toAPI(page), m_client.base.clientInfo);
         }
 
-        void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void ()> completionHandler) override
+        void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, Function<void ()>&& completionHandler) override
         {
             if (m_client.runJavaScriptAlert) {
                 RefPtr<RunJavaScriptAlertResultListener> listener = RunJavaScriptAlertResultListener::create(WTFMove(completionHandler));
@@ -1813,7 +1813,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler();
         }
 
-        void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void (bool)> completionHandler) override
+        void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, Function<void (bool)>&& completionHandler) override
         {
             if (m_client.runJavaScriptConfirm) {
                 RefPtr<RunJavaScriptConfirmResultListener> listener = RunJavaScriptConfirmResultListener::create(WTFMove(completionHandler));
@@ -1840,7 +1840,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler(false);
         }
 
-        void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void (const String&)> completionHandler) override
+        void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, Function<void (const String&)>&& completionHandler) override
         {
             if (m_client.runJavaScriptPrompt) {
                 RefPtr<RunJavaScriptPromptResultListener> listener = RunJavaScriptPromptResultListener::create(WTFMove(completionHandler));
@@ -2030,7 +2030,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             return m_client.runBeforeUnloadConfirmPanel_deprecatedForUseWithV6 || m_client.runBeforeUnloadConfirmPanel;
         }
 
-        void runBeforeUnloadConfirmPanel(WebKit::WebPageProxy* page, const WTF::String& message, WebKit::WebFrameProxy* frame, std::function<void (bool)> completionHandler) override
+        void runBeforeUnloadConfirmPanel(WebKit::WebPageProxy* page, const WTF::String& message, WebKit::WebFrameProxy* frame, Function<void (bool)>&& completionHandler) override
         {
             if (m_client.runBeforeUnloadConfirmPanel) {
                 RefPtr<RunBeforeUnloadConfirmPanelResultListener> listener = RunBeforeUnloadConfirmPanelResultListener::create(WTFMove(completionHandler));
@@ -2055,7 +2055,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.pageDidScroll(toAPI(page), m_client.base.clientInfo);
         }
 
-        void exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, API::SecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, std::function<void (unsigned long long)> completionHandler) override
+        void exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, API::SecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, Function<void (unsigned long long)>&& completionHandler) override
         {
             if (!m_client.exceededDatabaseQuota) {
                 completionHandler(currentQuota);
