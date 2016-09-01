@@ -1,3 +1,9 @@
+2016-09-01  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build-fix; don't specify an explicit deployment target.
+
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+
 2016-08-31  Jer Noble  <jer.noble@apple.com>
 
         Refactor MobileMiniBrowser into an application framework to allow external XCTesting
