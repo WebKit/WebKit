@@ -1862,6 +1862,7 @@ webkit.org/b/160367 media/track/media-element-enqueue-event-crash.html [ Pass Cr
 webkit.org/b/161323 media/track/text-track-cue-is-reachable.html [ Pass Crash ]
 webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Failure ]
 webkit.org/b/160367 media/track/track-remove-crash.html [ Skip ]
+webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Pass Failure ]
 
 webkit.org/b/160591 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-worker.html [ Failure Timeout ]
 

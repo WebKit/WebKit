@@ -1,5 +1,14 @@
 2016-09-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking media/video-main-content-allow-then-scroll.html as flaky on ios-simulator-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=161491
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2016-09-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Add ios-simulator baseline for compositing/layer-creation/will-change-on-normal-flow-content.html.
         https://bugs.webkit.org/show_bug.cgi?id=161490
 
