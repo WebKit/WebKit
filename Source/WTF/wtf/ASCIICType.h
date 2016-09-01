@@ -187,6 +187,18 @@ inline char upperNibbleToASCIIHexDigit(uint8_t value)
     return nibble + (nibble < 10 ? '0' : 'A' - 10);
 }
 
+inline char lowerNibbleToLowercaseASCIIHexDigit(uint8_t value)
+{
+    uint8_t nibble = value & 0xF;
+    return nibble + (nibble < 10 ? '0' : 'a' - 10);
+}
+
+inline char upperNibbleToLowercaseASCIIHexDigit(uint8_t value)
+{
+    uint8_t nibble = value >> 4;
+    return nibble + (nibble < 10 ? '0' : 'a' - 10);
+}
+
 template<typename CharacterType> inline bool isASCIIAlphaCaselessEqual(CharacterType inputCharacter, char expectedASCIILowercaseLetter)
 {
     // Name of this argument says this must be a lowercase letter, but it can actually be:
@@ -219,10 +231,12 @@ using WTF::isASCIIPrintable;
 using WTF::isASCIISpace;
 using WTF::isASCIIUpper;
 using WTF::lowerNibbleToASCIIHexDigit;
+using WTF::lowerNibbleToLowercaseASCIIHexDigit;
 using WTF::toASCIIHexValue;
 using WTF::toASCIILower;
 using WTF::toASCIILowerUnchecked;
 using WTF::toASCIIUpper;
 using WTF::upperNibbleToASCIIHexDigit;
+using WTF::upperNibbleToLowercaseASCIIHexDigit;
 
 #endif

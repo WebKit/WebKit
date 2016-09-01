@@ -1,3 +1,14 @@
+2016-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Implement IPv6 parsing in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=161390
+
+        Reviewed by Darin Adler.
+
+        * wtf/ASCIICType.h:
+        (WTF::lowerNibbleToLowercaseASCIIHexDigit):
+        (WTF::upperNibbleToLowercaseASCIIHexDigit):
+
 2016-08-30  Brady Eidson  <beidson@apple.com>
 
         GameController.framework backend for gamepad API.

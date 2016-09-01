@@ -50,7 +50,12 @@ struct ExpectedParts {
     String string;
 };
 
-static bool eq(const String& s1, const String& s2) { return s1.utf8() == s2.utf8(); }
+static bool eq(const String& s1, const String& s2)
+{
+    EXPECT_STREQ(s1.utf8().data(), s2.utf8().data());
+    return s1.utf8() == s2.utf8();
+}
+
 static void checkURL(const String& urlString, const ExpectedParts& parts)
 {
     URLParser parser;
@@ -94,6 +99,9 @@ TEST_F(URLParserTest, Parse)
     checkURL("about:blank", {"about", "", "", "", 0, "blank", "", "", "about:blank"});
     checkURL("about:blank?query", {"about", "", "", "", 0, "blank", "query", "", "about:blank?query"});
     checkURL("about:blank#fragment", {"about", "", "", "", 0, "blank", "", "fragment", "about:blank#fragment"});
+    checkURL("http://[0:f::f:f:0:0]", {"http", "", "", "[0:f::f:f:0:0]", 0, "/", "", "", "http://[0:f::f:f:0:0]/"});
+    checkURL("http://[0:f:0:0:f::]", {"http", "", "", "[0:f:0:0:f::]", 0, "/", "", "", "http://[0:f:0:0:f::]/"});
+    checkURL("http://[::f:0:0:f:0:0]", {"http", "", "", "[::f:0:0:f:0:0]", 0, "/", "", "", "http://[::f:0:0:f:0:0]/"});
 }
 
 static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts)
@@ -202,6 +210,18 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://011.11.0X11.0x011",
         {"http", "", "", "9.11.17.17", 0, "/", "", "", "http://9.11.17.17/"},
         {"http", "", "", "011.11.0x11.0x011", 0, "/", "", "", "http://011.11.0x11.0x011/"});
+    checkURLDifferences("http://[1234:0078:90AB:CdEf:0123:0007:89AB:0000]",
+        {"http", "", "", "[1234:78:90ab:cdef:123:7:89ab:0]", 0, "/", "", "", "http://[1234:78:90ab:cdef:123:7:89ab:0]/"},
+        {"http", "", "", "[1234:0078:90ab:cdef:0123:0007:89ab:0000]", 0, "/", "", "", "http://[1234:0078:90ab:cdef:0123:0007:89ab:0000]/"});
+    checkURLDifferences("http://[0:f:0:0:f:f:0:0]",
+        {"http", "", "", "[0:f::f:f:0:0]", 0, "/", "", "", "http://[0:f::f:f:0:0]/"},
+        {"http", "", "", "[0:f:0:0:f:f:0:0]", 0, "/", "", "", "http://[0:f:0:0:f:f:0:0]/"});
+    checkURLDifferences("http://[0:f:0:0:f:0:0:0]",
+        {"http", "", "", "[0:f:0:0:f::]", 0, "/", "", "", "http://[0:f:0:0:f::]/"},
+        {"http", "", "", "[0:f:0:0:f:0:0:0]", 0, "/", "", "", "http://[0:f:0:0:f:0:0:0]/"});
+    checkURLDifferences("http://[0:0:f:0:0:f:0:0]",
+        {"http", "", "", "[::f:0:0:f:0:0]", 0, "/", "", "", "http://[::f:0:0:f:0:0]/"},
+        {"http", "", "", "[0:0:f:0:0:f:0:0]", 0, "/", "", "", "http://[0:0:f:0:0:f:0:0]/"});
 
     // FIXME: This behavior ought to be specified in the standard.
     // With the existing URL::parse, WebKit returns "https:/", Firefox returns "https:///", and Chrome throws an error.
