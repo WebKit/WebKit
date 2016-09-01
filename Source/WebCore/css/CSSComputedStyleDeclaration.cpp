@@ -2286,6 +2286,7 @@ Node* ComputedStyleExtractor::styledNode() const
     return &element;
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 static StyleSelfAlignmentData resolveLegacyJustifyItems(const StyleSelfAlignmentData& data)
 {
     if (data.positionType() == LegacyPosition)
@@ -2293,7 +2294,6 @@ static StyleSelfAlignmentData resolveLegacyJustifyItems(const StyleSelfAlignment
     return data;
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
 static StyleSelfAlignmentData resolveJustifyItemsAuto(const StyleSelfAlignmentData& data, Node* parent)
 {
     if (data.position() != ItemPositionAuto)
