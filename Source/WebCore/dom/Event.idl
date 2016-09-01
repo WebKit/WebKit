@@ -72,7 +72,5 @@
     [ImplementedAs=legacyReturnValue] attribute boolean returnValue;
     attribute boolean cancelBubble;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Custom] readonly attribute DataTransfer clipboardData;
-#endif
 };

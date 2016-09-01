@@ -33,11 +33,7 @@
     Exposed=DedicatedWorker,
     JSGenerateToNativeObject,
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Custom, RaisesException] void postMessage(any message, optional Array messagePorts);
-#else
-    [RaisesException] void postMessage(DOMString message, optional MessagePort messagePort);
-#endif
 
     attribute EventHandler onmessage;
 };

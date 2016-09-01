@@ -24,19 +24,11 @@
     CustomCall,
 ] interface HTMLEmbedElement : HTMLElement {
 [Reflect] attribute DOMString align;
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
 [Reflect] attribute DOMString height;
-#else
-[Reflect] attribute long height;
-#endif
 [Reflect] attribute DOMString name;
 [Reflect, URL] attribute USVString src;
 [Reflect] attribute DOMString type;
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
 [Reflect] attribute DOMString width;
-#else
-[Reflect] attribute long width;
-#endif
 
 [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
 };

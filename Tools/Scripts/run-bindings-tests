@@ -42,10 +42,7 @@ def main(argv):
     reset_results = "--reset-results" in argv
     verbose = not "--no-verbose" in argv
 
-    generators = [
-        'JS',
-        'GObject'
-    ]
+    generators = [ 'JS' ]
 
     from webkitpy.bindings.main import BindingsTests
 

@@ -30,10 +30,6 @@
     attribute boolean selected;
     attribute DOMString value;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     attribute DOMString text;
-#else
-    readonly attribute DOMString text;
-#endif
     readonly attribute long index;
 };

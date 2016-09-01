@@ -22,13 +22,6 @@
     JSGenerateToJSObject
 ] interface DocumentType : Node {
     readonly attribute DOMString name;
-
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    [ImplementedAs=entitiesForBindings] readonly attribute NamedNodeMap entities;
-    [ImplementedAs=notationsForBindings] readonly attribute NamedNodeMap notations;
-    [ImplementedAs=internalSubsetForBindings] readonly attribute DOMString? internalSubset;
-#endif
-
     readonly attribute DOMString publicId;
     readonly attribute DOMString systemId;
 };

@@ -26,11 +26,6 @@
 ] interface HTMLCollection {
     readonly attribute unsigned long length;
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    getter Node item(unsigned long index);
-    getter Node namedItem(DOMString name);
-#else
     getter Element? item(unsigned long index);
     getter Element? namedItem(DOMString name);
-#endif
 };

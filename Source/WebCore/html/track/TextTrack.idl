@@ -49,11 +49,8 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
 
     attribute EventHandler oncuechange;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
-    // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
     readonly attribute VTTRegionList regions;
     // FIXME: region parameter should not be nullable in addRegion and removeRegion.
     void addRegion(VTTRegion? region);
     [RaisesException] void removeRegion(VTTRegion? region);
-#endif
 };

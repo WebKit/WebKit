@@ -33,7 +33,6 @@
     [InitializedByEventConstructor] readonly attribute DOMString lastEventId;
     [InitializedByEventConstructor] readonly attribute EventTarget source; // May be a DOMWindow or a MessagePort.
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any data;
     [InitializedByEventConstructor] readonly attribute sequence<MessagePort> ports;
 
@@ -44,11 +43,4 @@
     [Custom] void webkitInitMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
         optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional DOMWindow sourceArg,
         optional Array transferables);
-#else
-    readonly attribute SerializedScriptValue data;
-    readonly attribute MessagePort messagePort;
-    void initMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
-        optional SerializedScriptValue? dataArg, optional DOMString originArg, optional DOMString lastEventIdArg, optional DOMWindow? sourceArg,
-        optional MessagePort? messagePort);
-#endif
 };

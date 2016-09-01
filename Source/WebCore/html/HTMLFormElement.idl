@@ -35,11 +35,7 @@
     [Reflect] attribute boolean noValidate;
     [Reflect] attribute DOMString target;
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    [ImplementedAs=elementsForNativeBindings] readonly attribute HTMLCollection elements;
-#else
     readonly attribute HTMLFormControlsCollection elements;
-#endif
     readonly attribute long length;
 
     getter Element (unsigned long index);
@@ -48,11 +44,7 @@
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [ImplementedAs=submitFromJavaScript] void submit();
-#else
-    void submit();
-#endif
     void reset();
     boolean checkValidity();
 

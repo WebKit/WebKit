@@ -28,7 +28,5 @@
 ] partial interface HTMLMediaElement {
     attribute DOMString kind;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     attribute MediaSession? session;
-#endif
 };

@@ -36,7 +36,4 @@
 ] interface ImageData {
     readonly attribute long width;
     readonly attribute long height;
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    readonly attribute Uint8ClampedArray data;
-#endif
 };

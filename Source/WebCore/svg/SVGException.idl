@@ -26,9 +26,7 @@
     readonly attribute DOMString        name;
     readonly attribute DOMString        message;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [NotEnumerable] DOMString toString();
-#endif
 
     // SVGExceptionCode
     const unsigned short SVG_WRONG_TYPE_ERR = 0;

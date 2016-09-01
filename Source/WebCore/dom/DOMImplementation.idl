@@ -28,13 +28,7 @@
 
     [RaisesException, NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
 
-    [NewObject, RaisesException]
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-        Document
-#else
-        XMLDocument
-#endif
-    createDocument(DOMString? namespaceURI, [TreatNullAs=EmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
+    [NewObject, RaisesException] XMLDocument createDocument(DOMString? namespaceURI, [TreatNullAs=EmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     [RaisesException] CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");

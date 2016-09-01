@@ -57,37 +57,18 @@
 
     [RaisesException] Node adoptNode(Node source);
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    // document.documentURI was writable in DOM3 Core, but is read-only in DOM4
-    // (see http://www.w3.org/TR/2011/WD-dom-20110915/#document). We need to keep
-    // the writable version around for GObject clients, but are moving to
-    // read-only for other clients.
-    attribute DOMString? documentURI;
-#else
     [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
-#endif
 
     [RaisesException, NewObject] Event createEvent(DOMString eventType);
 
     [NewObject] Range createRange();
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    NodeIterator createNodeIterator(Node root,
-        optional unsigned long whatToShow = 0xFFFFFFFF,
-        optional NodeFilter? filter,
-        optional boolean expandEntityReferences);
-    TreeWalker createTreeWalker(Node root,
-        optional unsigned long whatToShow = 0xFFFFFFFF,
-        optional NodeFilter? filter,
-        optional boolean expandEntityReferences);
-#else
     [NewObject] NodeIterator createNodeIterator(Node root,
         optional unsigned long whatToShow = 0xFFFFFFFF,
         optional NodeFilter? filter = null);
     [NewObject] TreeWalker createTreeWalker(Node root,
         optional unsigned long whatToShow = 0xFFFFFFFF,
         optional NodeFilter? filter = null);
-#endif
 
     readonly attribute DOMWindow defaultView;
 
@@ -120,11 +101,7 @@
     attribute DOMString designMode;
 
     readonly attribute USVString referrer;
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [SetterRaisesException] attribute USVString domain;
-#else
-    readonly attribute DOMString domain;
-#endif
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;
 
     [GetterRaisesException, SetterRaisesException] attribute USVString cookie;
@@ -144,32 +121,20 @@
 
     NodeList getElementsByName([AtomicString] DOMString elementName);
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [PutForwards=href, Unforgeable] readonly attribute Location? location;
-#endif
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    attribute DOMString charset;
-#else
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString charset;
-#endif
     readonly attribute DOMString readyState;
 
     Element elementFromPoint(optional long x = 0, optional long y = 0);
     Range caretRangeFromPoint(optional long x = 0, optional long y = 0);
 
     // Mozilla extensions
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     DOMSelection getSelection();
-#endif
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString characterSet;
 
     readonly attribute DOMString? preferredStylesheetSet;
     attribute DOMString? selectedStylesheetSet;
-
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    CSSStyleDeclaration createCSSStyleDeclaration();
-#endif
 
     // FIXME: This is not standard and has been dropped from Blink already.
     [Custom] (CanvasRenderingContext2D or WebGLRenderingContextBase) getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
@@ -197,7 +162,6 @@
     [Conditional=POINTER_LOCK] void exitPointerLock();
     [Conditional=POINTER_LOCK] readonly attribute Element? pointerLockElement;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 
     readonly attribute FontFaceSet fonts;
@@ -211,8 +175,6 @@
         optional long webkitRadiusX = 0, optional long webkitRadiusY = 0,
         optional unrestricted float webkitRotationAngle = NaN, optional unrestricted float webkitForce = NaN);
     [NewObject, Custom] TouchList createTouchList(Touch... touches);
-#endif
-
 #endif
 
     // Page visibility API.

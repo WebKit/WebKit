@@ -26,9 +26,7 @@
 [NoInterfaceObject] interface URLUtils {
     [SetterRaisesException, URL] attribute USVString href;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [NotEnumerable] DOMString toString();
-#endif
 
     readonly attribute USVString origin;
 

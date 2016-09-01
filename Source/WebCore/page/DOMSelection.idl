@@ -54,9 +54,7 @@
     void removeAllRanges();
     void addRange(Range range);
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [NotEnumerable] DOMString toString();
-#endif
 
     readonly attribute DOMString type;
 

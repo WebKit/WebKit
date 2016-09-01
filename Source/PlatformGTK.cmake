@@ -6,7 +6,6 @@ if (ENABLE_INTROSPECTION)
 endif ()
 
 list(APPEND DocumentationDependencies
-    GObjectDOMBindings
     WebKit2
     "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml"
     "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-${WEBKITGTK_API_VERSION}-sections.txt"

@@ -415,13 +415,13 @@ expected_build_steps = {
     'JSCOnly Linux ARMv7 Traditional Release' : ['configure build', 'wait-for-svn-server', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
     'JSCOnly Linux AArch64 Release' : ['configure build', 'wait-for-svn-server', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
 
-    'GTK Linux 32-bit Release' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'jscore-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generation-tests', 'API tests', 'WebKit GObject DOM bindings API break tests'],
+    'GTK Linux 32-bit Release' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'jscore-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generation-tests', 'API tests'],
     'GTK Linux 64-bit Debug (Build)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'archive-built-product', 'upload', 'trigger'],
-    'GTK Linux 64-bit Debug (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'jscore-test', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generation-tests', 'archive-test-results', 'upload', 'MasterShellCommand', 'API tests', 'WebKit GObject DOM bindings API break tests'],
+    'GTK Linux 64-bit Debug (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'jscore-test', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generation-tests', 'archive-test-results', 'upload', 'MasterShellCommand', 'API tests'],
     'GTK Linux 64-bit Release (Build)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'archive-built-product', 'upload', 'trigger'],
     'GTK Linux 64-bit Release (Perf)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'perf-test', 'benchmark-test'],
-    'GTK Linux 64-bit Release (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'jscore-test', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generation-tests', 'archive-test-results', 'upload', 'MasterShellCommand', 'API tests', 'WebKit GObject DOM bindings API break tests'],
-    'GTK Linux ARM Release' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'jscore-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generation-tests', 'API tests', 'WebKit GObject DOM bindings API break tests'],
+    'GTK Linux 64-bit Release (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'download-built-product', 'extract-built-product', 'jscore-test', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generation-tests', 'archive-test-results', 'upload', 'MasterShellCommand', 'API tests'],
+    'GTK Linux ARM Release' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'jscore-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generation-tests', 'API tests'],
 
     'WinCairo 64-Bit Release' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit'],
 }
@@ -452,51 +452,6 @@ class BuildStepsTest(unittest.TestCase):
 
         for builder in expected_build_steps:
             self.assertTrue(builder in builders, "Builder %s doesn't exist, but has unnecessary expected results" % builder)
-
-
-class RunGtkWebKitGObjectDOMBindingsAPIBreakTestsTest(unittest.TestCase):
-    def assertResults(self, expected_missing, expected_new, stdio):
-        expected_text = ""
-        expected_results = SUCCESS
-        if expected_new:
-            expected_results = WARNINGS
-        if expected_missing:
-            expected_results = FAILURE
-
-        cmd = StubRemoteCommand(0, stdio)
-        step = RunGtkWebKitGObjectDOMBindingsAPIBreakTests()
-        step.commandComplete(cmd)
-
-        actual_results = step.evaluateCommand(cmd)
-        self.assertEqual(expected_results, actual_results)
-        self.assertEqual(expected_missing, step.missingAPI)
-        self.assertEqual(expected_new, step.newAPI)
-
-    def test_missing_and_new_api(self):
-        self.assertResults(expected_missing=True, expected_new=True, stdio="""Missing API (API break!) detected in GObject DOM bindings
-    gboolean webkit_dom_html_input_element_get_webkitdirectory(WebKitDOMHTMLInputElement*)
-    gchar* webkit_dom_text_track_cue_get_text(WebKitDOMTextTrackCue*)
-
-New API detected in GObject DOM bindings
-    void webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement*, gboolean)
-    gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement*)
-    void webkit_dom_text_track_add_cue(WebKitDOMTextTrack*, WebKitDOMTextTrackCue*, GError**)
-    gchar* webkit_dom_document_get_origin(WebKitDOMDocument*)""")
-
-    def test_missing_api(self):
-        self.assertResults(expected_missing=True, expected_new=False, stdio="""Missing API (API break!) detected in GObject DOM bindings
-    gboolean webkit_dom_html_input_element_get_webkitdirectory(WebKitDOMHTMLInputElement*)
-    gchar* webkit_dom_text_track_cue_get_text(WebKitDOMTextTrackCue*)""")
-
-    def test_new_api(self):
-        self.assertResults(expected_missing=False, expected_new=True, stdio="""New API detected in GObject DOM bindings
-    void webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement*, gboolean)
-    gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement*)
-    void webkit_dom_text_track_add_cue(WebKitDOMTextTrack*, WebKitDOMTextTrackCue*, GError**)
-    gchar* webkit_dom_document_get_origin(WebKitDOMDocument*)""")
-
-    def test_success(self):
-        self.assertResults(expected_missing=False, expected_new=False, stdio="")
 
 
 class RunAndUploadPerfTestsTest(unittest.TestCase):

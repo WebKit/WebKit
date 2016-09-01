@@ -24,7 +24,6 @@
     JSCustomHeader,
     JSCustomToNativeObject,
 ] interface EventTarget {
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     // FIXME: Should be:
     // void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options);
     // void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options);
@@ -32,7 +31,6 @@
     [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener, AddEventListenerOptions options);
     [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener);
     [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, EventListenerOptions options);
-#endif
 
     [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener, boolean useCapture);
     [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, boolean useCapture);

@@ -58,11 +58,7 @@
     attribute DOMString type; // readonly dropped as part of DOM level 2
     attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString value;
-#else
-    attribute DOMString value;
-#endif
     [SetterRaisesException] attribute Date valueAsDate;
     [SetterRaisesException] attribute unrestricted double valueAsNumber;
 
@@ -92,10 +88,6 @@
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute boolean incremental;
-
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    void setValueForUser(DOMString value);
-#endif
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
 

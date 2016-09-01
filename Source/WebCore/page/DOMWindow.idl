@@ -68,9 +68,7 @@
 
     [Custom] any showModalDialog(DOMString url, optional any dialogArgs, optional DOMString featureArgs);
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     void alert();
-#endif
     void alert(DOMString message);
     boolean confirm(optional DOMString message = "");
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
@@ -103,11 +101,9 @@
     void scrollTo(unrestricted double x, unrestricted double y);
     [ImplementedAs=scrollTo] void scroll(unrestricted double x, unrestricted double y);
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     void scrollBy(optional ScrollToOptions option);
     void scrollTo(optional ScrollToOptions options);
     [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);
-#endif
 
     void moveBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: this should take longs not floats.
     void moveTo(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: this should take longs not floats.
@@ -122,10 +118,8 @@
 
     attribute DOMString status;
     attribute DOMString defaultStatus;
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     // This attribute is an alias of defaultStatus and is necessary for legacy uses.
     [ImplementedAs=defaultStatus] attribute DOMString defaultstatus;
-#endif
 
     // Self referential attributes
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow self;
@@ -147,15 +141,11 @@
 
     // DOM Level 2 Style Interface
     [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional DOMString? pseudoElement = null);
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     // FIXME: Drop this overload once <rdar://problem/28016778> has been fixed.
     [NewObject, RaisesException] CSSStyleDeclaration getComputedStyle(Document document, optional DOMString? pseudoElement = null);
-#endif
 
     // WebKit extensions
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     CSSRuleList getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
-#endif
 
     [Replaceable] readonly attribute unrestricted double devicePixelRatio;
     
@@ -175,11 +165,7 @@
     [Conditional=ORIENTATION_EVENTS] readonly attribute long orientation;
 
     // cross-document messaging
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [DoNotCheckSecurity, Custom, RaisesException, ForwardDeclareInHeader] void postMessage(SerializedScriptValue message, USVString targetOrigin, optional Array messagePorts);
-#else
-    [DoNotCheckSecurity, Custom, RaisesException, ForwardDeclareInHeader] void postMessage(SerializedScriptValue message, optional MessagePort messagePort, DOMString targetOrigin);
-#endif
 
     [Conditional=WEB_TIMING, Replaceable] readonly attribute Performance performance;
 
@@ -192,7 +178,6 @@
     void captureEvents(/*in long eventFlags*/);
     void releaseEvents(/*in long eventFlags*/);
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [CustomGetter, CustomConstructor] attribute HTMLImageElementNamedConstructor Image; // Usable with new operator
     attribute XMLDocumentConstructor SVGDocument;
 
@@ -200,7 +185,6 @@
     attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Add metrics to determine when we can remove this.
 
     [Conditional=CUSTOM_ELEMENTS, EnabledAtRuntime=CustomElements, ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
-#endif
 
     // Event Handlers
 

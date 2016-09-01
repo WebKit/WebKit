@@ -33,13 +33,8 @@
     readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [RaisesException] void setStart(Node refNode, unsigned long offset);
     [RaisesException] void setEnd(Node refNode, unsigned long offset);
-#else
-    [RaisesException] void setStart(Node refNode, long offset);
-    [RaisesException] void setEnd(Node refNode, long offset);
-#endif
 
     [RaisesException] void setStartBefore(Node refNode);
     [RaisesException] void setStartAfter(Node refNode);
@@ -67,10 +62,8 @@
 
     void detach();
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
-#endif
 
     [RaisesException, NewObject] DocumentFragment createContextualFragment(DOMString html);
 
@@ -84,18 +77,9 @@
 
     [RaisesException] boolean intersectsNode(Node refNode);
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [RaisesException] short comparePoint(Node refNode, unsigned long offset);
     [RaisesException] boolean isPointInRange(Node refNode, unsigned long offset);
-#else
-    [RaisesException] short comparePoint(Node refNode, long offset);
-    [RaisesException] boolean isPointInRange(Node refNode, long offset);
-#endif
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     [RaisesException] void expand(optional DOMString unit = "undefined");
-
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    readonly attribute DOMString text;
-#endif
 };

@@ -26,7 +26,5 @@
     readonly attribute CSSPrimitiveValue green;
     readonly attribute CSSPrimitiveValue blue;
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     readonly attribute CSSPrimitiveValue alpha;
-#endif
 };

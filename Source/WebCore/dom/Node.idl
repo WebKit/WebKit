@@ -66,10 +66,6 @@
 
     void normalize();
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    [ImplementedAs=isSupportedForBindings] boolean isSupported(optional DOMString feature, optional DOMString version);
-#endif
-
     readonly attribute USVString baseURI;
 
     // FIXME: the spec says this can also raise on retrieval.

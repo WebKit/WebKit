@@ -24,11 +24,7 @@ interface HTMLFieldSetElement : HTMLElement {
 
     readonly attribute DOMString type;
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    [ImplementedAs=elementsForNativeBindings] readonly attribute HTMLCollection elements;
-#else
     readonly attribute HTMLFormControlsCollection elements;
-#endif
 
     readonly attribute boolean         willValidate;
     readonly attribute ValidityState   validity;

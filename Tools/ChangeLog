@@ -1,3 +1,44 @@
+2016-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move GObject DOM bindings to WebKit2 layer and stop auto generating them
+        https://bugs.webkit.org/show_bug.cgi?id=161438
+
+        Reviewed by Michael Catanzaro.
+
+        Remove scripts related to the GObject DOM bindings auto-generation.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkAPITests.getText2):
+        (TestFactory.__init__):
+        (RunWebKit1Tests): Deleted.
+        (RunWebKit1Tests.start): Deleted.
+        (RunWebKit1LeakTests): Deleted.
+        (RunWebKit1LeakTests.start): Deleted.
+        (RunAndUploadPerfTests): Deleted.
+        (RunAndUploadPerfTests.start): Deleted.
+        (BuildAndRemoteJSCTestsFactory.__init__): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (BuildStepsTest.test_unnecessary_expected_results):
+        (RunAndUploadPerfTestsTest): Deleted.
+        (RunAndUploadPerfTestsTest.assertResults): Deleted.
+        (RunAndUploadPerfTestsTest.test_success): Deleted.
+        (RunAndUploadPerfTestsTest.test_tests_failed): Deleted.
+        (RunAndUploadPerfTestsTest.test_build_bad_build): Deleted.
+        (RunAndUploadPerfTestsTest.test_build_bad_source_json): Deleted.
+        (RunAndUploadPerfTestsTest.test_build_bad_marge): Deleted.
+        (RunAndUploadPerfTestsTest.test_build_bad_failed_uploading): Deleted.
+        (RunAndUploadPerfTestsTest.test_build_bad_preparation): Deleted.
+        (RunAndUploadPerfTestsTest.test_buildbot_timeout): Deleted.
+        (RunBenchmarkTest): Deleted.
+        (RunBenchmarkTest.assertResults): Deleted.
+        (RunBenchmarkTest.test_success): Deleted.
+        * Scripts/run-bindings-tests:
+        (main):
+        * Scripts/webkitpy/style/checker.py:
+        * gtk/check-for-webkitdom-api-breaks: Removed.
+        * gtk/generate-gtkdoc:
+        * gtk/webkitdom.py: Removed.
+
 2016-08-31  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Small clean up in MiniBrowser

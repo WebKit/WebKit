@@ -23,20 +23,10 @@
     ConstructorTemplate=Event,
 ] interface KeyboardEvent : UIEvent {
 
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    // KeyLocationCode
-    const unsigned long KEY_LOCATION_STANDARD = 0x00;
-    const unsigned long KEY_LOCATION_LEFT = 0x01;
-    const unsigned long KEY_LOCATION_RIGHT = 0x02;
-    const unsigned long KEY_LOCATION_NUMPAD = 0x03;
-#endif
-
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     const unsigned long DOM_KEY_LOCATION_STANDARD = 0x00;
     const unsigned long DOM_KEY_LOCATION_LEFT = 0x01;
     const unsigned long DOM_KEY_LOCATION_RIGHT = 0x02;
     const unsigned long DOM_KEY_LOCATION_NUMPAD = 0x03;
-#endif
 
     [InitializedByEventConstructor] readonly attribute DOMString keyIdentifier;
     [InitializedByEventConstructor] readonly attribute unsigned long location;
@@ -46,10 +36,6 @@
     [InitializedByEventConstructor] readonly attribute boolean altKey;
     [InitializedByEventConstructor] readonly attribute boolean metaKey;
     readonly attribute boolean altGraphKey;
-
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    boolean getModifierState(optional DOMString keyIdentifierArg);
-#endif
 
     // FIXME: this does not match the version in the DOM spec.
     // FIXME: Using "undefined" as default parameter value is wrong.

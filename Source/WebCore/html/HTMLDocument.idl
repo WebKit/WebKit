@@ -30,20 +30,12 @@
     [Custom] void write(optional DOMString text);
     [Custom] void writeln(optional DOMString text);
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Custom, Replaceable, Deletable] readonly attribute HTMLAllCollection all;
-#endif
 
     void clear();
 
     void captureEvents();
     void releaseEvents();
-
-#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    readonly attribute long width;
-    readonly attribute long height;
-    attribute DOMString dir;
-#endif
 
     // Deprecated attributes.
     [TreatNullAs=EmptyString] attribute DOMString bgColor;

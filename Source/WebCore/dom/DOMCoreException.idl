@@ -38,9 +38,7 @@
     readonly attribute DOMString        name;
     readonly attribute DOMString        message;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [NotEnumerable] DOMString toString();
-#endif
 
     // ExceptionCode
     const unsigned short INDEX_SIZE_ERR = 1;

@@ -40,15 +40,8 @@
 
     readonly attribute boolean webkitDirectionInvertedFromDevice;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     void initWebKitWheelEvent(optional long wheelDeltaX = 0, optional long wheelDeltaY = 0, optional DOMWindow? view = null,
         optional long screenX = 0, optional long screenY = 0, optional long clientX = 0, optional long clientY = 0,
         optional boolean ctrlKey = false, optional boolean altKey = false,
         optional boolean shiftKey = false, optional boolean metaKey = false);
-#else
-    void initWheelEvent(optional long wheelDeltaX = 0, optional long wheelDeltaY = 0, optional DOMWindow? view = null,
-        optional long screenX = 0, optional long screenY = 0, optional long clientX = 0, optional long clientY = 0,
-        optional boolean ctrlKey = false, optional boolean altKey = false,
-        optional boolean shiftKey = false, optional boolean metaKey = false);
-#endif
 };

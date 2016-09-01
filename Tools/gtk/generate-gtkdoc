@@ -26,7 +26,6 @@ import gtkdoc
 import logging
 import os.path
 import sys
-import webkitdom
 
 sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
 sys.stderr = codecs.getwriter("utf-8")(sys.stderr)
@@ -197,7 +196,6 @@ if __name__ == "__main__":
     if not webkitdom_generator:
         print("gtkdoc-webkitdom.cfg does not exist! Skipping that documentation")
         sys.exit(1)
-    webkitdom.write_doc_files(webkitdom_generator.module_name)
     saw_warnings = generate_documentation(webkitdom_generator)
     if saw_warnings:
         sys.exit(saw_warnings)

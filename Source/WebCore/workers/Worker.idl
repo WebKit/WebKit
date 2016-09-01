@@ -31,11 +31,7 @@
 ] interface Worker : EventTarget {
     attribute EventHandler onmessage;
 
-#if !(defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT)
     [Custom, RaisesException] void postMessage(SerializedScriptValue message, optional Array messagePorts);
-#else
-    [RaisesException] void postMessage(SerializedScriptValue message, optional MessagePort messagePort);
-#endif
 
     void terminate();
 };
