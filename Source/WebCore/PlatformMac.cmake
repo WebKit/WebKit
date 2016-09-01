@@ -640,6 +640,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     platform/audio/cocoa
 
+    platform/gamepad/cocoa
     platform/gamepad/mac
 
     platform/graphics/ca
