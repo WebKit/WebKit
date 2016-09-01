@@ -887,8 +887,6 @@ public:
 
         if (m_thisObject->allowsAccessFrom(visitor->callFrame()))
             m_result = JSValue::encode(m_thisObject->getPrototype(m_exec->vm(), m_exec));
-        else
-            m_result = JSValue::encode(jsNull());
 
         return StackVisitor::Done;
     }
@@ -976,10 +974,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (!thisObject)
         return JSValue::encode(jsUndefined());
 
-    if (!checkProtoSetterAccessAllowed(exec, thisObject)) {
-        throwTypeError(exec, scope, ASCIILiteral("Permission denied"));
+    if (!checkProtoSetterAccessAllowed(exec, thisObject))
         return JSValue::encode(jsUndefined());
-    }
 
     // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.
     if (!value.isObject() && !value.isNull())

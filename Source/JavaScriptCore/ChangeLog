@@ -1,5 +1,18 @@
 2016-09-01  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r205297.
+
+        Caused some JSC test failures
+
+        Reverted changeset:
+
+        "Align cross-origin proto getter / setter behavior with the
+        specification"
+        https://bugs.webkit.org/show_bug.cgi?id=161455
+        http://trac.webkit.org/changeset/205297
+
+2016-09-01  Chris Dumez  <cdumez@apple.com>
+
         Align cross-origin proto getter / setter behavior with the specification
         https://bugs.webkit.org/show_bug.cgi?id=161455
 

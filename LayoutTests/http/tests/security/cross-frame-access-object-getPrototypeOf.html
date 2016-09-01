@@ -18,10 +18,6 @@
 
             shouldBeNull("Object.getPrototypeOf(targetWindow)");
             shouldBeNull("Object.getPrototypeOf(targetWindow.location)");
-            protoGetter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').get;
-            shouldBeNull("protoGetter.call(targetWindow)");
-            shouldBeNull("protoGetter.call(targetWindow.location)");
-
             shouldThrowErrorName("targetWindow.history", "SecurityError");
 
             finishJSTest();

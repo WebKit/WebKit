@@ -1,13 +1,9 @@
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 This tests that you can't get the prototype of the window or history objects cross-origin using Object.getPrototypeOf().
 
 PASS: Object.getPrototypeOf(targetWindow) should be 'null' and is.
 PASS: Object.getPrototypeOf(targetWindow.location) should be 'null' and is.
-PASS: protoGetter.call(targetWindow) should be 'null' and is.
-PASS: protoGetter.call(targetWindow.location) should be 'null' and is.
 PASS targetWindow.history threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
 PASS: successfullyParsed should be 'true' and is.
 
