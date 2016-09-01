@@ -1,3 +1,27 @@
+2016-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Align cross-origin proto getter / setter behavior with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=161455
+
+        Reviewed by Mark Lam.
+
+        Align cross-origin proto getter / setter behavior with the specification:
+
+        The setter should throw a TypeError:
+        - https://html.spec.whatwg.org/#windowproxy-setprototypeof
+        - https://html.spec.whatwg.org/#location-setprototypeof
+        - https://tc39.github.io/ecma262/#sec-object.setprototypeof (step 5)
+
+        The getter should return null:
+        - https://html.spec.whatwg.org/#windowproxy-getprototypeof
+        - https://html.spec.whatwg.org/#location-getprototypeof
+
+        I have verified that this aligns our behavior with Firefox and Chrome.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::GlobalFuncProtoGetterFunctor::operator()):
+        (JSC::globalFuncProtoSetter):
+
 2016-09-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed ARM buildfix after r205283.
