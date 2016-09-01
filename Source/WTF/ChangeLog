@@ -1,3 +1,15 @@
+2016-09-01  Anders Carlsson  <andersca@apple.com>
+
+        add BlockPtr::fromCallable
+        https://bugs.webkit.org/show_bug.cgi?id=161504
+
+        Reviewed by Tim Horton.
+
+        BlockPtr::fromCallable lets you create an Objective-C block from any callable object - including lambdas that contain move-only types.
+        The block will be allocated on the heap so it doesn't ever need to be copied (which is how it can work with move-only types).
+
+        * wtf/BlockPtr.h:
+
 2016-08-31  Keith Rollin  <krollin@apple.com>
 
         WebKit should set a subsystem for os_log so it's easier to filter for WebKit log messages

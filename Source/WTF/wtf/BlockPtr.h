@@ -23,25 +23,84 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BlockPtr_h
-#define BlockPtr_h
+#pragma once
 
 #include <Block.h>
 #include <wtf/Assertions.h>
 
 namespace WTF {
 
+extern "C" void* _NSConcreteMallocBlock[32];
+
 template<typename> class BlockPtr;
 
 template<typename R, typename... Args>
 class BlockPtr<R (Args...)> {
 public:
+    using BlockType = R (^)(Args...);
+
+    template<typename F>
+    static BlockPtr fromCallable(F function)
+    {
+        struct Descriptor {
+            uintptr_t reserved;
+            uintptr_t size;
+            void (*copy)(void *dst, const void *src);
+            void (*dispose)(const void *);
+        };
+
+        struct Block {
+            void* isa;
+            int32_t flags;
+            int32_t reserved;
+            R (*invoke)(void *, Args...);
+            const struct Descriptor* descriptor;
+            F f;
+        };
+
+        static const Descriptor descriptor {
+            0,
+            sizeof(Block),
+
+            // We keep the copy function null - the block is already on the heap
+            // so it should never be copied.
+            nullptr,
+
+            [](const void* ptr) {
+                static_cast<Block*>(const_cast<void*>(ptr))->f.~F();
+            }
+        };
+
+        Block* block = static_cast<Block*>(malloc(sizeof(Block)));
+        block->isa = _NSConcreteMallocBlock;
+
+        enum {
+            BLOCK_NEEDS_FREE = (1 << 24),
+            BLOCK_HAS_COPY_DISPOSE = (1 << 25),
+        };
+        const unsigned retainCount = 1;
+
+        block->flags = BLOCK_HAS_COPY_DISPOSE | BLOCK_NEEDS_FREE | (retainCount << 1);
+        block->reserved = 0;
+        block->invoke = [](void *ptr, Args... args) -> R {
+            return static_cast<Block*>(ptr)->f(std::forward<Args>(args)...);
+        };
+        block->descriptor = &descriptor;
+
+        new (&block->f) F { std::move(function) };
+
+        BlockPtr blockPtr;
+        blockPtr.m_block = static_cast<BlockType>(block);
+
+        return blockPtr;
+    }
+
     BlockPtr()
         : m_block(nullptr)
     {
     }
 
-    BlockPtr(R (^block)(Args...))
+    BlockPtr(BlockType block)
         : m_block(Block_copy(block))
     {
     }
@@ -81,6 +140,8 @@ public:
         return *this;
     }
 
+    BlockType get() const { return m_block; }
+
     explicit operator bool() const { return m_block; }
     bool operator!() const { return !m_block; }
 
@@ -90,9 +151,9 @@ public:
         
         return m_block(std::forward<Args>(arguments)...);
     }
-    
+
 private:
-    R (^m_block)(Args...);
+    BlockType m_block;
 };
 
 template<typename R, typename... Args>
@@ -106,4 +167,3 @@ inline BlockPtr<R (Args...)> makeBlockPtr(R (^block)(Args...))
 using WTF::BlockPtr;
 using WTF::makeBlockPtr;
 
-#endif // BlockPtr_h

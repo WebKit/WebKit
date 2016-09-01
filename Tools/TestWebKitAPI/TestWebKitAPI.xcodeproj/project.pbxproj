@@ -33,6 +33,7 @@
 		1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */; };
 		1A7E8B3618120B2F00AEB74A /* FragmentNavigation.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A7E8B351812093600AEB74A /* FragmentNavigation.html */; };
 		1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C045F9461385C2F800C0F3CD /* 18-characters.html */; };
+		1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ADAD14E1D77A9F600212586 /* BlockPtr.mm */; };
 		1ADBEFE3130C6AA100D61D19 /* simple-accelerated-compositing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */; };
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		1AF7B21F1D6CD14D008C126C /* EnumTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */; };
@@ -676,6 +677,7 @@
 		1A9FB6CC1CA34BE500966124 /* EarlyKVOCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EarlyKVOCrash.mm; sourceTree = "<group>"; };
 		1AAD19F51C7CE20300831E47 /* Coding.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Coding.mm; sourceTree = "<group>"; };
 		1ABC3DED1899BE6D004F0626 /* Navigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Navigation.mm; sourceTree = "<group>"; };
+		1ADAD14E1D77A9F600212586 /* BlockPtr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockPtr.mm; sourceTree = "<group>"; };
 		1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceRepaint.cpp; sourceTree = "<group>"; };
 		1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-accelerated-compositing.html"; sourceTree = "<group>"; };
 		1AE72F47173EB214006362F0 /* TerminateTwice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TerminateTwice.cpp; sourceTree = "<group>"; };
@@ -1451,6 +1453,7 @@
 		BC029B1A1486B23800817DA9 /* ns */ = {
 			isa = PBXGroup;
 			children = (
+				1ADAD14E1D77A9F600212586 /* BlockPtr.mm */,
 				BC029B1B1486B25900817DA9 /* RetainPtr.mm */,
 			);
 			name = ns;
@@ -2122,6 +2125,7 @@
 				7C83DED21D0A590C00FEBCF3 /* HashMap.cpp in Sources */,
 				7C83DED41D0A590C00FEBCF3 /* HashSet.cpp in Sources */,
 				7C83DEE01D0A590C00FEBCF3 /* IntegerToStringConversion.cpp in Sources */,
+				1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */,
 				7C83DEE81D0A590C00FEBCF3 /* ListHashSet.cpp in Sources */,
 				7C83DF1D1D0A590C00FEBCF3 /* Lock.cpp in Sources */,
 				7C83DEED1D0A590C00FEBCF3 /* MathExtras.cpp in Sources */,

@@ -1,3 +1,16 @@
+2016-09-01  Anders Carlsson  <andersca@apple.com>
+
+        add BlockPtr::fromCallable
+        https://bugs.webkit.org/show_bug.cgi?id=161504
+
+        Reviewed by Tim Horton.
+
+        Add a test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/BlockPtr.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2016-09-01  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should handle . and .. in URL paths
