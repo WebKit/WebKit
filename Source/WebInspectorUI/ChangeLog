@@ -1,3 +1,14 @@
+2016-09-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: add Object.awaitEvent which is like singleFireEventListener but returns a promise
+        https://bugs.webkit.org/show_bug.cgi?id=161451
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object.awaitEvent):
+        (WebInspector.Object.prototype.awaitEvent):
+
 2016-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Minification detection produces false positives for small resources

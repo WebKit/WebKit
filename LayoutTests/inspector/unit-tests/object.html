@@ -5,12 +5,12 @@
 <script>
 function test()
 {
-    let suite = InspectorTest.createSyncSuite("Object");
+    let suite = InspectorTest.createAsyncSuite("Object");
 
     suite.addTestCase({
-        name: "Events propagation",
+        name: "WebInspector.Object.prototype.dispatchEventToListeners",
         description: "WebInspector.Object shouldn't dispatch constructor-level events multiple times",
-        test: function() {
+        test(resolve, reject) {
             class Parent extends WebInspector.Object {}
             class Child extends Parent {}
 
@@ -23,6 +23,35 @@ function test()
             child.dispatchEventToListeners(eventName);
 
             InspectorTest.log("Dispatch count: " + dispatchCount);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.Object.prototype.awaitEvent",
+        description: "awaitEvent should only trigger once",
+        test(resolve, reject) {
+            const eventName = "test";
+            let dispatchCount = 0;
+
+            let object = new WebInspector.Object;
+
+            object.awaitEvent(eventName).then(() => {
+                dispatchCount++;
+
+                InspectorTest.expectThat(dispatchCount === 1, "Await event handler should be dispatched just once.");
+                InspectorTest.log("Dispatch count: " + dispatchCount);
+
+                // Resolve test on second event dispatch.
+                object.awaitEvent(eventName).then(() => {
+                    resolve();
+                });
+
+                object.dispatchEventToListeners(eventName);
+            });
+
+            object.dispatchEventToListeners(eventName);
         }
     });
 

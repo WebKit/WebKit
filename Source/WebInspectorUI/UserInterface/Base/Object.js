@@ -98,6 +98,13 @@ WebInspector.Object = class WebInspectorObject
         console.assert(didDelete, "removeEventListener cannot remove " + eventType.toString() + " because it doesn't exist.");
     }
 
+    static awaitEvent(eventType)
+    {
+        return new Promise((resolve, reject) => {
+            this.singleFireEventListener(eventType, (event) => resolve(event), null);
+        });
+    }
+
     // Only used by tests.
     static hasEventListeners(eventType)
     {
@@ -131,6 +138,7 @@ WebInspector.Object = class WebInspectorObject
     addEventListener() { return WebInspector.Object.addEventListener.apply(this, arguments); }
     singleFireEventListener() { return WebInspector.Object.singleFireEventListener.apply(this, arguments); }
     removeEventListener() { return WebInspector.Object.removeEventListener.apply(this, arguments); }
+    awaitEvent() { return WebInspector.Object.awaitEvent.apply(this, arguments); }
     hasEventListeners() { return WebInspector.Object.hasEventListeners.apply(this, arguments); }
     retainedObjectsWithPrototype() { return WebInspector.Object.retainedObjectsWithPrototype.apply(this, arguments); }
 
