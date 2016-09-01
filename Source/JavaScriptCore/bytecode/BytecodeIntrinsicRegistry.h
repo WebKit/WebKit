@@ -61,7 +61,7 @@ class Identifier;
     macro(ModuleFetch) \
     macro(ModuleTranslate) \
     macro(ModuleInstantiate) \
-    macro(ModuleResolveDependencies) \
+    macro(ModuleSatisfy) \
     macro(ModuleLink) \
     macro(ModuleReady) \
     macro(promiseStatePending) \

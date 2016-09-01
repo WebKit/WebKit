@@ -86,7 +86,7 @@ JSValue JSModuleLoader::provide(ExecState* exec, JSValue key, Status status, con
     return call(exec, function, callType, callData, this, arguments);
 }
 
-JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValue moduleName, JSValue referrer)
+JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValue moduleName, JSValue referrer, JSValue initiator)
 {
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadAndEvaluateModulePublicName()));
     CallData callData;
@@ -96,11 +96,12 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValu
     MarkedArgumentBuffer arguments;
     arguments.append(moduleName);
     arguments.append(referrer);
+    arguments.append(initiator);
 
     return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
 }
 
-JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleName, JSValue referrer)
+JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleName, JSValue referrer, JSValue initiator)
 {
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadModulePublicName()));
     CallData callData;
@@ -110,11 +111,12 @@ JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleNam
     MarkedArgumentBuffer arguments;
     arguments.append(moduleName);
     arguments.append(referrer);
+    arguments.append(initiator);
 
     return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
 }
 
-JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey)
+JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey, JSValue initiator)
 {
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().linkAndEvaluateModulePublicName()));
     CallData callData;
@@ -123,31 +125,32 @@ JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey
 
     MarkedArgumentBuffer arguments;
     arguments.append(moduleKey);
+    arguments.append(initiator);
 
     return call(exec, function, callType, callData, this, arguments);
 }
 
-JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValue referrer)
+JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValue referrer, JSValue initiator)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [resolve] ", printableModuleKey(exec, name), "\n");
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderResolve)
-        return globalObject->globalObjectMethodTable()->moduleLoaderResolve(globalObject, exec, this, name, referrer);
+        return globalObject->globalObjectMethodTable()->moduleLoaderResolve(globalObject, exec, this, name, referrer, initiator);
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
     deferred->resolve(exec, name);
     return deferred->promise();
 }
 
-JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key)
+JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue initiator)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [fetch] ", printableModuleKey(exec, key), "\n");
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
-        return globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, exec, this, key);
+        return globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, exec, this, key, initiator);
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
     String moduleKey = key.toString(exec)->value(exec);
     if (exec->hadException()) {
@@ -160,40 +163,40 @@ JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key)
     return deferred->promise();
 }
 
-JSInternalPromise* JSModuleLoader::translate(ExecState* exec, JSValue key, JSValue payload)
+JSInternalPromise* JSModuleLoader::translate(ExecState* exec, JSValue key, JSValue payload, JSValue initiator)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [translate] ", printableModuleKey(exec, key), "\n");
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderTranslate)
-        return globalObject->globalObjectMethodTable()->moduleLoaderTranslate(globalObject, exec, this, key, payload);
+        return globalObject->globalObjectMethodTable()->moduleLoaderTranslate(globalObject, exec, this, key, payload, initiator);
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
     deferred->resolve(exec, payload);
     return deferred->promise();
 }
 
-JSInternalPromise* JSModuleLoader::instantiate(ExecState* exec, JSValue key, JSValue source)
+JSInternalPromise* JSModuleLoader::instantiate(ExecState* exec, JSValue key, JSValue source, JSValue initiator)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [instantiate] ", printableModuleKey(exec, key), "\n");
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderInstantiate)
-        return globalObject->globalObjectMethodTable()->moduleLoaderInstantiate(globalObject, exec, this, key, source);
+        return globalObject->globalObjectMethodTable()->moduleLoaderInstantiate(globalObject, exec, this, key, source, initiator);
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
     deferred->resolve(exec, jsUndefined());
     return deferred->promise();
 }
 
-JSValue JSModuleLoader::evaluate(ExecState* exec, JSValue key, JSValue moduleRecordValue)
+JSValue JSModuleLoader::evaluate(ExecState* exec, JSValue key, JSValue moduleRecordValue, JSValue initiator)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [evaluate] ", printableModuleKey(exec, key), "\n");
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderEvaluate)
-        return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, exec, this, key, moduleRecordValue);
+        return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, exec, this, key, moduleRecordValue, initiator);
 
     JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(moduleRecordValue);
     if (!moduleRecord)
