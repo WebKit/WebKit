@@ -32,15 +32,13 @@ function enqueue(chunk)
     if (!@isReadableStreamDefaultController(this))
         throw @makeThisTypeError("ReadableStreamDefaultController", "enqueue");
 
-    const stream = this.@controlledReadableStream;
+    if (this.@closeRequested)
+        throw new @TypeError("ReadableStreamDefaultController is requested to close");
 
-    if (stream.@closeRequested)
-        throw new @TypeError("ReadableStream is requested to close");
-
-    if (stream.@state !== @streamReadable)
+    if (this.@controlledReadableStream.@state !== @streamReadable)
         throw new @TypeError("ReadableStream is not readable");
 
-    return @enqueueInReadableStream(stream, chunk);
+    return @enqueueInReadableStream(this, chunk);
 }
 
 function error(error)
@@ -64,14 +62,13 @@ function close()
     if (!@isReadableStreamDefaultController(this))
         throw @makeThisTypeError("ReadableStreamDefaultController", "close");
 
-    const stream = this.@controlledReadableStream;
-    if (stream.@closeRequested)
-        throw new @TypeError("ReadableStream is already requested to close");
+    if (this.@closeRequested)
+        throw new @TypeError("ReadableStreamDefaultController is already requested to close");
 
-    if (stream.@state !== @streamReadable)
+    if (this.@controlledReadableStream.@state !== @streamReadable)
         throw new @TypeError("ReadableStream is not readable");
 
-    @closeReadableStream(stream);
+    @readableStreamDefaultControllerClose(this);
 }
 
 function desiredSize()
@@ -81,5 +78,6 @@ function desiredSize()
     if (!@isReadableStreamDefaultController(this))
         throw @makeGetterTypeError("ReadableStreamDefaultController", "desiredSize");
 
-    return @getReadableStreamDesiredSize(this.@controlledReadableStream);
+    return @readableStreamDefaultControllerGetDesiredSize(this);
 }
+

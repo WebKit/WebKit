@@ -1,3 +1,16 @@
+2016-09-01  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Streams API] Align internal structure of ReadableStream with spec
+        https://bugs.webkit.org/show_bug.cgi?id=160299
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Aligned internal structure of ReadableStream with spec. Fixed one expectation
+        that was set to FAIL while it is now PASSing.
+
+        * web-platform-tests/streams/readable-streams/general.https-expected.txt:
+
+
 2016-08-31  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Fetch API should be able to load data URL in Same Origin mode

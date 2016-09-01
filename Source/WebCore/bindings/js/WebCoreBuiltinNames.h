@@ -61,6 +61,7 @@ namespace WebCore {
     macro(operations) \
     macro(ownerReadableStream) \
     macro(privateGetStats) \
+    macro(pull) \
     macro(pulling) \
     macro(pullAgain) \
     macro(queue) \
@@ -71,6 +72,7 @@ namespace WebCore {
     macro(queuedSetRemoteDescription) \
     macro(reader) \
     macro(readRequests) \
+    macro(readableStreamController) \
     macro(readyPromiseCapability) \
     macro(removeTrack) \
     macro(responseCacheIsValid) \

@@ -1,7 +1,7 @@
 
 PASS ReadableStream can be constructed with no errors 
 PASS ReadableStream can't be constructed with garbage 
-FAIL ReadableStream can't be constructed with an invalid type assert_throws: constructor should throw when the type is null function "() => new ReadableStream({ type: null })" did not throw
+PASS ReadableStream can't be constructed with an invalid type 
 FAIL ReadableStream instances should have the correct list of properties assert_equals: getReader should have no parameters expected 0 but got 1
 PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 
@@ -38,7 +38,7 @@ FAIL Load general.js with SharedWorker assert_unreached: SharedWorker is unavail
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
 PASS ReadableStream can be constructed with no errors 
 PASS ReadableStream can't be constructed with garbage 
-FAIL ReadableStream can't be constructed with an invalid type assert_throws: constructor should throw when the type is null function "() => new ReadableStream({ type: null })" did not throw
+PASS ReadableStream can't be constructed with an invalid type 
 FAIL ReadableStream instances should have the correct list of properties assert_equals: getReader should have no parameters expected 0 but got 1
 PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 

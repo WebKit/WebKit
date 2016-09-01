@@ -50,7 +50,7 @@ function initializeFetchResponse(body, init)
             throw new @TypeError("Response cannot have a body with the given status");
 
         // FIXME: Use @isReadableStream once it is no longer guarded by STREAMS_API guard.
-        let isBodyReadableStream = (@isObject(body) && !!body.@underlyingSource);
+        let isBodyReadableStream = (@isObject(body) && !!body.@readableStreamController);
         if (isBodyReadableStream)
           this.@body = body;
 
