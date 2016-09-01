@@ -1,3 +1,16 @@
+2016-08-31  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !flow->layer() && !flow->isInlineElementContinuation() in WebCore::RenderBlock::addContinuationWithOutline
+        https://bugs.webkit.org/show_bug.cgi?id=151022
+        <rdar://problem/27710993>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/layer-creation/assert-on-inline-element-with-will-change-expected.txt: Added.
+        * compositing/layer-creation/assert-on-inline-element-with-will-change.html: Added.
+        * compositing/layer-creation/will-change-on-normal-flow-content-expected.txt: Added.
+        * compositing/layer-creation/will-change-on-normal-flow-content.html: Added.
+
 2016-08-31  Ricky Mondello  <rmondello@apple.com>
 
         Break pluginReplacementEnabled into youTubeFlashPluginReplacementEnabled and quickTimePluginReplacementEnabled

@@ -57,6 +57,7 @@ public:
     bool canCreateStackingContext() const { return m_canCreateStackingContext; }
     bool canTriggerCompositing() const { return m_canTriggerCompositing; }
     bool canTriggerCompositingOnInline() const { return m_canTriggerCompositingOnInline; }
+    bool canCreateGraphicalGroup() const { return m_canCreateGraphicalGroup; }
 
     enum Feature {
         ScrollPosition,
@@ -124,6 +125,7 @@ private:
     bool m_canCreateStackingContext { false };
     bool m_canTriggerCompositing { false };
     bool m_canTriggerCompositingOnInline { false };
+    bool m_canCreateGraphicalGroup { false };
 };
 
 

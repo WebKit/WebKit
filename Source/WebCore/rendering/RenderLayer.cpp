@@ -6464,6 +6464,19 @@ void RenderLayer::repaintIncludingNonCompositingDescendants(RenderLayerModelObje
     }
 }
 
+static bool mayCreateGraphicalGroup(const RenderElement& renderer)
+{
+    bool createsGraphicalGroup = renderer.hasClipPath()
+        || renderer.hasFilter()
+        || renderer.hasBackdropFilter()
+#if ENABLE(CSS_COMPOSITING)
+        || renderer.hasBlendMode()
+#endif
+        || renderer.isTransparent()
+        || renderer.hasMask();
+    return createsGraphicalGroup || (renderer.style().willChange() && renderer.style().willChange()->canCreateGraphicalGroup());
+}
+
 bool RenderLayer::shouldBeNormalFlowOnly() const
 {
     return (renderer().hasOverflowClip()
@@ -6475,20 +6488,14 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isRenderIFrame()
         || (renderer().style().specifiesColumns() && !isRootLayer())
         || renderer().isInFlowRenderFlowThread())
-        && !renderer().isPositioned()
         && !renderer().hasTransformRelatedProperty()
-        && !renderer().hasClipPath()
-        && !renderer().hasFilter()
-        && !renderer().hasBackdropFilter()
+        && !renderer().isPositioned()
+        && !needsCompositedScrolling()
+        && !renderer().style().hasFlowFrom()
 #if PLATFORM(IOS)
         && !hasAcceleratedTouchScrolling()
 #endif
-#if ENABLE(CSS_COMPOSITING)
-        && !renderer().hasBlendMode()
-#endif
-        && !isTransparent()
-        && !needsCompositedScrolling()
-        && !renderer().style().hasFlowFrom();
+        && !mayCreateGraphicalGroup(renderer());
 }
 
 bool RenderLayer::shouldBeSelfPaintingLayer() const
