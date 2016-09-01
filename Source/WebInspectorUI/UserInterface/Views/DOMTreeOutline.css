@@ -48,7 +48,7 @@
     left: 0;
     right: 0;
     height: 15px;
-    z-index: 10;
+    z-index: -1;
 }
 
 .tree-outline.dom li.selected .selection-area {
@@ -62,11 +62,6 @@
 
 .tree-outline.dom:focus li.selected .selection-area {
     background-color: hsl(209, 100%, 49%);
-}
-
-.tree-outline.dom li > span {
-    position: relative;
-    z-index: 20;
 }
 
 .tree-outline.dom li.selected > span::after {

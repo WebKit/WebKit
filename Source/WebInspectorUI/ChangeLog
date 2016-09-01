@@ -1,3 +1,16 @@
+2016-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r201454): Web Inspector: Text caret isn't visible when editing an attribute
+        https://bugs.webkit.org/show_bug.cgi?id=160986
+        <rdar://problem/27916207>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li .selection-area):
+        (.tree-outline.dom li > span):
+        Place selection area under the edited field, the way it was before r201454.
+
 2016-09-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: tweak one UIString for "reasons for compositing"
