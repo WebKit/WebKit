@@ -1,3 +1,10 @@
+2016-09-02  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix: restore storyboard files to Xcode 7-compatability.
+
+        * MobileMiniBrowser/MobileMiniBrowser/Base.lproj/LaunchScreen.storyboard:
+        * MobileMiniBrowser/MobileMiniBrowserFramework/Base.lproj/Main.storyboard:
+
 2016-09-02  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r205329): Two API tests time out on iOS Simulator
