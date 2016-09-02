@@ -140,6 +140,8 @@ bool ModuleParser::parseFunctionTypes()
     if (verbose)
         dataLogLn("count: ", count);
 
+    m_signatures.resize(count);
+
     for (uint32_t i = 0; i < count; ++i) {
         uint8_t type;
         if (!parseUInt7(type))
@@ -181,8 +183,7 @@ bool ModuleParser::parseFunctionTypes()
         } else
             returnType = Type::Void;
 
-        // TODO: Actually do something with this data...
-        UNUSED_PARAM(returnType);
+        m_signatures[i] = { returnType, WTFMove(argumentTypes) };
     }
     return true;
 }
@@ -199,6 +200,11 @@ bool ModuleParser::parseFunctionSignatures()
         uint32_t typeNumber;
         if (!parseVarUInt32(typeNumber))
             return false;
+
+        if (typeNumber >= m_signatures.size())
+            return false;
+
+        m_functions[i].signature = &m_signatures[typeNumber];
     }
 
     return true;

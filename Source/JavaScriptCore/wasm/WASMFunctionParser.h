@@ -61,6 +61,7 @@ FunctionParser<Context>::FunctionParser(Context& context, const Vector<uint8_t>&
     : Parser(sourceBuffer, info.start, info.end)
     , m_context(context)
 {
+    m_context.addArguments(info.signature->arguments);
 }
 
 template<typename Context>
@@ -135,6 +136,18 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!parseVarUInt32(constant))
             return false;
         m_expressionStack.append(m_context.addConstant(Int32, constant));
+        return true;
+    }
+
+    case OpType::GetLocal: {
+        uint32_t index;
+        if (!parseVarUInt32(index))
+            return false;
+        ExpressionType result;
+        if (!m_context.getLocal(index, result))
+            return false;
+
+        m_expressionStack.append(result);
         return true;
     }
 

@@ -90,6 +90,7 @@ struct FunctionPointerTable {
 };
 
 struct FunctionInformation {
+    Signature* signature;
     size_t start;
     size_t end;
 };

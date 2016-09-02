@@ -29,9 +29,11 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3BasicBlockInlines.h"
+#include "B3CallingConventions.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "B3VariableValue.h"
+#include "VirtualRegister.h"
 #include "WASMFunctionParser.h"
 #include <wtf/Optional.h>
 
@@ -67,8 +69,11 @@ public:
 
     B3IRGenerator(Procedure&);
 
+    void addArguments(const Vector<Type>&);
     void addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
+
+    bool WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
 
     bool WARN_UNUSED_RETURN binaryOp(BinaryOpType, ExpressionType left, ExpressionType right, ExpressionType& result);
     bool WARN_UNUSED_RETURN unaryOp(UnaryOpType, ExpressionType arg, ExpressionType& result);
@@ -88,6 +93,7 @@ private:
     BasicBlock* m_currentBlock;
     // This is a pair of the continuation and the types expected on the stack for that continuation.
     Vector<std::pair<BasicBlock*, Optional<Vector<Variable*>>>> m_controlStack;
+    Vector<Variable*> m_locals;
 };
 
 B3IRGenerator::B3IRGenerator(Procedure& procedure)
@@ -96,9 +102,31 @@ B3IRGenerator::B3IRGenerator(Procedure& procedure)
     m_currentBlock = m_proc.addBlock();
 }
 
-void B3IRGenerator::addLocal(Type, uint32_t)
+void B3IRGenerator::addLocal(Type type, uint32_t count)
+{
+    m_locals.reserveCapacity(m_locals.size() + count);
+    for (uint32_t i = 0; i < count; ++i)
+        m_locals.append(m_proc.addVariable(type));
+}
+
+void B3IRGenerator::addArguments(const Vector<Type>& types)
 {
     // TODO: Add locals.
+    ASSERT(!m_locals.size());
+    m_locals.grow(types.size());
+    jscCallingConvention().iterate(types, m_proc, m_currentBlock, Origin(),
+        [&] (ExpressionType argument, unsigned i) {
+            Variable* argumentVariable = m_proc.addVariable(argument->type());
+            m_locals[i] = argumentVariable;
+            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), argumentVariable, argument);
+        });
+}
+
+bool WARN_UNUSED_RETURN B3IRGenerator::getLocal(uint32_t index, ExpressionType& result)
+{
+    ASSERT(m_locals[index]);
+    result = m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, Origin(), m_locals[index]);
+    return true;
 }
 
 bool B3IRGenerator::unaryOp(UnaryOpType op, ExpressionType arg, ExpressionType& result)

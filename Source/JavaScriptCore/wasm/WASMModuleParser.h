@@ -58,6 +58,7 @@ private:
     bool WARN_UNUSED_RETURN parseExpression(OpType);
 
     Vector<FunctionInformation> m_functions;
+    Vector<Signature> m_signatures;
 };
 
 } // namespace WASM

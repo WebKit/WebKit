@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-struct ProtoCallFrame {
+struct JS_EXPORT_PRIVATE ProtoCallFrame {
     Register codeBlockValue;
     Register calleeValue;
     Register argCountAndCodeOriginValue;

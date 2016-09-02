@@ -27,7 +27,10 @@
 
 #include "B3Compilation.h"
 #include "InitializeThreading.h"
+#include "JSCJSValueInlines.h"
 #include "JSString.h"
+#include "LLIntThunks.h"
+#include "ProtoCallFrame.h"
 #include "VM.h"
 #include "WASMPlan.h"
 #include <wtf/DataLog.h>
@@ -190,17 +193,36 @@ using namespace JSC;
 using namespace WASM;
 using namespace B3;
 
-template<typename T, typename... Arguments>
-T invoke(MacroAssemblerCodePtr ptr, Arguments... arguments)
+template<typename T>
+T invoke(MacroAssemblerCodePtr ptr, std::initializer_list<JSValue> args)
 {
-    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(ptr.executableAddress());
-    return function(arguments...);
+    JSValue firstArgument;
+    // Since vmEntryToJavaScript expects a this value we claim there is one... there isn't.
+    int argCount = 1;
+    JSValue* remainingArguments = nullptr;
+    if (args.size()) {
+        remainingArguments = const_cast<JSValue*>(args.begin());
+        firstArgument = *remainingArguments;
+        remainingArguments++;
+        argCount = args.size();
+    }
+
+    ProtoCallFrame protoCallFrame;
+    protoCallFrame.init(nullptr, nullptr, firstArgument, argCount, remainingArguments);
+
+    // This won't work for floating point values but we don't have those yet.
+    return static_cast<T>(vmEntryToWASM(ptr.executableAddress(), vm, &protoCallFrame));
 }
 
-template<typename T, typename... Arguments>
-T invoke(const Compilation& code, Arguments... arguments)
+template<typename T>
+T invoke(const Compilation& code, std::initializer_list<JSValue> args)
 {
-    return invoke<T>(code.code(), arguments...);
+    return invoke<T>(code.code(), args);
+}
+
+inline JSValue box(uint64_t value)
+{
+    return JSValue::decode(value);
 }
 
 // For now we inline the test files.
@@ -224,7 +246,7 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        RELEASE_ASSERT(invoke<int>(*plan.result[0]) == 5);
+        RELEASE_ASSERT(invoke<int>(*plan.result[0], { }) == 5);
     }
 
 
@@ -246,7 +268,7 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        RELEASE_ASSERT(invoke<int>(*plan.result[0]) == 11);
+        RELEASE_ASSERT(invoke<int>(*plan.result[0], { }) == 11);
     }
     
     {
@@ -267,7 +289,7 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        RELEASE_ASSERT(invoke<int>(*plan.result[0]) == 11);
+        RELEASE_ASSERT(invoke<int>(*plan.result[0], { }) == 11);
     }
 
     {
@@ -288,7 +310,29 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        RELEASE_ASSERT(invoke<int>(*plan.result[0]) == 11);
+        RELEASE_ASSERT(invoke<int>(*plan.result[0], { }) == 11);
+    }
+
+    {
+        // Generated from: (module (func $add (param $x i32) (param $y i32) (result i32) (return (i32.add (get_local $x) (get_local $y)))) )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x04, 0x74, 0x79, 0x70, 0x65, 0x87, 0x80, 0x80,
+            0x00, 0x01, 0x40, 0x02, 0x01, 0x01, 0x01, 0x01, 0x08, 0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f,
+            0x6e, 0x82, 0x80, 0x80, 0x00, 0x01, 0x00, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x8e, 0x80, 0x80, 0x00,
+            0x01, 0x89, 0x80, 0x80, 0x00, 0x00, 0x14, 0x00, 0x14, 0x01, 0x40, 0x09, 0x01, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        RELEASE_ASSERT(invoke<int>(*plan.result[0], {box(0), box(1)}) == 1);
+        RELEASE_ASSERT(invoke<int>(*plan.result[0], {box(100), box(1)}) == 101);
+        RELEASE_ASSERT(invoke<int>(*plan.result[0], {box(-1), box(1)}) == 0);
+        RELEASE_ASSERT(invoke<int>(*plan.result[0], {box(std::numeric_limits<int>::max()), box(1)}) == std::numeric_limits<int>::min());
     }
 }
 

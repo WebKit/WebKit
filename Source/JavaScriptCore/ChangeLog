@@ -81,6 +81,50 @@
 
 2016-09-01  Keith Miller  <keith_miller@apple.com>
 
+        WASM functions should be able to use arguments
+        https://bugs.webkit.org/show_bug.cgi?id=161471
+
+        Reviewed by Benjamin Poulain.
+
+        This patch does a couple of changes:
+
+        1) Adds a new Calling Convention class for B3. This class is used to make it easy to specify the calling convention of a function. In particular it knows which arguments are in registers and which ones should be on the stack. For now, nothing uses the argument registers, in the future we will use these for WASM and/or JS. Additonally, it knows the callee save registers for any given function. The main advantage of this class is that it makes it easy to iterate over the arguments of your function without having to worry about the details of the calling convention you are using.
+
+        2) Makes the WASM calling convention the same as the JS one. Currently, the CodeBlock, CodeOrigin, and Callee are all 0. Since they have no value. Additionally, since we call into WASM from C++ through vmEntryToJavaScript, if there are no arguments to the callee we insert a null pointer as the first argument.
+
+        3) Since WASM expects the arguments to be mapped to function locals we map the argument stack slots to variables immediately after the function prologue.
+
+        * B3CallingConventions.cpp: Copied from Source/JavaScriptCore/llint/LLIntThunks.h.
+        (JSC::B3::jscCallingConvention):
+        * B3CallingConventions.h: Added.
+        (JSC::B3::CallingConvention::CallingConvention):
+        (JSC::B3::CallingConvention::iterate):
+        (JSC::B3::nextJSCOffset):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/ProtoCallFrame.h:
+        * llint/LLIntThunks.cpp:
+        (JSC::vmEntryToWASM):
+        * llint/LLIntThunks.h:
+        * testWASM.cpp:
+        (invoke):
+        (box):
+        (runWASMTests):
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::B3IRGenerator::addLocal):
+        (JSC::WASM::B3IRGenerator::addArguments):
+        (JSC::WASM::B3IRGenerator::getLocal):
+        * wasm/WASMFormat.h:
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::FunctionParser):
+        (JSC::WASM::FunctionParser<Context>::parseExpression):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASM::ModuleParser::parseFunctionTypes):
+        (JSC::WASM::ModuleParser::parseFunctionSignatures):
+        * wasm/WASMModuleParser.h:
+        * wasm/WASMOps.h:
+
+2016-09-01  Keith Miller  <keith_miller@apple.com>
+
         Rename WASM classes dropping the WASM prefix
         https://bugs.webkit.org/show_bug.cgi?id=161500
 

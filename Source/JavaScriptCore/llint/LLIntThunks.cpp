@@ -41,6 +41,11 @@
 
 namespace JSC {
 
+EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWASM(void* code, VM* vm, ProtoCallFrame* frame)
+{
+    return vmEntryToJavaScript(code, vm, frame);
+}
+    
 #if ENABLE(JIT)
 
 namespace LLInt {

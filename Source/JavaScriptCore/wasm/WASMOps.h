@@ -32,7 +32,8 @@ namespace JSC {
 namespace WASM {
 
 #define FOR_EACH_WASM_SPECIAL_OP(macro) \
-    macro(I32Const, 0x10, NA)
+    macro(I32Const, 0x10, NA) \
+    macro(GetLocal, 0x14, NA)
 
 #define FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \
     macro(Block, 0x01, NA) \
