@@ -33,6 +33,7 @@
 #define CSSParserIdioms_h
 
 #include <wtf/ASCIICType.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -56,6 +57,8 @@ bool isNameCodePoint(CharacterType c)
 {
     return isNameStartCodePoint(c) || isASCIIDigit(c) || c == '-';
 }
+
+void convertToASCIILowercaseInPlace(StringView&);
 
 }
 
