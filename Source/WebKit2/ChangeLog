@@ -1,3 +1,10 @@
+2016-09-02  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; partial roll out of r205365 to remove unintentional change in WKWebView.mm.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
 2016-09-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: If inspector process crashes, re-inspecting the page does not work
