@@ -41,8 +41,6 @@ public:
     CSSImageGeneratorValue& imageValue() { return m_imageGeneratorValue; }
 
 private:
-    bool operator==(const StyleImage& other) const override { return data() == other.data(); }
-
     WrappedImagePtr data() const override { return m_imageGeneratorValue.ptr(); }
 
     PassRefPtr<CSSValue> cssValue() const override;

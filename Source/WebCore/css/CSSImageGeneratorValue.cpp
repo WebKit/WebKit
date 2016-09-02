@@ -253,7 +253,7 @@ CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue& value, Cac
     if (is<CSSImageValue>(value)) {
         auto& imageValue = downcast<CSSImageValue>(value);
         imageValue.loadImage(cachedResourceLoader, options);
-        return imageValue.cachedImage();
+        return imageValue.styleImage().cachedImage();
     }
     
     if (is<CSSImageGeneratorValue>(value)) {

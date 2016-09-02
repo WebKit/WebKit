@@ -1702,27 +1702,33 @@ RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, cons
 
 RefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue& value)
 {
+    if (is<CSSImageValue>(value))
+        return cachedOrPendingFromValue(property, downcast<CSSImageValue>(value));
+
     if (is<CSSImageGeneratorValue>(value)) {
         if (is<CSSGradientValue>(value))
-            return styleGeneratedImageFromValue(property, *downcast<CSSGradientValue>(value).gradientWithStylesResolved(this));
-        return styleGeneratedImageFromValue(property, downcast<CSSImageGeneratorValue>(value));
+            return generatedOrPendingFromValue(property, *downcast<CSSGradientValue>(value).gradientWithStylesResolved(this));
+        return generatedOrPendingFromValue(property, downcast<CSSImageGeneratorValue>(value));
     }
 
-    if (is<CSSImageValue>(value) || is<CSSImageSetValue>(value) || is<CSSCursorImageValue>(value))
-        return styleCachedImageFromValue(property, value);
+    if (is<CSSImageSetValue>(value))
+        return setOrPendingFromValue(property, downcast<CSSImageSetValue>(value));
+
+    if (is<CSSCursorImageValue>(value))
+        return cursorOrPendingFromValue(property, downcast<CSSCursorImageValue>(value));
 
     return nullptr;
 }
 
-Ref<StyleCachedImage> StyleResolver::styleCachedImageFromValue(CSSPropertyID property, CSSValue& value)
+Ref<StyleImage> StyleResolver::cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue& value)
 {
-    auto image = StyleCachedImage::create(value);
+    Ref<StyleImage> image = value.styleImage();
     if (image->isPending())
         m_state.ensurePendingResources().pendingImages.set(property, &value);
     return image;
 }
 
-Ref<StyleGeneratedImage> StyleResolver::styleGeneratedImageFromValue(CSSPropertyID property, CSSImageGeneratorValue& value)
+Ref<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID property, CSSImageGeneratorValue& value)
 {
     if (is<CSSFilterImageValue>(value)) {
         // FilterImage needs to calculate FilterOperations.
@@ -1732,6 +1738,22 @@ Ref<StyleGeneratedImage> StyleResolver::styleGeneratedImageFromValue(CSSProperty
         m_state.ensurePendingResources().pendingImages.set(property, &value);
 
     return StyleGeneratedImage::create(value);
+}
+
+RefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue& value)
+{
+    auto& image = value.styleImage(document());
+    if (image.isPending())
+        m_state.ensurePendingResources().pendingImages.set(property, &value);
+    return &image;
+}
+
+RefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID property, CSSCursorImageValue& value)
+{
+    auto& image = value.styleImage(document());
+    if (image.isPending())
+        m_state.ensurePendingResources().pendingImages.set(property, &value);
+    return &image;
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)

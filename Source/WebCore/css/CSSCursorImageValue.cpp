@@ -26,6 +26,8 @@
 #include "CSSImageValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "StyleCachedImage.h"
+#include "StyleImage.h"
 #include "SVGCursorElement.h"
 #include "SVGLengthContext.h"
 #include "SVGNames.h"
@@ -107,28 +109,25 @@ void CSSCursorImageValue::loadImage(CachedResourceLoader& loader, const Resource
         return;
     }
 
-    if (auto* cursorElement = updateCursorElement(*loader.document())) {
-        if (cursorElement->href() != downcast<CSSImageValue>(m_imageValue.get()).url())
-            m_imageValue = CSSImageValue::create(cursorElement->href());
-    }
-
     downcast<CSSImageValue>(m_imageValue.get()).loadImage(loader, options);
 }
 
-CachedImage* CSSCursorImageValue::cachedImage() const
+StyleCachedImage& CSSCursorImageValue::styleImage(const Document& document)
 {
+    // Need to delegate completely so that changes in device scale factor can be handled appropriately.
+    StyleCachedImage* styleImage;
     if (is<CSSImageSetValue>(m_imageValue.get()))
-        return downcast<CSSImageSetValue>(m_imageValue.get()).cachedImage();
+        styleImage = &downcast<CSSImageSetValue>(m_imageValue.get()).styleImage(document);
+    else {
+        if (auto* cursorElement = updateCursorElement(document)) {
+            if (cursorElement->href() != downcast<CSSImageValue>(m_imageValue.get()).url())
+                m_imageValue = CSSImageValue::create(cursorElement->href());
+        }
+        styleImage = &downcast<CSSImageValue>(m_imageValue.get()).styleImage();
+    }
+    styleImage->setCSSValue(*this);
 
-    return downcast<CSSImageValue>(m_imageValue.get()).cachedImage();
-}
-
-float CSSCursorImageValue::scaleFactor() const
-{
-    if (is<CSSImageSetValue>(m_imageValue.get()))
-        return downcast<CSSImageSetValue>(m_imageValue.get()).bestFitScaleFactor();
-
-    return 1;
+    return *styleImage;
 }
 
 bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const

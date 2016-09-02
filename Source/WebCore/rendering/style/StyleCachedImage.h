@@ -32,19 +32,21 @@ namespace WebCore {
 
 class CSSValue;
 class CachedImage;
-class Document;
 
-class StyleCachedImage final : public StyleImage {
+class StyleCachedImage final : public StyleImage, private CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<StyleCachedImage> create(CSSValue& cssValue) { return adoptRef(*new StyleCachedImage(cssValue)); }
     virtual ~StyleCachedImage();
 
-    bool operator==(const StyleImage& other) const override;
+    CachedImage* cachedImage() const override { return m_image.get(); }
 
-    CachedImage* cachedImage() const override;
+    void detachFromCSSValue() { m_cssValue = nullptr; }
+    void setCSSValue(CSSValue& value) { m_cssValue = &value; }
 
-    WrappedImagePtr data() const override { return m_cachedImage.get(); }
+    void setCachedImage(CachedImage&, float scaleFactor = 1);
+
+    WrappedImagePtr data() const override { return m_image.get(); }
 
     PassRefPtr<CSSValue> cssValue() const override;
     
@@ -67,9 +69,9 @@ public:
 private:
     StyleCachedImage(CSSValue&);
 
-    Ref<CSSValue> m_cssValue;
-    mutable float m_scaleFactor { 1 };
-    mutable CachedResourceHandle<CachedImage> m_cachedImage;
+    CSSValue* m_cssValue;
+    float m_scaleFactor { 1 };
+    CachedResourceHandle<CachedImage> m_image;
 };
 
 } // namespace WebCore

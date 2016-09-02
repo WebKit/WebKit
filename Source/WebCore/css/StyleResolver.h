@@ -72,8 +72,6 @@ class RuleData;
 class RuleSet;
 class SelectorFilter;
 class Settings;
-class StyleCachedImage;
-class StyleGeneratedImage;
 class StyleImage;
 class StyleKeyframe;
 class StylePendingImage;
@@ -460,8 +458,10 @@ public:
     const State& state() const { return m_state; }
 
     RefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
-    Ref<StyleCachedImage> styleCachedImageFromValue(CSSPropertyID, CSSValue&);
-    Ref<StyleGeneratedImage> styleGeneratedImageFromValue(CSSPropertyID, CSSImageGeneratorValue&);
+    Ref<StyleImage> cachedOrPendingFromValue(CSSPropertyID, CSSImageValue&);
+    Ref<StyleImage> generatedOrPendingFromValue(CSSPropertyID, CSSImageGeneratorValue&);
+    RefPtr<StyleImage> setOrPendingFromValue(CSSPropertyID, CSSImageSetValue&);
+    RefPtr<StyleImage> cursorOrPendingFromValue(CSSPropertyID, CSSCursorImageValue&);
 
     bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }
     bool applyPropertyToVisitedLinkStyle() const { return m_state.applyPropertyToVisitedLinkStyle(); }

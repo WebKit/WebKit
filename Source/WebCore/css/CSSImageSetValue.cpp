@@ -35,17 +35,22 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Page.h"
+#include "StyleCachedImage.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 CSSImageSetValue::CSSImageSetValue()
     : CSSValueList(ImageSetClass, CommaSeparator)
+    , m_accessedBestFitImage(false)
+    , m_scaleFactor(1)
 {
 }
 
 CSSImageSetValue::~CSSImageSetValue()
 {
+    if (m_image)
+        m_image->detachFromCSSValue();
 }
 
 void CSSImageSetValue::fillImageSet()
@@ -74,14 +79,11 @@ void CSSImageSetValue::fillImageSet()
 
 CSSImageSetValue::ImageWithScale CSSImageSetValue::bestImageForScaleFactor()
 {
-    if (!m_imagesInSet.size())
-        fillImageSet();
-
     ImageWithScale image;
     size_t numberOfImages = m_imagesInSet.size();
     for (size_t i = 0; i < numberOfImages; ++i) {
         image = m_imagesInSet.at(i);
-        if (image.scaleFactor >= m_deviceScaleFactor)
+        if (image.scaleFactor >= m_scaleFactor)
             return image;
     }
     return image;
@@ -90,11 +92,16 @@ CSSImageSetValue::ImageWithScale CSSImageSetValue::bestImageForScaleFactor()
 void CSSImageSetValue::loadBestFitImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
     Document* document = loader.document();
-    updateDeviceScaleFactor(*document);
-    
+    if (Page* page = document->page())
+        m_scaleFactor = page->deviceScaleFactor();
+    else
+        m_scaleFactor = 1;
+
+    if (!m_imagesInSet.size())
+        fillImageSet();
+
     if (m_accessedBestFitImage)
         return;
-
     // FIXME: In the future, we want to take much more than deviceScaleFactor into acount here.
     // All forms of scale should be included: Page::pageScaleFactor(), Frame::pageZoomFactor(),
     // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
@@ -105,19 +112,30 @@ void CSSImageSetValue::loadBestFitImage(CachedResourceLoader& loader, const Reso
         ASSERT(document->securityOrigin());
         updateRequestForAccessControl(request.mutableResourceRequest(), *document->securityOrigin(), options.allowCredentials);
     }
-    m_cachedImage = loader.requestImage(request);
-    m_bestFitImageScaleFactor = image.scaleFactor;
-    m_accessedBestFitImage = true;
+    if (CachedResourceHandle<CachedImage> cachedImage = loader.requestImage(request)) {
+        styleImage(*document).setCachedImage(*cachedImage, image.scaleFactor);
+        m_accessedBestFitImage = true;
+    }
 }
 
-void CSSImageSetValue::updateDeviceScaleFactor(const Document& document)
+StyleCachedImage& CSSImageSetValue::styleImage(const Document& document)
 {
-    float deviceScaleFactor = document.page() ? document.page()->deviceScaleFactor() : 1;
-    if (deviceScaleFactor == m_deviceScaleFactor)
-        return;
-    m_deviceScaleFactor = deviceScaleFactor;
-    m_accessedBestFitImage = false;
-    m_cachedImage = nullptr;
+    if (!m_image)
+        m_image = StyleCachedImage::create(*this);
+    else if (!m_image->isPending()) {
+        float deviceScaleFactor = 1;
+        if (Page* page = document.page())
+            deviceScaleFactor = page->deviceScaleFactor();
+
+        // If the deviceScaleFactor has changed, we may not have the best image loaded, so we have to re-assess.
+        if (deviceScaleFactor != m_scaleFactor) {
+            m_accessedBestFitImage = false;
+            m_image->detachFromCSSValue();
+            m_image = StyleCachedImage::create(*this);
+        }
+    }
+
+    return *m_image;
 }
 
 String CSSImageSetValue::customCSSText() const
@@ -152,13 +170,18 @@ String CSSImageSetValue::customCSSText() const
 
 bool CSSImageSetValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
-    if (!m_cachedImage)
+    if (!m_image)
         return false;
-    return handler(*m_cachedImage);
+    CachedImage* cachedResource = m_image->cachedImage();
+    if (!cachedResource)
+        return false;
+    return handler(*cachedResource);
 }
 
 CSSImageSetValue::CSSImageSetValue(const CSSImageSetValue& cloneFrom)
     : CSSValueList(cloneFrom)
+    , m_accessedBestFitImage(false)
+    , m_scaleFactor(1)
 {
     // Non-CSSValueList data is not accessible through CSS OM, no need to clone.
 }

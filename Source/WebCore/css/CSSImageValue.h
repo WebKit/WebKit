@@ -22,7 +22,6 @@
 #define CSSImageValue_h
 
 #include "CSSValue.h"
-#include "CachedResourceHandle.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -30,6 +29,7 @@ namespace WebCore {
 class CachedImage;
 class CachedResourceLoader;
 class Element;
+class StyleCachedImage;
 class RenderElement;
 struct ResourceLoaderOptions;
 
@@ -41,7 +41,7 @@ public:
 
     bool isPending() const;
     void loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
-    CachedImage* cachedImage() const { return m_cachedImage.get(); }
+    StyleCachedImage& styleImage();
 
     const String& url() const { return m_url; }
 
@@ -62,7 +62,7 @@ private:
     explicit CSSImageValue(CachedImage&);
 
     String m_url;
-    CachedResourceHandle<CachedImage> m_cachedImage;
+    RefPtr<StyleCachedImage> m_image;
     bool m_accessedImage;
     AtomicString m_initiatorName;
 };
