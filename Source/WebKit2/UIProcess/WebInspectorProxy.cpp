@@ -160,6 +160,13 @@ void WebInspectorProxy::close()
     didClose();
 }
 
+void WebInspectorProxy::closeForCrash()
+{
+    close();
+
+    platformDidCloseForCrash();
+}
+
 void WebInspectorProxy::showConsole()
 {
     if (!m_inspectedPage)
@@ -319,7 +326,7 @@ static void webProcessDidCrash(WKPageRef, const void* clientInfo)
 {
     WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
     ASSERT(webInspectorProxy);
-    webInspectorProxy->close();
+    webInspectorProxy->closeForCrash();
 }
 
 static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActionRef navigationActionRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
@@ -634,6 +641,11 @@ void WebInspectorProxy::platformOpen()
 }
 
 void WebInspectorProxy::platformDidClose()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformDidCloseForCrash()
 {
     notImplemented();
 }

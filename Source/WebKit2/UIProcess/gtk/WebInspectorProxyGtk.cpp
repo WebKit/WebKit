@@ -214,6 +214,10 @@ void WebInspectorProxy::platformDidClose()
     m_inspectorView = 0;
 }
 
+void WebInspectorProxy::platformDidCloseForCrash()
+{
+}
+
 void WebInspectorProxy::platformInvalidate()
 {
 }

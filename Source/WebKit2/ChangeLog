@@ -1,5 +1,42 @@
 2016-09-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: If inspector process crashes, re-inspecting the page does not work
+        https://bugs.webkit.org/show_bug.cgi?id=161502
+        <rdar://problem/28120368>
+
+        Reviewed by Brian Burg.
+
+        This is an issue on Mac because WebInspectorProxyMac's platformDidClose
+        doesn't immediately get rid of the WKWebView for the inspector. This is
+        intended so that a quick close and reopen of Web Inspector is faster,
+        however in the case where the WebPage under the WKWebView crashed, we
+        actually should clear things instead of using the timer path. Provide
+        a stronger platform close handler when the inspector page crashed.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::closeForCrash):
+        (WebKit::webProcessDidCrash):
+        (WebKit::WebInspectorProxy::platformDidCloseForCrash):
+        Go through a stronger path when the web process crashes.
+        Some platforms may want to handle this differently then the user
+        closing a web inspector window.
+        
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformDidCloseForCrash):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformDidCloseForCrash):
+        These platforms do not need to do anything special.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::closeTimerFired):
+        Loosen this code. There is no need for it to be so strict.
+
+        (WebKit::WebInspectorProxy::platformDidCloseForCrash):
+        If the inspector page crashed, close our handles immediately.
+
+2016-09-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Provide a way to open an inspector frontend for a remote target
         https://bugs.webkit.org/show_bug.cgi?id=161515
         <rdar://problem/13182127>

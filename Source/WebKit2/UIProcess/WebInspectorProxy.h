@@ -97,6 +97,7 @@ public:
     void show();
     void hide();
     void close();
+    void closeForCrash();
 
 #if PLATFORM(MAC) && WK_API_ENABLED
     static RetainPtr<WKWebViewConfiguration> createFrontendConfiguration(WebPageProxy*, bool underTest);
@@ -176,6 +177,7 @@ private:
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();
     void platformDidClose();
+    void platformDidCloseForCrash();
     void platformInvalidate();
     void platformBringToFront();
     void platformHide();

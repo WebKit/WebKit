@@ -146,6 +146,10 @@ void WebInspectorProxy::platformDidClose()
     }
 }
 
+void WebInspectorProxy::platformDidCloseForCrash()
+{
+}
+
 void WebInspectorProxy::platformInvalidate()
 {
 }

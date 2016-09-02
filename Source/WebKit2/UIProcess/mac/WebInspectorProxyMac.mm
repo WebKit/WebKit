@@ -162,18 +162,18 @@ WKRect WebInspectorProxy::inspectorWindowFrame()
 void WebInspectorProxy::closeTimerFired()
 {
     ASSERT(!m_isAttached || !m_inspectorWindow);
-    if (m_isAttached || m_inspectorWindow)
-        return;
 
     if (m_inspectorView) {
         m_inspectorView->_page->close();
         m_inspectorView = nil;
     }
 
-    [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get()];
+    if (m_inspectorProxyObjCAdapter) {
+        [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get()];
 
-    [m_inspectorProxyObjCAdapter close];
-    m_inspectorProxyObjCAdapter = nil;
+        [m_inspectorProxyObjCAdapter close];
+        m_inspectorProxyObjCAdapter = nil;
+    }
 }
 
 void WebInspectorProxy::createInspectorWindow()
@@ -349,6 +349,13 @@ void WebInspectorProxy::platformDidClose()
     }
 
     m_closeTimer.startOneShot(webViewCloseTimeout);
+}
+
+void WebInspectorProxy::platformDidCloseForCrash()
+{
+    m_closeTimer.stop();
+
+    closeTimerFired();
 }
 
 void WebInspectorProxy::platformInvalidate()
