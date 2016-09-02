@@ -1,5 +1,15 @@
 2016-09-01  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        [EFL] Mark failing tests to failure
+
+        Unreviewed EFL gardening.
+
+        Failing tests of security, hyphenation, and form are marked to failure.
+
+        * platform/efl/TestExpectations:
+
+2016-09-01  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         [EFL] Gardening faliure and timeout tests on 2th Sep.
 
         Unreviewed EFL gardening.
