@@ -1,3 +1,15 @@
+2016-09-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r205373.
+
+        This change causes LayoutTest crashes under GuardMalloc
+
+        Reverted changeset:
+
+        "[Cocoa] Distinguish between paint advances and base advances"
+        https://bugs.webkit.org/show_bug.cgi?id=160892
+        http://trac.webkit.org/changeset/205373
+
 2016-09-02  Beth Dakin  <bdakin@apple.com>
 
         Need to updateEditorState if an element change edit-ability without changing 

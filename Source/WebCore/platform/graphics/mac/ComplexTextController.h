@@ -32,8 +32,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#define USE_LAYOUT_SPECIFIC_ADVANCES ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000))
-
 typedef unsigned short CGGlyph;
 
 typedef const struct __CTRun * CTRunRef;
@@ -58,12 +56,14 @@ public:
     void advance(unsigned to, GlyphBuffer* = nullptr, GlyphIterationStyle = IncludePartialGlyphs, HashSet<const Font*>* fallbackFonts = nullptr);
 
     // Compute the character offset for a given x coordinate.
-    unsigned offsetForPosition(float x, bool includePartialGlyphs);
+    int offsetForPosition(float x, bool includePartialGlyphs);
 
     // Returns the width of everything we've consumed so far.
     float runWidthSoFar() const { return m_runWidthSoFar; }
 
     float totalWidth() const { return m_totalWidth; }
+
+    float finalRoundingWidth() const { return m_finalRoundingWidth; }
 
     float minGlyphBoundingBoxX() const { return m_minGlyphBoundingBoxX; }
     float maxGlyphBoundingBoxX() const { return m_maxGlyphBoundingBoxX; }
@@ -95,20 +95,8 @@ private:
         CFIndex indexEnd() const { return m_indexEnd; }
         CFIndex endOffsetAt(size_t i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
         const CGGlyph* glyphs() const { return m_glyphs; }
-
-        /*
-         *                                              X (Paint glyph position)   X (Paint glyph position)   X (Paint glyph position)
-         *                                             7                          7                          7
-         *                                            /                          /                          /
-         *                                           / (Glyph origin)           / (Glyph origin)           / (Glyph origin)
-         *                                          /                          /                          /
-         *                                         /                          /                          /
-         *                X-----------------------X--------------------------X--------------------------X---->...
-         * (text position ^)  (initial advance)          (base advance)             (base advance)
-         */
         CGSize initialAdvance() const { return m_initialAdvance; }
-        const CGSize* baseAdvances() const { return m_baseAdvances; }
-        const CGPoint* glyphOrigins() const { return m_glyphOrigins.data(); }
+        const CGSize* advances() const { return m_advances; }
         bool isLTR() const { return m_isLTR; }
         bool isMonotonic() const { return m_isMonotonic; }
         void setIsNonMonotonic();
@@ -117,22 +105,21 @@ private:
         ComplexTextRun(CTRunRef, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange);
         ComplexTextRun(const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr);
 
-        Vector<CGSize, 64> m_baseAdvancesVector;
-        Vector<CGPoint, 64> m_glyphOrigins;
-        Vector<CGGlyph, 64> m_glyphsVector;
-        Vector<CFIndex, 64> m_glyphEndOffsets;
-        Vector<CFIndex, 64> m_coreTextIndicesVector;
-        CGSize m_initialAdvance;
+        unsigned m_glyphCount;
         const Font& m_font;
         const UChar* m_characters;
+        unsigned m_stringLocation;
         size_t m_stringLength;
+        Vector<CFIndex, 64> m_coreTextIndicesVector;
         const CFIndex* m_coreTextIndices;
-        const CGGlyph* m_glyphs;
-        const CGSize* m_baseAdvances;
         CFIndex m_indexBegin;
         CFIndex m_indexEnd;
-        unsigned m_glyphCount;
-        unsigned m_stringLocation;
+        Vector<CFIndex, 64> m_glyphEndOffsets;
+        Vector<CGGlyph, 64> m_glyphsVector;
+        const CGGlyph* m_glyphs;
+        CGSize m_initialAdvance;
+        Vector<CGSize, 64> m_advancesVector;
+        const CGSize* m_advances;
         bool m_isLTR;
         bool m_isMonotonic;
     };
@@ -148,12 +135,18 @@ private:
     unsigned indexOfCurrentRun(unsigned& leftmostGlyph);
     unsigned incrementCurrentRun(unsigned& leftmostGlyph);
 
-    float runWidthSoFarFraction(unsigned glyphStartOffset, unsigned glyphEndOffset, unsigned oldCharacterInCurrentGlyph, GlyphIterationStyle) const;
+    // The initial capacity of these vectors was selected as being the smallest power of two greater than
+    // the average (3.5) plus one standard deviation (7.5) of nonzero sizes used on Arabic Wikipedia.
+    Vector<unsigned, 16> m_runIndices;
+    Vector<unsigned, 16> m_glyphCountFromStartToIndex;
 
-    Vector<CGSize, 256> m_adjustedBaseAdvances;
-    Vector<CGPoint, 256> m_glyphOrigins;
-    Vector<CGGlyph, 256> m_adjustedGlyphs;
+    const FontCascade& m_font;
+    const TextRun& m_run;
+    bool m_isLTROnly;
+    bool m_mayUseNaturalWritingDirection;
+    bool m_forTextEmphasis;
 
+    Vector<String> m_stringsFor8BitRuns;
     Vector<UChar, 256> m_smallCapsBuffer;
 
     // There is a 3-level hierarchy here. At the top, we are interested in m_run.string(). We partition that string
@@ -163,41 +156,34 @@ private:
     // relative to m_run.string(). ComplexTextRun::indexAt() returns to the offset of a codepoint relative to
     // its Line. ComplexTextRun::glyphs() and ComplexTextRun::advances() refer to glyphs relative to the ComplexTextRun.
     // The length of the entire TextRun is m_run.length()
-    Vector<RefPtr<ComplexTextRun>, 16> m_complexTextRuns;
-
-    // The initial capacity of these vectors was selected as being the smallest power of two greater than
-    // the average (3.5) plus one standard deviation (7.5) of nonzero sizes used on Arabic Wikipedia.
-    Vector<unsigned, 16> m_runIndices;
-    Vector<unsigned, 16> m_glyphCountFromStartToIndex;
-
     Vector<RetainPtr<CTLineRef>> m_coreTextLines;
-
-    HashSet<const Font*>* m_fallbackFonts { nullptr };
-
-    const FontCascade& m_font;
-    const TextRun& m_run;
+    Vector<RefPtr<ComplexTextRun>, 16> m_complexTextRuns;
+    Vector<CGSize, 256> m_adjustedAdvances;
+    Vector<CGGlyph, 256> m_adjustedGlyphs;
  
-    unsigned m_currentCharacter { 0 };
-    unsigned m_end { 0 };
+    unsigned m_currentCharacter;
+    int m_end;
 
-    float m_totalWidth { 0 };
-    float m_runWidthSoFar { 0 };
-    unsigned m_numGlyphsSoFar { 0 };
-    unsigned m_currentRun { 0 };
-    unsigned m_glyphInCurrentRun { 0 };
-    unsigned m_characterInCurrentGlyph { 0 };
-    float m_expansion { 0 };
-    float m_expansionPerOpportunity { 0 };
-    float m_leadingExpansion { 0 };
+    CGFloat m_totalWidth;
 
-    float m_minGlyphBoundingBoxX { std::numeric_limits<float>::max() };
-    float m_maxGlyphBoundingBoxX { std::numeric_limits<float>::min() };
-    float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
-    float m_maxGlyphBoundingBoxY { std::numeric_limits<float>::min() };
+    float m_runWidthSoFar;
+    unsigned m_numGlyphsSoFar;
+    size_t m_currentRun;
+    unsigned m_glyphInCurrentRun;
+    unsigned m_characterInCurrentGlyph;
+    float m_finalRoundingWidth;
+    float m_expansion;
+    float m_expansionPerOpportunity;
+    float m_leadingExpansion;
 
-    bool m_isLTROnly { true };
-    bool m_mayUseNaturalWritingDirection { false };
-    bool m_forTextEmphasis { false };
+    HashSet<const Font*>* m_fallbackFonts;
+
+    float m_minGlyphBoundingBoxX;
+    float m_maxGlyphBoundingBoxX;
+    float m_minGlyphBoundingBoxY;
+    float m_maxGlyphBoundingBoxY;
+
+    unsigned m_lastRoundingGlyph;
 };
 
 } // namespace WebCore

@@ -67,7 +67,6 @@ public:
     }
 
     void setWidth(CGFloat width) { this->CGSize::width = width; }
-    void setHeight(CGFloat height) { this->CGSize::height = height; }
     CGFloat width() const { return this->CGSize::width; }
     CGFloat height() const { return this->CGSize::height; }
 };

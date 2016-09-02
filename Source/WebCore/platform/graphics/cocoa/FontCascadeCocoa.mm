@@ -514,7 +514,7 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsign
     float afterWidth = controller.runWidthSoFar();
 
     if (run.rtl()) {
-        initialAdvance = controller.totalWidth() - afterWidth + controller.leadingExpansion();
+        initialAdvance = controller.totalWidth() + controller.finalRoundingWidth() - afterWidth + controller.leadingExpansion();
         glyphBuffer.reverse(0, glyphBuffer.size());
     } else
         initialAdvance = beforeWidth;
