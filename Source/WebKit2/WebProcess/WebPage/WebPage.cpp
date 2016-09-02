@@ -900,7 +900,22 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
 
     platformEditorState(frame, result, shouldIncludePostLayoutData);
 
+    m_lastEditorStateWasContentEditable = result.isContentEditable ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
+
     return result;
+}
+
+void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()
+{
+    // FIXME: We should update EditorStateIsContentEditable to track whether the state is richly
+    // editable or plainttext-only.
+    if (m_lastEditorStateWasContentEditable == EditorStateIsContentEditable::Unset)
+        return;
+
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    EditorStateIsContentEditable editorStateIsContentEditable = frame.selection().selection().isContentEditable() ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
+    if (m_lastEditorStateWasContentEditable != editorStateIsContentEditable)
+        send(Messages::WebPageProxy::EditorStateChanged(editorState()));
 }
 
 String WebPage::renderTreeExternalRepresentation() const
@@ -2610,6 +2625,7 @@ void WebPage::didStartPageTransition()
 #endif
     m_hasEverFocusedElementDueToUserInteractionSincePageTransition = false;
     m_isAssistingNodeDueToUserInteraction = false;
+    m_lastEditorStateWasContentEditable = EditorStateIsContentEditable::Unset;
 #if PLATFORM(MAC)
     if (hasPreviouslyFocusedDueToUserInteraction)
         send(Messages::WebPageProxy::SetHasHadSelectionChangesFromUserInteraction(m_hasEverFocusedElementDueToUserInteractionSincePageTransition));
