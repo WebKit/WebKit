@@ -1,3 +1,118 @@
+2016-07-08  Jer Noble  <jer.noble@apple.com>
+
+        Refactor WebPlaybackSessionModelMediaElement to be client based.
+        https://bugs.webkit.org/show_bug.cgi?id=159580
+
+        Reviewed by Eric Carlson.
+
+        Adopt the changes made in the WebPlaybackSessionModel,Interface and WebVideoFullscreenModel,Interface
+        in the WebPlaybackSessionManager,Proxy classes.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Deleted.
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionModelContext::addClient):
+        (WebKit::WebPlaybackSessionModelContext::removeClient):
+        (WebKit::WebPlaybackSessionModelContext::setDuration):
+        (WebKit::WebPlaybackSessionModelContext::setCurrentTime):
+        (WebKit::WebPlaybackSessionModelContext::setBufferedTime):
+        (WebKit::WebPlaybackSessionModelContext::setRate):
+        (WebKit::WebPlaybackSessionModelContext::setSeekableRanges):
+        (WebKit::WebPlaybackSessionModelContext::setCanPlayFastReverse):
+        (WebKit::WebPlaybackSessionModelContext::setAudioMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionModelContext::setLegibleMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionModelContext::setExternalPlayback):
+        (WebKit::WebPlaybackSessionModelContext::setWirelessVideoPlaybackDisabled):
+        (WebKit::WebPlaybackSessionManagerProxy::createModelAndInterface):
+        (WebKit::WebPlaybackSessionManagerProxy::removeClientForContext):
+        (WebKit::WebPlaybackSessionManagerProxy::setCurrentTime):
+        (WebKit::WebPlaybackSessionManagerProxy::setBufferedTime):
+        (WebKit::WebPlaybackSessionManagerProxy::setSeekableRangesVector):
+        (WebKit::WebPlaybackSessionManagerProxy::setCanPlayFastReverse):
+        (WebKit::WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionManagerProxy::setExternalPlaybackProperties):
+        (WebKit::WebPlaybackSessionManagerProxy::setWirelessVideoPlaybackDisabled):
+        (WebKit::WebPlaybackSessionManagerProxy::setDuration):
+        (WebKit::WebPlaybackSessionManagerProxy::setRate):
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenModelContext::addClient):
+        (WebKit::WebVideoFullscreenModelContext::removeClient):
+        (WebKit::WebVideoFullscreenManagerProxy::setHasVideo):
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoDimensions):
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionInterfaceContext::durationChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::currentTimeChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::bufferedTimeChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::rateChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::seekableRangesChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::canPlayFastReverseChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::audioMediaSelectionOptionsChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::legibleMediaSelectionOptionsChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::externalPlaybackChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::wirelessVideoPlaybackDisabledChanged):
+        (WebKit::WebPlaybackSessionManager::~WebPlaybackSessionManager):
+        (WebKit::WebPlaybackSessionManager::createModelAndInterface):
+        (WebKit::WebPlaybackSessionManager::removeContext):
+        (WebKit::WebPlaybackSessionManager::durationChanged):
+        (WebKit::WebPlaybackSessionManager::currentTimeChanged):
+        (WebKit::WebPlaybackSessionManager::bufferedTimeChanged):
+        (WebKit::WebPlaybackSessionManager::rateChanged):
+        (WebKit::WebPlaybackSessionManager::seekableRangesChanged):
+        (WebKit::WebPlaybackSessionManager::canPlayFastReverseChanged):
+        (WebKit::WebPlaybackSessionManager::audioMediaSelectionOptionsChanged):
+        (WebKit::WebPlaybackSessionManager::legibleMediaSelectionOptionsChanged):
+        (WebKit::WebPlaybackSessionManager::externalPlaybackChanged):
+        (WebKit::WebPlaybackSessionManager::wirelessVideoPlaybackDisabledChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::setDuration): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setCurrentTime): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setBufferedTime): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setRate): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setSeekableRanges): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setCanPlayFastReverse): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setAudioMediaSelectionOptions): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setLegibleMediaSelectionOptions): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setExternalPlayback): Deleted.
+        (WebKit::WebPlaybackSessionInterfaceContext::setWirelessVideoPlaybackDisabled): Deleted.
+        (WebKit::WebPlaybackSessionManager::setDuration): Deleted.
+        (WebKit::WebPlaybackSessionManager::setCurrentTime): Deleted.
+        (WebKit::WebPlaybackSessionManager::setBufferedTime): Deleted.
+        (WebKit::WebPlaybackSessionManager::setRate): Deleted.
+        (WebKit::WebPlaybackSessionManager::setSeekableRanges): Deleted.
+        (WebKit::WebPlaybackSessionManager::setCanPlayFastReverse): Deleted.
+        (WebKit::WebPlaybackSessionManager::setAudioMediaSelectionOptions): Deleted.
+        (WebKit::WebPlaybackSessionManager::setLegibleMediaSelectionOptions): Deleted.
+        (WebKit::WebPlaybackSessionManager::setExternalPlayback): Deleted.
+        (WebKit::WebPlaybackSessionManager::setWirelessVideoPlaybackDisabled): Deleted.
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        (WebKit::WebVideoFullscreenInterfaceContext::create):
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenInterfaceContext::WebVideoFullscreenInterfaceContext):
+        (WebKit::WebVideoFullscreenInterfaceContext::hasVideoChanged):
+        (WebKit::WebVideoFullscreenInterfaceContext::videoDimensionsChanged):
+        (WebKit::WebVideoFullscreenManager::~WebVideoFullscreenManager):
+        (WebKit::WebVideoFullscreenManager::createModelAndInterface):
+        (WebKit::WebVideoFullscreenManager::removeContext):
+        (WebKit::WebVideoFullscreenManager::hasVideoChanged):
+        (WebKit::WebVideoFullscreenManager::videoDimensionsChanged):
+        (WebKit::WebVideoFullscreenInterfaceContext::resetMediaState): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setDuration): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setCurrentTime): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setBufferedTime): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setRate): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setVideoDimensions): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setSeekableRanges): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setCanPlayFastReverse): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setAudioMediaSelectionOptions): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setLegibleMediaSelectionOptions): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setExternalPlayback): Deleted.
+        (WebKit::WebVideoFullscreenInterfaceContext::setWirelessVideoPlaybackDisabled): Deleted.
+        (WebKit::WebVideoFullscreenManager::setVideoDimensions): Deleted.
+
 2016-09-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix GObject bindings build breakage when compiling with ENABLE_USER_TIMING disabled.

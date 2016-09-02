@@ -42,8 +42,6 @@ class WebPlaybackSessionInterfaceAVKit;
     BOOL _pictureInPictureInterrupted;
 }
 
-- (void)resetState;
-
 @property (retain) AVPlayerController* playerControllerProxy;
 @property (assign) WebCore::WebPlaybackSessionModel* delegate;
 @property (assign) WebCore::WebPlaybackSessionInterfaceAVKit* playbackSessionInterface;

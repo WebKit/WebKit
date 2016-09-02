@@ -351,18 +351,25 @@ namespace WebCore {
 WebVideoFullscreenInterfaceMac::WebVideoFullscreenInterfaceMac(WebPlaybackSessionInterfaceMac& playbackSessionInterface)
     : m_playbackSessionInterface(playbackSessionInterface)
 {
-    m_playbackSessionInterface->setClient(this);
+    ASSERT(m_playbackSessionInterface->webPlaybackSessionModel());
+    m_playbackSessionInterface->webPlaybackSessionModel()->addClient(*this);
 }
 
 WebVideoFullscreenInterfaceMac::~WebVideoFullscreenInterfaceMac()
 {
-    if (m_playbackSessionInterface->client() == this)
-        m_playbackSessionInterface->setClient(nullptr);
+    if (m_playbackSessionInterface->webPlaybackSessionModel())
+        m_playbackSessionInterface->webPlaybackSessionModel()->removeClient(*this);
+    if (m_videoFullscreenModel)
+        m_videoFullscreenModel->removeClient(*this);
 }
 
 void WebVideoFullscreenInterfaceMac::setWebVideoFullscreenModel(WebVideoFullscreenModel* model)
 {
+    if (m_videoFullscreenModel)
+        m_videoFullscreenModel->removeClient(*this);
     m_videoFullscreenModel = model;
+    if (m_videoFullscreenModel)
+        m_videoFullscreenModel->addClient(*this);
 }
 
 void WebVideoFullscreenInterfaceMac::setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver* observer)
@@ -392,39 +399,9 @@ void WebVideoFullscreenInterfaceMac::clearMode(HTMLMediaElementEnums::VideoFulls
         m_videoFullscreenModel->fullscreenModeChanged(m_mode);
 }
 
-void WebVideoFullscreenInterfaceMac::setDuration(double duration)
-{
-    m_playbackSessionInterface->setDuration(duration);
-}
-
-void WebVideoFullscreenInterfaceMac::setCurrentTime(double currentTime, double anchorTime)
-{
-    m_playbackSessionInterface->setCurrentTime(currentTime, anchorTime);
-}
-
-void WebVideoFullscreenInterfaceMac::setRate(bool isPlaying, float playbackRate)
-{
-    m_playbackSessionInterface->setRate(isPlaying, playbackRate);
-}
-
 void WebVideoFullscreenInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
 {
     [videoFullscreenInterfaceObjC() updateIsPlaying:isPlaying newPlaybackRate:playbackRate];
-}
-
-void WebVideoFullscreenInterfaceMac::setSeekableRanges(const TimeRanges& timeRanges)
-{
-    m_playbackSessionInterface->setSeekableRanges(timeRanges);
-}
-
-void WebVideoFullscreenInterfaceMac::setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
-{
-    m_playbackSessionInterface->setAudioMediaSelectionOptions(options, selectedIndex);
-}
-
-void WebVideoFullscreenInterfaceMac::setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
-{
-    m_playbackSessionInterface->setLegibleMediaSelectionOptions(options, selectedIndex);
 }
 
 void WebVideoFullscreenInterfaceMac::ensureControlsManager()
@@ -545,26 +522,29 @@ void WebVideoFullscreenInterfaceMac::preparedToReturnToInline(bool visible, cons
     [m_webVideoFullscreenInterfaceObjC exitPIPAnimatingToRect:(NSRect)inlineRect inWindow:parentWindow];
 }
 
-void WebVideoFullscreenInterfaceMac::setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String)
+void WebVideoFullscreenInterfaceMac::externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String&)
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::setExternalPlayback(%p), enabled:%s", this, boolString(enabled));
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::externalPlaybackChanged(%p), enabled:%s", this, boolString(enabled));
 
     if (enabled && m_mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
         exitFullscreen(IntRect(), nil);
 }
 
-void WebVideoFullscreenInterfaceMac::setVideoDimensions(bool hasVideo, float width, float height)
+void WebVideoFullscreenInterfaceMac::hasVideoChanged(bool hasVideo)
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::setVideoDimensions(%p), hasVideo:%s, width:%.0f, height:%.0f", this, boolString(hasVideo), width, height);
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::hasVideoChanged(%p):%s", this, boolString(hasVideo));
 
-    if (!hasVideo) {
+    if (!hasVideo)
         exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
-        return;
-    }
+}
+
+void WebVideoFullscreenInterfaceMac::videoDimensionsChanged(const FloatSize& videoDimensions)
+{
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceMac::videoDimensionsChanged(%p), width:%.0f, height:%.0f", this, videoDimensions.width(), videoDimensions.height());
 
     // Width and height can be zero when we are transitioning from one video to another. Ignore zero values.
-    if (width && height)
-        [m_webVideoFullscreenInterfaceObjC setVideoDimensions:NSMakeSize(width, height)];
+    if (!videoDimensions.isZero())
+        [m_webVideoFullscreenInterfaceObjC setVideoDimensions:videoDimensions];
 }
 
 bool WebVideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() const

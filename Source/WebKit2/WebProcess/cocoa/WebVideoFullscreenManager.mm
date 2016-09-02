@@ -66,9 +66,8 @@ static IntRect inlineVideoFrame(HTMLVideoElement& element)
 
 #pragma mark - WebVideoFullscreenInterfaceContext
 
-WebVideoFullscreenInterfaceContext::WebVideoFullscreenInterfaceContext(WebVideoFullscreenManager& manager, WebPlaybackSessionInterfaceContext& playbackSessionInterface, uint64_t contextId)
+WebVideoFullscreenInterfaceContext::WebVideoFullscreenInterfaceContext(WebVideoFullscreenManager& manager, uint64_t contextId)
     : m_manager(&manager)
-    , m_playbackSessionInterface(playbackSessionInterface)
     , m_contextId(contextId)
 {
 }
@@ -82,65 +81,16 @@ void WebVideoFullscreenInterfaceContext::setLayerHostingContext(std::unique_ptr<
     m_layerHostingContext = WTFMove(context);
 }
 
-void WebVideoFullscreenInterfaceContext::resetMediaState()
-{
-    m_playbackSessionInterface->resetMediaState();
-}
-
-void WebVideoFullscreenInterfaceContext::setDuration(double duration)
-{
-    m_playbackSessionInterface->setDuration(duration);
-}
-
-void WebVideoFullscreenInterfaceContext::setCurrentTime(double currentTime, double anchorTime)
-{
-    m_playbackSessionInterface->setCurrentTime(currentTime, anchorTime);
-}
-
-void WebVideoFullscreenInterfaceContext::setBufferedTime(double bufferedTime)
-{
-    m_playbackSessionInterface->setBufferedTime(bufferedTime);
-}
-
-void WebVideoFullscreenInterfaceContext::setRate(bool isPlaying, float playbackRate)
-{
-    m_playbackSessionInterface->setRate(isPlaying, playbackRate);
-}
-
-void WebVideoFullscreenInterfaceContext::setVideoDimensions(bool hasVideo, float width, float height)
+void WebVideoFullscreenInterfaceContext::hasVideoChanged(bool hasVideo)
 {
     if (m_manager)
-        m_manager->setVideoDimensions(m_contextId, hasVideo, width, height);
+        m_manager->hasVideoChanged(m_contextId, hasVideo);
 }
 
-void WebVideoFullscreenInterfaceContext::setSeekableRanges(const WebCore::TimeRanges& ranges)
+void WebVideoFullscreenInterfaceContext::videoDimensionsChanged(const FloatSize& videoDimensions)
 {
-    m_playbackSessionInterface->setSeekableRanges(ranges);
-}
-
-void WebVideoFullscreenInterfaceContext::setCanPlayFastReverse(bool value)
-{
-    m_playbackSessionInterface->setCanPlayFastReverse(value);
-}
-
-void WebVideoFullscreenInterfaceContext::setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
-{
-    m_playbackSessionInterface->setAudioMediaSelectionOptions(options, selectedIndex);
-}
-
-void WebVideoFullscreenInterfaceContext::setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
-{
-    m_playbackSessionInterface->setLegibleMediaSelectionOptions(options, selectedIndex);
-}
-
-void WebVideoFullscreenInterfaceContext::setExternalPlayback(bool enabled, ExternalPlaybackTargetType type, WTF::String localizedDeviceName)
-{
-    m_playbackSessionInterface->setExternalPlayback(enabled, type, localizedDeviceName);
-}
-
-void WebVideoFullscreenInterfaceContext::setWirelessVideoPlaybackDisabled(bool disabled)
-{
-    m_playbackSessionInterface->setWirelessVideoPlaybackDisabled(disabled);
+    if (m_manager)
+        m_manager->videoDimensionsChanged(m_contextId, videoDimensions);
 }
 
 #pragma mark - WebVideoFullscreenManager
@@ -164,8 +114,8 @@ WebVideoFullscreenManager::~WebVideoFullscreenManager()
         RefPtr<WebVideoFullscreenInterfaceContext> interface;
         std::tie(model, interface) = tuple;
 
-        model->setWebVideoFullscreenInterface(nullptr);
         model->setVideoElement(nullptr);
+        model->removeClient(*interface);
 
         interface->invalidate();
     }
@@ -179,14 +129,12 @@ WebVideoFullscreenManager::~WebVideoFullscreenManager()
 
 WebVideoFullscreenManager::ModelInterfaceTuple WebVideoFullscreenManager::createModelAndInterface(uint64_t contextId)
 {
-    auto& playbackSessionModel = m_playbackSessionManager->ensureModel(contextId);
-    RefPtr<WebVideoFullscreenModelVideoElement> model = WebVideoFullscreenModelVideoElement::create(playbackSessionModel);
-    auto& playbackSessionInterface = m_playbackSessionManager->ensureInterface(contextId);
-    RefPtr<WebVideoFullscreenInterfaceContext> interface = WebVideoFullscreenInterfaceContext::create(*this, playbackSessionInterface, contextId);
+    RefPtr<WebVideoFullscreenModelVideoElement> model = WebVideoFullscreenModelVideoElement::create();
+    RefPtr<WebVideoFullscreenInterfaceContext> interface = WebVideoFullscreenInterfaceContext::create(*this, contextId);
     m_playbackSessionManager->addClientForContext(contextId);
 
     interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
-    model->setWebVideoFullscreenInterface(interface.get());
+    model->addClient(*interface);
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -219,7 +167,7 @@ void WebVideoFullscreenManager::removeContext(uint64_t contextId)
 
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
     model->setVideoElement(nullptr);
-    model->setWebVideoFullscreenInterface(nullptr);
+    model->removeClient(*interface);
     interface->invalidate();
     m_videoElements.remove(videoElement.get());
     m_contextMap.remove(contextId);
@@ -331,9 +279,14 @@ void WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCor
 
 #pragma mark Interface to WebVideoFullscreenInterfaceContext:
 
-void WebVideoFullscreenManager::setVideoDimensions(uint64_t contextId, bool hasVideo, float width, float height)
+void WebVideoFullscreenManager::hasVideoChanged(uint64_t contextId, bool hasVideo)
 {
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoDimensions(contextId, hasVideo, width, height), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetHasVideo(contextId, hasVideo), m_page->pageID());
+}
+
+void WebVideoFullscreenManager::videoDimensionsChanged(uint64_t contextId, const FloatSize& videoDimensions)
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoDimensions(contextId, videoDimensions), m_page->pageID());
 }
 
 #pragma mark Messages from WebVideoFullscreenManagerProxy:

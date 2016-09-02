@@ -8636,10 +8636,8 @@ bool LayerFlushController::flushLayers()
     _private->playbackSessionModel->setMediaElement(&mediaElement);
 
     if (!_private->playbackSessionInterface)
-        _private->playbackSessionInterface = WebPlaybackSessionInterfaceMac::create();
+        _private->playbackSessionInterface = WebPlaybackSessionInterfaceMac::create(*_private->playbackSessionModel);
 
-    _private->playbackSessionInterface->setWebPlaybackSessionModel(_private->playbackSessionModel.get());
-    _private->playbackSessionModel->setWebPlaybackSessionInterface(_private->playbackSessionInterface.get());
     [self updateWebViewAdditions];
 }
 
@@ -8649,8 +8647,7 @@ bool LayerFlushController::flushLayers()
         return;
 
     _private->playbackSessionModel->setMediaElement(nullptr);
-    _private->playbackSessionModel->setWebPlaybackSessionInterface(nullptr);
-    _private->playbackSessionInterface->setWebPlaybackSessionModel(nullptr);
+    _private->playbackSessionInterface->invalidate();
 
     _private->playbackSessionModel = nullptr;
     _private->playbackSessionInterface = nullptr;

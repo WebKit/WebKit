@@ -36,9 +36,14 @@ namespace WebCore {
 
 class TimeRanges;
 
+class WebPlaybackSessionModelClient;
+
 class WebPlaybackSessionModel {
 public:
     virtual ~WebPlaybackSessionModel() { };
+    virtual void addClient(WebPlaybackSessionModelClient&) = 0;
+    virtual void removeClient(WebPlaybackSessionModelClient&) = 0;
+
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void togglePlayState() = 0;
@@ -52,6 +57,8 @@ public:
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
 
+    enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
+
     virtual double duration() const = 0;
     virtual double currentTime() const = 0;
     virtual double bufferedTime() const = 0;
@@ -59,12 +66,29 @@ public:
     virtual float playbackRate() const = 0;
     virtual Ref<TimeRanges> seekableRanges() const = 0;
     virtual bool canPlayFastReverse() const = 0;
-    virtual Vector<WTF::String> audioMediaSelectionOptions() const = 0;
+    virtual Vector<String> audioMediaSelectionOptions() const = 0;
     virtual uint64_t audioMediaSelectedIndex() const = 0;
-    virtual Vector<WTF::String> legibleMediaSelectionOptions() const = 0;
+    virtual Vector<String> legibleMediaSelectionOptions() const = 0;
     virtual uint64_t legibleMediaSelectedIndex() const = 0;
     virtual bool externalPlaybackEnabled() const = 0;
+    virtual ExternalPlaybackTargetType externalPlaybackTargetType() const = 0;
+    virtual String externalPlaybackLocalizedDeviceName() const = 0;
     virtual bool wirelessVideoPlaybackDisabled() const = 0;
+};
+
+class WebPlaybackSessionModelClient {
+public:
+    virtual ~WebPlaybackSessionModelClient() { };
+    virtual void durationChanged(double) { }
+    virtual void currentTimeChanged(double /* currentTime */, double /* anchorTime */) { }
+    virtual void bufferedTimeChanged(double) { }
+    virtual void rateChanged(bool /* isPlaying */, float /* playbackRate */) { }
+    virtual void seekableRangesChanged(const TimeRanges&) { }
+    virtual void canPlayFastReverseChanged(bool) { }
+    virtual void audioMediaSelectionOptionsChanged(const Vector<String>& /* options */, uint64_t /* selectedIndex */) { }
+    virtual void legibleMediaSelectionOptionsChanged(const Vector<String>& /* options */, uint64_t /* selectedIndex */) { }
+    virtual void externalPlaybackChanged(bool /* enabled */, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
+    virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
 };
 
 }

@@ -34,6 +34,7 @@
 #include <WebCore/WebVideoFullscreenChangeObserver.h>
 #include <WebCore/WebVideoFullscreenModel.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -56,7 +57,10 @@ class WebPlaybackSessionManagerProxy;
 class WebPlaybackSessionModelContext;
 class WebVideoFullscreenManagerProxy;
 
-class WebVideoFullscreenModelContext final: public RefCounted<WebVideoFullscreenModelContext>, public WebCore::WebVideoFullscreenModel, public WebCore::WebVideoFullscreenChangeObserver  {
+class WebVideoFullscreenModelContext final
+    : public RefCounted<WebVideoFullscreenModelContext>
+    , public WebCore::WebVideoFullscreenModel
+    , public WebCore::WebVideoFullscreenChangeObserver  {
 public:
     static Ref<WebVideoFullscreenModelContext> create(WebVideoFullscreenManagerProxy& manager, WebPlaybackSessionModelContext& playbackSessionModel, uint64_t contextId)
     {
@@ -73,11 +77,15 @@ private:
     WebVideoFullscreenModelContext(WebVideoFullscreenManagerProxy&, WebPlaybackSessionModelContext&, uint64_t);
 
     // WebVideoFullscreenModel
+    void addClient(WebCore::WebVideoFullscreenModelClient&) override;
+    void removeClient(WebCore::WebVideoFullscreenModelClient&) override;
     void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     void setVideoLayerFrame(WebCore::FloatRect) override;
     void setVideoLayerGravity(VideoGravity) override;
     void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool isVisible() const override;
+    bool hasVideo() const override { return m_hasVideo; }
+    WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
 
     // WebVideoFullscreenChangeObserver
     void didSetupFullscreen() override;
@@ -90,6 +98,9 @@ private:
     Ref<WebPlaybackSessionModelContext> m_playbackSessionModel;
     uint64_t m_contextId;
     RetainPtr<PlatformView *> m_layerHostView;
+    HashSet<WebCore::WebVideoFullscreenModelClient*> m_clients;
+    WebCore::FloatSize m_videoDimensions;
+    bool m_hasVideo { false };
 };
 
 class WebVideoFullscreenManagerProxy : public RefCounted<WebVideoFullscreenManagerProxy>, private IPC::MessageReceiver {
@@ -125,7 +136,8 @@ private:
 
     // Messages from WebVideoFullscreenManager
     void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture);
-    void setVideoDimensions(uint64_t contextId, bool hasVideo, unsigned width, unsigned height);
+    void setHasVideo(uint64_t contextId, bool);
+    void setVideoDimensions(uint64_t contextId, const WebCore::FloatSize&);
     void enterFullscreen(uint64_t contextId);
     void exitFullscreen(uint64_t contextId, WebCore::IntRect finalRect);
     void cleanupFullscreen(uint64_t contextId);

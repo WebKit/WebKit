@@ -56,34 +56,10 @@ WebPlaybackSessionModelMediaElement::~WebPlaybackSessionModelMediaElement()
 {
 }
 
-void WebPlaybackSessionModelMediaElement::setWebPlaybackSessionInterface(WebPlaybackSessionInterface* interface)
-{
-    if (interface == m_playbackSessionInterface)
-        return;
-
-    m_playbackSessionInterface = interface;
-
-    if (!m_playbackSessionInterface)
-        return;
-
-    m_playbackSessionInterface->resetMediaState();
-    m_playbackSessionInterface->setDuration(duration());
-    m_playbackSessionInterface->setCurrentTime(currentTime(), [[NSProcessInfo processInfo] systemUptime]);
-    m_playbackSessionInterface->setBufferedTime(bufferedTime());
-    m_playbackSessionInterface->setRate(isPlaying(), playbackRate());
-    m_playbackSessionInterface->setSeekableRanges(seekableRanges());
-    m_playbackSessionInterface->setCanPlayFastReverse(canPlayFastReverse());
-    m_playbackSessionInterface->setWirelessVideoPlaybackDisabled(wirelessVideoPlaybackDisabled());
-    updateLegibleOptions();
-}
-
 void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaElement)
 {
     if (m_mediaElement == mediaElement)
         return;
-
-    if (m_playbackSessionInterface)
-        m_playbackSessionInterface->resetMediaState();
 
     if (m_mediaElement && m_isListening) {
         for (auto& eventName : observedEventNames())
@@ -93,17 +69,13 @@ void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* medi
 
     m_mediaElement = mediaElement;
 
-    if (!m_mediaElement)
-        return;
-
-    for (auto& eventName : observedEventNames())
-        m_mediaElement->addEventListener(eventName, *this, false);
-    m_isListening = true;
+    if (m_mediaElement) {
+        for (auto& eventName : observedEventNames())
+            m_mediaElement->addEventListener(eventName, *this, false);
+        m_isListening = true;
+    }
 
     updateForEventName(eventNameAll());
-
-    if (m_playbackSessionInterface)
-        m_playbackSessionInterface->setWirelessVideoPlaybackDisabled(m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement));
 }
 
 void WebPlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)
@@ -113,31 +85,46 @@ void WebPlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionCo
 
 void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicString& eventName)
 {
-    if (!m_mediaElement || !m_playbackSessionInterface)
+    if (m_clients.isEmpty())
         return;
 
     bool all = eventName == eventNameAll();
 
     if (all
         || eventName == eventNames().durationchangeEvent) {
-        m_playbackSessionInterface->setDuration(m_mediaElement->duration());
+        double duration = this->duration();
+        for (auto client : m_clients)
+            client->durationChanged(duration);
         // These is no standard event for minFastReverseRateChange; duration change is a reasonable proxy for it.
         // It happens every time a new item becomes ready to play.
-        m_playbackSessionInterface->setCanPlayFastReverse(m_mediaElement->minFastReverseRate() < 0.0);
+        bool canPlayFastReverse = this->canPlayFastReverse();
+        for (auto client : m_clients)
+            client->canPlayFastReverseChanged(canPlayFastReverse);
     }
 
     if (all
         || eventName == eventNames().pauseEvent
         || eventName == eventNames().playEvent
-        || eventName == eventNames().ratechangeEvent)
-        m_playbackSessionInterface->setRate(!m_mediaElement->paused(), m_mediaElement->playbackRate());
+        || eventName == eventNames().ratechangeEvent) {
+        bool isPlaying = this->isPlaying();
+        float playbackRate = this->playbackRate();
+        for (auto client : m_clients)
+            client->rateChanged(isPlaying, playbackRate);
+    }
 
     if (all
         || eventName == eventNames().timeupdateEvent) {
-        m_playbackSessionInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
-        m_playbackSessionInterface->setBufferedTime(m_mediaElement->maxBufferedTime());
-        // FIXME: 130788 - find a better event to update seekable ranges from.
-        m_playbackSessionInterface->setSeekableRanges(m_mediaElement->seekable());
+        auto currentTime = this->currentTime();
+        auto anchorTime = [[NSProcessInfo processInfo] systemUptime];
+        auto bufferedTime = this->bufferedTime();
+        auto seekableRanges = this->seekableRanges();
+
+        for (auto client : m_clients) {
+            client->currentTimeChanged(currentTime, anchorTime);
+            client->bufferedTimeChanged(bufferedTime);
+            // FIXME: 130788 - find a better event from which to update seekable ranges.
+            client->seekableRangesChanged(seekableRanges);
+        }
     }
 
     if (all
@@ -147,21 +134,28 @@ void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicSt
 
     if (all
         || eventName == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
-        bool enabled = m_mediaElement->webkitCurrentPlaybackTargetIsWireless();
-        WebPlaybackSessionInterface::ExternalPlaybackTargetType targetType = WebPlaybackSessionInterface::TargetTypeNone;
-        String localizedDeviceName;
+        bool enabled = externalPlaybackEnabled();
+        ExternalPlaybackTargetType targetType = externalPlaybackTargetType();
+        String localizedDeviceName = externalPlaybackLocalizedDeviceName();
 
-        if (m_mediaElement->mediaControlsHost()) {
-            auto type = m_mediaElement->mediaControlsHost()->externalDeviceType();
-            if (type == MediaControlsHost::DeviceType::Airplay)
-                targetType = WebPlaybackSessionInterface::TargetTypeAirPlay;
-            else if (type == MediaControlsHost::DeviceType::Tvout)
-                targetType = WebPlaybackSessionInterface::TargetTypeTVOut;
-            localizedDeviceName = m_mediaElement->mediaControlsHost()->externalDeviceDisplayName();
+        bool wirelessVideoPlaybackDisabled = this->wirelessVideoPlaybackDisabled();
+
+        for (auto client : m_clients) {
+            client->externalPlaybackChanged(enabled, targetType, localizedDeviceName);
+            client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
         }
-        m_playbackSessionInterface->setExternalPlayback(enabled, targetType, localizedDeviceName);
-        m_playbackSessionInterface->setWirelessVideoPlaybackDisabled(m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement));
     }
+}
+void WebPlaybackSessionModelMediaElement::addClient(WebPlaybackSessionModelClient& client)
+{
+    ASSERT(!m_clients.contains(&client));
+    m_clients.add(&client);
+}
+
+void WebPlaybackSessionModelMediaElement::removeClient(WebPlaybackSessionModelClient& client)
+{
+    ASSERT(m_clients.contains(&client));
+    m_clients.remove(&client);
 }
 
 void WebPlaybackSessionModelMediaElement::play()
@@ -279,31 +273,37 @@ void WebPlaybackSessionModelMediaElement::updateLegibleOptions()
     else
         m_audioTracksForMenu.clear();
 
-    m_playbackSessionInterface->setAudioMediaSelectionOptions(audioMediaSelectionOptions(), audioMediaSelectedIndex());
-    m_playbackSessionInterface->setLegibleMediaSelectionOptions(legibleMediaSelectionOptions(), legibleMediaSelectedIndex());
+    auto audioOptions = audioMediaSelectionOptions();
+    auto audioIndex = audioMediaSelectedIndex();
+    auto legibleOptions = legibleMediaSelectionOptions();
+    auto legibleIndex = legibleMediaSelectedIndex();
+
+    for (auto client : m_clients) {
+        client->audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
+        client->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
+    }
 }
 
-const Vector<AtomicString>&  WebPlaybackSessionModelMediaElement::observedEventNames()
+const Vector<AtomicString>& WebPlaybackSessionModelMediaElement::observedEventNames()
 {
-    static NeverDestroyed<Vector<AtomicString>> sEventNames;
-
-    if (!sEventNames.get().size()) {
-        sEventNames.get().append(eventNames().durationchangeEvent);
-        sEventNames.get().append(eventNames().pauseEvent);
-        sEventNames.get().append(eventNames().playEvent);
-        sEventNames.get().append(eventNames().ratechangeEvent);
-        sEventNames.get().append(eventNames().timeupdateEvent);
-        sEventNames.get().append(eventNames().addtrackEvent);
-        sEventNames.get().append(eventNames().removetrackEvent);
-        sEventNames.get().append(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
-    }
-    return sEventNames.get();
+    // FIXME(157452): Remove the right-hand constructor notation once NeverDestroyed supports initializer_lists.
+    static NeverDestroyed<Vector<AtomicString>> names = Vector<AtomicString>({
+        eventNames().durationchangeEvent,
+        eventNames().pauseEvent,
+        eventNames().playEvent,
+        eventNames().ratechangeEvent,
+        eventNames().timeupdateEvent,
+        eventNames().addtrackEvent,
+        eventNames().removetrackEvent,
+        eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent,
+    });
+    return names.get();
 }
 
 const AtomicString&  WebPlaybackSessionModelMediaElement::eventNameAll()
 {
-    static NeverDestroyed<AtomicString> sEventNameAll = "allEvents";
-    return sEventNameAll;
+    static NeverDestroyed<AtomicString> eventNameAll("allEvents", AtomicString::ConstructFromLiteral);
+    return eventNameAll;
 }
 
 double WebPlaybackSessionModelMediaElement::duration() const
@@ -341,7 +341,7 @@ bool WebPlaybackSessionModelMediaElement::canPlayFastReverse() const
     return m_mediaElement ? m_mediaElement->minFastReverseRate() < 0.0 : false;
 }
 
-Vector<WTF::String> WebPlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
+Vector<String> WebPlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
 {
     Vector<String> audioTrackDisplayNames;
 
@@ -350,8 +350,9 @@ Vector<WTF::String> WebPlaybackSessionModelMediaElement::audioMediaSelectionOpti
 
     auto& captionPreferences = m_mediaElement->document().page()->group().captionPreferences();
 
+    audioTrackDisplayNames.reserveInitialCapacity(m_audioTracksForMenu.size());
     for (auto& audioTrack : m_audioTracksForMenu)
-        audioTrackDisplayNames.append(captionPreferences.displayNameForTrack(audioTrack.get()));
+        audioTrackDisplayNames.uncheckedAppend(captionPreferences.displayNameForTrack(audioTrack.get()));
 
     return audioTrackDisplayNames;
 }
@@ -362,7 +363,7 @@ uint64_t WebPlaybackSessionModelMediaElement::audioMediaSelectedIndex() const
         if (m_audioTracksForMenu[index]->enabled())
             return index;
     }
-    return 0;
+    return std::numeric_limits<uint64_t>::max();
 }
 
 Vector<WTF::String> WebPlaybackSessionModelMediaElement::legibleMediaSelectionOptions() const
@@ -382,16 +383,18 @@ Vector<WTF::String> WebPlaybackSessionModelMediaElement::legibleMediaSelectionOp
 
 uint64_t WebPlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
 {
-    uint64_t selectedIndex = 0;
+    uint64_t selectedIndex = std::numeric_limits<uint64_t>::max();
     uint64_t offIndex = 0;
     bool trackMenuItemSelected = false;
 
-    if (!m_mediaElement || !m_mediaElement->mediaControlsHost())
+    auto host = m_mediaElement ? m_mediaElement->mediaControlsHost() : nullptr;
+
+    if (!host)
         return selectedIndex;
 
-    AtomicString displayMode = m_mediaElement->mediaControlsHost()->captionDisplayMode();
-    TextTrack* offItem = m_mediaElement->mediaControlsHost()->captionMenuOffItem();
-    TextTrack* automaticItem = m_mediaElement->mediaControlsHost()->captionMenuAutomaticItem();
+    AtomicString displayMode = host->captionDisplayMode();
+    TextTrack* offItem = host->captionMenuOffItem();
+    TextTrack* automaticItem = host->captionMenuAutomaticItem();
 
     for (size_t index = 0; index < m_legibleTracksForMenu.size(); index++) {
         auto& track = m_legibleTracksForMenu[index];
@@ -417,12 +420,37 @@ uint64_t WebPlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
 
 bool WebPlaybackSessionModelMediaElement::externalPlaybackEnabled() const
 {
-    return m_mediaElement ? m_mediaElement->webkitCurrentPlaybackTargetIsWireless() : false;
+    return m_mediaElement && m_mediaElement->webkitCurrentPlaybackTargetIsWireless();
+}
+
+WebPlaybackSessionModel::ExternalPlaybackTargetType WebPlaybackSessionModelMediaElement::externalPlaybackTargetType() const
+{
+    if (!m_mediaElement || !m_mediaElement->mediaControlsHost())
+        return TargetTypeNone;
+
+    switch (m_mediaElement->mediaControlsHost()->externalDeviceType()) {
+    default:
+        ASSERT_NOT_REACHED();
+        return TargetTypeNone;
+    case MediaControlsHost::DeviceType::None:
+        return TargetTypeNone;
+    case MediaControlsHost::DeviceType::Airplay:
+        return TargetTypeAirPlay;
+    case MediaControlsHost::DeviceType::Tvout:
+        return TargetTypeTVOut;
+    }
+}
+
+String WebPlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() const
+{
+    if (m_mediaElement && m_mediaElement->mediaControlsHost())
+        return m_mediaElement->mediaControlsHost()->externalDeviceDisplayName();
+    return emptyString();
 }
 
 bool WebPlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 {
-    return m_mediaElement ? m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement) : false;
+    return m_mediaElement && m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement);
 }
 
 #endif

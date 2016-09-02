@@ -544,8 +544,6 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
         _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 
     _navigationState = std::make_unique<WebKit::NavigationState>(self);
-    _page->setNavigationClient(_navigationState->createNavigationClient());
-
     _uiDelegate = std::make_unique<WebKit::UIDelegate>(self);
     _page->setFindClient(std::make_unique<WebKit::FindClient>(self));
     _page->setDiagnosticLoggingClient(std::make_unique<WebKit::DiagnosticLoggingClient>(self));
