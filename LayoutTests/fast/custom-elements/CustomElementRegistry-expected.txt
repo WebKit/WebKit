@@ -29,11 +29,11 @@ PASS CustomElementRegistry interface must have get as a method
 PASS customElements.get must return undefined when the registry does not contain an entry with the given name 
 PASS customElements.get must return undefined when the registry does not contain an entry with the given name even if the name was not a valid custom element name 
 PASS customElements.get return the constructor of the entry with the given name when there is a matching entry. 
-PASS customElements.whenDefined must return a promise for a valid custom element name 
+FAIL customElements.whenDefined must return a promise for a valid custom element name assert_true: expected true got false
 PASS customElements.whenDefined must return the same promise each time invoked for a valid custom element name which has not been defined 
-PASS customElements.whenDefined must return an unresolved promise when the registry does not contain the entry with the given name 
+FAIL customElements.whenDefined must return an unresolved promise when the registry does not contain the entry with the given name undefined is not an object (evaluating 'customElements.whenDefined('a-b').then')
 PASS customElements.whenDefined must return a rejected promise when the given name is not a valid custom element name 
 PASS customElements.whenDefined must return a resolved promise when the registry contains the entry with the given name 
 PASS customElements.whenDefined must return a new resolved promise each time invoked when the registry contains the entry with the given name 
-PASS A promise returned by customElements.whenDefined must be resolved by "define" 
+FAIL A promise returned by customElements.whenDefined must be resolved by "define" undefined is not an object (evaluating 'promise.then')
 

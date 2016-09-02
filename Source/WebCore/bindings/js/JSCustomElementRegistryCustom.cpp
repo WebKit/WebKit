@@ -182,11 +182,7 @@ static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObj
         return jsPromise.promise();
     }
 
-    auto result = registry.promiseMap().ensure(localName, [&] {
-        return DeferredWrapper::create(&state, &globalObject, JSPromiseDeferred::create(&state, &globalObject));
-    });
-
-    return result.iterator->value->promise();
+    return jsUndefined();
 }
 
 JSValue JSCustomElementRegistry::whenDefined(ExecState& state)

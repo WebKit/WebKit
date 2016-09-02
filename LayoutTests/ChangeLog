@@ -1,3 +1,14 @@
+2016-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Temporarily break customElements.whenDefined to remove flaky crashes
+        https://bugs.webkit.org/show_bug.cgi?id=161555
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline the test now that some test cases are failing due to the partial rollout.
+
+        * fast/custom-elements/CustomElementRegistry-expected.txt:
+
 2016-09-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r205373.
