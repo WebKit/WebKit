@@ -91,7 +91,7 @@ public:
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() const;
 
     RefPtr<MediaConstraints> constraints() const;
-    void applyConstraints(const MediaConstraints&);
+    void applyConstraints(const MediaConstraints&, RealtimeMediaSource::SuccessHandler, RealtimeMediaSource::FailureHandler);
 
     AudioSourceProvider* audioSourceProvider();
 

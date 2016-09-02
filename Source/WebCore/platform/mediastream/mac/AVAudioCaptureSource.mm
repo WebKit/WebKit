@@ -80,7 +80,7 @@ AVAudioCaptureSource::~AVAudioCaptureSource()
 void AVAudioCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
     // FIXME: finish this implementation - https://webkit.org/b/122430
-    capabilities.setVolume(CapabilityValueOrRange(0, 1.0));
+    capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
 }
 
 void AVAudioCaptureSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)

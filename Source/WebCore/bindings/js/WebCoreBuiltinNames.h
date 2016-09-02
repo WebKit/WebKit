@@ -58,6 +58,7 @@ namespace WebCore {
     macro(localStreams) \
     macro(makeThisTypeError) \
     macro(makeGetterTypeError) \
+    macro(mediaStreamTrackConstraints) \
     macro(operations) \
     macro(ownerReadableStream) \
     macro(privateGetStats) \

@@ -46,19 +46,19 @@ RefPtr<MediaConstraint> MediaConstraint::create(const String& name)
     case MediaConstraintType::Height:
     case MediaConstraintType::SampleRate:
     case MediaConstraintType::SampleSize:
-        return IntConstraint::create(constraintType);
+        return IntConstraint::create(name, constraintType);
     case MediaConstraintType::AspectRatio:
     case MediaConstraintType::FrameRate:
     case MediaConstraintType::Volume:
-        return DoubleConstraint::create(constraintType);
+        return DoubleConstraint::create(name, constraintType);
     case MediaConstraintType::EchoCancellation:
-        return BooleanConstraint::create(constraintType);
+        return BooleanConstraint::create(name, constraintType);
     case MediaConstraintType::FacingMode:
     case MediaConstraintType::DeviceId:
     case MediaConstraintType::GroupId:
-        return StringConstraint::create(constraintType);
+        return StringConstraint::create(name, constraintType);
     case MediaConstraintType::Unknown:
-        return nullptr;
+        return UnknownConstraint::create(name, constraintType);
     }
 }
 
@@ -119,6 +119,21 @@ bool StringConstraint::getIdeal(Vector<String>& ideal) const
 
     ideal = m_ideal;
     return true;
+}
+
+const String& StringConstraint::find(std::function<bool(ConstraintType, const String&)> filter) const
+{
+    for (auto& constraint : m_exact) {
+        if (filter(ConstraintType::ExactConstraint, constraint))
+            return constraint;
+    }
+
+    for (auto& constraint : m_ideal) {
+        if (filter(ConstraintType::IdealConstraint, constraint))
+            return constraint;
+    }
+    
+    return emptyString();
 }
 
 }

@@ -128,91 +128,64 @@ void AVVideoCaptureSource::updateSettings(RealtimeMediaSourceSettings& settings)
     settings.setAspectRatio(static_cast<float>(m_width) / m_height);
 }
 
-bool AVVideoCaptureSource::setFrameRateConstraint(double minFrameRate, double maxFrameRate)
+bool AVVideoCaptureSource::applySize(const IntSize& size)
+{
+    NSString *preset = AVCaptureSessionInfo(session()).bestSessionPresetForVideoDimensions(size.width(), size.height());
+    if (!preset || ![session() canSetSessionPreset:preset]) {
+        LOG(Media, "AVVideoCaptureSource::applySize%p), unable find or set preset for width: %i, height: %i", this, size.width(), size.height());
+        return false;
+    }
+
+    NSError *error = nil;
+    @try {
+        [session() setSessionPreset:preset];
+
+    } @catch(NSException *exception) {
+        LOG(Media, "AVVideoCaptureSource::applySize(%p), exception thrown configuring device: <%s> %s", this, [[exception name] UTF8String], [[exception reason] UTF8String]);
+        return false;
+    }
+
+    if (error) {
+        LOG(Media, "AVVideoCaptureSource::applySize(%p), failed to lock video device for configuration: %s", this, [[error localizedDescription] UTF8String]);
+        return false;
+    }
+
+    LOG(Media, "AVVideoCaptureSource::applySize(%p) - set frame size to %i x %i", this, size.width(), size.height());
+    return true;
+}
+
+bool AVVideoCaptureSource::applyFrameRate(double rate)
 {
     AVFrameRateRange *bestFrameRateRange = 0;
-
     for (AVFrameRateRange *frameRateRange in [[device() activeFormat] videoSupportedFrameRateRanges]) {
-        if (!maxFrameRate) {
-            if (minFrameRate == [frameRateRange minFrameRate])
-                bestFrameRateRange = frameRateRange;
-        } else if (minFrameRate >= [frameRateRange minFrameRate] && maxFrameRate <= [frameRateRange maxFrameRate]) {
-            if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], >, [bestFrameRateRange minFrameDuration]))
+        if (rate >= [frameRateRange minFrameRate] && rate <= [frameRateRange maxFrameRate]) {
+            if (!bestFrameRateRange || CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], >, [bestFrameRateRange minFrameDuration]))
                 bestFrameRateRange = frameRateRange;
         }
     }
-    
+
     if (!bestFrameRateRange) {
-        LOG(Media, "AVVideoCaptureSource::setFrameRateConstraint(%p), frame rate range %f..%f not supported by video device", this, minFrameRate, maxFrameRate);
+        LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p), frame rate %f not supported by video device", this, rate);
         return false;
     }
-    
+
     NSError *error = nil;
     @try {
         if ([device() lockForConfiguration:&error]) {
             [device() setActiveVideoMinFrameDuration:[bestFrameRateRange minFrameDuration]];
-            if (maxFrameRate)
-                [device() setActiveVideoMaxFrameDuration:[bestFrameRateRange maxFrameDuration]];
             [device() unlockForConfiguration];
         }
     } @catch(NSException *exception) {
-        LOG(Media, "AVVideoCaptureSource::setFrameRateConstraint(%p), exception thrown configuring device: <%s> %s", this, [[exception name] UTF8String], [[exception reason] UTF8String]);
+        LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p), exception thrown configuring device: <%s> %s", this, [[exception name] UTF8String], [[exception reason] UTF8String]);
         return false;
     }
-    
+
     if (error) {
-        LOG(Media, "AVVideoCaptureSource::setFrameRateConstraint(%p), failed to lock video device for configuration: %s", this, [[error localizedDescription] UTF8String]);
+        LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p), failed to lock video device for configuration: %s", this, [[error localizedDescription] UTF8String]);
         return false;
     }
 
-    LOG(Media, "AVVideoCaptureSource::setFrameRateConstraint(%p) - set frame rate range to %f..%f", this, minFrameRate, maxFrameRate);
-    return true;
-}
-
-bool AVVideoCaptureSource::applyConstraints(MediaConstraints* constraints)
-{
-    ASSERT(constraints);
-
-    // FIXME: Below needs to be refactored for https://bugs.webkit.org/show_bug.cgi?id=160579.
-
-    auto& mandatoryConstraints = constraints->mandatoryConstraints();
-    int intValue;
-
-    String widthConstraintName = RealtimeMediaSourceSupportedConstraints::nameForConstraint(MediaConstraintType::Width);
-    auto widthConstraint = mandatoryConstraints.get(widthConstraintName);
-    Optional<int> width;
-    if (widthConstraint && widthConstraint->getExact(intValue))
-        width = intValue;
-
-    String heightConstraintName = RealtimeMediaSourceSupportedConstraints::nameForConstraint(MediaConstraintType::Height);
-    auto heightConstraint = mandatoryConstraints.get(heightConstraintName);
-    Optional<int> height;
-    if (heightConstraint && heightConstraint->getExact(intValue))
-        height = intValue;
-    
-    if (width && height) {
-        NSString *preset = AVCaptureSessionInfo(session()).bestSessionPresetForVideoDimensions(width.value(), height.value());
-        if (!preset || ![session() canSetSessionPreset:preset]) {
-            LOG(Media, "AVVideoCaptureSource::applyConstraints(%p), unable find or set preset for width: %i, height: %i", this, width.value(), height.value());
-            return false;
-        }
-
-        [session() setSessionPreset:preset];
-    }
-
-    String frameRateConstraintName = RealtimeMediaSourceSupportedConstraints::nameForConstraint(MediaConstraintType::FrameRate);
-    auto frameRateConstraint = mandatoryConstraints.get(frameRateConstraintName);
-
-    Optional<double> frameRate;
-    double doubleValue;
-    if (frameRateConstraint && frameRateConstraint->getExact(doubleValue))
-        frameRate = doubleValue;
-
-    if (frameRate && !setFrameRateConstraint(frameRate.value(), 0)) {
-        LOG(Media, "AVVideoCaptureSource::applyConstraints(%p), unable set frame rate to %f", this, frameRate.value());
-        return false;
-    }
-
+    LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p) - set frame rate range to %f", this, rate);
     return true;
 }
 
@@ -226,9 +199,6 @@ void AVVideoCaptureSource::setupCaptureSession()
     }
 
     [session() addInput:videoIn.get()];
-
-    if (constraints())
-        applyConstraints(constraints());
 
     RetainPtr<AVCaptureVideoDataOutputType> videoOutput = adoptNS([allocAVCaptureVideoDataOutputInstance() init]);
     RetainPtr<NSDictionary> settingsDictionary = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:

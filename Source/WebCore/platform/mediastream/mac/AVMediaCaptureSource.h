@@ -33,7 +33,6 @@
 #include "Timer.h"
 #include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVCaptureAudioDataOutput;
 OBJC_CLASS AVCaptureConnection;
@@ -63,8 +62,6 @@ public:
     void stopProducingData() override;
     bool isProducingData() const override { return m_isRunning; }
 
-    WeakPtr<AVMediaCaptureSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-
 protected:
     AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>);
 
@@ -86,15 +83,12 @@ protected:
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
     void setAudioSampleBufferDelegate(AVCaptureAudioDataOutput*);
 
-    void scheduleDeferredTask(Function<void ()>&&);
-
 private:
     void setupSession();
     void reset() override;
 
     RealtimeMediaSourceSettings m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
-    WeakPtrFactory<AVMediaCaptureSource> m_weakPtrFactory;
     RetainPtr<WebCoreAVMediaCaptureSourceObserver> m_objcObserver;
     RefPtr<MediaConstraints> m_constraints;
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;

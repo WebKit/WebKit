@@ -45,6 +45,8 @@ class MediaConstraint : public RefCounted<MediaConstraint> {
 public:
     static RefPtr<MediaConstraint> create(const String& name);
 
+    enum class ConstraintType { ExactConstraint, IdealConstraint, MinConstraint, MaxConstraint };
+
     virtual ~MediaConstraint() { };
     virtual bool isEmpty() const = 0;
     virtual bool isMandatory() const = 0;
@@ -53,11 +55,15 @@ public:
     virtual bool getMax(int&) const { ASSERT_NOT_REACHED(); return false; }
     virtual bool getExact(int&) const { ASSERT_NOT_REACHED(); return false; }
     virtual bool getIdeal(int&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool validForRange(int, int) const { ASSERT_NOT_REACHED(); return false; }
+    virtual int find(std::function<bool(ConstraintType, int)>) const { ASSERT_NOT_REACHED(); return 0; }
 
     virtual bool getMin(double&) const { ASSERT_NOT_REACHED(); return false; }
     virtual bool getMax(double&) const { ASSERT_NOT_REACHED(); return false; }
     virtual bool getExact(double&) const { ASSERT_NOT_REACHED(); return false; }
     virtual bool getIdeal(double&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual bool validForRange(double, double) const { ASSERT_NOT_REACHED(); return false; }
+    virtual double find(std::function<bool(ConstraintType, double)>) const { ASSERT_NOT_REACHED(); return 0; }
 
     virtual bool getMin(bool&) const { ASSERT_NOT_REACHED(); return false; }
     virtual bool getMax(bool&) const { ASSERT_NOT_REACHED(); return false; }
@@ -68,16 +74,20 @@ public:
     virtual bool getMax(Vector<String>&) const { ASSERT_NOT_REACHED(); return false; }
     virtual bool getExact(Vector<String>&) const { ASSERT_NOT_REACHED(); return false; }
     virtual bool getIdeal(Vector<String>&) const { ASSERT_NOT_REACHED(); return false; }
+    virtual const String& find(std::function<bool(ConstraintType, const String&)>) const { ASSERT_NOT_REACHED(); return emptyString(); }
 
     MediaConstraintType type() const { return m_type; }
+    const String& name() const { return m_name; }
 
 protected:
-    explicit MediaConstraint(MediaConstraintType type)
-        : m_type(type)
+    explicit MediaConstraint(const String& name, MediaConstraintType type)
+        : m_name(name)
+        , m_type(type)
     {
     }
 
 private:
+    String m_name;
     MediaConstraintType m_type;
 };
 
@@ -124,9 +134,42 @@ public:
         return true;
     }
 
+    bool validForRange(ValueType rangeMin, ValueType rangeMax) const final {
+        if (isEmpty())
+            return false;
+
+        if (m_exact && (m_exact.value() < rangeMin || m_exact.value() > rangeMax))
+            return false;
+
+        if (m_min && m_min.value() > rangeMax)
+            return false;
+
+        if (m_max && m_max.value() < rangeMin)
+            return false;
+
+        return true;
+    }
+
+    ValueType find(std::function<bool(ConstraintType, ValueType)> function) const final {
+        if (m_min && function(ConstraintType::MinConstraint, m_min.value()))
+            return m_min.value();
+
+        if (m_max && function(ConstraintType::MaxConstraint, m_max.value()))
+            return m_max.value();
+
+        if (m_exact && function(ConstraintType::ExactConstraint, m_exact.value()))
+            return m_exact.value();
+
+        if (m_ideal && function(ConstraintType::IdealConstraint, m_ideal.value()))
+            return m_ideal.value();
+
+        return 0;
+    }
+    
+
 protected:
-    explicit NumericConstraint(MediaConstraintType type)
-        : MediaConstraint(type)
+    explicit NumericConstraint(const String& name, MediaConstraintType type)
+        : MediaConstraint(name, type)
     {
     }
 
@@ -139,29 +182,29 @@ private:
 
 class IntConstraint final : public NumericConstraint<int> {
 public:
-    static Ref<IntConstraint> create(MediaConstraintType type) { return adoptRef(*new IntConstraint(type)); }
+    static Ref<IntConstraint> create(const String& name, MediaConstraintType type) { return adoptRef(*new IntConstraint(name, type)); }
 
 private:
-    explicit IntConstraint(MediaConstraintType type)
-        : NumericConstraint<int>(type)
+    explicit IntConstraint(const String& name, MediaConstraintType type)
+        : NumericConstraint<int>(name, type)
     {
     }
 };
 
 class DoubleConstraint final : public NumericConstraint<double> {
 public:
-    static Ref<DoubleConstraint> create(MediaConstraintType type) { return adoptRef(*new DoubleConstraint(type)); }
+    static Ref<DoubleConstraint> create(const String& name, MediaConstraintType type) { return adoptRef(*new DoubleConstraint(name, type)); }
 
 private:
-    explicit DoubleConstraint(MediaConstraintType type)
-        : NumericConstraint<double>(type)
+    explicit DoubleConstraint(const String& name, MediaConstraintType type)
+        : NumericConstraint<double>(name, type)
     {
     }
 };
 
 class BooleanConstraint final : public MediaConstraint {
 public:
-    static Ref<BooleanConstraint> create(MediaConstraintType type) { return adoptRef(*new BooleanConstraint(type)); }
+    static Ref<BooleanConstraint> create(const String& name, MediaConstraintType type) { return adoptRef(*new BooleanConstraint(name, type)); }
 
     void setExact(bool value) { m_exact = value; }
     void setIdeal(bool value) { m_ideal = value; }
@@ -173,18 +216,18 @@ public:
     bool isMandatory() const final { return bool(m_exact); }
 
 private:
-    explicit BooleanConstraint(MediaConstraintType type)
-        : MediaConstraint(type)
+    explicit BooleanConstraint(const String& name, MediaConstraintType type)
+        : MediaConstraint(name, type)
     {
     }
 
-    Optional<bool> m_exact { false };
-    Optional<bool> m_ideal { false };
+    Optional<bool> m_exact;
+    Optional<bool> m_ideal;
 };
 
 class StringConstraint final : public MediaConstraint {
 public:
-    static Ref<StringConstraint> create(MediaConstraintType type) { return adoptRef(*new StringConstraint(type)); }
+    static Ref<StringConstraint> create(const String& name, MediaConstraintType type) { return adoptRef(*new StringConstraint(name, type)); }
 
     void setExact(const String&);
     void appendExact(const String&);
@@ -197,14 +240,30 @@ public:
     bool isEmpty() const final { return m_exact.isEmpty() && m_ideal.isEmpty(); }
     bool isMandatory() const final { return !m_exact.isEmpty(); }
 
+    const String& find(std::function<bool(ConstraintType, const String&)>) const override;
+
 private:
-    explicit StringConstraint(MediaConstraintType type)
-        : MediaConstraint(type)
+    explicit StringConstraint(const String& name, MediaConstraintType type)
+        : MediaConstraint(name, type)
     {
     }
 
     Vector<String> m_exact;
     Vector<String> m_ideal;
+};
+
+class UnknownConstraint final : public MediaConstraint {
+public:
+    static Ref<UnknownConstraint> create(const String& name, MediaConstraintType type) { return adoptRef(*new UnknownConstraint(name, type)); }
+
+    bool isEmpty() const final { return true; }
+    bool isMandatory() const final { return false; }
+
+private:
+    explicit UnknownConstraint(const String& name, MediaConstraintType type)
+        : MediaConstraint(name, type)
+    {
+    }
 };
 
 using MediaTrackConstraintSetMap = HashMap<String, RefPtr<MediaConstraint>>;

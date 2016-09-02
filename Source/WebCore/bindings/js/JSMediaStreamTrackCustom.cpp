@@ -28,10 +28,14 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
+#include "JSMediaDevicesCustom.h"
+#include "MediaConstraintsImpl.h"
 #include "MediaSourceSettings.h"
 #include "MediaStreamTrack.h"
+#include "WebCoreJSClientData.h"
 #include <runtime/JSObject.h>
 #include <runtime/ObjectConstructor.h>
 
@@ -57,7 +61,7 @@ JSC::JSValue JSMediaStreamTrack::getSettings(ExecState& state)
         object->putDirect(state.vm(), Identifier::fromString(&state, "width"), jsNumber(settings->width()), DontDelete | ReadOnly);
     if (settings->supportsHeight())
         object->putDirect(state.vm(), Identifier::fromString(&state, "height"), jsNumber(settings->height()), DontDelete | ReadOnly);
-    if (settings->supportsAspectRatio())
+    if (settings->supportsAspectRatio() && settings->aspectRatio())
         object->putDirect(state.vm(), Identifier::fromString(&state, "aspectRatio"), jsDoubleNumber(settings->aspectRatio()), DontDelete | ReadOnly);
     if (settings->supportsFrameRate())
         object->putDirect(state.vm(), Identifier::fromString(&state, "frameRate"), jsDoubleNumber(settings->frameRate()), DontDelete | ReadOnly);
@@ -90,8 +94,8 @@ static JSValue capabilityValue(const CapabilityValueOrRange& value, ExecState& s
             object->putDirect(state.vm(), Identifier::fromString(&state, "min"), jsNumber(min.asDouble));
             object->putDirect(state.vm(), Identifier::fromString(&state, "max"), jsNumber(max.asDouble));
         } else {
-            object->putDirect(state.vm(), Identifier::fromString(&state, "min"), jsNumber(min.asULong));
-            object->putDirect(state.vm(), Identifier::fromString(&state, "max"), jsNumber(max.asULong));
+            object->putDirect(state.vm(), Identifier::fromString(&state, "min"), jsNumber(min.asInt));
+            object->putDirect(state.vm(), Identifier::fromString(&state, "max"), jsNumber(max.asInt));
         }
 
         return object;
@@ -100,7 +104,7 @@ static JSValue capabilityValue(const CapabilityValueOrRange& value, ExecState& s
     if (value.type() == CapabilityValueOrRange::Double)
         return jsNumber(value.value().asDouble);
 
-    return jsNumber(value.value().asULong);
+    return jsNumber(value.value().asInt);
 }
 
 JSC::JSValue JSMediaStreamTrack::getCapabilities(ExecState& state)
@@ -160,6 +164,38 @@ JSC::JSValue JSMediaStreamTrack::getCapabilities(ExecState& state)
     
 
     return object;
+}
+
+JSValue JSMediaStreamTrack::applyConstraints(ExecState& state)
+{
+    MediaTrackConstraintSetMap mandatoryConstraints;
+    Vector<MediaTrackConstraintSetMap> advancedConstraints;
+    bool valid = false;
+
+    if (state.argumentCount() >= 1) {
+        JSValue argument = state.uncheckedArgument(0);
+
+        JSVMClientData& clientData = *static_cast<JSVMClientData*>(state.vm().clientData);
+        putDirect(state.vm(), clientData.builtinNames().mediaStreamTrackConstraintsPrivateName(), argument, DontEnum);
+
+        auto constraintsDictionary = Dictionary(&state, argument);
+        if (!constraintsDictionary.isUndefinedOrNull())
+            parseMediaConstraintsDictionary(constraintsDictionary, mandatoryConstraints, advancedConstraints);
+        valid = !advancedConstraints.isEmpty() || !mandatoryConstraints.isEmpty();
+    }
+
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
+    auto constraints = MediaConstraintsImpl::create(WTFMove(mandatoryConstraints), WTFMove(advancedConstraints), valid);
+    wrapped().applyConstraints(WTFMove(constraints), DeferredWrapper::create(&state, globalObject(), promiseDeferred));
+
+    return promiseDeferred->promise();
+}
+
+JSValue JSMediaStreamTrack::getConstraints(ExecState& state)
+{
+    JSVMClientData& clientData = *static_cast<JSVMClientData*>(state.vm().clientData);
+    JSValue result = getDirect(state.vm(), clientData.builtinNames().mediaStreamTrackConstraintsPrivateName());
+    return !result.isEmpty() ? result : jsUndefined();
 }
 
 } // namespace WebCore

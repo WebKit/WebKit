@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/apply-constraints-utils.js"></script>
+        <script>
+
+            let tests = [
+                {
+                    message: "set volume to a valid value.",
+                    constraint: { volume: .5 }, 
+                    expected: { volume: .5, echoCancellation: false }, 
+                },
+                {
+                    message: "the 'exact' constraint it too big, promise should reject and no settings should change.",
+                    constraint: { volume: { exact: 2.1 } }, 
+                    expected: { volume: .5, echoCancellation: false }, 
+                    error: "volume",
+                },
+                {
+                    message: "the 'exact' constraint it too small, promise should reject and no settings should change.",
+                    constraint: { volume: { exact: -1 } }, 
+                    expected: { volume: .5, echoCancellation: false }, 
+                    error: "volume",
+                },
+                {
+                    message: "set echoCancellation to a valid value.",
+                    constraint: { echoCancellation: true }, 
+                    expected: { volume: .5, echoCancellation: true }, 
+                },
+                {
+                    message: "constraint not supported by an audio track should be ignored.",
+                    constraint: { facingMode: "environment", frameRate: 30, volume: 1.0 }, 
+                    expected: { volume: 1.0, echoCancellation: true }, 
+                },
+                
+            ];
+
+            let tester = new ConstraintsTest({ audio: true }, tests, "Tests applyConstraints on an audio stream track.")
+                .onStreamReady((s) => {
+                    stream = s;
+                    shouldBe('stream.getVideoTracks().length', '0');
+                    shouldBe('stream.getAudioTracks().length', '1');
+                    tester.setStreamTrack(stream.getAudioTracks()[0]);
+                })
+                .onVideoReady((v) => {
+                    video = v;
+                    shouldBe('video.videoTracks.length', '0');
+                    shouldBe('video.audioTracks.length', '1');
+                })
+                .start();
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </head>
+    <body>
+        <video controls id="video"</video>
+        <br>
+        <div id="div"></div>
+
+    </body>
+</html>
+

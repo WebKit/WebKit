@@ -37,28 +37,60 @@
 
 namespace WebCore {
 
-const AtomicString& RealtimeMediaSourceSettings::facingMode(RealtimeMediaSourceSettings::VideoFacingMode mode)
+static const AtomicString& userFacing()
 {
     static NeverDestroyed<AtomicString> userFacing("user", AtomicString::ConstructFromLiteral);
+    return userFacing;
+}
+static const AtomicString& environmentFacing()
+{
     static NeverDestroyed<AtomicString> environmentFacing("environment", AtomicString::ConstructFromLiteral);
+    return environmentFacing;
+}
+
+static const AtomicString& leftFacing()
+{
     static NeverDestroyed<AtomicString> leftFacing("left", AtomicString::ConstructFromLiteral);
+    return leftFacing;
+}
+
+static const AtomicString& rightFacing()
+{
     static NeverDestroyed<AtomicString> rightFacing("right", AtomicString::ConstructFromLiteral);
-    
+    return rightFacing;
+}
+
+const AtomicString& RealtimeMediaSourceSettings::facingMode(RealtimeMediaSourceSettings::VideoFacingMode mode)
+{
     switch (mode) {
     case RealtimeMediaSourceSettings::User:
-        return userFacing;
+        return userFacing();
     case RealtimeMediaSourceSettings::Environment:
-        return environmentFacing;
+        return environmentFacing();
     case RealtimeMediaSourceSettings::Left:
-        return leftFacing;
+        return leftFacing();
     case RealtimeMediaSourceSettings::Right:
-        return rightFacing;
+        return rightFacing();
     case RealtimeMediaSourceSettings::Unknown:
         return emptyAtom;
     }
     
     ASSERT_NOT_REACHED();
     return emptyAtom;
+}
+
+RealtimeMediaSourceSettings::VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(const String& mode)
+{
+    if (mode == userFacing())
+        return RealtimeMediaSourceSettings::User;
+    if (mode == environmentFacing())
+        return RealtimeMediaSourceSettings::Environment;
+    if (mode == leftFacing())
+        return RealtimeMediaSourceSettings::Left;
+    if (mode == rightFacing())
+        return RealtimeMediaSourceSettings::Right;
+
+    return RealtimeMediaSourceSettings::Unknown;
 }
 
 } // namespace WebCore

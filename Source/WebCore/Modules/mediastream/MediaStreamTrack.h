@@ -31,18 +31,20 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "JSDOMPromise.h"
 #include "MediaStreamTrackPrivate.h"
 #include "RealtimeMediaSource.h"
 #include "ScriptWrappable.h"
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class AudioSourceProvider;
-class Dictionary;
-class MediaConstraintsImpl;
+class MediaConstraints;
 class MediaSourceSettings;
 class MediaTrackConstraints;
 
@@ -79,7 +81,9 @@ public:
     RefPtr<MediaTrackConstraints> getConstraints() const;
     RefPtr<MediaSourceSettings> getSettings() const;
     RefPtr<RealtimeMediaSourceCapabilities> getCapabilities() const;
-    void applyConstraints(const Dictionary&);
+
+    using ApplyConstraintsPromise = DOMPromise<std::nullptr_t>;
+    void applyConstraints(Ref<MediaConstraints>&&, ApplyConstraintsPromise&&);
     void applyConstraints(const MediaConstraints&);
 
     RealtimeMediaSource& source() const { return m_private->source(); }
@@ -118,10 +122,14 @@ private:
     void trackSettingsChanged(MediaStreamTrackPrivate&) override;
     void trackEnabledChanged(MediaStreamTrackPrivate&) override;
 
+    WeakPtr<MediaStreamTrack> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
     Vector<Observer*> m_observers;
     Ref<MediaStreamTrackPrivate> m_private;
 
-    RefPtr<MediaConstraintsImpl> m_constraints;
+    RefPtr<MediaConstraints> m_constraints;
+    Optional<ApplyConstraintsPromise> m_promise;
+    WeakPtrFactory<MediaStreamTrack> m_weakPtrFactory;
 
     bool m_ended { false };
 };

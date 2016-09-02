@@ -124,7 +124,6 @@ RealtimeMediaSourceSupportedConstraints& MockRealtimeMediaSource::supportedConst
     return m_supportedConstraints;
 }
 
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

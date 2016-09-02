@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-class FloatRect;
-class GraphicsContext;
 class TrackSourceInfo;
 
 class MockRealtimeMediaSource : public RealtimeMediaSource {

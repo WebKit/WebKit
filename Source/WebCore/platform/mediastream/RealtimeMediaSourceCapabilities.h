@@ -48,7 +48,7 @@ public:
     Type type() const { return m_type; }
 
     union ValueUnion {
-        unsigned long asULong;
+        int asInt;
         double asDouble;
     };
 
@@ -63,10 +63,10 @@ public:
         m_minOrValue.asDouble = value;
     }
 
-    CapabilityValueOrRange(unsigned long value)
+    CapabilityValueOrRange(int value)
         : m_type(ULong)
     {
-        m_minOrValue.asULong = value;
+        m_minOrValue.asInt = value;
     }
 
     CapabilityValueOrRange(double min, double max)
@@ -76,11 +76,11 @@ public:
         m_max.asDouble = max;
     }
     
-    CapabilityValueOrRange(unsigned long min, unsigned long max)
+    CapabilityValueOrRange(int min, int max)
         : m_type(ULongRange)
     {
-        m_minOrValue.asULong = min;
-        m_max.asULong = max;
+        m_minOrValue.asInt = min;
+        m_max.asInt = max;
     }
 
     const ValueUnion& rangeMin() const

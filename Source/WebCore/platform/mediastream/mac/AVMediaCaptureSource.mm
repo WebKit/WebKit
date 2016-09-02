@@ -124,7 +124,6 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
 
 AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id, RealtimeMediaSource::Type type, PassRefPtr<MediaConstraints> constraints)
     : RealtimeMediaSource(id, type, emptyString())
-    , m_weakPtrFactory(this)
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
     , m_constraints(constraints)
     , m_device(device)
@@ -237,17 +236,6 @@ void AVMediaCaptureSource::setVideoSampleBufferDelegate(AVCaptureVideoDataOutput
 void AVMediaCaptureSource::setAudioSampleBufferDelegate(AVCaptureAudioDataOutputType* audioOutput)
 {
     [audioOutput setSampleBufferDelegate:m_objcObserver.get() queue:globaAudioCaptureSerialQueue()];
-}
-
-void AVMediaCaptureSource::scheduleDeferredTask(Function<void ()>&& function)
-{
-    ASSERT(function);
-    callOnMainThread([weakThis = createWeakPtr(), function = WTFMove(function)] {
-        if (!weakThis)
-            return;
-
-        function();
-    });
 }
 
 AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()

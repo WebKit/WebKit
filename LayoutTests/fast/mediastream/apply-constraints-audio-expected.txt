@@ -1,0 +1,43 @@
+Tests applyConstraints on an audio stream track.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stream.getVideoTracks().length is 0
+PASS stream.getAudioTracks().length is 1
+PASS video.videoTracks.length is 0
+PASS video.audioTracks.length is 1
+
+** Constraint: {"volume":0.5} - set volume to a valid value.
+PASS settings['volume'] is 0.5
+PASS typeof settings['echoCancellation'] is 'boolean'
+PASS settings['echoCancellation'] is false
+
+** Constraint: {"volume":{"exact":2.1}} - the 'exact' constraint it too big, promise should reject and no settings should change.
+PASS Promise was rejected
+PASS error.constraint is "volume"
+PASS settings['volume'] is 0.5
+PASS typeof settings['echoCancellation'] is 'boolean'
+PASS settings['echoCancellation'] is false
+
+** Constraint: {"volume":{"exact":-1}} - the 'exact' constraint it too small, promise should reject and no settings should change.
+PASS Promise was rejected
+PASS error.constraint is "volume"
+PASS settings['volume'] is 0.5
+PASS typeof settings['echoCancellation'] is 'boolean'
+PASS settings['echoCancellation'] is false
+
+** Constraint: {"echoCancellation":true} - set echoCancellation to a valid value.
+PASS settings['volume'] is 0.5
+PASS typeof settings['echoCancellation'] is 'boolean'
+PASS settings['echoCancellation'] is true
+
+** Constraint: {"facingMode":"environment","frameRate":30,"volume":1} - constraint not supported by an audio track should be ignored.
+PASS settings['volume'] is 1
+PASS typeof settings['echoCancellation'] is 'boolean'
+PASS settings['echoCancellation'] is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

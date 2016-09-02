@@ -1,3 +1,17 @@
+2016-09-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] applyConstraints pt. 1 - mandatory constraints
+        https://bugs.webkit.org/show_bug.cgi?id=161469
+        <rdar://problem/28109325>
+
+        Reviewed by Jer Noble.
+
+        * fast/mediastream/apply-constraints-audio-expected.txt: Added.
+        * fast/mediastream/apply-constraints-audio.html: Added.
+        * fast/mediastream/apply-constraints-video-expected.txt: Added.
+        * fast/mediastream/apply-constraints-video.html: Added.
+        * fast/mediastream/resources/apply-constraints-utils.js: Added.
+
 2016-09-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Only update connected custom elements

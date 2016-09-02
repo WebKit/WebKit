@@ -36,13 +36,18 @@
 #if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSource.h"
 
+#include "MediaConstraints.h"
+#include "NotImplemented.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "UUID.h"
+#include <wtf/MainThread.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const String& name)
-    : m_id(id)
+    : m_weakPtrFactory(this)
+    , m_id(id)
     , m_type(type)
     , m_name(name)
 {
@@ -51,6 +56,7 @@ RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const Stri
     if (m_id.isEmpty())
         m_id = createCanonicalUUIDString();
     m_persistentID = m_id;
+    m_suppressNotifications = false;
 }
 
 void RealtimeMediaSource::reset()
@@ -92,8 +98,18 @@ void RealtimeMediaSource::setMuted(bool muted)
 
 void RealtimeMediaSource::settingsDidChange()
 {
-    for (auto& observer : m_observers)
-        observer->sourceSettingsChanged();
+    ASSERT(isMainThread());
+
+    if (m_pendingSettingsDidChangeNotification || m_suppressNotifications)
+        return;
+
+    m_pendingSettingsDidChangeNotification = true;
+
+    scheduleDeferredTask([this] {
+        m_pendingSettingsDidChangeNotification = false;
+        for (auto& observer : m_observers)
+            observer->sourceSettingsChanged();
+    });
 }
 
 void RealtimeMediaSource::mediaDataUpdated(MediaSample& mediaSample)
@@ -132,6 +148,418 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
             return;
     }
     stop(callingObserver);
+}
+
+RealtimeMediaSource::ConstraintSupport RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
+{
+    RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
+
+    switch (constraint.type()) {
+    case MediaConstraintType::Width: {
+        if (!capabilities.supportsWidth())
+            return ConstraintSupport::Ignored;
+
+        auto widthRange = capabilities.width();
+        return constraint.validForRange(widthRange.rangeMin().asInt, widthRange.rangeMax().asInt) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        break;
+    }
+
+    case MediaConstraintType::Height: {
+        if (!capabilities.supportsHeight())
+            return ConstraintSupport::Ignored;
+
+        auto heightRange = capabilities.height();
+        return constraint.validForRange(heightRange.rangeMin().asInt, heightRange.rangeMax().asInt) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        break;
+    }
+
+    case MediaConstraintType::FrameRate: {
+        if (!capabilities.supportsFrameRate())
+            return ConstraintSupport::Ignored;
+
+        auto rateRange = capabilities.frameRate();
+        return constraint.validForRange(rateRange.rangeMin().asDouble, rateRange.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        break;
+    }
+
+    case MediaConstraintType::AspectRatio: {
+        if (!capabilities.supportsAspectRatio())
+            return ConstraintSupport::Ignored;
+
+        auto range = capabilities.aspectRatio();
+        return constraint.validForRange(range.rangeMin().asDouble, range.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        break;
+    }
+
+    case MediaConstraintType::Volume: {
+        if (!capabilities.supportsVolume())
+            return ConstraintSupport::Ignored;
+
+        auto range = capabilities.volume();
+        return constraint.validForRange(range.rangeMin().asDouble, range.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        break;
+    }
+
+    case MediaConstraintType::SampleRate: {
+        if (!capabilities.supportsSampleRate())
+            return ConstraintSupport::Ignored;
+
+        auto range = capabilities.sampleRate();
+        return constraint.validForRange(range.rangeMin().asDouble, range.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        break;
+    }
+
+    case MediaConstraintType::SampleSize: {
+        if (!capabilities.supportsSampleSize())
+            return ConstraintSupport::Ignored;
+
+        auto range = capabilities.sampleSize();
+        return constraint.validForRange(range.rangeMin().asDouble, range.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        break;
+    }
+
+    case MediaConstraintType::FacingMode: {
+        if (!capabilities.supportsFacingMode())
+            return ConstraintSupport::Ignored;
+
+        ConstraintSupport support = ConstraintSupport::Ignored;
+        auto& supportedModes = capabilities.facingMode();
+        std::function<bool(MediaConstraint::ConstraintType, const String&)> filter = [supportedModes, &support](MediaConstraint::ConstraintType type, const String& modeString) {
+            if (type == MediaConstraint::ConstraintType::ExactConstraint)
+                support = ConstraintSupport::Unsupported;
+
+            auto mode = RealtimeMediaSourceSettings::videoFacingModeEnum(modeString);
+            for (auto& supportedMode : supportedModes) {
+                if (supportedMode == mode) {
+                    support = ConstraintSupport::Supported;
+                    break;
+                }
+            }
+
+            return type == MediaConstraint::ConstraintType::ExactConstraint ? true : false;
+        };
+
+        constraint.find(filter);
+        return support;
+        break;
+    }
+
+    case MediaConstraintType::EchoCancellation:
+        if (!capabilities.supportsEchoCancellation())
+            return ConstraintSupport::Ignored;
+
+        if (capabilities.echoCancellation() == RealtimeMediaSourceCapabilities::EchoCancellation::ReadOnly)
+            return constraint.isMandatory() ? ConstraintSupport::Unsupported : ConstraintSupport::Ignored;
+
+        return ConstraintSupport::Supported;
+        break;
+
+    case MediaConstraintType::DeviceId: {
+        if (!capabilities.supportsDeviceId())
+            return ConstraintSupport::Ignored;
+
+        ConstraintSupport support = ConstraintSupport::Ignored;
+        std::function<bool(MediaConstraint::ConstraintType, const String&)> filter = [this, &support](MediaConstraint::ConstraintType type, const String& idString) {
+            if (type != MediaConstraint::ConstraintType::ExactConstraint)
+                return false; // Keep looking.
+
+            support = idString == m_id ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+            return false;
+        };
+
+        constraint.find(filter);
+        return support;
+        break;
+    }
+
+    case MediaConstraintType::GroupId: {
+        if (!capabilities.supportsDeviceId())
+            return ConstraintSupport::Ignored;
+
+        ConstraintSupport support = ConstraintSupport::Ignored;
+        String groupId = settings().groupId();
+        std::function<bool(MediaConstraint::ConstraintType, const String&)> filter = [groupId, &support](MediaConstraint::ConstraintType type, const String& idString) {
+            if (type != MediaConstraint::ConstraintType::ExactConstraint)
+                return false; // Keep looking.
+
+            support = idString == groupId ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+            return false;
+        };
+
+        constraint.find(filter);
+        return support;
+        break;
+    }
+
+    case MediaConstraintType::Unknown:
+        // Unknown (or unsupported) constraints should be ignored.
+        break;
+    }
+
+    return ConstraintSupport::Ignored;
+}
+
+
+template <typename T>
+T value(const MediaConstraint& constraint, T rangeMin, T rangeMax)
+{
+    T result;
+
+    if (constraint.getExact(result)) {
+        ASSERT(result >= rangeMin && result <= rangeMax);
+        return result;
+    }
+
+    if (constraint.getIdeal(result)) {
+        if (result < rangeMin)
+            result = rangeMin;
+        else if (result > rangeMax)
+            result = rangeMax;
+
+        return result;
+    }
+
+    if (constraint.getMin(result) && result > rangeMax)
+        return false;
+
+    if (constraint.getMax(result) && result < rangeMin)
+        return false;
+    
+    return result;
+}
+
+
+void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
+{
+    RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
+    switch (constraint.type()) {
+    case MediaConstraintType::Width: {
+        if (!capabilities.supportsWidth())
+            return;
+
+        auto widthRange = capabilities.width();
+        setWidth(value(constraint, widthRange.rangeMin().asInt, widthRange.rangeMax().asInt));
+        break;
+    }
+
+    case MediaConstraintType::Height: {
+        if (!capabilities.supportsHeight())
+            return;
+
+        auto heightRange = capabilities.height();
+        setHeight(value(constraint, heightRange.rangeMin().asInt, heightRange.rangeMax().asInt));
+        break;
+    }
+
+    case MediaConstraintType::FrameRate: {
+        if (!capabilities.supportsFrameRate())
+            return;
+
+        auto rateRange = capabilities.frameRate();
+        setFrameRate(value(constraint, rateRange.rangeMin().asDouble, rateRange.rangeMax().asDouble));
+        break;
+    }
+
+    case MediaConstraintType::AspectRatio: {
+        if (!capabilities.supportsAspectRatio())
+            return;
+
+        auto range = capabilities.aspectRatio();
+        setAspectRatio(value(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble));
+        break;
+    }
+
+    case MediaConstraintType::Volume: {
+        if (!capabilities.supportsVolume())
+            return;
+
+        auto range = capabilities.volume();
+        // std::pair<T, T> valuesForRange(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble)
+        setVolume(value(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble));
+        break;
+    }
+
+    case MediaConstraintType::SampleRate: {
+        if (!capabilities.supportsSampleRate())
+            return;
+
+        auto range = capabilities.sampleRate();
+        setSampleRate(value(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble));
+        break;
+    }
+
+    case MediaConstraintType::SampleSize: {
+        if (!capabilities.supportsSampleSize())
+            return;
+
+        auto range = capabilities.sampleSize();
+        setSampleSize(value(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble));
+        break;
+    }
+
+    case MediaConstraintType::EchoCancellation:
+        if (!capabilities.supportsEchoCancellation())
+            return;
+
+        bool setting;
+        if (constraint.getExact(setting) || constraint.getIdeal(setting))
+            setEchoCancellation(setting);
+        break;
+
+    case MediaConstraintType::FacingMode: {
+        if (!capabilities.supportsFacingMode())
+            return;
+
+        auto& supportedModes = capabilities.facingMode();
+        std::function<bool(MediaConstraint::ConstraintType, const String&)> filter = [supportedModes](MediaConstraint::ConstraintType, const String& modeString) {
+            auto mode = RealtimeMediaSourceSettings::videoFacingModeEnum(modeString);
+            for (auto& supportedMode : supportedModes) {
+                if (mode == supportedMode)
+                    return true;
+            }
+            return false;
+        };
+
+        auto modeString = constraint.find(filter);
+        if (!modeString.isEmpty())
+            setFacingMode(RealtimeMediaSourceSettings::videoFacingModeEnum(modeString));
+        break;
+    }
+
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+        // There is nothing to do here, neither can be changed.
+        break;
+
+    case MediaConstraintType::Unknown:
+        break;
+    }
+}
+
+void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler successHandler, FailureHandler failureHandler)
+{
+    ASSERT(constraints.isValid());
+
+    auto& mandatoryConstraints = constraints.mandatoryConstraints();
+    for (auto& nameConstraintPair : mandatoryConstraints) {
+        auto& constraint = *nameConstraintPair.value;
+        if (supportsConstraint(constraint) == ConstraintSupport::Unsupported) {
+            failureHandler(constraint.name(), "Constraint not supported");
+            return;
+        }
+    }
+
+    for (auto& nameConstraintPair : mandatoryConstraints)
+        applyConstraint(*nameConstraintPair.value);
+
+    successHandler();
+}
+
+void RealtimeMediaSource::setWidth(int width)
+{
+    if (width == m_size.width())
+        return;
+
+    int height = m_aspectRatio ? width / m_aspectRatio : m_size.height();
+    if (!applySize(IntSize(width, height)))
+        return;
+
+    m_size.setWidth(width);
+    if (m_aspectRatio)
+        m_size.setHeight(width / m_aspectRatio);
+
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::setHeight(int height)
+{
+    if (height == m_size.height())
+        return;
+
+    int width = m_aspectRatio ? height * m_aspectRatio : m_size.width();
+    if (!applySize(IntSize(width, height)))
+        return;
+
+    if (m_aspectRatio)
+        m_size.setWidth(width);
+    m_size.setHeight(height);
+
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::setFrameRate(double rate)
+{
+    if (m_frameRate == rate || !applyFrameRate(rate))
+        return;
+
+    m_frameRate = rate;
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::setAspectRatio(double ratio)
+{
+    if (m_aspectRatio == ratio || !applyAspectRatio(ratio))
+        return;
+
+    m_aspectRatio = ratio;
+    m_size.setHeight(m_size.width() / ratio);
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::setFacingMode(RealtimeMediaSourceSettings::VideoFacingMode mode)
+{
+    if (m_facingMode == mode || !applyFacingMode(mode))
+        return;
+
+    m_facingMode = mode;
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::setVolume(double volume)
+{
+    if (m_volume == volume || !applyVolume(volume))
+        return;
+
+    m_volume = volume;
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::setSampleRate(double rate)
+{
+    if (m_sampleRate == rate || !applySampleRate(rate))
+        return;
+
+    m_sampleRate = rate;
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::setSampleSize(double size)
+{
+    if (m_sampleSize == size || !applySampleSize(size))
+        return;
+
+    m_sampleSize = size;
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::setEchoCancellation(bool echoCancellation)
+{
+    if (m_echoCancellation == echoCancellation || !applyEchoCancellation(echoCancellation))
+        return;
+
+    m_echoCancellation = echoCancellation;
+    settingsDidChange();
+}
+
+void RealtimeMediaSource::scheduleDeferredTask(std::function<void()>&& function)
+{
+    ASSERT(function);
+    callOnMainThread([weakThis = createWeakPtr(), function = WTFMove(function)] {
+        if (!weakThis)
+            return;
+
+        function();
+    });
 }
 
 } // namespace WebCore

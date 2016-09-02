@@ -59,12 +59,13 @@ MockRealtimeAudioSource::MockRealtimeAudioSource(const String& name)
 
 void MockRealtimeAudioSource::updateSettings(RealtimeMediaSourceSettings& settings)
 {
-    settings.setVolume(50);
+    settings.setVolume(volume());
+    settings.setEchoCancellation(echoCancellation());
 }
 
 void MockRealtimeAudioSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
-    capabilities.setVolume(CapabilityValueOrRange(0, 1.0));
+    capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
     capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
 }
 

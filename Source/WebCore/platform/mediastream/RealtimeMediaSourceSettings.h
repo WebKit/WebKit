@@ -42,6 +42,8 @@ public:
 
     static const AtomicString& facingMode(RealtimeMediaSourceSettings::VideoFacingMode);
 
+    static RealtimeMediaSourceSettings::VideoFacingMode videoFacingModeEnum(const String&);
+
     explicit RealtimeMediaSourceSettings()
     {
     }

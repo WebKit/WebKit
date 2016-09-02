@@ -1,0 +1,97 @@
+Tests applyConstraints on a video stream track.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stream.getVideoTracks().length is 1
+PASS stream.getAudioTracks().length is 0
+PASS video.videoTracks.length is 1
+PASS video.audioTracks.length is 0
+
+** Constraint: {"width":640,"height":480,"frameRate":30} - set width, height, and frame rate to valid values.
+PASS settings['width'] is 640
+PASS settings['height'] is 480
+PASS settings['frameRate'] is 30
+
+** Constraint: {"width":320,"height":240} - change width and height, frame rate should remain unchanged.
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+PASS settings['frameRate'] is 30
+
+** Constraint: {"width":{"exact":2000}} - the 'exact' constraint can't be satisfied, promise should reject and no settings should change.
+PASS Promise was rejected
+PASS error.constraint is "width"
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+PASS settings['frameRate'] is 30
+
+** Constraint: {"width":640,"height":{"min":3000}} - the 'min' constraint can't be satisfied, promise should reject and no settings should change.
+PASS Promise was rejected
+PASS error.constraint is "height"
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+PASS settings['frameRate'] is 30
+
+** Constraint: {"frameRate":{"max":6}} - the 'max' constraint can't be satisfied, promise should reject and no settings should change.
+PASS Promise was rejected
+PASS error.constraint is "frameRate"
+PASS settings['frameRate'] is 30
+
+** Constraint: {"width":{"exact":400}} - the 'exact' constraint can be satisfied.
+PASS settings['width'] is 400
+PASS settings['height'] is 240
+
+** Constraint: {"width":{"min":300,"ideal":5000}} - the 'ideal' constraint can't be satisfied but the 'min' can, max should be chosen.
+PASS settings['width'] is 1920
+PASS settings['height'] is 240
+
+** Constraint: {"width":{"min":320,"ideal":1280},"height":{"min":480,"ideal":720}} - 'ideal' and 'min' constraints can be satisfied, 'ideal' should be chosen.
+PASS settings['width'] is 1280
+PASS settings['height'] is 720
+
+** Constraint: {"width":3000} - ideal width is greater than track capability, should be clamped to the maximum value.
+PASS settings['width'] is 1920
+
+** Constraint: {"width":160,"height":120,"frameRate":10} - all values are less than track capabilities, should be clamped to the minimum values.
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+PASS settings['frameRate'] is 15
+
+** Constraint: {"facingMode":"environment"} - set facing mode, width and height should remain unchanged
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+PASS settings['facingMode'] is "environment"
+
+** Constraint: {"facingMode":"USER","height":400} - illegal facing mode value should be ignored, height should change.
+PASS settings['facingMode'] is "environment"
+PASS settings['width'] is 320
+PASS settings['height'] is 400
+
+** Constraint: {"FACINGMODE":"user","frameRate":30} - unknown constraint should be ignored, frame rate should change.
+PASS settings['facingMode'] is "environment"
+PASS settings['frameRate'] is 30
+
+** Constraint: {"aspectRatio":"1.3333"} - aspect ratio should change width and height.
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+
+** Constraint: {"aspectRatio":"1.7778"} - new aspect ratio should again change width and height.
+PASS settings['width'] is 320
+PASS settings['height'] is 180
+
+** Constraint: {"width":1920} - when aspect ratio has been set, changing width should change height.
+PASS settings['width'] is 1920
+PASS settings['height'] is 1080
+
+** Constraint: {"height":576} - when aspect ratio has been set, changing height should change width.
+PASS settings['width'] is 1024
+PASS settings['height'] is 576
+
+** Constraint: {"deviceId":{"exact":"20983-20o198-109283-098-09812"}} - the 'exact' deviceID doesn't match, promise should reject.
+PASS Promise was rejected
+PASS error.constraint is "deviceId"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -312,6 +312,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
     m_playing = true;
     m_haveEverPlayed = true;
     scheduleDeferredTask([this] {
+        updateDisplayMode();
         updateReadyState();
     });
 }
