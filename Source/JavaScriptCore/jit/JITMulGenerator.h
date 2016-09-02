@@ -38,7 +38,8 @@ struct MathICGenerationState;
 
 class JITMulGenerator {
 public:
-    JITMulGenerator() { }
+    JITMulGenerator()
+    { }
 
     JITMulGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,
@@ -61,9 +62,9 @@ public:
     JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&);
     bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowJumpList, bool shouldEmitProfiling);
 
-    bool isLeftOperandValidConstant() const { return m_leftOperand.isPositiveConstInt32(); }
-    bool isRightOperandValidConstant() const { return m_rightOperand.isPositiveConstInt32(); }
-
+    static bool isLeftOperandValidConstant(SnippetOperand leftOperand) { return leftOperand.isPositiveConstInt32(); }
+    static bool isRightOperandValidConstant(SnippetOperand rightOperand) { return rightOperand.isPositiveConstInt32(); }
+    
     ArithProfile* arithProfile() const { return m_arithProfile; }
 
 private:

@@ -3471,12 +3471,13 @@ void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, boo
         rightOperand.setConstInt32(rightChild->asInt32());
 
     ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+    ASSERT(!(Generator::isLeftOperandValidConstant(leftOperand) && Generator::isRightOperandValidConstant(rightOperand)));
 
-    if (!mathIC->isLeftOperandValidConstant()) {
+    if (!Generator::isLeftOperandValidConstant(leftOperand)) {
         left = JSValueOperand(this, leftChild);
         leftRegs = left->jsValueRegs();
     }
-    if (!mathIC->isRightOperandValidConstant()) {
+    if (!Generator::isRightOperandValidConstant(rightOperand)) {
         right = JSValueOperand(this, rightChild);
         rightRegs = right->jsValueRegs();
     }
@@ -3511,10 +3512,10 @@ void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, boo
 
             auto innerLeftRegs = leftRegs;
             auto innerRightRegs = rightRegs;
-            if (mathIC->isLeftOperandValidConstant()) {
+            if (Generator::isLeftOperandValidConstant(leftOperand)) {
                 innerLeftRegs = resultRegs;
                 m_jit.moveValue(leftChild->asJSValue(), innerLeftRegs);
-            } else if (mathIC->isRightOperandValidConstant()) {
+            } else if (Generator::isRightOperandValidConstant(rightOperand)) {
                 innerRightRegs = resultRegs;
                 m_jit.moveValue(rightChild->asJSValue(), innerRightRegs);
             }
@@ -3542,10 +3543,10 @@ void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, boo
 
         });
     } else {
-        if (mathIC->isLeftOperandValidConstant()) {
+        if (Generator::isLeftOperandValidConstant(leftOperand)) {
             left = JSValueOperand(this, leftChild);
             leftRegs = left->jsValueRegs();
-        } else if (mathIC->isRightOperandValidConstant()) {
+        } else if (Generator::isRightOperandValidConstant(rightOperand)) {
             right = JSValueOperand(this, rightChild);
             rightRegs = right->jsValueRegs();
         }

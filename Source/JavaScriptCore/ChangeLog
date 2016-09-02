@@ -1,3 +1,38 @@
+2016-09-02  Caio Lima  <ticaiolima@gmail.com>
+
+        Register usage optimization in mathIC when LHS and RHS are constants isn't configured correctly
+        https://bugs.webkit.org/show_bug.cgi?id=160802
+
+        Reviewed by Saam Barati.
+
+        This patch is fixing a broken mechanism of MathIC that avoids allocate
+        a register to LHS or RHS if one of these operands are proven as valid
+        constant for JIT*Generator. In previous implementation, even if the
+        JIT*Generator was not using an operand register because it was proven as a
+        constant, compileMathIC and emitICFast were allocating a register for
+        it. This was broken because mathIC->isLeftOperandValidConstant and
+        mathIC->isLeftOperandValidConstant were being called before its Generator be
+        properly initialized. We changed this mechanism to enable Generators write
+        their validConstant rules using static methods isLeftOperandValidConstant(SnippetOperand)
+        and isRightOperandValidConstant(SnippetOperand).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::JITAddGenerator):
+        (JSC::JITAddGenerator::isLeftOperandValidConstant):
+        (JSC::JITAddGenerator::isRightOperandValidConstant):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        * jit/JITMathIC.h:
+        * jit/JITMulGenerator.h:
+        (JSC::JITMulGenerator::JITMulGenerator):
+        (JSC::JITMulGenerator::isLeftOperandValidConstant):
+        (JSC::JITMulGenerator::isRightOperandValidConstant):
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::isLeftOperandValidConstant):
+        (JSC::JITSubGenerator::isRightOperandValidConstant):
+
 2016-09-02  JF Bastien  <jfbastien@apple.com>
 
         GetByValWithThis: fix opInfo in DFG creation
