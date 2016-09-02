@@ -1,3 +1,9 @@
+2016-09-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ build fix when compiling with Clang.
+
+        * WebProcess/WebPage/gtk/AcceleratedSurface.cpp: Include WebPage.h.
+
 2016-09-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix after r205327
