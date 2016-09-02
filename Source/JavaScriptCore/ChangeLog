@@ -1,3 +1,17 @@
+2016-09-01  JF Bastien  <jfbastien@apple.com>
+
+        jsc: provide printErr()
+        https://bugs.webkit.org/show_bug.cgi?id=161513
+
+        Reviewed by Mark Lam.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (printInternal): renamed from functionPrint, add error checking
+        (functionPrintStdOut): punt to printInternal
+        (functionPrintStdErr): punt to printInternal
+        (functionPrint): Deleted.
+
 2016-09-01  Mark Lam  <mark.lam@apple.com>
 
         Move some JSObject and JSArray inline functions to their respective Inlines.h files.
