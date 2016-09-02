@@ -1,3 +1,9 @@
+2016-09-01  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2016-09-01  Tim Horton  <timothy_horton@apple.com>
 
         Provide a TestWebKitAPI-wide WKNavigationDelegate to simplify tests

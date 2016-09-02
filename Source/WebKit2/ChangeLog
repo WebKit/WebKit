@@ -1,3 +1,9 @@
+2016-09-01  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-09-01  Anders Carlsson  <andersca@apple.com>
 
         Use WTF::Function for completion handlers in API::UIClient

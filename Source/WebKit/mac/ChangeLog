@@ -1,3 +1,9 @@
+2016-09-01  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Clean up TextRun-related code
