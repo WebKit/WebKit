@@ -225,6 +225,8 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
     gtk_box_pack_start(GTK_BOX(tab), dialog, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(tab), dialog, 0);
     gtk_widget_show(dialog);
+
+    return TRUE;
 }
 
 #if GTK_CHECK_VERSION(3, 12, 0)
