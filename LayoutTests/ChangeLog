@@ -1,3 +1,14 @@
+2016-09-02  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERT_NOT_REACHED() is touched in WebCore::valueForLength
+        https://bugs.webkit.org/show_bug.cgi?id=123337
+        <rdar://problem/27684121>
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/assert-on-non-resolvable-row-dimension-expected.txt: Added.
+        * fast/table/assert-on-non-resolvable-row-dimension.html: Added.
+
 2016-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Temporarily break customElements.whenDefined to remove flaky crashes
