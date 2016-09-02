@@ -31,7 +31,6 @@ class Document;
 class Element;
 class SVGCursorElement;
 class SVGElement;
-class StyleCachedImage;
 
 class CSSCursorImageValue final : public CSSValue {
 public:
@@ -54,7 +53,9 @@ public:
     String customCSSText() const;
 
     void loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
-    StyleCachedImage& styleImage(const Document&);
+    CachedImage* cachedImage() const;
+
+    float scaleFactor() const;
 
     void removeReferencedElement(SVGElement*);
 

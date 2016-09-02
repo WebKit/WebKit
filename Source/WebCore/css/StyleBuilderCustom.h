@@ -46,6 +46,7 @@
 #include "SVGElement.h"
 #include "SVGRenderStyle.h"
 #include "StyleBuilderConverter.h"
+#include "StyleCachedImage.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
 #include "StyleResolver.h"
@@ -1313,12 +1314,12 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
                 styleResolver.style()->setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(item.get())), didSet);
             didSet = true;
         } else if (is<CSSImageSetValue>(item.get())) {
-            styleResolver.style()->setContent(styleResolver.setOrPendingFromValue(CSSPropertyContent, downcast<CSSImageSetValue>(item.get())), didSet);
+            styleResolver.style()->setContent(styleResolver.styleCachedImageFromValue(CSSPropertyContent, item), didSet);
             didSet = true;
         }
 
         if (is<CSSImageValue>(item.get())) {
-            styleResolver.style()->setContent(styleResolver.cachedOrPendingFromValue(CSSPropertyContent, downcast<CSSImageValue>(item.get())), didSet);
+            styleResolver.style()->setContent(styleResolver.styleCachedImageFromValue(CSSPropertyContent, item), didSet);
             didSet = true;
             continue;
         }

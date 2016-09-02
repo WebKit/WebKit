@@ -45,10 +45,7 @@ class StyleImage : public RefCounted<StyleImage> {
 public:
     virtual ~StyleImage() { }
 
-    bool operator==(const StyleImage& other) const
-    {
-        return &other == this || (data() && data() == other.data());
-    }
+    virtual bool operator==(const StyleImage& other) const = 0;
 
     virtual PassRefPtr<CSSValue> cssValue() const = 0;
 
