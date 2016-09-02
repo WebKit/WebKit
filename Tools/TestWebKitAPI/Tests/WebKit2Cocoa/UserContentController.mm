@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKUserScript.h>
@@ -78,14 +79,10 @@ TEST(WKUserContentController, ScriptMessageHandlerBasicPost)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    [webView _test_waitForDidFinishNavigation];
 
     [webView evaluateJavaScript:@"window.webkit.messageHandlers.testHandler.postMessage('Hello')" completionHandler:nil];
 
@@ -154,14 +151,10 @@ TEST(WKUserContentController, ScriptMessageHandlerBasicRemove)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    [webView _test_waitForDidFinishNavigation];
 
     // Test that handlerToRemove was succesfully added.
     [webView evaluateJavaScript:
@@ -202,14 +195,10 @@ TEST(WKUserContentController, ScriptMessageHandlerCallRemovedHandler)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    [webView _test_waitForDidFinishNavigation];
 
     [webView evaluateJavaScript:@"var handlerToRemove = window.webkit.messageHandlers.handlerToRemove;" completionHandler:nil];
 
@@ -237,12 +226,9 @@ static RetainPtr<WKWebView> webViewForScriptMessageHandlerMultipleHandlerRemoval
     [[configurationCopy userContentController] addScriptMessageHandler:handler.get() name:@"handlerToRemove"];
     [[configurationCopy userContentController] addScriptMessageHandler:handler.get() name:@"handlerToPost"];
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationCopy.get()]);
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     return webView;
 }
@@ -282,14 +268,9 @@ TEST(WKUserContentController, ScriptMessageHandlerWithNavigation)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     [webView evaluateJavaScript:@"window.webkit.messageHandlers.testHandler.postMessage('First Message')" completionHandler:nil];
 
@@ -300,10 +281,8 @@ TEST(WKUserContentController, ScriptMessageHandlerWithNavigation)
     receivedScriptMessage = false;
     lastScriptMessage = nullptr;
 
-
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     [webView evaluateJavaScript:@"window.webkit.messageHandlers.testHandler.postMessage('Second Message')" completionHandler:nil];
 
@@ -322,14 +301,10 @@ TEST(WKUserContentController, ScriptMessageHandlerReplaceWithSameName)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    [webView _test_waitForDidFinishNavigation];
 
     // Test that handlerToReplace was succesfully added.
     [webView evaluateJavaScript:@"window.webkit.messageHandlers.handlerToReplace.postMessage('PASS1');" completionHandler:nil];
@@ -381,12 +356,8 @@ TEST(WKUserContentController, AddUserStyleSheetBeforeCreatingView)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
 }
@@ -395,12 +366,8 @@ TEST(WKUserContentController, AddUserStyleSheetAfterCreatingView)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
@@ -419,12 +386,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlyMainFrame)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     [webView loadHTMLString:@"<body style='background-color: red;'><iframe></iframe></body>" baseURL:nil];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     // The main frame should be affected.
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -442,12 +405,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingAllFrames)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     [webView loadHTMLString:@"<body style='background-color: red;'><iframe></iframe></body>" baseURL:nil];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     // The main frame should be affected.
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);

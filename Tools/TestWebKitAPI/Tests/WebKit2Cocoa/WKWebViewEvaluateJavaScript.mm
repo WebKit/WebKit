@@ -30,23 +30,12 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKErrorPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool isDone;
-
-@interface EvaluateJavaScriptNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation EvaluateJavaScriptNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    isDone = true;
-}
-
-@end
 
 TEST(WKWebView, EvaluateJavaScriptBlockCrash)
 {
@@ -76,12 +65,10 @@ TEST(WKWebView, EvaluateJavaScriptBlockCrash)
 TEST(WKWebView, EvaluateJavaScriptErrorCases)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    RetainPtr<EvaluateJavaScriptNavigationDelegate> delegate = adoptNS([[EvaluateJavaScriptNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    [webView _test_waitForDidFinishNavigation];
 
     [webView evaluateJavaScript:@"document.body" completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);

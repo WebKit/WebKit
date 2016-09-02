@@ -26,29 +26,15 @@
 #import "config.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 
 #import <WebKit/WKBackForwardListPrivate.h>
-#import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKSessionState.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
-
-static bool isDone;
-
-@interface WKBackForwardListTestNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation WKBackForwardListTestNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    isDone = true;
-}
-
-@end
 
 static NSString *loadableURL1 = @"data:text/html,no%20error%20A";
 static NSString *loadableURL2 = @"data:text/html,no%20error%20B";
@@ -57,20 +43,15 @@ static NSString *loadableURL3 = @"data:text/html,no%20error%20C";
 TEST(WKBackForwardList, RemoveCurrentItem)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
-    auto controller = adoptNS([[WKBackForwardListTestNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:controller.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL1]]];
-    TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
+    [webView _test_waitForDidFinishNavigation];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL2]]];
-    TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
+    [webView _test_waitForDidFinishNavigation];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL3]]];
-    TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
+    [webView _test_waitForDidFinishNavigation];
 
     WKBackForwardList *list = [webView backForwardList];
     EXPECT_EQ((NSUInteger)2, list.backList.count);

@@ -30,6 +30,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "UserContentWorldProtocol.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -44,20 +45,6 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-@interface CancelFontSubresourceNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation CancelFontSubresourceNavigationDelegate
-
-static bool navigationComplete = false;
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    navigationComplete = true;
-}
-
-@end
-
 TEST(CancelLoading, CancelFontSubresource)
 {
     NSString * const testPlugInClassName = @"CancelFontSubresourcePlugIn";
@@ -66,13 +53,9 @@ TEST(CancelLoading, CancelFontSubresource)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    CancelFontSubresourceNavigationDelegate *delegate = [[CancelFontSubresourceNavigationDelegate alloc] init];
-    [webView setNavigationDelegate:delegate];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"webfont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&navigationComplete);
+    [webView _test_waitForDidFinishNavigation];
 }
 
 #endif

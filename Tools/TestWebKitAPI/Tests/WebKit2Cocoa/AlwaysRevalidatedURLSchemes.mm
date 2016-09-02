@@ -28,13 +28,13 @@
 #if WK_API_ENABLED
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKBrowsingContextController.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 static NSString * const customScheme = @"custom";
-static bool isDone;
 static size_t loadsStarted;
 
 @interface AlwaysRevalidatedURLSchemeProtocol : NSURLProtocol
@@ -74,18 +74,6 @@ static size_t loadsStarted;
 
 @end
 
-@interface AlwaysRevalidatedURLSchemesDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation AlwaysRevalidatedURLSchemesDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    isDone = true;
-}
-
-@end
-
 TEST(WebKit2, AlwaysRevalidatedURLSchemes)
 {
     @autoreleasepool {
@@ -99,18 +87,15 @@ TEST(WebKit2, AlwaysRevalidatedURLSchemes)
         auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [webViewConfiguration setProcessPool:processPool.get()];
 
-        auto navigationDelegate = adoptNS([[AlwaysRevalidatedURLSchemesDelegate alloc] init]);
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration.get()]);
-        [webView setNavigationDelegate:navigationDelegate.get()];
 
         NSString *htmlString = [NSString stringWithFormat:@"<!DOCTYPE html><body><img src='%@://image'>", customScheme];
         [webView loadHTMLString:htmlString baseURL:nil];
-        TestWebKitAPI::Util::run(&isDone);
+        [webView _test_waitForDidFinishNavigation];
         EXPECT_EQ(1UL, loadsStarted);
 
-        isDone = false;
         [webView loadHTMLString:htmlString baseURL:nil];
-        TestWebKitAPI::Util::run(&isDone);
+        [webView _test_waitForDidFinishNavigation];
         EXPECT_EQ(2UL, loadsStarted);
 
         [WKBrowsingContextController unregisterSchemeForCustomProtocol:customScheme];

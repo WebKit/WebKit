@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -35,28 +36,9 @@ static bool shrinkToFitDone;
 static bool shrinkToFitAfterNavigationDone;
 static bool shrinkToFitDisabledDone;
 
-@interface ShrinkToFitNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation ShrinkToFitNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    // After loading a wide page, the view should be scaled to fit the width of the document.
-    [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
-        EXPECT_EQ(808, [result integerValue]);
-        shrinkToFitAfterNavigationDone = true;
-    }];
-}
-
-@end
-
 TEST(WebKit2, ShrinkToFit)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
-
-    ShrinkToFitNavigationDelegate *delegate = [[ShrinkToFitNavigationDelegate alloc] init];
-    [webView setNavigationDelegate:delegate];
 
     [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(100, [result integerValue]);
@@ -69,6 +51,13 @@ TEST(WebKit2, ShrinkToFit)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    // After loading a wide page, the view should be scaled to fit the width of the document.
+    [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
+        EXPECT_EQ(808, [result integerValue]);
+        shrinkToFitAfterNavigationDone = true;
+    }];
 
     TestWebKitAPI::Util::run(&shrinkToFitAfterNavigationDone);
 

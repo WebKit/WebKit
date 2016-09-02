@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,39 +24,62 @@
  */
 
 #import "config.h"
-#import <WebKit/WKFoundation.h>
+#import "TestNavigationDelegate.h"
+
+#import "Utilities.h"
+#import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import "TestNavigationDelegate.h"
-#import <wtf/RetainPtr.h>
+@implementation TestNavigationDelegate
 
-static bool isDone;
-
-TEST(WKWebView, ProvisionalURLNotChange)
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    auto webView = adoptNS([[WKWebView alloc] init]);
+    if (_didFailProvisionalNavigation)
+        _didFailProvisionalNavigation(webView, navigation, error);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    if (_didFinishNavigation)
+        _didFinishNavigation(webView, navigation);
+}
+
+- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents
+{
+    if (_renderingProgressDidChange)
+        _renderingProgressDidChange(webView, progressEvents);
+}
+
+- (void)waitForDidFinishNavigation
+{
+    EXPECT_FALSE(self.didFinishNavigation);
+
+    __block bool finished = false;
+    self.didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finished = true;
+    };
+
+    TestWebKitAPI::Util::run(&finished);
+
+    self.didFinishNavigation = nil;
+}
+
+@end
+
+@implementation WKWebView (TestWebKitAPIExtras)
+
+- (void)_test_waitForDidFinishNavigation
+{
+    EXPECT_FALSE(self.navigationDelegate);
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
-    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
-        isDone = true;
-    }];
-    [navigationDelegate setDidFailProvisionalNavigation:^(WKWebView *, WKNavigation *, NSError *) {
-        isDone = true;
-    }];
-    [webView setNavigationDelegate:navigationDelegate.get()];
+    self.navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForDidFinishNavigation];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,start"]]];
-    TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.webkit.org!"]]];
-    TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
-
-    EXPECT_STREQ([webView URL].absoluteString.UTF8String, "data:text/html,start");
+    self.navigationDelegate = nil;
 }
+
+@end
 
 #endif

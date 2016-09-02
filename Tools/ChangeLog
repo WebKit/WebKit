@@ -1,3 +1,92 @@
+2016-09-01  Tim Horton  <timothy_horton@apple.com>
+
+        Provide a TestWebKitAPI-wide WKNavigationDelegate to simplify tests
+        https://bugs.webkit.org/show_bug.cgi?id=161413
+
+        Reviewed by Simon Fraser.
+
+        Add TestNavigationDelegate, which provides block properties to make
+        writing tests feel a little more natural (the callbacks can be inline),
+        and also add WKWebView _test_waitForDidFinishNavigation, so that many
+        tests don't even need to manually allocate a navigation delegate at all.
+
+        Adopt in some of the simpler tests; there are a few navigation delegates
+        left behind, which we can move to the new model in the future.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/WKBackForwardList.mm:
+        (TEST):
+        (-[WKBackForwardListTestNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AlwaysRevalidatedURLSchemes.mm:
+        (TEST):
+        (-[AlwaysRevalidatedURLSchemesDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+        (animatedResizeWebView):
+        (-[AnimatedResizeNavigationDelegate _webView:renderingProgressDidChange:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AutoLayoutIntegration.mm:
+        (-[AutoLayoutWKWebView initWithFrame:configuration:]):
+        (-[AutoLayoutWKWebView load:withWidth:expectingContentSize:resettingWidth:]):
+        (TEST):
+        (-[AutoLayoutNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/CancelFontSubresource.mm:
+        (TEST):
+        (-[CancelFontSubresourceNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/CommandBackForward.mm:
+        (WebKit2_CommandBackForwardTestWKWebView::SetUp):
+        (WebKit2_CommandBackForwardTestWKWebView::loadFiles):
+        (TEST_F):
+        (-[CommandBackForwardNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DataDetection.mm:
+        (expectLinkCount):
+        (TEST):
+        (-[DataDetectionNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FindInPage.mm:
+        (TEST):
+        (-[FindInPageNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FixedLayoutSize.mm:
+        (TEST):
+        (-[FixedLayoutSizeNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBDatabaseProcessKill.mm:
+        (TEST):
+        (-[DatabaseProcessKillNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBPersistence.mm:
+        (-[IndexedDBNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ProvisionalURLNotChange.mm:
+        (TEST):
+        (-[ProvisionalURLNotChangeController webView:didFinishNavigation:]): Deleted.
+        (-[ProvisionalURLNotChangeController webView:didFailProvisionalNavigation:withError:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RequiresUserActionForPlayback.mm:
+        (RequiresUserActionForPlaybackTest::createWebView):
+        (RequiresUserActionForPlaybackTest::testVideoWithAudio):
+        (RequiresUserActionForPlaybackTest::testVideoWithoutAudio):
+        (RequiresUserActionForPlaybackTest::testAudioOnly):
+        (-[RequiresUserActionForPlaybackNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ShrinkToFit.mm:
+        (TEST):
+        (-[ShrinkToFitNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        (TEST):
+        (webViewForScriptMessageHandlerMultipleHandlerRemovalTest):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentWorld.mm:
+        (TEST):
+        (-[SimpleDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKPDFViewResizeCrash.mm:
+        (TEST):
+        (-[WKPDFViewResizeNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        (-[EvaluateJavaScriptNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewTextInput.mm:
+        (TEST):
+        (-[DummyNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h: Added.
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm: Added.
+        (-[TestNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[TestNavigationDelegate webView:didFinishNavigation:]):
+        (-[TestNavigationDelegate _webView:renderingProgressDidChange:]):
+        (-[TestNavigationDelegate waitForDidFinishNavigation]):
+        (-[WKWebView _test_waitForDidFinishNavigation]):
+
 2016-09-01  Ricky Mondello  <rmondello@apple.com>
 
         YouTube Flash plug-in replacement facility should not insert showinfo=0 into iframe URLs
