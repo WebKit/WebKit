@@ -56,6 +56,8 @@ onload = function() {
     shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'search').set.call(frames[0].location, 1)", "SecurityError");
     shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hash').set.call(frames[0].location, 1)", "SecurityError");
 
+    shouldThrowErrorName("Object.defineProperty(frames[0].location, 'foo', { value: 1 })", "SecurityError");
+
     // Setting 'href' cross origin should be allowed.
     shouldNotThrow("frames[0].location.href = 'about:blank'");
     setTimeout(function() {

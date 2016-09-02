@@ -47,6 +47,7 @@ PASS Object.getOwnPropertyDescriptor(window.location, 'port').set.call(frames[0]
 PASS Object.getOwnPropertyDescriptor(window.location, 'pathname').set.call(frames[0].location, 1) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
 PASS Object.getOwnPropertyDescriptor(window.location, 'search').set.call(frames[0].location, 1) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
 PASS Object.getOwnPropertyDescriptor(window.location, 'hash').set.call(frames[0].location, 1) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS Object.defineProperty(frames[0].location, 'foo', { value: 1 }) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
 PASS frames[0].location.href = 'about:blank' did not throw exception.
 PASS frames[0].location.href is "about:blank"
 PASS successfullyParsed is true
