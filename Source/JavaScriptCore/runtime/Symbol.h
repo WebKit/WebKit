@@ -49,7 +49,7 @@ public:
 
     static Symbol* create(VM&);
     static Symbol* create(ExecState*, JSString* description);
-    static Symbol* create(VM&, SymbolImpl& uid);
+    JS_EXPORT_PRIVATE static Symbol* create(VM&, SymbolImpl& uid);
 
     const PrivateName& privateName() const { return m_privateName; }
     String descriptiveString() const;

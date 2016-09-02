@@ -58,7 +58,7 @@ void Symbol::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    vm.symbolImplToSymbolMap.set(m_privateName.uid(), this);
+    vm.symbolImplToSymbolMap.set(&m_privateName.uid(), this);
 }
 
 inline SymbolObject* SymbolObject::create(VM& vm, JSGlobalObject* globalObject, Symbol* symbol)

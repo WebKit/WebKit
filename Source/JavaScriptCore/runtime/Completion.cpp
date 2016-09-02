@@ -142,7 +142,7 @@ static Symbol* createSymbolForEntryPointModule(VM& vm)
 {
     // Generate the unique key for the source-provided module.
     PrivateName privateName(PrivateName::Description, "EntryPointModule");
-    return Symbol::create(vm, *privateName.uid());
+    return Symbol::create(vm, privateName.uid());
 }
 
 static JSInternalPromise* rejectPromise(ExecState* exec, JSGlobalObject* globalObject)

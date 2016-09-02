@@ -85,7 +85,7 @@ inline Identifier Identifier::fromUid(ExecState* exec, UniquedStringImpl* uid)
 
 inline Identifier Identifier::fromUid(const PrivateName& name)
 {
-    return *name.uid();
+    return name.uid();
 }
 
 template<unsigned charactersCount>

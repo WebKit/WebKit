@@ -45,7 +45,7 @@ public:
     }
 
     PropertyName(const PrivateName& propertyName)
-        : m_impl(propertyName.uid())
+        : m_impl(&propertyName.uid())
     {
         ASSERT(m_impl);
         ASSERT(m_impl->isSymbol());

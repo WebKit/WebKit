@@ -117,12 +117,12 @@ EncodedJSValue JSC_HOST_CALL symbolConstructorKeyFor(ExecState* exec)
     if (!symbolValue.isSymbol())
         return JSValue::encode(throwTypeError(exec, scope, SymbolKeyForTypeError));
 
-    SymbolImpl* uid = asSymbol(symbolValue)->privateName().uid();
-    if (!uid->symbolRegistry())
+    SymbolImpl& uid = asSymbol(symbolValue)->privateName().uid();
+    if (!uid.symbolRegistry())
         return JSValue::encode(jsUndefined());
 
-    ASSERT(uid->symbolRegistry() == &vm.symbolRegistry());
-    return JSValue::encode(jsString(exec, vm.symbolRegistry().keyForSymbol(*uid)));
+    ASSERT(uid.symbolRegistry() == &vm.symbolRegistry());
+    return JSValue::encode(jsString(exec, vm.symbolRegistry().keyForSymbol(uid)));
 }
 
 } // namespace JSC

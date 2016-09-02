@@ -1,3 +1,36 @@
+2016-09-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add toJS for JSC::PrivateName
+        https://bugs.webkit.org/show_bug.cgi?id=161522
+
+        Reviewed by Ryosuke Niwa.
+
+        Add the export annotation.
+        And we perform refactoring RefPtr<SymbolImpl> => Ref<SymbolImpl> for PrivateName,
+        since PrivateName never holds null SymbolImpl pointer. And along with this change,
+        we changed SymbolImpl* to SymbolImpl& in PrivateName::uid() callers.
+
+        * runtime/Completion.cpp:
+        (JSC::createSymbolForEntryPointModule):
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::fromUid):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::setFunctionName):
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+        (JSC::PrivateName::uid): Ugly const_cast. But const annotation is meaningless for SymbolImpl.
+        StringImpl should be observed as an immutable object. (Of course, its hash members etc. are mutable.
+        But most of the users (One of the exceptions is the concurrent JIT compiling thread!) should not care about this.)
+        (JSC::PrivateName::operator==):
+        (JSC::PrivateName::operator!=):
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::PropertyName):
+        * runtime/Symbol.cpp:
+        (JSC::Symbol::finishCreation):
+        * runtime/Symbol.h:
+        * runtime/SymbolConstructor.cpp:
+        (JSC::symbolConstructorKeyFor):
+
 2016-09-01  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

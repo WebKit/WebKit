@@ -599,11 +599,11 @@ void JSFunction::setFunctionName(ExecState* exec, JSValue value)
     ASSERT(jsExecutable()->ecmaName().isNull());
     String name;
     if (value.isSymbol()) {
-        SymbolImpl* uid = asSymbol(value)->privateName().uid();
-        if (uid->isNullSymbol())
+        SymbolImpl& uid = asSymbol(value)->privateName().uid();
+        if (uid.isNullSymbol())
             name = emptyString();
         else
-            name = makeString('[', String(uid), ']');
+            name = makeString('[', String(&uid), ']');
     } else {
         VM& vm = exec->vm();
         JSString* jsStr = value.toString(exec);
