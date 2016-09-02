@@ -1,3 +1,11 @@
+2016-09-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix Mac CMake build, missing _WKRemoteWebInspectorViewController.mm
+
+        Unreviewed build fix.
+
+        * PlatformMac.cmake:
+
 2016-09-02  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; partial roll out of r205365 to remove unintentional change in WKWebView.mm.
