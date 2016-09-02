@@ -1,3 +1,24 @@
+2016-09-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove some more useless cases from FTL Capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=161466
+
+        Reviewed by Geoffrey Garen.
+
+        Some cases do not make sense:
+        -In: Fixup only generate CellUse.
+        -PutByIdXXX: same.
+        -GetIndexedPropertyStorage: those cases are the only ones supported
+         by DFG. We would have crashed in SpeculativeJIT if other modes
+         were generated.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+
 2016-09-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r205354 because it caused JSC test failures
