@@ -1,3 +1,20 @@
+2016-09-02  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Web Inspector: NetworkTimelineOverviewGraph.MinimumBarPaddingTime is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=161510
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        (WebInspector.NetworkTimelineOverviewGraph.prototype._networkTimelineRecordAdded):
+        (WebInspector.NetworkTimelineOverviewGraph):
+        Calculate the minimumBarPaddingTime in similar ways to TimelineRecordBar,
+        by using MinimumWidthPixel, MinimumMarginPixel and MinimumDurationPerPixel as the secondsPerPixel value.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        Make Minimum/MaximumDurationPerPixel public properties.
+
 2016-09-01  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add visual indicator for shadow content in DOM tree

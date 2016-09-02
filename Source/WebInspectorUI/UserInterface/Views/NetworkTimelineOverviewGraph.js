@@ -114,13 +114,15 @@ WebInspector.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph e
             return a.startTime - b.startTime;
         }
 
+        let minimumBarPaddingTime = WebInspector.TimelineOverview.MinimumDurationPerPixel * (WebInspector.TimelineRecordBar.MinimumWidthPixels + WebInspector.TimelineRecordBar.MinimumMarginPixels)
+
         // Try to find a row that has room and does not overlap a previous record.
         var foundRowForRecord = false;
         for (var i = 0; i < this._timelineRecordGridRows.length; ++i) {
             var rowRecords = this._timelineRecordGridRows[i];
             var lastRecord = rowRecords.lastValue;
 
-            if (!lastRecord || lastRecord.endTime + WebInspector.NetworkTimelineOverviewGraph.MinimumBarPaddingTime <= resourceTimelineRecord.startTime) {
+            if (!lastRecord || lastRecord.endTime + minimumBarPaddingTime <= resourceTimelineRecord.startTime) {
                 insertObjectIntoSortedArray(resourceTimelineRecord, rowRecords, compareByStartTime);
                 this._nextDumpRow = i + 1;
                 foundRowForRecord = true;
@@ -135,7 +137,7 @@ WebInspector.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph e
                 var lastRecord = rowRecords.lastValue;
                 console.assert(lastRecord);
 
-                if (lastRecord.activeStartTime + WebInspector.NetworkTimelineOverviewGraph.MinimumBarPaddingTime <= resourceTimelineRecord.startTime) {
+                if (lastRecord.activeStartTime + minimumBarPaddingTime <= resourceTimelineRecord.startTime) {
                     insertObjectIntoSortedArray(resourceTimelineRecord, rowRecords, compareByStartTime);
                     this._nextDumpRow = i + 1;
                     foundRowForRecord = true;
