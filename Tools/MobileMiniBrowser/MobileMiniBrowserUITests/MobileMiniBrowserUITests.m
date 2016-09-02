@@ -60,18 +60,8 @@
     XCUIElement *clearButton = urlField.buttons[@"Clear text"];
     if (clearButton.exists)
         [clearButton tap];
-    [urlField typeText:@"http://test-safari.apple.com/"];
+    [urlField typeText:@"bundle:/looping.html"];
     [app.buttons[@"Go To URL"] tap];
-
-    XCUIElement *captions = app.links[@"Captions"];
-    [self expectationForPredicate:exists evaluatedWithObject:captions handler:nil];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [captions tap];
-
-    XCUIElement *viewInPage = app.links[@"Video in page"];
-    [self expectationForPredicate:exists evaluatedWithObject:viewInPage handler:nil];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [viewInPage tap];
 
     XCUIElement *startPlayback = app.buttons[@"Start Playback"];
     [self expectationForPredicate:exists evaluatedWithObject:startPlayback handler:nil];

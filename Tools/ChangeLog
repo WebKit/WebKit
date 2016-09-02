@@ -1,3 +1,42 @@
+2016-08-31  Jer Noble  <jer.noble@apple.com>
+
+        Refactor MobileMiniBrowser into an application framework to allow external XCTesting
+        https://bugs.webkit.org/show_bug.cgi?id=161462
+
+        Reviewed by Eric Carlson.
+
+        XCTest targets need to be in the same project as the application which they're testing. To facilitate
+        having external projects with XCTest targets, move the application's implementation into a framework
+        that can be included with a bare-bones application shell for testing.
+
+        Simultaneously, add the ability to load files from within the new framework's bundle by using a
+        'bundle:/' URL scheme. Update the tests to use this new bundle URL and remove the dependency on
+        an external server for testing.
+
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+        * MobileMiniBrowser/MobileMiniBrowser/Base.lproj/LaunchScreen.storyboard:
+        * MobileMiniBrowser/MobileMiniBrowser/Info.plist:
+        * MobileMiniBrowser/MobileMiniBrowser/main.m:
+        * MobileMiniBrowser/MobileMiniBrowserFramework/AppDelegate.h: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/AppDelegate.h.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/AppDelegate.m: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/AppDelegate.m.
+        (-[AppDelegate application:didFinishLaunchingWithOptions:]): Manually instantiate the main view
+            controller from the framework's bundle.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/Assets.xcassets/AppIcon.appiconset/Contents.json: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/Assets.xcassets/AppIcon.appiconset/Contents.json.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/Base.lproj/Main.storyboard: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/Base.lproj/Main.storyboard.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/Info.plist: Added.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/MobileMiniBrowser.h: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/AppDelegate.h.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/TabViewController.h: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/TabViewController.h.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/TabViewController.m: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/TabViewController.m.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/WebViewController.h: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/WebViewController.h.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/WebViewController.m: Renamed from Tools/MobileMiniBrowser/MobileMiniBrowser/WebViewController.m.
+        (+[NSURL __bundleURLForFileURL:bundle:]): Add utility method.
+        (+[NSURL __fileURLForBundleURL:bundle:]): Ditto.
+        (-[WebViewController navigateTo:]): Support loading "bundle:/" URLs which are really just "file:" URLs
+            pointing to the framework's resources directory.
+        (-[WebViewController observeValueForKeyPath:ofObject:change:context:]): Ditto.
+        * MobileMiniBrowser/MobileMiniBrowserUITests/MobileMiniBrowserUITests.m:
+        (-[MobileMiniBrowserUITests testBasicVideoPlayback]):
+
 2016-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         Fix --no-sample-on-timeout command line argument

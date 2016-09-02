@@ -31,6 +31,28 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 
+@implementation NSURL (BundleURLMethods)
++ (NSURL *)__bundleURLForFileURL:(NSURL *)url bundle:(NSBundle *)bundle
+{
+    if (![url.scheme isEqualToString:@"file"])
+        return nil;
+    NSString *resourcePath = [bundle.resourcePath stringByAppendingString:@"/"];
+    if (![url.path hasPrefix:resourcePath])
+        return nil;
+    NSURLComponents *bundleComponents = [[NSURLComponents alloc] init];
+    bundleComponents.scheme = @"bundle";
+    bundleComponents.path = [url.path substringFromIndex:resourcePath.length];
+    return [bundleComponents.URL copy];
+}
+
++ (NSURL *)__fileURLForBundleURL:(NSURL *)url bundle:(NSBundle *)bundle
+{
+    if (![url.scheme isEqualToString:@"bundle"])
+        return nil;
+    return [bundle.resourceURL URLByAppendingPathComponent:url.path];
+}
+@end
+
 @interface WebViewController () <WKNavigationDelegate> {
     WKWebView *_currentWebView;
 }
@@ -90,12 +112,18 @@ void* URLContext = &URLContext;
     NSString* requestedDestination = self.urlField.text;
     if ([requestedDestination rangeOfString:@"^[\\p{Alphabetic}]+:" options:(NSRegularExpressionSearch | NSCaseInsensitiveSearch | NSAnchoredSearch)].location == NSNotFound)
         requestedDestination = [@"http://" stringByAppendingString:requestedDestination];
-    [self.currentWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:requestedDestination]]];
+    NSURL* requestedURL = [NSURL URLWithString:requestedDestination];
+    if ([requestedURL.scheme isEqualToString:@"bundle"]) {
+        NSBundle *frameworkBundle = [NSBundle bundleForClass:[WebViewController class]];
+        requestedURL = [NSURL __fileURLForBundleURL:requestedURL bundle:frameworkBundle];
+        [self.currentWebView loadFileURL:requestedURL allowingReadAccessToURL:frameworkBundle.resourceURL];
+    }
+    [self.currentWebView loadRequest:[NSURLRequest requestWithURL:requestedURL]];
 }
 
 - (IBAction)showTabs:(id)sender
 {
-    [self presentViewController:self.tabViewController animated:YES completion:^{ }];
+    [self presentViewController:self.tabViewController animated:YES completion:nil];
     self.tabViewController.popoverPresentationController.barButtonItem = self.tabButton;
 }
 
@@ -173,7 +201,7 @@ void* URLContext = &URLContext;
 
 #pragma mark Navigation Delegate
 
-- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error;
+- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
 {
     [webView loadHTMLString:[error description] baseURL:nil];
 }
@@ -186,10 +214,12 @@ void* URLContext = &URLContext;
         float value = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
         [self.progressView setProgress:value animated:YES];
     } else if (context == URLContext) {
-        id newURLValue = [change valueForKey:NSKeyValueChangeNewKey];
-        if ([newURLValue isKindOfClass:[NSURL class]])
+        NSURL *newURLValue = [change valueForKey:NSKeyValueChangeNewKey];
+        if ([newURLValue isKindOfClass:[NSURL class]]) {
+            if ([newURLValue.scheme isEqualToString:@"file"])
+                newURLValue = [NSURL __bundleURLForFileURL:newURLValue bundle:[NSBundle bundleForClass:[WebViewController class]]];
             self.urlField.text = [newURLValue absoluteString];
-        else if ([newURLValue isKindOfClass:[NSNull class]])
+        } else if ([newURLValue isKindOfClass:[NSNull class]])
             self.urlField.text = @"";
     } else if (context == TitleContext)
         [self.tabViewController.tableView reloadData];
