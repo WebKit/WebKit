@@ -1,3 +1,25 @@
+2016-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Distinguish between paint advances and base advances
+        https://bugs.webkit.org/show_bug.cgi?id=160892
+
+        Reviewed by Simon Fraser.
+
+        Update tests. There are some expected (small) changes in metrics due to this patch.
+
+        * platform/mac-elcapitan/css2.1/t051202-c26-psudo-nest-00-c-expected.png: Copied from LayoutTests/platform/mac/css2.1/t051202-c26-psudo-nest-00-c-expected.png.
+        * platform/mac-elcapitan/css2.1/t051202-c26-psudo-nest-00-c-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t051202-c26-psudo-nest-00-c-expected.txt.
+        * platform/mac-elcapitan/css2.1/t1508-c527-font-00-b-expected.png: Copied from LayoutTests/platform/mac/css2.1/t1508-c527-font-00-b-expected.png.
+        * platform/mac-elcapitan/css2.1/t1508-c527-font-00-b-expected.txt: Added.
+        * platform/mac-elcapitan/fast/inline/absolute-positioned-inline-in-centred-block-expected.png: Copied from LayoutTests/platform/mac/fast/inline/absolute-positioned-inline-in-centred-block-expected.png.
+        * platform/mac-elcapitan/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Copied from LayoutTests/platform/mac/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt.
+        * platform/mac/css2.1/t051202-c26-psudo-nest-00-c-expected.png:
+        * platform/mac/css2.1/t051202-c26-psudo-nest-00-c-expected.txt:
+        * platform/mac/css2.1/t1508-c527-font-00-b-expected.png:
+        * platform/mac/css2.1/t1508-c527-font-00-b-expected.txt: Added.
+        * platform/mac/fast/inline/absolute-positioned-inline-in-centred-block-expected.png:
+        * platform/mac/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt:
+
 2016-09-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r205354 because it caused JSC test failures
