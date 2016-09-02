@@ -1,3 +1,15 @@
+2016-09-02  JF Bastien  <jfbastien@apple.com>
+
+        GetByValWithThis: fix opInfo in DFG creation
+        https://bugs.webkit.org/show_bug.cgi?id=161541
+
+        Reviewed by Saam Barati.
+
+        super-get-by-val-with-this-monomorphic might be 1.0148x faster after this change.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): fix OpInfo
+
 2016-09-02  Chris Dumez  <cdumez@apple.com>
 
         Object.preventExtensions() should throw cross-origin
