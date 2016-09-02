@@ -24,6 +24,15 @@
             shouldThrowErrorName("Object.setPrototypeOf(targetWindow.location, Array.prototype)", "TypeError");
             shouldBeFalse("targetWindow.location instanceof Array");
 
+            protoSetter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
+            shouldBeFalse("targetWindow instanceof Array");
+            shouldThrowErrorName("protoSetter.call(targetWindow, Array.prototype)", "TypeError");
+            shouldBeFalse("targetWindow instanceof Array");
+
+            shouldBeFalse("targetWindow.location instanceof Array");
+            shouldThrowErrorName("protoSetter.call(targetWindow.location, Array.prototype)", "TypeError");
+            shouldBeFalse("targetWindow.location instanceof Array");
+
             finishJSTest();
         }
     </script>

@@ -1322,6 +1322,10 @@ sub GenerateHeader
     # Custom defineOwnProperty function
     push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n") if $interface->extendedAttributes->{"JSCustomDefineOwnProperty"};
 
+    # Custom getPrototype / setPrototype functions.
+    push (@headerContent, "    static JSC::JSValue getPrototype(JSC::JSObject*, JSC::ExecState*);\n") if $interface->extendedAttributes->{"CustomGetPrototype"};
+    push (@headerContent, "    static bool setPrototype(JSC::JSObject*, JSC::ExecState*, JSC::JSValue, bool shouldThrowIfCantSet);\n") if $interface->extendedAttributes->{"CustomSetPrototype"};
+
     # Override toBoolean to return false for objects that want to 'MasqueradesAsUndefined'.
     if ($interface->extendedAttributes->{"MasqueradesAsUndefined"}) {
         $structureFlags{"JSC::MasqueradesAsUndefined"} = 1;

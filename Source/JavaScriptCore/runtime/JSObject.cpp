@@ -1371,15 +1371,17 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
     }
 
     JSValue nextPrototype = prototype;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
     while (nextPrototype && nextPrototype.isObject()) {
         if (nextPrototype == this) {
             if (shouldThrowIfCantSet)
                 throwTypeError(exec, scope, ASCIILiteral("cyclic __proto__ value"));
             return false;
         }
-        if (UNLIKELY(asObject(nextPrototype)->methodTable(vm)->getPrototype != defaultGetPrototype))
-            break; // We're done. Set the prototype.
+        // FIXME: The specification says we should do this but this allows for cycles and our
+        // code base currently does not deal properly with such cycles.
+        // https://bugs.webkit.org/show_bug.cgi?id=161534
+        // if (UNLIKELY(asObject(nextPrototype)->methodTable(vm)->getPrototype != JSObject::getPrototype))
+        //    break; // We're done. Set the prototype.
         nextPrototype = asObject(nextPrototype)->getPrototypeDirect();
     }
     setPrototypeDirect(vm, prototype);
@@ -1399,12 +1401,6 @@ JSValue JSObject::getPrototype(JSObject* object, ExecState*)
 bool JSObject::setPrototype(VM& vm, ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
 {
     return methodTable(vm)->setPrototype(this, exec, prototype, shouldThrowIfCantSet);
-}
-
-bool JSObject::allowsAccessFrom(ExecState* exec)
-{
-    JSGlobalObject* globalObject = this->globalObject();
-    return globalObject->globalObjectMethodTable()->allowsAccessFrom(globalObject, exec);
 }
 
 bool JSObject::putGetter(ExecState* exec, PropertyName propertyName, JSValue getter, unsigned attributes)

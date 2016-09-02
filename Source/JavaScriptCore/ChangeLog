@@ -1,3 +1,58 @@
+2016-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Align proto getter / setter behavior with other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=161455
+
+        Reviewed by Mark Lam.
+
+        Drop allowsAccessFrom from the methodTable and delegate cross-origin
+        checking to the DOM bindings for [[SetPrototypeOf]] / [[GetPrototypeOf]].
+        This is more consistent with other operations (e.g. [[GetOwnProperty]]).
+
+        * jsc.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoGetter):
+        (JSC::globalFuncProtoSetter):
+        (JSC::globalFuncBuiltinLog): Deleted.
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::getArrayLength): Deleted.
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setPrototype):
+        (JSC::JSProxy::getPrototype):
+        * runtime/JSProxy.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorSetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor): Deleted.
+        (JSC::objectConstructorGetOwnPropertyDescriptors): Deleted.
+        * runtime/ObjectConstructor.h:
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectGetPrototypeOf):
+        (JSC::reflectObjectSetPrototypeOf):
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        Comment out check added in r197648. This check was added to match
+        the latest EcmaScript spec:
+        - https://tc39.github.io/ecma262/#sec-ordinarysetprototypeof (step 8)
+        This check allowed for [[Prototype]] chain cycles if the prototype
+        chain includes objects that do not use the ordinary object definitions
+        for [[GetPrototypeOf]] and [[SetPrototypeOf]].
+        The issue is that the rest of our code base does not properly handle
+        such cycles and we can end up in infinite loops. This became obvious
+        because this patch updates Window / Location so that they no longer
+        use the default [[GetPrototypeOf]] / [[SetPrototypeOf]]. If I do not
+        comment out this check, I get an infinite loop in
+        Structure::anyObjectInChainMayInterceptIndexedAccesses(), which is
+        called from JSObject::setPrototypeDirect(), when running the following
+        layout test:
+        - html/browsers/history/the-location-interface/allow_prototype_cycle_through_location.sub.html
+        I filed https://bugs.webkit.org/show_bug.cgi?id=161534 to track this
+        issue.
+
 2016-09-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add toJS for JSC::PrivateName

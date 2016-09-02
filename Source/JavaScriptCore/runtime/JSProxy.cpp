@@ -139,4 +139,16 @@ void JSProxy::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNam
     thisObject->target()->methodTable(exec->vm())->getOwnPropertyNames(thisObject->target(), exec, propertyNames, mode);
 }
 
+bool JSProxy::setPrototype(JSObject* object, ExecState* exec, JSValue value, bool shouldThrowIfCantSet)
+{
+    JSProxy* thisObject = jsCast<JSProxy*>(object);
+    return thisObject->target()->methodTable(exec->vm())->setPrototype(thisObject->target(), exec, value, shouldThrowIfCantSet);
+}
+
+JSValue JSProxy::getPrototype(JSObject* object, ExecState* exec)
+{
+    JSProxy* thisObject = jsCast<JSProxy*>(object);
+    return thisObject->target()->methodTable(exec->vm())->getPrototype(thisObject->target(), exec);
+}
+
 } // namespace JSC

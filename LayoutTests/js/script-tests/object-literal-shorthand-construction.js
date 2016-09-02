@@ -109,7 +109,4 @@ shouldBeTrue("!!Object.getOwnPropertyDescriptor({set x(value){}}, 'x').set");
 shouldBeTrue("!!Object.getOwnPropertyDescriptor({set 'x'(value){}}, 'x').set");
 shouldBeTrue("!!Object.getOwnPropertyDescriptor({set 42(value){}}, '42').set");
 
-// __proto__ shorthand should be not modify the prototype.
-shouldBeTrue("__proto__ = []; ({__proto__: __proto__}) instanceof Array");
-shouldBeFalse("__proto__ = []; ({__proto__}) instanceof Array");
-shouldBeTrue("__proto__ = []; ({__proto__}).__proto__ instanceof Array");
+shouldThrowErrorName("__proto__ = []", "TypeError");
