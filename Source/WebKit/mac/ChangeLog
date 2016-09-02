@@ -1,3 +1,13 @@
+2016-09-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] RetainPtr misuse, AnimationController leaks
+        https://bugs.webkit.org/show_bug.cgi?id=161552
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]):
+
 2016-07-08  Jer Noble  <jer.noble@apple.com>
 
         Refactor WebPlaybackSessionModelMediaElement to be client based.
