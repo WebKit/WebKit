@@ -1,3 +1,11 @@
+2016-09-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/mediastream/MediaStreamTrack-getSettings.html after r205348.
+
+        Unreviewed test gardening.
+
+        * fast/mediastream/MediaStreamTrack-getSettings-expected.txt:
+
 2016-09-02  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r204839): [mac-wk1] LayoutTest webgl/max-active-contexts-webglcontextlost-prevent-default.html is a flaky timeout
