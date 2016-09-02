@@ -1,3 +1,13 @@
+2016-09-02  JF Bastien  <jfbastien@apple.com>
+
+        bitwise_cast infinite loops if called from the default constructor in ToType
+        https://bugs.webkit.org/show_bug.cgi?id=161365
+
+        Reviewed by Saam Barati.
+
+        * wtf/StdLibExtras.h:
+        (WTF::bitwise_cast): use aggregate initialization to avoid ctor
+
 2016-09-01  Anders Carlsson  <andersca@apple.com>
 
         Use BlockPtr::fromCallable in WorkQueue::dispatch and WorkQueue::dispatchAfter
