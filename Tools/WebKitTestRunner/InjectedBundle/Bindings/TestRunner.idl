@@ -64,6 +64,7 @@ interface TestRunner {
     void setJavaScriptCanAccessClipboard(boolean value);
     void setAutomaticLinkDetectionEnabled(boolean value);
     void setPrivateBrowsingEnabled(boolean value);
+    void setUseDashboardCompatibilityMode(boolean value);
     void setPopupBlockingEnabled(boolean value);
     void setAuthorAndUserStylesEnabled(boolean value);
     void setCustomPolicyDelegate(boolean enabled, boolean permissive);

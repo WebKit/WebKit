@@ -111,6 +111,7 @@ public:
     void setJavaScriptCanAccessClipboard(bool);
     void setAutomaticLinkDetectionEnabled(bool);
     void setPrivateBrowsingEnabled(bool);
+    void setUseDashboardCompatibilityMode(bool);
     void setPopupBlockingEnabled(bool);
     void setAuthorAndUserStylesEnabled(bool);
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);

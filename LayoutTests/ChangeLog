@@ -1,3 +1,16 @@
+2016-09-02  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
+        https://bugs.webkit.org/show_bug.cgi?id=42547
+
+        Reviewed by Darin Adler.
+
+        The addition of setUseDashboardCompatibilityMode to the WebKit2 TestRunner means the set of tests removed from the expected failures list now pass.
+        Note: this bug mistakenly called this function setDashboardCompatibilityMode, it is actually setUseDashboardCompatibilityMode.
+
+        * platform/ios-simulator-wk2/TestExpectations:  Changed reason test was excluded.
+        * platform/wk2/TestExpectations: Remove tests which use setUseDashboardCompatibilityMode from expected failures.
+
 2016-09-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking editing/pasteboard/5478250.html as flaky on mac-wk2.

@@ -327,6 +327,14 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
         (*iter)->enableLegacyPrivateBrowsing(enabled);
 }
 
+void InjectedBundle::setUseDashboardCompatibilityMode(WebPageGroupProxy* pageGroup, bool enabled)
+{
+#if ENABLE(DASHBOARD_SUPPORT)
+    for (auto& page : PageGroup::pageGroup(pageGroup->identifier())->pages())
+        page->settings().setUsesDashboardBackwardCompatibilityMode(enabled);
+#endif
+}
+
 void InjectedBundle::setPopupBlockingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();

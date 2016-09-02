@@ -1,3 +1,25 @@
+2016-09-02  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
+        https://bugs.webkit.org/show_bug.cgi?id=42547
+ 
+        Reviewed by Darin Adler.
+
+        Added JavaScript bindings and C++ implementation of setUseDashboardCompatibilityMode for the WebKit2 sTestRunner.
+        Note: this bug mistakenly called this function setDashboardCompatibilityMode, it is actually setUseDashboardCompatibilityMode.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Added dashboard compatiblity mode setter.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting): Reset dashboard compatibility mode.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setJavaScriptCanAccessClipboard): Code style changes.
+        (WTR::TestRunner::setPrivateBrowsingEnabled): Code style changes.
+        (WTR::TestRunner::setUseDashboardCompatibilityMode): Added dashboard compatiblity mode setter.
+        (WTR::TestRunner::setPopupBlockingEnabled): Code style changes.
+        (WTR::TestRunner::setAuthorAndUserStylesEnabled): Code style changes.
+        (WTR::TestRunner::addOriginAccessWhitelistEntry): Code style changes.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h: Added dashboard compatiblity mode setter.
+
 2016-09-02  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix: restore storyboard files to Xcode 7-compatability.

@@ -105,7 +105,7 @@ http/tests/misc/willCacheResponse-delegate-callback.html [ Skip ]
 # testRunner.setAlwaysAcceptCookies() is not implemented on Windows.
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
 
-# TODO No Dashboard compatibility mode on Windows
+# No Dashboard compatibility mode on Windows.
 http/tests/xmlhttprequest/default-content-type-dashboard.html [ Skip ]
 http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Skip ]
 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Skip ]

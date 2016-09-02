@@ -108,6 +108,7 @@ public:
     void setJavaScriptCanAccessClipboard(WebPageGroupProxy*, bool);
     void setAutomaticLinkDetectionEnabled(WebPageGroupProxy*, bool enabled);
     void setPrivateBrowsingEnabled(WebPageGroupProxy*, bool);
+    void setUseDashboardCompatibilityMode(WebPageGroupProxy*, bool);
     void setPopupBlockingEnabled(WebPageGroupProxy*, bool);
     void setAuthorAndUserStylesEnabled(WebPageGroupProxy*, bool);
     void setSpatialNavigationEnabled(WebPageGroupProxy*, bool);

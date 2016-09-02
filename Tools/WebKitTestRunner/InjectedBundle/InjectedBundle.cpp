@@ -296,6 +296,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);
     WKBundleSetAutomaticLinkDetectionEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetPrivateBrowsingEnabled(m_bundle, m_pageGroup, false);
+    WKBundleSetUseDashboardCompatibilityMode(m_bundle, m_pageGroup, false);
     WKBundleSetAuthorAndUserStylesEnabled(m_bundle, m_pageGroup, true);
     WKBundleSetFrameFlatteningEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetMinimumLogicalFontSize(m_bundle, m_pageGroup, 9);

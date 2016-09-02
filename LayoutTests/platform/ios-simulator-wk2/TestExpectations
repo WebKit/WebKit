@@ -90,8 +90,13 @@ scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spa
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrollbars-on-positioned-content.html [ Failure ]
 
-# WebKitTestRunner needs testRunner.setUseDashboardCompatibilityMode
-mathml/mathml-in-dashboard.html [ Skip ]
+# iOS doesn’t support dashboard.
+mathml/mathml-in-dashboard.html [ Failure ]
+svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
+svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]
+svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
+svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
+http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
 
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
@@ -264,7 +269,6 @@ imported/mozilla/svg/image/image-xy-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/image/image-y-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/text/text-shadow.svg [ ImageOnlyFailure ]
 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
-svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
 svg/custom/focus-event-handling-keyboard.xhtml [ Failure ]
 svg/custom/focus-event-handling.xhtml [ Failure ]
 svg/custom/foreignObject-crash-on-hover.xml [ Failure ]
@@ -274,8 +278,6 @@ svg/custom/getscreenctm-in-scrollable-svg-area.xhtml [ Failure ]
 svg/custom/hover-default-fill.svg [ Failure ]
 svg/custom/image-clipped-hit.svg [ Failure ]
 svg/custom/invisible-text-after-scrolling.xhtml [ Failure ]
-svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]
-svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
 svg/custom/marker-changes.svg [ Failure ]
 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure ]
 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
@@ -285,7 +287,6 @@ svg/custom/pointer-events-text-css-transform.svg [ Failure ]
 svg/custom/pointer-events-text.svg [ Failure ]
 svg/custom/polyline-hittest.svg [ Failure ]
 svg/custom/stroke-width-click.svg [ Failure ]
-svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
 svg/custom/text-hit-test.svg [ Failure ]
 svg/custom/use-clipped-hit.svg [ Failure ]
@@ -376,7 +377,6 @@ http/tests/security/no-referrer.html [ Failure ]
 http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
 http/tests/uri/css-href.php [ Failure ]
-http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
 
 # HTTP tests that assert:
 http/tests/navigation/new-window-redirect-history.html

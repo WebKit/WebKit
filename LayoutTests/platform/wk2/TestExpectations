@@ -113,16 +113,6 @@ platform/mac/fast/text/attributed-substring-from-range-in-textfield.html
 platform/mac/fast/text/attributed-substring-from-range.html
 platform/mac/fast/text/justified-text-rect.html
 
-# WebKitTestRunner needs testRunner.setDashboardCompatibilityMode
-# <https://bugs.webkit.org/show_bug.cgi?id=42547>
-fast/canvas/canvas-gradient-addStop-error.html
-http/tests/xmlhttprequest/default-content-type-dashboard.html
-http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html
-svg/custom/embedded-svg-allowed-in-dashboard.xml
-svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
-svg/custom/manually-parsed-svg-allowed-in-dashboard.html
-svg/custom/svg-allowed-in-dashboard-object.html
-
 # WebKitTestRunner needs testRunner.setMainFrameIsFirstResponder
 # <https://bugs.webkit.org/show_bug.cgi?id=42685>
 editing/selection/caret-and-focus-ring.html
@@ -301,10 +291,6 @@ printing/page-rule-selection.html
 # WebKitTestRunner needs testRunner.dumpUserGestureInFrameLoadCallbacks
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
-
-# WebKitTestRunner needs testRunner.setUseDashboardCompatibilityMode
-platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html [ Skip ]
-mathml/mathml-in-dashboard.html [ Skip ]
 
 # WebKitTestRunner needs testRunner.addURLToRedirect
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
