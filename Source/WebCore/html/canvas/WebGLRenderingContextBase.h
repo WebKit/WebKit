@@ -837,4 +837,6 @@ protected:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGLRenderingContextBase, is3d())
+
 #endif

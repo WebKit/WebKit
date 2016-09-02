@@ -252,4 +252,3 @@ webkit.org/b/161056 gamepad [ Skip ]
 
 webkit.org/b/161191 imported/w3c/web-platform-tests/url/url-setters.html [ Skip ]
 
-webkit.org/b/161205 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Timeout ]

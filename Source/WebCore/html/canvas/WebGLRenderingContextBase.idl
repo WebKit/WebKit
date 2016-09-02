@@ -39,10 +39,12 @@ typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
 
 [
-Conditional=WEBGL,
-DoNotCheckConstants,
-JSCustomMarkFunction,
-NoInterfaceObject,
+    Conditional=WEBGL,
+    CustomIsReachable,
+    CustomToJSObject,
+    DoNotCheckConstants,
+    JSCustomMarkFunction,
+    NoInterfaceObject,
 ] interface WebGLRenderingContextBase {
 
     // back-reference to the canvas
