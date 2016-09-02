@@ -581,9 +581,9 @@ inline void BreakingContext::handleReplaced()
             m_ignoringSpaces = true;
         }
         if (downcast<RenderListMarker>(*m_current.renderer()).isInside())
-            m_width.addUncommittedReplacedWidth(replacedLogicalWidth);
+            m_width.addUncommittedWidth(replacedLogicalWidth);
     } else
-        m_width.addUncommittedReplacedWidth(replacedLogicalWidth);
+        m_width.addUncommittedWidth(replacedLogicalWidth);
     if (is<RenderRubyRun>(*m_current.renderer())) {
         m_width.applyOverhang(downcast<RenderRubyRun>(m_current.renderer()), m_lastObject, m_nextObject);
         downcast<RenderRubyRun>(m_current.renderer())->updatePriorContextFromCachedBreakIterator(m_renderTextInfo.lineBreakIterator);
@@ -800,7 +800,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     float charWidth = 0;
     bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == SPACE;
     // Auto-wrapping text should wrap in the middle of a word only if it could not wrap before the word,
-    // which is only possible if the word is the first thing on the line, that is, if |w| is zero.
+    // which is only possible if the word is the first thing on the line.
     bool breakWords = m_currentStyle->breakWords() && ((m_autoWrap && !m_width.hasCommitted()) || m_currWS == PRE);
     bool midWordBreak = false;
     bool breakAll = m_currentStyle->wordBreak() == BreakAllWordBreak && m_autoWrap;

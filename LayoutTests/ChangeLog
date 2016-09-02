@@ -1,3 +1,14 @@
+2016-09-02  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !m_committedWidth in WebCore::LineWidth::fitBelowFloats
+        https://bugs.webkit.org/show_bug.cgi?id=149462
+        <rdar://problem/27710841>
+
+        Reviewed by David Hyatt.
+
+        * fast/text/assert-when-text-with-negative-margin-sibling-does-not-fit-expected.txt: Added.
+        * fast/text/assert-when-text-with-negative-margin-sibling-does-not-fit.html: Added.
+
 2016-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Distinguish between paint advances and base advances

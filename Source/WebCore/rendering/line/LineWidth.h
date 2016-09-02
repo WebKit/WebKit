@@ -59,18 +59,13 @@ public:
     float availableWidth() const { return m_availableWidth; }
     float logicalLeftOffset() const { return m_left; }
     
-    bool hasCommitted() const { return m_committedWidth > 0 || m_hasCommittedReplaced; }
+    bool hasCommitted() const { return m_hasCommitted; }
 
     void updateAvailableWidth(LayoutUnit minimumHeight = 0);
     void shrinkAvailableWidthForNewFloatIfNeeded(const FloatingObject&);
     void addUncommittedWidth(float delta)
     {
         m_uncommittedWidth += delta;
-    }
-    void addUncommittedReplacedWidth(float delta)
-    {
-        addUncommittedWidth(delta);
-        m_hasUncommittedReplaced = true;
     }
     void commit();
     void applyOverhang(RenderRubyRun*, RenderObject* startRenderer, RenderObject* endRenderer);
@@ -89,17 +84,16 @@ private:
 #endif
 
     RenderBlockFlow& m_block;
-    float m_uncommittedWidth;
-    float m_committedWidth;
-    float m_overhangWidth; // The amount by which |m_availableWidth| has been inflated to account for possible contraction due to ruby overhang.
-    float m_trailingWhitespaceWidth;
-    float m_trailingCollapsedWhitespaceWidth;
-    float m_left;
-    float m_right;
-    float m_availableWidth;
-    bool m_isFirstLine;
-    bool m_hasUncommittedReplaced { false };
-    bool m_hasCommittedReplaced { false };
+    float m_uncommittedWidth { 0 };
+    float m_committedWidth { 0 };
+    float m_overhangWidth { 0 }; // The amount by which |m_availableWidth| has been inflated to account for possible contraction due to ruby overhang.
+    float m_trailingWhitespaceWidth { 0 };
+    float m_trailingCollapsedWhitespaceWidth { 0 };
+    float m_left { 0 };
+    float m_right { 0 };
+    float m_availableWidth { 0 };
+    bool m_isFirstLine { true };
+    bool m_hasCommitted { false };
     IndentTextOrNot m_shouldIndentText;
 };
 
