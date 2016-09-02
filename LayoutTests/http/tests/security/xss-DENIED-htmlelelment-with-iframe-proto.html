@@ -14,7 +14,7 @@ jsTestIsAsync = true;
 targetWindow = frames[0];
 
 window.onload = function() {
-  shouldThrowErrorName("__proto__ = targetWindow", "TypeError");
+  __proto__ = targetWindow;
   shouldThrowErrorName('targetWindow.myinput', 'SecurityError');
   finishJSTest();
 }

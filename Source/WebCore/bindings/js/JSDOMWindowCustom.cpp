@@ -342,25 +342,6 @@ bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec,
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
-bool JSDOMWindow::setPrototype(JSObject*, ExecState* exec, JSValue, bool shouldThrowIfCantSet)
-{
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
-
-    if (shouldThrowIfCantSet)
-        throwTypeError(exec, scope, ASCIILiteral("Cannot set prototype of this object"));
-
-    return false;
-}
-
-JSValue JSDOMWindow::getPrototype(JSObject* object, ExecState* exec)
-{
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError))
-        return jsNull();
-
-    return Base::getPrototype(object, exec);
-}
-
 bool JSDOMWindow::preventExtensions(JSObject* object, ExecState* exec)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);

@@ -1,13 +1,5 @@
 
 Tests that making other frame window a prototype doesn't expose that window properties
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS __proto__ = targetWindow threw exception TypeError: Cannot set prototype of this object.
 PASS: innerHeight === originalInnerHeight should be 'true' and is.
 PASS: this.innerHeight === originalInnerHeight should be 'true' and is.
-PASS: successfullyParsed should be 'true' and is.
-
-TEST COMPLETE
 

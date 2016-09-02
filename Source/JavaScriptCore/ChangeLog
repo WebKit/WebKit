@@ -1,3 +1,40 @@
+2016-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, roll out r205354 because it caused JSC test failures
+
+        * jsc.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::allowsAccessFrom):
+        (JSC::JSGlobalObject::setDebugger): Deleted.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::GlobalFuncProtoGetterFunctor::GlobalFuncProtoGetterFunctor):
+        (JSC::GlobalFuncProtoGetterFunctor::result):
+        (JSC::GlobalFuncProtoGetterFunctor::operator()):
+        (JSC::globalFuncProtoGetter):
+        (JSC::GlobalFuncProtoSetterFunctor::GlobalFuncProtoSetterFunctor):
+        (JSC::GlobalFuncProtoSetterFunctor::allowsAccess):
+        (JSC::GlobalFuncProtoSetterFunctor::operator()):
+        (JSC::checkProtoSetterAccessAllowed):
+        (JSC::globalFuncProtoSetter):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::allowsAccessFrom):
+        * runtime/JSObject.h:
+        * runtime/JSProxy.cpp:
+        * runtime/JSProxy.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::ObjectConstructorGetPrototypeOfFunctor):
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::result):
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::operator()):
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorSetPrototypeOf):
+        * runtime/ObjectConstructor.h:
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectGetPrototypeOf):
+        (JSC::reflectObjectSetPrototypeOf):
+
 2016-09-02  Caio Lima  <ticaiolima@gmail.com>
 
         Register usage optimization in mathIC when LHS and RHS are constants isn't configured correctly

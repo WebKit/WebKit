@@ -215,7 +215,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectGetPrototypeOf(ExecState* exec)
     JSValue target = exec->argument(0);
     if (!target.isObject())
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.getPrototypeOf requires the first argument be an object")));
-    return JSValue::encode(asObject(target)->getPrototype(exec->vm(), exec));
+    return JSValue::encode(objectConstructorGetPrototypeOf(exec, asObject(target)));
 }
 
 // https://tc39.github.io/ecma262/#sec-reflect.isextensible
@@ -301,6 +301,9 @@ EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState* exec)
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.setPrototypeOf requires the second argument be either an object or null")));
 
     JSObject* object = asObject(target);
+
+    if (!checkProtoSetterAccessAllowed(exec, object))
+        return JSValue::encode(jsBoolean(false));
 
     bool shouldThrowIfCantSet = false;
     bool didSetPrototype = object->setPrototype(vm, exec, proto, shouldThrowIfCantSet);
