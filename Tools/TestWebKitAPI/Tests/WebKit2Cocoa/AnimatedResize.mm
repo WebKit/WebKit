@@ -55,7 +55,7 @@ static bool didEndAnimatedResize;
 
 @end
 
-static RetainPtr<WKWebView> animatedResizeWebView()
+static RetainPtr<WKWebView> createAnimatedResizeWebView()
 {
     RetainPtr<_WKProcessPoolConfiguration> processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
@@ -66,22 +66,27 @@ static RetainPtr<WKWebView> animatedResizeWebView()
 
     RetainPtr<WKWebView> webView = adoptNS([[AnimatedResizeWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
-    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
-    [navigationDelegate setRenderingProgressDidChange:^(WKWebView *, _WKRenderingProgressEvents progressEvents) {
-        if (progressEvents & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
-            didLayout = true;
-    }];
-    [webView setNavigationDelegate:navigationDelegate.get()];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
     return webView;
 }
 
+static RetainPtr<TestNavigationDelegate> createFirstVisuallyNonEmptyWatchingNavigationDelegate()
+{
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setRenderingProgressDidChange:^(WKWebView *, _WKRenderingProgressEvents progressEvents) {
+        if (progressEvents & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
+            didLayout = true;
+    }];
+    return navigationDelegate;
+}
+
 TEST(WebKit2, ResizeWithHiddenContentDoesNotHang)
 {
-    auto webView = animatedResizeWebView();
+    auto webView = createAnimatedResizeWebView();
+    auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();
+    [webView setNavigationDelegate:navigationDelegate.get()];
     RetainPtr<UIWindow> window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [window addSubview:webView.get()];
     [window setHidden:NO];
@@ -101,7 +106,9 @@ TEST(WebKit2, ResizeWithHiddenContentDoesNotHang)
 
 TEST(WebKit2, AnimatedResizeDoesNotHang)
 {
-    auto webView = animatedResizeWebView();
+    auto webView = createAnimatedResizeWebView();
+    auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();
+    [webView setNavigationDelegate:navigationDelegate.get()];
     RetainPtr<UIWindow> window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [window addSubview:webView.get()];
     [window setHidden:NO];

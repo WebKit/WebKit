@@ -1,3 +1,18 @@
+2016-09-02  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r205329): Two API tests time out on iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=161542
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+        (createAnimatedResizeWebView):
+        (createFirstVisuallyNonEmptyWatchingNavigationDelegate):
+        (TEST):
+        (animatedResizeWebView): Deleted.
+        The navigation delegate was being stored in a local and went out of scope
+        before the test was over. Keep it around, instead.
+
 2016-08-31  Jer Noble  <jer.noble@apple.com>
 
         Refactor MobileMiniBrowser into an application framework to allow external XCTesting
