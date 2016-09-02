@@ -30,12 +30,14 @@
 #include "APIObject.h"
 #include "Attachment.h"
 #include "MessageReceiver.h"
+#include "WebInspectorUtilities.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #include "WKGeometry.h"
+#include <WebCore/IntRect.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -45,6 +47,7 @@ OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKWebInspectorProxyObjCAdapter;
 OBJC_CLASS WKWebInspectorWKWebView;
+OBJC_CLASS WKWebViewConfiguration;
 #endif
 
 #if PLATFORM(GTK)
@@ -56,12 +59,15 @@ OBJC_CLASS WKWebInspectorWKWebView;
 #include <Evas.h>
 #endif
 
+namespace WebCore {
+class URL;
+}
+
 namespace WebKit {
 
 class WebFrameProxy;
 class WebPageProxy;
 class WebPreferences;
-class WebProcessPool;
 
 enum class AttachmentSide {
     Bottom,
@@ -93,6 +99,9 @@ public:
     void close();
 
 #if PLATFORM(MAC) && WK_API_ENABLED
+    static RetainPtr<WKWebViewConfiguration> createFrontendConfiguration(WebPageProxy*, bool underTest);
+    static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame);
+
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange(CGFloat = 0);
@@ -136,13 +145,11 @@ public:
     bool isElementSelectionActive() const { return m_elementSelectionActive; }
     void toggleElementSelection();
 
-    static bool isInspectorProcessPool(WebProcessPool&);
-    static bool isInspectorPage(WebPageProxy&);
-
     // Provided by platform WebInspectorProxy implementations.
     static String inspectorPageURL();
     static String inspectorTestPageURL();
     static String inspectorBaseURL();
+    static bool isMainOrTestInspectorPage(const WebCore::URL&);
 
 #if ENABLE(INSPECTOR_SERVER)
     void enableRemoteInspection();
@@ -152,10 +159,14 @@ public:
     int remoteInspectionPageID() const { return m_remoteInspectionPageId; }
 #endif
 
+    static const unsigned minimumWindowWidth;
+    static const unsigned minimumWindowHeight;
+
+    static const unsigned initialWindowWidth;
+    static const unsigned initialWindowHeight;
+
 private:
     explicit WebInspectorProxy(WebPageProxy*);
-
-    static WebProcessPool& inspectorProcessPool(unsigned inspectionLevel);
 
     void eagerlyCreateInspectorPage();
 
@@ -210,11 +221,8 @@ private:
 
     void open();
 
-    // The inspection level is used to give different preferences to each inspector
-    // by setting a per-level page group identifier. Local storage settings in the frontend
-    // also use the inspection level in the key prefix to disambiguate persistent view state.
     unsigned inspectionLevel() const;
-    String inspectorPageGroupIdentifier() const;
+
     WebPreferences& inspectorPagePreferences() const;
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
@@ -224,12 +232,6 @@ private:
 #if PLATFORM(GTK)
     void updateInspectorWindowTitle() const;
 #endif
-
-    static const unsigned minimumWindowWidth;
-    static const unsigned minimumWindowHeight;
-
-    static const unsigned initialWindowWidth;
-    static const unsigned initialWindowHeight;
 
     WebPageProxy* m_inspectedPage { nullptr };
     WebPageProxy* m_inspectorPage { nullptr };

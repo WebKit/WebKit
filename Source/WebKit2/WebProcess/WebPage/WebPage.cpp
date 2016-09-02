@@ -50,6 +50,8 @@
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "PrintInfo.h"
+#include "RemoteWebInspectorUI.h"
+#include "RemoteWebInspectorUIMessages.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "SessionTracker.h"
@@ -537,6 +539,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     webProcess.addMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID, *this);
     webProcess.addMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID, *this);
+    webProcess.addMessageReceiver(Messages::RemoteWebInspectorUI::messageReceiverName(), m_pageID, *this);
 #if ENABLE(FULLSCREEN_API)
     webProcess.addMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID, *this);
 #endif
@@ -630,6 +633,7 @@ WebPage::~WebPage()
 #endif
     webProcess.removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
     webProcess.removeMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID);
+    webProcess.removeMessageReceiver(Messages::RemoteWebInspectorUI::messageReceiverName(), m_pageID);
 #if ENABLE(FULLSCREEN_API)
     webProcess.removeMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID);
 #endif
@@ -3264,6 +3268,15 @@ WebInspectorUI* WebPage::inspectorUI()
     return m_inspectorUI.get();
 }
 
+RemoteWebInspectorUI* WebPage::remoteInspectorUI()
+{
+    if (m_isClosed)
+        return nullptr;
+    if (!m_remoteInspectorUI)
+        m_remoteInspectorUI = RemoteWebInspectorUI::create(*this);
+    return m_remoteInspectorUI.get();
+}
+
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 WebPlaybackSessionManager& WebPage::playbackSessionManager()
 {
@@ -3897,6 +3910,12 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
     if (decoder.messageReceiverName() == Messages::WebInspectorUI::messageReceiverName()) {
         if (WebInspectorUI* inspectorUI = this->inspectorUI())
             inspectorUI->didReceiveMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteWebInspectorUI::messageReceiverName()) {
+        if (RemoteWebInspectorUI* remoteInspectorUI = this->remoteInspectorUI())
+            remoteInspectorUI->didReceiveMessage(connection, decoder);
         return;
     }
 

@@ -28,23 +28,16 @@
 
 #if PLATFORM(MAC) && WK_API_ENABLED
 
-#import "WKAPICast.h"
 #import "WKInspectorPrivateMac.h"
-#import "WKMutableArray.h"
-#import "WKOpenPanelParametersRef.h"
-#import "WKOpenPanelResultListener.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
-#import "WKRetainPtr.h"
-#import "WKURLCF.h"
 #import "WKViewInternal.h"
+#import "WKWebInspectorWKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
-#import "WebPreferences.h"
-#import "WebProcessProxy.h"
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
@@ -139,82 +132,7 @@ static const unsigned webViewCloseTimeout = 60;
 
 @end
 
-@interface WKWebInspectorWKWebView : WKWebView {
-@private
-    WKWebInspectorProxyObjCAdapter *_inspectorProxyObjCAdapter;
-}
-
-@property (nonatomic, assign) WKWebInspectorProxyObjCAdapter *inspectorProxyObjCAdapter;
-@end
-
-@implementation WKWebInspectorWKWebView
-
-@synthesize inspectorProxyObjCAdapter = _inspectorProxyObjCAdapter;
-
-- (NSInteger)tag
-{
-    return WKInspectorViewTag;
-}
-
-@end
-
 namespace WebKit {
-
-static WKRect getWindowFrame(WKPageRef, const void* clientInfo)
-{
-    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
-    ASSERT(webInspectorProxy);
-
-    return webInspectorProxy->inspectorWindowFrame();
-}
-
-static void setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
-{
-    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
-    ASSERT(webInspectorProxy);
-
-    webInspectorProxy->setInspectorWindowFrame(frame);
-}
-
-static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)
-{
-    return std::max<unsigned long long>(expectedUsage, currentDatabaseUsage * 1.25);
-}
-
-static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
-{
-    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
-    ASSERT(webInspectorProxy);
-
-    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    [openPanel setAllowsMultipleSelection:WKOpenPanelParametersGetAllowsMultipleFiles(parameters)];
-
-    WKRetain(listener);
-
-    auto completionHandler = ^(NSInteger result) {
-        if (result == NSFileHandlingPanelOKButton) {
-            WKMutableArrayRef fileURLs = WKMutableArrayCreate();
-
-            for (NSURL* nsURL in [openPanel URLs]) {
-                WKURLRef wkURL = WKURLCreateWithCFURL(reinterpret_cast<CFURLRef>(nsURL));
-                WKArrayAppendItem(fileURLs, wkURL);
-                WKRelease(wkURL);
-            }
-
-            WKOpenPanelResultListenerChooseFiles(listener, fileURLs);
-
-            WKRelease(fileURLs);
-        } else
-            WKOpenPanelResultListenerCancel(listener);
-
-        WKRelease(listener);
-    };
-
-    if (webInspectorProxy->inspectorWindow())
-        [openPanel beginSheetModalForWindow:webInspectorProxy->inspectorWindow() completionHandler:completionHandler];
-    else
-        completionHandler([openPanel runModal]);
-}
 
 void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
 {
@@ -249,7 +167,6 @@ void WebInspectorProxy::closeTimerFired()
 
     if (m_inspectorView) {
         m_inspectorView->_page->close();
-        [m_inspectorView setInspectorProxyObjCAdapter:nil];
         m_inspectorView = nil;
     }
 
@@ -263,42 +180,72 @@ void WebInspectorProxy::createInspectorWindow()
 {
     ASSERT(!m_inspectorWindow);
 
-    NSRect windowFrame = NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
-
-    // Restore the saved window frame, if there was one.
     NSString *savedWindowFrameString = inspectedPage()->pageGroup().preferences().inspectorWindowFrame();
     NSRect savedWindowFrame = NSRectFromString(savedWindowFrameString);
-    if (!NSIsEmptyRect(savedWindowFrame))
-        windowFrame = savedWindowFrame;
 
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO];
-    [window setDelegate:m_inspectorProxyObjCAdapter.get()];
+    m_inspectorWindow = WebInspectorProxy::createFrontendWindow(savedWindowFrame);
+    [m_inspectorWindow setDelegate:m_inspectorProxyObjCAdapter.get()];
+
+    NSView *contentView = [m_inspectorWindow contentView];
+    [m_inspectorView setFrame:[contentView bounds]];
+    [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [contentView addSubview:m_inspectorView.get()];
+
+    updateInspectorWindowTitle();
+}
+
+RetainPtr<WKWebViewConfiguration> WebInspectorProxy::createFrontendConfiguration(WebPageProxy* page, bool underTest)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    WKPreferences *preferences = [configuration preferences];
+    preferences._allowFileAccessFromFileURLs = YES;
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
+    preferences._storageBlockingPolicy = _WKStorageBlockingPolicyAllowAll;
+    preferences._javaScriptRuntimeFlags = 0;
+
+#ifndef NDEBUG
+    // Allow developers to inspect the Web Inspector in debug builds without changing settings.
+    preferences._developerExtrasEnabled = YES;
+    preferences._logsPageMessagesToSystemConsoleEnabled = YES;
+#endif
+
+    if (underTest) {
+        preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
+        preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
+    }
+
+    unsigned inspectorLevel = inspectorLevelForPage(page);
+    [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool(inspectorLevel))];
+    [configuration _setGroupIdentifier:inspectorPageGroupIdentifierForPage(page)];
+
+    return configuration;
+}
+
+RetainPtr<NSWindow> WebInspectorProxy::createFrontendWindow(NSRect savedWindowFrame)
+{
+    NSRect windowFrame = !NSIsEmptyRect(savedWindowFrame) ? savedWindowFrame : NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO]);
+    // [window setDelegate:m_inspectorProxyObjCAdapter.get()];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
     [window setReleasedWhenClosed:NO];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-    CGFloat approximatelyHalfScreenSize = (window.screen.frame.size.width / 2) - 4;
+    CGFloat approximatelyHalfScreenSize = ([window screen].frame.size.width / 2) - 4;
     CGFloat minimumFullScreenWidth = std::max<CGFloat>(636, approximatelyHalfScreenSize);
     [window setMinFullScreenContentSize:NSMakeSize(minimumFullScreenWidth, minimumWindowHeight)];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
 #endif
 
-    window.titlebarAppearsTransparent = YES;
-
-    m_inspectorWindow = adoptNS(window);
-
-    NSView *contentView = [window contentView];
-
-    [m_inspectorView setFrame:[contentView bounds]];
-    [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [contentView addSubview:m_inspectorView.get()];
+    [window setTitlebarAppearsTransparent:YES];
 
     // Center the window if the saved frame was empty.
     if (NSIsEmptyRect(savedWindowFrame))
         [window center];
 
-    updateInspectorWindowTitle();
+    return window;
 }
 
 void WebInspectorProxy::updateInspectorWindowTitle() const
@@ -353,93 +300,15 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
             initialRect = [NSWindow contentRectForFrameRect:windowFrame styleMask:windowStyleMask];
     }
 
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferences *preferences = [configuration preferences];
-#ifndef NDEBUG
-    // Allow developers to inspect the Web Inspector in debug builds without changing settings.
-    preferences._developerExtrasEnabled = YES;
-    preferences._logsPageMessagesToSystemConsoleEnabled = YES;
-#endif
-    preferences._allowFileAccessFromFileURLs = YES;
-    [configuration _setAllowUniversalAccessFromFileURLs:YES];
-    preferences._storageBlockingPolicy = _WKStorageBlockingPolicyAllowAll;
-    preferences._javaScriptRuntimeFlags = 0;
-    if (isUnderTest()) {
-        preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
-        preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
-    }
-
-    [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool(inspectionLevel()))];
-    [configuration _setGroupIdentifier:inspectorPageGroupIdentifier()];
-
-    m_inspectorView = adoptNS([[WKWebInspectorWKWebView alloc] initWithFrame:initialRect configuration:configuration.get()]);
-    ASSERT(m_inspectorView);
-
-    [m_inspectorView _setAutomaticallyAdjustsContentInsets:NO];
-
     m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
     ASSERT(m_inspectorProxyObjCAdapter);
 
-    [m_inspectorView setInspectorProxyObjCAdapter:m_inspectorProxyObjCAdapter.get()];
-
     [[NSNotificationCenter defaultCenter] addObserver:m_inspectorProxyObjCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
 
-    WebPageProxy* inspectorPage = m_inspectorView->_page.get();
-    ASSERT(inspectorPage);
+    auto configuration = WebInspectorProxy::createFrontendConfiguration(inspectedPage(), isUnderTest());
+    m_inspectorView = adoptNS([[WKWebInspectorWKWebView alloc] initWithFrame:initialRect configuration:configuration.get()]);
 
-    WKPageUIClientV2 uiClient = {
-        { 2, this },
-        0, // createNewPage_deprecatedForUseWithV0
-        0, // showPage
-        0, // closePage
-        0, // takeFocus
-        0, // focus
-        0, // unfocus
-        0, // runJavaScriptAlert
-        0, // runJavaScriptConfirm
-        0, // runJavaScriptPrompt
-        0, // setStatusText
-        0, // mouseDidMoveOverElement_deprecatedForUseWithV0
-        0, // missingPluginButtonClicked_deprecatedForUseWithV0
-        0, // didNotHandleKeyEvent
-        0, // didNotHandleWheelEvent
-        0, // areToolbarsVisible
-        0, // setToolbarsVisible
-        0, // isMenuBarVisible
-        0, // setMenuBarVisible
-        0, // isStatusBarVisible
-        0, // setStatusBarVisible
-        0, // isResizable
-        0, // setResizable
-        getWindowFrame,
-        setWindowFrame,
-        0, // runBeforeUnloadConfirmPanel
-        0, // didDraw
-        0, // pageDidScroll
-        exceededDatabaseQuota,
-        runOpenPanel,
-        0, // decidePolicyForGeolocationPermissionRequest
-        0, // headerHeight
-        0, // footerHeight
-        0, // drawHeader
-        0, // drawFooter
-        0, // printFrame
-        0, // runModal
-        0, // unused
-        0, // saveDataToFileInDownloadsFolder
-        0, // shouldInterruptJavaScript
-        0, // createPage
-        0, // mouseDidMoveOverElement
-        0, // decidePolicyForNotificationPermissionRequest
-        0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
-        0, // showColorPicker
-        0, // hideColorPicker
-        0, // unavailablePluginButtonClicked
-    };
-
-    WKPageSetPageUIClient(toAPI(inspectorPage), &uiClient.base);
-
-    return inspectorPage;
+    return m_inspectorView->_page.get();
 }
 
 bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)

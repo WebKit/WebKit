@@ -24,17 +24,6 @@
  */
 
 (function() {
-    var backendURLs;
-    if (InspectorFrontendHost.inspectorBackendCommandsURLs) {
-        var suggestedBackendCommandsURLs = InspectorFrontendHost.inspectorBackendCommandsURLs();
-        if (suggestedBackendCommandsURLs)
-            backendURLs = suggestedBackendCommandsURLs;
-    }
-
-    if (!backendURLs)
-        backendURLs = ["Protocol/InspectorBackendCommands.js"];
-
-    console.assert(backendURLs.length);
-    for (var backendCommandsURL of backendURLs)
-        document.write("<script src=\"" + backendCommandsURL + "\"></script>");
+    let backendCommandsURL = InspectorFrontendHost.backendCommandsURL() || "Protocol/InspectorBackendCommands.js";
+    document.write("<script src=\"" + backendCommandsURL + "\"></script>");
 })();

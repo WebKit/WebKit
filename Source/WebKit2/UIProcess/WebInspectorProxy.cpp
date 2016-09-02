@@ -60,14 +60,6 @@ const unsigned WebInspectorProxy::minimumWindowHeight = 400;
 const unsigned WebInspectorProxy::initialWindowWidth = 1000;
 const unsigned WebInspectorProxy::initialWindowHeight = 650;
 
-typedef HashMap<WebPageProxy*, unsigned> PageLevelMap;
-
-static PageLevelMap& pageLevelMap()
-{
-    static NeverDestroyed<PageLevelMap> map;
-    return map;
-}
-
 WebInspectorProxy::WebInspectorProxy(WebPageProxy* inspectedPage)
     : m_inspectedPage(inspectedPage)
 #if PLATFORM(MAC) && WK_API_ENABLED
@@ -83,16 +75,7 @@ WebInspectorProxy::~WebInspectorProxy()
 
 unsigned WebInspectorProxy::inspectionLevel() const
 {
-    auto findResult = pageLevelMap().find(inspectedPage());
-    if (findResult != pageLevelMap().end())
-        return findResult->value + 1;
-
-    return 1;
-}
-
-String WebInspectorProxy::inspectorPageGroupIdentifier() const
-{
-    return String::format("__WebInspectorPageGroupLevel%u__", inspectionLevel());
+    return inspectorLevelForPage(inspectedPage());
 }
 
 WebPreferences& WebInspectorProxy::inspectorPagePreferences() const
@@ -113,7 +96,6 @@ void WebInspectorProxy::invalidate()
     didClose();
     platformInvalidate();
 
-    pageLevelMap().remove(m_inspectedPage);
     m_inspectedPage = nullptr;
 }
 
@@ -317,38 +299,11 @@ void WebInspectorProxy::toggleElementSelection()
     }
 }
 
-static WebProcessPool* s_mainInspectorProcessPool;
-static WebProcessPool* s_nestedInspectorProcessPool;
-
-WebProcessPool& WebInspectorProxy::inspectorProcessPool(unsigned inspectionLevel)
-{
-    // Having our own process pool removes us from the main process pool and
-    // guarantees no process sharing for our user interface.
-    WebProcessPool*& pool = inspectionLevel == 1 ? s_mainInspectorProcessPool : s_nestedInspectorProcessPool;
-    if (!pool) {
-        auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
-        pool = &WebProcessPool::create(configuration.get()).leakRef();
-    }
-    return *pool;
-}
-
-bool WebInspectorProxy::isInspectorProcessPool(WebProcessPool& processPool)
-{
-    return (s_mainInspectorProcessPool && s_mainInspectorProcessPool == &processPool)
-        || (s_nestedInspectorProcessPool && s_nestedInspectorProcessPool == &processPool);
-}
-
-bool WebInspectorProxy::isInspectorPage(WebPageProxy& webPage)
-{
-    return pageLevelMap().contains(&webPage);
-}
-
-static bool isMainOrTestInspectorPage(WebCore::ResourceRequest& request)
+bool WebInspectorProxy::isMainOrTestInspectorPage(const URL& url)
 {
     // Use URL so we can compare the paths and protocols.
-    const URL& requestURL = request.url();
     URL mainPageURL(URL(), WebInspectorProxy::inspectorPageURL());
-    if (requestURL.protocol() == mainPageURL.protocol() && decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(mainPageURL.path()))
+    if (url.protocol() == mainPageURL.protocol() && decodeURLEscapeSequences(url.path()) == decodeURLEscapeSequences(mainPageURL.path()))
         return true;
 
     // We might not have a Test URL in Production builds.
@@ -357,7 +312,7 @@ static bool isMainOrTestInspectorPage(WebCore::ResourceRequest& request)
         return false;
 
     URL testPageURL(URL(), testPageURLString);
-    return requestURL.protocol() == testPageURL.protocol() && decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(testPageURL.path());
+    return url.protocol() == testPageURL.protocol() && decodeURLEscapeSequences(url.path()) == decodeURLEscapeSequences(testPageURL.path());
 }
 
 static void webProcessDidCrash(WKPageRef, const void* clientInfo)
@@ -382,7 +337,7 @@ static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActio
     WebCore::ResourceRequest request = toImpl(navigationActionRef)->request();
 
     // Allow loading of the main inspector file.
-    if (isMainOrTestInspectorPage(request)) {
+    if (WebInspectorProxy::isMainOrTestInspectorPage(request.url())) {
         toImpl(listenerRef)->use();
         return;
     }
@@ -451,7 +406,7 @@ void WebInspectorProxy::eagerlyCreateInspectorPage()
     if (!m_inspectorPage)
         return;
 
-    pageLevelMap().set(m_inspectorPage, inspectionLevel());
+    trackInspectorPage(m_inspectorPage);
 
     WKPageNavigationClientV0 navigationClient = {
         { 0, this },
@@ -562,6 +517,8 @@ void WebInspectorProxy::didClose()
     m_isProfilingPage = false;
     m_showMessageSent = false;
     m_ignoreFirstBringToFront = false;
+
+    untrackInspectorPage(m_inspectorPage);
 
     m_inspectorPage->process().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->pageID());
     m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID());

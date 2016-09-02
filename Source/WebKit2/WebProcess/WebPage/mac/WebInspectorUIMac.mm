@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WebInspectorUI.h"
+#import "RemoteWebInspectorUI.h"
 
 #import <WebCore/SoftLinking.h>
 
@@ -37,21 +38,26 @@ bool WebInspectorUI::canSave()
     return true;
 }
 
+static String webInspectorUILocalizedStringsURL()
+{
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
+
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"localizedStrings" ofType:@"js"];
+    if (path.length)
+        return [[NSURL fileURLWithPath:path] absoluteString];
+
+    return String();
+}
+
 String WebInspectorUI::localizedStringsURL()
 {
-    if (!m_hasLocalizedStringsURL) {
-        // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
-        WebInspectorUILibrary();
+    return webInspectorUILocalizedStringsURL();
+}
 
-        NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"localizedStrings" ofType:@"js"];
-        if ([path length])
-            m_localizedStringsURL = [[NSURL fileURLWithPath:path] absoluteString];
-        else
-            m_localizedStringsURL = String();
-        m_hasLocalizedStringsURL = true;
-    }
-
-    return m_localizedStringsURL;
+String RemoteWebInspectorUI::localizedStringsURL()
+{
+    return webInspectorUILocalizedStringsURL();
 }
 
 } // namespace WebKit

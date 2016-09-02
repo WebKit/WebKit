@@ -31,6 +31,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -52,6 +53,8 @@ public:
 
     virtual String localizedStringsURL() = 0;
     virtual unsigned inspectionLevel() const = 0;
+    virtual String backendCommandsURL() { return String(); };
+    virtual String debuggableType() { return ASCIILiteral("web"); }
 
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;

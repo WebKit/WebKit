@@ -68,6 +68,7 @@ public:
     void moveWindowBy(float x, float y) const;
 
     String localizedStringsURL();
+    String backendCommandsURL();
     String debuggableType();
     unsigned inspectionLevel();
 

@@ -222,12 +222,17 @@ void InspectorFrontendHost::moveWindowBy(float x, float y) const
 
 String InspectorFrontendHost::localizedStringsURL()
 {
-    return m_client ? m_client->localizedStringsURL() : emptyString();
+    return m_client ? m_client->localizedStringsURL() : String();
+}
+
+String InspectorFrontendHost::backendCommandsURL()
+{
+    return m_client ? m_client->backendCommandsURL() : String();
 }
 
 String InspectorFrontendHost::debuggableType()
 {
-    return ASCIILiteral("web");
+    return m_client ? m_client->debuggableType() : String();
 }
 
 unsigned InspectorFrontendHost::inspectionLevel()

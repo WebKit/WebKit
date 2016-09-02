@@ -101,6 +101,11 @@ if (!window.InspectorFrontendHost) {
             return undefined;
         },
 
+        backendCommandsURL: function()
+        {
+            return undefined;
+        },
+
         debuggableType: function()
         {
             return "web";

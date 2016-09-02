@@ -40,7 +40,7 @@
 #include "UserData.h"
 #include "WebBackForwardListItem.h"
 #include "WebIconDatabase.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUtilities.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageGroup.h"
@@ -124,7 +124,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 
     ChildProcessProxy::getLaunchOptions(launchOptions);
 
-    if (WebInspectorProxy::isInspectorProcessPool(m_processPool))
+    if (WebKit::isInspectorProcessPool(m_processPool))
         launchOptions.extraInitializationData.add(ASCIILiteral("inspector-process"), ASCIILiteral("1"));
 
     auto overrideLanguages = m_processPool->configuration().overrideLanguages();

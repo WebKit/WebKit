@@ -1,3 +1,202 @@
+2016-09-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Provide a way to open an inspector frontend for a remote target
+        https://bugs.webkit.org/show_bug.cgi?id=161515
+        <rdar://problem/13182127>
+
+        Reviewed by Brian Burg.
+
+        Provide an interface to open a Web Inspector window/webView for a
+        remote debuggable. Unlike the local Web Inspector, the remote
+        debuggable may be either a JSContext or WebPage, and may only
+        support an older version of the protocol. The Inspector frontend
+        already supports these configurations.
+
+        This adds new RemoteWebInspector/Proxy classes that mirror the
+        WebInspector/Proxy classes for local inspection, but have
+        slightly different behavior as the inspected target is not
+        directly available (and may not be a web page).
+
+        The remote and local classes share a lot of inspector
+        frontend implementation:
+
+          - share most of the inspector frontend host implementation
+          - share much of the frontend webview/window handling
+          - use an inspector process for the frontend page
+
+        But remains separate in some ways:
+
+          - inspected target is unavailable
+          - docking is never available
+          - a few inspector frontend host methods are duplicated
+          - some of the webview/window handling is duplicated
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h: Added.
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm: Added.
+        (-[_WKRemoteWebInspectorViewController init]):
+        (-[_WKRemoteWebInspectorViewController window]):
+        (-[_WKRemoteWebInspectorViewController webView]):
+        (-[_WKRemoteWebInspectorViewController loadForDebuggableType:backendCommandsURL:]):
+        (-[_WKRemoteWebInspectorViewController close]):
+        (-[_WKRemoteWebInspectorViewController show]):
+        (-[_WKRemoteWebInspectorViewController sendMessageToFrontend:]):
+        (-[_WKRemoteWebInspectorViewController sendMessageToBackend:]):
+        (-[_WKRemoteWebInspectorViewController closeFromFrontend]):
+        The interface that may be used to open an inspector window for
+        a remote debuggable. There are only a few delegates to handle
+        sending messages to the backend and knowing if the frontend
+        closed itself (InspectorFrontendHost.closeWindow() or crashed).
+
+        * UIProcess/WebInspectorUtilities.h:
+        * UIProcess/WebInspectorUtilities.cpp: Added.
+        (WebKit::pageLevelMap):
+        (WebKit::inspectorLevelForPage):
+        (WebKit::inspectorPageGroupIdentifierForPage):
+        (WebKit::trackInspectorPage):
+        (WebKit::untrackInspectorPage):
+        (WebKit::inspectorProcessPool):
+        (WebKit::isInspectorProcessPool):
+        (WebKit::isInspectorPage):
+        Extract utilities for determining if a page contains an inspector frontend.
+        Previously this was part of WebInspectorProxy and subclasses but can
+        now be used by multiple classes.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectionLevel):
+        (WebKit::WebInspectorProxy::invalidate):
+        (WebKit::WebInspectorProxy::isMainOrTestInspectorPage):
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage):
+        (WebKit::WebInspectorProxy::didClose):
+        (WebKit::pageLevelMap): Deleted.
+        (WebKit::WebInspectorProxy::inspectorPageGroupIdentifier): Deleted.
+        (WebKit::WebInspectorProxy::inspectorProcessPool): Deleted.
+        (WebKit::WebInspectorProxy::isInspectorProcessPool): Deleted.
+        (WebKit::WebInspectorProxy::isInspectorPage): Deleted.
+        (WebKit::isMainOrTestInspectorPage): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Extract methods to utilities and use them.
+
+        Also address an issue where WebInspectorProxy was untracking
+        the wrong page. It should have been untracking the inspector
+        page but was untracking the inspected page.
+
+        * UIProcess/RemoteWebInspectorProxy.cpp: Added.
+        (WebKit::RemoteWebInspectorProxy::RemoteWebInspectorProxy):
+        (WebKit::RemoteWebInspectorProxy::~RemoteWebInspectorProxy):
+        (WebKit::RemoteWebInspectorProxy::invalidate):
+        (WebKit::RemoteWebInspectorProxy::load):
+        (WebKit::RemoteWebInspectorProxy::closeFromBackend):
+        (WebKit::RemoteWebInspectorProxy::closeFromCrash):
+        (WebKit::RemoteWebInspectorProxy::show):
+        (WebKit::RemoteWebInspectorProxy::sendMessageToFrontend):
+        (WebKit::RemoteWebInspectorProxy::frontendDidClose):
+        (WebKit::RemoteWebInspectorProxy::bringToFront):
+        (WebKit::RemoteWebInspectorProxy::save):
+        (WebKit::RemoteWebInspectorProxy::append):
+        (WebKit::RemoteWebInspectorProxy::startWindowDrag):
+        (WebKit::RemoteWebInspectorProxy::openInNewTab):
+        (WebKit::RemoteWebInspectorProxy::sendMessageToBackend):
+        (WebKit::RemoteWebInspectorProxy::createFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorProxy::closeFrontendPageAndWindow):
+        This class behaves like WebInspectorProxy but without having a
+        reference to the inspected target. It communicates with
+        RemoteInspectorUI in an Inspector process to send and receive
+        frontend messages. What can't be easily shared is duplicated.
+
+        * UIProcess/mac/RemoteWebInspectorProxyMac.mm: Added.
+        (-[WKRemoteWebInspectorProxyObjCAdapter initWithRemoteWebInspectorProxy:]):
+        (-[WKRemoteWebInspectorProxyObjCAdapter webViewWebContentProcessDidTerminate:]):
+        (-[WKRemoteWebInspectorProxyObjCAdapter webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorProxy::platformBringToFront):
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+        (WebKit::RemoteWebInspectorProxy::platformAppend):
+        (WebKit::RemoteWebInspectorProxy::platformStartWindowDrag):
+        (WebKit::RemoteWebInspectorProxy::platformOpenInNewTab):
+        Platform implementation for the bits that are platform specific.
+        What can't be easily shared is duplicated. Ideally we will
+        eventually share this with WebInspectorProxyMac.
+
+        * UIProcess/mac/WKWebInspectorWKWebView.h:
+        * UIProcess/mac/WKWebInspectorWKWebView.mm: Added.
+        (WebKit::getWindowFrame):
+        (WebKit::setWindowFrame):
+        (WebKit::exceededDatabaseQuota):
+        (WebKit::runOpenPanel):
+        (-[WKWebInspectorWKWebView initWithFrame:configuration:]):
+        (-[WKWebInspectorWKWebView tag]):
+        Extract Mac platform code for the inspector webview from WebInspectorProxyMac.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::closeTimerFired):
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::createFrontendConfiguration):
+        (WebKit::WebInspectorProxy::createFrontendWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (-[WKWebInspectorWKWebView tag]): Deleted.
+        (WebKit::getWindowFrame): Deleted.
+        (WebKit::setWindowFrame): Deleted.
+        (WebKit::exceededDatabaseQuota): Deleted.
+        (WebKit::runOpenPanel): Deleted.
+        Extact Mac platform code to be shared for construction of a
+        WKWebViewConfiguration, WKWebView, and NSWindow for an inspector webview.
+        
+        * WebProcess/WebPage/RemoteWebInspectorUI.cpp: Added.
+        (WebKit::RemoteWebInspectorUI::create):
+        (WebKit::RemoteWebInspectorUI::RemoteWebInspectorUI):
+        (WebKit::RemoteWebInspectorUI::initialize):
+        (WebKit::RemoteWebInspectorUI::didSave):
+        (WebKit::RemoteWebInspectorUI::didAppend):
+        (WebKit::RemoteWebInspectorUI::sendMessageToFrontend):
+        (WebKit::RemoteWebInspectorUI::sendMessageToBackend):
+        (WebKit::RemoteWebInspectorUI::windowObjectCleared):
+        (WebKit::RemoteWebInspectorUI::frontendLoaded):
+        (WebKit::RemoteWebInspectorUI::startWindowDrag):
+        (WebKit::RemoteWebInspectorUI::moveWindowBy):
+        (WebKit::RemoteWebInspectorUI::bringToFront):
+        (WebKit::RemoteWebInspectorUI::closeWindow):
+        (WebKit::RemoteWebInspectorUI::openInNewTab):
+        (WebKit::RemoteWebInspectorUI::save):
+        (WebKit::RemoteWebInspectorUI::append):
+        (WebKit::RemoteWebInspectorUI::inspectedURLChanged):
+        * WebProcess/WebPage/RemoteWebInspectorUI.h: Added.
+        * WebProcess/WebPage/RemoteWebInspectorUI.messages.in: Added.
+        * UIProcess/RemoteWebInspectorProxy.messages.in: Added.
+        * UIProcess/RemoteWebInspectorProxy.mm: Added.
+        Inspector frontend client that knows to talk
+        with a RemoteWebInspectorProxy instead of a WebInspectorProxy.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/mac/WebInspectorUIMac.mm:
+        (WebKit::webInspectorUILocalizedStringsURL):
+        (WebKit::WebInspectorUI::localizedStringsURL):
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL):
+        Simplify localized string URL lookup.
+
+        * DerivedSources.make:
+        * WebKit2.xcodeproj/project.pbxproj:
+        New files.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::remoteInspectorUI):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isInspectorPage):
+        An InspectorProcess WebPage may have either a WebInspectorUI or a RemoteWebInspectorUI.
+
 2016-07-08  Jer Noble  <jer.noble@apple.com>
 
         Refactor WebPlaybackSessionModelMediaElement to be client based.

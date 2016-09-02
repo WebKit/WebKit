@@ -51,6 +51,7 @@
     void moveWindowBy(unrestricted float x, unrestricted float y);
 
     DOMString localizedStringsURL();
+    DOMString backendCommandsURL();
     DOMString debuggableType();
     unsigned long inspectionLevel();
 

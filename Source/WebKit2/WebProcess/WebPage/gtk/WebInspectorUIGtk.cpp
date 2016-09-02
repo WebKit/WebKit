@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "WebInspectorUI.h"
+#include "RemoteWebInspectorUI.h"
 
 #include <WebCore/FileSystem.h>
 #include <glib.h>
@@ -39,6 +40,11 @@ bool WebInspectorUI::canSave()
 }
 
 String WebInspectorUI::localizedStringsURL()
+{
+    return String("resource:///org/webkitgtk/inspector/Localizations/en.lproj/localizedStrings.js");
+}
+
+String RemoteWebInspectorUI::localizedStringsURL()
 {
     return String("resource:///org/webkitgtk/inspector/Localizations/en.lproj/localizedStrings.js");
 }

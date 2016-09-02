@@ -35,7 +35,6 @@
 
 namespace IPC {
 class Connection;
-class MessageDecoder;
 }
 
 namespace WebCore {

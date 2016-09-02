@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebInspectorUI.h"
+#include "RemoteWebInspectorUI.h"
 
 #include <WebCore/EflInspectorUtilities.h>
 #include <wtf/text/WTFString.h>
@@ -37,6 +38,11 @@ bool WebInspectorUI::canSave()
 }
 
 String WebInspectorUI::localizedStringsURL()
+{
+    return "file://" + WebCore::inspectorResourcePath() + "/localizedStrings.js";
+}
+
+String RemoteWebInspectorUI::localizedStringsURL()
 {
     return "file://" + WebCore::inspectorResourcePath() + "/localizedStrings.js";
 }
