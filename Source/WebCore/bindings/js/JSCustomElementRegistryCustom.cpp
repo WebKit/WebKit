@@ -127,23 +127,20 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     QualifiedName name(nullAtom, localName, HTMLNames::xhtmlNamespaceURI);
     auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
-    auto* connectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback"));
-    if (state.hadException())
-        return jsUndefined();
-    if (connectedCallback)
+    if (auto* connectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback")))
         elementInterface->setConnectedCallback(connectedCallback);
-
-    auto* disconnectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback"));
     if (state.hadException())
         return jsUndefined();
-    if (disconnectedCallback)
+
+    if (auto* disconnectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback")))
         elementInterface->setDisconnectedCallback(disconnectedCallback);
-
-    auto* adoptedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback"));
     if (state.hadException())
         return jsUndefined();
-    if (adoptedCallback)
+
+    if (auto* adoptedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback")))
         elementInterface->setAdoptedCallback(adoptedCallback);
+    if (state.hadException())
+        return jsUndefined();
 
     auto* attributeChangedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
     if (state.hadException())
@@ -160,14 +157,6 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     globalObject()->putDirect(vm, uniquePrivateName, constructor);
 
     registry.addElementDefinition(WTFMove(elementInterface));
-
-    // FIXME: 17. Let map be registry's upgrade candidates map.
-    // FIXME: 18. Upgrade a newly-defined element given map and definition.
-
-    auto& promiseMap = registry.promiseMap();
-    auto promise = promiseMap.take(localName);
-    if (promise)
-        promise.value()->resolve(nullptr);
 
     return jsUndefined();
 }

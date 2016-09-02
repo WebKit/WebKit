@@ -1606,8 +1606,13 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
     }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (becomeConnected && UNLIKELY(isCustomElement()))
-        CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
+    if (becomeConnected) {
+        if (UNLIKELY(isUnresolvedCustomElement()))
+            CustomElementReactionQueue::enqueueElementUpgradeIfDefined(*this);
+        if (UNLIKELY(isCustomElement()))
+            CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
+    }
+
 #endif
 
     return InsertionDone;

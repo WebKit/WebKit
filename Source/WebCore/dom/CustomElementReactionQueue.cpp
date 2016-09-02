@@ -116,8 +116,28 @@ CustomElementReactionQueue::~CustomElementReactionQueue()
 
 void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, JSCustomElementInterface& elementInterface)
 {
+    ASSERT(element.tagQName() == elementInterface.name());
     if (auto* queue = CustomElementReactionStack::ensureCurrentQueue())
         queue->m_items.append({CustomElementReactionQueueItem::Type::ElementUpgrade, element, elementInterface});
+}
+
+void CustomElementReactionQueue::enqueueElementUpgradeIfDefined(Element& element)
+{
+    ASSERT(element.inDocument());
+    ASSERT(element.isUnresolvedCustomElement());
+    auto* window = element.document().domWindow();
+    if (!window)
+        return;
+
+    auto* registry = window->customElementRegistry();
+    if (!registry)
+        return;
+
+    auto* elementInterface = registry->findInterface(element);
+    if (!elementInterface)
+        return;
+
+    enqueueElementUpgrade(element, *elementInterface);
 }
 
 void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& element)

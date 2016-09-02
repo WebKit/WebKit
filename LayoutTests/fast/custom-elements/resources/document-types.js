@@ -3,6 +3,7 @@ const DocumentTypes = [
         name: 'document',
         create: function () { return Promise.resolve(document); },
         isOwner: true,
+        hasBrowsingContext: true,
     },
     {
         name: 'document of a template element',
@@ -14,7 +15,8 @@ const DocumentTypes = [
                     doc.appendChild(doc.createElement('html'));
                 resolve(doc);
             });
-        }
+        },
+        hasBrowsingContext: false,
     },
     {
         name: 'new document',
@@ -24,7 +26,8 @@ const DocumentTypes = [
                 doc.appendChild(doc.createElement('html'));
                 resolve(doc);
             });
-        }
+        },
+        hasBrowsingContext: false,
     },
     {
         name: 'cloned document',
@@ -34,19 +37,22 @@ const DocumentTypes = [
                 doc.appendChild(doc.createElement('html'));
                 resolve(doc);
             });
-        }
+        },
+        hasBrowsingContext: false,
     },
     {
         name: 'document created by createHTMLDocument',
         create: function () {
             return Promise.resolve(document.implementation.createHTMLDocument());
-        }
+        },
+        hasBrowsingContext: false,
     },
     {
         name: 'HTML document created by createDocument',
         create: function () {
             return Promise.resolve(document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null));
-        }
+        },
+        hasBrowsingContext: false,
     },
     {
         name: 'document in an iframe',
@@ -57,7 +63,8 @@ const DocumentTypes = [
                 iframe.onerror = function () { reject('Failed to load an empty iframe'); }
                 document.body.appendChild(iframe);
             });
-        }
+        },
+        hasBrowsingContext: true,
     },
     {
         name: 'HTML document fetched by XHR',
@@ -70,6 +77,7 @@ const DocumentTypes = [
                 xhr.onerror = function () { reject('Failed to fetch the document'); }
                 xhr.send();
             });
-        }
+        },
+        hasBrowsingContext: false,
     }
 ];

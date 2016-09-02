@@ -625,7 +625,7 @@ bool DOMWindow::isCurrentlyDisplayedInFrame() const
 CustomElementRegistry& DOMWindow::ensureCustomElementRegistry()
 {
     if (!m_customElementRegistry)
-        m_customElementRegistry = CustomElementRegistry::create();
+        m_customElementRegistry = CustomElementRegistry::create(*this);
     return *m_customElementRegistry;
 }
 #endif

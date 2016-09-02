@@ -28,6 +28,11 @@ class MyElement extends HTMLElement {
 customElements.define('my-element', MyElement);
 
 test(function () {
+    assert_false(upgradeCandidate.matches(':defined'));
+}, 'The defined flag of a custom element must not be set if a custom element has not been upgraded yet even if the element has been defined');
+
+test(function () {
+    document.body.appendChild(upgradeCandidate);
     assert_true(upgradeCandidate.matches(':defined'));
     assert_false(matchInsideConstructor, 'Upgrading a custom element must set defined flag after invoking the constructor');
 }, 'The defined flag of a custom element must be set when a custom element is successfully upgraded');
@@ -37,6 +42,12 @@ test(function () {
     assert_true(definedElement.matches(':defined'));
     assert_false(matchInsideConstructor, 'Creating a custom element must set defined flag after invoking the constructor');
 }, 'The defined flag of a custom element must be set if there is a matching definition');
+
+test(function () {
+    var upgradedElement = document.createElement('my-element').cloneNode(true);
+    assert_true(upgradedElement.matches(':defined'));
+    assert_false(matchInsideConstructor, 'Creating a custom element must set defined flag after invoking the constructor');
+}, 'The defined flag of an upgraded custom element must be set');
 
 document.write('<my-other-element></my-other-element>');
 

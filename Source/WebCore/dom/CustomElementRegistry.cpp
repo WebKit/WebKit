@@ -28,28 +28,46 @@
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
+#include "CustomElementReactionQueue.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Element.h"
+#include "ElementTraversal.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMPromise.h"
 #include "MathMLNames.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"
+#include "ShadowRoot.h"
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-Ref<CustomElementRegistry> CustomElementRegistry::create()
+Ref<CustomElementRegistry> CustomElementRegistry::create(DOMWindow& window)
 {
-    return adoptRef(*new CustomElementRegistry());
+    return adoptRef(*new CustomElementRegistry(window));
 }
 
-CustomElementRegistry::CustomElementRegistry()
+CustomElementRegistry::CustomElementRegistry(DOMWindow& window)
+    : m_window(window)
 { }
 
 CustomElementRegistry::~CustomElementRegistry()
 { }
+
+// https://dom.spec.whatwg.org/#concept-shadow-including-tree-order
+static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface)
+{
+    for (Element* element = ElementTraversal::firstWithin(node); element; element = ElementTraversal::next(*element)) {
+        if (element->isUnresolvedCustomElement() && element->tagQName() == elementInterface.name())
+            CustomElementReactionQueue::enqueueElementUpgrade(*element, elementInterface);
+        if (auto* shadowRoot = element->shadowRoot()) {
+            if (shadowRoot->mode() != ShadowRoot::Mode::UserAgent)
+                enqueueUpgradeInShadowIncludingTreeOrder(*shadowRoot, elementInterface);
+        }
+    }
+}
 
 void CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&& elementInterface)
 {
@@ -58,35 +76,23 @@ void CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&&
     m_constructorMap.add(elementInterface->constructor(), elementInterface.ptr());
     m_nameMap.add(localName, elementInterface.copyRef());
 
-    auto candidateList = m_upgradeCandidatesMap.find(localName);
-    if (candidateList == m_upgradeCandidatesMap.end())
-        return;
+    if (auto* document = m_window.document())
+        enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get());
 
-    Vector<RefPtr<Element>> list(WTFMove(candidateList->value));
-
-    m_upgradeCandidatesMap.remove(localName);
-
-    for (auto& candidate : list) {
-        ASSERT(candidate);
-        elementInterface->upgradeElement(*candidate);
-    }
-
-    // We should not be adding more upgrade candidate for this local name.
-    ASSERT(!m_upgradeCandidatesMap.contains(localName));
+    if (auto promise = m_promiseMap.take(localName))
+        promise.value()->resolve(nullptr);
 }
 
-void CustomElementRegistry::addUpgradeCandidate(Element& candidate)
+JSCustomElementInterface* CustomElementRegistry::findInterface(const Element& element) const
 {
-    auto result = m_upgradeCandidatesMap.ensure(candidate.localName(), [] {
-        return Vector<RefPtr<Element>>();
-    });
-    auto& nodeVector = result.iterator->value;
-    ASSERT(!nodeVector.contains(&candidate));
-    nodeVector.append(&candidate);
+    return findInterface(element.tagQName());
 }
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const QualifiedName& name) const
 {
+    ASSERT(!name.hasPrefix());
+    if (name.namespaceURI() != HTMLNames::xhtmlNamespaceURI)
+        return nullptr;
     auto it = m_nameMap.find(name.localName());
     return it == m_nameMap.end() || it->value->name() != name ? nullptr : const_cast<JSCustomElementInterface*>(it->value.ptr());
 }

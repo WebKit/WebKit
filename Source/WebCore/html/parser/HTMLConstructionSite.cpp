@@ -678,7 +678,6 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
         if (window && Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
             element = HTMLElement::create(qualifiedName, ownerDocument);
             element->setIsUnresolvedCustomElement();
-            window->ensureCustomElementRegistry().addUpgradeCandidate(*element);
         } else
 #endif
             element = HTMLUnknownElement::create(qualifiedName, ownerDocument);

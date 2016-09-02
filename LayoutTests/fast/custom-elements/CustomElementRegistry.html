@@ -149,6 +149,31 @@ test(function () {
     assert_array_equals(calls, ['prototype'], 'customElements.define must get "prototype"');
 }, 'customElements.define must validate the custom element name before checking the element definition is running flag');
 
+test(function () {
+    var unresolvedElement = document.createElement('constructor-calls-define');
+    document.body.appendChild(unresolvedElement);
+    var elementUpgradedDuringUpgrade = document.createElement('defined-during-upgrade');
+    document.body.appendChild(elementUpgradedDuringUpgrade);
+
+    var DefinedDuringUpgrade = class extends HTMLElement { };
+
+    class ConstructorCallsDefine extends HTMLElement {
+        constructor() {
+            customElements.define('defined-during-upgrade', DefinedDuringUpgrade);
+            assert_false(unresolvedElement instanceof ConstructorCallsDefine);
+            assert_true(elementUpgradedDuringUpgrade instanceof DefinedDuringUpgrade);
+            super();
+            assert_true(unresolvedElement instanceof ConstructorCallsDefine);
+            assert_true(elementUpgradedDuringUpgrade instanceof DefinedDuringUpgrade);
+        }
+    }
+
+    assert_false(unresolvedElement instanceof ConstructorCallsDefine);
+    assert_false(elementUpgradedDuringUpgrade instanceof DefinedDuringUpgrade);
+
+    customElements.define('constructor-calls-define', ConstructorCallsDefine);
+}, 'customElements.define unset the element definition is running flag before upgrading custom elements');
+
 (function () {
     var testCase = async_test('customElements.define must not throw'
         +' when defining another custom element in a different global object during Get(constructor, "prototype")', {timeout: 100});
@@ -384,13 +409,48 @@ test(function () {
 }, 'customElements.define must define an instantiatable custom element');
 
 test(function () {
+    var disconnectedElement = document.createElement('some-custom');
+    var connectedElementBeforeShadowHost = document.createElement('some-custom');
+    var connectedElementAfterShadowHost = document.createElement('some-custom');
+    var elementInShadowTree = document.createElement('some-custom');
+    var childElementOfShadowHost = document.createElement('some-custom');
+    var customShadowHost = document.createElement('some-custom');
+    var elementInNestedShadowTree = document.createElement('some-custom');
+
+    var container = document.createElement('div');
+    var shadowHost = document.createElement('div');
+    var shadowRoot = shadowHost.attachShadow({mode: 'closed'});
+    container.appendChild(connectedElementBeforeShadowHost);
+    container.appendChild(shadowHost);
+    container.appendChild(connectedElementAfterShadowHost);
+    shadowHost.appendChild(childElementOfShadowHost);
+    shadowRoot.appendChild(elementInShadowTree);
+    shadowRoot.appendChild(customShadowHost);
+
+    var innerShadowRoot = customShadowHost.attachShadow({mode: 'closed'});
+    innerShadowRoot.appendChild(elementInNestedShadowTree);
+
+    var calls = [];
+    class SomeCustomElement extends HTMLElement {
+        constructor() {
+            super();
+            calls.push(this);
+        }
+    };
+
+    document.body.appendChild(container);
+    customElements.define('some-custom', SomeCustomElement);
+    assert_array_equals(calls, [connectedElementBeforeShadowHost, elementInShadowTree, customShadowHost, elementInNestedShadowTree, childElementOfShadowHost, connectedElementAfterShadowHost]);
+}, 'customElements.define must upgrade elements in the shadow-including tree order');
+
+test(function () {
     assert_true('get' in CustomElementRegistry.prototype, '"get" exists on CustomElementRegistry.prototype');
     assert_true('get' in customElements, '"get" exists on window.customElements');
 }, 'CustomElementRegistry interface must have get as a method');
 
 test(function () {
     assert_equals(customElements.get('a-b'), undefined);
-}, '"get" must return undefined when the registry does not contain an entry with the given name');
+}, 'customElements.get must return undefined when the registry does not contain an entry with the given name');
 
 test(function () {
     assert_equals(customElements.get('html'), undefined);
@@ -398,22 +458,22 @@ test(function () {
     assert_equals(customElements.get('div'), undefined);
     assert_equals(customElements.get('g'), undefined);
     assert_equals(customElements.get('ab'), undefined);
-}, '"get" must return undefined when the registry does not contain an entry with the given name even if the name was not a valid custom element name');
+}, 'customElements.get must return undefined when the registry does not contain an entry with the given name even if the name was not a valid custom element name');
 
 test(function () {
     assert_equals(customElements.get('existing-custom-element'), undefined);
     class ExistingCustomElement extends HTMLElement {};
     customElements.define('existing-custom-element', ExistingCustomElement);
     assert_equals(customElements.get('existing-custom-element'), ExistingCustomElement);
-}, '"get" return the constructor of the entry with the given name when there is a matching entry.');
+}, 'customElements.get return the constructor of the entry with the given name when there is a matching entry.');
 
 test(function () {
     assert_true(customElements.whenDefined('some-name') instanceof Promise);
-}, '"whenDefined" must return a promise for a valid custom element name');
+}, 'customElements.whenDefined must return a promise for a valid custom element name');
 
 test(function () {
     assert_equals(customElements.whenDefined('some-name'), customElements.whenDefined('some-name'));
-}, '"whenDefined" must return the same promise each time invoked for a valid custom element name which has not been defined');
+}, 'customElements.whenDefined must return the same promise each time invoked for a valid custom element name which has not been defined');
 
 promise_test(function () {
     var resolved = false;
@@ -423,7 +483,7 @@ promise_test(function () {
         assert_false(resolved, 'The promise returned by "whenDefined" must not be resolved until a custom element is defined');
         assert_false(rejected, 'The promise returned by "whenDefined" must not be rejected until a custom element is defined');
     });    
-}, '"whenDefined" must return an unresolved promise when the registry does not contain the entry with the given name')
+}, 'customElements.whenDefined must return an unresolved promise when the registry does not contain the entry with the given name')
 
 promise_test(function () {
     var promise = customElements.whenDefined('badname');
@@ -436,7 +496,7 @@ promise_test(function () {
         assert_false('resolved' in promise, 'The promise returned by "whenDefined" must be resolved when a custom element is defined');
         assert_true('rejected' in promise, 'The promise returned by "whenDefined" must not be rejected when a custom element is defined');
     });
-}, '"whenDefined" must return a rejected promise when the given name is not a valid custom element name');
+}, 'customElements.whenDefined must return a rejected promise when the given name is not a valid custom element name');
 
 promise_test(function () {
     customElements.define('preexisting-custom-element', class extends HTMLElement { });
@@ -453,7 +513,7 @@ promise_test(function () {
             'The promise returned by "whenDefined" must be resolved with "undefined" when a custom element is defined');
         assert_false('rejected' in promise, 'The promise returned by "whenDefined" must not be rejected when a custom element is defined');
     });
-}, '"whenDefined" must return a resolved promise when the registry contains the entry with the given name');
+}, 'customElements.whenDefined must return a resolved promise when the registry contains the entry with the given name');
 
 promise_test(function () {
     class AnotherExistingCustomElement extends HTMLElement {};
@@ -479,7 +539,7 @@ promise_test(function () {
         assert_equals(promise2.resolved, undefined, 'The promise returned by "whenDefined" must be resolved with "undefined" when a custom element is defined');
         assert_false('rejected' in promise2, 'The promise returned by "whenDefined" must not be rejected when a custom element is defined');
     });
-}, '"whenDefined" must return a new resolved promise each time invoked when the registry contains the entry with the given name');
+}, 'customElements.whenDefined must return a new resolved promise each time invoked when the registry contains the entry with the given name');
 
 promise_test(function () {
     var promise = customElements.whenDefined('element-defined-after-whendefined');
@@ -514,7 +574,7 @@ promise_test(function () {
             'The promise returned by "whenDefined" must be resolved with "undefined" when a custom element is defined');
         assert_false('rejected' in promiseAfterDefine, 'The promise returned by "whenDefined" must not be rejected when a custom element is defined');
     });
-}, 'A promise returned by "whenDefined" must be resolved by "define"');
+}, 'A promise returned by customElements.whenDefined must be resolved by "define"');
 
 </script>
 </body>

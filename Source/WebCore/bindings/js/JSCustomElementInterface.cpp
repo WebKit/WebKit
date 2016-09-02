@@ -104,6 +104,7 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& t
 
 void JSCustomElementInterface::upgradeElement(Element& element)
 {
+    ASSERT(element.tagQName() == name());
     ASSERT(element.isUnresolvedCustomElement());
     if (!canInvokeCallback())
         return;

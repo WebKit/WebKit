@@ -46,6 +46,7 @@ public:
     ~CustomElementReactionQueue();
 
     static void enqueueElementUpgrade(Element&, JSCustomElementInterface&);
+    static void enqueueElementUpgradeIfDefined(Element&);
     static void enqueueConnectedCallbackIfNeeded(Element&);
     static void enqueueDisconnectedCallbackIfNeeded(Element&);
     static void enqueueAdoptedCallbackIfNeeded(Element&, Document& oldDocument, Document& newDocument);
