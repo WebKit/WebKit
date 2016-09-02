@@ -248,7 +248,7 @@ void webkit_dom_performance_set_resource_timing_buffer_size(WebKitDOMPerformance
 
 void webkit_dom_performance_webkit_mark(WebKitDOMPerformance* self, const gchar* markName, GError** error)
 {
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) && ENABLE(USER_TIMING)
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_PERFORMANCE(self));
     g_return_if_fail(markName);
@@ -271,7 +271,7 @@ void webkit_dom_performance_webkit_mark(WebKitDOMPerformance* self, const gchar*
 
 void webkit_dom_performance_webkit_clear_marks(WebKitDOMPerformance* self, const gchar* markName)
 {
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) && ENABLE(USER_TIMING)
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_PERFORMANCE(self));
     g_return_if_fail(markName);
@@ -287,7 +287,7 @@ void webkit_dom_performance_webkit_clear_marks(WebKitDOMPerformance* self, const
 
 void webkit_dom_performance_webkit_measure(WebKitDOMPerformance* self, const gchar* measureName, const gchar* startMark, const gchar* endMark, GError** error)
 {
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) && ENABLE(USER_TIMING)
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_PERFORMANCE(self));
     g_return_if_fail(measureName);
@@ -316,7 +316,7 @@ void webkit_dom_performance_webkit_measure(WebKitDOMPerformance* self, const gch
 
 void webkit_dom_performance_webkit_clear_measures(WebKitDOMPerformance* self, const gchar* measureName)
 {
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) && ENABLE(USER_TIMING)
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_PERFORMANCE(self));
     g_return_if_fail(measureName);

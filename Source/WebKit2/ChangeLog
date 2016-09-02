@@ -1,5 +1,23 @@
 2016-09-02  Zan Dobersek  <zdobersek@igalia.com>
 
+        Fix GObject bindings build breakage when compiling with ENABLE_USER_TIMING disabled.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        Add additional ENABLE(USER_TIMING) build guards to WebKitDOMPerformance bindings,
+        avoiding build errors when building with that feature disabled. Previously this
+        wasn't a problem because the four amended binding functions weren't generated
+        when the feature was disabled due to the similar use of guards in the Performance.idl
+        file.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformance.cpp:
+        (webkit_dom_performance_webkit_mark):
+        (webkit_dom_performance_webkit_clear_marks):
+        (webkit_dom_performance_webkit_measure):
+        (webkit_dom_performance_webkit_clear_measures):
+
+2016-09-02  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK+ build fix when compiling with Clang.
 
         * WebProcess/WebPage/gtk/AcceleratedSurface.cpp: Include WebPage.h.
