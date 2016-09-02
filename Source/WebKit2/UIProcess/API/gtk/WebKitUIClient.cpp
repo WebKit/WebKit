@@ -62,18 +62,18 @@ private:
         webkitWebViewClosePage(m_webView);
     }
 
-    void runJavaScriptAlert(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void ()> completionHandler) override
+    void runJavaScriptAlert(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void ()>&& completionHandler) override
     {
         webkitWebViewRunJavaScriptAlert(m_webView, message.utf8());
         completionHandler();
     }
 
-    void runJavaScriptConfirm(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (bool)> completionHandler) override
+    void runJavaScriptConfirm(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void (bool)>&& completionHandler) override
     {
         completionHandler(webkitWebViewRunJavaScriptConfirm(m_webView, message.utf8()));
     }
 
-    void runJavaScriptPrompt(WebPageProxy*, const String& message, const String& defaultValue, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (const String&)> completionHandler) override
+    void runJavaScriptPrompt(WebPageProxy*, const String& message, const String& defaultValue, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void (const String&)>&& completionHandler) override
     {
         CString result = webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8());
         if (result.isNull()) {
@@ -86,7 +86,7 @@ private:
 
     bool canRunBeforeUnloadConfirmPanel() const override { return true; }
 
-    void runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*, std::function<void (bool)> completionHandler) override
+    void runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*, Function<void (bool)>&& completionHandler) override
     {
         completionHandler(webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8()));
     }
@@ -153,7 +153,7 @@ private:
         return WebCore::FloatRect(geometry);
     }
 
-    void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const String&, const String&, unsigned long long /*currentQuota*/, unsigned long long /*currentOriginUsage*/, unsigned long long /*currentDatabaseUsage*/, unsigned long long /*expectedUsage*/, std::function<void (unsigned long long)> completionHandler) override
+    void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const String&, const String&, unsigned long long /*currentQuota*/, unsigned long long /*currentOriginUsage*/, unsigned long long /*currentDatabaseUsage*/, unsigned long long /*expectedUsage*/, Function<void (unsigned long long)>&& completionHandler) override
     {
         static const unsigned long long defaultQuota = 5 * 1024 * 1204; // 5 MB
         // FIXME: Provide API for this.
