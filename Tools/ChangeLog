@@ -1,5 +1,24 @@
 2016-09-02  Jonathan Bedard  <jbedard@apple.com>
 
+        Fix --no-sample-on-timeout command line argument
+        https://bugs.webkit.org/show_bug.cgi?id=161507
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch fixes the —no-sample-on-timeout flag and correctly names spindumps as spindump.txt.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Fixed —-no-sample-on-timeout.
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort.sample_process): Use correct file name.
+        (ApplePort.spindump_file_path): Spindump and sample file names are different.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._check_for_driver_timeout): Check “sample_on_timeout” flag.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_spindump): Modified for correct filename.
+
+2016-09-02  Jonathan Bedard  <jbedard@apple.com>
+
         Unreviewed: moved myself to the reviewers list.
 
         * Scripts/webkitpy/common/config/contributors.json:

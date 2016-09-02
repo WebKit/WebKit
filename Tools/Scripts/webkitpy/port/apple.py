@@ -198,7 +198,6 @@ class ApplePort(Port):
         return self._merge_crash_logs(crash_logs, all_crash_log, crashed_processes)
 
     def sample_process(self, name, pid):
-        hang_report = self.sample_file_path(name, pid)
         exit_status = self._executive.run_command([
             "/usr/bin/sudo",
             "-n",
@@ -207,7 +206,7 @@ class ApplePort(Port):
             10,
             10,
             "-file",
-            hang_report,
+            self.spindump_file_path(name, pid),
         ], return_exit_code=True)
         if exit_status:
             try:
@@ -217,13 +216,16 @@ class ApplePort(Port):
                     10,
                     10,
                     "-file",
-                    hang_report,
+                    self.sample_file_path(name, pid),
                 ])
             except ScriptError as e:
                 _log.warning('Unable to sample process:' + str(e))
 
     def sample_file_path(self, name, pid):
         return self._filesystem.join(self.results_directory(), "{0}-{1}-sample.txt".format(name, pid))
+
+    def spindump_file_path(self, name, pid):
+        return self._filesystem.join(self.results_directory(), "{0}-{1}-spindump.txt".format(name, pid))
 
     def look_for_new_samples(self, unresponsive_processes, start_time):
         sample_files = {}
