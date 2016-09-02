@@ -1,3 +1,11 @@
+2016-09-01  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Gardening faliure and timeout tests on 2th Sep.
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2016-09-01  Ricky Mondello  <rmondello@apple.com>
 
         YouTube Flash plug-in replacement facility should not insert showinfo=0 into iframe URLs
