@@ -53,7 +53,7 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
     if (!DataDetectorsLibrary())
         return nil;
 
-    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
+    RetainPtr<DDActionContext> actionContext = adoptNS([[getDDActionContextClass() alloc] init]);
     [actionContext setAllowedActionUTIs:@[ @"com.apple.dial" ]];
 
     NSArray *proposedMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:actionContext.get()];
@@ -84,7 +84,7 @@ RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
     NSMutableArray *faceTimeItems = [NSMutableArray array];
     NSMenuItem *dialItem = nil;
 
-    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
+    RetainPtr<DDActionContext> actionContext = adoptNS([[getDDActionContextClass() alloc] init]);
     [actionContext setAllowedActionUTIs:@[ @"com.apple.dial", @"com.apple.facetime", @"com.apple.facetimeaudio" ]];
 
     NSArray *proposedMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:actionContext.get()];

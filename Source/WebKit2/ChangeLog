@@ -1,5 +1,16 @@
 2016-09-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        [Mac] RetainPtr misuse, DDActionContext leaks
+        https://bugs.webkit.org/show_bug.cgi?id=161551
+
+        Reviewed by Tim Horton.
+
+        * Platform/mac/MenuUtilities.mm:
+        (WebKit::menuItemForTelephoneNumber):
+        (WebKit::menuForTelephoneNumber):
+
+2016-09-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix Mac CMake build, missing _WKRemoteWebInspectorViewController.mm
 
         Unreviewed build fix.
