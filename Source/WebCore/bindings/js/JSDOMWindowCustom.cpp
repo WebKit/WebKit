@@ -361,6 +361,14 @@ JSValue JSDOMWindow::getPrototype(JSObject* object, ExecState* exec)
     return Base::getPrototype(object, exec);
 }
 
+bool JSDOMWindow::preventExtensions(JSObject* object, ExecState* exec)
+{
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), ThrowSecurityError))
+        return false;
+    return false;
+}
+
 // Custom Attributes
 
 void JSDOMWindow::setLocation(ExecState& state, JSValue value)

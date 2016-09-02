@@ -1326,6 +1326,9 @@ sub GenerateHeader
     push (@headerContent, "    static JSC::JSValue getPrototype(JSC::JSObject*, JSC::ExecState*);\n") if $interface->extendedAttributes->{"CustomGetPrototype"};
     push (@headerContent, "    static bool setPrototype(JSC::JSObject*, JSC::ExecState*, JSC::JSValue, bool shouldThrowIfCantSet);\n") if $interface->extendedAttributes->{"CustomSetPrototype"};
 
+    # Custom preventExtensions function.
+    push(@headerContent, "    static bool preventExtensions(JSC::JSObject*, JSC::ExecState*);\n") if $interface->extendedAttributes->{"CustomPreventExtensions"};
+    
     # Override toBoolean to return false for objects that want to 'MasqueradesAsUndefined'.
     if ($interface->extendedAttributes->{"MasqueradesAsUndefined"}) {
         $structureFlags{"JSC::MasqueradesAsUndefined"} = 1;

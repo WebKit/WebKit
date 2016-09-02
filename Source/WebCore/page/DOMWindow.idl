@@ -30,6 +30,7 @@
     CustomEnumerateProperty,
     CustomGetOwnPropertySlot,
     CustomGetPrototype,
+    CustomPreventExtensions,
     CustomProxyToJSObject,
     CustomPutFunction,
     CustomSetPrototype,

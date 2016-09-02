@@ -147,6 +147,16 @@ JSValue JSLocation::getPrototype(JSObject* object, ExecState* exec)
     return Base::getPrototype(object, exec);
 }
 
+bool JSLocation::preventExtensions(JSObject* object, ExecState* exec)
+{
+    JSLocation* thisObject = jsCast<JSLocation*>(object);
+    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), ThrowSecurityError))
+        return false;
+    // FIXME: The specification says to return false in the same origin case as well but other browsers have
+    // not implemented this yet.
+    return Base::preventExtensions(object, exec);
+}
+
 bool JSLocationPrototype::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&, bool& putResult)
 {
     putResult = false;

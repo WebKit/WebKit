@@ -1,5 +1,18 @@
 2016-09-02  Chris Dumez  <cdumez@apple.com>
 
+        Object.preventExtensions() should throw cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=161486
+
+        Reviewed by Geoffrey Garen.
+
+        Update JSProxy to forward preventExtensions() calls to its target.
+
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::preventExtensions):
+        * runtime/JSProxy.h:
+
+2016-09-02  Chris Dumez  <cdumez@apple.com>
+
         Align proto getter / setter behavior with other browsers
         https://bugs.webkit.org/show_bug.cgi?id=161455
 

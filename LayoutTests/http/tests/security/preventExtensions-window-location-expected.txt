@@ -1,0 +1,24 @@
+Test the behavior of Object.preventExtensions() for Window / Location.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Cross origin
+PASS Object.isExtensible(frames[0]) is true
+PASS Object.preventExtensions(frames[0]) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS Object.isExtensible(frames[0]) is true
+PASS Object.isExtensible(frames[0].location) is true
+PASS Object.preventExtensions(frames[0].location) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS Object.isExtensible(frames[0].location) is true
+
+* Same origin
+PASS Object.isExtensible(window) is true
+FAIL Object.preventExtensions(window) should throw a TypeError. Did not throw.
+PASS Object.isExtensible(window) is true
+PASS Object.isExtensible(window.location) is true
+FAIL Object.preventExtensions(window.location) should throw a TypeError. Did not throw.
+FAIL Object.isExtensible(window.location) should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

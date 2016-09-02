@@ -32,6 +32,7 @@
     CustomEnumerateProperty,
     CustomGetPrototype,
     CustomNamedSetter,
+    CustomPreventExtensions,
     CustomSetPrototype,
     GenerateIsReachable=ImplFrame,
     JSCustomDefineOwnProperty,
