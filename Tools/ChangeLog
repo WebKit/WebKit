@@ -1,3 +1,11 @@
+2016-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix archive-built-product step in GTK+ bots after r205280.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct): Do not copy to the archive the files needed to run GObject DOM bindings API breaks tests
+        that no longer exist.
+
 2016-09-02  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should parse file URLs

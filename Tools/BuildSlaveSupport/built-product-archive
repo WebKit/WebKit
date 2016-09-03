@@ -196,13 +196,6 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
             if dirContainsdwo(objectDir):
                 neededDirectories.append(objectDir)
 
-        # On GTK we need this for the WebKit GObject DOM bindings API break test
-        if platform == 'gtk':
-            neededDirectories.append("DerivedSources/webkitdom")
-            webkitdomFile = os.path.join(_configurationBuildDirectory, 'gtkdoc-webkitdom.cfg')
-            if subprocess.call('cp %s %s' % (webkitdomFile, thinDirectory), shell=True):
-                return 1
-
         for dirname in neededDirectories:
             fromDir = os.path.join(_configurationBuildDirectory, dirname, '.')
             toDir = os.path.join(thinDirectory, dirname)
