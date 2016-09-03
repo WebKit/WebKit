@@ -1,11 +1,8 @@
-CONSOLE MESSAGE: line 29: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 29: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 48: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 55: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 29: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 75: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 82: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-This tests that variable names can't be enumerated cross domain (see http://bugs.webkit.org/show_bug.cgi?id=16387)
+CONSOLE MESSAGE: line 28: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 28: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+Tests enumeration of Window / Location properties cross origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS: Cross frame access by enumerating the window object was denied.
@@ -14,4 +11,9 @@ PASS: Cross frame access by getting the property names of the window object was 
 PASS: Cross frame access by enumerating the Location object was denied.
 PASS: Cross frame access by getting the keys of the Location object was denied.
 PASS: Cross frame access by getting the property names of the Location object was denied.
+PASS: areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), whitelistedWindowProperties.sort()) should be 'true' and is.
+PASS: areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), whitelistedLocationProperties.sort()) should be 'true' and is.
+PASS: successfullyParsed should be 'true' and is.
+
+TEST COMPLETE
 

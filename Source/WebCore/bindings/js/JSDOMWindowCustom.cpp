@@ -319,12 +319,27 @@ void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNa
     Base::getPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
+static void addCrossOriginWindowPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+{
+    // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
+    static const Identifier* properties[] = {
+        &state.propertyNames().blur, &state.propertyNames().close, &state.propertyNames().closed,
+        &state.propertyNames().focus, &state.propertyNames().frames, &state.propertyNames().length,
+        &state.propertyNames().location, &state.propertyNames().opener, &state.propertyNames().parent,
+        &state.propertyNames().postMessage, &state.propertyNames().self, &state.propertyNames().top,
+        &state.propertyNames().window
+    };
+    for (auto* property : properties)
+        propertyNames.add(*property);
+}
+
 void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
-    // Only allow the window to enumerated by frames in the same origin.
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError)) {
+        addCrossOriginWindowPropertyNames(*exec, propertyNames);
         return;
+    }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 

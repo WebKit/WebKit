@@ -1,5 +1,17 @@
 2016-09-03  Chris Dumez  <cdumez@apple.com>
 
+        Align cross-Origin Object.getOwnPropertyNames() with the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=161457
+
+        Reviewed by Darin Adler.
+
+        Add test coverage.
+
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration.html:
+
+2016-09-03  Chris Dumez  <cdumez@apple.com>
+
         Object.preventExtensions(window) should throw a TypeError
         https://bugs.webkit.org/show_bug.cgi?id=161554
 
