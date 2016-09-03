@@ -41,7 +41,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLToken::RenderMathMLToken(Element& element, RenderStyle&& style)
+RenderMathMLToken::RenderMathMLToken(MathMLTokenElement& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
 {
 }

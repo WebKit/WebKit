@@ -39,10 +39,11 @@
 namespace WebCore {
 
 class RenderMathMLOperator;
+class MathMLPresentationElement;
 
 class RenderMathMLBlock : public RenderBlock {
 public:
-    RenderMathMLBlock(Element&, RenderStyle&&);
+    RenderMathMLBlock(MathMLPresentationElement&, RenderStyle&&);
     RenderMathMLBlock(Document&, RenderStyle&&);
     virtual ~RenderMathMLBlock();
 
@@ -97,7 +98,7 @@ private:
 
 class RenderMathMLTable final : public RenderTable {
 public:
-    explicit RenderMathMLTable(Element& element, RenderStyle&& style)
+    explicit RenderMathMLTable(MathMLElement& element, RenderStyle&& style)
         : RenderTable(element, WTFMove(style))
         , m_mathMLStyle(MathMLStyle::create())
     {

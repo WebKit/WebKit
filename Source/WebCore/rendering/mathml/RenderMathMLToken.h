@@ -37,7 +37,7 @@ class MathMLTokenElement;
 
 class RenderMathMLToken : public RenderMathMLBlock {
 public:
-    RenderMathMLToken(Element&, RenderStyle&&);
+    RenderMathMLToken(MathMLTokenElement&, RenderStyle&&);
     RenderMathMLToken(Document&, RenderStyle&&);
 
     MathMLTokenElement& element();
