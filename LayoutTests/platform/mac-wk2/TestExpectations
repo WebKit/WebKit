@@ -541,3 +541,6 @@ webkit.org/b/160309 fast/dom/Window/child-window-focus.html [ Pass Failure ]
 webkit.org/b/161148 gamepad/gamepad-timestamp.html [ Pass Failure ]
 
 webkit.org/b/161366 editing/pasteboard/5478250.html [ Pass Failure ]
+
+webkit.org/b/161411 [ Debug ] editing/mac/spelling/accept-misspelled-candidate.html [ Pass Failure ]
+webkit.org/b/161411 [ Debug ] editing/mac/spelling/autocorrection-contraction.html [ Pass Failure ]
