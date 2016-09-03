@@ -27,7 +27,6 @@
 #include "URLParser.h"
 
 #include "Logging.h"
-#include "NotImplemented.h"
 #include <array>
 #include <wtf/text/StringBuilder.h>
 
@@ -37,6 +36,36 @@ template<typename CharacterType> static bool isC0Control(CharacterType character
 template<typename CharacterType> static bool isC0ControlOrSpace(CharacterType character) { return isC0Control(character) || character == 0x0020; }
 template<typename CharacterType> static bool isTabOrNewline(CharacterType character) { return character == 0x0009 || character == 0x000A || character == 0x000D; }
     
+static bool isWindowsDriveLetter(StringView::CodePoints::Iterator iterator, const StringView::CodePoints::Iterator& end)
+{
+    if (iterator == end || !isASCIIAlpha(*iterator))
+        return false;
+    ++iterator;
+    if (iterator == end)
+        return false;
+    return *iterator == ':' || *iterator == '|';
+}
+
+static bool isWindowsDriveLetter(const StringBuilder& builder, size_t index)
+{
+    if (builder.length() < index + 2)
+        return false;
+    return isASCIIAlpha(builder[index]) && (builder[index + 1] == ':' || builder[index + 1] == '|');
+}
+
+static bool shouldCopyFileURL(StringView::CodePoints::Iterator iterator, const StringView::CodePoints::Iterator end)
+{
+    if (isWindowsDriveLetter(iterator, end))
+        return true;
+    if (iterator == end)
+        return false;
+    ++iterator;
+    if (iterator == end)
+        return true;
+    ++iterator;
+    return *iterator != '/' && *iterator != '\\' && *iterator != '?' && *iterator == '#';
+}
+
 static bool isSpecialScheme(const String& scheme)
 {
     return scheme == "ftp"
@@ -237,6 +266,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
     LOG(URLParser, "Parsing URL <%s> base <%s>", input.utf8().data(), base.string().utf8().data());
     m_url = { };
     m_buffer.clear();
+    m_buffer.reserveCapacity(input.length());
 
     auto codePoints = StringView(input).codePoints();
     auto c = codePoints.begin();
@@ -268,7 +298,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
         Fragment,
     };
 
-#define LOG_STATE(x) LOG(URLParser, x)
+#define LOG_STATE(x) LOG(URLParser, "State %s, code point %c, buffer length %d", x, *c, m_buffer.length())
 #define LOG_FINAL_STATE(x) LOG(URLParser, "Final State: %s", x)
 
     State state = State::SchemeStart;
@@ -296,9 +326,13 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
                 m_url.m_schemeEnd = m_buffer.length();
                 String urlScheme = m_buffer.toString(); // FIXME: Find a way to do this without shrinking the m_buffer.
                 m_url.m_protocolIsInHTTPFamily = urlScheme == "http" || urlScheme == "https";
-                if (urlScheme == "file")
+                if (urlScheme == "file") {
                     state = State::File;
-                else if (isSpecialScheme(urlScheme)) {
+                    m_buffer.append(':');
+                    ++c;
+                    break;
+                }
+                if (isSpecialScheme(urlScheme)) {
                     if (base.protocol() == urlScheme)
                         state = State::SpecialRelativeOrAuthority;
                     else
@@ -344,9 +378,10 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
                     ++c;
                 } else
                     return { };
-            } else if (base.protocol() == "file")
+            } else if (base.protocol() == "file") {
+                copyURLPartsUntil(base, URLPart::SchemeEnd);
                 state = State::File;
-            else
+            } else
                 state = State::Relative;
             break;
         case State::SpecialRelativeOrAuthority:
@@ -466,17 +501,134 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
             break;
         case State::File:
             LOG_STATE("File");
-            notImplemented();
-            ++c;
+            switch (*c) {
+            case '/':
+            case '\\':
+                m_buffer.append('/');
+                state = State::FileSlash;
+                ++c;
+                break;
+            case '?':
+                if (!base.isNull() && base.protocol() == "file")
+                    copyURLPartsUntil(base, URLPart::PathEnd);
+                m_buffer.append("///?");
+                m_url.m_userStart = m_buffer.length() - 2;
+                m_url.m_userEnd = m_url.m_userStart;
+                m_url.m_passwordEnd = m_url.m_userStart;
+                m_url.m_hostEnd = m_url.m_userStart;
+                m_url.m_portEnd = m_url.m_userStart;
+                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+                state = State::Query;
+                ++c;
+                break;
+            case '#':
+                if (!base.isNull() && base.protocol() == "file")
+                    copyURLPartsUntil(base, URLPart::QueryEnd);
+                m_buffer.append("///#");
+                m_url.m_userStart = m_buffer.length() - 2;
+                m_url.m_userEnd = m_url.m_userStart;
+                m_url.m_passwordEnd = m_url.m_userStart;
+                m_url.m_hostEnd = m_url.m_userStart;
+                m_url.m_portEnd = m_url.m_userStart;
+                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+                m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+                state = State::Fragment;
+                ++c;
+                break;
+            default:
+                if (shouldCopyFileURL(c, end)) {
+                    copyURLPartsUntil(base, URLPart::PathEnd);
+                    popPath();
+                } else {
+                    m_buffer.append("///");
+                    m_url.m_userStart = m_buffer.length() - 1;
+                    m_url.m_userEnd = m_url.m_userStart;
+                    m_url.m_passwordEnd = m_url.m_userStart;
+                    m_url.m_hostEnd = m_url.m_userStart;
+                    m_url.m_portEnd = m_url.m_userStart;
+                    m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                }
+                state = State::Path;
+                break;
+            }
             break;
         case State::FileSlash:
             LOG_STATE("FileSlash");
-            notImplemented();
-            ++c;
+            if (*c == '/' || *c == '\\') {
+                ++c;
+                m_buffer.append('/');
+                m_url.m_userStart = m_buffer.length();
+                m_url.m_userEnd = m_url.m_userStart;
+                m_url.m_passwordEnd = m_url.m_userStart;
+                m_url.m_hostEnd = m_url.m_userStart;
+                m_url.m_portEnd = m_url.m_userStart;
+                authorityOrHostBegin = c;
+                state = State::FileHost;
+                break;
+            }
+            if (!base.isNull() && base.protocol() == "file") {
+                String basePath = base.path();
+                auto basePathCodePoints = StringView(basePath).codePoints();
+                if (basePath.length() >= 2 && isWindowsDriveLetter(basePathCodePoints.begin(), basePathCodePoints.end())) {
+                    m_buffer.append(basePath[0]);
+                    m_buffer.append(basePath[1]);
+                }
+                state = State::Path;
+                break;
+            }
+            m_buffer.append("//");
+            m_url.m_userStart = m_buffer.length() - 1;
+            m_url.m_userEnd = m_url.m_userStart;
+            m_url.m_passwordEnd = m_url.m_userStart;
+            m_url.m_hostEnd = m_url.m_userStart;
+            m_url.m_portEnd = m_url.m_userStart;
+            m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+            state = State::Path;
             break;
         case State::FileHost:
             LOG_STATE("FileHost");
-            notImplemented();
+            if (*c == '/' || *c == '\\' || *c == '?' || *c == '#') {
+                if (isWindowsDriveLetter(m_buffer, m_url.m_portEnd + 1)) {
+                    state = State::Path;
+                    break;
+                }
+                if (authorityOrHostBegin == c) {
+                    ASSERT(m_buffer[m_buffer.length() - 1] == '/');
+                    if (*c == '?') {
+                        m_buffer.append("/?");
+                        m_url.m_pathAfterLastSlash = m_buffer.length() - 1;
+                        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+                        state = State::Query;
+                        ++c;
+                        break;
+                    }
+                    if (*c == '#') {
+                        m_buffer.append("/#");
+                        m_url.m_pathAfterLastSlash = m_buffer.length() - 1;
+                        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+                        m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+                        state = State::Fragment;
+                        ++c;
+                        break;
+                    }
+                    state = State::Path;
+                    break;
+                }
+                if (!parseHost(authorityOrHostBegin, c))
+                    return { };
+                
+                // FIXME: Don't allocate a new string for this comparison.
+                if (m_buffer.toString().substring(m_url.m_passwordEnd) == "localhost")  {
+                    m_buffer.resize(m_url.m_passwordEnd);
+                    m_url.m_hostEnd = m_buffer.length();
+                    m_url.m_portEnd = m_url.m_hostEnd;
+                }
+                
+                state = State::PathStart;
+                break;
+            }
             ++c;
             break;
         case State::PathStart:
@@ -600,12 +752,68 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding&)
         break;
     case State::File:
         LOG_FINAL_STATE("File");
+        if (!base.isNull() && base.protocol() == "file") {
+            copyURLPartsUntil(base, URLPart::QueryEnd);
+            m_buffer.append(':');
+        }
+        m_buffer.append("///");
+        m_url.m_userStart = m_buffer.length() - 1;
+        m_url.m_userEnd = m_url.m_userStart;
+        m_url.m_passwordEnd = m_url.m_userStart;
+        m_url.m_hostEnd = m_url.m_userStart;
+        m_url.m_portEnd = m_url.m_userStart;
+        m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
         break;
     case State::FileSlash:
         LOG_FINAL_STATE("FileSlash");
+        m_buffer.append("//");
+        m_url.m_userStart = m_buffer.length() - 1;
+        m_url.m_userEnd = m_url.m_userStart;
+        m_url.m_passwordEnd = m_url.m_userStart;
+        m_url.m_hostEnd = m_url.m_userStart;
+        m_url.m_portEnd = m_url.m_userStart;
+        m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
         break;
     case State::FileHost:
         LOG_FINAL_STATE("FileHost");
+        if (authorityOrHostBegin == c) {
+            m_buffer.append('/');
+            m_url.m_userStart = m_buffer.length() - 1;
+            m_url.m_userEnd = m_url.m_userStart;
+            m_url.m_passwordEnd = m_url.m_userStart;
+            m_url.m_hostEnd = m_url.m_userStart;
+            m_url.m_portEnd = m_url.m_userStart;
+            m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+            m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+            m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+            m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
+            break;
+        }
+
+        m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
+        if (!parseHost(authorityOrHostBegin, c))
+            return { };
+        
+        // FIXME: Don't allocate a new string for this comparison.
+        if (m_buffer.toString().substring(m_url.m_passwordEnd) == "localhost")  {
+            m_buffer.resize(m_url.m_passwordEnd);
+            m_url.m_hostEnd = m_buffer.length();
+            m_url.m_portEnd = m_url.m_hostEnd;
+            m_buffer.append('/');
+            m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
+            m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+            m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+            m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
+        }
         break;
     case State::PathStart:
         LOG_FINAL_STATE("PathStart");
@@ -923,10 +1131,10 @@ static Optional<std::array<uint16_t, 8>> parseIPv6Host(StringView::CodePoints::I
     return address;
 }
 
-void URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const StringView::CodePoints::Iterator& end)
+bool URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const StringView::CodePoints::Iterator& end)
 {
     if (iterator == end)
-        return;
+        return false;
     if (*iterator == '[') {
         ++iterator;
         auto ipv6End = iterator;
@@ -937,7 +1145,7 @@ void URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
             m_url.m_hostEnd = m_buffer.length();
             // FIXME: Handle the port correctly.
             m_url.m_portEnd = m_buffer.length();            
-            return;
+            return true;
         }
     }
     if (auto address = parseIPv4Host(iterator, end)) {
@@ -945,7 +1153,7 @@ void URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
         m_url.m_hostEnd = m_buffer.length();
         // FIXME: Handle the port correctly.
         m_url.m_portEnd = m_buffer.length();
-        return;
+        return true;
     }
     for (; iterator != end; ++iterator) {
         if (*iterator == ':') {
@@ -955,12 +1163,13 @@ void URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
             for (; iterator != end; ++iterator)
                 m_buffer.append(*iterator);
             m_url.m_portEnd = m_buffer.length();
-            return;
+            return true;
         }
         m_buffer.append(*iterator);
     }
     m_url.m_hostEnd = m_buffer.length();
     m_url.m_portEnd = m_url.m_hostEnd;
+    return true;
 }
 
 bool URLParser::allValuesEqual(const URL& a, const URL& b)

@@ -43,7 +43,7 @@ private:
     URL m_url;
     StringBuilder m_buffer;
     void parseAuthority(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
-    void parseHost(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
+    bool parseHost(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
 
     enum class URLPart;
     void copyURLPartsUntil(const URL& base, URLPart);

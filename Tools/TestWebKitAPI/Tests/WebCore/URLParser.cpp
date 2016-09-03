@@ -84,7 +84,7 @@ static void checkURL(const String& urlString, const ExpectedParts& parts)
     EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
 }
 
-TEST_F(URLParserTest, Parse)
+TEST_F(URLParserTest, Basic)
 {
     checkURL("http://user:pass@webkit.org:123/path?query#fragment", {"http", "user", "pass", "webkit.org", 123, "/path", "query", "fragment", "http://user:pass@webkit.org:123/path?query#fragment"});
     checkURL("http://user:pass@webkit.org:123/path?query", {"http", "user", "pass", "webkit.org", 123, "/path", "query", "", "http://user:pass@webkit.org:123/path?query"});
@@ -139,6 +139,32 @@ TEST_F(URLParserTest, Parse)
     checkURL("http://example.com/path1/path2/..?query", {"http", "", "", "example.com", 0, "/path1/", "query", "", "http://example.com/path1/?query"});
     checkURL("http://example.com/path1/path2/.#fragment", {"http", "", "", "example.com", 0, "/path1/path2/", "", "fragment", "http://example.com/path1/path2/#fragment"});
     checkURL("http://example.com/path1/path2/..#fragment", {"http", "", "", "example.com", 0, "/path1/", "", "fragment", "http://example.com/path1/#fragment"});
+
+    checkURL("file:", {"file", "", "", "", 0, "/", "", "", "file:///"});
+    checkURL("file:/", {"file", "", "", "", 0, "/", "", "", "file:///"});
+    checkURL("file://", {"file", "", "", "", 0, "/", "", "", "file:///"});
+    checkURL("file:///", {"file", "", "", "", 0, "/", "", "", "file:///"});
+    checkURL("file:////", {"file", "", "", "", 0, "//", "", "", "file:////"}); // This matches Firefox and URL::parse which I believe are correct, but not Chrome.
+    checkURL("file:/path", {"file", "", "", "", 0, "/path", "", "", "file:///path"});
+    checkURL("file://host/path", {"file", "", "", "host", 0, "/path", "", "", "file://host/path"});
+    checkURL("file:///path", {"file", "", "", "", 0, "/path", "", "", "file:///path"});
+    checkURL("file:////path", {"file", "", "", "", 0, "//path", "", "", "file:////path"});
+    checkURL("file://localhost/path", {"file", "", "", "", 0, "/path", "", "", "file:///path"});
+    checkURL("file://localhost/", {"file", "", "", "", 0, "/", "", "", "file:///"});
+    checkURL("file://localhost", {"file", "", "", "", 0, "/", "", "", "file:///"});
+    // FIXME: check file://lOcAlHoSt etc.
+    checkURL("file:?query", {"file", "", "", "", 0, "/", "query", "", "file:///?query"});
+    checkURL("file:#fragment", {"file", "", "", "", 0, "/", "", "fragment", "file:///#fragment"});
+    checkURL("file:?query#fragment", {"file", "", "", "", 0, "/", "query", "fragment", "file:///?query#fragment"});
+    checkURL("file:#fragment?notquery", {"file", "", "", "", 0, "/", "", "fragment?notquery", "file:///#fragment?notquery"});
+    checkURL("file:/?query", {"file", "", "", "", 0, "/", "query", "", "file:///?query"});
+    checkURL("file:/#fragment", {"file", "", "", "", 0, "/", "", "fragment", "file:///#fragment"});
+    checkURL("file://?query", {"file", "", "", "", 0, "/", "query", "", "file:///?query"});
+    checkURL("file://#fragment", {"file", "", "", "", 0, "/", "", "fragment", "file:///#fragment"});
+    checkURL("file:///?query", {"file", "", "", "", 0, "/", "query", "", "file:///?query"});
+    checkURL("file:///#fragment", {"file", "", "", "", 0, "/", "", "fragment", "file:///#fragment"});
+    checkURL("file:////?query", {"file", "", "", "", 0, "//", "query", "", "file:////?query"});
+    checkURL("file:////#fragment", {"file", "", "", "", 0, "//", "", "fragment", "file:////#fragment"});
 }
 
 static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts)
@@ -296,12 +322,22 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://example.com/path1/path2/%2e%2e#fragment",
         {"http", "", "", "example.com", 0, "/path1/", "", "fragment", "http://example.com/path1/#fragment"},
         {"http", "", "", "example.com", 0, "/path1/path2/%2e%2e", "", "fragment", "http://example.com/path1/path2/%2e%2e#fragment"});
+    checkURLDifferences("file://[0:a:0:0:b:c:0:0]/path",
+        {"file", "", "", "[0:a::b:c:0:0]", 0, "/path", "", "", "file://[0:a::b:c:0:0]/path"},
+        {"file", "", "", "[0:a:0:0:b:c:0:0]", 0, "/path", "", "", "file://[0:a:0:0:b:c:0:0]/path"});
 
     // FIXME: This behavior ought to be specified in the standard.
     // With the existing URL::parse, WebKit returns "https:/", Firefox returns "https:///", and Chrome throws an error.
     checkRelativeURLDifferences("//", "https://www.webkit.org/path",
         {"https", "", "", "", 0, "", "", "", "https://"},
         {"https", "", "", "", 0, "/", "", "", "https:/"});
+    
+    // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
+    // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.
+    // The spec is unclear.
+    checkURLDifferences("file:path",
+        {"file", "", "", "", 0, "/path", "", "", "file:///path"},
+        {"file", "", "", "", 0, "path", "", "", "file://path"});
 }
 
 static void shouldFail(const String& urlString)
