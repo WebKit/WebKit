@@ -74,13 +74,13 @@ String TokenPreloadScanner::initiatorFor(TagId tagId)
     switch (tagId) {
     case TagId::Source:
     case TagId::Img:
-        return "img";
+        return ASCIILiteral("img");
     case TagId::Input:
-        return "input";
+        return ASCIILiteral("input");
     case TagId::Link:
-        return "link";
+        return ASCIILiteral("link");
     case TagId::Script:
-        return "script";
+        return ASCIILiteral("script");
     case TagId::Unknown:
     case TagId::Style:
     case TagId::Base:
@@ -88,10 +88,10 @@ String TokenPreloadScanner::initiatorFor(TagId tagId)
     case TagId::Meta:
     case TagId::Picture:
         ASSERT_NOT_REACHED();
-        return "unknown";
+        return ASCIILiteral("unknown");
     }
     ASSERT_NOT_REACHED();
-    return "unknown";
+    return ASCIILiteral("unknown");
 }
 
 class TokenPreloadScanner::StartTagScanner {

@@ -1,3 +1,13 @@
+2016-09-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use ASCIILiteral in some more places
+        https://bugs.webkit.org/show_bug.cgi?id=161557
+
+        Reviewed by Darin Adler.
+
+        * runtime/TypeSet.h:
+        (JSC::StructureShape::setConstructorName):
+
 2016-09-01  Michael Saboff  <msaboff@apple.com>
 
         Import Chakra tests to JSC

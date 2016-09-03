@@ -465,7 +465,7 @@ String SecurityOrigin::toString() const
 String SecurityOrigin::toRawString() const
 {
     if (m_protocol == "file")
-        return "file://";
+        return ASCIILiteral("file://");
 
     StringBuilder result;
     result.reserveCapacity(m_protocol.length() + m_host.length() + 10);
