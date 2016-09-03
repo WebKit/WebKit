@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -20,10 +20,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGElement_h
-#define SVGElement_h
+#pragma once
 
-#include "CSSPropertyNames.h"
 #include "SVGAnimatedString.h"
 #include "SVGLangSpace.h"
 #include "SVGLocatable.h"
@@ -31,7 +29,6 @@
 #include "SVGParsingError.h"
 #include "SVGPropertyInfo.h"
 #include "StyledElement.h"
-#include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -86,7 +83,7 @@ public:
     void svgLoadEventTimerFired();
     virtual Timer* svgLoadEventTimer();
 
-    virtual AffineTransform* supplementalTransform() { return 0; }
+    virtual AffineTransform* supplementalTransform() { return nullptr; }
 
     void invalidateSVGAttributes() { ensureUniqueElementData().setAnimatedSVGAttributesAreDirty(true); }
     void invalidateSVGPresentationAttributeStyle()
@@ -180,8 +177,6 @@ protected:
 private:
     const RenderStyle* computedStyle(PseudoId = NOPSEUDO) final;
 
-    virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
-
     virtual void clearTarget() { }
 
     void buildPendingResourcesIfNeeded();
@@ -264,5 +259,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGElement)
 SPECIALIZE_TYPE_TRAITS_END()
 
 #include "SVGElementTypeHelpers.h"
-
-#endif

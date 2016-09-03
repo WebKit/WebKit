@@ -28,7 +28,6 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
-#include "DOMImplementation.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -39,6 +38,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
+#include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "ParsedContentType.h"
 #include "ResourceError.h"
@@ -59,7 +59,6 @@
 #include <runtime/ArrayBufferView.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
-#include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -935,7 +934,7 @@ String XMLHttpRequest::responseMIMEType() const
 
 bool XMLHttpRequest::responseIsXML() const
 {
-    return DOMImplementation::isXMLMIMEType(responseMIMEType());
+    return MIMETypeRegistry::isXMLMIMEType(responseMIMEType());
 }
 
 int XMLHttpRequest::status() const

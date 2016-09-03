@@ -1,3 +1,35 @@
+2016-09-03  Darin Adler  <darin@apple.com>
+
+        Streamline DOMImplementation, and move it to our new DOM exception system
+        https://bugs.webkit.org/show_bug.cgi?id=161295
+
+        Reviewed by Ryosuke Niwa.
+
+        * DOM/DOMDOMImplementation.mm:
+        (unwrap): Added. Use this instead of the IMPL macro.
+        (-[DOMImplementation dealloc]): Updated to use unwrap.
+        (-[DOMImplementation hasFeature:version:]): Ditto.
+        (-[DOMImplementation createDocumentType:publicId:systemId:]): Updated to work with
+        ExceptionOr.
+        (-[DOMImplementation createDocument:qualifiedName:doctype:]): Ditto.
+        (-[DOMImplementation createCSSStyleSheet:media:]): Removed exception logic since
+        this function can no longer raise an exception.
+        (-[DOMImplementation createHTMLDocument:]): Updated to use unwrap.
+        (-[DOMImplementation hasFeature::]): Changed to call the non-deprecated version
+        rather than duplicating its implementation. Also moved into the category as defined
+        in the header.
+        (-[DOMImplementation createDocumentType:::]): Ditto.
+        (-[DOMImplementation createDocument:::]): Ditto.
+        (-[DOMImplementation createCSSStyleSheet::]): Ditto.
+
+        * DOM/DOMDocument.mm: Removed unneeded include of DOMImplementation.h.
+        (-[DOMDocument setXmlStandalone:]): Updated since setXMLStandalone no longer can
+        raise an exception.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _canProvideDocumentSource]): Updated to use isTextMIMEType in its new
+        location in MIMETypeRegistry instead of in DOMImplementation.
+
 2016-09-03  Brian Weinstein  <bweinstein@apple.com>
 
         Implement a stub version of FrameLoaderClient::shouldUseContentExtensionsForURL.

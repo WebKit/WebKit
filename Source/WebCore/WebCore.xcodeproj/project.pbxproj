@@ -3275,6 +3275,8 @@
 		93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */; };
 		93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF0260AF6C52900018E89 /* NavigationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93CCF0600AF6CA7600018E89 /* NavigationAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */; };
+		93D196311D6CAB7600FC7E47 /* ExceptionOr.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D196301D6CAB7600FC7E47 /* ExceptionOr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93D196331D6CAB8200FC7E47 /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D196321D6CAB8200FC7E47 /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93D4379F1D57B15300AB85EA /* JSMainThreadExecState.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93D437A01D57B19A00AB85EA /* CustomElementReactionQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B56C9A81C89312800C456DF /* CustomElementReactionQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93D437A11D57B3F400AB85EA /* ElementDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = ADE11F4A18D8311B0078983B /* ElementDescendantIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10437,6 +10439,8 @@
 		93CA4CA209DF93FA00DF8677 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
 		93CCF0260AF6C52900018E89 /* NavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationAction.h; sourceTree = "<group>"; };
 		93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationAction.cpp; sourceTree = "<group>"; };
+		93D196301D6CAB7600FC7E47 /* ExceptionOr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionOr.h; sourceTree = "<group>"; };
+		93D196321D6CAB8200FC7E47 /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeBoundaryPoint.h; sourceTree = "<group>"; };
 		93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoader.cpp; sourceTree = "<group>"; };
 		93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePlugInStreamLoader.cpp; sourceTree = "<group>"; };
@@ -22996,11 +23000,13 @@
 				E12EDB7A0B308A78002704B6 /* EventTarget.h */,
 				85AFA7420AAF298400E84305 /* EventTarget.idl */,
 				CDCE5CD014633BC900D47CCA /* EventTargetFactory.in */,
+				93D196321D6CAB8200FC7E47 /* Exception.h */,
 				BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */,
 				BC60D8F10D2A11E000B9918F /* ExceptionBase.h */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
 				A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */,
 				A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */,
+				93D196301D6CAB7600FC7E47 /* ExceptionOr.h */,
 				E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */,
 				E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */,
 				B6D9D23414EABD260090D75E /* FocusEvent.cpp */,
@@ -25598,6 +25604,7 @@
 				078E093917D16B2C00420AA1 /* MediaStreamCreationClient.h in Headers */,
 				078E091617D14D1C00420AA1 /* MediaStreamEvent.h in Headers */,
 				078E093717D16B2C00420AA1 /* MediaStreamPrivate.h in Headers */,
+				93D196331D6CAB8200FC7E47 /* Exception.h in Headers */,
 				078E091717D14D1C00420AA1 /* MediaStreamRegistry.h in Headers */,
 				078E091817D14D1C00420AA1 /* MediaStreamTrack.h in Headers */,
 				078E091917D14D1C00420AA1 /* MediaStreamTrackEvent.h in Headers */,
@@ -26668,6 +26675,7 @@
 				B2227AD70D00BF220071B782 /* SVGTransform.h in Headers */,
 				B2227ADA0D00BF220071B782 /* SVGTransformable.h in Headers */,
 				B2227ADD0D00BF220071B782 /* SVGTransformDistance.h in Headers */,
+				93D196311D6CAB7600FC7E47 /* ExceptionOr.h in Headers */,
 				B2227ADF0D00BF220071B782 /* SVGTransformList.h in Headers */,
 				08C7136E128956A3001B107E /* SVGTransformListPropertyTearOff.h in Headers */,
 				B2227AE20D00BF220071B782 /* SVGTRefElement.h in Headers */,

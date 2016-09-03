@@ -1064,7 +1064,7 @@ void XMLDocumentParser::startDocument(const xmlChar* version, const xmlChar* enc
     if (version)
         document()->setXMLVersion(toString(version), ASSERT_NO_EXCEPTION);
     if (standalone != StandaloneUnspecified)
-        document()->setXMLStandalone(standaloneInfo == StandaloneYes, ASSERT_NO_EXCEPTION);
+        document()->setXMLStandalone(standaloneInfo == StandaloneYes);
     if (encoding)
         document()->setXMLEncoding(toString(encoding));
     document()->setHasXMLDeclaration(true);

@@ -1373,11 +1373,6 @@ void Document::setContentLanguage(const String& language)
 
 void Document::setXMLVersion(const String& version, ExceptionCode& ec)
 {
-    if (!implementation().hasFeature("XML", String())) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
     if (!XMLDocumentParser::supportsXMLVersion(version)) {
         ec = NOT_SUPPORTED_ERR;
         return;
@@ -1386,13 +1381,8 @@ void Document::setXMLVersion(const String& version, ExceptionCode& ec)
     m_xmlVersion = version;
 }
 
-void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
+void Document::setXMLStandalone(bool standalone)
 {
-    if (!implementation().hasFeature("XML", String())) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
     m_xmlStandalone = standalone ? Standalone : NotStandalone;
 }
 

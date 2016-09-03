@@ -53,7 +53,7 @@
 
     readonly attribute DOMString? xmlEncoding;
     [SetterRaisesException] attribute DOMString? xmlVersion;
-    [SetterRaisesException] attribute boolean xmlStandalone;
+    attribute boolean xmlStandalone;
 
     [RaisesException] Node adoptNode(Node source);
 

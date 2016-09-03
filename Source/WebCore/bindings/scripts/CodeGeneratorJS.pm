@@ -4341,7 +4341,7 @@ sub GenerateCallbackImplementation
                 push(@implContent, "    args.append(" . NativeToJSValue($param, 1, $interface, $paramName, "m_data") . ");\n");
             }
 
-            push(@implContent, "\n    NakedPtr<Exception> returnedException;\n");
+            push(@implContent, "\n    NakedPtr<JSC::Exception> returnedException;\n");
 
             my $propertyToLookup = "Identifier::fromString(state, \"${functionName}\")";
             my $invokeMethod = "JSCallbackData::CallbackType::FunctionOrObject";

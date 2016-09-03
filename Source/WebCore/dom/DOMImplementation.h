@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "XMLDocument.h"
 
 namespace WebCore {
@@ -36,24 +37,13 @@ public:
     void deref() { m_document.deref(); }
     Document& document() { return m_document; }
 
-    // DOM methods & attributes for DOMImplementation
-    WEBCORE_EXPORT static bool hasFeature(const String& feature, const String& version);
-    WEBCORE_EXPORT RefPtr<DocumentType> createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId, ExceptionCode&);
-    WEBCORE_EXPORT RefPtr<XMLDocument> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*, ExceptionCode&);
-
-    DOMImplementation* getInterface(const String& feature);
-
-    // From the DOMImplementationCSS interface
-    WEBCORE_EXPORT static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media, ExceptionCode&);
-
-    // From the HTMLDOMImplementation interface
+    WEBCORE_EXPORT ExceptionOr<Ref<DocumentType>> createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId);
+    WEBCORE_EXPORT ExceptionOr<Ref<XMLDocument>> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*);
     WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(const String& title);
+    WEBCORE_EXPORT static bool hasFeature(const String& feature, const String& version);
+    WEBCORE_EXPORT static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media);
 
-    // Other methods (not part of DOM)
     static Ref<Document> createDocument(const String& MIMEType, Frame*, const URL&);
-
-    WEBCORE_EXPORT static bool isXMLMIMEType(const String& MIMEType);
-    WEBCORE_EXPORT static bool isTextMIMEType(const String& MIMEType);
 
 private:
     Document& m_document;

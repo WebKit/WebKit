@@ -442,7 +442,7 @@ public:
 
     void setXMLEncoding(const String& encoding) { m_xmlEncoding = encoding; } // read-only property, only to be set from XMLDocumentParser
     WEBCORE_EXPORT void setXMLVersion(const String&, ExceptionCode&);
-    WEBCORE_EXPORT void setXMLStandalone(bool, ExceptionCode&);
+    WEBCORE_EXPORT void setXMLStandalone(bool);
     void setHasXMLDeclaration(bool hasXMLDeclaration) { m_hasXMLDeclaration = hasXMLDeclaration ? 1 : 0; }
 
     String documentURI() const { return m_documentURI; }

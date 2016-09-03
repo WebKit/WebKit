@@ -1,3 +1,16 @@
+2016-09-03  Darin Adler  <darin@apple.com>
+
+        Streamline DOMImplementation, and move it to our new DOM exception system
+        https://bugs.webkit.org/show_bug.cgi?id=161295
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::isDisplayingMarkupDocument): Use isXMLMIMEType in its
+        new location in MIMETypeRegistry rather than in DOMImplementation.
+        (WebKit::WebFrameProxy::isDisplayingPDFDocument): Removed unneeded redundant
+        check for empty string, already done by MIMETypeRegistry.
+
 2016-09-03  Brian Weinstein  <bweinstein@apple.com>
 
         Implement WebFrameLoaderClient::shouldUseContentExtensionsForURL and consult the InjectedBundlePageLoaderClient.
@@ -19,6 +32,16 @@
         (WebKit::WebFrameLoaderClient::shouldUseContentExtensionsForURL): Only consult with the injected bundle about whether
         or not we should use content extensions for this URL.
         * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.cpp:
+        (webkit_dom_dom_implementation_create_document_type): Updated to work with ExceptionOr.
+        (webkit_dom_dom_implementation_create_document): Updated to work with ExceptionOr.
+        (webkit_dom_dom_implementation_create_css_style_sheet): Updated since this function
+        can no longer raise an exception.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp:
+        (webkit_dom_document_set_xml_standalone): Updated since this function can no longer
+        raise an exception.
 
 2016-09-03  Joseph Pecoraro  <pecoraro@apple.com>
 

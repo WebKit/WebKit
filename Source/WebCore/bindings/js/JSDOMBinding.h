@@ -23,9 +23,9 @@
 
 #pragma once
 
+#include "DOMWrapperWorld.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
-#include "DOMWrapperWorld.h"
 #include "ScriptWrappable.h"
 #include "ScriptWrappableInlines.h"
 #include "WebCoreTypedArrayController.h"
@@ -69,7 +69,9 @@ class Node;
 
 struct ExceptionCodeWithMessage;
 
-typedef int ExceptionCode;
+template<typename> class ExceptionOr;
+
+using ExceptionCode = int;
 
 struct ExceptionDetails {
     String message;
@@ -185,6 +187,9 @@ JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode, const String&);
 // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
 WEBCORE_EXPORT void setDOMException(JSC::ExecState*, ExceptionCode);
 void setDOMException(JSC::ExecState*, const ExceptionCodeWithMessage&);
+
+template<typename T> inline JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, ExceptionOr<T>&&);
+template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, ExceptionOr<T>&&);
 
 JSC::JSValue jsString(JSC::ExecState*, const URL&); // empty if the URL is null
 
@@ -806,6 +811,25 @@ template<JSC::NativeFunction nativeFunction, int length> JSC::EncodedJSValue non
 template<typename T> inline JSC::JSValue toNullableJSNumber(Optional<T> optionalNumber)
 {
     return optionalNumber ? JSC::jsNumber(optionalNumber.value()) : JSC::jsNull();
+}
+
+template<typename T> inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ExceptionOr<T>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        setDOMException(state, value.exceptionCode());
+        return JSC::jsUndefined();
+    }
+    return toJS(state, globalObject, value.takeReturnValue());
+}
+
+template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ExceptionOr<T>&& value)
+{
+    // FIXME: It's really annoying to have two of these functions. Should find a way to combine toJS and toJSNewlyCreated.
+    if (UNLIKELY(value.hasException())) {
+        setDOMException(state, value.exceptionCode());
+        return JSC::jsUndefined();
+    }
+    return toJSNewlyCreated(state, globalObject, value.takeReturnValue());
 }
 
 } // namespace WebCore

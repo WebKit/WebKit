@@ -23,15 +23,14 @@
     GenerateIsReachable=ImplDocument,
     ImplementationLacksVTable,
 ] interface DOMImplementation {
+    [NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
+    [NewObject] XMLDocument createDocument(DOMString? namespaceURI, [TreatNullAs=EmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
+    [NewObject] HTMLDocument createHTMLDocument(optional DOMString title);
+
+    // FIXME: Latest DOM specification says this should ignore all arguments and always return true.
     // FIXME: Using "undefined" as default parameter value is wrong.
     boolean hasFeature(optional DOMString feature = "undefined", [TreatNullAs=EmptyString] optional DOMString version = "undefined");
 
-    [RaisesException, NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
-
-    [NewObject, RaisesException] XMLDocument createDocument(DOMString? namespaceURI, [TreatNullAs=EmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
-
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");
-
-    [NewObject] HTMLDocument createHTMLDocument(optional DOMString title);
+    CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");
 };

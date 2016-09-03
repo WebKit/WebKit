@@ -29,10 +29,8 @@
  */
 
 #include "config.h"
-
 #include "HTMLTemplateElement.h"
 
-#include "DOMImplementation.h"
 #include "DocumentFragment.h"
 #include "HTMLDocument.h"
 #include "TemplateContentDocumentFragment.h"

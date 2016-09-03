@@ -25,25 +25,25 @@
 #include "config.h"
 #include "DOMImplementation.h"
 
-#include "ContentType.h"
 #include "CSSStyleSheet.h"
+#include "ContentType.h"
 #include "DocumentType.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "FTPDirectoryDocument.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "FTPDirectoryDocument.h"
 #include "HTMLDocument.h"
 #include "HTMLHeadElement.h"
 #include "HTMLTitleElement.h"
 #include "Image.h"
 #include "ImageDocument.h"
+#include "MIMETypeRegistry.h"
 #include "MainFrame.h"
 #include "MediaDocument.h"
-#include "MediaPlayer.h"
 #include "MediaList.h"
-#include "MIMETypeRegistry.h"
+#include "MediaPlayer.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
@@ -73,6 +73,7 @@ static void addString(FeatureSet& set, const char* string)
 }
 
 #if ENABLE(VIDEO)
+
 class DOMImplementationSupportsTypeClient : public MediaPlayerSupportsTypeClient {
 public:
     DOMImplementationSupportsTypeClient(bool needsHacks, const String& host)
@@ -88,6 +89,7 @@ private:
     bool m_needsHacks;
     String m_host;
 };
+
 #endif
 
 static bool isSupportedSVG10Feature(const String& feature, const String& version)
@@ -207,101 +209,56 @@ bool DOMImplementation::hasFeature(const String& feature, const String& version)
     return true;
 }
 
-RefPtr<DocumentType> DOMImplementation::createDocumentType(const String& qualifiedName,
-    const String& publicId, const String& systemId, ExceptionCode& ec)
+ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId)
 {
-    String prefix, localName;
-    if (!Document::parseQualifiedName(qualifiedName, prefix, localName, ec))
-        return 0;
+    ExceptionCode ec = 0;
+    String prefix;
+    String localName;
+    Document::parseQualifiedName(qualifiedName, prefix, localName, ec);
+    if (ec)
+        return Exception(ec);
 
     return DocumentType::create(m_document, qualifiedName, publicId, systemId);
 }
 
-DOMImplementation* DOMImplementation::getInterface(const String& /*feature*/)
+static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI)
 {
-    return 0;
+    if (namespaceURI == SVGNames::svgNamespaceURI)
+        return SVGDocument::create(nullptr, URL());
+    if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
+        return XMLDocument::createXHTML(nullptr, URL());
+    return XMLDocument::create(nullptr, URL());
 }
 
-RefPtr<XMLDocument> DOMImplementation::createDocument(const String& namespaceURI,
-    const String& qualifiedName, DocumentType* doctype, ExceptionCode& ec)
+ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType* documentType)
 {
-    RefPtr<XMLDocument> doc;
-    if (namespaceURI == SVGNames::svgNamespaceURI)
-        doc = SVGDocument::create(0, URL());
-    else if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
-        doc = XMLDocument::createXHTML(0, URL());
-    else
-        doc = XMLDocument::create(0, URL());
+    auto document = createXMLDocument(namespaceURI);
 
-    doc->setSecurityOriginPolicy(m_document.securityOriginPolicy());
+    document->setSecurityOriginPolicy(m_document.securityOriginPolicy());
 
-    RefPtr<Node> documentElement;
+    RefPtr<Element> documentElement;
     if (!qualifiedName.isEmpty()) {
-        documentElement = doc->createElementNS(namespaceURI, qualifiedName, ec);
+        ExceptionCode ec = 0;
+        documentElement = document->createElementNS(namespaceURI, qualifiedName, ec);
         if (ec)
-            return nullptr;
+            return Exception(ec);
     }
 
-    if (doctype)
-        doc->appendChild(*doctype);
+    if (documentType)
+        document->appendChild(*documentType);
     if (documentElement)
-        doc->appendChild(*documentElement);
+        document->appendChild(*documentElement);
 
-    return doc;
+    return WTFMove(document);
 }
 
-Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const String& media, ExceptionCode&)
+Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const String& media)
 {
     // FIXME: Title should be set.
     // FIXME: Media could have wrong syntax, in which case we should generate an exception.
-    Ref<CSSStyleSheet> sheet = CSSStyleSheet::create(StyleSheetContents::create());
+    auto sheet = CSSStyleSheet::create(StyleSheetContents::create());
     sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(media));
     return sheet;
-}
-
-static inline bool isValidXMLMIMETypeChar(UChar c)
-{
-    // Valid characters per RFCs 3023 and 2045:
-    // 0-9a-zA-Z_-+~!$^{}|.%'`#&*
-    return isASCIIAlphanumeric(c) || c == '!' || c == '#' || c == '$' || c == '%' || c == '&' || c == '\'' || c == '*' || c == '+'
-        || c == '-' || c == '.' || c == '^' || c == '_' || c == '`' || c == '{' || c == '|' || c == '}' || c == '~';
-}
-
-bool DOMImplementation::isXMLMIMEType(const String& mimeType)
-{
-    // FIXME: Can we move this logic to MIMETypeRegistry and have this just be a single function call?
-
-    if (equalLettersIgnoringASCIICase(mimeType, "text/xml") || equalLettersIgnoringASCIICase(mimeType, "application/xml") || equalLettersIgnoringASCIICase(mimeType, "text/xsl"))
-        return true;
-
-    if (!mimeType.endsWith("+xml", false))
-        return false;
-
-    size_t slashPosition = mimeType.find('/');
-    // Take into account the '+xml' ending of mimeType.
-    if (slashPosition == notFound || !slashPosition || slashPosition == mimeType.length() - 5)
-        return false;
-
-    // Again, mimeType ends with '+xml', no need to check the validity of that substring.
-    size_t mimeLength = mimeType.length();
-    for (size_t i = 0; i < mimeLength - 4; ++i) {
-        if (!isValidXMLMIMETypeChar(mimeType[i]) && i != slashPosition)
-            return false;
-    }
-
-    return true;
-}
-
-bool DOMImplementation::isTextMIMEType(const String& mimeType)
-{
-    // FIXME: Can we move this logic to MIMETypeRegistry and have this just be a single function call?
-
-    return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
-        || equalLettersIgnoringASCIICase(mimeType, "application/json") // Render JSON as text/plain.
-        || (mimeType.startsWith("text/", false)
-            && !equalLettersIgnoringASCIICase(mimeType, "text/html")
-            && !equalLettersIgnoringASCIICase(mimeType, "text/xml")
-            && !equalLettersIgnoringASCIICase(mimeType, "text/xsl"));
 }
 
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
@@ -321,6 +278,9 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 
 Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const URL& url)
 {
+    // FIXME: Confusing to have this here with public DOM APIs for creating documents. This is different enough that it should perhaps be moved.
+    // FIXME: This function is doing case insensitive comparisons on MIME types. Should do equalLettersIgnoringASCIICase instead.
+
     // Plugins cannot take HTML and XHTML from us, and we don't even need to initialize the plugin database for those.
     if (type == "text/html")
         return HTMLDocument::create(frame, url);
@@ -338,7 +298,7 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
         return ImageDocument::create(*frame, url);
 
     PluginData* pluginData = nullptr;
-    PluginData::AllowedPluginTypes allowedPluginTypes = PluginData::OnlyApplicationPlugins;
+    auto allowedPluginTypes = PluginData::OnlyApplicationPlugins;
     if (frame && frame->page()) {
         if (frame->loader().subframeLoader().allowPlugins())
             allowedPluginTypes = PluginData::AllPlugins;
@@ -369,13 +329,13 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
     // and also serves as an optimization to prevent loading the plug-in database in the common case.
     if (type != "text/plain" && ((pluginData && pluginData->supportsWebVisibleMimeType(type, allowedPluginTypes)) || (frame && frame->loader().client().shouldAlwaysUsePluginDocument(type))))
         return PluginDocument::create(frame, url);
-    if (isTextMIMEType(type))
+    if (MIMETypeRegistry::isTextMIMEType(type))
         return TextDocument::create(frame, url);
 
     if (type == "image/svg+xml")
         return SVGDocument::create(frame, url);
 
-    if (isXMLMIMEType(type))
+    if (MIMETypeRegistry::isXMLMIMEType(type))
         return XMLDocument::create(frame, url);
 
     return HTMLDocument::create(frame, url);

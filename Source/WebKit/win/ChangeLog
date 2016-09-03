@@ -1,3 +1,14 @@
+2016-09-03  Darin Adler  <darin@apple.com>
+
+        Streamline DOMImplementation, and move it to our new DOM exception system
+        https://bugs.webkit.org/show_bug.cgi?id=161295
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebFrame.cpp:
+        (WebFrame::canProvideDocumentSource): Updated to use isXMLMIMEType in its new
+        location in MIMETypeRegistry instead of in DOMImplementation.
+
 2016-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix attempt after r205381.

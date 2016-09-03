@@ -27,7 +27,6 @@
 #include "SVGElement.h"
 
 #include "CSSParser.h"
-#include "DOMImplementation.h"
 #include "Document.h"
 #include "ElementIterator.h"
 #include "Event.h"
@@ -360,11 +359,6 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
     }
 
     ASSERT_NOT_REACHED();
-}
-
-bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
-{
-    return DOMImplementation::hasFeature(feature, version);
 }
 
 void SVGElement::removedFrom(ContainerNode& rootParent)

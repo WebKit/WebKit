@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13,7 +13,7 @@
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,13 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MIMETypeRegistry_h
-#define MIMETypeRegistry_h
+#pragma once
 
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -60,15 +58,11 @@ public:
     static bool isSupportedJavaScriptMIMEType(const String& mimeType);    
 
     // Check to see if a non-image MIME type is suitable for being loaded as a
-    // document in a frame.  Includes supported JavaScript MIME types.
+    // document in a frame. Includes supported JavaScript MIME types.
     WEBCORE_EXPORT static bool isSupportedNonImageMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded using <video> and <audio>.
     WEBCORE_EXPORT static bool isSupportedMediaMIMEType(const String& mimeType);
-
-    // Check to see if the MIME type is not suitable for being loaded as a text
-    // document in a frame. Only valid for MIME types begining with "text/".
-    static bool isUnsupportedTextMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is a valid Java applet mime type.
     WEBCORE_EXPORT static bool isJavaAppletMIMEType(const String& mimeType);
@@ -86,6 +80,15 @@ public:
     // "text/" and isUnsupportedTextMIMEType() returns false.
     WEBCORE_EXPORT static bool canShowMIMEType(const String& mimeType);
 
+    // Check to see if a MIME type is one where an XML document should be created
+    // rather than an HTML document.
+    WEBCORE_EXPORT static bool isXMLMIMEType(const String& mimeType);
+
+    // Used in page load algorithm to decide whether to display as a text
+    // document in a frame. Not a good idea to use elsewhere, because that code
+    // makes this test is after many other tests are done on the MIME type.
+    WEBCORE_EXPORT static bool isTextMIMEType(const String& mimeType);
+
     // FIXME: WebKit coding style says we should not have the word "get" in the names of these functions.
     // FIXME: Would be nice to find a way to avoid exposing these sets, even worse exposing non-const references.
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageMIMETypes();
@@ -100,10 +103,13 @@ public:
     // FIXME: WebKit coding style says we should not have the word "get" in the name of this function.
     // FIXME: Unclear what the concept of a normalized MIME type is; currently it's a platform-specific notion.
     static String getNormalizedMIMEType(const String&);
+
+private:
+    // Check to see if the MIME type is not suitable for being loaded as a text
+    // document in a frame. Only valid for MIME types begining with "text/".
+    static bool isUnsupportedTextMIMEType(const String& mimeType);
 };
 
 const String& defaultMIMEType();
 
 } // namespace WebCore
-
-#endif // MIMETypeRegistry_h

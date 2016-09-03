@@ -40,7 +40,6 @@
 #include "CachedScript.h"
 #include "Cookie.h"
 #include "CookieJar.h"
-#include "DOMImplementation.h"
 #include "DOMPatchSupport.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
@@ -59,6 +58,7 @@
 #include "InspectorOverlay.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
+#include "MIMETypeRegistry.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
@@ -128,7 +128,7 @@ static RefPtr<TextResourceDecoder> createXHRTextDecoder(const String& mimeType, 
     RefPtr<TextResourceDecoder> decoder;
     if (!textEncodingName.isEmpty())
         decoder = TextResourceDecoder::create("text/plain", textEncodingName);
-    else if (DOMImplementation::isXMLMIMEType(mimeType)) {
+    else if (MIMETypeRegistry::isXMLMIMEType(mimeType)) {
         decoder = TextResourceDecoder::create("application/xml");
         decoder->useLenientXMLDecoding();
     } else if (equalLettersIgnoringASCIICase(mimeType, "text/html"))

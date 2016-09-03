@@ -108,7 +108,7 @@ bool JSTestCallback::callbackWithNoParam()
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
 
-    NakedPtr<Exception> returnedException;
+    NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithNoParam"), returnedException);
     if (returnedException)
         reportException(state, returnedException);
@@ -128,7 +128,7 @@ bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
     MarkedArgumentBuffer args;
     args.append(toJS(state, m_data->globalObject(), arrayParam));
 
-    NakedPtr<Exception> returnedException;
+    NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithArrayParam"), returnedException);
     if (returnedException)
         reportException(state, returnedException);
@@ -149,7 +149,7 @@ bool JSTestCallback::callbackWithSerializedScriptValueParam(RefPtr<SerializedScr
     args.append(srzParam ? srzParam->deserialize(state, m_data->globalObject(), 0) : jsNull());
     args.append(jsStringWithCache(state, strArg));
 
-    NakedPtr<Exception> returnedException;
+    NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithSerializedScriptValueParam"), returnedException);
     if (returnedException)
         reportException(state, returnedException);
@@ -169,7 +169,7 @@ bool JSTestCallback::callbackWithStringList(DOMStringList* listParam)
     MarkedArgumentBuffer args;
     args.append(toJS(state, m_data->globalObject(), listParam));
 
-    NakedPtr<Exception> returnedException;
+    NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithStringList"), returnedException);
     if (returnedException)
         reportException(state, returnedException);
@@ -189,7 +189,7 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
     MarkedArgumentBuffer args;
     args.append(jsBoolean(boolParam));
 
-    NakedPtr<Exception> returnedException;
+    NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithBoolean"), returnedException);
     if (returnedException)
         reportException(state, returnedException);
@@ -210,7 +210,7 @@ bool JSTestCallback::callbackRequiresThisToPass(int32_t longParam, TestNode* tes
     args.append(jsNumber(longParam));
     args.append(toJS(state, m_data->globalObject(), testNodeParam));
 
-    NakedPtr<Exception> returnedException;
+    NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackRequiresThisToPass"), returnedException);
     if (returnedException)
         reportException(state, returnedException);

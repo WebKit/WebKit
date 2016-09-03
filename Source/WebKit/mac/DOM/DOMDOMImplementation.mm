@@ -30,105 +30,90 @@
 #import "DOMDocumentTypeInternal.h"
 #import "DOMHTMLDocumentInternal.h"
 #import "DOMInternal.h"
-#import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
 #import <WebCore/CSSStyleSheet.h>
 #import <WebCore/DOMImplementation.h>
-#import <WebCore/Document.h>
 #import <WebCore/DocumentType.h>
 #import <WebCore/HTMLDocument.h>
 #import <WebCore/JSMainThreadExecState.h>
 #import <WebCore/ThreadCheck.h>
-#import <WebCore/URL.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
-#import <WebCore/XMLDocument.h>
-#import <wtf/GetPtr.h>
-
-#define IMPL reinterpret_cast<WebCore::DOMImplementation*>(_internal)
 
 @implementation DOMImplementation
+
+static inline WebCore::DOMImplementation& unwrap(DOMImplementation& wrapper)
+{
+    return *reinterpret_cast<WebCore::DOMImplementation*>(wrapper._internal);
+}
 
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainThread([DOMImplementation class], self))
         return;
-
     if (_internal)
-        IMPL->deref();
+        unwrap(*self).deref();
     [super dealloc];
 }
 
 - (BOOL)hasFeature:(NSString *)feature version:(NSString *)version
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->hasFeature(feature, version);
-}
-
-- (BOOL)hasFeature:(NSString *)feature :(NSString *)version
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->hasFeature(feature, version);
+    return unwrap(*self).hasFeature(feature, version);
 }
 
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName publicId:(NSString *)publicId systemId:(NSString *)systemId
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMDocumentType *result = kit(WTF::getPtr(IMPL->createDocumentType(qualifiedName, publicId, systemId, ec)));
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMDocumentType *result = kit(WTF::getPtr(IMPL->createDocumentType(qualifiedName, publicId, systemId, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    auto result = unwrap(*self).createDocumentType(qualifiedName, publicId, systemId);
+    if (result.hasException())
+        raiseDOMException(result.exceptionCode());
+    return kit(result.takeReturnValue().ptr());
 }
 
 - (DOMDocument *)createDocument:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName doctype:(DOMDocumentType *)doctype
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMDocument *result = kit(WTF::getPtr(IMPL->createDocument(namespaceURI, qualifiedName, core(doctype), ec)));
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMDocument *result = kit(WTF::getPtr(IMPL->createDocument(namespaceURI, qualifiedName, core(doctype), ec)));
-    raiseOnDOMError(ec);
-    return result;
+    auto result = unwrap(*self).createDocument(namespaceURI, qualifiedName, core(doctype));
+    if (result.hasException())
+        raiseDOMException(result.exceptionCode());
+    return kit(result.takeReturnValue().ptr());
 }
 
 - (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title media:(NSString *)media
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMCSSStyleSheet *result = kit(WTF::getPtr(IMPL->createCSSStyleSheet(title, media, ec)));
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMCSSStyleSheet *result = kit(WTF::getPtr(IMPL->createCSSStyleSheet(title, media, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(unwrap(*self).createCSSStyleSheet(title, media).ptr());
 }
 
 - (DOMHTMLDocument *)createHTMLDocument:(NSString *)title
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->createHTMLDocument(title)));
+    return kit(unwrap(*self).createHTMLDocument(title).ptr());
+}
+
+@end
+
+@implementation DOMImplementation (DOMImplementationDeprecated)
+
+- (BOOL)hasFeature:(NSString *)feature :(NSString *)version
+{
+    return [self hasFeature:feature version:version];
+}
+
+- (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId
+{
+    return [self createDocumentType:qualifiedName publicId:publicId systemId:systemId];
+}
+
+- (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype
+{
+    return [self createDocument:namespaceURI qualifiedName:qualifiedName doctype:doctype];
+}
+
+- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media
+{
+    return [self createCSSStyleSheet:title media:media];
 }
 
 @end
