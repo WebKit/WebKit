@@ -1,3 +1,15 @@
+2016-09-01  Michael Saboff  <msaboff@apple.com>
+
+        Import Chakra tests to JSC
+        https://bugs.webkit.org/show_bug.cgi?id=154697
+
+        Reviewed by Saam Barati.
+
+        Added "runChakra" and "chakraPassFailErrorHandler" to support the running of
+        Chakra tests.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode

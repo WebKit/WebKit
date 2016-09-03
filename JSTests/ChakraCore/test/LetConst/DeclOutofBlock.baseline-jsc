@@ -1,0 +1,6 @@
+SyntaxError: Unexpected identifier 'b'. Parse error.
+SyntaxError: Unexpected keyword 'const'
+SyntaxError: Unexpected identifier 'd'. Parse error.
+SyntaxError: Unexpected identifier 'd'. Parse error.
+SyntaxError: Unexpected identifier 'f'. Parse error.
+success

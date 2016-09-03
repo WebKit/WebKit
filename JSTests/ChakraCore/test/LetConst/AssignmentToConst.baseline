@@ -1,0 +1,48 @@
+test 1
+TypeError: Assignment to const
+test 2
+TypeError: Assignment to const
+test 3
+TypeError: Assignment to const
+test 4
+TypeError: Assignment to const
+test 5
+TypeError: Assignment to const
+test 6
+TypeError: Assignment to const
+test 7
+TypeError: Assignment to const
+test 8
+TypeError: Assignment to const
+test 9
+TypeError: Assignment to const
+test 10
+TypeError: Assignment to const
+test 11
+TypeError: Assignment to const
+test 12
+TypeError: Assignment to const
+test 13
+TypeError: Assignment to const
+test 14
+TypeError: Assignment to const
+test 15
+TypeError: Assignment to const
+test 16
+TypeError: Assignment to const
+test 17
+TypeError: Assignment to const
+test 18
+passed
+test 19
+ReferenceError: Use before declaration
+test 20
+TypeError: Assignment to const
+test 21
+TypeError: Assignment to const
+test 22
+TypeError: Assignment to const
+test 23
+ReferenceError: Use before declaration
+test 24
+ReferenceError: Use before declaration

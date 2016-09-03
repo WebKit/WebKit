@@ -1,0 +1,12 @@
+g1
+g1
+g1
+TypeError: g2 is not a function. (In 'g2()', 'g2' is undefined)
+global
+global
+TypeError: g3 is not a function. (In 'g3()', 'g3' is undefined)
+TypeError: g3 is not a function. (In 'g3()', 'g3' is undefined)
+global
+TypeError: g4 is not a function. (In 'g4()', 'g4' is undefined)
+global
+another

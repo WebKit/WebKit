@@ -1,0 +1,104 @@
+--- f is not callable ---
+Exception: TypeError : noncallable.apply is not a function. (In 'noncallable.apply()', 'noncallable.apply' is an instance of Object)
+Exception: TypeError : noncallable.apply is not a function. (In 'noncallable.apply({}, [1, 2, 3])', 'noncallable.apply' is an instance of Object)
+
+--- f.apply(x) ---
+Called with this: object[[object Object]], args: []
+
+--- f.apply(x, null), f.apply(x, undefined) ---
+Called with this: object[[object Object]], args: []
+Called with this: object[[object Object]], args: []
+
+--- f.apply(x, 123), f.apply(x, 'string'), f.apply(x, true) ---
+Exception: TypeError : second argument to Function.prototype.apply must be an Array-like object (evaluating 'dump_args.apply(o, 123)')
+Exception: TypeError : second argument to Function.prototype.apply must be an Array-like object (evaluating 'dump_args.apply(o, 'string')')
+Exception: TypeError : second argument to Function.prototype.apply must be an Array-like object (evaluating 'dump_args.apply(o, true)')
+
+--- f.apply(x, obj), obj.length is null/undefined/NaN/string/OutOfRange ---
+Called with this: object[[object Object]], args: []
+Called with this: object[[object Object]], args: []
+Called with this: object[[object Object]], args: []
+Called with this: object[[object Object]], args: []
+Called with this: object[[object Object]], args: []
+Exception: RangeError : Maximum call stack size exceeded.
+
+--- f.apply(x, arr), arr.length is huge ---
+Exception: RangeError : Maximum call stack size exceeded.
+
+--- f.apply(x, obj), obj.length is huge ---
+Exception: RangeError : Maximum call stack size exceeded.
+
+--- f.apply(x, arr) ---
+Called with this: object[[object Object]], args: []
+Called with this: object[[object Object]], args: [1]
+Called with this: object[[object Object]], args: [2, 3, NaN, null, undefined, false, hello, [object Object]]
+
+--- f.apply(x, arr) arr.length increased ---
+Called with this: object[[object Object]], args: [1, 2, undefined, undefined, undefined]
+
+--- f.apply(x, arguments) ---
+Called with this: object[[object Object]], args: []
+Called with this: object[[object Object]], args: [1]
+Called with this: object[[object Object]], args: [2, 3, NaN, null, undefined, false, hello, [object Object]]
+
+--- f.apply(x, obj) ---
+Called with this: object[[object Object]], args: []
+Called with this: object[[object Object]], args: [1]
+Called with this: object[[object Object]], args: [2, 3, NaN, null, undefined, false, hello, [object Object]]
+
+--- f.apply(), f.apply(null), f.apply(undefined), global x1 should be changed ---
+global x1 : hello
+global x1 : hello
+global x1 : hello
+
+--- f.apply(x), global x1 should NOT be changed ---
+global x1 : 0
+o.x1 : hello
+
+--- f.apply(v), v is missing/null/undefined/123/true/'string' ---
+Called with this: object[[object global]], args: []
+Called with this: object[[object global]], args: []
+Called with this: object[[object global]], args: []
+Called with this: object[123], args: []
+Called with this: object[true], args: []
+Called with this: object[string], args: []
+
+--- f.apply(v), v is missing/null/undefined/123/true/'string', f: string.charCodeAt ---
+Exception: TypeError : Type error
+Exception: TypeError : Type error
+Exception: TypeError : Type error
+49
+116
+115
+
+--- f.apply(v), v is missing/null/undefined/123/true/'string', f: string.charAt ---
+Exception: TypeError : Type error
+Exception: TypeError : Type error
+Exception: TypeError : Type error
+1
+t
+s
+
+--- f.call(v), v is missing/null/undefined/123/true/'string' ---
+Called with this: object[[object global]], args: []
+Called with this: object[[object global]], args: []
+Called with this: object[[object global]], args: []
+Called with this: object[123], args: []
+Called with this: object[true], args: []
+Called with this: object[string], args: []
+
+--- f.call(v), v is missing/null/undefined/123/true/'string', f: string.charCodeAt ---
+Exception: TypeError : Type error
+Exception: TypeError : Type error
+Exception: TypeError : Type error
+49
+116
+115
+
+--- f.call(v), v is missing/null/undefined/123/true/'string', f: string.charAt ---
+Exception: TypeError : Type error
+Exception: TypeError : Type error
+Exception: TypeError : Type error
+1
+t
+s

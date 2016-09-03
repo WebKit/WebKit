@@ -1,0 +1,6 @@
+Only function code is in strict mode
+2
+SyntaxError: Decimal integer literals with a leading zero are forbidden in strict mode
+yield okay
+SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator.
+SyntaxError: 'with' statements are not valid in strict mode.

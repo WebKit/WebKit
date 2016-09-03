@@ -1,0 +1,6 @@
+HasFuncDecl: test
+HasFuncDecl: test
+HasFuncAssignment: nested
+HasMaybeEscapedNestedFunc (ObjectScopeAssignment): test (function  (#1.1), #2)
+test1
+test2

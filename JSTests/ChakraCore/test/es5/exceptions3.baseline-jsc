@@ -1,0 +1,30 @@
+ Array.prototype.sort.call(document);; throws;;   -expected: es3 TypeError ::: ReferenceError: Can't find variable: document
+ Array.prototype.slice.call(document);; throws;;   -expected: es3 TypeError ::: ReferenceError: Can't find variable: document
+ Array.prototype.shift.call(document);; throws;;   -expected: es3 TypeError ::: ReferenceError: Can't find variable: document
+ Array.prototype.reverse.call(document);; throws;;   -expected: es3 TypeError ::: ReferenceError: Can't find variable: document
+ Array.prototype.push.call(document);; throws;;   -expected: es3 TypeError ::: ReferenceError: Can't find variable: document
+ Array.prototype.pop.call(document);; throws;;   -expected: es3 TypeError ::: ReferenceError: Can't find variable: document
+ Array.prototype.join.call(document);; throws;;   -expected: es3 TypeError ::: ReferenceError: Can't find variable: document
+ Object.prototype.propertyIsEnumerable.call(document);; throws;;   -expected: es3 TypeError ::: ReferenceError: Can't find variable: document
+ delete this; ends without error; 
+ var xnew = new Object(); var y = new xnew(); throws;;   -expected: es3, es5 TypeError ::: TypeError: Object is not a constructor (evaluating 'new xnew()')
+ var x = new Object(); var y = x.ffm; ends without error; 
+var x = new Object(); x.ff() throws;;   -expected: es3, es5 TypeError ::: TypeError: x.ff is not a function. (In 'x.ff()', 'x.ff' is undefined)
+var x = function f(){return "inner";}();   -expected: es3, es5 R3eferenceError ::: ReferenceError: Can't find variable: ff
+call to undefined fg() throws;   -expected: es3 - TypeError, es5-ReferenceError ::: ReferenceError: Can't find variable: fg
+ call to an non function object ooj();;;   -expected: es3, es5 TypeError ::: TypeError: ooj is not a function. (In 'ooj()', 'ooj' is an instance of Object)
+ o_undef();;;   -expected: es3, es5 TypeError ::: TypeError: o_undef is not a function. (In 'o_undef()', 'o_undef' is undefined)
+ o_null();;;   -expected: es3, es5 TypeError ::: TypeError: o_null is not a function. (In 'o_null()', 'o_null' is null)
+undefined.toString();   -expected: es3, es5 TypeError ::: TypeError: undefined is not an object (evaluating 'undefined.toString')
+ null.anchor();;   -expected: es3, es5 TypeError ::: TypeError: null is not an object (evaluating 'null.anchor')
+ NaN.anchor();;   -expected: es3, es5 TypeError ::: TypeError: NaN.anchor is not a function. (In 'NaN.anchor()', 'NaN.anchor' is undefined)
+ true.anchor();;   -expected: es3, es5 TypeError ::: TypeError: true.anchor is not a function. (In 'true.anchor()', 'true.anchor' is undefined)
+new Array(12.4) - RangeError exception:  expected in es3 and es5::: RangeError: Array size is not a small enough positive integer.
+new Array(12.4); x.length = 12.5; - RangeError exception: es5-expected, ES3-not expected  ::: RangeError: Invalid array length
+(123.45).toFixed(25); - RangeError exception : expected es3, es5::: RangeError: toFixed() argument must be between 0 and 20
+(123.45).toExponential(-25); - RangeError exception : expected es3, es5 ::: RangeError: toExponential() argument must be between 0 and 20
+eval("blah."); -expected es3-EvalError exception : expected es5-SyntaxException ::: SyntaxError: Unexpected end of script
+f = new Function("a", "b", "return a+b."); -expected es3 and es5-SyntaxError exception ::: SyntaxError: Unexpected token '}'. Expected a property name after '.'.
+var num = 0.0009;var x = num.toFixed(3);  - no exception: not expected es3, es5  ::: value = 0.001
+var re = /a{5,4}/;   -expected: es3 -RegexExpError, es5-SyntaxError exception ::: SyntaxError: Invalid regular expression: numbers out of order in {} quantifier
+var re = new RegExp("\\0a");  - no exception: not expected es3, es5  ::: value = 

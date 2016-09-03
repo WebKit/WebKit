@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<regress-exe>
+  <test>
+    <default>
+      <files>toint32.js</files>
+      <baseline>ToInt32.baseline</baseline>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>toint32_2.js</files>
+      <baseline>toint32_2.3.baseline</baseline>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>touint32.js</files>
+      <baseline>ToUInt32.baseline</baseline>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ImplicitConversions.js</files>
+      <baseline>ImplicitConversions_es5.baseline</baseline>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>bug1.js</files>
+    </default>
+  </test>
+</regress-exe>

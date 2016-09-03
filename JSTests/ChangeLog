@@ -1,3 +1,48 @@
+2016-09-01  Michael Saboff  <msaboff@apple.com>
+
+        Import Chakra tests to JSC
+        https://bugs.webkit.org/show_bug.cgi?id=154697
+
+        Reviewed by Saam Barati.
+
+        Added Chakra tests.  All these tests are under Chakra/test.  This is the same layout
+        for tests in the Chakra tree.
+
+        Created a ChakraCore.yaml file to be used with run-jsc-stress-tests.  This file contains
+        the tests that are run when the original Chakra runtests.py script is run.  That script
+        is the test driver for *nix platforms and does not attempt to run all tests or all
+        variations of tests.  The runtest.py driver consults rlexe.xml files in each test
+        subdirectory to determine the test to run, the options to pass to the test and how to
+        determine pass/fail of the test.  With runtests.py as the start, tests that didn't
+        pass directly where either skipped, with a message describing why or through 
+        adjustments to the test infrastructure, as described below, where made to pass.
+        
+        The only modification to the test infrastrucutre are:
+
+         1) Added simple mapping of Chakra expected exception text to JSC expected text in
+            test/UnitTestFramework/UnitTestFramework.js.  It would make sense to also
+            map some JSC specific exception text to more generic text for the cases where
+            that text contains indetifier names or other source specific strings and the
+            Chakra equivolent exception texts are generic.  
+ 
+         2) Created JSC specific expected text files where it is clear that the text work
+            as expected on JSC but the test output is different.  Typically the differences
+            fall into three categories, different exception output, different output from
+            toString() of a function, slight numeric differences, and test that rely on
+            iteration order.
+
+         3) Stripped the CR's from the CR-LF line terminations of the files.  
+
+        No actual test .js files were modified.
+
+        * ChakraCore: Added.
+        * ChakraCore.yaml: Added.
+        * ChakraCore/CONTRIBUTING.md: Added.
+        * ChakraCore/LICENSE.txt: Added.
+        * ChakraCore/README.md: Added.
+        * ChakraCore/THIRD-PARTY-NOTICES.txt: Added.
+        * ChakraCore/test: Added this directory and the tests included therein.
+
 2016-09-01  JF Bastien  <jfbastien@apple.com>
 
         GetByIdWithThis/GetByValWithThis should have ValueProfiles so that they can predict their result types

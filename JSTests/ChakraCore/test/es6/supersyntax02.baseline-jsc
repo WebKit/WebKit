@@ -1,0 +1,2 @@
+Exception: SyntaxError: super is not valid in this context.
+at supersyntax02.js:7

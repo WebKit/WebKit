@@ -1,0 +1,48 @@
+ReferenceError: Cannot access uninitialized variable.
+local x
+ReferenceError: Cannot access uninitialized variable.
+local x
+ReferenceError: Cannot access uninitialized variable.
+a is a string
+ReferenceError: Cannot access uninitialized variable.
+did not delete a
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+undefined
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Left side of assignment is not a reference.
+ReferenceError: Left side of assignment is not a reference.
+false
+ReferenceError: Cannot access uninitialized variable.
+false
+string
+false
+ReferenceError: Cannot access uninitialized variable.
+false
+string
+ReferenceError: Cannot access uninitialized variable.
+function () { write(y = 123); }
+123
+123
+ReferenceError: Cannot access uninitialized variable.
+function () { write(y = 123); }
+123
+123
+ReferenceError: Cannot access uninitialized variable.
+function
+ReferenceError: Cannot access uninitialized variable.
+function
+ReferenceError: Cannot access uninitialized variable.
+function () { write(y); }
+ReferenceError: Cannot access uninitialized variable.
+function () { write(y); }
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.

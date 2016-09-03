@@ -1,0 +1,25 @@
+
+==== Basic let and const variables at global scope ====
+
+
+Naked references
+
+global var a
+global undecl b
+global let c
+global const d
+function e() { }
+
+this. references
+
+global var a
+global undecl b
+undefined
+undefined
+function e() { }
+
+for-in enumeration of this
+
+a: global var a
+e: function e() { }
+b: global undecl b

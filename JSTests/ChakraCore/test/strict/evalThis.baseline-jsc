@@ -1,0 +1,20 @@
+** Checking 'this' using 'eval' in global scope
+[object global]
+[object global]
+[object global]
+[object global]
+** Checking 'this' using 'my_eval' in global scope
+[object global]
+[object global]
+[object global]
+[object global]
+** Checking 'this' using 'eval' in function scope
+undefined
+undefined
+undefined
+undefined
+** Checking 'this' using 'my_eval' in function scope
+[object global]
+[object global]
+[object global]
+[object global]

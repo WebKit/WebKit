@@ -1,0 +1,2 @@
+Exception: SyntaxError: Cannot continue to the label 'LABEL1' as it is not targeting a loop.
+at deferredBadContinue.js:14

@@ -47,6 +47,7 @@ THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
 SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
 WEBKIT_PATH = SCRIPTS_PATH.dirname.dirname
 LAYOUTTESTS_PATH = WEBKIT_PATH + "LayoutTests"
+CHAKRATESTS_PATH = WEBKIT_PATH + "JSTests/ChakraCore/test"
 raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
 raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
 
@@ -626,6 +627,27 @@ def mozillaExit3ErrorHandler
     }
 end
 
+# Error handler for tests that report success by saying "Passed" or error by saying "FAILED".
+# This is used by Chakra tests.
+def chakraPassFailErrorHandler
+    Proc.new {
+        | outp, plan |
+        outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+
+        outp.puts "if test -e #{plan.failFile}"
+        outp.puts "then"
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "elif grep -i -q FAILED #{outputFilename}"
+        outp.puts "then"
+        outp.puts "    (echo Detected failures: && cat #{outputFilename}) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "else"
+        outp.puts "    " + plan.successCommand
+        outp.puts "fi"
+    }
+end
+
 $runCommandOptions = {}
 
 class Plan
@@ -1138,6 +1160,41 @@ def runModules
     run("ftl-eager-modules", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
     run("ftl-eager-no-cjit-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
     run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+end
+
+def runChakra(mode, exception, baselineFile, extraFiles)
+    raise unless $benchmark.to_s =~ /\.js$/
+    failsWithException = exception != "NoException"
+    testName = $~.pre_match
+
+    prepareExtraAbsoluteFiles(CHAKRATESTS_PATH, ["jsc-lib.js"])
+    prepareExtraRelativeFiles(extraFiles.map { |f| "../" + f }, $collection)
+
+    args = [pathToVM.to_s] + BASE_OPTIONS
+    args += FTL_OPTIONS if $isFTLPlatform
+    args += EAGER_OPTIONS
+    args << "--exception=" + exception if failsWithException
+    args << "--dumpException" if failsWithException
+    args += ["jsc-lib.js"]
+
+    case mode
+    when :baseline
+        prepareExtraRelativeFiles([(Pathname("..") + baselineFile).to_s], $collection)
+        errorHandler = diffErrorHandler(($benchmarkDirectory + baselineFile).to_s)
+        outputHandler = noisyOutputHandler
+    when :pass
+        errorHandler = chakraPassFailErrorHandler
+        outputHandler = noisyOutputHandler
+    when :skip
+        return
+    else
+        raise "Invalid mode: #{mode}"
+    end
+
+    kind = "default"
+    args << $benchmark.to_s
+
+    addRunCommand(kind, args, outputHandler, errorHandler)
 end
 
 def runLayoutTest(kind, *options)

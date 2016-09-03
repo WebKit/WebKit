@@ -1,3 +1,19 @@
+2016-09-01  Michael Saboff  <msaboff@apple.com>
+
+        Import Chakra tests to JSC
+        https://bugs.webkit.org/show_bug.cgi?id=154697
+
+        Reviewed by Saam Barati.
+
+        Added --dumpException option to jsc command line utility to dump uncaught exception
+        text even for the last exception that matches --exception.  This is used to
+        check the exception text for a text that is expected to end on an exception.
+        Chakra has several tests of this form and does the same thing when such a test
+        ends with an exception.  Tests that rely on this behavior have had their expected
+        output updated for JSC specific text.
+
+        * jsc.cpp:
+
 2016-09-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove some more useless cases from FTL Capabilities

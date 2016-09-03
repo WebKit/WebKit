@@ -1,0 +1,27 @@
+HasFuncDecl: test
+HasFuncDecl: outer
+HasFuncDecl: inner
+HasFuncDecl: nested
+HasFuncDecl: test
+HasFuncDecl: outer
+HasFuncDecl: inner
+HasFuncDecl: nested
+DoStackNestedFunc: test (function  (#1.1), #2)
+HasFuncDecl: nested
+RestoreHasFuncAssignment: nested
+HasFuncDecl: outer
+HasFuncDecl: inner
+DoStackNestedFunc: outer (function  (#1.2), #4)
+HasFuncDecl: nested
+RestoreHasFuncAssignment: nested
+HasFuncDecl: inner
+HasMaybeEscapedUse: nested
+HasMaybeEscapedNestedFunc (MaybeEscapedUseFuncDecl): test (function  (#1.1), #2)
+DeferParse: box and disable stack function: test (function  (#1.1), #2)
+Boxing StackScriptFunction Object: nested (function Id:  (#1.4), #5)
+Boxing StackScriptFunction Object: outer (function Id:  (#1.2), #4)
+Boxing Frame [Interpreted]: test  (#1.1), #2
+HasFuncDecl: nested
+RestoreHasFuncAssignment: nested
+test1
+test2

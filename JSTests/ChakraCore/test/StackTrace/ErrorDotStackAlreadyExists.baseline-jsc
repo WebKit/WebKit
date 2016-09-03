@@ -1,0 +1,13 @@
+description = undefined
+stack = abacaba
+line = 7
+column = 18
+sourceURL = ErrorDotStackAlreadyExists.js
+somevalue = xyz
+----------------------
+description = undefined
+stack = abacaba
+line = 7
+column = 18
+sourceURL = ErrorDotStackAlreadyExists.js
+somevalue = xyz

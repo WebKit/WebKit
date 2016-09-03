@@ -1,0 +1,30 @@
+validate_line_column.js:17:9
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:16:4
+validate_line_column.js:21:11
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:20:4
+validate_line_column.js:26:7
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:24:4
+validate_line_column.js:30:14
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:29:4
+validate_line_column.js:35:7
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:33:4
+validate_line_column.js:40:7
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:38:4
+validate_line_column.js:45:7
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:43:4
+validate_line_column.js:50:7
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:48:4
+validate_line_column.js:55:7
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:53:4
+validate_line_column.js:60:9
+foo@validate_line_column.js:10:17
+global code@validate_line_column.js:58:4

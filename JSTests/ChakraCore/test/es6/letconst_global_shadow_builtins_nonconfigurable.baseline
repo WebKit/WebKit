@@ -1,0 +1,2 @@
+ReferenceError: Let/Const redeclaration
+	at Global code (letconst_global_shadow_builtins_nonconfigurable.js:8:1)

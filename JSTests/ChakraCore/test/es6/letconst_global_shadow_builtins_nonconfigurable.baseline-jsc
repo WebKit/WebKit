@@ -1,0 +1,2 @@
+Exception: ReferenceError: Cannot access uninitialized variable.
+global code@letconst_global_shadow_builtins_nonconfigurable.js:8:16

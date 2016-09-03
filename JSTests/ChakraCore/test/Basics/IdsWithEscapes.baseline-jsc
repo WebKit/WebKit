@@ -1,0 +1,22 @@
+10
+10
+20
+20
+ReferenceError: Can't find variable: hello2
+false
+false
+true
+SyntaxError: Unexpected keyword 'var'
+SyntaxError: Unexpected keyword 'v\u0061r'
+SyntaxError: Unexpected keyword 'else'
+SyntaxError: Unexpected keyword 'els\u0065'
+SyntaxError: Cannot use the keyword 'false' as a variable name.
+SyntaxError: Cannot use the keyword 'var' as a variable name.
+SyntaxError: Cannot use the keyword 'fals\u0065' as a variable name.
+SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.
+10
+10
+10
+10
+SyntaxError: Cannot use the keyword 'else' as a function name.
+SyntaxError: Cannot use the keyword 'els\u0065' as a function name.

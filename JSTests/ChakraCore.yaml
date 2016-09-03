@@ -1,0 +1,2379 @@
+---
+- path: ChakraCore/test/Array/array_fastinit.js
+  cmd: runChakra :baseline, "NoException", "array_fastinit.baseline", []
+- path: ChakraCore/test/Array/array_init2.js
+  cmd: runChakra :baseline, "NoException", "array_init2.baseline", []
+- path: ChakraCore/test/Array/sliceArrayForceBtreeBug616623.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/bug945376SegLeftPlusSizeGreaterThanMaxArrayLen.js
+  # Test takes too long.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Array/bug1062870.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/bug1065362.js
+  # Test takes too long.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Array/bug4916987.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/bug6268659.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/ArrayBtreeBadCodeGen.js
+  cmd: runChakra :baseline, "NoException", "ArrayBtreeBadCodeGen.baseline", []
+- path: ChakraCore/test/Array/SliceandConcatAlterOriginalArrayBug.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Array/rawLastUsedSegmentBugInFloatArray.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/ArrayElementMissingValueSetToZero.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/TryGrowHeadSegmentBug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/array_ctr.js
+  cmd: runChakra :baseline, "NoException", "array_ctr.baseline-jsc", []
+- path: ChakraCore/test/Array/arr_bailout.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/concat1.js
+  cmd: runChakra :baseline, "NoException", "concat1.baseline", []
+- path: ChakraCore/test/Array/concat2.js
+  # Test takes too long to execute.
+  cmd: runChakra :skip, "NoException", "concat2.baseline", []
+- path: ChakraCore/test/Array/delete.js
+  cmd: runChakra :baseline, "NoException", "delete.baseline", []
+- path: ChakraCore/test/Array/es5array_push.js
+  cmd: runChakra :baseline, "NoException", "es5array_push.baseline", []
+- path: ChakraCore/test/Array/ldindex.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/bug612012.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/SegmentMapFlagResetInJSArrayConstructor.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/LastUsedSegmentHasNULLElement.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/array_length.js
+  cmd: runChakra :pass, "NoException", "array_length.baseline", []
+- path: ChakraCore/test/Array/join2.js
+  cmd: runChakra :pass, "NoException", "join2.baseline", []
+- path: ChakraCore/test/Array/missing.js
+  cmd: runChakra :baseline, "NoException", "missing.baseline", []
+- path: ChakraCore/test/Array/pop1.js
+  cmd: runChakra :baseline, "NoException", "pop1.baseline", []
+- path: ChakraCore/test/Array/pop2.js
+  cmd: runChakra :baseline, "NoException", "pop2.baseline", []
+- path: ChakraCore/test/Array/pop3.js
+  cmd: runChakra :baseline, "NoException", "pop3.baseline", []
+- path: ChakraCore/test/Array/push1.js
+  cmd: runChakra :baseline, "NoException", "push1_2.baseline", []
+- path: ChakraCore/test/Array/push2.js
+  cmd: runChakra :pass, "NoException", "push2.baseline", []
+- path: ChakraCore/test/Array/push3.js
+  cmd: runChakra :baseline, "NoException", "push3.baseline-jsc", []
+- path: ChakraCore/test/Array/reverse1.js
+  cmd: runChakra :baseline, "NoException", "reverse1.baseline", []
+- path: ChakraCore/test/Array/reverse2.js
+  cmd: runChakra :baseline, "NoException", "reverse2.baseline", []
+- path: ChakraCore/test/Array/shift_unshift.js
+  cmd: runChakra :pass, "NoException", "shift_unshift.baseline", []
+- path: ChakraCore/test/Array/toString.js
+  cmd: runChakra :baseline, "NoException", "toString.baseline", []
+- path: ChakraCore/test/Array/toLocaleString.js
+  cmd: runChakra :baseline, "NoException", "toLocaleString.baseline-jsc", []
+- path: ChakraCore/test/Array/array_slice.js
+  cmd: runChakra :baseline, "NoException", "array_slice.baseline", []
+- path: ChakraCore/test/Array/array_slice2.js
+# Test takes too long to execute.
+  cmd: runChakra :skip, "NoException", "array_slice2.baseline", []
+- path: ChakraCore/test/Array/array_sort.js
+  cmd: runChakra :baseline, "NoException", "array_sort.baseline-jsc", []
+- path: ChakraCore/test/Array/array_includes.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/array_sort2.js
+  cmd: runChakra :baseline, "NoException", "array_sort2.baseline", []
+- path: ChakraCore/test/Array/array_sort3.js
+  cmd: runChakra :pass, "NoException", "array_sort3.baseline", []
+- path: ChakraCore/test/Array/array_splice.js
+  cmd: runChakra :baseline, "NoException", "array_splice.baseline", []
+- path: ChakraCore/test/Array/array_splice_double.js
+  cmd: runChakra :baseline, "NoException", "array_splice_double.baseline", []
+- path: ChakraCore/test/Array/array_splice1.js
+  cmd: runChakra :baseline, "NoException", "array_splice1.baseline", []
+- path: ChakraCore/test/Array/array_splice2.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "array_splice2.baseline", []
+- path: ChakraCore/test/Array/array_splice3.js
+  cmd: runChakra :baseline, "NoException", "array_splice3_3.baseline", []
+- path: ChakraCore/test/Array/array_splice4.js
+  cmd: runChakra :baseline, "NoException", "array_splice4.baseline", []
+- path: ChakraCore/test/Array/sparsearray.js
+  cmd: runChakra :baseline, "NoException", "sparsearray.baseline", []
+- path: ChakraCore/test/Array/array_lastindexof.js
+  cmd: runChakra :baseline, "NoException", "array_lastindexof.baseline", []
+- path: ChakraCore/test/Array/array_indexOf.js
+  cmd: runChakra :baseline, "NoException", "array_indexOf.baseline", []
+- path: ChakraCore/test/Array/array_indexOfSparse.js
+  cmd: runChakra :baseline, "NoException", "array_indexOfSparse.baseline", []
+- path: ChakraCore/test/Array/negindex.js
+  cmd: runChakra :baseline, "NoException", "negindex.baseline", []
+- path: ChakraCore/test/Array/array_forin.js
+  cmd: runChakra :baseline, "NoException", "array_forin.baseline", []
+- path: ChakraCore/test/Array/array_literal.js
+  cmd: runChakra :baseline, "NoException", "array_literal.baseline", []
+- path: ChakraCore/test/Array/nativearray_gen1.js
+  cmd: runChakra :baseline, "NoException", "nativearray_gen1.baseline", []
+- path: ChakraCore/test/Array/nativearray_gen2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/nativearray_gen3.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/nativearray_gen4.js
+  cmd: runChakra :baseline, "NoException", "nativearray_gen4.baseline", []
+- path: ChakraCore/test/Array/nativearray_gen5.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/nativearray_gen6.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/nativearray_gen7.js
+  cmd: runChakra :baseline, "NoException", "nativearray_gen7.baseline", []
+- path: ChakraCore/test/Array/nativearray_gen8.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/arrlit.js
+  cmd: runChakra :baseline, "NoException", "arrlit.baseline", []
+- path: ChakraCore/test/Array/protoLookup.js
+  cmd: runChakra :baseline, "NoException", "protoLookup.baseline-jsc", []
+- path: ChakraCore/test/Array/protoLookup_native.js
+  cmd: runChakra :baseline, "NoException", "protoLookup_native.baseline-jsc", []
+- path: ChakraCore/test/Array/protoLookupWithGetters.js
+  # Different behavior.  Immediate unhandled exception in JSC.
+  cmd: runChakra :skip, "NoException", "protoLookupWithGetters.baseline", []
+- path: ChakraCore/test/Array/array_apply.js
+  cmd: runChakra :baseline, "NoException", "array_apply.baseline", []
+- path: ChakraCore/test/Array/nativeArrayPushInlining.js
+  cmd: runChakra :baseline, "NoException", "nativeArrayPushInlining.baseline", []
+- path: ChakraCore/test/Array/reverse_native.js
+  cmd: runChakra :baseline, "NoException", "reverse_native.baseline", []
+- path: ChakraCore/test/Array/nativeFloatArray_shift_unshift.js
+  cmd: runChakra :baseline, "NoException", "nativeFloatArray_shift_unshift.baseline", []
+- path: ChakraCore/test/Array/nativeFloatArray_sort.js
+  cmd: runChakra :baseline, "NoException", "nativeFloatArray_sort.baseline", []
+- path: ChakraCore/test/Array/missingItemFastPathCheck.js
+  cmd: runChakra :baseline, "NoException", "missingItemFastPathCheck.baseline", []
+- path: ChakraCore/test/Array/array_opts.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/nativeIntPop.js
+  cmd: runChakra :baseline, "NoException", "nativeIntPop.baseline", []
+- path: ChakraCore/test/Array/nativeFloatPop.js
+  cmd: runChakra :baseline, "NoException", "nativeFloatPop.baseline", []
+- path: ChakraCore/test/Array/popImplicitCall.js
+  cmd: runChakra :pass, "NoException", "popImplicitCall.baseline", []
+- path: ChakraCore/test/Array/array_splice_515632.js
+  cmd: runChakra :baseline, "NoException", "array_splice_515632.baseline", []
+- path: ChakraCore/test/Array/InlineArrayPopWithIntConstSrc.js
+  cmd: runChakra :baseline, "NoException", "InlineArrayPopWithIntConstSrc.baseline", []
+- path: ChakraCore/test/Array/FailToSetLength.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Array/foreach_nativearray_change.js
+  cmd: runChakra :baseline, "NoException", "foreach_nativearray_change.baseline", []
+- path: ChakraCore/test/Array/newfromargs.js
+  cmd: runChakra :baseline, "NoException", "newfromargs.baseline", []
+- path: ChakraCore/test/Array/bug945376SizeBoundStartSeg.js
+  # Takes too long.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Array/memop_lifetime_bug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/memset.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/memset2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/memcopy.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Array/memcopy_length_bug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/memcopy_missing_values.js
+  cmd: runChakra :baseline, "NoException", "memcopy_missing_values.baseline", []
+- path: ChakraCore/test/Array/memop_alias.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/memop_field.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/memop_slot.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/memop_bounds_check.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/bug4587739.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/bug8159763.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Array/Array_TypeConfusion_bugs.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Basics/Array.js
+  cmd: runChakra :baseline, "NoException", "Array.baseline", []
+- path: ChakraCore/test/Basics/ArrayConcat.js
+  cmd: runChakra :baseline, "NoException", "ArrayConcat.baseline", []
+- path: ChakraCore/test/Basics/arrayinit.js
+  cmd: runChakra :baseline, "NoException", "arrayinit.baseline", []
+- path: ChakraCore/test/Basics/IdsWithEscapes.js
+  cmd: runChakra :baseline, "NoException", "IdsWithEscapes.baseline-jsc", []
+- path: ChakraCore/test/Basics/ArrayResize.js
+  cmd: runChakra :baseline, "NoException", "ArrayResize.baseline", []
+- path: ChakraCore/test/Basics/DirectCall.js
+  cmd: runChakra :baseline, "NoException", "DirectCall.baseline", []
+- path: ChakraCore/test/Basics/equal.js
+  cmd: runChakra :baseline, "NoException", "equal.baseline", []
+- path: ChakraCore/test/Basics/equal_object.js
+  cmd: runChakra :baseline, "NoException", "equal_object.baseline", []
+- path: ChakraCore/test/Basics/label1.js
+  # JSC doesn't handle labels of this form.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Basics/label2.js
+  # JSC doesn't handle labels of this form.
+  cmd: runChakra :skip, "NoException", "label2.baseline", []
+- path: ChakraCore/test/Basics/label3.js
+  # JSC doesn't handle labels of this form.
+  cmd: runChakra :skip, "NoException", "label3.baseline", []
+- path: ChakraCore/test/Basics/label4.js
+  # JSC doesn't handle labels of this form.
+  cmd: runChakra :skip, "NoException", "label4.baseline", []
+- path: ChakraCore/test/Basics/label5.js
+  # JSC doesn't handle labels of this form.
+  cmd: runChakra :skip, "NoException", "label5.baseline", []
+- path: ChakraCore/test/Basics/label6.js
+  # JSC doesn't handle labels of this form.
+  cmd: runChakra :skip, "NoException", "label6.baseline", []
+- path: ChakraCore/test/Basics/Length.js
+  cmd: runChakra :baseline, "NoException", "Length.baseline", []
+- path: ChakraCore/test/Basics/Logical.js
+  cmd: runChakra :baseline, "NoException", "Logical.baseline", []
+- path: ChakraCore/test/Basics/ParameterOrder.js
+  cmd: runChakra :baseline, "NoException", "ParameterOrder.baseline", []
+- path: ChakraCore/test/Basics/Parameters.js
+  cmd: runChakra :baseline, "NoException", "Parameters.baseline", []
+- path: ChakraCore/test/Basics/StringCharCodeAt.js
+  cmd: runChakra :baseline, "NoException", "StringCharCodeAt.baseline", []
+- path: ChakraCore/test/Basics/StringField.js
+  cmd: runChakra :baseline, "NoException", "StringField.baseline", []
+- path: ChakraCore/test/Basics/StringFromCharCode.js
+  cmd: runChakra :baseline, "NoException", "StringFromCharCode.baseline", []
+- path: ChakraCore/test/Basics/StringSubstring.js
+  cmd: runChakra :baseline, "NoException", "StringSubstring.baseline", []
+- path: ChakraCore/test/Basics/switch.js
+  # JSC doesn't handle computed case statements.
+  cmd: runChakra :skip, "NoException", "switch.baseline", []
+- path: ChakraCore/test/Basics/Switch2.js
+  cmd: runChakra :baseline, "NoException", "switch2.baseline", []
+- path: ChakraCore/test/Basics/typeof.js
+  cmd: runChakra :baseline, "NoException", "typeof.baseline", []
+- path: ChakraCore/test/Basics/typeofcombi.js
+  cmd: runChakra :baseline, "NoException", "typeofcombi.baseline", []
+- path: ChakraCore/test/Basics/TypePromotion.js
+  cmd: runChakra :baseline, "NoException", "TypePromotion.baseline", []
+- path: ChakraCore/test/Basics/UndefinedVsNull.js
+  cmd: runChakra :baseline, "NoException", "UndefinedVsNull.baseline", []
+- path: ChakraCore/test/Basics/With.js
+  cmd: runChakra :baseline, "NoException", "With.baseline-jsc", []
+- path: ChakraCore/test/Basics/withBug940841.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Basics/withBug940841_2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Basics/With2.js
+  cmd: runChakra :baseline, "NoException", "With2.baseline", []
+- path: ChakraCore/test/Basics/witheval.js
+  cmd: runChakra :baseline, "NoException", "witheval.baseline", []
+- path: ChakraCore/test/Basics/TernaryOperator.js
+  cmd: runChakra :baseline, "NoException", "TernaryOperator.baseline", []
+- path: ChakraCore/test/Basics/DeleteProperty1.js
+  cmd: runChakra :baseline, "NoException", "DeleteProperty1.baseline-jsc", []
+- path: ChakraCore/test/Basics/Accessors.js
+  cmd: runChakra :baseline, "NoException", "Accessors.baseline", []
+- path: ChakraCore/test/Basics/DefProp.js
+  cmd: runChakra :baseline, "NoException", "DefProp.baseline", []
+- path: ChakraCore/test/Basics/scopedaccessors.js
+  cmd: runChakra :baseline, "NoException", "scopedaccessors.baseline-jsc", []
+- path: ChakraCore/test/Basics/flags.js
+  cmd: runChakra :baseline, "NoException", "flagsES5.baseline-jsc", []
+- path: ChakraCore/test/Basics/Branching.js
+  cmd: runChakra :baseline, "NoException", "Branching.baseline", []
+- path: ChakraCore/test/Basics/inlinecache.js
+  cmd: runChakra :baseline, "NoException", "inlinecache.baseline", []
+- path: ChakraCore/test/Basics/scan.js
+  cmd: runChakra :baseline, "NoException", "scan.baseline-jsc", []
+- path: ChakraCore/test/Basics/enum.js
+  cmd: runChakra :baseline, "NoException", "enum.baseline-jsc", []
+- path: ChakraCore/test/Basics/with3.js
+  cmd: runChakra :baseline, "NoException", "with3.baseline-jsc", []
+- path: ChakraCore/test/Basics/cross_site_accessor_main.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "", ["cross_site_accessor_child.js"]
+- path: ChakraCore/test/Basics/bug650104.js
+  cmd: runChakra :baseline, "TypeError", "bug650104.baseline-jsc", []
+- path: ChakraCore/test/Boolean/simple1.js
+  cmd: runChakra :baseline, "NoException", "simple1.baseline", []
+- path: ChakraCore/test/Boolean/simple2.js
+  cmd: runChakra :baseline, "NoException", "simple2.baseline", []
+- path: ChakraCore/test/Boolean/wrappedobj.js
+  cmd: runChakra :baseline, "NoException", "wrappedobj.baseline", []
+- path: ChakraCore/test/Boolean/Equals.js
+  cmd: runChakra :baseline, "NoException", "Equals.baseline", []
+- path: ChakraCore/test/Boolean/property_and_index_of_boolean.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Bugs/bug602.js
+  cmd: runChakra :baseline, "NoException", "bug602_3.baseline", []
+- path: ChakraCore/test/Bugs/bug764.js
+  cmd: runChakra :baseline, "NoException", "bug764.baseline-jsc", []
+- path: ChakraCore/test/Bugs/withnonativeApplyOptimizationBug3433559.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/Win8_486977_BranchStrictEqual.js
+  cmd: runChakra :baseline, "NoException", "Win8_486977_BranchStrictEqual.baseline", []
+- path: ChakraCore/test/Bugs/bug_OS_1197716.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/addexception.js
+  cmd: runChakra :baseline, "NoException", "addexception.baseline", []
+- path: ChakraCore/test/Bugs/regalloc.js
+  cmd: runChakra :baseline, "NoException", "regalloc.baseline", []
+- path: ChakraCore/test/Bugs/randombug.js
+  # Stack trace different (ok), but we create arguments and caller properties for bound functions.
+  cmd: runChakra :skip, "NoException", "randombug.baseline", []
+- path: ChakraCore/test/Bugs/blue_532460.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug56026_minimal.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug56026_minimalWithProperties.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug56026_nested.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug56026_trycatch.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/blue_245702.js
+  cmd: runChakra :baseline, "NoException", "blue_245702.baseline-jsc", []
+- path: ChakraCore/test/Bugs/bug547302.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug215238.mul-53-ovf.js
+  cmd: runChakra :baseline, "NoException", "bug215238.mul-53-ovf.baseline", []
+- path: ChakraCore/test/Bugs/bug215238-shrua.js
+  cmd: runChakra :baseline, "NoException", "bug215238-shrua.baseline", []
+- path: ChakraCore/test/Bugs/bug215238.shrua-2.js
+  cmd: runChakra :baseline, "NoException", "bug215238.shrua-2.baseline", []
+- path: ChakraCore/test/Bugs/bug435809.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug594298.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug661952.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug724121.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/deserializationbug339404.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug843670.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug934443.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/vso_os_1091425.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["vso_os_1091425_1.js", "vso_os_1091425_2.js"]
+- path: ChakraCore/test/Bugs/bug1092916.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/blue_1096569.js
+  cmd: runChakra :baseline, "NoException", "blue_1096569.baseline", []
+- path: ChakraCore/test/Bugs/blue_1086262.js
+  cmd: runChakra :baseline, "NoException", "blue_1086262.baseline-jsc", []
+- path: ChakraCore/test/Bugs/bug1288931.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/OS_1362136.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug_OS_4683246.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/OS_5248645.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/OS_5553123.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Bugs/symbol_tostring.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/default_undodefer.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/Bug_resetisdead.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/bug_es5array.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Bugs/simpletypehandler-property-deletion.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Bugs/HasOnlyWritableDataProperties-cross-context.js
+  # jsc-lib.js polyfill does not return an object from WScript.LoadScript.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Closures/cachedscope_1.js
+  cmd: runChakra :baseline, "NoException", "cachedscope_1.baseline", []
+- path: ChakraCore/test/Closures/cachedscope_2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Closures/closure.js
+  cmd: runChakra :baseline, "NoException", "closure.baseline", []
+- path: ChakraCore/test/Closures/closure-callback.js
+  cmd: runChakra :baseline, "NoException", "closure-callback.baseline", []
+- path: ChakraCore/test/Closures/closure_multiple_1.js
+  cmd: runChakra :baseline, "NoException", "closure_multiple_1.baseline", []
+- path: ChakraCore/test/Closures/closure_multiple_2.js
+  cmd: runChakra :baseline, "NoException", "closure_multiple_2.baseline", []
+- path: ChakraCore/test/Closures/closure_binding.js
+  cmd: runChakra :baseline, "NoException", "closure_binding.baseline", []
+- path: ChakraCore/test/Closures/closure_binding_2.js
+  cmd: runChakra :baseline, "NoException", "closure_binding_2.baseline", []
+- path: ChakraCore/test/Closures/closure-funcexpr-eval.js
+  cmd: runChakra :baseline, "NoException", "closure-funcexpr-eval-3.baseline-jsc", []
+- path: ChakraCore/test/Closures/closure-qmark.js
+  cmd: runChakra :baseline, "NoException", "closure-qmark.baseline-jsc", []
+- path: ChakraCore/test/Closures/initcachedscope.js
+  cmd: runChakra :baseline, "NoException", "initcachedscope.baseline-jsc", []
+- path: ChakraCore/test/Closures/invalcachedscope.js
+  cmd: runChakra :baseline, "NoException", "invalcachedscope.baseline", []
+- path: ChakraCore/test/Closures/bug_OS_2299723.js
+  cmd: runChakra :baseline, "NoException", "bug_OS_2299723.baseline-jsc", []
+- path: ChakraCore/test/Closures/bug_OS_2671095.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Closures/bug_OS_2903083.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/ControlFlow/DoLoop.js
+  cmd: runChakra :baseline, "NoException", "DoLoop.baseline", []
+- path: ChakraCore/test/ControlFlow/DoLoop2.js
+  cmd: runChakra :baseline, "NoException", "DoLoop2.baseline", []
+- path: ChakraCore/test/ControlFlow/DoLoop3.js
+  cmd: runChakra :baseline, "NoException", "DoLoop3.baseline", []
+- path: ChakraCore/test/ControlFlow/jump.js
+  cmd: runChakra :baseline, "NoException", "jump.baseline", []
+- path: ChakraCore/test/ControlFlow/ForLoop.js
+  cmd: runChakra :baseline, "NoException", "ForLoop.baseline", []
+- path: ChakraCore/test/ControlFlow/ForLoop2.js
+  cmd: runChakra :baseline, "NoException", "ForLoop2.baseline", []
+- path: ChakraCore/test/ControlFlow/WhileLoop.js
+  cmd: runChakra :baseline, "NoException", "WhileLoop.baseline", []
+- path: ChakraCore/test/ControlFlow/WhileLoop2.js
+  cmd: runChakra :baseline, "NoException", "WhileLoop2.baseline", []
+- path: ChakraCore/test/ControlFlow/forInMisc.js
+  cmd: runChakra :baseline, "NoException", "forInMisc.baseline-jsc", []
+- path: ChakraCore/test/ControlFlow/forInObjectDelete.js
+  cmd: runChakra :baseline, "NoException", "forInObjectDelete.baseline", []
+- path: ChakraCore/test/ControlFlow/forInObjectAdd.js
+  cmd: runChakra :baseline, "NoException", "forInObjectAddv3.baseline", []
+- path: ChakraCore/test/ControlFlow/forInObjectAddDelete.js
+  cmd: runChakra :baseline, "NoException", "forInObjectAddDeletev3.baseline", []
+- path: ChakraCore/test/ControlFlow/forInPrimitive.js
+  cmd: runChakra :baseline, "NoException", "forInPrimitive.baseline-jsc", []
+- path: ChakraCore/test/ControlFlow/enumeration_adddelete.js
+  cmd: runChakra :baseline, "NoException", "enumeration_adddelete.baseline", []
+- path: ChakraCore/test/ControlFlow/forInArrayAdd.js
+  cmd: runChakra :baseline, "NoException", "forinArrayAddv3.baseline", []
+- path: ChakraCore/test/ControlFlow/forInObjectWithPrototype.js
+  cmd: runChakra :baseline, "NoException", "forInObjectWithPrototype.baseline", []
+- path: ChakraCore/test/ControlFlow/DoWhile.js
+  cmd: runChakra :baseline, "NoException", "DoWhileES5.baseline", []
+- path: ChakraCore/test/Conversions/toint32.js
+  cmd: runChakra :baseline, "NoException", "ToInt32.baseline", []
+- path: ChakraCore/test/Conversions/toint32_2.js
+  cmd: runChakra :baseline, "NoException", "toint32_2.3.baseline-jsc", []
+- path: ChakraCore/test/Conversions/touint32.js
+  cmd: runChakra :baseline, "NoException", "ToUInt32.baseline", []
+- path: ChakraCore/test/Conversions/ImplicitConversions.js
+  cmd: runChakra :baseline, "NoException", "ImplicitConversions_es5.baseline-jsc", []
+- path: ChakraCore/test/Conversions/bug1.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Date/DateCtr.js
+  cmd: runChakra :baseline, "NoException", "DateCtr.baseline", []
+- path: ChakraCore/test/Date/DateParse.js
+  # JSC accepts different Date parsing syntax.
+  cmd: runChakra :skip, "NoException", "DateParse_es5.baseline", []
+- path: ChakraCore/test/Date/DateParse2.js
+  # JSC accepts different Date parsing syntax.
+  cmd: runChakra :skip, "NoException", "DateParse2.v5.baseline", []
+- path: ChakraCore/test/Date/toISO_3.js
+  cmd: runChakra :baseline, "NoException", "toISO_3.baseline", []
+- path: ChakraCore/test/Date/dateutc.js
+  cmd: runChakra :baseline, "NoException", "dateutc.baseline", []
+- path: ChakraCore/test/Date/MillisecondTruncationCheckAfterCopyConstructor.js
+  cmd: runChakra :baseline, "NoException", "MillisecondTruncationCheckAfterCopyConstructor.es6.baseline", []
+- path: ChakraCore/test/Date/date_cache_bug.js
+  cmd: runChakra :baseline, "NoException", "date_cache_bug.baseline", []
+- path: ChakraCore/test/EH/capture.js
+  cmd: runChakra :baseline, "NoException", "capture.baseline", []
+- path: ChakraCore/test/EH/oos2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/EH/try1.js
+  cmd: runChakra :baseline, "NoException", "try1.baseline", []
+- path: ChakraCore/test/EH/try2.js
+  cmd: runChakra :baseline, "NoException", "try2-es5.baseline-jsc", []
+- path: ChakraCore/test/EH/try3.js
+  cmd: runChakra :baseline, "NoException", "try3.baseline", []
+- path: ChakraCore/test/EH/try4.js
+  cmd: runChakra :baseline, "NoException", "try4.baseline", []
+- path: ChakraCore/test/EH/try5-ES3.js
+  cmd: runChakra :baseline, "NoException", "try5-ES3.baseline", []
+- path: ChakraCore/test/EH/try6.js
+  cmd: runChakra :baseline, "NoException", "try6.baseline-jsc", []
+- path: ChakraCore/test/EH/try.bug188541.js
+  cmd: runChakra :baseline, "NoException", "try.bug188541.baseline", []
+- path: ChakraCore/test/EH/try.bug188541.v5.js
+  cmd: runChakra :baseline, "NoException", "try.bug188541.v5.baseline-jsc", []
+- path: ChakraCore/test/EH/so.js
+  cmd: runChakra :baseline, "NoException", "so.baseline", []
+- path: ChakraCore/test/EH/newso.js
+  cmd: runChakra :baseline, "NoException", "newso.baseline-jsc", []
+- path: ChakraCore/test/EH/trylabel.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/EH/alignment.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/EH/101832.js
+  cmd: runChakra :baseline, "NoException", "101832.baseline", []
+- path: ChakraCore/test/Error/errorProps.js
+  # Checks engine specific Error porperties.
+  cmd: runChakra :skip, "NoException", "errorProps_v4.baseline", []
+- path: ChakraCore/test/Error/ErrorCtorProps.js
+  cmd: runChakra :baseline, "NoException", "ErrorCtorProps_v3.baseline-jsc", []
+- path: ChakraCore/test/Error/NativeErrors.js
+  cmd: runChakra :baseline, "NoException", "NativeErrors_v4.baseline-jsc", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/Error/outofmem.js
+  cmd: runChakra :baseline, "NoException", "outofmem.baseline-jsc", []
+- path: ChakraCore/test/Error/stack2.js
+  cmd: runChakra :baseline, "NoException", "stack2.baseline-jsc", []
+- path: ChakraCore/test/Error/errorCtor.js
+  # Different Error object properties.
+  cmd: runChakra :skip, "NoException", "errorCtor_v4.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/Error/errorNum.js
+  # JSC doesn't have error numbers.
+  cmd: runChakra :skip, "NoException", "errorNum.baseline", []
+- path: ChakraCore/test/Error/CallNonFunction.js
+  cmd: runChakra :baseline, "NoException", "CallNonFunction_3.baseline-jsc", []
+- path: ChakraCore/test/Error/variousErrors.js
+  cmd: runChakra :baseline, "NoException", "variousErrors3.baseline", []
+- path: ChakraCore/test/Error/bug560940.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Error/inlineSameFunc.js
+  cmd: runChakra :baseline, "NoException", "inlineSameFunc.baseline-jsc", []
+- path: ChakraCore/test/Error/PartInitStackFrame.js
+  # JSC gives no output
+  cmd: runChakra :skip, "NoException", "PartInitStackFrame.baseline", []
+- path: ChakraCore/test/Error/validate_line_column.js
+  cmd: runChakra :baseline, "NoException", "validate_line_column.baseline-jsc", []
+- path: ChakraCore/test/Function/apply.js
+  cmd: runChakra :baseline, "NoException", "apply.baseline", []
+- path: ChakraCore/test/Function/apply3.js
+  cmd: runChakra :baseline, "NoException", "apply3.baseline-jsc", []
+- path: ChakraCore/test/Function/applyArgs.js
+  cmd: runChakra :baseline, "NoException", "applyArgs.baseline", []
+- path: ChakraCore/test/Function/arguments1.js
+  cmd: runChakra :baseline, "NoException", "arguments1.baseline", []
+- path: ChakraCore/test/Function/arguments2.js
+  cmd: runChakra :baseline, "NoException", "arguments2.baseline", []
+- path: ChakraCore/test/Function/arguments3.js
+  cmd: runChakra :baseline, "NoException", "arguments3.baseline-jsc", []
+- path: ChakraCore/test/Function/arguments4.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Function/argumentsMisc.js
+  # Difference when assigning to arguments.
+  cmd: runChakra :skip, "NoException", "argumentsMisc_3.baseline", []
+- path: ChakraCore/test/Function/arguments.es5.js
+  # Differences in the handling of sealed objects.
+  cmd: runChakra :skip, "NoException", "arguments.es5.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Function/argumentsResolution.js
+  cmd: runChakra :baseline, "NoException", "argumentsResolution_3.baseline", []
+- path: ChakraCore/test/Function/argumentsLimits.js
+  cmd: runChakra :baseline, "NoException", "argumentsLimits.baseline", []
+- path: ChakraCore/test/Function/someMoreArguments.js
+  cmd: runChakra :baseline, "NoException", "someMoreArguments_3.baseline", []
+- path: ChakraCore/test/Function/bind.js
+  cmd: runChakra :baseline, "NoException", "bind.baseline", []
+- path: ChakraCore/test/Function/call1.js
+  cmd: runChakra :baseline, "NoException", "call1.baseline-jsc", []
+- path: ChakraCore/test/Function/call2.js
+  cmd: runChakra :baseline, "NoException", "call2.baseline", []
+- path: ChakraCore/test/Function/CallerArgs.js
+  cmd: runChakra :baseline, "NoException", "CallerArgsES5.baseline-jsc", []
+- path: ChakraCore/test/Function/callsideeffects.js
+  cmd: runChakra :baseline, "NoException", "callsideeffects_3.baseline-jsc", []
+- path: ChakraCore/test/Function/catchsymbolvar.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Function/newsideeffect.js
+  # Difference in argument side effects calling.
+  cmd: runChakra :skip, "NoException", "newsideeffect.baseline", []
+- path: ChakraCore/test/Function/callmissingtgt.js
+  cmd: runChakra :baseline, "NoException", "callmissingtgt.6.baseline", []
+- path: ChakraCore/test/Function/defernested.js
+  cmd: runChakra :baseline, "NoException", "defernested.baseline-jsc", []
+- path: ChakraCore/test/Function/jitLoopBody.js
+  cmd: runChakra :baseline, "NoException", "jitLoopBody.baseline", []
+- path: ChakraCore/test/Function/deferredBadContinue.js
+  cmd: runChakra :baseline, "SyntaxError", "deferredBadContinue.baseline-jsc", []
+- path: ChakraCore/test/Function/newFunction.js
+  cmd: runChakra :baseline, "NoException", "newFunction.baseline", []
+- path: ChakraCore/test/Function/prototype.js
+  cmd: runChakra :baseline, "NoException", "prototype.baseline-jsc", []
+- path: ChakraCore/test/Function/TApply1.js
+  cmd: runChakra :baseline, "NoException", "TApply1.baseline", []
+- path: ChakraCore/test/Function/toString.js
+  cmd: runChakra :baseline, "NoException", "toString.baseline-jsc", []
+- path: ChakraCore/test/Function/funcExpr.js
+  cmd: runChakra :baseline, "NoException", "funcExpr5.baseline-jsc", []
+- path: ChakraCore/test/Function/moreFuncExpr.js
+  cmd: runChakra :baseline, "NoException", "moreFuncExpr3.baseline-jsc", []
+- path: ChakraCore/test/Function/evenMoreFuncExpr3.js
+  cmd: runChakra :baseline, "NoException", "evenMoreFuncExpr3.baseline", []
+- path: ChakraCore/test/Function/someMoreFuncExpr.js
+  cmd: runChakra :baseline, "NoException", "someMoreFuncExpr3.baseline-jsc", []
+- path: ChakraCore/test/Function/constructor.js
+  cmd: runChakra :baseline, "NoException", "constructor.baseline", []
+- path: ChakraCore/test/Function/ctrFlags.js
+  cmd: runChakra :baseline, "NoException", "ctrFlags3.baseline", []
+- path: ChakraCore/test/Function/typeErrorAccessor.js
+  # Difference in Object.getOwnPropertyDescriptor(functiong.__proto__, 'caller').
+  cmd: runChakra :skip, "NoException", "typeErrorAccessor.baseline", []
+- path: ChakraCore/test/Function/FuncBody.js
+  # This crashes in JSC.
+  cmd: runChakra :skip, "NoException", "FuncBodyES5.baseline", []
+- path: ChakraCore/test/Function/FuncBody.bug227901.js
+  cmd: runChakra :baseline, "NoException", "FuncBody.bug227901.baseline-jsc", []
+- path: ChakraCore/test/Function/FuncBody.bug232281.js
+  cmd: runChakra :baseline, "NoException", "FuncBody.bug232281.baseline-jsc", []
+- path: ChakraCore/test/Function/FuncBody.bug236810.js
+  cmd: runChakra :baseline, "NoException", "FuncBody.bug236810.baseline", []
+- path: ChakraCore/test/Function/bug_258259.js
+  # Has hardcoded expected error text.
+  cmd: runChakra :skip, "NoException", "bug_258259.baseline", []
+- path: ChakraCore/test/Function/sameNamePara.js
+  cmd: runChakra :baseline, "NoException", "sameNamePara.baseline", []
+- path: ChakraCore/test/Function/closure.js
+  cmd: runChakra :baseline, "NoException", "closure.baseline", []
+- path: ChakraCore/test/Function/undefThis.js
+  cmd: runChakra :baseline, "NoException", "undefThis.v10.baseline-jsc", []
+- path: ChakraCore/test/Function/stackargs.js
+  cmd: runChakra :baseline, "NoException", "stackargs.baseline-jsc", []
+- path: ChakraCore/test/Function/StackArgsWithFormals.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Function/StackArgs_MaxInterpret.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Function/calli.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Function/caller_replaced_proto.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Function/bug542360.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Function/crosssite_bind_main.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "", ["crosssite_bind_child.js"]
+- path: ChakraCore/test/GlobalFunctions/GlobalFunctions.js
+  cmd: runChakra :baseline, "NoException", "GlobalFunctions.baseline", []
+- path: ChakraCore/test/GlobalFunctions/eval1.js
+  # Differences in eval() in a with block.
+  cmd: runChakra :skip, "NoException", "eval1_v3.baseline", []
+- path: ChakraCore/test/GlobalFunctions/evalNullsNewlines.js
+  cmd: runChakra :baseline, "NoException", "evalNullsNewlines.baseline-jsc", []
+- path: ChakraCore/test/GlobalFunctions/evalreturns.js
+  cmd: runChakra :baseline, "NoException", "evalreturns3.baseline-jsc", []
+- path: ChakraCore/test/GlobalFunctions/evalDeferred.js
+  cmd: runChakra :baseline, "NoException", "evalDeferred.baseline", []
+- path: ChakraCore/test/GlobalFunctions/eval-strict-delete.js
+  cmd: runChakra :baseline, "NoException", "eval-strict-delete.baseline", []
+- path: ChakraCore/test/GlobalFunctions/parseFloat.js
+  cmd: runChakra :baseline, "NoException", "parseFloat.baseline", []
+- path: ChakraCore/test/GlobalFunctions/parseInt.js
+  cmd: runChakra :baseline, "NoException", "parseInt.baseline", []
+- path: ChakraCore/test/GlobalFunctions/parseShortCut.js
+  cmd: runChakra :baseline, "NoException", "parseShortCut.baseline", []
+- path: ChakraCore/test/GlobalFunctions/InternalToString.js
+  cmd: runChakra :baseline, "NoException", "InternalToString.baseline", []
+- path: ChakraCore/test/GlobalFunctions/ParseInt1.js
+  cmd: runChakra :baseline, "NoException", "ParseInt1.baseline", []
+- path: ChakraCore/test/GlobalFunctions/toString.js
+  cmd: runChakra :baseline, "NoException", "toString.baseline", []
+- path: ChakraCore/test/InlineCaches/t0.js
+  cmd: runChakra :baseline, "NoException", "t0.baseline", []
+- path: ChakraCore/test/InlineCaches/t1.js
+  cmd: runChakra :baseline, "NoException", "t1.baseline", []
+- path: ChakraCore/test/InlineCaches/t2.js
+  cmd: runChakra :baseline, "NoException", "t2.baseline", []
+- path: ChakraCore/test/InlineCaches/t3.js
+  cmd: runChakra :baseline, "NoException", "t3.baseline", []
+- path: ChakraCore/test/InlineCaches/t4.js
+  cmd: runChakra :baseline, "NoException", "t4.baseline", []
+- path: ChakraCore/test/InlineCaches/t5.js
+  cmd: runChakra :baseline, "NoException", "t5.baseline", []
+- path: ChakraCore/test/InlineCaches/test6.js
+  cmd: runChakra :baseline, "NoException", "test6.baseline", []
+- path: ChakraCore/test/InlineCaches/TypePropertyCache_CrossContext.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "TypePropertyCache_CrossContext.baseline", ["TypePropertyCache_CrossContext_RequestContext.js"]
+- path: ChakraCore/test/InlineCaches/getter_sideeffect.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/InlineCaches/prototypeChainModifications.js
+  cmd: runChakra :baseline, "NoException", "prototypeChainModifications.baseline", []
+- path: ChakraCore/test/InlineCaches/inlineLocalCacheWithoutProperty.js
+  cmd: runChakra :baseline, "NoException", "inlineLocalCacheWithoutProperty.baseline", []
+- path: ChakraCore/test/InlineCaches/writable1.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/InlineCaches/writable2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/InlineCaches/writable3.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/InlineCaches/BigDictionaryTypeHandler.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/InlineCaches/addFldFastPath.js
+  cmd: runChakra :baseline, "NoException", "addFldFastPath.baseline", []
+- path: ChakraCore/test/InlineCaches/MissingPropertyCache1.js
+  cmd: runChakra :baseline, "NoException", "MissingPropertyCache1.baseline", []
+- path: ChakraCore/test/InlineCaches/MissingPropertyCache2.js
+  cmd: runChakra :baseline, "NoException", "MissingPropertyCache2.baseline", []
+- path: ChakraCore/test/InlineCaches/MissingPropertyCache3.js
+  cmd: runChakra :baseline, "NoException", "MissingPropertyCache3.baseline", []
+- path: ChakraCore/test/InlineCaches/instanceOfCacheCrossRegistration.js
+  cmd: runChakra :baseline, "NoException", "instanceOfCacheCrossRegistration.baseline", []
+- path: ChakraCore/test/InlineCaches/bug_vso_os_1206083.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "bug_vso_os_1206083.baseline", []
+- path: ChakraCore/test/JSON/jx1.js
+  cmd: runChakra :baseline, "NoException", "jx1.baseline", []
+- path: ChakraCore/test/JSON/jx2.js
+  cmd: runChakra :baseline, "NoException", "jx2.baseline-jsc", []
+- path: ChakraCore/test/JSON/space.js
+  cmd: runChakra :baseline, "NoException", "space.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/JSON/simple.js
+  cmd: runChakra :baseline, "NoException", "simple.baseline", []
+- path: ChakraCore/test/JSON/simple.stringify.js
+  cmd: runChakra :baseline, "NoException", "simple.stringify.baseline", []
+- path: ChakraCore/test/JSON/jsonCache.js
+  cmd: runChakra :baseline, "NoException", "jsonCache.baseline", []
+- path: ChakraCore/test/JSON/json_parse_Blue_548957.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/JSON/jsonParseWalkTest.js
+  cmd: runChakra :baseline, "NoException", "jsonParseWalkTest.baseline", []
+- path: ChakraCore/test/JSON/syntaxError.js
+  cmd: runChakra :baseline, "NoException", "syntaxError.baseline-jsc", []
+- path: ChakraCore/test/LetConst/a.js
+  cmd: runChakra :baseline, "NoException", "a.baseline", []
+- path: ChakraCore/test/LetConst/b.js
+  cmd: runChakra :baseline, "NoException", "b.baseline", []
+- path: ChakraCore/test/LetConst/c.js
+  cmd: runChakra :baseline, "NoException", "c.baseline", []
+- path: ChakraCore/test/LetConst/d.js
+  cmd: runChakra :baseline, "NoException", "d.baseline", []
+- path: ChakraCore/test/LetConst/e.js
+  cmd: runChakra :baseline, "NoException", "e.baseline", []
+- path: ChakraCore/test/LetConst/f.js
+  cmd: runChakra :baseline, "NoException", "f.baseline", []
+- path: ChakraCore/test/LetConst/g.js
+  cmd: runChakra :baseline, "NoException", "g.baseline", []
+- path: ChakraCore/test/LetConst/h.js
+  cmd: runChakra :baseline, "NoException", "h.baseline", []
+- path: ChakraCore/test/LetConst/i.js
+  cmd: runChakra :baseline, "NoException", "i.baseline", []
+- path: ChakraCore/test/LetConst/j.js
+  cmd: runChakra :baseline, "NoException", "j.baseline", []
+- path: ChakraCore/test/LetConst/k.js
+  cmd: runChakra :baseline, "NoException", "k.baseline", []
+- path: ChakraCore/test/LetConst/l.js
+  cmd: runChakra :baseline, "NoException", "l.baseline-jsc", []
+- path: ChakraCore/test/LetConst/m.js
+  cmd: runChakra :baseline, "NoException", "m.baseline", []
+- path: ChakraCore/test/LetConst/n.js
+  cmd: runChakra :baseline, "NoException", "n.baseline", []
+- path: ChakraCore/test/LetConst/o.js
+  cmd: runChakra :baseline, "NoException", "o.baseline", []
+- path: ChakraCore/test/LetConst/p.js
+  # Bad test, dumps the global properties.
+  cmd: runChakra :skip, "NoException", "p.baseline", []
+- path: ChakraCore/test/LetConst/q.js
+  # Bad test, dumps the global properties.
+  cmd: runChakra :skip, "NoException", "q.baseline", []
+- path: ChakraCore/test/LetConst/r.js
+  cmd: runChakra :baseline, "NoException", "r.baseline-jsc", []
+- path: ChakraCore/test/LetConst/arguments.js
+  cmd: runChakra :baseline, "NoException", "arguments.baseline", []
+- path: ChakraCore/test/LetConst/AssignmentToConst.js
+  cmd: runChakra :baseline, "NoException", "AssignmentToConst.baseline-jsc", []
+- path: ChakraCore/test/LetConst/constreassign1.js
+  cmd: runChakra :baseline, "NoException", "constreassign1.baseline-jsc", []
+- path: ChakraCore/test/LetConst/DeclOutofBlock.js
+  cmd: runChakra :baseline, "NoException", "DeclOutofBlock.baseline-jsc", []
+- path: ChakraCore/test/LetConst/defer1.js
+  cmd: runChakra :baseline, "SyntaxError", "defer1.baseline-jsc", []
+- path: ChakraCore/test/LetConst/defer2.js
+  cmd: runChakra :baseline, "TypeError", "defer2.baseline-jsc", []
+- path: ChakraCore/test/LetConst/defer3.js
+  cmd: runChakra :baseline, "NoException", "defer3.baseline-jsc", []
+- path: ChakraCore/test/LetConst/defer4.js
+  cmd: runChakra :baseline, "NoException", "defer4.baseline-jsc", []
+- path: ChakraCore/test/LetConst/defer5.js
+  cmd: runChakra :baseline, "ReferenceError", "defer5.baseline-jsc", []
+- path: ChakraCore/test/LetConst/delete.js
+  cmd: runChakra :baseline, "NoException", "delete.baseline", []
+- path: ChakraCore/test/LetConst/dop.js
+  # Differences in Object.seal().
+  cmd: runChakra :skip, "NoException", "dop.baseline", []
+- path: ChakraCore/test/LetConst/dop1.js
+  # Differences in Object.seal().
+  cmd: runChakra :skip, "NoException", "dop1.baseline", []
+- path: ChakraCore/test/LetConst/eval_fncdecl.js
+  # Seems like a bug.  We try to define a function in a false "then" block.
+  cmd: runChakra :skip, "NoException", "eval_fncdecl.baseline", []
+- path: ChakraCore/test/LetConst/eval_letconst.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/LetConst/eval1.js
+  # Different behavior plus benign exception output differences.
+  cmd: runChakra :skip, "NoException", "eval1.baseline", []
+- path: ChakraCore/test/LetConst/mixedscope.js
+  cmd: runChakra :baseline, "NoException", "mixedscope.baseline", []
+- path: ChakraCore/test/LetConst/for-loop.js
+  # Difference in handling of eval('function foo() { { for (var a = 123 in []) { } let a; } } foo();').
+  cmd: runChakra :skip, "NoException", "for-loop.baseline", []
+- path: ChakraCore/test/LetConst/letvar.js
+  cmd: runChakra :baseline, "NoException", "letvar.baseline-jsc", []
+- path: ChakraCore/test/LetConst/redeclaration.js
+  cmd: runChakra :baseline, "NoException", "redeclaration.baseline-jsc", []
+- path: ChakraCore/test/LetConst/scopegen1.js
+  # Different handling of with / eval and global scope.
+  cmd: runChakra :skip, "NoException", "scopegen1.baseline", []
+- path: ChakraCore/test/LetConst/seal.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/LetConst/seal1.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/LetConst/seal2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/LetConst/tdz1.js
+  cmd: runChakra :baseline, "NoException", "tdz1.baseline-jsc", []
+- path: ChakraCore/test/LetConst/tdz2.js
+  # Bad test, embedded exception text.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/LetConst/storeundecl_multiscript.js
+  cmd: runChakra :baseline, "NoException", "storeundecl_multiscript.baseline-jsc", ["storeundecl_script2.js"]
+- path: ChakraCore/test/LetConst/storeundecl_eval.js
+  cmd: runChakra :baseline, "NoException", "storeundecl_eval.baseline-jsc", []
+- path: ChakraCore/test/LetConst/with.js
+  cmd: runChakra :baseline, "NoException", "with.baseline-jsc", []
+- path: ChakraCore/test/LetConst/unassignedconst.js
+  cmd: runChakra :pass, "NoException", "", ["unassignedconst_noneval_global.js", "unassignedconst_noneval_function.js"]
+- path: ChakraCore/test/LetConst/letconst_undeclinlinecache.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/LetConst/loopinit.js
+  cmd: runChakra :baseline, "NoException", "loopinit.baseline", []
+- path: ChakraCore/test/LetConst/letlet.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Lib/construct.js
+  cmd: runChakra :baseline, "NoException", "construct.baseline-jsc", []
+- path: ChakraCore/test/Lib/getclass.js
+  cmd: runChakra :baseline, "NoException", "getclass1.baseline-jsc", []
+- path: ChakraCore/test/Lib/length2.js
+  cmd: runChakra :baseline, "NoException", "length.baseline", []
+- path: ChakraCore/test/Lib/LibLength.js
+  cmd: runChakra :baseline, "NoException", "LibLength.baseline", []
+- path: ChakraCore/test/Lib/noargs.js
+  cmd: runChakra :baseline, "NoException", "noargs_2.baseline-jsc", []
+- path: ChakraCore/test/Lib/tostring.js
+  cmd: runChakra :baseline, "NoException", "toString.baseline-jsc", []
+- path: ChakraCore/test/Lib/forin_lib.js
+  cmd: runChakra :baseline, "NoException", "forin_lib_v3.baseline-jsc", []
+- path: ChakraCore/test/Lib/uri.js
+  cmd: runChakra :baseline, "NoException", "uri.baseline-jsc", []
+- path: ChakraCore/test/Lib/error.js
+  cmd: runChakra :baseline, "NoException", "error.baseline", []
+- path: ChakraCore/test/Lib/workingset.js
+  # WScript.GetWorkingSet is not implemented in jsc-lib.js polyfill.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Math/abs.js
+  cmd: runChakra :baseline, "NoException", "abs.baseline", []
+- path: ChakraCore/test/Math/acos.js
+  cmd: runChakra :baseline, "NoException", "acos.baseline", []
+- path: ChakraCore/test/Math/asin.js
+  cmd: runChakra :baseline, "NoException", "asin.baseline", []
+- path: ChakraCore/test/Math/atan.js
+  cmd: runChakra :baseline, "NoException", "atan.baseline", []
+- path: ChakraCore/test/Math/atan2.js
+  cmd: runChakra :baseline, "NoException", "atan2.baseline", []
+- path: ChakraCore/test/Math/cos.js
+  cmd: runChakra :baseline, "NoException", "cos.baseline", []
+- path: ChakraCore/test/Math/exp.js
+  cmd: runChakra :baseline, "NoException", "exp.baseline", []
+- path: ChakraCore/test/Math/log.js
+  cmd: runChakra :baseline, "NoException", "log.baseline", []
+- path: ChakraCore/test/Math/neg.js
+  cmd: runChakra :baseline, "NoException", "neg.baseline", []
+- path: ChakraCore/test/Math/pow.js
+  cmd: runChakra :baseline, "NoException", "pow.baseline", []
+- path: ChakraCore/test/Math/min.js
+  cmd: runChakra :baseline, "NoException", "min.baseline", []
+- path: ChakraCore/test/Math/max.js
+  cmd: runChakra :baseline, "NoException", "max.baseline", []
+- path: ChakraCore/test/Math/miscellaneous.js
+  cmd: runChakra :baseline, "NoException", "miscellaneous.baseline", []
+- path: ChakraCore/test/Math/round.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Math/ceilfloor.js
+  cmd: runChakra :baseline, "NoException", "ceilfloor.baseline", []
+- path: ChakraCore/test/Math/sin.js
+  cmd: runChakra :baseline, "NoException", "sin.baseline", []
+- path: ChakraCore/test/Math/sqrt.js
+  cmd: runChakra :baseline, "NoException", "sqrt.baseline", []
+- path: ChakraCore/test/Math/tan.js
+  cmd: runChakra :baseline, "NoException", "tan.baseline", []
+- path: ChakraCore/test/Math/constants.js
+  cmd: runChakra :baseline, "NoException", "constants.baseline-jsc", []
+- path: ChakraCore/test/Math/clz32.js
+  cmd: runChakra :baseline, "NoException", "clz32.baseline", []
+- path: ChakraCore/test/Miscellaneous/HasOnlyWritableDataPropertiesCache.js
+  cmd: runChakra :baseline, "NoException", "HasOnlyWritableDataPropertiesCache.baseline-jsc", []
+- path: ChakraCore/test/Miscellaneous/etwtest.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Miscellaneous/evalAlias.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Miscellaneous/SetTimeout.js
+  # Not implemented in jsc-lib.js.
+  cmd: runChakra :skip, "NoException", "SetTimeout.baseline", []
+- path: ChakraCore/test/Number/toString.js
+  cmd: runChakra :baseline, "NoException", "toString_3.baseline-jsc", []
+- path: ChakraCore/test/Number/floatcmp.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Number/NaN.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Number/integer.js
+  cmd: runChakra :baseline, "NoException", "integer.baseline", []
+- path: ChakraCore/test/Number/toUint16.js
+  cmd: runChakra :baseline, "NoException", "toUint16.baseline", []
+- path: ChakraCore/test/Number/boundaries.js
+  cmd: runChakra :baseline, "NoException", "boundaries.baseline", []
+- path: ChakraCore/test/Number/NoSse.js
+  cmd: runChakra :baseline, "NoException", "NoSse.baseline", []
+- path: ChakraCore/test/Number/property_and_index_of_number.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Object/constructor.js
+  # Seems to have non-deterministic output.
+  cmd: runChakra :skip, "TypeError", "constructor.baseline", ["constructor-crossScript.js"]
+- path: ChakraCore/test/Object/constructor1.js
+  cmd: runChakra :baseline, "NoException", "constructor1.baseline", []
+- path: ChakraCore/test/Object/expandos.js
+  cmd: runChakra :baseline, "NoException", "expandos.baseline", []
+- path: ChakraCore/test/Object/hasOwnProperty.js
+  cmd: runChakra :baseline, "NoException", "hasOwnProperty.baseline", []
+- path: ChakraCore/test/Object/isEnumerable.js
+  cmd: runChakra :baseline, "NoException", "isEnumerable.baseline", []
+- path: ChakraCore/test/Object/isPrototypeOf.js
+  cmd: runChakra :baseline, "NoException", "isPrototypeOf_v3.baseline", []
+- path: ChakraCore/test/Object/Object.js
+  cmd: runChakra :baseline, "NoException", "Object.baseline", []
+- path: ChakraCore/test/Object/null.js
+  cmd: runChakra :baseline, "NoException", "null.baseline-jsc", []
+- path: ChakraCore/test/Object/propertyDescriptorNonObject.js
+  # Bad test, checks hard coded exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Object/toLocaleString2.js
+  # Bad test, checks hard coded exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Object/toLocaleStringBasics.js
+  cmd: runChakra :baseline, "NoException", "toLocaleStringBasics.baseline", []
+- path: ChakraCore/test/Object/toString1.js
+  cmd: runChakra :baseline, "NoException", "toString3.baseline", []
+- path: ChakraCore/test/Object/toString2.js
+  cmd: runChakra :baseline, "NoException", "toString2.baseline", []
+- path: ChakraCore/test/Object/newobj.js
+  cmd: runChakra :baseline, "NoException", "newobj.baseline", []
+- path: ChakraCore/test/Object/regex.js
+  cmd: runChakra :baseline, "NoException", "regex.baseline", []
+- path: ChakraCore/test/Object/var.js
+  cmd: runChakra :baseline, "NoException", "var.baseline-jsc", []
+- path: ChakraCore/test/Object/Slow.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Object/NumericPropertyIsEnumerable.js
+  cmd: runChakra :baseline, "NoException", "NumericPropertyIsEnumerable.baseline", []
+- path: ChakraCore/test/Object/defineProperty.js
+  cmd: runChakra :baseline, "NoException", "defineProperty_v3.baseline-jsc", []
+- path: ChakraCore/test/Object/getOwnPropertyDescriptor.js
+  cmd: runChakra :baseline, "NoException", "getOwnPropertyDescriptor_v3.baseline", []
+- path: ChakraCore/test/Object/getOwnPropertyDescriptors.js
+  # Bad test, checks hard coded exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Object/objectCreationOptimizations.js
+  cmd: runChakra :baseline, "NoException", "objectCreationOptimizations.baseline", []
+  # Different behavior for muliple global "var" after Object.defineProperty(this, "x", { writable: false });.
+  cmd: runChakra :skip, "NoException", "multivardecl.baseline", []
+- path: ChakraCore/test/Object/propertyStrings.js
+  cmd: runChakra :baseline, "NoException", "propertyStrings.baseline", []
+- path: ChakraCore/test/Object/forinenumcache.js
+  cmd: runChakra :baseline, "NoException", "forinenumcache.baseline", []
+- path: ChakraCore/test/Object/forinnonenumerableshadowing.js
+  # Bad test, checks hard coded exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Object/forinfastpath.js
+  cmd: runChakra :baseline, "NoException", "forinfastpath.baseline", []
+- path: ChakraCore/test/Object/forIn.error.js
+  cmd: runChakra :baseline, "NoException", "forIn.error.baseline-jsc", []
+- path: ChakraCore/test/Object/HashTable.js
+  # Test takes too long.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/Object/TypeSnapshotEnumeration.js
+  # Tests modifying properties during enumeration expected a deterministic result.
+  cmd: runChakra :skip, "NoException", "TypeSnapshotEnumeration.baseline", []
+- path: ChakraCore/test/Object/NewScObject-InlineSlotCapacityLocking.js
+  cmd: runChakra :baseline, "NoException", "NewScObject-InlineSlotCapacityLocking.baseline", []
+- path: ChakraCore/test/Object/objlit_type.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Object/stackobject.js
+  cmd: runChakra :baseline, "NoException", "stackobject.baseline", []
+- path: ChakraCore/test/Object/stackobject_escape.js
+  cmd: runChakra :baseline, "NoException", "stackobject_escape.baseline", []
+- path: ChakraCore/test/Object/LargeAuxArray.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Object/stackobject_dependency.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Object/objectCreateNull.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Object/ObjectHeaderInlining_otherInstrs.js
+  cmd: runChakra :baseline, "NoException", "ObjectHeaderInlining_otherInstrs.baseline", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining.js
+  cmd: runChakra :baseline, "NoException", "ObjectHeaderInlining.baseline", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_SimpleDictTypeHandler.js
+  cmd: runChakra :baseline, "NoException", "ObjectHeaderInlining_SimpleDictTypeHandler.baseline", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_DictTypeHandler.js
+  cmd: runChakra :baseline, "NoException", "ObjectHeaderInlining_DictTypeHandler.baseline", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_deleteProps.js
+  cmd: runChakra :baseline, "NoException", "ObjectHeaderInlining_deleteProps.baseline", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_prototype.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_prototypeTypeChange.js
+  cmd: runChakra :baseline, "NoException", "ObjectHeaderInlining_prototypeTypeChange.baseline", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_objArrayFastPath.js
+  cmd: runChakra :baseline, "NoException", "ObjectHeaderInlining_objArrayFastPath.baseline", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_StFldOpt.js
+  cmd: runChakra :baseline, "NoException", "ObjectHeaderInlining_StFldOpt.baseline", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_NewPropNoInlineCache.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_NewPropNoInlineCache_StaticType.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Object/ObjectHeaderInlining_NewPropSharedInlineCache.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Operators/access.js
+  cmd: runChakra :baseline, "NoException", "access.baseline", []
+- path: ChakraCore/test/Operators/add.js
+  cmd: runChakra :baseline, "NoException", "add.baseline", []
+- path: ChakraCore/test/Operators/addcross.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "", ["adddata.js"]
+- path: ChakraCore/test/Operators/binop-kills.js
+  cmd: runChakra :baseline, "NoException", "binop-kills.baseline", []
+- path: ChakraCore/test/Operators/delete1.js
+  cmd: runChakra :baseline, "NoException", "delete1.baseline", []
+- path: ChakraCore/test/Operators/delete2.js
+  cmd: runChakra :baseline, "NoException", "delete2.baseline", []
+- path: ChakraCore/test/Operators/delete3.js
+  cmd: runChakra :baseline, "NoException", "delete3.baseline", []
+- path: ChakraCore/test/Operators/div.js
+  cmd: runChakra :baseline, "NoException", "div.baseline-jsc", []
+- path: ChakraCore/test/Operators/equals.js
+  cmd: runChakra :baseline, "NoException", "equals.baseline", []
+- path: ChakraCore/test/Operators/instanceof.js
+  cmd: runChakra :baseline, "NoException", "instanceof.baseline-jsc", []
+- path: ChakraCore/test/Operators/inst_bug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Operators/isin.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Operators/logAnd.js
+  cmd: runChakra :baseline, "NoException", "logAnd.baseline", []
+- path: ChakraCore/test/Operators/logOr.js
+  cmd: runChakra :baseline, "NoException", "logOr.baseline", []
+- path: ChakraCore/test/Operators/mod.js
+  cmd: runChakra :baseline, "NoException", "mod.baseline", []
+- path: ChakraCore/test/Operators/mul.js
+  cmd: runChakra :baseline, "NoException", "mul.baseline", []
+- path: ChakraCore/test/Operators/OpEq.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Operators/or.js
+  cmd: runChakra :baseline, "NoException", "or.baseline", []
+- path: ChakraCore/test/Operators/relops.js
+  cmd: runChakra :baseline, "NoException", "relops.baseline", []
+- path: ChakraCore/test/Operators/strictequal.js
+  cmd: runChakra :baseline, "NoException", "strictequal.baseline", []
+- path: ChakraCore/test/Operators/unaryOps.js
+  cmd: runChakra :baseline, "NoException", "unaryOps.baseline", []
+- path: ChakraCore/test/Operators/xor.js
+  cmd: runChakra :baseline, "NoException", "xor.baseline", []
+- path: ChakraCore/test/Operators/new.js
+  cmd: runChakra :baseline, "NoException", "new.baseline-jsc", []
+- path: ChakraCore/test/Operators/newReturn.js
+  cmd: runChakra :baseline, "NoException", "newReturn.baseline", []
+- path: ChakraCore/test/Operators/newBuiltin.js
+  cmd: runChakra :baseline, "NoException", "newBuiltin.baseline-jsc", []
+- path: ChakraCore/test/Operators/newProto.js
+  cmd: runChakra :baseline, "NoException", "newProto.baseline", []
+- path: ChakraCore/test/Operators/prototypeInheritance.js
+  # Failures with JSC.
+  cmd: runChakra :skip, "NoException", "prototypeInheritance.baseline", []
+- path: ChakraCore/test/Operators/prototypeInheritance2.js
+  # JSC exits with an unhandled exception and terminates the test.
+  cmd: runChakra :skip, "NoException", "prototypeInheritance2.baseline", []
+- path: ChakraCore/test/Operators/zero.js
+  cmd: runChakra :baseline, "NoException", "zero.baseline", []
+- path: ChakraCore/test/Prototypes/Prototype.js
+  cmd: runChakra :baseline, "NoException", "Prototype.baseline", []
+- path: ChakraCore/test/Prototypes/Prototype2.js
+  cmd: runChakra :baseline, "NoException", "Prototype2.baseline", []
+- path: ChakraCore/test/Prototypes/deep.js
+  cmd: runChakra :baseline, "NoException", "deep.baseline", []
+- path: ChakraCore/test/Prototypes/initProto.js
+  # JSC exits with an unhandled exception and terminates the test.
+  cmd: runChakra :skip, "NoException", "initProto.baseline", []
+- path: ChakraCore/test/Prototypes/ReadOnly.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Prototypes/shadow.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Prototypes/shadow2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/RWC/OneNote.ribbon.js
+  cmd: runChakra :baseline, "NoException", "OneNote.ribbon.baseline", []
+- path: ChakraCore/test/Regex/captures.js
+  cmd: runChakra :baseline, "NoException", "captures.baseline", []
+- path: ChakraCore/test/Regex/fastRegexCaptures.js
+  cmd: runChakra :baseline, "NoException", "fastRegexCaptures.baseline", []
+- path: ChakraCore/test/Regex/regex1.js
+  cmd: runChakra :baseline, "NoException", "regex1.baseline", []
+- path: ChakraCore/test/Regex/regexSplitOptimization.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Regex/match_global.js
+  cmd: runChakra :baseline, "NoException", "match_global.baseline", []
+- path: ChakraCore/test/Regex/configurableTest.js
+  # different behavior for properties on regexp constructor and instances.
+  cmd: runChakra :skip, "NoException", "configurableTest.baseline", []
+- path: ChakraCore/test/Regex/rx1.js
+  # different behavior for properties on regexp constructor and instances.
+  cmd: runChakra :skip, "NoException", "rx1.baseline", []
+- path: ChakraCore/test/Regex/regex_replacefn.js
+  cmd: runChakra :baseline, "NoException", "regex_replacefn.baseline", []
+- path: ChakraCore/test/Regex/regex_replacefn_this.js
+  cmd: runChakra :baseline, "NoException", "regex_replacefn_this.baseline", []
+- path: ChakraCore/test/Regex/class-case.js
+  cmd: runChakra :baseline, "NoException", "class-case.baseline", []
+- path: ChakraCore/test/Regex/prioritizedalternatives.js
+  cmd: runChakra :baseline, "NoException", "prioritizedalternatives.baseline", []
+- path: ChakraCore/test/Regex/multiline.js
+  cmd: runChakra :baseline, "NoException", "multiline.baseline", []
+- path: ChakraCore/test/Regex/regex_assertion.js
+  cmd: runChakra :baseline, "NoException", "regex_assertion.baseline", []
+- path: ChakraCore/test/Regex/regex_deviations.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Regex/undefined_option.js
+  cmd: runChakra :baseline, "NoException", "undefined_option.baseline", []
+- path: ChakraCore/test/Regex/toString.js
+  cmd: runChakra :baseline, "NoException", "toString.baseline", []
+- path: ChakraCore/test/Regex/trigram.js
+  cmd: runChakra :baseline, "NoException", "trigram.baseline", []
+- path: ChakraCore/test/Regex/nul_character.js
+  cmd: runChakra :baseline, "NoException", "nul_character.baseline-jsc", []
+- path: ChakraCore/test/Regex/replace.js
+  # Different output, may be IE specific.
+  cmd: runChakra :skip, "NoException", "replace.baseline", []
+- path: ChakraCore/test/Regex/BolEol.js
+  cmd: runChakra :baseline, "NoException", "BolEol.baseline", []
+- path: ChakraCore/test/Regex/crossContext.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "crossContext.baseline", ["crossContext_remoteContext.js"]
+- path: ChakraCore/test/Regex/properties.js
+  # Appears to be a IE compat test.
+  cmd: runChakra :skip, "NoException", "properties.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Regex/NotBOILiteral2.js
+  cmd: runChakra :baseline, "NoException", "NotBOILiteral2.baseline", []
+- path: ChakraCore/test/Regex/leadtrail.js
+  cmd: runChakra :baseline, "NoException", "leadtrail.baseline", []
+- path: ChakraCore/test/Regex/Bug517864.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Regex/stackregex_box.js
+  cmd: runChakra :baseline, "NoException", "stackregex_box.baseline", []
+- path: ChakraCore/test/Regex/blue_102584_1.js
+  cmd: runChakra :baseline, "NoException", "blue_102584_1.baseline-jsc", []
+- path: ChakraCore/test/Regex/blue_102584_2.js
+  cmd: runChakra :baseline, "NoException", "blue_102584_2.baseline", []
+- path: ChakraCore/test/Regex/Bug737451.js
+  cmd: runChakra :baseline, "NoException", "Bug737451.baseline", []
+- path: ChakraCore/test/Regex/Bug1153694.js
+  # Has hardcoded expected error text, jsc exits with 3 due to different exception text.
+  cmd: runChakra :skip, "NoException", "Bug1153694.baseline", []
+- path: ChakraCore/test/StackTrace/PropertyValidation.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "PropertyValidation.nostrict.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/SimpleThrow.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "simpleThrow.js.stackTraceDisabled.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/SimpleThrow.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "SimpleThrow.js.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/LongCallStackThrow.js
+  # Different stack trace format and cannot pass arguments into the test.
+  cmd: runChakra :skip, "NoException", "LongCallStackThrow.js.Args5.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/LongCallStackThrow.js
+  # Different stack trace format and cannot pass arguments into the test.
+  cmd: runChakra :skip, "NoException", "LongCallStackThrow.js.Args6.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/LongCallStackThrow.js
+  # Different stack trace format and cannot pass arguments into the test.
+  cmd: runChakra :skip, "NoException", "LongCallStackThrow.js.Args7.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/LongCallStackThrow.js
+  # Different stack trace format and cannot pass arguments into the test.
+  cmd: runChakra :skip, "NoException", "LongCallStackThrow.js.Args30.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/StackTraceLimit.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "StackTraceLimit.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/StackTraceLimitOOS.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "StackTraceLimitOOS.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/dynamic.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "dynamic.js.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/ErrorPrototype.js
+  cmd: runChakra :baseline, "NoException", "ErrorPrototype.baseline-jsc", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/ErrorDotStackAlreadyExists.js
+  cmd: runChakra :baseline, "NoException", "ErrorDotStackAlreadyExists.baseline-jsc", []
+- path: ChakraCore/test/StackTrace/FunctionName.js
+  cmd: runChakra :baseline, "NoException", "FunctionName.js.baseline-jsc", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/x64StackWalk.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "x64StackWalk.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/StackTrace/x64StackWalkLoopBody.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "x64StackWalkLoopBody.baseline", ["TrimStackTracePath.js"]
+- path: ChakraCore/test/Strings/charAt.js
+  cmd: runChakra :baseline, "NoException", "charAt.baseline-jsc", []
+- path: ChakraCore/test/Strings/fromCharCode.js
+  cmd: runChakra :baseline, "NoException", "fromCharCode.baseline", []
+- path: ChakraCore/test/Strings/charCodeAt.js
+  cmd: runChakra :baseline, "NoException", "charCodeAt.baseline-jsc", []
+- path: ChakraCore/test/Strings/concat1.js
+  cmd: runChakra :baseline, "NoException", "concat1.baseline", []
+- path: ChakraCore/test/Strings/concat2.js
+  cmd: runChakra :baseline, "NoException", "concat2.baseline", []
+- path: ChakraCore/test/Strings/concat3.js
+  # Bad test, hard coded exception text.
+  cmd: runChakra :skip, "NoException", "concat3.baseline", []
+- path: ChakraCore/test/Strings/concat4.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Strings/concat5.js
+  cmd: runChakra :baseline, "NoException", "concat5.baseline", []
+- path: ChakraCore/test/Strings/concat6.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Strings/concat7.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Strings/concat_empty.js
+  # Test takes too long.
+  cmd: runChakra :skip, "NoException", "concat_empty.baseline", []
+- path: ChakraCore/test/Strings/LeftDead.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Strings/split1.js
+  cmd: runChakra :baseline, "NoException", "split1_v3.baseline", []
+- path: ChakraCore/test/Strings/stringBuiltin.js
+  cmd: runChakra :baseline, "NoException", "stringBuiltin.baseline", []
+- path: ChakraCore/test/Strings/toLowerCase.js
+  cmd: runChakra :baseline, "NoException", "toLowerCase.baseline", []
+- path: ChakraCore/test/Strings/string_replace.js
+  cmd: runChakra :baseline, "NoException", "string_replace.baseline", []
+- path: ChakraCore/test/Strings/compare.js
+  cmd: runChakra :baseline, "NoException", "compare.baseline", []
+- path: ChakraCore/test/Strings/replace.js
+  cmd: runChakra :baseline, "NoException", "replace.baseline-jsc", []
+- path: ChakraCore/test/Strings/trim.js
+  cmd: runChakra :baseline, "NoException", "trim.baseline", []
+- path: ChakraCore/test/Strings/lastindexof.js
+  cmd: runChakra :baseline, "NoException", "lastindexof.baseline", []
+- path: ChakraCore/test/Strings/indexof.js
+  cmd: runChakra :baseline, "NoException", "indexof.baseline", []
+- path: ChakraCore/test/Strings/neg_index.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Strings/substring.js
+  cmd: runChakra :baseline, "NoException", "substring.baseline", []
+- path: ChakraCore/test/Strings/HTMLHelpers.js
+  cmd: runChakra :baseline, "NoException", "HTMLHelpers.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Strings/stringindex.js
+  cmd: runChakra :baseline, "NoException", "stringindex_v3.baseline", []
+- path: ChakraCore/test/Strings/length.js
+  cmd: runChakra :baseline, "NoException", "length.baseline-jsc", []
+- path: ChakraCore/test/Strings/stringtypespec.js
+  cmd: runChakra :baseline, "NoException", "stringtypespec.baseline", []
+- path: ChakraCore/test/Strings/concatmulti.js
+  cmd: runChakra :baseline, "NoException", "concatmulti.baseline", []
+- path: ChakraCore/test/Strings/concatmulti_compoundstring.js
+  cmd: runChakra :baseline, "NoException", "concatmulti_compoundstring.baseline", []
+- path: ChakraCore/test/Strings/concatmulti_large.js
+  cmd: runChakra :baseline, "NoException", "concatmulti_large.baseline", []
+- path: ChakraCore/test/Strings/concatmulti_loop.js
+  cmd: runChakra :baseline, "NoException", "concatmulti_loop.baseline", []
+- path: ChakraCore/test/Strings/long_concatstr.js
+  cmd: runChakra :baseline, "NoException", "long_concatstr.baseline", []
+- path: ChakraCore/test/Strings/StringTagFunctions.js
+  cmd: runChakra :baseline, "NoException", "StringTagFunctions.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Strings/string_object_indices_589140.js
+  cmd: runChakra :baseline, "NoException", "string_object_indices_589140.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Strings/property_and_index_of_string.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/Strings/bug_OS_3080673.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/Strings/unicode_toUpperCase_toLowerCase.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/TaggedIntegers/remBailout.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/TaggedIntegers/comparison.js
+  cmd: runChakra :baseline, "NoException", "comparison.baseline", []
+- path: ChakraCore/test/TaggedIntegers/div_min_int.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/TaggedIntegers/divide.js
+  cmd: runChakra :baseline, "NoException", "divide.baseline", []
+- path: ChakraCore/test/TaggedIntegers/not.js
+  cmd: runChakra :baseline, "NoException", "not.baseline", []
+- path: ChakraCore/test/TaggedIntegers/negate.js
+  cmd: runChakra :baseline, "NoException", "negate.baseline", []
+- path: ChakraCore/test/TaggedIntegers/signedshiftleft.js
+  cmd: runChakra :baseline, "NoException", "signedshiftleft.baseline", []
+- path: ChakraCore/test/TaggedIntegers/signedshiftright.js
+  cmd: runChakra :baseline, "NoException", "signedshiftright.baseline", []
+- path: ChakraCore/test/TaggedIntegers/unsignedshiftright.js
+  cmd: runChakra :baseline, "NoException", "unsignedshiftright.baseline", []
+- path: ChakraCore/test/TaggedIntegers/loopbounds.js
+  cmd: runChakra :baseline, "NoException", "loopbounds.baseline", []
+- path: ChakraCore/test/TaggedIntegers/not_1.js
+  cmd: runChakra :baseline, "NoException", "not_1.baseline", []
+- path: ChakraCore/test/TaggedIntegers/shift_constants.js
+  cmd: runChakra :baseline, "NoException", "shift_constants.baseline", []
+- path: ChakraCore/test/TaggedIntegers/predecrement.js
+  cmd: runChakra :baseline, "NoException", "predecrement.baseline", []
+- path: ChakraCore/test/TaggedIntegers/preincrement.js
+  cmd: runChakra :baseline, "NoException", "preincrement.baseline", []
+- path: ChakraCore/test/UnifiedRegex/acid.js
+  cmd: runChakra :baseline, "NoException", "acid.baseline", []
+- path: ChakraCore/test/UnifiedRegex/assertion.js
+  cmd: runChakra :baseline, "NoException", "assertion.baseline", []
+- path: ChakraCore/test/UnifiedRegex/captures.js
+  cmd: runChakra :baseline, "NoException", "captures.baseline-jsc", []
+- path: ChakraCore/test/UnifiedRegex/class-case.js
+  cmd: runChakra :baseline, "NoException", "class-case.baseline", []
+- path: ChakraCore/test/UnifiedRegex/crazy.js
+  cmd: runChakra :baseline, "NoException", "crazy.baseline", []
+- path: ChakraCore/test/UnifiedRegex/es5SpecExamples.js
+  cmd: runChakra :baseline, "NoException", "es5SpecExamples.baseline", []
+- path: ChakraCore/test/UnifiedRegex/escapes.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "escapes.baseline", []
+- path: ChakraCore/test/UnifiedRegex/fastRegexCaptures.js
+  cmd: runChakra :baseline, "NoException", "fastRegexCaptures.baseline", []
+- path: ChakraCore/test/UnifiedRegex/lazyVsEagerLastIndex.js
+  cmd: runChakra :baseline, "NoException", "lazyVsEagerLastIndex.baseline", []
+- path: ChakraCore/test/UnifiedRegex/match_global.js
+  cmd: runChakra :baseline, "NoException", "match_global.baseline", []
+- path: ChakraCore/test/UnifiedRegex/multiline.js
+  cmd: runChakra :baseline, "NoException", "multiline.baseline", []
+- path: ChakraCore/test/UnifiedRegex/NoBacktrackingChomp.js
+  cmd: runChakra :baseline, "NoException", "NoBacktrackingChomp.baseline", []
+- path: ChakraCore/test/UnifiedRegex/nul_character.js
+  cmd: runChakra :baseline, "NoException", "nul_character.baseline", []
+- path: ChakraCore/test/UnifiedRegex/prioritizedalternatives.js
+  cmd: runChakra :baseline, "NoException", "prioritizedalternatives.baseline-jsc", []
+- path: ChakraCore/test/UnifiedRegex/sets.js
+  cmd: runChakra :baseline, "NoException", "sets.baseline", []
+- path: ChakraCore/test/UnifiedRegex/split.js
+  # Note that we don't set RegExp.$_ to the last input.
+  cmd: runChakra :baseline, "NoException", "split.baseline-jsc", []
+- path: ChakraCore/test/UnifiedRegex/WOOB1138949.js
+  cmd: runChakra :baseline, "NoException", "WOOB1138949.baseline", []
+- path: ChakraCore/test/UnifiedRegex/propertyString.js
+  cmd: runChakra :baseline, "NoException", "propertyString.baseline", []
+- path: ChakraCore/test/UnifiedRegex/bugFixVersioned.js
+  cmd: runChakra :baseline, "NoException", "bugFixVersioned.baseline", []
+- path: ChakraCore/test/UnifiedRegex/mru.js
+  cmd: runChakra :baseline, "NoException", "mru.baseline", []
+- path: ChakraCore/test/UnifiedRegex/SourceToString.js
+  cmd: runChakra :baseline, "NoException", "SourceToString.baseline", []
+- path: ChakraCore/test/UnifiedRegex/scanner.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/UnitTestFramework/UTFTests.js
+  cmd: runChakra :baseline, "NoException", "UTFTests.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/VT_DATE/getvardate.js
+  # Tests IE specific feature.
+  cmd: runChakra :skip, "NoException", "getVarDate.baseline", []
+- path: ChakraCore/test/es5/reservedWords.js
+  cmd: runChakra :baseline, "NoException", "reservedWords.baseline", []
+- path: ChakraCore/test/es5/Lex_u3.js
+  cmd: runChakra :baseline, "NoException", "Lex_u3.baseline-jsc", []
+- path: ChakraCore/test/es5/array_every.js
+  cmd: runChakra :baseline, "NoException", "array_every.baseline", []
+- path: ChakraCore/test/es5/array_some.js
+  cmd: runChakra :baseline, "NoException", "array_some.baseline", []
+- path: ChakraCore/test/es5/array_forEach.js
+  cmd: runChakra :baseline, "NoException", "array_forEach.baseline", []
+- path: ChakraCore/test/es5/array_map.js
+  cmd: runChakra :baseline, "NoException", "array_map.baseline", []
+- path: ChakraCore/test/es5/array_filter.js
+  cmd: runChakra :baseline, "NoException", "array_filter.baseline", []
+- path: ChakraCore/test/es5/array_reduce.js
+  cmd: runChakra :baseline, "NoException", "array_reduce.baseline", []
+- path: ChakraCore/test/es5/array_reduceright.js
+  cmd: runChakra :baseline, "NoException", "array_reduceright.baseline", []
+- path: ChakraCore/test/es5/DateGetSet9.js
+  cmd: runChakra :baseline, "NoException", "DateGetSet9.baseline-jsc", []
+- path: ChakraCore/test/es5/SemicolonAfterBlockEs5.js
+  cmd: runChakra :baseline, "NoException", "SemicolonAfterBlockEs5.baseline-jsc", []
+- path: ChakraCore/test/es5/exceptions.js
+  cmd: runChakra :baseline, "NoException", "exceptions3.baseline-jsc", []
+- path: ChakraCore/test/es5/ObjLitGetSet.js
+  cmd: runChakra :baseline, "NoException", "ObjLitGetSet.baseline-jsc", []
+- path: ChakraCore/test/es5/ObjLitGetSetParseOnly.js
+  cmd: runChakra :baseline, "NoException", "ObjLitGetSetParseOnly.baseline", []
+- path: ChakraCore/test/es5/ObjLitInitFld.js
+  cmd: runChakra :baseline, "NoException", "ObjLitInitFld.baseline", []
+- path: ChakraCore/test/es5/seal.js
+  cmd: runChakra :baseline, "NoException", "seal.baseline", []
+- path: ChakraCore/test/es5/freeze.js
+  cmd: runChakra :baseline, "NoException", "freeze.baseline", []
+- path: ChakraCore/test/es5/extensible.js
+  # Test expects creating a global variable using eval() throws an exception after Object.preventExtensions() is called on 'this'.
+  cmd: runChakra :skip, "NoException", "extensible.baseline", []
+- path: ChakraCore/test/es5/array_length.js
+  cmd: runChakra :baseline, "NoException", "array_length.baseline-jsc", []
+- path: ChakraCore/test/es5/createdp.js
+  cmd: runChakra :baseline, "NoException", "createdp.baseline", []
+- path: ChakraCore/test/es5/defineProperty.js
+  cmd: runChakra :baseline, "NoException", "defineProperty.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es5/defineIndexProperty.js
+  # Differences in Obj.seal, Obj.frozen and sort.
+  cmd: runChakra :skip, "NoException", "defineIndexProperty.baseline", []
+- path: ChakraCore/test/es5/enumerable.js
+  cmd: runChakra :baseline, "NoException", "enumerable.baseline-jsc", []
+- path: ChakraCore/test/es5/hasItem.js
+  cmd: runChakra :baseline, "NoException", "hasItem.baseline", []
+- path: ChakraCore/test/es5/regexSpace.js
+  cmd: runChakra :baseline, "NoException", "regexSpace.baseline", []
+- path: ChakraCore/test/es5/EnumeratingWithES5.js
+  cmd: runChakra :baseline, "NoException", "EnumeratingWithES5.baseline-jsc", []
+- path: ChakraCore/test/es5/InsufficientArguments.js
+  cmd: runChakra :baseline, "NoException", "InsufficientArguments.baseline", []
+- path: ChakraCore/test/es5/recursivesetter.js
+  cmd: runChakra :baseline, "NoException", "recursivesetter.baseline", []
+- path: ChakraCore/test/es5/valueof.js
+  cmd: runChakra :baseline, "NoException", "valueof5.baseline-jsc", []
+- path: ChakraCore/test/es5/tostring_override.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es5/valueof_override.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es5/TypeConversions.js
+  cmd: runChakra :baseline, "NoException", "TypeConversions.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es5/RegExpStrictDelete.js
+  cmd: runChakra :baseline, "NoException", "RegExpStrictDelete.baseline-jsc", []
+- path: ChakraCore/test/es5/settersArguments.js
+  cmd: runChakra :baseline, "NoException", "settersArguments.baseline-jsc", []
+- path: ChakraCore/test/es5/augmentPrimitive.js
+  cmd: runChakra :baseline, "NoException", "augmentPrimitive.baseline", []
+- path: ChakraCore/test/es5/setget.js
+  cmd: runChakra :baseline, "NoException", "setget.baseline", []
+- path: ChakraCore/test/es5/es5array_objproto.js
+  cmd: runChakra :baseline, "NoException", "es5array_objproto.baseline", []
+- path: ChakraCore/test/es5/es5array_arrayproto.js
+  cmd: runChakra :baseline, "NoException", "es5array_arrayproto.baseline", []
+- path: ChakraCore/test/es5/es5array_arrayproto_crosssite.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "es5array_arrayproto_crosssite.baseline", ["es5array_crosssite.js"]
+- path: ChakraCore/test/es5/es5array_protoarr.js
+  cmd: runChakra :baseline, "NoException", "es5array_proto.baseline", []
+- path: ChakraCore/test/es5/es5array_protoobj.js
+  cmd: runChakra :baseline, "NoException", "es5array_proto.baseline", []
+- path: ChakraCore/test/es5/es5array_protoobj_crosssite.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "es5array_protoobj_crosssite.baseline", ["es5array_crosssite.js"]
+- path: ChakraCore/test/es5/es5array_replaceprotoarr.js
+  cmd: runChakra :baseline, "NoException", "es5array_proto.baseline", []
+- path: ChakraCore/test/es5/es5array_replaceprotoobj.js
+  cmd: runChakra :baseline, "NoException", "es5array_proto.baseline", []
+- path: ChakraCore/test/es5/resetproperty.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es5/es5array_enum_edit.js
+  cmd: runChakra :baseline, "NoException", "es5array_enum_edit.baseline", []
+- path: ChakraCore/test/es6/lambda1.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/NumericLiteralTest.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/boundBug3837520.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/es6toLength.js
+  # Test takes too long.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/toPrimitiveCrossScriptTestCase.js
+  cmd: runChakra :pass, "NoException", "", ["toPrimitiveCrossScriptTestCaseHelper.js"]
+- path: ChakraCore/test/es6/computedPropertyToString.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/computedPropertySideEffect.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/BugFix2214646.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/es6IsConcatSpreadable.js
+  # Different behavior and exception text.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/toPrimitive.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/unscopablesWithScopeTest.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/function.name.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/superDotOSBug3930962.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/toStringTag.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/proto_basic.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "proto_basic.baseline", ["protolib.js"]
+- path: ChakraCore/test/es6/proto_disable.js
+  # Different behavior, in part Obj.seal() / Obj.freeze().
+  cmd: runChakra :skip, "NoException", "proto_disable.baseline", ["protolib.js"]
+- path: ChakraCore/test/es6/proto_initializer.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "proto_initializer.baseline", ["protolib.js"]
+- path: ChakraCore/test/es6/proto_addprop.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/map_basic.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/map_functionality.js
+  # Different behavior and exception text.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/set_basic.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/set_functionality.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/weakmap_basic.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/weakmap_functionality.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/weakset_basic.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/weakset_functionality.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/blockscope-activationobject.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/blockscope-deferred.js
+  cmd: runChakra :baseline, "NoException", "blockscope-deferred.baseline", []
+- path: ChakraCore/test/es6/blockscope-functionbinding.js
+  # Appears to be bad test.  JSC early parse exception vs. Chakra runtime exception.
+  cmd: runChakra :skip, "NoException", "blockscope-functionbinding.baseline", []
+- path: ChakraCore/test/es6/letconst_global.js
+  cmd: runChakra :baseline, "NoException", "letconst_global.baseline-jsc", []
+- path: ChakraCore/test/es6/letconst_global_shadowing.js
+  cmd: runChakra :baseline, "NoException", "letconst_global_shadowing.baseline-jsc", []
+- path: ChakraCore/test/es6/letconst_global_shadow_builtins.js
+  cmd: runChakra :baseline, "NoException", "letconst_global_shadow_builtins.baseline-jsc", []
+- path: ChakraCore/test/es6/letconst_global_shadow_builtins_nonconfigurable.js
+  cmd: runChakra :baseline, "ReferenceError", "letconst_global_shadow_builtins_nonconfigurable.baseline-jsc", []
+- path: ChakraCore/test/es6/letconst_global_shadow_deleted.js
+  cmd: runChakra :baseline, "NoException", "letconst_global_shadow_deleted.baseline", ["letconst_global_shadow_deleted_2.js"]
+- path: ChakraCore/test/es6/letconst_global_shadow_accessor.js
+  cmd: runChakra :baseline, "NoException", "letconst_global_shadow_accessor.baseline", []
+- path: ChakraCore/test/es6/letconst_global_bug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/letconst_eval_redecl.js
+  # Different behavior and exception text.
+  cmd: runChakra :skip, "NoException", "letconst_eval_redecl.baseline", []
+- path: ChakraCore/test/es6/letconst_eval_redecl.js
+  # Different behavior and exception text.
+  cmd: runChakra :skip, "NoException", "letconst_eval_redecl.strictmode.baseline", []
+- path: ChakraCore/test/es6/definegettersetter.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "definegettersetter.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/classes.js
+  # Difference behavior for toString() of a function and exception differences.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/classes_bugfixes.js
+  # Different exception string.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/classes_bug_OS_6471427.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/classes_bug_OS_7100885.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/ES6SubclassableBuiltins.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6SubclassableAsync.js
+  cmd: runChakra :baseline, "NoException", "ES6SubclassableAsync.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6MathAPIs.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6NumberAPIs.js
+  # parseFloat !== Number.parseFloat.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6StringAPIs.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/codePointAt.js
+  cmd: runChakra :baseline, "NoException", "codePointAt.baseline-jsc", []
+- path: ChakraCore/test/es6/stringtemplate_basic.js
+  cmd: runChakra :baseline, "NoException", "stringtemplate_basic.baseline", []
+- path: ChakraCore/test/es6/ES6StringTemplate.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6ArrayAPI.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6ArrayUseConstructor.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6ArrayUseConstructor_v5.js
+  # Differences in results with Symbol.species and Array.prototype.splice.call among other things.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6Symbol.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js", "ES6Symbol_cross_context_child.js", "ES6Symbol_cross_context_registration_child.js"]
+- path: ChakraCore/test/es6/ES6Promise.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6PromiseAsync.js
+  # WScript.SetTimeout no implemented in jsc-lib.js.
+  cmd: runChakra :skip, "NoException", "ES6PromiseAsync.baseline", []
+- path: ChakraCore/test/es6/es6_stable.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "es6_stable.baseline", []
+- path: ChakraCore/test/es6/es6_stable.js
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "es6_stable.enable_disable.baseline", []
+- path: ChakraCore/test/es6/es6_all.js
+  # Windows specific test.
+  cmd: runChakra :skip, "NoException", "es6_all.baseline", []
+- path: ChakraCore/test/es6/normalize.js
+  cmd: runChakra :baseline, "NoException", "normalize.baseline-jsc", []
+- path: ChakraCore/test/es6/normalizeProp.js
+  cmd: runChakra :baseline, "NoException", "normalizeProp.baseline", []
+- path: ChakraCore/test/es6/unicode_escape_sequences.js
+  # Different behavior.  JSC throws an exception for an invalid RegExp..
+  cmd: runChakra :skip, "NoException", "unicode_escape_sequences.baseline", []
+- path: ChakraCore/test/es6/unicode_6_identifiers_utf8.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "unicode_6_identifiers_utf8.baseline", []
+- path: ChakraCore/test/es6/unicode_regex_surrogate_atoms.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "unicode_regex_surrogate_atoms.baseline", []
+- path: ChakraCore/test/es6/spreadIterator.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/reflectConstructConsumeNewTarget.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ReflectApiTests.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/proxyTrapConsumeNewTarget.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/CrossContextSpreadfunctionCall.js
+  # LoadScriptFile polyfill doesn't return an object.
+  cmd: runChakra :skip, "NoException", "", ["CrossContextSpreadFunction.js", "CrossContextSpreadArguments.js"]
+- path: ChakraCore/test/es6/spread.js
+  # Test takes too long.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/Bug517864.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/unicode_6_identifier_Blue511452.js
+  cmd: runChakra :baseline, "SyntaxError", "unicode_6_identifier_Blue511452.baseline-jsc", []
+- path: ChakraCore/test/es6/unicode_idDeferParseFunctions_utf8.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/unicode_6_identifier_Blue524737.js
+  cmd: runChakra :baseline, "SyntaxError", "unicode_6_identifier_Blue524737.baseline-jsc", []
+- path: ChakraCore/test/es6/supersyntax02.js
+  cmd: runChakra :baseline, "SyntaxError", "supersyntax02.baseline-jsc", []
+- path: ChakraCore/test/es6/supersyntax05.js
+  cmd: runChakra :baseline, "SyntaxError", "supersyntax05.baseline-jsc", []
+- path: ChakraCore/test/es6/supersyntax06.js
+  cmd: runChakra :baseline, "SyntaxError", "supersyntax06.baseline-jsc", []
+- path: ChakraCore/test/es6/objlit.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/unicode_blue_533163_utf8.js
+  cmd: runChakra :baseline, "ReferenceError", "unicode_blue_533163_utf8.baseline-jsc", []
+- path: ChakraCore/test/es6/ES6Iterators-forof.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6Iterators-apis.js
+  # We throw an exception when length is -2 iterating a object with values when called with Array.prototype[Symbol.iterator].call(obj).
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6Species-apis.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6Species-bugs.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/blue595539.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/proxytest6.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/proxybug3.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/proxyprotobug.js
+  cmd: runChakra :baseline, "NoException", "proxyprotobug.baseline", []
+- path: ChakraCore/test/es6/proxybug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/proxyenumbug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/proxy-issue884.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "proxy-issue884.baseline", []
+- path: ChakraCore/test/es6/nullPropertyDescriptor.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/object-is.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/object-assign.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/default.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/default-splitscope.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/default-splitscope-undodeferparse.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/rest.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/generators-syntax.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/generators-deferparse.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/generators-apis.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/generators-functionality.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/generators-deferred.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/generators-undodefer.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/generators-cachedscope.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/generators-applyargs.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/destructuring.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/destructuring_obj.js
+  # Different behavior and different exception text.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/destructuring_params.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/destructuring_catch.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/destructuring_bugs.js
+  # Different behavior and different exception text.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/bug_279376.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/OS_917200.js
+  # Different exception thrown.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/bug_981217.js
+  cmd: runChakra :baseline, "NoException", "bug_981217.baseline-jsc", []
+- path: ChakraCore/test/es6/objlit-shorthand-error.js
+  cmd: runChakra :baseline, "NoException", "objlit-shorthand-error.baseline-jsc", []
+- path: ChakraCore/test/es6/generator-strict-error.js
+  cmd: runChakra :baseline, "NoException", "generator-strict-error.baseline-jsc", []
+- path: ChakraCore/test/es6/regex-annex-b.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regex-case-folding.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regex-quantifiers.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regex-code-point.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regex-unicode.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regex-set.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regex-prototype-properties.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regex-symbols.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regexflags.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/regexflags-disabled-features.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/RegExpApisTestWithStickyFlag.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/stickyflag.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "stickyflag.baseline", []
+- path: ChakraCore/test/es6/utfbug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/proxybugWithLdFld.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/proxybugWithproto.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/ProxySetPrototypeOf.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/arraywithproxy.js
+  # Different behavior, cannot convert Symbol to string. Could be bad test.
+  cmd: runChakra :skip, "NoException", "arraywithproxy.baseline", []
+- path: ChakraCore/test/es6/proxytest8.js
+  cmd: runChakra :baseline, "NoException", "proxytest8.baseline", []
+- path: ChakraCore/test/es6/proxytest9.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "proxytest9.baseline", []
+- path: ChakraCore/test/es6/ES6Function_bugs.js
+  # Different behavior with Object.seal().
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/OS_2700778.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/bug_OS_2184795.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/unicode_whitespace.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/bug_OS_2915477.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/bug_os3198161.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/bug_OS_4498031.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/ES6NewTarget.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6NewTarget_bugfixes.js
+  # We throw "Cannot declare a lexical variable twice: 'a'" for 'function foo(){ var a = b = c = 1; try {} catch([a,b,c]) { new.target;}}'.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6Class_SuperChain.js
+  # On line 254, JSC throws error during parsing while Chakra throws at runtime.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/globalLambdaNewTargetSyntaxError.js
+  cmd: runChakra :baseline, "ReferenceError", "globalLambdaNewTargetSyntaxError.baseline-jsc", []
+- path: ChakraCore/test/es6/globalNewTargetSyntaxError.js
+  cmd: runChakra :baseline, "SyntaxError", "globalNewTargetSyntaxError.baseline-jsc", []
+- path: ChakraCore/test/es6/globalCatchNewTargetSyntaxError.js
+  cmd: runChakra :baseline, "SyntaxError", "globalCatchNewTargetSyntaxError.baseline-jsc", []
+- path: ChakraCore/test/es6/globalParamCatchNewTargetSyntaxError.js
+  cmd: runChakra :baseline, "SyntaxError", "globalParamCatchNewTargetSyntaxError.baseline-jsc", []
+- path: ChakraCore/test/es6/ES6Class_BaseClassConstruction.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/expo.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/trailingcomma.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/es6HasInstance.js
+  # Different behavior and exception text.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6RestrictedProperties.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/ES6Proto.js
+  # Mapping from Chakra to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/object_literal_bug.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/OS_5403724.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/es6/forloops-per-iteration-bindings.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es6/HTMLComments.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "HTMLComments.baseline", []
+- path: ChakraCore/test/es6/OS_5500719.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", []
+- path: ChakraCore/test/es6/iteratorclose.js
+  # Different behavior and exception text.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es7/asyncawait-syntax.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es7/asyncawait-functionality.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "asyncawait-functionality.baseline", []
+- path: ChakraCore/test/es7/stringpad.js
+  # Intermittent failures.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es7/asyncawait-apis.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es7/valuesAndEntries.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es7/misc_bugs.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es7/immutable-prototype.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/es7/lookupgettersetter.js
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/fieldopts/equiv-finaltypeandpoly.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/equiv-missing.js
+  cmd: runChakra :baseline, "NoException", "equiv-missing.baseline", []
+- path: ChakraCore/test/fieldopts/equiv-mismatch.js
+  cmd: runChakra :baseline, "NoException", "equiv-mismatch.baseline", []
+- path: ChakraCore/test/fieldopts/equiv-locktypeid.js
+  cmd: runChakra :baseline, "NoException", "equiv-locktypeid.baseline", []
+- path: ChakraCore/test/fieldopts/equiv-needmonocheck.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/equiv-needsmonocheck2.js
+  cmd: runChakra :baseline, "NoException", "equiv-needsmonocheck2.baseline", []
+- path: ChakraCore/test/fieldopts/fieldconstprop_ldmethodfld.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldcopyprop_assign.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldcopyprop_delete.js
+  cmd: runChakra :baseline, "NoException", "fieldcopyprop_delete.baseline", []
+- path: ChakraCore/test/fieldopts/fieldcopyprop_deletestrict.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist4.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist4.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist5.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist6.js
+  cmd: runChakra :baseline, "ReferenceError", "fieldhoist6.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldhoist6b.js
+  cmd: runChakra :baseline, "ReferenceError", "fieldhoist6b.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldhoist7.js
+  cmd: runChakra :baseline, "ReferenceError", "fieldhoist7.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldhoist8.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist8.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_nullfieldhoist.js
+  cmd: runChakra :baseline, "TypeError", "fieldhoist_nullfieldhoist.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldhoist9.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist_unreachable.js
+  cmd: runChakra :baseline, "ReferenceError", "fieldhoist_unreachable.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldhoist_typespec.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_typespec.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_typespec2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist_typespec3.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_typespec3.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_undefined_global.js
+  cmd: runChakra :baseline, "ReferenceError", "fieldhoist_undefined_global.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldhoist_negzero.js
+  cmd: runChakra :baseline, "ReferenceError", "fieldhoist_negzero.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldhoist_typeof.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_typeof.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_sideeffect.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_sideeffect.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldcopyprop_nonwritable.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "fieldcopyprop_nonwritable.baseline", []
+- path: ChakraCore/test/fieldopts/fieldcopyprop_primitive.js
+  cmd: runChakra :baseline, "NoException", "fieldcopyprop_primitive.baseline", []
+- path: ChakraCore/test/fieldopts/fieldcopyprop_preventextensions.js
+  cmd: runChakra :baseline, "NoException", "fieldcopyprop_preventextensions.baseline", []
+- path: ChakraCore/test/fieldopts/fieldcopyprop_freeze.js
+  cmd: runChakra :baseline, "NoException", "fieldcopyprop_freeze.baseline", []
+- path: ChakraCore/test/fieldopts/redundanttype1.js
+  cmd: runChakra :baseline, "NoException", "redundanttype1.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/fieldhoist_join.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_join.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_slots.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_slots.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_slots2.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_slots2.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_objptrcopyprop.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist_objptrcopyprop2.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_objptrcopyprop2.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_kills.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_kills.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_stripbailouts.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_stripbailouts.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/redundanttype2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/CheckThis.js
+  cmd: runChakra :baseline, "NoException", "CheckThis.baseline-jsc", []
+- path: ChakraCore/test/fieldopts/objptrcopyprop_bug.js
+  cmd: runChakra :baseline, "NoException", "objptrcopyprop_bug.baseline", []
+- path: ChakraCore/test/fieldopts/objptrcopyprop_typescript.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldcopyprop_typespec.js
+  cmd: runChakra :baseline, "NoException", "fieldcopyprop_typespec.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_deletefld.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/forcefixdataprops.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/PropObjectPointerCopyProp.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/redundanttype_kills.js
+  cmd: runChakra :baseline, "NoException", "redundanttype_kills.baseline", []
+- path: ChakraCore/test/fieldopts/fieldhoist_copypropdep.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist_number.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_number.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec1.js
+  cmd: runChakra :baseline, "NoException", "objtypespec1.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec2.js
+  cmd: runChakra :baseline, "NoException", "objtypespec2.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec3.js
+  cmd: runChakra :baseline, "NoException", "objtypespec3.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-fieldhoist.js
+  cmd: runChakra :baseline, "NoException", "objtypespec-fieldhoist.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-fieldhoist.2.js
+  cmd: runChakra :baseline, "NoException", "objtypespec-fieldhoist.2.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec_proto.js
+  cmd: runChakra :baseline, "NoException", "objtypespec_proto.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-add.js
+  # Different behavior, JSC throws out of stack exception at end of test.
+  cmd: runChakra :skip, "NoException", "objtypespec-add.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-add-2.js
+  cmd: runChakra :baseline, "NoException", "objtypespec-add-2.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-add-4.js
+  cmd: runChakra :baseline, "NoException", "objtypespec-add-4.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-newobj.1.js
+  cmd: runChakra :baseline, "NoException", "objtypespec-newobj.1.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-newobj.2.js
+  cmd: runChakra :baseline, "NoException", "objtypespec-newobj.2.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-newobj-invalidation.1.js
+  cmd: runChakra :baseline, "NoException", "objtypespec-newobj-invalidation.1.baseline", []
+- path: ChakraCore/test/fieldopts/objtypespec-newobj-invalidation.2.js
+  # Different behavior when run on 32 bit JSC.
+  cmd: runChakra :skip, "NoException", "objtypespec-newobj-invalidation.2.baseline", []
+- path: ChakraCore/test/fieldopts/FieldHoist_MaxInterpret.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/markTemp.js
+  cmd: runChakra :baseline, "NoException", "markTemp.baseline", []
+- path: ChakraCore/test/fieldopts/rootObj-1.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "rootObj-1.baseline", []
+- path: ChakraCore/test/fieldopts/finaltypebug.js
+  cmd: runChakra :baseline, "NoException", "finaltypebug.baseline", []
+- path: ChakraCore/test/fieldopts/finaltype2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/finaltype-objheaderinlining1.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/finaltype-objheaderinlining2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/finaltype-objheaderinlining3.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist_accessorinlining1.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fieldhoist_accessorinlining2.js
+  cmd: runChakra :baseline, "NoException", "fieldhoist_accessorinlining2.baseline", []
+- path: ChakraCore/test/fieldopts/fixedfieldmonocheck.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fixedfieldmonocheck2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fixedfieldmonocheck3.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fixedfieldmonocheck4.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fixedfieldmonocheck5.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/fixedfieldmonocheck6.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/fieldopts/add-prop-to-dictionary.js
+  cmd: runChakra :baseline, "NoException", "add-prop-to-dictionary.baseline", []
+- path: ChakraCore/test/loop/loop.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "loop.baseline", []
+- path: ChakraCore/test/loop/loopinversion.js
+  cmd: runChakra :baseline, "NoException", "loopinversion.baseline", []
+- path: ChakraCore/test/loop/infinite.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/strict/GlobalEval.js
+  cmd: runChakra :baseline, "NoException", "GlobalEval.baseline", []
+- path: ChakraCore/test/strict/basics_function_in_SM.js
+  cmd: runChakra :baseline, "NoException", "basics_function_in_SM.baseline-jsc", []
+- path: ChakraCore/test/strict/callerOrArgsNoAccess.js
+  cmd: runChakra :baseline, "NoException", "callerOrArgsNoAccess.baseline", []
+- path: ChakraCore/test/strict/stricteval-deferred.js
+  cmd: runChakra :baseline, "SyntaxError", "stricteval-deferred.baseline-jsc", []
+- path: ChakraCore/test/strict/stricteval2-deferred.js
+  cmd: runChakra :baseline, "SyntaxError", "stricteval2-deferred.baseline-jsc", []
+- path: ChakraCore/test/strict/stricteval3-deferred.js
+  cmd: runChakra :baseline, "NoException", "stricteval3-deferred.baseline-jsc", []
+- path: ChakraCore/test/strict/strictargs-deferred.js
+  cmd: runChakra :baseline, "SyntaxError", "strictargs-deferred.baseline-jsc", []
+- path: ChakraCore/test/strict/strictargs2-deferred.js
+  cmd: runChakra :baseline, "SyntaxError", "strictargs2-deferred.baseline-jsc", []
+- path: ChakraCore/test/strict/strictargs3-deferred.js
+  cmd: runChakra :baseline, "SyntaxError", "strictargs3-deferred.baseline-jsc", []
+- path: ChakraCore/test/strict/evalargs.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/strict/evalThis.js
+  cmd: runChakra :baseline, "NoException", "evalThis.baseline-jsc", []
+- path: ChakraCore/test/strict/evalThis2.js
+  cmd: runChakra :baseline, "NoException", "evalThis2.baseline", []
+- path: ChakraCore/test/strict/evalThisNested.js
+  cmd: runChakra :baseline, "NoException", "evalThisNested.baseline-jsc", []
+- path: ChakraCore/test/strict/formal_samename1.js
+  cmd: runChakra :baseline, "SyntaxError", "formal_samename1.baseline-jsc", []
+- path: ChakraCore/test/strict/formal_samename2.js
+  cmd: runChakra :baseline, "SyntaxError", "formal_samename2.baseline-jsc", []
+- path: ChakraCore/test/strict/multiunit.js
+  cmd: runChakra :baseline, "SyntaxError", "multiunit.baseline-jsc", []
+- path: ChakraCore/test/strict/delete.js
+  cmd: runChakra :baseline, "SyntaxError", "delete.baseline-jsc", []
+- path: ChakraCore/test/strict/01.octal.js
+  cmd: runChakra :baseline, "NoException", "01.octal.baseline", []
+- path: ChakraCore/test/strict/01.octal_sm.js
+  cmd: runChakra :baseline, "NoException", "01.octal_sm.baseline", []
+- path: ChakraCore/test/strict/03.assign.js
+  cmd: runChakra :baseline, "NoException", "03.assign.baseline", []
+- path: ChakraCore/test/strict/03.assign_sm.js
+  cmd: runChakra :baseline, "NoException", "03.assign_sm.baseline", []
+- path: ChakraCore/test/strict/04.eval.js
+  cmd: runChakra :baseline, "NoException", "04.eval.baseline", []
+- path: ChakraCore/test/strict/05.arguments.js
+  cmd: runChakra :baseline, "NoException", "05.arguments.baseline-jsc", []
+- path: ChakraCore/test/strict/05.arguments_sm.js
+  cmd: runChakra :baseline, "NoException", "05.arguments_sm.baseline-jsc", []
+- path: ChakraCore/test/strict/06.arguments.js
+  cmd: runChakra :baseline, "NoException", "06.arguments.baseline", []
+- path: ChakraCore/test/strict/06.arguments_sm.js
+  cmd: runChakra :baseline, "NoException", "06.arguments_sm.baseline", []
+- path: ChakraCore/test/strict/07.arguments.js
+  cmd: runChakra :baseline, "NoException", "07.arguments.baseline", []
+- path: ChakraCore/test/strict/07.arguments_sm.js
+  cmd: runChakra :baseline, "NoException", "07.arguments_sm.baseline", []
+- path: ChakraCore/test/strict/08.ObjectLiteral.js
+  cmd: runChakra :baseline, "NoException", "08.ObjectLiteral.baseline", []
+- path: ChakraCore/test/strict/08.ObjectLiteral_sm.js
+  cmd: runChakra :baseline, "NoException", "08.ObjectLiteral_sm.baseline", []
+- path: ChakraCore/test/strict/09.ObjectLiteral.js
+  cmd: runChakra :baseline, "NoException", "09.ObjectLiteral.baseline", []
+- path: ChakraCore/test/strict/09.ObjectLiteral_sm.js
+  cmd: runChakra :baseline, "NoException", "09.ObjectLiteral_sm.baseline", []
+- path: ChakraCore/test/strict/10.eval.js
+  cmd: runChakra :baseline, "NoException", "10.eval.baseline", []
+- path: ChakraCore/test/strict/10.eval_sm.js
+  cmd: runChakra :baseline, "NoException", "10.eval_sm.baseline-jsc", []
+- path: ChakraCore/test/strict/11.this.js
+  cmd: runChakra :baseline, "NoException", "11.this.baseline-jsc", []
+- path: ChakraCore/test/strict/11.this_sm.js
+  cmd: runChakra :baseline, "NoException", "11.this_sm.baseline-jsc", []
+- path: ChakraCore/test/strict/12.delete.js
+  cmd: runChakra :baseline, "NoException", "12.delete.baseline", []
+- path: ChakraCore/test/strict/12.delete_sm.js
+  cmd: runChakra :baseline, "NoException", "12.delete_sm.baseline", []
+- path: ChakraCore/test/strict/13.delete.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "13.delete.baseline", []
+- path: ChakraCore/test/strict/14.var.js
+  cmd: runChakra :baseline, "NoException", "14.var.baseline", []
+- path: ChakraCore/test/strict/14.var_sm.js
+  cmd: runChakra :baseline, "NoException", "14.var_sm.baseline", []
+- path: ChakraCore/test/strict/15.with.js
+  cmd: runChakra :baseline, "NoException", "15.with.baseline", []
+- path: ChakraCore/test/strict/15.with_sm.js
+  cmd: runChakra :baseline, "NoException", "15.with_sm.baseline", []
+- path: ChakraCore/test/strict/16.catch.js
+  cmd: runChakra :baseline, "NoException", "16.catch.baseline", []
+- path: ChakraCore/test/strict/16.catch_sm.js
+  cmd: runChakra :baseline, "NoException", "16.catch_sm.baseline", []
+- path: ChakraCore/test/strict/17.formal.js
+  cmd: runChakra :baseline, "NoException", "17.formal.baseline", []
+- path: ChakraCore/test/strict/17.formal_sm.js
+  cmd: runChakra :baseline, "NoException", "17.formal_sm.baseline", []
+- path: ChakraCore/test/strict/18.formal.js
+  cmd: runChakra :baseline, "NoException", "18.formal.baseline", []
+- path: ChakraCore/test/strict/18.formal_sm.js
+  cmd: runChakra :baseline, "NoException", "18.formal_sm.baseline", []
+- path: ChakraCore/test/strict/19.function.js
+  cmd: runChakra :baseline, "NoException", "19.function.baseline", []
+- path: ChakraCore/test/strict/19.function_sm.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "19.function_sm.baseline", []
+- path: ChakraCore/test/strict/20.function.js
+  cmd: runChakra :baseline, "NoException", "20.function.baseline", []
+- path: ChakraCore/test/strict/20.function_sm.js
+  cmd: runChakra :baseline, "NoException", "20.function_sm.baseline", []
+- path: ChakraCore/test/strict/21.functionDeclaration.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "21.functionDeclaration.baseline", []
+- path: ChakraCore/test/strict/21.functionDeclaration_sm.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "21.functionDeclaration_sm.baseline", []
+- path: ChakraCore/test/strict/22.callerCalleeArguments.js
+  cmd: runChakra :baseline, "NoException", "22.callerCalleeArguments.baseline-jsc", []
+- path: ChakraCore/test/strict/22.callerCalleeArguments_sm.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "22.callerCalleeArguments_sm.baseline", []
+- path: ChakraCore/test/strict/23.reservedWords.js
+  cmd: runChakra :baseline, "NoException", "23.reservedWords.baseline-jsc", []
+- path: ChakraCore/test/strict/23.reservedWords_sm.js
+  cmd: runChakra :baseline, "NoException", "23.reservedWords_sm.baseline-jsc", []
+- path: ChakraCore/test/strict/24.properties.js
+  cmd: runChakra :baseline, "NoException", "24.properties.baseline", []
+- path: ChakraCore/test/strict/24.properties_sm.js
+  cmd: runChakra :baseline, "NoException", "24.properties_sm.baseline", []
+- path: ChakraCore/test/strict/strictkwd.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "strictkwd.baseline", []
+- path: ChakraCore/test/strict/strictkwd-deferred.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "strictkwd-deferred.baseline", []
+- path: ChakraCore/test/strict/comma_bug219390.js
+  cmd: runChakra :baseline, "NoException", "comma_bug219390.baseline-jsc", []
+- path: ChakraCore/test/strict/nestedfnnameargs.js
+  cmd: runChakra :baseline, "NoException", "nestedfnnameargs.baseline-jsc", []
+- path: ChakraCore/test/strict/bug212755.js
+  cmd: runChakra :baseline, "SyntaxError", "bug212755.baseline-jsc", []
+- path: ChakraCore/test/strict/OS_1362136.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/strict/nonSimpleParameterList.js
+  cmd: runChakra :baseline, "SyntaxError", "nonSimpleParameterList.baseline-jsc", []
+- path: ChakraCore/test/switchStatement/allIIntCases.js
+  cmd: runChakra :baseline, "NoException", "allIIntCases.baseline", []
+- path: ChakraCore/test/switchStatement/emptyCases.js
+  cmd: runChakra :baseline, "NoException", "emptyCases.baseline", []
+- path: ChakraCore/test/switchStatement/moreSwitches1.js
+  cmd: runChakra :baseline, "NoException", "moreSwitches1.baseline", []
+- path: ChakraCore/test/switchStatement/moreSwitches2.js
+  cmd: runChakra :baseline, "NoException", "moreSwitches2.baseline", []
+- path: ChakraCore/test/switchStatement/switchMathExp.js
+  cmd: runChakra :baseline, "NoException", "switchMathExp.baseline", []
+- path: ChakraCore/test/switchStatement/allStringCases.js
+  cmd: runChakra :baseline, "NoException", "allStringCases.baseline", []
+- path: ChakraCore/test/switchStatement/stringAndNonStrings.js
+  cmd: runChakra :baseline, "NoException", "stringAndNonStrings.baseline", []
+- path: ChakraCore/test/switchStatement/repeatIntCases.js
+  cmd: runChakra :baseline, "NoException", "repeatIntCases.baseline", []
+- path: ChakraCore/test/switchStatement/emptyStringCases.js
+  cmd: runChakra :baseline, "NoException", "emptyStringCases.baseline", []
+- path: ChakraCore/test/switchStatement/repeatStringCases.js
+  cmd: runChakra :baseline, "NoException", "repeatStringCases.baseline", []
+- path: ChakraCore/test/switchStatement/loopAndRetarget.js
+  cmd: runChakra :baseline, "NoException", "loopAndRetarget.baseline", []
+- path: ChakraCore/test/switchStatement/implicitCallSwitchExpr.js
+  cmd: runChakra :baseline, "NoException", "implicitCallSwitchExpr.baseline", []
+- path: ChakraCore/test/switchStatement/simpleSwitch.js
+  cmd: runChakra :baseline, "NoException", "simpleSwitch.baseline", []
+- path: ChakraCore/test/switchStatement/BugFixRegression_MaxInterpret.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/switchStatement/amd64JScriptNumberRegression.js
+  cmd: runChakra :baseline, "NoException", "amd64JScriptNumberRegression.baseline", []
+- path: ChakraCore/test/switchStatement/substring.js
+  cmd: runChakra :baseline, "NoException", "substring.baseline", []
+- path: ChakraCore/test/switchStatement/stringDictionaryBailOnNoProfileBug.js
+  cmd: runChakra :baseline, "NoException", "stringDictionaryBailOnNoProfileBug.baseline", []
+- path: ChakraCore/test/switchStatement/jmpTableTest1.js
+  cmd: runChakra :baseline, "NoException", "jmpTableTest1.baseline", []
+- path: ChakraCore/test/switchStatement/minMaxCaseValues.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/switchStatement/jmpTableTest2.js
+  cmd: runChakra :baseline, "NoException", "jmpTableTest2.baseline", []
+- path: ChakraCore/test/switchStatement/duplicateStringCaseArmBug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/switchStatement/CallBetweenSwitchExprUses.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/switchStatement/switchDefNotStringBug.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/switchStatement/singleCharStringCase.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/arraybuffer.js
+  cmd: runChakra :baseline, "NoException", "arrayBuffer.baseline", []
+- path: ChakraCore/test/typedarray/arraybufferType.js
+  cmd: runChakra :baseline, "NoException", "arraybufferType.baseline-jsc", []
+- path: ChakraCore/test/typedarray/TypedArrayBuiltins.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/typedarray/BadNaN.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/int8array.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "int8array_es6.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/uint8array.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "uint8array_es6.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/int16array.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "int16array_es6.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/uint16array.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "uint16array_es6.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/int32array.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "int32array_es6.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/uint32array.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "uint32array_es6.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/float32array.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "float32array_es6.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/float64array.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "float64array_es6.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/dataview.js
+  cmd: runChakra :baseline, "NoException", "dataview.baseline-jsc", []
+- path: ChakraCore/test/typedarray/objectproperty.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "objectproperty_es6.baseline", []
+- path: ChakraCore/test/typedarray/nan.js
+  # Different behavior. Could be just the difference in NaN values used by Chakra compared to JSC.
+  cmd: runChakra :skip, "NoException", "nan.x64.baseline", []
+- path: ChakraCore/test/typedarray/negIndexes.js
+  # Different behavior. JSC allows writing/reading to negative indicies of typed arrays and Chakra doesn't.
+  cmd: runChakra :skip, "NoException", "negIndexes.baseline", []
+- path: ChakraCore/test/typedarray/set.js
+  cmd: runChakra :baseline, "NoException", "set.baseline-jsc", []
+- path: ChakraCore/test/typedarray/samethread.js
+  cmd: runChakra :skip, "NoException", "samethread.baseline", ["util.js"]
+- path: ChakraCore/test/typedarray/Int8Array2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/UInt8Array2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/Int16Array2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/UInt16Array2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/Int32Array2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/UInt32Array2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/Float32Array2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/Float64Array2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/subarray.js
+  cmd: runChakra :baseline, "NoException", "subarray.baseline", []
+- path: ChakraCore/test/typedarray/dataview1.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "dataview1.baseline", ["../UnitTestFramework/UnitTestFramework.js", "util.js"]
+- path: ChakraCore/test/typedarray/allocation.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/allocation2.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/pixelArrayRounding.js
+  cmd: runChakra :baseline, "NoException", "pixelArrayRounding.baseline", []
+- path: ChakraCore/test/typedarray/cseTypedArray.js
+  cmd: runChakra :baseline, "NoException", "cseTypedArray.baseline", []
+- path: ChakraCore/test/typedarray/Uint8ClampedArray.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "Uint8ClampedArray_es6.baseline", ["../UnitTestFramework/UnitTestFramework.js", "util.js"]
+- path: ChakraCore/test/typedarray/setDifferentTypes.js
+  cmd: runChakra :baseline, "NoException", "setDifferentTypes.baseline", []
+- path: ChakraCore/test/typedarray/bug2230916.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/bug2268573.js
+  # Non-trivial mapping of Chakra exceptions to JSC exceptions.
+  cmd: runChakra :skip, "NoException", "bug2268573.baseline", []
+- path: ChakraCore/test/typedarray/bug_4653428.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/typedarray/transfer.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "transfer.baseline", []
+- path: ChakraCore/test/typedarray/memset.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/memset_neg.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/memcopy.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/memcopy_negative.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/typedarray/typedarray_bugfixes.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+- path: ChakraCore/test/typedarray/bug_OS_6911900.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/utf8/invalidutf8.js
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "invalidutf8.baseline", []
+- path: ChakraCore/test/utf8/unicode_digit_as_identifier_should_work.js
+  cmd: runChakra :pass, "NoException", "", []
+- path: ChakraCore/test/utf8/surrogatepair.js
+  cmd: runChakra :pass, "NoException", "", []
