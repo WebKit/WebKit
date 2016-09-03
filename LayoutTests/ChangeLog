@@ -1,3 +1,14 @@
+2016-09-02  Zalan Bujtas  <zalan@apple.com>
+
+        Should never be reached failure in WebCore::floatValueForLength
+        https://bugs.webkit.org/show_bug.cgi?id=139397
+        <rdar://problem/27704376>
+
+        Reviewed by Simon Fraser.
+
+        * svg/css/assert-on-non-resolvable-dimension-expected.txt: Added.
+        * svg/css/assert-on-non-resolvable-dimension.html: Added.
+
 2016-09-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline editing/secure-input/removed-password-input.html after r205381.

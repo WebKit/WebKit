@@ -91,7 +91,7 @@ float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode mode)
 {
     if (length.isPercent())
         return convertValueFromPercentageToUserUnits(length.value() / 100, mode, IGNORE_EXCEPTION);
-    if (length.isAuto())
+    if (length.isAuto() || !length.isSpecified())
         return 0;
 
     FloatSize viewportSize;
