@@ -30,10 +30,9 @@
 """Abstract base class of Port-specific entry points for the layout tests
 test infrastructure (the Port and Driver classes)."""
 
-import cgi
 import difflib
-import errno
 import itertools
+import json
 import logging
 import os
 import operator
@@ -42,6 +41,7 @@ import re
 import sys
 
 from collections import OrderedDict
+from functools import partial
 
 from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png
@@ -49,7 +49,6 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import path
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.wavediff import WaveDiff
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -141,6 +140,7 @@ class Port(object):
         self._root_was_set = hasattr(options, 'root') and options.root
         self._jhbuild_wrapper = []
         self._layout_tests_dir = hasattr(options, 'layout_tests_dir') and options.layout_tests_dir and self._filesystem.abspath(options.layout_tests_dir)
+        self._w3c_resource_files = None
 
     def architecture(self):
         return self.get_option('architecture')
@@ -535,7 +535,6 @@ class Port(object):
         if not '-expected.' in path:
             return None
 
-        subpath = self.host.filesystem.relpath(path, self.layout_tests_dir())
         if path.startswith('platform' + self._filesystem.sep):
             steps = path.split(self._filesystem.sep)
             path = self._filesystem.join(self._filesystem.sep.join(steps[2:]))
@@ -563,12 +562,31 @@ class Port(object):
     def _real_tests(self, paths):
         # When collecting test cases, skip these directories
         skipped_directories = set(['.svn', '_svn', 'resources', 'support', 'script-tests', 'reference', 'reftest'])
-        files = find_files.find(self._filesystem, self.layout_tests_dir(), paths, skipped_directories, Port._is_test_file, self.test_key)
+        files = find_files.find(self._filesystem, self.layout_tests_dir(), paths, skipped_directories, partial(Port._is_test_file, self), self.test_key)
         return [self.relative_test_filename(f) for f in files]
 
     # When collecting test cases, we include any file with these extensions.
     _supported_test_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl', '.htm', '.php', '.svg', '.mht', '.xht'])
     _supported_reference_extensions = set(['.html', '.xml', '.xhtml', '.htm', '.svg', '.xht'])
+
+    def is_w3c_resource_file(self, filesystem, dirname, filename):
+        path = filesystem.join(dirname, filename)
+        w3c_path = filesystem.join(self.layout_tests_dir(), "imported", "w3c")
+        if not w3c_path in path:
+            return False
+
+        if not self._w3c_resource_files:
+            filepath = filesystem.join(w3c_path, "resources", "resource-files.json")
+            json_data = filesystem.read_text_file(filepath)
+            self._w3c_resource_files = json.loads(json_data)
+
+        subpath = path[len(w3c_path) + 1:].replace('\\', '/')
+        if subpath in self._w3c_resource_files["files"]:
+            return True
+        for dirpath in self._w3c_resource_files["directories"]:
+            if dirpath in subpath:
+                return True
+        return False
 
     @staticmethod
     # If any changes are made here be sure to update the isUsedInReftest method in old-run-webkit-tests as well.
@@ -589,9 +607,14 @@ class Port(object):
         extension = filesystem.splitext(filename)[1]
         return extension in Port._supported_test_extensions
 
-    @staticmethod
-    def _is_test_file(filesystem, dirname, filename):
-        return Port._has_supported_extension(filesystem, filename) and not Port.is_reference_html_file(filesystem, dirname, filename)
+    def _is_test_file(self, filesystem, dirname, filename):
+        if not Port._has_supported_extension(filesystem, filename):
+            return False
+        if Port.is_reference_html_file(filesystem, dirname, filename):
+            return False
+        if self.is_w3c_resource_file(filesystem, dirname, filename):
+            return False
+        return True
 
     def test_key(self, test_name):
         """Turns a test name into a list with two sublists, the natural key of the

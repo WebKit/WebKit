@@ -1,3 +1,23 @@
+2016-09-03  Youenn Fablet  <youenn@apple.com>
+
+        run-webkit-tests should detect w3c test resource files
+        https://bugs.webkit.org/show_bug.cgi?id=161307
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__): Adding self._w3c_resource_files to store the list of resource files.
+        (Port.potential_test_names_from_expected_file):
+        (Port._real_tests):
+        (Port.is_w3c_resource_file): Computing whether a file is a resource file based on imported/w3c/resources/resource-files.json.
+        (Port._is_test_file): Updated to call Port.is_w3c_resource_file. _is_test_file is no longer static.
+        (Port): Deleted.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_additional_platform_directory):
+        (PortTest.test_find_no_paths_specified):
+        (PortTest.test_is_test_file): Updated to use non-static version of _is_test_file.
+        (PortTest.test_is_w3c_resource_file): Adding tests.
+
 2016-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix archive-built-product step in GTK+ bots after r205280.
