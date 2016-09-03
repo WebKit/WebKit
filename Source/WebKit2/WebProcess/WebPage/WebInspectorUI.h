@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorUI_h
-#define WebInspectorUI_h
+#pragma once
 
 #include "Connection.h"
 #include "WebInspectorFrontendAPIDispatcher.h"
@@ -132,5 +131,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebInspectorUI_h

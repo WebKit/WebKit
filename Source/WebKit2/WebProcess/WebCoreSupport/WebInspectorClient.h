@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorClient_h
-#define WebInspectorClient_h
+#pragma once
 
 #include <WebCore/InspectorClient.h>
 #include <WebCore/PageOverlay.h>
@@ -88,5 +87,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebInspectorClient_h

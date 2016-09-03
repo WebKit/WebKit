@@ -1,3 +1,18 @@
+2016-09-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move WebKit2 WebInspector files to #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=161550
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/gtk/WebInspectorClientGtk.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.h:
+        * WebProcess/WebPage/WebInspectorUI.h:
+
 2016-09-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] -Wmissing-field-initializers on WaylandCompositor.cpp:295

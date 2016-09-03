@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorServer_h
-#define WebInspectorServer_h
+#pragma once
 
 #if ENABLE(INSPECTOR_SERVER)
 
@@ -75,5 +74,3 @@ private:
 }
 
 #endif // ENABLE(INSPECTOR_SERVER)
-
-#endif // WebInspectorServer_h

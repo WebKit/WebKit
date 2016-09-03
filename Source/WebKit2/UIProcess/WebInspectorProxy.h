@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorProxy_h
-#define WebInspectorProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "Attachment.h"
@@ -243,7 +242,7 @@ private:
     bool m_isAttached { false };
     bool m_canAttach { false };
     bool m_isProfilingPage { false };
-    bool m_showMessageSent { false };    
+    bool m_showMessageSent { false };
     bool m_ignoreFirstBringToFront { false };
     bool m_elementSelectionActive { false };
     bool m_ignoreElementSelectionChange { false };
@@ -275,5 +274,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebInspectorProxy_h

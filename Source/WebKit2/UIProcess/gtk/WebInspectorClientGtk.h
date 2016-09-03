@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorClientGtk_h
-#define WebInspectorClientGtk_h
+#pragma once
 
 #include "APIClient.h"
 #include "WKInspectorClientGtk.h"
-
 #include <wtf/text/WTFString.h>
 
 namespace API {
@@ -57,5 +55,3 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // WebInspectorClientGtk_h

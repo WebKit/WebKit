@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorFrontendAPIDispatcher_h
-#define WebInspectorFrontendAPIDispatcher_h
+#pragma once
 
 #include <wtf/Deque.h>
 #include <wtf/text/WTFString.h>
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebInspectorFrontendAPIDispatcher_h

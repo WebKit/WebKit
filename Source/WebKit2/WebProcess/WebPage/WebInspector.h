@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspector_h
-#define WebInspector_h
+#pragma once
 
 #include "APIObject.h"
 #include "Connection.h"
@@ -117,5 +116,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebInspector_h
