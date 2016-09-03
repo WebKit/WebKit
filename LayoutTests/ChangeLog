@@ -1,3 +1,19 @@
+2016-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add validations for a synchronously constructed custom element
+        https://bugs.webkit.org/show_bug.cgi?id=161528
+
+        Reviewed by Yusuke Suzuki.
+
+        Added test cases for sanity checks in step 6.1. of https://dom.spec.whatwg.org/#concept-create-element
+        and updated other test cases per those changes.
+
+        * fast/custom-elements/Document-createElement-expected.txt:
+        * fast/custom-elements/Document-createElement.html:
+        * fast/custom-elements/defined-pseudo-class-expected.txt: Rebaselined now that exceptions thrown while constructing
+        a custom element is reported in the console.
+        * fast/custom-elements/parser/parser-fallsback-to-unknown-element-expected.txt: Ditto.
+
 2016-09-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking two editing/mac/spelling tests as flaky on mac-wk2.

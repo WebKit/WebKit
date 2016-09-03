@@ -1,7 +1,37 @@
 
 PASS document.createElement must create an instance of custom elements 
-PASS document.createElement must return null when a custom element constructor returns an object that is not an instance of Node 
-PASS document.createElement must return null when a custom element constructor returns a Text node 
-PASS document.createElement must return an element returned by a custom element constructor 
+PASS document.createElement must throw a TypeError when the result of Construct is not a DOM node 
+PASS document.createElement must throw a TypeError when the result of Construct is a TextNode 
+PASS document.createElement must throw a NotSupportedError when attribute is added by setAttribute during construction 
+PASS document.createElement must throw a NotSupportedError when attribute is added by attributes.setNamedItem during construction 
+PASS document.createElement must not throw a NotSupportedError when attribute is added and removed during construction 
+PASS document.createElement must throw a NotSupportedError when a Text child is added during construction 
+PASS document.createElement must throw a NotSupportedError when a Comment child is added during construction 
+PASS document.createElement must throw a NotSupportedError when an element child is added during construction 
+PASS document.createElement must not throw a NotSupportedError when an element child is added and removed during construction 
+PASS document.createElement must throw a NotSupportedError when the element gets inserted into another element during construction 
+PASS document.createElement must not throw a NotSupportedError when the element is inserted and removed from another element during construction 
+PASS document.createElement must throw a NotSupportedError when the element is adopted into a document of a template element during construction 
+PASS document.createElement must throw a NotSupportedError when the element is inserted into a document of a template element during construction 
+PASS document.createElement must not throw a NotSupportedError when the element is adopted back from a document of a template element during construction 
+PASS document.createElement must throw a NotSupportedError when the element is adopted into a new document during construction 
+PASS document.createElement must throw a NotSupportedError when the element is inserted into a new document during construction 
+PASS document.createElement must not throw a NotSupportedError when the element is adopted back from a new document during construction 
+PASS document.createElement must throw a NotSupportedError when the element is adopted into a cloned document during construction 
+PASS document.createElement must throw a NotSupportedError when the element is inserted into a cloned document during construction 
+PASS document.createElement must not throw a NotSupportedError when the element is adopted back from a cloned document during construction 
+PASS document.createElement must throw a NotSupportedError when the element is adopted into a document created by createHTMLDocument during construction 
+PASS document.createElement must throw a NotSupportedError when the element is inserted into a document created by createHTMLDocument during construction 
+PASS document.createElement must not throw a NotSupportedError when the element is adopted back from a document created by createHTMLDocument during construction 
+PASS document.createElement must throw a NotSupportedError when the element is adopted into a HTML document created by createDocument during construction 
+PASS document.createElement must throw a NotSupportedError when the element is inserted into a HTML document created by createDocument during construction 
+PASS document.createElement must not throw a NotSupportedError when the element is adopted back from a HTML document created by createDocument during construction 
+PASS document.createElement must throw a NotSupportedError when the element is adopted into a document in an iframe during construction 
+PASS document.createElement must throw a NotSupportedError when the element is inserted into a document in an iframe during construction 
+PASS document.createElement must not throw a NotSupportedError when the element is adopted back from a document in an iframe during construction 
+PASS document.createElement must throw a NotSupportedError when the element is adopted into a HTML document fetched by XHR during construction 
+PASS document.createElement must throw a NotSupportedError when the element is inserted into a HTML document fetched by XHR during construction 
+PASS document.createElement must not throw a NotSupportedError when the element is adopted back from a HTML document fetched by XHR during construction 
+PASS document.createElement must throw a NotSupportedError when the local name of the element does not match that of the custom element 
 PASS document.createElement must re-throw an exception thrown by a custom element constructor 
 

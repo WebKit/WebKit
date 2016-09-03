@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: line 75: TypeError: The result of constructing a custom element must be a HTMLElement
+
+Harness Error (FAIL), message = TypeError: The result of constructing a custom element must be a HTMLElement
 
 PASS The defined flag of a custom element must not be set if a custom element has not been upgraded yet 
 PASS The defined flag of a custom element must not be set if a custom element has not been upgraded yet even if the element has been defined 

@@ -1,3 +1,9 @@
+CONSOLE MESSAGE: TypeError: The result of constructing a custom element must be a HTMLElement
+CONSOLE MESSAGE: TypeError: The result of constructing a custom element must be a HTMLElement
+CONSOLE MESSAGE: line 32: ReferenceError: Cannot access uninitialized variable.
+CONSOLE MESSAGE: line 38: Bad
+
+Harness Error (FAIL), message = Bad
 
 PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor returns a Text node 
 PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor returns non-Element object 

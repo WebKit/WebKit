@@ -31,6 +31,7 @@
 #if ENABLE(CUSTOM_ELEMENTS)
 
 #include "DOMWrapperWorld.h"
+#include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "JSElement.h"
 #include "JSHTMLElement.h"
@@ -56,14 +57,17 @@ JSCustomElementInterface::~JSCustomElementInterface()
 {
 }
 
-RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& tagName, ShouldClearException shouldClearException)
+static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, ExecState&, JSObject* constructor, const AtomicString& localName);
+
+RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& localName, ShouldClearException shouldClearException)
 {
     if (!canInvokeCallback())
         return nullptr;
 
     Ref<JSCustomElementInterface> protectedThis(*this);
 
-    JSLockHolder lock(m_isolatedWorld->vm());
+    VM& vm = m_isolatedWorld->vm();
+    JSLockHolder lock(vm);
 
     if (!m_constructor)
         return nullptr;
@@ -72,33 +76,73 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& t
     if (!context)
         return nullptr;
     ASSERT(context->isDocument());
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, *m_isolatedWorld);
-    ExecState* state = globalObject->globalExec();
 
+    auto& state = *context->execState();
+    RefPtr<Element> element = constructCustomElementSynchronously(downcast<Document>(*context), vm, state, m_constructor.get(), localName);
+    if (!element) {
+        auto* exception = vm.exception();
+        ASSERT(exception);
+        if (shouldClearException == ShouldClearException::Clear) {
+            state.clearException();
+            reportException(&state, exception);
+        }
+        return nullptr;
+    }
+
+    element->setCustomElementIsResolved(*this);
+    return element;
+}
+
+// https://dom.spec.whatwg.org/#concept-create-element
+// 6. 1. If the synchronous custom elements flag is set
+static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, ExecState& state, JSObject* constructor, const AtomicString& localName)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ConstructData constructData;
-    ConstructType constructType = m_constructor->methodTable()->getConstructData(m_constructor.get(), constructData);
+    ConstructType constructType = constructor->methodTable()->getConstructData(constructor, constructData);
     if (constructType == ConstructType::None) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
     MarkedArgumentBuffer args;
-    args.append(jsStringWithCache(state, tagName));
+    args.append(jsStringWithCache(&state, localName));
 
-    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(context, constructType, constructData);
-    JSValue newElement = construct(state, m_constructor.get(), constructType, constructData, args);
-    InspectorInstrumentation::didCallFunction(cookie, context);
-
-    if (shouldClearException == ShouldClearException::Clear && state->hadException())
-        state->clearException();
-
-    if (newElement.isEmpty())
+    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(&document, constructType, constructData);
+    JSValue newElement = construct(&state, constructor, constructType, constructData, args);
+    InspectorInstrumentation::didCallFunction(cookie, &document);
+    if (vm.exception())
         return nullptr;
 
-    Element* wrappedElement = JSElement::toWrapped(newElement);
-    if (!wrappedElement)
+    ASSERT(!newElement.isEmpty());
+    HTMLElement* wrappedElement = JSHTMLElement::toWrapped(newElement);
+    if (!wrappedElement) {
+        throwTypeError(&state, scope, ASCIILiteral("The result of constructing a custom element must be a HTMLElement"));
         return nullptr;
-    wrappedElement->setCustomElementIsResolved(*this);
+    }
+
+    if (wrappedElement->hasAttributes()) {
+        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element must not have attributes"));
+        return nullptr;
+    }
+    if (wrappedElement->hasChildNodes()) {
+        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element must not have child nodes"));
+        return nullptr;
+    }
+    if (wrappedElement->parentNode()) {
+        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element must not have a parent node"));
+        return nullptr;
+    }
+    if (&wrappedElement->document() != &document) {
+        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element belongs to a wrong docuemnt"));
+        return nullptr;
+    }
+    ASSERT(wrappedElement->namespaceURI() == HTMLNames::xhtmlNamespaceURI);
+    if (wrappedElement->localName() != localName) {
+        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element belongs to a wrong docuemnt"));
+        return nullptr;
+    }
+
     return wrappedElement;
 }
 
