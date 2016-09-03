@@ -1338,7 +1338,8 @@
 - path: ChakraCore/test/UnifiedRegex/class-case.js
   cmd: runChakra :baseline, "NoException", "class-case.baseline", []
 - path: ChakraCore/test/UnifiedRegex/crazy.js
-  cmd: runChakra :baseline, "NoException", "crazy.baseline", []
+  # Skipped because the original test file contained tabs which we don't allow in WebKit source.
+  cmd: runChakra :skip, "NoException", "crazy.baseline", []
 - path: ChakraCore/test/UnifiedRegex/es5SpecExamples.js
   cmd: runChakra :baseline, "NoException", "es5SpecExamples.baseline", []
 - path: ChakraCore/test/UnifiedRegex/escapes.js

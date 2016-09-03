@@ -1,3 +1,12 @@
+2016-09-02  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed fix after importing Chakra test
+
+        * ChakraCore.yaml: Skipped ChakraCore/test/UnifiedRegex/crazy.js because the original
+        test contained tab characters.  I removed the tabs before landing.  This test depended
+        on the tab characters and now fails after they were removed.
+        test.
+
 2016-09-01  Michael Saboff  <msaboff@apple.com>
 
         Import Chakra tests to JSC
