@@ -31,6 +31,7 @@
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
 #include "CoordinatedLayerTreeHost.h"
+#include "SimpleViewportController.h"
 #include "ThreadedCompositor.h"
 
 namespace WebCore {
@@ -78,11 +79,6 @@ private:
         }
 
     private:
-        void setVisibleContentsRect(const WebCore::FloatRect& rect, const WebCore::FloatPoint& trajectoryVector, float scale) override
-        {
-            m_layerTreeHost.setVisibleContentsRect(rect, trajectoryVector, scale);
-        }
-
         void renderNextFrame() override
         {
             m_layerTreeHost.renderNextFrame();
@@ -96,9 +92,7 @@ private:
         ThreadedCoordinatedLayerTreeHost& m_layerTreeHost;
     };
 
-    void didScaleFactorChanged(float scale, const WebCore::IntPoint& origin);
-
-    void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&, float);
+    void didChangeViewport();
 
     // CompositingCoordinator::Client
     void didFlushRootLayer(const WebCore::FloatRect&) override { }
@@ -107,8 +101,8 @@ private:
     CompositorClient m_compositorClient;
     std::unique_ptr<AcceleratedSurface> m_surface;
     RefPtr<ThreadedCompositor> m_compositor;
-    float m_lastScaleFactor { 1 };
-    WebCore::IntPoint m_prevScrollPosition;
+    SimpleViewportController m_viewportController;
+    float m_lastPageScaleFactor { 1 };
     WebCore::IntPoint m_lastScrollPosition;
 };
 

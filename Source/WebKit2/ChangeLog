@@ -1,3 +1,65 @@
+2016-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Move the viewport controller off the compositing thread
+        https://bugs.webkit.org/show_bug.cgi?id=161532
+
+        Reviewed by Michael Catanzaro.
+
+        While working on bug #161242 I've realized that having the view port controller in the compositing thread makes
+        everything more complex. The viewport controller receives changes about things like contents size, viewport
+        size, etc. and uses that information to compute the visible contents rect and page scale factor. Then it
+        notifies back to main thread about the computed visible contents rect and page scale. Those computations are not
+        heave at all, so they could be done in the main thread and we would avoid communications between the main and
+        compositing thread in both directions. The main thread needs the visible contents rect to notify the compositing
+        coordinator and the page cale to scale the page in case of pixed layout. But the compositing thread only needs
+        to know the effective scale and scroll position. So, instead of going to the compositing thread after every
+        change that might update the visible contents rect and page scale factor, we could do those calculations in the
+        main thread and only notify the compositing thread about the actual changes in the scroll position and effective scale.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::createTilesIfNeeded): Return early if backingStore is nullptr, which can
+        happen if the layer shouldn't have a backing store and was removed by the previous call to prepareContentBackingStore().
+        (WebKit::CoordinatedGraphicsScene::updateTilesIfNeeded): Ditto.
+        * Shared/CoordinatedGraphics/SimpleViewportController.cpp:
+        (WebKit::SimpleViewportController::SimpleViewportController): Remove the client since we no longer need to
+        notify about changes.
+        (WebKit::SimpleViewportController::didChangeViewportSize): Remove call to syncVisibleContents().
+        (WebKit::SimpleViewportController::didChangeContentsSize): Ditto.
+        (WebKit::SimpleViewportController::didChangeViewportAttributes): Ditto.
+        (WebKit::SimpleViewportController::didScroll): Removed unused scrollBy methods and renamed scrollTo as
+        didiScroll for consistency. Save the position without calling boundContentsPosition, because that's already
+        donde when the position is used to compute the contents visible rectangle.
+        (WebKit::SimpleViewportController::visibleContentsRect): No need to notify about the changes.
+        (WebKit::SimpleViewportController::visibleContentsSize): Deleted.
+        * Shared/CoordinatedGraphics/SimpleViewportController.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create): Pass a reference to the client instead of a pointer. It's no longer
+        possible to have a valid pointer when the object has been destroyed, so we can better use a reference now.
+        (WebKit::ThreadedCompositor::ThreadedCompositor): Ditto.
+        (WebKit::ThreadedCompositor::~ThreadedCompositor): Remove assert.
+        (WebKit::ThreadedCompositor::invalidate): No need to invalidate the client.
+        (WebKit::ThreadedCompositor::setScaleFactor): Set the effective scale factor that should be used for rendering.
+        (WebKit::ThreadedCompositor::setScrollPosition): Set the current scroll position and effective scale factor.
+        (WebKit::ThreadedCompositor::setViewportSize): Set the viewport size and effective scale factor.
+        (WebKit::ThreadedCompositor::renderNextFrame): Update m_client use that is no longer a pointer.
+        (WebKit::ThreadedCompositor::commitScrollOffset): Ditto.
+        (WebKit::ThreadedCompositor::renderLayerTree): Call glViewport after a resize and use m_viewportSize,
+        m_scrollPosition and m_scaleFactor members.
+        (WebKit::ThreadedCompositor::didChangeVisibleRect): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost): Pass the compositor client as a
+        reference to ThreadedCompositor constructor.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents): Update the viewport and call didChangeViewport().
+        (WebKit::ThreadedCoordinatedLayerTreeHost::contentsSizeChanged): Ditto.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged): Pass the effective scale factor to
+        the compositor.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::sizeDidChange): Update the viewport, the compositor and call didChangeViewport().
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties): Update the viewport and call didChangeViewport().
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didChangeViewport): Notify the compositing coordinator about the new
+        visible contents rectangle, and update the threaded compositor if needed.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
 2016-09-02  Beth Dakin  <bdakin@apple.com>
 
         Need to updateEditorState if an element change edit-ability without changing 

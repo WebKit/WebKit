@@ -20,34 +20,26 @@
  */
 
 #include "config.h"
+#include "SimpleViewportController.h"
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-#include "SimpleViewportController.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-SimpleViewportController::SimpleViewportController(Client* client)
-    : m_client(client)
-    , m_contentsPosition(FloatPoint())
-    , m_contentsSize(FloatSize())
-    , m_viewportSize(FloatSize())
-    , m_allowsUserScaling(false)
-    , m_initiallyFitToViewport(true)
-    , m_hasViewportAttribute(false)
+SimpleViewportController::SimpleViewportController()
 {
     resetViewportToDefaultState();
 }
 
-void SimpleViewportController::didChangeViewportSize(const FloatSize& newSize)
+void SimpleViewportController::didChangeViewportSize(const IntSize& newSize)
 {
     if (newSize.isEmpty())
         return;
 
     m_viewportSize = newSize;
     updateMinimumScaleToFit();
-    syncVisibleContents();
 }
 
 void SimpleViewportController::didChangeContentsSize(const IntSize& newSize)
@@ -62,11 +54,9 @@ void SimpleViewportController::didChangeContentsSize(const IntSize& newSize)
         m_rawAttributes.initialScale = m_minimumScaleToFit;
         restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
     }
-
-    syncVisibleContents();
 }
 
-void SimpleViewportController::didChangeViewportAttribute(const ViewportAttributes& newAttributes)
+void SimpleViewportController::didChangeViewportAttributes(const ViewportAttributes& newAttributes)
 {
     if (newAttributes.layoutSize.isEmpty()) {
         resetViewportToDefaultState();
@@ -83,40 +73,20 @@ void SimpleViewportController::didChangeViewportAttribute(const ViewportAttribut
         restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
 
     updateMinimumScaleToFit();
-
-    syncVisibleContents();
 }
 
-void SimpleViewportController::scrollBy(const IntSize& scrollOffset)
+void SimpleViewportController::didScroll(const IntPoint& position)
 {
-    m_contentsPosition.move(scrollOffset);
-    m_contentsPosition = boundContentsPosition(m_contentsPosition);
-
-    syncVisibleContents();
-}
-
-void SimpleViewportController::scrollTo(const IntPoint& position)
-{
-    if (m_contentsPosition == boundContentsPosition(position))
-        return;
-
-    m_contentsPosition = boundContentsPosition(position);
-    syncVisibleContents();
-}
-
-void SimpleViewportController::syncVisibleContents()
-{
-    if (m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
-        return;
-
-    m_client->didChangeVisibleRect();
+    m_contentsPosition = position;
 }
 
 FloatRect SimpleViewportController::visibleContentsRect() const
 {
+    if (m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
+        return { };
+
     FloatRect visibleContentsRect(boundContentsPosition(m_contentsPosition), visibleContentsSize());
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
-
     return visibleContentsRect;
 }
 

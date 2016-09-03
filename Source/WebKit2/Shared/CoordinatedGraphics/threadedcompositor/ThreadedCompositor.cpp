@@ -42,12 +42,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync)
 {
     return adoptRef(*new ThreadedCompositor(client, nativeSurfaceHandle, doFrameSync));
 }
 
-ThreadedCompositor::ThreadedCompositor(Client* client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync)
+ThreadedCompositor::ThreadedCompositor(Client& client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync)
     : m_client(client)
     , m_nativeSurfaceHandle(nativeSurfaceHandle)
     , m_doFrameSync(doFrameSync)
@@ -55,14 +55,12 @@ ThreadedCompositor::ThreadedCompositor(Client* client, uint64_t nativeSurfaceHan
 {
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
-        m_viewportController = std::make_unique<SimpleViewportController>(this);
         m_scene->setActive(!!m_nativeSurfaceHandle);
     });
 }
 
 ThreadedCompositor::~ThreadedCompositor()
 {
-    ASSERT(!m_client);
 }
 
 void ThreadedCompositor::invalidate()
@@ -73,10 +71,8 @@ void ThreadedCompositor::invalidate()
         m_scene->purgeGLResources();
         m_context = nullptr;
         m_scene = nullptr;
-        m_viewportController = nullptr;
     });
     m_compositingRunLoop = nullptr;
-    m_client = nullptr;
 }
 
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
@@ -93,10 +89,29 @@ void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
     });
 }
 
-void ThreadedCompositor::setDeviceScaleFactor(float scale)
+void ThreadedCompositor::setScaleFactor(float scale)
 {
     m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), scale] {
-        m_deviceScaleFactor = scale;
+        m_scaleFactor = scale;
+        scheduleDisplayImmediately();
+    });
+}
+
+void ThreadedCompositor::setScrollPosition(const IntPoint& scrollPosition, float scale)
+{
+    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), scrollPosition, scale] {
+        m_scrollPosition = scrollPosition;
+        m_scaleFactor = scale;
+        scheduleDisplayImmediately();
+    });
+}
+
+void ThreadedCompositor::setViewportSize(const IntSize& viewportSize, float scale)
+{
+    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), viewportSize, scale] {
+        m_viewportSize = viewportSize;
+        m_scaleFactor = scale;
+        m_needsResize = true;
         scheduleDisplayImmediately();
     });
 }
@@ -109,51 +124,16 @@ void ThreadedCompositor::setDrawsBackground(bool drawsBackground)
     });
 }
 
-void ThreadedCompositor::didChangeViewportSize(const IntSize& size)
-{
-    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), size] {
-        m_viewportController->didChangeViewportSize(size);
-    });
-}
-
-void ThreadedCompositor::didChangeViewportAttribute(const ViewportAttributes& attr)
-{
-    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), attr] {
-        m_viewportController->didChangeViewportAttribute(attr);
-    });
-}
-
-void ThreadedCompositor::didChangeContentsSize(const IntSize& size)
-{
-    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), size] {
-        m_viewportController->didChangeContentsSize(size);
-    });
-}
-
-void ThreadedCompositor::scrollTo(const IntPoint& position)
-{
-    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), position] {
-        m_viewportController->scrollTo(position);
-    });
-}
-
-void ThreadedCompositor::scrollBy(const IntSize& delta)
-{
-    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), delta] {
-        m_viewportController->scrollBy(delta);
-    });
-}
-
 void ThreadedCompositor::renderNextFrame()
 {
     ASSERT(isMainThread());
-    m_client->renderNextFrame();
+    m_client.renderNextFrame();
 }
 
 void ThreadedCompositor::commitScrollOffset(uint32_t layerID, const IntSize& offset)
 {
     ASSERT(isMainThread());
-    m_client->commitScrollOffset(layerID, offset);
+    m_client.commitScrollOffset(layerID, offset);
 }
 
 void ThreadedCompositor::updateViewport()
@@ -194,16 +174,6 @@ void ThreadedCompositor::forceRepaint()
     });
 }
 
-void ThreadedCompositor::didChangeVisibleRect()
-{
-    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), visibleRect = m_viewportController->visibleContentsRect(), scale = m_viewportController->pageScaleFactor()] {
-        if (m_client)
-            m_client->setVisibleContentsRect(visibleRect, FloatPoint::zero(), scale);
-    });
-
-    scheduleDisplayImmediately();
-}
-
 void ThreadedCompositor::renderLayerTree()
 {
     if (!m_scene || !m_scene->isActive())
@@ -212,27 +182,21 @@ void ThreadedCompositor::renderLayerTree()
     if (!makeContextCurrent())
         return;
 
-    // The window size may be out of sync with the page size at this point, and getting
-    // the viewport parameters incorrect, means that the content will be misplaced. Thus,
-    // we set the viewport parameters directly from the window size.
-    IntSize contextSize = m_context->defaultFrameBufferSize();
-    if (m_viewportSize != contextSize) {
-        glViewport(0, 0, contextSize.width(), contextSize.height());
-        m_viewportSize = contextSize;
+    if (m_needsResize) {
+        glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
+        m_needsResize = false;
     }
-
     FloatRect clipRect(0, 0, m_viewportSize.width(), m_viewportSize.height());
 
     TransformationMatrix viewportTransform;
-    FloatPoint scrollPostion = m_viewportController->visibleContentsRect().location();
-    viewportTransform.scale(m_viewportController->pageScaleFactor() * m_deviceScaleFactor);
-    viewportTransform.translate(-scrollPostion.x(), -scrollPostion.y());
+    viewportTransform.scale(m_scaleFactor);
+    viewportTransform.translate(-m_scrollPosition.x(), -m_scrollPosition.y());
 
     if (!m_drawsBackground) {
         glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
-    m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::transparent, !m_drawsBackground, scrollPostion);
+    m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::transparent, !m_drawsBackground, m_scrollPosition);
 
     m_context->swapBuffers();
 }

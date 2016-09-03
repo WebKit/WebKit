@@ -58,10 +58,10 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
         // Do not do frame sync when rendering offscreen in the web process to ensure that SwapBuffers never blocks.
         // Rendering to the actual screen will happen later anyway since the UI process schedules a redraw for every update,
         // the compositor will take care of syncing to vblank.
-        m_compositor = ThreadedCompositor::create(&m_compositorClient, m_surface->window(), ThreadedCompositor::ShouldDoFrameSync::No);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, m_surface->window(), ThreadedCompositor::ShouldDoFrameSync::No);
         m_layerTreeContext.contextID = m_surface->surfaceID();
     } else
-        m_compositor = ThreadedCompositor::create(&m_compositorClient);
+        m_compositor = ThreadedCompositor::create(m_compositorClient);
 }
 
 void ThreadedCoordinatedLayerTreeHost::invalidate()
@@ -77,15 +77,16 @@ void ThreadedCoordinatedLayerTreeHost::forceRepaint()
     m_compositor->forceRepaint();
 }
 
-void ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect& rect)
+void ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents(const IntRect& rect)
 {
-    m_compositor->scrollTo(rect.location());
-    scheduleLayerFlush();
+    m_viewportController.didScroll(rect.location());
+    didChangeViewport();
 }
 
-void ThreadedCoordinatedLayerTreeHost::contentsSizeChanged(const WebCore::IntSize& newSize)
+void ThreadedCoordinatedLayerTreeHost::contentsSizeChanged(const IntSize& newSize)
 {
-    m_compositor->didChangeContentsSize(newSize);
+    m_viewportController.didChangeContentsSize(newSize);
+    didChangeViewport();
 }
 
 void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
@@ -94,7 +95,7 @@ void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
         m_layerTreeContext.contextID = m_surface->surfaceID();
 
     CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged();
-    m_compositor->setDeviceScaleFactor(m_webPage.deviceScaleFactor());
+    m_compositor->setScaleFactor(m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
 }
 
 void ThreadedCoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()
@@ -109,17 +110,17 @@ void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const IntSize& size)
         m_layerTreeContext.contextID = m_surface->surfaceID();
 
     CoordinatedLayerTreeHost::sizeDidChange(size);
-    m_compositor->didChangeViewportSize(size);
+    m_viewportController.didChangeViewportSize(size);
+    IntSize scaledSize(size);
+    scaledSize.scale(m_webPage.deviceScaleFactor());
+    m_compositor->setViewportSize(scaledSize, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
+    didChangeViewport();
 }
 
-void ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
+void ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties(const ViewportAttributes& attr)
 {
-    m_compositor->didChangeViewportAttribute(attr);
-}
-
-void ThreadedCoordinatedLayerTreeHost::didScaleFactorChanged(float scale, const IntPoint& origin)
-{
-    m_webPage.scalePage(scale, origin);
+    m_viewportController.didChangeViewportAttributes(attr);
+    didChangeViewport();
 }
 
 #if PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
@@ -131,9 +132,11 @@ void ThreadedCoordinatedLayerTreeHost::setNativeSurfaceHandleForCompositing(uint
 }
 #endif
 
-void ThreadedCoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector, float scale)
+void ThreadedCoordinatedLayerTreeHost::didChangeViewport()
 {
-    FloatRect visibleRect(rect);
+    FloatRect visibleRect(m_viewportController.visibleContentsRect());
+    if (visibleRect.isEmpty())
+        return;
 
     // When using non overlay scrollbars, the contents size doesn't include the scrollbars, but we need to include them
     // in the visible area used by the compositor to ensure that the scrollbar layers are also updated.
@@ -146,17 +149,21 @@ void ThreadedCoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& r
     if (scrollbar && !scrollbar->isOverlayScrollbar())
         visibleRect.expand(0, scrollbar->height());
 
-    CoordinatedLayerTreeHost::setVisibleContentsRect(visibleRect, trajectoryVector);
-    if (m_lastScrollPosition != roundedIntPoint(visibleRect.location())) {
-        m_lastScrollPosition = roundedIntPoint(visibleRect.location());
+    CoordinatedLayerTreeHost::setVisibleContentsRect(visibleRect, FloatPoint::zero());
+
+    float pageScale = m_viewportController.pageScaleFactor();
+    IntPoint scrollPosition = roundedIntPoint(visibleRect.location());
+    if (m_lastScrollPosition != scrollPosition) {
+        m_lastScrollPosition = scrollPosition;
+        m_compositor->setScrollPosition(m_lastScrollPosition, m_webPage.deviceScaleFactor() * pageScale);
 
         if (!view->useFixedLayout())
             view->notifyScrollPositionChanged(m_lastScrollPosition);
     }
 
-    if (m_lastScaleFactor != scale) {
-        m_lastScaleFactor = scale;
-        didScaleFactorChanged(m_lastScaleFactor, m_lastScrollPosition);
+    if (m_lastPageScaleFactor != pageScale) {
+        m_lastPageScaleFactor = pageScale;
+        m_webPage.scalePage(pageScale, m_lastScrollPosition);
     }
 }
 
