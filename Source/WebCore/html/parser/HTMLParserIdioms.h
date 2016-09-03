@@ -70,6 +70,9 @@ WEBCORE_EXPORT Optional<int> parseHTMLNonNegativeInteger(const String&);
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-floating-point-number-values
 Vector<double> parseHTMLListOfOfFloatingPointNumberValues(StringView);
 
+// https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-refresh
+bool parseMetaHTTPEquivRefresh(const StringView&, double& delay, String& url);
+
 // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-settings-attribute
 String parseCORSSettingsAttribute(const AtomicString&);
 

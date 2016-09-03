@@ -3266,7 +3266,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
     case HTTPHeaderName::Refresh: {
         double delay;
         String urlString;
-        if (frame && parseHTTPRefresh(content, true, delay, urlString)) {
+        if (frame && parseMetaHTTPEquivRefresh(content, delay, urlString)) {
             URL completedURL;
             if (urlString.isEmpty())
                 completedURL = m_url;
