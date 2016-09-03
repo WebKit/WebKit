@@ -16,6 +16,11 @@ ERROR: Protocol Error: Invalid number of arguments for command 'Runtime.evaluate
 PASS: A backend command should return a Promise when invoked without a callback.
 PASS: An invalid command invocation's promise should be rejected.
 
+-- Running test case: RejectCommandPromiseWithExtraArgumentThatIsNotCallback
+ERROR: Protocol Error: Protocol Error: Optional callback argument for command 'Runtime.enable' call must be a function but its type is 'number'.
+PASS: A backend command should return a Promise when invoked without a callback.
+PASS: An invalid command invocation's promise should be rejected.
+
 -- Running test case: ReturnNothingIfCallback
 PASS: A backend command should not have a return value when invoked with a callback.
 

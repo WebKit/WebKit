@@ -73,6 +73,27 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "RejectCommandPromiseWithExtraArgumentThatIsNotCallback",
+        description: "Backend command's returned promise should be rejected if the command has an extra argument that is not a callback.",
+        test: (resolve, reject) => {
+            let result = RuntimeAgent.enable(1);
+
+            InspectorTest.expectThat(result instanceof Promise, "A backend command should return a Promise when invoked without a callback.");
+            // If a promise wasn't returned, we can't test the rest so just die.
+            if (!(result instanceof Promise))
+                reject();
+
+            result.then(function resolved(result) {
+                InspectorTest.log("FAIL: An invalid command invocation's promise should be rejected.");
+                reject();
+            }, function rejected(result) {
+                InspectorTest.log("PASS: An invalid command invocation's promise should be rejected.");
+                resolve();
+            });
+        }
+    });
+
     // Test behavior for function-based callbacks.
 
     suite.addTestCase({

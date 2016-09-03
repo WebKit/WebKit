@@ -583,7 +583,7 @@ InspectorBackend.Command.prototype = {
         }
 
         if (!callback && commandArguments.length === 1 && commandArguments[0] !== undefined)
-            return deliverFailure(`Protocol Error: Optional callback argument for command '${instance.qualifiedName}' call must be a function but its type is '${typeof args[0]}'.`);
+            return deliverFailure(`Protocol Error: Optional callback argument for command '${instance.qualifiedName}' call must be a function but its type is '${typeof commandArguments[0]}'.`);
 
         if (callback)
             instance._backend._sendCommandToBackendWithCallback(instance, parameters, callback);

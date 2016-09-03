@@ -83,7 +83,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         case CSSAgent.CSSMediaSource.InlineSheet:
             return WebInspector.CSSMedia.Type.InlineStyleSheet;
         default:
-            console.assert(false, "Unknown CSS.CSSMediaSource", origin);
+            console.assert(false, "Unknown CSS.CSSMediaSource", source);
             return WebInspector.CSSMedia.Type.MediaRule;
         }
     }

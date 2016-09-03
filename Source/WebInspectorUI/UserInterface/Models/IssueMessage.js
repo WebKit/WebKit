@@ -70,7 +70,7 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
             break;
 
         default:
-            console.error("Unknown issue source:", source);
+            console.error("Unknown issue source:", this._consoleMessage.source);
             this._type = WebInspector.IssueMessage.Type.OtherIssue;
         }
 
