@@ -1,3 +1,25 @@
+2016-09-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Implement WebFrameLoaderClient::shouldUseContentExtensionsForURL and consult the InjectedBundlePageLoaderClient.
+        https://bugs.webkit.org/show_bug.cgi?id=161441
+
+        Reviewed by Darin Adler.
+
+        WebFrameLoaderClient::shouldUseContentExtensionsForURL only consults the injected bundle, because we don't want to
+        defer the loading of every main resource to consult with the UI Process about whether or not we should use content
+        extensions for the load.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h: Bump the latest version to WKBundlePageLoaderClientV9 and
+        add WKBundlePageShouldUseContentExtensionsForURLCallback.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::shouldUseContentExtensionsForURL): Ask the client if we should use content
+        extensions for this URL.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldUseContentExtensionsForURL): Only consult with the injected bundle about whether
+        or not we should use content extensions for this URL.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2016-09-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move WebKit2 WebInspector files to #pragma once

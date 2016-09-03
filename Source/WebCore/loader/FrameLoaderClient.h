@@ -173,6 +173,10 @@ namespace WebCore {
         virtual void dispatchDidFinishDataDetection(NSArray *detectionResults) = 0;
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+        virtual bool shouldUseContentExtensionsForURL(const URL&) = 0;
+#endif
+
         virtual void dispatchDidLayout() { }
         virtual void dispatchDidReachLayoutMilestone(LayoutMilestones) { }
 

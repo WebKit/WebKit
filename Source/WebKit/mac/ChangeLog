@@ -1,3 +1,12 @@
+2016-09-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Implement a stub version of FrameLoaderClient::shouldUseContentExtensionsForURL.
+        https://bugs.webkit.org/show_bug.cgi?id=16144
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2016-09-02  Beth Dakin  <bdakin@apple.com>
 
         Need to updateEditorState if an element change edit-ability without changing 

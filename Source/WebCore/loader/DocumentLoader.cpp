@@ -1478,6 +1478,11 @@ void DocumentLoader::startLoadingMainResource()
     m_contentFilter = !m_substituteData.isValid() ? ContentFilter::create(*this) : nullptr;
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (m_userContentExtensionsEnabled)
+        m_userContentExtensionsEnabled = frameLoader()->client().shouldUseContentExtensionsForURL(m_request.url());
+#endif
+
     // FIXME: Is there any way the extra fields could have not been added by now?
     // If not, it would be great to remove this line of code.
     // Note that currently, some requests may have incorrect extra fields even if this function has been called,

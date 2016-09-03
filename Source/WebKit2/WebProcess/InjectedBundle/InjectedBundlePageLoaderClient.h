@@ -40,7 +40,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKBundlePageLoaderClientBase> {
-    typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7, WKBundlePageLoaderClientV8> Versions;
+    typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7, WKBundlePageLoaderClientV8, WKBundlePageLoaderClientV9> Versions;
 };
 }
 
@@ -102,6 +102,10 @@ public:
 
     void willDestroyFrame(WebPage*, WebFrame*);
     API::String* userAgentForURL(WebFrame*, API::URL*) const;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    bool shouldUseContentExtensionsForURL(WebPage*, API::URL*) const;
+#endif
 };
 
 } // namespace WebKit
