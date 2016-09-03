@@ -1,3 +1,9 @@
+2016-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix attempt after r205381.
+
+        * WebCoreSupport/WebEditorClient.h:
+
 2016-08-31  Keith Rollin  <krollin@apple.com>
 
         WebKit should set a subsystem for os_log so it's easier to filter for WebKit log messages
