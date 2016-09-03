@@ -442,7 +442,7 @@ URL::URL(ParsedURLStringTag, const String& url)
     if (URLParser::enabled()) {
         URLParser parser;
         *this = parser.parse(url);
-        ASSERT(url.isEmpty() && m_string.isEmpty() || url == m_string); // FIXME: Investigate parsing non-null empty ParsedURLStrings.
+        ASSERT((url.isEmpty() && m_string.isEmpty()) || url == m_string); // FIXME: Investigate parsing non-null empty ParsedURLStrings.
     } else {
         parse(url);
 #if OS(WINDOWS)
