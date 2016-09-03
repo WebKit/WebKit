@@ -872,7 +872,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         var result = {};
         for (var [identifier, column] of this.columns) {
             var width = this._headerTableColumnGroupElement.children[column["ordinal"]].style.width;
-            result[columnIdentifier] = parseFloat(width);
+            result[identifier] = parseFloat(width);
         }
         return result;
     }
