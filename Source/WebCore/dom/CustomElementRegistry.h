@@ -66,12 +66,15 @@ public:
 
     JSC::JSValue get(const AtomicString&);
 
+    HashMap<AtomicString, Ref<DeferredWrapper>>& promiseMap() { return m_promiseMap; }
+
 private:
     CustomElementRegistry(DOMWindow&);
 
     DOMWindow& m_window;
     HashMap<AtomicString, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap;
+    HashMap<AtomicString, Ref<DeferredWrapper>> m_promiseMap;
 
     bool m_elementDefinitionIsRunning { false };
 

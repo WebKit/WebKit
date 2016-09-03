@@ -1,3 +1,14 @@
+2016-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unbreak customElements.whenDefined after r205383 with a crash fix
+        https://bugs.webkit.org/show_bug.cgi?id=161562
+
+        Reviewed by Darin Adler.
+
+        Revert r205383 now that all test cases pass.
+
+        * fast/custom-elements/CustomElementRegistry-expected.txt:
+
 2016-09-03  Chris Dumez  <cdumez@apple.com>
 
         Align cross-Origin Object.getOwnPropertyNames() with the HTML specification

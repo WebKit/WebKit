@@ -59,6 +59,7 @@ void DeferredWrapper::clear()
 
 void DeferredWrapper::contextDestroyed()
 {
+    ActiveDOMCallback::contextDestroyed();
     clear();
 }
 
