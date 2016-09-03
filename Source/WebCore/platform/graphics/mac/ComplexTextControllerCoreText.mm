@@ -29,6 +29,7 @@
 #include "CoreTextSPI.h"
 #include "FontCache.h"
 #include "FontCascade.h"
+#include "SoftLinking.h"
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
 #include <wtf/WeakPtr.h>
@@ -38,6 +39,12 @@
 #else
 #include <ApplicationServices/ApplicationServices.h>
 #endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 90000)
+SOFT_LINK_FRAMEWORK(CoreText);
+SOFT_LINK(CoreText, CTRunGetBaseAdvancesAndOrigins, void, (CTRunRef run, CFRange range, CGSize baseAdvances[], CGPoint origins[]), (run, range, baseAdvances, origins))
+#endif
+
 
 // Note: CTFontDescriptorRefs can live forever in caches inside CoreText, so this object can too.
 @interface WebCascadeList : NSArray {
@@ -100,13 +107,13 @@
 namespace WebCore {
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
-    : m_font(font)
+    : m_initialAdvance(CTRunGetInitialAdvance(ctRun))
+    , m_font(font)
     , m_characters(characters)
-    , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
     , m_indexBegin(runRange.location)
     , m_indexEnd(runRange.location + runRange.length)
-    , m_initialAdvance(CTRunGetInitialAdvance(ctRun))
+    , m_stringLocation(stringLocation)
     , m_isLTR(!(CTRunGetStatus(ctRun) & kCTRunStatusRightToLeft))
     , m_isMonotonic(true)
 {
@@ -125,24 +132,31 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
         m_glyphs = m_glyphsVector.data();
     }
 
-    m_advances = CTRunGetAdvancesPtr(ctRun);
-    if (!m_advances) {
-        m_advancesVector.grow(m_glyphCount);
-        CTRunGetAdvances(ctRun, CFRangeMake(0, 0), m_advancesVector.data());
-        m_advances = m_advancesVector.data();
+#if USE_LAYOUT_SPECIFIC_ADVANCES
+    m_baseAdvancesVector.grow(m_glyphCount);
+    m_glyphOrigins.grow(m_glyphCount);
+    CTRunGetBaseAdvancesAndOrigins(ctRun, CFRangeMake(0, 0), m_baseAdvancesVector.data(), m_glyphOrigins.data());
+    m_baseAdvances = m_baseAdvancesVector.data();
+#else
+    m_baseAdvances = CTRunGetAdvancesPtr(ctRun);
+    if (!m_baseAdvances) {
+        m_baseAdvancesVector.grow(m_glyphCount);
+        CTRunGetAdvances(ctRun, CFRangeMake(0, 0), m_baseAdvancesVector.data());
+        m_baseAdvances = m_baseAdvancesVector.data();
     }
+#endif
 }
 
 // Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
 // glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
 ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
-    : m_font(font)
+    : m_initialAdvance(CGSizeZero)
+    , m_font(font)
     , m_characters(characters)
-    , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
     , m_indexBegin(0)
     , m_indexEnd(stringLength)
-    , m_initialAdvance(CGSizeZero)
+    , m_stringLocation(stringLocation)
     , m_isLTR(ltr)
     , m_isMonotonic(true)
 {
@@ -150,10 +164,8 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     unsigned r = 0;
     while (r < m_stringLength) {
         m_coreTextIndicesVector.uncheckedAppend(r);
-        if (U_IS_LEAD(m_characters[r]) && r + 1 < m_stringLength && U_IS_TRAIL(m_characters[r + 1]))
-            r += 2;
-        else
-            r++;
+        UChar32 character;
+        U16_NEXT(m_characters, r, m_stringLength, character);
     }
     m_glyphCount = m_coreTextIndicesVector.size();
     if (!ltr) {
@@ -165,8 +177,8 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     // Synthesize a run of missing glyphs.
     m_glyphsVector.fill(0, m_glyphCount);
     m_glyphs = m_glyphsVector.data();
-    m_advancesVector.fill(CGSizeMake(m_font.widthForGlyph(0), 0), m_glyphCount);
-    m_advances = m_advancesVector.data();
+    m_baseAdvancesVector.fill(CGSizeMake(m_font.widthForGlyph(0), 0), m_glyphCount);
+    m_baseAdvances = m_baseAdvancesVector.data();
 }
 
 struct ProviderInfo {
