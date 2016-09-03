@@ -10,10 +10,11 @@ jsTestIsAsync = true;
 onload = function() {
     debug ("* Cross origin");
     shouldBeTrue("Object.isExtensible(frames[0])");
-    shouldThrowErrorName("Object.preventExtensions(frames[0])", "SecurityError");
+    shouldThrowErrorName("Object.preventExtensions(frames[0])", "TypeError");
     shouldBeTrue("Object.isExtensible(frames[0])");
 
     shouldBeTrue("Object.isExtensible(frames[0].location)");
+    // FIXME: Should throw a TypeError once we start throw in the same origin case as well.
     shouldThrowErrorName("Object.preventExtensions(frames[0].location)", "SecurityError");
     shouldBeTrue("Object.isExtensible(frames[0].location)");
 

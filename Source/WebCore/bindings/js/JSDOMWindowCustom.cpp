@@ -342,11 +342,11 @@ bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec,
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
-bool JSDOMWindow::preventExtensions(JSObject* object, ExecState* exec)
+bool JSDOMWindow::preventExtensions(JSObject*, ExecState* exec)
 {
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), ThrowSecurityError))
-        return false;
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+
+    throwTypeError(exec, scope, ASCIILiteral("Cannot prevent extensions on this object"));
     return false;
 }
 

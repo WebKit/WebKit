@@ -1,3 +1,13 @@
+2016-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Object.preventExtensions(window) should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=161554
+
+        Reviewed by Darin Adler.
+
+        * http/tests/security/preventExtensions-window-location-expected.txt:
+        * http/tests/security/preventExtensions-window-location.html:
+
 2016-09-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Address ESLint undefined variable errors
