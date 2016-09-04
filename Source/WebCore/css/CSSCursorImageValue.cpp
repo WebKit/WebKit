@@ -26,8 +26,6 @@
 #include "CSSImageValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
-#include "StyleCachedImage.h"
-#include "StyleImage.h"
 #include "SVGCursorElement.h"
 #include "SVGLengthContext.h"
 #include "SVGNames.h"
@@ -102,32 +100,17 @@ void CSSCursorImageValue::cursorElementChanged(SVGCursorElement& cursorElement)
     m_hotSpot.setY(static_cast<int>(y));
 }
 
-void CSSCursorImageValue::loadImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
+std::pair<CachedImage*, float> CSSCursorImageValue::loadImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-    if (is<CSSImageSetValue>(m_imageValue.get())) {
-        downcast<CSSImageSetValue>(m_imageValue.get()).loadBestFitImage(loader, options);
-        return;
-    }
-
-    downcast<CSSImageValue>(m_imageValue.get()).loadImage(loader, options);
-}
-
-StyleCachedImage& CSSCursorImageValue::styleImage(const Document& document)
-{
-    // Need to delegate completely so that changes in device scale factor can be handled appropriately.
-    StyleCachedImage* styleImage;
     if (is<CSSImageSetValue>(m_imageValue.get()))
-        styleImage = &downcast<CSSImageSetValue>(m_imageValue.get()).styleImage(document);
-    else {
-        if (auto* cursorElement = updateCursorElement(document)) {
-            if (cursorElement->href() != downcast<CSSImageValue>(m_imageValue.get()).url())
-                m_imageValue = CSSImageValue::create(cursorElement->href());
-        }
-        styleImage = &downcast<CSSImageValue>(m_imageValue.get()).styleImage();
-    }
-    styleImage->setCSSValue(*this);
+        return downcast<CSSImageSetValue>(m_imageValue.get()).loadBestFitImage(loader, options);
 
-    return *styleImage;
+    if (auto* cursorElement = updateCursorElement(*loader.document())) {
+        if (cursorElement->href() != downcast<CSSImageValue>(m_imageValue.get()).url())
+            m_imageValue = CSSImageValue::create(cursorElement->href());
+    }
+
+    return { downcast<CSSImageValue>(m_imageValue.get()).loadImage(loader, options), 1 };
 }
 
 bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const

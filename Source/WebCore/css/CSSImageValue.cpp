@@ -32,7 +32,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "MemoryCache.h"
-#include "StyleCachedImage.h"
 
 namespace WebCore {
 
@@ -46,60 +45,46 @@ CSSImageValue::CSSImageValue(const String& url)
 CSSImageValue::CSSImageValue(CachedImage& image)
     : CSSValue(ImageClass)
     , m_url(image.url())
-    , m_image(StyleCachedImage::create(*this))
+    , m_cachedImage(&image)
     , m_accessedImage(true)
 {
-    m_image->setCachedImage(image);
 }
 
 
 CSSImageValue::~CSSImageValue()
 {
-    if (m_image)
-        m_image->detachFromCSSValue();
 }
 
 bool CSSImageValue::isPending() const
 {
-    return !m_image || !m_image->cachedImage();
+    return !m_accessedImage;
 }
 
-StyleCachedImage& CSSImageValue::styleImage()
+CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-    if (!m_image)
-        m_image = StyleCachedImage::create(*this);
+    if (!m_accessedImage) {
+        m_accessedImage = true;
 
-    return *m_image;
-}
+        CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
+        if (m_initiatorName.isEmpty())
+            request.setInitiator(cachedResourceRequestInitiators().css);
+        else
+            request.setInitiator(m_initiatorName);
 
-void CSSImageValue::loadImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
-{
-    if (m_accessedImage)
-        return;
-    m_accessedImage = true;
-
-    CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
-    if (m_initiatorName.isEmpty())
-        request.setInitiator(cachedResourceRequestInitiators().css);
-    else
-        request.setInitiator(m_initiatorName);
-
-    if (options.mode == FetchOptions::Mode::Cors) {
-        ASSERT(loader.document()->securityOrigin());
-        updateRequestForAccessControl(request.mutableResourceRequest(), *loader.document()->securityOrigin(), options.allowCredentials);
+        if (options.mode == FetchOptions::Mode::Cors) {
+            ASSERT(loader.document()->securityOrigin());
+            updateRequestForAccessControl(request.mutableResourceRequest(), *loader.document()->securityOrigin(), options.allowCredentials);
+        }
+        m_cachedImage = loader.requestImage(request);
     }
-    if (CachedResourceHandle<CachedImage> cachedImage = loader.requestImage(request))
-        styleImage().setCachedImage(*cachedImage);
+    return m_cachedImage.get();
 }
 
 bool CSSImageValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
-    if (!m_image)
+    if (!m_cachedImage)
         return false;
-    CachedResource* cachedResource = m_image->cachedImage();
-    if (!cachedResource)
-        return false;
-    return handler(*cachedResource);
+    return handler(*m_cachedImage);
 }
 
 bool CSSImageValue::equals(const CSSImageValue& other) const
@@ -122,7 +107,9 @@ Ref<CSSValue> CSSImageValue::cloneForCSSOM() const
 
 bool CSSImageValue::knownToBeOpaque(const RenderElement* renderer) const
 {
-    return m_image ? m_image->knownToBeOpaque(renderer) : false;
+    if (!m_cachedImage)
+        return false;
+    return m_cachedImage->currentFrameKnownToBeOpaque(renderer);
 }
 
 } // namespace WebCore

@@ -27,9 +27,6 @@
 #include "StylePendingResources.h"
 
 #include "CSSCursorImageValue.h"
-#include "CSSImageGeneratorValue.h"
-#include "CSSImageSetValue.h"
-#include "CSSImageValue.h"
 #include "CachedResourceLoader.h"
 #include "CachedSVGDocumentReference.h"
 #include "ContentData.h"
@@ -60,26 +57,7 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
         options.allowCredentials = DoNotAllowStoredCredentials;
     }
 
-    auto cssValue = const_cast<StyleImage*>(styleImage)->cssValue();
-    if (is<CSSImageValue>(cssValue.get())) {
-        downcast<CSSImageValue>(*cssValue).loadImage(document.cachedResourceLoader(), options);
-        return;
-    };
-
-    if (is<CSSImageSetValue>(cssValue.get())) {
-        downcast<CSSImageSetValue>(*cssValue).loadBestFitImage(document.cachedResourceLoader(), options);
-        return;
-    };
-
-    if (is<CSSImageGeneratorValue>(cssValue.get())) {
-        downcast<CSSImageGeneratorValue>(*cssValue).loadSubimages(document.cachedResourceLoader(), options);
-        return;
-    };
-
-    if (is<CSSCursorImageValue>(cssValue.get())) {
-        downcast<CSSCursorImageValue>(*cssValue).loadImage(document.cachedResourceLoader(), options);
-        return;
-    };
+    const_cast<StyleImage&>(*styleImage).load(document.cachedResourceLoader(), options);
 }
 
 static void loadPendingImages(const PendingResources& pendingResources, Document& document, RenderStyle& style, const Element* element)

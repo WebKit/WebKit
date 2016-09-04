@@ -35,9 +35,11 @@
 namespace WebCore {
 
 class CachedImage;
+class CachedResourceLoader;
 class CSSValue;
 class RenderElement;
 class RenderObject;
+struct ResourceLoaderOptions;
 
 typedef const void* WrappedImagePtr;
 
@@ -45,15 +47,13 @@ class StyleImage : public RefCounted<StyleImage> {
 public:
     virtual ~StyleImage() { }
 
-    bool operator==(const StyleImage& other) const
-    {
-        return &other == this || (data() && data() == other.data());
-    }
+    virtual bool operator==(const StyleImage& other) const = 0;
 
     virtual PassRefPtr<CSSValue> cssValue() const = 0;
 
     virtual bool canRender(const RenderObject*, float /*multiplier*/) const { return true; }
     virtual bool isPending() const = 0;
+    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) = 0;
     virtual bool isLoaded() const { return true; }
     virtual bool errorOccurred() const { return false; }
     virtual FloatSize imageSize(const RenderElement*, float multiplier) const = 0;

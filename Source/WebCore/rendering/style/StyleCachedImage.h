@@ -32,26 +32,25 @@ namespace WebCore {
 
 class CSSValue;
 class CachedImage;
+class Document;
 
-class StyleCachedImage final : public StyleImage, private CachedImageClient {
+class StyleCachedImage final : public StyleImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<StyleCachedImage> create(CSSValue& cssValue) { return adoptRef(*new StyleCachedImage(cssValue)); }
     virtual ~StyleCachedImage();
 
-    CachedImage* cachedImage() const override { return m_image.get(); }
+    bool operator==(const StyleImage& other) const override;
 
-    void detachFromCSSValue() { m_cssValue = nullptr; }
-    void setCSSValue(CSSValue& value) { m_cssValue = &value; }
+    CachedImage* cachedImage() const override;
 
-    void setCachedImage(CachedImage&, float scaleFactor = 1);
-
-    WrappedImagePtr data() const override { return m_image.get(); }
+    WrappedImagePtr data() const override { return m_cachedImage.get(); }
 
     PassRefPtr<CSSValue> cssValue() const override;
     
     bool canRender(const RenderObject*, float multiplier) const override;
     bool isPending() const override;
+    void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
     bool isLoaded() const override;
     bool errorOccurred() const override;
     FloatSize imageSize(const RenderElement*, float multiplier) const override;
@@ -69,9 +68,9 @@ public:
 private:
     StyleCachedImage(CSSValue&);
 
-    CSSValue* m_cssValue;
-    float m_scaleFactor { 1 };
-    CachedResourceHandle<CachedImage> m_image;
+    Ref<CSSValue> m_cssValue;
+    mutable float m_scaleFactor { 1 };
+    mutable CachedResourceHandle<CachedImage> m_cachedImage;
 };
 
 } // namespace WebCore
