@@ -1,3 +1,31 @@
+2016-09-03  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add keyboard shortcut for switching to last used dock configuration
+        https://bugs.webkit.org/show_bug.cgi?id=110328
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.updateDockedState):
+        (WebInspector._togglePreviousDockConfiguration):
+        Added variable for saving the previous dock state, which is used by the new Cmd+Shift+D
+        shortcut to toggle the docked state between the current and previous states.
+
+        (WebInspector._undock):
+        (WebInspector._dockBottom):
+        (WebInspector._dockRight):
+        (WebInspector._updateDockNavigationItems):
+        (WebInspector._dockedResizerMouseDown):
+        (WebInspector._dockedResizerMouseDown.dockedResizerDrag):
+        Make use of new WebInspector.DockConfiguration instead of hardcoded strings.
+
+        (WebInspector.DockConfiguration):
+        Create enum for different WebInspector dock modes:
+         - Right
+         - Bottom
+         - Undocked
+
 2016-09-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Address ESLint undefined variable errors

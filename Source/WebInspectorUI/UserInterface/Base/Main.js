@@ -316,6 +316,8 @@ WebInspector.contentLoaded = function()
     this._dockBottomToolbarButton = new WebInspector.ButtonToolbarItem("dock-bottom", WebInspector.UIString("Dock to bottom of window"), null, "Images/DockBottom.svg");
     this._dockBottomToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._dockBottom, this);
 
+    this._togglePreviousDockConfigurationKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "D", this._togglePreviousDockConfiguration.bind(this));
+
     var toolTip;
     if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
         toolTip = WebInspector.UIString("Restart (%s)").format(this._reloadPageKeyboardShortcut.displayName);
@@ -699,23 +701,31 @@ WebInspector.updateDockingAvailability = function(available)
 
 WebInspector.updateDockedState = function(side)
 {
-    if (this._dockSide === side)
+    if (this._dockConfiguration === side)
         return;
 
-    this._dockSide = side;
+    this._previousDockConfiguration = this._dockConfiguration;
+    if (!this._previousDockConfiguration) {
+        if (side === WebInspector.DockConfiguration.Right)
+            this._previousDockConfiguration = WebInspector.DockConfiguration.Bottom;
+        else
+            this._previousDockConfiguration = WebInspector.DockConfiguration.Right;
+    }
 
-    this.docked = side !== "undocked";
+    this._dockConfiguration = side;
+
+    this.docked = side !== WebInspector.DockConfiguration.Undocked;
 
     this._ignoreToolbarModeDidChangeEvents = true;
 
-    if (side === "bottom") {
-        document.body.classList.add("docked", "bottom");
-        document.body.classList.remove("window-inactive", "right");
-    } else if (side === "right") {
-        document.body.classList.add("docked", "right");
-        document.body.classList.remove("window-inactive", "bottom");
+    if (side === WebInspector.DockConfiguration.Bottom) {
+        document.body.classList.add("docked", WebInspector.DockConfiguration.Bottom);
+        document.body.classList.remove("window-inactive", WebInspector.DockConfiguration.Right);
+    } else if (side === WebInspector.DockConfiguration.Right) {
+        document.body.classList.add("docked", WebInspector.DockConfiguration.Right);
+        document.body.classList.remove("window-inactive", WebInspector.DockConfiguration.Bottom);
     } else
-        document.body.classList.remove("docked", "right", "bottom");
+        document.body.classList.remove("docked", WebInspector.DockConfiguration.Right, WebInspector.DockConfiguration.Bottom);
 
     this._ignoreToolbarModeDidChangeEvents = false;
 
@@ -1479,26 +1489,31 @@ WebInspector.isDebugUIEnabled = function()
 
 WebInspector._undock = function(event)
 {
-    InspectorFrontendHost.requestSetDockSide("undocked");
+    InspectorFrontendHost.requestSetDockSide(WebInspector.DockConfiguration.Undocked);
 };
 
 WebInspector._dockBottom = function(event)
 {
-    InspectorFrontendHost.requestSetDockSide("bottom");
+    InspectorFrontendHost.requestSetDockSide(WebInspector.DockConfiguration.Bottom);
 };
 
 WebInspector._dockRight = function(event)
 {
-    InspectorFrontendHost.requestSetDockSide("right");
+    InspectorFrontendHost.requestSetDockSide(WebInspector.DockConfiguration.Right);
+};
+
+WebInspector._togglePreviousDockConfiguration = function(event)
+{
+    InspectorFrontendHost.requestSetDockSide(this._previousDockConfiguration);
 };
 
 WebInspector._updateDockNavigationItems = function()
 {
     if (this._dockingAvailable || this.docked) {
         this._closeToolbarButton.hidden = !this.docked;
-        this._undockToolbarButton.hidden = this._dockSide === "undocked";
-        this._dockBottomToolbarButton.hidden = this._dockSide === "bottom";
-        this._dockRightToolbarButton.hidden = this._dockSide === "right";
+        this._undockToolbarButton.hidden = this._dockConfiguration === WebInspector.DockConfiguration.Undocked;
+        this._dockBottomToolbarButton.hidden = this._dockConfiguration === WebInspector.DockConfiguration.Bottom;
+        this._dockRightToolbarButton.hidden = this._dockConfiguration === WebInspector.DockConfiguration.Right;
     } else {
         this._closeToolbarButton.hidden = true;
         this._undockToolbarButton.hidden = true;
@@ -1621,7 +1636,7 @@ WebInspector._toolbarMouseDown = function(event)
     if (event.ctrlKey)
         return;
 
-    if (this._dockSide === "right")
+    if (this._dockConfiguration === WebInspector.DockConfiguration.Right)
         return;
 
     if (this.docked)
@@ -1643,9 +1658,9 @@ WebInspector._dockedResizerMouseDown = function(event)
         !event.target.classList.contains("flexible-space") && !event.target.classList.contains("item-section"))
         return;
 
-    var windowProperty = this._dockSide === "bottom" ? "innerHeight" : "innerWidth";
-    var eventScreenProperty = this._dockSide === "bottom" ? "screenY" : "screenX";
-    var eventClientProperty = this._dockSide === "bottom" ? "clientY" : "clientX";
+    let windowProperty = this._dockConfiguration === WebInspector.DockConfiguration.Bottom ? "innerHeight" : "innerWidth";
+    let eventScreenProperty = this._dockConfiguration === WebInspector.DockConfiguration.Bottom ? "screenY" : "screenX";
+    let eventClientProperty = this._dockConfiguration === WebInspector.DockConfiguration.Bottom ? "clientY" : "clientX";
 
     var resizerElement = event.target;
     var firstClientPosition = event[eventClientProperty];
@@ -1677,7 +1692,7 @@ WebInspector._dockedResizerMouseDown = function(event)
         // width or height should be the same in device pixels regardless of the document zoom.
         dimension *= this._zoomFactor();
 
-        if (this._dockSide === "bottom")
+        if (this._dockConfiguration === WebInspector.DockConfiguration.Bottom)
             InspectorFrontendHost.setAttachedWindowHeight(dimension);
         else
             InspectorFrontendHost.setAttachedWindowWidth(dimension);
@@ -1691,7 +1706,7 @@ WebInspector._dockedResizerMouseDown = function(event)
         WebInspector.elementDragEnd(event);
     }
 
-    WebInspector.elementDragStart(resizerElement, dockedResizerDrag.bind(this), dockedResizerDragEnd.bind(this), event, this._dockSide === "bottom" ? "row-resize" : "col-resize");
+    WebInspector.elementDragStart(resizerElement, dockedResizerDrag.bind(this), dockedResizerDragEnd.bind(this), event, this._dockConfiguration === WebInspector.DockConfiguration.Bottom ? "row-resize" : "col-resize");
 };
 
 WebInspector._moveWindowMouseDown = function(event)
@@ -2490,4 +2505,10 @@ WebInspector.dialogWasDismissed = function(dialog)
         return;
 
     WebInspector.showRepresentedObject(representedObject, dialog.cookie);
+};
+
+WebInspector.DockConfiguration = {
+    Right: "right",
+    Bottom: "bottom",
+    Undocked: "undocked",
 };
