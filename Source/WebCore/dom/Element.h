@@ -274,7 +274,9 @@ public:
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    void setCustomElementIsResolved(JSCustomElementInterface&);
+    void setIsDefinedCustomElement(JSCustomElementInterface&);
+    void setIsFailedCustomElement(JSCustomElementInterface&);
+    void setIsCustomElementUpgradeCandidate();
     JSCustomElementInterface* customElementInterface() const;
 #endif
 

@@ -1295,7 +1295,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
     document().incDOMTreeVersion();
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (UNLIKELY(isCustomElement()))
+    if (UNLIKELY(isDefinedCustomElement()))
         CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
 #endif
 
@@ -1495,7 +1495,7 @@ void Element::didMoveToNewDocument(Document* oldDocument)
     }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (UNLIKELY(isCustomElement()))
+    if (UNLIKELY(isDefinedCustomElement()))
         CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, *oldDocument, document());
 #endif
 }
@@ -1607,9 +1607,9 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
 
 #if ENABLE(CUSTOM_ELEMENTS)
     if (becomeConnected) {
-        if (UNLIKELY(isUnresolvedCustomElement()))
+        if (UNLIKELY(isCustomElementUpgradeCandidate()))
             CustomElementReactionQueue::enqueueElementUpgradeIfDefined(*this);
-        if (UNLIKELY(isCustomElement()))
+        if (UNLIKELY(isDefinedCustomElement()))
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
     }
 
@@ -1663,7 +1663,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
         }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-        if (becomeDisconnected && UNLIKELY(isCustomElement()))
+        if (becomeDisconnected && UNLIKELY(isDefinedCustomElement()))
             CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(*this);
 #endif
     }
@@ -1836,16 +1836,31 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
     
 #if ENABLE(CUSTOM_ELEMENTS)
 
-void Element::setCustomElementIsResolved(JSCustomElementInterface& elementInterface)
+void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterface)
 {
-    clearFlag(IsEditingTextOrUnresolvedCustomElementFlag);
+    clearFlag(IsEditingTextOrUndefinedCustomElementFlag);
     setFlag(IsCustomElement);
     ensureElementRareData().setCustomElementInterface(elementInterface);
 }
 
+void Element::setIsFailedCustomElement(JSCustomElementInterface& elementInterface)
+{
+    ASSERT(isUndefinedCustomElement());
+    ASSERT(getFlag(IsEditingTextOrUndefinedCustomElementFlag));
+    clearFlag(IsCustomElement);
+    ensureElementRareData().setCustomElementInterface(elementInterface);
+}
+
+void Element::setIsCustomElementUpgradeCandidate()
+{
+    ASSERT(!getFlag(IsCustomElement));
+    setFlag(IsCustomElement);
+    setFlag(IsEditingTextOrUndefinedCustomElementFlag);
+}
+
 JSCustomElementInterface* Element::customElementInterface() const
 {
-    ASSERT(isCustomElement());
+    ASSERT(isDefinedCustomElement());
     if (!hasRareData())
         return nullptr;
     return elementRareData()->customElementInterface();

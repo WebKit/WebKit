@@ -21,17 +21,25 @@
         my-undefined-element:defined { background: red; }
         my-undefined-element:not(:defined) { color: green; }
 
-        div.box { background: green; color: red; height: 50px; }
+        failed-element { background: green; color: red; }
+        failed-element:defined { background: red; }
+        failed-element:not(:defined) { color: green; }
+
+        div.box { background: green; color: red; }
         div:defined { color: green; }
         div:not(:defined) { background: red; }
     </style>
     <p>Test passes if you see a single 100px by 100px green box below.</p>
     <my-defined-element class="box">FAIL</my-defined-element>
     <my-undefined-element class="box">FAIL</my-undefined-element>
+    <failed-element class="box">FAIL</failed-element>
     <div class="box"></div>
     <script>
 
         customElements.define('my-defined-element', class extends HTMLElement {});
+        customElements.define('failed-element', class extends HTMLElement {
+            constructor() { throw 'bad'; }
+        });
 
     </script>
 </body>

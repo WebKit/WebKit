@@ -60,7 +60,7 @@ CustomElementRegistry::~CustomElementRegistry()
 static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface)
 {
     for (Element* element = ElementTraversal::firstWithin(node); element; element = ElementTraversal::next(*element)) {
-        if (element->isUnresolvedCustomElement() && element->tagQName() == elementInterface.name())
+        if (element->isCustomElementUpgradeCandidate() && element->tagQName() == elementInterface.name())
             CustomElementReactionQueue::enqueueElementUpgrade(*element, elementInterface);
         if (auto* shadowRoot = element->shadowRoot()) {
             if (shadowRoot->mode() != ShadowRoot::Mode::UserAgent)

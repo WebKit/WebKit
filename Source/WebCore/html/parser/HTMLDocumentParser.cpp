@@ -195,10 +195,14 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
     if (std::unique_ptr<CustomElementConstructionData> constructionData = m_treeBuilder->takeCustomElementConstructionData()) {
         ASSERT(!m_treeBuilder->hasParserBlockingScriptWork());
 
-        RefPtr<Element> newElement = constructionData->elementInterface->constructElement(constructionData->name, JSCustomElementInterface::ShouldClearException::Clear);
+        // https://html.spec.whatwg.org/#create-an-element-for-the-token
+        auto& elementInterface = constructionData->elementInterface.get();
+        RefPtr<Element> newElement = elementInterface.constructElement(constructionData->name, JSCustomElementInterface::ShouldClearException::Clear);
         if (!newElement) {
             ASSERT(!m_treeBuilder->isParsingTemplateContents());
             newElement = HTMLUnknownElement::create(QualifiedName(nullAtom, constructionData->name, xhtmlNamespaceURI), *document());
+            newElement->setIsCustomElementUpgradeCandidate();
+            newElement->setIsFailedCustomElement(elementInterface);
         }
 
         m_treeBuilder->didCreateCustomOrCallbackElement(newElement.releaseNonNull(), *constructionData);

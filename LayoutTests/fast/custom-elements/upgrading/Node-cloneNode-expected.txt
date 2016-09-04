@@ -6,4 +6,5 @@ PASS Node.prototype.cloneNode(true) must be able to clone a descendent custom el
 PASS HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed due to a custom element constructor constructing itself after super() call 
 PASS HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed due to a custom element constructor constructing itself before super() call 
 PASS Upgrading a custom element must throw InvalidStateError when the custom element's constructor returns another element 
+PASS Inserting an element must not try to upgrade a custom element when it had already failed to upgrade once 
 

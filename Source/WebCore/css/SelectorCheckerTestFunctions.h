@@ -66,7 +66,7 @@ ALWAYS_INLINE bool matchesEnabledPseudoClass(const Element& element)
 #if ENABLE(CUSTOM_ELEMENTS)
 ALWAYS_INLINE bool isDefinedElement(const Element& element)
 {
-    return !element.isUnresolvedCustomElement();
+    return !element.isUndefinedCustomElement();
 }
 #endif
 

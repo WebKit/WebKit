@@ -68,7 +68,7 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Element& element)
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Element>&& element)
 {
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (element->isCustomElement())
+    if (element->isDefinedCustomElement())
         return getCachedWrapper(globalObject->world(), element);
 #endif
     ASSERT(!getCachedWrapper(globalObject->world(), element));

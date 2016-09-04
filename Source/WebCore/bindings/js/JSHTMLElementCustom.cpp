@@ -82,7 +82,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
             return JSValue::encode(jsUndefined());
 
         Ref<HTMLElement> element = HTMLElement::create(elementInterface->name(), document);
-        element->setIsUnresolvedCustomElement();
+        element->setIsDefinedCustomElement(*elementInterface);
         auto* jsElement = JSHTMLElement::create(newElementStructure, globalObject, element.get());
         cacheWrapper(globalObject->world(), element.ptr(), jsElement);
         return JSValue::encode(jsElement);

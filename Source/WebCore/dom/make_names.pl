@@ -1323,7 +1323,7 @@ END
     if ($parameters{customElementInterfaceName}) {
         print F <<END
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (element->isUnresolvedCustomElement())
+    if (element->isCustomElementUpgradeCandidate())
         return CREATE_DOM_WRAPPER(globalObject, $parameters{customElementInterfaceName}, WTFMove(element));
 #endif
 END

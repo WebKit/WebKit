@@ -89,7 +89,6 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& l
         return nullptr;
     }
 
-    element->setCustomElementIsResolved(*this);
     return element;
 }
 
@@ -149,7 +148,7 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
 void JSCustomElementInterface::upgradeElement(Element& element)
 {
     ASSERT(element.tagQName() == name());
-    ASSERT(element.isUnresolvedCustomElement());
+    ASSERT(element.isCustomElementUpgradeCandidate());
     if (!canInvokeCallback())
         return;
 
@@ -186,15 +185,18 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     m_constructionStack.removeLast();
 
-    if (state->hadException())
+    if (state->hadException()) {
+        element.setIsFailedCustomElement(*this);
         return;
+    }
 
     Element* wrappedElement = JSElement::toWrapped(returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
+        element.setIsFailedCustomElement(*this);
         throwInvalidStateError(*state, scope, "Custom element constructor failed to upgrade an element");
         return;
     }
-    wrappedElement->setCustomElementIsResolved(*this);
+    element.setIsDefinedCustomElement(*this);
 }
 
 void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const WTF::Function<void(ExecState*, JSDOMGlobalObject*, MarkedArgumentBuffer&)>& addArguments)

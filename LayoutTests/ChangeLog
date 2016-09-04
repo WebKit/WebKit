@@ -1,5 +1,27 @@
 2016-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Update the semantics of defined-ness of custom elements per spec changes
+        https://bugs.webkit.org/show_bug.cgi?id=161570
+
+        Reviewed by Darin Adler.
+
+        Added a new test cases to defined-pseudo-class.html, defined-rule.html, and Node-cloneNode.html
+        and rebaselined the tests.
+
+        * fast/custom-elements/defined-pseudo-class-expected.txt:
+        * fast/custom-elements/defined-pseudo-class.html:
+        (MyElement): Made matchInsideConstructor an instance variable so that there won't be inter-test dependency.
+        Added test cases for :defined not being not applying to a failed-to-upgrade custom element. Finally, updated
+        test expectation to reflect the fact :defined now applies inside custom element constructors immediately after
+        super() call.
+        * fast/custom-elements/defined-rule.html: Added a test case for :defined not applying to a failed-to-upgrade
+        custom element. Also adjusted the height of the last box so that the green box is still 100px by 100px.
+        * fast/custom-elements/upgrading/Node-cloneNode-expected.txt:
+        * fast/custom-elements/upgrading/Node-cloneNode.html: Added a test to make sure we don't try to upgrade
+        a custom element for the second time when the first attempt resulted in the constructor throwing an exception.
+
+2016-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unbreak customElements.whenDefined after r205383 with a crash fix
         https://bugs.webkit.org/show_bug.cgi?id=161562
 

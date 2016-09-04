@@ -164,6 +164,33 @@ test(function () {
     });
 }, 'Upgrading a custom element must throw InvalidStateError when the custom element\'s constructor returns another element');
 
+test(function () {
+    withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
+
+        var instance = contentDocument.createElement('my-custom-element');
+        contentDocument.body.appendChild(instance);
+
+        var calls = [];
+        class MyCustomElement extends contentWindow.HTMLElement {
+            constructor() {
+                super();
+                calls.push(this);
+                throw 'bad';
+            }
+        }
+
+        try {
+            contentWindow.customElements.define('my-custom-element', MyCustomElement);
+        } catch (e) { }
+
+        assert_array_equals(calls, [instance]);
+        contentDocument.body.removeChild(instance);
+        contentDocument.body.appendChild(instance);
+        assert_array_equals(calls, [instance]);
+
+    });
+}, 'Inserting an element must not try to upgrade a custom element when it had already failed to upgrade once');
+
 </script>
 </body>
 </html>

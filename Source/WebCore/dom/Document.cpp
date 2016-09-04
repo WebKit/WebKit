@@ -890,7 +890,7 @@ static ALWAYS_INLINE RefPtr<HTMLElement> createUpgradeCandidateElement(Document&
         return nullptr;
 
     auto element = HTMLElement::create(name, document);
-    element->setIsUnresolvedCustomElement();
+    element->setIsCustomElementUpgradeCandidate();
     return WTFMove(element);
 }
 #endif
@@ -1091,7 +1091,7 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const Qual
         if (UNLIKELY(registry)) {
             if (auto* elementInterface = registry->findInterface(name)) {
                 auto element = HTMLElement::create(name, document);
-                element->setIsUnresolvedCustomElement();
+                element->setIsCustomElementUpgradeCandidate();
                 CustomElementReactionQueue::enqueueElementUpgrade(element.get(), *elementInterface);
                 return element;
             }
