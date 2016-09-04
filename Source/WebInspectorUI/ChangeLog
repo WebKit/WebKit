@@ -1,5 +1,24 @@
 2016-09-03  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Change Cmd-D from kill line to selecting next occurrence
+        https://bugs.webkit.org/show_bug.cgi?id=161514
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/CodeMirrorTextKillController.js:
+        (WebInspector.CodeMirrorTextKillController):
+        (WebInspector.CodeMirrorTextKillController.prototype._handleTextChange):
+        Remove Cmd-D mapping.
+
+        * UserInterface/External/CodeMirror/sublime.js:
+        * UserInterface/Main.html:
+        Add Sublime Text keybinding support.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        Use Sublime text selectNextOccurrence for Cmd-D instead of deleteLine.
+
+2016-09-03  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Add keyboard shortcut for switching to last used dock configuration
         https://bugs.webkit.org/show_bug.cgi?id=110328
 

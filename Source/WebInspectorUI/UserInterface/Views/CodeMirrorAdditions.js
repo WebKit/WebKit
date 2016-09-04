@@ -584,6 +584,7 @@
         "Alt-PageDown": alterNumber.bind(null, -10),
         "Shift-Alt-PageDown": alterNumber.bind(null, -100),
         "Cmd-/": "toggleComment",
+        "Cmd-D": "selectNextOccurrence",
         "Shift-Tab": "indentLess",
         fallthrough: "macDefault"
     };

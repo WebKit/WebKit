@@ -46,7 +46,6 @@ WebInspector.CodeMirrorTextKillController = class CodeMirrorTextKillController e
             // Overrides for the 'emacsy' keymap.
             "Ctrl-K": this._handleTextKillCommand.bind(this, "killLine", false),
             "Alt-D": this._handleTextKillCommand.bind(this, "delWordAfter", false),
-            "Cmd-D": this._handleTextKillCommand.bind(this, "deleteLine", false),
             // Overrides for the 'macDefault' keymap.
             "Alt-Delete": this._handleTextKillCommand.bind(this, "delGroupAfter", false),
             "Cmd-Backspace": this._handleTextKillCommand.bind(this, "delWrappedLineLeft", true),
@@ -99,7 +98,7 @@ WebInspector.CodeMirrorTextKillController = class CodeMirrorTextKillController e
         // strange change objects. Special-case for when this could happen.
         let killedText;
         if (change.to.line === change.from.line + 1 && change.removed.length === 2) {
-            // An entire line was deleted, including newline (Cmd-D).
+            // An entire line was deleted, including newline (deleteLine).
             if (change.removed[0].length && !change.removed[1].length) 
                 killedText = change.removed[0] + "\n";
             // A newline was killed by itself (Ctrl-K).

@@ -36,6 +36,7 @@ CODE_MIRROR_FILES_TO_COPY = %w(
   addon/mode/overlay.js
   addon/runmode/runmode.js
   addon/search/searchcursor.js
+  keymap/sublime.js
   lib/codemirror.css
   lib/codemirror.js
   mode/clojure/clojure.js
