@@ -35,5 +35,7 @@ messages -> WebPlaybackSessionManagerProxy {
     SetRate(uint64_t contextId, bool isPlaying, double rate)
     SetUpPlaybackControlsManagerWithID(uint64_t contextId)
     ClearPlaybackControlsManager()
+
+    HandleControlledElementIDResponse(uint64_t contextId, String id)
 }
 #endif

@@ -4553,6 +4553,17 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     return _page && _page->hasActiveVideoForControlsManager();
 }
+
+- (void)_requestControlledElementID
+{
+    if (_page)
+        _page->requestControlledElementID();
+}
+
+- (void)_handleControlledElementIDResponse:(NSString *)identifier
+{
+    // Overridden by subclasses.
+}
 #endif // PLATFORM(MAC)
 
 // Execute the supplied block after the next transaction from the WebProcess.

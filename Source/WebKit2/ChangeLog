@@ -1,3 +1,37 @@
+2016-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor the heuristic for showing media controls to take all media sessions into account
+        https://bugs.webkit.org/show_bug.cgi?id=161503
+        <rdar://problem/28033783>
+
+        Reviewed by Darin Adler.
+
+        Adds an SPI testing hook for sending the element ID of the currently controlled video element from the web
+        process to the UI process. See VideoControlsManager.mm in Tools/TestWebKitAPI/ for usage.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _requestControlledElementID]):
+        (-[WKWebView _handleControlledElementIDResponse:]):
+        (-[WKWebView _hasActiveVideoForControlsManager]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionManagerProxy::handleControlledElementIDResponse):
+        (WebKit::WebPlaybackSessionManagerProxy::requestControlledElementID):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestControlledElementID):
+        (WebKit::WebPageProxy::handleControlledElementIDResponse):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::handleControlledElementIDResponse):
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::handleControlledElementIDRequest):
+
 2016-09-03  Darin Adler  <darin@apple.com>
 
         Streamline DOMImplementation, and move it to our new DOM exception system

@@ -146,6 +146,7 @@ public:
     void invalidate();
 
     PlatformWebPlaybackSessionInterface* controlsManagerInterface();
+    void requestControlledElementID();
 
 private:
     friend class WebPlaybackSessionModelContext;
@@ -176,6 +177,7 @@ private:
     void setWirelessVideoPlaybackDisabled(uint64_t contextId, bool);
     void setDuration(uint64_t contextId, double duration);
     void setRate(uint64_t contextId, bool isPlaying, double rate);
+    void handleControlledElementIDResponse(uint64_t, String) const;
 
     // Messages to WebPlaybackSessionManager
     void play(uint64_t contextId);

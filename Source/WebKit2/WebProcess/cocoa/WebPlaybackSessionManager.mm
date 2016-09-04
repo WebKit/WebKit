@@ -415,6 +415,13 @@ void WebPlaybackSessionManager::selectLegibleMediaOption(uint64_t contextId, uin
     ensureModel(contextId).selectLegibleMediaOption(index);
 }
 
+void WebPlaybackSessionManager::handleControlledElementIDRequest(uint64_t contextId)
+{
+    auto element = ensureModel(contextId).mediaElement();
+    if (element)
+        m_page->send(Messages::WebPlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

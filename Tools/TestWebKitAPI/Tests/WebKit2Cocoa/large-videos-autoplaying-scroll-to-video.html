@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            video {
+                width: 480px;
+                height: 320px;
+            }
+            #second {
+                margin-top: 5000px;
+            }
+        </style>
+        <script>
+            function handleLoaded() {
+                document.querySelector("#second").scrollIntoView();
+                setTimeout(function() {
+                    window.webkit.messageHandlers.playingHandler.postMessage("scrolled");
+                }, 0);
+            }
+        </script>
+    </head>
+    <body onload=handleLoaded()>
+        <video autoplay loop id="first" src="large-video-with-audio.mp4"></video>
+        <br>
+        <video autoplay loop id="second" src="large-video-with-audio.mp4"></video>
+    </body>
+<html>

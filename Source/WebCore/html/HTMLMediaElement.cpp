@@ -346,6 +346,79 @@ static uint64_t nextElementID()
 }
 #endif
 
+struct MediaElementSessionInfo {
+    const MediaElementSession* session;
+
+    double timeOfLastUserInteraction;
+    bool canShowControlsManager : 1;
+    bool isVisibleInViewportOrFullscreen : 1;
+    bool isLargeEnoughForMainContent : 1;
+    bool isPlayingAudio : 1;
+};
+
+static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElementSession& session)
+{
+    const HTMLMediaElement& element = session.element();
+    return {
+        &session,
+        session.mostRecentUserInteractionTime(),
+        session.canShowControlsManager(),
+        element.isFullscreen() || element.isVisibleInViewport(),
+        session.isLargeEnoughForMainContent(),
+        element.isPlaying() && element.hasAudio() && !element.muted()
+    };
+}
+
+static bool preferMediaControlsForCandidateSessionOverOtherCandidateSession(const MediaElementSessionInfo& session, const MediaElementSessionInfo& otherSession)
+{
+    // Prioritize visible media over offscreen media.
+    if (session.isVisibleInViewportOrFullscreen != otherSession.isVisibleInViewportOrFullscreen)
+        return session.isVisibleInViewportOrFullscreen;
+
+    // As a tiebreaker, prioritize elements that the user recently interacted with.
+    return session.timeOfLastUserInteraction > otherSession.timeOfLastUserInteraction;
+}
+
+static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionInfo& session)
+{
+    if (!session.isVisibleInViewportOrFullscreen)
+        return false;
+
+    if (!session.isLargeEnoughForMainContent)
+        return false;
+
+    // Even if this video is not a candidate, if it is visible to the user and large enough
+    // to be main content, it poses a risk for being confused with main content.
+    return true;
+}
+
+static const MediaElementSession* bestMediaSessionForShowingPlaybackControlsManager()
+{
+    auto allSessions = PlatformMediaSessionManager::sharedManager().currentSessionsMatching([] (const PlatformMediaSession& session) {
+        return is<MediaElementSession>(session);
+    });
+
+    Vector<MediaElementSessionInfo> candidateSessions;
+    bool atLeastOneNonCandidateMayBeConfusedForMainContent = false;
+    for (auto& session : allSessions) {
+        auto mediaElementSessionInfo = mediaElementSessionInfoForSession(downcast<MediaElementSession>(*session));
+        if (mediaElementSessionInfo.canShowControlsManager)
+            candidateSessions.append(mediaElementSessionInfo);
+        else if (mediaSessionMayBeConfusedWithMainContent(mediaElementSessionInfo))
+            atLeastOneNonCandidateMayBeConfusedForMainContent = true;
+    }
+
+    if (!candidateSessions.size())
+        return nullptr;
+
+    std::sort(candidateSessions.begin(), candidateSessions.end(), preferMediaControlsForCandidateSessionOverOtherCandidateSession);
+    auto strongestSessionCandidate = candidateSessions.first();
+    if (!strongestSessionCandidate.isVisibleInViewportOrFullscreen && !strongestSessionCandidate.isPlayingAudio && atLeastOneNonCandidateMayBeConfusedForMainContent)
+        return nullptr;
+
+    return strongestSessionCandidate.session;
+}
+
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(&document)
@@ -837,8 +910,7 @@ void HTMLMediaElement::didAttachRenderers()
 {
     if (auto* renderer = this->renderer()) {
         renderer->updateFromElement();
-        if (m_mediaSession->hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted)
-            || m_mediaSession->hasBehaviorRestriction(MediaElementSession::OverrideUserGestureRequirementForMainContent))
+        if (m_mediaSession && m_mediaSession->wantsToObserveViewportVisibilityForAutoplay())
             renderer->registerForVisibleInViewportCallback();
     }
     updateShouldAutoplay();
@@ -4022,6 +4094,11 @@ void HTMLMediaElement::layoutSizeChanged()
         m_receivedLayoutSizeChanged = true;
         scheduleUpdatePlaybackControlsManager();
     }
+
+    // If the video is a candidate for main content, we should register it for viewport visibility callbacks
+    // if it hasn't already been registered.
+    if (renderer() && m_mediaSession && !m_mediaSession->wantsToObserveViewportVisibilityForAutoplay() && m_mediaSession->wantsToObserveViewportVisibilityForMediaControls())
+        renderer()->registerForVisibleInViewportCallback();
 }
 
 void HTMLMediaElement::visibilityDidChange()
@@ -7141,6 +7218,7 @@ static bool mediaElementIsAllowedToAutoplay(const HTMLMediaElement& element)
 void HTMLMediaElement::isVisibleInViewportChanged()
 {
     updateShouldAutoplay();
+    scheduleUpdatePlaybackControlsManager();
 }
 
 void HTMLMediaElement::updateShouldAutoplay()
@@ -7169,20 +7247,29 @@ void HTMLMediaElement::updateShouldPlay()
         play();
 }
 
+void HTMLMediaElement::resetPlaybackSessionState()
+{
+    if (m_mediaSession)
+        m_mediaSession->resetPlaybackSessionState();
+}
+
+bool HTMLMediaElement::isVisibleInViewport() const
+{
+    auto renderer = this->renderer();
+    return renderer && renderer->visibleInViewportState() == RenderElement::VisibleInViewport;
+}
+
 void HTMLMediaElement::updatePlaybackControlsManager()
 {
     Page* page = document().page();
     if (!page)
         return;
 
-    PlatformMediaSession* session = PlatformMediaSessionManager::sharedManager().currentSessionMatching([] (const PlatformMediaSession& session) {
-        return session.canControlControlsManager();
-    });
-
-    if (!is<MediaElementSession>(session))
-        page->chrome().client().clearPlaybackControlsManager();
+    // FIXME: Ensure that the renderer here should be up to date.
+    if (auto bestMediaSession = bestMediaSessionForShowingPlaybackControlsManager())
+        page->chrome().client().setUpPlaybackControlsManager(bestMediaSession->element());
     else
-        page->chrome().client().setUpPlaybackControlsManager(downcast<MediaElementSession>(session)->element());
+        page->chrome().client().clearPlaybackControlsManager();
 }
 
 void HTMLMediaElement::scheduleUpdatePlaybackControlsManager()

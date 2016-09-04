@@ -280,13 +280,14 @@ PlatformMediaSession* PlatformMediaSessionManager::currentSession() const
     return m_sessions[0];
 }
 
-PlatformMediaSession* PlatformMediaSessionManager::currentSessionMatching(std::function<bool(const PlatformMediaSession &)> filter)
+Vector<PlatformMediaSession*> PlatformMediaSessionManager::currentSessionsMatching(std::function<bool(const PlatformMediaSession &)> filter)
 {
+    Vector<PlatformMediaSession*> matchingSessions;
     for (auto& session : m_sessions) {
         if (filter(*session))
-            return session;
+            matchingSessions.append(session);
     }
-    return nullptr;
+    return matchingSessions;
 }
     
 bool PlatformMediaSessionManager::sessionCanLoadMedia(const PlatformMediaSession& session) const

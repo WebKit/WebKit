@@ -143,6 +143,7 @@ protected:
     void endScanning(uint64_t contextId);
     void selectAudioMediaOption(uint64_t contextId, uint64_t index);
     void selectLegibleMediaOption(uint64_t contextId, uint64_t index);
+    void handleControlledElementIDRequest(uint64_t contextId);
 
     WebPage* m_page;
     HashMap<WebCore::HTMLMediaElement*, uint64_t> m_mediaElements;

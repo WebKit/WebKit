@@ -35,5 +35,6 @@ messages -> WebPlaybackSessionManager {
     EndScanning(uint64_t contextId)
     SelectAudioMediaOption(uint64_t contextId, uint64_t index)
     SelectLegibleMediaOption(uint64_t contextId, uint64_t index)
+    HandleControlledElementIDRequest(uint64_t contextId)
 }
 #endif

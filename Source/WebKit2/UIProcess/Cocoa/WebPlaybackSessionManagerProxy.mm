@@ -394,6 +394,19 @@ void WebPlaybackSessionManagerProxy::setRate(uint64_t contextId, bool isPlaying,
     ensureModel(contextId).setRate(isPlaying, rate);
 }
 
+
+void WebPlaybackSessionManagerProxy::handleControlledElementIDResponse(uint64_t contextId, String identifier) const
+{
+#if PLATFORM(MAC)
+    if (contextId == m_controlsManagerContextId)
+        m_page->handleControlledElementIDResponse(identifier);
+#else
+    UNUSED_PARAM(contextId);
+    UNUSED_PARAM(identifier);
+#endif
+}
+
+
 #pragma mark Messages to WebPlaybackSessionManager
 
 void WebPlaybackSessionManagerProxy::play(uint64_t contextId)
@@ -454,6 +467,12 @@ void WebPlaybackSessionManagerProxy::selectAudioMediaOption(uint64_t contextId, 
 void WebPlaybackSessionManagerProxy::selectLegibleMediaOption(uint64_t contextId, uint64_t index)
 {
     m_page->send(Messages::WebPlaybackSessionManager::SelectLegibleMediaOption(contextId, index), m_page->pageID());
+}
+
+void WebPlaybackSessionManagerProxy::requestControlledElementID()
+{
+    if (m_controlsManagerContextId)
+        m_page->send(Messages::WebPlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId), m_page->pageID());
 }
 
 PlatformWebPlaybackSessionInterface* WebPlaybackSessionManagerProxy::controlsManagerInterface()

@@ -92,7 +92,7 @@ public:
     void setCurrentSession(PlatformMediaSession&);
     PlatformMediaSession* currentSession() const;
 
-    PlatformMediaSession* currentSessionMatching(std::function<bool(const PlatformMediaSession&)>);
+    Vector<PlatformMediaSession*> currentSessionsMatching(std::function<bool(const PlatformMediaSession&)>);
 
     void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession&);
     void sessionCanProduceAudioChanged(PlatformMediaSession&);

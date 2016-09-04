@@ -1,3 +1,40 @@
+2016-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor the heuristic for showing media controls to take all media sessions into account
+        https://bugs.webkit.org/show_bug.cgi?id=161503
+        <rdar://problem/28033783>
+
+        Reviewed by Darin Adler.
+
+        Adds new unit tests verifying the behavior of media playback controls when scrolling another video into view.
+        Please see the WebCore ChangeLog for more details about this change. Also refactors existing
+        VideoControlsManager tests by folding duplicated setup and testing logic into helper methods to make the unit
+        tests more readable.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (-[MessageHandler initWithMessage:handler:]):
+        (-[MessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[VideoControlsManagerTestWebView performAfterLoading:]):
+        (-[VideoControlsManagerTestWebView loadTestPageNamed:]):
+        (-[VideoControlsManagerTestWebView loadTestPageNamed:andExpectControlsManager:afterReceivingMessage:]):
+        (-[VideoControlsManagerTestWebView performAfterReceivingMessage:action:]):
+        (-[VideoControlsManagerTestWebView controlledElementID]):
+        (-[VideoControlsManagerTestWebView _handleControlledElementIDResponse:]):
+        (TestWebKitAPI::setUpWebViewForTestingVideoControlsManager):
+        (TestWebKitAPI::TEST):
+        (-[MediaPlaybackMessageHandler initWithWKWebView:finalMessageString:]): Deleted.
+        (-[MediaPlaybackMessageHandler userContentController:didReceiveScriptMessage:]): Deleted.
+        (-[OnLoadMessageHandler initWithWKWebView:handler:]): Deleted.
+        (-[OnLoadMessageHandler userContentController:didReceiveScriptMessage:]): Deleted.
+        (-[WKWebView performAfterLoading:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-playing-scroll-away.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-autoplaying-click-to-pause.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-autoplaying-scroll-to-video.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-paused-video-hides-controls.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-playing-muted-video-hides-controls.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-playing-video-keeps-controls.html: Added.
+
 2016-09-03  Youenn Fablet  <youenn@apple.com>
 
         run-webkit-tests should detect w3c test resource files

@@ -271,6 +271,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_requestControlledElementID WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_handleControlledElementIDResponse:(NSString *)identifier WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

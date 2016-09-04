@@ -67,6 +67,9 @@ void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* medi
     }
     m_isListening = false;
 
+    if (m_mediaElement)
+        m_mediaElement->resetPlaybackSessionState();
+
     m_mediaElement = mediaElement;
 
     if (m_mediaElement) {

@@ -54,8 +54,6 @@ public:
     bool pageAllowsDataLoading(const HTMLMediaElement&) const;
     bool pageAllowsPlaybackAfterResuming(const HTMLMediaElement&) const;
 
-    bool canControlControlsManager() const override;
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void showPlaybackTargetPicker(const HTMLMediaElement&);
     bool hasWirelessPlaybackTargets(const HTMLMediaElement&) const;
@@ -77,6 +75,8 @@ public:
     bool allowsAutomaticMediaDataLoading(const HTMLMediaElement&) const;
 
     void mediaEngineUpdated(const HTMLMediaElement&);
+
+    void resetPlaybackSessionState() override;
 
     // Restrictions to modify default behaviors.
     enum BehaviorRestrictionFlags : unsigned {
@@ -111,6 +111,12 @@ public:
 
     HTMLMediaElement& element() const { return m_element; }
 
+    bool wantsToObserveViewportVisibilityForMediaControls() const;
+    bool wantsToObserveViewportVisibilityForAutoplay() const;
+    bool canShowControlsManager() const;
+    bool isLargeEnoughForMainContent() const;
+    double mostRecentUserInteractionTime() const;
+
 private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -139,6 +145,8 @@ private:
 #if PLATFORM(IOS)
     bool m_hasPlaybackTargetAvailabilityListeners { false };
 #endif
+
+    double m_mostRecentUserInteractionTime { 0 };
 
     mutable bool m_isMainContent { false };
     Timer m_mainContentCheckTimer;
