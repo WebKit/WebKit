@@ -6,36 +6,14 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		99E9A7F21D70BAD300C247A6 /* Derived Sources */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 99E9A7F31D70BAD300C247A6 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
-			buildPhases = (
-				99E9A7F91D70BAF600C247A6 /* Generate Derived Sources */,
-			);
-			dependencies = (
-			);
-			name = "Derived Sources";
-			productName = "Derived Sources";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		1C60FF1614E6E3F7006CD77D /* localizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C60FF1314E6E35D006CD77D /* localizedStrings.js */; };
 		1C78EE1717611340002F6AA5 /* WebInspectorUI.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C78EE1617611340002F6AA5 /* WebInspectorUI.c */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		99E9A7F71D70BADD00C247A6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A54C224D148B23DE00373FA3 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 99E9A7F21D70BAD300C247A6;
-			remoteInfo = "Derived Sources";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
+		1C435CAC14E7B287004E10EA /* cssmin.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = cssmin.py; sourceTree = "<group>"; };
+		1C435CAD14E7B287004E10EA /* jsmin.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = jsmin.py; sourceTree = "<group>"; };
 		1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1C60FE3214E5F3CD006CD77D /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
@@ -76,6 +54,8 @@
 			children = (
 				1C60FF1914E73C64006CD77D /* combine-resources.pl */,
 				1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */,
+				1C435CAC14E7B287004E10EA /* cssmin.py */,
+				1C435CAD14E7B287004E10EA /* jsmin.py */,
 				1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */,
 			);
 			path = Scripts;
@@ -115,7 +95,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				99E9A7F81D70BADD00C247A6 /* PBXTargetDependency */,
 			);
 			name = WebInspectorUI;
 			productName = WebInspector;
@@ -131,12 +110,6 @@
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Apple;
-				TargetAttributes = {
-					99E9A7F21D70BAD300C247A6 = {
-						CreatedOnToolsVersion = 8.0;
-						ProvisioningStyle = Automatic;
-					};
-				};
 			};
 			buildConfigurationList = A54C2250148B23DE00373FA3 /* Build configuration list for PBXProject "WebInspectorUI" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -151,7 +124,6 @@
 			projectRoot = "";
 			targets = (
 				A54C2256148B23DF00373FA3 /* WebInspectorUI */,
-				99E9A7F21D70BAD300C247A6 /* Derived Sources */,
 			);
 		};
 /* End PBXProject section */
@@ -174,21 +146,7 @@
 			name = "Copy User Interface Resources";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This is defined differently for Make/xcodebuild vs CMake ports.\nDERIVED_SOURCES_DIR=\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebInspectorUI\"\n\n/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"";
-		};
-		99E9A7F91D70BAF600C247A6 /* Generate Derived Sources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate Derived Sources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "GENERATE_DERIVED_SOURCES_PATH=\"${SRCROOT}/Scripts/generate-webinspectorui-derived-sources\"\n[[ -x \"${GENERATE_DERIVED_SOURCES_PATH}\" ]] && exec \"${GENERATE_DERIVED_SOURCES_PATH}\"\nexit 0\n";
+			shellScript = "/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -202,14 +160,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		99E9A7F81D70BADD00C247A6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 99E9A7F21D70BAD300C247A6 /* Derived Sources */;
-			targetProxy = 99E9A7F71D70BADD00C247A6 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		1C60FF1314E6E35D006CD77D /* localizedStrings.js */ = {
@@ -235,30 +185,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */;
 			buildSettings = {
-			};
-			name = Production;
-		};
-		99E9A7F41D70BAD300C247A6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		99E9A7F51D70BAD300C247A6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		99E9A7F61D70BAD300C247A6 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -295,16 +221,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		99E9A7F31D70BAD300C247A6 /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				99E9A7F41D70BAD300C247A6 /* Debug */,
-				99E9A7F51D70BAD300C247A6 /* Release */,
-				99E9A7F61D70BAD300C247A6 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
 		A54C2250148B23DE00373FA3 /* Build configuration list for PBXProject "WebInspectorUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

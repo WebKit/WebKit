@@ -1,3 +1,18 @@
+2016-09-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r205415.
+        https://bugs.webkit.org/show_bug.cgi?id=161573
+
+        Many bots see inspector test failures, rolling out now and
+        investigating later. (Requested by brrian on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: unify Main.html and Test.html sources and
+        generate different copies with the preprocessor"
+        https://bugs.webkit.org/show_bug.cgi?id=161212
+        http://trac.webkit.org/changeset/205415
+
 2016-09-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: unify Main.html and Test.html sources and generate different copies with the preprocessor

@@ -26,10 +26,6 @@ if (ENABLE_WEBCORE)
     add_subdirectory(WebCore)
 endif ()
 
-if (ENABLE_WEBKIT OR ENABLE_WEBKIT2)
-    add_subdirectory(WebInspectorUI)
-endif ()
-
 if (ENABLE_WEBKIT)
     add_subdirectory(WebKit)
 endif ()

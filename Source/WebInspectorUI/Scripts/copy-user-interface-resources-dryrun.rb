@@ -31,49 +31,27 @@ if ARGV.size != 1 || ARGV[0].include?("-h")
   exit 1
 end
 
-JAVASCRIPTCORE_PATH = File.expand_path File.join(File.dirname(__FILE__), "..", "..", "JavaScriptCore")
-WEBCORE_PATH = File.expand_path File.join(File.dirname(__FILE__), "..", "..", "WebCore")
 WEB_INSPECTOR_PATH = File.expand_path File.join(File.dirname(__FILE__), "..")
-GENERATE_DERIVED_SOURCES_PATH = File.join WEB_INSPECTOR_PATH, "Scripts", "generate-webinspectorui-derived-sources"
 COPY_USER_INTERFACE_RESOURCES_PATH = File.join WEB_INSPECTOR_PATH, "Scripts", "copy-user-interface-resources.pl"
 
-# This script simulates processing user interface resources located in SRCROOT.
-# It places processed files in the specified output directory. This is most similar
-# to an isolated OBJROOT since it includes DerivedSources. It doesn't place files
-# into their DSTROOT locations, such as inside of WebInspectorUI.framework.
 $output_directory = File.expand_path ARGV[0]
-$start_directory = FileUtils.pwd
 
 Dir.mktmpdir do |tmpdir|
 
   # Create the output directory if needed.
   FileUtils.mkdir_p $output_directory
-
+  
   # Create empty derived sources expected to exist.
   FileUtils.touch(File.join(tmpdir, 'InspectorBackendCommands.js'))
-
-  # Stage some scripts expected to be in various framework PrivateHeaders.
+  
+  # Setup the environment and run.
+  ENV["DERIVED_SOURCES_DIR"] = tmpdir
   ENV["JAVASCRIPTCORE_PRIVATE_HEADERS_DIR"] = tmpdir
-  ENV["WEBCORE_PRIVATE_HEADERS_DIR"] = tmpdir
-  FileUtils.cp(File.join(JAVASCRIPTCORE_PATH, "Scripts", "cssmin.py"), tmpdir)
-  FileUtils.cp(File.join(JAVASCRIPTCORE_PATH, "Scripts", "jsmin.py"), tmpdir)
-  FileUtils.cp(File.join(WEBCORE_PATH, "bindings", "scripts", "preprocessor.pm"), tmpdir)
-
-  # Setup the environment and generate derived sources.
   ENV["SRCROOT"] = WEB_INSPECTOR_PATH
-  ENV["BUILT_PRODUCTS_DIR"] = $output_directory
-  ENV["ACTION"] = "install"
-  FileUtils.cd $start_directory
-  system(GENERATE_DERIVED_SOURCES_PATH) or raise "Failed to generate derived sources."
-
-  # Setup the environment and combine/process/stage resources.
-  ENV["DERIVED_SOURCES_DIR"] = File.join($output_directory, "DerivedSources", "WebInspectorUI")
   ENV["TARGET_BUILD_DIR"] = $output_directory
   ENV["UNLOCALIZED_RESOURCES_FOLDER_PATH"] = ""
   ENV["COMBINE_INSPECTOR_RESOURCES"] = "YES"
   ENV["COMBINE_TEST_RESOURCES"] = "YES"
-  ENV["FORCE_TOOL_INSTALL"] = "NO"
-  FileUtils.cd $start_directory
-  system(COPY_USER_INTERFACE_RESOURCES_PATH) or raise "Failed to process user interface resources."
+  exec COPY_USER_INTERFACE_RESOURCES_PATH
 
 end

@@ -1,5 +1,5 @@
 <!--
- * Copyright (C) 2013, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS"
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -26,11 +26,8 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-#if !INCLUDE_TEST_RESOURCES
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * file: blob: resource:; connect-src * ws:; media-src * blob:; font-src * blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
-#endif
 
-#if INCLUDE_UI_RESOURCES
     <link rel="stylesheet" href="External/CodeMirror/codemirror.css">
 
     <link rel="stylesheet" href="Views/ApplicationCacheFrameContentView.css">
@@ -201,24 +198,20 @@
     <link rel="stylesheet" href="Controllers/CodeMirrorCompletionController.css">
     <link rel="stylesheet" href="Controllers/CodeMirrorDragToAdjustNumberController.css">
     <link rel="stylesheet" href="Controllers/CodeMirrorTokenTrackingController.css">
-#endif // INCLUDE_UI_RESOURCES
 
-#if ENGINEERING_BUILD && !INCLUDE_TEST_RESOURCES
     <link rel="stylesheet" href="Debug/UncaughtExceptionReporter.css">
+
     <script src="Debug/UncaughtExceptionReporter.js"></script>
-#endif
 
     <script src="External/CodeMirror/codemirror.js"></script>
 
-    <script src="External/CodeMirror/css.js"></script>
-    <script src="External/CodeMirror/htmlmixed.js"></script>
-    <script src="External/CodeMirror/javascript.js"></script>
-
-#if INCLUDE_UI_RESOURCES
     <script src="External/CodeMirror/clojure.js"></script>
     <script src="External/CodeMirror/closebrackets.js"></script>
     <script src="External/CodeMirror/coffeescript.js"></script>
     <script src="External/CodeMirror/comment.js"></script>
+    <script src="External/CodeMirror/css.js"></script>
+    <script src="External/CodeMirror/htmlmixed.js"></script>
+    <script src="External/CodeMirror/javascript.js"></script>
     <script src="External/CodeMirror/livescript.js"></script>
     <script src="External/CodeMirror/matchbrackets.js"></script>
     <script src="External/CodeMirror/overlay.js"></script>
@@ -229,7 +222,6 @@
     <script src="External/CodeMirror/sql.js"></script>
     <script src="External/CodeMirror/sublime.js"></script>
     <script src="External/CodeMirror/xml.js"></script>
-#endif
 
     <script src="External/Esprima/esprima.js"></script>
 
@@ -239,15 +231,6 @@
     <script src="Base/LinkedList.js"></script>
     <script src="Base/ListMultimap.js"></script>
     <script src="Base/Object.js"></script>
-
-#if INCLUDE_TEST_RESOURCES
-    <script src="Test/TestHarness.js"></script>
-    <script src="Test/FrontendTestHarness.js"></script>
-    <script src="Test/TestSuite.js"></script>
-    <script src="Test/Test.js"></script>
-#else
-    <script src="Base/Main.js"></script>
-#endif
 
     <script src="Base/DOMUtilities.js"></script>
     <script src="Base/EventListener.js"></script>
@@ -365,7 +348,7 @@
     <script src="Models/ProfileNodeCall.js"></script>
     <script src="Models/PropertyDescriptor.js"></script>
     <script src="Models/PropertyPath.js"></script>
-    <script src="Models/PropertyPreview.js"></script>
+    <script src="Models/PropertyPreview.js"></script>    
     <script src="Models/RenderingFrameTimelineRecord.js"></script>
     <script src="Models/ReplayDashboard.js"></script>
     <script src="Models/ReplaySession.js"></script>
@@ -406,10 +389,6 @@
     <script src="Proxies/HeapSnapshotProxy.js"></script>
     <script src="Proxies/HeapSnapshotWorkerProxy.js"></script>
 
-    <script src="Views/CodeMirrorAdditions.js"></script>
-    <script src="Views/CodeMirrorFormatters.js"></script>
-
-#if INCLUDE_UI_RESOURCES
     <script src="Views/View.js"></script>
 
     <script src="Views/ConsoleCommandView.js"></script>
@@ -495,7 +474,9 @@
     <script src="Views/ChartDetailsSectionRow.js"></script>
     <script src="Views/CircleChart.js"></script>
     <script src="Views/ClusterContentView.js"></script>
+    <script src="Views/CodeMirrorAdditions.js"></script>
     <script src="Views/CodeMirrorEditor.js"></script>
+    <script src="Views/CodeMirrorFormatters.js"></script>
     <script src="Views/CodeMirrorTextMarkers.js"></script>
     <script src="Views/ColorPicker.js"></script>
     <script src="Views/ColorWheel.js"></script>
@@ -690,39 +671,16 @@
     <script src="Views/VisualStyleTimingEditor.js"></script>
     <script src="Views/VisualStyleURLInput.js"></script>
     <script src="Views/VisualStyleUnitSlider.js"></script>
-#endif // INCLUDE_UI_RESOURCES
 
-    <script src="Controllers/Formatter.js"></script>
-    <script src="Controllers/FormatterSourceMap.js"></script>
-    <script src="Controllers/ResourceQueryController.js"></script>
-
-    <script src="Controllers/AnalyzerManager.js"></script>
-    <script src="Controllers/ApplicationCacheManager.js"></script>
-    <script src="Controllers/BranchManager.js"></script>
-    <script src="Controllers/CSSStyleManager.js"></script>
-    <script src="Controllers/CSSStyleManager.js"></script>
-    <script src="Controllers/DashboardManager.js"></script>
-    <script src="Controllers/DebuggerManager.js"></script>
-    <script src="Controllers/DOMTreeManager.js"></script>
-    <script src="Controllers/FrameResourceManager.js"></script>
-    <script src="Controllers/HeapManager.js"></script>
-    <script src="Controllers/IssueManager.js"></script>
-    <script src="Controllers/LayerTreeManager.js"></script>
-    <script src="Controllers/LogManager.js"></script>
-    <script src="Controllers/MemoryManager.js"></script>
-    <script src="Controllers/ProbeManager.js"></script>
-    <script src="Controllers/ReplayManager.js"></script>
-    <script src="Controllers/RuntimeManager.js"></script>
-    <script src="Controllers/SourceMapManager.js"></script>
-    <script src="Controllers/StorageManager.js"></script>
-    <script src="Controllers/TimelineManager.js"></script>
-
-#if INCLUDE_UI_RESOURCES
     <script src="Controllers/Annotator.js"></script>
     <script src="Controllers/CodeMirrorEditingController.js"></script>
 
+    <script src="Controllers/AnalyzerManager.js"></script>
+    <script src="Controllers/ApplicationCacheManager.js"></script>
     <script src="Controllers/BasicBlockAnnotator.js"></script>
+    <script src="Controllers/BranchManager.js"></script>
     <script src="Controllers/BreakpointPopoverController.js"></script>
+    <script src="Controllers/CSSStyleManager.js"></script>
     <script src="Controllers/CodeMirrorColorEditingController.js"></script>
     <script src="Controllers/CodeMirrorCompletionController.js"></script>
     <script src="Controllers/CodeMirrorBezierEditingController.js"></script>
@@ -731,34 +689,40 @@
     <script src="Controllers/CodeMirrorSpringEditingController.js"></script>
     <script src="Controllers/CodeMirrorTokenTrackingController.js"></script>
     <script src="Controllers/CodeMirrorTextKillController.js"></script>
+    <script src="Controllers/DOMTreeManager.js"></script>
+    <script src="Controllers/DashboardManager.js"></script>
+    <script src="Controllers/DebuggerManager.js"></script>
     <script src="Controllers/DragToAdjustController.js"></script>
+    <script src="Controllers/Formatter.js"></script>
+    <script src="Controllers/FormatterSourceMap.js"></script>
+    <script src="Controllers/FrameResourceManager.js"></script>
+    <script src="Controllers/HeapManager.js"></script>
+    <script src="Controllers/IssueManager.js"></script>
     <script src="Controllers/JavaScriptLogViewController.js"></script>
     <script src="Controllers/JavaScriptRuntimeCompletionProvider.js"></script>
+    <script src="Controllers/LayerTreeManager.js"></script>
+    <script src="Controllers/LogManager.js"></script>
+    <script src="Controllers/MemoryManager.js"></script>
+    <script src="Controllers/ProbeManager.js"></script>
+    <script src="Controllers/ReplayManager.js"></script>
+    <script src="Controllers/ResourceQueryController.js"></script>
+    <script src="Controllers/RuntimeManager.js"></script>
+    <script src="Controllers/SourceMapManager.js"></script>
+    <script src="Controllers/StorageManager.js"></script>
+    <script src="Controllers/TimelineManager.js"></script>
     <script src="Controllers/TypeTokenAnnotator.js"></script>
     <script src="Controllers/VisualStyleCompletionsController.js"></script>
-#endif
 
     <script src="Workers/Formatter/FormatterContentBuilder.js"></script>
 
-#if ENGINEERING_BUILD
+    <script src="Base/Main.js"></script>
+
     <script src="Debug/Bootstrap.js"></script>
     <script src="Debug/CapturingProtocolTracer.js"></script>
     <script src="Debug/ProtocolTrace.js"></script>
-#endif
 
     <script>
         WebInspector.loaded();
-
-#if INCLUDE_TEST_RESOURCES
-        // Debug logging is synchronous on the test page.
-        InspectorTest.forceDebugLogging = false;
-
-        // Tee all TestHarness commands to stderr from within the Inspector.
-        InspectorTest.dumpActivityToSystemConsole = false;
-
-        // Best used in combination with dumpActivityToSystemConsole.
-        InspectorBackend.dumpInspectorProtocolMessages = false;
-#endif
     </script>
 </head>
 <body>

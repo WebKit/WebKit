@@ -373,12 +373,3 @@ macro(PROCESS_ALLINONE_FILE _file_list _all_in_one_file _result_file_list _no_co
     endforeach ()
 
 endmacro()
-
-# Converts a CMake list to a string containing elements separated by spaces.
-macro(TO_LIST_WITH_SPACES _in_list _out_string)
-    set(${_out_string} "")
-    foreach (_item ${_in_list})
-        set(${_out_string} "${${_out_string}} ${_item}")
-    endforeach ()
-    string(STRIP "${${_out_string}}" ${_out_string})
-endmacro()
