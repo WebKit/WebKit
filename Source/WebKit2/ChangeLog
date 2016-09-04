@@ -1,3 +1,18 @@
+2016-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: unify Main.html and Test.html sources and generate different copies with the preprocessor
+        https://bugs.webkit.org/show_bug.cgi?id=161212
+        <rdar://problem/28017961>
+
+        Reviewed by Joseph Pecoraro.
+
+        Rearrange CMake rules so that most Inspector UI work is done in WebInspectorUI.
+
+        * PlatformGTK.cmake:
+        - Move the list of Inspector resources into WebInspectorUI/CMakeLists.txt.
+        - Move generation of InspectorGResourceBundle into WebInspectorUI.
+        - Copy over InspectorGResourceBundle.c into WebKit2's Derived Sources before compiling.
+
 2016-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor the heuristic for showing media controls to take all media sessions into account

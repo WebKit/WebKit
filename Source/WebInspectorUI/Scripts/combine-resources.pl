@@ -35,7 +35,6 @@ our $outputStylesheetName;
 our $derivedSourcesDirectory;
 our $htmlDirectory;
 our $htmlFile;
-our $strip;
 
 GetOptions('output-dir=s' => \$outputDirectory,
            'output-script-name=s' => \$outputScriptName,
@@ -43,11 +42,10 @@ GetOptions('output-dir=s' => \$outputDirectory,
            'derived-sources-dir=s' => \$derivedSourcesDirectory,
            'input-dir=s' => \$inputDirectory,
            'input-html-dir=s' => \$htmlDirectory,
-           'input-html=s' => \$htmlFile,
-           'strip' => \$strip);
+           'input-html=s' => \$htmlFile);
 
-unless (defined $htmlFile and defined $derivedSourcesDirectory and defined $outputDirectory and (defined $strip or defined $outputScriptName or defined $outputStylesheetName)) {
-    print "Usage: $0 --input-html <path> --derived-sources-dir <path> --output-dir <path> [--output-script-name <name>] [--output-style-name <name>] [--strip]\n";
+unless (defined $htmlFile and defined $derivedSourcesDirectory and defined $outputDirectory and (defined $outputScriptName or defined $outputStylesheetName)) {
+    print "Usage: $0 --input-html <path> --derived-sources-dir <path> --output-dir <path> [--output-script-name <name>] [--output-style-name <name>]\n";
     exit;
 }
 
@@ -90,17 +88,12 @@ sub concatenateFiles($$$)
     # Don't use \s so we can control the newlines we consume.
     my $replacementExpression = "([\t ]*)" . $tagExpression . "[\t ]*\n+";
 
-    if (defined $strip) {
-        # Just strip all occurrences of the pattern.
-        $headContents =~ s/$replacementExpression//gi;
-    } else {
-        # Replace the first occurrence with a token so we can inject the concatenated tag in the same place
-        # as the first file that got consolidated. This makes sure we preserve some order if there are other
-        # items in the head that we didn't consolidate.
-        $headContents =~ s/$replacementExpression/$1%CONCATENATED%\n/i;
-        $headContents =~ s/$replacementExpression//gi;
-        $headContents =~ s/%CONCATENATED%/$concatenatedTag/;
-    }
+    # Replace the first occurrence with a token so we can inject the concatenated tag in the same place
+    # as the first file that got consolidated. This makes sure we preserve some order if there are other
+    # items in the head that we didn't consolidate.
+    $headContents =~ s/$replacementExpression/$1%CONCATENATED%\n/i;
+    $headContents =~ s/$replacementExpression//gi;
+    $headContents =~ s/%CONCATENATED%/$concatenatedTag/;
 }
 
 my $inputDirectoryPattern = "(?!External\/)(?!Workers\/)[^\"]*";

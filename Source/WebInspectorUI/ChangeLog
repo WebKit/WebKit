@@ -1,3 +1,86 @@
+2016-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: unify Main.html and Test.html sources and generate different copies with the preprocessor
+        https://bugs.webkit.org/show_bug.cgi?id=161212
+        <rdar://problem/28017961>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a Derived Sources build phase to WebInspectorUI project. Generate
+        Test.html and Main.html from a combined Inspector.html.in which has preprocessor
+        macros to include/exclude files not needed by all main resource versions.
+
+        Similarly, start generating these Inspector files in WebInspectorUI/CMakeLists.txt.
+        Move platform-specific bundling commands into PlatformGTK.cmake.
+
+        * CMakeLists.txt: Added.
+        Set up a list of common frontend resources that specific ports can extend, such as
+        with their own port-specific image resources. This list is the input to port-specific
+        packaging/bundling scripts. Eventually, minification and concatenation should happen
+        independently of the specific port by constructing the list of resources dynamically.
+
+        To ensure resources are always generated in WebInspectorUI and accessible from WebKit2,
+        add a dummy target that is always out of date and depends on generated files, causing
+        them to be built.
+
+        Also create a macro to run the preprocessor over Inspector.html.in using various
+        preprocessor macro definitions. These are customizable by ports to control the
+        appearance of ENGINEERING_BUILD, which guards resources not meant for shipping builds.
+
+        * Configurations/WebInspectorUIFramework.xcconfig:
+        We need to use preprocessor.pm from WebCore. On Mac, this is a private header.
+        Teach xcodebuild how to compute WEBCORE_PRIVATE_HEADERS_DIR. This is copied
+        from WebKit2's configuration files.
+
+        * PlatformGTK.cmake: Added.
+        Add GTK image resources to the resource list. Generate GResource catalog and embedded
+        C file into DerivedSources. WebKit2 will copy over this file and compile it.
+
+        * Scripts/combine-resources.pl:
+        (concatenateFiles):
+        Remove the --strip option as this patch removes the only use of it.
+
+        * DerivedSources.make: Added.
+        Generate Test.html and Main.html from the new combined Inspector.html.in.
+        The 'preprocess_main_resource' rule was copied from WebCore's DerivedSources.make.
+
+        * Scripts/cssmin.py: Removed.
+        * Scripts/jsmin.py: Removed.
+        These scripts are copied from JavaScriptCore but nobody uses these copies. Remove them.
+
+        * Scripts/copy-user-interface-resources-dryrun.rb: Do some cleanup.
+        - Stage scripts from SRCROOT into the tmpdir so dryrun doesn't require
+          a previous build to process WebInspectorUI resources.
+        - Run DerivedSources.make before copying/processing resources.
+        - Add some environment variables for new phase and group by script affected.
+        - Add a comment to clarify what this script is simulating.
+
+        * Scripts/copy-user-interface-resources.pl:
+        - Use Main.html and Test.html from DerivedSources/ instead of SRCROOT.
+        - Copy over Main.html and Test.html manually if not combining resources.
+        - Remove the command to strip files from Debug/ for production. This is
+          now redundant with ENGINEERING_BUILD guards in Inspector.html.in.
+        - Use jsmin.py from JavaScriptCore instead of the local copy.
+        - Wrap all multi-argument 'system' invocations so they are readable.
+
+        * Scripts/generate-webinspectorui-derived-sources: Added.
+        Added boilerplate script to run DerivedSources.make for Mac port.
+
+        * Scripts/preprocess-main-resource.pl: Added.
+        Trivially invoke the preprocessor on $0 using the given defines.
+
+        * UserInterface/Inspector.html.in: Renamed from Source/WebInspectorUI/UserInterface/Main.html.
+        * UserInterface/Test.html: Removed.
+        Combine Test.html and Main.html into Inspector.html.in. Add these guards:
+        - INCLUDE_TEST_RESOURCES: for resources excluded from Main.html.
+        - INCLUDE_UI_RESOURCES: for resources excluded from model tests.
+        - ENGINEERING_BUILD: for resources not to be shipped (Debug/ directory).
+
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+        - Add new aggregate target 'Derived Sources' to project 'WebInspectorUI'.
+        - Add dependency on 'Derived Sources' to WebInspectorUI.framework.
+        - Remove unused copies of jsmin.py and cssmin.py.
+
 2016-09-03  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Change Cmd-D from kill line to selecting next occurrence

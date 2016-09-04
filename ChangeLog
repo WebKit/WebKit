@@ -1,5 +1,34 @@
 2016-09-01  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: unify Main.html and Test.html sources and generate different copies with the preprocessor
+        https://bugs.webkit.org/show_bug.cgi?id=161212
+        <rdar://problem/28017961>
+
+        Reviewed by Joseph Pecoraro.
+
+        Rearrange some CMake rules so most Inspector UI work is done in WebInspectorUI.
+
+        * Source/CMakeLists.txt: Add 'WebInspectorUI' subdirectory.
+        * Source/PlatformEfl.cmake:
+        - Move the rule to copy InspectorBackendCommands.js into WebInspectorUI/CMakeLists.txt.
+        - Add a FIXME to use the cross-port list of Inspector resources instead of copying everything.
+        - Add new dependency so generated WebInspectorUI files are made by web-inspector-resources.
+        - Copy over generated files Main.html and Test.html.
+
+        * Source/PlatformWin.cmake:
+        - Add a FIXME to use the cross-port list of Inspector resources instead of copying everything.
+        - Add new dependency so generated WebInspectorUI files are made by web-inspector-resources.
+        - Copy over generated files Main.html and Test.html.
+
+        * Source/cmake/WebKitFS.cmake:
+        - Set up WEBINSPECTORUI_DIR and use it.
+        - Move directory creation commands here from JavaScriptCore.
+
+        * Source/cmake/WebKitMacros.cmake:
+        Add a helper to turn a CMake list into a space-delimited string of elements.
+
+2016-09-01  Brian Burg  <bburg@apple.com>
+
         Update root .gitignore for latest WebKitLibraries
         https://bugs.webkit.org/show_bug.cgi?id=161501
 

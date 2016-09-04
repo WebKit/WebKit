@@ -1,3 +1,13 @@
+2016-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: unify Main.html and Test.html sources and generate different copies with the preprocessor
+        https://bugs.webkit.org/show_bug.cgi?id=161212
+        <rdar://problem/28017961>
+
+        Reviewed by Joseph Pecoraro.
+
+        * CMakeLists.txt: Remove some unnecessary MAKE_DIRECTORY commands.
+
 2016-09-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use ASCIILiteral in some more places
