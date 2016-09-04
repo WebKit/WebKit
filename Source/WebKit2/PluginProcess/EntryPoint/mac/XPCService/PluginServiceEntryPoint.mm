@@ -31,10 +31,6 @@
 #import "XPCServiceEntryPoint.h"
 #import <wtf/RunLoop.h>
 
-#if HAVE(OS_ACTIVITY)
-#include <os/activity.h>
-#endif
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 namespace WebKit {
@@ -79,21 +75,6 @@ void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initiali
     // Remove the PluginProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes
     // spawned by the PluginProcess don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
-
-#if HAVE(OS_ACTIVITY)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    os_activity_t activity = os_activity_start("com.apple.WebKit.Plugin", OS_ACTIVITY_FLAG_DEFAULT);
-#pragma clang diagnostic pop
-#endif
-
     XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
-
-#if HAVE(OS_ACTIVITY)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    os_activity_end(activity);
-#pragma clang diagnostic pop
-#endif
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }

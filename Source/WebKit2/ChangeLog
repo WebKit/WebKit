@@ -1,3 +1,22 @@
+2016-09-04  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Wrapping XPC service execution in os_activity is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=161577
+
+        Reviewed by Sam Weinig.
+
+        Removed code that created an os_activity around the execution of the XPC service
+        code, because this workaround is no longer needed.
+
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm:
+        (DatabaseServiceInitializer):
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (NetworkServiceInitializer):
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (PluginServiceInitializer):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+
 2016-09-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r205415.
