@@ -64,6 +64,7 @@
 		2E1DFDED1D42A51100714A00 /* large-videos-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDEC1D42A41C00714A00 /* large-videos-with-audio.html */; };
 		2E1DFDEF1D42A6F200714A00 /* large-videos-with-audio-autoplay.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDEE1D42A6EB00714A00 /* large-videos-with-audio-autoplay.html */; };
 		2E1DFDF11D42E1E400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */; };
+		2E54F40D1D7BC84200921ADF /* large-video-mutes-onplaying.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E54F40C1D7BC83900921ADF /* large-video-mutes-onplaying.html */; };
 		2E691AEA1D78B53600129407 /* large-videos-paused-video-hides-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AE81D78B52B00129407 /* large-videos-paused-video-hides-controls.html */; };
 		2E691AEB1D78B53600129407 /* large-videos-playing-video-keeps-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AE91D78B52B00129407 /* large-videos-playing-video-keeps-controls.html */; };
 		2E691AED1D78B91000129407 /* large-videos-playing-muted-video-hides-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AEC1D78B90200129407 /* large-videos-playing-muted-video-hides-controls.html */; };
@@ -526,6 +527,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				2E54F40D1D7BC84200921ADF /* large-video-mutes-onplaying.html in Copy Resources */,
 				2E691AF31D79E75E00129407 /* large-video-playing-scroll-away.html in Copy Resources */,
 				2E691AF11D79E51A00129407 /* large-videos-autoplaying-scroll-to-video.html in Copy Resources */,
 				2E691AEF1D79DE8400129407 /* large-videos-autoplaying-click-to-pause.html in Copy Resources */,
@@ -755,6 +757,7 @@
 		2E1DFDEC1D42A41C00714A00 /* large-videos-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-with-audio.html"; sourceTree = "<group>"; };
 		2E1DFDEE1D42A6EB00714A00 /* large-videos-with-audio-autoplay.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-with-audio-autoplay.html"; sourceTree = "<group>"; };
 		2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-seek-to-beginning-and-play-after-ending.html"; sourceTree = "<group>"; };
+		2E54F40C1D7BC83900921ADF /* large-video-mutes-onplaying.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-mutes-onplaying.html"; sourceTree = "<group>"; };
 		2E691AE81D78B52B00129407 /* large-videos-paused-video-hides-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-paused-video-hides-controls.html"; sourceTree = "<group>"; };
 		2E691AE91D78B52B00129407 /* large-videos-playing-video-keeps-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-playing-video-keeps-controls.html"; sourceTree = "<group>"; };
 		2E691AEC1D78B90200129407 /* large-videos-playing-muted-video-hides-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-playing-muted-video-hides-controls.html"; sourceTree = "<group>"; };
@@ -1418,6 +1421,7 @@
 		A16F66B81C40E9E100BD4D24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2E54F40C1D7BC83900921ADF /* large-video-mutes-onplaying.html */,
 				2E691AF21D79E75400129407 /* large-video-playing-scroll-away.html */,
 				2E691AF01D79E51400129407 /* large-videos-autoplaying-scroll-to-video.html */,
 				2E691AEE1D79DE6F00129407 /* large-videos-autoplaying-click-to-pause.html */,

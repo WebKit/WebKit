@@ -228,6 +228,11 @@ bool MediaElementSession::canShowControlsManager() const
         return false;
     }
 
+    if (m_element.document().isMediaDocument()) {
+        LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Is media document");
+        return true;
+    }
+
     if (m_element.document().activeDOMObjectsAreSuspended()) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: activeDOMObjectsAreSuspended()");
         return false;
@@ -253,15 +258,15 @@ bool MediaElementSession::canShowControlsManager() const
         return false;
     }
 
+    if (!m_element.hasEverNotifiedAboutPlaying()) {
+        LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: Hasn't fired playing notification");
+        return false;
+    }
+
     if (m_element.isVideo()) {
         if (!m_element.renderer()) {
             LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: No renderer");
             return false;
-        }
-
-        if (m_element.document().isMediaDocument()) {
-            LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Is media document");
-            return true;
         }
 
         if (!m_element.hasVideo()) {

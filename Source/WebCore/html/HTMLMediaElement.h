@@ -470,6 +470,7 @@ public:
 
     void resetPlaybackSessionState();
     bool isVisibleInViewport() const;
+    bool hasEverNotifiedAboutPlaying() const;
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
@@ -943,6 +944,7 @@ private:
     bool m_elementIsHidden : 1;
     bool m_creatingControls : 1;
     bool m_receivedLayoutSizeChanged : 1;
+    bool m_hasEverNotifiedAboutPlaying : 1;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     bool m_mediaControlsDependOnPageScaleFactor : 1;

@@ -1,5 +1,35 @@
 2016-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Media controls behave strangely when videos mute from within a playing handler
+        https://bugs.webkit.org/show_bug.cgi?id=161559
+        <rdar://problem/28018438>
+
+        Reviewed by Darin Adler.
+
+        Accounts for changes when determining whether or not to show media controls for autoplaying videos that have not
+        begun playing yet. Rather than check for a controlled media element upon page load, we force tests to wait until
+        all autoplaying videos have actually begun playing. This extends to tests that involve interaction, such as
+        clicking or scrolling.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (-[VideoControlsManagerTestWebView callJavascriptFunction:]):
+        (-[VideoControlsManagerTestWebView expectControlsManager:afterReceivingMessage:]):
+        (-[VideoControlsManagerTestWebView performAfterReceivingMessage:action:]):
+        (-[VideoControlsManagerTestWebView waitForPageToLoadWithAutoplayingVideos:]):
+        (TestWebKitAPI::TEST):
+        (-[VideoControlsManagerTestWebView loadTestPageNamed:andExpectControlsManager:afterReceivingMessage:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/autoplaying-video-with-audio.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-hides-controls-after-seek-to-end.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-playing-scroll-away.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-autoplaying-click-to-pause.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-autoplaying-scroll-to-video.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-paused-video-hides-controls.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-playing-muted-video-hides-controls.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-playing-video-keeps-controls.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-with-audio-autoplay.html:
+
+2016-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Refactor the heuristic for showing media controls to take all media sessions into account
         https://bugs.webkit.org/show_bug.cgi?id=161503
         <rdar://problem/28033783>
