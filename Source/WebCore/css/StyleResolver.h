@@ -76,7 +76,6 @@ class StyleCachedImage;
 class StyleGeneratedImage;
 class StyleImage;
 class StyleKeyframe;
-class StylePendingImage;
 class StyleProperties;
 class StyleRule;
 class StyleRuleKeyframes;
@@ -407,9 +406,6 @@ public:
 
         bool useSVGZoomRules() const { return m_element && m_element->isSVGElement(); }
 
-        Style::PendingResources& ensurePendingResources();
-        std::unique_ptr<Style::PendingResources> takePendingResources() { return WTFMove(m_pendingResources); }
-
         const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
 
         CascadeLevel cascadeLevel() const { return m_cascadeLevel; }
@@ -446,7 +442,6 @@ public:
         FillLayer m_backgroundData { BackgroundFillLayer };
         Color m_backgroundColor;
 
-        std::unique_ptr<Style::PendingResources> m_pendingResources;
         CSSToLengthConversionData m_cssToLengthConversionData;
         
         CascadeLevel m_cascadeLevel { UserAgentLevel };
@@ -459,9 +454,7 @@ public:
     State& state() { return m_state; }
     const State& state() const { return m_state; }
 
-    RefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
-    Ref<StyleCachedImage> styleCachedImageFromValue(CSSPropertyID, CSSValue&);
-    Ref<StyleGeneratedImage> styleGeneratedImageFromValue(CSSPropertyID, CSSImageGeneratorValue&);
+    RefPtr<StyleImage> styleImage(CSSValue&);
 
     bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }
     bool applyPropertyToVisitedLinkStyle() const { return m_state.applyPropertyToVisitedLinkStyle(); }

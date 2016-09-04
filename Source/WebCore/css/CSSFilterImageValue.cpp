@@ -30,6 +30,7 @@
 #include "CSSImageValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "CachedSVGDocumentReference.h"
 #include "CrossfadeGeneratedImage.h"
 #include "FilterEffectRenderer.h"
 #include "ImageBuffer.h"
@@ -94,6 +95,13 @@ void CSSFilterImageValue::loadSubimages(CachedResourceLoader& cachedResourceLoad
             oldCachedImage->removeClient(&m_filterSubimageObserver);
         if (m_cachedImage)
             m_cachedImage->addClient(&m_filterSubimageObserver);
+    }
+
+    for (auto& filterOperation : m_filterOperations.operations()) {
+        if (!is<ReferenceFilterOperation>(filterOperation.get()))
+            continue;
+        auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(*filterOperation);
+        referenceFilterOperation.loadExternalDocumentIfNeeded(cachedResourceLoader, options);
     }
 
     m_filterSubimageObserver.setReady(true);

@@ -87,7 +87,7 @@ private:
     // FIXME: This should be part of some sort of StyleImageCache object which
     // is held by the StyleResolver, and likely provided to this object
     // during the resolve.
-    RefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
+    RefPtr<StyleImage> styleImage(CSSValue&);
 
     StyleResolver* m_resolver;
 };

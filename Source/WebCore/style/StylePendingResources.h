@@ -25,27 +25,15 @@
 
 #pragma once
 
-#include "CSSPropertyNames.h"
-#include "FilterOperations.h"
-#include <wtf/HashMap.h>
-
 namespace WebCore {
 
-class CSSValue;
 class Document;
 class Element;
 class RenderStyle;
 
 namespace Style {
 
-struct PendingResources {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    HashMap<CSSPropertyID, RefPtr<CSSValue>> pendingImages;
-    Vector<RefPtr<ReferenceFilterOperation>> pendingSVGFilters;
-};
-
-void loadPendingResources(const PendingResources&, Document&, RenderStyle&, const Element*);
+void loadPendingResources(RenderStyle&, Document&, const Element*);
 
 }
 }

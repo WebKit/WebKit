@@ -28,7 +28,6 @@
 
 #include "CSSCursorImageValue.h"
 #include "CachedResourceLoader.h"
-#include "CachedSVGDocumentReference.h"
 #include "ContentData.h"
 #include "CursorData.h"
 #include "CursorList.h"
@@ -60,82 +59,37 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
     const_cast<StyleImage&>(*styleImage).load(document.cachedResourceLoader(), options);
 }
 
-static void loadPendingImages(const PendingResources& pendingResources, Document& document, RenderStyle& style, const Element* element)
+void loadPendingResources(RenderStyle& style, Document& document, const Element* element)
 {
-    for (auto currentProperty : pendingResources.pendingImages.keys()) {
-        switch (currentProperty) {
-        case CSSPropertyBackgroundImage: {
-            for (auto* backgroundLayer = &style.ensureBackgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next())
-                loadPendingImage(document, backgroundLayer->image(), element);
-            break;
-        }
-        case CSSPropertyContent: {
-            for (auto* contentData = const_cast<ContentData*>(style.contentData()); contentData; contentData = contentData->next()) {
-                if (is<ImageContentData>(*contentData)) {
-                    auto& styleImage = downcast<ImageContentData>(*contentData).image();
-                    loadPendingImage(document, &styleImage, element);
-                }
-            }
-            break;
-        }
-        case CSSPropertyCursor: {
-            if (auto* cursorList = style.cursors()) {
-                for (size_t i = 0; i < cursorList->size(); ++i)
-                    loadPendingImage(document, cursorList->at(i).image(), element);
-            }
-            break;
-        }
-        case CSSPropertyListStyleImage: {
-            loadPendingImage(document, style.listStyleImage(), element);
-            break;
-        }
-        case CSSPropertyBorderImageSource: {
-            loadPendingImage(document, style.borderImageSource(), element);
-            break;
-        }
-        case CSSPropertyWebkitBoxReflect: {
-            if (auto* reflection = style.boxReflect())
-                loadPendingImage(document, reflection->mask().image(), element);
-            break;
-        }
-        case CSSPropertyWebkitMaskBoxImageSource: {
-            loadPendingImage(document, style.maskBoxImageSource(), element);
-            break;
-        }
-        case CSSPropertyWebkitMaskImage: {
-            for (auto* maskLayer = &style.ensureMaskLayers(); maskLayer; maskLayer = maskLayer->next())
-                loadPendingImage(document, maskLayer->image(), element);
-            break;
-        }
-#if ENABLE(CSS_SHAPES)
-        case CSSPropertyWebkitShapeOutside: {
-            if (style.shapeOutside())
-                loadPendingImage(document, style.shapeOutside()->image(), element, LoadPolicy::ShapeOutside);
-            break;
-        }
-#endif
-        default:
-            ASSERT_NOT_REACHED();
+    for (auto* backgroundLayer = style.backgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next())
+        loadPendingImage(document, backgroundLayer->image(), element);
+
+    for (auto* contentData = style.contentData(); contentData; contentData = contentData->next()) {
+        if (is<ImageContentData>(*contentData)) {
+            auto& styleImage = downcast<ImageContentData>(*contentData).image();
+            loadPendingImage(document, &styleImage, element);
         }
     }
-}
 
-static void loadPendingSVGFilters(const PendingResources& pendingResources, Document& document, const Element* element)
-{
-    if (pendingResources.pendingSVGFilters.isEmpty())
-        return;
+    if (auto* cursorList = style.cursors()) {
+        for (size_t i = 0; i < cursorList->size(); ++i)
+            loadPendingImage(document, cursorList->at(i).image(), element);
+    }
 
-    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.contentSecurityPolicyImposition = element && element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    loadPendingImage(document, style.listStyleImage(), element);
+    loadPendingImage(document, style.borderImageSource(), element);
+    loadPendingImage(document, style.maskBoxImageSource(), element);
 
-    for (auto& filterOperation : pendingResources.pendingSVGFilters)
-        filterOperation->getOrCreateCachedSVGDocumentReference()->load(document.cachedResourceLoader(), options);
-}
+    if (auto* reflection = style.boxReflect())
+        loadPendingImage(document, reflection->mask().image(), element);
 
-void loadPendingResources(const PendingResources& pendingResources, Document& document, RenderStyle& style, const Element* element)
-{
-    loadPendingImages(pendingResources, document, style, element);
-    loadPendingSVGFilters(pendingResources, document, element);
+    for (auto* maskLayer = style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
+        loadPendingImage(document, maskLayer->image(), element);
+
+#if ENABLE(CSS_SHAPES)
+    if (style.shapeOutside())
+        loadPendingImage(document, style.shapeOutside()->image(), element, LoadPolicy::ShapeOutside);
+#endif
 }
 
 }

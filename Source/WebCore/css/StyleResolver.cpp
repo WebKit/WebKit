@@ -189,7 +189,6 @@ inline void StyleResolver::State::clear()
     m_parentStyle = nullptr;
     m_ownedParentStyle = nullptr;
     m_regionForStyling = nullptr;
-    m_pendingResources = nullptr;
     m_cssToLengthConversionData = CSSToLengthConversionData();
 }
 
@@ -376,13 +375,6 @@ void StyleResolver::State::setParentStyle(std::unique_ptr<RenderStyle> parentSty
 {
     m_ownedParentStyle = WTFMove(parentStyle);
     m_parentStyle = m_ownedParentStyle.get();
-}
-
-Style::PendingResources& StyleResolver::State::ensurePendingResources()
-{
-    if (!m_pendingResources)
-        m_pendingResources = std::make_unique<Style::PendingResources>();
-    return *m_pendingResources;
 }
 
 static inline bool isAtShadowBoundary(const Element& element)
@@ -1700,38 +1692,23 @@ RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, cons
     return parser.parseVariableDependentValue(propID, value, m_state.style()->customProperties(), m_state.style()->direction(), m_state.style()->writingMode());
 }
 
-RefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue& value)
+RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
 {
     if (is<CSSImageGeneratorValue>(value)) {
         if (is<CSSGradientValue>(value))
-            return styleGeneratedImageFromValue(property, *downcast<CSSGradientValue>(value).gradientWithStylesResolved(this));
-        return styleGeneratedImageFromValue(property, downcast<CSSImageGeneratorValue>(value));
+            return StyleGeneratedImage::create(*downcast<CSSGradientValue>(value).gradientWithStylesResolved(this));
+
+        if (is<CSSFilterImageValue>(value)) {
+            // FilterImage needs to calculate FilterOperations.
+            downcast<CSSFilterImageValue>(value).createFilterOperations(this);
+        }
+        return StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(value));
     }
 
     if (is<CSSImageValue>(value) || is<CSSImageSetValue>(value) || is<CSSCursorImageValue>(value))
-        return styleCachedImageFromValue(property, value);
+        return StyleCachedImage::create(value);
 
     return nullptr;
-}
-
-Ref<StyleCachedImage> StyleResolver::styleCachedImageFromValue(CSSPropertyID property, CSSValue& value)
-{
-    auto image = StyleCachedImage::create(value);
-    if (image->isPending())
-        m_state.ensurePendingResources().pendingImages.set(property, &value);
-    return image;
-}
-
-Ref<StyleGeneratedImage> StyleResolver::styleGeneratedImageFromValue(CSSPropertyID property, CSSImageGeneratorValue& value)
-{
-    if (is<CSSFilterImageValue>(value)) {
-        // FilterImage needs to calculate FilterOperations.
-        downcast<CSSFilterImageValue>(value).createFilterOperations(this);
-    }
-    if (value.isPending())
-        m_state.ensurePendingResources().pendingImages.set(property, &value);
-
-    return StyleGeneratedImage::create(value);
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -1968,9 +1945,6 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
             URL url = m_state.document().completeURL(cssUrl);
 
             RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier());
-            if (SVGURIReference::isExternalURIReference(cssUrl, m_state.document()))
-                state.ensurePendingResources().pendingSVGFilters.append(operation);
-
             operations.operations().append(operation);
             continue;
         }
@@ -2078,8 +2052,7 @@ void StyleResolver::loadPendingResources()
     RELEASE_ASSERT(!m_inLoadPendingImages);
     TemporaryChange<bool> changeInLoadPendingImages(m_inLoadPendingImages, true);
 
-    if (auto pendingResources = state().takePendingResources())
-        Style::loadPendingResources(*pendingResources, document(), *style(), m_state.element());
+    Style::loadPendingResources(*style(), document(), m_state.element());
 }
 
 inline StyleResolver::MatchedProperties::MatchedProperties()
