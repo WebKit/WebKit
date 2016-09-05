@@ -1,3 +1,13 @@
+2016-09-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Miscellaneous unreviewed GTK test gardening
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/math-multiscript-attributes-expected.txt:
+        * platform/gtk/css1/box_properties/float_on_text_elements-expected.txt:
+        * platform/gtk/editing/pasteboard/image-in-iframe-expected.txt: Added.
+        * platform/gtk/editing/pasteboard/onpaste-text-html-expected.txt:
+
 2016-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update the semantics of defined-ness of custom elements per spec changes

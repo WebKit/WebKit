@@ -730,6 +730,9 @@ security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.h
 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
 http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
 
+# No support for font-variant-* properties in @font-face declarations
+webkit.org/b/161586 css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -819,6 +822,11 @@ webkit.org/b/153692 imported/blink/fast/css/first-letter-float-block.html [ Cras
 webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Timeout Pass Crash ]
 
 webkit.org/b/153937 http/tests/misc/detach-during-notifyDone.html [ Crash Pass ]
+
+webkit.org/b/161582 fast/mediastream/apply-constraints-video.html [ Crash ]
+webkit.org/b/161582 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Crash ]
+webkit.org/b/161582 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Crash ]
+webkit.org/b/161582 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -2601,6 +2609,16 @@ webkit.org/b/160249 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 
 webkit.org/b/160251 fast/text/font-kerning.html [ ImageOnlyFailure ]
 
+webkit.org/b/161583 accessibility/auto-fill-types.html [ Failure ]
+webkit.org/b/161584 accessibility/children-changed-sends-notification.html [ Failure ]
+webkit.org/b/161585 accessibility/media-emits-object-replacement.html [ Failure ]
+
+webkit.org/b/161587 css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/161588 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
+webkit.org/b/161589 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
+
+webkit.org/b/161590 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2690,7 +2708,7 @@ fast/text/emoji-gender.html [ Pass ]
 # Tests failing due to switch to THREADED COMPOSITOR
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/160119 accessibility/media-element.html [ Timeout Crash Pass ]
+webkit.org/b/160119 accessibility/media-element.html [ Timeout Crash Pass Failure ]
 
 webkit.org/b/160119 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
 webkit.org/b/160119 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
@@ -2793,6 +2811,8 @@ webkit.org/b/160119 svg/repaint/remove-outline-property-on-root.html [ ImageOnly
 
 webkit.org/b/161242 compositing/fixed-with-fixed-layout.html [ Skip ]
 webkit.org/b/161242 fast/fixed-layout/fixed-layout.html [ Skip ]
+
+webkit.org/b/161242 animations/negative-delay.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test

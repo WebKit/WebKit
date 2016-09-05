@@ -338,7 +338,7 @@ layer at (0,0) size 785x2589
                     text run at (0,17) width 411: "background of the DIV element is blue and its width is 75%."
                     text run at (0,34) width 33: "This "
                     text run at (32,34) width 369: "text should all be inside the blue rectangle. The blue DIV "
-                    text run at (400,34) width 161: "element has another DIV"
+                    text run at (401,34) width 160: "element has another DIV"
                     text run at (0,51) width 218: "element as a child. It has a yellow "
                     text run at (217,51) width 344: "background color and is floated to the right. Since it is"
                     text run at (0,68) width 12: "a "
