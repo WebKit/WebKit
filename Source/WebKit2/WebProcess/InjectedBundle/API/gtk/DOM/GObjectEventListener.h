@@ -63,7 +63,7 @@ private:
     ~GObjectEventListener();
     void gobjectDestroyed();
 
-    virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*);
+    void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
 
     GObject* m_target;
     // We do not need to keep a reference to the m_coreTarget, because

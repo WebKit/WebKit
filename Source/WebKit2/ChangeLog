@@ -1,3 +1,14 @@
+2016-09-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GObject bindings] override handleEvent() method in GObjectEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=161593
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/GObjectEventListener.h: Override
+        the handleMethod() which is inherited from the WebCore EventListener class.
+        Suppresses the -Winconsistent-missing-override warning that Clang propagates.
+
 2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unnecessary RetainPtr.
