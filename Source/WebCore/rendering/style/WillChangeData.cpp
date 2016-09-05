@@ -99,6 +99,30 @@ static bool propertyCreatesStackingContext(CSSPropertyID property)
     }
 }
 
+static bool propertyCreatesGraphicalGroup(CSSPropertyID property)
+{
+    switch (property) {
+    case CSSPropertyClipPath:
+    case CSSPropertyWebkitClipPath:
+    case CSSPropertyMask:
+    case CSSPropertyOpacity:
+#if ENABLE(CSS_COMPOSITING)
+    case CSSPropertyMixBlendMode:
+    case CSSPropertyIsolation:
+#endif
+    case CSSPropertyFilter:
+#if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyWebkitBackdropFilter:
+#endif
+    case CSSPropertyWebkitMask:
+    case CSSPropertyWebkitMaskImage:
+    case CSSPropertyWebkitMaskBoxImage:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool propertyTriggersCompositing(CSSPropertyID property)
 {
     switch (property) {
@@ -137,6 +161,8 @@ void WillChangeData::addFeature(Feature feature, CSSPropertyID propertyID)
 
     m_canTriggerCompositingOnInline |= propertyTriggersCompositing(propertyID);
     m_canTriggerCompositing |= m_canTriggerCompositingOnInline | propertyTriggersCompositingOnBoxesOnly(propertyID);
+
+    m_canCreateGraphicalGroup |= propertyCreatesGraphicalGroup(propertyID);
 }
 
 WillChangeData::FeaturePropertyPair WillChangeData::featureAt(size_t index) const
