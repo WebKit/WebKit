@@ -1,5 +1,16 @@
 2016-09-02  Zalan Bujtas  <zalan@apple.com>
 
+        ASSERT_NOT_REACHED() is touched in WebCore::valueForLength
+        https://bugs.webkit.org/show_bug.cgi?id=123337
+        <rdar://problem/27684121>
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/assert-on-non-resolvable-row-dimension-expected.txt: Added.
+        * fast/table/assert-on-non-resolvable-row-dimension.html: Added.
+
+2016-09-02  Zalan Bujtas  <zalan@apple.com>
+
         ASSERTION FAILED: !m_committedWidth in WebCore::LineWidth::fitBelowFloats
         https://bugs.webkit.org/show_bug.cgi?id=149462
         <rdar://problem/27710841>
