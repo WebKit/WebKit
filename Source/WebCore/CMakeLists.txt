@@ -542,67 +542,12 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ValidityState.idl
     html/VoidCallback.idl
 
-    html/canvas/ANGLEInstancedArrays.idl
     html/canvas/CanvasGradient.idl
     html/canvas/CanvasPath.idl
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasProxy.idl
     html/canvas/CanvasRenderingContext2D.idl
     html/canvas/DOMPath.idl
-    html/canvas/EXTBlendMinMax.idl
-    html/canvas/EXTFragDepth.idl
-    html/canvas/EXTShaderTextureLOD.idl
-    html/canvas/EXTTextureFilterAnisotropic.idl
-    html/canvas/EXTsRGB.idl
-    html/canvas/OESElementIndexUint.idl
-    html/canvas/OESStandardDerivatives.idl
-    html/canvas/OESTextureFloat.idl
-    html/canvas/OESTextureFloatLinear.idl
-    html/canvas/OESTextureHalfFloat.idl
-    html/canvas/OESTextureHalfFloatLinear.idl
-    html/canvas/OESVertexArrayObject.idl
-    html/canvas/WebGL2RenderingContext.idl
-    html/canvas/WebGLActiveInfo.idl
-    html/canvas/WebGLBuffer.idl
-    html/canvas/WebGLCompressedTextureATC.idl
-    html/canvas/WebGLCompressedTexturePVRTC.idl
-    html/canvas/WebGLCompressedTextureS3TC.idl
-    html/canvas/WebGLContextAttributes.idl
-    html/canvas/WebGLContextEvent.idl
-    html/canvas/WebGLDebugRendererInfo.idl
-    html/canvas/WebGLDebugShaders.idl
-    html/canvas/WebGLDepthTexture.idl
-    html/canvas/WebGLDrawBuffers.idl
-    html/canvas/WebGLFramebuffer.idl
-    html/canvas/WebGLLoseContext.idl
-    html/canvas/WebGLProgram.idl
-    html/canvas/WebGLQuery.idl
-    html/canvas/WebGLRenderbuffer.idl
-    html/canvas/WebGLRenderingContext.idl
-    html/canvas/WebGLRenderingContextBase.idl
-    html/canvas/WebGLSampler.idl
-    html/canvas/WebGLShader.idl
-    html/canvas/WebGLShaderPrecisionFormat.idl
-    html/canvas/WebGLSync.idl
-    html/canvas/WebGLTexture.idl
-    html/canvas/WebGLTransformFeedback.idl
-    html/canvas/WebGLUniformLocation.idl
-    html/canvas/WebGLVertexArrayObject.idl
-    html/canvas/WebGLVertexArrayObjectOES.idl
-
-    html/track/AudioTrack.idl
-    html/track/AudioTrackList.idl
-    html/track/DataCue.idl
-    html/track/TextTrack.idl
-    html/track/TextTrackCue.idl
-    html/track/TextTrackCueList.idl
-    html/track/TextTrackList.idl
-    html/track/TrackEvent.idl
-    html/track/VTTCue.idl
-    html/track/VTTRegion.idl
-    html/track/VTTRegionList.idl
-    html/track/VideoTrack.idl
-    html/track/VideoTrackList.idl
 
     inspector/CommandLineAPIHost.idl
     inspector/InspectorFrontendHost.idl
@@ -630,9 +575,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/PerformanceResourceTiming.idl
     page/PerformanceTiming.idl
     page/Screen.idl
-    page/UserMessageHandler.idl
-    page/UserMessageHandlersNamespace.idl
-    page/WebKitNamespace.idl
     page/WebKitPoint.idl
     page/WindowEventHandlers.idl
     page/WindowOrWorkerGlobalScope.idl
@@ -3165,6 +3107,8 @@ if (ENABLE_VIDEO_TRACK)
         html/track/TextTrackList.idl
         html/track/TrackEvent.idl
         html/track/VTTCue.idl
+        html/track/VTTRegion.idl
+        html/track/VTTRegionList.idl
         html/track/VideoTrack.idl
         html/track/VideoTrackList.idl
     )
