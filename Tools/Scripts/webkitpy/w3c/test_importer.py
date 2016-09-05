@@ -180,7 +180,7 @@ class TestImporter(object):
 
         self._test_resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, "resources", "resource-files.json")
         self._test_resource_files = json.loads(self.filesystem.read_text_file(self._test_resource_files_json_path)) if self.filesystem.exists(self._test_resource_files_json_path) else None
-        if self.options.clean_destination_directory:
+        if self.options.clean_destination_directory and self._test_resource_files:
             self._test_resource_files["files"] = []
 
     def do_import(self):

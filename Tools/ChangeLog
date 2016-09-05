@@ -1,3 +1,13 @@
+2016-09-05  Youenn Fablet  <youenn@apple.com>
+
+        Fix W3C test importer unit tests after r205447
+        https://bugs.webkit.org/show_bug.cgi?id=161604
+
+        Unreviewed.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.__init__): Skip cleaning test_resource_files files if resource-files.json cannot be read.
+
 2016-09-05  Philippe Normand  <pnormand@igalia.com>
 
         WebRTC: Several media stream tests crashing
