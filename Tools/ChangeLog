@@ -1,3 +1,13 @@
+2016-09-05  Philippe Normand  <pnormand@igalia.com>
+
+        WebRTC: Several media stream tests crashing
+        https://bugs.webkit.org/show_bug.cgi?id=161582
+
+        Reviewed by Alejandro G. Castro.
+
+        * gtk/jhbuild.modules: Bump to latest OpenWebRTC master fixing the crash on missing
+        glvideoflip GStreamer element.
+
 2016-09-05  Youenn Fablet  <youenn@apple.com>
 
         W3C test importer should generate the list of resource files

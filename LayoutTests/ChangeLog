@@ -1,3 +1,12 @@
+2016-09-05  Philippe Normand  <pnormand@igalia.com>
+
+        WebRTC: Several media stream tests crashing
+        https://bugs.webkit.org/show_bug.cgi?id=161582
+
+        Reviewed by Alejandro G. Castro.
+
+        * platform/gtk/TestExpectations: Unskip now-passing tests.
+
 2016-09-05  Youenn Fablet  <youenn@apple.com>
 
         CachedResourceLoader is not taking into account fetch options to use or not cached resources

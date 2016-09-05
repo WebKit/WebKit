@@ -514,7 +514,7 @@
       <dep package="gst-plugins-openwebrtc"/>
       <dep package="libnice"/>
      </dependencies>
-    <branch repo="github.com" module="EricssonResearch/openwebrtc.git" checkoutdir="openwebrtc" tag="9b18c94a1c5e5cad16f241954613c267cb032c85"/>
+    <branch repo="github.com" module="EricssonResearch/openwebrtc.git" checkoutdir="openwebrtc" tag="c997bff14a9389582bc107e2aea7ce77fb700ed9"/>
   </autotools>
 
   <autotools id="llvm"

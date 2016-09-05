@@ -823,11 +823,6 @@ webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Timeout
 
 webkit.org/b/153937 http/tests/misc/detach-during-notifyDone.html [ Crash Pass ]
 
-webkit.org/b/161582 fast/mediastream/apply-constraints-video.html [ Crash ]
-webkit.org/b/161582 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Crash ]
-webkit.org/b/161582 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Crash ]
-webkit.org/b/161582 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
