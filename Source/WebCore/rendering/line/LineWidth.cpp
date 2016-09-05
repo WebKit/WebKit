@@ -37,14 +37,6 @@ namespace WebCore {
 
 LineWidth::LineWidth(RenderBlockFlow& block, bool isFirstLine, IndentTextOrNot shouldIndentText)
     : m_block(block)
-    , m_uncommittedWidth(0)
-    , m_committedWidth(0)
-    , m_overhangWidth(0)
-    , m_trailingWhitespaceWidth(0)
-    , m_trailingCollapsedWhitespaceWidth(0)
-    , m_left(0)
-    , m_right(0)
-    , m_availableWidth(0)
     , m_isFirstLine(isFirstLine)
     , m_shouldIndentText(shouldIndentText)
 {
@@ -136,10 +128,7 @@ void LineWidth::commit()
 {
     m_committedWidth += m_uncommittedWidth;
     m_uncommittedWidth = 0;
-    if (m_hasUncommittedReplaced) {
-        m_hasCommittedReplaced = true;
-        m_hasUncommittedReplaced = false;
-    }
+    m_hasCommitted = true;
 }
 
 void LineWidth::applyOverhang(RenderRubyRun* rubyRun, RenderObject* startRenderer, RenderObject* endRenderer)

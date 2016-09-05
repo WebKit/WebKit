@@ -1,3 +1,22 @@
+2016-09-02  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !m_committedWidth in WebCore::LineWidth::fitBelowFloats
+        https://bugs.webkit.org/show_bug.cgi?id=149462
+        <rdar://problem/27710841>
+
+        Reviewed by David Hyatt.
+
+        In certain cases (multiple spans on the same line with negativ marings), the LineWidth::m_committedWidth > 0
+        check is not sufficient to decide if some content has already been committed to the current line.
+        This patch adds a flag to indicate if we ever committed to the current line. 
+
+        Test: fast/text/assert-when-text-with-negative-margin-sibling-does-not-fit.html
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+        * rendering/line/LineWidth.h:
+        (WebCore::LineWidth::hasCommitted):
+
 2016-08-31  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !flow->layer() && !flow->isInlineElementContinuation() in WebCore::RenderBlock::addContinuationWithOutline
