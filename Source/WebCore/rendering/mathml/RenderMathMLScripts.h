@@ -53,16 +53,33 @@ protected:
 private:
     MathMLScriptsElement& element() const;
     Optional<int> firstLineBaseline() const final;
-    bool getBaseAndScripts(RenderBox*& base, RenderBox*& firstPostScript, RenderBox*& firstPreScript);
+    struct ReferenceChildren {
+        RenderBox* base;
+        RenderBox* prescriptDelimiter;
+        RenderBox* firstPostScript;
+        RenderBox* firstPreScript;
+    };
+    Optional<ReferenceChildren> validateAndGetReferenceChildren();
     LayoutUnit spaceAfterScript();
-    LayoutUnit italicCorrection(RenderBox* base);
-    struct ScriptMetrics {
+    LayoutUnit italicCorrection(const ReferenceChildren&);
+    struct VerticalParameters {
+        LayoutUnit subscriptShiftDown;
+        LayoutUnit superscriptShiftUp;
+        LayoutUnit subscriptBaselineDropMin;
+        LayoutUnit superScriptBaselineDropMax;
+        LayoutUnit subSuperscriptGapMin;
+        LayoutUnit superscriptBottomMin;
+        LayoutUnit subscriptTopMax;
+        LayoutUnit superscriptBottomMaxWithSubscript;
+    };
+    VerticalParameters verticalParameters() const;
+    struct VerticalMetrics {
         LayoutUnit subShift;
         LayoutUnit supShift;
         LayoutUnit ascent;
         LayoutUnit descent;
     };
-    void getScriptMetricsAndLayoutIfNeeded(RenderBox* base, RenderBox* script, ScriptMetrics&);
+    VerticalMetrics verticalMetrics(const ReferenceChildren&);
 };
 
 } // namespace WebCore
