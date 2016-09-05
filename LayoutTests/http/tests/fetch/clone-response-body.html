@@ -11,6 +11,7 @@
 promise_test(function(t) {
     var clone;
     return fetch('/resources/testharnessreport.js').then(function(res) {
+        assert_equals(res.status, 200);
         var resolveFunction;
         var promise = new Promise((resolve) => {
             resolveFunction = resolve;
@@ -33,7 +34,8 @@ promise_test(function(t) {
 
 promise_test(function(t) {
     var clone;
-    return fetch('/download-json-with-delay.php?iteration=2&delay=1').then(function(res) {
+    return fetch('/resources/download-json-with-delay.php?iteration=2&delay=100').then(function(res) {
+        assert_equals(res.status, 200);
         // All data should not be enqueued yet.
         clone = res.clone();
         var string;
