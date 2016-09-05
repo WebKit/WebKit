@@ -303,7 +303,7 @@ void CDMSessionAVStreamSession::removeParser(AVStreamDataParser* parser)
         [m_streamSession removeStreamDataParser:parser];
 }
 
-PassRefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyReleaseMessage(unsigned short& errorCode, uint32_t systemCode)
+PassRefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode)
 {
     ASSERT(m_mode == KeyRelease);
     m_certificate = m_initData;
