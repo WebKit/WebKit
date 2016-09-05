@@ -21,8 +21,7 @@ function checkCSSLoading(id, expectToIncludeOrigin, expectVisibility)
 {
     expectedColor = expectToIncludeOrigin ? "rgb(255, 255, 0)" : "rgb(0, 0, 255)";
     assert_equals(getBackgroundColorForId(id), expectedColor);
-    // FIXME: cssRules should be made visible according resource tainted status, not only based on the resource URL being cross origin.
-    // assert_equals(document.getElementById("link-" + id).sheet.cssRules !== null, expectVisibility);
+    assert_equals(document.getElementById("link-" + id).sheet.cssRules !== null, expectVisibility);
 }
 
 var onloadTest = async_test(" Testing that link element to load stylesheets correctly handle crossorigin mode.");

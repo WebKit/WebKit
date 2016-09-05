@@ -78,19 +78,19 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 #endif
 
 Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, CSSImportRule* ownerRule)
-{ 
+{
     return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerRule));
 }
 
-Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, Node* ownerNode)
-{ 
-    return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerNode, TextPosition::minimumPosition(), false));
+Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, Node& ownerNode, const Optional<bool>& isCleanOrigin)
+{
+    return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerNode, TextPosition::minimumPosition(), false, isCleanOrigin));
 }
 
 Ref<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const URL& baseURL, const TextPosition& startPosition, const String& encoding)
 {
     CSSParserContext parserContext(ownerNode.document(), baseURL, encoding);
-    return adoptRef(*new CSSStyleSheet(StyleSheetContents::create(baseURL.string(), parserContext), &ownerNode, startPosition, true));
+    return adoptRef(*new CSSStyleSheet(StyleSheetContents::create(baseURL.string(), parserContext), ownerNode, startPosition, true, true));
 }
 
 CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* ownerRule)
@@ -105,16 +105,17 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* 
     m_contents->registerClient(this);
 }
 
-CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node* ownerNode, const TextPosition& startPosition, bool isInlineStylesheet)
+CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node& ownerNode, const TextPosition& startPosition, bool isInlineStylesheet, const Optional<bool>& isOriginClean)
     : m_contents(WTFMove(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
     , m_isDisabled(false)
     , m_mutatedRules(false)
-    , m_ownerNode(ownerNode)
+    , m_isOriginClean(isOriginClean)
+    , m_ownerNode(&ownerNode)
     , m_ownerRule(0)
     , m_startPosition(startPosition)
 {
-    ASSERT(isAcceptableCSSStyleSheetParent(ownerNode));
+    ASSERT(isAcceptableCSSStyleSheetParent(&ownerNode));
     m_contents->registerClient(this);
 }
 
@@ -258,17 +259,16 @@ CSSRule* CSSStyleSheet::item(unsigned index)
 
 bool CSSStyleSheet::canAccessRules() const
 {
-    if (m_isInlineStylesheet)
-        return true;
+    if (m_isOriginClean)
+        return m_isOriginClean.value();
+
     URL baseURL = m_contents->baseURL();
     if (baseURL.isEmpty())
         return true;
     Document* document = ownerDocument();
     if (!document)
         return true;
-    if (document->securityOrigin()->canRequest(baseURL))
-        return true;
-    return false;
+    return document->securityOrigin()->canRequest(baseURL);
 }
 
 RefPtr<CSSRuleList> CSSStyleSheet::rules()

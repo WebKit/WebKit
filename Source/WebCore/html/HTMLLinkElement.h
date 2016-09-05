@@ -82,6 +82,8 @@ private:
     InsertionNotificationRequest insertedInto(ContainerNode&) final;
     void removedFrom(ContainerNode&) final;
 
+    void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&);
+
     // from CachedResourceClient
     void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*) final;
     bool sheetLoaded() final;

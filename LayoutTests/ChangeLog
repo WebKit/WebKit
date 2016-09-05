@@ -1,3 +1,17 @@
+2016-09-05  Youenn Fablet  <youenn@apple.com>
+
+        Clean CSS stylesheets should be accessible from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=158728
+
+        Reviewed by Darin Adler.
+
+        * http/tests/security/cannot-read-cssrules-expected.txt:
+        * http/tests/security/cannot-read-cssrules-redirect-expected.txt:
+        * http/tests/security/cannot-read-cssrules-redirect.html:
+        * http/tests/security/cannot-read-cssrules.html:
+        * http/tests/security/cross-origin-css-9.html:
+        * http/tests/security/resources/xorigincss1-allow-star.php: Added.
+
 2016-09-05  Philippe Normand  <pnormand@igalia.com>
 
         WebRTC: Several media stream tests crashing

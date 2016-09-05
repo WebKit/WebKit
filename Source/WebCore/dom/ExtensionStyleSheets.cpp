@@ -160,14 +160,14 @@ void ExtensionStyleSheets::invalidateInjectedStyleSheetCache()
 void ExtensionStyleSheets::addUserStyleSheet(Ref<StyleSheetContents>&& userSheet)
 {
     ASSERT(userSheet.get().isUserStyleSheet());
-    m_userStyleSheets.append(CSSStyleSheet::create(WTFMove(userSheet), &m_document));
+    m_userStyleSheets.append(CSSStyleSheet::create(WTFMove(userSheet), m_document));
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 void ExtensionStyleSheets::addAuthorStyleSheetForTesting(Ref<StyleSheetContents>&& authorSheet)
 {
     ASSERT(!authorSheet.get().isUserStyleSheet());
-    m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTFMove(authorSheet), &m_document));
+    m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTFMove(authorSheet), m_document));
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
@@ -191,7 +191,7 @@ void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifie
     if (m_contentExtensionSheets.contains(identifier))
         return;
 
-    Ref<CSSStyleSheet> cssSheet = CSSStyleSheet::create(sheet, &m_document);
+    Ref<CSSStyleSheet> cssSheet = CSSStyleSheet::create(sheet, m_document);
     m_contentExtensionSheets.set(identifier, &cssSheet.get());
     m_userStyleSheets.append(adoptRef(cssSheet.leakRef()));
     m_styleResolverChangedTimer.startOneShot(0);

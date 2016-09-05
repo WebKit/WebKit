@@ -4,6 +4,10 @@
 <link rel="stylesheet"
       href="http://localhost:8000/security/resources/cssStyle.css">
 <link rel="stylesheet" href="resources/cssStyle.css">
+<link rel="stylesheet"
+      href="http://localhost:8000/security/resources/cssStyle.css" crossorigin="">
+<link rel="stylesheet"
+      href="http://localhost:8000/security/resources/xorigincss1-allow-star.php" crossorigin="">
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
@@ -14,16 +18,36 @@ function log(msg) {
     document.getElementById("console").appendChild(div);
 }
 
+function checkCSSRules(sheet)
+{
+    try {
+        var cssRules = sheet.cssRules;
+        log("cssRules: " + cssRules);
+        if (cssRules)
+            log("cssRules length: " + cssRules.length);
+    } catch(e) {
+        log("exception thrown for cssRules: " + e);
+    }
+    try {
+        var rules = sheet.rules;
+        log("rules: " + rules);
+        if (rules)
+            log("rules length: " + rules.length);
+    } catch(e) {
+        log("exception thrown for rules: " + e);
+    }
+}
+
 window.onload = function() {
     log("Test begins.");
-    log("== Cross-Origin ==");
-    var sheet1 = document.styleSheets[0];
-    log("cssRules: " + sheet1.cssRules);
-    log("rules: " + sheet1.rules);
-    log("== Same-Origin ==");
-    var sheet2 = document.styleSheets[1];
-    log("cssRules: " + sheet2.cssRules);
-    log("rules: " + sheet2.rules);
+    log("== Cross-Origin resource, no-cors mode ==");
+    checkCSSRules(document.styleSheets[0]);
+    log("== Same-Origin resource, no-cors mode ==");
+    checkCSSRules(document.styleSheets[1]);
+    log("== Cross-Origin resource, cors mode, failing cors check ==");
+    checkCSSRules(document.styleSheets[2]);
+    log("== Cross-Origin resource, cors mode, successful cors check ==");
+    checkCSSRules(document.styleSheets[3]);
     log("Test ends.");
 }
 </script>

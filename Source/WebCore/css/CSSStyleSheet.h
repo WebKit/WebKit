@@ -49,7 +49,7 @@ typedef int ExceptionCode;
 class CSSStyleSheet final : public StyleSheet {
 public:
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule = 0);
-    static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, Node* ownerNode);
+    static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, Node& ownerNode, const Optional<bool>& isOriginClean = Nullopt);
     static Ref<CSSStyleSheet> createInline(Node&, const URL&, const TextPosition& startPosition = TextPosition::minimumPosition(), const String& encoding = String());
 
     virtual ~CSSStyleSheet();
@@ -125,16 +125,18 @@ public:
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule);
     CSSStyleSheet(Ref<StyleSheetContents>&&, Node* ownerNode, const TextPosition& startPosition, bool isInlineStylesheet);
+    CSSStyleSheet(Ref<StyleSheetContents>&&, Node& ownerNode, const TextPosition& startPosition, bool isInlineStylesheet, const Optional<bool>&);
 
     bool isCSSStyleSheet() const final { return true; }
     String type() const final { return ASCIILiteral("text/css"); }
 
     bool canAccessRules() const;
-    
+
     Ref<StyleSheetContents> m_contents;
     bool m_isInlineStylesheet;
     bool m_isDisabled;
     bool m_mutatedRules;
+    Optional<bool> m_isOriginClean;
     String m_title;
     RefPtr<MediaQuerySet> m_mediaQueries;
 

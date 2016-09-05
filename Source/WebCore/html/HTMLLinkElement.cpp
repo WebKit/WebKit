@@ -339,6 +339,18 @@ void HTMLLinkElement::finishParsingChildren()
     HTMLElement::finishParsingChildren();
 }
 
+void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet, const CachedCSSStyleSheet& cachedStyleSheet)
+{
+    // FIXME: originClean should be turned to false except if fetch mode is CORS.
+    Optional<bool> originClean;
+    if (cachedStyleSheet.options().mode == FetchOptions::Mode::Cors)
+        originClean = cachedStyleSheet.isClean();
+
+    m_sheet = CSSStyleSheet::create(WTFMove(styleSheet), *this, originClean);
+    m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
+    m_sheet->setTitle(title());
+}
+
 void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* cachedStyleSheet)
 {
     if (!inDocument()) {
@@ -358,10 +370,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     if (RefPtr<StyleSheetContents> restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext, cachePolicy)) {
         ASSERT(restoredSheet->isCacheable());
         ASSERT(!restoredSheet->isLoading());
-
-        m_sheet = CSSStyleSheet::create(restoredSheet.releaseNonNull(), this);
-        m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
-        m_sheet->setTitle(title());
+        initializeStyleSheet(restoredSheet.releaseNonNull(), *cachedStyleSheet);
 
         m_loading = false;
         sheetLoaded();
@@ -370,9 +379,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     }
 
     auto styleSheet = StyleSheetContents::create(href, parserContext);
-    m_sheet = CSSStyleSheet::create(styleSheet.copyRef(), this);
-    m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
-    m_sheet->setTitle(title());
+    initializeStyleSheet(styleSheet.copyRef(), *cachedStyleSheet);
 
     styleSheet.get().parseAuthorStyleSheet(cachedStyleSheet, document().securityOrigin());
 

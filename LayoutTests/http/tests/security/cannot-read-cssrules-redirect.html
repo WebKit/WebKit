@@ -5,6 +5,12 @@
       href="/resources/redirect.php?url=http://localhost:8000/security/resources/cssStyle.css">
 <link rel="stylesheet"
       href="http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/security/resources/cssStyle.css">
+<link rel="stylesheet"
+      href="/resources/redirect.php?url=http://127.0.0.1:8000/security/resources/cssStyle.css" crossorigin="">
+<link rel="stylesheet"
+      href="http://localhost:8000/security/resources/redirect-allow-star.php?url=http://127.0.0.1:8000/security/resources/xorigincss1-allow-star.php" crossorigin="">
+<link rel="stylesheet"
+      href="http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/security/resources/xorigincss1.css" crossorigin="">
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
@@ -15,16 +21,38 @@ function log(msg) {
     document.getElementById("console").appendChild(div);
 }
 
+function checkCSSRules(sheet)
+{
+    try {
+        var cssRules = sheet.cssRules;
+        log("cssRules: " + cssRules);
+        if (cssRules)
+            log("cssRules length: " + cssRules.length);
+    } catch(e) {
+        log("exception thrown for cssRules: " + e);
+    }
+    try {
+        var rules = sheet.rules;
+        log("rules: " + rules);
+        if (rules)
+            log("rules length: " + rules.length);
+    } catch(e) {
+        log("exception thrown for rules: " + e);
+    }
+}
+
 window.onload = function() {
     log("Test begins.");
-    log("== Same-Origin to Cross-Origin ==");
-    var sheet1 = document.styleSheets[0];
-    log("cssRules: " + sheet1.cssRules);
-    log("rules: " + sheet1.rules);
-    log("== Cross-Origin to Same-Origin ==");
-    var sheet2 = document.styleSheets[1];
-    log("cssRules: " + sheet2.cssRules);
-    log("rules: " + sheet2.rules);
+    log("== Same-Origin to Cross-Origin, no-cors mode ==");
+    checkCSSRules(document.styleSheets[0]);
+    log("== Cross-Origin to Same-Origin, no-cors mode ==");
+    checkCSSRules(document.styleSheets[1]);
+    log("== Same-Origin to Same-Origin, cors mode ==");
+    checkCSSRules(document.styleSheets[2]);
+    log("== Cross-Origin to Same-Origin, cors mode, successful cors check ==");
+    checkCSSRules(document.styleSheets[3]);
+    log("== Cross-Origin to Same-Origin, cors mode, failing cors check ==");
+    checkCSSRules(document.styleSheets[4]);
     log("Test ends.");
 }
 </script>

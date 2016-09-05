@@ -38,7 +38,7 @@ namespace WebCore {
 namespace ContentExtensions {
 
 ContentExtensionStyleSheet::ContentExtensionStyleSheet(Document& document)
-    : m_styleSheet(CSSStyleSheet::create(StyleSheetContents::create(), &document))
+    : m_styleSheet(CSSStyleSheet::create(StyleSheetContents::create(), document))
 {
     m_styleSheet->contents().setIsUserStyleSheet(true);
 }
