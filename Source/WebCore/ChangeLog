@@ -1,3 +1,20 @@
+2016-08-25  Zalan Bujtas  <zalan@apple.com>
+
+        Infinite recursion crash in WebCore::RenderBlockFlow::layoutBlock
+        https://bugs.webkit.org/show_bug.cgi?id=139474
+        <rdar://problem/27705190>
+
+        Reviewed by David Hyatt.
+
+        We should just give up trying to avoid widow when the page is too small to break line.
+
+        Test: fast/multicol/assert-on-small-page-height-with-widow.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clearShouldBreakAtLineToAvoidWidowIfNeeded):
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        * rendering/RenderBlockFlow.h:
+
 2016-05-03  Pranjal Jumde  <pjumde@apple.com>
 
         WorkerGlobalScope's self, location and navigator attributes should not be replaceable
