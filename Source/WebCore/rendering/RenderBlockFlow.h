@@ -345,8 +345,8 @@ public:
     RootInlineBox* firstRootBox() const { return downcast<RootInlineBox>(m_lineBoxes.firstLineBox()); }
     RootInlineBox* lastRootBox() const { return downcast<RootInlineBox>(m_lineBoxes.lastLineBox()); }
 
-    virtual bool hasLines() const override final;
-    virtual void invalidateLineLayoutPath() override final;
+    bool hasLines() const;
+    void invalidateLineLayoutPath() final;
 
     enum LineLayoutPath { UndeterminedPath = 0, SimpleLinesPath, LineBoxesPath, ForceLineBoxesPath };
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
