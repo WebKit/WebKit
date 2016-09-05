@@ -57,11 +57,11 @@ static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObje
     auto& document = passedDocument.get();
     JSObject* wrapper;
     if (document.isHTMLDocument())
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, HTMLDocument, WTFMove(passedDocument));
+        wrapper = createWrapper<HTMLDocument>(&globalObject, WTFMove(passedDocument));
     else if (document.isXMLDocument())
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, XMLDocument, WTFMove(passedDocument));
+        wrapper = createWrapper<XMLDocument>(&globalObject, WTFMove(passedDocument));
     else
-        wrapper = CREATE_DOM_WRAPPER(&globalObject, Document, WTFMove(passedDocument));
+        wrapper = createWrapper<Document>(&globalObject, WTFMove(passedDocument));
 
     reportMemoryForDocumentIfFrameless(state, document);
 

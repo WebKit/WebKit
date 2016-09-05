@@ -162,14 +162,12 @@ bool clearInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMObject*);
 bool clearInlineCachedWrapper(DOMWrapperWorld&, ScriptWrappable*, JSDOMObject* wrapper);
 bool clearInlineCachedWrapper(DOMWrapperWorld&, JSC::ArrayBuffer*, JSC::JSArrayBuffer* wrapper);
 
-template<typename DOMClass, typename T> Ref<DOMClass> inline castDOMObjectForWrapperCreation(Ref<T>&& object) { return static_reference_cast<DOMClass>(WTFMove(object)); }
-#define CREATE_DOM_WRAPPER(globalObject, className, object) createWrapper<JS##className, className>(globalObject, castDOMObjectForWrapperCreation<className>(object))
-
 template<typename DOMClass> JSC::JSObject* getCachedWrapper(DOMWrapperWorld&, DOMClass&);
 template<typename DOMClass> inline JSC::JSObject* getCachedWrapper(DOMWrapperWorld& world, Ref<DOMClass>& object) { return getCachedWrapper(world, object.get()); }
 template<typename DOMClass, typename WrapperClass> void cacheWrapper(DOMWrapperWorld&, DOMClass*, WrapperClass*);
 template<typename DOMClass, typename WrapperClass> void uncacheWrapper(DOMWrapperWorld&, DOMClass*, WrapperClass*);
-template<typename WrapperClass, typename DOMClass> WrapperClass* createWrapper(JSDOMGlobalObject*, Ref<DOMClass>&&);
+template<typename DOMClass, typename T> auto createWrapper(JSDOMGlobalObject*, Ref<T>&&) -> typename std::enable_if<std::is_same<DOMClass, T>::value, typename JSDOMWrapperConverterTraits<DOMClass>::WrapperClass*>::type;
+template<typename DOMClass, typename T> auto createWrapper(JSDOMGlobalObject*, Ref<T>&&) -> typename std::enable_if<!std::is_same<DOMClass, T>::value, typename JSDOMWrapperConverterTraits<DOMClass>::WrapperClass*>::type;
 
 template<typename DOMClass> JSC::JSValue wrap(JSC::ExecState*, JSDOMGlobalObject*, DOMClass&);
 
@@ -471,13 +469,20 @@ template<typename DOMClass, typename WrapperClass> inline void uncacheWrapper(DO
     weakRemove(world.m_wrappers, wrapperKey(domObject), wrapper);
 }
 
-template<typename WrapperClass, typename DOMClass> inline WrapperClass* createWrapper(JSDOMGlobalObject* globalObject, Ref<DOMClass>&& node)
+template<typename DOMClass, typename T> inline auto createWrapper(JSDOMGlobalObject* globalObject, Ref<T>&& domObject) -> typename std::enable_if<std::is_same<DOMClass, T>::value, typename JSDOMWrapperConverterTraits<DOMClass>::WrapperClass*>::type
 {
-    ASSERT(!getCachedWrapper(globalObject->world(), node));
-    auto* nodePtr = node.ptr();
-    WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), *globalObject), globalObject, WTFMove(node));
-    cacheWrapper(globalObject->world(), nodePtr, wrapper);
+    using WrapperClass = typename JSDOMWrapperConverterTraits<DOMClass>::WrapperClass;
+
+    ASSERT(!getCachedWrapper(globalObject->world(), domObject));
+    auto* domObjectPtr = domObject.ptr();
+    auto* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), *globalObject), globalObject, WTFMove(domObject));
+    cacheWrapper(globalObject->world(), domObjectPtr, wrapper);
     return wrapper;
+}
+
+template<typename DOMClass, typename T> inline auto createWrapper(JSDOMGlobalObject* globalObject, Ref<T>&& domObject) -> typename std::enable_if<!std::is_same<DOMClass, T>::value, typename JSDOMWrapperConverterTraits<DOMClass>::WrapperClass*>::type
+{
+    return createWrapper<DOMClass>(globalObject, static_reference_cast<DOMClass>(WTFMove(domObject)));
 }
 
 template<typename DOMClass> inline JSC::JSValue wrap(JSC::ExecState* state, JSDOMGlobalObject* globalObject, DOMClass& domObject)

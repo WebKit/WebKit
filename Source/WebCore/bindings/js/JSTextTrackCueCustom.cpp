@@ -64,10 +64,10 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<TextTr
     // This switch will make more sense once we support DataCue
     switch (cue->cueType()) {
     case TextTrackCue::Data:
-        return CREATE_DOM_WRAPPER(globalObject, DataCue, WTFMove(cue));
+        return createWrapper<DataCue>(globalObject, WTFMove(cue));
     case TextTrackCue::WebVTT:
     case TextTrackCue::Generic:
-        return CREATE_DOM_WRAPPER(globalObject, VTTCue, WTFMove(cue));
+        return createWrapper<VTTCue>(globalObject, WTFMove(cue));
     default:
         ASSERT_NOT_REACHED();
         return jsNull();

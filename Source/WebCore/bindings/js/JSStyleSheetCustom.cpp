@@ -38,8 +38,8 @@ void JSStyleSheet::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<StyleSheet>&& styleSheet)
 {
     if (styleSheet->isCSSStyleSheet())
-        return CREATE_DOM_WRAPPER(globalObject, CSSStyleSheet, WTFMove(styleSheet));
-    return CREATE_DOM_WRAPPER(globalObject, StyleSheet, WTFMove(styleSheet));
+        return createWrapper<CSSStyleSheet>(globalObject, WTFMove(styleSheet));
+    return createWrapper<StyleSheet>(globalObject, WTFMove(styleSheet));
 }
 
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, StyleSheet& stylesheet)

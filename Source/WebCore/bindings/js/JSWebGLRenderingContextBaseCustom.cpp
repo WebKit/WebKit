@@ -120,9 +120,9 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
 {
 #if ENABLE(WEBGL2)
     if (is<WebGL2RenderingContext>(object))
-        return CREATE_DOM_WRAPPER(globalObject, WebGL2RenderingContext, WTFMove(object));
+        return createWrapper<WebGL2RenderingContext>(globalObject, WTFMove(object));
 #endif
-    return CREATE_DOM_WRAPPER(globalObject, WebGLRenderingContext, WTFMove(object));
+    return createWrapper<WebGLRenderingContext>(globalObject, WTFMove(object));
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebGLRenderingContextBase& object)

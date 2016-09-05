@@ -224,37 +224,37 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             else if (is<SVGElement>(node.get()))
                 wrapper = createJSSVGWrapper(globalObject, static_reference_cast<SVGElement>(WTFMove(node)));
             else
-                wrapper = CREATE_DOM_WRAPPER(globalObject, Element, WTFMove(node));
+                wrapper = createWrapper<Element>(globalObject, WTFMove(node));
             break;
         case Node::ATTRIBUTE_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, Attr, WTFMove(node));
+            wrapper = createWrapper<Attr>(globalObject, WTFMove(node));
             break;
         case Node::TEXT_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, Text, WTFMove(node));
+            wrapper = createWrapper<Text>(globalObject, WTFMove(node));
             break;
         case Node::CDATA_SECTION_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CDATASection, WTFMove(node));
+            wrapper = createWrapper<CDATASection>(globalObject, WTFMove(node));
             break;
         case Node::PROCESSING_INSTRUCTION_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, ProcessingInstruction, WTFMove(node));
+            wrapper = createWrapper<ProcessingInstruction>(globalObject, WTFMove(node));
             break;
         case Node::COMMENT_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, Comment, WTFMove(node));
+            wrapper = createWrapper<Comment>(globalObject, WTFMove(node));
             break;
         case Node::DOCUMENT_NODE:
             // we don't want to cache the document itself in the per-document dictionary
             return toJS(exec, globalObject, downcast<Document>(node.get()));
         case Node::DOCUMENT_TYPE_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentType, WTFMove(node));
+            wrapper = createWrapper<DocumentType>(globalObject, WTFMove(node));
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
             if (node->isShadowRoot())
-                wrapper = CREATE_DOM_WRAPPER(globalObject, ShadowRoot, WTFMove(node));
+                wrapper = createWrapper<ShadowRoot>(globalObject, WTFMove(node));
             else
-                wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentFragment, WTFMove(node));
+                wrapper = createWrapper<DocumentFragment>(globalObject, WTFMove(node));
             break;
         default:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, Node, WTFMove(node));
+            wrapper = createWrapper<Node>(globalObject, WTFMove(node));
     }
 
     return wrapper;

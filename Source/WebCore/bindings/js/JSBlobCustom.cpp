@@ -53,8 +53,8 @@ namespace WebCore {
 JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<Blob>&& blob)
 {
     if (is<File>(blob))
-        return CREATE_DOM_WRAPPER(globalObject, File, WTFMove(blob));
-    return createWrapper<JSBlob>(globalObject, WTFMove(blob));
+        return createWrapper<File>(globalObject, WTFMove(blob));
+    return createWrapper<Blob>(globalObject, WTFMove(blob));
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Blob& blob)
@@ -75,7 +75,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
         return throwConstructorScriptExecutionContextUnavailableError(exec, scope, "Blob");
 
     if (!exec.argumentCount()) {
-        return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), Blob, Blob::create()));
+        return JSValue::encode(createWrapper<Blob>(jsConstructor->globalObject(), Blob::create()));
     }
 
     unsigned blobPartsLength = 0;
@@ -139,7 +139,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
     }
 
     auto blob = Blob::create(blobBuilder.finalize(), Blob::normalizedContentType(type));
-    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), Blob, WTFMove(blob)));
+    return JSValue::encode(createWrapper<Blob>(jsConstructor->globalObject(), WTFMove(blob)));
 }
 
 } // namespace WebCore

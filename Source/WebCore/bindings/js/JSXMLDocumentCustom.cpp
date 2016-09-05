@@ -35,11 +35,11 @@ namespace WebCore {
 
 using namespace JSC;
 
-JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<XMLDocument>&& passedDocument)
+JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<XMLDocument>&& document)
 {
-    reportMemoryForDocumentIfFrameless(*state, passedDocument.get());
+    reportMemoryForDocumentIfFrameless(*state, document.get());
 
-    return CREATE_DOM_WRAPPER(globalObject, XMLDocument, WTFMove(passedDocument));
+    return createWrapper<XMLDocument>(globalObject, WTFMove(document));
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, XMLDocument& document)

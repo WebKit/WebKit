@@ -94,13 +94,13 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState& exec)
             setDOMException(&exec, TypeError);
             return JSValue::encode(jsUndefined());
         }
-        return JSValue::encode(CREATE_DOM_WRAPPER(castedThis->globalObject(), DataCue, DataCue::create(*context, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), *data, type)));
+        return JSValue::encode(createWrapper<DataCue>(castedThis->globalObject(), DataCue::create(*context, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), *data, type)));
     }
 
 #if !ENABLE(DATACUE_VALUE)
     return JSValue::encode(jsUndefined());
 #else
-    return JSValue::encode(CREATE_DOM_WRAPPER(castedThis->globalObject(), DataCue,DataCue::create(*context, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), valueArgument, type)));
+    return JSValue::encode(createWrapper<DataCue>(castedThis->globalObject(), DataCue::create(*context, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), valueArgument, type)));
 #endif
 }
 

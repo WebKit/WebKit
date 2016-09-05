@@ -64,33 +64,33 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSRul
 {
     switch (rule->type()) {
     case CSSRule::STYLE_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSStyleRule, WTFMove(rule));
+        return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
     case CSSRule::MEDIA_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSMediaRule, WTFMove(rule));
+        return createWrapper<CSSMediaRule>(globalObject, WTFMove(rule));
     case CSSRule::FONT_FACE_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSFontFaceRule, WTFMove(rule));
+        return createWrapper<CSSFontFaceRule>(globalObject, WTFMove(rule));
     case CSSRule::PAGE_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSPageRule, WTFMove(rule));
+        return createWrapper<CSSPageRule>(globalObject, WTFMove(rule));
     case CSSRule::IMPORT_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSImportRule, WTFMove(rule));
+        return createWrapper<CSSImportRule>(globalObject, WTFMove(rule));
     case CSSRule::CHARSET_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSCharsetRule, WTFMove(rule));
+        return createWrapper<CSSCharsetRule>(globalObject, WTFMove(rule));
     case CSSRule::KEYFRAME_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSKeyframeRule, WTFMove(rule));
+        return createWrapper<CSSKeyframeRule>(globalObject, WTFMove(rule));
     case CSSRule::KEYFRAMES_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSKeyframesRule, WTFMove(rule));
+        return createWrapper<CSSKeyframesRule>(globalObject, WTFMove(rule));
     case CSSRule::SUPPORTS_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, CSSSupportsRule, WTFMove(rule));
+        return createWrapper<CSSSupportsRule>(globalObject, WTFMove(rule));
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case CSSRule::WEBKIT_VIEWPORT_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, WebKitCSSViewportRule, WTFMove(rule));
+        return createWrapper<WebKitCSSViewportRule>(globalObject, WTFMove(rule));
 #endif
 #if ENABLE(CSS_REGIONS)
     case CSSRule::WEBKIT_REGION_RULE:
-        return CREATE_DOM_WRAPPER(globalObject, WebKitCSSRegionRule, WTFMove(rule));
+        return createWrapper<WebKitCSSRegionRule>(globalObject, WTFMove(rule));
 #endif
     default:
-        return CREATE_DOM_WRAPPER(globalObject, CSSRule, WTFMove(rule));
+        return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     }
 }
 

@@ -125,7 +125,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
     }
 
     auto file = File::create(blobBuilder.finalize(), filename, normalizedType, lastModified.value());
-    return JSValue::encode(CREATE_DOM_WRAPPER(constructor->globalObject(), File, WTFMove(file)));
+    return JSValue::encode(createWrapper<File>(constructor->globalObject(), WTFMove(file)));
 }
 
 } // namespace WebCore

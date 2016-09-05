@@ -28,6 +28,7 @@
 #define JSWorkerGlobalScopeBase_h
 
 #include "JSDOMGlobalObject.h"
+#include "JSDOMWrapper.h"
 
 namespace WebCore {
 

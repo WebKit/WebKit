@@ -42,8 +42,8 @@ namespace WebCore {
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<AnimationTimeline>&& value)
 {
     if (value->isDocumentTimeline())
-        return CREATE_DOM_WRAPPER(globalObject, DocumentTimeline, WTFMove(value));
-    return CREATE_DOM_WRAPPER(globalObject, AnimationTimeline, WTFMove(value));
+        return createWrapper<DocumentTimeline>(globalObject, WTFMove(value));
+    return createWrapper<AnimationTimeline>(globalObject, WTFMove(value));
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AnimationTimeline& value)

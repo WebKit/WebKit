@@ -55,7 +55,7 @@ static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Elem
         return createJSHTMLWrapper(globalObject, static_reference_cast<HTMLElement>(WTFMove(element)));
     if (is<SVGElement>(element.get()))
         return createJSSVGWrapper(globalObject, static_reference_cast<SVGElement>(WTFMove(element)));
-    return CREATE_DOM_WRAPPER(globalObject, Element, WTFMove(element));
+    return createWrapper<Element>(globalObject, WTFMove(element));
 }
 
 JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Element& element)

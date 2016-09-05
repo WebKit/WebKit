@@ -55,8 +55,8 @@ JSValue JSIDBCursor::source(ExecState& state) const
 JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<IDBCursor>&& cursor)
 {
     if (is<IDBCursorWithValue>(cursor))
-        return CREATE_DOM_WRAPPER(globalObject, IDBCursorWithValue, WTFMove(cursor));
-    return createWrapper<JSIDBCursor>(globalObject, WTFMove(cursor));
+        return createWrapper<IDBCursorWithValue>(globalObject, WTFMove(cursor));
+    return createWrapper<IDBCursor>(globalObject, WTFMove(cursor));
 }
 
 JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, IDBCursor& cursor)

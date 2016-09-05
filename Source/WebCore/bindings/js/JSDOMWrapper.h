@@ -66,6 +66,8 @@ private:
     Ref<ImplementationClass> m_wrapped;
 };
 
+template<typename ImplementationClass> struct JSDOMWrapperConverterTraits;
+
 template<typename JSClass, typename Enable = void>
 struct JSDOMObjectInspector {
 public:

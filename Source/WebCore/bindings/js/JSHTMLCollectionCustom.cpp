@@ -56,16 +56,16 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<HTMLCo
 {
     switch (collection->type()) {
     case FormControls:
-        return CREATE_DOM_WRAPPER(globalObject, HTMLFormControlsCollection, WTFMove(collection));
+        return createWrapper<HTMLFormControlsCollection>(globalObject, WTFMove(collection));
     case SelectOptions:
-        return CREATE_DOM_WRAPPER(globalObject, HTMLOptionsCollection, WTFMove(collection));
+        return createWrapper<HTMLOptionsCollection>(globalObject, WTFMove(collection));
     case DocAll:
-        return CREATE_DOM_WRAPPER(globalObject, HTMLAllCollection, WTFMove(collection));
+        return createWrapper<HTMLAllCollection>(globalObject, WTFMove(collection));
     default:
         break;
     }
 
-    return CREATE_DOM_WRAPPER(globalObject, HTMLCollection, WTFMove(collection));
+    return createWrapper<HTMLCollection>(globalObject, WTFMove(collection));
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, HTMLCollection& collection)

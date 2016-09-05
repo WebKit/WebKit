@@ -1582,6 +1582,12 @@ sub GenerateHeader
         push(@headerContent, "bool fill${interfaceName}Init(${interfaceName}Init&, JSDictionary&);\n\n");
     }
 
+    if (NeedsImplementationClass($interface)) {
+        push(@headerContent, "template<> struct JSDOMWrapperConverterTraits<${implType}> {\n");
+        push(@headerContent, "    using WrapperClass = ${className};\n");
+        push(@headerContent, "};\n");
+    }
+
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@headerContent, "\n} // namespace WebCore\n");
     push(@headerContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
@@ -3708,7 +3714,7 @@ END
     globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
 END
 
-        push(@implContent, "    return createWrapper<$className, $implType>(globalObject, WTFMove(impl));\n");
+        push(@implContent, "    return createWrapper<$implType>(globalObject, WTFMove(impl));\n");
         push(@implContent, "}\n\n");
 
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType& impl)\n");
@@ -5298,7 +5304,7 @@ template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecS
     }
 
     Ref<${interfaceName}> event = ${interfaceName}::createForBindings(eventType, eventInit);
-    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), ${interfaceName}, WTFMove(event)));
+    return JSValue::encode(createWrapper<${interfaceName}>(jsConstructor->globalObject(), WTFMove(event)));
 }
 
 bool fill${interfaceName}Init(${interfaceName}Init& eventInit, JSDictionary& dictionary)

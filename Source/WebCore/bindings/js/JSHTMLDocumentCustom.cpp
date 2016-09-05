@@ -56,7 +56,7 @@ using namespace HTMLNames;
 JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<HTMLDocument>&& passedDocument)
 {
     auto& document = passedDocument.get();
-    JSObject* wrapper = createWrapper<JSHTMLDocument>(globalObject, WTFMove(passedDocument));
+    JSObject* wrapper = createWrapper<HTMLDocument>(globalObject, WTFMove(passedDocument));
 
     reportMemoryForDocumentIfFrameless(*state, document);
 

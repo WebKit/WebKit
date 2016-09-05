@@ -67,18 +67,18 @@ void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSValue>&& value)
 {
     if (value->isWebKitCSSTransformValue())
-        return CREATE_DOM_WRAPPER(globalObject, WebKitCSSTransformValue, WTFMove(value));
+        return createWrapper<WebKitCSSTransformValue>(globalObject, WTFMove(value));
     if (value->isWebKitCSSFilterValue())
-        return CREATE_DOM_WRAPPER(globalObject, WebKitCSSFilterValue, WTFMove(value));
+        return createWrapper<WebKitCSSFilterValue>(globalObject, WTFMove(value));
     if (value->isValueList())
-        return CREATE_DOM_WRAPPER(globalObject, CSSValueList, WTFMove(value));
+        return createWrapper<CSSValueList>(globalObject, WTFMove(value));
     if (value->isSVGPaint())
-        return CREATE_DOM_WRAPPER(globalObject, SVGPaint, WTFMove(value));
+        return createWrapper<SVGPaint>(globalObject, WTFMove(value));
     if (value->isSVGColor())
-        return CREATE_DOM_WRAPPER(globalObject, SVGColor, WTFMove(value));
+        return createWrapper<SVGColor>(globalObject, WTFMove(value));
     if (value->isPrimitiveValue())
-        return CREATE_DOM_WRAPPER(globalObject, CSSPrimitiveValue, WTFMove(value));
-    return CREATE_DOM_WRAPPER(globalObject, CSSValue, WTFMove(value));
+        return createWrapper<CSSPrimitiveValue>(globalObject, WTFMove(value));
+    return createWrapper<CSSValue>(globalObject, WTFMove(value));
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, CSSValue& value)
