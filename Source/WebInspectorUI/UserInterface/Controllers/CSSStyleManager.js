@@ -497,7 +497,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
             if (!styleSheet.url)
                 return;
 
-            var resource = styleSheet.parentFrame.resourceForURL(styleSheet.url);;
+            var resource = styleSheet.parentFrame.resourceForURL(styleSheet.url);
             if (!resource)
                 return;
 

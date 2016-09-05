@@ -52,7 +52,7 @@ InspectorBackendClass = class InspectorBackendClass
         this._dumpInspectorTimeStats = false;
 
         let setting = WebInspector.autoLogProtocolMessagesSetting = new WebInspector.Setting("auto-collect-protocol-messages", false);
-        setting.addEventListener(WebInspector.Setting.Event.Changed, this._startOrStopAutomaticTracing.bind(this))
+        setting.addEventListener(WebInspector.Setting.Event.Changed, this._startOrStopAutomaticTracing.bind(this));
         this._startOrStopAutomaticTracing();
     }
 
@@ -470,7 +470,7 @@ InspectorBackend.Agent = class InspectorBackendAgent
 // But we can use strict mode to get stricter handling of the code inside its functions.
 InspectorBackend.Command = function(backend, qualifiedName, callSignature, replySignature)
 {
-    'use strict';
+    "use strict";
 
     this._backend = backend;
     this._instance = this;
@@ -484,7 +484,7 @@ InspectorBackend.Command = function(backend, qualifiedName, callSignature, reply
 
 InspectorBackend.Command.create = function(backend, commandName, callSignature, replySignature)
 {
-    'use strict';
+    "use strict";
 
     var instance = new InspectorBackend.Command(backend, commandName, callSignature, replySignature);
 
@@ -527,7 +527,7 @@ InspectorBackend.Command.prototype = {
 
     invoke: function(commandArguments, callback)
     {
-        'use strict';
+        "use strict";
 
         let instance = this._instance;
 
@@ -539,7 +539,7 @@ InspectorBackend.Command.prototype = {
 
     supports: function(parameterName)
     {
-        'use strict';
+        "use strict";
 
         var instance = this._instance;
         return instance.callSignature.some((parameter) => parameter["name"] === parameterName);
@@ -549,7 +549,7 @@ InspectorBackend.Command.prototype = {
 
     _invokeWithArguments: function()
     {
-        'use strict';
+        "use strict";
 
         let instance = this._instance;
         let commandArguments = Array.from(arguments);

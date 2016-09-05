@@ -62,7 +62,7 @@ ProtocolTestHarness = class ProtocolTestHarness extends TestHarness
         let args = {
             method: "Runtime.evaluate",
             params: {expression}
-        }
+        };
 
         if (typeof callback === "function")
             InspectorProtocol.sendCommand(args, callback);
@@ -75,4 +75,4 @@ ProtocolTestHarness = class ProtocolTestHarness extends TestHarness
         this.dumpActivityToSystemConsole = true;
         this.dumpInspectorProtocolMessages = true;
     }
-}
+};

@@ -474,7 +474,7 @@ WebInspector.isTabTypeAllowed = function(tabType)
 WebInspector.knownTabClasses = function()
 {
     return new Set(this._knownTabClassesByType.values());
-}
+};
 
 WebInspector._showOpenResourceDialog = function()
 {
@@ -485,7 +485,7 @@ WebInspector._showOpenResourceDialog = function()
         return;
 
     this._openResourceDialog.present(this._contentElement);
-}
+};
 
 WebInspector._createTabContentViewForType = function(tabType)
 {
@@ -563,7 +563,7 @@ WebInspector._tryToRestorePendingTabs = function()
     this._pendingOpenTabs = stillPendingOpenTabs;
 
     this._updateNewTabButtonState();
-}
+};
 
 WebInspector.showNewTabTab = function(shouldAnimate)
 {
@@ -634,7 +634,7 @@ WebInspector.registerTabClass = function(tabClass)
 
     this._tryToRestorePendingTabs();
     this.notifications.dispatchEventToListeners(WebInspector.Notification.TabTypesChanged);
-}
+};
 
 WebInspector.activateExtraDomains = function(domains)
 {
@@ -736,7 +736,7 @@ WebInspector.updateVisibilityState = function(visible)
 {
     this.visible = visible;
     this.notifications.dispatchEventToListeners(WebInspector.Notification.VisibilityStateDidChange);
-}
+};
 
 WebInspector.handlePossibleLinkClick = function(event, frame, alwaysOpenExternally)
 {
@@ -1000,7 +1000,7 @@ WebInspector.unlocalizedString = function(string)
     // (such as in Debug UI) or in text that is standardized in English.
     // For example, CSS property names and values are never localized.
     return string;
-}
+};
 
 WebInspector.UIString = function(string, vararg)
 {
@@ -1485,7 +1485,7 @@ WebInspector._contextMenuRequested = function(event)
 WebInspector.isDebugUIEnabled = function()
 {
     return WebInspector.showDebugUISetting && WebInspector.showDebugUISetting.value;
-}
+};
 
 WebInspector._undock = function(event)
 {
@@ -1953,7 +1953,7 @@ WebInspector._find = function(event)
     var contentBrowser = this._focusedOrVisibleContentBrowser();
     if (!contentBrowser || typeof contentBrowser.handleFindEvent !== "function")
         return;
-    
+
     contentBrowser.handleFindEvent(event);
 };
 
@@ -2042,14 +2042,14 @@ WebInspector._resetZoom = function(event)
 WebInspector._zoomFactor = function()
 {
     return this._zoomFactorSetting.value;
-}
+};
 
 WebInspector._setZoomFactor = function(factor)
 {
     InspectorFrontendHost.setZoomFactor(factor);
     // Round-trip through the frontend host API in case the requested factor is not used.
     this._zoomFactorSetting.value = InspectorFrontendHost.zoomFactor();
-}
+};
 
 WebInspector._showTabAtIndex = function(i, event)
 {
@@ -2120,13 +2120,8 @@ WebInspector.createMessageTextView = function(message, isError)
 
 WebInspector.createGoToArrowButton = function()
 {
-    function stopPropagation(event)
-    {
-        event.stopPropagation()
-    }
-
     var button = document.createElement("button");
-    button.addEventListener("mousedown", stopPropagation, true);
+    button.addEventListener("mousedown", (event) => { event.stopPropagation(); }, true);
     button.className = "go-to-arrow";
     button.tabIndex = -1;
     return button;
@@ -2236,7 +2231,7 @@ WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linki
         container.append(nonLink);
 
         var title = linkString;
-        var realURL = (linkString.startsWith("www.") ? "http://" + linkString : linkString);
+        var realURL = linkString.startsWith("www.") ? "http://" + linkString : linkString;
         var lineColumnMatch = lineColumnRegEx.exec(realURL);
         if (lineColumnMatch)
             realURL = realURL.substring(0, realURL.length - lineColumnMatch[0].length);
@@ -2286,7 +2281,7 @@ WebInspector.createResourceLink = function(resource, className)
     linkNode.textContent = (resource.urlComponents.lastPathComponent || resource.url).insertWordBreakCharacters();
     linkNode.addEventListener("click", handleClick.bind(this));
     return linkNode;
-}
+};
 
 WebInspector._undoKeyboardShortcut = function(event)
 {
@@ -2435,7 +2430,7 @@ WebInspector.canArchiveMainFrame = function()
         return false;
 
     if (!WebInspector.frameResourceManager.mainFrame || !WebInspector.frameResourceManager.mainFrame.mainResource)
-        return;
+        return false;
 
     return WebInspector.Resource.typeFromMIMEType(WebInspector.frameResourceManager.mainFrame.mainResource.mimeType) === WebInspector.Resource.Type.Document;
 };

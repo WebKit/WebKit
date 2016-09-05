@@ -52,4 +52,4 @@ WebInspector.WrappedPromise = class WrappedPromise
     {
         this._reject(value);
     }
-}
+};

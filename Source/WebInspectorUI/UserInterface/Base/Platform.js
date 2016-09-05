@@ -43,7 +43,7 @@ WebInspector.Platform = {
     if (osVersionMatch && osVersionMatch[1] === "10") {
         WebInspector.Platform.version.base = 10;
         WebInspector.Platform.version.release = parseInt(osVersionMatch[2]);
-        switch(osVersionMatch[2]) {
+        switch (osVersionMatch[2]) {
             case "11":
                 WebInspector.Platform.version.name = "el-capitan";
                 break;

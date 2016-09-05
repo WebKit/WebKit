@@ -41,7 +41,7 @@ WebInspector.ScriptProfilerObserver = class ScriptProfilerObserver
     {
         WebInspector.timelineManager.scriptProfilerTrackingCompleted(samples);
     }
-    
+
     programmaticCaptureStarted()
     {
         WebInspector.timelineManager.scriptProfilerProgrammaticCaptureStarted();

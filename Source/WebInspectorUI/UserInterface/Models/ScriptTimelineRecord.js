@@ -357,7 +357,7 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         WebInspector.ScriptTimelineRecord._eventDisplayNames = nameMap;
     }
 
-    switch(eventType) {
+    switch (eventType) {
     case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
     case WebInspector.ScriptTimelineRecord.EventType.APIScriptEvaluated:
         return WebInspector.UIString("Script Evaluated");

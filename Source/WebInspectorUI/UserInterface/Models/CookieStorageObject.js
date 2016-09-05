@@ -38,9 +38,9 @@ WebInspector.CookieStorageObject = class CookieStorageObject
         if (!parsedURL || !WebInspector.CookieStorageObject.cookieDomainMatchesResourceDomain(cookie.domain, parsedURL.host))
             return false;
 
-        return (parsedURL.path.startsWith(cookie.path)
+        return parsedURL.path.startsWith(cookie.path)
             && (!cookie.port || parsedURL.port === cookie.port)
-            && (!cookie.secure || parsedURL.scheme === "https"));
+            && (!cookie.secure || parsedURL.scheme === "https");
     }
 
     static cookieDomainMatchesResourceDomain(cookieDomain, resourceDomain)

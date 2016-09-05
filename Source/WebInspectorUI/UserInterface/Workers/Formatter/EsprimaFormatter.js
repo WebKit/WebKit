@@ -262,7 +262,7 @@ EsprimaFormatter = class EsprimaFormatter
         }
 
         if (nodeType === "LogicalExpression" || nodeType === "BinaryExpression") {
-            if ((tokenValue !== "(" && tokenValue !== ")")) {
+            if (tokenValue !== "(" && tokenValue !== ")") {
                 builder.appendSpace();
                 builder.appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
@@ -875,4 +875,4 @@ EsprimaFormatter = class EsprimaFormatter
             console.assert(!programNode.trailingComments);
         }
     }
-}
+};

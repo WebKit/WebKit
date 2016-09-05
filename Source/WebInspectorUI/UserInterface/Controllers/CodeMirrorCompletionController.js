@@ -416,7 +416,6 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
 
         var bracketStack = [];
         var bracketOffsetStack = [];
-        var lastCloseBracketOffset = NaN;
 
         var startOffset = endOffset;
         var firstOffset = endOffset + direction;

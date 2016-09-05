@@ -43,7 +43,7 @@ WebInspector.LayoutTimelineRecord = class LayoutTimelineRecord extends WebInspec
 
     static displayNameForEventType(eventType)
     {
-        switch(eventType) {
+        switch (eventType) {
         case WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles:
             return WebInspector.UIString("Styles Invalidated");
         case WebInspector.LayoutTimelineRecord.EventType.RecalculateStyles:

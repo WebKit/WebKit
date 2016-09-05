@@ -44,7 +44,7 @@ InspectorProtocol.sendCommand = function(methodOrObject, params, handler)
     this._sendMessage(messageObject);
 
     return this._requestId;
-}
+};
 
 InspectorProtocol.awaitCommand = function(args)
 {
@@ -52,7 +52,7 @@ InspectorProtocol.awaitCommand = function(args)
     let messageObject = {method, params, id: ++this._requestId};
 
     return this.awaitMessage(messageObject);
-}
+};
 
 InspectorProtocol.awaitMessage = function(messageObject)
 {
@@ -70,7 +70,7 @@ InspectorProtocol.awaitMessage = function(messageObject)
         this._dispatchTable[requestId] = {resolve, reject};
         this._sendMessage(messageObject);
     });
-}
+};
 
 InspectorProtocol.awaitEvent = function(args)
 {
@@ -82,9 +82,9 @@ InspectorProtocol.awaitEvent = function(args)
         InspectorProtocol.eventHandler[event] = function(message) {
             InspectorProtocol.eventHandler[event] = undefined;
             resolve(message);
-        }
+        };
     });
-}
+};
 
 InspectorProtocol._sendMessage = function(messageObject)
 {
@@ -94,7 +94,7 @@ InspectorProtocol._sendMessage = function(messageObject)
         InspectorFrontendHost.unbufferedLog(`frontend: ${messageString}`);
 
     InspectorFrontendHost.sendMessageToBackend(messageString);
-}
+};
 
 InspectorProtocol.addEventListener = function(eventTypeOrObject, listener)
 {
@@ -120,7 +120,7 @@ InspectorProtocol.addEventListener = function(eventTypeOrObject, listener)
         throw new Error("Cannot register the same listener more than once.");
 
     listeners.push(listener);
-}
+};
 
 InspectorProtocol.checkForError = function(responseObject)
 {
@@ -129,7 +129,7 @@ InspectorProtocol.checkForError = function(responseObject)
         ProtocolTest.completeTest();
         throw "PROTOCOL ERROR";
     }
-}
+};
 
 InspectorProtocol.dispatchMessageFromBackend = function(messageObject)
 {
@@ -179,4 +179,4 @@ InspectorProtocol.dispatchMessageFromBackend = function(messageObject)
                 resolve(messageObject.result);
         }
     }
-}
+};

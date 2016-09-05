@@ -108,7 +108,7 @@ WebInspector.DragToAdjustController = class DragToAdjustController
 
     handleEvent(event)
     {
-        switch(event.type) {
+        switch (event.type) {
         case "mouseenter":
             if (!this._dragging) {
                 if (this._delegate && typeof this._delegate.dragToAdjustControllerCanBeActivated === "function")

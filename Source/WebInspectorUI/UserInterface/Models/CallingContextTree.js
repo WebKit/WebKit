@@ -106,7 +106,7 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
 
         this._root.forEachChild((child) => {
             if (child.hasStackTraceInTimeRange(startTime, endTime))
-                roots.push(child.toCPUProfileNode(numSamplesInTimeRange, startTime, endTime)); 
+                roots.push(child.toCPUProfileNode(numSamplesInTimeRange, startTime, endTime));
         });
 
         cpuProfile.rootNodes = roots;

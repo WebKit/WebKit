@@ -75,7 +75,7 @@ WebInspector.loaded = function()
 
     // Global settings.
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", true);
-}
+};
 
 WebInspector.contentLoaded = function()
 {
@@ -85,7 +85,7 @@ WebInspector.contentLoaded = function()
     // Tell the InspectorFrontendHost we loaded, which causes the window to display
     // and pending InspectorFrontendAPI commands to be sent.
     InspectorFrontendHost.loaded();
-}
+};
 
 WebInspector.isDebugUIEnabled = () => false;
 

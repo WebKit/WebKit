@@ -341,7 +341,7 @@ WebInspector.ReplayManager = class ReplayManager extends WebInspector.Object
                 console.assert(manager.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
                 console.assert(manager.segmentState === WebInspector.ReplayManager.SegmentState.Loaded || manager.segmentState === WebInspector.ReplayManager.SegmentState.Unloaded);
 
-                return ReplayAgent.replayToCompletion(manager.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward)
+                return ReplayAgent.replayToCompletion(manager.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward);
             }).catch(function(error) {
                 console.error("Failed to start playback to completion: ", error);
                 throw error;

@@ -51,7 +51,7 @@ WebInspector.VisualStyleCompletionsController = class VisualStyleCompletionsCont
     get currentCompletion()
     {
         if (!this.hasCompletions)
-            return;
+            return null;
 
         return this._currentCompletions[this._selectedCompletionIndex] || null;
     }
@@ -129,4 +129,4 @@ WebInspector.VisualStyleCompletionsController = class VisualStyleCompletionsCont
 
 WebInspector.VisualStyleCompletionsController.Event = {
     CompletionSelected: "visual-style-completions-controller-completion-selected"
-}
+};

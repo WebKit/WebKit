@@ -50,7 +50,7 @@ WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
         this._nextSibling = null;
         this._computedTotalTimes = false;
 
-        if (this._callInfo) {            
+        if (this._callInfo) {
             this._startTime = this._callInfo.startTime;
             this._endTime = this._callInfo.endTime;
             this._totalTime = this._callInfo.totalTime;

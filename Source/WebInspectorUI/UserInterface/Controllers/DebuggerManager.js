@@ -284,7 +284,6 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         console.assert(sourceCode instanceof WebInspector.Resource || sourceCode instanceof WebInspector.Script);
 
         if (sourceCode instanceof WebInspector.SourceMapResource) {
-            var mappedResourceBreakpoints = [];
             var originalSourceCodeBreakpoints = this.breakpointsForSourceCode(sourceCode.sourceMap.originalSourceCode);
             return originalSourceCodeBreakpoints.filter(function(breakpoint) {
                 return breakpoint.sourceCodeLocation.displaySourceCode === sourceCode;

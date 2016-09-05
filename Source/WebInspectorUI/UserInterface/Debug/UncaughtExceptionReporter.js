@@ -166,7 +166,7 @@ function createErrorSheet() {
 
         if (entry.details) {
             lines.push("");
-            lines.push("Additional Details:")
+            lines.push("Additional Details:");
             for (let key in entry.details) {
                 let value = entry.details[key];
                 lines.push(`${indent}${key} --> ${value}`);

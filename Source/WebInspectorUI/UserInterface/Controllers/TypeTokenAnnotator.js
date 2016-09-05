@@ -100,7 +100,7 @@ WebInspector.TypeTokenAnnotator = class TypeTokenAnnotator extends WebInspector.
         if (!functionReturnType || !functionReturnType.valid)
             return;
 
-        // If a function does not have an explicit return statement with an argument (i.e, "return x;" instead of "return;") 
+        // If a function does not have an explicit return statement with an argument (i.e, "return x;" instead of "return;")
         // then don't show a return type unless we think it's a constructor.
         var scriptSyntaxTree = this._script._scriptSyntaxTree;
         if (!node.attachments.__typeToken && (scriptSyntaxTree.containsNonEmptyReturnStatement(node.body) || !functionReturnType.typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Undefined))) {

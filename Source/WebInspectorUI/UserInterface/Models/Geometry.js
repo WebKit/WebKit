@@ -58,7 +58,7 @@ WebInspector.Point = class Point
 
     equals(anotherPoint)
     {
-        return (this.x === anotherPoint.x && this.y === anotherPoint.y);
+        return this.x === anotherPoint.x && this.y === anotherPoint.y;
     }
 
     distance(anotherPoint)
@@ -91,7 +91,7 @@ WebInspector.Size = class Size
 
     equals(anotherSize)
     {
-        return (this.width === anotherSize.width && this.height === anotherSize.height);
+        return this.width === anotherSize.width && this.height === anotherSize.height;
     }
 };
 
@@ -135,7 +135,7 @@ WebInspector.Rect = class Rect
 
     equals(anotherRect)
     {
-        return (this.origin.equals(anotherRect.origin) && this.size.equals(anotherRect.size));
+        return this.origin.equals(anotherRect.origin) && this.size.equals(anotherRect.size);
     }
 
     inset(insets)
@@ -252,8 +252,8 @@ WebInspector.EdgeInsets = class EdgeInsets
 
     equals(anotherInset)
     {
-        return (this.top === anotherInset.top && this.right === anotherInset.right &&
-                this.bottom === anotherInset.bottom && this.left === anotherInset.left);
+        return this.top === anotherInset.top && this.right === anotherInset.right
+            && this.bottom === anotherInset.bottom && this.left === anotherInset.left;
     }
 
     copy()
@@ -320,7 +320,7 @@ WebInspector.Polygon = class Polygon
         }
         return new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY);
     }
-}
+};
 
 WebInspector.CubicBezier = class CubicBezier
 {
@@ -333,7 +333,7 @@ WebInspector.CubicBezier = class CubicBezier
         this._curveInfo = {
             x: {c: 3.0 * x1},
             y: {c: 3.0 * y1}
-        }
+        };
 
         this._curveInfo.x.b = 3.0 * (x2 - x1) - this._curveInfo.x.c;
         this._curveInfo.x.a = 1.0 - this._curveInfo.x.c - this._curveInfo.x.b;
@@ -467,7 +467,7 @@ WebInspector.CubicBezier = class CubicBezier
         // Failure.
         return t2;
     }
-}
+};
 
 WebInspector.CubicBezier.keywordValues = {
     "ease":         [0.25, 0.1, 0.25, 1],
@@ -568,4 +568,4 @@ WebInspector.Spring = class Spring
         }
         return t;
     }
-}
+};

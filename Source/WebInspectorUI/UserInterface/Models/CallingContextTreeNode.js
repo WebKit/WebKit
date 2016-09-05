@@ -72,7 +72,7 @@ WebInspector.CallingContextTreeNode = class CallingContextTreeNode extends WebIn
         }
         return false;
     }
-    
+
     hasStackTraceInTimeRange(startTime, endTime)
     {
         console.assert(startTime <= endTime);
@@ -153,7 +153,7 @@ WebInspector.CallingContextTreeNode = class CallingContextTreeNode extends WebIn
         if (!expressionLocation)
             return;
 
-        let {line, column} = expressionLocation;    
+        let {line, column} = expressionLocation;
         let hashCons = line + ":" + column;
         let timestamps = this._expressionLocations[hashCons];
         if (!timestamps) {

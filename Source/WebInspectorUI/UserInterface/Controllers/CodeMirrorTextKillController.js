@@ -99,7 +99,7 @@ WebInspector.CodeMirrorTextKillController = class CodeMirrorTextKillController e
         let killedText;
         if (change.to.line === change.from.line + 1 && change.removed.length === 2) {
             // An entire line was deleted, including newline (deleteLine).
-            if (change.removed[0].length && !change.removed[1].length) 
+            if (change.removed[0].length && !change.removed[1].length)
                 killedText = change.removed[0] + "\n";
             // A newline was killed by itself (Ctrl-K).
             else

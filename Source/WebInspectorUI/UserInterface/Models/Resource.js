@@ -88,7 +88,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
     static displayNameForType(type, plural)
     {
-        switch(type) {
+        switch (type) {
         case WebInspector.Resource.Type.Document:
             if (plural)
                 return WebInspector.UIString("Documents");
@@ -717,9 +717,9 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
         if (this.requestDataContentType && this.requestMethod !== "GET" && this.requestData) {
             if (this.requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
-                command.push("--data " + escapeStringPosix(this.requestData))
+                command.push("--data " + escapeStringPosix(this.requestData));
             else
-                command.push("--data-binary " + escapeStringPosix(this.requestData))
+                command.push("--data-binary " + escapeStringPosix(this.requestData));
         }
 
         let curlCommand = command.join(" \\\n");

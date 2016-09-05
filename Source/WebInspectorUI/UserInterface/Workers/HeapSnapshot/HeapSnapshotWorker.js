@@ -88,7 +88,7 @@ HeapSnapshotWorker = class HeapSnapshotWorker
     }
 
     // Private
-    
+
     _handleMessage(event)
     {
         let data = event.data;

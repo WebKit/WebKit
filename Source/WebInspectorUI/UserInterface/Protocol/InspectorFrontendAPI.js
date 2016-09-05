@@ -83,7 +83,7 @@ InspectorFrontendAPI = {
         if (document.readyState !== "complete")
             document.addEventListener("readystatechange", this);
         if (document.visibilityState !== "visible")
-            document.addEventListener("visibilitychange", this);  
+            document.addEventListener("visibilitychange", this);
     },
 
     handleEvent: function(event)
@@ -146,7 +146,7 @@ InspectorFrontendAPI = {
         var methodName = signature.shift();
         console.assert(InspectorFrontendAPI[methodName], "Unexpected InspectorFrontendAPI method name: " + methodName);
         if (!InspectorFrontendAPI[methodName])
-            return;
+            return null;
 
         return InspectorFrontendAPI[methodName].apply(InspectorFrontendAPI, signature);
     },

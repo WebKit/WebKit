@@ -117,7 +117,7 @@ TestHarness = class TestHarness extends WebInspector.Object
     {
         if (message instanceof Element)
             return message.textContent;
-        
+
         return (typeof message !== "string") ? JSON.stringify(message) : message;
     }
 };

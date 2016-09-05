@@ -105,8 +105,8 @@ WebInspector.TypeSet = class TypeSet extends WebInspector.Object
         if (typeSet.isSymbol)
             this._primitiveTypeNames.push("Symbol");
 
-        // It's implied that type Integer is contained in type Number. Don't put 
-        // both 'Integer' and 'Number' into the set because this could imply that 
+        // It's implied that type Integer is contained in type Number. Don't put
+        // both 'Integer' and 'Number' into the set because this could imply that
         // Number means to Double instead of Double|Integer.
         if (typeSet.isNumber)
             this._primitiveTypeNames.push("Number");

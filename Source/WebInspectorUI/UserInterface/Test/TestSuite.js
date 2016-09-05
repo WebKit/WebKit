@@ -79,10 +79,10 @@ TestSuite = class TestSuite extends WebInspector.Object
             throw new Error("Tried to add test case without `test` function.");
 
         if (testcase.setup && typeof testcase.setup !== "function")
-            throw new Error("Tried to add test case with invalid `setup` parameter (must be a function).")
+            throw new Error("Tried to add test case with invalid `setup` parameter (must be a function).");
 
         if (testcase.teardown && typeof testcase.teardown !== "function")
-            throw new Error("Tried to add test case with invalid `teardown` parameter (must be a function).")
+            throw new Error("Tried to add test case with invalid `teardown` parameter (must be a function).");
 
         this.testcases.push(testcase);
     }

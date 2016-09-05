@@ -1,3 +1,62 @@
+2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update ESLint rules and run it over most of UserInterface
+        https://bugs.webkit.org/show_bug.cgi?id=161561
+
+        Reviewed by Brian Burg.
+
+        * .eslintrc:
+        Updated ESLint rules.
+
+        * UserInterface/Base/InspectorFrontendHostStub.js:
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/Object.js:
+        * UserInterface/Base/Platform.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/CSSStyleManager.js:
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        * UserInterface/Controllers/CodeMirrorTextKillController.js:
+        * UserInterface/Controllers/DebuggerManager.js:
+        * UserInterface/Controllers/DragToAdjustController.js:
+        * UserInterface/Controllers/ReplayManager.js:
+        * UserInterface/Controllers/SourceMapManager.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        * UserInterface/Controllers/VisualStyleCompletionsController.js:
+        * UserInterface/Debug/Bootstrap.js:
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        * UserInterface/Models/CSSRule.js:
+        * UserInterface/Models/CallingContextTree.js:
+        * UserInterface/Models/CallingContextTreeNode.js:
+        * UserInterface/Models/ConsoleCommandResultMessage.js:
+        * UserInterface/Models/CookieStorageObject.js:
+        * UserInterface/Models/Frame.js:
+        * UserInterface/Models/Geometry.js:
+        * UserInterface/Models/IssueMessage.js:
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        * UserInterface/Models/MemoryTimeline.js:
+        * UserInterface/Models/NativeFunctionParameters.js:
+        * UserInterface/Models/ProfileNode.js:
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        * UserInterface/Models/Resource.js:
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        * UserInterface/Models/StackTrace.js:
+        * UserInterface/Models/TypeSet.js:
+        * UserInterface/Models/WrappedPromise.js:
+        * UserInterface/Protocol/InspectorBackend.js:
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        * UserInterface/Protocol/ScriptProfilerObserver.js:
+        * UserInterface/Test/FrontendTestHarness.js:
+        * UserInterface/Test/InspectorProtocol.js:
+        * UserInterface/Test/ProtocolTestHarness.js:
+        * UserInterface/Test/Test.js:
+        * UserInterface/Test/TestHarness.js:
+        * UserInterface/Test/TestSuite.js:
+        * UserInterface/Workers/Formatter/EsprimaFormatter.js:
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshotWorker.js:
+
 2016-09-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r205415.

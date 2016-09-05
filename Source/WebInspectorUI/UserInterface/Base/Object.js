@@ -38,11 +38,11 @@ WebInspector.Object = class WebInspectorObject
 
         console.assert(eventType, "Object.addEventListener: invalid event type ", eventType, "(listener: ", listener, "thisObject: ", thisObject, ")");
         if (!eventType)
-            return;
+            return null;
 
         console.assert(listener, "Object.addEventListener: invalid listener ", listener, "(event type: ", eventType, "thisObject: ", thisObject, ")");
         if (!listener)
-            return;
+            return null;
 
         if (!this._listeners)
             this._listeners = new Map();

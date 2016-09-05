@@ -989,12 +989,12 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
     _mergeScriptProfileRecords()
     {
-        let nextRecord = function(list) { return list.shift() || null; }
+        let nextRecord = function(list) { return list.shift() || null; };
         let nextWebTimelineRecord = nextRecord.bind(null, this._webTimelineScriptRecordsExpectingScriptProfilerEvents);
         let nextScriptProfilerRecord = nextRecord.bind(null, this._scriptProfilerRecords);
         let recordEnclosesRecord = function(record1, record2) {
             return record1.startTime <= record2.startTime && record1.endTime >= record2.endTime;
-        }
+        };
 
         let webRecord = nextWebTimelineRecord();
         let profilerRecord = nextScriptProfilerRecord();

@@ -35,7 +35,7 @@ WebInspector.MemoryTimeline = class MemoryTimeline extends WebInspector.Timeline
 
         this._pressureEvents.push(memoryPressureEvent);
 
-        this.dispatchEventToListeners(WebInspector.MemoryTimeline.Event.MemoryPressureEventAdded, {memoryPressureEvent})
+        this.dispatchEventToListeners(WebInspector.MemoryTimeline.Event.MemoryPressureEventAdded, {memoryPressureEvent});
     }
 
     // Protected

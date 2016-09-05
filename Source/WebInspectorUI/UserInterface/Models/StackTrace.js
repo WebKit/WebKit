@@ -151,5 +151,4 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
 
         return null;
     }
-    
 };

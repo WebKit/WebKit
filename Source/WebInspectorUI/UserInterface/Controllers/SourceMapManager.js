@@ -113,7 +113,7 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
                 var baseURL = sourceMapURL.startsWith("data:") ? originalSourceCode.url : sourceMapURL;
                 var sourceMap = new WebInspector.SourceMap(baseURL, payload, originalSourceCode);
                 this._loadAndParseSucceeded(sourceMapURL, sourceMap);
-            } catch(e) {
+            } catch (e) {
                 this._loadAndParseFailed(sourceMapURL);
             }
         }

@@ -166,14 +166,14 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
                         if (frame.indexOf("[native code]") !== -1)
                             frameLocation = "[native code]";
                         else
-                            frameLocation = "(" + frameLocation + ")"
+                            frameLocation = "(" + frameLocation + ")";
 
                         return `#${i}: ${frameName} ${frameLocation}`;
                     });
                     self.addResult("TRACE: " + Array.from(arguments).join(" "));
                     self.addResult(sanitizedFrames.join("\n"));
                 }
-            }
+            };
         }
 
         let redirectedMethods = {};

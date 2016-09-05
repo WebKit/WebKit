@@ -83,7 +83,7 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
 
     static displayName(type)
     {
-        switch(type) {
+        switch (type) {
         case WebInspector.IssueMessage.Type.SemanticIssue:
             return WebInspector.UIString("Semantic Issue");
         case WebInspector.IssueMessage.Type.RangeIssue:

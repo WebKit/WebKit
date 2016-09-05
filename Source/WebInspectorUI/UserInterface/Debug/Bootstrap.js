@@ -58,4 +58,4 @@ WebInspector.runBootstrapOperations = function() {
     });
 
     updateDebugUI();
-}
+};

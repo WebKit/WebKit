@@ -472,7 +472,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
 
     _isProvisionalResource(resource)
     {
-        return (resource.loaderIdentifier && this._provisionalLoaderIdentifier && resource.loaderIdentifier === this._provisionalLoaderIdentifier);
+        return resource.loaderIdentifier && this._provisionalLoaderIdentifier && resource.loaderIdentifier === this._provisionalLoaderIdentifier;
     }
 
     _associateWithResource(resource)

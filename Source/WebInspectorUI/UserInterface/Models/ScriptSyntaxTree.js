@@ -149,15 +149,15 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
 
     static functionReturnDivot(node)
     {
-        console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration || node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression || node.type === WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition || node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression); 
+        console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration || node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression || node.type === WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition || node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
 
-        // COMPATIBILITY (iOS 9): Legacy Backends view the return type as being the opening "{" of the function body. 
+        // COMPATIBILITY (iOS 9): Legacy Backends view the return type as being the opening "{" of the function body.
         // After iOS 9, this is to move to the start of the function statement/expression. See below:
         // FIXME: Need a better way to determine backend versions. Using DOM.pseudoElement because that was added after iOS 9.
         if (!DOMAgent.hasEvent("pseudoElementAdded"))
             return node.body.range[0];
 
-        // "f" in "function". "s" in "set". "g" in "get". First letter in any method name for classes and object literals. 
+        // "f" in "function". "s" in "set". "g" in "get". First letter in any method name for classes and object literals.
         // The "[" for computed methods in classes and object literals.
         return node.typeProfilingReturnDivot;
     }
@@ -780,7 +780,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.RestElement,
                 argument: this._createInternalSyntaxTree(node.argument)
             };
-            break;            
+            break;
         case "ReturnStatement":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.ReturnStatement,

@@ -32,7 +32,7 @@ WebInspector.ConsoleCommandResultMessage = class ConsoleCommandResult extends We
     constructor(result, wasThrown, savedResultIndex, shouldRevealConsole = true)
     {
         let source = WebInspector.ConsoleMessage.MessageSource.JS;
-        let level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+        let level = wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log;
         let type = WebInspector.ConsoleMessage.MessageType.Result;
 
         super(source, level, "", type, undefined, undefined, undefined, 0, [result], undefined, undefined);

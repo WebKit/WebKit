@@ -436,7 +436,7 @@ WebInspector.RemoteObject = class RemoteObject
 
         RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, true, mycallback);
     }
-    
+
     invokeGetter(getterRemoteObject, callback)
     {
         console.assert(getterRemoteObject instanceof WebInspector.RemoteObject);
@@ -639,7 +639,7 @@ WebInspector.RemoteObject.FakeRemoteObjectId = "fake-remote-object";
 WebInspector.RemoteObject.SourceCodeLocationPromise = {
     NoSourceFound: "remote-object-source-code-location-promise-no-source-found",
     MissingObjectId: "remote-object-source-code-location-promise-missing-object-id"
-}
+};
 
 // FIXME: Phase out this deprecated class.
 WebInspector.DeprecatedRemoteObjectProperty = class DeprecatedRemoteObjectProperty

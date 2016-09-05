@@ -2187,7 +2187,7 @@ WebInspector.NativePrototypeFunctionParameters = {
         before: "[node|string]...",
         replaceWith: "[node|string]...",
     };
-    Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ChildNode)
+    Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ChildNode);
     Object.assign(WebInspector.NativePrototypeFunctionParameters.CharacterData, ChildNode);
 
     var ParentNode = {

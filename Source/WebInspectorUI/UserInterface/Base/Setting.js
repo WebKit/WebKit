@@ -61,7 +61,7 @@ WebInspector.Setting = class Setting extends WebInspector.Object
         if (!window.InspectorTest && window.localStorage && this._localStorageKey in window.localStorage) {
             try {
                 this._value = JSON.parse(window.localStorage[this._localStorageKey]);
-            } catch(e) {
+            } catch (e) {
                 delete window.localStorage[this._localStorageKey];
             }
         }
@@ -83,7 +83,7 @@ WebInspector.Setting = class Setting extends WebInspector.Object
                     delete window.localStorage[this._localStorageKey];
                 else
                     window.localStorage[this._localStorageKey] = JSON.stringify(this._value);
-            } catch(e) {
+            } catch (e) {
                 console.error("Error saving setting with name: " + this._name);
             }
         }
