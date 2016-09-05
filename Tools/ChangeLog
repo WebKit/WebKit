@@ -1,3 +1,13 @@
+2016-09-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Skip several failing API tests
+
+        Unfortunately we don't have any form of test expectations for API tests, so we'll just skip
+        them after bugs are filed.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2016-09-05  Youenn Fablet  <youenn@apple.com>
 
         Fix W3C test importer unit tests after r205447
