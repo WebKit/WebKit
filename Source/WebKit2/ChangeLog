@@ -1,3 +1,16 @@
+2016-09-05  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] GL_PACK_ROW_LENGTH is not available in GLES2
+        https://bugs.webkit.org/show_bug.cgi?id=161484
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::paint): when under GLES2 we cannot rely on
+        GL_PACK_ROW_LENGTH; use glReadPixel directly when stride matches width, read line
+        by line manually otherwise. Colour conversion is also required to get the data out
+        correctly.
+
 2016-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] SetNativeSurfaceHandleForCompositing should not be compiled in for wayland build
