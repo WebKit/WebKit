@@ -1,3 +1,24 @@
+2016-09-05  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Drop ".Development" suffix from XPC service bundle IDs, leave it only on the executable
+        https://bugs.webkit.org/show_bug.cgi?id=161575
+
+        Reviewed by Sam Weinig.
+
+        Append the ".Development" suffix to the executable names, but not to the bundle names and
+        bundle IDs.
+
+        * Configurations/BaseTarget.xcconfig: No need for a preprocessor definition anymore.
+        * Configurations/BaseXPCService.xcconfig: Set EXECUTABLE_SUFFIX.
+        * Configurations/DatabaseService.xcconfig: No need to suffix the service name and bundle ID.
+        * Configurations/NetworkService.xcconfig: Ditto.
+        * Configurations/PluginService.32.xcconfig: Ditto.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Ditto.
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName): Service names are no longer suffixed.
+        * WebKit2.xcodeproj/project.pbxproj: Ditto.
+
 2016-09-05  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] GL_PACK_ROW_LENGTH is not available in GLES2

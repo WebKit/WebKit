@@ -52,18 +52,18 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 {
     switch (launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
-        return "com.apple.WebKit.WebContent" WK_XPC_SERVICE_SUFFIX;
+        return "com.apple.WebKit.WebContent";
     case ProcessLauncher::ProcessType::Network:
-        return "com.apple.WebKit.Networking" WK_XPC_SERVICE_SUFFIX;
+        return "com.apple.WebKit.Networking";
 #if ENABLE(DATABASE_PROCESS)
     case ProcessLauncher::ProcessType::Database:
-        return "com.apple.WebKit.Databases" WK_XPC_SERVICE_SUFFIX;
+        return "com.apple.WebKit.Databases";
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::ProcessType::Plugin32:
-        return "com.apple.WebKit.Plugin.32" WK_XPC_SERVICE_SUFFIX;
+        return "com.apple.WebKit.Plugin.32";
     case ProcessLauncher::ProcessType::Plugin64:
-        return "com.apple.WebKit.Plugin.64" WK_XPC_SERVICE_SUFFIX;
+        return "com.apple.WebKit.Plugin.64";
 #endif
     }
 }
