@@ -120,18 +120,12 @@ static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
 
 RenderBox::RenderBox(Element& element, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
     : RenderBoxModelObject(element, WTFMove(style), baseTypeFlags)
-    , m_minPreferredLogicalWidth(-1)
-    , m_maxPreferredLogicalWidth(-1)
-    , m_inlineBoxWrapper(nullptr)
 {
     setIsBox();
 }
 
 RenderBox::RenderBox(Document& document, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
     : RenderBoxModelObject(document, WTFMove(style), baseTypeFlags)
-    , m_minPreferredLogicalWidth(-1)
-    , m_maxPreferredLogicalWidth(-1)
-    , m_inlineBoxWrapper(nullptr)
 {
     setIsBox();
 }
@@ -2123,13 +2117,14 @@ std::unique_ptr<InlineElementBox> RenderBox::createInlineBox()
 
 void RenderBox::dirtyLineBoxes(bool fullLayout)
 {
-    if (m_inlineBoxWrapper) {
-        if (fullLayout) {
-            delete m_inlineBoxWrapper;
-            m_inlineBoxWrapper = nullptr;
-        } else
-            m_inlineBoxWrapper->dirtyLineBoxes();
-    }
+    if (!m_inlineBoxWrapper)
+        return;
+    
+    if (fullLayout) {
+        delete m_inlineBoxWrapper;
+        m_inlineBoxWrapper = nullptr;
+    } else
+        m_inlineBoxWrapper->dirtyLineBoxes();
 }
 
 void RenderBox::positionLineBox(InlineElementBox& box)
@@ -2165,12 +2160,13 @@ void RenderBox::positionLineBox(InlineElementBox& box)
 
 void RenderBox::deleteLineBoxWrapper()
 {
-    if (m_inlineBoxWrapper) {
-        if (!documentBeingDestroyed())
-            m_inlineBoxWrapper->removeFromParent();
-        delete m_inlineBoxWrapper;
-        m_inlineBoxWrapper = nullptr;
-    }
+    if (!m_inlineBoxWrapper)
+        return;
+    
+    if (!documentBeingDestroyed())
+        m_inlineBoxWrapper->removeFromParent();
+    delete m_inlineBoxWrapper;
+    m_inlineBoxWrapper = nullptr;
 }
 
 LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const

@@ -1,5 +1,25 @@
 2016-08-24  Zalan Bujtas  <zalan@apple.com>
 
+        ASSERTION FAILED: contentSize >= 0 in WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax
+        https://bugs.webkit.org/show_bug.cgi?id=155700
+        <rdar://problem/27720727>
+
+        Reviewed by David Hyatt.
+
+        RenderBox::m_minPreferredLogicalWidth/m_maxPreferredLogicalWidth don't need special initial value since
+        preferredLogicalWidthsDirty flag guards them. -1 as initial value can cause problems for renderers that don't
+        override RenderBox::computePreferredLogicalWidths().    
+
+        Test: fast/ruby/assert-when-content-size-is-negative.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::dirtyLineBoxes):
+        (WebCore::RenderBox::deleteLineBoxWrapper):
+        * rendering/RenderBox.h:
+
+2016-08-24  Zalan Bujtas  <zalan@apple.com>
+
         ASSERTION FAILED: childrenInline() in WebCore::RenderBlockFlow::hasLines
         https://bugs.webkit.org/show_bug.cgi?id=139396
         <rdar://problem/27704339>
