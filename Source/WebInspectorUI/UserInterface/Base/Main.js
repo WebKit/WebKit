@@ -2155,7 +2155,7 @@ WebInspector.linkifyLocation = function(url, lineNumber, columnNumber, className
 
     if (!sourceCode) {
         var anchor = document.createElement("a");
-        anchor.href  = url;
+        anchor.href = url;
         anchor.lineNumber = lineNumber;
         if (className)
             anchor.className = className;
@@ -2351,33 +2351,33 @@ WebInspector.highlightRangesWithStyleClass = function(element, resultRanges, sty
         var lastTextNode = textNodeSnapshot.snapshotItem(endIndex);
         var lastText = lastTextNode.textContent;
         lastTextNode.textContent = lastText.substring(endOffset - nodeRanges[endIndex].offset);
-        changes.push({ node: lastTextNode, type: "changed", oldText: lastText, newText: lastTextNode.textContent });
+        changes.push({node: lastTextNode, type: "changed", oldText: lastText, newText: lastTextNode.textContent});
 
         if (startIndex === endIndex) {
             lastTextNode.parentElement.insertBefore(highlightNode, lastTextNode);
-            changes.push({ node: highlightNode, type: "added", nextSibling: lastTextNode, parent: lastTextNode.parentElement });
+            changes.push({node: highlightNode, type: "added", nextSibling: lastTextNode, parent: lastTextNode.parentElement});
             highlightNodes.push(highlightNode);
 
             var prefixNode = ownerDocument.createTextNode(lastText.substring(0, startOffset - nodeRanges[startIndex].offset));
             lastTextNode.parentElement.insertBefore(prefixNode, highlightNode);
-            changes.push({ node: prefixNode, type: "added", nextSibling: highlightNode, parent: lastTextNode.parentElement });
+            changes.push({node: prefixNode, type: "added", nextSibling: highlightNode, parent: lastTextNode.parentElement});
         } else {
             var firstTextNode = textNodeSnapshot.snapshotItem(startIndex);
             var firstText = firstTextNode.textContent;
             var anchorElement = firstTextNode.nextSibling;
 
             firstTextNode.parentElement.insertBefore(highlightNode, anchorElement);
-            changes.push({ node: highlightNode, type: "added", nextSibling: anchorElement, parent: firstTextNode.parentElement });
+            changes.push({node: highlightNode, type: "added", nextSibling: anchorElement, parent: firstTextNode.parentElement});
             highlightNodes.push(highlightNode);
 
             firstTextNode.textContent = firstText.substring(0, startOffset - nodeRanges[startIndex].offset);
-            changes.push({ node: firstTextNode, type: "changed", oldText: firstText, newText: firstTextNode.textContent });
+            changes.push({node: firstTextNode, type: "changed", oldText: firstText, newText: firstTextNode.textContent});
 
             for (var j = startIndex + 1; j < endIndex; j++) {
                 var textNode = textNodeSnapshot.snapshotItem(j);
                 var text = textNode.textContent;
                 textNode.textContent = "";
-                changes.push({ node: textNode, type: "changed", oldText: text, newText: textNode.textContent });
+                changes.push({node: textNode, type: "changed", oldText: text, newText: textNode.textContent});
             }
         }
         startIndex = endIndex;

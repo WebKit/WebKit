@@ -397,7 +397,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         {
             if (!error) {
                 delete this._attributesMap[name];
-                for (var i = 0;  i < this._attributes.length; ++i) {
+                for (var i = 0; i < this._attributes.length; ++i) {
                     if (this._attributes[i].name === name) {
                         this._attributes.splice(i, 1);
                         break;

@@ -186,7 +186,7 @@ WebInspector.ApplicationCacheFrameContentView = class ApplicationCacheFrameConte
             case "type": comparator = localeCompare.bind(this, "type"); break;
             case "size": comparator = numberCompare.bind(this, "size"); break;
             case "url":
-            default:  comparator = localeCompare.bind(this, "url"); break;
+            default: comparator = localeCompare.bind(this, "url"); break;
         }
 
         this._dataGrid.sortNodes(comparator);

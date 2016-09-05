@@ -509,7 +509,7 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
             // Peek ahead to see if the next token is "}" or ",". If it is, we are a shorthand and therefore a variable.
             let shorthand = false;
             let mode = tokenInfo.innerMode.mode;
-            let position =  {line: tokenInfo.position.line, ch: tokenInfo.token.end};
+            let position = {line: tokenInfo.position.line, ch: tokenInfo.token.end};
             WebInspector.walkTokens(this._codeMirror, mode, position, function(tokenType, string) {
                 if (tokenType)
                     return false;

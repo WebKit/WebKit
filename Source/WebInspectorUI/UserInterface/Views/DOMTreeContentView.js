@@ -165,7 +165,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
             WebInspector.archiveMainFrame();
         }
 
-        return { customSaveHandler: saveHandler };
+        return {customSaveHandler: saveHandler};
     }
 
     get supportsSearch()

@@ -296,7 +296,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "hidden", "auto", "visible", "overlay", "scroll", "marquee", "-webkit-paged-x", "-webkit-paged-y"
     ],
     "margin-bottom-collapse": [
-        "collapse",  "separate", "discard"
+        "collapse", "separate", "discard"
     ],
     "-webkit-box-reflect": [
         "none", "left", "right", "above", "below"

@@ -54,11 +54,11 @@ WebInspector.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimeline
         case "name":
             cell.classList.add(...this.iconClassNames());
 
-            let fragment = document.createDocumentFragment();
-            let titleElement = fragment.appendChild(document.createElement("span"));
+            var fragment = document.createDocumentFragment();
+            var titleElement = fragment.appendChild(document.createElement("span"));
             titleElement.textContent = this._data.name;
             if (!this._record.heapSnapshot.invalid) {
-                let goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());
+                var goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());
                 goToButton.addEventListener("click", (event) => {
                     this._heapAllocationsView.showHeapSnapshotTimelineRecord(this._record);
                 });

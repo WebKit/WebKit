@@ -47,7 +47,7 @@ WebInspector.EventListenerSet = class EventListenerSet
         console.assert(callback, "Missing callback for event: " + type);
         console.assert(type, "Tried to register listener for unknown event: " + type);
         var emitterIsValid = emitter && (emitter instanceof WebInspector.Object || emitter instanceof Node || (typeof emitter.addEventListener === "function"));
-        console.assert(emitterIsValid,  "Event emitter ", emitter, " (type:" + type + ") is null or does not implement Node or WebInspector.Object!");
+        console.assert(emitterIsValid, "Event emitter ", emitter, " (type:" + type + ") is null or does not implement Node or WebInspector.Object!");
 
         if (!emitterIsValid || !type || !callback)
             return;

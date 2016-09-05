@@ -90,7 +90,8 @@ WebInspector.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends W
     }
 
     updateEditorValues(updatedValues)
-    {   if (!updatedValues.conflictingValues) {
+    {
+        if (!updatedValues.conflictingValues) {
             let missing = this._propertyMissing || !updatedValues.value;
             this._unchangedOptionElement.selected = missing;
             this.specialPropertyPlaceholderElement.hidden = !missing;

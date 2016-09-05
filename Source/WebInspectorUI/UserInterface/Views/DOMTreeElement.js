@@ -1200,7 +1200,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
     _buildTagDOM(parentElement, tagName, isClosingTag, isDistinctTreeElement)
     {
         var node = this.representedObject;
-        var classes = [ "html-tag" ];
+        var classes = ["html-tag"];
         if (isClosingTag && isDistinctTreeElement)
             classes.push("close");
         var tagElement = parentElement.createChild("span", classes.join(" "));
@@ -1526,13 +1526,13 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         var match = searchRegex.exec(text);
         var matchRanges = [];
         while (match) {
-            matchRanges.push({ offset: match.index, length: match[0].length });
+            matchRanges.push({offset: match.index, length: match[0].length});
             match = searchRegex.exec(text);
         }
 
         // Fall back for XPath, etc. matches.
         if (!matchRanges.length)
-            matchRanges.push({ offset: 0, length: text.length });
+            matchRanges.push({offset: 0, length: text.length});
 
         this._highlightResult = [];
         WebInspector.highlightRangesWithStyleClass(this.title, matchRanges, WebInspector.DOMTreeElement.SearchHighlightStyleClassName, this._highlightResult);

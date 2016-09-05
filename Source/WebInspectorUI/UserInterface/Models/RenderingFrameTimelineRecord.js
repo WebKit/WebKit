@@ -60,7 +60,7 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
         case WebInspector.TimelineRecord.Type.Script:
             return WebInspector.RenderingFrameTimelineRecord.TaskType.Script;
         case WebInspector.TimelineRecord.Type.Layout:
-            if (record.eventType  === WebInspector.LayoutTimelineRecord.EventType.Paint || record.eventType === WebInspector.LayoutTimelineRecord.EventType.Composite)
+            if (record.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint || record.eventType === WebInspector.LayoutTimelineRecord.EventType.Composite)
                 return WebInspector.RenderingFrameTimelineRecord.TaskType.Paint;
             return WebInspector.RenderingFrameTimelineRecord.TaskType.Layout;
         default:

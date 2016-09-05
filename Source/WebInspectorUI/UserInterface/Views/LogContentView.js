@@ -916,7 +916,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             var match = searchRegex.exec(text);
             while (match) {
                 numberOfResults++;
-                matchRanges.push({ offset: match.index, length: match[0].length });
+                matchRanges.push({offset: match.index, length: match[0].length});
                 match = searchRegex.exec(text);
             }
 

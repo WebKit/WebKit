@@ -64,7 +64,7 @@ FormatterWorker = class FormatterWorker
             let jsonStringified = JSON.stringify(JSON.parse(sourceText), null, indentString);
             let result = {formattedText: jsonStringified};
             if (includeSourceMapData)
-                result.sourceMapData = {mapping: {original: [], formatted: []}, originalLineEndings:[], formattedLineEndings: []};
+                result.sourceMapData = {mapping: {original: [], formatted: []}, originalLineEndings: [], formattedLineEndings: []};
             return result;
         } catch (e) {}
 
@@ -79,7 +79,7 @@ FormatterWorker = class FormatterWorker
             let formattedTextWithParens = invalidJSONFormatter.formattedText;
             let result = {formattedText: formattedTextWithParens.substring(1, formattedTextWithParens.length - 2)}; // Remove "(" and ")\n".
             if (includeSourceMapData)
-                result.sourceMapData = {mapping: {original: [], formatted: []}, originalLineEndings:[], formattedLineEndings: []};
+                result.sourceMapData = {mapping: {original: [], formatted: []}, originalLineEndings: [], formattedLineEndings: []};
             return result;
         }
 

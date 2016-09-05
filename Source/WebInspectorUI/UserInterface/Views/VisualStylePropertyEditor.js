@@ -549,7 +549,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         }
 
         this._element.classList.toggle("missing-dependency", !!title.length);
-        this._warningElement.title = !!title.length ? WebInspector.UIString("Missing Dependencies:%s").format(title) : null;
+        this._warningElement.title = title.length ? WebInspector.UIString("Missing Dependencies:%s").format(title) : null;
     }
 
     _titleElementPrepareForClick(event)

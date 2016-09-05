@@ -1,5 +1,44 @@
 2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Enable and enforce some recommended and stylistic ESLint rules
+        https://bugs.webkit.org/show_bug.cgi?id=161567
+
+        Reviewed by Brian Burg.
+
+        * .eslintrc:
+        * UserInterface/Base/EventListener.js:
+        * UserInterface/Base/EventListenerSet.js:
+        * UserInterface/Base/MIMETypeUtilities.js:
+        * UserInterface/Base/Main.js:
+        * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+        * UserInterface/Controllers/DOMTreeManager.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        * UserInterface/Models/Frame.js:
+        * UserInterface/Models/Geometry.js:
+        * UserInterface/Models/ProfileNode.js:
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        * UserInterface/Models/SourceCodeLocation.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        * UserInterface/Views/ContextMenu.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        * UserInterface/Views/DataGrid.js:
+        * UserInterface/Views/GeneralTreeElement.js:
+        * UserInterface/Views/HeapAllocationsTimelineDataGridNode.js:
+        * UserInterface/Views/LogContentView.js:
+        * UserInterface/Views/OpenResourceDialog.js:
+        * UserInterface/Views/StyleDetailsPanel.js:
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        * UserInterface/Views/VisualStyleKeywordPicker.js:
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        * UserInterface/Workers/Formatter/FormatterWorker.js:
+
+2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Run ESLint over UserInterface/Views
         https://bugs.webkit.org/show_bug.cgi?id=161564
 

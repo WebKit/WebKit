@@ -1126,7 +1126,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let borderAllSize = new WebInspector.DetailsSectionRow;
 
-        properties.borderStyle = new WebInspector.VisualStyleKeywordPicker(["border-top-style", "border-right-style", "border-bottom-style", "border-left-style"] , WebInspector.UIString("Style"), this._keywords.borderStyle);
+        properties.borderStyle = new WebInspector.VisualStyleKeywordPicker(["border-top-style", "border-right-style", "border-bottom-style", "border-left-style"], WebInspector.UIString("Style"), this._keywords.borderStyle);
         properties.borderStyle.propertyReferenceName = "border-style";
         properties.borderWidth = new WebInspector.VisualStyleNumberInputBox(["border-top-width", "border-right-width", "border-bottom-width", "border-left-width"], WebInspector.UIString("Width"), this._keywords.borderWidth, this._units.defaults);
         properties.borderWidth.propertyReferenceName = "border-width";
@@ -1327,7 +1327,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let outlineSizeRow = new WebInspector.DetailsSectionRow;
 
-        properties.outlineStyle = new WebInspector.VisualStyleKeywordPicker("outline-style" , WebInspector.UIString("Style"), this._keywords.borderStyle);
+        properties.outlineStyle = new WebInspector.VisualStyleKeywordPicker("outline-style", WebInspector.UIString("Style"), this._keywords.borderStyle);
         properties.outlineWidth = new WebInspector.VisualStyleNumberInputBox("outline-width", WebInspector.UIString("Width"), this._keywords.borderWidth, this._units.defaults);
 
         outlineSizeRow.element.appendChild(properties.outlineStyle.element);

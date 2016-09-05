@@ -1801,7 +1801,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._dataTableColumnGroupElement.children[leftCellIndex].style.width = percentLeftColumn;
 
         var percentRightColumn = (((rightEdgeOfNextColumn - dragPoint) / this._dataTableElement.offsetWidth) * 100) + "%";
-        this._headerTableColumnGroupElement.children[rightCellIndex].style.width =  percentRightColumn;
+        this._headerTableColumnGroupElement.children[rightCellIndex].style.width = percentRightColumn;
         this._dataTableColumnGroupElement.children[rightCellIndex].style.width = percentRightColumn;
 
         this._positionResizerElements();

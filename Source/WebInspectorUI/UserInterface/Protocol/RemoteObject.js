@@ -312,7 +312,7 @@ WebInspector.RemoteObject = class RemoteObject
         }
 
         // FIXME: It doesn't look like setPropertyValue is used yet. This will need to be tested when it is again (editable ObjectTrees).
-        RuntimeAgent.evaluate.invoke({expression:appendWebInspectorSourceURL(value), doNotPauseOnExceptionsAndMuteConsole:true}, evaluatedCallback.bind(this));
+        RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL(value), doNotPauseOnExceptionsAndMuteConsole: true}, evaluatedCallback.bind(this));
 
         function evaluatedCallback(error, result, wasThrown)
         {
@@ -328,7 +328,7 @@ WebInspector.RemoteObject = class RemoteObject
 
             delete result.description; // Optimize on traffic.
 
-            RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(setPropertyValue.toString()), [{value:name}, result], true, undefined, propertySetCallback.bind(this));
+            RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(setPropertyValue.toString()), [{value: name}, result], true, undefined, propertySetCallback.bind(this));
 
             if (result._objectId)
                 RuntimeAgent.releaseObject(result._objectId);

@@ -263,10 +263,10 @@ WebInspector.EdgeInsets = class EdgeInsets
 };
 
 WebInspector.RectEdge = {
-    MIN_X : 0,
-    MIN_Y : 1,
-    MAX_X : 2,
-    MAX_Y : 3
+    MIN_X: 0,
+    MIN_Y: 1,
+    MAX_X: 2,
+    MAX_Y: 3
 };
 
 WebInspector.Quad = class Quad

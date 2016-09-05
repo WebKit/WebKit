@@ -53,7 +53,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         this._treeOutline.large = true;
 
         this._treeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
-        this._treeOutline.element.addEventListener("focus", () => {this._inputElement.focus();});
+        this._treeOutline.element.addEventListener("focus", () => { this._inputElement.focus(); });
 
         this.element.appendChild(this._treeOutline.element);
 

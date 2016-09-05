@@ -91,7 +91,7 @@ WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
     get startTime()
     {
         if (this._startTime === undefined)
-            this._startTime =  Math.max(0, this._calls[0].startTime);
+            this._startTime = Math.max(0, this._calls[0].startTime);
         return this._startTime;
     }
 

@@ -167,7 +167,7 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
             var node = this._idToDOMNode[nodeId];
             if (node) {
                 node._setAttributesPayload(attributes);
-                this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeModified, { node, name: "style" });
+                this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.AttributeModified, {node, name: "style"});
                 node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeModified, {name: "style"});
             }
         }

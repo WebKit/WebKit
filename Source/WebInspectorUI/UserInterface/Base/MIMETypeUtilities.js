@@ -104,11 +104,9 @@ WebInspector.fileExtensionForMIMEType = function(mimeType)
         // Image types.
         "image/bmp": "bmp",
         "image/gif": "gif",
-        "image/jpeg": "jpeg",
         "image/jpeg": "jpg",
         "application/pdf": "pdf",
         "image/png": "png",
-        "image/tiff": "tif",
         "image/tiff": "tiff",
 
         // Font types and Media types are ignored for now.

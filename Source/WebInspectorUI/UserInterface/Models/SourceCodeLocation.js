@@ -332,11 +332,11 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
         case WebInspector.SourceCodeLocation.NameStyle.Short:
         case WebInspector.SourceCodeLocation.NameStyle.Full:
-            let displayURL = sourceCode.displayURL;
-            let name = nameStyle === WebInspector.SourceCodeLocation.NameStyle.Full && displayURL ? displayURL : sourceCode.displayName;
+            var displayURL = sourceCode.displayURL;
+            var name = nameStyle === WebInspector.SourceCodeLocation.NameStyle.Full && displayURL ? displayURL : sourceCode.displayName;
             if (columnStyle === WebInspector.SourceCodeLocation.ColumnStyle.Hidden)
                 return prefix + name;
-            let lineSuffix = displayURL ? ":" + lineString : WebInspector.UIString(" (line %s)").format(lineString);
+            var lineSuffix = displayURL ? ":" + lineString : WebInspector.UIString(" (line %s)").format(lineString);
             return prefix + name + lineSuffix;
 
         default:

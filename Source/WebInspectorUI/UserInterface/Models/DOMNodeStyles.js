@@ -269,7 +269,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         // COMPATIBILITY (iOS 9): Before CSS.createStyleSheet, CSS.addRule could be called with a contextNode.
         if (!CSSAgent.createStyleSheet) {
-            CSSAgent.addRule.invoke({contextNodeId: this._node.id , selector}, addedRule.bind(this));
+            CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
             return;
         }
 

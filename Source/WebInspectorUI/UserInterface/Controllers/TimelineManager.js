@@ -594,7 +594,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            let timerDetails = {timerId: recordPayload.data.timerId, timeout: recordPayload.data.timeout, repeating: !recordPayload.data.singleShot};
+            var timerDetails = {timerId: recordPayload.data.timerId, timeout: recordPayload.data.timeout, repeating: !recordPayload.data.singleShot};
             return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerInstalled, startTime, startTime, callFrames, sourceCodeLocation, timerDetails);
 
         case TimelineAgent.EventType.TimerRemove:
