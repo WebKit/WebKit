@@ -2561,12 +2561,11 @@ void Document::cancelParsing()
 
 void Document::implicitOpen()
 {
-    cancelParsing();
-
     removeChildren();
 
     setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
 
+    cancelParsing();
     m_parser = createParser();
     setParsing(true);
     setReadyState(Loading);
