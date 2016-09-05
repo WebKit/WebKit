@@ -203,7 +203,7 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
     globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
-    return createWrapper<JSInterfaceName, InterfaceName>(globalObject, WTFMove(impl));
+    return createWrapper<InterfaceName>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, InterfaceName& impl)

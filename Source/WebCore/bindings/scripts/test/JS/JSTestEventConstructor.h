@@ -86,5 +86,8 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 bool fillTestEventConstructorInit(TestEventConstructorInit&, JSDictionary&);
 
+template<> struct JSDOMWrapperConverterTraits<TestEventConstructor> {
+    using WrapperClass = JSTestEventConstructor;
+};
 
 } // namespace WebCore

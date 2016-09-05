@@ -82,5 +82,8 @@ inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject,
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, Ref<TestOverloadedConstructorsWithSequence>&&);
 inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, RefPtr<TestOverloadedConstructorsWithSequence>&& impl) { return impl ? toJSNewlyCreated(state, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
+template<> struct JSDOMWrapperConverterTraits<TestOverloadedConstructorsWithSequence> {
+    using WrapperClass = JSTestOverloadedConstructorsWithSequence;
+};
 
 } // namespace WebCore

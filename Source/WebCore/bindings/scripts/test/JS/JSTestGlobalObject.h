@@ -112,5 +112,8 @@ public:
     static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 };
 
+template<> struct JSDOMWrapperConverterTraits<TestGlobalObject> {
+    using WrapperClass = JSTestGlobalObject;
+};
 
 } // namespace WebCore

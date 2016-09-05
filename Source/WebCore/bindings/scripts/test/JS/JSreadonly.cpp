@@ -167,7 +167,7 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     // attribute to readonly.
     static_assert(!__is_polymorphic(readonly), "readonly is polymorphic but the IDL claims it is not");
 #endif
-    return createWrapper<JSreadonly, readonly>(globalObject, WTFMove(impl));
+    return createWrapper<readonly>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, readonly& impl)

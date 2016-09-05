@@ -105,7 +105,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     }
 
     Ref<TestEventConstructor> event = TestEventConstructor::createForBindings(eventType, eventInit);
-    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), TestEventConstructor, WTFMove(event)));
+    return JSValue::encode(createWrapper<TestEventConstructor>(jsConstructor->globalObject(), WTFMove(event)));
 }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDictionary& dictionary)
@@ -305,7 +305,7 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createWrapper<JSTestEventConstructor, TestEventConstructor>(globalObject, WTFMove(impl));
+    return createWrapper<TestEventConstructor>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestEventConstructor& impl)

@@ -201,7 +201,7 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createWrapper<JSTestClassWithJSBuiltinConstructor, TestClassWithJSBuiltinConstructor>(globalObject, WTFMove(impl));
+    return createWrapper<TestClassWithJSBuiltinConstructor>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestClassWithJSBuiltinConstructor& impl)

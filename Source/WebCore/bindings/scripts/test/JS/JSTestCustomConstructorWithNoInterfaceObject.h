@@ -84,5 +84,8 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 // Custom constructor
 JSC::EncodedJSValue JSC_HOST_CALL constructJSTestCustomConstructorWithNoInterfaceObject(JSC::ExecState&);
 
+template<> struct JSDOMWrapperConverterTraits<TestCustomConstructorWithNoInterfaceObject> {
+    using WrapperClass = JSTestCustomConstructorWithNoInterfaceObject;
+};
 
 } // namespace WebCore

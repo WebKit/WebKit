@@ -996,7 +996,7 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     // attribute to TestInterface.
     static_assert(!__is_polymorphic(TestInterface), "TestInterface is polymorphic but the IDL claims it is not");
 #endif
-    return createWrapper<JSTestInterface, TestInterface>(globalObject, WTFMove(impl));
+    return createWrapper<TestInterface>(globalObject, WTFMove(impl));
 }
 
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestInterface& impl)
