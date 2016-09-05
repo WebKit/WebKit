@@ -296,7 +296,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
     {
         var messageLevel;
 
-        switch(level) {
+        switch (level) {
         case WebInspector.ConsoleMessage.MessageLevel.Warning:
             messageLevel = WebInspector.LogContentView.Scopes.Warnings;
             break;
@@ -680,7 +680,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
     _scopeBarSelectionDidChange(event)
     {
         var item = this._scopeBar.selectedItems[0];
-        
+
         if (item.id === WebInspector.LogContentView.Scopes.All) {
             for (var item of this._scopeBar.items)
                 item.element.classList.remove("unread");
@@ -850,6 +850,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             if (this._isMessageVisible(messages[i]))
                 return messages[i];
         }
+        return null;
     }
 
     _nextMessage(message)
@@ -859,6 +860,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             if (this._isMessageVisible(messages[i]))
                 return messages[i];
         }
+        return null;
     }
 
     _clearFocusableChildren()

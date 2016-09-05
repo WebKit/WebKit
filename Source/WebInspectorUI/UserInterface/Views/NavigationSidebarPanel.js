@@ -589,8 +589,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
                 break;
         }
 
-        let selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
-
         let filters = this._filterBar.filters;
         this._textFilterRegex = simpleGlobStringToRegExp(filters.text, "i");
         this._filtersSetting.value = filters;

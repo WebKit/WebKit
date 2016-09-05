@@ -184,7 +184,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         if (newContentView.parentContainer && newContentView.parentContainer !== this)
             return;
 
-        var currentlyShowing = (this.currentContentView === oldContentView);
+        var currentlyShowing = this.currentContentView === oldContentView;
         if (currentlyShowing)
             this._hideEntry(this.currentBackForwardEntry);
 
@@ -492,7 +492,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         }
 
         if (!this.subviews.includes(entry.contentView))
-            this.addSubview(entry.contentView)
+            this.addSubview(entry.contentView);
 
         entry.prepareToShow(shouldCallShown);
     }
@@ -508,7 +508,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
 
         entry.prepareToHide();
         if (this.subviews.includes(entry.contentView))
-            this.removeSubview(entry.contentView)
+            this.removeSubview(entry.contentView);
     }
 
     _tombstoneContentViewContainersForContentView(contentView)

@@ -726,7 +726,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (column["collapsesGroup"]) {
             console.assert(column["group"] !== column["collapsesGroup"]);
 
-            var dividerElement = headerCellElement.createChild("div", "divider");
+            headerCellElement.createChild("div", "divider");
 
             var collapseDiv = headerCellElement.createChild("div", "collapser-button");
             collapseDiv.title = this._collapserButtonCollapseColumnsToolTip();
@@ -1763,7 +1763,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
     resizerDragging(resizer, positionDelta)
     {
         console.assert(resizer === this._currentResizer, resizer, this._currentResizer);
-        if (resizer != this._currentResizer)
+        if (resizer !== this._currentResizer)
             return;
 
         // Constrain the dragpoint to be within the containing div of the
@@ -1812,7 +1812,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
     resizerDragEnded(resizer)
     {
         console.assert(resizer === this._currentResizer, resizer, this._currentResizer);
-        if (resizer != this._currentResizer)
+        if (resizer !== this._currentResizer)
             return;
 
         this._currentResizer = null;

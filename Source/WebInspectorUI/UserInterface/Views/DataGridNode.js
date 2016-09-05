@@ -254,7 +254,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
     get leftPadding()
     {
-        if (typeof(this._leftPadding) === "number")
+        if (typeof this._leftPadding === "number")
             return this._leftPadding;
 
         this._leftPadding = this.depth * this.dataGrid.indentWidth;
@@ -405,7 +405,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         if (!this.parent)
             return;
 
-        var previousChild = (myIndex > 0 ? this.parent.children[myIndex - 1] : null);
+        var previousChild = myIndex > 0 ? this.parent.children[myIndex - 1] : null;
 
         if (previousChild) {
             previousChild.nextSibling = this;

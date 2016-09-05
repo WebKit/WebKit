@@ -57,14 +57,14 @@ WebInspector.ScriptProfileTimelineView = class ScriptProfileTimelineView extends
 
         this._profileOrientationButton = new WebInspector.TextToggleButtonNavigationItem("profile-orientation", WebInspector.UIString("Inverted"));
         this._profileOrientationButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._profileOrientationButtonClicked, this);
-        if (WebInspector.ScriptProfileTimelineView.profileOrientationSetting.value == WebInspector.ScriptProfileTimelineView.ProfileOrientation.TopDown)
+        if (WebInspector.ScriptProfileTimelineView.profileOrientationSetting.value === WebInspector.ScriptProfileTimelineView.ProfileOrientation.TopDown)
             this._profileOrientationButton.activated = false;
         else
             this._profileOrientationButton.activated = true;
 
         this._topFunctionsButton = new WebInspector.TextToggleButtonNavigationItem("top-functions", WebInspector.UIString("Top Functions"));
         this._topFunctionsButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._topFunctionsButtonClicked, this);
-        if (WebInspector.ScriptProfileTimelineView.profileTypeSetting.value == WebInspector.ScriptProfileTimelineView.ProfileViewType.Hierarchy)
+        if (WebInspector.ScriptProfileTimelineView.profileTypeSetting.value === WebInspector.ScriptProfileTimelineView.ProfileViewType.Hierarchy)
             this._topFunctionsButton.activated = false;
         else
             this._topFunctionsButton.activated = true;

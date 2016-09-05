@@ -130,7 +130,7 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
             return;
         this.dispatchEventToListeners(WebInspector.ButtonNavigationItem.Event.Clicked);
     }
-}
+};
 
 WebInspector.ButtonNavigationItem.DisabledStyleClassName = "disabled";
 WebInspector.ButtonNavigationItem.TextOnlyClassName = "text-only";

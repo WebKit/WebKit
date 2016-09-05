@@ -247,7 +247,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     {
         HeapAgent.getRemoteObject(this._node.id, (error, remoteObjectPayload) => {
             if (error) {
-                this._populateError(containerElement)
+                this._populateError(containerElement);
                 return;
             }
 
@@ -427,7 +427,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
         }
 
         function stringifyEdge(edge) {
-            switch(edge.type) {
+            switch (edge.type) {
             case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Property:
             case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Variable:
                 if (/^(?![0-9])\w+$/.test(edge.data))

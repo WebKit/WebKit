@@ -35,7 +35,7 @@ CodeMirror.extendMode("javascript", {
             if (content === "(") // Most keywords like "if (" but not "function(" or "typeof(".
                 return lastToken && /\bkeyword\b/.test(lastToken) && (lastContent !== "function" && lastContent !== "typeof" && lastContent !== "instanceof");
             if (content === ":") // Ternary.
-                return (state.lexical.type === "stat" || state.lexical.type === ")" || state.lexical.type === "]");
+                return state.lexical.type === "stat" || state.lexical.type === ")" || state.lexical.type === "]";
             return false;
         }
 

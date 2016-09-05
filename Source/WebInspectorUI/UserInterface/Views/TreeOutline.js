@@ -325,7 +325,6 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         }
 
         for (let child of childrenToRemove) {
-            child = childrenToRemove[i];
             child.deselect(suppressOnDeselect);
 
             let treeOutline = child.treeOutline;
@@ -363,7 +362,7 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
     _forgetTreeElement(element)
     {
         if (this.selectedTreeElement === element) {
-            element.deselect(true)
+            element.deselect(true);
             this.selectedTreeElement = null;
         }
         if (this._knownTreeElements[element.identifier])

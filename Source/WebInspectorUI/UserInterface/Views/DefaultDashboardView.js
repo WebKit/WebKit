@@ -29,7 +29,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
     {
         super(representedObject, "default");
 
-        representedObject.addEventListener(WebInspector.DefaultDashboard.Event.DataDidChange, () => { this._updateDisplaySoon() });
+        representedObject.addEventListener(WebInspector.DefaultDashboard.Event.DataDidChange, () => { this._updateDisplaySoon(); });
         this._scheduledUpdateIdentifier = undefined;
 
         this._items = {
@@ -62,7 +62,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
         for (var name in this._items)
             this._appendElementForNamedItem(name);
     }
-    
+
     // Private
 
     _updateDisplaySoon()

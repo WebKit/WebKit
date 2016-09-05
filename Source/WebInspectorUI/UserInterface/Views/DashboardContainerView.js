@@ -68,7 +68,7 @@ WebInspector.DashboardContainerView = class DashboardContainerView extends WebIn
             return null;
 
         if (this.currentDashboardView === dashboardView)
-            return;
+            return dashboardView;
 
         var index = this._dashboardStack.indexOf(dashboardView);
         this._showDashboardAtIndex(index);
@@ -92,7 +92,7 @@ WebInspector.DashboardContainerView = class DashboardContainerView extends WebIn
         var onlyReturnExistingViews = true;
         var dashboardView = this._dashboardViewForRepresentedObject(representedObject, onlyReturnExistingViews);
         if (!dashboardView)
-            return null;
+            return;
 
         this._closeDashboardView(dashboardView);
     }

@@ -154,7 +154,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
         let resourceMatchesStorageDomain = (resource) => {
             let urlComponents = resource.urlComponents;
             return urlComponents && urlComponents.host && urlComponents.host === this.representedObject.host;
-        }
+        };
 
         let allResources = [];
         for (let frame of WebInspector.frameResourceManager.frames) {

@@ -133,7 +133,7 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
         popover.present(target, [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
         popover.windowResizeHandler = () => {
             let target = WebInspector.Rect.rectFromClientRect(event.target.element.getBoundingClientRect());
-            popover.present(target, [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);            
+            popover.present(target, [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
         };
         textBox.select();
     }

@@ -101,6 +101,7 @@
         "appendWebInspectorConsoleEvaluationSourceURL": true,
         "timestamp": true,
         "handlePromiseException": true,
+        "insertObjectIntoSortedArray": true,
 
         // Image Utilities
         "platformImagePath": true,

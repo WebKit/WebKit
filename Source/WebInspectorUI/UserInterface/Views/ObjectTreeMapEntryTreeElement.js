@@ -112,7 +112,7 @@ WebInspector.ObjectTreeMapValueTreeElement = class ObjectTreeMapValueTreeElement
         super(object, propertyPath);
 
         this._key = key;
-        
+
         this.mainTitle = this.titleFragment();
 
         this.addClassName("value");

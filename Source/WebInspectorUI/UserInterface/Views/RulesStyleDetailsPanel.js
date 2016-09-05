@@ -370,7 +370,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                         label.classList.remove(WebInspector.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
                 } else
                     section.element.classList.add(WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
-                
+
                 matchFound = true;
             }
         }

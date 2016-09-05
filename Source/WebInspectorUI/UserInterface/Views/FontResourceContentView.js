@@ -142,7 +142,7 @@ WebInspector.FontResourceContentView = class FontResourceContentView extends Web
     {
         this.sizeToFit();
     }
-}
+};
 
 WebInspector.FontResourceContentView._uniqueFontIdentifier = 0;
 

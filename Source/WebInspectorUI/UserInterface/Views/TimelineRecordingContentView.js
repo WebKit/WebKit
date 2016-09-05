@@ -307,7 +307,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (selectedPathComponent === this._selectedTimeRangePathComponent)
             return;
 
-        let timelineRuler = this._timelineOverview.timelineRuler
+        let timelineRuler = this._timelineOverview.timelineRuler;
         if (selectedPathComponent === this._entireRecordingPathComponent)
             timelineRuler.selectEntireRange();
         else {

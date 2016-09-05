@@ -270,7 +270,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         for (var property of propertiesList) {
             if (property.__filterResultClassName) {
                 property.__filterResultClassName = null;
-                this._updateTextMarkerForPropertyIfNeeded(property)
+                this._updateTextMarkerForPropertyIfNeeded(property);
             }
         }
     }
@@ -567,7 +567,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                     if (trimmedPreviousLine.includes(";"))
                         previousHead = trimmedPreviousLine.lastIndexOf(";");
                 }
-                
+
                 codeMirror.setSelection({line: cursor.line, ch: previousAnchor}, {line: cursor.line, ch: previousHead});
                 return;
             }

@@ -159,7 +159,7 @@ WebInspector.FormattedValue.createElementForFunctionWithName = function(descript
     span.classList.add("formatted-function");
     span.textContent = description.substring(0, description.indexOf("("));
     return span;
-}
+};
 
 WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subtype, displayString, size, isPreview, hadException)
 {
@@ -225,7 +225,7 @@ WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForObjectPreview 
         return WebInspector.FormattedValue.createElementForFunctionWithName(objectPreview.description);
 
     return new WebInspector.ObjectPreviewView(objectPreview, previewViewMode).element;
-}
+};
 
 WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForRemoteObject = function(object, previewViewMode)
 {

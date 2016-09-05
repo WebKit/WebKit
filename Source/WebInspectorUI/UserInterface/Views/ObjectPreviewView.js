@@ -273,7 +273,6 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
         event.__addedObjectPreviewContextMenuItems = true;
 
         contextMenu.appendItem(WebInspector.UIString("Log Value"), () => {
-            let remoteObject = this._remoteObject;
             let isImpossible = !this._propertyPath || this._propertyPath.isFullPathImpossible();
             let text = isImpossible ? WebInspector.UIString("Selected Value") : this._propertyPath.displayPath(WebInspector.PropertyPath.Type.Value);
 

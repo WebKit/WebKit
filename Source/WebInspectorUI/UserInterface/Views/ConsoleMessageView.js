@@ -322,7 +322,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             if (this._message.url) {
                 var anchor = WebInspector.linkifyURLAsNode(this._message.url, this._message.url, "console-message-url");
                 anchor.classList.add("console-message-location");
-                this._element.appendChild(anchor);                
+                this._element.appendChild(anchor);
             }
             return;
         }

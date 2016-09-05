@@ -49,13 +49,13 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         this._contentViewContainer = new WebInspector.ContentViewContainer;
         this.addSubview(this._contentViewContainer);
 
-        let showNextTab = () => { this._showNextTab(); }
-        let showPreviousTab = () => { this._showPreviousTab(); }
+        let showNextTab = () => { this._showNextTab(); };
+        let showPreviousTab = () => { this._showPreviousTab(); };
         let closeCurrentTab = () => {
             let selectedTabBarItem = this._tabBar.selectedTabBarItem;
             if (this._tabBar.tabBarItems.length > 2 || !selectedTabBarItem.isDefaultTab)
                 this._tabBar.removeTabBarItem(selectedTabBarItem);
-        }
+        };
 
         this._closeCurrentTabKeyboardShortuct = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "W", closeCurrentTab);
 

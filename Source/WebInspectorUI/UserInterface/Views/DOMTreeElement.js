@@ -398,7 +398,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         // Remove any tree elements that no longer have this node (or this node's contentDocument) as their parent.
         // Keep a list of existing tree elements for nodes that we can use later.
         var existingChildTreeElements = new Map;
-        for (var i = (this.children.length - 1); i >= 0; --i) {
+        for (var i = this.children.length - 1; i >= 0; --i) {
             var currentChildTreeElement = this.children[i];
             var currentNode = currentChildTreeElement.representedObject;
             var currentParentNode = currentNode.parentNode;
@@ -411,7 +411,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
 
         // Move / create TreeElements for our visible children.
-        var childIndex = 0;
         var elementToSelect = null;
         var visibleChildren = this._visibleChildren();
         for (var i = 0; i < visibleChildren.length && i < this.expandedChildrenLimit; ++i) {
@@ -459,7 +458,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (this.expandAllButtonElement && this.expandAllButtonElement.__treeElement.parent)
             this.removeChild(this.expandAllButtonElement.__treeElement);
 
-        var node = this.representedObject;
         if (!this._hasVisibleChildren())
             return;
 
@@ -497,7 +495,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
     handleLoadAllChildren()
     {
         var visibleChildren = this._visibleChildren();
-        var totalChildrenCount = visibleChildren.length;
         this.expandedChildrenLimit = Math.max(visibleChildren.length, this.expandedChildrenLimit + WebInspector.DOMTreeElement.InitialChildrenLimit);
     }
 
@@ -1101,7 +1098,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         // tag, or HTML elements without a closing tag (such as <br>). Return
         // null in the case where there isn't a closing tag.
         var tags = this.listItemElement.getElementsByClassName("html-tag");
-        return (tags.length === 1 ? null : tags[tags.length - 1]);
+        return tags.length === 1 ? null : tags[tags.length - 1];
     }
 
     updateTitle(onlySearchQueryChanged)
@@ -1129,7 +1126,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _buildAttributeDOM(parentElement, name, value, node)
     {
-        let hasText = (value.length > 0);
+        let hasText = value.length > 0;
         let attrSpanElement = parentElement.createChild("span", "html-attribute");
         let attrNameElement = attrSpanElement.createChild("span", "html-attribute-name");
         attrNameElement.textContent = name;
@@ -1177,7 +1174,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                     linkElement.href = rewrittenURL;
                     linkElement.textContent = linkText.insertWordBreakCharacters();
                     let descriptorElement = attrValueElement.appendChild(document.createElement("span"));
-                    descriptorElement.textContent = string.substring(spaceIndex);
+                    descriptorElement.textContent = descriptorText;
                 }
 
                 if (i < groups.length - 1) {
@@ -1526,7 +1523,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         var text = this.title.textContent;
         var searchRegex = new RegExp(this._searchQuery.escapeForRegExp(), "gi");
 
-        var offset = 0;
         var match = searchRegex.exec(text);
         var matchRanges = [];
         while (match) {

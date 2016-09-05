@@ -327,4 +327,4 @@ WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol = Symbol("visual-
 
 WebInspector.VisualStyleSelectorSection.Event = {
     SelectorChanged: "visual-style-selector-section-selector-changed"
-}
+};

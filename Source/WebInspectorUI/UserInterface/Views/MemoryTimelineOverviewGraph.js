@@ -35,7 +35,7 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
 
         this._memoryTimeline = timeline;
         this._memoryTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
-        this._memoryTimeline.addEventListener(WebInspector.MemoryTimeline.Event.MemoryPressureEventAdded, this._memoryTimelineMemoryPressureEventAdded, this)
+        this._memoryTimeline.addEventListener(WebInspector.MemoryTimeline.Event.MemoryPressureEventAdded, this._memoryTimelineMemoryPressureEventAdded, this);
 
         this._didInitializeCategories = false;
 
@@ -94,8 +94,6 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
             this._chart.size = new WebInspector.Size(graphWidth, this.height);
 
         let graphStartTime = this.startTime;
-        let graphEndTime = this.endTime;
-        let graphCurrentTime = this.currentTime;
         let visibleEndTime = Math.min(this.endTime, this.currentTime);
 
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;

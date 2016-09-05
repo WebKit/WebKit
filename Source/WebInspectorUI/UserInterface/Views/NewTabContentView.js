@@ -124,7 +124,7 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
             referencedView: this,
             shouldReplaceTab: !canCreateAdditionalTabs || !WebInspector.modifierKeys.metaKey,
             shouldShowNewTab: !WebInspector.modifierKeys.metaKey
-        }
+        };
         WebInspector.createNewTabWithType(tabType, options);
     }
 

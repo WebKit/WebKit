@@ -487,7 +487,7 @@
             // selectionStart/End may the same object if there is no selection. If that is the case
             // make only one modification to prevent a double adjustment, and keep it a single object
             // to avoid CodeMirror inadvertently creating an actual selection range.
-            let diff = (newLength - previousLength);
+            let diff = newLength - previousLength;
             if (selectionStart === selectionEnd)
                 selectionStart.ch += diff;
             else {
@@ -632,14 +632,13 @@ WebInspector.walkTokens = function(cm, mode, initialPosition, callback)
 
     let lineCount = cm.lineCount();
     let abort = false;
-    for (lineNumber = initialPosition.line; !abort && lineNumber < lineCount; ++lineNumber) {
+    for (let lineNumber = initialPosition.line; !abort && lineNumber < lineCount; ++lineNumber) {
         let line = cm.getLine(lineNumber);
         let stream = new CodeMirror.StringStream(line);
         if (lineNumber === initialPosition.line)
             stream.start = stream.pos = initialPosition.ch;
 
         while (!stream.eol()) {
-            let innerMode = CodeMirror.innerMode(mode, state);
             let tokenType = mode.token(stream, state);
             if (!callback(tokenType, stream.current())) {
                 abort = true;
@@ -651,4 +650,4 @@ WebInspector.walkTokens = function(cm, mode, initialPosition, callback)
 
     if (!abort)
         callback(null);
-}
+};

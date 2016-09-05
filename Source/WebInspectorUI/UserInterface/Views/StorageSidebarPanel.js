@@ -189,7 +189,6 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
     _domStorageObjectWasAdded(event)
     {
-        var domStorage = event.data.domStorage;
         this._addDOMStorageObject(event.data.domStorage);
     }
 
@@ -212,7 +211,6 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
     _databaseWasAdded(event)
     {
-        var database = event.data.database;
         this._addDatabase(event.data.database);
     }
 

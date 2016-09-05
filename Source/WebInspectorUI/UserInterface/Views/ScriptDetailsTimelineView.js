@@ -128,10 +128,6 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
             if (dataGridNode.hidden)
                 return null;
 
-            let representedObject = null;
-            if (dataGridNode instanceof WebInspector.ProfileNodeDataGridNode)
-                representedObject = dataGridNode.profileNode;
-
             let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(dataGridNode);
             pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
             pathComponents.unshift(pathComponent);

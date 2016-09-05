@@ -55,7 +55,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
 
         this._showContentViewForIdentifier(this._currentContentViewSetting.value);
 
-        this.contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._scriptClusterViewCurrentContentViewDidChange, this)
+        this.contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._scriptClusterViewCurrentContentViewDidChange, this);
     }
 
     // TimelineView

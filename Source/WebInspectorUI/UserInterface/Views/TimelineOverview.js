@@ -106,7 +106,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._cachedScrollContainerWidth = NaN;
         this._timelineRulerSelectionChanged = false;
         this._viewMode = WebInspector.TimelineOverview.ViewMode.Timelines;
-        this._selectedTimeline = null;;
+        this._selectedTimeline = null;
 
         for (let instrument of this._recording.instruments)
             this._instrumentAdded(instrument);
@@ -590,7 +590,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
     _handleGestureChange(event)
     {
         // Cap zooming out at 5x.
-        let scale = Math.max(1/5, event.scale);
+        let scale = Math.max(1 / 5, event.scale);
 
         let mouseOffset = event.pageX - this.element.totalOffsetLeft;
         let newSecondsPerPixel = this._gestureStartDurationPerPixel / scale;

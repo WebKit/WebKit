@@ -1,5 +1,77 @@
 2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Run ESLint over UserInterface/Views
+        https://bugs.webkit.org/show_bug.cgi?id=161564
+
+        Reviewed by Brian Burg.
+
+        * .eslintrc:
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        * UserInterface/Views/ButtonNavigationItem.js:
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        * UserInterface/Views/CodeMirrorEditor.js:
+        * UserInterface/Views/CodeMirrorFormatters.js:
+        * UserInterface/Views/ColorWheel.js:
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        * UserInterface/Views/ConsoleMessageView.js:
+        * UserInterface/Views/ContentViewContainer.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        * UserInterface/Views/DOMStorageContentView.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        * UserInterface/Views/DOMTreeOutline.js:
+        * UserInterface/Views/DashboardContainerView.js:
+        * UserInterface/Views/DataGrid.js:
+        * UserInterface/Views/DataGridNode.js:
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/DefaultDashboardView.js:
+        * UserInterface/Views/FontResourceContentView.js:
+        * UserInterface/Views/FormattedValue.js:
+        * UserInterface/Views/GradientEditor.js:
+        * UserInterface/Views/GradientSlider.js:
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        * UserInterface/Views/HoverMenu.js:
+        * UserInterface/Views/LogContentView.js:
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        * UserInterface/Views/MemoryTimelineView.js:
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        * UserInterface/Views/NewTabContentView.js:
+        * UserInterface/Views/ObjectPreviewView.js:
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js:
+        * UserInterface/Views/OverviewTimelineView.js:
+        * UserInterface/Views/Popover.js:
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        * UserInterface/Views/ProfileDataGridNode.js:
+        * UserInterface/Views/ProfileDataGridTree.js:
+        * UserInterface/Views/ProfileView.js:
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.js:
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        * UserInterface/Views/StackedLineChart.js:
+        * UserInterface/Views/StorageSidebarPanel.js:
+        * UserInterface/Views/TabBrowser.js:
+        * UserInterface/Views/TextEditor.js:
+        * UserInterface/Views/TimelineDataGridNode.js:
+        * UserInterface/Views/TimelineOverview.js:
+        * UserInterface/Views/TimelineRecordFrame.js:
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        * UserInterface/Views/TimelineTabContentView.js:
+        * UserInterface/Views/TreeOutline.js:
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+
+2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Update ESLint rules and run it over most of UserInterface
         https://bugs.webkit.org/show_bug.cgi?id=161561
 

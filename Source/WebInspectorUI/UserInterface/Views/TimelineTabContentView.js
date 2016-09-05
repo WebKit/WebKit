@@ -435,7 +435,7 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
     _recordingCreated(event)
     {
-        this._addRecording(event.data.recording)
+        this._addRecording(event.data.recording);
         this._recordingCountChanged();
     }
 

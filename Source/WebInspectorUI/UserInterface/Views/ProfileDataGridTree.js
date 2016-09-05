@@ -50,11 +50,11 @@ WebInspector.ProfileDataGridTree = class ProfileDataGridTree extends WebInspecto
 
     static buildSortComparator(columnIdentifier, sortOrder)
     {
-        let ascending = sortOrder == WebInspector.DataGrid.SortOrder.Ascending;
+        let ascending = sortOrder === WebInspector.DataGrid.SortOrder.Ascending;
         return function(a, b) {
             let result = a.data[columnIdentifier] - b.data[columnIdentifier];
             return ascending ? result : -result;
-        }
+        };
     }
 
     // Public
@@ -279,7 +279,7 @@ WebInspector.ProfileDataGridTree = class ProfileDataGridTree extends WebInspecto
     {
         this.dispatchEventToListeners(WebInspector.ProfileDataGridTree.Event.ModifiersChanged);
     }
-}
+};
 
 WebInspector.ProfileDataGridTree.Event = {
     FocusChanged: "profile-data-grid-tree-focus-changed",

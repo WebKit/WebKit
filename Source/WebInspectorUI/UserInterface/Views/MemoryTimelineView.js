@@ -174,7 +174,6 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
         let graphStartTime = this.startTime;
         let graphEndTime = this.endTime;
-        let graphCurrentTime = this.currentTime;
         let visibleEndTime = Math.min(this.endTime, this.currentTime);
 
         let discontinuities = this._recording.discontinuitiesInTimeRange(graphStartTime, visibleEndTime);

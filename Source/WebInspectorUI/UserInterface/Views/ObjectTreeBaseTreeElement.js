@@ -194,7 +194,7 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
             this.treeOutline.objectTreeElementAddContextMenuItems(this, contextMenu);
             if (!contextMenu.isEmpty())
                 contextMenu.appendSeparator();
-        }             
+        }
 
         let resolvedValue = this.resolvedValue();
         if (!resolvedValue)

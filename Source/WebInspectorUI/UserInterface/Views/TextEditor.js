@@ -826,7 +826,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
     _updateAfterFormatting(pretty, beforePrettyPrintState)
     {
         let oldSelectionAnchor = beforePrettyPrintState.selectionAnchor;
-        let oldSelectionHead = beforePrettyPrintState.selectionHead;        
+        let oldSelectionHead = beforePrettyPrintState.selectionHead;
         let newSelectionAnchor, newSelectionHead;
         let newExecutionLocation = null;
 
@@ -891,7 +891,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             this.searchCleared();
             // Set timeout so that this happens after the current CodeMirror operation.
             // The editor has to update for the value and selection changes.
-            setTimeout(() => { this.performSearch(searchQuery) }, 0);
+            setTimeout(() => { this.performSearch(searchQuery); }, 0);
         }
 
         if (this._delegate && typeof this._delegate.textEditorUpdatedFormatting === "function")

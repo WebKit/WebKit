@@ -87,7 +87,7 @@ WebInspector.StackedLineChart = class StackedLineChart
     initializeSections(sectionClassNames)
     {
         console.assert(!this._pathElements.length, "Should not initialize multiple times");
-        
+
         sectionClassNames.reverse();
 
         for (let i = 0; i < sectionClassNames.length; ++i) {

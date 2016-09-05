@@ -205,7 +205,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
         let parentFrame = resource.parentFrame;
         if (!parentFrame)
-            return;
+            return null;
 
         let resourceTimelineRecord = this._networkTimeline ? this._networkTimeline.recordForResource(resource) : null;
         if (!resourceTimelineRecord)
@@ -231,7 +231,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
             parentDataGridNode = this._addResourceToDataGridIfNeeded(parentResource);
             console.assert(parentDataGridNode);
             if (!parentDataGridNode)
-                return;
+                return null;
         }
 
         this._insertDataGridNode(resourceDataGridNode, parentDataGridNode);

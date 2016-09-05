@@ -78,6 +78,8 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
             if (node.data.key === event.data.key)
                 return this._dataGrid.removeChild(node);
         }
+
+        return null;
     }
 
     itemAdded(event)
@@ -199,14 +201,6 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
             editingNode.__originalValue = undefined;
         }
 
-        function restoreOriginalValues()
-        {
-            editingNode.data.key = editingNode.__originalKey;
-            editingNode.data.value = editingNode.__originalValue;
-            editingNode.refresh();
-            cleanup();
-        }
-
         // If the key/value field was cleared, add "missing" style.
         if (isEditingKey) {
             if (key.length)
@@ -243,7 +237,7 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
         if (!key.length && !value.length && !editingNode.isPlaceholderNode) {
             this._dataGrid.removeChild(editingNode);
             domStorage.removeItem(editingNode.__originalKey);
-            return;                
+            return;
         }
 
         // Done editing but leaving the row in an invalid state. Leave in uncommitted state.

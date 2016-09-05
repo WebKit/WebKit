@@ -53,7 +53,6 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
         let numberCompare = (columnIdentifier, a, b) => multiplier * (a.data[columnIdentifier] - b.data[columnIdentifier]);
         let localeCompare = (columnIdentifier, a, b) => multiplier * (a.data[columnIdentifier].localeCompare(b.data[columnIdentifier]));
 
-        let comparator;
         switch (columnIdentifier) {
         case "retainedSize":
             return numberCompare.bind(this, "retainedSize");
@@ -210,7 +209,7 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
             this.appendChild(new WebInspector.HeapSnapshotClassDataGridNode({className, size, retainedSize, count: liveCount}, this));
         }
 
-        this.didPopulate()
+        this.didPopulate();
     }
 
     removeCollectedNodes(collectedNodes)

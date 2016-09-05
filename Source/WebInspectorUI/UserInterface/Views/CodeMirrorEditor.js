@@ -46,4 +46,4 @@ WebInspector.CodeMirrorEditor = class CodeMirrorEditor
 
         return codeMirror;
     }
-}
+};

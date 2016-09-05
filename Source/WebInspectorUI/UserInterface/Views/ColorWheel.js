@@ -203,7 +203,6 @@ WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
         var ctx = this._rawCanvas.getContext("2d");
 
         var dimension = this._dimension * window.devicePixelRatio;
-        var center = dimension / 2;
 
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, dimension, dimension);

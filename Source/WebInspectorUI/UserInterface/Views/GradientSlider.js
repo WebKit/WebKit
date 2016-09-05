@@ -125,7 +125,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
     knobWillDetach(knob)
     {
         knob.element.classList.add(WebInspector.GradientSlider.DetachingClassName);
-        
+
         this._stops.remove(knob.stop);
         this._knobs.remove(knob);
         this._sortStops();
@@ -194,7 +194,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
             this._shadowKnob.element.classList.add(WebInspector.GradientSlider.ShadowClassName);
             this.element.appendChild(this._shadowKnob.element);
         }
-        
+
         this._shadowKnob.x = window.webkitConvertPointFromPageToNode(this.element, new WebKitPoint(event.pageX, event.pageY)).x;
 
         var colorData = this._canvas.getContext("2d").getImageData(this._shadowKnob.x - 1, 0, 1, 1).data;
@@ -218,7 +218,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
     {
         var w = WebInspector.GradientSlider.Width;
         var h = WebInspector.GradientSlider.Height;
-        
+
         this._canvas.width = w;
         this._canvas.height = h;
 
@@ -238,7 +238,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
     _updateKnobs()
     {
         var selectedStop = this._selectedKnob ? this._selectedKnob.stop : null;
-        
+
         while (this._knobs.length > this._stops.length)
             this._knobs.pop().element.remove();
 
@@ -311,7 +311,7 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
     {
         return this._x;
     }
-    
+
     set x(x) {
         this._x = x;
         this._updateTransform();
@@ -321,7 +321,7 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
     {
         return this._x;
     }
-    
+
     set y(y) {
         this._y = y;
         this._updateTransform();
@@ -349,7 +349,7 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
             return;
 
         this._element.classList.toggle(WebInspector.GradientSliderKnob.SelectedClassName, selected);
-        
+
         if (this.delegate && typeof this.delegate.knobSelectionChanged === "function")
             this.delegate.knobSelectionChanged(this);
     }

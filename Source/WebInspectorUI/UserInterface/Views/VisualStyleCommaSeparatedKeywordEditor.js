@@ -69,7 +69,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
     get value()
     {
         if (!this._commaSeparatedKeywords.hasChildren)
-            return;
+            return "";
 
         let value = "";
         for (let treeItem of this._commaSeparatedKeywords.children) {
@@ -288,4 +288,4 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor.ListItemClassName = "visual-
 WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event = {
     TreeItemSelected: "visual-style-comma-separated-keyword-editor-tree-item-selected",
     NoRemainingTreeItems: "visual-style-comma-separated-keyword-editor-no-remaining-tree-items"
-}
+};

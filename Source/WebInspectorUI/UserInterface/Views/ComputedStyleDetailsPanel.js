@@ -30,7 +30,7 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
         super(delegate, WebInspector.ComputedStyleDetailsPanel.StyleClassName, "computed", WebInspector.UIString("Styles \u2014 Computed"));
 
         this._computedStyleShowAllSetting = new WebInspector.Setting("computed-style-show-all", false);
-        
+
         this.cssStyleDeclarationTextEditorShouldAddPropertyGoToArrows = true;
     }
 

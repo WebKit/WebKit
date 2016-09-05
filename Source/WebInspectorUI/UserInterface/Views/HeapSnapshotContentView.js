@@ -103,7 +103,7 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
                 tooltip: WebInspector.UIString("Size of the current object plus the size of all objects it keeps alive."),
                 width: "140px",
                 aligned: "right",
-                sortable: true, 
+                sortable: true,
             },
             size: {
                 title: WebInspector.UIString("Self Size"),
@@ -138,7 +138,7 @@ WebInspector.HeapSnapshotObjectGraphContentView = class HeapSnapshotObjectGraphC
                 tooltip: WebInspector.UIString("Size of the current object plus the size of all objects it keeps alive."),
                 width: "140px",
                 aligned: "right",
-                sortable: true, 
+                sortable: true,
             },
             size: {
                 title: WebInspector.UIString("Self Size"),

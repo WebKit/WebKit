@@ -174,8 +174,8 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
                 for (let {type, source} of this._tree.modifiers) {
                     if (type === WebInspector.ProfileDataGridTree.ModifierType.ChargeToCaller) {
                         if (child.equals(source)) {
-                            this._childrenToChargeToSelf.add(child);                            
-                            this._extraSelfTimeFromChargedChildren += child.filteredTimestampsAndDuration(this._tree.startTime, this._tree.endTime).duration;                            
+                            this._childrenToChargeToSelf.add(child);
+                            this._extraSelfTimeFromChargedChildren += child.filteredTimestampsAndDuration(this._tree.startTime, this._tree.endTime).duration;
                             continue;
                         }
                     }
@@ -266,4 +266,4 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
 
         this.removeEventListener("populate", this._populate, this);
     }
-}
+};

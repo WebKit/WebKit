@@ -513,7 +513,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
 
         // Prevent the arrow from being positioned against one of the popover's rounded corners.
         let arrowPadding = cornerRadius + arrowHalfLength;
-        if (anchorEdge === WebInspector.RectEdge.MIN_Y ||anchorEdge === WebInspector.RectEdge.MAX_Y)
+        if (anchorEdge === WebInspector.RectEdge.MIN_Y || anchorEdge === WebInspector.RectEdge.MAX_Y)
             anchorPoint.x = Number.constrain(anchorPoint.x, bounds.minX() + arrowPadding, bounds.maxX() - arrowPadding);
         else
             anchorPoint.y = Number.constrain(anchorPoint.y, bounds.minY() + arrowPadding, bounds.maxY() - arrowPadding);

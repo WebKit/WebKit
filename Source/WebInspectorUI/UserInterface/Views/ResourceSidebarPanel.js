@@ -68,7 +68,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
         if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
             this.contentTreeOutline.disclosureButtons = false;
-            WebInspector.SourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, () => { this.contentTreeOutline.disclosureButtons = true }, this);
+            WebInspector.SourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, () => { this.contentTreeOutline.disclosureButtons = true; }, this);
         }
 
         if (WebInspector.frameResourceManager.mainFrame)
@@ -331,7 +331,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
     {
         const suppressOnDeselect = true;
         const suppressSelectSibling = true;
-        
+
         if (this._extensionScriptsFolderTreeElement) {
             if (this._extensionScriptsFolderTreeElement.parent)
                 this._extensionScriptsFolderTreeElement.parent.removeChild(this._extensionScriptsFolderTreeElement, suppressOnDeselect, suppressSelectSibling);

@@ -221,7 +221,7 @@ WebInspector.GradientEditor = class GradientEditor extends WebInspector.Object
 
         this.dispatchEventToListeners(WebInspector.GradientEditor.Event.GradientChanged, {gradient: this._gradient});
     }
-}
+};
 
 WebInspector.GradientEditor.Event = {
     GradientChanged: "gradient-editor-gradient-changed",

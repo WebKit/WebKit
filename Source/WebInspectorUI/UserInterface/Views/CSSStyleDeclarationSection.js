@@ -390,7 +390,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         var selectorText = this._selectorElement.textContent;
         if (!selectorText || !selectorText.length) {
             if (!this._style.ownerRule)
-                return;
+                return "";
 
             selectorText = this._style.ownerRule.selectorText;
         }

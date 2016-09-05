@@ -44,7 +44,7 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
 
     get record()
     {
-        return this.records && this.records.length ? this.records[0] : null;;
+        return this.records && this.records.length ? this.records[0] : null;
     }
 
     get records()

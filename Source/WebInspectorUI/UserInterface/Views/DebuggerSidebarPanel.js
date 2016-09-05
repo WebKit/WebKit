@@ -123,7 +123,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
                 }
             }
             return false;
-        };
+        }
 
         this.filterBar.addFilterBarButton("debugger-show-resources-with-issues-only", showResourcesWithIssuesOnlyFilterFunction.bind(this), true, WebInspector.UIString("Only show resources with issues"), WebInspector.UIString("Show all resources"), "Images/Errors.svg", 15, 15);
 
@@ -377,7 +377,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         if (!treeElement) {
             console.error("Unknown sourceCode instance", sourceCode);
-            return;
+            return null;
         }
 
         if (!treeElement.parent) {
@@ -750,7 +750,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     {
         if (!a.debuggerObject || !b.debuggerObject)
             return 0;
-        
+
         var aLocation = a.debuggerObject.sourceCodeLocation;
         var bLocation = b.debuggerObject.sourceCodeLocation;
 
@@ -865,6 +865,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         if (debuggerObject instanceof WebInspector.IssueMessage)
             return this._addIssue(debuggerObject);
+
+        return null;
     }
 
     _addIssue(issueMessage)

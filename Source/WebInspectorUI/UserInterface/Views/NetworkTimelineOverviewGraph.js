@@ -114,7 +114,7 @@ WebInspector.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph e
             return a.startTime - b.startTime;
         }
 
-        let minimumBarPaddingTime = WebInspector.TimelineOverview.MinimumDurationPerPixel * (WebInspector.TimelineRecordBar.MinimumWidthPixels + WebInspector.TimelineRecordBar.MinimumMarginPixels)
+        let minimumBarPaddingTime = WebInspector.TimelineOverview.MinimumDurationPerPixel * (WebInspector.TimelineRecordBar.MinimumWidthPixels + WebInspector.TimelineRecordBar.MinimumMarginPixels);
 
         // Try to find a row that has room and does not overlap a previous record.
         var foundRowForRecord = false;

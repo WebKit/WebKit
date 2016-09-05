@@ -103,7 +103,7 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
     {
         var buttonWidth = this._button.width;
         var buttonHeight = this._button.height;
-        
+
         // Add room for the button on the last line.
         var lastRect = rects.pop();
         lastRect.size.width += buttonWidth;
@@ -177,7 +177,7 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
             "q", 0, r, r, r,
             "H", rect.maxX()
         ], tx, ty);
-        
+
         rect = secondRect;
         this._addPath([
             "M", rect.minX(), rect.minY(),
@@ -188,7 +188,7 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
             "H", rect.minX()
         ], tx, ty);
     }
-    
+
     _drawOverlappingLines(rects)
     {
         var PADDING = 2;
@@ -208,10 +208,10 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
         var maxY = rects.lastValue.maxY() + PADDING;
         var firstLineMinX = rects[0].minX() - PADDING;
         var lastLineMaxX = rects.lastValue.maxX() + PADDING;
-        
+
         if (firstLineMinX === minX && lastLineMaxX === maxX)
             return this._addRect(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
-        
+
         var lastLineMinY = rects.lastValue.minY() + PADDING;
         if (rects[0].minX() === minX + PADDING) {
             return this._addPath([

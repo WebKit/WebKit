@@ -87,7 +87,7 @@ WebInspector.ScopeRadioButtonNavigationItem = class ScopeRadioButtonNavigationIt
         this._element.title = selectedItemIdentifier.label;
         this.dispatchEventToListeners(WebInspector.ScopeRadioButtonNavigationItem.Event.SelectedItemChanged);
     }
-}
+};
 
 WebInspector.ScopeRadioButtonNavigationItem.Event = {
     SelectedItemChanged: "scope-radio-button-navigation-item-selected-item-changed"

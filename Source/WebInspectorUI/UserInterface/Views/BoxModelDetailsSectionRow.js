@@ -113,7 +113,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
         {
             // Check if the value is a float and whether it should be rounded.
             let floatValue = parseFloat(value);
-            let shouldRoundValue = (!isNaN(floatValue) && floatValue % 1 !== 0);
+            let shouldRoundValue = !isNaN(floatValue) && (floatValue % 1 !== 0);
 
             if (isNaN(floatValue))
                 value = figureDash;
@@ -222,7 +222,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
                 var heightElement = createContentAreaHeightElement.call(this, style);
                 boxElement.append(widthElement, " \u00D7 ", heightElement);
             } else {
-                var suffix = (name === "border" ? "-width" : "");
+                var suffix = name === "border" ? "-width" : "";
 
                 var labelElement = document.createElement("div");
                 labelElement.className = "label";
@@ -276,7 +276,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
     _alteredFloatNumber(number, event)
     {
-        var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
+        var arrowKeyPressed = event.keyIdentifier === "Up" || event.keyIdentifier === "Down";
 
         // Jump by 10 when shift is down or jump by 0.1 when Alt/Option is down.
         // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.

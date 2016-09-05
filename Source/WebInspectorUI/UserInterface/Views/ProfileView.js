@@ -102,7 +102,7 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
     {
         if (!this._profileDataGridTree)
             return false;
-        return this._profileDataGridTree.focusNodes.length > 0
+        return this._profileDataGridTree.focusNodes.length > 0;
     }
 
     clearFocusNodes()

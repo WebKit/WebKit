@@ -561,7 +561,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             console.assert(effectiveNode);
             if (!effectiveNode)
                 return;
-        }            
+        }
 
         if (effectiveNode.nodeType() !== Node.ELEMENT_NODE)
             return;
