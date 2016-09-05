@@ -236,9 +236,27 @@ static void addAdditionalRequestHeadersToRequest(ResourceRequest& request, const
     frameLoader.addExtraFieldsToSubresourceRequest(request);
 }
 
-void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& cachedResourceLoader)
+void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& loader)
 {
-    addAdditionalRequestHeadersToRequest(m_resourceRequest, cachedResourceLoader, *this);
+    addAdditionalRequestHeadersToRequest(m_resourceRequest, loader, *this);
+}
+
+void CachedResource::computeOrigin(CachedResourceLoader& loader)
+{
+    if (type() == MainResource)
+        return;
+
+    ASSERT(loader.document());
+    if (m_resourceRequest.hasHTTPOrigin())
+        m_origin = SecurityOrigin::createFromString(m_resourceRequest.httpOrigin());
+    else
+        m_origin = loader.document()->securityOrigin();
+    ASSERT(m_origin);
+
+    if (!(m_resourceRequest.url().protocolIsData() && m_options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set) && !m_origin->canRequest(m_resourceRequest.url()))
+        setCrossOrigin();
+
+    addAdditionalRequestHeaders(loader);
 }
 
 void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
@@ -300,18 +318,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
 #endif
     m_resourceRequest.setPriority(loadPriority());
 
-    if (type() != MainResource) {
-        if (m_resourceRequest.hasHTTPOrigin())
-            m_origin = SecurityOrigin::createFromString(m_resourceRequest.httpOrigin());
-        else
-            m_origin = cachedResourceLoader.document()->securityOrigin();
-        ASSERT(m_origin);
-
-        if (!(m_resourceRequest.url().protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set)  && m_origin && !m_origin->canRequest(m_resourceRequest.url()))
-            setCrossOrigin();
-
-        addAdditionalRequestHeaders(cachedResourceLoader);
-    }
+    computeOrigin(cachedResourceLoader);
 
     // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
     // We should look into removing the expectation of that knowledge from the platform network stacks.
@@ -330,6 +337,27 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
     }
 
     m_status = Pending;
+}
+
+void CachedResource::loadFrom(const CachedResource& resource, const ResourceLoaderOptions& options, CachedResourceLoader& cachedResourceLoader)
+{
+    ASSERT(url() == resource.url());
+    ASSERT(type() == resource.type());
+    ASSERT(resource.status() == Status::Cached);
+
+    m_options = options;
+    computeOrigin(cachedResourceLoader);
+
+    if (isCrossOrigin() && options.mode == FetchOptions::Mode::Cors) {
+        ASSERT(m_origin);
+        String errorMessage;
+        if (!WebCore::passesAccessControlCheck(resource.response(), m_options.allowCredentials, *m_origin, errorMessage)) {
+            setResourceError(ResourceError(String(), 0, url(), errorMessage, ResourceError::Type::AccessControl));
+            return;
+        }
+    }
+
+    setBodyDataFrom(resource);
 }
 
 void CachedResource::checkNotify()

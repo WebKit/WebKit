@@ -209,6 +209,8 @@ public:
     bool isClean() const;
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
 
+    void loadFrom(const CachedResource&, const ResourceLoaderOptions&, CachedResourceLoader&);
+
     SecurityOrigin* origin() const { return m_origin.get(); }
 
     bool canDelete() const { return !hasClients() && !m_loader && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
@@ -305,10 +307,12 @@ private:
 
     virtual void checkNotify();
     virtual bool mayTryReplaceEncodedData() const { return false; }
+    virtual void setBodyDataFrom(const CachedResource&) { }
 
     std::chrono::microseconds freshnessLifetime(const ResourceResponse&) const;
 
     void addAdditionalRequestHeaders(CachedResourceLoader&);
+    void computeOrigin(CachedResourceLoader&);
     void failBeforeStarting();
 
     HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;

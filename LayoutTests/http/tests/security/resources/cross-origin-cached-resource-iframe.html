@@ -1,0 +1,27 @@
+<html>
+<body>
+
+<img id="img" onload="logStatus(true)" onerror="logStatus(false)"/>
+<script>
+var test = JSON.parse(decodeURIComponent(location.hash.substring(1)));
+
+function logStatus(status)
+{
+    var msg = "Test " + test.id;
+    msg += test.shouldPass == status ? " PASS: " : " FAIL: ";
+
+    msg += status ? "Loaded" : "Did not load";
+    msg += " image " + img.src + " from " + location.host;
+    if (test.crossOrigin)
+        msg += " (crossOrigin=" + test.crossOrigin + ")";
+
+    parent.postMessage(msg, "*");
+}
+
+var image = document.getElementById('img');
+if (test.crossOrigin !== undefined)
+    image.crossOrigin = test.crossOrigin;
+image.src = test.url;
+</script>
+</body>
+</html>

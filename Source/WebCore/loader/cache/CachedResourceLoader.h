@@ -155,7 +155,8 @@ private:
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, CachedResourceRequest&, CachedResource* existingResource) const;
-    
+
+    bool updateCachedResourceWithCurrentRequest(CachedResourceRequest&, CachedResourceHandle<CachedResource>&);
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const URL&) const;
 

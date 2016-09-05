@@ -1,5 +1,7 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi. Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi. Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi due to access control checks.
 Tests that asynchronous XMLHttpRequests handle redirects according to the CORS standard.
 
 Testing ../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi without credentials

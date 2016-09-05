@@ -539,6 +539,34 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
     return !newRequest.isNull();
 }
 
+bool CachedResourceLoader::updateCachedResourceWithCurrentRequest(CachedResourceRequest& request, CachedResourceHandle<CachedResource>& resourceHandle)
+{
+    ASSERT(resourceHandle);
+
+    CachedResource& resource = *resourceHandle;
+
+    // FIXME: We should progressively extend this to other reusable resources
+    if (resource.type() != CachedResource::Type::ImageResource)
+        return false;
+
+    bool shouldUpdate = resource.options().mode != request.options().mode || request.resourceRequest().httpOrigin() != resource.resourceRequest().httpOrigin();
+
+    if (!shouldUpdate)
+        return false;
+
+    // FIXME: For being loaded requests, we currently do not use the same resource, as this may induce errors in the resource response tainting.
+    // We should find a way to improve this.
+    if (resource.status() != CachedResource::Cached) {
+        request.setCachingPolicy(CachingPolicy::DisallowCaching);
+        resourceHandle = loadResource(resource.type(), request);
+        return true;
+    }
+
+    resourceHandle = createResource(resource.type(), request.mutableResourceRequest(), request.charset(), sessionID());
+    resourceHandle->loadFrom(resource, request.options(), *this);
+    return true;
+}
+
 static inline void logMemoryCacheResourceRequest(Frame* frame, const String& description, const String& value = String())
 {
     if (!frame || !frame->page())
@@ -635,19 +663,21 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         resource = revalidateResource(request, resource.get());
         break;
     case Use:
-        if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(request, resource.get()))
-            return nullptr;
-        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::usedKey());
-        memoryCache.resourceAccessed(*resource);
+        if (!updateCachedResourceWithCurrentRequest(request, resource)) {
+            if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(request, resource.get()))
+                return nullptr;
+            logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::usedKey());
+            memoryCache.resourceAccessed(*resource);
 #if ENABLE(WEB_TIMING)
-        if (document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
-            // FIXME (161170): The networkLoadTiming shouldn't be stored on the ResourceResponse.
-            resource->response().networkLoadTiming().reset();
-            loadTiming.setResponseEnd(monotonicallyIncreasingTime());
-            m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
-            m_resourceTimingInfo.addResourceTiming(resource.get(), *document(), loadTiming);
-        }
+            if (document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
+                // FIXME (161170): The networkLoadTiming shouldn't be stored on the ResourceResponse.
+                resource->response().networkLoadTiming().reset();
+                loadTiming.setResponseEnd(monotonicallyIncreasingTime());
+                m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request, frame());
+                m_resourceTimingInfo.addResourceTiming(resource.get(), *document(), loadTiming);
+            }
 #endif
+        }
         break;
     }
 
@@ -800,11 +830,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // in CachedImage::load.
     if (cachedResourceRequest.defer() == CachedResourceRequest::DeferredByClient)
         return Reload;
-    
+
     // Don't reload resources while pasting.
     if (m_allowStaleResources)
         return Use;
-    
+
     // Always use preloads.
     if (existingResource->isPreloaded())
         return Use;

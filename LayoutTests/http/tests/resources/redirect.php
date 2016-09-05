@@ -1,16 +1,22 @@
 <?php
-    function addCacheControl() {
-        # Workaround for https://bugs.webkit.org/show_bug.cgi?id=77538
-        # Caching redirects results in flakiness in tests that dump loader delegates.
-        header("Cache-Control: no-store");
+    function addCacheControl($allowCache) {
+        if ($allowCache)
+            header("Cache-Control: public, max-age=86400");
+        else {
+            # Workaround for https://bugs.webkit.org/show_bug.cgi?id=77538
+            # Caching redirects results in flakiness in tests that dump loader delegates.
+            header("Cache-Control: no-store");
+        }
     }
 
     $url = $_GET['url'];
 
+    $allowCache = isset($_GET['allowCache']);
+
     if (isset($_GET['refresh'])) {
         header("HTTP/1.1 200");
         header("Refresh: " . $_GET['refresh'] . "; url=$url");
-        addCacheControl();
+        addCacheControl($allowCache);
         return;
     }
 
@@ -22,5 +28,5 @@
     } else
         header("HTTP/1.1 " . $_GET['code']);
     header("Location: $url");
-    addCacheControl();
+    addCacheControl($allowCache);
 ?>

@@ -1,5 +1,26 @@
 2016-09-05  Youenn Fablet  <youenn@apple.com>
 
+        CachedResourceLoader is not taking into account fetch options to use or not cached resources
+        https://bugs.webkit.org/show_bug.cgi?id=161389
+
+        Reviewed by Darin Adler.
+
+        Updated as new console log messages appear now that cors checks are done at SubresourceLoader level.
+
+        * web-platform-tests/XMLHttpRequest/security-consideration.sub-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-basic-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-basic-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-origin-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-origin.js:
+        (corsOrigin): Fixing a typo in the test making the tests always passing, since the fetch promise was not taken into account.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker-expected.txt:
+
+2016-09-05  Youenn Fablet  <youenn@apple.com>
+
         W3C test importer should generate the list of resource files
         https://bugs.webkit.org/show_bug.cgi?id=161578
 
