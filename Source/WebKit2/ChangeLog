@@ -1,3 +1,28 @@
+2016-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] SetNativeSurfaceHandleForCompositing should not be compiled in for wayland build
+        https://bugs.webkit.org/show_bug.cgi?id=161483
+
+        Reviewed by Žan Doberšek.
+
+        SetNativeSurfaceHandleForCompositing and DestroyNativeSurfaceHandleForCompositing messages should only be used
+        for GTK+ port when compiled with OpenGL and X11 enabled and redirected XComposite window disabled. So, we should
+        use USE(TEXTURE_MAPPER) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW) consistently.
+        This fixes the build when building the GTK+ port with Wayland enabled and X11 disabled.
+
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp:
+        (WebKit::AcceleratedDrawingAreaProxy::didUpdateBackingStoreState):
+        * UIProcess/AcceleratedDrawingAreaProxy.h:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::enterAcceleratedCompositingMode):
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2016-09-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [GObject bindings] override handleEvent() method in GObjectEventListener

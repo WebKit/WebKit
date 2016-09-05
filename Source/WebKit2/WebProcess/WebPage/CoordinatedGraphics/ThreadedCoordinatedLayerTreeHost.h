@@ -66,7 +66,7 @@ private:
     void forceRepaint() override;
     bool forceRepaintAsync(uint64_t callbackID) override { return false; }
 
-#if PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(GTK) && PLATFORM(X11) &&  !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
 #endif
 
