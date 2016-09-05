@@ -1,3 +1,10 @@
+2016-09-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed error message typo fix
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::removeUserContentWorlds):
+
 2016-09-05  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Drop ".Development" suffix from XPC service bundle IDs, leave it only on the executable
