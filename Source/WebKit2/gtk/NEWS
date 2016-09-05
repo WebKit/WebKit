@@ -1,4 +1,13 @@
 ==================
+WebKitGTK+  2.12.5
+==================
+
+What's new in WebKitGTK+ 2.12.5?
+
+  - Fix a regression introduced in 2.12.4 that caused a hang in the network process after a load failure.
+  - Fix several crashes and rendering issues.
+
+==================
 WebKitGTK+  2.12.4
 ==================
 
