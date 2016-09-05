@@ -74,16 +74,14 @@
 """
 
 import argparse
-import datetime
+import json
 import logging
 import mimetypes
-import os
 import sys
 
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.common.system.executive import ScriptError
 from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
 from webkitpy.w3c.test_downloader import TestDownloader
@@ -179,6 +177,11 @@ class TestImporter(object):
 
         self.import_list = []
         self._importing_downloaded_tests = source_directory is None
+
+        self._test_resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, "resources", "resource-files.json")
+        self._test_resource_files = json.loads(self.filesystem.read_text_file(self._test_resource_files_json_path)) if self.filesystem.exists(self._test_resource_files_json_path) else None
+        if self.options.clean_destination_directory:
+            self._test_resource_files["files"] = []
 
     def do_import(self):
         if not self.source_directory:
@@ -294,11 +297,13 @@ class TestImporter(object):
                 test_parser = TestParser(vars(self.options), filename=fullpath, host=self.host)
                 test_info = test_parser.analyze_test()
                 if test_info is None:
-                    # This is probably a resource file.
-                    if self.filesystem.basename(self.filesystem.dirname(fullpath)) != "resources":
-                        self._potential_test_resource_files.append({'src': fullpath, 'dest': filename})
+                    # This is probably a resource file, but we should generate WPT manifest instead and get the list of resource files from it.
+                    if not self._is_in_resources_directory(fullpath):
+                        self._potential_test_resource_files.append(fullpath)
                     copy_list.append({'src': fullpath, 'dest': filename})
                     continue
+                elif self._is_in_resources_directory(fullpath):
+                    _log.warning('%s is a test located in a "resources" folder. This test will be skipped by WebKit test runners.', fullpath)
 
                 if 'manualtest' in test_info.keys():
                     continue
@@ -462,10 +467,26 @@ class TestImporter(object):
         for prefixed_value in sorted(total_prefixed_property_values, key=lambda p: total_prefixed_property_values[p]):
             _log.info('  %s: %s', prefixed_value, total_prefixed_property_values[prefixed_value])
 
-        if self._potential_test_resource_files:
-            _log.info('The following files may be resource files and should be marked as skipped in the TestExpectations:')
-            for filename in sorted([test['src'] for test in self._potential_test_resource_files]):
-                _log.info(filename.replace(self.source_directory, self.tests_w3c_relative_path) + ' [ Skip ]')
+        if self._potential_test_resource_files and self._test_resource_files:
+            # FIXME: We should check that actual tests are not in the test_resource_files list
+            should_update_json_file = False
+            files = self._test_resource_files["files"]
+            for full_path in self._potential_test_resource_files:
+                resource_file_path = self.filesystem.relpath(full_path, self.source_directory)
+                if not self._already_identified_as_resource_file(resource_file_path):
+                    files.append(resource_file_path)
+                    should_update_json_file = True
+            if should_update_json_file:
+                files.sort()
+                self.filesystem.write_text_file(self._test_resource_files_json_path, json.dumps(self._test_resource_files, sort_keys=True, indent=4).replace(' \n', '\n'))
+
+    def _already_identified_as_resource_file(self, path):
+        if path in self._test_resource_files["files"]:
+            return True
+        return any([path.find(directory) != -1 for directory in self._test_resource_files["directories"]])
+
+    def _is_in_resources_directory(self, path):
+        return "resources" in path.split(self.filesystem.sep)
 
     def remove_deleted_files(self, import_directory, new_file_list):
         """ Reads an import log in |import_directory|, compares it to the |new_file_list|, and removes files not in the new list."""

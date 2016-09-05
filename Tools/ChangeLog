@@ -1,3 +1,20 @@
+2016-09-05  Youenn Fablet  <youenn@apple.com>
+
+        W3C test importer should generate the list of resource files
+        https://bugs.webkit.org/show_bug.cgi?id=161578
+
+        Reviewed by Ryosuke Niwa.
+
+        Generating LayoutTests/imported/w3c/resources/resource-files.json when importing tests.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.__init__): Reading test resource files configuration file.
+        (TestImporter.find_importable_tests):
+        (TestImporter.import_tests): Update the test resource files based on test parsed files.
+        (TestImporter):
+        (TestImporter._already_identified_as_resource_file): Helper routine to know whether a file is already set as a resource file.
+        (TestImporter._is_in_resources_directory: Helper routine to know whether a file is in a resources directory.
+
 2016-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Media controls behave strangely when videos mute from within a playing handler
