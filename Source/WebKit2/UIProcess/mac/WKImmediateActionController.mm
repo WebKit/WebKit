@@ -269,10 +269,8 @@ using namespace WebKit;
 
 - (id <NSImmediateActionAnimationController>)_defaultAnimationController
 {
-    if (_contentPreventsDefault) {
-        RetainPtr<WKAnimationController> dummyController = adoptNS([[WKAnimationController alloc] init]);
-        return dummyController.autorelease();
-    }
+    if (_contentPreventsDefault)
+        return [[[WKAnimationController alloc] init] autorelease];
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
 

@@ -255,10 +255,8 @@ using namespace WebCore;
 
 - (id <NSImmediateActionAnimationController>)_defaultAnimationController
 {
-    if (_contentPreventsDefault) {
-        RetainPtr<WebAnimationController> dummyController = adoptNS([[WebAnimationController alloc] init]);
-        return dummyController.autorelease();
-    }
+    if (_contentPreventsDefault)
+        return [[[WebAnimationController alloc] init] autorelease];
 
     NSURL *url = _hitTestResult.absoluteLinkURL();
     NSString *absoluteURLString = [url absoluteString];

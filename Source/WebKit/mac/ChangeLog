@@ -1,3 +1,12 @@
+2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unnecessary RetainPtr.
+
+        Review comments on earlier change.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]):
+
 2016-09-03  Darin Adler  <darin@apple.com>
 
         Streamline DOMImplementation, and move it to our new DOM exception system

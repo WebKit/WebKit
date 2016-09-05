@@ -1,3 +1,12 @@
+2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unnecessary RetainPtr.
+
+        Review comments on earlier change.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _defaultAnimationController]):
+
 2016-09-04  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Wrapping XPC service execution in os_activity is no longer needed
