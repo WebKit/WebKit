@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that table does not assert when child visual overflow is cleared.</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function() {
+	window.scrollTo(0, document.body.scrollHeight);
+	document.designMode = 'on';
+}
+</script>
+<style>
+pre {
+	margin-top: -1px;
+	position: relative;
+	display: inline-table;
+}
+
+span {
+	position: absolute;
+}
+</style>
+</head>
+<body>
+PASS if no assert in debug.
+<table><tr><th><span><div><pre><a>a<pre><span><details></details></span></pre></a></pre></div></span></tr></th></table>
+</body>
