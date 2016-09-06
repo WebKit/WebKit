@@ -78,12 +78,7 @@ public:
 #endif
         Swipe
     };
-    
-    enum class SwipeTransitionStyle {
-        Overlap,
-        Push
-    };
-    
+
     enum class SwipeDirection {
         Back,
         Forward
@@ -264,7 +259,6 @@ private:
     RetainPtr<CALayer> m_swipeDimmingLayer;
     Vector<RetainPtr<CALayer>> m_currentSwipeLiveLayers;
 
-    SwipeTransitionStyle m_swipeTransitionStyle { SwipeTransitionStyle::Overlap };
     Vector<RetainPtr<NSView>> m_customSwipeViews;
     float m_customSwipeViewsTopContentInset { 0 };
     WebCore::FloatRect m_currentSwipeCustomViewBounds;

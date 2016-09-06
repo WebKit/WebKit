@@ -608,7 +608,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         [snapshotLayerParent insertSublayer:m_swipeLayer.get() above:layerAdjacentToSnapshot];
 
     // We don't know enough about the custom views' hierarchy to apply a shadow.
-    if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap && m_customSwipeViews.isEmpty()) {
+    if (m_customSwipeViews.isEmpty()) {
         FloatRect dimmingRect(FloatPoint(), m_webPageProxy.viewSize());
         m_swipeDimmingLayer = adoptNS([[CALayer alloc] init]);
         [m_swipeDimmingLayer setName:@"Gesture Swipe Dimming Layer"];
@@ -711,23 +711,14 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
     else
         [m_swipeShadowLayer setOpacity:swipeOverlayShadowOpacity];
 
-    if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap)
-        [m_swipeShadowLayer setTransform:CATransform3DMakeTranslation((swipingLeft ? 0 : width) + swipingLayerOffset, 0, 0)];
+    [m_swipeShadowLayer setTransform:CATransform3DMakeTranslation((swipingLeft ? 0 : width) + swipingLayerOffset, 0, 0)];
 
-    if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
-        if (!swipingLeft) {
-            [m_swipeLayer setTransform:CATransform3DMakeTranslation(width + swipingLayerOffset, 0, 0)];
-            didMoveSwipeSnapshotLayer();
-        }
-    } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push)
-        [m_swipeLayer setTransform:CATransform3DMakeTranslation((swipingLeft ? -width : width) + swipingLayerOffset, 0, 0)];
-
-    for (const auto& layer : m_currentSwipeLiveLayers) {
-        if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
-            if (swipingLeft)
-                [layer setTransform:CATransform3DMakeTranslation(swipingLayerOffset, 0, 0)];
-        } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push)
+    if (swipingLeft) {
+        for (const auto& layer : m_currentSwipeLiveLayers)
             [layer setTransform:CATransform3DMakeTranslation(swipingLayerOffset, 0, 0)];
+    } else {
+        [m_swipeLayer setTransform:CATransform3DMakeTranslation(width + swipingLayerOffset, 0, 0)];
+        didMoveSwipeSnapshotLayer();
     }
 }
 
