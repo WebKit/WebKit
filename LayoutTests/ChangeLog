@@ -1,3 +1,9 @@
+2016-09-06  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK gardening
+
+        * platform/gtk/TestExpectations: Mark 2 mediastream tests as crashing
+
 2016-09-05  Darin Adler  <darin@apple.com>
 
         More bindings improvements, particularly things not needed for JavaScript bindings
