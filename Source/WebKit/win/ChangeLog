@@ -1,3 +1,17 @@
+2016-09-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Null pointer crash under WebView::scrollOffset.
+        https://bugs.webkit.org/show_bug.cgi?id=161620
+
+        Reviewed by Darin Adler.
+
+        Added null pointer checks.
+
+        * WebView.cpp:
+        (WebView::scrollOffset):
+        (WebView::scrollBy):
+        (WebView::visibleContentRect):
+
 2016-09-03  Darin Adler  <darin@apple.com>
 
         Streamline DOMImplementation, and move it to our new DOM exception system
