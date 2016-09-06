@@ -103,7 +103,6 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     if (![self isKindOfClass:[DOMNode class]]) {
         // DOMObject can't map back to a document, and thus an interpreter,
         // so for now only create wrappers for DOMNodes.
-        NSLog(@"%s:%d:  We don't know how to create ObjC JS wrappers from DOMObjects yet.", __FILE__, __LINE__);
         return;
     }
     

@@ -1,3 +1,12 @@
+2016-09-06  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/8064563> Ugly NSLog in DOMInternal.mm
+
+        Rubber-stamped by Anders Carlsson.
+
+        * DOM/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]): Removed useless call to NSLog.
+
 2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r205407.
