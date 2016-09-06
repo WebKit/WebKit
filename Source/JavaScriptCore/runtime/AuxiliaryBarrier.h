@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef AuxiliaryBarrier_h
+#define AuxiliaryBarrier_h
 
 namespace JSC {
 
@@ -61,3 +62,4 @@ private:
 
 } // namespace JSC
 
+#endif // AuxiliaryBarrier_h
