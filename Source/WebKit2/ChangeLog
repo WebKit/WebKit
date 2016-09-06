@@ -1,3 +1,10 @@
+2016-09-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, update stale variable name
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreateWebPage):
+
 2016-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
