@@ -165,6 +165,9 @@ TEST_F(URLParserTest, Basic)
     checkURL("file:///#fragment", {"file", "", "", "", 0, "/", "", "fragment", "file:///#fragment"});
     checkURL("file:////?query", {"file", "", "", "", 0, "//", "query", "", "file:////?query"});
     checkURL("file:////#fragment", {"file", "", "", "", 0, "//", "", "fragment", "file:////#fragment"});
+    checkURL("http://host/A b", {"http", "", "", "host", 0, "/A%20b", "", "", "http://host/A%20b"});
+    checkURL("http://host/a%20B", {"http", "", "", "host", 0, "/a%20B", "", "", "http://host/a%20B"});
+    checkURL("http://host?q=@ <>!#fragment", {"http", "", "", "host", 0, "/", "q=@%20%3C%3E!", "fragment", "http://host/?q=@%20%3C%3E!#fragment"});
 }
 
 static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts)
@@ -204,6 +207,8 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("http://whatwg.org/index.html", "http://webkit.org/path1/path2/", {"http", "", "", "whatwg.org", 0, "/index.html", "", "", "http://whatwg.org/index.html"});
     checkRelativeURL("index.html", "http://webkit.org/path1/path2/page.html?query#fragment", {"http", "", "", "webkit.org", 0, "/path1/path2/index.html", "", "", "http://webkit.org/path1/path2/index.html"});
     checkRelativeURL("//whatwg.org/index.html", "https://www.webkit.org/path", {"https", "", "", "whatwg.org", 0, "/index.html", "", "", "https://whatwg.org/index.html"});
+    checkRelativeURL("http://example\t.\norg", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/", "", "", "http://example.org/"});
+    checkRelativeURL("test", "file:///path1/path2", {"file", "", "", "", 0, "/path1/test", "", "", "file:///path1/test"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
@@ -338,8 +343,74 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("file:path",
         {"file", "", "", "", 0, "/path", "", "", "file:///path"},
         {"file", "", "", "", 0, "path", "", "", "file://path"});
+    
+    // FIXME: Fix and test incomplete percent encoded characters in the middle and end of the input string.
+    // FIXME: Fix and test percent encoded upper case characters in the host.
+    checkURLDifferences("http://host%73",
+        {"http", "", "", "hosts", 0, "/", "", "", "http://hosts/"},
+        {"http", "", "", "host%73", 0, "/", "", "", "http://host%73/"});
+    
+    // URLParser matches Chrome and the spec, but not URL::parse or Firefox.
+    checkURLDifferences("http://host/path%2e.%2E",
+        {"http", "", "", "host", 0, "/path...", "", "", "http://host/path..."},
+        {"http", "", "", "host", 0, "/path%2e.%2E", "", "", "http://host/path%2e.%2E"});
 }
 
+TEST_F(URLParserTest, DefaultPort)
+{
+    checkURL("ftp://host:21/", {"ftp", "", "", "host", 0, "/", "", "", "ftp://host/"});
+    checkURL("ftp://host:22/", {"ftp", "", "", "host", 22, "/", "", "", "ftp://host:22/"});
+    checkURLDifferences("ftp://host:21",
+        {"ftp", "", "", "host", 0, "/", "", "", "ftp://host/"},
+        {"ftp", "", "", "host", 0, "", "", "", "ftp://host"});
+    checkURLDifferences("ftp://host:22",
+        {"ftp", "", "", "host", 22, "/", "", "", "ftp://host:22/"},
+        {"ftp", "", "", "host", 22, "", "", "", "ftp://host:22"});
+    
+    checkURL("gopher://host:70/", {"gopher", "", "", "host", 0, "/", "", "", "gopher://host/"});
+    checkURL("gopher://host:71/", {"gopher", "", "", "host", 71, "/", "", "", "gopher://host:71/"});
+    // Spec, Chrome, Firefox, and URLParser have "/", URL::parse does not.
+    // Spec, Chrome, URLParser, URL::parse recognize gopher default port, Firefox does not.
+    checkURLDifferences("gopher://host:70",
+        {"gopher", "", "", "host", 0, "/", "", "", "gopher://host/"},
+        {"gopher", "", "", "host", 0, "", "", "", "gopher://host"});
+    checkURLDifferences("gopher://host:71",
+        {"gopher", "", "", "host", 71, "/", "", "", "gopher://host:71/"},
+        {"gopher", "", "", "host", 71, "", "", "", "gopher://host:71"});
+    
+    checkURL("http://host:80", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
+    checkURL("http://host:80/", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
+    checkURL("http://host:81", {"http", "", "", "host", 81, "/", "", "", "http://host:81/"});
+    checkURL("http://host:81/", {"http", "", "", "host", 81, "/", "", "", "http://host:81/"});
+    
+    checkURL("https://host:443", {"https", "", "", "host", 0, "/", "", "", "https://host/"});
+    checkURL("https://host:443/", {"https", "", "", "host", 0, "/", "", "", "https://host/"});
+    checkURL("https://host:444", {"https", "", "", "host", 444, "/", "", "", "https://host:444/"});
+    checkURL("https://host:444/", {"https", "", "", "host", 444, "/", "", "", "https://host:444/"});
+    
+    checkURL("ws://host:80/", {"ws", "", "", "host", 0, "/", "", "", "ws://host/"});
+    checkURL("ws://host:81/", {"ws", "", "", "host", 81, "/", "", "", "ws://host:81/"});
+    // URLParser matches Chrome and Firefox, but not URL::parse
+    checkURLDifferences("ws://host:80",
+        {"ws", "", "", "host", 0, "/", "", "", "ws://host/"},
+        {"ws", "", "", "host", 0, "", "", "", "ws://host"});
+    checkURLDifferences("ws://host:81",
+        {"ws", "", "", "host", 81, "/", "", "", "ws://host:81/"},
+        {"ws", "", "", "host", 81, "", "", "", "ws://host:81"});
+    
+    checkURL("wss://host:443/", {"wss", "", "", "host", 0, "/", "", "", "wss://host/"});
+    checkURL("wss://host:444/", {"wss", "", "", "host", 444, "/", "", "", "wss://host:444/"});
+    // URLParser matches Chrome and Firefox, but not URL::parse
+    checkURLDifferences("wss://host:443",
+        {"wss", "", "", "host", 0, "/", "", "", "wss://host/"},
+        {"wss", "", "", "host", 0, "", "", "", "wss://host"});
+    checkURLDifferences("wss://host:444",
+        {"wss", "", "", "host", 444, "/", "", "", "wss://host:444/"},
+        {"wss", "", "", "host", 444, "", "", "", "wss://host:444"});
+    
+    // FIXME: Fix and check unknown schemes with ports, as well as ftps.
+}
+    
 static void shouldFail(const String& urlString)
 {
     URLParser parser;
