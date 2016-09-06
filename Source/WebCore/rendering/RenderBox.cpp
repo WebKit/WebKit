@@ -2676,7 +2676,7 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
     // Case Three: The object is being pushed to the end of the containing block's available logical width.
     bool pushToEndFromTextAlign = !marginEndLength.isAuto() && ((!containingBlockStyle.isLeftToRightDirection() && containingBlockStyle.textAlign() == WEBKIT_LEFT)
         || (containingBlockStyle.isLeftToRightDirection() && containingBlockStyle.textAlign() == WEBKIT_RIGHT));
-    if ((marginStartLength.isAuto() && childWidth < containerWidth) || pushToEndFromTextAlign) {
+    if ((marginStartLength.isAuto() || pushToEndFromTextAlign) && childWidth < containerWidth) {
         marginEnd = valueForLength(marginEndLength, containerWidth);
         marginStart = containerWidth - childWidth - marginEnd;
         return;

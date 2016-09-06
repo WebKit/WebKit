@@ -1,3 +1,23 @@
+2016-09-06  Daniel Bates  <dabates@apple.com>
+
+        <table> inside <div align="right"> with large content inside = no scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=3352
+
+        Reviewed by Brent Fulgham.
+
+        Add a new test that is derived from the test LayoutTests/fast/block/align-bigger-child.html included
+        in <https://src.chromium.org/viewvc/blink?revision=187157&view=revision>.
+
+        Also update expected results of existing tests.
+
+        * fast/block/align-overflow-child-expected.txt: Added.
+        * fast/block/align-overflow-child.html: Added.
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt:
+        * platform/ios-simulator/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt:
+
 2016-09-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r205480.
