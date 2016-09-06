@@ -3616,10 +3616,6 @@ foreach (_include ${WebCore_IDL_INCLUDES})
     list(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
 endforeach ()
 
-foreach (_include ${WebCoreTestSupport_IDL_INCLUDES})
-    list(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
-endforeach ()
-
 set(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
 
 # Create JavaScript C++ code given an IDL input
@@ -3627,11 +3623,6 @@ foreach (_idl ${WebCore_IDL_FILES})
     set(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
 endforeach ()
 
-foreach (_idl ${WebCoreTestSupport_IDL_FILES})
-    set(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
-endforeach ()
-
-set(IDL_FILES_LIST "${IDL_FILES_LIST}${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl\n")
 list(APPEND IDL_INCLUDES --include=${DERIVED_SOURCES_WEBCORE_DIR})
 list(APPEND WebCoreTestSupport_IDL_FILES ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl)
 
@@ -3639,7 +3630,7 @@ file(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
 
 add_custom_command(
     OUTPUT ${SUPPLEMENTAL_DEPENDENCY_FILE} ${WINDOW_CONSTRUCTORS_FILE} ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE} ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-    DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${SCRIPTS_PREPROCESS_IDLS} ${WebCore_IDL_FILES} ${WebCoreTestSupport_IDL_FILES} ${WEBCORE_DIR}/CMakeLists.txt
+    DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${SCRIPTS_PREPROCESS_IDLS} ${WebCore_IDL_FILES} ${WEBCORE_DIR}/CMakeLists.txt
     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --windowConstructorsFile ${WINDOW_CONSTRUCTORS_FILE} --workerGlobalScopeConstructorsFile ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
 --dedicatedWorkerGlobalScopeConstructorsFile ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
     VERBATIM)
@@ -3660,15 +3651,17 @@ GENERATE_BINDINGS(WebCore_DERIVED_SOURCES
     ${SUPPLEMENTAL_DEPENDENCY_FILE}
     ${ADDITIONAL_BINDINGS_DEPENDENCIES})
 
+foreach (_include ${WebCoreTestSupport_IDL_INCLUDES})
+    list(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
+endforeach ()
+
 GENERATE_BINDINGS(WebCoreTestSupport_SOURCES
     "${WebCoreTestSupport_IDL_FILES}"
     "${WEBCORE_DIR}"
     "${IDL_INCLUDES}"
     "${FEATURE_DEFINES_JAVASCRIPT}"
     ${DERIVED_SOURCES_WEBCORE_DIR} JS JS cpp
-    ${IDL_ATTRIBUTES_FILE}
-    ${SUPPLEMENTAL_DEPENDENCY_FILE}
-    ${ADDITIONAL_BINDINGS_DEPENDENCIES})
+    ${IDL_ATTRIBUTES_FILE})
 
 # WebCore JS Builtins
 
@@ -3760,6 +3753,7 @@ list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/ExceptionCode
 
 
 GENERATE_SETTINGS_MACROS(${WEBCORE_DIR}/page/Settings.in SettingsMacros.h)
+list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SettingsMacros.h)
 list(APPEND WebCoreTestSupport_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.cpp)
 
 
