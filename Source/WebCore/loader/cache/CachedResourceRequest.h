@@ -61,6 +61,7 @@ public:
     void setInitiator(const AtomicString& name);
     const AtomicString& initiatorName() const;
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
+    void setCachingPolicy(CachingPolicy policy) { m_options.cachingPolicy = policy; }
 
     void setAsPotentiallyCrossOrigin(const String&, Document&);
 

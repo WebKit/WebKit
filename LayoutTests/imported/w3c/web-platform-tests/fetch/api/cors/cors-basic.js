@@ -20,9 +20,7 @@ function cors(desc, origin) {
   }, desc + " [no-cors mode]");
 
   promise_test(function(test) {
-    var testedPromise = fetch(url + RESOURCES_DIR + "top.txt", {"mode": "cors"} ).then(function(resp) {
-      return promise_rejects(test, new TypeError(), testedPromise);
-    });
+    return promise_rejects(test, new TypeError(), fetch(url + RESOURCES_DIR + "top.txt", {"mode": "cors"}));
   }, desc + " [server forbid CORS]");
 
   promise_test(function(test) {

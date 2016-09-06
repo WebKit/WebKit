@@ -276,14 +276,6 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
 {
     ASSERT(m_client);
 
-    String accessControlErrorDescription;
-    if (!m_sameOriginRequest && m_options.mode == FetchOptions::Mode::Cors) {
-        if (!passesAccessControlCheck(response, m_options.allowCredentials, securityOrigin(), accessControlErrorDescription)) {
-            m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, response.url(), accessControlErrorDescription, ResourceError::Type::AccessControl));
-            return;
-        }
-    }
-
     ASSERT(response.type() != ResourceResponse::Type::Error);
     if (response.type() == ResourceResponse::Type::Default) {
         m_client->didReceiveResponse(identifier, ResourceResponse::filterResponse(response, tainting));
@@ -430,8 +422,19 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     }
 
     ResourceResponse::Tainting tainting = ResourceResponse::Tainting::Basic;
-    if (!m_sameOriginRequest)
-        tainting = m_options.mode == FetchOptions::Mode::Cors ? ResourceResponse::Tainting::Cors : ResourceResponse::Tainting::Opaque;
+    if (!m_sameOriginRequest) {
+        if (m_options.mode == FetchOptions::Mode::NoCors)
+            tainting = ResourceResponse::Tainting::Opaque;
+        else {
+            ASSERT(m_options.mode == FetchOptions::Mode::Cors);
+            tainting = ResourceResponse::Tainting::Cors;
+            String accessControlErrorDescription;
+            if (!passesAccessControlCheck(response, m_options.allowCredentials, securityOrigin(), accessControlErrorDescription)) {
+                m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, response.url(), accessControlErrorDescription, ResourceError::Type::AccessControl));
+                return;
+            }
+        }
+    }
     didReceiveResponse(identifier, response, tainting);
 
     if (data)
