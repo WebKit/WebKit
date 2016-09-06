@@ -356,15 +356,5 @@ API::String* InjectedBundlePageLoaderClient::userAgentForURL(WebFrame* frame, AP
     WKStringRef userAgent = m_client.userAgentForURL(toAPI(frame), toAPI(url), m_client.base.clientInfo);
     return toImpl(userAgent);
 }
-
-#if ENABLE(CONTENT_EXTENSIONS)
-bool InjectedBundlePageLoaderClient::shouldUseContentExtensionsForURL(WebPage* page, API::URL* url) const
-{
-    if (!m_client.shouldUseContentExtensionsForURL)
-        return true;
-
-    return m_client.shouldUseContentExtensionsForURL(toAPI(page), toAPI(url), m_client.base.clientInfo);
-}
-#endif
-
+    
 } // namespace WebKit

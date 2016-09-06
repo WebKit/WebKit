@@ -303,10 +303,6 @@ public:
     void dispatchDidFinishLoad() override { }
     void dispatchDidReachLayoutMilestone(LayoutMilestones) override { }
 
-#if ENABLE(CONTENT_EXTENSIONS)
-    bool shouldUseContentExtensionsForURL(const URL&) override { return true; }
-#endif
-
     Frame* dispatchCreatePage(const NavigationAction&) override { return nullptr; }
     void dispatchShow() override { }
 

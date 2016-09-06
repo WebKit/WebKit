@@ -118,10 +118,6 @@ private:
     void dispatchDidFinishLoad() override;
     void dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) override;
 
-#if ENABLE(CONTENT_EXTENSIONS)
-    bool shouldUseContentExtensionsForURL(const WebCore::URL&) override { return true; }
-#endif
-
     WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) override;
     void dispatchShow() override;
 

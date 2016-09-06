@@ -635,18 +635,6 @@ void WebFrameLoaderClient::dispatchDidLayout()
     }
 }
 
-#if ENABLE(CONTENT_EXTENSIONS)
-bool WebFrameLoaderClient::shouldUseContentExtensionsForURL(const URL& url)
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return true;
-
-    // Just send the request to the injected bundle client because we don't have time to wait for a response from the UI Process.
-    return webPage->injectedBundleLoaderClient().shouldUseContentExtensionsForURL(webPage, API::URL::create(url.string()).ptr());
-}
-#endif
-
 Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction)
 {
     WebPage* webPage = m_frame->page();
