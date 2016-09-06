@@ -2217,7 +2217,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
 
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
-    m_userIsInteracting = true;
+    TemporaryChange<bool> userIsInteractingChange { m_userIsInteracting, true };
 
     m_page->pageThrottler().didReceiveUserInput();
 
@@ -2235,7 +2235,6 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 
     if (!shouldHandleEvent) {
         send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), false));
-        m_userIsInteracting = false;
         return;
     }
 
@@ -2261,7 +2260,6 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
     }
 
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));
-    m_userIsInteracting = false;
 }
 
 static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
@@ -2297,7 +2295,7 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
-    m_userIsInteracting = true;
+    TemporaryChange<bool> userIsInteractingChange { m_userIsInteracting, true };
 
     m_page->pageThrottler().didReceiveUserInput();
 
@@ -2309,8 +2307,6 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
         handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
 
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
-
-    m_userIsInteracting = false;
 }
 
 void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
@@ -2361,13 +2357,11 @@ static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 #if ENABLE(IOS_TOUCH_EVENTS)
 void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
 {
-    m_userIsInteracting = true;
+    TemporaryChange<bool> userIsInteractingChange { m_userIsInteracting, true };
 
     m_lastInteractionLocation = touchEvent.position();
     CurrentEvent currentEvent(touchEvent);
     handled = handleTouchEvent(touchEvent, m_page.get());
-
-    m_userIsInteracting = false;
 }
 
 void WebPage::touchEventSync(const WebTouchEvent& touchEvent, bool& handled)
