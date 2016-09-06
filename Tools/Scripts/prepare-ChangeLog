@@ -2325,21 +2325,21 @@ sub statusDescription($$$$)
     my $propertyDescription = defined $propertyChanges ? propertyChangeDescription($propertyChanges) : "";
 
     my %svn = (
-        "A" => defined $original ? sprintf(" Copied from \%s.", $original) : " Added.",
+        "A" => defined $original ? " Copied from \%s." : " Added.",
         "D" => " Removed.",
         "M" => "",
-        "R" => defined $original ? sprintf(" Replaced with \%s.", $original) : " Replaced.",
+        "R" => defined $original ? " Replaced with \%s." : " Replaced.",
         " " => "",
     );
 
     my %git = %svn;
     $git{"A"} = " Added.";
-    $git{"C"} = sprintf(" Copied from \%s.", $original);
-    $git{"R"} = sprintf(" Renamed from \%s.", $original);
+    $git{"C"} = " Copied from \%s.";
+    $git{"R"} = " Renamed from \%s.";
 
     my $description;
-    $description = $svn{$status} if isSVN() && exists $svn{$status};
-    $description = $git{$status} if isGit() && exists $git{$status};
+    $description = sprintf($svn{$status}, $original) if isSVN() && exists $svn{$status};
+    $description = sprintf($git{$status}, $original) if isGit() && exists $git{$status};
     return unless defined $description;
 
     $description .= $propertyDescription unless isAddedStatus($status);

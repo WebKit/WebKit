@@ -1,3 +1,18 @@
+2016-09-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r205461.
+        https://bugs.webkit.org/show_bug.cgi?id=161628
+
+        Introduced "Use of uninitialized value $original in sprintf"
+        warning (Requested by mcatanzaro on #webkit).
+
+        Reverted changeset:
+
+        ""Redundant argument in sprintf" warning spam from prepare-
+        ChangeLog"
+        https://bugs.webkit.org/show_bug.cgi?id=161606
+        http://trac.webkit.org/changeset/205461
+
 2016-09-06  Youenn Fablet  <youenn@apple.com>
 
         W3C test importer should be able to identify slow test
