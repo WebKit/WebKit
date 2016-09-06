@@ -1,3 +1,15 @@
+2016-09-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Crash logs have incorrect symbols.
+        https://bugs.webkit.org/show_bug.cgi?id=161603
+
+        Reviewed by Darin Adler.
+
+        Add build path to _NT_SYMBOL_PATH environment variable.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.setup_crash_log_saving):
+
 2016-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
