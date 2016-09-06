@@ -1,5 +1,16 @@
 2016-09-06  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: CodeMirror in resource content view should not show 'CR' characters
+        https://bugs.webkit.org/show_bug.cgi?id=160465
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror .cm-invalidchar):
+        Hide all invalid characters.
+
+2016-09-06  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Cannot undo in breakpoint editor
         https://bugs.webkit.org/show_bug.cgi?id=152858
 

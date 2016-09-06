@@ -90,3 +90,8 @@
     color: hsl(0, 0%, 65%);
     text-indent: 0;
 }
+
+/* FIXME: Add setting to show/hide invalid characters. */
+.CodeMirror .cm-invalidchar {
+    display: none;
+}
