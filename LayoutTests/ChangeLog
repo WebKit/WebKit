@@ -1,5 +1,14 @@
 2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip some asserting Fetch API tests.
+        https://bugs.webkit.org/show_bug.cgi?id=161632
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Revert r205491 because it did not resolve the test failures, update bug number in TestExpectations.
         https://bugs.webkit.org/show_bug.cgi?id=161366
 
