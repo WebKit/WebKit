@@ -1224,4 +1224,9 @@
 #define USE_MEDIAREMOTE 1
 #endif
 
+#if COMPILER(MSVC)
+/* Enable strict runtime stack buffer checks. */
+#pragma strict_gs_check(on)
+#endif
+
 #endif /* WTF_Platform_h */
