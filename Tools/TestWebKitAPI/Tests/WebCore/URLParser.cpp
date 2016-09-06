@@ -84,6 +84,16 @@ static void checkURL(const String& urlString, const ExpectedParts& parts)
     EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
 }
 
+template<size_t length>
+static String wideString(const wchar_t (&url)[length])
+{
+    StringBuilder builder;
+    builder.reserveCapacity(length - 1);
+    for (size_t i = 0; i < length - 1; ++i)
+        builder.append(url[i]);
+    return builder.toString();
+}
+
 TEST_F(URLParserTest, Basic)
 {
     checkURL("http://user:pass@webkit.org:123/path?query#fragment", {"http", "user", "pass", "webkit.org", 123, "/path", "query", "fragment", "http://user:pass@webkit.org:123/path?query#fragment"});
@@ -209,6 +219,8 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("//whatwg.org/index.html", "https://www.webkit.org/path", {"https", "", "", "whatwg.org", 0, "/index.html", "", "", "https://whatwg.org/index.html"});
     checkRelativeURL("http://example\t.\norg", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/", "", "", "http://example.org/"});
     checkRelativeURL("test", "file:///path1/path2", {"file", "", "", "", 0, "/path1/test", "", "", "file:///path1/test"});
+    checkRelativeURL(wideString(L"http://www.foo。bar.com"), "http://other.com/", {"http", "", "", "www.foo.bar.com", 0, "/", "", "", "http://www.foo.bar.com/"});
+    checkRelativeURL(wideString(L"sc://ñ.test/"), "about:blank", {"sc", "", "", "xn--ida.test", 0, "/", "", "", "sc://xn--ida.test/"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
@@ -351,6 +363,9 @@ TEST_F(URLParserTest, ParserDifferences)
         {"http", "", "", "host%73", 0, "/", "", "", "http://host%73/"});
     
     // URLParser matches Chrome and the spec, but not URL::parse or Firefox.
+    checkURLDifferences(wideString(L"http://０Ｘｃ０．０２５０．０１"),
+        {"http", "", "", "192.168.0.1", 0, "/", "", "", "http://192.168.0.1/"},
+        {"http", "", "", "0xc0.0250.01", 0, "/", "", "", "http://0xc0.0250.01/"});
     checkURLDifferences("http://host/path%2e.%2E",
         {"http", "", "", "host", 0, "/path...", "", "", "http://host/path..."},
         {"http", "", "", "host", 0, "/path%2e.%2E", "", "", "http://host/path%2e.%2E"});

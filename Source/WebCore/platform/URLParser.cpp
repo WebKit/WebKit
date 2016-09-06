@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include <array>
+#include <unicode/uidna.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -450,7 +451,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         case State::SchemeEndCheckForSlashes:
             LOG_STATE("SchemeEndCheckForSlashes");
             if (*c == '/') {
-                m_buffer.append('/');
+                m_buffer.append("//");
+                m_url.m_userStart = m_buffer.length();
                 state = State::PathOrAuthority;
                 ++c;
             } else {
@@ -1269,11 +1271,44 @@ static String percentDecode(const String& input)
     return output.toStringPreserveCapacity();
 }
 
+static bool containsOnlyASCII(const String& string)
+{
+    if (string.is8Bit())
+        return charactersAreAllASCII(string.characters8(), string.length());
+    return charactersAreAllASCII(string.characters16(), string.length());
+}
+
 static Optional<String> domainToASCII(const String& domain)
 {
-    // FIXME: Implement correctly
-    CString utf8 = domain.utf8();
-    return String(utf8.data(), utf8.length());
+    const unsigned hostnameBufferLength = 2048;
+
+    if (containsOnlyASCII(domain)) {
+        if (domain.is8Bit())
+            return domain;
+        Vector<LChar, hostnameBufferLength> buffer;
+        size_t length = domain.length();
+        buffer.reserveInitialCapacity(length);
+        for (size_t i = 0; i < length; ++i)
+            buffer.append(domain[i]);
+        return String(buffer.data(), length);
+    }
+    
+    UChar hostnameBuffer[hostnameBufferLength];
+    UErrorCode error = U_ZERO_ERROR;
+    
+    int32_t numCharactersConverted = uidna_IDNToASCII(StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, nullptr, &error);
+
+    if (error == U_ZERO_ERROR) {
+        LChar buffer[hostnameBufferLength];
+        for (int32_t i = 0; i < numCharactersConverted; ++i) {
+            ASSERT(isASCII(hostnameBuffer[i]));
+            buffer[i] = hostnameBuffer[i];
+        }
+        return String(buffer, numCharactersConverted);
+    }
+
+    // FIXME: Check for U_BUFFER_OVERFLOW_ERROR and retry with an allocated buffer.
+    return Nullopt;
 }
 
 static bool hasInvalidDomainCharacter(const String& asciiDomain)
