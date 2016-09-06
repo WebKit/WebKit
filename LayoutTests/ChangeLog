@@ -1,3 +1,14 @@
+2016-09-06  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !paintInfo.overlapTestRequests->contains(this) in WebCore::RenderWidget::paintContents
+        https://bugs.webkit.org/show_bug.cgi?id=135602
+        <rdar://problem/27701733>
+
+        Reviewed by Simon Fraser.
+
+        * fast/layers/assert-on-overlap-testing-with-frames-inside-columns-expected.txt: Added.
+        * fast/layers/assert-on-overlap-testing-with-frames-inside-columns.html: Added.
+
 2016-09-06  Simon Fraser  <simon.fraser@apple.com>
 
         Align element.scroll() / scrollTo() / scrollBy() with the CSSOM specification
