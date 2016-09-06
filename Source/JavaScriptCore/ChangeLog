@@ -1,5 +1,22 @@
 2016-09-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Heap::isMarked() should use concurrent lazy flipping
+        https://bugs.webkit.org/show_bug.cgi?id=161613
+
+        Reviewed by Michael Catanzaro.
+        
+        I found out about this race condition via
+        https://bugs.webkit.org/show_bug.cgi?id=160125#c233.
+        
+        The problem is that we use isMarked, and maybe even isLive, inside the concurrent mark
+        phase. So, they need to lazy-flip in a non-racy way.
+
+        * heap/HeapInlines.h:
+        (JSC::Heap::isLive):
+        (JSC::Heap::isMarked):
+
+2016-09-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, reset generator test results after the butterflies.
 
         * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:

@@ -80,7 +80,7 @@ inline bool Heap::isLive(const void* rawCell)
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isLive();
     MarkedBlock& block = cell->markedBlock();
-    block.flipIfNecessary(block.vm()->heap.objectSpace().version());
+    block.flipIfNecessaryConcurrently(block.vm()->heap.objectSpace().version());
     return block.handle().isLiveCell(cell);
 }
 
@@ -90,7 +90,7 @@ ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isMarked();
     MarkedBlock& block = cell->markedBlock();
-    block.flipIfNecessary(block.vm()->heap.objectSpace().version());
+    block.flipIfNecessaryConcurrently(block.vm()->heap.objectSpace().version());
     return block.isMarked(cell);
 }
 
