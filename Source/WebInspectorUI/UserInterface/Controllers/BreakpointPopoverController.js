@@ -239,8 +239,11 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
 
     _conditionCodeMirrorBeforeChange(codeMirror, change)
     {
-        let newText = change.text.join("").replace(/\n/g, "");
-        change.update(change.from, change.to, [newText]);
+        if (change.update) {
+            let newText = change.text.join("").replace(/\n/g, "");
+            change.update(change.from, change.to, [newText]);
+        }
+
         return true;
     }
 

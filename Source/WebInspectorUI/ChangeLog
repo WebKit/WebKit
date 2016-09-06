@@ -1,3 +1,15 @@
+2016-09-06  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Cannot undo in breakpoint editor
+        https://bugs.webkit.org/show_bug.cgi?id=152858
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype._conditionCodeMirrorBeforeChange):
+        Since the breakpoint editor only allows a single line of JavaScript, it attempts to remove
+        all "\n" characters.  During an "undo" action, this is not possible.
+
 2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Enable and enforce some recommended and stylistic ESLint rules
