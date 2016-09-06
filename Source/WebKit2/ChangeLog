@@ -1,3 +1,23 @@
+2016-09-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix ENABLE(GAMEPAD) build errors on non-Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=161596
+
+        Reviewed by Darin Adler.
+
+        This patch fixes build errors popping up when enabling Gamepad
+        feature on non-Cocoa platforms.
+
+        * CMakeLists.txt: Add the Source/WebCore/platform/gamepad/ directory to
+        WebKit2_INCLUDE_DIRECTORIES. Add GamepadData.cpp, UIGamepad.cpp files to the build.
+        * UIProcess/Gamepad/UIGamepadProvider.cpp: Don't include Cocoa-specific
+        HIDGamepadProvider.h file. Update methods for the UIGamepadProvider class.
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput):
+        (WebKit::UIGamepadProvider::platformStartMonitoringGamepads): Deleted.
+        (WebKit::UIGamepadProvider::platformStopMonitoringGamepads): Deleted.
+        (WebKit::UIGamepadProvider::platformGamepads): Deleted.
+        (WebKit::UIGamepadProvider::platformWebProcessProxyForGamepadInput): Deleted.
+
 2016-09-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove some dead code in ViewGestureControllerMac
