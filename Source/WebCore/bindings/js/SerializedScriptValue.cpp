@@ -1368,7 +1368,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             case MapDataStartVisitEntry: {
                 JSMapIterator* iterator = mapIteratorStack.last();
                 JSValue key, value;
-                if (!iterator->nextKeyValue(key, value)) {
+                if (!iterator->nextKeyValue(m_exec, key, value)) {
                     mapIteratorStack.removeLast();
                     JSObject* object = inputObjectStack.last();
                     ASSERT(jsDynamicCast<JSMap*>(object));
@@ -2545,7 +2545,9 @@ DeserializationResult CloneDeserializer::deserialize()
         mapObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
                 return std::make_pair(JSValue(), StackOverflowError);
-            JSMap* map = JSMap::create(m_exec->vm(), m_globalObject->mapStructure());
+            JSMap* map = JSMap::create(m_exec, m_exec->vm(), m_globalObject->mapStructure());
+            if (UNLIKELY(m_exec->hadException()))
+                goto error;
             m_gcBuffer.append(map);
             outputObjectStack.append(map);
             mapStack.append(map);
@@ -2574,7 +2576,9 @@ DeserializationResult CloneDeserializer::deserialize()
         setObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
                 return std::make_pair(JSValue(), StackOverflowError);
-            JSSet* set = JSSet::create(m_exec->vm(), m_globalObject->setStructure());
+            JSSet* set = JSSet::create(m_exec, m_exec->vm(), m_globalObject->setStructure());
+            if (UNLIKELY(m_exec->hadException()))
+                goto error;
             m_gcBuffer.append(set);
             outputObjectStack.append(set);
             setStack.append(set);

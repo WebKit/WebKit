@@ -1,3 +1,55 @@
+2016-09-06  Saam Barati  <sbarati@apple.com>
+
+        Make JSMap and JSSet faster
+        https://bugs.webkit.org/show_bug.cgi?id=160989
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/dense-set.js: Added.
+        (bench):
+        * microbenchmarks/large-map-iteration-with-additions.js: Added.
+        (bar):
+        (foo):
+        * microbenchmarks/large-map-iteration-with-mutation.js: Added.
+        (bar):
+        (foo):
+        * microbenchmarks/large-map-iteration.js: Added.
+        (bar):
+        (foo):
+        * microbenchmarks/map-get-get-cse.js: Added.
+        (bar):
+        (foo):
+        * microbenchmarks/map-has-get-cse-opportunity.js: Added.
+        (bar):
+        (foo):
+        * microbenchmarks/sparse-set.js: Added.
+        (bench):
+        * stress/map-cse-correctness.js: Added.
+        (assert):
+        (testHas):
+        (testGet):
+        (foo):
+        * stress/map-iteration.js: Added.
+        (assert):
+        (test1):
+        (test2):
+        (test3):
+        (test4):
+        (test5):
+        (test6):
+        (test7):
+        (test8):
+        (test9):
+        (test10):
+        (test11):
+        (test12):
+        (test13):
+        (test14):
+        (test15):
+        (test16):
+        (test17):
+        (test18):
+
 2016-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression

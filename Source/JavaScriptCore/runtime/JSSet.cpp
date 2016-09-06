@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,70 +26,15 @@
 #include "config.h"
 #include "JSSet.h"
 
-#include "CopiedBlockInlines.h"
-#include "JSCJSValueInlines.h"
-#include "JSSetIterator.h"
-#include "MapDataInlines.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
 const ClassInfo JSSet::s_info = { "Set", &Base::s_info, 0, CREATE_METHOD_TABLE(JSSet) };
 
-void JSSet::destroy(JSCell* cell)
-{
-    JSSet* thisObject = jsCast<JSSet*>(cell);
-    thisObject->JSSet::~JSSet();
-}
-
 String JSSet::toStringName(const JSObject*, ExecState*)
 {
     return ASCIILiteral("Object");
-}
-
-size_t JSSet::estimatedSize(JSCell* cell)
-{
-    JSSet* thisObject = jsCast<JSSet*>(cell);
-    size_t setDataSize = thisObject->m_setData.capacityInBytes();
-    return Base::estimatedSize(cell) + setDataSize;
-}
-
-void JSSet::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    Base::visitChildren(cell, visitor);
-    jsCast<JSSet*>(cell)->m_setData.visitChildren(cell, visitor);
-}
-
-void JSSet::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
-{
-    Base::copyBackingStore(cell, visitor, token);
-    jsCast<JSSet*>(cell)->m_setData.copyBackingStore(visitor, token);
-}
-
-bool JSSet::has(ExecState* exec, JSValue value)
-{
-    return m_setData.contains(exec, value);
-}
-
-size_t JSSet::size(ExecState* exec)
-{
-    return m_setData.size(exec);
-}
-
-void JSSet::add(ExecState* exec, JSValue value)
-{
-    m_setData.set(exec, this, value, value);
-}
-
-void JSSet::clear(ExecState*)
-{
-    m_setData.clear();
-}
-
-bool JSSet::remove(ExecState* exec, JSValue value)
-{
-    return m_setData.remove(exec, value);
 }
 
 }

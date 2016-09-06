@@ -708,6 +708,7 @@ private:
         case GetGlobalLexicalVariable:
         case GetClosureVar:
         case GetFromArguments:
+        case LoadFromJSMapBucket:
         case ToNumber: {
             setPrediction(m_currentNode->getHeapPrediction());
             break;
@@ -737,6 +738,16 @@ private:
             setPrediction(SpecInt32Only);
             break;
         }
+
+        case MapHash:
+            setPrediction(SpecInt32Only);
+            break;
+        case GetMapBucket:
+            setPrediction(SpecCellOther);
+            break;
+        case IsNonEmptyMapBucket:
+            setPrediction(SpecBoolean);
+            break;
 
         case GetRestLength: {
             setPrediction(SpecInt32Only);

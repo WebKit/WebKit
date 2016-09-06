@@ -70,6 +70,7 @@
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSLexicalEnvironment.h"
+#include "JSMap.h"
 #include "OperandsInlines.h"
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
@@ -897,6 +898,18 @@ private:
             break;
         case IsJSArray:
             compileIsJSArray();
+            break;
+        case MapHash:
+            compileMapHash();
+            break;
+        case GetMapBucket:
+            compileGetMapBucket();
+            break;
+        case LoadFromJSMapBucket:
+            compileLoadFromJSMapBucket();
+            break;
+        case IsNonEmptyMapBucket:
+            compileIsNonEmptyMapBucket();
             break;
         case IsObject:
             compileIsObject();
@@ -6289,6 +6302,229 @@ private:
         setBoolean(m_out.phi(Int32, notCellResult, cellResult));
     }
 
+    void compileMapHash()
+    {
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock notCell = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock straightHash = m_out.newBlock();
+        LBasicBlock isNumberCase = m_out.newBlock();
+        LBasicBlock isStringCase = m_out.newBlock();
+        LBasicBlock nonEmptyStringCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(
+            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(notCell));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
+        LValue isString = m_out.equal(m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType), m_out.constInt32(StringType));
+        m_out.branch(
+            isString, unsure(isStringCase), unsure(straightHash));
+
+        m_out.appendTo(isStringCase, nonEmptyStringCase);
+        LValue stringImpl = m_out.loadPtr(value, m_heaps.JSString_value);
+        m_out.branch(
+            m_out.equal(stringImpl, m_out.constIntPtr(0)), rarely(slowCase), usually(nonEmptyStringCase));
+
+        m_out.appendTo(nonEmptyStringCase, notCell);
+        LValue hash = m_out.lShr(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
+        ValueFromBlock nonEmptyStringHashResult = m_out.anchor(hash);
+        m_out.branch(m_out.equal(hash, m_out.constInt32(0)),
+            rarely(slowCase), usually(continuation));
+
+        m_out.appendTo(notCell, isNumberCase);
+        m_out.branch(
+            isNumber(value), unsure(isNumberCase), unsure(straightHash));
+
+        m_out.appendTo(isNumberCase, straightHash);
+        m_out.branch(
+            isInt32(value), unsure(straightHash), unsure(slowCase));
+
+        m_out.appendTo(straightHash, slowCase);
+        // key += ~(key << 32);
+        LValue key = value;
+        LValue temp = key;
+        temp = m_out.shl(temp, m_out.constInt32(32));
+        temp = m_out.bitNot(temp);
+        key = m_out.add(key, temp);
+        // key ^= (key >> 22);
+        temp = key;
+        temp = m_out.lShr(temp, m_out.constInt32(22));
+        key = m_out.bitXor(key, temp);
+        // key += ~(key << 13);
+        temp = key;
+        temp = m_out.shl(temp, m_out.constInt32(13));
+        temp = m_out.bitNot(temp);
+        key = m_out.add(key, temp);
+        // key ^= (key >> 8);
+        temp = key;
+        temp = m_out.lShr(temp, m_out.constInt32(8));
+        key = m_out.bitXor(key, temp);
+        // key += (key << 3);
+        temp = key;
+        temp = m_out.shl(temp, m_out.constInt32(3));
+        key = m_out.add(key, temp);
+        // key ^= (key >> 15);
+        temp = key;
+        temp = m_out.lShr(temp, m_out.constInt32(15));
+        key = m_out.bitXor(key, temp);
+        // key += ~(key << 27);
+        temp = key;
+        temp = m_out.shl(temp, m_out.constInt32(27));
+        temp = m_out.bitNot(temp);
+        key = m_out.add(key, temp);
+        // key ^= (key >> 31);
+        temp = key;
+        temp = m_out.lShr(temp, m_out.constInt32(31));
+        key = m_out.bitXor(key, temp);
+        key = m_out.castToInt32(key);
+
+        ValueFromBlock fastResult = m_out.anchor(key);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(
+            vmCall(Int32, m_out.operation(operationMapHash), m_callFrame, value));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setInt32(m_out.phi(Int32, fastResult, slowResult, nonEmptyStringHashResult));
+    }
+
+    void compileGetMapBucket()
+    {
+        LBasicBlock loopStart = m_out.newBlock();
+        LBasicBlock loopAround = m_out.newBlock();
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock notPresentInTable = m_out.newBlock();
+        LBasicBlock notEmptyValue = m_out.newBlock();
+        LBasicBlock notDeletedValue = m_out.newBlock();
+        LBasicBlock notBitEqual = m_out.newBlock();
+        LBasicBlock bucketKeyNotCell = m_out.newBlock();
+        LBasicBlock bucketKeyIsCell = m_out.newBlock();
+        LBasicBlock bothAreCells = m_out.newBlock();
+        LBasicBlock bucketKeyIsString = m_out.newBlock();
+        LBasicBlock bucketKeyIsNumber = m_out.newBlock();
+        LBasicBlock bothAreNumbers = m_out.newBlock();
+        LBasicBlock bucketKeyIsInt32 = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopStart);
+
+        LValue map;
+        if (m_node->child1().useKind() == MapObjectUse)
+            map = lowMapObject(m_node->child1());
+        else if (m_node->child1().useKind() == SetObjectUse)
+            map = lowSetObject(m_node->child1());
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+
+        LValue key = lowJSValue(m_node->child2());
+        LValue hash = lowInt32(m_node->child3());
+
+        LValue hashMapImpl = m_out.loadPtr(map, m_node->child1().useKind() == MapObjectUse ? m_heaps.JSMap_hashMapImpl : m_heaps.JSSet_hashMapImpl);
+        LValue buffer = m_out.loadPtr(hashMapImpl, m_heaps.HashMapImpl_buffer);
+        LValue mask = m_out.sub(m_out.load32(hashMapImpl, m_heaps.HashMapImpl_capacity), m_out.int32One);
+
+        ValueFromBlock indexStart = m_out.anchor(hash);
+        m_out.jump(loopStart);
+
+        m_out.appendTo(loopStart, notEmptyValue);
+        LValue unmaskedIndex = m_out.phi(Int32, indexStart);
+        LValue index = m_out.bitAnd(mask, unmaskedIndex);
+        LValue hashMapBucket = m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), buffer, m_out.zeroExt(index, Int64), ScaleEight));
+        ValueFromBlock bucketResult = m_out.anchor(hashMapBucket);
+        m_out.branch(m_out.equal(hashMapBucket, m_out.constIntPtr(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::emptyValue())),
+            unsure(notPresentInTable), unsure(notEmptyValue));
+
+        m_out.appendTo(notEmptyValue, notDeletedValue);
+        m_out.branch(m_out.equal(hashMapBucket, m_out.constIntPtr(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::deletedValue())),
+            unsure(loopAround), unsure(notDeletedValue));
+
+        m_out.appendTo(notDeletedValue, notBitEqual);
+        LValue bucketKey = m_out.load64(hashMapBucket, m_heaps.HashMapBucket_key);
+        // Perform Object.is()
+        m_out.branch(m_out.equal(key, bucketKey),
+            unsure(continuation), unsure(notBitEqual));
+
+        m_out.appendTo(notBitEqual, bucketKeyIsCell);
+        m_out.branch(isCell(bucketKey),
+            unsure(bucketKeyIsCell), unsure(bucketKeyNotCell));
+
+        m_out.appendTo(bucketKeyIsCell, bothAreCells);
+        m_out.branch(isCell(key),
+            unsure(bothAreCells), unsure(loopAround));
+
+        m_out.appendTo(bothAreCells, bucketKeyIsString);
+        m_out.branch(isString(bucketKey),
+            unsure(bucketKeyIsString), unsure(loopAround));
+
+        m_out.appendTo(bucketKeyIsString, bucketKeyNotCell);
+        m_out.branch(isString(key),
+            unsure(slowPath), unsure(loopAround));
+
+        m_out.appendTo(bucketKeyNotCell, bucketKeyIsNumber);
+        m_out.branch(isNotNumber(bucketKey),
+            unsure(loopAround), unsure(bucketKeyIsNumber));
+
+        m_out.appendTo(bucketKeyIsNumber, bothAreNumbers);
+        m_out.branch(isNotNumber(key),
+            unsure(loopAround), unsure(bothAreNumbers));
+
+        m_out.appendTo(bothAreNumbers, bucketKeyIsInt32);
+        m_out.branch(isNotInt32(bucketKey),
+            unsure(slowPath), unsure(bucketKeyIsInt32));
+
+        m_out.appendTo(bucketKeyIsInt32, loopAround);
+        m_out.branch(isNotInt32(key),
+            unsure(slowPath), unsure(loopAround));
+
+        m_out.appendTo(loopAround, slowPath);
+        m_out.addIncomingToPhi(unmaskedIndex, m_out.anchor(m_out.add(index, m_out.int32One)));
+        m_out.jump(loopStart);
+
+        m_out.appendTo(slowPath, notPresentInTable);
+        ValueFromBlock slowPathResult = m_out.anchor(vmCall(pointerType(),
+            m_out.operation(m_node->child1().useKind() == MapObjectUse ? operationJSMapFindBucket : operationJSSetFindBucket), m_callFrame, map, key, hash));
+        m_out.jump(continuation);
+
+        m_out.appendTo(notPresentInTable, continuation);
+        ValueFromBlock notPresentResult = m_out.anchor(m_out.constIntPtr(0));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setMapBucket(m_out.phi(pointerType(), bucketResult, slowPathResult, notPresentResult));
+    }
+
+    void compileLoadFromJSMapBucket()
+    {
+        LValue mapBucket = lowMapBucket(m_node->child1());
+
+        LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock hasBucket = m_out.newBlock();
+
+        ValueFromBlock noBucketResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
+
+        m_out.branch(m_out.equal(mapBucket, m_out.constIntPtr(0)),
+            unsure(continuation), unsure(hasBucket));
+
+        LBasicBlock lastNext = m_out.appendTo(hasBucket, continuation);
+        ValueFromBlock bucketResult = m_out.anchor(m_out.load64(mapBucket, m_heaps.HashMapBucket_value));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(Int64, noBucketResult, bucketResult));
+    }
+
+    void compileIsNonEmptyMapBucket()
+    {
+        LValue bucket = lowMapBucket(m_node->child1());
+        LValue result = m_out.notEqual(bucket, m_out.constIntPtr(0));
+        setBoolean(result);
+    }
+
     void compileIsObjectOrNull()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
@@ -9979,6 +10215,20 @@ private:
         speculateRegExpObject(edge, result);
         return result;
     }
+
+    LValue lowMapObject(Edge edge)
+    {
+        LValue result = lowCell(edge);
+        speculateMapObject(edge, result);
+        return result;
+    }
+
+    LValue lowSetObject(Edge edge)
+    {
+        LValue result = lowCell(edge);
+        speculateSetObject(edge, result);
+        return result;
+    }
     
     LValue lowString(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
@@ -10095,6 +10345,17 @@ private:
     LValue lowStorage(Edge edge)
     {
         LoweredNodeValue value = m_storageValues.get(edge.node());
+        if (isValid(value))
+            return value.value();
+        
+        LValue result = lowCell(edge);
+        setStorage(edge.node(), result);
+        return result;
+    }
+
+    LValue lowMapBucket(Edge edge)
+    {
+        LoweredNodeValue value = m_mapBucketValues.get(edge.node());
         if (isValid(value))
             return value.value();
         
@@ -10404,6 +10665,12 @@ private:
             break;
         case RegExpObjectUse:
             speculateRegExpObject(edge);
+            break;
+        case MapObjectUse:
+            speculateMapObject(edge);
+            break;
+        case SetObjectUse:
+            speculateSetObject(edge);
             break;
         case StringUse:
             speculateString(edge);
@@ -10732,6 +10999,28 @@ private:
     void speculateRegExpObject(Edge edge)
     {
         speculateRegExpObject(edge, lowCell(edge));
+    }
+
+    void speculateMapObject(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecMapObject, isNotType(cell, JSMapType));
+    }
+
+    void speculateMapObject(Edge edge)
+    {
+        speculateMapObject(edge, lowCell(edge));
+    }
+
+    void speculateSetObject(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecSetObject, isNotType(cell, JSSetType));
+    }
+
+    void speculateSetObject(Edge edge)
+    {
+        speculateSetObject(edge, lowCell(edge));
     }
     
     void speculateString(Edge edge, LValue cell)
@@ -11501,6 +11790,10 @@ private:
     {
         m_storageValues.set(node, LoweredNodeValue(value, m_highBlock));
     }
+    void setMapBucket(Node* node, LValue value)
+    {
+        m_mapBucketValues.set(node, LoweredNodeValue(value, m_highBlock));
+    }
     void setDouble(Node* node, LValue value)
     {
         m_doubleValues.set(node, LoweredNodeValue(value, m_highBlock));
@@ -11533,6 +11826,10 @@ private:
     void setStorage(LValue value)
     {
         setStorage(m_node, value);
+    }
+    void setMapBucket(LValue value)
+    {
+        setMapBucket(m_node, value);
     }
     void setDouble(LValue value)
     {
@@ -11717,6 +12014,7 @@ private:
     HashMap<Node*, LoweredNodeValue> m_jsValueValues;
     HashMap<Node*, LoweredNodeValue> m_booleanValues;
     HashMap<Node*, LoweredNodeValue> m_storageValues;
+    HashMap<Node*, LoweredNodeValue> m_mapBucketValues;
     HashMap<Node*, LoweredNodeValue> m_doubleValues;
     
     // This is a bit of a hack. It prevents B3 from having to do CSE on loading of arguments.

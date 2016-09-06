@@ -1,3 +1,14 @@
+2016-09-06  Saam Barati  <sbarati@apple.com>
+
+        Make JSMap and JSSet faster
+        https://bugs.webkit.org/show_bug.cgi?id=160989
+
+        Reviewed by Filip Pizlo.
+
+        I made s_flagCount public since JSC's JITs now use this field.
+
+        * wtf/text/StringImpl.h:
+
 2016-09-06  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Enable strict runtime stack buffer checks.

@@ -68,14 +68,13 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->clear, mapProtoFuncClear, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, mapProtoFuncDelete, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->get, mapProtoFuncGet, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, mapProtoFuncHas, DontEnum, 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->get, mapProtoFuncGet, DontEnum, 1, JSMapGetIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, mapProtoFuncHas, DontEnum, 1, JSMapHasIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->set, mapProtoFuncSet, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().keysPublicName(), mapProtoFuncKeys, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().valuesPublicName(), mapProtoFuncValues, DontEnum, 0);
 
-    // Private get / set operations.
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getPrivateName(), mapProtoFuncGet, DontEnum, 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getPrivateName(), mapProtoFuncGet, DontEnum, 1, JSMapGetIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().setPrivateName(), mapProtoFuncSet, DontEnum, 2);
 
     JSFunction* entries = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().entriesPublicName().string(), mapProtoFuncEntries);
@@ -91,16 +90,21 @@ ALWAYS_INLINE static JSMap* getMap(CallFrame* callFrame, JSValue thisValue)
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!thisValue.isObject()) {
+    if (UNLIKELY(!thisValue.isCell())) {
         throwVMError(callFrame, scope, createNotAnObjectError(callFrame, thisValue));
         return nullptr;
     }
-    JSMap* map = jsDynamicCast<JSMap*>(thisValue);
-    if (!map) {
-        throwTypeError(callFrame, scope, ASCIILiteral("Map operation called on non-Map object"));
-        return nullptr;
-    }
-    return map;
+
+    if (LIKELY(thisValue.asCell()->type() == JSMapType))
+        return jsCast<JSMap*>(thisValue);
+    throwTypeError(callFrame, scope, ASCIILiteral("Map operation called on non-Map object"));
+    return nullptr;
+}
+
+EncodedJSValue JSC_HOST_CALL privateFuncIsMap(ExecState* exec)
+{
+    JSValue value = exec->uncheckedArgument(0);
+    return JSValue::encode(jsBoolean(value.isCell() && value.asCell()->type() == JSMapType));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncClear(CallFrame* callFrame)
@@ -187,11 +191,6 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncKeys(CallFrame* callFrame)
     return JSValue::encode(JSMapIterator::create(vm, callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateKey));
 }
 
-EncodedJSValue JSC_HOST_CALL privateFuncIsMap(ExecState* exec)
-{
-    return JSValue::encode(jsBoolean(jsDynamicCast<JSMap*>(exec->uncheckedArgument(0))));
-}
-
 EncodedJSValue JSC_HOST_CALL privateFuncMapIterator(ExecState* exec)
 {
     ASSERT(jsDynamicCast<JSMap*>(exec->uncheckedArgument(0)));
@@ -204,13 +203,12 @@ EncodedJSValue JSC_HOST_CALL privateFuncMapIteratorNext(ExecState* exec)
     ASSERT(jsDynamicCast<JSMapIterator*>(exec->thisValue()));
     JSMapIterator* iterator = jsCast<JSMapIterator*>(exec->thisValue());
     JSValue key, value;
-    if (iterator->nextKeyValue(key, value)) {
+    if (iterator->nextKeyValue(exec, key, value)) {
         JSArray* resultArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
         resultArray->putDirectIndex(exec, 0, key);
         resultArray->putDirectIndex(exec, 1, value);
         return JSValue::encode(jsBoolean(false));
     }
-    iterator->finish();
     return JSValue::encode(jsBoolean(true));
 }
 

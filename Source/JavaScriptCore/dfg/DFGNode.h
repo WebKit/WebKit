@@ -1421,6 +1421,7 @@ public:
         case StringReplace:
         case StringReplaceRegExp:
         case ToNumber:
+        case LoadFromJSMapBucket:
             return true;
         default:
             return false;

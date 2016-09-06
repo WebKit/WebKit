@@ -142,6 +142,10 @@ char* JIT_OPERATION operationEnsureArrayStorage(ExecState*, JSCell*);
 StringImpl* JIT_OPERATION operationResolveRope(ExecState*, JSString*);
 JSString* JIT_OPERATION operationSingleCharacterString(ExecState*, int32_t);
 
+int32_t JIT_OPERATION operationMapHash(ExecState*, EncodedJSValue input);
+JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState*, JSCell*, EncodedJSValue, int32_t);
+JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState*, JSCell*, EncodedJSValue, int32_t);
+
 JSCell* JIT_OPERATION operationNewStringObject(ExecState*, JSString*, Structure*);
 JSCell* JIT_OPERATION operationToStringOnCell(ExecState*, JSCell*);
 JSCell* JIT_OPERATION operationToString(ExecState*, EncodedJSValue);

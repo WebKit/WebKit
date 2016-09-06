@@ -1545,6 +1545,29 @@ private:
             break;
         }
 
+        case GetMapBucket:
+            if (node->child1().useKind() == MapObjectUse)
+                fixEdge<MapObjectUse>(node->child1());
+            else if (node->child1().useKind() == SetObjectUse)
+                fixEdge<SetObjectUse>(node->child1());
+            else
+                RELEASE_ASSERT_NOT_REACHED();
+            fixEdge<UntypedUse>(node->child2());
+            fixEdge<Int32Use>(node->child3());
+            break;
+
+        case LoadFromJSMapBucket:
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+
+        case IsNonEmptyMapBucket:
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+
+        case MapHash:
+            fixEdge<UntypedUse>(node->child1());
+            break;
+
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:

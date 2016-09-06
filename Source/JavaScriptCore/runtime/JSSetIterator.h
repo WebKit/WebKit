@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 namespace JSC {
 
 class JSSetIterator : public JSNonFinalObject {
+    typedef HashMapBucket<HashMapBucketDataKey> HashMapBucketType;
 public:
     typedef JSNonFinalObject Base;
 
@@ -52,38 +53,51 @@ public:
         return instance;
     }
 
-    bool next(CallFrame* callFrame, JSValue& value)
+    ALWAYS_INLINE HashMapBucketType* advanceIter(ExecState* exec)
     {
-        WTF::KeyValuePair<JSValue, JSValue> pair;
-        if (!m_iterator.next(pair))
-            return false;
-        if (m_kind == IterateValue || m_kind == IterateKey)
-            value = pair.key;
-        else
-            value = createPair(callFrame, pair.key, pair.key);
-        return true;
+        HashMapBucketType* prev = m_iter.get();
+        if (!prev)
+            return nullptr;
+        HashMapBucketType* bucket = m_iter->next();
+        while (bucket && bucket->deleted()) {
+            prev = bucket;
+            bucket = bucket->next();
+        }
+        if (!bucket) {
+            setIterator(exec->vm(), nullptr);
+            return nullptr;
+        }
+        setIterator(exec->vm(), bucket); // We keep m_iter on the last value since the first thing we do in this function is call next().
+        return bucket;
     }
 
-    void finish()
+    bool next(ExecState* exec, JSValue& value)
     {
-        m_iterator.finish();
+        HashMapBucketType* bucket = advanceIter(exec);
+        if (!bucket)
+            return false;
+
+        if (m_kind == IterateValue || m_kind == IterateKey)
+            value = bucket->key();
+        else
+            value = createPair(exec, bucket->key(), bucket->key());
+        return true;
     }
 
     IterationKind kind() const { return m_kind; }
     JSValue iteratedValue() const { return m_set.get(); }
     JSSetIterator* clone(ExecState*);
 
-    JSSet::SetData::IteratorData* iteratorData()
-    {
-        return &m_iterator;
-    }
-
 private:
-    JSSetIterator(VM& vm, Structure* structure, JSSet* iteratedObject, IterationKind kind)
+    JSSetIterator(VM& vm, Structure* structure, JSSet*, IterationKind kind)
         : Base(vm, structure)
-        , m_iterator(iteratedObject->m_setData.createIteratorData(this))
         , m_kind(kind)
     {
+    }
+
+    void setIterator(VM& vm, HashMapBucketType* bucket)
+    {
+        m_iter.setMayBeNull(vm, this, bucket); 
     }
 
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSSet*);
@@ -91,7 +105,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSSet> m_set;
-    JSSet::SetData::IteratorData m_iterator;
+    WriteBarrier<HashMapBucketType> m_iter;
     IterationKind m_kind;
 };
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSSetIterator);

@@ -1058,6 +1058,22 @@ ALWAYS_INLINE bool isThisValueAltered(const PutPropertySlot& slot, JSObject* bas
     return true;
 }
 
+// See section 7.2.9: https://tc39.github.io/ecma262/#sec-samevalue
+ALWAYS_INLINE bool sameValue(ExecState* exec, JSValue a, JSValue b)
+{
+    if (!a.isNumber())
+        return JSValue::strictEqual(exec, a, b);
+    if (!b.isNumber())
+        return false;
+    double x = a.asNumber();
+    double y = b.asNumber();
+    bool xIsNaN = std::isnan(x);
+    bool yIsNaN = std::isnan(y);
+    if (xIsNaN || yIsNaN)
+        return xIsNaN && yIsNaN;
+    return bitwise_cast<uint64_t>(x) == bitwise_cast<uint64_t>(y);
+}
+
 } // namespace JSC
 
 #endif // JSValueInlines_h

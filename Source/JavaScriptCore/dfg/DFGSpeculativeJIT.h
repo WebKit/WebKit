@@ -1311,6 +1311,12 @@ public:
 
 #if USE(JSVALUE64)
 
+    JITCompiler::Call callOperation(C_JITOperation_ECJZ operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
+        return appendCallSetResult(operation, result);
+    }
+
     JITCompiler::Call callOperation(J_JITOperation_EJJMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr mathIC)
     {
         m_jit.setupArgumentsWithExecState(arg1.gpr(), arg2.gpr(), mathIC);
@@ -1691,6 +1697,12 @@ public:
         return appendCall(operation);
     }
 
+    JITCompiler::Call callOperation(Z_JITOperation_EJ operation, GPRReg result, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(arg1);
+        return appendCallSetResult(operation, result);
+    }
+
     JITCompiler::Call callOperation(Z_JITOperation_EJZZ operation, GPRReg result, GPRReg arg1, unsigned arg2, unsigned arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, TrustedImm32(arg2), TrustedImm32(arg3));
@@ -1738,6 +1750,18 @@ public:
         return appendCallSetResult(operation, result);
     }
 #else // USE(JSVALUE32_64)
+
+    JITCompiler::Call callOperation(C_JITOperation_ECJZ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3);
+        return appendCallSetResult(operation, result);
+    }
+
+    JITCompiler::Call callOperation(Z_JITOperation_EJ operation, GPRReg result, JSValueRegs arg1)
+    {
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR());
+        return appendCallSetResult(operation, result);
+    }
 
     JITCompiler::Call callOperation(J_JITOperation_EJJMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr mathIC)
     {
@@ -2654,6 +2678,10 @@ public:
     void speculateFinalObject(Edge);
     void speculateRegExpObject(Edge, GPRReg cell);
     void speculateRegExpObject(Edge);
+    void speculateMapObject(Edge);
+    void speculateMapObject(Edge, GPRReg cell);
+    void speculateSetObject(Edge);
+    void speculateSetObject(Edge, GPRReg cell);
     void speculateObjectOrOther(Edge);
     void speculateString(Edge edge, GPRReg cell);
     void speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage);

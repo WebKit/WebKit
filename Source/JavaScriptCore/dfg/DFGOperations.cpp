@@ -50,6 +50,8 @@
 #include "JSCInlines.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSLexicalEnvironment.h"
+#include "JSMap.h"
+#include "JSSet.h"
 #include "ObjectConstructor.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"
@@ -1813,6 +1815,34 @@ void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, Enco
         strictMode = exec->codeBlock()->isStrictMode();
     PutPropertySlot slot(scope, strictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     scope->methodTable()->put(scope, exec, ident, JSValue::decode(value), slot);
+}
+
+int32_t JIT_OPERATION operationMapHash(ExecState* exec, EncodedJSValue input)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return jsMapHash(exec, vm, normalizeMapKey(JSValue::decode(input)));
+}
+
+JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState* exec, JSCell* map, EncodedJSValue key, int32_t hash)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(exec, normalizeMapKey(JSValue::decode(key)), hash);
+    if (!bucket)
+        return nullptr;
+    return *bucket;
+}
+
+JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, EncodedJSValue key, int32_t hash)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(exec, normalizeMapKey(JSValue::decode(key)), hash);
+    if (!bucket)
+        return nullptr;
+    return *bucket;
 }
 
 extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, OSRExitBase* exit)

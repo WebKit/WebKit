@@ -185,6 +185,10 @@ bool doesGC(Graph& graph, Node* node)
     case ForceOSRExit:
     case CheckWatchdogTimer:
     case StringFromCharCode:
+    case MapHash:
+    case GetMapBucket:
+    case LoadFromJSMapBucket:
+    case IsNonEmptyMapBucket:
     case Unreachable:
     case ExtractOSREntryLocal:
     case CheckTierUpInLoop:

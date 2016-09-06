@@ -37,6 +37,7 @@
 #include "DFGSlowPathGenerator.h"
 #include "DirectArguments.h"
 #include "GetterSetter.h"
+#include "HashMapImpl.h"
 #include "JSEnvironmentRecord.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
@@ -4716,6 +4717,82 @@ void SpeculativeJIT::compile(Node* node)
 
     case TypeOf: {
         compileTypeOf(node);
+        break;
+    }
+
+    case MapHash: {
+        JSValueOperand input(this, node->child1());
+
+        JSValueRegs inputRegs = input.jsValueRegs();
+
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+
+        flushRegisters();
+        callOperation(operationMapHash, resultGPR, inputRegs);
+        m_jit.exceptionCheck();
+        int32Result(resultGPR, node);
+        break;
+    }
+
+    case GetMapBucket: {
+        SpeculateCellOperand map(this, node->child1());
+        JSValueOperand key(this, node->child2());
+        SpeculateInt32Operand hash(this, node->child3());
+        GPRFlushedCallResult result(this);
+
+        GPRReg mapGPR = map.gpr();
+        JSValueRegs keyRegs = key.jsValueRegs();
+        GPRReg hashGPR = hash.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        if (node->child1().useKind() == MapObjectUse)
+            speculateMapObject(node->child1(), mapGPR);
+        else if (node->child1().useKind() == SetObjectUse)
+            speculateSetObject(node->child1(), mapGPR);
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+
+        flushRegisters();
+        if (node->child1().useKind() == MapObjectUse)
+            callOperation(operationJSMapFindBucket, resultGPR, mapGPR, keyRegs, hashGPR);
+        else
+            callOperation(operationJSSetFindBucket, resultGPR, mapGPR, keyRegs, hashGPR);
+        m_jit.exceptionCheck();
+        cellResult(resultGPR, node);
+        break;
+    }
+
+    case LoadFromJSMapBucket: {
+        SpeculateCellOperand bucket(this, node->child1());
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
+
+        GPRReg bucketGPR = bucket.gpr();
+        GPRReg resultPayloadGPR = resultPayload.gpr();
+        GPRReg resultTagGPR = resultTag.gpr();
+
+        auto notBucket = m_jit.branchTestPtr(MacroAssembler::Zero, bucketGPR);
+        m_jit.loadValue(MacroAssembler::Address(bucketGPR, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfValue()), JSValueRegs(resultTagGPR, resultPayloadGPR));
+        auto done = m_jit.jump();
+
+        notBucket.link(&m_jit);
+        m_jit.move(TrustedImm32(JSValue::UndefinedTag), resultTagGPR);
+        m_jit.move(TrustedImm32(0), resultPayloadGPR);
+        done.link(&m_jit);
+        jsValueResult(resultTagGPR, resultPayloadGPR, node);
+        break;
+    }
+
+    case IsNonEmptyMapBucket: {
+        SpeculateCellOperand bucket(this, node->child1());
+        GPRTemporary result(this);
+
+        GPRReg bucketGPR = bucket.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        m_jit.comparePtr(MacroAssembler::NotEqual, bucketGPR, TrustedImm32(0), resultGPR);
+        booleanResult(resultGPR, node);
         break;
     }
 
