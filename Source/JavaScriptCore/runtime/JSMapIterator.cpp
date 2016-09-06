@@ -38,7 +38,6 @@ void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject)
 {
     Base::finishCreation(vm);
     m_map.set(vm, this, iteratedObject);
-    setIterator(vm, m_map->impl()->head());
 }
 
 void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -47,7 +46,6 @@ void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_map);
-    visitor.append(&thisObject->m_iter);
 }
 
 JSValue JSMapIterator::createPair(CallFrame* callFrame, JSValue key, JSValue value)
@@ -61,9 +59,8 @@ JSValue JSMapIterator::createPair(CallFrame* callFrame, JSValue key, JSValue val
 
 JSMapIterator* JSMapIterator::clone(ExecState* exec)
 {
-    VM& vm = exec->vm();
-    auto clone = JSMapIterator::create(vm, exec->callee()->globalObject()->mapIteratorStructure(), m_map.get(), m_kind);
-    clone->setIterator(vm, m_iter.get());
+    auto clone = JSMapIterator::create(exec->vm(), exec->callee()->globalObject()->mapIteratorStructure(), m_map.get(), m_kind);
+    clone->m_iterator = m_iterator;
     return clone;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,78 @@
 #include "config.h"
 #include "JSMap.h"
 
-#include "JSCInlines.h"
+#include "CopiedBlockInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSMapIterator.h"
+#include "MapDataInlines.h"
+#include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
 const ClassInfo JSMap::s_info = { "Map", &Base::s_info, 0, CREATE_METHOD_TABLE(JSMap) };
 
+void JSMap::destroy(JSCell* cell)
+{
+    JSMap* thisObject = jsCast<JSMap*>(cell);
+    thisObject->JSMap::~JSMap();
+}
+
+size_t JSMap::estimatedSize(JSCell* cell)
+{
+    JSMap* thisObject = jsCast<JSMap*>(cell);
+    size_t mapDataSize = thisObject->m_mapData.capacityInBytes();
+    return Base::estimatedSize(cell) + mapDataSize;
+}
+
 String JSMap::toStringName(const JSObject*, ExecState*)
 {
     return ASCIILiteral("Object");
+}
+
+void JSMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    Base::visitChildren(cell, visitor);
+    jsCast<JSMap*>(cell)->m_mapData.visitChildren(cell, visitor);
+}
+
+void JSMap::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
+{
+    Base::copyBackingStore(cell, visitor, token);
+    jsCast<JSMap*>(cell)->m_mapData.copyBackingStore(visitor, token);
+}
+
+bool JSMap::has(ExecState* exec, JSValue key)
+{
+    return m_mapData.contains(exec, key);
+}
+
+size_t JSMap::size(ExecState* exec)
+{
+    return m_mapData.size(exec);
+}
+
+JSValue JSMap::get(ExecState* exec, JSValue key)
+{
+    JSValue result = m_mapData.get(exec, key);
+    if (!result)
+        return jsUndefined();
+    return result;
+}
+
+void JSMap::set(ExecState* exec, JSValue key, JSValue value)
+{
+    m_mapData.set(exec, this, key, value);
+}
+
+void JSMap::clear(ExecState*)
+{
+    m_mapData.clear();
+}
+
+bool JSMap::remove(ExecState* exec, JSValue key)
+{
+    return m_mapData.remove(exec, key);
 }
 
 }

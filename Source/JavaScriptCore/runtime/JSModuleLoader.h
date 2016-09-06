@@ -47,10 +47,10 @@ public:
         Ready = 6,
     };
 
-    static JSModuleLoader* create(ExecState* exec, VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    static JSModuleLoader* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         JSModuleLoader* object = new (NotNull, allocateCell<JSModuleLoader>(vm.heap)) JSModuleLoader(vm, structure);
-        object->finishCreation(exec, vm, globalObject);
+        object->finishCreation(vm, globalObject);
         return object;
     }
 
@@ -77,7 +77,7 @@ public:
     JSValue evaluate(ExecState*, JSValue key, JSValue moduleRecord, JSValue initiator);
 
 protected:
-    void finishCreation(ExecState*, VM&, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

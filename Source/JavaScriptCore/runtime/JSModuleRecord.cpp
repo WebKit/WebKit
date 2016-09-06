@@ -44,17 +44,14 @@ void JSModuleRecord::destroy(JSCell* cell)
     thisObject->JSModuleRecord::~JSModuleRecord();
 }
 
-void JSModuleRecord::finishCreation(ExecState* exec, VM& vm)
+void JSModuleRecord::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("registryEntry")), jsUndefined());
     putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("evaluated")), jsBoolean(false));
 
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSMap* map = JSMap::create(exec, vm, globalObject()->mapStructure());
-    RELEASE_ASSERT(!scope.exception());
-    m_dependenciesMap.set(vm, this, map);
+    m_dependenciesMap.set(vm, this, JSMap::create(vm, globalObject()->mapStructure()));
     putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("dependenciesMap")), m_dependenciesMap.get());
 }
 

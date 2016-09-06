@@ -388,12 +388,7 @@ namespace JSC { namespace DFG {
     macro(GetPropertyEnumerator, NodeMustGenerate | NodeResultJS) \
     macro(GetEnumeratorStructurePname, NodeMustGenerate | NodeResultJS) \
     macro(GetEnumeratorGenericPname, NodeMustGenerate | NodeResultJS) \
-    macro(ToIndexString, NodeResultJS) \
-    /* Nodes for JSMap and JSSet */ \
-    macro(MapHash, NodeResultInt32) \
-    macro(GetMapBucket, NodeResultJS) \
-    macro(LoadFromJSMapBucket, NodeResultJS) \
-    macro(IsNonEmptyMapBucket, NodeResultBoolean) \
+    macro(ToIndexString, NodeResultJS)
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

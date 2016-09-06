@@ -58,6 +58,7 @@ EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(CallFrame* callFrame)
 
     if (iterator->next(callFrame, result))
         return JSValue::encode(createIteratorResultObject(callFrame, result, false));
+    iterator->finish();
     return JSValue::encode(createIteratorResultObject(callFrame, jsUndefined(), true));
 }
 

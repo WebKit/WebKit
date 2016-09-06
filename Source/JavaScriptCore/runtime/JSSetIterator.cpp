@@ -38,7 +38,6 @@ void JSSetIterator::finishCreation(VM& vm, JSSet* iteratedObject)
 {
     Base::finishCreation(vm);
     m_set.set(vm, this, iteratedObject);
-    setIterator(vm, m_set->impl()->head());
 }
 
 void JSSetIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -47,7 +46,6 @@ void JSSetIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_set);
-    visitor.append(&thisObject->m_iter);
 }
 
 JSValue JSSetIterator::createPair(CallFrame* callFrame, JSValue key, JSValue value)
@@ -61,9 +59,8 @@ JSValue JSSetIterator::createPair(CallFrame* callFrame, JSValue key, JSValue val
 
 JSSetIterator* JSSetIterator::clone(ExecState* exec)
 {
-    VM& vm = exec->vm();
-    auto clone = JSSetIterator::create(vm, exec->callee()->globalObject()->setIteratorStructure(), m_set.get(), m_kind);
-    clone->setIterator(vm, m_iter.get());
+    auto clone = JSSetIterator::create(exec->vm(), exec->callee()->globalObject()->setIteratorStructure(), m_set.get(), m_kind);
+    clone->m_iterator = m_iterator;
     return clone;
 }
 

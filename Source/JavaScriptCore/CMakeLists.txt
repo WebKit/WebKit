@@ -672,7 +672,6 @@ set(JavaScriptCore_SOURCES
     runtime/GeneratorFunctionPrototype.cpp
     runtime/GeneratorPrototype.cpp
     runtime/GetterSetter.cpp
-    runtime/HashMapImpl.cpp
     runtime/Identifier.cpp
     runtime/IndexingType.cpp
     runtime/InferredType.cpp
@@ -758,7 +757,6 @@ set(JavaScriptCore_SOURCES
     runtime/LazyClassStructure.cpp
     runtime/LiteralParser.cpp
     runtime/Lookup.cpp
-    runtime/MapBase.cpp
     runtime/MapConstructor.cpp
     runtime/MapIteratorPrototype.cpp
     runtime/MapPrototype.cpp

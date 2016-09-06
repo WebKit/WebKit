@@ -58,10 +58,7 @@ enum LocationKind {
     StructureLoc,
     TypedArrayByteOffsetLoc,
     StackLoc,
-    StackPayloadLoc,
-    MapBucketLoc,
-    JSMapGetLoc,
-    MapHasLoc
+    StackPayloadLoc
 };
 
 class HeapLocation {

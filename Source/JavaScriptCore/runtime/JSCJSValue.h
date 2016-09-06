@@ -606,9 +606,6 @@ inline bool operator!=(const JSCell* a, const JSValue b) { return JSValue(a) != 
 
 bool isThisValueAltered(const PutPropertySlot&, JSObject* baseObject);
 
-// See section 7.2.9: https://tc39.github.io/ecma262/#sec-samevalue
-bool sameValue(ExecState*, JSValue a, JSValue b);
-
 } // namespace JSC
 
 #endif // JSCJSValue_h

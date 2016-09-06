@@ -191,6 +191,22 @@ void PropertyDescriptor::setGetter(JSValue getter)
     m_attributes &= ~ReadOnly;
 }
 
+// See ES5.1 9.12
+bool sameValue(ExecState* exec, JSValue a, JSValue b)
+{
+    if (!a.isNumber())
+        return JSValue::strictEqual(exec, a, b);
+    if (!b.isNumber())
+        return false;
+    double x = a.asNumber();
+    double y = b.asNumber();
+    bool xIsNaN = std::isnan(x);
+    bool yIsNaN = std::isnan(y);
+    if (xIsNaN || yIsNaN)
+        return xIsNaN && yIsNaN;
+    return bitwise_cast<uint64_t>(x) == bitwise_cast<uint64_t>(y);
+}
+
 bool PropertyDescriptor::equalTo(ExecState* exec, const PropertyDescriptor& other) const
 {
     if (other.m_value.isEmpty() != m_value.isEmpty()

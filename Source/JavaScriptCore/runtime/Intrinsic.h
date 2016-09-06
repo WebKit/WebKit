@@ -62,9 +62,6 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     IsRegExpObjectIntrinsic,
     IsTypedArrayViewIntrinsic,
     BoundThisNoArgsFunctionCallIntrinsic,
-    JSMapGetIntrinsic,
-    JSMapHasIntrinsic,
-    JSSetHasIntrinsic,
 
     // Getter intrinsics.
     TypedArrayLengthIntrinsic,

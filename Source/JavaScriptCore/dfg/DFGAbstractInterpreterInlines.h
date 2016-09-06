@@ -977,22 +977,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case MapHash:
-        forNode(node).setType(SpecInt32Only);
-        break;
-
-    case LoadFromJSMapBucket:
-        forNode(node).makeHeapTop();
-        break;
-
-    case GetMapBucket:
-        forNode(node).setType(m_graph, SpecCellOther);
-        break;
-
-    case IsNonEmptyMapBucket:
-        forNode(node).setType(SpecBoolean);
-        break;
-
     case IsEmpty:
     case IsJSArray:
     case IsUndefined:
@@ -2899,7 +2883,7 @@ template<typename AbstractStateType>
 bool AbstractInterpreter<AbstractStateType>::execute(unsigned indexInBlock)
 {
     Node* node = m_state.block()->at(indexInBlock);
-
+    
     startExecuting();
     executeEdges(node);
     return executeEffects(indexInBlock, node);

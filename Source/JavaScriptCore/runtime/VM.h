@@ -334,10 +334,6 @@ public:
     Strong<Structure> evalCodeBlockStructure;
     Strong<Structure> functionCodeBlockStructure;
     Strong<Structure> webAssemblyCodeBlockStructure;
-    Strong<Structure> hashMapBucketSetStructure;
-    Strong<Structure> hashMapBucketMapStructure;
-    Strong<Structure> hashMapImplSetStructure;
-    Strong<Structure> hashMapImplMapStructure;
 
     Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;

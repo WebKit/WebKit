@@ -94,12 +94,6 @@ void printInternal(PrintStream& out, UseKind useKind)
     case RegExpObjectUse:
         out.print("RegExpObject");
         return;
-    case MapObjectUse:
-        out.print("MapObjectUse");
-        return;
-    case SetObjectUse:
-        out.print("SetObjectUse");
-        return;
     case ObjectOrOtherUse:
         out.print("ObjectOrOther");
         return;

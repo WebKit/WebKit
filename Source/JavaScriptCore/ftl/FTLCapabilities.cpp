@@ -181,10 +181,6 @@ inline CapabilityLevel canCompile(Node* node)
     case Unreachable:
     case In:
     case IsJSArray:
-    case MapHash:
-    case GetMapBucket:
-    case LoadFromJSMapBucket:
-    case IsNonEmptyMapBucket:
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:
@@ -429,8 +425,6 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringObjectUse:
                 case StringOrStringObjectUse:
                 case SymbolUse:
-                case MapObjectUse:
-                case SetObjectUse:
                 case FinalObjectUse:
                 case RegExpObjectUse:
                 case NotCellUse:

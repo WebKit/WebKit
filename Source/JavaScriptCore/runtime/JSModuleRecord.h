@@ -87,10 +87,10 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSModuleRecord* create(ExecState* exec, VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
+    static JSModuleRecord* create(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
     {
         JSModuleRecord* instance = new (NotNull, allocateCell<JSModuleRecord>(vm.heap)) JSModuleRecord(vm, structure, moduleKey, sourceCode, declaredVariables, lexicalVariables);
-        instance->finishCreation(exec, vm);
+        instance->finishCreation(vm);
         return instance;
     }
 
@@ -152,7 +152,7 @@ private:
     {
     }
 
-    void finishCreation(ExecState*, VM&);
+    void finishCreation(VM&);
 
     JSModuleNamespaceObject* getModuleNamespace(ExecState*);
 

@@ -1318,14 +1318,10 @@
 		79233C2B1D34715700C5A834 /* JITMathIC.h in Headers */ = {isa = PBXBuildFile; fileRef = 79233C291D34715700C5A834 /* JITMathIC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		792CB3491C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 792CB3471C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp */; };
 		792CB34A1C4EED5C00D13AF3 /* PCToCodeOriginMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 792CB3481C4EED5C00D13AF3 /* PCToCodeOriginMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		795B19971D78BE3500262FA0 /* MapBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 795B19951D78BE3500262FA0 /* MapBase.cpp */; };
-		795B19981D78BE3500262FA0 /* MapBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 795B19961D78BE3500262FA0 /* MapBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 796465681B952FF0003059EE /* GetPutInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */; };
 		797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		799EF7C41C56ED96002B0534 /* B3PCToOriginMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 799EF7C31C56ED96002B0534 /* B3PCToOriginMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		79A0907F1D768465008B889B /* HashMapImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79A0907D1D768465008B889B /* HashMapImpl.cpp */; };
-		79A090801D768465008B889B /* HashMapImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A0907E1D768465008B889B /* HashMapImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79A228351D35D71E00D8E067 /* ArithProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79A228331D35D71E00D8E067 /* ArithProfile.cpp */; };
 		79A228361D35D71F00D8E067 /* ArithProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A228341D35D71E00D8E067 /* ArithProfile.h */; };
 		79AF0BE41D3EFD4C00E95FA5 /* JITMathICInlineResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 79AF0BE31D3EFD4C00E95FA5 /* JITMathICInlineResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3573,14 +3569,10 @@
 		79233C291D34715700C5A834 /* JITMathIC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITMathIC.h; sourceTree = "<group>"; };
 		792CB3471C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PCToCodeOriginMap.cpp; sourceTree = "<group>"; };
 		792CB3481C4EED5C00D13AF3 /* PCToCodeOriginMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PCToCodeOriginMap.h; sourceTree = "<group>"; };
-		795B19951D78BE3500262FA0 /* MapBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapBase.cpp; sourceTree = "<group>"; };
-		795B19961D78BE3500262FA0 /* MapBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapBase.h; sourceTree = "<group>"; };
 		796465681B952FF0003059EE /* GetPutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPutInfo.h; sourceTree = "<group>"; };
 		797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalLexicalEnvironment.cpp; sourceTree = "<group>"; };
 		797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalLexicalEnvironment.h; sourceTree = "<group>"; };
 		799EF7C31C56ED96002B0534 /* B3PCToOriginMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3PCToOriginMap.h; path = b3/B3PCToOriginMap.h; sourceTree = "<group>"; };
-		79A0907D1D768465008B889B /* HashMapImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMapImpl.cpp; sourceTree = "<group>"; };
-		79A0907E1D768465008B889B /* HashMapImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashMapImpl.h; sourceTree = "<group>"; };
 		79A228331D35D71E00D8E067 /* ArithProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArithProfile.cpp; sourceTree = "<group>"; };
 		79A228341D35D71E00D8E067 /* ArithProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArithProfile.h; sourceTree = "<group>"; };
 		79A899FE1D38612E00D18C73 /* JITMathICForwards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITMathICForwards.h; sourceTree = "<group>"; };
@@ -5833,8 +5825,6 @@
 				796465681B952FF0003059EE /* GetPutInfo.h */,
 				BC02E9B80E184545000F9297 /* GetterSetter.cpp */,
 				BC337BDE0E1AF0B80076918A /* GetterSetter.h */,
-				79A0907D1D768465008B889B /* HashMapImpl.cpp */,
-				79A0907E1D768465008B889B /* HashMapImpl.h */,
 				933A349D038AE80F008635CE /* Identifier.cpp */,
 				933A349A038AE7C6008635CE /* Identifier.h */,
 				8606DDE918DA44AB00A383D0 /* IdentifierInlines.h */,
@@ -6045,8 +6035,6 @@
 				A7E2EA690FB460CF00601F06 /* LiteralParser.h */,
 				F692A8680255597D01FF60F7 /* Lookup.cpp */,
 				F692A8690255597D01FF60F7 /* Lookup.h */,
-				795B19951D78BE3500262FA0 /* MapBase.cpp */,
-				795B19961D78BE3500262FA0 /* MapBase.h */,
 				A700873717CBE85300C3E643 /* MapConstructor.cpp */,
 				A700873817CBE85300C3E643 /* MapConstructor.h */,
 				A78507D517CBC6FD0011F6E7 /* MapData.h */,
@@ -7338,7 +7326,6 @@
 				0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */,
 				1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */,
 				62EC9BB71B7EB07C00303AD1 /* CallFrameShuffleData.h in Headers */,
-				795B19981D78BE3500262FA0 /* MapBase.h in Headers */,
 				62D755D71B84FB4A001801FA /* CallFrameShuffler.h in Headers */,
 				0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */,
 				0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */,
@@ -7506,7 +7493,6 @@
 				0F9D339717FFC4E60073C2BC /* DFGFlushedAt.h in Headers */,
 				A7D89CF817A0B8CC00773AD8 /* DFGFlushFormat.h in Headers */,
 				0F2DD8151AB3D8BE00BBB8E8 /* DFGForAllKills.h in Headers */,
-				79A090801D768465008B889B /* HashMapImpl.h in Headers */,
 				0F69CC89193AC60A0045759E /* DFGFrozenValue.h in Headers */,
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
@@ -9239,7 +9225,6 @@
 				0F0332C018ADFAE1005F979A /* ExitingJITType.cpp in Sources */,
 				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,
 				0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */,
-				79A0907F1D768465008B889B /* HashMapImpl.cpp in Sources */,
 				0FEA0A1E1708B00700BB722C /* FTLAbstractHeapRepository.cpp in Sources */,
 				0F93274D1C1F66AA00CF6564 /* GPRInfo.cpp in Sources */,
 				0F485327187DFDEC0083B687 /* FTLAvailableRecovery.cpp in Sources */,
@@ -9284,7 +9269,6 @@
 				52B310FD1974AE870080857C /* FunctionHasExecutedCache.cpp in Sources */,
 				FE4BFF2B1AD476E700088F87 /* FunctionOverrides.cpp in Sources */,
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
-				795B19971D78BE3500262FA0 /* MapBase.cpp in Sources */,
 				62D2D38F1ADF103F000206C1 /* FunctionRareData.cpp in Sources */,
 				2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
