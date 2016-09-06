@@ -1,5 +1,14 @@
 2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking storage/indexeddb/objectstore-cursor.html as flaky on mac-wk2 debug.
+        https://bugs.webkit.org/show_bug.cgi?id=161633
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking media/media-document-audio-repaint.html as flaky on El Capitan WK2.
         https://bugs.webkit.org/show_bug.cgi?id=155757
 

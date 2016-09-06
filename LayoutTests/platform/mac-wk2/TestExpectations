@@ -543,3 +543,5 @@ webkit.org/b/161148 gamepad/gamepad-timestamp.html [ Pass Failure ]
 webkit.org/b/161366 editing/pasteboard/5478250.html [ Pass Failure ]
 webkit.org/b/161366 [ Debug ] editing/mac/spelling/accept-misspelled-candidate.html [ Pass Failure ]
 webkit.org/b/161366 [ Debug ] editing/mac/spelling/autocorrection-contraction.html [ Pass Failure ]
+
+webkit.org/b/161633 [ Debug ] storage/indexeddb/objectstore-cursor.html [ Pass Timeout ]
