@@ -37,6 +37,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this._mouseDownCursorPosition = null;
 
+        this._propertyVisibilityMode = WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.Shown;
         this._showsImplicitProperties = true;
         this._alwaysShowPropertyNames = {};
         this._filterResultPropertyNames = null;
@@ -86,25 +87,18 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._codeMirror.on("focus", this._editorFocused.bind(this));
 
         this.style = style;
+        this._shownProperties = [];
     }
 
     // Public
 
-    get delegate()
-    {
-        return this._delegate;
-    }
-
+    get delegate() { return this._delegate; }
     set delegate(delegate)
     {
         this._delegate = delegate || null;
     }
 
-    get style()
-    {
-        return this._style;
-    }
-
+    get style() { return this._style; }
     set style(style)
     {
         if (this._style === style)
@@ -129,13 +123,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._resetContent();
     }
 
+    get shownProperties() { return this._shownProperties; }
+
     get focused()
     {
         return this._codeMirror.getWrapperElement().classList.contains("CodeMirror-focused");
     }
 
-    get alwaysShowPropertyNames()
-    {
+    get alwaysShowPropertyNames() {
         return Object.keys(this._alwaysShowPropertyNames);
     }
 
@@ -146,11 +141,18 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._resetContent();
     }
 
-    get showsImplicitProperties()
+    get propertyVisibilityMode() { return this._propertyVisibilityMode; }
+    set propertyVisibilityMode(propertyVisibilityMode)
     {
-        return this._showsImplicitProperties;
+        if (this._propertyVisibilityMode === propertyVisibilityMode)
+            return;
+
+        this._propertyVisibilityMode = propertyVisibilityMode;
+
+        this._resetContent();
     }
 
+    get showsImplicitProperties() { return this._showsImplicitProperties; }
     set showsImplicitProperties(showsImplicitProperties)
     {
         if (this._showsImplicitProperties === showsImplicitProperties)
@@ -161,11 +163,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._resetContent();
     }
 
-    get sortProperties()
-    {
-        return this._sortProperties;
-    }
-
+    get sortProperties() { return this._sortProperties; }
     set sortProperties(sortProperties)
     {
         if (this._sortProperties === sortProperties)
@@ -1188,24 +1186,50 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _iterateOverProperties(onlyVisibleProperties, callback)
     {
-        var properties = onlyVisibleProperties ? this._style.visibleProperties : this._style.properties;
+        let properties = onlyVisibleProperties ? this._style.visibleProperties : this._style.properties;
 
+        let filterFunction = (property) => property; // Identity function.
         if (this._filterResultPropertyNames) {
-            properties = properties.filter(function(property) {
-                return (!property.implicit || this._showsImplicitProperties) && property.name in this._filterResultPropertyNames;
-            }, this);
+            filterFunction = (property) => {
+                if (!property.variable && this._propertyVisibilityMode === WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.HideNonVariables)
+                    return false;
 
-            if (this._sortProperties)
-                properties.sort(function(a, b) { return a.name.localeCompare(b.name); });
+                if (property.variable && this._propertyVisibilityMode === WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.HideVariables)
+                    return false;
+
+                if (property.implicit && !this._showsImplicitProperties)
+                    return false;
+
+                if (!(property.name in this._filterResultPropertyNames))
+                    return false;
+
+                return true;
+            };
         } else if (!onlyVisibleProperties) {
             // Filter based on options only when all properties are used.
-            properties = properties.filter(function(property) {
-                return !property.implicit || this._showsImplicitProperties || property.canonicalName in this._alwaysShowPropertyNames;
-            }, this);
+            filterFunction = (property) => {
+                switch (this._propertyVisibilityMode) {
+                case WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.HideNonVariables:
+                    if (!property.variable)
+                        return false;
 
-            if (this._sortProperties)
-                properties.sort(function(a, b) { return a.name.localeCompare(b.name); });
+                    break;
+                case WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.HideVariables:
+                    if (property.variable)
+                        return false;
+
+                    break;
+                }
+
+                return !property.implicit || this._showsImplicitProperties || property.canonicalName in this._alwaysShowPropertyNames;
+            };
         }
+
+        properties = properties.filter(filterFunction);
+        if (this._sortProperties)
+                properties.sort((a, b) => a.name.localeCompare(b.name));
+
+        this._shownProperties = properties;
 
         for (var i = 0; i < properties.length; ++i) {
             if (callback.call(this, properties[i], i === properties.length - 1))
@@ -1667,6 +1691,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 WebInspector.CSSStyleDeclarationTextEditor.Event = {
     ContentChanged: "css-style-declaration-text-editor-content-changed",
     Blurred: "css-style-declaration-text-editor-blurred"
+};
+
+WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode = {
+    ShowAll: Symbol("variable-visibility-show-all"),
+    HideVariables: Symbol("variable-visibility-hide-variables"),
+    HideNonVariables: Symbol("variable-visibility-hide-non-variables"),
 };
 
 WebInspector.CSSStyleDeclarationTextEditor.PrefixWhitespace = "\n";

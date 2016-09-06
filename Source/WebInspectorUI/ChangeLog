@@ -1,5 +1,70 @@
 2016-09-06  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Allow hiding of CSS variables in Computed styles panel
+        https://bugs.webkit.org/show_bug.cgi?id=161405
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Models/CSSProperty.js:
+        (WebInspector.CSSProperty.prototype.update):
+        (WebInspector.CSSProperty.prototype.get variable):
+        Sets a member variable if the CSS property begins with "--", indicating that it is a variable.
+
+        (WebInspector.CSSProperty.prototype.get name):
+        (WebInspector.CSSProperty.prototype.get value):
+        (WebInspector.CSSProperty.prototype.get priority):
+        (WebInspector.CSSProperty.prototype.get overridden):
+        (WebInspector.CSSProperty.prototype.get anonymous):
+        (WebInspector.CSSProperty.prototype.get inherited):
+        (WebInspector.CSSProperty.prototype.get valid):
+        (WebInspector.CSSProperty.prototype.get styleSheetTextRange):
+        (WebInspector.CSSProperty.prototype.get relatedShorthandProperty):
+        (WebInspector.CSSProperty.prototype.get relatedLonghandProperties):
+        Changed styling to be one line getters.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode):
+        Dictionary for the three possible states of CSS property visibility:
+         - ShowAll
+         - HideVariables
+         - HideNonVariables
+
+        (WebInspector.CSSStyleDeclarationTextEditor):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.get shownProperties):
+        Added member variable that holds the list of properties resulting from the filter inside
+        WebInspector.CSSStyleDeclarationTextEditor.prototype._iterateOverProperties.
+
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.get propertyVisibilityMode):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.set propertyVisibilityMode):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._iterateOverProperties):
+        Added member variable controlling the visibility of CSS properties.
+
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.get delegate):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.get style):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.get showsImplicitProperties):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.get sortProperties):
+        Changed styling to be one line getters.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.refresh):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.filterDidChange):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.initialLayout):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._handleVariablesSectionCollapsedStateChanged):
+        Added an additional text editor that displays the list of CSS Variables visible to the
+        selected node.  Also ties this new editor into the refresh/collapse/filter event handlers.
+
+        (WebInspector.ComputedStyleDetailsPanel.prototype._handlePropertiesSectionCollapsedStateChanged):
+        Renamed from WebInspector.ComputedStyleDetailsPanel.prototype._handleCollapsedStateChanged.
+
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get regionFlow):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get contentFlow):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get containerRegions):
+        Changed styling to be one line getters.
+
+2016-09-06  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: CodeMirror in resource content view should not show 'CR' characters
         https://bugs.webkit.org/show_bug.cgi?id=160465
 

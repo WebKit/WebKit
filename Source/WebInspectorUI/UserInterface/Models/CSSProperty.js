@@ -103,6 +103,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         this._anonymous = anonymous;
         this._inherited = WebInspector.CSSProperty.isInheritedPropertyName(name);
         this._valid = valid;
+        this._variable = name.startsWith("--");
         this._styleSheetTextRange = styleSheetTextRange || null;
 
         this._relatedShorthandProperty = null;
@@ -132,10 +133,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         return this._text || this.synthesizedText;
     }
 
-    get name()
-    {
-        return this._name;
-    }
+    get name() { return this._name; }
 
     get canonicalName()
     {
@@ -147,31 +145,21 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         return this._canonicalName;
     }
 
-    get value()
-    {
-        return this._value;
-    }
+    get value() { return this._value; }
 
     get important()
     {
         return this.priority === "important";
     }
 
-    get priority()
-    {
-        return this._priority;
-    }
+    get priority() { return this._priority; }
 
     get enabled()
     {
         return this._enabled && this._ownerStyle && (!isNaN(this._index) || this._ownerStyle.type === WebInspector.CSSStyleDeclaration.Type.Computed);
     }
 
-    get overridden()
-    {
-        return this._overridden;
-    }
-
+    get overridden() { return this._overridden; }
     set overridden(overridden)
     {
         overridden = overridden || false;
@@ -202,25 +190,11 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
     get implicit() { return this._implicit; }
     set implicit(implicit) { this._implicit = implicit; }
 
-    get anonymous()
-    {
-        return this._anonymous;
-    }
-
-    get inherited()
-    {
-        return this._inherited;
-    }
-
-    get valid()
-    {
-        return this._valid;
-    }
-
-    get styleSheetTextRange()
-    {
-        return this._styleSheetTextRange;
-    }
+    get anonymous() { return this._anonymous; }
+    get inherited() { return this._inherited; }
+    get valid() { return this._valid; }
+    get variable() { return this._variable; }
+    get styleSheetTextRange() { return this._styleSheetTextRange; }
 
     get styleDeclarationTextRange()
     {
@@ -250,20 +224,13 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         return this._styleDeclarationTextRange;
     }
 
-    get relatedShorthandProperty()
-    {
-        return this._relatedShorthandProperty;
-    }
-
+    get relatedShorthandProperty() { return this._relatedShorthandProperty; }
     set relatedShorthandProperty(property)
     {
         this._relatedShorthandProperty = property || null;
     }
 
-    get relatedLonghandProperties()
-    {
-        return this._relatedLonghandProperties;
-    }
+    get relatedLonghandProperties() { return this._relatedLonghandProperties;}
 
     addRelatedLonghandProperty(property)
     {

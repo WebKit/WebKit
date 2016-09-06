@@ -778,6 +778,7 @@ localizedStrings["User Stylesheet"] = "User Stylesheet";
 localizedStrings["Using Keyword Value"] = "Using Keyword Value";
 localizedStrings["Using the previous selector “%s”."] = "Using the previous selector “%s”.";
 localizedStrings["Value"] = "Value";
+localizedStrings["Variables"] = "Variables";
 localizedStrings["Variants"] = "Variants";
 localizedStrings["Version"] = "Version";
 localizedStrings["Vertical"] = "Vertical";
