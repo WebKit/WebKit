@@ -262,20 +262,6 @@ imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html 
 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub.html [ Pass Failure ]
 
-# W3C XMLHttpRequest tests
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-abortedonmain.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overrides.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overridesexpires.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-simple.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-synconmain.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-twice.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-aborted.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overrides.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overridesexpires.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-simple.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-synconworker.html [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice.html [ Slow ]
 # XMLHttpRequest tests requiring DTR/WTR to allow other URLs than localhost to not be blocked and be reachable (www2.localhost)
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
