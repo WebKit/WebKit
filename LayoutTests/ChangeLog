@@ -1,3 +1,17 @@
+2016-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Align element.scroll() / scrollTo() / scrollBy() with the CSSOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=161610
+
+        Reviewed by Darin Adler, Chris Dumez.
+
+        * fast/dom/Element/scrolling-funtions-on-body-expected.txt: Added.
+        * fast/dom/Element/scrolling-funtions-on-body-quirks-expected.txt: Added.
+        * fast/dom/Element/scrolling-funtions-on-body-quirks.html: Added.
+        * fast/dom/Element/scrolling-funtions-on-body.html: Added.
+        * fast/dom/Element/scrolling-funtions-on-element-expected.txt: Added.
+        * fast/dom/Element/scrolling-funtions-on-element.html: Added.
+
 2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip some asserting Fetch API tests.

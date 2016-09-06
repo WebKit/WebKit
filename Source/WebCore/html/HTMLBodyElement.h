@@ -56,6 +56,8 @@ private:
     
     int scrollTop() final;
     void setScrollTop(int) final;
+
+    void scrollTo(const ScrollToOptions&) final;
     
     int scrollHeight() final;
     int scrollWidth() final;

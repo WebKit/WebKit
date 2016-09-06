@@ -71,8 +71,8 @@
     readonly attribute double clientWidth;
     readonly attribute double clientHeight;
 
-    attribute long scrollLeft;
-    attribute long scrollTop;
+    attribute long scrollLeft; // FIXME: should be unrestricted double
+    attribute long scrollTop; // FIXME: should be unrestricted double
     readonly attribute long scrollWidth;
     readonly attribute long scrollHeight;
 
@@ -80,11 +80,21 @@
 
     void scrollIntoView(optional boolean alignWithTop = true);
 
-    sequence<DOMString> getAttributeNames();
-
     void scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
+
+    [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);
+    [ImplementedAs=scrollTo] void scroll(unrestricted double x, unrestricted double y);
+
+    void scrollTo(optional ScrollToOptions options);
+    void scrollTo(unrestricted double x, unrestricted double y);
+
+    void scrollBy(optional ScrollToOptions option);
+    void scrollBy(unrestricted double x, unrestricted double y);
+
     void scrollByLines(optional long lines = 0);
     void scrollByPages(optional long pages = 0);
+
+    sequence<DOMString> getAttributeNames();
 
     HTMLCollection getElementsByClassName(DOMString name);
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerHTML;
@@ -176,6 +186,12 @@ enum ShadowRootMode { "open", "closed" };
 
 dictionary ShadowRootInit {
     required ShadowRootMode mode;
+};
+
+// FIXME: Support ScrollBehavior.
+dictionary ScrollToOptions {
+    unrestricted double left;
+    unrestricted double top;
 };
 
 Element implements Animatable;

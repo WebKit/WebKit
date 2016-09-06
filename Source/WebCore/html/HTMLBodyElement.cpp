@@ -27,6 +27,7 @@
 #include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
+#include "DOMWindow.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -292,6 +293,23 @@ void HTMLBodyElement::setScrollTop(int scrollTop)
         view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor() * frame->frameScaleFactor())));
     }
     return HTMLElement::setScrollTop(scrollTop);
+}
+
+void HTMLBodyElement::scrollTo(const ScrollToOptions& options)
+{
+    if (isFirstBodyElementOfDocument()) {
+        // If the element is the HTML body element, document is in quirks mode, and the element is not potentially scrollable,
+        // invoke scroll() on window with options as the only argument, and terminate these steps.
+        // Note that WebKit always uses quirks mode document scrolling behavior. See Document::scrollingElement().
+        // FIXME: Scrolling an independently scrollable body is broken: webkit.org/b/161612.
+        auto* window = document().domWindow();
+        if (!window)
+            return;
+
+        window->scrollTo({ options.left, options.top });
+        return;
+    }
+    return HTMLElement::scrollTo(options);
 }
 
 int HTMLBodyElement::scrollHeight()
