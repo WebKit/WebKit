@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
-CONSOLE MESSAGE: Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
-CONSOLE MESSAGE: Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
-CONSOLE MESSAGE: Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
-
-PASS Ensure cors checks work when loading in parallel the same resource with different modes 
-PASS Ensure cors checks work when loading successively the same resource with different modes 
-

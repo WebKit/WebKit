@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 
 PASS 3 origins allowed, match the 3rd (http://localhost:8800) 
 PASS 3 origins allowed, match the 3rd ("*") 

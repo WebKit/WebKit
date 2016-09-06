@@ -54,7 +54,6 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
     if (loadPolicy == LoadPolicy::ShapeOutside) {
         options.mode = FetchOptions::Mode::Cors;
         options.allowCredentials = DoNotAllowStoredCredentials;
-        options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     }
 
     const_cast<StyleImage&>(*styleImage).load(document.cachedResourceLoader(), options);

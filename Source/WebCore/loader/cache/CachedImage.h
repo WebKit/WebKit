@@ -91,10 +91,6 @@ public:
 private:
     void clear();
 
-    CachedImage(CachedImage&, const ResourceRequest&, SessionID);
-
-    void setBodyDataFrom(const CachedResource&) final;
-
     void createImage();
     void clearImage();
     // If not null, changeRect is the changed part of the image.

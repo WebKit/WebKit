@@ -114,25 +114,13 @@ void CachedImage::load(CachedResourceLoader& cachedResourceLoader, const Resourc
         setLoading(false);
 }
 
-void CachedImage::setBodyDataFrom(const CachedResource& resource)
-{
-    ASSERT(resource.type() == type());
-    const CachedImage& image = static_cast<const CachedImage&>(resource);
-
-    setLoading(false);
-    m_image = image.m_image;
-
-    if (m_image && is<SVGImage>(*m_image))
-        m_svgImageCache = std::make_unique<SVGImageCache>(&downcast<SVGImage>(*m_image));
-}
-
 void CachedImage::didAddClient(CachedResourceClient* client)
 {
     if (m_data && !m_image && !errorOccurred()) {
         createImage();
         m_image->setData(m_data.copyRef(), true);
     }
-
+    
     ASSERT(client->resourceClientType() == CachedImageClient::expectedType());
     if (m_image && !m_image->isNull())
         static_cast<CachedImageClient*>(client)->imageChanged(this);

@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.php due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 Test verifies that content MIME type is set correctly when Blob is sent using XMLHttpRequest asynchronously.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -277,14 +277,6 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
             m_frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
-    String errorDescription;
-    if (!checkResponseCrossOriginAccessControl(response, errorDescription)) {
-        if (m_frame && m_frame->document())
-            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorDescription);
-        cancel(ResourceError(String(), 0, request().url(), errorDescription, ResourceError::Type::AccessControl));
-        return;
-    }
-
     m_resource->responseReceived(response);
     if (reachedTerminalState())
         return;
@@ -409,15 +401,6 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
         break;
     }
     frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceKey(), DiagnosticLoggingKeys::loadedKey(), resourceType, ShouldSample::Yes);
-}
-
-bool SubresourceLoader::checkResponseCrossOriginAccessControl(const ResourceResponse& response, String& errorDescription)
-{
-    if (!m_resource->isCrossOrigin() || options().mode != FetchOptions::Mode::Cors)
-        return true;
-
-    ASSERT(m_origin);
-    return passesAccessControlCheck(response, options().allowCredentials, *m_origin, errorDescription);
 }
 
 bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest, String& errorMessage)

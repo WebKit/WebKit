@@ -92,7 +92,6 @@ private:
 #endif
 
     bool checkForHTTPStatusCodeError();
-    bool checkResponseCrossOriginAccessControl(const ResourceResponse&, String&);
     bool checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest, String&);
 
     void didReceiveDataOrBuffer(const char*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
