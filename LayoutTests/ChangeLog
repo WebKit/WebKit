@@ -1,5 +1,15 @@
 2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Revert r205491 because it did not resolve the test failures, update bug number in TestExpectations.
+        https://bugs.webkit.org/show_bug.cgi?id=161366
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skipping editing/inserting/smart-link-when-caret-is-moved-before-URL.html.
         https://bugs.webkit.org/show_bug.cgi?id=161366
 
