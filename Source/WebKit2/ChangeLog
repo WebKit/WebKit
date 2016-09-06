@@ -1,3 +1,14 @@
+2016-09-05  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some dead code in ViewGestureControllerMac
+        https://bugs.webkit.org/show_bug.cgi?id=161616
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        All other LEGACY_SWIPE_SHADOW_STYLE code has been removed, except for this.
+
 2016-09-05  Darin Adler  <darin@apple.com>
 
         More bindings improvements, particularly things not needed for JavaScript bindings

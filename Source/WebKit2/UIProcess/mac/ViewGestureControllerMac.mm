@@ -752,12 +752,6 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     m_swipeCancellationTracker = nullptr;
 
-#if ENABLE(LEGACY_SWIPE_SHADOW_STYLE)
-    CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
-    rootLayer.shadowOpacity = 0;
-    rootLayer.shadowRadius = 0;
-#endif
-
     if (cancelled) {
         removeSwipeSnapshot();
         m_webPageProxy.navigationGestureDidEnd(false, *targetItem);
