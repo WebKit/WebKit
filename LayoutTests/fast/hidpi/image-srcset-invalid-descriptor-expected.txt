@@ -1,12 +1,17 @@
-PASS document.getElementById("invalid_with_x").clientWidth is 100
-PASS document.getElementById("invalid_without_x").clientWidth is 100
-PASS document.getElementById("future_descriptor").clientWidth is 100
-PASS document.getElementById("future_descriptor_without_x").clientWidth is 100
-PASS document.getElementById("x_with_w_ignored").clientWidth is 200
-PASS document.getElementById("x_with_h_ignored").clientWidth is 200
+PASS document.getElementById("foo").clientWidth==200 is true
+PASS document.getElementById("foo2").clientWidth==200 is true
+PASS document.getElementById("foo3").clientWidth==200 is true
+PASS document.getElementById("foo4").clientWidth==200 is true
+PASS document.getElementById("foo5").clientWidth==200 is true
+PASS document.getElementById("foo6").clientWidth==200 is true
+PASS document.getElementById("foo7").clientWidth==200 is true
+PASS document.getElementById("foo8").clientWidth==200 is true
+PASS document.getElementById("foo9").clientWidth==200 is true
+PASS document.getElementById("foo10").clientWidth==200 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-This test passes if the image below is a 100px blue square when the deviceScaleFactor is 1.
-It tests that even though the 1x resource contains many invalid descriptors, only the invalid descriptors are ignored (according to the spec).
+This test passes if the image below is a 200px green square when the deviceScaleFactor is 1.
+It tests that the 1x resource is ignored since it contains invalid descriptors.
+The 2x resource has an intrinsic width of 200px, since it's a 400px wide image at 2x DPR.
          

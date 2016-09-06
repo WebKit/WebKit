@@ -26,26 +26,26 @@ PASS "data:,a "
 PASS "data:,a 1x" 
 PASS "data:,a 1x " 
 PASS "data:,a 1x," 
-FAIL "data:,a ( , data:,b 1x, ), data:,c" assert_equals: expected "data:,c" but got "data:,a"
-FAIL "data:,a ((( , data:,b 1x, ), data:,c" assert_equals: expected "data:,c" but got "data:,a"
-FAIL "data:,a [ , data:,b 1x, ], data:,c" assert_equals: expected "data:,b" but got "data:,a"
-FAIL "data:,a { , data:,b 1x, }, data:,c" assert_equals: expected "data:,b" but got "data:,a"
-FAIL "data:,a \" , data:,b 1x, \", data:,c" assert_equals: expected "data:,b" but got "data:,a"
-FAIL "data:,a \\,data:;\,b, data:,c" assert_equals: expected "data:;\\,b" but got "data:,a"
+PASS "data:,a ( , data:,b 1x, ), data:,c" 
+PASS "data:,a ((( , data:,b 1x, ), data:,c" 
+PASS "data:,a [ , data:,b 1x, ], data:,c" 
+PASS "data:,a { , data:,b 1x, }, data:,c" 
+PASS "data:,a \" , data:,b 1x, \", data:,c" 
+PASS "data:,a \\,data:;\,b, data:,c" 
 PASS "data:,a, data:,b (" 
 PASS "data:,a, data:,b (  " 
 PASS "data:,a, data:,b (," 
 PASS "data:,a, data:,b (x" 
 PASS "data:,a, data:,b ()" 
-FAIL "data:,a (, data:,b" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a /*, data:,b, data:,c */" assert_equals: expected "data:,b" but got "data:,a"
-FAIL "data:,a //, data:,b" assert_equals: expected "data:,b" but got "data:,a"
-FAIL "data:,a foo" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a foo foo" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a foo 1x" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a foo 1x foo" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a foo 1w" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a foo 1w foo" assert_equals: expected "" but got "data:,a"
+PASS "data:,a (, data:,b" 
+PASS "data:,a /*, data:,b, data:,c */" 
+PASS "data:,a //, data:,b" 
+PASS "data:,a foo" 
+PASS "data:,a foo foo" 
+PASS "data:,a foo 1x" 
+PASS "data:,a foo 1x foo" 
+PASS "data:,a foo 1w" 
+PASS "data:,a foo 1w foo" 
 PASS "data:,a 1x 1x" 
 PASS "data:,a 1w 1w" 
 PASS "data:,a 1w 1x" 
@@ -57,67 +57,67 @@ PASS "data:,a 1h 1x"
 PASS "data:,a 1h 1w 1x" 
 PASS "data:,a 1x 1w 1h" 
 PASS "data:,a 1w" 
-FAIL "data:,a 1h" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1h foo" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a foo 1h" assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1h" 
+PASS "data:,a 1h foo" 
+PASS "data:,a foo 1h" 
 PASS "data:,a 0w" 
 PASS "data:,a -1w" 
 PASS "data:,a 1w -1w" 
-FAIL "data:,a 1.0w" assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1.0w" 
 PASS "data:,a 1w 1.0w" 
-FAIL "data:,a 1e0w" assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1e0w" 
 PASS "data:,a 1w 1e0w" 
-FAIL "data:,a 1www" assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1www" 
 PASS "data:,a 1w 1www" 
-FAIL "data:,a +1w" assert_equals: expected "" but got "data:,a"
+PASS "data:,a +1w" 
 PASS "data:,a 1w +1w" 
-FAIL "data:,a 1W" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1W" assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1W" 
+PASS "data:,a 1w 1W" 
 PASS "data:,a Infinityw" 
 PASS "data:,a 1w Infinityw" 
 PASS "data:,a NaNw" 
 PASS "data:,a 1w NaNw" 
 PASS "data:,a 0x1w" 
 PASS "data:,a 0X1w" 
-FAIL "data:,a 1\x01w" (trailing U+0001) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+00A0) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+1680) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2000) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2001) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2002) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2003) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2004) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2005) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2006) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2007) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2008) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+2009) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+200A) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1‌w" (trailing U+200C) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1‍w" (trailing U+200D) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+202F) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1 w" (trailing U+205F) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1　w" (trailing U+3000) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1﻿w" (trailing U+FEFF) assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1\x01w" (trailing U+0001) 
+PASS "data:,a 1 w" (trailing U+00A0) 
+PASS "data:,a 1 w" (trailing U+1680) 
+PASS "data:,a 1 w" (trailing U+2000) 
+PASS "data:,a 1 w" (trailing U+2001) 
+PASS "data:,a 1 w" (trailing U+2002) 
+PASS "data:,a 1 w" (trailing U+2003) 
+PASS "data:,a 1 w" (trailing U+2004) 
+PASS "data:,a 1 w" (trailing U+2005) 
+PASS "data:,a 1 w" (trailing U+2006) 
+PASS "data:,a 1 w" (trailing U+2007) 
+PASS "data:,a 1 w" (trailing U+2008) 
+PASS "data:,a 1 w" (trailing U+2009) 
+PASS "data:,a 1 w" (trailing U+200A) 
+PASS "data:,a 1‌w" (trailing U+200C) 
+PASS "data:,a 1‍w" (trailing U+200D) 
+PASS "data:,a 1 w" (trailing U+202F) 
+PASS "data:,a 1 w" (trailing U+205F) 
+PASS "data:,a 1　w" (trailing U+3000) 
+PASS "data:,a 1﻿w" (trailing U+FEFF) 
 PASS "data:,a \x011w" (leading U+0001) 
 PASS "data:,a  1w" (leading U+00A0) 
-FAIL "data:,a  1w" (leading U+1680) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2000) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2001) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2002) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2003) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2004) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2005) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2006) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2007) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2008) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+2009) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a  1w" (leading U+200A) assert_equals: expected "" but got "data:,a"
+PASS "data:,a  1w" (leading U+1680) 
+PASS "data:,a  1w" (leading U+2000) 
+PASS "data:,a  1w" (leading U+2001) 
+PASS "data:,a  1w" (leading U+2002) 
+PASS "data:,a  1w" (leading U+2003) 
+PASS "data:,a  1w" (leading U+2004) 
+PASS "data:,a  1w" (leading U+2005) 
+PASS "data:,a  1w" (leading U+2006) 
+PASS "data:,a  1w" (leading U+2007) 
+PASS "data:,a  1w" (leading U+2008) 
+PASS "data:,a  1w" (leading U+2009) 
+PASS "data:,a  1w" (leading U+200A) 
 PASS "data:,a ‌1w" (leading U+200C) 
 PASS "data:,a ‍1w" (leading U+200D) 
 PASS "data:,a  1w" (leading U+202F) 
-FAIL "data:,a  1w" (leading U+205F) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 　1w" (leading U+3000) assert_equals: expected "" but got "data:,a"
+PASS "data:,a  1w" (leading U+205F) 
+PASS "data:,a 　1w" (leading U+3000) 
 PASS "data:,a ﻿1w" (leading U+FEFF) 
 PASS "data:,a 0x" 
 PASS "data:,a -0x" 
@@ -131,15 +131,15 @@ PASS "data:,a 1.5e1x"
 PASS "data:,a -x" 
 PASS "data:,a .x" 
 PASS "data:,a -.x" 
-FAIL "data:,a 1.x" assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1.x" 
 PASS "data:,a .5x" 
 PASS "data:,a .5e1x" 
 PASS "data:,a 1x 1.5e1x" 
 PASS "data:,a 1x 1e1.5x" 
 PASS "data:,a 1.0x" 
 PASS "data:,a 1x 1.0x" 
-FAIL "data:,a +1x" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1X" assert_equals: expected "" but got "data:,a"
+PASS "data:,a +1x" 
+PASS "data:,a 1X" 
 PASS "data:,a Infinityx" 
 PASS "data:,a NaNx" 
 PASS "data:,a 0x1x" 
@@ -186,53 +186,53 @@ PASS "data:,a 　1x" (leading U+3000)
 PASS "data:,a ﻿1x" (leading U+FEFF) 
 PASS "data:,a 1w 0h" 
 PASS "data:,a 1w -1h" 
-FAIL "data:,a 1w 1.0h" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1e0h" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1hhh" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w +1h" assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1H" assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1w 1.0h" 
+PASS "data:,a 1w 1e0h" 
+PASS "data:,a 1w 1hhh" 
+PASS "data:,a 1w +1h" 
+PASS "data:,a 1w 1H" 
 PASS "data:,a 1w Infinityh" 
 PASS "data:,a 1w NaNh" 
 PASS "data:,a 0x1h" 
 PASS "data:,a 0X1h" 
-FAIL "data:,a 1w 1\x01h" (trailing U+0001) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+00A0) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+1680) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2000) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2001) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2002) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2003) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2004) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2005) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2006) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2007) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2008) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+2009) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+200A) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1‌h" (trailing U+200C) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1‍h" (trailing U+200D) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+202F) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1 h" (trailing U+205F) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1　h" (trailing U+3000) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 1﻿h" (trailing U+FEFF) assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1w 1\x01h" (trailing U+0001) 
+PASS "data:,a 1w 1 h" (trailing U+00A0) 
+PASS "data:,a 1w 1 h" (trailing U+1680) 
+PASS "data:,a 1w 1 h" (trailing U+2000) 
+PASS "data:,a 1w 1 h" (trailing U+2001) 
+PASS "data:,a 1w 1 h" (trailing U+2002) 
+PASS "data:,a 1w 1 h" (trailing U+2003) 
+PASS "data:,a 1w 1 h" (trailing U+2004) 
+PASS "data:,a 1w 1 h" (trailing U+2005) 
+PASS "data:,a 1w 1 h" (trailing U+2006) 
+PASS "data:,a 1w 1 h" (trailing U+2007) 
+PASS "data:,a 1w 1 h" (trailing U+2008) 
+PASS "data:,a 1w 1 h" (trailing U+2009) 
+PASS "data:,a 1w 1 h" (trailing U+200A) 
+PASS "data:,a 1w 1‌h" (trailing U+200C) 
+PASS "data:,a 1w 1‍h" (trailing U+200D) 
+PASS "data:,a 1w 1 h" (trailing U+202F) 
+PASS "data:,a 1w 1 h" (trailing U+205F) 
+PASS "data:,a 1w 1　h" (trailing U+3000) 
+PASS "data:,a 1w 1﻿h" (trailing U+FEFF) 
 PASS "data:,a 1w \x011h" (leading U+0001) 
 PASS "data:,a 1w  1h" (leading U+00A0) 
-FAIL "data:,a 1w  1h" (leading U+1680) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2000) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2001) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2002) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2003) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2004) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2005) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2006) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2007) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2008) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+2009) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w  1h" (leading U+200A) assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1w  1h" (leading U+1680) 
+PASS "data:,a 1w  1h" (leading U+2000) 
+PASS "data:,a 1w  1h" (leading U+2001) 
+PASS "data:,a 1w  1h" (leading U+2002) 
+PASS "data:,a 1w  1h" (leading U+2003) 
+PASS "data:,a 1w  1h" (leading U+2004) 
+PASS "data:,a 1w  1h" (leading U+2005) 
+PASS "data:,a 1w  1h" (leading U+2006) 
+PASS "data:,a 1w  1h" (leading U+2007) 
+PASS "data:,a 1w  1h" (leading U+2008) 
+PASS "data:,a 1w  1h" (leading U+2009) 
+PASS "data:,a 1w  1h" (leading U+200A) 
 PASS "data:,a 1w ‌1h" (leading U+200C) 
 PASS "data:,a 1w ‍1h" (leading U+200D) 
 PASS "data:,a 1w  1h" (leading U+202F) 
-FAIL "data:,a 1w  1h" (leading U+205F) assert_equals: expected "" but got "data:,a"
-FAIL "data:,a 1w 　1h" (leading U+3000) assert_equals: expected "" but got "data:,a"
+PASS "data:,a 1w  1h" (leading U+205F) 
+PASS "data:,a 1w 　1h" (leading U+3000) 
 PASS "data:,a 1w ﻿1h" (leading U+FEFF) 
                                                                                                                                                                                                                                              

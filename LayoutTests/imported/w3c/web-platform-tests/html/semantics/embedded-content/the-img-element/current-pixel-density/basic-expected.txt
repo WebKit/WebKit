@@ -4,7 +4,7 @@ PASS <img srcset="/images/green-256x256.png 1x" data-expect="256">
 FAIL <img srcset="/images/green-256x256.png 1.6x" data-expect="160"> assert_equals: naturalWidth expected 160 but got 256
 FAIL <img srcset="/images/green-256x256.png 2x" data-expect="128"> assert_equals: naturalWidth expected 128 but got 256
 FAIL <img srcset="/images/green-256x256.png 10000x" data-expect="0"> assert_equals: naturalWidth expected 0 but got 256
-FAIL <img srcset="/images/green-256x256.png 9e99999999999999999999999x" data-expect="0"> assert_equals: naturalWidth expected 0 but got 256
+PASS <img srcset="/images/green-256x256.png 9e99999999999999999999999x" data-expect="0"> 
 PASS <img srcset="/images/green-256x256.png 256w" sizes="256px" data-expect="256"> 
 FAIL <img srcset="/images/green-256x256.png 512w" sizes="256px" data-expect="128"> assert_equals: naturalWidth expected 128 but got 256
 FAIL <img srcset="/images/green-256x256.png 256w" sizes="512px" data-expect="512"> assert_equals: naturalWidth expected 512 but got 256

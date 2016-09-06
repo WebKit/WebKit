@@ -1,3 +1,15 @@
+2016-09-06  Chris Dumez  <cdumez@apple.com>
+
+        Align srcset attribute parsing with the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=161636
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a couple of W3C tests now that more checks are passing.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/basic-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/parse-a-srcset-attribute-expected.txt:
+
 2016-09-06  Youenn Fablet  <youenn@apple.com>
 
         CachedResourceLoader is not taking into account fetch options to use or not cached resources

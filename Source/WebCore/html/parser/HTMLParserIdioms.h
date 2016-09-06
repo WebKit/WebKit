@@ -67,6 +67,12 @@ WEBCORE_EXPORT Optional<int> parseHTMLInteger(const String&);
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
 WEBCORE_EXPORT Optional<int> parseHTMLNonNegativeInteger(const String&);
 
+// https://html.spec.whatwg.org/#valid-non-negative-integer
+Optional<int> parseValidHTMLNonNegativeInteger(StringView);
+
+// https://html.spec.whatwg.org/#valid-floating-point-number
+Optional<double> parseValidHTMLFloatingPointNumber(StringView);
+
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-floating-point-number-values
 Vector<double> parseHTMLListOfOfFloatingPointNumberValues(StringView);
 
