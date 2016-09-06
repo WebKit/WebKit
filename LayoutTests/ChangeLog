@@ -1,3 +1,11 @@
+2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline http/tests/cookies/third-party-cookie-relaxing.html for Sierra.
+
+        Unreviewed test gardening.
+
+        * platform/mac/http/tests/cookies/third-party-cookie-relaxing-expected.txt:
+
 2016-09-06  Youenn Fablet  <youenn@apple.com>
 
         http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin.html is flaky
