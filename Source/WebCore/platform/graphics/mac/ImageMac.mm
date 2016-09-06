@@ -31,23 +31,17 @@
 #import "SharedBuffer.h"
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS)
+#import <CoreGraphics/CoreGraphics.h>
+#import <ImageIO/ImageIO.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
+
 @interface WebCoreBundleFinder : NSObject
 @end
 
 @implementation WebCoreBundleFinder
 @end
-
-#if PLATFORM(IOS)
-#import "SoftLinking.h"
-
-#import <CoreGraphics/CoreGraphics.h>
-#import <ImageIO/ImageIO.h>
-#import <MobileCoreServices/MobileCoreServices.h>
-
-SOFT_LINK_FRAMEWORK(MobileCoreServices)
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeTIFF, CFStringRef)
-#define kUTTypeTIFF getkUTTypeTIFF()
-#endif
 
 namespace WebCore {
 

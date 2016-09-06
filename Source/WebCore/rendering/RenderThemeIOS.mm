@@ -74,9 +74,6 @@
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
 
-SOFT_LINK_FRAMEWORK(MobileCoreServices)
-SOFT_LINK_CLASS(MobileCoreServices, LSDocumentProxy)
-
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIApplication)
 SOFT_LINK_CLASS(UIKit, UIColor)

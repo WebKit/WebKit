@@ -27,21 +27,7 @@
 #import "UTIUtilities.h"
 
 #if PLATFORM(IOS)
-#import "SoftLinking.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-
-SOFT_LINK_FRAMEWORK(MobileCoreServices)
-
-SOFT_LINK(MobileCoreServices, UTTypeIsDeclared, Boolean, (CFStringRef inUTI), (inUTI))
-SOFT_LINK(MobileCoreServices, UTTypeCopyDeclaration, CFDictionaryRef, (CFStringRef inUTI), (inUTI))
-SOFT_LINK(MobileCoreServices, UTTypeCopyPreferredTagWithClass, CFStringRef, (CFStringRef inUTI, CFStringRef inTagClass), (inUTI, inTagClass))
-SOFT_LINK(MobileCoreServices, UTTypeCreatePreferredIdentifierForTag, CFStringRef, (CFStringRef inTagClass, CFStringRef inTag, CFStringRef inConformingToUTI), (inTagClass, inTag, inConformingToUTI))
-
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeConformsToKey, CFStringRef)
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassMIMEType, CFStringRef)
-
-#define kUTTagClassMIMEType getkUTTagClassMIMEType()
-#define kUTTypeConformsToKey getkUTTypeConformsToKey()
 #endif
 
 namespace WebCore {

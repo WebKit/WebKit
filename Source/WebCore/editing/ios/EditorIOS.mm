@@ -23,61 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Editor.h"
+#import "config.h"
+#import "Editor.h"
 
-#include "CSSComputedStyleDeclaration.h"
-#include "CSSPrimitiveValueMappings.h"
-#include "CachedImage.h"
-#include "CachedResourceLoader.h"
-#include "DataTransfer.h"
-#include "DocumentFragment.h"
-#include "DocumentLoader.h"
-#include "EditorClient.h"
-#include "FontCascade.h"
-#include "Frame.h"
-#include "FrameLoaderClient.h"
-#include "HTMLConverter.h"
-#include "HTMLImageElement.h"
-#include "HTMLInputElement.h"
-#include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
-#include "HTMLTextAreaElement.h"
-#include "LegacyWebArchive.h"
-#include "NSAttributedStringSPI.h"
-#include "NodeTraversal.h"
-#include "Page.h"
-#include "Pasteboard.h"
-#include "RenderBlock.h"
-#include "RenderImage.h"
-#include "SharedBuffer.h"
-#include "SoftLinking.h"
-#include "StyleProperties.h"
-#include "Text.h"
-#include "TypingCommand.h"
-#include "WAKAppKitStubs.h"
-#include "htmlediting.h"
-#include "markup.h"
-#include <wtf/BlockObjCExceptions.h>
+#import "CSSComputedStyleDeclaration.h"
+#import "CSSPrimitiveValueMappings.h"
+#import "CachedImage.h"
+#import "CachedResourceLoader.h"
+#import "DataTransfer.h"
+#import "DocumentFragment.h"
+#import "DocumentLoader.h"
+#import "EditorClient.h"
+#import "FontCascade.h"
+#import "Frame.h"
+#import "FrameLoaderClient.h"
+#import "HTMLConverter.h"
+#import "HTMLImageElement.h"
+#import "HTMLInputElement.h"
+#import "HTMLNames.h"
+#import "HTMLParserIdioms.h"
+#import "HTMLTextAreaElement.h"
+#import "LegacyWebArchive.h"
+#import "NSAttributedStringSPI.h"
+#import "NodeTraversal.h"
+#import "Page.h"
+#import "Pasteboard.h"
+#import "RenderBlock.h"
+#import "RenderImage.h"
+#import "SharedBuffer.h"
+#import "SoftLinking.h"
+#import "StyleProperties.h"
+#import "Text.h"
+#import "TypingCommand.h"
+#import "WAKAppKitStubs.h"
+#import "htmlediting.h"
+#import "markup.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <wtf/BlockObjCExceptions.h>
 
 SOFT_LINK_FRAMEWORK(AppSupport)
 SOFT_LINK(AppSupport, CPSharedResourcesDirectory, CFStringRef, (void), ())
-
-SOFT_LINK_FRAMEWORK(MobileCoreServices)
-
-SOFT_LINK(MobileCoreServices, UTTypeConformsTo, Boolean, (CFStringRef inUTI, CFStringRef inConformsToUTI), (inUTI, inConformsToUTI))
-SOFT_LINK(MobileCoreServices, UTTypeCreatePreferredIdentifierForTag, CFStringRef, (CFStringRef inTagClass, CFStringRef inTag, CFStringRef inConformingToUTI), (inTagClass, inTag, inConformingToUTI))
-SOFT_LINK(MobileCoreServices, UTTypeCopyPreferredTagWithClass, CFStringRef, (CFStringRef inUTI, CFStringRef inTagClass), (inUTI, inTagClass))
-
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypePNG, CFStringRef)
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeJPEG, CFStringRef)
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassFilenameExtension, CFStringRef)
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassMIMEType, CFStringRef)
-
-#define kUTTypePNG  getkUTTypePNG()
-#define kUTTypeJPEG getkUTTypeJPEG()
-#define kUTTagClassFilenameExtension getkUTTagClassFilenameExtension()
-#define kUTTagClassMIMEType getkUTTagClassMIMEType()
 
 @interface NSAttributedString (NSAttributedStringKitAdditions)
 - (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;

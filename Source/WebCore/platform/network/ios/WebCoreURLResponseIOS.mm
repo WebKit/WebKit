@@ -28,21 +28,13 @@
 
 #import "config.h"
 #import "WebCoreURLResponseIOS.h"
-#import "UTIUtilities.h"
-#import "WebCoreSystemInterface.h"
 
 #import "QuickLook.h"
-#import "QuickLookSoftLink.h"
-#import "SoftLinking.h"
+#import "UTIUtilities.h"
+#import "WebCoreSystemInterface.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
-SOFT_LINK_FRAMEWORK(MobileCoreServices)
-
-SOFT_LINK(MobileCoreServices, UTTypeCreatePreferredIdentifierForTag, CFStringRef, (CFStringRef inTagClass, CFStringRef inTag, CFStringRef inConformingToUTI), (inTagClass, inTag, inConformingToUTI))
-
-SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassFilenameExtension, CFStringRef)
-
-#define kUTTagClassFilenameExtension getkUTTagClassFilenameExtension()
+#import "QuickLookSoftLink.h"
 
 namespace WebCore {
 
