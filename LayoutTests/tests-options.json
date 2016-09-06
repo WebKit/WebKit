@@ -1,0 +1,185 @@
+{
+    "imported/w3c/web-platform-tests/XMLHttpRequest/progress-events-response-data-gzip.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-abortedonmain.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overrides.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overridesexpires.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-simple.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-synconmain.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-twice.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-aborted.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overrides.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overridesexpires.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-simple.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-synconworker.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-attributes.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-cloneContents.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-cloneRange.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-collapse.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-commonAncestorContainer.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-compareBoundaryPoints.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-comparePoint-2.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-comparePoint.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-deleteContents.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-detach.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-extractContents.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-insertNode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode-binding.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-isPointInRange.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-selectNode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-set.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/traversal/NodeIterator-removal.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/traversal/NodeIterator.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/traversal/TreeWalker.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/api/request/request-cache.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-cross-origin.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/007.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-percent-encoded.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/007.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/creating_browsing_context_test_01.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/interfaces.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-embedded.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-forms.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-grouping.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-metadata.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-obsolete.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-sections.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-tabular.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/reflection-text.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html": [
+        "slow"
+    ]
+}

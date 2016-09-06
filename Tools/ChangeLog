@@ -1,3 +1,27 @@
+2016-09-06  Youenn Fablet  <youenn@apple.com>
+
+        W3C test importer should be able to identify slow test
+        https://bugs.webkit.org/show_bug.cgi?id=161601
+
+        Reviewed by Darin Adler.
+
+        Test parser is now identifying slow tests based on "meta element name=timeout content=long" elements.
+        Test importer is updating test-options.json file according that information.
+
+        In case of clean import, the test-options.json is cleaned from 'slow' options for all W3C tests.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.__init__):
+        (TestImporter.find_importable_tests):
+        (TestImporter.import_tests):
+        (TestImporter.update_test_options):
+        (TestImporter):
+        (TestImporter.remove_slow_from_w3c_test_options):
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.analyze_test):
+        (TestParser.is_slow_test):
+        (TestParser.potential_ref_filename):
+
 2016-09-06  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Crash logs have incorrect symbols.

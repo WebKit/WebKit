@@ -125,6 +125,9 @@ class TestParser(object):
         elif self.options['all'] is True:
             test_info = {'test': self.filename}
 
+        if test_info and self.is_slow_test():
+            test_info['slow'] = True
+
         return test_info
 
     def reference_links_of_type(self, reftest_type):
@@ -138,9 +141,12 @@ class TestParser(object):
         """Returns whether the test is a manual test according WPT rules (i.e. file ends with -manual.htm path)."""
         return self.filename.endswith('-manual.htm') or self.filename.endswith('-manual.html')
 
+    def is_slow_test(self):
+        return any([match.name == 'meta' and match['name'] == 'timeout' for match in self.test_doc.findAll(content='long')])
+
     def potential_ref_filename(self):
         parts = self.filesystem.splitext(self.filename)
-        return  parts[0] + '-ref' + parts[1]
+        return parts[0] + '-ref' + parts[1]
 
     def is_wpt_reftest(self):
         """Returns whether the test is a ref test according WPT rules (i.e. file has a -ref.html counterpart)."""
