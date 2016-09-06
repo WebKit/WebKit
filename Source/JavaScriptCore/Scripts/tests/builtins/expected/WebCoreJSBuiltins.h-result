@@ -265,6 +265,7 @@ private:
 
 #include "JSDOMGlobalObject.h"
 #include "WebCoreJSClientData.h"
+#include <heap/HeapInlines.h>
 #include <heap/SlotVisitorInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/StructureInlines.h>

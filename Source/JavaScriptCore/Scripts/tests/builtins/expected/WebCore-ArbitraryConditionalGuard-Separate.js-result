@@ -159,6 +159,7 @@ inline void ArbitraryConditionalGuardBuiltinsWrapper::exportNames()
 #if ENABLE(STREAMS_API) || USE(CF)
 
 #include "WebCoreJSClientData.h"
+#include <heap/HeapInlines.h>
 #include <runtime/Executable.h>
 #include <runtime/Intrinsic.h>
 #include <runtime/JSCJSValueInlines.h>
