@@ -1,3 +1,15 @@
+2016-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Strikethrough positions are erroneously snapped twice
+        https://bugs.webkit.org/show_bug.cgi?id=161647
+        <rdar://problem/11542470>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-line-through-mispositioned-expected.html: Updated.
+        * fast/text/strikethrough-int-expected-mismatch.html: Added.
+        * fast/text/strikethrough-int.html: Added.
+
 2016-09-06  Chris Dumez  <cdumez@apple.com>
 
         Align srcset attribute parsing with the HTML specification

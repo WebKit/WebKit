@@ -715,13 +715,12 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade&
         width = renderer().width(m_start, m_truncation, textPos(), isFirstLine());
         mirrorRTLSegment(m_logicalWidth, direction(), start, width);
     }
-    
-    int baseline = lineStyle().fontMetrics().ascent();
+
     TextDecorationPainter decorationPainter(context, decoration, renderer(), isFirstLine());
     decorationPainter.setInlineTextBox(this);
     decorationPainter.setFont(font);
     decorationPainter.setWidth(width);
-    decorationPainter.setBaseline(baseline);
+    decorationPainter.setBaseline(lineStyle().fontMetrics().ascent());
     decorationPainter.setIsHorizontal(isHorizontal());
     decorationPainter.addTextShadow(shadow);
 
