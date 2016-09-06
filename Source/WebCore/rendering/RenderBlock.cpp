@@ -2253,7 +2253,9 @@ void RenderBlock::insertPositionedObject(RenderBox& positioned)
 
     if (positioned.isRenderFlowThread())
         return;
-
+    // We should turn this bit on only while in layout.
+    ASSERT(posChildNeedsLayout() || view().frameView().isInLayout());
+    setPosChildNeedsLayoutBit(true);
     positionedDescendantsMap().addDescendant(*this, positioned, isRenderView() ? PositionedDescendantsMap::MoveDescendantToEnd::Yes
         : PositionedDescendantsMap::MoveDescendantToEnd::No);
 }

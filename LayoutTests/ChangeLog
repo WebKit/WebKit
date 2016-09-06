@@ -1,3 +1,14 @@
+2016-09-06  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !currBox->needsLayout() in WebCore::RenderBlock::checkPositionedObjectsNeedLayout
+        https://bugs.webkit.org/show_bug.cgi?id=120291
+        <rdar://problem/27683456>
+
+        Reviewed by David Hyatt.
+
+        * fast/block/positioning/assert-when-positioned-descendant-is-not-getting-laid-out-expected.txt: Added.
+        * fast/block/positioning/assert-when-positioned-descendant-is-not-getting-laid-out.html: Added.
+
 2016-09-06  Youenn Fablet  <youenn@apple.com>
 
         W3C test importer should be able to identify slow test
