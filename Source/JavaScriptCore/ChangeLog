@@ -1,5 +1,12 @@
 2016-09-06  Saam Barati  <sbarati@apple.com>
 
+        Unreviewed build fix for 32-bit platforms after r205520.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation): Deleted.
+
+2016-09-06  Saam Barati  <sbarati@apple.com>
+
         Member call on NULL pointer in JavaScriptCore/dfg/DFGAbstractInterpretterInlines.h
         https://bugs.webkit.org/show_bug.cgi?id=160870
 
