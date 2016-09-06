@@ -1,3 +1,18 @@
+2016-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
+        https://bugs.webkit.org/show_bug.cgi?id=160125
+
+        Reviewed by Geoffrey Garen and Keith Miller.
+        
+        Most of the things I did properly covered by existing tests, but I found some simple cases of
+        unshifting that had sketchy coverage.
+
+        * stress/array-storage-array-unshift.js: Added.
+        * stress/contiguous-array-unshift.js: Added.
+        * stress/double-array-unshift.js: Added.
+        * stress/int32-array-unshift.js: Added.
+
 2016-09-02  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed fix after importing Chakra test

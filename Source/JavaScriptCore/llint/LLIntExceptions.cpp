@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "Instruction.h"
 #include "LLIntCommon.h"
+#include "LLIntData.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
 

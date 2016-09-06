@@ -146,7 +146,13 @@ bool JSDollarVMPrototype::isInHeap(Heap* heap, void* ptr)
 bool JSDollarVMPrototype::isInObjectSpace(Heap* heap, void* ptr)
 {
     MarkedBlock* candidate = MarkedBlock::blockFor(ptr);
-    return heap->objectSpace().blocks().set().contains(candidate);
+    if (heap->objectSpace().blocks().set().contains(candidate))
+        return true;
+    for (LargeAllocation* allocation : heap->objectSpace().largeAllocations()) {
+        if (allocation->contains(ptr))
+            return true;
+    }
+    return false;
 }
 
 bool JSDollarVMPrototype::isInStorageSpace(Heap* heap, void* ptr)

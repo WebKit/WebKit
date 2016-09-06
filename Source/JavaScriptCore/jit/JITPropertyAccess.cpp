@@ -1246,7 +1246,7 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 
 void JIT::emitWriteBarrier(JSCell* owner)
 {
-    if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
+    if (!owner->cellContainer().isMarked(owner)) {
         Jump ownerIsRememberedOrInEden = jumpIfIsRememberedOrInEden(owner);
         callOperation(operationUnconditionalWriteBarrier, owner);
         ownerIsRememberedOrInEden.link(this);

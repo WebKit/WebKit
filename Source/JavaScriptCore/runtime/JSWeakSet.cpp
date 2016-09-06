@@ -26,11 +26,8 @@
 #include "config.h"
 #include "JSWeakSet.h"
 
-#include "JSCJSValueInlines.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
+#include "JSCInlines.h"
 #include "WeakMapData.h"
-#include "WriteBarrierInlines.h"
 
 namespace JSC {
 

@@ -503,12 +503,14 @@ void genericSplit(
     unsigned& matchPosition, bool regExpIsSticky, bool regExpIsUnicode,
     const ControlFunc& control, const PushFunc& push)
 {
+    Vector<int> ovector;
+        
     while (matchPosition < inputSize) {
         if (control() == AbortSplit)
             return;
         
-        Vector<int, 32> ovector;
-
+        ovector.resize(0);
+        
         // a. Perform ? Set(splitter, "lastIndex", q, true).
         // b. Let z be ? RegExpExec(splitter, S).
         int mpos = regexp->match(vm, input, matchPosition, ovector);

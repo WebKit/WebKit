@@ -69,6 +69,7 @@
 #include "JSPropertyNameEnumerator.h"
 #include "JSTemplateRegistryKey.h"
 #include "JSWithScope.h"
+#include "LLIntData.h"
 #include "Lexer.h"
 #include "Lookup.h"
 #include "MapData.h"
@@ -98,6 +99,7 @@
 #include "WeakMapData.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
+#include <wtf/SimpleStats.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
@@ -106,6 +108,7 @@
 
 #if !ENABLE(JIT)
 #include "CLoopStack.h"
+#include "CLoopStackInlines.h"
 #endif
 
 #if ENABLE(DFG_JIT)
@@ -162,6 +165,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_atomicStringTable(vmType == Default ? wtfThreadData().atomicStringTable() : new AtomicStringTable)
     , propertyNames(nullptr)
     , emptyList(new MarkedArgumentBuffer)
+    , machineCodeBytesPerBytecodeWordForBaselineJIT(std::make_unique<SimpleStats>())
     , customGetterSetterFunctionMap(*this)
     , stringCache(*this)
     , symbolImplToSymbolMap(*this)
@@ -872,5 +876,17 @@ size_t VM::committedStackByteCount()
     return CLoopStack::committedByteCount();
 #endif
 }
+
+#if !ENABLE(JIT)
+bool VM::ensureStackCapacityForCLoop(Register* newTopOfStack)
+{
+    return interpreter->cloopStack().ensureCapacityFor(newTopOfStack);
+}
+
+bool VM::isSafeToRecurseSoftCLoop() const
+{
+    return interpreter->cloopStack().isSafeToRecurse();
+}
+#endif // !ENABLE(JIT)
 
 } // namespace JSC

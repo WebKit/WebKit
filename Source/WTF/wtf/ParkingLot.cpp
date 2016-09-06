@@ -767,7 +767,7 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
         dataLog(toString(currentThread(), ": done unparking.\n"));
 }
 
-NEVER_INLINE void ParkingLot::forEach(std::function<void(ThreadIdentifier, const void*)> callback)
+NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>& callback)
 {
     Vector<Bucket*> bucketsToUnlock = lockHashtable();
 

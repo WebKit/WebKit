@@ -305,7 +305,7 @@ end
 _handleUncaughtException:
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
-    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    loadp MarkedBlock::m_vm[t3], t3
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]
@@ -653,7 +653,7 @@ end
 macro branchIfException(label)
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
-    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    loadp MarkedBlock::m_vm[t3], t3
     btiz VM::m_exception[t3], .noException
     jmp label
 .noException:
@@ -702,31 +702,6 @@ _llint_op_get_scope:
     dispatch(2)
 
 
-_llint_op_create_this:
-    traceExecution()
-    loadi 8[PC], t0
-    loadp PayloadOffset[cfr, t0, 8], t0
-    bbneq JSCell::m_type[t0], JSFunctionType, .opCreateThisSlow
-    loadp JSFunction::m_rareData[t0], t5
-    btpz t5, .opCreateThisSlow
-    loadp FunctionRareData::m_objectAllocationProfile + ObjectAllocationProfile::m_allocator[t5], t1
-    loadp FunctionRareData::m_objectAllocationProfile + ObjectAllocationProfile::m_structure[t5], t2
-    btpz t1, .opCreateThisSlow
-    loadpFromInstruction(4, t5)
-    bpeq t5, 1, .hasSeenMultipleCallee
-    bpneq t5, t0, .opCreateThisSlow
-.hasSeenMultipleCallee:
-    allocateJSObject(t1, t2, t0, t3, .opCreateThisSlow)
-    loadi 4[PC], t1
-    storei CellTag, TagOffset[cfr, t1, 8]
-    storei t0, PayloadOffset[cfr, t1, 8]
-    dispatch(5)
-
-.opCreateThisSlow:
-    callOpcodeSlowPath(_slow_path_create_this)
-    dispatch(5)
-
-
 _llint_op_to_this:
     traceExecution()
     loadi 4[PC], t0
@@ -739,22 +714,6 @@ _llint_op_to_this:
 
 .opToThisSlow:
     callOpcodeSlowPath(_slow_path_to_this)
-    dispatch(4)
-
-
-_llint_op_new_object:
-    traceExecution()
-    loadpFromInstruction(3, t0)
-    loadp ObjectAllocationProfile::m_allocator[t0], t1
-    loadp ObjectAllocationProfile::m_structure[t0], t2
-    allocateJSObject(t1, t2, t0, t3, .opNewObjectSlow)
-    loadi 4[PC], t1
-    storei CellTag, TagOffset[cfr, t1, 8]
-    storei t0, PayloadOffset[cfr, t1, 8]
-    dispatch(4)
-
-.opNewObjectSlow:
-    callOpcodeSlowPath(_llint_slow_path_new_object)
     dispatch(4)
 
 
@@ -1997,7 +1956,7 @@ _llint_op_catch:
     # and have set VM::targetInterpreterPCForThrow.
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
-    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    loadp MarkedBlock::m_vm[t3], t3
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]
@@ -2012,7 +1971,7 @@ _llint_op_catch:
 .isCatchableException:
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
-    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    loadp MarkedBlock::m_vm[t3], t3
 
     loadi VM::m_exception[t3], t0
     storei 0, VM::m_exception[t3]
@@ -2047,7 +2006,7 @@ _llint_throw_from_slow_path_trampoline:
     # This essentially emulates the JIT's throwing protocol.
     loadp Callee[cfr], t1
     andp MarkedBlockMask, t1
-    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
+    loadp MarkedBlock::m_vm[t1], t1
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(t1, t2)
     jmp VM::targetMachinePCForThrow[t1]
 
@@ -2066,7 +2025,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     if X86 or X86_WIN
         subp 8, sp # align stack pointer
         andp MarkedBlockMask, t1
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t3
+        loadp MarkedBlock::m_vm[t1], t3
         storep cfr, VM::topCallFrame[t3]
         move cfr, a0  # a0 = ecx
         storep a0, [sp]
@@ -2076,13 +2035,13 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         call executableOffsetToFunction[t1]
         loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+        loadp MarkedBlock::m_vm[t3], t3
         addp 8, sp
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS or SH4
         subp 8, sp # align stack pointer
         # t1 already contains the Callee.
         andp MarkedBlockMask, t1
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
+        loadp MarkedBlock::m_vm[t1], t1
         storep cfr, VM::topCallFrame[t1]
         move cfr, a0
         loadi Callee + PayloadOffset[cfr], t1
@@ -2095,7 +2054,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         end
         loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+        loadp MarkedBlock::m_vm[t3], t3
         addp 8, sp
     else
         error

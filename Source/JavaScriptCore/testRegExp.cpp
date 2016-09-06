@@ -191,7 +191,7 @@ int main(int argc, char** argv)
 static bool testOneRegExp(VM& vm, RegExp* regexp, RegExpTest* regExpTest, bool verbose, unsigned int lineNumber)
 {
     bool result = true;
-    Vector<int, 32> outVector;
+    Vector<int> outVector;
     outVector.resize(regExpTest->expectVector.size());
     int matchResult = regexp->match(vm, regExpTest->subject, regExpTest->offset, outVector);
 

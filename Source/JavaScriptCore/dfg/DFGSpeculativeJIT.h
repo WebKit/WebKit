@@ -1003,6 +1003,26 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(P_JITOperation_EStZB operation, GPRReg result, Structure* structure, GPRReg arg2, GPRReg butterfly)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2, butterfly);
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(P_JITOperation_EStZB operation, GPRReg result, Structure* structure, size_t arg2, GPRReg butterfly)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), TrustedImm32(arg2), butterfly);
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(P_JITOperation_EStZB operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg butterfly)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, butterfly);
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(P_JITOperation_EStZB operation, GPRReg result, GPRReg arg1, GPRReg arg2, Butterfly* butterfly)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(butterfly));
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_JITOperation_EStPS operation, GPRReg result, Structure* structure, void* pointer, size_t size)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), TrustedImmPtr(pointer), TrustedImmPtr(size));
@@ -2557,18 +2577,21 @@ public:
 
     // Allocator for a cell of a specific size.
     template <typename StructureType> // StructureType can be GPR or ImmPtr.
-    void emitAllocateJSCell(GPRReg resultGPR, GPRReg allocatorGPR, StructureType structure,
+    void emitAllocateJSCell(
+        GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, StructureType structure,
         GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        m_jit.emitAllocateJSCell(resultGPR, allocatorGPR, structure, scratchGPR, slowPath);
+        m_jit.emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
     }
 
     // Allocator for an object of a specific size.
     template <typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
-    void emitAllocateJSObject(GPRReg resultGPR, GPRReg allocatorGPR, StructureType structure,
+    void emitAllocateJSObject(
+        GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, StructureType structure,
         StorageType storage, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        m_jit.emitAllocateJSObject(resultGPR, allocatorGPR, structure, storage, scratchGPR, slowPath);
+        m_jit.emitAllocateJSObject(
+            resultGPR, allocator, allocatorGPR, structure, storage, scratchGPR, slowPath);
     }
 
     template <typename ClassType, typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.

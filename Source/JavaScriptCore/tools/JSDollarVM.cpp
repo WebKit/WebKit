@@ -26,8 +26,7 @@
 #include "config.h"
 #include "JSDollarVM.h"
 
-#include "JSCJSValueInlines.h"
-#include "StructureInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

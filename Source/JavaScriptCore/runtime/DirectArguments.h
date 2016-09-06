@@ -26,6 +26,7 @@
 #ifndef DirectArguments_h
 #define DirectArguments_h
 
+#include "CopyBarrier.h"
 #include "DirectArgumentsOffset.h"
 #include "GenericArguments.h"
 

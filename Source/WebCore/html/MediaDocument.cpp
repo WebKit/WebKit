@@ -48,6 +48,7 @@
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIterator.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

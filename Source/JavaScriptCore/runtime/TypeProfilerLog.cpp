@@ -29,7 +29,7 @@
 #include "config.h"
 #include "TypeProfilerLog.h"
 
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "TypeLocation.h"
 #include <wtf/CurrentTime.h>
 

@@ -1,3 +1,19 @@
+2016-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
+        https://bugs.webkit.org/show_bug.cgi?id=160125
+
+        Reviewed by Geoffrey Garen and Keith Miller.
+        
+        Just rewiring some #includes.
+
+        * UIProcess/ViewGestureController.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+
 2016-09-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed error message typo fix

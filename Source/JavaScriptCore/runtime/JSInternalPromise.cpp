@@ -27,10 +27,7 @@
 #include "JSInternalPromise.h"
 
 #include "BuiltinNames.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
-#include "JSObjectInlines.h"
-#include "StructureInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

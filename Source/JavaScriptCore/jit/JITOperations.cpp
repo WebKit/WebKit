@@ -44,6 +44,7 @@
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "ICStats.h"
+#include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JITToDFGDeferredCompilationCallback.h"
@@ -478,17 +479,6 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
     
     if (stubInfo->considerCaching(structure))
         repatchPutByID(exec, baseObject, structure, ident, slot, *stubInfo, Direct);
-}
-
-void JIT_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObject* base, Structure* structure, PropertyOffset offset, EncodedJSValue value)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    ASSERT(structure->outOfLineCapacity() > base->structure(vm)->outOfLineCapacity());
-    ASSERT(!vm.heap.storageAllocator().fastPathShouldSucceed(structure->outOfLineCapacity() * sizeof(JSValue)));
-    base->setStructureAndReallocateStorageIfNecessary(vm, structure);
-    base->putDirect(vm, offset, JSValue::decode(value));
 }
 
 ALWAYS_INLINE static bool isStringOrSymbol(JSValue value)
@@ -2157,7 +2147,6 @@ char* JIT_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitial
     NativeCallFrameTracer tracer(&vm, exec);
 
     ASSERT(!object->structure()->outOfLineCapacity());
-    DeferGC deferGC(vm.heap);
     Butterfly* result = object->growOutOfLineStorage(vm, 0, initialOutOfLineCapacity);
     object->setButterflyWithoutChangingStructure(vm, result);
     return reinterpret_cast<char*>(result);
@@ -2168,7 +2157,6 @@ char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    DeferGC deferGC(vm.heap);
     Butterfly* result = object->growOutOfLineStorage(vm, object->structure()->outOfLineCapacity(), newSize);
     object->setButterflyWithoutChangingStructure(vm, result);
     return reinterpret_cast<char*>(result);

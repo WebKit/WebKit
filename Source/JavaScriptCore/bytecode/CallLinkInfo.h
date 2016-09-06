@@ -31,7 +31,6 @@
 #include "CodeSpecializationKind.h"
 #include "JITWriteBarrier.h"
 #include "JSFunction.h"
-#include "Opcode.h"
 #include "PolymorphicCallStubRoutine.h"
 #include "WriteBarrier.h"
 #include <wtf/SentinelLinkedList.h>
@@ -40,26 +39,13 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
+enum OpcodeID : unsigned;
 struct CallFrameShuffleData;
 
 class CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
 public:
     enum CallType { None, Call, CallVarargs, Construct, ConstructVarargs, TailCall, TailCallVarargs };
-    static CallType callTypeFor(OpcodeID opcodeID)
-    {
-        if (opcodeID == op_call || opcodeID == op_call_eval)
-            return Call;
-        if (opcodeID == op_call_varargs)
-            return CallVarargs;
-        if (opcodeID == op_construct)
-            return Construct;
-        if (opcodeID == op_construct_varargs)
-            return ConstructVarargs;
-        if (opcodeID == op_tail_call)
-            return TailCall;
-        ASSERT(opcodeID == op_tail_call_varargs || op_tail_call_forward_arguments);
-        return TailCallVarargs;
-    }
+    static CallType callTypeFor(OpcodeID opcodeID);
 
     static bool isVarargsCallType(CallType callType)
     {

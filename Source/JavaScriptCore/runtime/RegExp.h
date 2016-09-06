@@ -64,17 +64,18 @@ public:
     bool isValid() const { return !m_constructionError && m_flags != InvalidFlags; }
     const char* errorMessage() const { return m_constructionError; }
 
-    JS_EXPORT_PRIVATE int match(VM&, const String&, unsigned startOffset, Vector<int, 32>& ovector);
+    JS_EXPORT_PRIVATE int match(VM&, const String&, unsigned startOffset, Vector<int>& ovector);
 
     // Returns false if we couldn't run the regular expression for any reason.
-    bool matchConcurrently(VM&, const String&, unsigned startOffset, int& position, Vector<int, 32>& ovector);
+    bool matchConcurrently(VM&, const String&, unsigned startOffset, int& position, Vector<int>& ovector);
     
     JS_EXPORT_PRIVATE MatchResult match(VM&, const String&, unsigned startOffset);
 
     bool matchConcurrently(VM&, const String&, unsigned startOffset, MatchResult&);
 
     // Call these versions of the match functions if you're desperate for performance.
-    int matchInline(VM&, const String&, unsigned startOffset, Vector<int, 32>& ovector);
+    template<typename VectorType>
+    int matchInline(VM&, const String&, unsigned startOffset, VectorType& ovector);
     MatchResult matchInline(VM&, const String&, unsigned startOffset);
     
     unsigned numSubpatterns() const { return m_numSubpatterns; }

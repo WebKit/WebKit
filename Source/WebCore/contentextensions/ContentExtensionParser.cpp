@@ -35,12 +35,9 @@
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsBackend.h"
 #include "ContentExtensionsDebugging.h"
-#include <JavaScriptCore/IdentifierInlines.h>
-#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSONObject.h>
-#include <JavaScriptCore/JSObjectInlines.h>
-#include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/WTFString.h>

@@ -30,11 +30,28 @@
 #include "DFGOperations.h"
 #include "DFGThunks.h"
 #include "JSCInlines.h"
+#include "Opcode.h"
 #include "Repatch.h"
 #include <wtf/ListDump.h>
 
 #if ENABLE(JIT)
 namespace JSC {
+
+CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
+{
+    if (opcodeID == op_call || opcodeID == op_call_eval)
+        return Call;
+    if (opcodeID == op_call_varargs)
+        return CallVarargs;
+    if (opcodeID == op_construct)
+        return Construct;
+    if (opcodeID == op_construct_varargs)
+        return ConstructVarargs;
+    if (opcodeID == op_tail_call)
+        return TailCall;
+    ASSERT(opcodeID == op_tail_call_varargs || op_tail_call_forward_arguments);
+    return TailCallVarargs;
+}
 
 CallLinkInfo::CallLinkInfo()
     : m_hasSeenShouldRepatch(false)

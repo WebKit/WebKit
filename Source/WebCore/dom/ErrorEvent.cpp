@@ -34,6 +34,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
+#include <heap/HeapInlines.h>
 
 using namespace JSC;
 

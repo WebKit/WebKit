@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,31 +26,35 @@
 #ifndef WeakSet_h
 #define WeakSet_h
 
+#include "CellContainer.h"
 #include "WeakBlock.h"
+#include <wtf/SentinelLinkedList.h>
 
 namespace JSC {
 
 class Heap;
-class MarkedBlock;
 class WeakImpl;
 
-class WeakSet {
+class WeakSet : public BasicRawSentinelNode<WeakSet> {
     friend class LLIntOffsetsExtractor;
 
 public:
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);
 
-    WeakSet(VM*, MarkedBlock&);
+    WeakSet(VM*, CellContainer);
     ~WeakSet();
     void lastChanceToFinalize();
+    
+    CellContainer container() const { return m_container; }
+    void setContainer(CellContainer container) { m_container = container; }
 
     Heap* heap() const;
     VM* vm() const;
 
     bool isEmpty() const;
 
-    void visit(HeapRootVisitor&);
+    unsigned visit(HeapRootVisitor&);
     void reap();
     void sweep();
     void shrink();
@@ -66,14 +70,14 @@ private:
     WeakBlock* m_nextAllocator;
     DoublyLinkedList<WeakBlock> m_blocks;
     VM* m_vm;
-    MarkedBlock& m_markedBlock;
+    CellContainer m_container;
 };
 
-inline WeakSet::WeakSet(VM* vm, MarkedBlock& markedBlock)
+inline WeakSet::WeakSet(VM* vm, CellContainer container)
     : m_allocator(0)
     , m_nextAllocator(0)
     , m_vm(vm)
-    , m_markedBlock(markedBlock)
+    , m_container(container)
 {
 }
 
@@ -103,29 +107,20 @@ inline void WeakSet::lastChanceToFinalize()
         block->lastChanceToFinalize();
 }
 
-inline void WeakSet::visit(HeapRootVisitor& visitor)
+inline unsigned WeakSet::visit(HeapRootVisitor& visitor)
 {
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+    unsigned count = 0;
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
+        count++;
         block->visit(visitor);
+    }
+    return count;
 }
 
 inline void WeakSet::reap()
 {
     for (WeakBlock* block = m_blocks.head(); block; block = block->next())
         block->reap();
-}
-
-inline void WeakSet::shrink()
-{
-    WeakBlock* next;
-    for (WeakBlock* block = m_blocks.head(); block; block = next) {
-        next = block->next();
-
-        if (block->isEmpty())
-            removeAllocator(block);
-    }
-
-    resetAllocator();
 }
 
 inline void WeakSet::resetAllocator()

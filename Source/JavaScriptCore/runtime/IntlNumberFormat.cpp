@@ -34,7 +34,6 @@
 #include "IntlNumberFormatConstructor.h"
 #include "IntlObject.h"
 #include "JSBoundFunction.h"
-#include "JSCellInlines.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 

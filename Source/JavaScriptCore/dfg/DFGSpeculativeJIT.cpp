@@ -94,7 +94,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, Structure* structur
     GPRReg scratch2GPR = scratch2.gpr();
 
     ASSERT(vectorLength >= numElements);
-    vectorLength = std::max(BASE_VECTOR_LEN, vectorLength);
+    vectorLength = Butterfly::optimalContiguousVectorLength(structure, vectorLength);
     
     JITCompiler::JumpList slowCases;
 
@@ -103,23 +103,30 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, Structure* structur
         size += vectorLength * sizeof(JSValue) + sizeof(IndexingHeader);
     size += outOfLineCapacity * sizeof(JSValue);
 
+    m_jit.move(TrustedImmPtr(0), storageGPR);
+    
     if (size) {
-        slowCases.append(
-            emitAllocateBasicStorage(TrustedImm32(size), storageGPR));
-        if (hasIndexingHeader)
-            m_jit.subPtr(TrustedImm32(vectorLength * sizeof(JSValue)), storageGPR);
-        else
-            m_jit.addPtr(TrustedImm32(sizeof(IndexingHeader)), storageGPR);
-    } else
-        m_jit.move(TrustedImmPtr(0), storageGPR);
+        if (MarkedAllocator* allocator = m_jit.vm()->heap.allocatorForAuxiliaryData(size)) {
+            m_jit.move(TrustedImmPtr(allocator), scratchGPR);
+            m_jit.emitAllocate(storageGPR, allocator, scratchGPR, scratch2GPR, slowCases);
+            
+            m_jit.addPtr(
+                TrustedImm32(outOfLineCapacity * sizeof(JSValue) + sizeof(IndexingHeader)),
+                storageGPR);
+            
+            if (hasIndexingHeader)
+                m_jit.store32(TrustedImm32(vectorLength), MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+        } else
+            slowCases.append(m_jit.jump());
+    }
 
     size_t allocationSize = JSFinalObject::allocationSize(inlineCapacity);
-    MarkedAllocator* allocatorPtr = &m_jit.vm()->heap.allocatorForObjectWithoutDestructor(allocationSize);
-    m_jit.move(TrustedImmPtr(allocatorPtr), scratchGPR);
-    emitAllocateJSObject(resultGPR, scratchGPR, TrustedImmPtr(structure), storageGPR, scratch2GPR, slowCases);
-
-    if (hasIndexingHeader)
-        m_jit.store32(TrustedImm32(vectorLength), MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+    MarkedAllocator* allocatorPtr = m_jit.vm()->heap.allocatorForObjectWithoutDestructor(allocationSize);
+    if (allocatorPtr) {
+        m_jit.move(TrustedImmPtr(allocatorPtr), scratchGPR);
+        emitAllocateJSObject(resultGPR, allocatorPtr, scratchGPR, TrustedImmPtr(structure), storageGPR, scratch2GPR, slowCases);
+    } else
+        slowCases.append(m_jit.jump());
 
     // I want a slow path that also loads out the storage pointer, and that's
     // what this custom CallArrayAllocatorSlowPathGenerator gives me. It's a lot
@@ -128,14 +135,20 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, Structure* structur
         slowCases, this, operationNewRawObject, resultGPR, storageGPR,
         structure, vectorLength));
 
-    if (hasDouble(structure->indexingType()) && numElements < vectorLength) {
+    if (numElements < vectorLength) {
 #if USE(JSVALUE64)
-        m_jit.move(TrustedImm64(bitwise_cast<int64_t>(PNaN)), scratchGPR);
+        if (hasDouble(structure->indexingType()))
+            m_jit.move(TrustedImm64(bitwise_cast<int64_t>(PNaN)), scratchGPR);
+        else
+            m_jit.move(TrustedImm64(JSValue::encode(JSValue())), scratchGPR);
         for (unsigned i = numElements; i < vectorLength; ++i)
             m_jit.store64(scratchGPR, MacroAssembler::Address(storageGPR, sizeof(double) * i));
 #else
         EncodedValueDescriptor value;
-        value.asInt64 = JSValue::encode(JSValue(JSValue::EncodeAsDouble, PNaN));
+        if (hasDouble(structure->indexingType()))
+            value.asInt64 = JSValue::encode(JSValue(JSValue::EncodeAsDouble, PNaN));
+        else
+            value.asInt64 = JSValue::encode(JSValue());
         for (unsigned i = numElements; i < vectorLength; ++i) {
             m_jit.store32(TrustedImm32(value.asBits.tag), MacroAssembler::Address(storageGPR, sizeof(double) * i + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
             m_jit.store32(TrustedImm32(value.asBits.payload), MacroAssembler::Address(storageGPR, sizeof(double) * i + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
@@ -3823,9 +3836,10 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     GPRReg scratchGPR = scratch.gpr();
     
     JITCompiler::JumpList slowPath;
-    MarkedAllocator& markedAllocator = m_jit.vm()->heap.allocatorForObjectWithDestructor(sizeof(JSRopeString));
-    m_jit.move(TrustedImmPtr(&markedAllocator), allocatorGPR);
-    emitAllocateJSCell(resultGPR, allocatorGPR, TrustedImmPtr(m_jit.vm()->stringStructure.get()), scratchGPR, slowPath);
+    MarkedAllocator* markedAllocator = m_jit.vm()->heap.allocatorForObjectWithDestructor(sizeof(JSRopeString));
+    RELEASE_ASSERT(markedAllocator);
+    m_jit.move(TrustedImmPtr(markedAllocator), allocatorGPR);
+    emitAllocateJSCell(resultGPR, markedAllocator, allocatorGPR, TrustedImmPtr(m_jit.vm()->stringStructure.get()), scratchGPR, slowPath);
         
     m_jit.storePtr(TrustedImmPtr(0), JITCompiler::Address(resultGPR, JSString::offsetOfValue()));
     for (unsigned i = 0; i < numOpGPRs; ++i)
@@ -6908,7 +6922,14 @@ void SpeculativeJIT::compileCheckStructure(Node* node)
 
 void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 {
-    if (node->transition()->previous->couldHaveIndexingHeader()) {
+    ASSERT(!node->transition()->previous->outOfLineCapacity());
+    ASSERT(initialOutOfLineCapacity == node->transition()->next->outOfLineCapacity());
+    
+    size_t size = initialOutOfLineCapacity * sizeof(JSValue);
+
+    MarkedAllocator* allocator = m_jit.vm()->heap.allocatorForAuxiliaryData(size);
+
+    if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
         
         GPRReg baseGPR = base.gpr();
@@ -6925,18 +6946,18 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
     
     SpeculateCellOperand base(this, node->child1());
     GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+    GPRTemporary scratch3(this);
         
     GPRReg baseGPR = base.gpr();
     GPRReg scratchGPR1 = scratch1.gpr();
+    GPRReg scratchGPR2 = scratch2.gpr();
+    GPRReg scratchGPR3 = scratch3.gpr();
         
-    ASSERT(!node->transition()->previous->outOfLineCapacity());
-    ASSERT(initialOutOfLineCapacity == node->transition()->next->outOfLineCapacity());
-    
-    JITCompiler::Jump slowPath =
-        emitAllocateBasicStorage(
-            TrustedImm32(initialOutOfLineCapacity * sizeof(JSValue)), scratchGPR1);
-
-    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(IndexingHeader)), scratchGPR1);
+    m_jit.move(JITCompiler::TrustedImmPtr(allocator), scratchGPR2);
+    JITCompiler::JumpList slowPath;
+    m_jit.emitAllocate(scratchGPR1, allocator, scratchGPR2, scratchGPR3, slowPath);
+    m_jit.addPtr(JITCompiler::TrustedImm32(size + sizeof(IndexingHeader)), scratchGPR1);
         
     addSlowPathGenerator(
         slowPathCall(slowPath, this, operationAllocatePropertyStorageWithInitialCapacity, scratchGPR1));
@@ -6951,8 +6972,10 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     size_t oldSize = node->transition()->previous->outOfLineCapacity() * sizeof(JSValue);
     size_t newSize = oldSize * outOfLineGrowthFactor;
     ASSERT(newSize == node->transition()->next->outOfLineCapacity() * sizeof(JSValue));
+    
+    MarkedAllocator* allocator = m_jit.vm()->heap.allocatorForAuxiliaryData(newSize);
 
-    if (node->transition()->previous->couldHaveIndexingHeader()) {
+    if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
         
         GPRReg baseGPR = base.gpr();
@@ -6971,16 +6994,19 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     StorageOperand oldStorage(this, node->child2());
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
+    GPRTemporary scratch3(this);
         
     GPRReg baseGPR = base.gpr();
     GPRReg oldStorageGPR = oldStorage.gpr();
     GPRReg scratchGPR1 = scratch1.gpr();
     GPRReg scratchGPR2 = scratch2.gpr();
-        
-    JITCompiler::Jump slowPath =
-        emitAllocateBasicStorage(TrustedImm32(newSize), scratchGPR1);
-
-    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(IndexingHeader)), scratchGPR1);
+    GPRReg scratchGPR3 = scratch3.gpr();
+    
+    JITCompiler::JumpList slowPath;
+    m_jit.move(JITCompiler::TrustedImmPtr(allocator), scratchGPR2);
+    m_jit.emitAllocate(scratchGPR1, allocator, scratchGPR2, scratchGPR3, slowPath);
+    
+    m_jit.addPtr(JITCompiler::TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR1);
         
     addSlowPathGenerator(
         slowPathCall(slowPath, this, operationAllocatePropertyStorage, scratchGPR1, newSize / sizeof(JSValue)));

@@ -32,6 +32,7 @@
 #include "DFGCommonData.h"
 #include "Heap.h"
 #include "VM.h"
+#include "JITStubRoutineSet.h"
 #include "JSCInlines.h"
 #include "SlotVisitor.h"
 #include "Structure.h"
@@ -45,7 +46,7 @@ GCAwareJITStubRoutine::GCAwareJITStubRoutine(
     , m_mayBeExecuting(false)
     , m_isJettisoned(false)
 {
-    vm.heap.m_jitStubRoutines.add(this);
+    vm.heap.m_jitStubRoutines->add(this);
 }
 
 GCAwareJITStubRoutine::~GCAwareJITStubRoutine() { }

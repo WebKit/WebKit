@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,9 +49,9 @@ public:
         m_sumOfSquares += value * value;
     }
     
-    bool operator!() const
+    explicit operator bool() const
     {
-        return !m_count;
+        return !!m_count;
     }
     
     double count() const
@@ -109,6 +109,8 @@ private:
 };
 
 } // namespace WTF
+
+using WTF::SimpleStats;
 
 #endif // SimpleStats_h
 

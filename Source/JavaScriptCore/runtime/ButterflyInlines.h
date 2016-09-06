@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,38 @@
 
 namespace JSC {
 
+ALWAYS_INLINE unsigned Butterfly::availableContiguousVectorLength(size_t propertyCapacity, unsigned vectorLength)
+{
+    size_t cellSize = totalSize(0, propertyCapacity, true, sizeof(EncodedJSValue) * vectorLength);
+    cellSize = MarkedSpace::optimalSizeFor(cellSize);
+    vectorLength = (cellSize - totalSize(0, propertyCapacity, true, 0)) / sizeof(EncodedJSValue);
+    return vectorLength;
+}
+
+ALWAYS_INLINE unsigned Butterfly::availableContiguousVectorLength(Structure* structure, unsigned vectorLength)
+{
+    return availableContiguousVectorLength(structure ? structure->outOfLineCapacity() : 0, vectorLength);
+}
+
+ALWAYS_INLINE unsigned Butterfly::optimalContiguousVectorLength(size_t propertyCapacity, unsigned vectorLength)
+{
+    if (!vectorLength)
+        vectorLength = BASE_CONTIGUOUS_VECTOR_LEN_EMPTY;
+    else
+        vectorLength = std::max(BASE_CONTIGUOUS_VECTOR_LEN, vectorLength);
+    return availableContiguousVectorLength(propertyCapacity, vectorLength);
+}
+
+ALWAYS_INLINE unsigned Butterfly::optimalContiguousVectorLength(Structure* structure, unsigned vectorLength)
+{
+    return optimalContiguousVectorLength(structure ? structure->outOfLineCapacity() : 0, vectorLength);
+}
+
 inline Butterfly* Butterfly::createUninitialized(VM& vm, JSCell* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes)
 {
-    void* temp;
     size_t size = totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-    RELEASE_ASSERT(vm.heap.tryAllocateStorage(intendedOwner, size, &temp));
-    Butterfly* result = fromBase(temp, preCapacity, propertyCapacity);
+    void* base = vm.heap.allocateAuxiliary(intendedOwner, size);
+    Butterfly* result = fromBase(base, preCapacity, propertyCapacity);
     return result;
 }
 
@@ -119,7 +145,8 @@ inline Butterfly* Butterfly::growArrayRight(
     void* theBase = base(0, propertyCapacity);
     size_t oldSize = totalSize(0, propertyCapacity, hadIndexingHeader, oldIndexingPayloadSizeInBytes);
     size_t newSize = totalSize(0, propertyCapacity, true, newIndexingPayloadSizeInBytes);
-    if (!vm.heap.tryReallocateStorage(intendedOwner, &theBase, oldSize, newSize))
+    theBase = vm.heap.tryReallocateAuxiliary(intendedOwner, theBase, oldSize, newSize);
+    if (!theBase)
         return 0;
     return fromBase(theBase, 0, propertyCapacity);
 }

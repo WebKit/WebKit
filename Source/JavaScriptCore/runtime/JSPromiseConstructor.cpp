@@ -32,14 +32,12 @@
 #include "GetterSetter.h"
 #include "IteratorOperations.h"
 #include "JSCBuiltins.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSPromise.h"
 #include "JSPromisePrototype.h"
 #include "Lookup.h"
 #include "NumberObject.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

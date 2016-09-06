@@ -39,7 +39,6 @@
 #include "WorkerThread.h"
 #include <bindings/ScriptValue.h>
 #include <heap/StrongInlines.h>
-#include <interpreter/Interpreter.h>
 #include <runtime/Completion.h>
 #include <runtime/Error.h>
 #include <runtime/Exception.h>

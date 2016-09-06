@@ -29,7 +29,6 @@
 #include "JSGlobalObject.h"
 #include "Options.h"
 #include <wtf/PrintStream.h>
-#include <wtf/SimpleStats.h>
 
 namespace JSC {
 

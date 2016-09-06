@@ -52,6 +52,7 @@
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
+#include "LLIntData.h"
 #include "LLIntEntrypoint.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "LowLevelInterpreter.h"
@@ -70,6 +71,7 @@
 #include "VMInlines.h"
 #include <wtf/BagToHashMap.h>
 #include <wtf/CommaPrinter.h>
+#include <wtf/SimpleStats.h>
 #include <wtf/StringExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/UniquedStringImpl.h>
@@ -1876,7 +1878,7 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
         m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
     }
     
-    heap()->m_codeBlocks.add(this);
+    heap()->m_codeBlocks->add(this);
 }
 
 CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock,
@@ -2342,7 +2344,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (Options::dumpGeneratedBytecodes())
         dumpBytecode();
     
-    heap()->m_codeBlocks.add(this);
+    heap()->m_codeBlocks->add(this);
     heap()->reportExtraMemoryAllocated(m_instructions.size() * sizeof(Instruction));
 }
 
@@ -2379,7 +2381,7 @@ void CodeBlock::finishCreation(VM& vm, WebAssemblyExecutable*, JSGlobalObject*)
 {
     Base::finishCreation(vm);
 
-    heap()->m_codeBlocks.add(this);
+    heap()->m_codeBlocks->add(this);
 }
 #endif
 
@@ -2781,6 +2783,14 @@ void CodeBlock::WeakReferenceHarvester::visitWeakReferences(SlotVisitor& visitor
 
     codeBlock->propagateTransitions(visitor);
     codeBlock->determineLiveness(visitor);
+}
+
+void CodeBlock::clearLLIntGetByIdCache(Instruction* instruction)
+{
+    instruction[0].u.opcode = LLInt::getOpcode(op_get_by_id);
+    instruction[4].u.pointer = nullptr;
+    instruction[5].u.pointer = nullptr;
+    instruction[6].u.pointer = nullptr;
 }
 
 void CodeBlock::finalizeLLIntInlineCaches()
@@ -4184,12 +4194,12 @@ size_t CodeBlock::predictedMachineCodeSize()
     if (!m_vm)
         return 0;
     
-    if (!m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT)
+    if (!*m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT)
         return 0; // It's as good of a prediction as we'll get.
     
     // Be conservative: return a size that will be an overestimation 84% of the time.
-    double multiplier = m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT.mean() +
-        m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT.standardDeviation();
+    double multiplier = m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->mean() +
+        m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->standardDeviation();
     
     // Be paranoid: silently reject bogus multipiers. Silently doing the "wrong" thing
     // here is OK, since this whole method is just a heuristic.

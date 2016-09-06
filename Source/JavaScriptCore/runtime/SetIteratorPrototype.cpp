@@ -27,10 +27,8 @@
 #include "SetIteratorPrototype.h"
 
 #include "IteratorOperations.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSSetIterator.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

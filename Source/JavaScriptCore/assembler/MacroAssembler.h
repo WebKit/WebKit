@@ -28,6 +28,8 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "JSCJSValue.h"
+
 #if CPU(ARM_THUMB2)
 #include "MacroAssemblerARMv7.h"
 namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };

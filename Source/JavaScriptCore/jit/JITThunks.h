@@ -30,7 +30,6 @@
 
 #include "CallData.h"
 #include "Intrinsic.h"
-#include "LowLevelInterpreter.h"
 #include "MacroAssemblerCodeRef.h"
 #include "ThunkGenerator.h"
 #include "Weak.h"

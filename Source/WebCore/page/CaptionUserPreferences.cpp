@@ -38,6 +38,7 @@
 #include "UserContentTypes.h"
 #include "UserStyleSheet.h"
 #include "UserStyleSheetTypes.h"
+#include <heap/HeapInlines.h>
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
 #include <wtf/NeverDestroyed.h>

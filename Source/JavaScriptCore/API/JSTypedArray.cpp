@@ -32,7 +32,7 @@
 #include "ClassInfo.h"
 #include "Error.h"
 #include "JSArrayBufferViewInlines.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSDataView.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSTypedArrays.h"

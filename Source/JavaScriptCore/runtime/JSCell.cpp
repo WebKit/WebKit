@@ -58,7 +58,7 @@ size_t JSCell::estimatedSizeInBytes() const
 
 size_t JSCell::estimatedSize(JSCell* cell)
 {
-    return MarkedBlock::blockFor(cell)->cellSize();
+    return cell->cellSize();
 }
 
 void JSCell::copyBackingStore(JSCell*, CopyVisitor&, CopyToken)

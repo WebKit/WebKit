@@ -33,6 +33,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "JSHistory.h"
+#include <heap/HeapInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;

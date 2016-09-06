@@ -29,6 +29,8 @@
 #if ENABLE(WEB_TIMING)
 
 #include "DOMWrapperWorld.h"
+#include <heap/HeapInlines.h>
+#include <runtime/AuxiliaryBarrierInlines.h>
 #include <runtime/IdentifierInlines.h>
 #include <runtime/JSObject.h>
 #include <runtime/ObjectConstructor.h>

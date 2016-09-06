@@ -51,6 +51,7 @@
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
 #include <wtf/RAMSize.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEBGL)    
 #include "WebGLContextAttributes.h"

@@ -26,6 +26,7 @@
 #include "JSScope.h"
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

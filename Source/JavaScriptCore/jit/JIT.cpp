@@ -48,6 +48,7 @@
 #include "SuperSampler.h"
 #include "TypeProfilerLog.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/SimpleStats.h>
 
 using namespace std;
 
@@ -64,6 +65,14 @@ void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr new
     MacroAssembler::repatchCall(
         CodeLocationCall(MacroAssemblerCodePtr(returnAddress)),
         newCalleeFunction);
+}
+
+JIT::CodeRef JIT::compileCTINativeCall(VM* vm, NativeFunction func)
+{
+    if (!vm->canUseJIT())
+        return CodeRef::createLLIntCodeRef(llint_native_call_trampoline);
+    JIT jit(vm, 0);
+    return jit.privateCompileCTINativeCall(vm, func);
 }
 
 JIT::JIT(VM* vm, CodeBlock* codeBlock)
@@ -786,7 +795,7 @@ CompilationResult JIT::link()
         patchBuffer,
         ("Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT)).data()));
     
-    m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT.add(
+    m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
         static_cast<double>(result.size()) /
         static_cast<double>(m_instructions.size()));
 

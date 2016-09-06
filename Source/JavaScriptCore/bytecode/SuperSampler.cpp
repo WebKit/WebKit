@@ -36,6 +36,7 @@ namespace JSC {
 
 volatile uint32_t g_superSamplerCount;
 
+static StaticLock lock;
 static double in;
 static double out;
 
@@ -51,10 +52,13 @@ void initializeSuperSampler()
             const int printingPeriod = 1000;
             for (;;) {
                 for (int ms = 0; ms < printingPeriod; ms += sleepQuantum) {
-                    if (g_superSamplerCount)
-                        in++;
-                    else
-                        out++;
+                    {
+                        LockHolder locker(lock);
+                        if (g_superSamplerCount)
+                            in++;
+                        else
+                            out++;
+                    }
                     sleepMS(sleepQuantum);
                 }
                 printSuperSamplerState();
@@ -64,11 +68,19 @@ void initializeSuperSampler()
         });
 }
 
+void resetSuperSamplerState()
+{
+    LockHolder locker(lock);
+    in = 0;
+    out = 0;
+}
+
 void printSuperSamplerState()
 {
     if (!Options::useSuperSampler())
         return;
 
+    LockHolder locker(lock);
     double percentage = 100.0 * in / (in + out);
     if (percentage != percentage)
         percentage = 0.0;

@@ -933,17 +933,20 @@ char* JIT_OPERATION operationNewEmptyArray(ExecState* exec, Structure* arrayStru
     return bitwise_cast<char*>(JSArray::create(*vm, arrayStructure));
 }
 
-char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayStructure, int32_t size)
+char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayStructure, int32_t size, Butterfly* butterfly)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(size < 0))
         return bitwise_cast<char*>(throwException(exec, scope, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
 
-    JSArray* result = JSArray::create(*vm, arrayStructure, size);
-    result->butterfly(); // Ensure that the backing store is in to-space.
+    JSArray* result;
+    if (butterfly)
+        result = JSArray::createWithButterfly(vm, arrayStructure, butterfly);
+    else
+        result = JSArray::create(vm, arrayStructure, size);
     return bitwise_cast<char*>(result);
 }
 
@@ -1629,13 +1632,13 @@ size_t JIT_OPERATION operationDefaultHasInstance(ExecState* exec, JSCell* value,
     return 0;
 }
 
-char* JIT_OPERATION operationNewRawObject(ExecState* exec, Structure* structure, int32_t length)
+char* JIT_OPERATION operationNewRawObject(ExecState* exec, Structure* structure, int32_t length, Butterfly* butterfly)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    Butterfly* butterfly;
-    if (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType())) {
+    if (!butterfly
+        && (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType()))) {
         IndexingHeader header;
         header.setVectorLength(length);
         header.setPublicLength(0);
@@ -1644,28 +1647,29 @@ char* JIT_OPERATION operationNewRawObject(ExecState* exec, Structure* structure,
             vm, nullptr, 0, structure->outOfLineCapacity(),
             hasIndexedProperties(structure->indexingType()), header,
             length * sizeof(EncodedJSValue));
-    } else
-        butterfly = nullptr;
+    }
 
     JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
     result->butterfly(); // Ensure that the butterfly is in to-space.
     return bitwise_cast<char*>(result);
 }
 
-JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState* exec, Structure* structure)
+JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState* exec, Structure* structure, Butterfly* butterfly)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     
-    Butterfly* butterfly = Butterfly::create(
-        vm, nullptr, 0, structure->outOfLineCapacity(), false, IndexingHeader(), 0);
+    if (!butterfly) {
+        butterfly = Butterfly::create(
+            vm, nullptr, 0, structure->outOfLineCapacity(), false, IndexingHeader(), 0);
+    }
     
     JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
     result->butterfly(); // Ensure that the butterfly is in to-space.
     return result;
 }
 
-JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(ExecState* exec, Structure* structure, unsigned length)
+JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(ExecState* exec, Structure* structure, unsigned length, Butterfly* butterfly)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1673,10 +1677,14 @@ JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVector
     IndexingHeader header;
     header.setVectorLength(length);
     header.setPublicLength(0);
-    Butterfly* butterfly = Butterfly::create(
-        vm, nullptr, 0, structure->outOfLineCapacity(), true, header,
-        sizeof(EncodedJSValue) * length);
-
+    if (butterfly)
+        *butterfly->indexingHeader() = header;
+    else {
+        butterfly = Butterfly::create(
+            vm, nullptr, 0, structure->outOfLineCapacity(), true, header,
+            sizeof(EncodedJSValue) * length);
+    }
+    
     // Paradoxically this may allocate a JSArray. That's totally cool.
     JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
     result->butterfly(); // Ensure that the butterfly is in to-space.

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ThrowScope.h"
 
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "VM.h"
 
 namespace JSC {
