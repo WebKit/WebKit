@@ -2050,19 +2050,6 @@ void FrameView::setIsOverlapped(bool isOverlapped)
     updateCanBlitOnScrollRecursively();
 }
 
-bool FrameView::isOverlappedIncludingAncestors() const
-{
-    if (isOverlapped())
-        return true;
-
-    if (FrameView* parentView = parentFrameView()) {
-        if (parentView->isOverlapped())
-            return true;
-    }
-
-    return false;
-}
-
 void FrameView::setContentIsOpaque(bool contentIsOpaque)
 {
     if (contentIsOpaque == m_contentIsOpaque)

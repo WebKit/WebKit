@@ -258,8 +258,6 @@ public:
 
     void setCannotBlitToWindow();
     void setIsOverlapped(bool);
-    bool isOverlapped() const { return m_isOverlapped; }
-    bool isOverlappedIncludingAncestors() const;
     void setContentIsOpaque(bool);
 
     void addSlowRepaintObject(RenderElement*);
@@ -714,7 +712,7 @@ private:
     
     bool m_canHaveScrollbars;
     bool m_cannotBlitToWindow;
-    bool m_isOverlapped;
+    bool m_isOverlapped { false };
     bool m_contentIsOpaque;
 
     Timer m_layoutTimer;
