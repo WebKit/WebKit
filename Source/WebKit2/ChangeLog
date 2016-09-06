@@ -1,3 +1,23 @@
+2016-09-06  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        [GTK][EFL] Make *_PROCESS_CMD_PREFIX conditional on DEVELOPER_MODE
+        https://bugs.webkit.org/show_bug.cgi?id=161621
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of enabling support for the *_PROCESS_CMD_PREFIX set of
+        environment valiables (eg. WEB_PROCESS_CMD_PREFIX) on debug builds
+        only, enable it when DEVELOPER_MODE is enabled as it already guards
+        similar features (eg. WEBKIT_EXEC_PATH).
+
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2016-09-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix ENABLE(GAMEPAD) build errors on non-Cocoa platforms
