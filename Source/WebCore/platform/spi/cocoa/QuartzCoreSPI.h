@@ -200,8 +200,6 @@ WTF_EXTERN_C_END
 #endif
 @end
 
-WTF_EXTERN_C_BEGIN
-
 extern NSString * const kCATiledLayerRemoveImmediately;
 
 extern NSString * const kCAFilterColorInvert;
@@ -233,8 +231,6 @@ extern NSString * const kCAContextIgnoresHitTest;
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300
 extern NSString * const kCAContentsFormatRGBA10XR;
 #endif
-
-WTF_EXTERN_C_END
 
 #if (PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED < 100000) \
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED < 30000) \
