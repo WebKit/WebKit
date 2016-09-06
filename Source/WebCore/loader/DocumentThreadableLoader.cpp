@@ -222,7 +222,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     Ref<DocumentThreadableLoader> protectedThis(*this);
     if (!isAllowedByContentSecurityPolicy(request.url(), !redirectResponse.isNull())) {
         reportContentSecurityPolicyError(*m_client, redirectResponse.url());
-        request = ResourceRequest();
+        clearResource();
         return;
     }
 

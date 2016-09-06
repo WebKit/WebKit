@@ -244,6 +244,9 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     ASSERT(!response.isNull());
     ASSERT(m_state == Initialized);
 
+    // We want redirect responses to be processed through willSendRequestInternal. The only exception is redirection with no Location headers.
+    ASSERT(response.httpStatusCode() < 300 || response.httpStatusCode() >= 400 || response.httpStatusCode() == 304 || !response.httpHeaderField(HTTPHeaderName::Location));
+
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
     Ref<SubresourceLoader> protectedThis(*this);
