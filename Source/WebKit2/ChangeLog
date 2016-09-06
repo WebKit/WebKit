@@ -1,5 +1,19 @@
 2016-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][Wayland] evince-browser-plugin prevents viewing PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=158697
+
+        Reviewed by Michael Catanzaro.
+
+        Use a different cache file for plugins depending on the current platform display. Plugins can claim to work on
+        X11 but not on Wayland, for example, if they need XEmebed to work. That's the case of the evince browser plugin.
+
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::cacheFilenameForCurrentDisplay):
+        (WebKit::PluginInfoCache::PluginInfoCache):
+
+2016-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Threaded Compositor] Update timer should have lower priority than tasks scheduled in compositing thread
         https://bugs.webkit.org/show_bug.cgi?id=161625
 
