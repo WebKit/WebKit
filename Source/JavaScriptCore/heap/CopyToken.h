@@ -29,6 +29,7 @@
 namespace JSC {
 
 enum CopyToken {
+    TypedArrayVectorCopyToken,
     MapBackingStoreCopyToken,
     DirectArgumentsOverridesCopyToken
 };

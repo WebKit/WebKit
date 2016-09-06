@@ -7180,8 +7180,6 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
     GPRReg scratchGPR2 = scratch2.gpr();
     
     JITCompiler::JumpList slowCases;
-    
-    m_jit.move(TrustedImmPtr(0), storageGPR);
 
     slowCases.append(m_jit.branch32(
         MacroAssembler::Above, sizeGPR, TrustedImm32(JSArrayBufferView::fastSizeLimit)));
@@ -7193,10 +7191,26 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
         m_jit.add32(TrustedImm32(7), scratchGPR);
         m_jit.and32(TrustedImm32(~7), scratchGPR);
     }
-    m_jit.emitAllocateVariableSized(
-        storageGPR, m_jit.vm()->heap.subspaceForAuxiliaryData(), scratchGPR, scratchGPR,
-        scratchGPR2, slowCases);
+    slowCases.append(
+        emitAllocateBasicStorage(scratchGPR, storageGPR));
     
+    m_jit.subPtr(scratchGPR, storageGPR);
+    
+    emitAllocateJSObject<JSArrayBufferView>(
+        resultGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, scratchGPR2,
+        slowCases);
+    
+    m_jit.storePtr(
+        storageGPR,
+        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfVector()));
+    m_jit.store32(
+        sizeGPR,
+        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfLength()));
+    m_jit.store32(
+        TrustedImm32(FastTypedArray),
+        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfMode()));
+    
+#if USE(JSVALUE32_64)
     MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, sizeGPR);
     m_jit.move(sizeGPR, scratchGPR);
     if (elementSize(type) != 4) {
@@ -7216,24 +7230,11 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
         MacroAssembler::BaseIndex(storageGPR, scratchGPR, MacroAssembler::TimesFour));
     m_jit.branchTest32(MacroAssembler::NonZero, scratchGPR).linkTo(loop, &m_jit);
     done.link(&m_jit);
-    
-    emitAllocateJSObject<JSArrayBufferView>(
-        resultGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, scratchGPR2,
-        slowCases);
-    
-    m_jit.storePtr(
-        storageGPR,
-        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfVector()));
-    m_jit.store32(
-        sizeGPR,
-        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfLength()));
-    m_jit.store32(
-        TrustedImm32(FastTypedArray),
-        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfMode()));
+#endif // USE(JSVALUE32_64)
     
     addSlowPathGenerator(slowPathCall(
         slowCases, this, operationNewTypedArrayWithSizeForType(type),
-        resultGPR, structure, sizeGPR, storageGPR));
+        resultGPR, structure, sizeGPR));
     
     cellResult(resultGPR, node);
 }

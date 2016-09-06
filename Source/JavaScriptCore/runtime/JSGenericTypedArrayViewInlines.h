@@ -63,20 +63,6 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
 }
 
 template<typename Adaptor>
-JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createWithFastVector(
-    ExecState* exec, Structure* structure, unsigned length, void* vector)
-{
-    VM& vm = exec->vm();
-    ConstructionContext context(structure, length, vector);
-    RELEASE_ASSERT(context);
-    JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
-        JSGenericTypedArrayView(vm, context);
-    result->finishCreation(vm);
-    return result;
-}
-
-template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninitialized(
     ExecState* exec, Structure* structure, unsigned length)
 {
@@ -477,7 +463,7 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     switch (thisObject->m_mode) {
     case FastTypedArray: {
         if (thisObject->m_vector)
-            visitor.markAuxiliary(thisObject->m_vector.get());
+            visitor.copyLater(thisObject, TypedArrayVectorCopyToken, thisObject->m_vector.get(), thisObject->byteSize());
         break;
     }
         
@@ -495,6 +481,25 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     }
     
     Base::visitChildren(thisObject, visitor);
+}
+
+template<typename Adaptor>
+void JSGenericTypedArrayView<Adaptor>::copyBackingStore(
+    JSCell* cell, CopyVisitor& visitor, CopyToken token)
+{
+    JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
+    
+    if (token == TypedArrayVectorCopyToken
+        && visitor.checkIfShouldCopy(thisObject->m_vector.get())) {
+        ASSERT(thisObject->m_vector);
+        void* oldVector = thisObject->vector();
+        void* newVector = visitor.allocateNewSpace(thisObject->byteSize());
+        memcpy(newVector, oldVector, thisObject->byteSize());
+        thisObject->m_vector.setWithoutBarrier(static_cast<char*>(newVector));
+        visitor.didCopy(oldVector, thisObject->byteSize());
+    }
+    
+    Base::copyBackingStore(thisObject, visitor, token);
 }
 
 template<typename Adaptor>
@@ -545,7 +550,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     }
 
     thisObject->butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
-    thisObject->m_vector.setWithoutBarrier(buffer->data());
+    thisObject->m_vector.setWithoutBarrier(static_cast<char*>(buffer->data()));
     thisObject->m_mode = WastefulTypedArray;
     heap->addReference(thisObject, buffer.get());
     

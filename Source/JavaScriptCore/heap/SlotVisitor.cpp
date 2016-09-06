@@ -247,8 +247,6 @@ void SlotVisitor::markAuxiliary(const void* base)
 {
     HeapCell* cell = bitwise_cast<HeapCell*>(base);
     
-    ASSERT(cell->heap() == heap());
-    
     if (Heap::testAndSetMarked(m_version, cell)) {
         RELEASE_ASSERT(Heap::isMarked(cell));
         return;
