@@ -1,3 +1,12 @@
+2016-09-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make ArithClz32 work with Cell arguments
+        https://bugs.webkit.org/show_bug.cgi?id=161369
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/arith-clz32-on-various-types.js: Added.
+
 2016-09-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r205504.

@@ -1,3 +1,31 @@
+2016-09-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make ArithClz32 work with Cell arguments
+        https://bugs.webkit.org/show_bug.cgi?id=161369
+
+        Reviewed by Geoffrey Garen.
+
+        ArithClz32 was already working with all primitive types
+        thanks to the magic of ValueToInt32.
+        This patch adds support for cell arguments through a function
+        call.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithClz32):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithClz32):
+
 2016-09-06  Mark Lam  <mark.lam@apple.com>
 
         Gardening: change to use old header guard to appease Win EWS.

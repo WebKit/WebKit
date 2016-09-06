@@ -142,7 +142,7 @@ namespace JSC { namespace DFG {
     /* this is only true if we do the overflow check - hence the need to keep it alive. More */\
     /* generally, we need to keep alive any operation whose checks cause filtration in AI. */\
     macro(ArithAdd, NodeResultNumber | NodeMustGenerate) \
-    macro(ArithClz32, NodeResultInt32) \
+    macro(ArithClz32, NodeResultInt32 | NodeMustGenerate) \
     macro(ArithSub, NodeResultNumber | NodeMustGenerate) \
     macro(ArithNegate, NodeResultNumber | NodeMustGenerate) \
     macro(ArithMul, NodeResultNumber | NodeMustGenerate) \

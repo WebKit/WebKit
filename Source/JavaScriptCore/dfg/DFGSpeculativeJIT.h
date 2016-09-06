@@ -1691,6 +1691,12 @@ public:
         return appendCall(operation);
     }
 
+    JITCompiler::Call callOperation(Z_JITOperation_EJ operation, GPRReg result, JSValueRegs arg1)
+    {
+        m_jit.setupArgumentsWithExecState(arg1.payloadGPR());
+        return appendCallSetResult(operation, result);
+    }
+
     JITCompiler::Call callOperation(Z_JITOperation_EJZZ operation, GPRReg result, GPRReg arg1, unsigned arg2, unsigned arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, TrustedImm32(arg2), TrustedImm32(arg3));
@@ -2132,7 +2138,11 @@ public:
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), arg2, EABI_32BIT_DUMMY_ARG arg3.payloadGPR(), arg3.tagGPR());
         return appendCallSetResult(operation, result);
     }
-
+    JITCompiler::Call callOperation(Z_JITOperation_EJ operation, GPRReg result, JSValueRegs arg1)
+    {
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG  arg1.payloadGPR(), arg1.tagGPR());
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(Z_JITOperation_EJZZ operation, GPRReg result, JSValueRegs arg1, unsigned arg2, unsigned arg3)
     {
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG  arg1.payloadGPR(), arg1.tagGPR(), TrustedImm32(arg2), TrustedImm32(arg3));
