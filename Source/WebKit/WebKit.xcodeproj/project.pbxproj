@@ -3273,7 +3273,6 @@
 			);
 			name = "Symlink WebKitPluginHost";
 			outputPaths = (
-				"$(TARGET_BUILD_DIR)/WebKitLegacy.framework/Versions/A/WebKitPluginHost.app",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
