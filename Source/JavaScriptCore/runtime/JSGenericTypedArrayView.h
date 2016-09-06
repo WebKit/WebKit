@@ -106,6 +106,7 @@ protected:
     
 public:
     static JSGenericTypedArrayView* create(ExecState*, Structure*, unsigned length);
+    static JSGenericTypedArrayView* createWithFastVector(ExecState*, Structure*, unsigned length, void* vector);
     static JSGenericTypedArrayView* createUninitialized(ExecState*, Structure*, unsigned length);
     static JSGenericTypedArrayView* create(ExecState*, Structure*, PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
     static JSGenericTypedArrayView* create(VM&, Structure*, PassRefPtr<typename Adaptor::ViewType> impl);
@@ -287,7 +288,6 @@ protected:
 
     static size_t estimatedSize(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
-    static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
 
     // Allocates the full-on native buffer and moves data into the C heap if
     // necessary. Note that this never allocates in the GC heap.

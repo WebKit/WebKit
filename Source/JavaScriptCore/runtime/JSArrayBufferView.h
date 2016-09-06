@@ -26,7 +26,7 @@
 #ifndef JSArrayBufferView_h
 #define JSArrayBufferView_h
 
-#include "CopyBarrier.h"
+#include "AuxiliaryBarrier.h"
 #include "JSObject.h"
 
 namespace JSC {
@@ -119,6 +119,9 @@ protected:
         
         JS_EXPORT_PRIVATE ConstructionContext(VM&, Structure*, uint32_t length, uint32_t elementSize, InitializationMode = ZeroFill);
         
+        // This is only for constructing fast typed arrays. It's used by the JIT's slow path.
+        ConstructionContext(Structure*, uint32_t length, void* vector);
+        
         JS_EXPORT_PRIVATE ConstructionContext(
             VM&, Structure*, PassRefPtr<ArrayBuffer>,
             unsigned byteOffset, unsigned length);
@@ -182,7 +185,7 @@ protected:
 
     static String toStringName(const JSObject*, ExecState*);
 
-    CopyBarrier<char> m_vector; // this is really a void*, but void would not work here.
+    AuxiliaryBarrier<void*> m_vector;
     uint32_t m_length;
     TypedArrayMode m_mode;
 };

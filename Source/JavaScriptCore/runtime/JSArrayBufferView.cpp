@@ -42,6 +42,17 @@ String JSArrayBufferView::toStringName(const JSObject*, ExecState*)
 }
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(
+    Structure* structure, uint32_t length, void* vector)
+    : m_structure(structure)
+    , m_vector(vector)
+    , m_length(length)
+    , m_mode(FastTypedArray)
+    , m_butterfly(nullptr)
+{
+    RELEASE_ASSERT(length <= fastSizeLimit);
+}
+
+JSArrayBufferView::ConstructionContext::ConstructionContext(
     VM& vm, Structure* structure, uint32_t length, uint32_t elementSize,
     InitializationMode mode)
     : m_structure(0)
@@ -50,23 +61,24 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 {
     if (length <= fastSizeLimit) {
         // Attempt GC allocation.
-        void* temp = 0;
+        void* temp;
         size_t size = sizeOf(length, elementSize);
-        // CopiedSpace only allows non-zero size allocations.
-        if (size && !vm.heap.tryAllocateStorage(0, size, &temp))
-            return;
+        if (size) {
+            temp = vm.heap.tryAllocateAuxiliary(nullptr, size);
+            if (!temp)
+                return;
+        } else
+            temp = nullptr;
 
         m_structure = structure;
         m_vector = temp;
         m_mode = FastTypedArray;
 
-#if USE(JSVALUE32_64)
         if (mode == ZeroFill) {
             uint64_t* asWords = static_cast<uint64_t*>(m_vector);
             for (unsigned i = size / sizeof(uint64_t); i--;)
                 asWords[i] = 0;
         }
-#endif // USE(JSVALUE32_64)
         
         return;
     }
@@ -118,7 +130,7 @@ JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
     , m_length(context.length())
     , m_mode(context.mode())
 {
-    m_vector.setWithoutBarrier(static_cast<char*>(context.vector()));
+    m_vector.setWithoutBarrier(context.vector());
 }
 
 void JSArrayBufferView::finishCreation(VM& vm)

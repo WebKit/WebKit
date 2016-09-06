@@ -1,3 +1,45 @@
+2016-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Typed arrays should use MarkedSpace instead of CopiedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=161100
+
+        Reviewed by Geoffrey Garen.
+        
+        This moves typed array backing stores out of CopiedSpace and into Auxiliary MarkedSpace.
+        
+        This is a purely mechanical change since Auxiliary MarkedSpace already knows how to do
+        everything that typed arrays want.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::newTypedArrayWithSize):
+        * dfg/DFGOperations.h:
+        (JSC::DFG::operationNewTypedArrayWithSizeForType):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicStorage): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::initializeArrayElements):
+        (JSC::FTL::DFG::LowerDFGToB3::splatWords):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateBasicStorageAndGetEnd): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::allocateBasicStorage): Deleted.
+        * heap/CopyToken.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::markAuxiliary):
+        * jit/JITOperations.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::createWithFastVector):
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        (JSC::JSGenericTypedArrayView<Adaptor>::copyBackingStore): Deleted.
+
 2016-09-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Silence GCC warning spam introduced in r205462
