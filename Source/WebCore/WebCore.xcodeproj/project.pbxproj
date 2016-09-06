@@ -4506,7 +4506,7 @@
 		B2227AA80D00BF220071B782 /* SVGStopElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279120D00BF210071B782 /* SVGStopElement.cpp */; };
 		B2227AA90D00BF220071B782 /* SVGStopElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279130D00BF210071B782 /* SVGStopElement.h */; };
 		B2227AAB0D00BF220071B782 /* SVGStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279150D00BF210071B782 /* SVGStringList.cpp */; };
-		B2227AAC0D00BF220071B782 /* SVGStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279160D00BF210071B782 /* SVGStringList.h */; };
+		B2227AAC0D00BF220071B782 /* SVGStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279160D00BF210071B782 /* SVGStringList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227AB50D00BF220071B782 /* SVGGraphicsElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222791F0D00BF210071B782 /* SVGGraphicsElement.cpp */; };
 		B2227AB60D00BF220071B782 /* SVGGraphicsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279200D00BF210071B782 /* SVGGraphicsElement.h */; };
 		B2227AB70D00BF220071B782 /* SVGStyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279210D00BF210071B782 /* SVGStyleElement.cpp */; };
@@ -4518,7 +4518,7 @@
 		B2227AC00D00BF220071B782 /* SVGSymbolElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222792A0D00BF210071B782 /* SVGSymbolElement.cpp */; };
 		B2227AC10D00BF220071B782 /* SVGSymbolElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222792B0D00BF210071B782 /* SVGSymbolElement.h */; };
 		B2227AC40D00BF220071B782 /* SVGTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222792E0D00BF210071B782 /* SVGTests.cpp */; };
-		B2227AC50D00BF220071B782 /* SVGTests.h in Headers */ = {isa = PBXBuildFile; fileRef = B222792F0D00BF210071B782 /* SVGTests.h */; };
+		B2227AC50D00BF220071B782 /* SVGTests.h in Headers */ = {isa = PBXBuildFile; fileRef = B222792F0D00BF210071B782 /* SVGTests.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227AC70D00BF220071B782 /* SVGTextContentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279310D00BF210071B782 /* SVGTextContentElement.cpp */; };
 		B2227AC80D00BF220071B782 /* SVGTextContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279320D00BF210071B782 /* SVGTextContentElement.h */; };
 		B2227ACA0D00BF220071B782 /* SVGTextElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279340D00BF210071B782 /* SVGTextElement.cpp */; };

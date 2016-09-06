@@ -336,11 +336,6 @@ void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouse
     simulateClick(*this, underlyingEvent, eventOptions, visualOptions, SimulatedClickCreationOptions::FromUserAgent);
 }
 
-void Element::dispatchSimulatedClickForBindings(Event* underlyingEvent)
-{
-    simulateClick(*this, underlyingEvent, SendNoEvents, DoNotShowPressedLook, SimulatedClickCreationOptions::FromBindings);
-}
-
 Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
     switch (type) {

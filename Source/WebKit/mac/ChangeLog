@@ -1,3 +1,29 @@
+2016-09-05  Darin Adler  <darin@apple.com>
+
+        More bindings improvements, particularly things not needed for JavaScript bindings
+        https://bugs.webkit.org/show_bug.cgi?id=161572
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMDOMImplementation.mm:
+        (-[DOMImplementation hasFeature:version:]): Call SVGTests::hasFeatureForLegacyBindings
+        instead of DOMImplementation::hasFeature. Also removed JSMainThreadNullState
+        since this does not do anything that can invoke JavaScript.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument defaultCharset]): Call defaultCharsetForLegacyBindings. Also removed
+        JSMainThreadNullState.
+
+        * DOM/DOMDocumentType.mm:
+        (-[DOMDocumentType entities]): Changed to simply return nil; same behavior as before,
+        but with no dependency on WebCore. Also removed JSMainThreadNullState.
+        (-[DOMDocumentType notations]): Ditto.
+        (-[DOMDocumentType internalSubset]): Ditto, except empty string rather than nil.
+
+        * DOM/DOMNode.mm:
+        (-[DOMNode isSupported:version:]): Call SVGTests::hasFeatureForLegacyBindings
+        instead of Node::isSupportedForBindings. Also removed JSMainThreadNullState.
+
 2016-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unnecessary RetainPtr.

@@ -33,6 +33,7 @@
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/SVGTests.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -107,15 +108,12 @@ static void webkit_dom_dom_implementation_init(WebKitDOMDOMImplementation* reque
 
 gboolean webkit_dom_dom_implementation_has_feature(WebKitDOMDOMImplementation* self, const gchar* feature, const gchar* version)
 {
-    WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_IMPLEMENTATION(self), FALSE);
     g_return_val_if_fail(feature, FALSE);
     g_return_val_if_fail(version, FALSE);
-    WebCore::DOMImplementation* item = WebKit::core(self);
     WTF::String convertedFeature = WTF::String::fromUTF8(feature);
     WTF::String convertedVersion = WTF::String::fromUTF8(version);
-    gboolean result = item->hasFeature(convertedFeature, convertedVersion);
-    return result;
+    return WebCore::SVGTests::hasFeatureForLegacyBindings(convertedFeature, convertedVersion);
 }
 
 WebKitDOMDocumentType* webkit_dom_dom_implementation_create_document_type(WebKitDOMDOMImplementation* self, const gchar* qualifiedName, const gchar* publicId, const gchar* systemId, GError** error)

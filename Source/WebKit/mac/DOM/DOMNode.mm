@@ -33,9 +33,11 @@
 #import "DOMNodeListInternal.h"
 #import "ExceptionHandlers.h"
 #import "ObjCEventListener.h"
+#import <WebCore/DOMImplementation.h>
 #import <WebCore/Element.h>
 #import <WebCore/JSMainThreadExecState.h>
 #import <WebCore/NodeList.h>
+#import <WebCore/SVGTests.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
@@ -291,8 +293,7 @@ DOMNode *kit(Node* value)
 
 - (BOOL)isSupported:(NSString *)feature version:(NSString *)version
 {
-    JSMainThreadNullState state;
-    return unwrap(*self).isSupportedForBindings(feature, version);
+    return SVGTests::hasFeatureForLegacyBindings(feature, version);
 }
 
 - (BOOL)hasAttributes

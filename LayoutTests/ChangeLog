@@ -1,3 +1,47 @@
+2016-09-05  Darin Adler  <darin@apple.com>
+
+        More bindings improvements, particularly things not needed for JavaScript bindings
+        https://bugs.webkit.org/show_bug.cgi?id=161572
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Updated to expect success instead of failure for the
+        imported/mozilla/svg tests named conditions-01.svg, conditions-06.svg,
+        dynamic-conditions-01.svg, switch-01.svg, and
+        svg-integration/dynamic-conditions-outer-svg-03.xhtml. These are now all passing,
+        likely because of a progression due to correctly handling bogus feature strings.
+        Also, a comment in bug 139115 claims that requiredFeatures it going to be removed
+        from the SVG specifications and from other implementations. Updated to expect
+        possible failure for dynamic-conditions-08.svg and dynamic-conditions-12.svg. Before
+        these were reliably passing because of the incorrect handling of bogus feature strings.
+        Now, they are sometimes failing because the tests include required code that runs on
+        a timer, but no code to guarantee the test engine will wait for the timer to fire.
+
+        * platform/efl/TestExpectations: Removed now-redundant expectations that these
+        tests will pass; now expected on all platforms.
+
+        * platform/ios-simulator/svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/struct-dom-04-b-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1/struct-dom-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-04-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-05-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-05-b-expected.txt:
+        * svg/custom/svg-features-expected.txt:
+        Updated results for all these tests now that DOMImplementation.hasFeature always
+        returns true. The tests aren't super-valuable any more, but I don't see a good
+        reason to locally modify the imported tests from the W3C-SVG-1.1 suite, and
+        while the svg-features test isn't great, keeping it does provide a little test
+        coverage for the "always return true" behavior.
+
+        * platform/ios-simulator/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        Updated for progression due to correctly handling bogus feature strings.
+
 2016-09-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r205450.

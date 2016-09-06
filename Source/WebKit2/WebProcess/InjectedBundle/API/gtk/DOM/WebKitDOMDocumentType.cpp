@@ -232,29 +232,20 @@ gchar* webkit_dom_document_type_get_name(WebKitDOMDocumentType* self)
 
 WebKitDOMNamedNodeMap* webkit_dom_document_type_get_entities(WebKitDOMDocumentType* self)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT_TYPE(self), 0);
-    WebCore::DocumentType* item = WebKit::core(self);
-    RefPtr<WebCore::NamedNodeMap> gobjectResult = WTF::getPtr(item->entitiesForBindings());
-    return WebKit::kit(gobjectResult.get());
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT_TYPE(self), nullptr);
+    return nullptr;
 }
 
 WebKitDOMNamedNodeMap* webkit_dom_document_type_get_notations(WebKitDOMDocumentType* self)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT_TYPE(self), 0);
-    WebCore::DocumentType* item = WebKit::core(self);
-    RefPtr<WebCore::NamedNodeMap> gobjectResult = WTF::getPtr(item->notationsForBindings());
-    return WebKit::kit(gobjectResult.get());
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT_TYPE(self), nullptr);
+    return nullptr;
 }
 
 gchar* webkit_dom_document_type_get_internal_subset(WebKitDOMDocumentType* self)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT_TYPE(self), 0);
-    WebCore::DocumentType* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->internalSubsetForBindings());
-    return result;
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT_TYPE(self), nullptr);
+    return nullptr;
 }
 
 gchar* webkit_dom_document_type_get_public_id(WebKitDOMDocumentType* self)

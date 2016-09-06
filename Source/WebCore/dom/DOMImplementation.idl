@@ -27,9 +27,7 @@
     [NewObject] XMLDocument createDocument(DOMString? namespaceURI, [TreatNullAs=EmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
     [NewObject] HTMLDocument createHTMLDocument(optional DOMString title);
 
-    // FIXME: Latest DOM specification says this should ignore all arguments and always return true.
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    boolean hasFeature(optional DOMString feature = "undefined", [TreatNullAs=EmptyString] optional DOMString version = "undefined");
+    boolean hasFeature();
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");

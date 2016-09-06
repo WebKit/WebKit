@@ -121,9 +121,6 @@ public:
         DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20,
     };
 
-    // Only used by ObjC / GObject bindings.
-    WEBCORE_EXPORT static bool isSupportedForBindings(const String& feature, const String& version);
-
     WEBCORE_EXPORT static void startIgnoringLeaks();
     WEBCORE_EXPORT static void stopIgnoringLeaks();
 

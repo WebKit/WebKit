@@ -413,7 +413,7 @@ public:
 
     WEBCORE_EXPORT String readyState() const;
 
-    WEBCORE_EXPORT String defaultCharsetForBindings() const;
+    WEBCORE_EXPORT String defaultCharsetForLegacyBindings() const;
 
     String charset() const { return Document::encoding(); }
     WEBCORE_EXPORT String characterSetWithUTF8Fallback() const;

@@ -36,6 +36,7 @@
 #import <WebCore/DocumentType.h>
 #import <WebCore/HTMLDocument.h>
 #import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/SVGTests.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
@@ -58,8 +59,7 @@ static inline WebCore::DOMImplementation& unwrap(DOMImplementation& wrapper)
 
 - (BOOL)hasFeature:(NSString *)feature version:(NSString *)version
 {
-    WebCore::JSMainThreadNullState state;
-    return unwrap(*self).hasFeature(feature, version);
+    return WebCore::SVGTests::hasFeatureForLegacyBindings(feature, version);
 }
 
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName publicId:(NSString *)publicId systemId:(NSString *)systemId

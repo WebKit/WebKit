@@ -111,7 +111,7 @@ bool JSLocation::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
 static void addCrossOriginLocationPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
 {
     // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
-    static const Identifier* properties[] = { &state.propertyNames().href, &state.propertyNames().replace };
+    static const Identifier* const properties[] = { &state.propertyNames().href, &state.propertyNames().replace };
     for (auto* property : properties)
         propertyNames.add(*property);
 }

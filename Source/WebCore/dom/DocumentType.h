@@ -37,11 +37,6 @@ public:
         return adoptRef(*new DocumentType(document, name, publicId, systemId));
     }
 
-    // These are needed by ObjC / GObject bindings for backward compatibility.
-    NamedNodeMap* entitiesForBindings() const { return nullptr; }
-    NamedNodeMap* notationsForBindings() const { return nullptr; }
-    String internalSubsetForBindings() const { return String(); }
-
     const String& name() const { return m_name; }
     const String& publicId() const { return m_publicId; }
     const String& systemId() const { return m_systemId; }

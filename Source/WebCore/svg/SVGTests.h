@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTests_h
-#define SVGTests_h
+#pragma once
 
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGStringList.h"
@@ -46,6 +45,8 @@ public:
 
     static const SVGAttributeToPropertyMap& attributeToPropertyMap();
 
+    WEBCORE_EXPORT static bool hasFeatureForLegacyBindings(const String& feature, const String& version);
+
 protected:
     SVGTests();
 
@@ -62,5 +63,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SVGTests_h

@@ -145,9 +145,7 @@ WebKitDOMNode* webkit_dom_node_clone_node(WebKitDOMNode* self, gboolean deep)
 gchar* webkit_dom_document_get_default_charset(WebKitDOMDocument* self)
 {
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), nullptr);
-
-    WebCore::JSMainThreadNullState state;
-    return convertToUTF8String(WebKit::core(self)->defaultCharsetForBindings());
+    return convertToUTF8String(WebKit::core(self)->defaultCharsetForLegacyBindings());
 }
 
 WebKitDOMText* webkit_dom_text_replace_whole_text(WebKitDOMText* self, const gchar* content, GError** error)

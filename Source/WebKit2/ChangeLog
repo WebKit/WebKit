@@ -1,3 +1,29 @@
+2016-09-05  Darin Adler  <darin@apple.com>
+
+        More bindings improvements, particularly things not needed for JavaScript bindings
+        https://bugs.webkit.org/show_bug.cgi?id=161572
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.cpp:
+        (webkit_dom_dom_implementation_has_feature): Call SVGTests::hasFeatureForLegacyBindings
+        instead of DOMImplementation::hasFeature. Also removed JSMainThreadNullState
+        since this does not do anything that can invoke JavaScript.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.cpp:
+        (webkit_dom_document_get_default_charset): Call defaultCharsetForLegacyBindings.
+        Also removed JSMainThreadNullState.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.cpp:
+        (webkit_dom_document_type_get_entities): Changed to simply return nullptr; same behavior
+        as before, but with no dependency on WebCore. Also removed JSMainThreadNullState.
+        (webkit_dom_document_type_get_notations): Ditto.
+        (webkit_dom_document_type_get_internal_subset): Ditto.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.cpp:
+        (webkit_dom_node_is_supported): Call SVGTests::hasFeatureForLegacyBindings
+        instead of Node::isSupportedForBindings. Also removed JSMainThreadNullState.
+
 2016-09-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, update stale variable name

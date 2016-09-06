@@ -322,7 +322,7 @@ void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNa
 static void addCrossOriginWindowPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
 {
     // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
-    static const Identifier* properties[] = {
+    static const Identifier* const properties[] = {
         &state.propertyNames().blur, &state.propertyNames().close, &state.propertyNames().closed,
         &state.propertyNames().focus, &state.propertyNames().frames, &state.propertyNames().length,
         &state.propertyNames().location, &state.propertyNames().opener, &state.propertyNames().parent,

@@ -34,6 +34,6 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,222) size 147x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 147x35
         chunk 1 text run 1 at (10.00,250.00) startOffset 0 endOffset 11 width 146.65: "org.w3c.svg"
-    RenderSVGText {text} at (370,222) size 57x36 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 57x35
-        chunk 1 text run 1 at (370.00,250.00) startOffset 0 endOffset 5 width 56.63: "false"
+    RenderSVGText {text} at (370,222) size 47x36 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 47x35
+        chunk 1 text run 1 at (370.00,250.00) startOffset 0 endOffset 4 width 46.64: "true"

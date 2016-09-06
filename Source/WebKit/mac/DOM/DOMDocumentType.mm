@@ -48,14 +48,12 @@
 
 - (DOMNamedNodeMap *)entities
 {
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->entitiesForBindings()));
+    return nil;
 }
 
 - (DOMNamedNodeMap *)notations
 {
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->notationsForBindings()));
+    return nil;
 }
 
 - (NSString *)publicId
@@ -72,8 +70,7 @@
 
 - (NSString *)internalSubset
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->internalSubsetForBindings();
+    return @"";
 }
 
 - (void)remove
