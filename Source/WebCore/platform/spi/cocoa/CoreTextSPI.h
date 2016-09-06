@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions)
 
 #endif
 
-extern "C" {
+WTF_EXTERN_C_BEGIN
 
 typedef const UniChar* (*CTUniCharProviderCallback)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon);
 typedef void (*CTUniCharDisposeCallback)(const UniChar* chars, void* refCon);
@@ -122,6 +122,6 @@ bool CTFontIsAppleColorEmoji(CTFontRef);
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
 
-}
+WTF_EXTERN_C_END
 
 #endif

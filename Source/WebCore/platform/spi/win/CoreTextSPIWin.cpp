@@ -26,10 +26,10 @@
 #include "config.h"
 #include "CoreTextSPIWin.h"
 
-extern "C" {
+WTF_EXTERN_C_BEGIN
 
 const CFStringRef kCTFontAttributeName = CFSTR("NSFont");
 const CFStringRef kCTForegroundColorFromContextAttributeName = CFSTR("CTForegroundColorFromContext");
 
-}
+WTF_EXTERN_C_END
 

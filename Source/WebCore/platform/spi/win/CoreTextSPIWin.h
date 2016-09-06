@@ -29,7 +29,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
 
-extern "C" {
+WTF_EXTERN_C_BEGIN
 
 typedef const struct __CTFont* CTFontRef;
 typedef const struct __CTLine* CTLineRef;
@@ -52,5 +52,5 @@ void CTLineDraw(CTLineRef, CGContextRef);
 CFDataRef CTFontCopyTable(CTFontRef, CTFontTableTag, CTFontTableOptions);
 CFArrayRef CTFontCopyAvailableTables(CTFontRef, CTFontTableOptions);
 
-}
+WTF_EXTERN_C_END
 

@@ -31,8 +31,11 @@
 #import <CoreFoundation/CFPriv.h>
 #endif
 
-extern "C" {
+WTF_EXTERN_C_BEGIN
+
 CFDictionaryRef _CFCopySystemVersionDictionary(void);
 extern const CFStringRef _kCFSystemVersionProductVersionKey;
 extern const CFStringRef _kCFSystemVersionBuildVersionKey;
-}
+
+WTF_EXTERN_C_END
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,12 @@
 
 // FIXME: We conditionally enclose the ManagedConfiguration headers in an extern "C" linkage
 // block to make them suitable for C++ use.
-#ifdef __cplusplus
-extern "C" {
-#endif
+WTF_EXTERN_C_BEGIN
 
 #import <ManagedConfiguration/MCFeatures.h>
 #import <ManagedConfiguration/MCProfileConnection.h>
 
-#ifdef __cplusplus
-}
-#endif
+WTF_EXTERN_C_END
 
 #else
 

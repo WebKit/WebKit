@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,12 +38,20 @@
 
 typedef uint32_t IOPMAssertionID;
 
-EXTERN_C const CFStringRef kIOPMAssertionTypePreventUserIdleDisplaySleep = CFSTR("PreventUserIdleDisplaySleep");
+WTF_EXTERN_C_BEGIN
+
+const CFStringRef kIOPMAssertionTypePreventUserIdleDisplaySleep = CFSTR("PreventUserIdleDisplaySleep");
+
+WTF_EXTERN_C_END
 
 #endif
 
-EXTERN_C IOReturn IOPMAssertionCreateWithDescription(CFStringRef assertionType, CFStringRef name, CFStringRef details, CFStringRef humanReadableReason,
+WTF_EXTERN_C_BEGIN
+
+IOReturn IOPMAssertionCreateWithDescription(CFStringRef assertionType, CFStringRef name, CFStringRef details, CFStringRef humanReadableReason,
                                                      CFStringRef localizationBundlePath, CFTimeInterval timeout, CFStringRef timeoutAction, IOPMAssertionID *);
-EXTERN_C IOReturn IOPMAssertionRelease(IOPMAssertionID);
+IOReturn IOPMAssertionRelease(IOPMAssertionID);
+
+WTF_EXTERN_C_END
 
 #endif // IOPMLibSPI_h

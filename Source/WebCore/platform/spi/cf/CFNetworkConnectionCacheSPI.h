@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,11 @@ enum HTTPConnectionCacheLimitKeys {
 };
 #endif
 
-EXTERN_C int _CFNetworkHTTPConnectionCacheGetLimit(HTTPConnectionCacheLimitKeys);
-EXTERN_C void _CFNetworkHTTPConnectionCacheSetLimit(HTTPConnectionCacheLimitKeys, int);
+WTF_EXTERN_C_BEGIN
+
+int _CFNetworkHTTPConnectionCacheGetLimit(HTTPConnectionCacheLimitKeys);
+void _CFNetworkHTTPConnectionCacheSetLimit(HTTPConnectionCacheLimitKeys, int);
+
+WTF_EXTERN_C_END
 
 #endif // CFNetworkConnectionCacheSPI_h

@@ -51,4 +51,8 @@
 
 #endif
 
-extern "C" uint32_t dyld_get_program_sdk_version();
+WTF_EXTERN_C_BEGIN
+
+uint32_t dyld_get_program_sdk_version();
+
+WTF_EXTERN_C_END

@@ -1,3 +1,14 @@
+2016-09-06  Daniel Bates  <dabates@apple.com>
+
+        Remove EXTERN_C from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=161090
+
+        Reviewed by Brent Fulgham.
+
+        Guard external C declarations in WTF_EXTERN_C_BEGIN, WTF_EXTERN_C_END.
+
+        * Platform/spi/ios/ManagedConfigurationSPI.h:
+
 2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r205407.

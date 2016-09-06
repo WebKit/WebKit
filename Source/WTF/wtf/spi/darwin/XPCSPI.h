@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,71 +79,73 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 #include <xpc/private.h>
 #endif
 
-EXTERN_C const struct _xpc_dictionary_s _xpc_error_connection_invalid;
-EXTERN_C const struct _xpc_dictionary_s _xpc_error_termination_imminent;
+WTF_EXTERN_C_BEGIN
 
-EXTERN_C const struct _xpc_type_s _xpc_type_array;
-EXTERN_C const struct _xpc_type_s _xpc_type_bool;
-EXTERN_C const struct _xpc_type_s _xpc_type_dictionary;
-EXTERN_C const struct _xpc_type_s _xpc_type_error;
-EXTERN_C const struct _xpc_type_s _xpc_type_string;
+extern const struct _xpc_dictionary_s _xpc_error_connection_invalid;
+extern const struct _xpc_dictionary_s _xpc_error_termination_imminent;
 
-EXTERN_C xpc_object_t xpc_array_create(const xpc_object_t*, size_t count);
+extern const struct _xpc_type_s _xpc_type_array;
+extern const struct _xpc_type_s _xpc_type_bool;
+extern const struct _xpc_type_s _xpc_type_dictionary;
+extern const struct _xpc_type_s _xpc_type_error;
+extern const struct _xpc_type_s _xpc_type_string;
+
+xpc_object_t xpc_array_create(const xpc_object_t*, size_t count);
 #if COMPILER_SUPPORTS(BLOCKS)
-EXTERN_C bool xpc_array_apply(xpc_object_t, xpc_array_applier_t);
-EXTERN_C bool xpc_dictionary_apply(xpc_object_t xdict, xpc_dictionary_applier_t applier);
+bool xpc_array_apply(xpc_object_t, xpc_array_applier_t);
+bool xpc_dictionary_apply(xpc_object_t xdict, xpc_dictionary_applier_t applier);
 #endif
-EXTERN_C size_t xpc_array_get_count(xpc_object_t);
-EXTERN_C const char* xpc_array_get_string(xpc_object_t, size_t index);
-EXTERN_C void xpc_array_set_string(xpc_object_t, size_t index, const char* string);
-EXTERN_C bool xpc_bool_get_value(xpc_object_t);
-EXTERN_C void xpc_connection_cancel(xpc_connection_t);
-EXTERN_C xpc_connection_t xpc_connection_create(const char* name, dispatch_queue_t);
-EXTERN_C xpc_connection_t xpc_connection_create_mach_service(const char* name, dispatch_queue_t, uint64_t flags);
-EXTERN_C pid_t xpc_connection_get_pid(xpc_connection_t);
-EXTERN_C void xpc_connection_resume(xpc_connection_t);
-EXTERN_C void xpc_connection_send_message(xpc_connection_t, xpc_object_t);
-EXTERN_C void xpc_connection_send_message_with_reply(xpc_connection_t, xpc_object_t, dispatch_queue_t, xpc_handler_t);
-EXTERN_C void xpc_connection_set_event_handler(xpc_connection_t, xpc_handler_t);
-EXTERN_C void xpc_connection_set_target_queue(xpc_connection_t, dispatch_queue_t);
-EXTERN_C xpc_object_t xpc_dictionary_create(const char*  const* keys, const xpc_object_t*, size_t count);
-EXTERN_C xpc_object_t xpc_dictionary_create_reply(xpc_object_t);
-EXTERN_C int xpc_dictionary_dup_fd(xpc_object_t, const char* key);
-EXTERN_C xpc_connection_t xpc_dictionary_get_remote_connection(xpc_object_t);
-EXTERN_C bool xpc_dictionary_get_bool(xpc_object_t, const char* key);
-EXTERN_C const char* xpc_dictionary_get_string(xpc_object_t, const char* key);
-EXTERN_C uint64_t xpc_dictionary_get_uint64(xpc_object_t, const char* key);
-EXTERN_C xpc_object_t xpc_dictionary_get_value(xpc_object_t, const char* key);
-EXTERN_C void xpc_dictionary_set_bool(xpc_object_t, const char* key, bool value);
-EXTERN_C void xpc_dictionary_set_fd(xpc_object_t, const char* key, int fd);
-EXTERN_C void xpc_dictionary_set_string(xpc_object_t, const char* key, const char* string);
-EXTERN_C void xpc_dictionary_set_uint64(xpc_object_t, const char* key, uint64_t value);
-EXTERN_C void xpc_dictionary_set_value(xpc_object_t, const char*key, xpc_object_t value);
-EXTERN_C xpc_type_t xpc_get_type(xpc_object_t);
-EXTERN_C void xpc_main(xpc_connection_handler_t);
-EXTERN_C const char* xpc_string_get_string_ptr(xpc_object_t);
-EXTERN_C void xpc_transaction_begin(void);
-EXTERN_C void xpc_transaction_end(void);
-EXTERN_C void xpc_transaction_exit_clean(void);
-EXTERN_C void xpc_track_activity(void);
+size_t xpc_array_get_count(xpc_object_t);
+const char* xpc_array_get_string(xpc_object_t, size_t index);
+void xpc_array_set_string(xpc_object_t, size_t index, const char* string);
+bool xpc_bool_get_value(xpc_object_t);
+void xpc_connection_cancel(xpc_connection_t);
+xpc_connection_t xpc_connection_create(const char* name, dispatch_queue_t);
+xpc_connection_t xpc_connection_create_mach_service(const char* name, dispatch_queue_t, uint64_t flags);
+pid_t xpc_connection_get_pid(xpc_connection_t);
+void xpc_connection_resume(xpc_connection_t);
+void xpc_connection_send_message(xpc_connection_t, xpc_object_t);
+void xpc_connection_send_message_with_reply(xpc_connection_t, xpc_object_t, dispatch_queue_t, xpc_handler_t);
+void xpc_connection_set_event_handler(xpc_connection_t, xpc_handler_t);
+void xpc_connection_set_target_queue(xpc_connection_t, dispatch_queue_t);
+xpc_object_t xpc_dictionary_create(const char*  const* keys, const xpc_object_t*, size_t count);
+xpc_object_t xpc_dictionary_create_reply(xpc_object_t);
+int xpc_dictionary_dup_fd(xpc_object_t, const char* key);
+xpc_connection_t xpc_dictionary_get_remote_connection(xpc_object_t);
+bool xpc_dictionary_get_bool(xpc_object_t, const char* key);
+const char* xpc_dictionary_get_string(xpc_object_t, const char* key);
+uint64_t xpc_dictionary_get_uint64(xpc_object_t, const char* key);
+xpc_object_t xpc_dictionary_get_value(xpc_object_t, const char* key);
+void xpc_dictionary_set_bool(xpc_object_t, const char* key, bool value);
+void xpc_dictionary_set_fd(xpc_object_t, const char* key, int fd);
+void xpc_dictionary_set_string(xpc_object_t, const char* key, const char* string);
+void xpc_dictionary_set_uint64(xpc_object_t, const char* key, uint64_t value);
+void xpc_dictionary_set_value(xpc_object_t, const char*key, xpc_object_t value);
+xpc_type_t xpc_get_type(xpc_object_t);
+void xpc_main(xpc_connection_handler_t);
+const char* xpc_string_get_string_ptr(xpc_object_t);
+void xpc_transaction_begin(void);
+void xpc_transaction_end(void);
+void xpc_transaction_exit_clean(void);
+void xpc_track_activity(void);
 
-EXTERN_C xpc_object_t xpc_connection_copy_entitlement_value(xpc_connection_t, const char* entitlement);
-EXTERN_C void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
-EXTERN_C void xpc_connection_kill(xpc_connection_t, int);
-EXTERN_C void xpc_connection_set_instance(xpc_connection_t, uuid_t);
-EXTERN_C mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
-EXTERN_C void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
+xpc_object_t xpc_connection_copy_entitlement_value(xpc_connection_t, const char* entitlement);
+void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
+void xpc_connection_kill(xpc_connection_t, int);
+void xpc_connection_set_instance(xpc_connection_t, uuid_t);
+mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
+void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
 
-EXTERN_C void xpc_connection_set_bootstrap(xpc_connection_t, xpc_object_t bootstrap);
-EXTERN_C xpc_object_t xpc_copy_bootstrap(void);
-EXTERN_C void xpc_connection_set_oneshot_instance(xpc_connection_t, uuid_t instance);
+void xpc_connection_set_bootstrap(xpc_connection_t, xpc_object_t bootstrap);
+xpc_object_t xpc_copy_bootstrap(void);
+void xpc_connection_set_oneshot_instance(xpc_connection_t, uuid_t instance);
 
 #if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
 #if !defined(xpc_retain)
 #define xpc_retain(object) ({ xpc_object_t _o = (object); _xpc_object_validate(_o); [_o retain]; })
 #endif
 #else
-EXTERN_C xpc_object_t xpc_retain(xpc_object_t);
+xpc_object_t xpc_retain(xpc_object_t);
 #endif
 
 #if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
@@ -151,7 +153,9 @@ EXTERN_C xpc_object_t xpc_retain(xpc_object_t);
 #define xpc_release(object) ({ xpc_object_t _o = (object); _xpc_object_validate(_o); [_o release]; })
 #endif
 #else
-EXTERN_C void xpc_release(xpc_object_t);
+void xpc_release(xpc_object_t);
 #endif
+
+WTF_EXTERN_C_END
 
 #endif // XPCSPI_h

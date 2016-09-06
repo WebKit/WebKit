@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,13 @@
 #endif
 
 typedef struct __CCRandom* CCRandomRef;
+
+WTF_EXTERN_C_BEGIN
+
 extern const CCRandomRef kCCRandomDefault;
-extern "C" int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
+int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
+
+WTF_EXTERN_C_END
 
 #endif // OS(DARWIN)
 

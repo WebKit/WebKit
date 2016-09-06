@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,10 @@
 #import <Foundation/NSMapTablePriv.h>
 #endif
 
-EXTERN_C void *NSMapGet(NSMapTable *, const void *key);
-EXTERN_C void NSMapInsert(NSMapTable *, const void *key, const void *value);
-EXTERN_C void NSMapRemove(NSMapTable *, const void *key);
+WTF_EXTERN_C_BEGIN
+
+void *NSMapGet(NSMapTable *, const void *key);
+void NSMapInsert(NSMapTable *, const void *key, const void *value);
+void NSMapRemove(NSMapTable *, const void *key);
+
+WTF_EXTERN_C_END

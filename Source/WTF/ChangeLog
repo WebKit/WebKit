@@ -1,3 +1,21 @@
+2016-09-06  Daniel Bates  <dabates@apple.com>
+
+        Remove EXTERN_C from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=161090
+
+        Reviewed by Brent Fulgham.
+
+        Guard external C declarations in WTF_EXTERN_C_BEGIN, WTF_EXTERN_C_END.
+
+        * wtf/Compiler.h: Remove macro definition EXTERN_C.
+        * wtf/spi/cf/CFBundleSPI.h:
+        * wtf/spi/cocoa/NSMapTableSPI.h:
+        * wtf/spi/cocoa/SecuritySPI.h:
+        * wtf/spi/darwin/CommonCryptoSPI.h:
+        * wtf/spi/darwin/SandboxSPI.h:
+        * wtf/spi/darwin/XPCSPI.h:
+        * wtf/spi/darwin/dyldSPI.h:
+
 2016-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
