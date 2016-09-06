@@ -30,6 +30,7 @@
 #include "Options.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
