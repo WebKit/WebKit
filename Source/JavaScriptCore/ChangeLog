@@ -1,5 +1,25 @@
 2016-09-06  Saam Barati  <sbarati@apple.com>
 
+        Member call on NULL pointer in JavaScriptCore/dfg/DFGAbstractInterpretterInlines.h
+        https://bugs.webkit.org/show_bug.cgi?id=160870
+
+        Reviewed by Darin Adler.
+
+        Credit goes to Jonathan Bedard for finding this bug using the undefined
+        behavior sanitizer.
+
+        The rule for MaterializeNewObject inside AI was assuming that the graph
+        is in SSA form. This used to be true when MaterializeNewObject was only
+        inserted by the allocation sinking phase. However, Filip added more uses
+        of MaterializeNewObject in his RegExp constant folding patch. This fixes
+        the bug by using the structure set inside the Node's OpInfo rather than
+        generating it from m_phiChildren inside AI.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2016-09-06  Saam Barati  <sbarati@apple.com>
+
         Make JSMap and JSSet faster
         https://bugs.webkit.org/show_bug.cgi?id=160989
 

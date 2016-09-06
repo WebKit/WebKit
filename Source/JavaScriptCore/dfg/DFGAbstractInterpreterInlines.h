@@ -1965,15 +1965,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case MaterializeNewObject: {
-        StructureSet set;
-        
-        m_phiChildren->forAllTransitiveIncomingValues(
-            m_graph.varArgChild(node, 0).node(),
-            [&] (Node* incoming) {
-                set.add(incoming->castConstant<Structure*>());
-            });
-        
-        forNode(node).set(m_graph, set);
+        forNode(node).set(m_graph, node->structureSet());
         break;
     }
 
