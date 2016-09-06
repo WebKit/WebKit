@@ -148,7 +148,9 @@ private:
     };
 
     // The bottom 6 bits in the hash are flags.
+public:
     static const unsigned s_flagCount = 6;
+private:
     static const unsigned s_flagMask = (1u << s_flagCount) - 1;
     COMPILE_ASSERT(s_flagCount <= StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
     static const unsigned s_flagStringKindCount = 4;

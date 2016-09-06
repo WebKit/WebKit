@@ -1,3 +1,303 @@
+2016-09-06  Saam Barati  <sbarati@apple.com>
+
+        Make JSMap and JSSet faster
+        https://bugs.webkit.org/show_bug.cgi?id=160989
+
+        Reviewed by Filip Pizlo.
+
+        This patch revamps how we implement Map and Set. It uses
+        a new hash map implementation. The hash map uses linear
+        probing and it uses Wang's 64 bit hash function for JSValues
+        that aren't strings. Strings use StringImpl's hash function.
+        The reason I wanted to roll our own HashTable is twofold:
+        I didn't want to inline WTF::HashMap's implementation into our
+        JIT, since that seems error prone and unmaintainable. Also, I wanted
+        a different structure for hash map buckets where buckets also exist in
+        a linked list.
+
+        The reason for making buckets part of a linked list is that iteration
+        is now simple. Iteration works by just traversing a linked list.
+        This design also allows for a simple implementation when doing iteration
+        while the hash table is mutating. Whenever we remove a bucket from
+        the hash table, it is removed from the list, meaning items in the
+        list don't point to it. However, the removed bucket will still point
+        to things that are either in the list, or have also been removed.
+        e.g, from a removed bucket, you can always follow pointers until you
+        either find an item in the list, or you find the tail of the list.
+        This is a really nice property because it means that a Map or Set
+        does not need to reason about the all the iterators that point
+        into its list. Also, whenever we add items to the Map or Set, we
+        hijack the tail as the new item, and make the new item point to a newly
+        created tail. This means that any iterator that pointed to the "tail" now
+        points to non-tail items. This makes the implementation of adding things
+        to the Map/Set while iterating easy.
+
+        I also made Map.prototype.get, Map.prototype.has, and Set.prototype.has
+        into intrinsics in the DFG. The IR can now reason about hash map
+        operations and can even do CSE over Wang's hash function, hash map
+        bucket lookups, hash map bucket loads, and testing if a key is in
+        the hash table. This makes code patterns for Map like so, super fast
+        in the FTL, since we will only be doing a single hash and hash bucket lookup:
+
+        ```
+        function getKeyIfPresent(map, key) {
+            if (map.has(key))
+                return map.get(key);
+        }
+        ```
+
+        This patch is roughly an 8% speedup on ES6SampleBench.
+
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::not64):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromClassInfo):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::shift):
+        (JSC::DFG::Edge::makeWord):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateMapObject):
+        (JSC::DFG::SpeculativeJIT::speculateSetObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapHash):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoadFromJSMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsNonEmptyMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::lowMapObject):
+        (JSC::FTL::DFG::LowerDFGToB3::lowSetObject):
+        (JSC::FTL::DFG::LowerDFGToB3::lowMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateMapObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateSetObject):
+        (JSC::FTL::DFG::LowerDFGToB3::setMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::lowRegExpObject): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::lowStorage): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::speculateRegExpObject): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::setStorage): Deleted.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::wangsInt64Hash):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateDestructibleObject): Deleted.
+        * jit/JITOperations.h:
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::ModuleAnalyzer):
+        * runtime/HashMapImpl.cpp: Added.
+        (JSC::HashMapBucket<Data>::visitChildren):
+        (JSC::HashMapImpl<HashMapBucket>::visitChildren):
+        (JSC::HashMapImpl<HashMapBucket>::copyBackingStore):
+        * runtime/HashMapImpl.h: Added.
+        (JSC::HashMapBucket::selectStructure):
+        (JSC::HashMapBucket::createStructure):
+        (JSC::HashMapBucket::create):
+        (JSC::HashMapBucket::HashMapBucket):
+        (JSC::HashMapBucket::setNext):
+        (JSC::HashMapBucket::setPrev):
+        (JSC::HashMapBucket::setKey):
+        (JSC::HashMapBucket::setValue):
+        (JSC::HashMapBucket::key):
+        (JSC::HashMapBucket::value):
+        (JSC::HashMapBucket::next):
+        (JSC::HashMapBucket::prev):
+        (JSC::HashMapBucket::deleted):
+        (JSC::HashMapBucket::setDeleted):
+        (JSC::HashMapBucket::offsetOfKey):
+        (JSC::HashMapBucket::offsetOfValue):
+        (JSC::HashMapBuffer::allocationSize):
+        (JSC::HashMapBuffer::buffer):
+        (JSC::HashMapBuffer::create):
+        (JSC::areKeysEqual):
+        (JSC::normalizeMapKey):
+        (JSC::jsMapHash):
+        (JSC::HashMapImpl::selectStructure):
+        (JSC::HashMapImpl::createStructure):
+        (JSC::HashMapImpl::create):
+        (JSC::HashMapImpl::HashMapImpl):
+        (JSC::HashMapImpl::buffer):
+        (JSC::HashMapImpl::finishCreation):
+        (JSC::HashMapImpl::emptyValue):
+        (JSC::HashMapImpl::isEmpty):
+        (JSC::HashMapImpl::deletedValue):
+        (JSC::HashMapImpl::isDeleted):
+        (JSC::HashMapImpl::findBucket):
+        (JSC::HashMapImpl::get):
+        (JSC::HashMapImpl::has):
+        (JSC::HashMapImpl::add):
+        (JSC::HashMapImpl::remove):
+        (JSC::HashMapImpl::size):
+        (JSC::HashMapImpl::clear):
+        (JSC::HashMapImpl::bufferSizeInBytes):
+        (JSC::HashMapImpl::offsetOfBuffer):
+        (JSC::HashMapImpl::offsetOfCapacity):
+        (JSC::HashMapImpl::head):
+        (JSC::HashMapImpl::tail):
+        (JSC::HashMapImpl::approximateSize):
+        (JSC::HashMapImpl::findBucketAlreadyHashedAndNormalized):
+        (JSC::HashMapImpl::rehash):
+        (JSC::HashMapImpl::makeAndSetNewBuffer):
+        * runtime/Intrinsic.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::sameValue):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::destroy): Deleted.
+        (JSC::JSMap::estimatedSize): Deleted.
+        (JSC::JSMap::visitChildren): Deleted.
+        (JSC::JSMap::copyBackingStore): Deleted.
+        (JSC::JSMap::has): Deleted.
+        (JSC::JSMap::size): Deleted.
+        (JSC::JSMap::get): Deleted.
+        (JSC::JSMap::set): Deleted.
+        (JSC::JSMap::clear): Deleted.
+        (JSC::JSMap::remove): Deleted.
+        * runtime/JSMap.h:
+        (JSC::JSMap::createStructure):
+        (JSC::JSMap::create):
+        (JSC::JSMap::get):
+        (JSC::JSMap::set):
+        (JSC::JSMap::JSMap):
+        (JSC::JSMap::Entry::key): Deleted.
+        (JSC::JSMap::Entry::value): Deleted.
+        (JSC::JSMap::Entry::visitChildren): Deleted.
+        (JSC::JSMap::Entry::setKey): Deleted.
+        (JSC::JSMap::Entry::setKeyWithoutWriteBarrier): Deleted.
+        (JSC::JSMap::Entry::setValue): Deleted.
+        (JSC::JSMap::Entry::clear): Deleted.
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::finishCreation):
+        (JSC::JSMapIterator::visitChildren):
+        (JSC::JSMapIterator::clone):
+        * runtime/JSMapIterator.h:
+        (JSC::JSMapIterator::advanceIter):
+        (JSC::JSMapIterator::next):
+        (JSC::JSMapIterator::nextKeyValue):
+        (JSC::JSMapIterator::JSMapIterator):
+        (JSC::JSMapIterator::setIterator):
+        (JSC::JSMapIterator::finish): Deleted.
+        (JSC::JSMapIterator::iteratorData): Deleted.
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::finishCreation):
+        * runtime/JSModuleLoader.h:
+        (JSC::JSModuleLoader::create):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::finishCreation):
+        * runtime/JSModuleRecord.h:
+        (JSC::JSModuleRecord::create):
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::destroy): Deleted.
+        (JSC::JSSet::estimatedSize): Deleted.
+        (JSC::JSSet::visitChildren): Deleted.
+        (JSC::JSSet::copyBackingStore): Deleted.
+        (JSC::JSSet::has): Deleted.
+        (JSC::JSSet::size): Deleted.
+        (JSC::JSSet::add): Deleted.
+        (JSC::JSSet::clear): Deleted.
+        (JSC::JSSet::remove): Deleted.
+        * runtime/JSSet.h:
+        (JSC::JSSet::createStructure):
+        (JSC::JSSet::create):
+        (JSC::JSSet::add):
+        (JSC::JSSet::JSSet):
+        (JSC::JSSet::Entry::key): Deleted.
+        (JSC::JSSet::Entry::value): Deleted.
+        (JSC::JSSet::Entry::visitChildren): Deleted.
+        (JSC::JSSet::Entry::setKey): Deleted.
+        (JSC::JSSet::Entry::setKeyWithoutWriteBarrier): Deleted.
+        (JSC::JSSet::Entry::setValue): Deleted.
+        (JSC::JSSet::Entry::clear): Deleted.
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::finishCreation):
+        (JSC::JSSetIterator::visitChildren):
+        (JSC::JSSetIterator::clone):
+        * runtime/JSSetIterator.h:
+        (JSC::JSSetIterator::advanceIter):
+        (JSC::JSSetIterator::next):
+        (JSC::JSSetIterator::JSSetIterator):
+        (JSC::JSSetIterator::setIterator):
+        (JSC::JSSetIterator::finish): Deleted.
+        (JSC::JSSetIterator::iteratorData): Deleted.
+        * runtime/JSType.h:
+        * runtime/MapBase.cpp: Added.
+        (JSC::MapBase<HashMapBucketType>::visitChildren):
+        (JSC::MapBase<HashMapBucketType>::estimatedSize):
+        * runtime/MapBase.h: Added.
+        (JSC::MapBase::size):
+        (JSC::MapBase::has):
+        (JSC::MapBase::clear):
+        (JSC::MapBase::remove):
+        (JSC::MapBase::findBucket):
+        (JSC::MapBase::offsetOfHashMapImpl):
+        (JSC::MapBase::impl):
+        (JSC::MapBase::finishCreation):
+        (JSC::MapBase::MapBase):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototypeFuncNext):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        (JSC::getMap):
+        (JSC::privateFuncIsMap):
+        (JSC::privateFuncMapIteratorNext):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::sameValue): Deleted.
+        * runtime/PropertyDescriptor.h:
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototypeFuncNext):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        (JSC::getSet):
+        (JSC::privateFuncSetIteratorNext):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2016-09-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make ArithClz32 work with Cell arguments

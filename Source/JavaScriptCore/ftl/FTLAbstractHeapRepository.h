@@ -32,6 +32,8 @@
 #include "DFGArrayMode.h"
 #include "FTLAbstractHeap.h"
 #include "IndexingType.h"
+#include "JSMap.h"
+#include "JSSet.h"
 
 namespace JSC { namespace FTL {
 
@@ -101,7 +103,13 @@ namespace JSC { namespace FTL {
     macro(Structure_classInfo, Structure::classInfoOffset()) \
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
     macro(Structure_prototype, Structure::prototypeOffset()) \
-    macro(Structure_structureID, Structure::structureIDOffset())
+    macro(Structure_structureID, Structure::structureIDOffset()) \
+    macro(JSMap_hashMapImpl, JSMap::offsetOfHashMapImpl()) \
+    macro(JSSet_hashMapImpl, JSSet::offsetOfHashMapImpl()) \
+    macro(HashMapImpl_capacity, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()) \
+    macro(HashMapImpl_buffer,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()) \
+    macro(HashMapBucket_value, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfValue()) \
+    macro(HashMapBucket_key, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey()) \
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(DirectArguments_storage, DirectArguments::storageOffset(), sizeof(EncodedJSValue)) \

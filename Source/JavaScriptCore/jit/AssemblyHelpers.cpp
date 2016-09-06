@@ -626,6 +626,52 @@ void AssemblyHelpers::emitDumbVirtualCall(CallLinkInfo* info)
         });
 }
 
+#if USE(JSVALUE64)
+void AssemblyHelpers::wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch)
+{
+    GPRReg input = inputAndResult;
+    // key += ~(key << 32);
+    move(input, scratch);
+    lshift64(TrustedImm32(32), scratch);
+    not64(scratch);
+    add64(scratch, input);
+    // key ^= (key >> 22);
+    move(input, scratch);
+    urshift64(TrustedImm32(22), scratch);
+    xor64(scratch, input);
+    // key += ~(key << 13);
+    move(input, scratch);
+    lshift64(TrustedImm32(13), scratch);
+    not64(scratch);
+    add64(scratch, input);
+    // key ^= (key >> 8);
+    move(input, scratch);
+    urshift64(TrustedImm32(8), scratch);
+    xor64(scratch, input);
+    // key += (key << 3);
+    move(input, scratch);
+    lshift64(TrustedImm32(3), scratch);
+    add64(scratch, input);
+    // key ^= (key >> 15);
+    move(input, scratch);
+    urshift64(TrustedImm32(15), scratch);
+    xor64(scratch, input);
+    // key += ~(key << 27);
+    move(input, scratch);
+    lshift64(TrustedImm32(27), scratch);
+    not64(scratch);
+    add64(scratch, input);
+    // key ^= (key >> 31);
+    move(input, scratch);
+    urshift64(TrustedImm32(31), scratch);
+    xor64(scratch, input);
+
+    // return static_cast<unsigned>(result)
+    void* mask = bitwise_cast<void*>(static_cast<uintptr_t>(UINT_MAX));
+    and64(TrustedImmPtr(mask), inputAndResult);
+}
+#endif // USE(JSVALUE64)
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

@@ -62,9 +62,11 @@ static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
 
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
     Structure* setStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->setStructure());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
-    JSSet* set = JSSet::create(exec, setStructure);
+    JSSet* set = JSSet::create(exec, vm, setStructure);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
     JSValue iterable = exec->argument(0);
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(set);

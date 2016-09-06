@@ -7418,6 +7418,34 @@ void SpeculativeJIT::speculateRegExpObject(Edge edge)
     speculateRegExpObject(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateMapObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecMapObject, JSMapType);
+}
+
+void SpeculativeJIT::speculateMapObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecMapObject))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateMapObject(edge, operand.gpr());
+}
+
+void SpeculativeJIT::speculateSetObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecSetObject, JSSetType);
+}
+
+void SpeculativeJIT::speculateSetObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecSetObject))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateSetObject(edge, operand.gpr());
+}
+
 void SpeculativeJIT::speculateObjectOrOther(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecObject | SpecOther))
@@ -7704,6 +7732,12 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case RegExpObjectUse:
         speculateRegExpObject(edge);
+        break;
+    case MapObjectUse:
+        speculateMapObject(edge);
+        break;
+    case SetObjectUse:
+        speculateSetObject(edge);
         break;
     case ObjectOrOtherUse:
         speculateObjectOrOther(edge);

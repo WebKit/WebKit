@@ -65,6 +65,7 @@
 #include "JSInternalPromiseDeferred.h"
 #include "JSLexicalEnvironment.h"
 #include "JSLock.h"
+#include "JSMap.h"
 #include "JSPromiseDeferred.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSTemplateRegistryKey.h"
@@ -253,6 +254,10 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(WEBASSEMBLY)
     webAssemblyCodeBlockStructure.set(*this, WebAssemblyCodeBlock::createStructure(*this, 0, jsNull()));
 #endif
+    hashMapBucketSetStructure.set(*this, HashMapBucket<HashMapBucketDataKey>::createStructure(*this, 0, jsNull()));
+    hashMapBucketMapStructure.set(*this, HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, 0, jsNull()));
+    hashMapImplSetStructure.set(*this, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::createStructure(*this, 0, jsNull()));
+    hashMapImplMapStructure.set(*this, HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::createStructure(*this, 0, jsNull()));
 
     iterationTerminator.set(*this, JSFinalObject::create(*this, JSFinalObject::createStructure(*this, 0, jsNull(), 1)));
     nativeStdFunctionCellStructure.set(*this, NativeStdFunctionCell::createStructure(*this, 0, jsNull()));

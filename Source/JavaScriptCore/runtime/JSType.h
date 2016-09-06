@@ -82,8 +82,10 @@ enum JSType : uint8_t {
     ModuleEnvironmentType,
     RegExpObjectType,
     ProxyObjectType,
+    JSMapType,
+    JSSetType,
 
-    LastJSCObjectType = ProxyObjectType,
+    LastJSCObjectType = JSSetType,
 };
 
 COMPILE_ASSERT(sizeof(JSType) == sizeof(uint8_t), sizeof_jstype_is_one_byte);

@@ -30,9 +30,11 @@
 #include "SpeculatedType.h"
 
 #include "DirectArguments.h"
+#include "JSCInlines.h"
 #include "JSArray.h"
 #include "JSFunction.h"
-#include "JSCInlines.h"
+#include "JSMap.h"
+#include "JSSet.h"
 #include "ScopedArguments.h"
 #include "StringObject.h"
 #include "ValueProfile.h"
@@ -346,6 +348,12 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
 
     if (classInfo == RegExpObject::info())
         return SpecRegExpObject;
+
+    if (classInfo == JSMap::info())
+        return SpecMapObject;
+
+    if (classInfo == JSSet::info())
+        return SpecSetObject;
     
     if (classInfo->isSubClassOf(JSFunction::info()))
         return SpecFunction;

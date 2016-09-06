@@ -55,11 +55,14 @@ JSModuleLoader::JSModuleLoader(VM& vm, Structure* structure)
 {
 }
 
-void JSModuleLoader::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void JSModuleLoader::finishCreation(ExecState* exec, VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, Identifier::fromString(&vm, "registry"), JSMap::create(vm, globalObject->mapStructure()));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSMap* map = JSMap::create(exec, vm, globalObject->mapStructure());
+    RELEASE_ASSERT(!scope.exception());
+    putDirect(vm, Identifier::fromString(&vm, "registry"), map);
 }
 
 // ------------------------------ Functions --------------------------------
