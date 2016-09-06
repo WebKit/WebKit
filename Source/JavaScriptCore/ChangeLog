@@ -1,3 +1,12 @@
+2016-09-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Silence GCC warning spam introduced in r205462
+
+        Rubber-stamped by Filip Pizlo.
+
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+
 2016-09-05  Filip Pizlo  <fpizlo@apple.com>
 
         Heap::isMarked() should use concurrent lazy flipping
