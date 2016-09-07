@@ -1,3 +1,12 @@
+2016-09-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.html.
+        https://bugs.webkit.org/show_bug.cgi?id=161632
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2016-09-07  Youenn Fablet  <youenn@apple.com>
 
         Using tests-options.json to compute whether tests are slow
