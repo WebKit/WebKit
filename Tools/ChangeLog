@@ -1,3 +1,13 @@
+2016-09-07  Daniel Bates  <dabates@apple.com>
+
+        Update WebKitSystemInterface
+
+        Rubber-stamped by Dean Jackson.
+
+        Copy WebKitSystemInterface for iOS 10 to the built products directory.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2016-09-07  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] Separate compile flag for ReadableStream and WritableStream

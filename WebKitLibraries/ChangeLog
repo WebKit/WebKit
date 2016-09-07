@@ -1,3 +1,19 @@
+2016-09-07  Daniel Bates  <dabates@apple.com>
+
+        Update WebKitSystemInterface
+
+        Rubber-stamped by Dean Jackson.
+
+        Additionally, add WebKitSystemInterface for iOS 10.
+
+        * libWebKitSystemInterfaceElCapitan.a:
+        * libWebKitSystemInterfaceIOSDevice10.a: Added.
+        * libWebKitSystemInterfaceIOSDevice9.a:
+        * libWebKitSystemInterfaceIOSSimulator10.a: Added.
+        * libWebKitSystemInterfaceIOSSimulator9.a:
+        * libWebKitSystemInterfaceOSX10.12.a:
+        * libWebKitSystemInterfaceYosemite.a:
+
 2016-08-19  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the iOS 9.3 build
