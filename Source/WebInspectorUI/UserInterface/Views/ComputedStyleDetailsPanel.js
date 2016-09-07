@@ -36,7 +36,7 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
 
     // Public
 
-    get regionFlow() { return this._regionFlow;}
+    get regionFlow() { return this._regionFlow; }
     set regionFlow(regionFlow)
     {
         this._regionFlow = regionFlow;
@@ -45,7 +45,7 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
         this._updateFlowNamesSectionVisibility();
     }
 
-    get contentFlow() { return this._contentFlow;}
+    get contentFlow() { return this._contentFlow; }
     set contentFlow(contentFlow)
     {
         this._contentFlow = contentFlow;
@@ -54,7 +54,7 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
         this._updateFlowNamesSectionVisibility();
     }
 
-    get containerRegions() { return this._containerRegions;}
+    get containerRegions() { return this._containerRegions; }
     set containerRegions(regions)
     {
         this._containerRegions = regions;
@@ -224,9 +224,10 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
 
     _computedStyleShowAllCheckboxValueChanged(event)
     {
-        var checked = this._computedStyleShowAllCheckbox.checked;
+        let checked = this._computedStyleShowAllCheckbox.checked;
         this._computedStyleShowAllSetting.value = checked;
         this._propertiesTextEditor.showsImplicitProperties = checked;
+        this._propertiesTextEditor.updateLayout();
     }
 
     _handlePropertiesSectionCollapsedStateChanged(event)

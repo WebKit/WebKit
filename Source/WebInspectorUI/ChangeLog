@@ -1,3 +1,23 @@
+2016-09-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: clicking Computed Styles sidebar "Show All" checkbox doesn't trigger relayout of Properties section
+        https://bugs.webkit.org/show_bug.cgi?id=161652
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._iterateOverProperties):
+        Fixed style issues from r205518 <webkit.org/b/161405>.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get regionFlow):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get contentFlow):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get containerRegions):
+        Added missing space between semicolon and curly-brace.
+
+        (WebInspector.ComputedStyleDetailsPanel.prototype._computedStyleShowAllCheckboxValueChanged):
+        Added updateLayout call to resize and repopulate the CodeMirror instance.
+
 2016-09-07  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy canvas.probablySupportsContext()

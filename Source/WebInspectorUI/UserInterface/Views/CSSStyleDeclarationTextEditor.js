@@ -1219,6 +1219,13 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                         return false;
 
                     break;
+
+                case WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.ShowAll:
+                    break;
+
+                default:
+                    console.error("Invalid property visibility mode");
+                    break;
                 }
 
                 return !property.implicit || this._showsImplicitProperties || property.canonicalName in this._alwaysShowPropertyNames;
@@ -1227,7 +1234,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         properties = properties.filter(filterFunction);
         if (this._sortProperties)
-                properties.sort((a, b) => a.name.localeCompare(b.name));
+            properties.sort((a, b) => a.name.localeCompare(b.name));
 
         this._shownProperties = properties;
 
