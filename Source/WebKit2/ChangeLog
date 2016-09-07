@@ -1,3 +1,14 @@
+2016-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the GTK+ build after r205524.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        (webkit_dom_html_input_element_get_max_length):
+        (webkit_dom_html_input_element_set_max_length):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.cpp:
+        (webkit_dom_html_text_area_element_get_max_length):
+        (webkit_dom_html_text_area_element_set_max_length):
+
 2016-09-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] WebKit2 fails to build with iOS 10 beta SDK - "'UIWKTextInteractionAssistant' may not respond to 'selectAll:'"

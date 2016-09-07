@@ -681,7 +681,7 @@ glong webkit_dom_html_text_area_element_get_max_length(WebKitDOMHTMLTextAreaElem
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    glong result = item->maxLengthForBindings();
+    glong result = item->maxLength();
     return result;
 }
 
@@ -692,7 +692,7 @@ void webkit_dom_html_text_area_element_set_max_length(WebKitDOMHTMLTextAreaEleme
     g_return_if_fail(!error || !*error);
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
-    item->setMaxLengthForBindings(value, ec);
+    item->setMaxLength(value, ec);
     if (ec) {
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
