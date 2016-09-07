@@ -100,14 +100,14 @@ DOMHTMLTextAreaElement *kit(HTMLTextAreaElement* value)
 - (int)maxLength
 {
     JSMainThreadNullState state;
-    return unwrap(*self).maxLengthForBindings();
+    return unwrap(*self).maxLength();
 }
 
 - (void)setMaxLength:(int)newMaxLength
 {
     JSMainThreadNullState state;
     ExceptionCode ec = 0;
-    unwrap(*self).setMaxLengthForBindings(newMaxLength, ec);
+    unwrap(*self).setMaxLength(newMaxLength, ec);
     raiseOnDOMError(ec);
 }
 

@@ -456,7 +456,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
     // We use RenderTextControlSingleLine::text() instead of InputElement::value()
     // because they can be mismatched by sanitizeValue() in
     // HTMLInputElement::subtreeHasChanged() in some cases.
-    String innerText = element().innerTextValue();
+    StringView innerText = element().innerTextValue();
     unsigned oldLength = numGraphemeClusters(innerText);
 
     // selectionLength represents the selection length of this text field to be

@@ -44,7 +44,8 @@
     attribute boolean indeterminate;
     [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
     [Reflect] attribute DOMString max;
-    [ImplementedAs=maxLengthForBindings, SetterRaisesException] attribute long maxLength;
+    [SetterRaisesException] attribute long minLength;
+    [SetterRaisesException] attribute long maxLength;
     [Reflect] attribute DOMString min;
     [Reflect] attribute boolean multiple;
     [Reflect] attribute DOMString name;

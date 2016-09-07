@@ -1,5 +1,17 @@
 2016-09-06  Chris Dumez  <cdumez@apple.com>
 
+        Add support for input.minLength / textArea.minLength
+        https://bugs.webkit.org/show_bug.cgi?id=161644
+
+        Reviewed by Darin Adler.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-tooShort-expected.txt:
+
+2016-09-06  Chris Dumez  <cdumez@apple.com>
+
         Align srcset attribute parsing with the HTML specification
         https://bugs.webkit.org/show_bug.cgi?id=161636
 

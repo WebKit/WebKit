@@ -412,6 +412,9 @@ String InputType::validationMessage() const
     if (patternMismatch(value))
         return validationMessagePatternMismatchText();
 
+    if (element().tooShort())
+        return validationMessageTooShortText(numGraphemeClusters(value), element().minLength());
+
     if (element().tooLong())
         return validationMessageTooLongText(numGraphemeClusters(value), element().effectiveMaxLength());
 

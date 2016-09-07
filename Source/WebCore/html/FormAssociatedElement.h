@@ -72,12 +72,13 @@ public:
     bool badInput() const { return hasBadInput(); }
     bool customError() const;
 
-    // Implementations of patternMismatch, rangeOverflow, rangerUnderflow, stepMismatch, tooLong and valueMissing must call willValidate.
+    // Implementations of patternMismatch, rangeOverflow, rangerUnderflow, stepMismatch, tooShort, tooLong and valueMissing must call willValidate.
     virtual bool hasBadInput() const;
     virtual bool patternMismatch() const;
     virtual bool rangeOverflow() const;
     virtual bool rangeUnderflow() const;
     virtual bool stepMismatch() const;
+    virtual bool tooShort() const;
     virtual bool tooLong() const;
     virtual bool typeMismatch() const;
     virtual bool valueMissing() const;

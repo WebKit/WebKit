@@ -26,6 +26,7 @@
     readonly attribute boolean         valueMissing;
     readonly attribute boolean         typeMismatch;
     readonly attribute boolean         patternMismatch;
+    readonly attribute boolean         tooShort;
     readonly attribute boolean         tooLong;
     readonly attribute boolean         rangeUnderflow;
     readonly attribute boolean         rangeOverflow;

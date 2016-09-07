@@ -894,18 +894,18 @@ bool isWordTextBreak(TextBreakIterator* iterator)
     return ruleStatus != UBRK_WORD_NONE;
 }
 
-unsigned numGraphemeClusters(const String& s)
+unsigned numGraphemeClusters(StringView string)
 {
-    unsigned stringLength = s.length();
+    unsigned stringLength = string.length();
     
     if (!stringLength)
         return 0;
 
     // The only Latin-1 Extended Grapheme Cluster is CR LF
-    if (s.is8Bit() && !s.contains('\r'))
+    if (string.is8Bit() && !string.contains('\r'))
         return stringLength;
 
-    NonSharedCharacterBreakIterator it(s);
+    NonSharedCharacterBreakIterator it(string);
     if (!it)
         return stringLength;
 

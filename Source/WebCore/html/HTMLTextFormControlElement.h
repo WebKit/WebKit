@@ -40,7 +40,7 @@ enum TextFieldEventBehavior { DispatchNoEvent, DispatchChangeEvent, DispatchInpu
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
 public:
-    // Common flag for HTMLInputElement::tooLong() and HTMLTextAreaElement::tooLong().
+    // Common flag for HTMLInputElement::tooLong() / tooShort() and HTMLTextAreaElement::tooLong() / tooShort().
     enum NeedsToCheckDirtyFlag {CheckDirtyFlag, IgnoreDirtyFlag};
 
     virtual ~HTMLTextFormControlElement();
@@ -48,7 +48,12 @@ public:
     void didEditInnerTextValue();
     void forwardEvent(Event&);
 
-    WEBCORE_EXPORT void setMaxLengthForBindings(int, ExceptionCode&);
+    long maxLength() const { return m_maxLength; }
+    WEBCORE_EXPORT void setMaxLength(int, ExceptionCode&);
+    void setMaxLength(int maxLength) { m_maxLength = maxLength; }
+    long minLength() const { return m_minLength; }
+    void setMinLength(int, ExceptionCode&);
+    void setMinLength(int minLength) { m_minLength = minLength; }
 
     InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
@@ -150,6 +155,9 @@ private:
 
     int m_cachedSelectionStart;
     int m_cachedSelectionEnd;
+
+    int m_maxLength { -1 };
+    int m_minLength { -1 };
 
     unsigned char m_cachedSelectionDirection : 2;
     unsigned char m_lastChangeWasUserEdit : 1;

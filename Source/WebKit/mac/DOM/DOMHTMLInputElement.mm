@@ -275,14 +275,14 @@
 - (int)maxLength
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->maxLengthForBindings();
+    return IMPL->maxLength();
 }
 
 - (void)setMaxLength:(int)newMaxLength
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
-    IMPL->setMaxLengthForBindings(newMaxLength, ec);
+    IMPL->setMaxLength(newMaxLength, ec);
     raiseOnDOMError(ec);
 }
 

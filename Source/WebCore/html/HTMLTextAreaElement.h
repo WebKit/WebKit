@@ -45,11 +45,11 @@ public:
     WEBCORE_EXPORT String defaultValue() const;
     WEBCORE_EXPORT void setDefaultValue(const String&);
     int textLength() const { return value().length(); }
-    int maxLengthForBindings() const { return m_maxLength; }
-    int effectiveMaxLength() const { return m_maxLength; }
+    int effectiveMaxLength() const { return maxLength(); }
     // For ValidityState
     String validationMessage() const final;
     bool valueMissing() const final;
+    bool tooShort() const final;
     bool tooLong() const final;
     bool isValidValue(const String&) const;
     
@@ -73,6 +73,7 @@ private:
     void didAddUserAgentShadowRoot(ShadowRoot*) final;
 
     void maxLengthAttributeChanged(const AtomicString& newValue);
+    void minLengthAttributeChanged(const AtomicString& newValue);
 
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) const;
     static String sanitizeUserInputValue(const String&, unsigned maxLength);
@@ -120,11 +121,11 @@ private:
     bool matchesReadWritePseudoClass() const final;
 
     bool valueMissing(const String& value) const { return isRequiredFormControl() && !isDisabledOrReadOnly() && value.isEmpty(); }
-    bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
+    bool tooShort(StringView, NeedsToCheckDirtyFlag) const;
+    bool tooLong(StringView, NeedsToCheckDirtyFlag) const;
 
     unsigned m_rows;
     unsigned m_cols;
-    int m_maxLength { -1 };
     WrapMethod m_wrap { SoftWrap };
     RefPtr<HTMLElement> m_placeholder;
     mutable String m_value;

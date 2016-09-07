@@ -556,6 +556,11 @@ String validationMessageStepMismatchText(const String&, const String&)
     return String::fromUTF8("step mismatch");
 }
 
+String validationMessageTooShortText(int, int)
+{
+    return String::fromUTF8("too short");
+}
+
 String validationMessageTooLongText(int, int)
 {
     return String::fromUTF8("too long");

@@ -753,6 +753,11 @@ String validationMessagePatternMismatchText()
     return String::fromUTF8(_("pattern mismatch"));
 }
 
+String validationMessageTooShortText(int, int)
+{
+    return String::fromUTF8(_("too short"));
+}
+
 String validationMessageTooLongText(int, int)
 {
     return String::fromUTF8(_("too long"));

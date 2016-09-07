@@ -2706,7 +2706,7 @@ FAIL HTMLInputElement interface: attribute list assert_true: The prototype objec
 PASS HTMLInputElement interface: attribute max 
 PASS HTMLInputElement interface: attribute maxLength 
 PASS HTMLInputElement interface: attribute min 
-FAIL HTMLInputElement interface: attribute minLength assert_true: The prototype object must have a property "minLength" expected true got false
+PASS HTMLInputElement interface: attribute minLength 
 PASS HTMLInputElement interface: attribute multiple 
 PASS HTMLInputElement interface: attribute name 
 PASS HTMLInputElement interface: attribute pattern 
@@ -2766,7 +2766,7 @@ FAIL HTMLInputElement interface: document.createElement("input") must inherit pr
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: document.createElement("input") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: document.createElement("input") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "pattern" with the proper type (25) 
@@ -2832,7 +2832,7 @@ FAIL HTMLInputElement interface: createInput("text") must inherit property "list
 PASS HTMLInputElement interface: createInput("text") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("text") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("text") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "pattern" with the proper type (25) 
@@ -2898,7 +2898,7 @@ FAIL HTMLInputElement interface: createInput("hidden") must inherit property "li
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("hidden") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("hidden") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "pattern" with the proper type (25) 
@@ -2964,7 +2964,7 @@ FAIL HTMLInputElement interface: createInput("search") must inherit property "li
 PASS HTMLInputElement interface: createInput("search") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("search") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("search") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "pattern" with the proper type (25) 
@@ -3030,7 +3030,7 @@ FAIL HTMLInputElement interface: createInput("tel") must inherit property "list"
 PASS HTMLInputElement interface: createInput("tel") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("tel") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("tel") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "pattern" with the proper type (25) 
@@ -3096,7 +3096,7 @@ FAIL HTMLInputElement interface: createInput("url") must inherit property "list"
 PASS HTMLInputElement interface: createInput("url") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("url") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("url") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "pattern" with the proper type (25) 
@@ -3162,7 +3162,7 @@ FAIL HTMLInputElement interface: createInput("email") must inherit property "lis
 PASS HTMLInputElement interface: createInput("email") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("email") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("email") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "pattern" with the proper type (25) 
@@ -3228,7 +3228,7 @@ FAIL HTMLInputElement interface: createInput("password") must inherit property "
 PASS HTMLInputElement interface: createInput("password") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("password") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("password") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "pattern" with the proper type (25) 
@@ -3294,7 +3294,7 @@ FAIL HTMLInputElement interface: createInput("date") must inherit property "list
 PASS HTMLInputElement interface: createInput("date") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("date") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("date") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "pattern" with the proper type (25) 
@@ -3360,7 +3360,7 @@ FAIL HTMLInputElement interface: createInput("month") must inherit property "lis
 PASS HTMLInputElement interface: createInput("month") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("month") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("month") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "pattern" with the proper type (25) 
@@ -3426,7 +3426,7 @@ FAIL HTMLInputElement interface: createInput("week") must inherit property "list
 PASS HTMLInputElement interface: createInput("week") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("week") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("week") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "pattern" with the proper type (25) 
@@ -3492,7 +3492,7 @@ FAIL HTMLInputElement interface: createInput("time") must inherit property "list
 PASS HTMLInputElement interface: createInput("time") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("time") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("time") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "pattern" with the proper type (25) 
@@ -3558,7 +3558,7 @@ FAIL HTMLInputElement interface: createInput("datetime-local") must inherit prop
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("datetime-local") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "pattern" with the proper type (25) 
@@ -3624,7 +3624,7 @@ FAIL HTMLInputElement interface: createInput("number") must inherit property "li
 PASS HTMLInputElement interface: createInput("number") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("number") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("number") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "pattern" with the proper type (25) 
@@ -3690,7 +3690,7 @@ FAIL HTMLInputElement interface: createInput("range") must inherit property "lis
 PASS HTMLInputElement interface: createInput("range") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("range") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("range") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("range") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("range") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("range") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("range") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("range") must inherit property "pattern" with the proper type (25) 
@@ -3756,7 +3756,7 @@ FAIL HTMLInputElement interface: createInput("color") must inherit property "lis
 PASS HTMLInputElement interface: createInput("color") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("color") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("color") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("color") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("color") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("color") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("color") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("color") must inherit property "pattern" with the proper type (25) 
@@ -3822,7 +3822,7 @@ FAIL HTMLInputElement interface: createInput("checkbox") must inherit property "
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("checkbox") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("checkbox") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "pattern" with the proper type (25) 
@@ -3888,7 +3888,7 @@ FAIL HTMLInputElement interface: createInput("radio") must inherit property "lis
 PASS HTMLInputElement interface: createInput("radio") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("radio") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("radio") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "pattern" with the proper type (25) 
@@ -3954,7 +3954,7 @@ FAIL HTMLInputElement interface: createInput("file") must inherit property "list
 PASS HTMLInputElement interface: createInput("file") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("file") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("file") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("file") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("file") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("file") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("file") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("file") must inherit property "pattern" with the proper type (25) 
@@ -4020,7 +4020,7 @@ FAIL HTMLInputElement interface: createInput("submit") must inherit property "li
 PASS HTMLInputElement interface: createInput("submit") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("submit") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("submit") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "pattern" with the proper type (25) 
@@ -4086,7 +4086,7 @@ FAIL HTMLInputElement interface: createInput("image") must inherit property "lis
 PASS HTMLInputElement interface: createInput("image") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("image") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("image") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("image") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("image") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("image") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("image") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("image") must inherit property "pattern" with the proper type (25) 
@@ -4152,7 +4152,7 @@ FAIL HTMLInputElement interface: createInput("reset") must inherit property "lis
 PASS HTMLInputElement interface: createInput("reset") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("reset") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("reset") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "pattern" with the proper type (25) 
@@ -4218,7 +4218,7 @@ FAIL HTMLInputElement interface: createInput("button") must inherit property "li
 PASS HTMLInputElement interface: createInput("button") must inherit property "max" with the proper type (19) 
 PASS HTMLInputElement interface: createInput("button") must inherit property "maxLength" with the proper type (20) 
 PASS HTMLInputElement interface: createInput("button") must inherit property "min" with the proper type (21) 
-FAIL HTMLInputElement interface: createInput("button") must inherit property "minLength" with the proper type (22) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLInputElement interface: createInput("button") must inherit property "minLength" with the proper type (22) 
 PASS HTMLInputElement interface: createInput("button") must inherit property "multiple" with the proper type (23) 
 PASS HTMLInputElement interface: createInput("button") must inherit property "name" with the proper type (24) 
 PASS HTMLInputElement interface: createInput("button") must inherit property "pattern" with the proper type (25) 
@@ -4436,7 +4436,7 @@ PASS HTMLTextAreaElement interface: attribute disabled
 PASS HTMLTextAreaElement interface: attribute form 
 FAIL HTMLTextAreaElement interface: attribute inputMode assert_true: The prototype object must have a property "inputMode" expected true got false
 PASS HTMLTextAreaElement interface: attribute maxLength 
-FAIL HTMLTextAreaElement interface: attribute minLength assert_true: The prototype object must have a property "minLength" expected true got false
+PASS HTMLTextAreaElement interface: attribute minLength 
 PASS HTMLTextAreaElement interface: attribute name 
 PASS HTMLTextAreaElement interface: attribute placeholder 
 PASS HTMLTextAreaElement interface: attribute readOnly 
@@ -4471,7 +4471,7 @@ PASS HTMLTextAreaElement interface: document.createElement("textarea") must inhe
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "form" with the proper type (5) 
 FAIL HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "inputMode" with the proper type (6) assert_inherits: property "inputMode" not found in prototype chain
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "maxLength" with the proper type (7) 
-FAIL HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "minLength" with the proper type (8) assert_inherits: property "minLength" not found in prototype chain
+PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "minLength" with the proper type (8) 
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "name" with the proper type (9) 
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "placeholder" with the proper type (10) 
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "readOnly" with the proper type (11) 
@@ -4650,7 +4650,7 @@ PASS ValidityState interface: attribute valueMissing
 PASS ValidityState interface: attribute typeMismatch 
 PASS ValidityState interface: attribute patternMismatch 
 PASS ValidityState interface: attribute tooLong 
-FAIL ValidityState interface: attribute tooShort assert_true: The prototype object must have a property "tooShort" expected true got false
+PASS ValidityState interface: attribute tooShort 
 PASS ValidityState interface: attribute rangeUnderflow 
 PASS ValidityState interface: attribute rangeOverflow 
 PASS ValidityState interface: attribute stepMismatch 
@@ -4663,7 +4663,7 @@ PASS ValidityState interface: document.createElement("input").validity must inhe
 PASS ValidityState interface: document.createElement("input").validity must inherit property "typeMismatch" with the proper type (1) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "patternMismatch" with the proper type (2) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "tooLong" with the proper type (3) 
-FAIL ValidityState interface: document.createElement("input").validity must inherit property "tooShort" with the proper type (4) assert_inherits: property "tooShort" not found in prototype chain
+PASS ValidityState interface: document.createElement("input").validity must inherit property "tooShort" with the proper type (4) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "rangeUnderflow" with the proper type (5) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "rangeOverflow" with the proper type (6) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "stepMismatch" with the proper type (7) 
