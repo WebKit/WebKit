@@ -1,3 +1,14 @@
+2016-09-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [EFL] Switch to ENABLE_NETWORK_CACHE
+        https://bugs.webkit.org/show_bug.cgi?id=152676
+
+        Reviewed by Alex Christensen.
+
+        Build with -Wno-error=missing-field-initializers to avoid spurious build failures.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2016-09-07  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] Separate compile flag for ReadableStream and WritableStream

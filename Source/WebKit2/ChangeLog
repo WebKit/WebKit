@@ -1,3 +1,33 @@
+2016-09-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [EFL] Switch to ENABLE_NETWORK_CACHE
+        https://bugs.webkit.org/show_bug.cgi?id=152676
+
+        Reviewed by Alex Christensen.
+
+        Nowadays GTK+ always uses the network cache, and never the soup cache. Remove support for
+        using the soup cache, and switch the EFL port to use network cache.
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::add): Check return value of link to placate
+        -Werror=unused-result on EFL builder
+        * NetworkProcess/efl/NetworkProcessMainEfl.cpp:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::getCacheDiskFreeSize):
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        (WebKit::NetworkProcess::clearDiskCache):
+        * PlatformEfl.cmake: Add files to build.
+        * UIProcess/API/efl/APIWebsiteDataStoreEfl.cpp:
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory): Use a saner location.
+        * UIProcess/API/gtk/APIWebsiteDataStoreGtk.cpp:
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        * config.h:
+
 2016-09-07  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] Separate compile flag for ReadableStream and WritableStream

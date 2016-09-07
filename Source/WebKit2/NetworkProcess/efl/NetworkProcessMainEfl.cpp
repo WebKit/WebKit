@@ -53,11 +53,6 @@ public:
 
     void platformFinalize() override
     {
-        if (SoupCache* soupCache = SoupNetworkSession::defaultSession().cache()) {
-            soup_cache_flush(soupCache);
-            soup_cache_dump(soupCache);
-        }
-
         ecore_shutdown();
     }
 };

@@ -104,11 +104,6 @@ public:
 
     void platformFinalize() override
     {
-        if (SoupCache* soupCache = SoupNetworkSession::defaultSession().cache()) {
-            soup_cache_flush(soupCache);
-            soup_cache_dump(soupCache);
-        }
-
         edje_shutdown();
         ecore_evas_shutdown();
 #ifdef HAVE_ECORE_X

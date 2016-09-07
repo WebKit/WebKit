@@ -38,13 +38,7 @@ String WebsiteDataStore::defaultApplicationCacheDirectory()
 
 String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
-#if ENABLE(NETWORK_CACHE)
-    static const char networkCacheSubdirectory[] = "WebKitCache";
-#else
-    static const char networkCacheSubdirectory[] = "webkit";
-#endif
-
-    return cacheDirectoryFileSystemRepresentation(networkCacheSubdirectory);
+    return cacheDirectoryFileSystemRepresentation("WebKitEfl" EINA_PATH_SEP_S "WebKitCache");
 }
 
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()

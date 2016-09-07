@@ -97,7 +97,8 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
     if (blobExists) {
         auto existingData = mapFile(blobPath.data());
         if (bytesEqual(existingData, data)) {
-            link(blobPath.data(), linkPath.data());
+            if (link(blobPath.data(), linkPath.data()) == -1)
+                WTFLogAlways("Failed to create hard link from %s to %s", blobPath.data(), linkPath.data());
             return { existingData, hash };
         }
         unlink(blobPath.data());
@@ -107,7 +108,8 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
     if (mappedData.isNull())
         return { };
 
-    link(blobPath.data(), linkPath.data());
+    if (link(blobPath.data(), linkPath.data()) == -1)
+        WTFLogAlways("Failed to create hard link from %s to %s", blobPath.data(), linkPath.data());
 
     m_approximateSize += mappedData.size();
 

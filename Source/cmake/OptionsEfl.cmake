@@ -8,7 +8,7 @@ set(ENABLE_WEBKIT2 ON)
 
 # FIXME: Disable WERROR in clang build because of many warnings.
 if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(ADDITIONAL_COMPILER_FLAGS ENABLE_WERROR)
+    set(ADDITIONAL_COMPILER_FLAGS ENABLE_WERROR "-Wno-error=missing-field-initializers")
 endif ()
 
 set(USE_SOUP 1)
