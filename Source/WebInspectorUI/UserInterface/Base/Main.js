@@ -2230,6 +2230,12 @@ WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linki
         var nonLink = string.substring(0, linkIndex);
         container.append(nonLink);
 
+        if (linkString.startsWith("data:") || linkString.startsWith("javascript:") || linkString.startsWith("mailto:")) {
+            container.append(linkString);
+            string = string.substring(linkIndex + linkString.length, string.length);
+            continue;
+        }
+
         var title = linkString;
         var realURL = linkString.startsWith("www.") ? "http://" + linkString : linkString;
         var lineColumnMatch = lineColumnRegEx.exec(realURL);
