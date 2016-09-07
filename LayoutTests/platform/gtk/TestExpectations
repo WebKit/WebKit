@@ -2609,7 +2609,6 @@ webkit.org/b/160251 fast/text/font-kerning.html [ ImageOnlyFailure ]
 
 webkit.org/b/161583 accessibility/auto-fill-types.html [ Failure ]
 webkit.org/b/161584 accessibility/children-changed-sends-notification.html [ Failure ]
-webkit.org/b/161585 accessibility/media-emits-object-replacement.html [ Failure ]
 
 webkit.org/b/161587 css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/161588 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]

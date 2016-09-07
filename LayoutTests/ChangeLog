@@ -1,3 +1,15 @@
+2016-09-07  Nan Wang  <n_wang@apple.com>
+
+        [GTK] Layout test accessibility/media-emits-object-replacement.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=161585
+        <rdar://problem/28157032>
+
+        Reviewed by Chris Fleizach.
+
+        Updated the test expectation.
+
+        * platform/gtk/accessibility/media-emits-object-replacement-expected.txt:
+
 2016-09-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.html.
