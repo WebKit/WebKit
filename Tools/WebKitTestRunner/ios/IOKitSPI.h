@@ -33,6 +33,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <IOKit/hid/IOHIDEvent.h>
+#import <IOKit/hid/IOHIDEventData.h>
 #import <IOKit/hid/IOHIDEventSystemClient.h>
 #import <IOKit/hid/IOHIDUsageTables.h>
 
@@ -72,6 +73,9 @@ enum {
     kIOHIDDigitizerEventAttribute   = 1<<6,
     kIOHIDDigitizerEventCancel      = 1<<7,
     kIOHIDDigitizerEventStart       = 1<<8,
+    kIOHIDDigitizerEventEstimatedAltitude = 1<<28,
+    kIOHIDDigitizerEventEstimatedAzimuth = 1<<29,
+    kIOHIDDigitizerEventEstimatedPressure = 1<<30,
 };
 typedef uint32_t IOHIDDigitizerEventMask;
 
@@ -100,9 +104,21 @@ enum {
 };
 
 enum {
+    kIOHIDTransducerRange               = 0x00010000,
+    kIOHIDTransducerTouch               = 0x00020000,
+    kIOHIDTransducerInvert              = 0x00040000,
+    kIOHIDTransducerDisplayIntegrated   = 0x00080000
+};
+
+enum {
     kIOHIDDigitizerTransducerTypeHand = 3
 };
 typedef uint32_t IOHIDDigitizerTransducerType;
+
+enum {
+    kIOHIDEventFieldDigitizerWillUpdateMask = 720924,
+    kIOHIDEventFieldDigitizerDidUpdateMask = 720925
+};
 
 IOHIDEventRef IOHIDEventCreateDigitizerEvent(CFAllocatorRef, uint64_t, IOHIDDigitizerTransducerType, uint32_t, uint32_t, IOHIDDigitizerEventMask, uint32_t, IOHIDFloat, IOHIDFloat, IOHIDFloat, IOHIDFloat, IOHIDFloat, boolean_t, boolean_t, IOOptionBits);
 
@@ -113,6 +129,8 @@ IOHIDEventRef IOHIDEventCreateForceEvent(CFAllocatorRef, uint64_t, uint32_t, IOH
 IOHIDEventRef IOHIDEventCreateKeyboardEvent(CFAllocatorRef, uint64_t, uint32_t, uint32_t, boolean_t, IOOptionBits);
 
 IOHIDEventRef IOHIDEventCreateVendorDefinedEvent(CFAllocatorRef, uint64_t, uint32_t, uint32_t, uint32_t, uint8_t*, CFIndex, IOHIDEventOptionBits);
+
+IOHIDEventRef IOHIDEventCreateDigitizerStylusEventWithPolarOrientation(CFAllocatorRef, uint64_t, uint32_t, uint32_t, IOHIDDigitizerEventMask, uint32_t, IOHIDFloat, IOHIDFloat, IOHIDFloat, IOHIDFloat, IOHIDFloat, IOHIDFloat, IOHIDFloat, IOHIDFloat, boolean_t, boolean_t, IOHIDEventOptionBits);
 
 IOHIDEventType IOHIDEventGetType(IOHIDEventRef);
 

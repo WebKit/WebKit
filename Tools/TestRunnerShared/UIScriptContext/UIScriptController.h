@@ -56,7 +56,12 @@ public:
     void singleTapAtPoint(long x, long y, JSValueRef callback);
     void doubleTapAtPoint(long x, long y, JSValueRef callback);
     void dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback);
-    
+
+    void stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback);
+    void stylusMoveToPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback);
+    void stylusUpAtPoint(long x, long y, JSValueRef callback);
+    void stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback);
+
     void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
     void keyDownUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
     void keyUpUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);

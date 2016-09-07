@@ -1,3 +1,52 @@
+2016-09-06  Dean Jackson  <dino@apple.com>
+
+        Expose Apple Pencil input to testing system
+        https://bugs.webkit.org/show_bug.cgi?id=161670
+        <rdar://problem/28183327>
+
+        Reviewed by Simon Fraser.
+
+        Add API to UIScriptController that allows a test to emulate
+        stylus input, such as from the Apple Pencil.
+
+        The code is only implemented for WebKitTestRunner.
+
+        There are also four new tests that ensure an Apple Pencil
+        operates similarly to a regular touch. The main difference
+        is that you can't have multiple touches when using an Apple Pencil.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm: New methods. Empty implementations.
+        (WTR::UIScriptController::stylusDownAtPoint):
+        (WTR::UIScriptController::stylusMoveToPoint):
+        (WTR::UIScriptController::stylusUpAtPoint):
+        (WTR::UIScriptController::stylusTapAtPoint):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl: New methods.
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp: Empty implementations.
+        (WTR::UIScriptController::stylusDownAtPoint):
+        (WTR::UIScriptController::stylusMoveToPoint):
+        (WTR::UIScriptController::stylusUpAtPoint):
+        (WTR::UIScriptController::stylusTapAtPoint):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm: New StylusEvent types. Add some properties
+        to SyntheticEventDigitizerInfo.
+        (-[HIDEventGenerator _createIOHIDEventType:]): Add support for StylusEvent types.
+        (-[HIDEventGenerator touchDownAtPoints:touchCount:]): Clear any old stylus info.
+        (-[HIDEventGenerator stylusDownAtPoint:azimuthAngle:altitudeAngle:pressure:]):
+        (-[HIDEventGenerator stylusMoveToPoint:azimuthAngle:altitudeAngle:pressure:]):
+        (-[HIDEventGenerator stylusUpAtPoint:]):
+        (-[HIDEventGenerator stylusDownAtPoint:azimuthAngle:altitudeAngle:pressure:completionBlock:]):
+        (-[HIDEventGenerator stylusMoveToPoint:azimuthAngle:altitudeAngle:pressure:completionBlock:]):
+        (-[HIDEventGenerator stylusUpAtPoint:completionBlock:]):
+        (-[HIDEventGenerator stylusTapAtPoint:azimuthAngle:altitudeAngle:pressure:completionBlock:]):
+        * WebKitTestRunner/ios/IOKitSPI.h: Add new include, and new SPI.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm: Calls into the HIDEventGenerator for the new API.
+        (WTR::UIScriptController::stylusDownAtPoint):
+        (WTR::UIScriptController::stylusMoveToPoint):
+        (WTR::UIScriptController::stylusUpAtPoint):
+        (WTR::UIScriptController::stylusTapAtPoint):
+
 2016-09-07  Daniel Bates  <dabates@apple.com>
 
         Update WebKitSystemInterface

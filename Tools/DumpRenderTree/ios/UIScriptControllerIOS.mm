@@ -88,6 +88,22 @@ void UIScriptController::dragFromPointToPoint(long startX, long startY, long end
 {
 }
 
+void UIScriptController::stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+{
+}
+
+void UIScriptController::stylusMoveToPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+{
+}
+
+void UIScriptController::stylusUpAtPoint(long x, long y, JSValueRef callback)
+{
+}
+
+void UIScriptController::stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+{
+}
+
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
 {
 }

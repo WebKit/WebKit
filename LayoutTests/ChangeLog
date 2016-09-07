@@ -1,3 +1,23 @@
+2016-09-06  Dean Jackson  <dino@apple.com>
+
+        Expose Apple Pencil input to testing system
+        https://bugs.webkit.org/show_bug.cgi?id=161670
+        <rdar://problem/28183327>
+
+        Reviewed by Simon Fraser.
+
+        Four new tests that make sure Apple Pencil's register the correct
+        touch* style events.
+
+        * fast/events/touch/ios/pencil-down-gives-touchstart-expected.txt: Added.
+        * fast/events/touch/ios/pencil-down-gives-touchstart.html: Added.
+        * fast/events/touch/ios/pencil-move-gives-touchmove-expected.txt: Added.
+        * fast/events/touch/ios/pencil-move-gives-touchmove.html: Added.
+        * fast/events/touch/ios/pencil-tap-gives-touchstart-and-touchend-expected.txt: Added.
+        * fast/events/touch/ios/pencil-tap-gives-touchstart-and-touchend.html: Added.
+        * fast/events/touch/ios/pencil-up-gives-touchend-expected.txt: Added.
+        * fast/events/touch/ios/pencil-up-gives-touchend.html: Added.
+
 2016-09-07  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] some valid language tags cause errors in Intl constructors

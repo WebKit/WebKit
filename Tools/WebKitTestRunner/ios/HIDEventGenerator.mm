@@ -55,6 +55,9 @@ typedef enum {
     HandEventCanceled,
     HandEventInRange,
     HandEventInRangeLift,
+    StylusEventTouched,
+    StylusEventMoved,
+    StylusEventLifted,
 } HandEventType;
 
 typedef struct {
@@ -63,6 +66,9 @@ typedef struct {
     IOHIDFloat pathMajorRadius;
     IOHIDFloat pathPressure;
     UInt8 pathProximity;
+    BOOL isStylus;
+    IOHIDFloat azimuthAngle;
+    IOHIDFloat altitudeAngle;
 } SyntheticEventDigitizerInfo;
 
 static CFTimeInterval secondsSinceAbsoluteTime(CFAbsoluteTime startTime)
@@ -142,7 +148,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 - (IOHIDEventRef)_createIOHIDEventType:(HandEventType)eventType
 {
-    BOOL isTouching = (eventType == HandEventTouched || eventType == HandEventMoved || eventType == HandEventChordChanged);
+    BOOL isTouching = (eventType == HandEventTouched || eventType == HandEventMoved || eventType == HandEventChordChanged || eventType == StylusEventTouched || eventType == StylusEventMoved);
 
     IOHIDDigitizerEventMask eventMask = kIOHIDDigitizerEventTouch;
     if (eventType == HandEventMoved) {
@@ -182,7 +188,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
                 pointInfo->pathPressure = defaultPathPressure;
             if (!pointInfo->pathProximity)
                 pointInfo->pathProximity = kGSEventPathInfoInTouch | kGSEventPathInfoInRange;
-        } else if (eventType == HandEventLifted || eventType == HandEventCanceled) {
+        } else if (eventType == HandEventLifted || eventType == HandEventCanceled || eventType == StylusEventLifted) {
             pointInfo->pathMajorRadius = 0;
             pointInfo->pathPressure = 0;
             pointInfo->pathProximity = 0;
@@ -190,18 +196,51 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
         CGPoint point = pointInfo->point;
         point = CGPointMake(roundf(point.x), roundf(point.y));
-        RetainPtr<IOHIDEventRef> subEvent = adoptCF(IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, machTime,
-            pointInfo->identifier,
-            pointInfo->identifier,
-            eventMask,
-            point.x, point.y, 0,
-            pointInfo->pathPressure,
-            0,
-            pointInfo->pathProximity & kGSEventPathInfoInRange,
-            pointInfo->pathProximity & kGSEventPathInfoInTouch,
-            kIOHIDEventOptionNone));
+        RetainPtr<IOHIDEventRef> subEvent;
+        if (pointInfo->isStylus) {
+            if (eventType == StylusEventTouched) {
+                eventMask |= kIOHIDDigitizerEventEstimatedAltitude;
+                eventMask |= kIOHIDDigitizerEventEstimatedAzimuth;
+                eventMask |= kIOHIDDigitizerEventEstimatedPressure;
+            } else if (eventType == StylusEventMoved)
+                eventMask = kIOHIDDigitizerEventPosition;
+
+            subEvent = adoptCF(IOHIDEventCreateDigitizerStylusEventWithPolarOrientation(kCFAllocatorDefault, machTime,
+                pointInfo->identifier,
+                pointInfo->identifier,
+                eventMask,
+                0,
+                point.x, point.y, 0,
+                pointInfo->pathPressure,
+                pointInfo->pathPressure,
+                0,
+                pointInfo->altitudeAngle,
+                pointInfo->azimuthAngle,
+                1,
+                0,
+                isTouching ? kIOHIDTransducerTouch : 0));
+
+            if (eventType == StylusEventTouched)
+                IOHIDEventSetIntegerValue(subEvent.get(), kIOHIDEventFieldDigitizerWillUpdateMask, 0x0400);
+            else if (eventType == StylusEventMoved)
+                IOHIDEventSetIntegerValue(subEvent.get(), kIOHIDEventFieldDigitizerDidUpdateMask, 0x0400);
+
+        } else {
+            subEvent = adoptCF(IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, machTime,
+                pointInfo->identifier,
+                pointInfo->identifier,
+                eventMask,
+                point.x, point.y, 0,
+                pointInfo->pathPressure,
+                0,
+                pointInfo->pathProximity & kGSEventPathInfoInRange,
+                pointInfo->pathProximity & kGSEventPathInfoInTouch,
+                kIOHIDEventOptionNone));
+        }
+
         IOHIDEventSetFloatValue(subEvent.get(), kIOHIDEventFieldDigitizerMajorRadius, pointInfo->pathMajorRadius);
         IOHIDEventSetFloatValue(subEvent.get(), kIOHIDEventFieldDigitizerMinorRadius, pointInfo->pathMajorRadius);
+
         IOHIDEventAppendEvent(eventRef.get(), subEvent.get(), 0);
     }
 
@@ -284,8 +323,10 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
     _activePointCount = touchCount;
 
-    for (NSUInteger index = 0; index < touchCount; ++index)
+    for (NSUInteger index = 0; index < touchCount; ++index) {
         _activePoints[index].point = locations[index];
+        _activePoints[index].isStylus = NO;
+    }
 
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventTouched]);
     [self _sendHIDEvent:eventRef.get()];
@@ -379,6 +420,74 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 - (void)liftUp:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock
 {
     [self liftUp:location touchCount:count];
+    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+}
+
+- (void)stylusDownAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure
+{
+    _activePointCount = 1;
+    _activePoints[0].point = location;
+    _activePoints[0].isStylus = YES;
+    _activePoints[0].pathPressure = pressure;
+    _activePoints[0].azimuthAngle = azimuthAngle;
+    _activePoints[0].altitudeAngle = altitudeAngle;
+
+    RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:StylusEventTouched]);
+    [self _sendHIDEvent:eventRef.get()];
+}
+
+- (void)stylusMoveToPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure
+{
+    _activePointCount = 1;
+    _activePoints[0].point = location;
+    _activePoints[0].isStylus = YES;
+    _activePoints[0].pathPressure = pressure;
+    _activePoints[0].azimuthAngle = azimuthAngle;
+    _activePoints[0].altitudeAngle = altitudeAngle;
+
+    RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:StylusEventMoved]);
+    [self _sendHIDEvent:eventRef.get()];
+}
+
+- (void)stylusUpAtPoint:(CGPoint)location
+{
+    _activePointCount = 1;
+    _activePoints[0].point = location;
+    _activePoints[0].isStylus = YES;
+    _activePoints[0].pathPressure = 0;
+    _activePoints[0].azimuthAngle = 0;
+    _activePoints[0].altitudeAngle = 0;
+
+    RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:StylusEventLifted]);
+    [self _sendHIDEvent:eventRef.get()];
+}
+
+- (void)stylusDownAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock
+{
+    [self stylusDownAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure];
+    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+}
+
+- (void)stylusMoveToPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock
+{
+    [self stylusMoveToPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure];
+    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+}
+
+- (void)stylusUpAtPoint:(CGPoint)location completionBlock:(void (^)(void))completionBlock
+{
+    [self stylusUpAtPoint:location];
+    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+}
+
+- (void)stylusTapAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock
+{
+    struct timespec pressDelay = { 0, static_cast<long>(fingerLiftDelay) };
+
+    [self stylusDownAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure];
+    nanosleep(&pressDelay, 0);
+    [self stylusUpAtPoint:location];
+
     [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 

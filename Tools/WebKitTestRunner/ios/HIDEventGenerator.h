@@ -35,6 +35,12 @@
 - (void)touchDown:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock;
 - (void)liftUp:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock;
 
+// Stylus
+- (void)stylusDownAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock;
+- (void)stylusMoveToPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock;
+- (void)stylusUpAtPoint:(CGPoint)location completionBlock:(void (^)(void))completionBlock;
+- (void)stylusTapAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock;
+
 // Taps
 - (void)tap:(CGPoint)location completionBlock:(void (^)(void))completionBlock;
 - (void)doubleTap:(CGPoint)location completionBlock:(void (^)(void))completionBlock;

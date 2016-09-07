@@ -126,6 +126,54 @@ void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
     }];
 }
 
+void UIScriptController::stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusDownAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
+void UIScriptController::stylusMoveToPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusMoveToPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
+void UIScriptController::stylusUpAtPoint(long x, long y, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusUpAtPoint:location completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
+void UIScriptController::stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusTapAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
 void UIScriptController::dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
