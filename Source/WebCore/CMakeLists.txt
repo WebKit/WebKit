@@ -1349,6 +1349,7 @@ set(WebCore_SOURCES
     css/WebKitCSSTransformValue.cpp
     css/WebKitCSSViewportRule.cpp
 
+    css/parser/CSSAtRuleID.cpp
     css/parser/CSSParser.cpp
     css/parser/CSSParserFastPaths.cpp
     css/parser/CSSParserIdioms.cpp
