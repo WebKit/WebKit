@@ -845,6 +845,12 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         break;
     case State::RelativeSlash:
         LOG_FINAL_STATE("RelativeSlash");
+        copyURLPartsUntil(base, URLPart::PortEnd);
+        m_buffer.append('/');
+        m_url.m_pathAfterLastSlash = base.m_portEnd + 1;
+        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
         break;
     case State::SpecialAuthoritySlashes:
         LOG_FINAL_STATE("SpecialAuthoritySlashes");

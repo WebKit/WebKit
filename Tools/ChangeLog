@@ -1,3 +1,13 @@
+2016-09-06  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should parse / as a relative URL
+        https://bugs.webkit.org/show_bug.cgi?id=161667
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-09-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] DumpRenderTree and WebKitTestRunner fail to build - "Ad Hoc code signing is not allowed with SDK 'Simulator - iOS 10.0'"

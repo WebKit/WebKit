@@ -229,6 +229,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("#", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar#"});
     checkRelativeURL("?#", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar?#"});
     checkRelativeURL("#?", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "?", "http://example.org/foo/bar#?"});
+    checkRelativeURL("/", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/", "", "", "http://example.org/"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
