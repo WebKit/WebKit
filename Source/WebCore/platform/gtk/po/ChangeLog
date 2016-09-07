@@ -1,3 +1,12 @@
+2016-09-07  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [l10n] Updated Polish translation of WebKitGTK+ for 2.14
+        https://bugs.webkit.org/show_bug.cgi?id=161319
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * pl.po:
+
 2016-08-29  Piotr Drąg  <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+ for 2.14
