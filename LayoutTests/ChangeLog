@@ -1,3 +1,12 @@
+2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/security/cross-origin-plugin-allowed.html as flaky on mac-wk2 release.
+        https://bugs.webkit.org/show_bug.cgi?id=161539
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Strikethrough positions are erroneously snapped twice

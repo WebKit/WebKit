@@ -545,3 +545,5 @@ webkit.org/b/161366 [ Debug ] editing/mac/spelling/accept-misspelled-candidate.h
 webkit.org/b/161366 [ Debug ] editing/mac/spelling/autocorrection-contraction.html [ Pass Failure ]
 
 webkit.org/b/161633 [ Debug ] storage/indexeddb/objectstore-cursor.html [ Pass Timeout ]
+
+webkit.org/b/161539 [ Release ] http/tests/security/cross-origin-plugin-allowed.html [ Pass Failure ]
