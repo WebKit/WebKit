@@ -82,6 +82,9 @@ bool ArrayValue::get(size_t index, Dictionary& value) const
 
 bool ArrayValue::get(size_t index, String& value) const
 {
+    VM& vm = m_exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (isUndefinedOrNull())
         return false;
 
@@ -90,7 +93,7 @@ bool ArrayValue::get(size_t index, String& value) const
         return false;
 
     value = indexedValue.toWTFString(m_exec);
-    if (m_exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     return true;

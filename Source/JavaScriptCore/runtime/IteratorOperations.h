@@ -28,6 +28,7 @@
 
 #include "JSCJSValue.h"
 #include "JSObject.h"
+#include "ThrowScope.h"
 
 namespace JSC {
 
@@ -47,20 +48,22 @@ template <typename CallBackType>
 void forEachInIterable(ExecState* state, JSValue iterable, const CallBackType& callback)
 {
     auto& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue iterator = iteratorForIterable(state, iterable);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return;
     while (true) {
         JSValue next = iteratorStep(state, iterator);
-        if (next.isFalse() || vm.exception())
+        if (next.isFalse() || UNLIKELY(scope.exception()))
             return;
 
         JSValue nextValue = iteratorValue(state, next);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return;
 
         callback(vm, state, nextValue);
-        if (vm.exception()) {
+        if (UNLIKELY(scope.exception())) {
             iteratorClose(state, iterator);
             return;
         }

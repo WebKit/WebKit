@@ -105,10 +105,12 @@ JSValue ScriptFunctionCall::call(bool& hadException)
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
-    JSLockHolder lock(m_exec);
+    VM& vm = m_exec->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue function = thisObject->get(m_exec, Identifier::fromString(m_exec, m_name));
-    if (m_exec->hadException()) {
+    if (UNLIKELY(scope.exception())) {
         hadException = true;
         return { };
     }

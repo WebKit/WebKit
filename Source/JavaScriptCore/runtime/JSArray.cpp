@@ -654,7 +654,7 @@ JSValue JSArray::pop(ExecState* exec)
     unsigned index = getArrayLength() - 1;
     // Let element be the result of calling the [[Get]] internal method of O with argument indx.
     JSValue element = get(exec, index);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     // Call the [[Delete]] internal method of O with arguments indx and true.
     if (!deletePropertyByIndex(this, exec, index)) {
@@ -706,7 +706,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         
         if (length > MAX_ARRAY_INDEX) {
             methodTable(vm)->putByIndex(this, exec, length, value, true);
-            if (!exec->hadException())
+            if (!scope.exception())
                 throwException(exec, scope, createRangeError(exec, ASCIILiteral("Invalid array length")));
             return;
         }
@@ -726,7 +726,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         
         if (length > MAX_ARRAY_INDEX) {
             methodTable(vm)->putByIndex(this, exec, length, value, true);
-            if (!exec->hadException())
+            if (!scope.exception())
                 throwException(exec, scope, createRangeError(exec, ASCIILiteral("Invalid array length")));
             return;
         }
@@ -758,7 +758,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         
         if (length > MAX_ARRAY_INDEX) {
             methodTable(vm)->putByIndex(this, exec, length, value, true);
-            if (!exec->hadException())
+            if (!scope.exception())
                 throwException(exec, scope, createRangeError(exec, ASCIILiteral("Invalid array length")));
             return;
         }
@@ -771,7 +771,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         unsigned oldLength = length();
         bool putResult = false;
         if (attemptToInterceptPutByIndexOnHole(exec, oldLength, value, true, putResult)) {
-            if (!exec->hadException() && oldLength < 0xFFFFFFFFu)
+            if (!scope.exception() && oldLength < 0xFFFFFFFFu)
                 setLength(exec, oldLength + 1, true);
             return;
         }
@@ -794,7 +794,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         if (storage->length() > MAX_ARRAY_INDEX) {
             methodTable(vm)->putByIndex(this, exec, storage->length(), value, true);
             // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
-            if (!exec->hadException())
+            if (!scope.exception())
                 throwException(exec, scope, createRangeError(exec, ASCIILiteral("Invalid array length")));
             return;
         }
@@ -1257,6 +1257,9 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 
 void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     unsigned i = offset;
     WriteBarrier<Unknown>* vector;
     unsigned vectorEnd;
@@ -1321,7 +1324,7 @@ void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest,
     
     for (; i < length; ++i) {
         exec->r(firstElementDest + i - offset) = get(exec, i);
-        if (UNLIKELY(exec->vm().exception()))
+        if (UNLIKELY(scope.exception()))
             return;
     }
 }

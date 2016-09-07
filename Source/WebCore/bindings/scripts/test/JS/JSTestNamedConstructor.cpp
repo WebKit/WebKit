@@ -91,13 +91,13 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
     auto str1 = state->argument(0).toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : state->uncheckedArgument(1).toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto str3 = state->argument(2).isUndefined() ? String() : state->uncheckedArgument(2).toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto object = TestNamedConstructor::createForJSConstructor(*castedThis->document(), WTFMove(str1), WTFMove(str2), WTFMove(str3), ec);
     if (UNLIKELY(ec)) {

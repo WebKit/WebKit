@@ -107,11 +107,14 @@ public:
 
     static JSC::JSValue linkAndEvaluateModule(JSC::ExecState* exec, const JSC::Identifier& moduleKey, JSC::JSValue initiator, NakedPtr<JSC::Exception>& returnedException)
     {
+        JSC::VM& vm = exec->vm();
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+    
         JSMainThreadExecState currentState(exec);
         JSC::JSValue returnValue = JSC::linkAndEvaluateModule(exec, moduleKey, initiator);
-        if (exec->hadException()) {
-            returnedException = exec->vm().exception();
-            exec->clearException();
+        if (UNLIKELY(scope.exception())) {
+            returnedException = scope.exception();
+            scope.clearException();
             return JSC::jsUndefined();
         }
         return returnValue;
@@ -131,8 +134,10 @@ private:
 
     ~JSMainThreadExecState()
     {
+        JSC::VM& vm = s_mainThreadState->vm();
+        auto scope = DECLARE_CATCH_SCOPE(vm);
         ASSERT(isMainThread());
-        ASSERT(!s_mainThreadState->hadException());
+        ASSERT_UNUSED(scope, !scope.exception());
 
         bool didExitJavaScript = s_mainThreadState && !m_previousState;
 

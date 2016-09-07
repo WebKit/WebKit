@@ -71,7 +71,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
         return JSValue::encode(map);
 
     JSValue adderFunction = map->JSObject::get(exec, exec->propertyNames().set);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     CallData adderFunctionCallData;
@@ -80,17 +80,18 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
         return JSValue::encode(throwTypeError(exec, scope));
 
     forEachInIterable(exec, iterable, [&](VM& vm, ExecState* exec, JSValue nextItem) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
         if (!nextItem.isObject()) {
             throwTypeError(exec, scope);
             return;
         }
 
         JSValue key = nextItem.get(exec, static_cast<unsigned>(0));
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return;
 
         JSValue value = nextItem.get(exec, static_cast<unsigned>(1));
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return;
 
         MarkedArgumentBuffer arguments;

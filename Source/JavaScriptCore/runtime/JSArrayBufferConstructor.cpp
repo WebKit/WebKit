@@ -88,7 +88,7 @@ static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
     unsigned length;
     if (exec->argumentCount()) {
         length = exec->uncheckedArgument(0).toUInt32(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
     } else {
         // Although the documentation doesn't say so, it is in fact correct to say
@@ -102,7 +102,7 @@ static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
         return JSValue::encode(throwOutOfMemoryError(exec, scope));
 
     Structure* arrayBufferStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), constructor->globalObject()->arrayBufferStructure());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
     JSArrayBuffer* result = JSArrayBuffer::create(vm, arrayBufferStructure, WTFMove(buffer));
     

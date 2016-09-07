@@ -48,13 +48,16 @@ namespace WebCore {
 
 std::unique_ptr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperWorld& isolatedWorld, ContentSecurityPolicy* policy)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue v = exec->argument(0);
     CallData callData;
     if (getCallData(v, callData) == CallType::None) {
         if (policy && !policy->allowEval(exec))
             return nullptr;
         String string = v.toString(exec)->value(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return nullptr;
         return std::unique_ptr<ScheduledAction>(new ScheduledAction(string, isolatedWorld));
     }

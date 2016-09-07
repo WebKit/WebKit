@@ -6936,6 +6936,9 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
 #if !PLATFORM(IOS)
 static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue jsValue)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
     NSAppleEventDescriptor* aeDesc = 0;
     if (jsValue.isBoolean())
         return [NSAppleEventDescriptor descriptorWithBoolean:jsValue.asBoolean()];
@@ -6976,8 +6979,8 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
             }
         }
         JSC::JSValue primitive = object->toPrimitive(exec);
-        if (exec->hadException()) {
-            exec->clearException();
+        if (UNLIKELY(scope.exception())) {
+            scope.clearException();
             return [NSAppleEventDescriptor nullDescriptor];
         }
         return aeDescFromJSValue(exec, primitive);

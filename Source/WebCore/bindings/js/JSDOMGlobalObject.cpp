@@ -75,11 +75,13 @@ EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(ExecState* execState)
 {
     ASSERT(execState);
     ASSERT(execState->argumentCount() == 2);
+    VM& vm = execState->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto interfaceName = execState->uncheckedArgument(0).getString(execState);
-    ASSERT(!execState->hadException());
+    ASSERT_UNUSED(scope, !scope.exception());
     auto functionName = execState->uncheckedArgument(1).getString(execState);
-    ASSERT(!execState->hadException());
+    ASSERT(!scope.exception());
     return JSValue::encode(createTypeError(execState, makeThisTypeErrorMessage(interfaceName.utf8().data(), functionName.utf8().data())));
 }
 
@@ -87,11 +89,13 @@ EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(ExecState* execState
 {
     ASSERT(execState);
     ASSERT(execState->argumentCount() == 2);
+    VM& vm = execState->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto interfaceName = execState->uncheckedArgument(0).getString(execState);
-    ASSERT(!execState->hadException());
+    ASSERT_UNUSED(scope, !scope.exception());
     auto attributeName = execState->uncheckedArgument(1).getString(execState);
-    ASSERT(!execState->hadException());
+    ASSERT(!scope.exception());
     return JSValue::encode(createTypeError(execState, makeGetterTypeErrorMessage(interfaceName.utf8().data(), attributeName.utf8().data())));
 }
 

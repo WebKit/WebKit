@@ -54,7 +54,7 @@ namespace JSC {
                 m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments.data());
             } else
                 throwStackOverflowError(callFrame, scope);
-            m_valid = !callFrame->hadException();
+            m_valid = !scope.exception();
         }
         
         JSValue call()

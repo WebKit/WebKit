@@ -46,7 +46,8 @@ Instruction* returnToThrow(ExecState* exec)
     UNUSED_PARAM(exec);
 #if LLINT_SLOW_PATH_TRACING
     VM* vm = &exec->vm();
-    dataLog("Throwing exception ", vm->exception(), " (returnToThrow).\n");
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+    dataLog("Throwing exception ", scope.exception(), " (returnToThrow).\n");
 #endif
     return LLInt::exceptionInstructions();
 }
@@ -56,7 +57,8 @@ void* callToThrow(ExecState* exec)
     UNUSED_PARAM(exec);
 #if LLINT_SLOW_PATH_TRACING
     VM* vm = &exec->vm();
-    dataLog("Throwing exception ", vm->exception(), " (callToThrow).\n");
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+    dataLog("Throwing exception ", scope.exception(), " (callToThrow).\n");
 #endif
     return LLInt::getCodePtr(llint_throw_during_call_trampoline);
 }

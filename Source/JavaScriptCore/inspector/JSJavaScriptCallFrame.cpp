@@ -83,7 +83,7 @@ JSValue JSJavaScriptCallFrame::evaluateWithScopeExtension(ExecState* exec)
         return throwTypeError(exec, scope, ASCIILiteral("JSJavaScriptCallFrame.evaluateWithScopeExtension first argument must be a string."));
 
     String script = scriptValue.toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     NakedPtr<Exception> exception;

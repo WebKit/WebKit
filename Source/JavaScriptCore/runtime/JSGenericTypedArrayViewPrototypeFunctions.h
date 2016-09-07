@@ -51,7 +51,7 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue constructor = exemplar->get(exec, exec->propertyNames().constructor);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     if (constructor.isUndefined())
@@ -62,14 +62,14 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     }
 
     JSValue species = constructor.get(exec, exec->propertyNames().speciesSymbol);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     if (species.isUndefinedOrNull())
         return defaultConstructor();
 
     JSValue result = construct(exec, species, args, "species is not a constructor");
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(result)) {
@@ -147,7 +147,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(VM& vm, ExecState
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncCopyWithin(VM& vm, ExecState* exec)
 {
-//    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 22.2.3.5
@@ -157,13 +156,13 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncCopyWithin(VM& vm, Ex
 
     long length = thisObject->length();
     long to = argumentClampedIndexFromStartOrEnd(exec, 0, length);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return encodedJSValue();
     long from = argumentClampedIndexFromStartOrEnd(exec, 1, length);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return encodedJSValue();
     long final = argumentClampedIndexFromStartOrEnd(exec, 2, length, length);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return encodedJSValue();
 
     if (final < from)
@@ -183,7 +182,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncCopyWithin(VM& vm, Ex
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIncludes(VM& vm, ExecState* exec)
 {
-//    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
@@ -198,7 +196,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIncludes(VM& vm, Exec
     JSValue valueToFind = exec->argument(0);
 
     unsigned index = argumentClampedIndexFromStartOrEnd(exec, 1, length);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     if (thisObject->isNeutered())
@@ -209,7 +207,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIncludes(VM& vm, Exec
     if (!targetOption)
         return JSValue::encode(jsBoolean(false));
 
-    ASSERT(!vm.exception());
+    ASSERT(!scope.exception());
     RELEASE_ASSERT(!thisObject->isNeutered());
 
     if (std::isnan(static_cast<double>(*targetOption))) {
@@ -230,7 +228,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIncludes(VM& vm, Exec
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIndexOf(VM& vm, ExecState* exec)
 {
-//    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 22.2.3.13
@@ -245,7 +242,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIndexOf(VM& vm, ExecS
 
     JSValue valueToFind = exec->argument(0);
     unsigned index = argumentClampedIndexFromStartOrEnd(exec, 1, length);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return encodedJSValue();
 
     if (thisObject->isNeutered())
@@ -255,7 +252,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIndexOf(VM& vm, ExecS
     auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
     if (!targetOption)
         return JSValue::encode(jsNumber(-1));
-    ASSERT(!vm.exception());
+    ASSERT(!scope.exception());
     RELEASE_ASSERT(!thisObject->isNeutered());
 
     for (; index < length; ++index) {
@@ -269,7 +266,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIndexOf(VM& vm, ExecS
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncJoin(VM& vm, ExecState* exec)
 {
-//    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
@@ -282,11 +278,11 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncJoin(VM& vm, ExecStat
         unsigned length = thisObject->length();
 
         JSStringJoiner joiner(*exec, separator, length);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
         for (unsigned i = 0; i < length; i++) {
             joiner.append(*exec, thisObject->getIndexQuickly(i));
-            if (exec->hadException())
+            if (UNLIKELY(scope.exception()))
                 return JSValue::encode(jsUndefined());
         }
         return JSValue::encode(joiner.join(*exec));
@@ -299,7 +295,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncJoin(VM& vm, ExecStat
     }
 
     JSString* separatorString = separatorValue.toString(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     if (thisObject->isNeutered())
@@ -310,7 +306,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncJoin(VM& vm, ExecStat
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, ExecState* exec)
 {
-//    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 22.2.3.16
@@ -338,7 +333,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, E
             index = static_cast<unsigned>(fromDouble);
     }
 
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
 
     if (thisObject->isNeutered())
@@ -349,7 +344,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, E
         return JSValue::encode(jsNumber(-1));
 
     typename ViewClass::ElementType* array = thisObject->typedVector();
-    ASSERT(!vm.exception());
+    ASSERT(!scope.exception());
     RELEASE_ASSERT(!thisObject->isNeutered());
 
     for (; index >= 0; --index) {
@@ -432,7 +427,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSort(VM& vm, ExecSt
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(VM& vm, ExecState* exec)
 {
-//    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 22.2.3.26
@@ -445,10 +439,10 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(VM& vm, ExecSta
     unsigned thisLength = thisObject->length();
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, thisLength);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return encodedJSValue();
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, thisLength, thisLength);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return encodedJSValue();
 
     if (thisObject->isNeutered())
@@ -467,7 +461,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(VM& vm, ExecSta
         Structure* structure = callee->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
         return ViewClass::createUninitialized(exec, structure, length);
     });
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
 
     ASSERT(!result->isNeutered());
@@ -518,7 +512,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(VM& vm, ExecSta
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&vm, ExecState* exec)
 {
-//    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 22.2.3.23
@@ -537,9 +530,9 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     ASSERT(exec->argument(0).isNumber());
     ASSERT(exec->argument(1).isUndefined() || exec->argument(1).isNumber());
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, thisLength);
-    ASSERT(!vm.exception());
+    ASSERT(!scope.exception());
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, thisLength, thisLength);
-    ASSERT(!vm.exception());
+    ASSERT(!scope.exception());
 
     RELEASE_ASSERT(!thisObject->isNeutered());
 
@@ -572,7 +565,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     args.append(jsNumber(length));
 
     JSObject* result = construct(exec, species, args, "species is not a constructor");
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
 
     if (jsDynamicCast<JSArrayBufferView*>(result))

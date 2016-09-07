@@ -361,7 +361,8 @@ bool setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* state, En
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -369,7 +370,7 @@ bool setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* state, En
     }
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setNondeterministicWriteableAttr(WTFMove(nativeValue));
     return true;
@@ -380,7 +381,8 @@ bool setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* state, En
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -388,7 +390,7 @@ bool setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* state, En
     }
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setNondeterministicExceptionAttr(WTFMove(nativeValue));
     return true;
@@ -399,7 +401,8 @@ bool setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* sta
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -407,7 +410,7 @@ bool setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* sta
     }
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setNondeterministicGetterExceptionAttr(WTFMove(nativeValue));
     return true;
@@ -418,7 +421,8 @@ bool setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* sta
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -427,7 +431,7 @@ bool setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* sta
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     auto nativeValue = value.toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setNondeterministicSetterExceptionAttr(WTFMove(nativeValue), ec);
     setDOMException(state, ec);

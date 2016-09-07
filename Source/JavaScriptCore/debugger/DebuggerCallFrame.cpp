@@ -217,7 +217,9 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     if (!callFrame)
         return jsUndefined();
 
-    JSLockHolder lock(callFrame);
+    VM& vm = callFrame->vm();
+    JSLockHolder lock(vm);
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     CodeBlock* codeBlock = nullptr;
     if (isTailDeleted())
@@ -228,7 +230,6 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
         return jsUndefined();
     
     DebuggerEvalEnabler evalEnabler(callFrame);
-    VM& vm = callFrame->vm();
 
     EvalContextType evalContextType;
     
@@ -243,9 +244,9 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     JSScope::collectVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ);
 
     EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), codeBlock->isStrictMode(), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), evalContextType, &variablesUnderTDZ);
-    if (vm.exception()) {
-        exception = vm.exception();
-        vm.clearException();
+    if (UNLIKELY(catchScope.exception())) {
+        exception = catchScope.exception();
+        catchScope.clearException();
         return jsUndefined();
     }
 
@@ -257,9 +258,9 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
 
     JSValue thisValue = this->thisValue();
     JSValue result = vm.interpreter->execute(eval, callFrame, thisValue, scope()->jsScope());
-    if (vm.exception()) {
-        exception = vm.exception();
-        vm.clearException();
+    if (UNLIKELY(catchScope.exception())) {
+        exception = catchScope.exception();
+        catchScope.clearException();
     }
 
     if (scopeExtensionObject)

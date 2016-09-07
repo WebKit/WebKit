@@ -56,7 +56,7 @@ EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState& exec)
         return throwVMError(&exec, scope, createNotEnoughArgumentsError(&exec));
 
     String scriptURL = exec.uncheckedArgument(0).toWTFString(&exec);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
 
     // See section 4.8.2 step 14 of WebWorkers for why this is the lexicalGlobalObject.

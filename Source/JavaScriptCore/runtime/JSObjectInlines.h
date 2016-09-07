@@ -40,16 +40,16 @@ void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTyp
     
     Vector<JSValue> result;
     JSValue lengthProperty = arrayLikeValue.get(exec, vm.propertyNames->length);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return;
     double lengthAsDouble = lengthProperty.toLength(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return;
     RELEASE_ASSERT(lengthAsDouble >= 0.0 && lengthAsDouble == std::trunc(lengthAsDouble));
     uint64_t length = static_cast<uint64_t>(lengthAsDouble);
     for (uint64_t index = 0; index < length; index++) {
         JSValue next = arrayLikeValue.get(exec, index);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return;
         
         RuntimeType type = runtimeTypeForValue(next);
@@ -96,8 +96,10 @@ ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot
 template<typename CallbackWhenNoException>
 ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSObject::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     bool found = const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
-    if (UNLIKELY(exec->hadException()))
+    if (UNLIKELY(scope.exception()))
         return { };
     return callback(found, slot);
 }
@@ -105,6 +107,7 @@ ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot
 ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
@@ -112,14 +115,14 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyN
         Structure& structure = *structureIDTable.get(object->structureID());
         if (structure.classInfo()->methodTable.getOwnPropertySlotByIndex(object, exec, propertyName, slot))
             return true;
-        if (UNLIKELY(vm.exception()))
+        if (UNLIKELY(scope.exception()))
             return false;
         JSValue prototype;
         if (LIKELY(structure.classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
             prototype = structure.storedPrototype();
         else {
             prototype = object->getPrototype(vm, exec);
-            if (vm.exception())
+            if (UNLIKELY(scope.exception()))
                 return false;
         }
         if (!prototype.isObject())
@@ -134,6 +137,7 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
     ASSERT(!parseIndex(propertyName));
 
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
@@ -145,7 +149,7 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
         } else {
             if (structure.classInfo()->methodTable.getOwnPropertySlot(object, exec, propertyName, slot))
                 return true;
-            if (UNLIKELY(vm.exception()))
+            if (UNLIKELY(scope.exception()))
                 return false;
         }
         JSValue prototype;
@@ -153,7 +157,7 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
             prototype = structure.storedPrototype();
         else {
             prototype = object->getPrototype(vm, exec);
-            if (vm.exception())
+            if (UNLIKELY(scope.exception()))
                 return false;
         }
         if (!prototype.isObject())

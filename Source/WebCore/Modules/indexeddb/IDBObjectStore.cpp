@@ -236,6 +236,9 @@ RefPtr<IDBRequest> IDBObjectStore::putForCursorUpdate(ExecState& state, JSValue 
 
 RefPtr<IDBRequest> IDBObjectStore::putOrAdd(ExecState& state, JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, InlineKeyCheck inlineKeyCheck, ExceptionCodeWithMessage& ec)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
     LOG(IndexedDB, "IDBObjectStore::putOrAdd");
     ASSERT(currentThread() == m_transaction->database().originThreadID());
 
@@ -270,9 +273,9 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(ExecState& state, JSValue value, Ref
     }
 
     RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(&state, value, nullptr, nullptr);
-    if (state.hadException()) {
+    if (UNLIKELY(scope.exception())) {
         // Clear the DOM exception from the serializer so we can give a more targeted exception.
-        state.clearException();
+        scope.clearException();
 
         ec.code = IDBDatabaseException::DataCloneError;
         ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: An object could not be cloned.");

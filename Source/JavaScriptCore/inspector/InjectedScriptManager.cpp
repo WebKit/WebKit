@@ -134,7 +134,9 @@ String InjectedScriptManager::injectedScriptSource()
 
 JSC::JSObject* InjectedScriptManager::createInjectedScript(const String& source, ExecState* scriptState, int id)
 {
-    JSLockHolder lock(scriptState);
+    VM& vm = scriptState->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     SourceCode sourceCode = makeSource(source);
     JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
@@ -157,7 +159,7 @@ JSC::JSObject* InjectedScriptManager::createInjectedScript(const String& source,
     args.append(jsNumber(id));
 
     JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
-    scriptState->clearException();
+    scope.clearException();
     return result.getObject();
 }
 

@@ -642,7 +642,7 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue 
     }
 
     StringImpl* hintString = jsCast<JSString*>(value)->value(exec).impl();
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return NoPreference;
 
     if (WTF::equal(hintString, "default"))
@@ -784,8 +784,9 @@ ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot
 template<typename CallbackWhenNoException>
 ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
 {
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
     bool found = getPropertySlot(exec, propertyName, slot);
-    if (UNLIKELY(exec->hadException()))
+    if (UNLIKELY(scope.exception()))
         return { };
     return callback(found, slot);
 }
@@ -897,6 +898,7 @@ inline bool JSValue::equal(ExecState* exec, JSValue v1, JSValue v2)
 ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     do {
         if (v1.isNumber() && v2.isNumber())
             return v1.asNumber() == v2.asNumber();
@@ -924,7 +926,7 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
             if (v2.isObject())
                 return v1 == v2;
             JSValue p1 = v1.toPrimitive(exec);
-            if (exec->hadException())
+            if (UNLIKELY(scope.exception()))
                 return false;
             v1 = p1;
             if (v1.isInt32() && v2.isInt32())
@@ -934,7 +936,7 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
 
         if (v2.isObject()) {
             JSValue p2 = v2.toPrimitive(exec);
-            if (exec->hadException())
+            if (UNLIKELY(scope.exception()))
                 return false;
             v2 = p2;
             if (v1.isInt32() && v2.isInt32())

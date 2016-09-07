@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- *  Copyright (C) 2007, 2008, 2009, 2014-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2009, 2014-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -815,12 +815,14 @@ inline JSGlobalObject* asGlobalObject(JSValue value)
 
 inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0, JSValue newTarget = JSValue())
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     Structure* structure;
     if (initialLength >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
         structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(exec, ArrayWithArrayStorage, newTarget);
     else
         structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     return ArrayAllocationProfile::updateLastAllocationFor(profile, JSArray::create(exec->vm(), structure, initialLength));
@@ -833,8 +835,10 @@ inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* pro
  
 inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const ArgList& values, JSValue newTarget = JSValue())
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, structure, values));
 }
@@ -846,8 +850,10 @@ inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile,
 
 inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, structure, values, length));
 }
@@ -859,8 +865,10 @@ inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile,
 
 inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(exec, structure, values, length));
 }

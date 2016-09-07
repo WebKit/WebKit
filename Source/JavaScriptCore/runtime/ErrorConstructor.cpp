@@ -50,9 +50,11 @@ void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
 
 EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
     Structure* errorStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->errorStructure());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }

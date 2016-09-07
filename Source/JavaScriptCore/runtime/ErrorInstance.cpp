@@ -158,6 +158,7 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
 String ErrorInstance::sanitizedToString(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue nameValue;
     auto namePropertName = vm.propertyNames->name;
@@ -177,14 +178,14 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
         }
         currentObj = obj->getPrototypeDirect();
     }
-    ASSERT(!vm.exception());
+    ASSERT(!scope.exception());
 
     String nameString;
     if (!nameValue)
         nameString = ASCIILiteral("Error");
     else {
         nameString = nameValue.toString(exec)->value(exec);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return String();
     }
 
@@ -193,14 +194,14 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
     PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry);
     if (JSObject::getOwnPropertySlot(this, exec, messagePropertName, messageSlot) && messageSlot.isValue())
         messageValue = messageSlot.getValue(exec, messagePropertName);
-    ASSERT(!vm.exception());
+    ASSERT(!scope.exception());
 
     String messageString;
     if (!messageValue)
         messageString = String();
     else {
         messageString = messageValue.toString(exec)->value(exec);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return String();
     }
 

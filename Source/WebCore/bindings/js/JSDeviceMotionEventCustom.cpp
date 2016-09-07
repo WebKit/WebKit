@@ -47,32 +47,35 @@ static RefPtr<DeviceMotionData::Acceleration> readAccelerationArgument(JSValue v
     if (value.isUndefinedOrNull())
         return nullptr;
 
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Given the above test, this will always yield an object.
     JSObject* object = value.toObject(&state);
-    ASSERT(!state.hadException());
+    ASSERT(!scope.exception());
 
     JSValue xValue = object->get(&state, Identifier::fromString(&state, "x"));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     bool canProvideX = !xValue.isUndefinedOrNull();
     double x = xValue.toNumber(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     JSValue yValue = object->get(&state, Identifier::fromString(&state, "y"));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     bool canProvideY = !yValue.isUndefinedOrNull();
     double y = yValue.toNumber(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     JSValue zValue = object->get(&state, Identifier::fromString(&state, "z"));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     bool canProvideZ = !zValue.isUndefinedOrNull();
     double z = zValue.toNumber(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     if (!canProvideX && !canProvideY && !canProvideZ)
@@ -86,32 +89,35 @@ static RefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(JSValue v
     if (value.isUndefinedOrNull())
         return nullptr;
 
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Given the above test, this will always yield an object.
     JSObject* object = value.toObject(&state);
-    ASSERT(!state.hadException());
+    ASSERT(!scope.exception());
 
     JSValue alphaValue = object->get(&state, Identifier::fromString(&state, "alpha"));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     bool canProvideAlpha = !alphaValue.isUndefinedOrNull();
     double alpha = alphaValue.toNumber(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     JSValue betaValue = object->get(&state, Identifier::fromString(&state, "beta"));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     bool canProvideBeta = !betaValue.isUndefinedOrNull();
     double beta = betaValue.toNumber(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     JSValue gammaValue = object->get(&state, Identifier::fromString(&state, "gamma"));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     bool canProvideGamma = !gammaValue.isUndefinedOrNull();
     double gamma = gammaValue.toNumber(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     if (!canProvideAlpha && !canProvideBeta && !canProvideGamma)
@@ -172,6 +178,9 @@ JSValue JSDeviceMotionEvent::interval(ExecState&) const
 
 JSValue JSDeviceMotionEvent::initDeviceMotionEvent(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     const String type = state.argument(0).toString(&state)->value(&state);
     bool bubbles = state.argument(1).toBoolean(&state);
     bool cancelable = state.argument(2).toBoolean(&state);
@@ -179,15 +188,15 @@ JSValue JSDeviceMotionEvent::initDeviceMotionEvent(ExecState& state)
     // If any of the parameters are null or undefined, mark them as not provided.
     // Otherwise, use the standard JavaScript conversion.
     RefPtr<DeviceMotionData::Acceleration> acceleration = readAccelerationArgument(state.argument(3), state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     RefPtr<DeviceMotionData::Acceleration> accelerationIncludingGravity = readAccelerationArgument(state.argument(4), state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     RefPtr<DeviceMotionData::RotationRate> rotationRate = readRotationRateArgument(state.argument(5), state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     bool intervalProvided = !state.argument(6).isUndefinedOrNull();

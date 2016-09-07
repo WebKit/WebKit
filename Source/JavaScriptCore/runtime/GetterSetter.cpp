@@ -73,15 +73,17 @@ GetterSetter* GetterSetter::withSetter(VM& vm, JSGlobalObject* globalObject, JSO
 
 JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     // FIXME: Some callers may invoke get() without checking for an exception first.
     // We work around that by checking here.
-    if (exec->hadException())
-        return exec->exception()->value();
+    if (UNLIKELY(scope.exception()))
+        return scope.exception()->value();
 
     JSObject* getter = jsCast<GetterSetter*>(getterSetter)->getter();
 
     CallData callData;
-    CallType callType = getter->methodTable(exec->vm())->getCallData(getter, callData);
+    CallType callType = getter->methodTable(vm)->getCallData(getter, callData);
     return call(exec, getter, callType, callData, base, ArgList());
 }
 

@@ -46,12 +46,15 @@ namespace WebCore {
 #if ENABLE(WEBGL)
 static void get3DContextAttributes(ExecState& state, RefPtr<CanvasContextAttributes>& attrs)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue initializerValue = state.argument(1);
     if (initializerValue.isUndefinedOrNull())
         return;
     
     JSObject* initializerObject = initializerValue.toObject(&state);
-    ASSERT(!state.hadException());
+    ASSERT_UNUSED(scope, !scope.exception());
     JSDictionary dictionary(&state, initializerObject);
     
     GraphicsContext3D::Attributes graphicsAttrs;
@@ -83,7 +86,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::is3dType(contextId)) {
         get3DContextAttributes(state, attrs);
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
     }
 #endif

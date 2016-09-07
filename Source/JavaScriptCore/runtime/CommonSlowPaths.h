@@ -87,7 +87,7 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
         return baseObj->hasProperty(exec, i);
 
     auto property = propName.toPropertyKey(exec);
-    if (vm.exception())
+    if (scope.exception())
         return false;
     return baseObj->hasProperty(exec, property);
 }

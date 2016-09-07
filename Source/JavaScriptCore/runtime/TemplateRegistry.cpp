@@ -45,12 +45,13 @@ JSArray* TemplateRegistry::getTemplateObject(ExecState* exec, const TemplateRegi
         return cached;
 
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned count = templateKey.cookedStrings().size();
     JSArray* templateObject = constructEmptyArray(exec, nullptr, count);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     JSArray* rawObject = constructEmptyArray(exec, nullptr, count);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     for (unsigned index = 0; index < count; ++index) {
@@ -59,12 +60,12 @@ JSArray* TemplateRegistry::getTemplateObject(ExecState* exec, const TemplateRegi
     }
 
     objectConstructorFreeze(exec, rawObject);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
 
     templateObject->putDirect(vm, exec->propertyNames().raw, rawObject, ReadOnly | DontEnum | DontDelete);
 
     objectConstructorFreeze(exec, templateObject);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
 
     m_templateMap.set(templateKey, templateObject);
 

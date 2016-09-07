@@ -31,6 +31,7 @@
 #define Interpreter_h
 
 #include "ArgList.h"
+#include "CatchScope.h"
 #include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSObject.h"
@@ -38,6 +39,7 @@
 #include "SourceProvider.h"
 #include "StackAlignment.h"
 #include "StackFrame.h"
+#include "ThrowScope.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -92,8 +94,9 @@ namespace JSC {
         SuspendExceptionScope(VM* vm)
             : m_vm(vm)
         {
-            oldException = vm->exception();
-            vm->clearException();
+            auto scope = DECLARE_CATCH_SCOPE(*vm);
+            oldException = scope.exception();
+            scope.clearException();
         }
         ~SuspendExceptionScope()
         {

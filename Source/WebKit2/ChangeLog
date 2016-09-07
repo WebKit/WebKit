@@ -1,3 +1,19 @@
+2016-09-07  Mark Lam  <mark.lam@apple.com>
+
+        Add CatchScope and force all exception checks to be via ThrowScope or CatchScope.
+        https://bugs.webkit.org/show_bug.cgi?id=161498
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::hasMethod):
+        (WebKit::NPJSObject::hasProperty):
+        (WebKit::NPJSObject::getProperty):
+        (WebKit::NPJSObject::setProperty):
+        (WebKit::NPJSObject::removeProperty):
+        (WebKit::NPJSObject::construct):
+        (WebKit::NPJSObject::invoke):
+
 2016-09-07  Konstantin Tokarev  <annulen@yandex.ru>
 
         [GTK] Make inspection of Inspector conditional on DEVELOPER_MODE

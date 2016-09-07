@@ -108,7 +108,7 @@ JSValue JSStringJoiner::join(ExecState& state)
     ASSERT(m_strings.size() <= m_strings.capacity());
 
     unsigned length = joinedLength(state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     if (!length)

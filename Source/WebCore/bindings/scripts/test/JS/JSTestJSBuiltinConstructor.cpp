@@ -190,7 +190,8 @@ bool setJSTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, Encode
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestJSBuiltinConstructor* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {

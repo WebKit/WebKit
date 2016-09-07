@@ -43,10 +43,11 @@ bool ScriptGlobalObject::set(ExecState& scriptState, const char* name, Inspector
 {
     auto& vm = scriptState.vm();
     JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptState.lexicalGlobalObject());
     globalObject.putDirect(vm, Identifier::fromString(&vm, name), toJS(&scriptState, &globalObject, value));
-    if (scriptState.hadException()) {
-        reportException(&scriptState, scriptState.exception());
+    if (UNLIKELY(scope.exception())) {
+        reportException(&scriptState, scope.exception());
         return false;
     }
     return true;

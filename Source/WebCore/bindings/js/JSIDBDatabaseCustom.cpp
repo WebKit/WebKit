@@ -55,7 +55,7 @@ JSValue JSIDBDatabase::createObjectStore(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     String name = state.argument(0).toString(&state)->value(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     JSValue optionsValue = state.argument(1);
@@ -66,17 +66,17 @@ JSValue JSIDBDatabase::createObjectStore(ExecState& state)
     bool autoIncrement = false;
     if (!optionsValue.isUndefinedOrNull()) {
         JSValue keyPathValue = optionsValue.get(&state, Identifier::fromString(&state, "keyPath"));
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
 
         if (!keyPathValue.isUndefinedOrNull()) {
             keyPath = idbKeyPathFromValue(state, keyPathValue);
-            if (state.hadException())
+            if (UNLIKELY(scope.exception()))
                 return jsUndefined();
         }
 
         autoIncrement = optionsValue.get(&state, Identifier::fromString(&state, "autoIncrement")).toBoolean(&state);
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
     }
 

@@ -126,7 +126,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
     }
 
     Structure* subclassStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->functionStructure());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     return JSFunction::create(vm, function, globalObject->globalScope(), subclassStructure);

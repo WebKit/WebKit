@@ -210,14 +210,18 @@ static bool NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* vari
         // PluginView, so we destroy it asynchronously.
         PluginView::keepAlive(instance);
 
-        JSC::ExecState* exec = rootObject->globalObject()->globalExec();
-        JSC::JSLockHolder lock(exec);
+        auto globalObject = rootObject->globalObject();
+        auto& vm = globalObject->vm();
+        JSC::JSLockHolder lock(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+
+        JSC::ExecState* exec = globalObject->globalExec();
         String scriptString = JSC::Bindings::convertNPStringToUTF16(s);
 
-        JSC::JSValue returnValue = JSC::evaluate(rootObject->globalObject()->globalExec(), makeSource(scriptString), JSC::JSValue());
+        JSC::JSValue returnValue = JSC::evaluate(exec, makeSource(scriptString), JSC::JSValue());
 
         JSC::Bindings::convertValueToNPVariant(exec, returnValue, variant);
-        exec->clearException();
+        scope.clearException();
         return true;
     }
 
@@ -247,8 +251,13 @@ static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVa
         JSC::Bindings::RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
             return false;
-        JSC::ExecState* exec = rootObject->globalObject()->globalExec();
-        JSC::JSLockHolder lock(exec);
+
+        auto globalObject = rootObject->globalObject();
+        auto& vm = globalObject->vm();
+        JSC::JSLockHolder lock(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+
+        JSC::ExecState* exec = globalObject->globalExec();
         JSC::JSValue function = obj->imp->get(exec, JSC::Bindings::identifierFromNPIdentifier(exec, i->string()));
         JSC::CallData callData;
         JSC::CallType callType = getCallData(function, callData);
@@ -262,7 +271,7 @@ static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVa
 
         // Convert and return the result of the function call.
         JSC::Bindings::convertValueToNPVariant(exec, resultV, result);
-        exec->clearException();
+        scope.clearException();
         return true;
     }
 

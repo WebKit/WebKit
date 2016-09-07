@@ -85,9 +85,11 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 // ECMA 15.7.1
 static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     double n = exec->argumentCount() ? exec->uncheckedArgument(0).toNumber(exec) : 0;
     Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->numberObjectStructure());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
 
     NumberObject* object = NumberObject::create(exec->vm(), structure);

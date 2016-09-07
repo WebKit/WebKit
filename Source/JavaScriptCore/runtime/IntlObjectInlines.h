@@ -40,15 +40,17 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(ExecState& s
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!jsDynamicCast<IntlInstance*>(thisValue)) {
         JSValue prototype = callee->getDirect(vm, vm.propertyNames->prototype);
         if (JSObject::defaultHasInstance(&state, thisValue, prototype)) {
             JSObject* thisObject = thisValue.toObject(&state);
-            if (state.hadException())
+            if (UNLIKELY(scope.exception()))
                 return jsUndefined();
 
             IntlInstance* instance = factory(vm);
-            if (state.hadException())
+            if (UNLIKELY(scope.exception()))
                 return jsUndefined();
 
             thisObject->putDirect(vm, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName(), instance);

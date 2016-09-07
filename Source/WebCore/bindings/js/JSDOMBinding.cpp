@@ -119,8 +119,11 @@ String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
 
 String valueToUSVString(ExecState* exec, JSValue value)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String string = value.toWTFString(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return { };
     StringView view { string };
 
@@ -187,10 +190,11 @@ double valueToDate(ExecState* exec, JSValue value)
 
 void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cachedScript)
 {
-    RELEASE_ASSERT(exec->vm().currentThreadIsHoldingAPILock());
+    VM& vm = exec->vm();
+    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     Exception* exception = jsDynamicCast<Exception*>(exceptionValue);
     if (!exception) {
-        exception = exec->lastException();
+        exception = vm.lastException();
         if (!exception)
             exception = Exception::create(exec->vm(), exceptionValue, Exception::DoNotCaptureStack);
     }
@@ -200,15 +204,18 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 
 void reportException(ExecState* exec, Exception* exception, CachedScript* cachedScript, ExceptionDetails* exceptionDetails)
 {
-    RELEASE_ASSERT(exec->vm().currentThreadIsHoldingAPILock());
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (isTerminatedExecutionException(exception))
         return;
 
     ErrorHandlingScope errorScope(exec->vm());
 
     RefPtr<ScriptCallStack> callStack(createScriptCallStackFromException(exec, exception, ScriptCallStack::maxCallStackSizeToCapture));
-    exec->clearException();
-    exec->clearLastException();
+    scope.clearException();
+    vm.clearLastException();
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
@@ -239,8 +246,8 @@ void reportException(ExecState* exec, Exception* exception, CachedScript* cached
 
         // We need to clear any new exception that may be thrown in the toString() call above.
         // reportException() is not supposed to be making new exceptions.
-        exec->clearException();
-        exec->clearLastException();
+        scope.clearException();
+        vm.clearLastException();
     }
 
     ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();
@@ -256,8 +263,10 @@ void reportException(ExecState* exec, Exception* exception, CachedScript* cached
 
 void reportCurrentException(ExecState* exec)
 {
-    Exception* exception = exec->exception();
-    exec->clearException();
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    Exception* exception = scope.exception();
+    scope.clearException();
     reportException(exec, exception);
 }
 
@@ -341,7 +350,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!ec || exec->hadException())
+    if (!ec || scope.exception())
         return;
 
     throwException(exec, scope, createDOMException(exec, ec));
@@ -352,7 +361,7 @@ void setDOMException(JSC::ExecState* exec, const ExceptionCodeWithMessage& ec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!ec.code || exec->hadException())
+    if (!ec.code || scope.exception())
         return;
 
     throwException(exec, scope, createDOMException(exec, ec.code, ec.message));
@@ -362,15 +371,17 @@ void setDOMException(JSC::ExecState* exec, const ExceptionCodeWithMessage& ec)
 
 bool hasIteratorMethod(JSC::ExecState& state, JSC::JSValue value)
 {
+    auto& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject())
         return false;
 
-    auto& vm = state.vm();
     JSObject* object = JSC::asObject(value);
     CallData callData;
     CallType callType;
     JSValue applyMethod = object->getMethod(&state, callData, callType, vm.propertyNames->iteratorSymbol, ASCIILiteral("Symbol.iterator property should be callable"));
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     return !applyMethod.isUndefined();
@@ -509,7 +520,7 @@ static inline T toSmallerInt(ExecState& state, JSValue value, IntegerConversionC
     }
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(state.hadException()))
+    if (UNLIKELY(scope.exception()))
         return 0;
 
     switch (configuration) {
@@ -556,7 +567,7 @@ static inline T toSmallerUInt(ExecState& state, JSValue value, IntegerConversion
     }
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(state.hadException()))
+    if (UNLIKELY(scope.exception()))
         return 0;
 
     switch (configuration) {
@@ -642,11 +653,14 @@ uint16_t toUInt16(ExecState& state, JSValue value)
 // http://www.w3.org/TR/WebIDL/#es-long
 int32_t toInt32EnforceRange(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (value.isInt32())
         return value.asInt32();
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(state.hadException()))
+    if (UNLIKELY(scope.exception()))
         return 0;
     return enforceRange(state, x, kMinInt32, kMaxInt32);
 }
@@ -672,27 +686,36 @@ uint32_t toUInt32Clamp(ExecState& state, JSValue value)
 // http://www.w3.org/TR/WebIDL/#es-unsigned-long
 uint32_t toUInt32EnforceRange(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (value.isUInt32())
         return value.asUInt32();
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(state.hadException()))
+    if (UNLIKELY(scope.exception()))
         return 0;
     return enforceRange(state, x, 0, kMaxUInt32);
 }
 
 int64_t toInt64EnforceRange(ExecState& state, JSC::JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double x = value.toNumber(&state);
-    if (UNLIKELY(state.hadException()))
+    if (UNLIKELY(scope.exception()))
         return 0;
     return enforceRange(state, x, -kJSMaxInteger, kJSMaxInteger);
 }
 
 uint64_t toUInt64EnforceRange(ExecState& state, JSC::JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double x = value.toNumber(&state);
-    if (UNLIKELY(state.hadException()))
+    if (UNLIKELY(scope.exception()))
         return 0;
     return enforceRange(state, x, 0, kJSMaxInteger);
 }
@@ -856,21 +879,21 @@ void reportDeprecatedSetterError(JSC::ExecState& state, const char* interfaceNam
 
 void throwNotSupportedError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* message)
 {
-    ASSERT(!state.hadException());
+    ASSERT(!scope.exception());
     String messageString(message);
     throwException(&state, scope, createDOMException(&state, NOT_SUPPORTED_ERR, &messageString));
 }
 
 void throwInvalidStateError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* message)
 {
-    ASSERT(!state.hadException());
+    ASSERT(!scope.exception());
     String messageString(message);
     throwException(&state, scope, createDOMException(&state, INVALID_STATE_ERR, &messageString));
 }
 
 void throwSecurityError(JSC::ExecState& state, JSC::ThrowScope& scope, const String& message)
 {
-    ASSERT(!state.hadException());
+    ASSERT(!scope.exception());
     throwException(&state, scope, createDOMException(&state, SECURITY_ERR, message));
 }
 

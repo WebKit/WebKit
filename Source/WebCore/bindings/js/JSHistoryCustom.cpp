@@ -63,18 +63,18 @@ JSValue JSHistory::pushState(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     auto historyState = SerializedScriptValue::create(&state, state.uncheckedArgument(0), 0, 0);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     // FIXME: title should not be nullable.
     String title = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(1));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     String url;
     if (argCount > 2) {
         url = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
     }
 
@@ -97,18 +97,18 @@ JSValue JSHistory::replaceState(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     auto historyState = SerializedScriptValue::create(&state, state.uncheckedArgument(0), 0, 0);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     // FIXME: title should not be nullable.
     String title = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(1));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     String url;
     if (argCount > 2) {
         url = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
     }
 

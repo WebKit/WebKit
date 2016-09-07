@@ -96,11 +96,14 @@ CallType SymbolConstructor::getCallData(JSCell*, CallData& callData)
 
 EncodedJSValue JSC_HOST_CALL symbolConstructorFor(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSString* stringKey = exec->argument(0).toString(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     String string = stringKey->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     return JSValue::encode(Symbol::create(exec->vm(), exec->vm().symbolRegistry().symbolForKey(string)));

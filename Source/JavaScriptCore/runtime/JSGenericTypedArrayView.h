@@ -173,7 +173,7 @@ public:
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return false;
 
         if (isNeutered()) {

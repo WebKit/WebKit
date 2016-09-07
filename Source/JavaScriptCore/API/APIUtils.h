@@ -38,11 +38,13 @@ enum class ExceptionStatus {
 
 inline ExceptionStatus handleExceptionIfNeeded(JSC::ExecState* exec, JSValueRef* returnedExceptionRef)
 {
-    if (exec->hadException()) {
-        JSC::Exception* exception = exec->exception();
+    JSC::VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    if (UNLIKELY(scope.exception())) {
+        JSC::Exception* exception = scope.exception();
         if (returnedExceptionRef)
             *returnedExceptionRef = toRef(exec, exception->value());
-        exec->clearException();
+        scope.clearException();
 #if ENABLE(REMOTE_INSPECTOR)
         exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exception);
 #endif

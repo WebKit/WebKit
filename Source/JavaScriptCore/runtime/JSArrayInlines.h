@@ -70,24 +70,26 @@ inline bool JSArray::canFastCopy(VM& vm, JSArray* otherArray)
 
 ALWAYS_INLINE unsigned getLength(ExecState* exec, JSObject* obj)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (isJSArray(obj))
         return jsCast<JSArray*>(obj)->length();
 
-    VM& vm = exec->vm();
     JSValue lengthValue = obj->get(exec, vm.propertyNames->length);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return UINT_MAX;
     return lengthValue.toUInt32(exec);
 }
 
 ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (isJSArray(obj))
         return jsCast<JSArray*>(obj)->length();
 
-    VM& vm = exec->vm();
     JSValue lengthValue = obj->get(exec, vm.propertyNames->length);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return PNaN;
     return lengthValue.toLength(exec);
 }

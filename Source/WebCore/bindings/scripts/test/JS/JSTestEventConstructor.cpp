@@ -85,7 +85,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
 
     AtomicString eventType = state->uncheckedArgument(0).toString(state)->toAtomicString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
 
     TestEventConstructorInit eventInit;
@@ -94,7 +94,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     if (!initializerValue.isUndefinedOrNull()) {
         // Given the above test, this will always yield an object.
         JSObject* initializerObject = initializerValue.toObject(state);
-        ASSERT(!state->hadException());
+        ASSERT(!throwScope.exception());
 
         // Create the dictionary wrapper from the initializer object.
         JSDictionary dictionary(state, initializerObject);

@@ -152,13 +152,15 @@ JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue i
         dataLog("Loader [fetch] ", printableModuleKey(exec, key), "\n");
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
         return globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, exec, this, key, initiator);
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
     String moduleKey = key.toString(exec)->value(exec);
-    if (exec->hadException()) {
-        JSValue exception = exec->exception()->value();
-        exec->clearException();
+    if (UNLIKELY(scope.exception())) {
+        JSValue exception = scope.exception()->value();
+        scope.clearException();
         deferred->reject(exec, exception);
         return deferred->promise();
     }

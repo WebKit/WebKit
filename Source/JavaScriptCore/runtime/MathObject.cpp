@@ -162,8 +162,10 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncClz32(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     uint32_t value = exec->argument(0).toUInt32(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsNull());
     return JSValue::encode(JSValue(clz32(value)));
 }
@@ -185,13 +187,15 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncHypot(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned argsCount = exec->argumentCount();
     double max = 0;
     Vector<double, 8> args;
     args.reserveInitialCapacity(argsCount);
     for (unsigned i = 0; i < argsCount; ++i) {
         args.uncheckedAppend(exec->uncheckedArgument(i).toNumber(exec));
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsNull());
         if (std::isinf(args[i]))
             return JSValue::encode(jsDoubleNumber(+std::numeric_limits<double>::infinity()));
@@ -292,8 +296,10 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     int32_t left = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsNull());
     int32_t right = exec->argument(1).toInt32(exec);
     return JSValue::encode(jsNumber(left * right));

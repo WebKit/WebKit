@@ -251,7 +251,8 @@ bool setJSTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSVal
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -259,7 +260,7 @@ bool setJSTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSVal
     }
     auto& impl = castedThis->wrapped();
     auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setValue(WTFMove(nativeValue));
     return true;
@@ -270,7 +271,8 @@ bool setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, Encode
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -278,7 +280,7 @@ bool setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, Encode
     }
     auto& impl = castedThis->wrapped();
     auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setCachedValue(WTFMove(nativeValue));
     return true;

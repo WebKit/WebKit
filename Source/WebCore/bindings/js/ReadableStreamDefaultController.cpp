@@ -53,7 +53,7 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC:
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto function = object.get(&state, JSC::Identifier::fromString(&state, propertyName));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSC::jsUndefined();
 
     if (!function.isFunction()) {
@@ -70,19 +70,22 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC:
 
 bool ReadableStreamDefaultController::isControlledReadableStreamLocked() const
 {
-    auto& state = *globalObject()->globalExec();
-    JSC::JSLockHolder lock(&state);
+    auto globalObject = this->globalObject();
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto& state = *globalObject->globalExec();
 
-    auto& clientData = *static_cast<JSVMClientData*>(state.vm().clientData);
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     auto readableStream = m_jsController->get(&state, clientData.builtinNames().controlledReadableStreamPrivateName());
-    ASSERT(!state.hadException());
+    ASSERT_UNUSED(scope, !scope.exception());
 
-    auto isLocked = globalObject()->builtinInternalFunctions().readableStreamInternals().m_isReadableStreamLockedFunction.get();
+    auto isLocked = globalObject->builtinInternalFunctions().readableStreamInternals().m_isReadableStreamLockedFunction.get();
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(readableStream);
     auto result = callFunction(state, isLocked, JSC::jsUndefined(), arguments);
-    ASSERT(!state.hadException());
+    ASSERT(!scope.exception());
 
     return result.isTrue();
 }

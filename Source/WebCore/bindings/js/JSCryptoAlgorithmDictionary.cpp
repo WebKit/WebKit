@@ -80,7 +80,7 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValu
         }
     }
 
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (!algorithmName.containsOnlyASCII()) {
@@ -106,12 +106,14 @@ static bool getHashAlgorithm(JSDictionary& dictionary, CryptoAlgorithmIdentifier
     // FXIME: Teach JSDictionary how to return JSValues, and use that to get hash element value.
 
     ExecState* exec = dictionary.execState();
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = dictionary.initializerObject();
 
     Identifier identifier = Identifier::fromString(exec, "hash");
 
     JSValue hash = getProperty(exec, object, "hash");
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (hash.isUndefinedOrNull()) {
@@ -134,16 +136,16 @@ static RefPtr<CryptoAlgorithmParameters> createAesCbcParams(ExecState* exec, JSV
     }
 
     JSValue iv = getProperty(exec, value.getObject(), "iv");
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     auto result = adoptRef(*new CryptoAlgorithmAesCbcParams);
 
     CryptoOperationData ivData;
-    if (!cryptoOperationDataFromJSValue(exec, iv, ivData)) {
-        ASSERT(exec->hadException());
+    auto success = cryptoOperationDataFromJSValue(exec, iv, ivData);
+    ASSERT(scope.exception() || success);
+    if (!success)
         return nullptr;
-    }
 
     if (ivData.second != 16) {
         throwException(exec, scope, createError(exec, "AES-CBC initialization data must be 16 bytes"));
@@ -168,7 +170,7 @@ static RefPtr<CryptoAlgorithmParameters> createAesKeyGenParams(ExecState& state,
     auto result = adoptRef(*new CryptoAlgorithmAesKeyGenParams);
 
     JSValue lengthValue = getProperty(&state, value.getObject(), "length");
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     result->length = convert<uint16_t>(state, lengthValue, EnforceRange);
@@ -189,10 +191,10 @@ static RefPtr<CryptoAlgorithmParameters> createHmacParams(ExecState& state, JSVa
     JSDictionary jsDictionary(&state, value.getObject());
     auto result = adoptRef(*new CryptoAlgorithmHmacParams);
 
-    if (!getHashAlgorithm(jsDictionary, result->hash, HashRequirement::Required)) {
-        ASSERT(state.hadException());
+    auto success = getHashAlgorithm(jsDictionary, result->hash, HashRequirement::Required);
+    ASSERT_UNUSED(scope, scope.exception() || success);
+    if (!success)
         return nullptr;
-    }
 
     return WTFMove(result);
 }
@@ -210,13 +212,13 @@ static RefPtr<CryptoAlgorithmParameters> createHmacKeyParams(ExecState& state, J
     JSDictionary jsDictionary(&state, value.getObject());
     auto result = adoptRef(*new CryptoAlgorithmHmacKeyParams);
 
-    if (!getHashAlgorithm(jsDictionary, result->hash, HashRequirement::Required)) {
-        ASSERT(state.hadException());
+    auto success = getHashAlgorithm(jsDictionary, result->hash, HashRequirement::Required);
+    ASSERT(scope.exception() || success);
+    if (!success)
         return nullptr;
-    }
 
     result->hasLength = jsDictionary.get("length", result->length);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     return WTFMove(result);
@@ -236,16 +238,16 @@ static RefPtr<CryptoAlgorithmParameters> createRsaKeyGenParams(ExecState& state,
     auto result = adoptRef(*new CryptoAlgorithmRsaKeyGenParams);
 
     JSValue modulusLengthValue = getProperty(&state, value.getObject(), "modulusLength");
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     // FIXME: Why no EnforceRange? Filed as <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23779>.
     result->modulusLength = convert<uint32_t>(state, modulusLengthValue, NormalConversion);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     JSValue publicExponentValue = getProperty(&state, value.getObject(), "publicExponent");
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     RefPtr<Uint8Array> publicExponentArray = toUint8Array(publicExponentValue);
@@ -279,13 +281,13 @@ static RefPtr<CryptoAlgorithmParameters> createRsaOaepParams(ExecState* exec, JS
     JSDictionary jsDictionary(exec, value.getObject());
     auto result = adoptRef(*new CryptoAlgorithmRsaOaepParams);
 
-    if (!getHashAlgorithm(jsDictionary, result->hash, HashRequirement::Required)) {
-        ASSERT(exec->hadException());
+    auto success = getHashAlgorithm(jsDictionary, result->hash, HashRequirement::Required);
+    ASSERT(scope.exception() || success);
+    if (!success)
         return nullptr;
-    }
 
     JSValue labelValue = getProperty(exec, value.getObject(), "label");
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     result->hasLabel = !labelValue.isUndefinedOrNull();
@@ -293,10 +295,10 @@ static RefPtr<CryptoAlgorithmParameters> createRsaOaepParams(ExecState* exec, JS
         return WTFMove(result);
 
     CryptoOperationData labelData;
-    if (!cryptoOperationDataFromJSValue(exec, labelValue, labelData)) {
-        ASSERT(exec->hadException());
+    success = cryptoOperationDataFromJSValue(exec, labelValue, labelData);
+    ASSERT(scope.exception() || success);
+    if (!success)
         return nullptr;
-    }
 
     result->label.append(labelData.first, labelData.second);
 
@@ -316,10 +318,10 @@ static RefPtr<CryptoAlgorithmParameters> createRsaSsaParams(ExecState& state, JS
     JSDictionary jsDictionary(&state, value.getObject());
     auto result = adoptRef(*new CryptoAlgorithmRsaSsaParams);
 
-    if (!getHashAlgorithm(jsDictionary, result->hash, HashRequirement::Required)) {
-        ASSERT(state.hadException());
+    auto success = getHashAlgorithm(jsDictionary, result->hash, HashRequirement::Required);
+    ASSERT(scope.exception() || success);
+    if (!success)
         return nullptr;
-    }
 
     return WTFMove(result);
 }

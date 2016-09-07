@@ -104,6 +104,9 @@ JSValue JSMessageEvent::data(ExecState& state) const
 
 static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     const String& typeArg = state.argument(0).toString(&state)->value(&state);
     bool canBubbleArg = state.argument(1).toBoolean(&state);
     bool cancelableArg = state.argument(2).toBoolean(&state);
@@ -116,16 +119,16 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         messagePorts = std::make_unique<MessagePortArray>();
         arrayBuffers = std::make_unique<ArrayBufferArray>();
         fillMessagePortArray(state, state.argument(7), *messagePorts, *arrayBuffers);
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
     }
-    Deprecated::ScriptValue dataArg(state.vm(), state.argument(3));
-    if (state.hadException())
+    Deprecated::ScriptValue dataArg(vm, state.argument(3));
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     MessageEvent& event = jsEvent->wrapped();
     event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, WTFMove(messagePorts));
-    jsEvent->m_data.set(state.vm(), jsEvent, dataArg.jsValue());
+    jsEvent->m_data.set(vm, jsEvent, dataArg.jsValue());
     return jsUndefined();
 }
 

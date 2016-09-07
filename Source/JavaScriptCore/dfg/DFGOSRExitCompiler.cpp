@@ -112,14 +112,15 @@ extern "C" {
 
 void compileOSRExit(ExecState* exec)
 {
-    if (exec->vm().callFrameForCatch)
-        RELEASE_ASSERT(exec->vm().callFrameForCatch == exec);
+    VM* vm = &exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    if (vm->callFrameForCatch)
+        RELEASE_ASSERT(vm->callFrameForCatch == exec);
     
     CodeBlock* codeBlock = exec->codeBlock();
     ASSERT(codeBlock);
     ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
-
-    VM* vm = &exec->vm();
     
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
@@ -131,7 +132,7 @@ void compileOSRExit(ExecState* exec)
     if (vm->callFrameForCatch)
         ASSERT(exit.m_kind == GenericUnwind);
     if (exit.isExceptionHandler())
-        ASSERT(!!vm->exception());
+        ASSERT_UNUSED(scope, !!scope.exception());
         
     
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);

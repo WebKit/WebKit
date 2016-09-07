@@ -79,7 +79,12 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (!scriptExecutionContext || scriptExecutionContext->isJSExecutionForbidden())
         return;
 
-    JSLockHolder lock(scriptExecutionContext->vm());
+    VM& vm = scriptExecutionContext->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    // See https://dom.spec.whatwg.org/#dispatching-events spec on calling handleEvent.
+    // "If this throws an exception, report the exception." It should not propagate the
+    // exception.
 
     JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
     if (!jsFunction)
@@ -109,6 +114,14 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     // If jsFunction is not actually a function, see if it implements the EventListener interface and use that
     if (callType == CallType::None) {
         handleEventFunction = jsFunction->get(exec, Identifier::fromString(exec, "handleEvent"));
+        if (UNLIKELY(scope.exception())) {
+            Exception* exception = scope.exception();
+            scope.clearException();
+
+            event->target()->uncaughtExceptionInEventHandler();
+            reportException(exec, exception);
+            return;
+        }
         callType = getCallData(handleEventFunction, callData);
     }
 
@@ -121,7 +134,6 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(event);
 
-        VM& vm = globalObject->vm();
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
         InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
@@ -138,7 +150,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
         if (is<WorkerGlobalScope>(*scriptExecutionContext)) {
             auto scriptController = downcast<WorkerGlobalScope>(*scriptExecutionContext).script();
-            bool terminatorCausedException = (exec->hadException() && isTerminatedExecutionException(exec->exception()));
+            bool terminatorCausedException = (scope.exception() && isTerminatedExecutionException(scope.exception()));
             if (terminatorCausedException || scriptController->isTerminatingExecution())
                 scriptController->forbidExecution();
         }

@@ -60,7 +60,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
 
     unsigned blobPartsLength = 0;
     JSObject* blobParts = toJSSequence(exec, arg, blobPartsLength);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     ASSERT(blobParts);
 
@@ -69,7 +69,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
         return throwArgumentTypeError(exec, scope, 1, "filename", "File", nullptr, "DOMString");
 
     String filename = arg.toWTFString(&exec).replace('/', ':');
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     String normalizedType;
@@ -87,7 +87,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
         // Attempt to get the type property.
         String type;
         dictionary.get("type", type);
-        if (exec.hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
 
         normalizedType = Blob::normalizedContentType(type);
@@ -95,7 +95,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
         // Only try to parse the lastModified date if there was not an invalid type argument.
         if (type.isEmpty() ||  !normalizedType.isEmpty()) {
             dictionary.get("lastModified", lastModified);
-            if (exec.hadException())
+            if (UNLIKELY(scope.exception()))
                 return JSValue::encode(jsUndefined());
         }
     }
@@ -107,7 +107,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
 
     for (unsigned i = 0; i < blobPartsLength; ++i) {
         JSValue item = blobParts->get(&exec, i);
-        if (exec.hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
 
         if (ArrayBuffer* arrayBuffer = toArrayBuffer(item))
@@ -118,7 +118,7 @@ EncodedJSValue JSC_HOST_CALL constructJSFile(ExecState& exec)
             blobBuilder.append(blob);
         else {
             String string = item.toWTFString(&exec);
-            if (exec.hadException())
+            if (UNLIKELY(scope.exception()))
                 return JSValue::encode(jsUndefined());
             blobBuilder.append(string, ASCIILiteral("transparent"));
         }

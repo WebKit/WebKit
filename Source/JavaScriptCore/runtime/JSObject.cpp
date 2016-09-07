@@ -351,6 +351,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
     // 3. ES6 Proxy.
 
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* current = object;
     PropertyDescriptor ownDescriptor;
     while (true) {
@@ -362,13 +363,13 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
 
         // 9.1.9.1-2 Let ownDesc be ? O.[[GetOwnProperty]](P).
         bool ownDescriptorFound = current->getOwnPropertyDescriptor(exec, propertyName, ownDescriptor);
-        if (UNLIKELY(vm.exception()))
+        if (UNLIKELY(scope.exception()))
             return false;
 
         if (!ownDescriptorFound) {
             // 9.1.9.1-3-a Let parent be ? O.[[GetPrototypeOf]]().
             JSValue prototype = current->getPrototype(vm, exec);
-            if (UNLIKELY(vm.exception()))
+            if (UNLIKELY(scope.exception()))
                 return false;
 
             // 9.1.9.1-3-b If parent is not null, then
@@ -400,7 +401,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
         JSObject* receiverObject = asObject(receiver);
         PropertyDescriptor existingDescriptor;
         bool existingDescriptorFound = receiverObject->getOwnPropertyDescriptor(exec, propertyName, existingDescriptor);
-        if (UNLIKELY(vm.exception()))
+        if (UNLIKELY(scope.exception()))
             return false;
 
         // 9.1.9.1-4-d If existingDescriptor is not undefined, then
@@ -1292,7 +1293,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
         return true;
 
     bool isExtensible = this->isExtensible(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (!isExtensible) {
@@ -1552,7 +1553,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue function = object->get(exec, propertyName);
-    if (scope.exception())
+    if (UNLIKELY(scope.exception()))
         return scope.exception();
     if (function.isUndefined() && mode == TypeHintMode::TakesHint)
         return JSValue();
@@ -1580,7 +1581,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
 
     JSValue result = call(exec, function, callType, callData, const_cast<JSObject*>(object), callArgs);
     ASSERT(!result.isGetterSetter());
-    if (scope.exception())
+    if (UNLIKELY(scope.exception()))
         return scope.exception();
     if (result.isObject())
         return mode == TypeHintMode::DoesNotTakeHint ? JSValue() : throwTypeError(exec, scope, ASCIILiteral("Symbol.toPrimitive returned an object"));
@@ -1618,7 +1619,7 @@ JSValue JSObject::ordinaryToPrimitive(ExecState* exec, PreferredPrimitiveType hi
             return value;
     }
 
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
 
     return throwTypeError(exec, scope, ASCIILiteral("No default value"));
 }
@@ -1718,7 +1719,7 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
     JSObject* object = asObject(value);
     while (true) {
         JSValue objectValue = object->getPrototype(vm, exec);
-        if (UNLIKELY(vm.exception()))
+        if (UNLIKELY(scope.exception()))
             return false;
         if (!objectValue.isObject())
             return false;
@@ -1740,12 +1741,13 @@ EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(ExecState* exec)
 void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, propertyNames, mode);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return;
 
     JSValue nextProto = object->getPrototype(vm, exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return;
     if (nextProto.isNull())
         return;
@@ -1757,10 +1759,10 @@ void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameA
             break;
         }
         prototype->methodTable(vm)->getOwnPropertyNames(prototype, exec, propertyNames, mode);
-        if (UNLIKELY(vm.exception()))
+        if (UNLIKELY(scope.exception()))
             return;
         nextProto = prototype->getPrototype(vm, exec);
-        if (UNLIKELY(vm.exception()))
+        if (UNLIKELY(scope.exception()))
             return;
         if (nextProto.isNull())
             break;
@@ -1858,16 +1860,20 @@ void JSObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, Pr
 
 double JSObject::toNumber(ExecState* exec) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue primitive = toPrimitive(exec, PreferNumber);
-    if (exec->hadException()) // should be picked up soon in Nodes.cpp
+    if (UNLIKELY(scope.exception())) // should be picked up soon in Nodes.cpp
         return 0.0;
     return primitive.toNumber(exec);
 }
 
 JSString* JSObject::toString(ExecState* exec) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue primitive = toPrimitive(exec, PreferString);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return jsEmptyString(exec);
     return primitive.toString(exec);
 }
@@ -3076,15 +3082,18 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
 
 bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
+    VM& vm  = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
     // Track on the globaldata that we're in define property.
     // Currently DefineOwnProperty uses delete to remove properties when they are being replaced
     // (particularly when changing attributes), however delete won't allow non-configurable (i.e.
     // DontDelete) properties to be deleted. For now, we can use this flag to make this work.
-    VM::DeletePropertyModeScope scope(exec->vm(), VM::DeletePropertyMode::IgnoreConfigurable);
+    VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
     PropertyDescriptor current;
     bool isCurrentDefined = getOwnPropertyDescriptor(exec, propertyName, current);
     bool isExtensible = this->isExtensible(exec);
-    if (UNLIKELY(exec->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     return validateAndApplyPropertyDescriptor(exec, this, propertyName, isExtensible, descriptor, isCurrentDefined, current, throwException);
 }
@@ -3184,12 +3193,13 @@ void JSObject::getStructurePropertyNames(JSObject* object, ExecState* exec, Prop
 void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, propertyNames, EnumerationMode(mode, JSObjectPropertiesMode::Exclude));
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return;
 
     JSValue nextProto = object->getPrototype(vm, exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return;
     if (nextProto.isNull())
         return;
@@ -3201,10 +3211,10 @@ void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Proper
             break;
         }
         prototype->methodTable(vm)->getOwnPropertyNames(prototype, exec, propertyNames, mode);
-        if (UNLIKELY(exec->hadException()))
+        if (UNLIKELY(scope.exception()))
             return;
         nextProto = prototype->getPrototype(vm, exec);
-        if (UNLIKELY(vm.exception()))
+        if (UNLIKELY(scope.exception()))
             return;
         if (nextProto.isNull())
             break;
@@ -3220,7 +3230,7 @@ JSValue JSObject::getMethod(ExecState* exec, CallData& callData, CallType& callT
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue method = get(exec, ident);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     if (!method.isCell()) {

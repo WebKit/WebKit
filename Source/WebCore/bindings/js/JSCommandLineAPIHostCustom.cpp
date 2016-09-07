@@ -68,8 +68,9 @@ JSValue JSCommandLineAPIHost::inspectedObject(ExecState& state)
 static JSArray* getJSListenerFunctions(ExecState& state, Document* document, const EventListenerInfo& listenerInfo)
 {
     VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* result = constructEmptyArray(&state, nullptr);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     size_t handlersCount = listenerInfo.eventListenerVector.size();
     for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {

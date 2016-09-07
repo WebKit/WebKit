@@ -23,21 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ExceptionScope.h"
+
+#include "Exception.h"
 
 namespace JSC {
-
-struct ThrowScopeLocation {
-    ThrowScopeLocation() { }
-    ThrowScopeLocation(const char* functionName, const char* file, unsigned line)
-        : functionName(functionName)
-        , file(file)
-        , line(line)
-    { }
     
-    const char* functionName { nullptr };
-    const char* file { nullptr };
-    unsigned line { 0 };
-};
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+    
+ExceptionScope::ExceptionScope(VM& vm, ExceptionEventLocation location)
+    : m_vm(vm)
+    , m_previousScope(vm.m_topExceptionScope)
+    , m_location(location)
+    , m_recursionDepth(m_previousScope ? m_previousScope->m_recursionDepth + 1 : 0)
+{
+    m_vm.m_topExceptionScope = this;
+}
 
+ExceptionScope::~ExceptionScope()
+{
+    RELEASE_ASSERT(m_vm.m_topExceptionScope);
+    m_vm.m_topExceptionScope = m_previousScope;
+}
+
+#endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+    
 } // namespace JSC

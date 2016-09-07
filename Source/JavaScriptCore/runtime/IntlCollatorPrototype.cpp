@@ -78,6 +78,8 @@ void IntlCollatorPrototype::finishCreation(VM& vm)
 
 static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     // 10.3.4 Collator Compare Functions (ECMA-402 2.0)
     // 1. Let collator be the this value.
     // 2. Assert: Type(collator) is Object and collator has an [[initializedCollator]] internal slot whose value is true.
@@ -88,13 +90,13 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)
     // 5. Let X be ToString(x).
     JSString* x = state->argument(0).toString(state);
     // 6. ReturnIfAbrupt(X).
-    if (state->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     // 7. Let Y be ToString(y).
     JSString* y = state->argument(1).toString(state);
     // 8. ReturnIfAbrupt(Y).
-    if (state->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     // 9. Return CompareStrings(collator, X, Y).
@@ -122,7 +124,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(ExecState* state
 
         // c. Let bc be BoundFunctionCreate(F, «this value»).
         boundCompare = JSBoundFunction::create(vm, state, globalObject, targetObject, collator, nullptr, 2, ASCIILiteral("compare"));
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(JSValue());
         // d. Set collator.[[boundCompare]] to bc.
         collator->setBoundCompare(vm, boundCompare);

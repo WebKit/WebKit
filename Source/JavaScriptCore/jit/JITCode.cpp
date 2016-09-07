@@ -69,6 +69,7 @@ void JITCode::validateReferences(const TrackedReferences&)
 
 JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 {
+    auto scope = DECLARE_THROW_SCOPE(*vm);
     void* entryAddress;
     JSFunction* function = jsDynamicCast<JSFunction*>(protoCallFrame->callee());
 
@@ -78,7 +79,7 @@ JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
     } else
         entryAddress = addressForCall(MustCheckArity).executableAddress();
     JSValue result = JSValue::decode(vmEntryToJavaScript(entryAddress, vm, protoCallFrame));
-    return vm->exception() ? jsNull() : result;
+    return scope.exception() ? jsNull() : result;
 }
 
 DFG::CommonData* JITCode::dfgCommon()

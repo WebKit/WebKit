@@ -68,14 +68,13 @@ void CInstance::setGlobalException(String exception)
 
 void CInstance::moveGlobalExceptionToExecState(ExecState* exec)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (globalExceptionString().isNull())
         return;
 
     {
-        JSLockHolder lock(exec);
+        VM& vm = exec->vm();
+        JSLockHolder lock(vm);
+        auto scope = DECLARE_THROW_SCOPE(vm);
         throwException(exec, scope, createError(exec, globalExceptionString()));
     }
 

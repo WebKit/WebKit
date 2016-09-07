@@ -90,7 +90,7 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     unsigned short unitType = state.uncheckedArgument(0).toUInt32(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     ExceptionCode ec = 0;

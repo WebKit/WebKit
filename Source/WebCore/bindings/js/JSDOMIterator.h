@@ -205,7 +205,7 @@ JSC::EncodedJSValue iteratorForEach(JSC::ExecState& state, const char* propertyN
         appendForEachArguments(state, wrapper->globalObject(), arguments, value);
         arguments.append(wrapper);
         JSC::call(&state, callback, callType, callData, thisValue, arguments);
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             break;
     }
     return JSC::JSValue::encode(JSC::jsUndefined());

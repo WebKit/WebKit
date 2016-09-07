@@ -44,13 +44,16 @@ namespace WebCore {
 
 JSValue JSSQLTransaction::executeSql(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!state.argumentCount()) {
         setDOMException(&state, SYNTAX_ERR);
         return jsUndefined();
     }
 
     String sqlStatement = state.argument(0).toString(&state)->value(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     // Now assemble the list of SQL arguments
@@ -63,15 +66,15 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
         }
 
         JSValue lengthValue = object->get(&state, state.propertyNames().length);
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
         unsigned length = lengthValue.toUInt32(&state);
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
 
         for (unsigned i = 0 ; i < length; ++i) {
             JSValue value = object->get(&state, i);
-            if (state.hadException())
+            if (UNLIKELY(scope.exception()))
                 return jsUndefined();
 
             if (value.isUndefinedOrNull())
@@ -81,7 +84,7 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
             else {
                 // Convert the argument to a string and append it
                 sqlValues.append(value.toString(&state)->value(&state));
-                if (state.hadException())
+                if (UNLIKELY(scope.exception()))
                     return jsUndefined();
             }
         }

@@ -71,6 +71,9 @@ static void setMaximumAge(PositionOptions* options, const double& maximumAge)
 
 static RefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue value)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Create default options.
     auto options = PositionOptions::create();
 
@@ -82,7 +85,7 @@ static RefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue va
 
     // Given the above test, this will always yield an object.
     JSObject* object = value.toObject(exec);
-    ASSERT(!exec->hadException());
+    ASSERT_UNUSED(scope, !scope.exception());
 
     // Create the dictionary wrapper from the initializer object.
     JSDictionary dictionary(exec, object);
@@ -99,19 +102,22 @@ static RefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue va
 
 JSValue JSGeolocation::getCurrentPosition(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
     auto positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     ASSERT(positionCallback);
 
     auto positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     auto positionOptions = createPositionOptions(&state, state.argument(2));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     ASSERT(positionOptions);
 
@@ -121,19 +127,22 @@ JSValue JSGeolocation::getCurrentPosition(ExecState& state)
 
 JSValue JSGeolocation::watchPosition(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
     auto positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     ASSERT(positionCallback);
 
     auto positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     auto positionOptions = createPositionOptions(&state, state.argument(2));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     ASSERT(positionOptions);
 

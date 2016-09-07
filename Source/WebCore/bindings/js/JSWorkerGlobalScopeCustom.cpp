@@ -61,13 +61,16 @@ void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
 
 JSValue JSWorkerGlobalScope::importScripts(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!state.argumentCount())
         return jsUndefined();
 
     Vector<String> urls;
     for (unsigned i = 0; i < state.argumentCount(); ++i) {
         urls.append(valueToUSVString(&state, state.uncheckedArgument(i)));
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
     }
     ExceptionCode ec = 0;
@@ -86,7 +89,7 @@ JSValue JSWorkerGlobalScope::setTimeout(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), wrapped().contentSecurityPolicy());
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     if (!action)
         return jsNumber(0);
@@ -103,7 +106,7 @@ JSValue JSWorkerGlobalScope::setInterval(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), wrapped().contentSecurityPolicy());
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     if (!action)
         return jsNumber(0);

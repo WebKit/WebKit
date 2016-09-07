@@ -80,7 +80,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
     unsigned blobPartsLength = 0;
     JSObject* blobParts = toJSSequence(exec, exec.uncheckedArgument(0), blobPartsLength);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     ASSERT(blobParts);
 
@@ -101,7 +101,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
         // Attempt to get the endings property and validate it.
         bool containsEndings = dictionary.get("endings", endings);
-        if (exec.hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
 
         if (containsEndings) {
@@ -111,7 +111,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
         // Attempt to get the type property.
         dictionary.get("type", type);
-        if (exec.hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
     }
 
@@ -121,7 +121,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
     for (unsigned i = 0; i < blobPartsLength; ++i) {
         JSValue item = blobParts->get(&exec, i);
-        if (exec.hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
 
         if (ArrayBuffer* arrayBuffer = toArrayBuffer(item))
@@ -132,7 +132,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
             blobBuilder.append(blob);
         else {
             String string = item.toWTFString(&exec);
-            if (exec.hadException())
+            if (UNLIKELY(scope.exception()))
                 return JSValue::encode(jsUndefined());
             blobBuilder.append(string, endings);
         }

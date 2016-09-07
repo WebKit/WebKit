@@ -32,6 +32,7 @@
 #include "ConcurrentJITLock.h"
 #include "ControlFlowProfiler.h"
 #include "DateInstanceCache.h"
+#include "ExceptionEventLocation.h"
 #include "ExecutableAllocator.h"
 #include "FunctionHasExecutedCache.h"
 #include "Heap.h"
@@ -47,7 +48,6 @@
 #include "SmallStrings.h"
 #include "SourceCode.h"
 #include "Strong.h"
-#include "ThrowScopeLocation.h"
 #include "ThunkGenerators.h"
 #include "TypedArrayController.h"
 #include "VMEntryRecord.h"
@@ -85,6 +85,7 @@ class CommonIdentifiers;
 class CustomGetterSetter;
 class ExecState;
 class Exception;
+class ExceptionScope;
 class HandleStack;
 class TypeProfiler;
 class TypeProfilerLog;
@@ -112,7 +113,6 @@ class Structure;
 class RegExp;
 #endif
 class Symbol;
-class ThrowScope;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
 class UnlinkedFunctionExecutable;
@@ -447,12 +447,10 @@ public:
 
     void restorePreviousException(Exception* exception) { setException(exception); }
 
-    void clearException() { m_exception = nullptr; }
     void clearLastException() { m_lastException = nullptr; }
 
     ExecState** addressOfCallFrameForCatch() { return &callFrameForCatch; }
 
-    Exception* exception() const { return m_exception; }
     JSCell** addressOfException() { return reinterpret_cast<JSCell**>(&m_exception); }
 
     Exception* lastException() const { return m_lastException; }
@@ -648,6 +646,20 @@ private:
         m_exception = exception;
         m_lastException = exception;
     }
+    Exception* exception() const
+    {
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+        m_needExceptionCheck = false;
+#endif
+        return m_exception;
+    }
+    void clearException()
+    {
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+        m_needExceptionCheck = false;
+#endif
+        m_exception = nullptr;
+    }
 
 #if !ENABLE(JIT)    
     bool ensureStackCapacityForCLoop(Register* newTopOfStack);
@@ -657,6 +669,10 @@ private:
     JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
     JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
     JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
+
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+    void verifyExceptionCheckNeedIsSatisfied(unsigned depth, ExceptionEventLocation&);
+#endif
 
 #if ENABLE(ASSEMBLER)
     bool m_canUseAssembler;
@@ -682,11 +698,14 @@ private:
 
     Exception* m_exception { nullptr };
     Exception* m_lastException { nullptr };
-#if ENABLE(THROW_SCOPE_VERIFICATION)
-    ThrowScope* m_topThrowScope { nullptr };
-    ThrowScopeLocation m_simulatedThrowPointLocation;
-    unsigned m_simulatedThrowPointDepth { 0 };
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+    ExceptionScope* m_topExceptionScope { nullptr };
+    ExceptionEventLocation m_simulatedThrowPointLocation;
+    unsigned m_simulatedThrowPointRecursionDepth { 0 };
     mutable bool m_needExceptionCheck { false };
+
+    // Disabled temporarily until all known verification failures are fixed.
+    bool m_verifyExceptionEvents { false };
 #endif
 
     bool m_failNextNewCodeBlock { false };
@@ -712,6 +731,10 @@ private:
     std::unique_ptr<ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
 
+    // Friends for exception checking purpose only.
+    friend class Heap;
+    friend class CatchScope;
+    friend class ExceptionScope;
     friend class ThrowScope;
 };
 

@@ -592,6 +592,8 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
 void JSFunction::setFunctionName(ExecState* exec, JSValue value)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // The "name" property may have been already been defined as part of a property list in an
     // object literal (and therefore reified).
     if (hasReifiedName())
@@ -608,10 +610,10 @@ void JSFunction::setFunctionName(ExecState* exec, JSValue value)
             name = makeString('[', String(&uid), ']');
     } else {
         JSString* jsStr = value.toString(exec);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return;
         name = jsStr->value(exec);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return;
     }
     reifyName(vm, exec, name);

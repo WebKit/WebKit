@@ -46,7 +46,7 @@ static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype,
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue callback = prototype.get(&state, id);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
     if (callback.isUndefined())
         return nullptr;
@@ -88,7 +88,7 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     AtomicString localName(state.uncheckedArgument(0).toString(&state)->toAtomicString(&state));
-    if (UNLIKELY(state.hadException()))
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     JSValue constructorValue = state.uncheckedArgument(1);
@@ -118,7 +118,7 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     }
 
     JSValue prototypeValue = constructor->get(&state, vm.propertyNames->prototype);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     if (!prototypeValue.isObject())
         return throwTypeError(&state, scope, ASCIILiteral("Custom element constructor's prototype must be an object"));
@@ -129,25 +129,25 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
 
     if (auto* connectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback")))
         elementInterface->setConnectedCallback(connectedCallback);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     if (auto* disconnectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "disconnectedCallback")))
         elementInterface->setDisconnectedCallback(disconnectedCallback);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     if (auto* adoptedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "adoptedCallback")))
         elementInterface->setAdoptedCallback(adoptedCallback);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     auto* attributeChangedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     if (attributeChangedCallback) {
         auto value = convertOptional<Vector<String>>(state, constructor->get(&state, Identifier::fromString(&state, "observedAttributes")));
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
         if (value)
             elementInterface->setAttributeChangedCallback(attributeChangedCallback, *value);
@@ -170,7 +170,7 @@ static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObj
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     AtomicString localName(state.uncheckedArgument(0).toString(&state)->toAtomicString(&state));
-    if (UNLIKELY(state.hadException()))
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     if (!validateCustomElementNameAndThrowIfNeeded(state, localName))
@@ -191,13 +191,15 @@ static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObj
 
 JSValue JSCustomElementRegistry::whenDefined(ExecState& state)
 {
+    auto scope = DECLARE_CATCH_SCOPE(state.vm());
+
     JSDOMGlobalObject& globalObject = *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
     auto& promiseDeferred = *JSPromiseDeferred::create(&state, &globalObject);
     JSValue promise = whenDefinedPromise(state, globalObject, wrapped());
 
-    if (state.hadException()) {
+    if (UNLIKELY(scope.exception())) {
         rejectPromiseWithExceptionIfAny(state, globalObject, promiseDeferred);
-        ASSERT(!state.hadException());
+        ASSERT(!scope.exception());
         return promiseDeferred.promise();
     }
 

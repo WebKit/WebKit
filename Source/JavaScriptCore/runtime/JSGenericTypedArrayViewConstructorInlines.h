@@ -89,14 +89,14 @@ inline JSObject* constructGenericTypedArrayViewFromIterator(ExecState* exec, Str
     MarkedArgumentBuffer storage;
     while (true) {
         JSValue next = iteratorStep(exec, iterator);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return nullptr;
 
         if (next.isFalse())
             break;
 
         JSValue nextItem = iteratorValue(exec, next);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return nullptr;
 
         storage.append(nextItem);
@@ -104,13 +104,13 @@ inline JSObject* constructGenericTypedArrayViewFromIterator(ExecState* exec, Str
 
     ViewClass* result = ViewClass::createUninitialized(exec, structure, storage.size());
     if (!result) {
-        ASSERT(exec->hadException());
+        ASSERT(scope.exception());
         return nullptr;
     }
 
     for (unsigned i = 0; i < storage.size(); ++i) {
         if (!result->setIndex(exec, i, storage.at(i))) {
-            ASSERT(exec->hadException());
+            ASSERT(scope.exception());
             return nullptr;
         }
     }
@@ -162,7 +162,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
             object->getPropertySlot(exec, vm.propertyNames->length, lengthSlot);
 
             JSValue iteratorFunc = object->get(exec, vm.propertyNames->iteratorSymbol);
-            if (exec->hadException())
+            if (UNLIKELY(scope.exception()))
                 return nullptr;
 
             // We would like not use the iterator as it is painfully slow. Fortunately, unless
@@ -183,21 +183,21 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
 
                     ArgList arguments;
                     JSValue iterator = call(exec, iteratorFunc, callType, callData, object, arguments);
-                    if (exec->hadException())
+                    if (UNLIKELY(scope.exception()))
                         return nullptr;
 
                     return constructGenericTypedArrayViewFromIterator<ViewClass>(exec, structure, iterator);
             }
 
             length = lengthSlot.isUnset() ? 0 : lengthSlot.getValue(exec, vm.propertyNames->length).toUInt32(exec);
-            if (exec->hadException())
+            if (UNLIKELY(scope.exception()))
                 return nullptr;
         }
 
         
         ViewClass* result = ViewClass::createUninitialized(exec, structure, length);
         if (!result) {
-            ASSERT(exec->hadException());
+            ASSERT(scope.exception());
             return nullptr;
         }
         
@@ -235,7 +235,7 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
     InternalFunction* function = asInternalFunction(exec->callee());
     Structure* parentStructure = function->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
     Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), parentStructure);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
 
     size_t argCount = exec->argumentCount();
@@ -252,12 +252,12 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
     Optional<unsigned> length = Nullopt;
     if (jsDynamicCast<JSArrayBuffer*>(firstValue) && argCount > 1) {
         offset = exec->uncheckedArgument(1).toUInt32(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
 
         if (argCount > 2) {
             length = exec->uncheckedArgument(2).toUInt32(exec);
-            if (exec->hadException())
+            if (UNLIKELY(scope.exception()))
                 return JSValue::encode(jsUndefined());
         }
 

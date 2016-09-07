@@ -123,7 +123,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(ExecState* exec)
         arguments.append(value);
         return false;
     });
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     return JSValue::encode(construct(exec, target, constructType, constructData, arguments, newTarget));
@@ -139,14 +139,14 @@ EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState* exec)
     if (!target.isObject())
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.defineProperty requires the first argument be an object")));
     auto propertyName = exec->argument(1).toPropertyKey(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     PropertyDescriptor descriptor;
     if (!toPropertyDescriptor(exec, exec->argument(2), descriptor))
         return JSValue::encode(jsUndefined());
     ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
 
     // Reflect.defineProperty should not throw an error when the defineOwnProperty operation fails.
     bool shouldThrow = false;
@@ -178,7 +178,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectGet(ExecState* exec)
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.get requires the first argument be an object")));
 
     const Identifier propertyName = exec->argument(1).toPropertyKey(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsNull());
 
     JSValue receiver = target;
@@ -200,7 +200,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectGetOwnPropertyDescriptor(ExecState* ex
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.getOwnPropertyDescriptor requires the first argument be an object")));
 
     auto key = exec->argument(1).toPropertyKey(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     return JSValue::encode(objectConstructorGetOwnPropertyDescriptor(exec, asObject(target), key));
@@ -229,7 +229,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState* exec)
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.isExtensible requires the first argument be an object")));
 
     bool isExtensible = asObject(target)->isExtensible(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(isExtensible));
 }
@@ -257,7 +257,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState* exec)
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.preventExtensions requires the first argument be an object")));
     JSObject* object = asObject(target);
     bool result = object->methodTable(vm)->preventExtensions(object, exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(result));
 }
@@ -274,7 +274,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectSet(ExecState* exec)
     JSObject* targetObject = asObject(target);
 
     auto propertyName = exec->argument(1).toPropertyKey(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     JSValue receiver = target;
@@ -307,7 +307,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState* exec)
 
     bool shouldThrowIfCantSet = false;
     bool didSetPrototype = object->setPrototype(vm, exec, proto, shouldThrowIfCantSet);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(didSetPrototype));
 }

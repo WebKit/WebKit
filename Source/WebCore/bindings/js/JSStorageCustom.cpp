@@ -79,16 +79,19 @@ bool JSStorage::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned pr
 
 void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSStorage* thisObject = jsCast<JSStorage*>(object);
     ExceptionCode ec = 0;
     unsigned length = thisObject->wrapped().length(ec);
     setDOMException(exec, ec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return;
     for (unsigned i = 0; i < length; ++i) {
         propertyNames.add(Identifier::fromString(exec, thisObject->wrapped().key(i, ec)));
         setDOMException(exec, ec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return;
     }
         
@@ -97,6 +100,9 @@ void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
 
 bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // Only perform the custom put if the object doesn't have a native property by this name.
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
@@ -110,7 +116,7 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
         return false;
 
     String stringValue = value.toString(exec)->value(exec);
-    if (exec->hadException()) {
+    if (UNLIKELY(scope.exception())) {
         // The return value indicates whether putDelegate() should handle the put operation (which
         // if true, tells the caller not to execute the generic put). It does not indicate whether
         // putDelegate() did successfully complete the operation or not (which it didn't in this

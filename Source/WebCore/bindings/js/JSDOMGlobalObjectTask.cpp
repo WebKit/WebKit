@@ -49,7 +49,9 @@ public:
             return;
 
         Ref<JSGlobalObjectCallback> protectedThis(*this);
-        JSLockHolder lock(m_globalObject->vm());
+        VM& vm = m_globalObject->vm();
+        JSLockHolder lock(vm);
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
         ExecState* exec = m_globalObject->globalExec();
 
@@ -64,7 +66,7 @@ public:
             JSMainThreadExecState::runTask(exec, m_task);
         else
             m_task->run(exec);
-        ASSERT(!exec->hadException());
+        ASSERT_UNUSED(scope, !scope.exception());
     }
 
 private:

@@ -111,12 +111,13 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
 
         VM& vm = clearKeyVM();
         JSLockHolder lock(vm);
+        auto scope = DECLARE_THROW_SCOPE(vm);
         JSGlobalObject* globalObject = JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, jsNull()));
         ExecState* exec = globalObject->globalExec();
 
         JSLockHolder locker(clearKeyVM());
         JSValue keysDataObject = JSONParse(exec, rawKeysString);
-        if (exec->hadException() || !keysDataObject) {
+        if (scope.exception() || !keysDataObject) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: invalid JSON", this);
             break;
         }

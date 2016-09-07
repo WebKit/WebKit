@@ -62,7 +62,9 @@ namespace JSC {
 
 #define BEGIN_NO_SET_PC() \
     VM& vm = exec->vm();      \
-    NativeCallFrameTracer tracer(&vm, exec)
+    NativeCallFrameTracer tracer(&vm, exec); \
+    auto throwScope = DECLARE_THROW_SCOPE(vm); \
+    UNUSED_PARAM(throwScope)
 
 #ifndef NDEBUG
 #define SET_PC_FOR_STUBS() do { \
@@ -99,10 +101,10 @@ namespace JSC {
 
 #define CHECK_EXCEPTION() do {                    \
         doExceptionFuzzingIfEnabled(exec, "CommonSlowPaths", pc);   \
-        if (UNLIKELY(vm.exception())) {           \
-            RETURN_TO_THROW(exec, pc);               \
+        if (UNLIKELY(throwScope.exception())) {   \
+            RETURN_TO_THROW(exec, pc);            \
             END_IMPL();                           \
-        }                                               \
+        }                                         \
     } while (false)
 
 #define END() do {                        \
@@ -144,7 +146,7 @@ namespace JSC {
 #define CALL_CHECK_EXCEPTION(exec, pc) do {                          \
         ExecState* cceExec = (exec);                                 \
         Instruction* ccePC = (pc);                                   \
-        if (UNLIKELY(vm.exception()))                                \
+        if (UNLIKELY(throwScope.exception()))                        \
             CALL_END_IMPL(cceExec, LLInt::callToThrow(cceExec));     \
     } while (false)
 
@@ -427,7 +429,7 @@ SLOW_PATH_DECL(slow_path_mul)
     JSValue left = OP_C(2).jsValue();
     JSValue right = OP_C(3).jsValue();
     double a = left.toNumber(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     double b = right.toNumber(exec);
     JSValue result = jsNumber(a * b);
@@ -442,7 +444,7 @@ SLOW_PATH_DECL(slow_path_sub)
     JSValue left = OP_C(2).jsValue();
     JSValue right = OP_C(3).jsValue();
     double a = left.toNumber(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     double b = right.toNumber(exec);
     JSValue result = jsNumber(a - b);
@@ -457,10 +459,10 @@ SLOW_PATH_DECL(slow_path_div)
     JSValue left = OP_C(2).jsValue();
     JSValue right = OP_C(3).jsValue();
     double a = left.toNumber(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     double b = right.toNumber(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     JSValue result = jsNumber(a / b);
     RETURN_WITH_PROFILING(result, {
@@ -472,7 +474,7 @@ SLOW_PATH_DECL(slow_path_mod)
 {
     BEGIN();
     double a = OP_C(2).jsValue().toNumber(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     double b = OP_C(3).jsValue().toNumber(exec);
     RETURN(jsNumber(jsMod(a, b)));
@@ -482,10 +484,10 @@ SLOW_PATH_DECL(slow_path_pow)
 {
     BEGIN();
     double a = OP_C(2).jsValue().toNumber(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     double b = OP_C(3).jsValue().toNumber(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     RETURN(jsNumber(operationMathPow(a, b)));
 }
@@ -494,7 +496,7 @@ SLOW_PATH_DECL(slow_path_lshift)
 {
     BEGIN();
     int32_t a = OP_C(2).jsValue().toInt32(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     uint32_t b = OP_C(3).jsValue().toUInt32(exec);
     RETURN(jsNumber(a << (b & 31)));
@@ -504,7 +506,7 @@ SLOW_PATH_DECL(slow_path_rshift)
 {
     BEGIN();
     int32_t a = OP_C(2).jsValue().toInt32(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     uint32_t b = OP_C(3).jsValue().toUInt32(exec);
     RETURN(jsNumber(a >> (b & 31)));
@@ -514,7 +516,7 @@ SLOW_PATH_DECL(slow_path_urshift)
 {
     BEGIN();
     uint32_t a = OP_C(2).jsValue().toUInt32(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     uint32_t b = OP_C(3).jsValue().toUInt32(exec);
     RETURN(jsNumber(static_cast<int32_t>(a >> (b & 31))));
@@ -531,7 +533,7 @@ SLOW_PATH_DECL(slow_path_bitand)
 {
     BEGIN();
     int32_t a = OP_C(2).jsValue().toInt32(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     int32_t b = OP_C(3).jsValue().toInt32(exec);
     RETURN(jsNumber(a & b));
@@ -541,7 +543,7 @@ SLOW_PATH_DECL(slow_path_bitor)
 {
     BEGIN();
     int32_t a = OP_C(2).jsValue().toInt32(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     int32_t b = OP_C(3).jsValue().toInt32(exec);
     RETURN(jsNumber(a | b));
@@ -551,7 +553,7 @@ SLOW_PATH_DECL(slow_path_bitxor)
 {
     BEGIN();
     int32_t a = OP_C(2).jsValue().toInt32(exec);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     int32_t b = OP_C(3).jsValue().toInt32(exec);
     RETURN(jsNumber(a ^ b));

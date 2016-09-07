@@ -43,8 +43,11 @@ void JSVideoTrack::visitAdditionalChildren(SlotVisitor& visitor)
 void JSVideoTrack::setKind(ExecState& state, JSValue value)
 {
 #if ENABLE(MEDIA_SOURCE)
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto& string = value.toString(&state)->value(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return;
     wrapped().setKind(string);
 #else
@@ -56,8 +59,11 @@ void JSVideoTrack::setKind(ExecState& state, JSValue value)
 void JSVideoTrack::setLanguage(ExecState& state, JSValue value)
 {
 #if ENABLE(MEDIA_SOURCE)
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto& string = value.toString(&state)->value(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return;
     wrapped().setLanguage(string);
 #else

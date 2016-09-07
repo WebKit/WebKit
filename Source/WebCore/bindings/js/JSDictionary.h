@@ -203,6 +203,9 @@ inline bool JSDictionary::get(const char* propertyName, JSC::JSValue& finalResul
 template <typename T, typename Result>
 JSDictionary::GetPropertyResult JSDictionary::tryGetPropertyAndResult(const char* propertyName, T* context, void (*setter)(T* context, const Result&)) const
 {
+    JSC::VM& vm = m_exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSC::JSValue value;
     GetPropertyResult getPropertyResult = tryGetProperty(propertyName, value);
     switch (getPropertyResult) {
@@ -212,7 +215,7 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetPropertyAndResult(const char
         Result result;
         convertValue(m_exec, value, result);
 
-        if (m_exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return ExceptionThrown;
 
         setter(context, result);

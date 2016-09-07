@@ -106,10 +106,10 @@ JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState& exec)
 
     WebGL2RenderingContext& context = wrapped();
     unsigned pname = exec.uncheckedArgument(0).toInt32(&exec);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     unsigned index = exec.uncheckedArgument(1).toInt32(&exec);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     WebGLGetInfo info = context.getIndexedParameter(pname, index);
     return toJS(&exec, globalObject(), info);

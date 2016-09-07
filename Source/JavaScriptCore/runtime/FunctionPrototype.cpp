@@ -160,7 +160,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
     // Else set the length own property of F to 0.
     unsigned length = 0;
     if (targetObject->hasOwnProperty(exec, exec->propertyNames().length)) {
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
 
         // a. Let L be the length property of Target minus the length of A.

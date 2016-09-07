@@ -53,12 +53,13 @@ ProxyObject::ProxyObject(VM& vm, Structure* structure)
 String ProxyObject::toStringName(const JSObject* object, ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     const ProxyObject* proxy = jsCast<const ProxyObject*>(object);
     while (proxy) {
         const JSObject* target = proxy->target();
         if (isArray(exec, target))
             return target->classInfo()->methodTable.toStringName(target, exec);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             break;
 
         proxy = jsDynamicCast<const ProxyObject*>(target);
@@ -140,7 +141,7 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
     CallData callData;
     CallType callType;
     JSValue getHandler = handler->getMethod(exec, callData, callType, vm.propertyNames->get, ASCIILiteral("'get' property of a Proxy's handler object should be callable"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     if (getHandler.isUndefined())
@@ -151,7 +152,7 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     arguments.append(receiver);
     JSValue trapResult = call(exec, getHandler, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     PropertyDescriptor descriptor;
@@ -165,7 +166,7 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
         }
     }
 
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     return trapResult;
@@ -173,8 +174,10 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
 
 bool ProxyObject::performGet(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue result = performProxyGet(exec, this, slot.thisValue(), propertyName);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     unsigned ignoredAttributes = 0;
     slot.setValue(this, ignoredAttributes, result);
@@ -208,7 +211,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     CallData callData;
     CallType callType;
     JSValue getOwnPropertyDescriptorMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "getOwnPropertyDescriptor"), ASCIILiteral("'getOwnPropertyDescriptor' property of a Proxy's handler should be callable"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     if (getOwnPropertyDescriptorMethod.isUndefined())
         return performDefaultGetOwnProperty();
@@ -217,7 +220,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     JSValue trapResult = call(exec, getOwnPropertyDescriptorMethod, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (!trapResult.isUndefined() && !trapResult.isObject()) {
@@ -227,7 +230,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 
     PropertyDescriptor targetPropertyDescriptor;
     bool isTargetPropertyDescriptorDefined = target->getOwnPropertyDescriptor(exec, propertyName, targetPropertyDescriptor);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (trapResult.isUndefined()) {
@@ -240,7 +243,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         // FIXME: this doesn't work if 'target' is another Proxy. We don't have isExtensible implemented in a way that fits w/ Proxys.
         // https://bugs.webkit.org/show_bug.cgi?id=154375
         bool isExtensible = target->isExtensible(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return false;
         if (!isExtensible) {
             // FIXME: Come up with a test for this error. I'm not sure how to because
@@ -254,11 +257,11 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     }
 
     bool isExtensible = target->isExtensible(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     PropertyDescriptor trapResultAsDescriptor;
     toPropertyDescriptor(exec, trapResult, trapResultAsDescriptor);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     bool throwException = false;
     bool valid = validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, isExtensible,
@@ -277,7 +280,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 
     if (trapResultAsDescriptor.isAccessorDescriptor()) {
         GetterSetter* getterSetter = trapResultAsDescriptor.slowGetterSetter(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return false;
         slot.setGetterSlot(this, trapResultAsDescriptor.attributes(), getterSetter);
     } else if (trapResultAsDescriptor.isDataDescriptor() && !trapResultAsDescriptor.value().isEmpty())
@@ -316,7 +319,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
     CallData callData;
     CallType callType;
     JSValue hasMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->has, ASCIILiteral("'has' property of a Proxy's handler should be callable"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     if (hasMethod.isUndefined())
         return performDefaultHasProperty();
@@ -325,17 +328,17 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     JSValue trapResult = call(exec, hasMethod, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     bool trapResultAsBool = trapResult.toBoolean(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (!trapResultAsBool) {
         PropertyDescriptor descriptor;
         bool isPropertyDescriptorDefined = target->getOwnPropertyDescriptor(exec, propertyName, descriptor); 
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return false;
         if (isPropertyDescriptorDefined) {
             if (!descriptor.configurable()) {
@@ -343,7 +346,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
                 return false;
             }
             bool isExtensible = target->isExtensible(exec);
-            if (exec->hadException())
+            if (UNLIKELY(scope.exception()))
                 return false;
             if (!isExtensible) {
                 throwVMTypeError(exec, scope, ASCIILiteral("Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property"));
@@ -416,7 +419,7 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
     CallData callData;
     CallType callType;
     JSValue setMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->set, ASCIILiteral("'set' property of a Proxy's handler should be callable"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     JSObject* target = this->target();
     if (setMethod.isUndefined())
@@ -428,10 +431,10 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
     arguments.append(putValue);
     arguments.append(thisValue);
     JSValue trapResult = call(exec, setMethod, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     bool trapResultAsBool = trapResult.toBoolean(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     if (!trapResultAsBool)
         return false;
@@ -467,8 +470,9 @@ bool ProxyObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
 bool ProxyObject::putByIndexCommon(ExecState* exec, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow)
 {
     VM& vm = exec->vm();
-    Identifier ident = Identifier::from(exec, propertyName); 
-    if (exec->hadException())
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Identifier ident = Identifier::from(exec, propertyName);
+    if (UNLIKELY(scope.exception()))
         return false;
     auto performDefaultPut = [&] () {
         JSObject* target = this->target();
@@ -502,7 +506,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
     CallData callData;
     CallType callType;
     JSValue applyMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "apply"), ASCIILiteral("'apply' property of a Proxy's handler should be callable"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     JSObject* target = proxy->target();
     if (applyMethod.isUndefined()) {
@@ -513,7 +517,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
     }
 
     JSArray* argArray = constructArray(exec, static_cast<ArrayAllocationProfile*>(nullptr), ArgList(exec));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -552,7 +556,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
     CallData callData;
     CallType callType;
     JSValue constructMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "construct"), ASCIILiteral("'construct' property of a Proxy's handler should be constructible"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     JSObject* target = proxy->target();
     if (constructMethod.isUndefined()) {
@@ -563,14 +567,14 @@ static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
     }
 
     JSArray* argArray = constructArray(exec, static_cast<ArrayAllocationProfile*>(nullptr), ArgList(exec));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(argArray);
     arguments.append(exec->newTarget());
     JSValue result = call(exec, constructMethod, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     if (!result.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("Result from Proxy handler's 'construct' method should be an object"));
@@ -613,7 +617,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
     CallData callData;
     CallType callType;
     JSValue deletePropertyMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "deleteProperty"), ASCIILiteral("'deleteProperty' property of a Proxy's handler should be callable"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     JSObject* target = this->target();
     if (deletePropertyMethod.isUndefined())
@@ -623,11 +627,11 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     JSValue trapResult = call(exec, deletePropertyMethod, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     bool trapResultAsBool = trapResult.toBoolean(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (!trapResultAsBool)
@@ -641,7 +645,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
         }
     }
 
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     return true;
@@ -687,7 +691,7 @@ bool ProxyObject::performPreventExtensions(ExecState* exec)
     CallData callData;
     CallType callType;
     JSValue preventExtensionsMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "preventExtensions"), ASCIILiteral("'preventExtensions' property of a Proxy's handler should be callable"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     JSObject* target = this->target();
     if (preventExtensionsMethod.isUndefined())
@@ -696,16 +700,16 @@ bool ProxyObject::performPreventExtensions(ExecState* exec)
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     JSValue trapResult = call(exec, preventExtensionsMethod, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     bool trapResultAsBool = trapResult.toBoolean(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (trapResultAsBool) {
         bool targetIsExtensible = target->isExtensible(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return false;
         if (targetIsExtensible) {
             throwVMTypeError(exec, scope, ASCIILiteral("Proxy's 'preventExtensions' trap returned true even though its target is extensible. It should have returned false"));
@@ -740,7 +744,7 @@ bool ProxyObject::performIsExtensible(ExecState* exec)
     CallData callData;
     CallType callType;
     JSValue isExtensibleMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "isExtensible"), ASCIILiteral("'isExtensible' property of a Proxy's handler should be callable"));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     JSObject* target = this->target();
@@ -750,15 +754,15 @@ bool ProxyObject::performIsExtensible(ExecState* exec)
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     JSValue trapResult = call(exec, isExtensibleMethod, callType, callData, handler, arguments);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     bool trapResultAsBool = trapResult.toBoolean(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     bool isTargetExtensible = target->isExtensible(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (trapResultAsBool != isTargetExtensible) {
@@ -807,14 +811,14 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
     CallData callData;
     CallType callType;
     JSValue definePropertyMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->defineProperty, ASCIILiteral("'defineProperty' property of a Proxy's handler should be callable"));
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (definePropertyMethod.isUndefined())
         return performDefaultDefineOwnProperty();
 
     JSObject* descriptorObject = constructObjectFromPropertyDescriptor(exec, descriptor);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     MarkedArgumentBuffer arguments;
@@ -822,11 +826,11 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     arguments.append(descriptorObject);
     JSValue trapResult = call(exec, definePropertyMethod, callType, callData, handler, arguments);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     bool trapResultAsBool = trapResult.toBoolean(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     if (!trapResultAsBool)
@@ -834,11 +838,11 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
 
     PropertyDescriptor targetDescriptor;
     bool isTargetDescriptorDefined = target->getOwnPropertyDescriptor(exec, propertyName, targetDescriptor);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     bool targetIsExtensible = target->isExtensible(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
     bool settingConfigurableToFalse = descriptor.configurablePresent() && !descriptor.configurable();
 
@@ -896,7 +900,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     CallData callData;
     CallType callType;
     JSValue ownKeysMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "ownKeys"), ASCIILiteral("'ownKeys' property of a Proxy's handler should be callable"));
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return;
     JSObject* target = this->target();
     if (ownKeysMethod.isUndefined()) {
@@ -907,7 +911,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     JSValue arrayLikeObject = call(exec, ownKeysMethod, callType, callData, handler, arguments);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return;
 
     PropertyNameMode propertyNameMode = trapResult.mode();
@@ -935,7 +939,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
             return dontExitEarly;
 
         Identifier ident = value.toPropertyKey(exec);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return doExitEarly;
 
         uncheckedResultKeys.add(ident.impl());
@@ -944,21 +948,21 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     };
 
     createListFromArrayLike(exec, arrayLikeObject, dontThrowAnExceptionTypeFilter, ASCIILiteral("Proxy handler's 'ownKeys' method must return an array-like object containing only Strings and Symbols"), addPropName);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return;
 
     bool targetIsExensible = target->isExtensible(exec);
 
     PropertyNameArray targetKeys(&vm, propertyNameMode);
     target->methodTable(vm)->getOwnPropertyNames(target, exec, targetKeys, enumerationMode);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return;
     Vector<UniquedStringImpl*> targetConfigurableKeys;
     Vector<UniquedStringImpl*> targetNonConfigurableKeys;
     for (const Identifier& ident : targetKeys) {
         PropertyDescriptor descriptor;
         bool isPropertyDefined = target->getOwnPropertyDescriptor(exec, ident.impl(), descriptor); 
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return;
         if (isPropertyDefined && !descriptor.configurable())
             targetNonConfigurableKeys.append(ident.impl());
@@ -1047,7 +1051,7 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     CallData callData;
     CallType callType;
     JSValue setPrototypeOfMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "setPrototypeOf"), ASCIILiteral("'setPrototypeOf' property of a Proxy's handler should be callable"));
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     JSObject* target = this->target();
@@ -1058,11 +1062,11 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     arguments.append(target);
     arguments.append(prototype);
     JSValue trapResult = call(exec, setPrototypeOfMethod, callType, callData, handler, arguments);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     bool trapResultAsBool = trapResult.toBoolean(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
     
     if (!trapResultAsBool) {
@@ -1072,13 +1076,13 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     }
 
     bool targetIsExtensible = target->isExtensible(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
     if (targetIsExtensible)
         return true;
 
     JSValue targetPrototype = target->getPrototype(vm, exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return false;
     if (!sameValue(exec, prototype, targetPrototype)) {
         throwVMTypeError(exec, scope, ASCIILiteral("Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false"));
@@ -1112,7 +1116,7 @@ JSValue ProxyObject::performGetPrototype(ExecState* exec)
     CallData callData;
     CallType callType;
     JSValue getPrototypeOfMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "getPrototypeOf"), ASCIILiteral("'getPrototypeOf' property of a Proxy's handler should be callable"));
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return JSValue();
 
     JSObject* target = this->target();
@@ -1122,7 +1126,7 @@ JSValue ProxyObject::performGetPrototype(ExecState* exec)
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     JSValue trapResult = call(exec, getPrototypeOfMethod, callType, callData, handler, arguments);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return JSValue();
 
     if (!trapResult.isObject() && !trapResult.isNull()) {
@@ -1131,13 +1135,13 @@ JSValue ProxyObject::performGetPrototype(ExecState* exec)
     }
 
     bool targetIsExtensible = target->isExtensible(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return JSValue();
     if (targetIsExtensible)
         return trapResult;
 
     JSValue targetPrototype = target->getPrototype(vm, exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return JSValue();
     if (!sameValue(exec, targetPrototype, trapResult)) {
         throwVMTypeError(exec, scope, ASCIILiteral("Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype"));

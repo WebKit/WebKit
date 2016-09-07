@@ -53,6 +53,9 @@ static JSValue namedItems(ExecState& state, JSHTMLAllCollection* collection, Pro
 // HTMLAllCollections are strange objects, they support both get and call.
 static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (exec->argumentCount() < 1)
         return JSValue::encode(jsUndefined());
 
@@ -65,7 +68,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
     if (exec->argumentCount() == 1) {
         // Support for document.all(<index>) etc.
         String string = exec->argument(0).toString(exec)->value(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
         if (Optional<uint32_t> index = parseIndex(*string.impl()))
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection.item(index.value())));
@@ -76,7 +79,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 
     // The second arg, if set, is the index of the item we want
     String string = exec->argument(0).toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     if (Optional<uint32_t> index = parseIndex(*exec->argument(1).toWTFString(exec).impl())) {
         if (auto* item = collection.namedItemWithIndex(string, index.value()))

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -500,15 +501,17 @@ bool SDPProcessor::callScript(const String& functionName, const String& argument
 
     ScriptController& scriptController = document->frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(*m_isolatedWorld));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
 
     JSC::JSValue probeFunctionValue = globalObject->get(exec, JSC::Identifier::fromString(exec, "generate"));
     if (!probeFunctionValue.isFunction()) {
         URL scriptURL;
         scriptController.evaluateInWorld(ScriptSourceCode(SDPProcessorScriptResource::scriptString(), scriptURL), *m_isolatedWorld);
-        if (exec->hadException()) {
-            exec->clearException();
+        if (UNLIKELY(scope.exception())) {
+            scope.clearException();
             return false;
         }
     }
@@ -527,9 +530,9 @@ bool SDPProcessor::callScript(const String& functionName, const String& argument
     argList.append(JSC::jsString(exec, argument));
 
     JSC::JSValue result = JSC::call(exec, function, callType, callData, globalObject, argList);
-    if (exec->hadException()) {
+    if (UNLIKELY(scope.exception())) {
         LOG_ERROR("SDPProcessor script threw in function %s", functionName.ascii().data());
-        exec->clearException();
+        scope.clearException();
         return false;
     }
 

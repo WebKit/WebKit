@@ -101,8 +101,9 @@ inline JSObject* constructObject(ExecState* exec, JSGlobalObject* globalObject, 
 inline JSObject* constructObjectFromPropertyDescriptor(ExecState* exec, const PropertyDescriptor& descriptor)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* description = constructEmptyObject(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     if (!descriptor.isAccessorDescriptor()) {

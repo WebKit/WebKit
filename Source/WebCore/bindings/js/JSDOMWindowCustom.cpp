@@ -369,6 +369,9 @@ bool JSDOMWindow::preventExtensions(JSObject*, ExecState* exec)
 
 void JSDOMWindow::setLocation(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
 #if ENABLE(DASHBOARD_SUPPORT)
     // To avoid breaking old widgets, make "var location =" in a top-level frame create
     // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
@@ -382,7 +385,7 @@ void JSDOMWindow::setLocation(ExecState& state, JSValue value)
 #endif
 
     String locationString = value.toString(&state)->value(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return;
 
     if (Location* location = wrapped().location())
@@ -406,15 +409,18 @@ JSValue JSDOMWindow::image(ExecState& state) const
 
 JSValue JSDOMWindow::open(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String urlString = valueToUSVStringWithUndefinedOrNullCheck(&state, state.argument(0));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     JSValue targetValue = state.argument(1);
     AtomicString target = targetValue.isUndefinedOrNull() ? AtomicString("_blank", AtomicString::ConstructFromLiteral) : targetValue.toString(&state)->toAtomicString(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     String windowFeaturesString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(2));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     RefPtr<DOMWindow> openedWindow = wrapped().open(urlString, target, windowFeaturesString, activeDOMWindow(&state), firstDOMWindow(&state));
@@ -470,10 +476,10 @@ JSValue JSDOMWindow::showModalDialog(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     String urlString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(0));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     String dialogFeaturesString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(2));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     DialogHandler handler(state);
@@ -511,16 +517,16 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
         }
         fillMessagePortArray(state, state.argument(transferablesArgIndex), messagePorts, arrayBuffers);
     }
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     auto message = SerializedScriptValue::create(&state, state.uncheckedArgument(0), &messagePorts, &arrayBuffers);
 
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     String targetOrigin = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(targetOriginArgIndex));
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     ExceptionCode ec = 0;
@@ -545,7 +551,7 @@ JSValue JSDOMWindow::setTimeout(ExecState& state)
 
     ContentSecurityPolicy* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     if (!action)
@@ -570,7 +576,7 @@ JSValue JSDOMWindow::setInterval(ExecState& state)
 
     ContentSecurityPolicy* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
     int delay = state.argument(1).toInt32(&state);
 

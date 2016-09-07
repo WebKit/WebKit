@@ -74,9 +74,11 @@ void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
 
 bool JSString::equalSlowCase(ExecState* exec, JSString* other) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     String str1 = value(exec);
     String str2 = other->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
     return WTF::equal(*str1.impl(), *str2.impl());
 }

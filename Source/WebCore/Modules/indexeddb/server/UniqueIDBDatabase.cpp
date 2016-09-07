@@ -859,7 +859,9 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     // using steps to assign a key to a value using a key path.
     ThreadSafeDataBuffer injectedRecordValue;
     if (usedKeyIsGenerated && !objectStoreInfo->keyPath().isNull()) {
-        JSLockHolder locker(databaseThreadVM());
+        VM& vm = databaseThreadVM();
+        JSLockHolder locker(vm);
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
         auto value = deserializeIDBValueToJSValue(databaseThreadExecState(), originalRecordValue.data());
         if (value.isUndefined()) {
@@ -873,7 +875,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
         }
 
         auto serializedValue = SerializedScriptValue::create(&databaseThreadExecState(), value, nullptr, nullptr);
-        if (databaseThreadExecState().hadException()) {
+        if (UNLIKELY(scope.exception())) {
             postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to serialize record value after injecting record key")), usedKey));
             return;
         }

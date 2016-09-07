@@ -119,6 +119,9 @@ Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec, size_
 
 static void extractSourceInformationFromException(JSC::ExecState* exec, JSObject* exceptionObject, int* lineNumber, int* columnNumber, String* sourceURL)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
     JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier::fromString(exec, "line"));
     *lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
@@ -126,7 +129,7 @@ static void extractSourceInformationFromException(JSC::ExecState* exec, JSObject
     *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
     JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier::fromString(exec, "sourceURL"));
     *sourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : ASCIILiteral("undefined");
-    exec->clearException();
+    scope.clearException();
 }
 
 Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::Exception* exception, size_t maxStackSize)

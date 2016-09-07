@@ -231,10 +231,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
     auto str1 = state->argument(0).toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : state->uncheckedArgument(1).toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (UNLIKELY(!context))
@@ -663,9 +663,10 @@ bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* state, Encoded
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     auto nativeValue = value.toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
     return true;
@@ -678,7 +679,8 @@ bool setJSTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -686,7 +688,7 @@ bool setJSTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue
     }
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setImplementsStr2(WTFMove(nativeValue));
     return true;
@@ -699,7 +701,8 @@ bool setJSTestInterfaceImplementsStr3(ExecState* state, EncodedJSValue thisValue
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -716,7 +719,8 @@ bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -739,9 +743,10 @@ bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, Encod
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     auto nativeValue = value.toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
     return true;
@@ -754,7 +759,8 @@ bool setJSTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisVal
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -762,7 +768,7 @@ bool setJSTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisVal
     }
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return false;
     WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue));
     return true;
@@ -775,7 +781,8 @@ bool setJSTestInterfaceSupplementalStr3(ExecState* state, EncodedJSValue thisVal
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -792,7 +799,8 @@ bool setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisVal
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
@@ -852,7 +860,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     if (!context)
         return JSValue::encode(jsUndefined());
     auto strArg = state->argument(0).toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(!objArg))
@@ -930,7 +938,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     if (!context)
         return JSValue::encode(jsUndefined());
     auto strArg = state->argument(0).toWTFString(state);
-    if (UNLIKELY(state->hadException()))
+    if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(!objArg))

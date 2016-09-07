@@ -61,7 +61,7 @@ namespace WebCore {
         ArrayBufferArray arrayBufferArray;
         fillMessagePortArray(state, state.argument(1), portArray, arrayBufferArray);
         auto message = SerializedScriptValue::create(&state, state.uncheckedArgument(0), &portArray, &arrayBufferArray);
-        if (state.hadException())
+        if (UNLIKELY(scope.exception()))
             return JSC::jsUndefined();
 
         ExceptionCode ec = 0;

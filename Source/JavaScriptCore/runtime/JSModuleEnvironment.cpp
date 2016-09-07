@@ -78,17 +78,19 @@ void JSModuleEnvironment::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
     JSModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(exec, Identifier::fromUid(exec, propertyName.uid()));
     if (resolution.type == JSModuleRecord::Resolution::Type::Resolved) {
         // When resolveImport resolves the resolution, the imported module environment must have the binding.
         JSModuleEnvironment* importedModuleEnvironment = resolution.moduleRecord->moduleEnvironment();
         PropertySlot redirectSlot(importedModuleEnvironment, PropertySlot::InternalMethodType::Get);
-        bool result = importedModuleEnvironment->methodTable(exec->vm())->getOwnPropertySlot(importedModuleEnvironment, exec, resolution.localName, redirectSlot);
+        bool result = importedModuleEnvironment->methodTable(vm)->getOwnPropertySlot(importedModuleEnvironment, exec, resolution.localName, redirectSlot);
         ASSERT_UNUSED(result, result);
         ASSERT(redirectSlot.isValue());
         JSValue value = redirectSlot.getValue(exec, resolution.localName);
-        ASSERT(!exec->hadException());
+        ASSERT_UNUSED(scope, !scope.exception());
         slot.setValue(thisObject, redirectSlot.attributes(), value);
         return true;
     }

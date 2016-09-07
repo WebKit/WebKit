@@ -631,6 +631,7 @@ set(JavaScriptCore_SOURCES
     runtime/BooleanObject.cpp
     runtime/BooleanPrototype.cpp
     runtime/CallData.cpp
+    runtime/CatchScope.cpp
     runtime/ClonedArguments.cpp
     runtime/CodeCache.cpp
     runtime/CodeSpecializationKind.cpp
@@ -660,8 +661,11 @@ set(JavaScriptCore_SOURCES
     runtime/ErrorInstance.cpp
     runtime/ErrorPrototype.cpp
     runtime/Exception.cpp
+    runtime/ExceptionEvent.cpp
+    runtime/ExceptionEventLocation.cpp
     runtime/ExceptionFuzz.cpp
     runtime/ExceptionHelpers.cpp
+    runtime/ExceptionScope.cpp
     runtime/Executable.cpp
     runtime/FunctionConstructor.cpp
     runtime/FunctionExecutableDump.cpp

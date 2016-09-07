@@ -2148,12 +2148,17 @@
 		FE5068671AE25E280009DAB7 /* DeferredSourceDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */; };
 		FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */; };
 		FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE6029D91D6E1E4F0030204D /* ThrowScopeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6029D81D6E1E330030204D /* ThrowScopeLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE6029D91D6E1E4F0030204D /* ExceptionEventLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6029D81D6E1E330030204D /* ExceptionEventLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE6491371D78F01D00A694D4 /* ExceptionScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6491361D78F01300A694D4 /* ExceptionScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE6491391D78F3AF00A694D4 /* ExceptionScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6491381D78F3A300A694D4 /* ExceptionScope.cpp */; };
 		FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE68C6381B90DE0B0042BCB3 /* MacroAssemblerPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */; };
 		FE7BA60F1A1A7CEC00F1F7B4 /* HeapVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */; };
 		FE7BA6101A1A7CEC00F1F7B4 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
+		FE80C1971D775CDD008510C0 /* CatchScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80C1961D775B27008510C0 /* CatchScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE80C1991D775FBE008510C0 /* CatchScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80C1981D775FB4008510C0 /* CatchScope.cpp */; };
+		FE80C19B1D776A98008510C0 /* ExceptionEventLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80C19A1D7768FD008510C0 /* ExceptionEventLocation.cpp */; };
 		FE99B2491C24C3D300C82159 /* JITNegGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE99B2481C24B6D300C82159 /* JITNegGenerator.h */; };
 		FE99B24A1C24C3D700C82159 /* JITNegGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE99B2471C24B6D300C82159 /* JITNegGenerator.cpp */; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4475,11 +4480,16 @@
 		FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredSourceDump.cpp; sourceTree = "<group>"; };
 		FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMEntryScope.cpp; sourceTree = "<group>"; };
 		FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMEntryScope.h; sourceTree = "<group>"; };
-		FE6029D81D6E1E330030204D /* ThrowScopeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThrowScopeLocation.h; sourceTree = "<group>"; };
+		FE6029D81D6E1E330030204D /* ExceptionEventLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionEventLocation.h; sourceTree = "<group>"; };
+		FE6491361D78F01300A694D4 /* ExceptionScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionScope.h; sourceTree = "<group>"; };
+		FE6491381D78F3A300A694D4 /* ExceptionScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionScope.cpp; sourceTree = "<group>"; };
 		FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerPrinter.cpp; sourceTree = "<group>"; };
 		FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerPrinter.h; sourceTree = "<group>"; };
 		FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapVerifier.cpp; sourceTree = "<group>"; };
 		FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapVerifier.h; sourceTree = "<group>"; };
+		FE80C1961D775B27008510C0 /* CatchScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CatchScope.h; sourceTree = "<group>"; };
+		FE80C1981D775FB4008510C0 /* CatchScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CatchScope.cpp; sourceTree = "<group>"; };
+		FE80C19A1D7768FD008510C0 /* ExceptionEventLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionEventLocation.cpp; sourceTree = "<group>"; };
 		FE90BB3A1B7CF64E006B3F03 /* VMInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInlines.h; sourceTree = "<group>"; };
 		FE98B5B61BB9AE110073E7A6 /* JITSubGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITSubGenerator.h; sourceTree = "<group>"; };
 		FE99B2471C24B6D300C82159 /* JITNegGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITNegGenerator.cpp; sourceTree = "<group>"; };
@@ -5737,6 +5747,8 @@
 				0FB7F38C15ED8E3800F167B2 /* ButterflyInlines.h */,
 				BCA62DFE0E2826230004F30D /* CallData.cpp */,
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
+				FE80C1981D775FB4008510C0 /* CatchScope.cpp */,
+				FE80C1961D775B27008510C0 /* CatchScope.h */,
 				BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */,
 				0FE0501C1AA9095600D33B33 /* ClonedArguments.cpp */,
 				0FE0501D1AA9095600D33B33 /* ClonedArguments.h */,
@@ -5801,10 +5813,14 @@
 				BC02E9070E1839DB000F9297 /* ErrorPrototype.h */,
 				FE1C0FFE1B194FD100B53FCA /* Exception.cpp */,
 				FE1C0FFC1B193E9800B53FCA /* Exception.h */,
+				FE80C19A1D7768FD008510C0 /* ExceptionEventLocation.cpp */,
+				FE6029D81D6E1E330030204D /* ExceptionEventLocation.h */,
 				0F12DE0D1979D5FD0006FF4E /* ExceptionFuzz.cpp */,
 				0F12DE0E1979D5FD0006FF4E /* ExceptionFuzz.h */,
 				1429D8770ED21ACD00B89619 /* ExceptionHelpers.cpp */,
 				A72701B30DADE94900E548D7 /* ExceptionHelpers.h */,
+				FE6491381D78F3A300A694D4 /* ExceptionScope.cpp */,
+				FE6491361D78F01300A694D4 /* ExceptionScope.h */,
 				86CA032D1038E8440028A609 /* Executable.cpp */,
 				86CAFEE21035DDE60028A609 /* Executable.h */,
 				A7A8AF2917ADB5F3005AB174 /* Float32Array.h */,
@@ -6204,7 +6220,6 @@
 				0FA2C17A17D7CF84009D015F /* TestRunnerUtils.h */,
 				FE2E6A7A1D6EA5FE0060F896 /* ThrowScope.cpp */,
 				FE3422111D6B818C0032BE88 /* ThrowScope.h */,
-				FE6029D81D6E1E330030204D /* ThrowScopeLocation.h */,
 				0F55989717C86C5600A1E543 /* ToNativeFromValue.h */,
 				0F2B66D817B6B5AB00A7AE3F /* TypedArrayAdaptors.h */,
 				0F2B66D917B6B5AB00A7AE3F /* TypedArrayController.cpp */,
@@ -7759,7 +7774,7 @@
 				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
 				708EBE241CE8F35800453146 /* IntlObjectInlines.h in Headers */,
 				0F070A481D543A90006E7232 /* CellContainerInlines.h in Headers */,
-				FE6029D91D6E1E4F0030204D /* ThrowScopeLocation.h in Headers */,
+				FE6029D91D6E1E4F0030204D /* ExceptionEventLocation.h in Headers */,
 				0FE0501B1AA9091100D33B33 /* GenericOffset.h in Headers */,
 				0F2B66E017B6B5AB00A7AE3F /* GenericTypedArrayView.h in Headers */,
 				0F2B66E117B6B5AB00A7AE3F /* GenericTypedArrayViewInlines.h in Headers */,
@@ -8280,6 +8295,7 @@
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
+				FE6491371D78F01D00A694D4 /* ExceptionScope.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
 				436E54531C468E7400B5AF73 /* B3LegalizeMemoryOffsets.h in Headers */,
 				2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */,
@@ -8373,6 +8389,7 @@
 				709FB86C1AE335C60039D069 /* WeakSetPrototype.h in Headers */,
 				BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */,
 				A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */,
+				FE80C1971D775CDD008510C0 /* CatchScope.h in Headers */,
 				2A4EC90C1860D6C20094F782 /* WriteBarrierBuffer.h in Headers */,
 				C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
 				0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */,
@@ -8905,6 +8922,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0FFA549716B8835000B3A982 /* A64DOpcode.cpp in Sources */,
+				FE6491391D78F3AF00A694D4 /* ExceptionScope.cpp in Sources */,
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				0FEC856D1BDACDC70080FF74 /* AirAllocateStack.cpp in Sources */,
 				43422A661C16267500E2EB98 /* B3ReduceDoubleToFloat.cpp in Sources */,
@@ -9387,6 +9405,7 @@
 				0F2B66E617B6B5AB00A7AE3F /* JSArrayBufferPrototype.cpp in Sources */,
 				0F2B66E817B6B5AB00A7AE3F /* JSArrayBufferView.cpp in Sources */,
 				A5311C371C77CECA00E6B1B6 /* HeapSnapshotBuilder.cpp in Sources */,
+				FE80C1991D775FBE008510C0 /* CatchScope.cpp in Sources */,
 				1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */,
 				86FA9E91142BBB2E001773B7 /* JSBoundFunction.cpp in Sources */,
 				1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */,
@@ -9499,6 +9518,7 @@
 				0F4680A414BA7F8D00BFE272 /* LLIntSlowPaths.cpp in Sources */,
 				0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */,
 				14469DDE107EC7E700650446 /* Lookup.cpp in Sources */,
+				FE80C19B1D776A98008510C0 /* ExceptionEventLocation.cpp in Sources */,
 				0F4680CC14BBB17A00BFE272 /* LowLevelInterpreter.cpp in Sources */,
 				A5AB49DC1BEC8082007020FB /* PerGlobalObjectWrapperWorld.cpp in Sources */,
 				14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */,

@@ -346,6 +346,7 @@ typedef const char* optionString;
     v(bool, useExceptionFuzz, false, Normal, nullptr) \
     v(unsigned, fireExceptionFuzzAt, 0, Normal, nullptr) \
     v(bool, validateDFGExceptionHandling, false, Normal, "Causes the DFG to emit code validating exception handling for each node that can exit") /* This is true by default on Debug builds */\
+    v(bool, dumpSimulatedThrows, false, Normal, "Dumps the call stack at each simulated throw for exception scope verification") \
     \
     v(bool, useExecutableAllocationFuzz, false, Normal, nullptr) \
     v(unsigned, fireExecutableAllocationFuzzAt, 0, Normal, nullptr) \

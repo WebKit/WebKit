@@ -85,7 +85,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
 
     // 3. Let name be the result of calling the [[Get]] internal method of O with argument "name".
     JSValue name = thisObj->get(exec, exec->propertyNames().name);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     // 4. If name is undefined, then let name be "Error"; else let name be ToString(name).
@@ -94,13 +94,13 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
         nameString = ASCIILiteral("Error");
     else {
         nameString = name.toString(exec)->value(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
     }
 
     // 5. Let msg be the result of calling the [[Get]] internal method of O with argument "message".
     JSValue message = thisObj->get(exec, exec->propertyNames().message);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     // (sic)
@@ -111,7 +111,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
         messageString = String();
     else {
         messageString = message.toString(exec)->value(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
     }
 

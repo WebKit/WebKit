@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,10 +42,12 @@ JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const C
 
 JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSValue result = call(exec, functionObject, callType, callData, thisValue, args);
-    if (exec->hadException()) {
-        returnedException = exec->exception();
-        exec->clearException();
+    if (UNLIKELY(scope.exception())) {
+        returnedException = scope.exception();
+        scope.clearException();
         return jsUndefined();
     }
     RELEASE_ASSERT(result);

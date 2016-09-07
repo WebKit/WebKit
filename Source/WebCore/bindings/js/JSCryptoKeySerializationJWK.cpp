@@ -62,7 +62,7 @@ static bool getJSArrayFromJSON(ExecState* exec, JSObject* json, const char* key,
         return false;
 
     JSValue value = slot.getValue(exec, identifier);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
     if (!isJSArray(value)) {
         throwTypeError(exec, scope, String::format("Expected an array for \"%s\" JSON key",  key));
         return false;
@@ -85,10 +85,10 @@ static bool getStringFromJSON(ExecState* exec, JSObject* json, const char* key, 
         return false;
 
     JSValue jsValue = slot.getValue(exec, identifier);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
     if (!jsValue.getString(exec, result)) {
         // Can get an out of memory exception.
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return false;
         throwTypeError(exec, scope, String::format("Expected a string value for \"%s\" JSON key",  key));
         return false;
@@ -109,7 +109,7 @@ static bool getBooleanFromJSON(ExecState* exec, JSObject* json, const char* key,
         return false;
 
     JSValue jsValue = slot.getValue(exec, identifier);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
     if (!jsValue.isBoolean()) {
         throwTypeError(exec, scope, String::format("Expected a boolean value for \"%s\" JSON key",  key));
         return false;
@@ -148,7 +148,7 @@ JSCryptoKeySerializationJWK::JSCryptoKeySerializationJWK(ExecState* exec, const 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue jsonValue = JSONParse(exec, jsonString);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return;
 
     if (!jsonValue || !jsonValue.isObject()) {
@@ -298,7 +298,7 @@ void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsage
             JSValue jsValue = keyOps->getIndex(m_exec, i);
             String operation;
             if (!jsValue.getString(m_exec, operation)) {
-                if (!m_exec->hadException())
+                if (!scope.exception())
                     throwTypeError(m_exec, scope, ASCIILiteral("JWK key_ops attribute could not be processed"));
                 return;
             }
@@ -320,7 +320,7 @@ void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsage
                 return;
         }
     } else {
-        if (m_exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return;
 
         String jwkUseString;
@@ -391,7 +391,7 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataOctetSequence
 
     String keyBase64URL;
     if (!getStringFromJSON(m_exec, m_json.get(), "k", keyBase64URL)) {
-        if (!m_exec->hadException())
+        if (!scope.exception())
             throwTypeError(m_exec, scope, ASCIILiteral("Secret key data is not present is JWK"));
         return nullptr;
     }
@@ -420,7 +420,7 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataRSAComponents
     Vector<uint8_t> privateExponent;
 
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "n", modulus)) {
-        if (!m_exec->hadException())
+        if (!scope.exception())
             throwTypeError(m_exec, scope, ASCIILiteral("Required JWK \"n\" member is missing"));
         return nullptr;
     }
@@ -431,13 +431,13 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataRSAComponents
     }
 
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "e", exponent)) {
-        if (!m_exec->hadException())
+        if (!scope.exception())
             throwTypeError(m_exec, scope, ASCIILiteral("Required JWK \"e\" member is missing"));
         return nullptr;
     }
 
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "d", modulus)) {
-        if (m_exec->hadException())
+        if (scope.exception())
             return nullptr;
         return CryptoKeyDataRSAComponents::createPublic(modulus, exponent);
     }
@@ -446,38 +446,38 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataRSAComponents
     CryptoKeyDataRSAComponents::PrimeInfo secondPrimeInfo;
     Vector<CryptoKeyDataRSAComponents::PrimeInfo> otherPrimeInfos;
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "p", firstPrimeInfo.primeFactor)) {
-        if (m_exec->hadException())
+        if (scope.exception())
             return nullptr;
         return CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
     }
 
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "dp", firstPrimeInfo.factorCRTExponent)) {
-        if (m_exec->hadException())
+        if (scope.exception())
             return nullptr;
         return CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
     }
 
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "q", secondPrimeInfo.primeFactor)) {
-        if (m_exec->hadException())
+        if (scope.exception())
             return nullptr;
         return CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
     }
 
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "dq", secondPrimeInfo.factorCRTExponent)) {
-        if (m_exec->hadException())
+        if (scope.exception())
             return nullptr;
         return CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
     }
 
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "qi", secondPrimeInfo.factorCRTCoefficient)) {
-        if (m_exec->hadException())
+        if (scope.exception())
             return nullptr;
         return CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
     }
 
     JSArray* otherPrimeInfoJSArray;
     if (!getJSArrayFromJSON(m_exec, m_json.get(), "oth", otherPrimeInfoJSArray)) {
-        if (m_exec->hadException())
+        if (scope.exception())
             return nullptr;
         return CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(modulus, exponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos);
     }
@@ -485,24 +485,24 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataRSAComponents
     for (size_t i = 0; i < otherPrimeInfoJSArray->length(); ++i) {
         CryptoKeyDataRSAComponents::PrimeInfo info;
         JSValue element = otherPrimeInfoJSArray->getIndex(m_exec, i);
-        if (m_exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return nullptr;
         if (!element.isObject()) {
             throwTypeError(m_exec, scope, ASCIILiteral("JWK \"oth\" array member is not an object"));
             return nullptr;
         }
         if (!getBigIntegerVectorFromJSON(m_exec, asObject(element), "r", info.primeFactor)) {
-            if (!m_exec->hadException())
+            if (!scope.exception())
                 throwTypeError(m_exec, scope, ASCIILiteral("Cannot get prime factor for a prime in \"oth\" dictionary"));
             return nullptr;
         }
         if (!getBigIntegerVectorFromJSON(m_exec, asObject(element), "d", info.factorCRTExponent)) {
-            if (!m_exec->hadException())
+            if (!scope.exception())
                 throwTypeError(m_exec, scope, ASCIILiteral("Cannot get factor CRT exponent for a prime in \"oth\" dictionary"));
             return nullptr;
         }
         if (!getBigIntegerVectorFromJSON(m_exec, asObject(element), "t", info.factorCRTCoefficient)) {
-            if (!m_exec->hadException())
+            if (!scope.exception())
                 throwTypeError(m_exec, scope, ASCIILiteral("Cannot get factor CRT coefficient for a prime in \"oth\" dictionary"));
             return nullptr;
         }
@@ -519,7 +519,7 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyData() const
 
     String jwkKeyType;
     if (!getStringFromJSON(m_exec, m_json.get(), "kty", jwkKeyType)) {
-        if (!m_exec->hadException())
+        if (!scope.exception())
             throwTypeError(m_exec, scope, ASCIILiteral("Required JWK \"kty\" member is missing"));
         return nullptr;
     }
@@ -549,6 +549,9 @@ static void buildJSONForOctetSequence(ExecState* exec, const Vector<uint8_t>& ke
 
 static void buildJSONForRSAComponents(JSC::ExecState* exec, const CryptoKeyDataRSAComponents& data, JSC::JSObject* result)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     addToJSON(exec, result, "kty", "RSA");
     addToJSON(exec, result, "n", base64URLEncode(data.modulus()));
     addToJSON(exec, result, "e", base64URLEncode(data.exponent()));
@@ -570,9 +573,8 @@ static void buildJSONForRSAComponents(JSC::ExecState* exec, const CryptoKeyDataR
     if (data.otherPrimeInfos().isEmpty())
         return;
 
-    VM& vm = exec->vm();
     JSArray* oth = constructEmptyArray(exec, 0, exec->lexicalGlobalObject(), data.otherPrimeInfos().size());
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return;
     for (size_t i = 0, size = data.otherPrimeInfos().size(); i < size; ++i) {
         JSObject* jsPrimeInfo = constructEmptyObject(exec);
@@ -698,8 +700,9 @@ static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoK
 static void addUsagesToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usages)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* keyOps = constructEmptyArray(exec, 0, exec->lexicalGlobalObject(), 0);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return;
 
     unsigned index = 0;
@@ -738,13 +741,13 @@ String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& 
     JSObject* result = constructEmptyObject(exec);
 
     addJWKAlgorithmToJSON(exec, result, key);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return String();
 
     addBoolToJSON(exec, result, "ext", key.extractable());
 
     addUsagesToJSON(exec, result, key.usagesBitmap());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return String();
 
     if (is<CryptoKeyDataOctetSequence>(*keyData))
@@ -755,7 +758,7 @@ String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& 
         throwTypeError(exec, scope, ASCIILiteral("Key doesn't support exportKey"));
         return String();
     }
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return String();
 
     return JSONStringify(exec, result, 0);

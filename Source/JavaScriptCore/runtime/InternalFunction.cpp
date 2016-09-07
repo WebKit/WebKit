@@ -97,6 +97,7 @@ Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue ne
 {
 
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     // We allow newTarget == JSValue() because the API needs to be able to create classes without having a real JS frame.
     // Since we don't allow subclassing in the API we just treat newTarget == JSValue() as newTarget == exec->callee()
     ASSERT(!newTarget || newTarget.isConstructor());
@@ -112,13 +113,13 @@ Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue ne
 
             // Note, Reflect.construct might cause the profile to churn but we don't care.
             JSValue prototypeValue = newTarget.get(exec, exec->propertyNames().prototype);
-            if (UNLIKELY(vm.exception()))
+            if (UNLIKELY(scope.exception()))
                 return nullptr;
             if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue))
                 return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, prototype, baseClass);
         } else {
             JSValue prototypeValue = newTarget.get(exec, exec->propertyNames().prototype);
-            if (UNLIKELY(vm.exception()))
+            if (UNLIKELY(scope.exception()))
                 return nullptr;
             if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue)) {
                 // This only happens if someone Reflect.constructs our builtin constructor with another builtin constructor as the new.target.

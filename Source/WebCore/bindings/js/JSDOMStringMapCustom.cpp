@@ -75,11 +75,14 @@ bool JSDOMStringMap::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsign
 
 bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (propertyName.isSymbol())
         return false;
 
     String stringValue = value.toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return false;
 
     ExceptionCode ec = 0;

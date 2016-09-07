@@ -108,6 +108,8 @@ static bool isStringOwnProperty(ExecState* exec, StringObject* object, PropertyN
 
 bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     StringObject* thisObject = jsCast<StringObject*>(object);
 
     if (isStringOwnProperty(exec, thisObject, propertyName)) {
@@ -120,7 +122,7 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
         bool isCurrentDefined = thisObject->getOwnPropertyDescriptor(exec, propertyName, current);
         ASSERT(isCurrentDefined);
         bool isExtensible = thisObject->isExtensible(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return false;
         return validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, isExtensible, descriptor, isCurrentDefined, current, throwException);
     }

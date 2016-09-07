@@ -158,12 +158,15 @@ void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::J
 
 inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSC::EncodedJSValue promiseFunction(JSC::ExecState*, JSC::JSPromiseDeferred*))
 {
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
     JSDOMGlobalObject& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
     JSC::JSPromiseDeferred& promiseDeferred = *JSC::JSPromiseDeferred::create(&state, &globalObject);
     promiseFunction(&state, &promiseDeferred);
 
     rejectPromiseWithExceptionIfAny(state, globalObject, promiseDeferred);
-    ASSERT(!state.hadException());
+    ASSERT_UNUSED(scope, !scope.exception());
     return promiseDeferred.promise();
 }
 

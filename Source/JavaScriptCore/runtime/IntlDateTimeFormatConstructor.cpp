@@ -83,14 +83,16 @@ void IntlDateTimeFormatConstructor::finishCreation(VM& vm, IntlDateTimeFormatPro
 
 static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     // 12.1.2 Intl.DateTimeFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
     // 3. ReturnIfAbrupt(dateTimeFormat).
     Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlDateTimeFormatConstructor*>(state->callee())->dateTimeFormatStructure());
-    if (state->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
-    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(state->vm(), structure);
+    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, structure);
     ASSERT(dateTimeFormat);
 
     // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).
@@ -134,6 +136,8 @@ CallType IntlDateTimeFormatConstructor::getCallData(JSCell*, CallData& callData)
 
 EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     // 12.2.2 Intl.DateTimeFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let availableLocales be %DateTimeFormat%.[[availableLocales]].
@@ -142,7 +146,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
     Vector<String> requestedLocales = canonicalizeLocaleList(*state, state->argument(0));
-    if (state->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).

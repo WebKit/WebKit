@@ -78,7 +78,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
     if (!elementInterface->isUpgradingElement()) {
         Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *globalObject);
         auto* newElementStructure = InternalFunction::createSubclassStructure(&exec, newTargetValue, baseStructure);
-        if (UNLIKELY(exec.hadException()))
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
 
         Ref<HTMLElement> element = HTMLElement::create(elementInterface->name(), document);
@@ -98,12 +98,12 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
     ASSERT(elementWrapperValue.isObject());
 
     JSValue newPrototype = newTarget->get(&exec, vm.propertyNames->prototype);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     JSObject* elementWrapperObject = asObject(elementWrapperValue);
     JSObject::setPrototype(elementWrapperObject, &exec, newPrototype, true /* shouldThrowIfCantSet */);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     elementInterface->didUpgradeLastElementInConstructionStack();

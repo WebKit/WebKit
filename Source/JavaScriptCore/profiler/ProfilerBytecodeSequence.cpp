@@ -79,15 +79,16 @@ const Bytecode& BytecodeSequence::forBytecodeIndex(unsigned bytecodeIndex) const
 void BytecodeSequence::addSequenceProperties(ExecState* exec, JSObject* result) const
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* header = constructEmptyArray(exec, 0);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return;
     for (unsigned i = 0; i < m_header.size(); ++i)
         header->putDirectIndex(exec, i, jsString(exec, String::fromUTF8(m_header[i])));
     result->putDirect(vm, exec->propertyNames().header, header);
     
     JSArray* sequence = constructEmptyArray(exec, 0);
-    if (UNLIKELY(vm.exception()))
+    if (UNLIKELY(scope.exception()))
         return;
     for (unsigned i = 0; i < m_sequence.size(); ++i)
         sequence->putDirectIndex(exec, i, m_sequence[i].toJS(exec));

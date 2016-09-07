@@ -623,6 +623,9 @@ void Debugger::updateCallFrameAndPauseIfNeeded(CallFrame* callFrame)
 
 void Debugger::pauseIfNeeded(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (m_isPaused)
         return;
 
@@ -662,7 +665,7 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     {
         PauseReasonDeclaration reason(*this, didHitBreakpoint ? PausedForBreakpoint : m_reasonForPause);
         handlePause(vmEntryGlobalObject, m_reasonForPause);
-        RELEASE_ASSERT(!callFrame->hadException());
+        RELEASE_ASSERT(!scope.exception());
     }
 
     m_pausingBreakpointID = noBreakpointID;

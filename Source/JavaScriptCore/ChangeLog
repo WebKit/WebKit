@@ -1,3 +1,751 @@
+2016-09-07  Mark Lam  <mark.lam@apple.com>
+
+        Add CatchScope and force all exception checks to be via ThrowScope or CatchScope.
+        https://bugs.webkit.org/show_bug.cgi?id=161498
+
+        Reviewed by Geoffrey Garen.
+
+        This patch refactors the ThrowScope class, and introduces a base ExceptionScope
+        that ThrowScope extends.  A CatchScope which extends the ExceptionScope is also
+        introduced.
+
+        ENABLE(THROW_SCOPE_VERIFICATION) is now renamed to ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+        which is a more suitable name now.
+
+        Note: exception scope verification is still disabled by default.  There are still
+        many places that need to be fixed up or re-expressed in a way that is friendly
+        to the verification.  I'll address those in subsequent patches.
+
+        After this patch, the code will statically enforce that:
+        1. all calls to throwException() go through a ThrowScope.
+        2. all calls to clearException() go through a CatchScope.
+        3. all exception checks go through an ExceptionScope in the form of a ThrowScope
+           or CatchScope.
+
+        A Summary of how to use ExceptionScopes
+        =======================================
+        1. If a function can throw a JS exception, it should declare a ThrowScope at the
+           top of the function (as early as possible).
+
+        2. If a function can clear JS exceptions, it should declare a CatchScope at the
+           top of the function (as early as possible).
+
+        Declaring a ThrowScope in a function means that the function may throw an exception
+        that its caller will have to handle.  Declaring a CatchScope in a function means
+        that the function intends to clear pending exceptions before returning to its
+        caller. 
+
+        For more details, see the notes below.
+        
+        Everything you may want to know about ExceptionScopes
+        =====================================================
+        ExceptionScope verification works to simulate exception throws and detect cases
+        where exception checks are missing.  The notes below will cover:
+
+            1. The VM::m_needExceptionCheck bit
+            2. ThrowScopes and CatchScopes
+            3. Verification of needed exception checks
+            3. Checking Exceptions
+            4. Simulating throws
+            5. Using ThrowScope::release()
+            6. Checking exceptions with ThrowScope::exception() / CatchScope::exception()
+            7. Checking exceptions by checking callee results
+            8. Debugging verification errors
+
+        1. The VM::m_needExceptionCheck bit
+
+           The VM has a m_needExceptionCheck bit that indicates when an exception may be
+           thrown.  You can think of the m_needExceptionCheck bit being set as a simulated
+           throw.
+
+        2. ThrowScopes and CatchScopes
+
+           Only ThrowScopes may throwException.  Only CatchScopes may catchException.
+
+           Every throw site must declare a ThrowScope instance using DECLARE_THROW_SCOPE
+           at the top of its function (as early as possible) e.g.
+ 
+                void foo(...)
+                {
+                    auto scope = DECLARE_THROW_SCOPE(vm);
+                    ...
+                    throwException(exec, scope, ...);
+                }
+
+           Note: by convention, every throw helper function must take a ThrowScope argument
+           instead of instantiating its own ThrowScope.  This allows the throw to be
+           attributed to the client code rather than the throw helper itself.
+
+           Every catch site (i.e. a site that calls clearException()) must declare a
+           CatchScope instance using DECLARE_CATCH_SCOPE at the top of its function.
+
+           If a function can both throw or clear exceptions, then the ThrowScope should
+           be declared first so that it can simulate a throw to the function's caller.
+
+           Note: ThrowScope and CatchScope both extend ExceptionScope so that ThrowScopes
+           can be aware if there's an enclosing CatchScope between it and the point where
+           C++ code returns to JS code.  This is needed to determine if the ThrowScope
+           should simulate a re-throw or not.  See (4) below for more details on returning
+           to JS code.
+
+        3. Verification of needed exception checks
+
+           a. On construction, each ThrowScope and CatchScope will verify that
+              VM::m_needExceptionCheck is not set.
+ 
+              This ensures that the caller of the current function has checked for exceptions
+              where needed before doing more work which lead to calling the current function.
+
+           b. On destruction, each ThrowScope and CatchScope will verify that
+              VM::m_needExceptionCheck is not set. This verification will be skipped if
+              the ThrowScope has been released (see (5) below).
+
+              This ensures that the function that owns this exception scope is not missing
+              any exception checks before returning.
+
+           c. When throwing an exception, the ThrowScope will verify that VM::m_needExceptionCheck
+              is not already set, unless it's been ask to rethrow the same Exception object.
+
+        4. Simulating throws
+
+           Throws are simulated by setting the m_needExceptionCheck bit.
+
+           The bit will only be set in the ThrowScope destructor except when the ThrowScope
+           detects the caller is a LLInt or JIT function.  LLInt or JIT functions will always
+           check for exceptions after a host C++ function returns to it.  However, they will
+           not clear the m_needExceptionCheck bit.
+
+           Hence, if the ThrowScope destructor detects the caller is a LLInt or JIT function,
+           it will just skip the setting of the bit.
+
+           Note: it is not needed nor correct to set the m_needExceptionCheck bit in the
+           throwException methods.  This is because, in practice, we always return
+           immediately after throwing an exception.  It doesn't make sense to set the bit in
+           the throw just to have to clear it immediately after before we do verification in
+           the ThrowScope destructor.
+
+        5. Using ThrowScope::release()
+
+           Calling release() means that the scope is released from its obligation to
+           verify the VM::m_needExceptionCheck bit on destruction.
+
+           release() should only be used at the bottom of a function if:
+
+           a. This function is going to let its caller check and handle the exception, e.g.
+
+                void foo(...)
+                {
+                    auto scope = DECLARE_THROW_SCOPE(vm);
+                    auto result = goo(); // may throw.
+
+                    ... // Code that will are not affected by a pending exceptions.
+
+                    scope.release(); // tell the ThrowScope that the caller will handle the exception.
+                    return result;
+                }
+
+           b. This function is going to do a tail call that may throw.
+
+                void foo(...)
+                {
+                    auto scope = DECLARE_THROW_SCOPE(vm);
+                    ...
+                    scope.release(); // tell the ThrowScope that the caller will handle the exception.
+                    return goo(); // may throw.
+                }
+
+              release() should not be used in code paths that branch. For example:
+
+                void foo(...)
+                {
+                    auto scope = DECLARE_THROW_SCOPE(vm);
+
+                    auto result = goo1(); // may throw.
+                    scope.release(); // WRONG !!! Don't do this.
+                    if (result)
+                        return;
+
+                    result = goo2(); // may throw.
+                    ...
+                    return result;
+                }
+
+            The above will result in a verification error in goo2()'s ThrowScope.  The
+            proper way to fix this verification is to do either (6) or (7) below.
+
+         6. Checking exceptions with ThrowScope::exception() / CatchScope::exception()
+
+            ThrowScope/CatchScope::exception() returns the thrown Exception object if
+            there is one pending.  Else, it returns nullptr.
+
+            It also clears the m_needExceptionCheck bit thereby indicating that we've
+            satisfied the needed exception check.  For example,
+
+                void foo(...)
+                {
+                    auto scope = DECLARE_THROW_SCOPE(vm);
+
+                    auto result = goo1(); // may throw.
+                    if (scope.exception())
+                        return;
+
+                    result = goo2(); // may throw.
+                    ...
+                    return result;
+                }
+
+            But sometimes, for optimization reasons, we may choose to test the result of
+            the callee function instead doing a load of the VM exception value.  See (7)
+            below.
+
+         7. Checking exceptions by checking callee results
+
+            This approach should only be applied when it makes a difference to performance.
+            If we need to do this, we should add an ASSERT() that invokes the scope's
+            exception() method to verify the result.  Since exception scope verification
+            is only done on DEBUG builds, this ASSERT will satisfy the verification
+            requirements without impacting performance.  For example,
+
+                void foo(...)
+                {
+                    auto scope = DECLARE_THROW_SCOPE(vm);
+
+                    bool failed = goo1(); // may throw.
+                    ASSERT(!!scope.exception() == failed)
+                    if (failed)
+                        return;
+
+                    result = goo2(); // may throw.
+                    ...
+                    return result;
+                }
+
+         8. Debugging verification errors
+
+            a. When verification fails, you will see a message followed by an assertion
+               failure.  For example:
+
+            ERROR: Unchecked JS exception:
+                This scope can throw a JS exception: setUpCall @ /Volumes/Data/ws6/OpenSource/Source/JavaScriptCore/llint/LLIntSlowPaths.cpp:1245
+                    (ExceptionScope::m_recursionDepth was ...)
+                But the exception was unchecked as of this scope: varargsSetup @ /Volumes/Data/ws6/OpenSource/Source/JavaScriptCore/llint/LLIntSlowPaths.cpp:1398
+                    (ExceptionScope::m_recursionDepth was ...)
+                [ backtrace here ]
+
+               The message tells you that failure was detected at in varargsSetup() at
+               LLIntSlowPaths.cpp line 1398, and that the missing exception check should
+               have happened somewhere between the call to setUpCall() at LLIntSlowPaths.cpp
+               line 1245 and it.
+
+               If that is insufficient information, you can ...
+
+            b. Dump simulated throws
+
+               Re-run the test case with JSC_dumpSimulatedThrows=true.  You will also see
+               back traces at each simulated throw.
+
+            c. Narrowing down the source of a simulated throw
+
+               Another technique for narrowing down the source of simulated throws is by
+               further dividing a function to smaller regions by separating each region
+               with additional local throw scopes.  For example,
+
+                ... // Region 1
+                { auto scope = DECLARE_THROW_SCOPE(vm); }
+                ... // Region 2
+                { auto scope = DECLARE_THROW_SCOPE(vm); }
+                ... // Region 3
+
+        * API/APIUtils.h:
+        (handleExceptionIfNeeded):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * bindings/ScriptValue.cpp:
+        (Deprecated::ScriptValue::toString):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::evaluateWithScopeExtension):
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::weakSetEntries):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::evaluateWithScopeExtension):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::extractSourceInformationFromException):
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::clearException): Deleted.
+        (JSC::ExecState::exception): Deleted.
+        (JSC::ExecState::hadException): Deleted.
+        (JSC::ExecState::lastException): Deleted.
+        (JSC::ExecState::clearLastException): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::sizeOfVarargs):
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::debug):
+        * interpreter/Interpreter.h:
+        (JSC::SuspendExceptionScope::SuspendExceptionScope):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::functionsOnStack):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * jsc.cpp:
+        (WTF::ImpureGetter::getOwnPropertySlot):
+        (GlobalObject::moduleLoaderResolve):
+        (GlobalObject::moduleLoaderFetch):
+        (functionCreateElement):
+        (functionRun):
+        (functionRunString):
+        (functionLoad):
+        (functionLoadString):
+        (functionReadFile):
+        (functionCheckSyntax):
+        (functionSetRandomSeed):
+        (functionLoadModule):
+        (functionCreateBuiltin):
+        (functionCheckModuleSyntax):
+        (functionGenerateHeapSnapshot):
+        (functionSamplingProfilerStackTraces):
+        (dumpException):
+        (checkUncaughtException):
+        (runWithScripts):
+        (runInteractive):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::addSequenceProperties):
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::toJS):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::toJS):
+        * profiler/ProfilerOSRExitSite.cpp:
+        (JSC::Profiler::OSRExitSite::toJS):
+        * profiler/ProfilerOriginStack.cpp:
+        (JSC::Profiler::OriginStack::toJS):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesConstructArray):
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::slowJoin):
+        (JSC::fastJoin):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        (JSC::moveElements):
+        (JSC::concatAppendOne):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructWithBooleanConstructor):
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/CatchScope.cpp: Added.
+        (JSC::CatchScope::CatchScope):
+        (JSC::CatchScope::~CatchScope):
+        * runtime/CatchScope.h: Added.
+        (JSC::CatchScope::clearException):
+        (JSC::CatchScope::CatchScope):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/CommonSlowPathsExceptions.cpp:
+        (JSC::CommonSlowPaths::interpreterThrowInCaller):
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        (JSC::rejectPromise):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/ConsoleObject.cpp:
+        (JSC::consoleProtoFuncAssert):
+        (JSC::consoleProtoFuncProfile):
+        (JSC::consoleProtoFuncProfileEnd):
+        (JSC::consoleProtoFuncTakeHeapSnapshot):
+        (JSC::consoleProtoFuncTime):
+        (JSC::consoleProtoFuncTimeEnd):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::dateParse):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToPrimitiveSymbol):
+        (JSC::dateProtoFuncToJSON):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithErrorConstructor):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedToString):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/ExceptionEventLocation.cpp: Added.
+        (WTF::printInternal):
+        * runtime/ExceptionEventLocation.h: Copied from Source/JavaScriptCore/runtime/ThrowScopeLocation.h.
+        (JSC::ExceptionEventLocation::ExceptionEventLocation):
+        (JSC::ThrowScopeLocation::ThrowScopeLocation): Deleted.
+        * runtime/ExceptionHelpers.h:
+        * runtime/ExceptionScope.cpp: Added.
+        (JSC::ExceptionScope::ExceptionScope):
+        (JSC::ExceptionScope::~ExceptionScope):
+        * runtime/ExceptionScope.h: Added.
+        (JSC::ExceptionScope::vm):
+        (JSC::ExceptionScope::recursionDepth):
+        (JSC::ExceptionScope::exception):
+        (JSC::ExceptionScope::ExceptionScope):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::copyToArguments):
+        * runtime/GetterSetter.cpp:
+        (JSC::callGetter):
+        * runtime/InspectorInstrumentationObject.cpp:
+        (JSC::inspectorInstrumentationObjectLog):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        (JSC::IntlCollator::createCollator):
+        (JSC::IntlCollator::resolvedOptions):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::constructIntlCollator):
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorFuncCompare):
+        (JSC::IntlCollatorPrototypeGetterCompare):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::toDateTimeOptionsAnyDate):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::resolvedOptions):
+        (JSC::IntlDateTimeFormat::format):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatFuncFormatDateTime):
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::createNumberFormat):
+        (JSC::IntlNumberFormat::resolvedOptions):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatFuncFormatNumber):
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        * runtime/IntlObject.cpp:
+        (JSC::intlBooleanOption):
+        (JSC::intlStringOption):
+        (JSC::intlNumberOption):
+        (JSC::canonicalizeLocaleList):
+        (JSC::supportedLocales):
+        * runtime/IntlObjectInlines.h:
+        (JSC::constructIntlInstanceWithWorkaroundForLegacyIntlConstructor):
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorNext):
+        (JSC::iteratorStep):
+        (JSC::iteratorClose):
+        (JSC::iteratorForIterable):
+        * runtime/IteratorOperations.h:
+        (JSC::forEachInIterable):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+        * runtime/JSArrayInlines.h:
+        (JSC::getLength):
+        (JSC::toLength):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::getBoundFunctionStructure):
+        (JSC::JSBoundFunction::create):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        (JSC::JSValue::putToPrimitiveByIndex):
+        (JSC::JSValue::toStringSlowCase):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::toPreferredPrimitiveType):
+        (JSC::JSValue::getPropertySlot):
+        (JSC::JSValue::equalSlowCaseInline):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::setFunctionName):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::setIndex):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewFromIterator):
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray):
+        (JSC::constructArray):
+        (JSC::constructArrayNegativeIndexed):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSJob.cpp:
+        (JSC::JSJobMicrotask::run):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::getOwnPropertySlot):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::fetch):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlot):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSObject.cpp:
+        (JSC::ordinarySetSlow):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::callToPrimitiveFunction):
+        (JSC::JSObject::ordinaryToPrimitive):
+        (JSC::JSObject::defaultHasInstance):
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::toNumber):
+        (JSC::JSObject::toString):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        (JSC::JSObject::getGenericPropertyNames):
+        (JSC::JSObject::getMethod):
+        * runtime/JSObjectInlines.h:
+        (JSC::createListFromArrayLike):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSScope.cpp:
+        (JSC::isUnscopable):
+        (JSC::JSScope::resolve):
+        * runtime/JSString.cpp:
+        (JSC::JSString::equalSlowCase):
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::join):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncClz32):
+        (JSC::mathProtoFuncHypot):
+        (JSC::mathProtoFuncIMul):
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+        (JSC::moduleLoaderPrototypeRequestedModules):
+        (JSC::moduleLoaderPrototypeModuleDeclarationInstantiation):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithNativeErrorConstructor):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorSetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorGetOwnPropertySymbols):
+        (JSC::objectConstructorKeys):
+        (JSC::ownEnumerablePropertyKeys):
+        (JSC::toPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        (JSC::defineProperties):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        (JSC::objectConstructorIsExtensible):
+        (JSC::ownPropertyKeys):
+        * runtime/ObjectConstructor.h:
+        (JSC::constructObjectFromPropertyDescriptor):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        * runtime/Options.h:
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::slowGetterSetter):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::makeRevocableProxy):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::toStringName):
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::ProxyObject::putByIndexCommon):
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+        (JSC::reflectObjectDefineProperty):
+        (JSC::reflectObjectGet):
+        (JSC::reflectObjectGetOwnPropertyDescriptor):
+        (JSC::reflectObjectIsExtensible):
+        (JSC::reflectObjectPreventExtensions):
+        (JSC::reflectObjectSet):
+        (JSC::reflectObjectSetPrototypeOf):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::toFlags):
+        (JSC::regExpCreate):
+        (JSC::constructRegExp):
+        * runtime/RegExpConstructor.h:
+        (JSC::isRegExp):
+        * runtime/RegExpObject.cpp:
+        (JSC::collectMatches):
+        (JSC::RegExpObject::matchGlobal):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        (JSC::flagsString):
+        (JSC::regExpProtoFuncToString):
+        (JSC::regExpProtoGetterFlags):
+        (JSC::regExpProtoFuncSearchFast):
+        (JSC::regExpProtoFuncSplitFast):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCodePoint):
+        (JSC::constructWithStringConstructor):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::defineOwnProperty):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::operationStringProtoFuncReplaceRegExpEmptyStr):
+        (JSC::replaceUsingStringSearch):
+        (JSC::replace):
+        (JSC::stringProtoFuncReplaceUsingRegExp):
+        (JSC::stringProtoFuncReplaceUsingStringSearch):
+        (JSC::stringProtoFuncCodePointAt):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplitFast):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::toLocaleCase):
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+        (JSC::trimString):
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringIncludesImpl):
+        (JSC::stringProtoFuncIncludes):
+        (JSC::builtinStringIncludesInternal):
+        (JSC::stringProtoFuncNormalize):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::symbolConstructorFor):
+        * runtime/TemplateRegistry.cpp:
+        (JSC::TemplateRegistry::getTemplateObject):
+        * runtime/ThrowScope.cpp:
+        (JSC::ThrowScope::ThrowScope):
+        (JSC::ThrowScope::~ThrowScope):
+        (JSC::ThrowScope::throwException):
+        (JSC::ThrowScope::simulateThrow):
+        (JSC::ThrowScope::printIfNeedCheck): Deleted.
+        (JSC::ThrowScope::verifyExceptionCheckNeedIsSatisfied): Deleted.
+        * runtime/ThrowScope.h:
+        (JSC::ThrowScope::release):
+        (JSC::ThrowScope::ThrowScope):
+        (JSC::ThrowScope::throwException):
+        (JSC::ThrowScope::vm): Deleted.
+        (JSC::ThrowScope::exception): Deleted.
+        * runtime/ThrowScopeLocation.h: Removed.
+        * runtime/VM.cpp:
+        (JSC::VM::verifyExceptionCheckNeedIsSatisfied):
+        * runtime/VM.h:
+        (JSC::VM::exception):
+        (JSC::VM::clearException):
+        (JSC::VM::setException): Deleted.
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::functionPrint):
+
 2016-09-07  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] some valid language tags cause errors in Intl constructors

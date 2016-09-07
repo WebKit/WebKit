@@ -160,17 +160,19 @@ bool QuickTimePluginReplacement::ensureReplacementScriptInjected()
     DOMWrapperWorld& world = isolatedWorld();
     ScriptController& scriptController = m_parentElement->document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
     
     JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(exec, "createPluginReplacement"));
     if (replacementFunction.isFunction())
         return true;
     
     scriptController.evaluateInWorld(ScriptSourceCode(quickTimePluginReplacementScript()), world);
-    if (exec->hadException()) {
+    if (UNLIKELY(scope.exception())) {
         LOG(Plugins, "%p - Exception when evaluating QuickTime plugin replacement script", this);
-        exec->clearException();
+        scope.clearException();
         return false;
     }
     
@@ -188,15 +190,17 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     DOMWrapperWorld& world = isolatedWorld();
     ScriptController& scriptController = m_parentElement->document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
-    
+
     // Lookup the "createPluginReplacement" function.
     JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(exec, "createPluginReplacement"));
     if (replacementFunction.isUndefinedOrNull())
         return false;
     JSC::JSObject* replacementObject = replacementFunction.toObject(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
     JSC::CallData callData;
     JSC::CallType callType = replacementObject->methodTable()->getCallData(replacementObject, callData);
     if (callType == JSC::CallType::None)
@@ -209,32 +213,32 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     argList.append(toJS<String>(exec, globalObject, m_names));
     argList.append(toJS<String>(exec, globalObject, m_values));
     JSC::JSValue replacement = call(exec, replacementObject, callType, callData, globalObject, argList);
-    if (exec->hadException()) {
-        exec->clearException();
+    if (UNLIKELY(scope.exception())) {
+        scope.clearException();
         return false;
     }
 
     // Get the <video> created to replace the plug-in.
     JSC::JSValue value = replacement.get(exec, JSC::Identifier::fromString(exec, "video"));
-    if (!exec->hadException() && !value.isUndefinedOrNull())
+    if (!scope.exception() && !value.isUndefinedOrNull())
         m_mediaElement = JSHTMLVideoElement::toWrapped(value);
 
     if (!m_mediaElement) {
         LOG(Plugins, "%p - Failed to find <video> element created by QuickTime plugin replacement script.", this);
-        exec->clearException();
+        scope.clearException();
         return false;
     }
 
     // Get the scripting interface.
     value = replacement.get(exec, JSC::Identifier::fromString(exec, "scriptObject"));
-    if (!exec->hadException() && !value.isUndefinedOrNull()) {
+    if (!scope.exception() && !value.isUndefinedOrNull()) {
         m_scriptObject = value.toObject(exec);
-        ASSERT(!exec->hadException());
+        ASSERT(!scope.exception());
     }
 
     if (!m_scriptObject) {
         LOG(Plugins, "%p - Failed to find script object created by QuickTime plugin replacement.", this);
-        exec->clearException();
+        scope.clearException();
         return false;
     }
 

@@ -82,6 +82,8 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, Structure*)
 
 static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     // 12.3.4 DateTime Format Functions (ECMA-402 2.0)
     // 1. Let dtf be the this value.
     // 2. Assert: Type(dtf) is Object and dtf has an [[initializedDateTimeFormat]] internal slot whose value is true.
@@ -99,7 +101,7 @@ static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecSta
         // a. Let x be ToNumber(date).
         value = date.toNumber(state);
         // b. ReturnIfAbrupt(x).
-        if (state->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
     }
 
@@ -138,7 +140,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
 
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, dtf, boundArgs, 1, ASCIILiteral("format"));
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(JSValue());
         // d. Set dtf.[[boundFormat]] to bf.
         dtf->setBoundFormat(vm, boundFormat);

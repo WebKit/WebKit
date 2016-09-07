@@ -112,11 +112,11 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     const Identifier moduleKey = exec->argument(0).toPropertyKey(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     String source = exec->argument(1).toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     SourceCode sourceCode = makeSource(source, moduleKey.impl());
@@ -142,12 +142,14 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeRequestedModules(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
     if (!moduleRecord)
         return JSValue::encode(constructEmptyArray(exec, nullptr));
 
     JSArray* result = constructEmptyArray(exec, nullptr, moduleRecord->requestedModules().size());
-    if (UNLIKELY(exec->hadException()))
+    if (UNLIKELY(scope.exception()))
         JSValue::encode(jsUndefined());
     size_t i = 0;
     for (auto& key : moduleRecord->requestedModules())
@@ -158,6 +160,8 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeRequestedModules(ExecState* ex
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
     if (!moduleRecord)
         return JSValue::encode(jsUndefined());
@@ -166,7 +170,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation
         dataLog("Loader [link] ", moduleRecord->moduleKey(), "\n");
 
     moduleRecord->link(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     return JSValue::encode(jsUndefined());

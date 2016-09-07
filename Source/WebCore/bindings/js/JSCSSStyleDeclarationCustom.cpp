@@ -355,7 +355,7 @@ JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     String propertyName = state.uncheckedArgument(0).toWTFString(&state);
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
     RefPtr<CSSValue> cssValue = wrapped().getPropertyCSSValue(propertyName);

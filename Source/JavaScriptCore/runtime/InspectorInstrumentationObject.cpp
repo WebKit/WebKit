@@ -83,9 +83,11 @@ void InspectorInstrumentationObject::disable(VM& vm)
 
 EncodedJSValue JSC_HOST_CALL inspectorInstrumentationObjectLog(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue target = exec->argument(0);
     String value = target.toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     dataLog(value, "\n");
     return JSValue::encode(jsUndefined());

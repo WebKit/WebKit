@@ -603,7 +603,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleTimeString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(ExecState* exec)
 {
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec, scope, "Date.prototype[Symbol.toPrimitive] expected |this| to be an object.");
@@ -614,7 +615,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(ExecState* exec)
 
     JSValue hintValue = exec->uncheckedArgument(0);
     PreferredPrimitiveType type = toPreferredPrimitiveType(exec, hintValue);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
 
     if (type == NoPreference)
@@ -1123,20 +1124,21 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetYear(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
 {
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = exec->thisValue();
     JSObject* object = jsCast<JSObject*>(thisValue.toThis(exec, NotStrictMode));
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsNull());
 
     JSValue timeValue = object->toPrimitive(exec, PreferNumber);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsNull());
     if (timeValue.isNumber() && !(timeValue.isInt32() || std::isfinite(timeValue.asDouble())))
         return JSValue::encode(jsNull());
 
-    JSValue toISOValue = object->get(exec, exec->vm().propertyNames->toISOString);
-    if (exec->hadException())
+    JSValue toISOValue = object->get(exec, vm.propertyNames->toISOString);
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsNull());
 
     CallData callData;
@@ -1145,7 +1147,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
         return throwVMTypeError(exec, scope, ASCIILiteral("toISOString is not a function"));
 
     JSValue result = call(exec, asObject(toISOValue), callType, callData, object, exec->emptyList());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsNull());
     if (result.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("toISOString did not return a primitive value"));

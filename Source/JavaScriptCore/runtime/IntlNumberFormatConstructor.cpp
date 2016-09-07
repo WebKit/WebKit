@@ -83,14 +83,16 @@ void IntlNumberFormatConstructor::finishCreation(VM& vm, IntlNumberFormatPrototy
 
 static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     // 11.1.2 Intl.NumberFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // 2. Let numberFormat be OrdinaryCreateFromConstructor(newTarget, %NumberFormatPrototype%).
     // 3. ReturnIfAbrupt(numberFormat).
     Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlNumberFormatConstructor*>(state->callee())->numberFormatStructure());
-    if (state->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
-    IntlNumberFormat* numberFormat = IntlNumberFormat::create(state->vm(), structure);
+    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, structure);
     ASSERT(numberFormat);
 
     // 4. Return InitializeNumberFormat(numberFormat, locales, options).
@@ -134,6 +136,8 @@ CallType IntlNumberFormatConstructor::getCallData(JSCell*, CallData& callData)
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     // 11.2.2 Intl.NumberFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let availableLocales be %NumberFormat%.[[availableLocales]].
@@ -142,7 +146,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(E
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
     Vector<String> requestedLocales = canonicalizeLocaleList(*state, state->argument(0));
-    if (state->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).

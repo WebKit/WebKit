@@ -62,7 +62,7 @@ void JSMockContentFilterSettings::setDecisionPoint(ExecState& state, JSValue val
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     uint8_t nativeValue { convert<uint8_t>(state, value, EnforceRange) };
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return;
 
     DecisionPoint decisionPoint { static_cast<DecisionPoint>(nativeValue) };
@@ -98,7 +98,7 @@ static inline Decision toDecision(ExecState& state, JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     uint8_t nativeValue { convert<uint8_t>(state, value, EnforceRange) };
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return Decision::Allow;
 
     Decision decision { static_cast<Decision>(nativeValue) };
@@ -119,8 +119,11 @@ JSValue JSMockContentFilterSettings::decision(ExecState&) const
 
 void JSMockContentFilterSettings::setDecision(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     Decision decision { toDecision(state, value) };
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return;
 
     wrapped().setDecision(decision);
@@ -133,8 +136,11 @@ JSValue JSMockContentFilterSettings::unblockRequestDecision(ExecState&) const
 
 void JSMockContentFilterSettings::setUnblockRequestDecision(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     Decision unblockRequestDecision { toDecision(state, value) };
-    if (state.hadException())
+    if (UNLIKELY(scope.exception()))
         return;
 
     wrapped().setUnblockRequestDecision(unblockRequestDecision);

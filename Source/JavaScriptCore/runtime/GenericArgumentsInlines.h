@@ -219,13 +219,16 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
 template<typename Type>
 void GenericArguments<Type>::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     Type* thisObject = static_cast<Type*>(this);
     for (unsigned i = 0; i < length; ++i) {
         if (thisObject->canAccessIndexQuickly(i + offset))
             exec->r(firstElementDest + i) = thisObject->getIndexQuickly(i + offset);
         else {
             exec->r(firstElementDest + i) = get(exec, i + offset);
-            if (UNLIKELY(exec->vm().exception()))
+            if (UNLIKELY(scope.exception()))
                 return;
         }
     }

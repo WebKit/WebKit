@@ -894,4 +894,28 @@ bool VM::isSafeToRecurseSoftCLoop() const
 }
 #endif // !ENABLE(JIT)
 
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionEventLocation& location)
+{
+    if (!m_verifyExceptionEvents)
+        return;
+
+    if (UNLIKELY(m_needExceptionCheck)) {
+        auto throwDepth = m_simulatedThrowPointRecursionDepth;
+        auto& throwLocation = m_simulatedThrowPointLocation;
+
+        dataLog(
+            "ERROR: Unchecked JS exception:\n"
+            "    This scope can throw a JS exception: ", throwLocation, "\n"
+            "        (ExceptionScope::m_recursionDepth was  ", throwDepth, ")\n"
+            "    But the exception was unchecked as of this scope: ", location, "\n"
+            "        (ExceptionScope::m_recursionDepth was  ", recursionDepth, ")\n"
+            "\n");
+        WTFReportBacktrace();
+
+        RELEASE_ASSERT(!m_needExceptionCheck);
+    }
+}
+#endif
+
 } // namespace JSC

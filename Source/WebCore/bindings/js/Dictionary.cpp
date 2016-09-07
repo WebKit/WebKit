@@ -61,6 +61,8 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(HashMap<String, String>& map) c
 
     JSObject* object =  m_dictionary.initializerObject();
     ExecState* exec = m_dictionary.execState();
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     PropertyNameArray propertyNames(exec, PropertyNameMode::Strings);
     JSObject::getOwnPropertyNames(object, exec, propertyNames, EnumerationMode());
@@ -69,10 +71,10 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(HashMap<String, String>& map) c
         if (stringKey.isEmpty())
             continue;
         JSValue value = object->get(exec, *it);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             continue;
         String stringValue = value.toString(exec)->value(exec);
-        if (!exec->hadException())
+        if (LIKELY(!scope.exception()))
             map.set(stringKey, stringValue);
     }
 

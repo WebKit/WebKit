@@ -59,7 +59,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
 
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
     Structure* weakSetStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->weakSetStructure());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(JSValue());
     JSWeakSet* weakSet = JSWeakSet::create(exec, weakSetStructure);
     JSValue iterable = exec->argument(0);
@@ -67,7 +67,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
         return JSValue::encode(weakSet);
 
     JSValue adderFunction = weakSet->JSObject::get(exec, exec->propertyNames().add);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
 
     CallData adderFunctionCallData;

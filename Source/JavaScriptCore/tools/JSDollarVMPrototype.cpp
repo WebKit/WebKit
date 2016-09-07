@@ -307,9 +307,10 @@ static EncodedJSValue JSC_HOST_CALL functionPrintByteCodeFor(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 {
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         String argStr = exec->uncheckedArgument(i).toString(exec)->value(exec);
-        if (exec->hadException())
+        if (UNLIKELY(scope.exception()))
             return JSValue::encode(jsUndefined());
         dataLog(argStr);
     }

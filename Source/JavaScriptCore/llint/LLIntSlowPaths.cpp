@@ -882,7 +882,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
 
     // Don't put to an object if toString threw an exception.
     auto property = subscript.toPropertyKey(exec);
-    if (exec->vm().exception())
+    if (throwScope.exception())
         LLINT_END();
 
     if (Optional<uint32_t> index = parseIndex(property))

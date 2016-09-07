@@ -29,6 +29,7 @@
 #ifndef ExceptionHelpers_h
 #define ExceptionHelpers_h
 
+#include "CatchScope.h"
 #include "ErrorInstance.h"
 #include "JSObject.h"
 #include "ThrowScope.h"

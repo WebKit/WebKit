@@ -192,7 +192,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         }
 
         prototype = obj->getPrototype(vm, exec);
-        if (vm.exception())
+        if (UNLIKELY(scope.exception()))
             return false;
         if (prototype.isNull())
             break;
@@ -215,7 +215,7 @@ bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
     
     JSObject* prototype = synthesizePrototype(exec);
     if (UNLIKELY(!prototype)) {
-        ASSERT(exec->hadException());
+        ASSERT(scope.exception());
         return false;
     }
     bool putResult = false;
@@ -381,11 +381,11 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
 
     ASSERT(isCell());
     JSValue value = asCell()->toPrimitive(exec, PreferString);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return errorValue();
     ASSERT(!value.isObject());
     JSString* result = value.toString(exec);
-    if (vm.exception())
+    if (UNLIKELY(scope.exception()))
         return errorValue();
     return result;
 }

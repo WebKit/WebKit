@@ -197,13 +197,15 @@ public:
     void call()
     {
         Ref<JSDOMWindowMicrotaskCallback> protectedThis(*this);
-        JSLockHolder lock(m_globalObject->vm());
+        VM& vm = m_globalObject->vm();
+        JSLockHolder lock(vm);
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
         ExecState* exec = m_globalObject->globalExec();
 
         JSMainThreadExecState::runTask(exec, m_task);
 
-        ASSERT(!exec->hadException());
+        ASSERT_UNUSED(scope, !scope.exception());
     }
 
 private:

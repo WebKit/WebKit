@@ -552,7 +552,7 @@ inline JSC::JSObject* toJSSequence(JSC::ExecState& exec, JSC::JSValue value, uns
     }
 
     JSC::JSValue lengthValue = object->get(&exec, exec.propertyNames().length);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     if (lengthValue.isUndefinedOrNull()) {
@@ -561,7 +561,7 @@ inline JSC::JSObject* toJSSequence(JSC::ExecState& exec, JSC::JSValue value, uns
     }
 
     length = lengthValue.toUInt32(&exec);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     return object;
@@ -604,8 +604,11 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalO
 
 template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T>& vector)
 {
+    JSC::VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSC::JSArray* array = constructEmptyArray(exec, nullptr, vector.size());
-    if (UNLIKELY(exec->hadException()))
+    if (UNLIKELY(scope.exception()))
         return JSC::jsUndefined();
     for (size_t i = 0; i < vector.size(); ++i)
         array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i]));
@@ -614,8 +617,11 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalO
 
 template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<RefPtr<T>>& vector)
 {
+    JSC::VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSC::JSArray* array = constructEmptyArray(exec, nullptr, vector.size());
-    if (UNLIKELY(exec->hadException()))
+    if (UNLIKELY(scope.exception()))
         return JSC::jsUndefined();
     for (size_t i = 0; i < vector.size(); ++i)
         array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i].get()));
@@ -699,14 +705,17 @@ template<typename T, size_t inlineCapacity> inline JSC::JSValue jsArray(JSC::Exe
 
 template<typename T, size_t inlineCapacity> JSC::JSValue jsFrozenArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>& vector)
 {
+    JSC::VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSC::MarkedArgumentBuffer list;
     for (auto& element : vector) {
         list.append(JSValueTraits<T>::arrayJSValue(exec, globalObject, element));
-        if (UNLIKELY(exec->hadException()))
+        if (UNLIKELY(scope.exception()))
             return JSC::jsUndefined();
     }
     auto* array = JSC::constructArray(exec, nullptr, globalObject, list);
-    if (UNLIKELY(exec->hadException()))
+    if (UNLIKELY(scope.exception()))
         return JSC::jsUndefined();
     return JSC::objectConstructorFreeze(exec, array);
 }
@@ -745,32 +754,40 @@ inline RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue value) { return JSC
 template<> struct NativeValueTraits<String> {
     static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, String& indexedValue)
     {
+        JSC::VM& vm = exec.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         indexedValue = jsValue.toWTFString(&exec);
-        return !exec.hadException();
+        return !scope.exception();
     }
 };
 
 template<> struct NativeValueTraits<unsigned> {
     static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, unsigned& indexedValue)
     {
+        JSC::VM& vm = exec.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         indexedValue = jsValue.toUInt32(&exec);
-        return !exec.hadException();
+        return !scope.exception();
     }
 };
 
 template<> struct NativeValueTraits<float> {
     static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, float& indexedValue)
     {
+        JSC::VM& vm = exec.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         indexedValue = jsValue.toFloat(&exec);
-        return !exec.hadException();
+        return !scope.exception();
     }
 };
 
 template<> struct NativeValueTraits<double> {
     static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, double& indexedValue)
     {
+        JSC::VM& vm = exec.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         indexedValue = jsValue.toNumber(&exec);
-        return !exec.hadException();
+        return !scope.exception();
     }
 };
 
@@ -807,11 +824,13 @@ template<typename T> Vector<T> toNativeArray(JSC::ExecState& exec, JSC::JSValue 
     }
 
     Vector<T> result;
-    forEachInIterable(&exec, value, [&result](JSC::VM&, JSC::ExecState* state, JSC::JSValue jsValue) {
+    forEachInIterable(&exec, value, [&result](JSC::VM& vm, JSC::ExecState* state, JSC::JSValue jsValue) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
         T convertedValue;
-        if (!NativeValueTraits<T>::nativeValue(*state, jsValue, convertedValue))
+        bool success = NativeValueTraits<T>::nativeValue(*state, jsValue, convertedValue);
+        ASSERT_UNUSED(scope, scope.exception() || success);
+        if (!success)
             return;
-        ASSERT(!state->hadException());
         result.append(convertedValue);
     });
     return result;

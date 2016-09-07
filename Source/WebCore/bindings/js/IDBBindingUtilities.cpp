@@ -90,13 +90,14 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
 
     VM& vm = state.vm();
     Locker<JSLock> locker(vm.apiLock());
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     switch (key->type()) {
     case KeyType::Array: {
         auto& inArray = key->array();
         unsigned size = inArray.size();
         auto outArray = constructEmptyArray(&state, 0, &globalObject, size);
-        if (UNLIKELY(vm.exception()))
+        if (UNLIKELY(scope.exception()))
             return jsUndefined();
         for (size_t i = 0; i < size; ++i)
             outArray->putDirectIndex(&state, i, toJS(state, globalObject, inArray.at(i).get()));

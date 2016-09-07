@@ -87,16 +87,19 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
 
 JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)
 {
-    JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
-    RELEASE_ASSERT(!exec->vm().isCollectorBusy());
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
+    RELEASE_ASSERT(!vm.isCollectorBusy());
 
     CodeProfiling profile(source);
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
+    ASSERT(scope.exception() || program);
     if (!program) {
-        returnedException = exec->vm().exception();
-        exec->vm().clearException();
+        returnedException = scope.exception();
+        scope.clearException();
         return jsUndefined();
     }
 
@@ -105,9 +108,9 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, N
     JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(exec, NotStrictMode));
     JSValue result = exec->interpreter()->execute(program, exec, thisObj);
 
-    if (exec->hadException()) {
-        returnedException = exec->exception();
-        exec->clearException();
+    if (scope.exception()) {
+        returnedException = scope.exception();
+        scope.clearException();
         return jsUndefined();
     }
 
@@ -147,9 +150,11 @@ static Symbol* createSymbolForEntryPointModule(VM& vm)
 
 static JSInternalPromise* rejectPromise(ExecState* exec, JSGlobalObject* globalObject)
 {
-    ASSERT(exec->hadException());
-    JSValue exception = exec->exception()->value();
-    exec->clearException();
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    ASSERT(scope.exception());
+    JSValue exception = scope.exception()->value();
+    scope.clearException();
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
     deferred->reject(exec, exception);
     return deferred->promise();
@@ -176,17 +181,19 @@ JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const String& moduleNa
 
 JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const SourceCode& source, JSValue initiator)
 {
-    JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
-    RELEASE_ASSERT(!exec->vm().isCollectorBusy());
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
+    RELEASE_ASSERT(!vm.isCollectorBusy());
 
-    Symbol* key = createSymbolForEntryPointModule(exec->vm());
+    Symbol* key = createSymbolForEntryPointModule(vm);
 
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     globalObject->moduleLoader()->provide(exec, key, JSModuleLoader::Status::Fetch, source.view().toString());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return rejectPromise(exec, globalObject);
 
     return loadAndEvaluateModule(lock, exec, globalObject, key, jsUndefined(), initiator);
@@ -213,18 +220,20 @@ JSInternalPromise* loadModule(ExecState* exec, const String& moduleName, JSValue
 
 JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source, JSValue initiator)
 {
-    JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
-    RELEASE_ASSERT(!exec->vm().isCollectorBusy());
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
+    RELEASE_ASSERT(!vm.isCollectorBusy());
 
-    Symbol* key = createSymbolForEntryPointModule(exec->vm());
+    Symbol* key = createSymbolForEntryPointModule(vm);
 
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     // FIXME: Introduce JSSourceCode object to wrap around this source.
     globalObject->moduleLoader()->provide(exec, key, JSModuleLoader::Status::Fetch, source.view().toString());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return rejectPromise(exec, globalObject);
 
     return loadModule(lock, exec, globalObject, key, jsUndefined(), initiator);

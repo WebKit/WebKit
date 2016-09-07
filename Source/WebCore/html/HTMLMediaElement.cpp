@@ -4002,6 +4002,8 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 
 static JSC::JSValue controllerJSValue(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, HTMLMediaElement& media)
 {
+    JSC::VM& vm = globalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto mediaJSWrapper = toJS(&exec, &globalObject, media);
     
     // Retrieve the controller through the JS object graph
@@ -4009,18 +4011,18 @@ static JSC::JSValue controllerJSValue(JSC::ExecState& exec, JSDOMGlobalObject& g
     if (!mediaJSWrapperObject)
         return JSC::jsNull();
     
-    JSC::Identifier controlsHost = JSC::Identifier::fromString(&exec.vm(), "controlsHost");
+    JSC::Identifier controlsHost = JSC::Identifier::fromString(&vm, "controlsHost");
     JSC::JSValue controlsHostJSWrapper = mediaJSWrapperObject->get(&exec, controlsHost);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSC::jsNull();
 
     JSC::JSObject* controlsHostJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(controlsHostJSWrapper);
     if (!controlsHostJSWrapperObject)
         return JSC::jsNull();
 
-    JSC::Identifier controllerID = JSC::Identifier::fromString(&exec.vm(), "controller");
+    JSC::Identifier controllerID = JSC::Identifier::fromString(&vm, "controller");
     JSC::JSValue controllerJSWrapper = controlsHostJSWrapperObject->get(&exec, controllerID);
-    if (exec.hadException())
+    if (UNLIKELY(scope.exception()))
         return JSC::jsNull();
 
     return controllerJSWrapper;
@@ -4057,8 +4059,10 @@ void HTMLMediaElement::updateCaptionContainer()
 
     ScriptController& scriptController = document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
 
     JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
     JSC::JSObject* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
@@ -4083,7 +4087,7 @@ void HTMLMediaElement::updateCaptionContainer()
 
     JSC::MarkedArgumentBuffer noArguments;
     JSC::call(exec, methodObject, callType, callData, controllerObject, noArguments);
-    exec->clearException();
+    scope.clearException();
 
     m_haveSetUpCaptionContainer = true;
 #endif
@@ -6603,8 +6607,10 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     DOMWrapperWorld& world = ensureIsolatedWorld();
     ScriptController& scriptController = document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
 
     JSC::JSValue functionValue = globalObject->get(exec, JSC::Identifier::fromString(exec, "createControls"));
     if (functionValue.isFunction())
@@ -6617,8 +6623,8 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     URL scriptURL;
 #endif
     scriptController.evaluateInWorld(ScriptSourceCode(mediaControlsScript, scriptURL), world);
-    if (exec->hadException()) {
-        exec->clearException();
+    if (UNLIKELY(scope.exception())) {
+        scope.clearException();
         return false;
     }
 
@@ -6676,8 +6682,10 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
     ScriptController& scriptController = document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
 
     // The media controls script must provide a method with the following details.
     // Name: createControls
@@ -6704,21 +6712,21 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     argList.append(mediaControlsHostJSWrapper);
 
     JSC::JSObject* function = functionValue.toObject(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     if (callType == JSC::CallType::None)
         return;
 
     JSC::JSValue controllerValue = JSC::call(exec, function, callType, callData, globalObject, argList);
-    exec->clearException();
+    scope.clearException();
     JSC::JSObject* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
     if (!controllerObject)
         return;
 
     // Connect the Media, MediaControllerHost, and Controller so the GC knows about their relationship
     JSC::JSObject* mediaJSWrapperObject = mediaJSWrapper.toObject(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
     JSC::Identifier controlsHost = JSC::Identifier::fromString(&exec->vm(), "controlsHost");
     
     ASSERT(!mediaJSWrapperObject->hasProperty(exec, controlsHost));
@@ -6738,8 +6746,8 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     updatePageScaleFactorJSProperty();
     updateUsesLTRUserInterfaceLayoutDirectionJSProperty();
 
-    if (exec->hadException())
-        exec->clearException();
+    if (UNLIKELY(scope.exception()))
+        scope.clearException();
 }
 
 void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPageScale)
@@ -6774,21 +6782,23 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
     DOMWrapperWorld& world = ensureIsolatedWorld();
     ScriptController& scriptController = document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
 
     JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
     JSC::JSObject* controllerObject = controllerValue.toObject(exec);
 
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return;
 
     JSC::JSValue functionValue = controllerObject->get(exec, JSC::Identifier::fromString(exec, "handlePresentationModeChange"));
-    if (exec->hadException() || functionValue.isUndefinedOrNull())
+    if (UNLIKELY(scope.exception()) || functionValue.isUndefinedOrNull())
         return;
 
     JSC::JSObject* function = functionValue.toObject(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     if (callType == JSC::CallType::None)
@@ -6815,21 +6825,23 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
 
     ScriptController& scriptController = document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
 
     JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
     JSC::JSObject* controllerObject = controllerValue.toObject(exec);
 
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return emptyString();
 
     JSC::JSValue functionValue = controllerObject->get(exec, JSC::Identifier::fromString(exec, "getCurrentControlsStatus"));
-    if (exec->hadException() || functionValue.isUndefinedOrNull())
+    if (UNLIKELY(scope.exception()) || functionValue.isUndefinedOrNull())
         return emptyString();
 
     JSC::JSObject* function = functionValue.toObject(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!scope.exception());
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     JSC::MarkedArgumentBuffer argList;
@@ -6838,7 +6850,7 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
 
     JSC::JSValue outputValue = JSC::call(exec, function, callType, callData, controllerObject, argList);
 
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return emptyString();
 
     return outputValue.getString(exec);

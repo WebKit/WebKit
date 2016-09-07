@@ -147,6 +147,7 @@ static double millisecondsFromComponents(ExecState* exec, const ArgList& args, W
 JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget, const ArgList& args)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     int numArgs = args.size();
 
     double value;
@@ -167,7 +168,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
         value = millisecondsFromComponents(exec, args, WTF::LocalTime);
 
     Structure* dateStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->dateStructure());
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return nullptr;
 
     return DateInstance::create(vm, dateStructure, value);
@@ -202,10 +203,12 @@ CallType DateConstructor::getCallData(JSCell*, CallData& callData)
 
 EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     String dateStr = exec->argument(0).toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsNumber(parseDate(exec->vm(), dateStr)));
+    return JSValue::encode(jsNumber(parseDate(vm, dateStr)));
 }
 
 EncodedJSValue JSC_HOST_CALL dateNow(ExecState* exec)
