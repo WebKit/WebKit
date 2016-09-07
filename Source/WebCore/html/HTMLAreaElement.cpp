@@ -54,12 +54,14 @@ void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomicStri
     if (name == shapeAttr) {
         if (equalLettersIgnoringASCIICase(value, "default"))
             m_shape = Default;
-        else if (equalLettersIgnoringASCIICase(value, "circle"))
+        else if (equalLettersIgnoringASCIICase(value, "circle") || equalLettersIgnoringASCIICase(value, "circ"))
             m_shape = Circle;
-        else if (equalLettersIgnoringASCIICase(value, "poly"))
+        else if (equalLettersIgnoringASCIICase(value, "poly") || equalLettersIgnoringASCIICase(value, "polygon"))
             m_shape = Poly;
-        else if (equalLettersIgnoringASCIICase(value, "rect"))
+        else {
+            // The missing value default is the rectangle state.
             m_shape = Rect;
+        }
         invalidateCachedRegion();
     } else if (name == coordsAttr) {
         m_coords = parseHTMLListOfOfFloatingPointNumberValues(value.string());

@@ -1,5 +1,19 @@
 2016-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Align HTMLAreaElement shape parsing with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=161698
+
+        Reviewed by Daniel Bates.
+
+        Rebaseline W3C test now that more checks are passing. Chrome is also
+        passing all the checks in this test.
+
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape.html:
+        Incorporate https://github.com/w3c/web-platform-tests/pull/3659
+
+2016-09-07  Chris Dumez  <cdumez@apple.com>
+
         Drop legacy canvas.probablySupportsContext()
         https://bugs.webkit.org/show_bug.cgi?id=161692
 
