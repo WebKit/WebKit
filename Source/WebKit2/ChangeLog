@@ -1,3 +1,18 @@
+2016-09-07  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        [GTK] Clarify frame callbacks behaviour in Wayland compositor
+        https://bugs.webkit.org/show_bug.cgi?id=161683
+
+        Reviewed by Carlos Garcia Campos.
+
+        The way we fire frame callbacks in the nested Wayland compositor can
+        be puzzling to developers expecting Wayland semantics, but since we
+        have our own mechanism to handle synchronization we don't care much
+        about them. Add a comment to avoid surprised Wayland developers.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::Surface::commit):
+
 2016-09-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r205369, just for fun.

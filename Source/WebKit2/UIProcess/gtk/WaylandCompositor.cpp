@@ -231,6 +231,10 @@ bool WaylandCompositor::Surface::commit()
     if (m_webPage)
         m_webPage->setViewNeedsDisplay(IntRect(IntPoint::zero(), m_webPage->viewSize()));
 
+    // From a Wayland point-of-view frame callbacks should be fired where the
+    // compositor knows it has *used* the committed contents, so firing them here
+    // can be surprising but we don't need them as a throttling mechanism because
+    // rendering synchronization is handled elsewhere by WebKit.
     auto list = WTFMove(m_frameCallbackList);
     for (auto* resource : list) {
         wl_callback_send_done(resource, 0);
