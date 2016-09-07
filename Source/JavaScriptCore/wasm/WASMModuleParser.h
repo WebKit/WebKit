@@ -31,9 +31,7 @@
 #include "WASMParser.h"
 #include <wtf/Vector.h>
 
-namespace JSC {
-
-namespace WASM {
+namespace JSC { namespace WASM {
 
 class ModuleParser : public Parser {
 public:
@@ -61,8 +59,6 @@ private:
     Vector<Signature> m_signatures;
 };
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

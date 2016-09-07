@@ -854,6 +854,7 @@ set(JavaScriptCore_SOURCES
     wasm/WASMModuleParser.cpp
     wasm/WASMPlan.cpp
     wasm/WASMSections.cpp
+    wasm/WASMCallingConventions.cpp
 
     yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp

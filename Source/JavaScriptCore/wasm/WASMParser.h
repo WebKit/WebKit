@@ -34,9 +34,7 @@
 #include "WASMSections.h"
 #include <wtf/LEBDecoder.h>
 
-namespace JSC {
-
-namespace WASM {
+namespace JSC { namespace WASM {
 
 class Parser {
 protected:
@@ -127,8 +125,6 @@ ALWAYS_INLINE bool Parser::parseValueType(Type& result)
     return true;
 }
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

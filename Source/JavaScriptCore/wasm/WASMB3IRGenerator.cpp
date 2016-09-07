@@ -29,19 +29,23 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3BasicBlockInlines.h"
-#include "B3CallingConventions.h"
+#include "B3FixSSA.h"
+#include "B3Validate.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "B3VariableValue.h"
 #include "VirtualRegister.h"
+#include "WASMCallingConvention.h"
 #include "WASMFunctionParser.h"
 #include <wtf/Optional.h>
 
-namespace JSC {
+namespace JSC { namespace WASM {
 
-namespace WASM {
+namespace {
 
 using namespace B3;
+
+const bool verbose = false;
 
 inline B3::Opcode toB3Op(BinaryOpType op)
 {
@@ -64,8 +68,66 @@ inline B3::Opcode toB3Op(UnaryOpType op)
 }
 
 class B3IRGenerator {
+private:
+    class LazyBlock {
+    public:
+        explicit operator bool() { return !!m_block; }
+
+        BasicBlock* get(Procedure& proc)
+        {
+            if (!m_block)
+                m_block = proc.addBlock();
+            return m_block;
+        }
+
+        void dump(PrintStream& out) const
+        {
+            if (m_block)
+                out.print(*m_block);
+            else
+                out.print("Uninitialized");
+        }
+
+    private:
+        BasicBlock* m_block { nullptr };
+    };
+
+    struct ControlData {
+        ControlData(Optional<Vector<Variable*>>&& stack, BasicBlock* loopTarget = nullptr)
+            : loopTarget(loopTarget)
+            , stack(stack)
+        {
+        }
+
+        void dump(PrintStream& out) const
+        {
+            out.print("Continuation: ", continuation, ", Target: ");
+            if (loopTarget)
+                out.print(*loopTarget);
+            else
+                out.print(continuation);
+        }
+
+        BasicBlock* targetBlockForBranch(Procedure& proc)
+        {
+            if (loopTarget)
+                return loopTarget;
+            return continuation.get(proc);
+        }
+
+        bool isLoop() { return !!loopTarget; }
+
+        // We use a LazyBlock for the continuation since B3::validate does not like orphaned blocks. Note,
+        // it's possible to create an orphaned block by doing something like (block (return (...))). In
+        // that example, if we eagerly allocate a BasicBlock for the continuation it will never be reachable.
+        LazyBlock continuation;
+        BasicBlock* loopTarget;
+        Optional<Vector<Variable*>> stack;
+    };
+
 public:
     typedef Value* ExpressionType;
+    static constexpr ExpressionType emptyExpression = nullptr;
 
     B3IRGenerator(Procedure&);
 
@@ -74,25 +136,34 @@ public:
     ExpressionType addConstant(Type, uint64_t);
 
     bool WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
+    bool WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
 
     bool WARN_UNUSED_RETURN binaryOp(BinaryOpType, ExpressionType left, ExpressionType right, ExpressionType& result);
     bool WARN_UNUSED_RETURN unaryOp(UnaryOpType, ExpressionType arg, ExpressionType& result);
 
     bool WARN_UNUSED_RETURN addBlock();
-    bool WARN_UNUSED_RETURN endBlock(Vector<ExpressionType>& expressionStack);
+    bool WARN_UNUSED_RETURN addLoop();
+    bool WARN_UNUSED_RETURN endBlock(Vector<ExpressionType, 1>& expressionStack);
+
     bool WARN_UNUSED_RETURN addReturn(const Vector<ExpressionType, 1>& returnValues);
+    bool WARN_UNUSED_RETURN addBranch(ExpressionType condition, const Vector<ExpressionType, 1>& returnValues, uint32_t target);
+
+    void dumpGraphAndControlStack();
 
 private:
-    Optional<Vector<Variable*>>& stackForControlLevel(unsigned);
-    BasicBlock* blockForControlLevel(unsigned);
+    ControlData& controlDataForLevel(unsigned);
     void unify(Variable* target, const ExpressionType source);
-    Vector<Variable*> initializeIncommingTypes(BasicBlock*, const Vector<ExpressionType>&);
-    void unifyValuesWithLevel(const Vector<ExpressionType>& resultStack, unsigned);
+    Vector<Variable*> initializeIncommingTypes(BasicBlock*, const Vector<ExpressionType, 1>&);
+    void unifyValuesWithBlock(const Vector<ExpressionType, 1>& resultStack, Optional<Vector<Variable*>>& stack, BasicBlock* target);
 
+public:
+    unsigned unreachable { 0 };
+
+private:
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
     // This is a pair of the continuation and the types expected on the stack for that continuation.
-    Vector<std::pair<BasicBlock*, Optional<Vector<Variable*>>>> m_controlStack;
+    Vector<ControlData> m_controlStack;
     Vector<Variable*> m_locals;
 };
 
@@ -106,12 +177,11 @@ void B3IRGenerator::addLocal(Type type, uint32_t count)
 {
     m_locals.reserveCapacity(m_locals.size() + count);
     for (uint32_t i = 0; i < count; ++i)
-        m_locals.append(m_proc.addVariable(type));
+        m_locals.append(m_proc.addVariable(toB3Type(type)));
 }
 
 void B3IRGenerator::addArguments(const Vector<Type>& types)
 {
-    // TODO: Add locals.
     ASSERT(!m_locals.size());
     m_locals.grow(types.size());
     jscCallingConvention().iterate(types, m_proc, m_currentBlock, Origin(),
@@ -126,6 +196,13 @@ bool WARN_UNUSED_RETURN B3IRGenerator::getLocal(uint32_t index, ExpressionType& 
 {
     ASSERT(m_locals[index]);
     result = m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, Origin(), m_locals[index]);
+    return true;
+}
+
+bool WARN_UNUSED_RETURN B3IRGenerator::setLocal(uint32_t index, ExpressionType value)
+{
+    ASSERT(m_locals[index]);
+    m_currentBlock->appendNew<VariableValue>(m_proc, B3::Set, Origin(), m_locals[index], value);
     return true;
 }
 
@@ -160,31 +237,122 @@ B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t val
 
 bool B3IRGenerator::addBlock()
 {
-    m_controlStack.append(std::make_pair(m_proc.addBlock(), Nullopt));
+    if (unreachable) {
+        unreachable++;
+        return true;
+    }
+
+    if (verbose) {
+        dataLogLn("Adding block");
+        dumpGraphAndControlStack();
+    }
+    m_controlStack.append(ControlData(Nullopt));
+
     return true;
 }
 
-bool B3IRGenerator::endBlock(Vector<ExpressionType>& expressionStack)
+bool B3IRGenerator::addLoop()
 {
+    if (unreachable) {
+        unreachable++;
+        return true;
+    }
+
+    if (verbose) {
+        dataLogLn("Adding loop");
+        dumpGraphAndControlStack();
+    }
+    BasicBlock* body = m_proc.addBlock();
+    m_currentBlock->appendNewControlValue(m_proc, Jump, Origin(), body);
+    body->addPredecessor(m_currentBlock);
+    m_currentBlock = body;
+    m_controlStack.append(ControlData(Vector<Variable*>(), body));
+    return true;
+}
+
+bool B3IRGenerator::endBlock(Vector<ExpressionType, 1>& expressionStack)
+{
+    if (unreachable > 1) {
+        unreachable--;
+        return true;
+    }
+
+    if (verbose) {
+        dataLogLn("Falling out of block");
+        dumpGraphAndControlStack();
+    }
     // This means that we are exiting the function.
     if (!m_controlStack.size()) {
         // FIXME: Should this require the stack is empty? It's not clear from the current spec.
         return !expressionStack.size();
     }
 
-    unifyValuesWithLevel(expressionStack, 0);
+    ControlData data = m_controlStack.takeLast();
+    if (unreachable) {
+        // If nothing targets the continuation of the current block then we don't want to create
+        // an orphaned BasicBlock since it can't be reached by fallthrough.
+        if (data.continuation) {
+            m_currentBlock = data.continuation.get(m_proc);
+            unreachable--;
+        }
+        return true;
+    }
 
-    m_currentBlock = m_controlStack.takeLast().first;
+    BasicBlock* continuation = data.continuation.get(m_proc);
+    unifyValuesWithBlock(expressionStack, data.stack, continuation);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, Origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+    m_currentBlock = continuation;
     return true;
 }
 
 bool B3IRGenerator::addReturn(const Vector<ExpressionType, 1>& returnValues)
 {
+    if (unreachable)
+        return true;
+
+    if (verbose) {
+        dataLogLn("Adding return");
+        dumpGraphAndControlStack();
+    }
+
     ASSERT(returnValues.size() <= 1);
     if (returnValues.size())
         m_currentBlock->appendNewControlValue(m_proc, B3::Return, Origin(), returnValues[0]);
     else
         m_currentBlock->appendNewControlValue(m_proc, B3::Return, Origin());
+    unreachable = 1;
+    return true;
+}
+
+bool B3IRGenerator::addBranch(ExpressionType condition, const Vector<ExpressionType, 1>& returnValues, uint32_t level)
+{
+    if (unreachable)
+        return true;
+
+    ASSERT(level < m_controlStack.size());
+    ControlData& data = controlDataForLevel(level);
+    if (verbose) {
+        dataLogLn("Adding Branch from: ",  *m_currentBlock, " targeting: ", level, " with data: ", data);
+        dumpGraphAndControlStack();
+    }
+
+
+    BasicBlock* target = data.targetBlockForBranch(m_proc);
+    unifyValuesWithBlock(returnValues, data.stack, target);
+    if (condition) {
+        BasicBlock* continuation = m_proc.addBlock();
+        m_currentBlock->appendNew<Value>(m_proc, B3::Branch, Origin(), condition);
+        m_currentBlock->setSuccessors(FrequentedBlock(target), FrequentedBlock(continuation));
+        target->addPredecessor(m_currentBlock);
+        continuation->addPredecessor(m_currentBlock);
+        m_currentBlock = continuation;
+    } else {
+        m_currentBlock->appendNewControlValue(m_proc, Jump, Origin(), FrequentedBlock(target));
+        target->addPredecessor(m_currentBlock);
+        unreachable = 1;
+    }
+
     return true;
 }
 
@@ -193,12 +361,12 @@ void B3IRGenerator::unify(Variable* variable, ExpressionType source)
     m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), variable, source);
 }
 
-Vector<Variable*> B3IRGenerator::initializeIncommingTypes(BasicBlock* block, const Vector<ExpressionType>& source)
+Vector<Variable*> B3IRGenerator::initializeIncommingTypes(BasicBlock* block, const Vector<ExpressionType, 1>& source)
 {
     Vector<Variable*> result;
     result.reserveInitialCapacity(source.size());
     for (ExpressionType expr : source) {
-        ASSERT(expr->type() != Void);
+        ASSERT(expr->type() != B3::Void);
         Variable* var = m_proc.addVariable(expr->type());
         result.append(var);
         block->appendNew<VariableValue>(m_proc, B3::Get, Origin(), var);
@@ -207,31 +375,36 @@ Vector<Variable*> B3IRGenerator::initializeIncommingTypes(BasicBlock* block, con
     return result;
 }
 
-void B3IRGenerator::unifyValuesWithLevel(const Vector<ExpressionType>& resultStack, unsigned level)
+void B3IRGenerator::unifyValuesWithBlock(const Vector<ExpressionType, 1>& resultStack, Optional<Vector<Variable*>>& stack, BasicBlock* target)
 {
-    ASSERT(level < m_controlStack.size());
-
-    Optional<Vector<Variable*>>& expectedStack = stackForControlLevel(level);
-    if (!expectedStack) {
-        expectedStack = initializeIncommingTypes(blockForControlLevel(level), resultStack);
+    if (!stack) {
+        stack = initializeIncommingTypes(target, resultStack);
         return;
     }
 
-    ASSERT(expectedStack.value().size() != resultStack.size());
+    ASSERT(stack.value().size() == resultStack.size());
 
     for (size_t i = 0; i < resultStack.size(); ++i)
-        unify(expectedStack.value()[i], resultStack[i]);
+        unify(stack.value()[i], resultStack[i]);
 }
     
-Optional<Vector<Variable*>>& B3IRGenerator::stackForControlLevel(unsigned level)
+B3IRGenerator::ControlData& B3IRGenerator::controlDataForLevel(unsigned level)
 {
-    return m_controlStack[m_controlStack.size() - 1 - level].second;
+    return m_controlStack[m_controlStack.size() - 1 - level];
 }
 
-BasicBlock* B3IRGenerator::blockForControlLevel(unsigned level)
+void B3IRGenerator::dumpGraphAndControlStack()
 {
-    return m_controlStack[m_controlStack.size() - 1 - level].first;
+    dataLogLn("Processing Graph:");
+    dataLog(m_proc);
+    dataLogLn("With current block:", *m_currentBlock);
+    dataLogLn("With Control Stack:");
+    for (unsigned i = 0; i < m_controlStack.size(); ++i)
+        dataLogLn("[", i, "] ", m_controlStack[i]);
+    dataLogLn("\n");
 }
+
+} // anonymous namespace
 
 std::unique_ptr<Compilation> parseAndCompile(VM& vm, Vector<uint8_t>& source, FunctionInformation info, unsigned optLevel)
 {
@@ -241,11 +414,14 @@ std::unique_ptr<Compilation> parseAndCompile(VM& vm, Vector<uint8_t>& source, Fu
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();
 
+    validate(procedure, "After parsing:\n");
+
+    fixSSA(procedure);
+    if (verbose)
+        dataLog("Post SSA: ", procedure);
     return std::make_unique<Compilation>(vm, procedure, optLevel);
 }
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

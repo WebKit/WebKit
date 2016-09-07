@@ -24,17 +24,15 @@
  */
 
 #include "config.h"
-#include "B3CallingConventions.h"
+#include "WASMCallingConvention.h"
+
+#if ENABLE(WEBASSEMBLY)
 
 #include <wtf/NeverDestroyed.h>
 
-#if ENABLE(B3_JIT)
+namespace JSC { namespace WASM {
 
-namespace JSC {
-
-namespace B3 {
-
-JSCCallingConvention& jscCallingConvention()
+const JSCCallingConvention& jscCallingConvention()
 {
     static LazyNeverDestroyed<JSCCallingConvention> staticJSCCallingConvention;
     static std::once_flag staticJSCCallingConventionFlag;
@@ -45,8 +43,6 @@ JSCCallingConvention& jscCallingConvention()
     return staticJSCCallingConvention;
 }
 
-} // namespace B3
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(B3_JIT)

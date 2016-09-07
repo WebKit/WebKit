@@ -30,9 +30,7 @@
 #include "WASMParser.h"
 #include <wtf/DataLog.h>
 
-namespace JSC {
-
-namespace WASM {
+namespace JSC { namespace WASM {
 
 template<typename Context>
 class FunctionParser : public Parser {
@@ -53,7 +51,7 @@ private:
     Optional<Vector<ExpressionType>>& stackForControlLevel(unsigned level);
 
     Context& m_context;
-    Vector<ExpressionType> m_expressionStack;
+    Vector<ExpressionType, 1> m_expressionStack;
 };
 
 template<typename Context>
@@ -72,14 +70,15 @@ bool FunctionParser<Context>::parse()
         return false;
 
     for (uint32_t i = 0; i < localCount; ++i) {
-        uint32_t numberOfLocalsWithType;
-        if (!parseUInt32(numberOfLocalsWithType))
+        uint32_t numberOfLocals;
+        if (!parseVarUInt32(numberOfLocals))
             return false;
 
         Type typeOfLocal;
         if (!parseValueType(typeOfLocal))
             return false;
 
+        m_context.addLocal(typeOfLocal, numberOfLocals);
     }
 
     return parseBlock();
@@ -109,11 +108,14 @@ bool FunctionParser<Context>::parseBlock()
 template<typename Context>
 bool FunctionParser<Context>::parseExpression(OpType op)
 {
+    if (m_context.unreachable && !isControlOp(op))
+        return true;
+
     switch (op) {
 #define CREATE_CASE(name, id, b3op) case name:
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE) {
-        ExpressionType left = m_expressionStack.takeLast();
         ExpressionType right = m_expressionStack.takeLast();
+        ExpressionType left = m_expressionStack.takeLast();
         ExpressionType result;
         if (!m_context.binaryOp(static_cast<BinaryOpType>(op), left, right, result))
             return false;
@@ -135,7 +137,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         uint32_t constant;
         if (!parseVarUInt32(constant))
             return false;
-        m_expressionStack.append(m_context.addConstant(Int32, constant));
+        m_expressionStack.append(m_context.addConstant(I32, constant));
         return true;
     }
 
@@ -151,10 +153,46 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
+    case OpType::SetLocal: {
+        uint32_t index;
+        if (!parseVarUInt32(index))
+            return false;
+        ExpressionType value = m_expressionStack.takeLast();
+        return m_context.setLocal(index, value);
+    }
+
     case OpType::Block: {
         if (!m_context.addBlock())
             return false;
         return parseBlock();
+    }
+
+    case OpType::Loop: {
+        if (!m_context.addLoop())
+            return false;
+        return parseBlock();
+    }
+
+    case OpType::Branch:
+    case OpType::BranchIf: {
+        uint32_t arity;
+        if (!parseVarUInt32(arity) || arity > m_expressionStack.size())
+            return false;
+
+        uint32_t target;
+        if (!parseVarUInt32(target))
+            return false;
+
+        ExpressionType condition = Context::emptyExpression;
+        if (op == OpType::BranchIf)
+            condition = m_expressionStack.takeLast();
+
+
+        Vector<ExpressionType, 1> values(arity);
+        for (unsigned i = arity; i; i--)
+            values[i-1] = m_expressionStack.takeLast();
+
+        return m_context.addBranch(condition, values, target);
     }
 
     case OpType::Return: {
@@ -177,8 +215,6 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     return false;
 }
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

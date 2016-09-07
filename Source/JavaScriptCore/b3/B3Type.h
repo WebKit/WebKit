@@ -39,12 +39,11 @@
 namespace JSC { namespace B3 {
 
 enum Type : int8_t {
+    Void,
     Int32,
     Int64,
     Float,
     Double,
-    LastValueType = Double,
-    Void
 };
 
 inline bool isInt(Type type)

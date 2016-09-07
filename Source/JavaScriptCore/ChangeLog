@@ -1,3 +1,78 @@
+2016-09-03  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WASM Loops and Branches
+        https://bugs.webkit.org/show_bug.cgi?id=161569
+
+        Reviewed by Benjamin Poulain.
+
+        This patch adds support for loops and branches to WASM. In order
+        to support loops, we needed to change the way the B3IRGenerator
+        tracked control information. Now, the control data holds three
+        pieces of information: The continuation block, the loop branch
+        target, and variables exiting the block. Whenever we branch to
+        some control point we first check if it is a loop by checking that
+        the loop branch target is non-null. If the branch is not targeting
+        a loop, we map the stack values to the associated B3 variables for
+        that stack slot.
+
+        Another interesting thing of note is that we now only allocate the
+        continuation basic block lazily. This is beneficial when the
+        continuation would just fall through to another block anyway. For
+        example, in code like: (block ... (block (add 1 2) end) end) the
+        continuation for the inner block just falls through to the outer
+        block's continuation so we don't need an extra block.
+
+        * B3CallingConventions.cpp:
+        (JSC::B3::jscCallingConvention): Deleted.
+        * B3CallingConventions.h:
+        (JSC::B3::CallingConvention::CallingConvention): Deleted.
+        (JSC::B3::CallingConvention::iterate): Deleted.
+        (JSC::B3::nextJSCOffset): Deleted.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Type.h:
+        * testWASM.cpp:
+        (runWASMTests):
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::B3IRGenerator::LazyBlock::LazyBlock):
+        (JSC::WASM::B3IRGenerator::LazyBlock::operator bool):
+        (JSC::WASM::B3IRGenerator::LazyBlock::get):
+        (JSC::WASM::B3IRGenerator::LazyBlock::dump):
+        (JSC::WASM::B3IRGenerator::ControlData::ControlData):
+        (JSC::WASM::B3IRGenerator::ControlData::dump):
+        (JSC::WASM::B3IRGenerator::ControlData::targetBlockForBranch):
+        (JSC::WASM::B3IRGenerator::ControlData::isLoop):
+        (JSC::WASM::B3IRGenerator::addLocal):
+        (JSC::WASM::B3IRGenerator::addArguments):
+        (JSC::WASM::B3IRGenerator::setLocal):
+        (JSC::WASM::B3IRGenerator::addBlock):
+        (JSC::WASM::B3IRGenerator::addLoop):
+        (JSC::WASM::B3IRGenerator::endBlock):
+        (JSC::WASM::B3IRGenerator::addReturn):
+        (JSC::WASM::B3IRGenerator::addBranch):
+        (JSC::WASM::B3IRGenerator::initializeIncommingTypes):
+        (JSC::WASM::B3IRGenerator::unifyValuesWithBlock):
+        (JSC::WASM::B3IRGenerator::controlDataForLevel):
+        (JSC::WASM::B3IRGenerator::dumpGraphAndControlStack):
+        (JSC::WASM::parseAndCompile):
+        (JSC::WASM::B3IRGenerator::unifyValuesWithLevel): Deleted.
+        (JSC::WASM::B3IRGenerator::stackForControlLevel): Deleted.
+        (JSC::WASM::B3IRGenerator::blockForControlLevel): Deleted.
+        * wasm/WASMCallingConvention.cpp: Renamed from Source/JavaScriptCore/B3CallingConventions.cpp.
+        (JSC::WASM::jscCallingConvention):
+        * wasm/WASMCallingConvention.h: Renamed from Source/JavaScriptCore/B3CallingConventions.h.
+        (JSC::WASM::CallingConvention::CallingConvention):
+        (JSC::WASM::CallingConvention::iterate):
+        (JSC::WASM::nextJSCOffset):
+        * wasm/WASMFormat.h:
+        (JSC::WASM::toB3Type):
+        (JSC::WASM::isValueType):
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::parse):
+        (JSC::WASM::FunctionParser<Context>::parseExpression):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASM::ModuleParser::parseFunctionTypes):
+        * wasm/WASMOps.h:
+
 2016-09-07  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] Separate compile flag for ReadableStream and WritableStream

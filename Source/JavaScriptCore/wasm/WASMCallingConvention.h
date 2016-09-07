@@ -25,19 +25,17 @@
 
 #pragma once
 
-#if ENABLE(B3_JIT)
+#if ENABLE(WEBASSEMBLY)
 
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlock.h"
 #include "B3Const64Value.h"
 #include "B3MemoryValue.h"
-#include "B3Type.h"
 #include "CallFrame.h"
 #include "RegisterSet.h"
+#include "WASMFormat.h"
 
-namespace JSC {
-
-namespace B3 {
+namespace JSC { namespace WASM {
 
 typedef unsigned (*NextOffset)(unsigned currentOffset, Type type);
 
@@ -53,19 +51,19 @@ public:
     }
 
     template<typename Functor>
-    void iterate(const Vector<Type>& argumentTypes, Procedure& proc, BasicBlock* block, Origin origin, const Functor& functor) const
+    void iterate(const Vector<Type>& argumentTypes, B3::Procedure& proc, B3::BasicBlock* block, B3::Origin origin, const Functor& functor) const
     {
         unsigned currentOffset = headerSize;
-        Value* framePointer = block->appendNew<Value>(proc, FramePointer, origin);
+        B3::Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, origin);
 
         for (unsigned i = 0; i < argumentTypes.size(); ++i) {
-            Value* argument;
+            B3::Value* argument;
             if (i < m_registerArguments.size())
-                argument = block->appendNew<ArgumentRegValue>(proc, origin, m_registerArguments[i]);
+                argument = block->appendNew<B3::ArgumentRegValue>(proc, origin, m_registerArguments[i]);
             else {
-                Value* address = block->appendNew<Value>(proc, Add, origin, framePointer,
-                    block->appendNew<Const64Value>(proc, origin, currentOffset));
-                argument = block->appendNew<MemoryValue>(proc, Load, argumentTypes[i], origin, address);
+                B3::Value* address = block->appendNew<B3::Value>(proc, B3::Add, origin, framePointer,
+                    block->appendNew<B3::Const64Value>(proc, origin, currentOffset));
+                argument = block->appendNew<B3::MemoryValue>(proc, B3::Load, toB3Type(argumentTypes[i]), origin, address);
                 currentOffset = updateOffset(currentOffset, argumentTypes[i]);
             }
             functor(argument, i);
@@ -85,10 +83,8 @@ inline unsigned nextJSCOffset(unsigned currentOffset, Type)
 constexpr unsigned jscHeaderSize = ExecState::headerSizeInRegisters * sizeof(Register);
 typedef CallingConvention<jscHeaderSize, nextJSCOffset> JSCCallingConvention;
 
-JSCCallingConvention& jscCallingConvention();
+const JSCCallingConvention& jscCallingConvention();
 
-} // namespace B3
+} } // namespace JSC::WASM
 
-} // namespace JSC
-
-#endif // ENABLE(B3_JIT)
+#endif // ENABLE(WEBASSEMBLY)

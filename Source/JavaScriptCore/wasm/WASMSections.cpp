@@ -31,9 +31,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/text/WTFString.h>
 
-namespace JSC {
-
-namespace WASM {
+namespace JSC { namespace WASM {
 
 struct SectionData {
     unsigned length;
@@ -62,8 +60,6 @@ Sections::Section Sections::lookup(const uint8_t* name, unsigned length)
     return Sections::Unknown;
 }
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

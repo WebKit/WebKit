@@ -27,9 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-namespace JSC {
-
-namespace WASM {
+namespace JSC { namespace WASM {
 
 // These should be in the order that we expect them to be in the binary.
 #define FOR_EACH_WASM_SECTION_TYPE(macro) \
@@ -56,8 +54,6 @@ struct Sections {
     }
 };
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

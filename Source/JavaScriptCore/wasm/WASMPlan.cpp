@@ -33,9 +33,7 @@
 #include "WASMModuleParser.h"
 #include <wtf/DataLog.h>
 
-namespace JSC {
-
-namespace WASM {
+namespace JSC { namespace WASM {
 
 static const bool verbose = false;
 
@@ -59,8 +57,6 @@ Plan::Plan(VM& vm, Vector<uint8_t> source)
     }
 }
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

@@ -32,9 +32,7 @@
 #include "WASMOps.h"
 #include "WASMSections.h"
 
-namespace JSC {
-
-namespace WASM {
+namespace JSC { namespace WASM {
 
 static const bool verbose = false;
 
@@ -163,9 +161,9 @@ bool ModuleParser::parseFunctionTypes()
         argumentTypes.resize(argumentCount);
 
         for (unsigned i = 0; i < argumentCount; ++i) {
-            if (!parseUInt7(type) || type >= static_cast<uint8_t>(Type::LastValueType))
+            if (!parseUInt7(type) || !isValueType(static_cast<Type>(type)))
                 return false;
-            argumentTypes.append(static_cast<Type>(type));
+            argumentTypes[i] = static_cast<Type>(type);
         }
 
         if (!parseVarUInt1(type))
@@ -233,8 +231,6 @@ bool ModuleParser::parseFunctionDefinitions()
     return true;
 }
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

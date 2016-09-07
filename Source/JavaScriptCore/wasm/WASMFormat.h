@@ -54,16 +54,47 @@ class JSFunction;
 
 namespace WASM {
 
-using B3::Type;
-using B3::Int32;
-using B3::Int64;
-using B3::Float;
-using B3::Double;
+enum Type : uint8_t {
+    I32 = 1,
+    I64,
+    F32,
+    F64,
+    LastValueType = F64,
+    Void
+};
 
-static_assert(Int32 == 0, "WASM needs B3::Type::Int32 to have the value 0");
-static_assert(Int64 == 1, "WASM needs B3::Type::Int64 to have the value 1");
-static_assert(Float == 2, "WASM needs B3::Type::Float to have the value 2");
-static_assert(Double == 3, "WASM needs B3::Type::Double to have the value 3");
+static_assert(I32 == 1, "WASM needs I32 to have the value 1");
+static_assert(I64 == 2, "WASM needs I64 to have the value 2");
+static_assert(F32 == 3, "WASM needs F32 to have the value 3");
+static_assert(F64 == 4, "WASM needs F64 to have the value 4");
+
+inline B3::Type toB3Type(Type type)
+{
+    switch (type) {
+    case I32: return B3::Int32;
+    case I64: return B3::Int64;
+    case F32: return B3::Float;
+    case F64: return B3::Double;
+    case Void: return B3::Void;
+    default: break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline bool isValueType(Type type)
+{
+    switch (type) {
+    case I32:
+    case I64:
+    case F32:
+    case F64:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
 
 struct Signature {
     Type returnType;
@@ -95,8 +126,6 @@ struct FunctionInformation {
     size_t end;
 };
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)

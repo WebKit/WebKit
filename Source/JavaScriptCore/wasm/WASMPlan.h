@@ -48,8 +48,6 @@ public:
     Vector<std::unique_ptr<B3::Compilation>> result;
 };
 
-} // namespace WASM
-
-} // namespace JSC
+} } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)
