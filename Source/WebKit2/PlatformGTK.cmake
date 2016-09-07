@@ -345,7 +345,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMComment.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCustom.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMApplicationCache.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMCSSNamespace.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.cpp
@@ -872,8 +871,9 @@ set(WebKitDOM_GTKDOC_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindowSpeechSynthesis.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventTarget.h

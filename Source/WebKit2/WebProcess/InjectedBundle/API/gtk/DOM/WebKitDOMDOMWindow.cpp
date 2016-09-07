@@ -23,34 +23,24 @@
 
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
-#include <WebCore/DOMWindowSpeechSynthesis.h>
 #include <WebCore/Document.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/ExceptionCodeDescription.h>
 #include "GObjectEventListener.h"
 #include <WebCore/JSMainThreadExecState.h>
-#include "WebKitDOMBarPropPrivate.h"
+#include <WebCore/SerializedScriptValue.h>
+#include <WebCore/UserMessageHandlersNamespace.h>
+#include <WebCore/WebKitNamespace.h>
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"
-#include "WebKitDOMDOMApplicationCachePrivate.h"
 #include "WebKitDOMDOMSelectionPrivate.h"
 #include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTarget.h"
-#include "WebKitDOMHistoryPrivate.h"
-#include "WebKitDOMMediaQueryListPrivate.h"
-#include "WebKitDOMNavigatorPrivate.h"
 #include "WebKitDOMNodePrivate.h"
-#include "WebKitDOMPerformancePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMScreenPrivate.h"
-#include "WebKitDOMSpeechSynthesisPrivate.h"
-#include "WebKitDOMStoragePrivate.h"
-#include "WebKitDOMStyleMediaPrivate.h"
-#include "WebKitDOMWebKitPointPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMDOMWindowUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -125,16 +115,6 @@ G_DEFINE_TYPE_WITH_CODE(WebKitDOMDOMWindow, webkit_dom_dom_window, WEBKIT_DOM_TY
 
 enum {
     PROP_0,
-    PROP_SCREEN,
-    PROP_HISTORY,
-    PROP_LOCATIONBAR,
-    PROP_MENUBAR,
-    PROP_PERSONALBAR,
-    PROP_SCROLLBARS,
-    PROP_STATUSBAR,
-    PROP_TOOLBAR,
-    PROP_NAVIGATOR,
-    PROP_CLIENT_INFORMATION,
     PROP_FRAME_ELEMENT,
     PROP_OFFSCREEN_BUFFERING,
     PROP_OUTER_HEIGHT,
@@ -161,14 +141,8 @@ enum {
     PROP_PARENT,
     PROP_TOP,
     PROP_DOCUMENT,
-    PROP_STYLE_MEDIA,
     PROP_DEVICE_PIXEL_RATIO,
-    PROP_APPLICATION_CACHE,
-    PROP_SESSION_STORAGE,
-    PROP_LOCAL_STORAGE,
     PROP_ORIENTATION,
-    PROP_PERFORMANCE,
-    PROP_SPEECH_SYNTHESIS,
 };
 
 static void webkit_dom_dom_window_finalize(GObject* object)
@@ -206,36 +180,6 @@ static void webkit_dom_dom_window_get_property(GObject* object, guint propertyId
     WebKitDOMDOMWindow* self = WEBKIT_DOM_DOM_WINDOW(object);
 
     switch (propertyId) {
-    case PROP_SCREEN:
-        g_value_set_object(value, webkit_dom_dom_window_get_screen(self));
-        break;
-    case PROP_HISTORY:
-        g_value_set_object(value, webkit_dom_dom_window_get_history(self));
-        break;
-    case PROP_LOCATIONBAR:
-        g_value_set_object(value, webkit_dom_dom_window_get_locationbar(self));
-        break;
-    case PROP_MENUBAR:
-        g_value_set_object(value, webkit_dom_dom_window_get_menubar(self));
-        break;
-    case PROP_PERSONALBAR:
-        g_value_set_object(value, webkit_dom_dom_window_get_personalbar(self));
-        break;
-    case PROP_SCROLLBARS:
-        g_value_set_object(value, webkit_dom_dom_window_get_scrollbars(self));
-        break;
-    case PROP_STATUSBAR:
-        g_value_set_object(value, webkit_dom_dom_window_get_statusbar(self));
-        break;
-    case PROP_TOOLBAR:
-        g_value_set_object(value, webkit_dom_dom_window_get_toolbar(self));
-        break;
-    case PROP_NAVIGATOR:
-        g_value_set_object(value, webkit_dom_dom_window_get_navigator(self));
-        break;
-    case PROP_CLIENT_INFORMATION:
-        g_value_set_object(value, webkit_dom_dom_window_get_client_information(self));
-        break;
     case PROP_FRAME_ELEMENT:
         g_value_set_object(value, webkit_dom_dom_window_get_frame_element(self));
         break;
@@ -314,29 +258,11 @@ static void webkit_dom_dom_window_get_property(GObject* object, guint propertyId
     case PROP_DOCUMENT:
         g_value_set_object(value, webkit_dom_dom_window_get_document(self));
         break;
-    case PROP_STYLE_MEDIA:
-        g_value_set_object(value, webkit_dom_dom_window_get_style_media(self));
-        break;
     case PROP_DEVICE_PIXEL_RATIO:
         g_value_set_double(value, webkit_dom_dom_window_get_device_pixel_ratio(self));
         break;
-    case PROP_APPLICATION_CACHE:
-        g_value_set_object(value, webkit_dom_dom_window_get_application_cache(self));
-        break;
-    case PROP_SESSION_STORAGE:
-        g_value_set_object(value, webkit_dom_dom_window_get_session_storage(self, nullptr));
-        break;
-    case PROP_LOCAL_STORAGE:
-        g_value_set_object(value, webkit_dom_dom_window_get_local_storage(self, nullptr));
-        break;
     case PROP_ORIENTATION:
         g_value_set_long(value, webkit_dom_dom_window_get_orientation(self));
-        break;
-    case PROP_PERFORMANCE:
-        g_value_set_object(value, webkit_dom_dom_window_get_performance(self));
-        break;
-    case PROP_SPEECH_SYNTHESIS:
-        g_value_set_object(value, webkit_dom_dom_window_get_speech_synthesis(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -363,106 +289,6 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
     gobjectClass->finalize = webkit_dom_dom_window_finalize;
     gobjectClass->set_property = webkit_dom_dom_window_set_property;
     gobjectClass->get_property = webkit_dom_dom_window_get_property;
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_SCREEN,
-        g_param_spec_object(
-            "screen",
-            "DOMWindow:screen",
-            "read-only WebKitDOMScreen* DOMWindow:screen",
-            WEBKIT_DOM_TYPE_SCREEN,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_HISTORY,
-        g_param_spec_object(
-            "history",
-            "DOMWindow:history",
-            "read-only WebKitDOMHistory* DOMWindow:history",
-            WEBKIT_DOM_TYPE_HISTORY,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_LOCATIONBAR,
-        g_param_spec_object(
-            "locationbar",
-            "DOMWindow:locationbar",
-            "read-only WebKitDOMBarProp* DOMWindow:locationbar",
-            WEBKIT_DOM_TYPE_BAR_PROP,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_MENUBAR,
-        g_param_spec_object(
-            "menubar",
-            "DOMWindow:menubar",
-            "read-only WebKitDOMBarProp* DOMWindow:menubar",
-            WEBKIT_DOM_TYPE_BAR_PROP,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_PERSONALBAR,
-        g_param_spec_object(
-            "personalbar",
-            "DOMWindow:personalbar",
-            "read-only WebKitDOMBarProp* DOMWindow:personalbar",
-            WEBKIT_DOM_TYPE_BAR_PROP,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_SCROLLBARS,
-        g_param_spec_object(
-            "scrollbars",
-            "DOMWindow:scrollbars",
-            "read-only WebKitDOMBarProp* DOMWindow:scrollbars",
-            WEBKIT_DOM_TYPE_BAR_PROP,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_STATUSBAR,
-        g_param_spec_object(
-            "statusbar",
-            "DOMWindow:statusbar",
-            "read-only WebKitDOMBarProp* DOMWindow:statusbar",
-            WEBKIT_DOM_TYPE_BAR_PROP,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_TOOLBAR,
-        g_param_spec_object(
-            "toolbar",
-            "DOMWindow:toolbar",
-            "read-only WebKitDOMBarProp* DOMWindow:toolbar",
-            WEBKIT_DOM_TYPE_BAR_PROP,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_NAVIGATOR,
-        g_param_spec_object(
-            "navigator",
-            "DOMWindow:navigator",
-            "read-only WebKitDOMNavigator* DOMWindow:navigator",
-            WEBKIT_DOM_TYPE_NAVIGATOR,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_CLIENT_INFORMATION,
-        g_param_spec_object(
-            "client-information",
-            "DOMWindow:client-information",
-            "read-only WebKitDOMNavigator* DOMWindow:client-information",
-            WEBKIT_DOM_TYPE_NAVIGATOR,
-            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -726,52 +552,12 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_STYLE_MEDIA,
-        g_param_spec_object(
-            "style-media",
-            "DOMWindow:style-media",
-            "read-only WebKitDOMStyleMedia* DOMWindow:style-media",
-            WEBKIT_DOM_TYPE_STYLE_MEDIA,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_DEVICE_PIXEL_RATIO,
         g_param_spec_double(
             "device-pixel-ratio",
             "DOMWindow:device-pixel-ratio",
             "read-only gdouble DOMWindow:device-pixel-ratio",
             -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_APPLICATION_CACHE,
-        g_param_spec_object(
-            "application-cache",
-            "DOMWindow:application-cache",
-            "read-only WebKitDOMDOMApplicationCache* DOMWindow:application-cache",
-            WEBKIT_DOM_TYPE_DOM_APPLICATION_CACHE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_SESSION_STORAGE,
-        g_param_spec_object(
-            "session-storage",
-            "DOMWindow:session-storage",
-            "read-only WebKitDOMStorage* DOMWindow:session-storage",
-            WEBKIT_DOM_TYPE_STORAGE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_LOCAL_STORAGE,
-        g_param_spec_object(
-            "local-storage",
-            "DOMWindow:local-storage",
-            "read-only WebKitDOMStorage* DOMWindow:local-storage",
-            WEBKIT_DOM_TYPE_STORAGE,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -783,27 +569,6 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
             "read-only glong DOMWindow:orientation",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_PERFORMANCE,
-        g_param_spec_object(
-            "performance",
-            "DOMWindow:performance",
-            "read-only WebKitDOMPerformance* DOMWindow:performance",
-            WEBKIT_DOM_TYPE_PERFORMANCE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_SPEECH_SYNTHESIS,
-        g_param_spec_object(
-            "speech-synthesis",
-            "DOMWindow:speech-synthesis",
-            "read-only WebKitDOMSpeechSynthesis* DOMWindow:speech-synthesis",
-            WEBKIT_DOM_TYPE_SPEECH_SYNTHESIS,
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_dom_window_init(WebKitDOMDOMWindow* request)
@@ -922,14 +687,6 @@ void webkit_dom_dom_window_scroll_to(WebKitDOMDOMWindow* self, gdouble x, gdoubl
     item->scrollTo(x, y);
 }
 
-void webkit_dom_dom_window_scroll(WebKitDOMDOMWindow* self, gdouble x, gdouble y)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
-    WebCore::DOMWindow* item = WebKit::core(self);
-    item->scrollTo(x, y);
-}
-
 void webkit_dom_dom_window_move_by(WebKitDOMDOMWindow* self, gfloat x, gfloat y)
 {
     WebCore::JSMainThreadNullState state;
@@ -962,17 +719,6 @@ void webkit_dom_dom_window_resize_to(WebKitDOMDOMWindow* self, gfloat width, gfl
     item->resizeTo(width, height);
 }
 
-WebKitDOMMediaQueryList* webkit_dom_dom_window_match_media(WebKitDOMDOMWindow* self, const gchar* query)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    g_return_val_if_fail(query, 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    WTF::String convertedQuery = WTF::String::fromUTF8(query);
-    RefPtr<WebCore::MediaQueryList> gobjectResult = WTF::getPtr(item->matchMedia(convertedQuery));
-    return WebKit::kit(gobjectResult.get());
-}
-
 WebKitDOMCSSStyleDeclaration* webkit_dom_dom_window_get_computed_style(WebKitDOMDOMWindow* self, WebKitDOMElement* element, const gchar* pseudoElement)
 {
     WebCore::JSMainThreadNullState state;
@@ -983,74 +729,6 @@ WebKitDOMCSSStyleDeclaration* webkit_dom_dom_window_get_computed_style(WebKitDOM
     WTF::String convertedPseudoElement = WTF::String::fromUTF8(pseudoElement);
     RefPtr<WebCore::CSSStyleDeclaration> gobjectResult = WTF::getPtr(item->getComputedStyle(*convertedElement, convertedPseudoElement));
     return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMWebKitPoint* webkit_dom_dom_window_webkit_convert_point_from_page_to_node(WebKitDOMDOMWindow* self, WebKitDOMNode* node, WebKitDOMWebKitPoint* p)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_NODE(node), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_WEBKIT_POINT(p), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    WebCore::Node* convertedNode = WebKit::core(node);
-    WebCore::WebKitPoint* convertedP = WebKit::core(p);
-    RefPtr<WebCore::WebKitPoint> gobjectResult = WTF::getPtr(item->webkitConvertPointFromPageToNode(convertedNode, convertedP));
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMWebKitPoint* webkit_dom_dom_window_webkit_convert_point_from_node_to_page(WebKitDOMDOMWindow* self, WebKitDOMNode* node, WebKitDOMWebKitPoint* p)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_NODE(node), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_WEBKIT_POINT(p), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    WebCore::Node* convertedNode = WebKit::core(node);
-    WebCore::WebKitPoint* convertedP = WebKit::core(p);
-    RefPtr<WebCore::WebKitPoint> gobjectResult = WTF::getPtr(item->webkitConvertPointFromNodeToPage(convertedNode, convertedP));
-    return WebKit::kit(gobjectResult.get());
-}
-
-void webkit_dom_dom_window_cancel_animation_frame(WebKitDOMDOMWindow* self, glong id)
-{
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
-    WebCore::DOMWindow* item = WebKit::core(self);
-    item->cancelAnimationFrame(id);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(id);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Request Animation Frame")
-#endif /* ENABLE(REQUEST_ANIMATION_FRAME) */
-}
-
-void webkit_dom_dom_window_webkit_cancel_animation_frame(WebKitDOMDOMWindow* self, glong id)
-{
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
-    WebCore::DOMWindow* item = WebKit::core(self);
-    item->cancelAnimationFrame(id);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(id);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Request Animation Frame")
-#endif /* ENABLE(REQUEST_ANIMATION_FRAME) */
-}
-
-void webkit_dom_dom_window_webkit_cancel_request_animation_frame(WebKitDOMDOMWindow* self, glong id)
-{
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
-    WebCore::DOMWindow* item = WebKit::core(self);
-    item->cancelAnimationFrame(id);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(id);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Request Animation Frame")
-#endif /* ENABLE(REQUEST_ANIMATION_FRAME) */
 }
 
 void webkit_dom_dom_window_capture_events(WebKitDOMDOMWindow* self)
@@ -1067,138 +745,6 @@ void webkit_dom_dom_window_release_events(WebKitDOMDOMWindow* self)
     g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
     WebCore::DOMWindow* item = WebKit::core(self);
     item->releaseEvents();
-}
-
-void webkit_dom_dom_window_clear_timeout(WebKitDOMDOMWindow* self, glong handle)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
-    WebCore::DOMWindow* item = WebKit::core(self);
-    item->clearTimeout(handle);
-}
-
-void webkit_dom_dom_window_clear_interval(WebKitDOMDOMWindow* self, glong handle)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
-    WebCore::DOMWindow* item = WebKit::core(self);
-    item->clearInterval(handle);
-}
-
-gchar* webkit_dom_dom_window_atob(WebKitDOMDOMWindow* self, const gchar* string, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    g_return_val_if_fail(string, 0);
-    g_return_val_if_fail(!error || !*error, 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    WTF::String convertedString = WTF::String::fromUTF8(string);
-    WebCore::ExceptionCode ec = 0;
-    gchar* result = convertToUTF8String(item->atob(convertedString, ec));
-    return result;
-}
-
-gchar* webkit_dom_dom_window_btoa(WebKitDOMDOMWindow* self, const gchar* string, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    g_return_val_if_fail(string, 0);
-    g_return_val_if_fail(!error || !*error, 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    WTF::String convertedString = WTF::String::fromUTF8(string);
-    WebCore::ExceptionCode ec = 0;
-    gchar* result = convertToUTF8String(item->btoa(convertedString, ec));
-    return result;
-}
-
-WebKitDOMScreen* webkit_dom_dom_window_get_screen(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::Screen> gobjectResult = WTF::getPtr(item->screen());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMHistory* webkit_dom_dom_window_get_history(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::History> gobjectResult = WTF::getPtr(item->history());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMBarProp* webkit_dom_dom_window_get_locationbar(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::BarProp> gobjectResult = WTF::getPtr(item->locationbar());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMBarProp* webkit_dom_dom_window_get_menubar(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::BarProp> gobjectResult = WTF::getPtr(item->menubar());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMBarProp* webkit_dom_dom_window_get_personalbar(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::BarProp> gobjectResult = WTF::getPtr(item->personalbar());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMBarProp* webkit_dom_dom_window_get_scrollbars(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::BarProp> gobjectResult = WTF::getPtr(item->scrollbars());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMBarProp* webkit_dom_dom_window_get_statusbar(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::BarProp> gobjectResult = WTF::getPtr(item->statusbar());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMBarProp* webkit_dom_dom_window_get_toolbar(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::BarProp> gobjectResult = WTF::getPtr(item->toolbar());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMNavigator* webkit_dom_dom_window_get_navigator(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::Navigator> gobjectResult = WTF::getPtr(item->navigator());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMNavigator* webkit_dom_dom_window_get_client_information(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::Navigator> gobjectResult = WTF::getPtr(item->clientInformation());
-    return WebKit::kit(gobjectResult.get());
 }
 
 WebKitDOMElement* webkit_dom_dom_window_get_frame_element(WebKitDOMDOMWindow* self)
@@ -1465,15 +1011,6 @@ WebKitDOMDocument* webkit_dom_dom_window_get_document(WebKitDOMDOMWindow* self)
     return WebKit::kit(gobjectResult.get());
 }
 
-WebKitDOMStyleMedia* webkit_dom_dom_window_get_style_media(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::StyleMedia> gobjectResult = WTF::getPtr(item->styleMedia());
-    return WebKit::kit(gobjectResult.get());
-}
-
 gdouble webkit_dom_dom_window_get_device_pixel_ratio(WebKitDOMDOMWindow* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -1481,45 +1018,6 @@ gdouble webkit_dom_dom_window_get_device_pixel_ratio(WebKitDOMDOMWindow* self)
     WebCore::DOMWindow* item = WebKit::core(self);
     gdouble result = item->devicePixelRatio();
     return result;
-}
-
-WebKitDOMDOMApplicationCache* webkit_dom_dom_window_get_application_cache(WebKitDOMDOMWindow* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMApplicationCache> gobjectResult = WTF::getPtr(item->applicationCache());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMStorage* webkit_dom_dom_window_get_session_storage(WebKitDOMDOMWindow* self, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    g_return_val_if_fail(!error || !*error, 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Storage> gobjectResult = WTF::getPtr(item->sessionStorage(ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMStorage* webkit_dom_dom_window_get_local_storage(WebKitDOMDOMWindow* self, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    g_return_val_if_fail(!error || !*error, 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Storage> gobjectResult = WTF::getPtr(item->localStorage(ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-    return WebKit::kit(gobjectResult.get());
 }
 
 glong webkit_dom_dom_window_get_orientation(WebKitDOMDOMWindow* self)
@@ -1537,33 +1035,29 @@ glong webkit_dom_dom_window_get_orientation(WebKitDOMDOMWindow* self)
 #endif /* ENABLE(ORIENTATION_EVENTS) */
 }
 
-WebKitDOMPerformance* webkit_dom_dom_window_get_performance(WebKitDOMDOMWindow* self)
+gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow* window, const gchar* handlerName, const gchar* message)
 {
-#if ENABLE(WEB_TIMING)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::Performance> gobjectResult = WTF::getPtr(item->performance());
-    return WebKit::kit(gobjectResult.get());
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Web Timing")
-    return 0;
-#endif /* ENABLE(WEB_TIMING) */
-}
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(window), FALSE);
+    g_return_val_if_fail(handlerName, FALSE);
+    g_return_val_if_fail(message, FALSE);
 
-WebKitDOMSpeechSynthesis* webkit_dom_dom_window_get_speech_synthesis(WebKitDOMDOMWindow* self)
-{
-#if ENABLE(SPEECH_SYNTHESIS)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::SpeechSynthesis> gobjectResult = WTF::getPtr(WebCore::DOMWindowSpeechSynthesis::speechSynthesis(*item));
-    return WebKit::kit(gobjectResult.get());
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Speech Synthesis")
-    return 0;
-#endif /* ENABLE(SPEECH_SYNTHESIS) */
-}
+    WebCore::DOMWindow* domWindow = WebKit::core(window);
+    if (!domWindow->shouldHaveWebKitNamespaceForWorld(WebCore::mainThreadNormalWorld()))
+        return FALSE;
 
+    auto webkitNamespace = domWindow->webkitNamespace();
+    if (!webkitNamespace)
+        return FALSE;
+
+    auto handler = webkitNamespace->messageHandlers()->handler(String::fromUTF8(handlerName), WebCore::mainThreadNormalWorld());
+    if (!handler)
+        return FALSE;
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    handler->postMessage(WebCore::SerializedScriptValue::create(String::fromUTF8(message)), ec);
+    if (ec)
+        return FALSE;
+
+    return TRUE;
+}

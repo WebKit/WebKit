@@ -32,11 +32,6 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
-#define WEBKIT_DOM_USE_UNSTABLE_API
-#include <webkitdom/WebKitDOMWebKitNamespace.h>
-#include <webkitdom/WebKitDOMUserMessageHandlersNamespace.h>
-#include <webkitdom/WebKitDOMUserMessageHandler.h>
-
 static const char introspectionXML[] =
     "<node>"
     " <interface name='org.webkit.gtk.WebExtensionTest'>"
@@ -101,16 +96,9 @@ static void emitDocumentLoaded(GDBusConnection* connection)
 
 static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebExtension* extension)
 {
-    // FIXME: Too much code just to send a message, we need convenient custom API for this.
     WebKitDOMDocument* document = webkit_web_page_get_dom_document(webPage);
     GRefPtr<WebKitDOMDOMWindow> window = adoptGRef(webkit_dom_document_get_default_view(document));
-    if (WebKitDOMWebKitNamespace* webkit = webkit_dom_dom_window_get_webkit_namespace(window.get())) {
-        WebKitDOMUserMessageHandlersNamespace* messageHandlers = webkit_dom_webkit_namespace_get_message_handlers(webkit);
-        if (WebKitDOMUserMessageHandler* handler = webkit_dom_user_message_handlers_namespace_get_handler(messageHandlers, "dom"))
-            webkit_dom_user_message_handler_post_message(handler, "DocumentLoaded", nullptr);
-    }
-
-    webkit_dom_dom_window_webkit_message_handlers_post_message(window.get(), "dom-convenience", "DocumentLoaded");
+    webkit_dom_dom_window_webkit_message_handlers_post_message(window.get(), "dom", "DocumentLoaded");
 
     gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
     if (data)

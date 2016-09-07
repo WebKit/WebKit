@@ -918,14 +918,6 @@ gboolean webkit_dom_element_webkit_matches_selector(WebKitDOMElement* self, cons
     return result;
 }
 
-void webkit_dom_element_webkit_request_full_screen(WebKitDOMElement* self, gushort flags)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
-    WebCore::Element* item = WebKit::core(self);
-    item->webkitRequestFullScreen(flags);
-}
-
 void webkit_dom_element_webkit_request_fullscreen(WebKitDOMElement* self)
 {
     WebCore::JSMainThreadNullState state;

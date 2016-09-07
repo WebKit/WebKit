@@ -20,49 +20,9 @@
 #define WebKitDOMCustomUnstable_h
 
 #ifdef WEBKIT_DOM_USE_UNSTABLE_API
-
-#include <webkitdom/webkitdomdefines-unstable.h>
-
-G_BEGIN_DECLS
-
-/**
- * webkit_dom_dom_window_get_webkit_namespace:
- * @self: A #WebKitDOMDOMWindow
- *
- * Returns: (transfer full): A #WebKitDOMWebKitNamespace
- *
- * Stability: Unstable
- * Since: 2.8
- */
-WEBKIT_API WebKitDOMWebKitNamespace *
-webkit_dom_dom_window_get_webkit_namespace(WebKitDOMDOMWindow* self);
-
-/**
- * webkit_dom_user_message_handlers_namespace_get_handler:
- * @self: A #WebKitDOMUserMessageHandlersNamespace
- * @name: a #gchar
- *
- * Returns: (transfer full): A #WebKitDOMUserMessageHandler
- *
- * Stability: Unstable
- * Since: 2.8
- */
-WEBKIT_API WebKitDOMUserMessageHandler *
-webkit_dom_user_message_handlers_namespace_get_handler(WebKitDOMUserMessageHandlersNamespace* self, const gchar* name);
-
-/**
- * webkit_dom_html_link_element_set_sizes:
- * @self: A #WebKitDOMHTMLLinkElement
- * @value: a #gchar
- *
- * Stability: Unstable
- * Since: 2.8
- */
-WEBKIT_API void
-webkit_dom_html_link_element_set_sizes(WebKitDOMHTMLLinkElement* self, const gchar* value);
-
-G_END_DECLS
-
+#define __WEBKITDOM_H_INSIDE__
+#include <webkitdom/WebKitDOMDOMWindow.h>
+#undef __WEBKITDOM_H_INSIDE__
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 
-#endif
+#endif /* WebKitDOMCustomUnstable_h */

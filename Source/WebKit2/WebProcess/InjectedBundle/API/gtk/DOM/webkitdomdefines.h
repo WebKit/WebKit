@@ -302,6 +302,9 @@ typedef struct _WebKitDOMProcessingInstructionClass WebKitDOMProcessingInstructi
 typedef struct _WebKitDOMRange WebKitDOMRange;
 typedef struct _WebKitDOMRangeClass WebKitDOMRangeClass;
 
+typedef struct _WebKitDOMDOMSelection WebKitDOMDOMSelection;
+typedef struct _WebKitDOMDOMSelectionClass WebKitDOMDOMSelectionClass;
+
 typedef struct _WebKitDOMStyleSheet WebKitDOMStyleSheet;
 typedef struct _WebKitDOMStyleSheetClass WebKitDOMStyleSheetClass;
 
@@ -310,6 +313,9 @@ typedef struct _WebKitDOMStyleSheetListClass WebKitDOMStyleSheetListClass;
 
 typedef struct _WebKitDOMText WebKitDOMText;
 typedef struct _WebKitDOMTextClass WebKitDOMTextClass;
+
+typedef struct _WebKitDOMDOMTokenList WebKitDOMDOMTokenList;
+typedef struct _WebKitDOMDOMTokenListClass WebKitDOMDOMTokenListClass;
 
 typedef struct _WebKitDOMTreeWalker WebKitDOMTreeWalker;
 typedef struct _WebKitDOMTreeWalkerClass WebKitDOMTreeWalkerClass;

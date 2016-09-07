@@ -839,6 +839,243 @@ webkit_dom_document_get_active_element(WebKitDOMDocument* self);
 WEBKIT_API gchar*
 webkit_dom_document_get_compat_mode(WebKitDOMDocument* self);
 
+/**
+ * webkit_dom_document_caret_range_from_point:
+ * @self: A #WebKitDOMDocument
+ * @x: A #glong
+ * @y: A #glong
+ *
+ * Returns: (transfer full): A #WebKitDOMRange
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMRange*
+webkit_dom_document_caret_range_from_point(WebKitDOMDocument* self, glong x, glong y);
+
+/**
+ * webkit_dom_document_webkit_cancel_fullscreen:
+ * @self: A #WebKitDOMDocument
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_document_webkit_cancel_fullscreen(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_webkit_exit_fullscreen:
+ * @self: A #WebKitDOMDocument
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_document_webkit_exit_fullscreen(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_exit_pointer_lock:
+ * @self: A #WebKitDOMDocument
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_document_exit_pointer_lock(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_content_type:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gchar*
+webkit_dom_document_get_content_type(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_dir:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gchar*
+webkit_dom_document_get_dir(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_set_dir:
+ * @self: A #WebKitDOMDocument
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_document_set_dir(WebKitDOMDocument* self, const gchar* value);
+
+/**
+ * webkit_dom_document_get_webkit_is_fullscreen:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_document_get_webkit_is_fullscreen(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_webkit_fullscreen_keyboard_input_allowed:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_document_get_webkit_fullscreen_keyboard_input_allowed(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_webkit_current_fullscreen_element:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_get_webkit_current_fullscreen_element(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_webkit_fullscreen_enabled:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_document_get_webkit_fullscreen_enabled(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_webkit_fullscreen_element:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_get_webkit_fullscreen_element(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_pointer_lock_element:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_get_pointer_lock_element(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_visibility_state:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gchar*
+webkit_dom_document_get_visibility_state(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_hidden:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_document_get_hidden(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_current_script:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: (transfer none): A #WebKitDOMHTMLScriptElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMHTMLScriptElement*
+webkit_dom_document_get_current_script(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_origin:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gchar*
+webkit_dom_document_get_origin(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_scrolling_element:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_get_scrolling_element(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_children:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: (transfer full): A #WebKitDOMHTMLCollection
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMHTMLCollection*
+webkit_dom_document_get_children(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_first_element_child:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_get_first_element_child(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_last_element_child:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_get_last_element_child(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_child_element_count:
+ * @self: A #WebKitDOMDocument
+ *
+ * Returns: A #gulong
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gulong
+webkit_dom_document_get_child_element_count(WebKitDOMDocument* self);
+
 G_END_DECLS
 
 #endif /* WebKitDOMDocument_h */

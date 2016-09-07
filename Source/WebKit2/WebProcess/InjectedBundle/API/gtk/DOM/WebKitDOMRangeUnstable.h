@@ -22,24 +22,9 @@
 #define WebKitDOMRangeUnstable_h
 
 #ifdef WEBKIT_DOM_USE_UNSTABLE_API
-
-#include <webkitdom/webkitdomdefines-unstable.h>
-
-G_BEGIN_DECLS
-
-/**
- * webkit_dom_range_expand:
- * @self: A #WebKitDOMRange
- * @unit: A #gchar
- * @error: #GError
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_range_expand(WebKitDOMRange* self, const gchar* unit, GError** error);
-
-
-G_END_DECLS
-
+#define __WEBKITDOM_H_INSIDE__
+#include <webkitdom/WebKitDOMRange.h>
+#undef __WEBKITDOM_H_INSIDE__
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */
+
 #endif /* WebKitDOMRangeUnstable_h */

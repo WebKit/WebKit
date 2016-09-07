@@ -49,6 +49,88 @@ struct _WebKitDOMDocumentFragmentClass {
 WEBKIT_API GType
 webkit_dom_document_fragment_get_type(void);
 
+/**
+ * webkit_dom_document_fragment_get_element_by_id:
+ * @self: A #WebKitDOMDocumentFragment
+ * @elementId: A #gchar
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+ */
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_fragment_get_element_by_id(WebKitDOMDocumentFragment* self, const gchar* elementId);
+
+/**
+ * webkit_dom_document_fragment_query_selector:
+ * @self: A #WebKitDOMDocumentFragment
+ * @selectors: A #gchar
+ * @error: #GError
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+ */
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_fragment_query_selector(WebKitDOMDocumentFragment* self, const gchar* selectors, GError** error);
+
+/**
+ * webkit_dom_document_fragment_query_selector_all:
+ * @self: A #WebKitDOMDocumentFragment
+ * @selectors: A #gchar
+ * @error: #GError
+ *
+ * Returns: (transfer full): A #WebKitDOMNodeList
+ *
+ * Since: 2.16
+ */
+WEBKIT_API WebKitDOMNodeList*
+webkit_dom_document_fragment_query_selector_all(WebKitDOMDocumentFragment* self, const gchar* selectors, GError** error);
+
+/**
+ * webkit_dom_document_fragment_get_children:
+ * @self: A #WebKitDOMDocumentFragment
+ *
+ * Returns: (transfer full): A #WebKitDOMHTMLCollection
+ *
+ * Since: 2.16
+ */
+WEBKIT_API WebKitDOMHTMLCollection*
+webkit_dom_document_fragment_get_children(WebKitDOMDocumentFragment* self);
+
+/**
+ * webkit_dom_document_fragment_get_first_element_child:
+ * @self: A #WebKitDOMDocumentFragment
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+ */
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_fragment_get_first_element_child(WebKitDOMDocumentFragment* self);
+
+/**
+ * webkit_dom_document_fragment_get_last_element_child:
+ * @self: A #WebKitDOMDocumentFragment
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+ */
+WEBKIT_API WebKitDOMElement*
+webkit_dom_document_fragment_get_last_element_child(WebKitDOMDocumentFragment* self);
+
+/**
+ * webkit_dom_document_fragment_get_child_element_count:
+ * @self: A #WebKitDOMDocumentFragment
+ *
+ * Returns: A #gulong
+ *
+ * Since: 2.16
+ */
+WEBKIT_API gulong
+webkit_dom_document_fragment_get_child_element_count(WebKitDOMDocumentFragment* self);
+
 G_END_DECLS
 
 #endif /* WebKitDOMDocumentFragment_h */

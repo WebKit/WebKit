@@ -600,3 +600,10 @@ WebKitDOMDOMTokenList* webkit_dom_html_link_element_get_rel_list(WebKitDOMHTMLLi
     return WebKit::kit(gobjectResult.get());
 }
 
+void webkit_dom_html_link_element_set_sizes(WebKitDOMHTMLLinkElement* linkElement, const gchar* value)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(linkElement));
+    g_return_if_fail(value);
+
+    WebKit::core(linkElement)->sizes().setValue(String::fromUTF8(value));
+}

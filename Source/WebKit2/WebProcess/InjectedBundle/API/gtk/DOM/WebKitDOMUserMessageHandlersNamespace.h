@@ -25,7 +25,6 @@
 
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/WebKitDOMCustomUnstable.h>
 #include <webkitdom/webkitdomdefines-unstable.h>
 
 G_BEGIN_DECLS
@@ -47,6 +46,18 @@ struct _WebKitDOMUserMessageHandlersNamespaceClass {
 
 WEBKIT_API GType
 webkit_dom_user_message_handlers_namespace_get_type(void);
+
+/**
+ * webkit_dom_user_message_handlers_namespace_get_handler:
+ * @self: A #WebKitDOMUserMessageHandlersNamespace
+ * @name: a #gchar
+ *
+ * Returns: (transfer full): A #WebKitDOMUserMessageHandler
+ *
+ * Stability: Unstable
+ */
+WEBKIT_API WebKitDOMUserMessageHandler *
+webkit_dom_user_message_handlers_namespace_get_handler(WebKitDOMUserMessageHandlersNamespace* self, const gchar* name);
 
 G_END_DECLS
 

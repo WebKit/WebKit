@@ -28,6 +28,7 @@
 #include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/JSMainThreadExecState.h>
 #include "WebKitDOMPrivate.h"
+#include "WebKitDOMUserMessageHandlerPrivate.h"
 #include "WebKitDOMUserMessageHandlersNamespacePrivate.h"
 #include "ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>
@@ -108,3 +109,10 @@ static void webkit_dom_user_message_handlers_namespace_init(WebKitDOMUserMessage
     new (priv) WebKitDOMUserMessageHandlersNamespacePrivate();
 }
 
+WebKitDOMUserMessageHandler* webkit_dom_user_message_handlers_namespace_get_handler(WebKitDOMUserMessageHandlersNamespace* handlersNamespace, const gchar* name)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_USER_MESSAGE_HANDLERS_NAMESPACE(handlersNamespace), nullptr);
+    g_return_val_if_fail(name, nullptr);
+
+    return WebKit::kit(WebKit::core(handlersNamespace)->handler(String::fromUTF8(name), WebCore::mainThreadNormalWorld()));
+}

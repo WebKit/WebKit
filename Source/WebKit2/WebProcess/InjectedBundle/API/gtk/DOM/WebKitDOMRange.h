@@ -397,6 +397,17 @@ webkit_dom_range_get_common_ancestor_container(WebKitDOMRange* self, GError** er
 WEBKIT_API gchar*
 webkit_dom_range_get_text(WebKitDOMRange* self);
 
+/**
+ * webkit_dom_range_expand:
+ * @self: A #WebKitDOMRange
+ * @unit: A #gchar
+ * @error: #GError
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_range_expand(WebKitDOMRange* self, const gchar* unit, GError** error);
+
 G_END_DECLS
 
 #endif /* WebKitDOMRange_h */

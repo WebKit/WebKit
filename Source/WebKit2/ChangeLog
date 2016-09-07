@@ -1,3 +1,80 @@
+2016-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move some GObject DOM unstable API to stable
+        https://bugs.webkit.org/show_bug.cgi?id=161681
+
+        Reviewed by Žan Doberšek.
+
+        Move unstable API currently used by applications to the stable API in preparation for removing all unused
+        unstable API.
+
+        * PlatformGTK.cmake:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCustom.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCustom.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCustomUnstable.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
+        (webkit_dom_dom_window_get_property):
+        (webkit_dom_dom_window_class_init):
+        (webkit_dom_dom_window_webkit_message_handlers_post_message):
+        (webkit_dom_dom_window_set_property): Deleted.
+        (webkit_dom_dom_window_get_computed_style): Deleted.
+        (webkit_dom_dom_window_capture_events): Deleted.
+        (webkit_dom_dom_window_get_frame_element): Deleted.
+        (webkit_dom_dom_window_get_offscreen_buffering): Deleted.
+        (webkit_dom_dom_window_get_outer_height): Deleted.
+        (webkit_dom_dom_window_get_outer_width): Deleted.
+        (webkit_dom_dom_window_get_inner_height): Deleted.
+        (webkit_dom_dom_window_get_inner_width): Deleted.
+        (webkit_dom_dom_window_get_screen_x): Deleted.
+        (webkit_dom_dom_window_set_status): Deleted.
+        (webkit_dom_dom_window_get_default_status): Deleted.
+        (webkit_dom_dom_window_get_window): Deleted.
+        (webkit_dom_dom_window_get_frames): Deleted.
+        (webkit_dom_dom_window_get_parent): Deleted.
+        (webkit_dom_dom_window_get_top): Deleted.
+        (webkit_dom_dom_window_get_document): Deleted.
+        (webkit_dom_dom_window_get_device_pixel_ratio): Deleted.
+        (webkit_dom_dom_window_get_orientation): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindowUnstable.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp:
+        (webkit_dom_document_get_property):
+        (webkit_dom_document_webkit_cancel_fullscreen):
+        (webkit_dom_document_get_webkit_is_fullscreen):
+        (webkit_dom_document_get_webkit_fullscreen_keyboard_input_allowed):
+        (webkit_dom_document_get_webkit_current_fullscreen_element):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragmentUnstable.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentUnstable.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_webkit_request_fullscreen): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElementUnstable.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElementUnstable.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        (webkit_dom_html_input_element_is_edited):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.cpp:
+        (webkit_dom_html_link_element_set_sizes):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.cpp:
+        (webkit_dom_html_text_area_element_is_edited):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRangeUnstable.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandlersNamespace.cpp:
+        (webkit_dom_user_message_handlers_namespace_get_handler):
+        (webkit_dom_user_message_handlers_namespace_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandlersNamespace.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/docs/webkitdomgtk-4.0-sections.txt:
+        * WebProcess/InjectedBundle/API/gtk/DOM/docs/webkitdomgtk-docs.sgml:
+        * WebProcess/InjectedBundle/API/gtk/DOM/webkitdomdefines-unstable.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/webkitdomdefines.h:
+
 2016-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Threaded Compositor] Several flaky tests

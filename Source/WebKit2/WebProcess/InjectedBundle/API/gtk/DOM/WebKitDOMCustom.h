@@ -16,43 +16,11 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <webkitdom/webkitdom.h> can be included directly."
+#endif
+
 #ifndef WebKitDOMCustom_h
 #define WebKitDOMCustom_h
 
-#include <glib-object.h>
-#include <glib.h>
-#include <webkitdom/webkitdomdefines.h>
-
-G_BEGIN_DECLS
-
-/**
- * webkit_dom_html_text_area_element_is_edited:
- * @input: A #WebKitDOMHTMLTextAreaElement
- *
- * Returns: A #gboolean
- */
-WEBKIT_API gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTextAreaElement* input);
-
-/**
- * webkit_dom_html_input_element_is_edited:
- * @input: A #WebKitDOMHTMLInputElement
- *
- * Returns: A #gboolean
- */
-WEBKIT_API gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* input);
-
-/**
- * webkit_dom_dom_window_post_user_message:
- * @window: A #WebKitDOMDOMWindow
- * @handler: Name of the user message handler.
- * @message: JavaScript value to be sent.
- *
- * Returns: Whether the message was successfully sent.
- *
- * Since: 2.8
- */
-gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow* window, const gchar* handler, const gchar* message);
-
-G_END_DECLS
-
-#endif
+#endif /* WebKitDOMCustom_h */

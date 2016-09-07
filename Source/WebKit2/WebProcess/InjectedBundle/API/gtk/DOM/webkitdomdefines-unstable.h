@@ -66,17 +66,11 @@ typedef struct _WebKitDOMDOMPluginClass WebKitDOMDOMPluginClass;
 typedef struct _WebKitDOMDOMPluginArray WebKitDOMDOMPluginArray;
 typedef struct _WebKitDOMDOMPluginArrayClass WebKitDOMDOMPluginArrayClass;
 
-typedef struct _WebKitDOMDOMSelection WebKitDOMDOMSelection;
-typedef struct _WebKitDOMDOMSelectionClass WebKitDOMDOMSelectionClass;
-
 typedef struct _WebKitDOMDOMStringList WebKitDOMDOMStringList;
 typedef struct _WebKitDOMDOMStringListClass WebKitDOMDOMStringListClass;
 
 typedef struct _WebKitDOMDOMStringMap WebKitDOMDOMStringMap;
 typedef struct _WebKitDOMDOMStringMapClass WebKitDOMDOMStringMapClass;
-
-typedef struct _WebKitDOMDOMTokenList WebKitDOMDOMTokenList;
-typedef struct _WebKitDOMDOMTokenListClass WebKitDOMDOMTokenListClass;
 
 typedef struct _WebKitDOMDOMWindowSpeechSynthesis WebKitDOMDOMWindowSpeechSynthesis;
 typedef struct _WebKitDOMDOMWindowSpeechSynthesisClass WebKitDOMDOMWindowSpeechSynthesisClass;

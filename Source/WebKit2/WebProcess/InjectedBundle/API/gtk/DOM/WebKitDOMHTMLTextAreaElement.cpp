@@ -1048,3 +1048,9 @@ void webkit_dom_html_text_area_element_set_autocomplete(WebKitDOMHTMLTextAreaEle
     item->setAutocomplete(convertedValue);
 }
 
+gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTextAreaElement* area)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(area), FALSE);
+
+    return WebKit::core(area)->lastChangeWasUserEdit();
+}

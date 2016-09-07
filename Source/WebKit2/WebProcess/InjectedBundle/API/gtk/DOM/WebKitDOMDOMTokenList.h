@@ -18,10 +18,12 @@
  *  Boston, MA 02110-1301, USA.
  */
 
+#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT) && !defined(WEBKIT_DOM_USE_UNSTABLE_API)
+#error "Only <webkitdom/webkitdom.h> can be included directly."
+#endif
+
 #ifndef WebKitDOMDOMTokenList_h
 #define WebKitDOMDOMTokenList_h
-
-#ifdef WEBKIT_DOM_USE_UNSTABLE_API
 
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
@@ -54,8 +56,8 @@ webkit_dom_dom_token_list_get_type(void);
  *
  * Returns: A #gchar
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gchar*
 webkit_dom_dom_token_list_item(WebKitDOMDOMTokenList* self, gulong index);
 
@@ -66,8 +68,8 @@ webkit_dom_dom_token_list_item(WebKitDOMDOMTokenList* self, gulong index);
  *
  * Returns: A #gboolean
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gboolean
 webkit_dom_dom_token_list_contains(WebKitDOMDOMTokenList* self, const gchar* token);
 
@@ -77,8 +79,8 @@ webkit_dom_dom_token_list_contains(WebKitDOMDOMTokenList* self, const gchar* tok
  * @error: #GError
  * @...: list of #gchar ended by %NULL.
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_token_list_add(WebKitDOMDOMTokenList* self, GError** error, ...);
 
@@ -88,8 +90,8 @@ webkit_dom_dom_token_list_add(WebKitDOMDOMTokenList* self, GError** error, ...);
  * @error: #GError
  * @...: list of #gchar ended by %NULL.
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_token_list_remove(WebKitDOMDOMTokenList* self, GError** error, ...);
 
@@ -102,8 +104,8 @@ webkit_dom_dom_token_list_remove(WebKitDOMDOMTokenList* self, GError** error, ..
  *
  * Returns: A #gboolean
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gboolean
 webkit_dom_dom_token_list_toggle(WebKitDOMDOMTokenList* self, const gchar* token, gboolean force, GError** error);
 
@@ -114,8 +116,8 @@ webkit_dom_dom_token_list_toggle(WebKitDOMDOMTokenList* self, const gchar* token
  * @newToken: A #gchar
  * @error: #GError
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_token_list_replace(WebKitDOMDOMTokenList* self, const gchar* token, const gchar* newToken, GError** error);
 
@@ -125,8 +127,8 @@ webkit_dom_dom_token_list_replace(WebKitDOMDOMTokenList* self, const gchar* toke
  *
  * Returns: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gulong
 webkit_dom_dom_token_list_get_length(WebKitDOMDOMTokenList* self);
 
@@ -136,8 +138,8 @@ webkit_dom_dom_token_list_get_length(WebKitDOMDOMTokenList* self);
  *
  * Returns: A #gchar
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gchar*
 webkit_dom_dom_token_list_get_value(WebKitDOMDOMTokenList* self);
 
@@ -146,12 +148,11 @@ webkit_dom_dom_token_list_get_value(WebKitDOMDOMTokenList* self);
  * @self: A #WebKitDOMDOMTokenList
  * @value: A #gchar
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_token_list_set_value(WebKitDOMDOMTokenList* self, const gchar* value);
 
 G_END_DECLS
 
-#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMDOMTokenList_h */

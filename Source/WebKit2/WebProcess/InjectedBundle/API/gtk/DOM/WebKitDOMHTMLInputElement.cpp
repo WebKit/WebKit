@@ -1790,3 +1790,9 @@ void webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement* self, 
 #endif /* ENABLE(MEDIA_CAPTURE) */
 }
 
+gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* input)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(input), FALSE);
+
+    return WebKit::core(input)->lastChangeWasUserEdit();
+}

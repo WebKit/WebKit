@@ -50,6 +50,11 @@ WEBKIT_API GType
 webkit_dom_element_get_type(void);
 
 /**
+ * WEBKIT_DOM_ELEMENT_ALLOW_KEYBOARD_INPUT:
+ */
+#define WEBKIT_DOM_ELEMENT_ALLOW_KEYBOARD_INPUT 1
+
+/**
  * webkit_dom_element_get_attribute:
  * @self: A #WebKitDOMElement
  * @name: A #gchar
@@ -637,6 +642,133 @@ webkit_dom_element_get_last_element_child(WebKitDOMElement* self);
 **/
 WEBKIT_API gulong
 webkit_dom_element_get_child_element_count(WebKitDOMElement* self);
+
+/**
+ * webkit_dom_element_matches:
+ * @self: A #WebKitDOMElement
+ * @selectors: A #gchar
+ * @error: #GError
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_element_matches(WebKitDOMElement* self, const gchar* selectors, GError** error);
+
+/**
+ * webkit_dom_element_closest:
+ * @self: A #WebKitDOMElement
+ * @selectors: A #gchar
+ * @error: #GError
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMElement*
+webkit_dom_element_closest(WebKitDOMElement* self, const gchar* selectors, GError** error);
+
+/**
+ * webkit_dom_element_webkit_matches_selector:
+ * @self: A #WebKitDOMElement
+ * @selectors: A #gchar
+ * @error: #GError
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_element_webkit_matches_selector(WebKitDOMElement* self, const gchar* selectors, GError** error);
+
+/**
+ * webkit_dom_element_webkit_request_fullscreen:
+ * @self: A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_element_webkit_request_fullscreen(WebKitDOMElement* self);
+
+/**
+ * webkit_dom_element_insert_adjacent_element:
+ * @self: A #WebKitDOMElement
+ * @where: A #gchar
+ * @element: A #WebKitDOMElement
+ * @error: #GError
+ *
+ * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMElement*
+webkit_dom_element_insert_adjacent_element(WebKitDOMElement* self, const gchar* where, WebKitDOMElement* element, GError** error);
+
+/**
+ * webkit_dom_element_insert_adjacent_html:
+ * @self: A #WebKitDOMElement
+ * @where: A #gchar
+ * @html: A #gchar
+ * @error: #GError
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_element_insert_adjacent_html(WebKitDOMElement* self, const gchar* where, const gchar* html, GError** error);
+
+/**
+ * webkit_dom_element_insert_adjacent_text:
+ * @self: A #WebKitDOMElement
+ * @where: A #gchar
+ * @text: A #gchar
+ * @error: #GError
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_element_insert_adjacent_text(WebKitDOMElement* self, const gchar* where, const gchar* text, GError** error);
+
+/**
+ * webkit_dom_element_request_pointer_lock:
+ * @self: A #WebKitDOMElement
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_element_request_pointer_lock(WebKitDOMElement* self);
+
+/**
+ * webkit_dom_element_remove:
+ * @self: A #WebKitDOMElement
+ * @error: #GError
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_element_remove(WebKitDOMElement* self, GError** error);
+
+/**
+ * webkit_dom_element_get_class_list:
+ * @self: A #WebKitDOMElement
+ *
+ * Returns: (transfer full): A #WebKitDOMDOMTokenList
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMDOMTokenList*
+webkit_dom_element_get_class_list(WebKitDOMElement* self);
+
+/**
+ * webkit_dom_element_get_webkit_region_overset:
+ * @self: A #WebKitDOMElement
+ *
+ * Returns: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gchar*
+webkit_dom_element_get_webkit_region_overset(WebKitDOMElement* self);
 
 G_END_DECLS
 

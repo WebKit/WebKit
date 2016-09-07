@@ -213,6 +213,111 @@ webkit_dom_html_element_set_content_editable(WebKitDOMHTMLElement* self, const g
 WEBKIT_API gboolean
 webkit_dom_html_element_get_is_content_editable(WebKitDOMHTMLElement* self);
 
+/**
+ * webkit_dom_html_element_get_translate:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_html_element_get_translate(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_set_translate:
+ * @self: A #WebKitDOMHTMLElement
+ * @value: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_element_set_translate(WebKitDOMHTMLElement* self, gboolean value);
+
+/**
+ * webkit_dom_html_element_get_draggable:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_html_element_get_draggable(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_set_draggable:
+ * @self: A #WebKitDOMHTMLElement
+ * @value: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_element_set_draggable(WebKitDOMHTMLElement* self, gboolean value);
+
+/**
+ * webkit_dom_html_element_get_webkitdropzone:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * Returns: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gchar*
+webkit_dom_html_element_get_webkitdropzone(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_set_webkitdropzone:
+ * @self: A #WebKitDOMHTMLElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_element_set_webkitdropzone(WebKitDOMHTMLElement* self, const gchar* value);
+
+/**
+ * webkit_dom_html_element_get_hidden:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_html_element_get_hidden(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_set_hidden:
+ * @self: A #WebKitDOMHTMLElement
+ * @value: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_element_set_hidden(WebKitDOMHTMLElement* self, gboolean value);
+
+/**
+ * webkit_dom_html_element_get_spellcheck:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API gboolean
+webkit_dom_html_element_get_spellcheck(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_set_spellcheck:
+ * @self: A #WebKitDOMHTMLElement
+ * @value: A #gboolean
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_element_set_spellcheck(WebKitDOMHTMLElement* self, gboolean value);
+
 G_END_DECLS
 
 #endif /* WebKitDOMHTMLElement_h */

@@ -11,7 +11,6 @@
 
   <chapter>
     <title>Class Overview</title>
-    <xi:include href="xml/WebKitDOMCustom.xml"/>
     <xi:include href="xml/WebKitDOMEventTarget.xml"/>
     <xi:include href="xml/WebKitDOMNodeFilter.xml"/>
     <xi:include href="xml/WebKitDOMObject.xml"/>
@@ -107,10 +106,12 @@
     <xi:include href="xml/WebKitDOMHTMLTitleElement.xml"/>
     <xi:include href="xml/WebKitDOMHTMLUListElement.xml"/>
     <xi:include href="xml/WebKitDOMDOMWindow.xml"/>
+    <xi:include href="xml/WebKitDOMDOMSelection.xml"/>
     <xi:include href="xml/WebKitDOMXPathExpression.xml"/>
     <xi:include href="xml/WebKitDOMXPathResult.xml"/>
     <xi:include href="xml/WebKitDOMEntityReference.xml"/>
     <xi:include href="xml/WebKitDOMHTMLBaseFontElement.xml"/>
+    <xi:include href="xml/WebKitDOMDOMTokenList.xml"/>
   </chapter>
 
   <index id="index-all">

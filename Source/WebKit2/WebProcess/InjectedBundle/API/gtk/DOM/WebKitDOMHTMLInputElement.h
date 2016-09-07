@@ -448,6 +448,14 @@ webkit_dom_html_input_element_set_use_map(WebKitDOMHTMLInputElement* self, const
 WEBKIT_API gchar*
 webkit_dom_html_input_element_get_capture_type(WebKitDOMHTMLInputElement* self);
 
+/**
+ * webkit_dom_html_input_element_is_edited:
+ * @input: A #WebKitDOMHTMLInputElement
+ *
+ * Returns: A #gboolean
+ */
+WEBKIT_API gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* input);
+
 G_END_DECLS
 
 #endif /* WebKitDOMHTMLInputElement_h */

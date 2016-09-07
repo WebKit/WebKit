@@ -18,14 +18,16 @@
  *  Boston, MA 02110-1301, USA.
  */
 
+#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT) && !defined(WEBKIT_DOM_USE_UNSTABLE_API)
+#error "Only <webkitdom/webkitdom.h> can be included directly."
+#endif
+
 #ifndef WebKitDOMDOMSelection_h
 #define WebKitDOMDOMSelection_h
 
-#ifdef WEBKIT_DOM_USE_UNSTABLE_API
-
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines-unstable.h>
+#include <webkitdom/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 
@@ -53,8 +55,8 @@ webkit_dom_dom_selection_get_type(void);
  * @node: A #WebKitDOMNode
  * @offset: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_collapse(WebKitDOMDOMSelection* self, WebKitDOMNode* node, gulong offset);
 
@@ -63,8 +65,8 @@ webkit_dom_dom_selection_collapse(WebKitDOMDOMSelection* self, WebKitDOMNode* no
  * @self: A #WebKitDOMDOMSelection
  * @error: #GError
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_collapse_to_end(WebKitDOMDOMSelection* self, GError** error);
 
@@ -73,8 +75,8 @@ webkit_dom_dom_selection_collapse_to_end(WebKitDOMDOMSelection* self, GError** e
  * @self: A #WebKitDOMDOMSelection
  * @error: #GError
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_collapse_to_start(WebKitDOMDOMSelection* self, GError** error);
 
@@ -82,8 +84,8 @@ webkit_dom_dom_selection_collapse_to_start(WebKitDOMDOMSelection* self, GError**
  * webkit_dom_dom_selection_delete_from_document:
  * @self: A #WebKitDOMDOMSelection
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_delete_from_document(WebKitDOMDOMSelection* self);
 
@@ -95,8 +97,8 @@ webkit_dom_dom_selection_delete_from_document(WebKitDOMDOMSelection* self);
  *
  * Returns: A #gboolean
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gboolean
 webkit_dom_dom_selection_contains_node(WebKitDOMDOMSelection* self, WebKitDOMNode* node, gboolean allowPartial);
 
@@ -105,8 +107,8 @@ webkit_dom_dom_selection_contains_node(WebKitDOMDOMSelection* self, WebKitDOMNod
  * @self: A #WebKitDOMDOMSelection
  * @node: A #WebKitDOMNode
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_select_all_children(WebKitDOMDOMSelection* self, WebKitDOMNode* node);
 
@@ -117,8 +119,8 @@ webkit_dom_dom_selection_select_all_children(WebKitDOMDOMSelection* self, WebKit
  * @offset: A #gulong
  * @error: #GError
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_extend(WebKitDOMDOMSelection* self, WebKitDOMNode* node, gulong offset, GError** error);
 
@@ -130,8 +132,8 @@ webkit_dom_dom_selection_extend(WebKitDOMDOMSelection* self, WebKitDOMNode* node
  *
  * Returns: (transfer full): A #WebKitDOMRange
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API WebKitDOMRange*
 webkit_dom_dom_selection_get_range_at(WebKitDOMDOMSelection* self, gulong index, GError** error);
 
@@ -139,8 +141,8 @@ webkit_dom_dom_selection_get_range_at(WebKitDOMDOMSelection* self, gulong index,
  * webkit_dom_dom_selection_remove_all_ranges:
  * @self: A #WebKitDOMDOMSelection
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_remove_all_ranges(WebKitDOMDOMSelection* self);
 
@@ -149,8 +151,8 @@ webkit_dom_dom_selection_remove_all_ranges(WebKitDOMDOMSelection* self);
  * @self: A #WebKitDOMDOMSelection
  * @range: A #WebKitDOMRange
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_add_range(WebKitDOMDOMSelection* self, WebKitDOMRange* range);
 
@@ -162,8 +164,8 @@ webkit_dom_dom_selection_add_range(WebKitDOMDOMSelection* self, WebKitDOMRange* 
  * @extentNode: A #WebKitDOMNode
  * @extentOffset: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_set_base_and_extent(WebKitDOMDOMSelection* self, WebKitDOMNode* baseNode, gulong baseOffset, WebKitDOMNode* extentNode, gulong extentOffset);
 
@@ -173,8 +175,8 @@ webkit_dom_dom_selection_set_base_and_extent(WebKitDOMDOMSelection* self, WebKit
  * @node: A #WebKitDOMNode
  * @offset: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_set_position(WebKitDOMDOMSelection* self, WebKitDOMNode* node, gulong offset);
 
@@ -182,8 +184,8 @@ webkit_dom_dom_selection_set_position(WebKitDOMDOMSelection* self, WebKitDOMNode
  * webkit_dom_dom_selection_empty:
  * @self: A #WebKitDOMDOMSelection
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_empty(WebKitDOMDOMSelection* self);
 
@@ -194,8 +196,8 @@ webkit_dom_dom_selection_empty(WebKitDOMDOMSelection* self);
  * @direction: A #gchar
  * @granularity: A #gchar
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API void
 webkit_dom_dom_selection_modify(WebKitDOMDOMSelection* self, const gchar* alter, const gchar* direction, const gchar* granularity);
 
@@ -205,8 +207,8 @@ webkit_dom_dom_selection_modify(WebKitDOMDOMSelection* self, const gchar* alter,
  *
  * Returns: (transfer none): A #WebKitDOMNode
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API WebKitDOMNode*
 webkit_dom_dom_selection_get_anchor_node(WebKitDOMDOMSelection* self);
 
@@ -216,8 +218,8 @@ webkit_dom_dom_selection_get_anchor_node(WebKitDOMDOMSelection* self);
  *
  * Returns: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gulong
 webkit_dom_dom_selection_get_anchor_offset(WebKitDOMDOMSelection* self);
 
@@ -227,8 +229,8 @@ webkit_dom_dom_selection_get_anchor_offset(WebKitDOMDOMSelection* self);
  *
  * Returns: (transfer none): A #WebKitDOMNode
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API WebKitDOMNode*
 webkit_dom_dom_selection_get_focus_node(WebKitDOMDOMSelection* self);
 
@@ -238,8 +240,8 @@ webkit_dom_dom_selection_get_focus_node(WebKitDOMDOMSelection* self);
  *
  * Returns: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gulong
 webkit_dom_dom_selection_get_focus_offset(WebKitDOMDOMSelection* self);
 
@@ -249,8 +251,8 @@ webkit_dom_dom_selection_get_focus_offset(WebKitDOMDOMSelection* self);
  *
  * Returns: A #gboolean
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gboolean
 webkit_dom_dom_selection_get_is_collapsed(WebKitDOMDOMSelection* self);
 
@@ -260,8 +262,8 @@ webkit_dom_dom_selection_get_is_collapsed(WebKitDOMDOMSelection* self);
  *
  * Returns: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gulong
 webkit_dom_dom_selection_get_range_count(WebKitDOMDOMSelection* self);
 
@@ -271,8 +273,8 @@ webkit_dom_dom_selection_get_range_count(WebKitDOMDOMSelection* self);
  *
  * Returns: A #gchar
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gchar*
 webkit_dom_dom_selection_get_selection_type(WebKitDOMDOMSelection* self);
 
@@ -282,8 +284,8 @@ webkit_dom_dom_selection_get_selection_type(WebKitDOMDOMSelection* self);
  *
  * Returns: (transfer none): A #WebKitDOMNode
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API WebKitDOMNode*
 webkit_dom_dom_selection_get_base_node(WebKitDOMDOMSelection* self);
 
@@ -293,8 +295,8 @@ webkit_dom_dom_selection_get_base_node(WebKitDOMDOMSelection* self);
  *
  * Returns: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gulong
 webkit_dom_dom_selection_get_base_offset(WebKitDOMDOMSelection* self);
 
@@ -304,8 +306,8 @@ webkit_dom_dom_selection_get_base_offset(WebKitDOMDOMSelection* self);
  *
  * Returns: (transfer none): A #WebKitDOMNode
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API WebKitDOMNode*
 webkit_dom_dom_selection_get_extent_node(WebKitDOMDOMSelection* self);
 
@@ -315,12 +317,11 @@ webkit_dom_dom_selection_get_extent_node(WebKitDOMDOMSelection* self);
  *
  * Returns: A #gulong
  *
- * Stability: Unstable
-**/
+ * Since: 2.16
+ */
 WEBKIT_API gulong
 webkit_dom_dom_selection_get_extent_offset(WebKitDOMDOMSelection* self);
 
 G_END_DECLS
 
-#endif /* WEBKIT_DOM_USE_UNSTABLE_API */
 #endif /* WebKitDOMDOMSelection_h */

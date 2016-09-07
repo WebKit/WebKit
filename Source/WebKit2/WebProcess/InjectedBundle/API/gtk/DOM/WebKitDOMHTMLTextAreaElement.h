@@ -275,6 +275,14 @@ webkit_dom_html_text_area_element_get_selection_end(WebKitDOMHTMLTextAreaElement
 WEBKIT_API void
 webkit_dom_html_text_area_element_set_selection_end(WebKitDOMHTMLTextAreaElement* self, glong value);
 
+/**
+ * webkit_dom_html_text_area_element_is_edited:
+ * @input: A #WebKitDOMHTMLTextAreaElement
+ *
+ * Returns: A #gboolean
+ */
+WEBKIT_API gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTextAreaElement* input);
+
 G_END_DECLS
 
 #endif /* WebKitDOMHTMLTextAreaElement_h */

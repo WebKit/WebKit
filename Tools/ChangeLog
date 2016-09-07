@@ -1,3 +1,20 @@
+2016-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move some GObject DOM unstable API to stable
+        https://bugs.webkit.org/show_bug.cgi?id=161681
+
+        Reviewed by Žan Doberšek.
+
+        Do not use user message handler unstable API in the tests, since we have stable convenient API for that.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        (testUserContentManagerScriptMessageFromDOMBindings):
+        (serverCallback): Deleted.
+        (beforeAll): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (documentLoadedCallback):
+        (emitURIChanged): Deleted.
+
 2016-09-07  Youenn Fablet  <youenn@apple.com>
 
         Using tests-options.json to compute whether tests are slow
