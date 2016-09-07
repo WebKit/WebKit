@@ -1,3 +1,16 @@
+2016-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Make emitAllocateWithNonNullAllocator's sub32() disallow-scratch-friendly
+        https://bugs.webkit.org/show_bug.cgi?id=161706
+
+        Reviewed by Geoffrey Garen.
+        
+        You can't sub32(Addr, Reg) on not-x86 without using a scratch register. So, on those CPUs, we
+        have to do something different.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+
 2016-09-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed CMake build fix after r205552
