@@ -757,8 +757,6 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
     if (m_currentCallFrame == m_pauseOnCallFrame) {
         VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
         m_pauseOnCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
-        if (!m_currentCallFrame)
-            return;
     }
     VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
     m_currentCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
