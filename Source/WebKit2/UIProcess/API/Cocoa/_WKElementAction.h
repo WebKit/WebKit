@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeOpenInDefaultBrowser WK_API_AVAILABLE(ios(9_0)),
     _WKElementActionTypeOpenInExternalApplication WK_API_AVAILABLE(ios(9_0)),
 #endif
-    _WKElementActionTypeShare WK_API_AVAILABLE(ios(WK_IOS_TBA)),
+    _WKElementActionTypeShare WK_API_AVAILABLE(ios(10.0)),
 } WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
 WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))

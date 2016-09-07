@@ -168,7 +168,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  @discussion @link WKWebView @/link is key-value observing (KVO) compliant 
  for this property.
  */
-@property (nonatomic, readonly, nullable) SecTrustRef serverTrust WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, nullable) SecTrustRef serverTrust WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 /*! @abstract A Boolean value indicating whether there is a back item in
  the back-forward list that can be navigated to.
@@ -306,7 +306,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 @interface WKWebView (WKDeprecated)
 
-@property (nonatomic, readonly, copy) NSArray *certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("serverTrust", macosx(10.11, WK_MAC_TBA), ios(9.0, WK_IOS_TBA));
+@property (nonatomic, readonly, copy) NSArray *certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("serverTrust", macosx(10.11, 10.12), ios(9.0, 10.0));
 
 @end
 

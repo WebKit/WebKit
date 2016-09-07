@@ -72,8 +72,8 @@ typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
     WKDataDetectorTypeLookupSuggestion = 1 << 6,
     WKDataDetectorTypeAll = NSUIntegerMax,
 
-    WKDataDetectorTypeSpotlightSuggestion WK_API_DEPRECATED_WITH_REPLACEMENT("WKDataDetectorTypeLookupSuggestion", ios(WK_IOS_TBA, WK_IOS_TBA)) = WKDataDetectorTypeLookupSuggestion,
-} WK_API_AVAILABLE(ios(WK_IOS_TBA));
+    WKDataDetectorTypeSpotlightSuggestion WK_API_DEPRECATED_WITH_REPLACEMENT("WKDataDetectorTypeLookupSuggestion", ios(10.0, 10.0)) = WKDataDetectorTypeLookupSuggestion,
+} WK_API_AVAILABLE(ios(10.0));
 
 #else
 
@@ -91,7 +91,7 @@ typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
 typedef NS_ENUM(NSInteger, WKUserInterfaceDirectionPolicy) {
     WKUserInterfaceDirectionPolicyContent,
     WKUserInterfaceDirectionPolicySystem,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+} WK_API_AVAILABLE(macosx(10.12));
 
 #endif
 
@@ -107,7 +107,7 @@ typedef NS_OPTIONS(NSUInteger, WKAudiovisualMediaTypes) {
     WKAudiovisualMediaTypeAudio = 1 << 0,
     WKAudiovisualMediaTypeVideo = 1 << 1,
     WKAudiovisualMediaTypeAll = NSUIntegerMax
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 /*! A WKWebViewConfiguration object is a collection of properties with
  which to initialize a web view.
@@ -151,7 +151,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  */
 @property (nonatomic) BOOL allowsAirPlayForMediaPlayback WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
-@property (nonatomic) WKAudiovisualMediaTypes mediaTypesRequiringUserActionForPlayback WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) WKAudiovisualMediaTypes mediaTypesRequiringUserActionForPlayback WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline
@@ -180,13 +180,13 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  if the dataDetectorTypes property is set to WKDataDetectorTypePhoneNumber | WKDataDetectorTypeLink | WKDataDetectorTypeCalendarEvent.
 
  */
-@property (nonatomic) WKDataDetectorTypes dataDetectorTypes WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic) WKDataDetectorTypes dataDetectorTypes WK_API_AVAILABLE(ios(10.0));
 
 /*! @abstract A Boolean value indicating whether the WKWebView should always allow scaling of the web page, regardless of author intent.
  @discussion This will override the user-scalable property.
  The default value is NO.
  */
-@property (nonatomic) BOOL ignoresViewportScaleLimits WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic) BOOL ignoresViewportScaleLimits WK_API_AVAILABLE(ios(10.0));
 
 #else
 
@@ -194,7 +194,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  @discussion Possible values are described in WKUserInterfaceDirectionPolicy.
  The default value is WKUserInterfaceDirectionPolicyContent.
  */
-@property (nonatomic) WKUserInterfaceDirectionPolicy userInterfaceDirectionPolicy WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic) WKUserInterfaceDirectionPolicy userInterfaceDirectionPolicy WK_API_AVAILABLE(macosx(10.12));
 
 #endif
 
@@ -205,7 +205,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 #if TARGET_OS_IPHONE
 @property (nonatomic) BOOL mediaPlaybackRequiresUserAction WK_API_DEPRECATED_WITH_REPLACEMENT("requiresUserActionForMediaPlayback", ios(8.0, 9.0));
 @property (nonatomic) BOOL mediaPlaybackAllowsAirPlay WK_API_DEPRECATED_WITH_REPLACEMENT("allowsAirPlayForMediaPlayback", ios(8.0, 9.0));
-@property (nonatomic) BOOL requiresUserActionForMediaPlayback WK_API_DEPRECATED_WITH_REPLACEMENT("mediaTypesRequiringUserActionForPlayback", ios(9.0, WK_IOS_TBA));
+@property (nonatomic) BOOL requiresUserActionForMediaPlayback WK_API_DEPRECATED_WITH_REPLACEMENT("mediaTypesRequiringUserActionForPlayback", ios(9.0, 10.0));
 #endif
 
 @end

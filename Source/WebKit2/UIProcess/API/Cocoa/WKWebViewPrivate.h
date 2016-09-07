@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
     _WKImmediateActionLookupText,
     _WKImmediateActionMailtoLink,
     _WKImmediateActionTelLink
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+} WK_API_AVAILABLE(macosx(10.12));
 
 #endif
 
@@ -77,7 +77,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, readonly) NSURL *_unreachableURL;
 
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
-- (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @property (nonatomic, readonly) NSArray *_certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("certificateChain", macosx(10.10, 10.11), ios(8.0, 9.0));
 @property (nonatomic, readonly) NSURL *_committedURL;
@@ -102,7 +102,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (_WKSessionState *)_sessionStateWithFilter:(BOOL (^)(WKBackForwardListItem *item))filter;
 
 @property (nonatomic, setter=_setAllowsRemoteInspection:) BOOL _allowsRemoteInspection;
-@property (nonatomic, copy, setter=_setRemoteInspectionNameOverride:) NSString *_remoteInspectionNameOverride WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, copy, setter=_setRemoteInspectionNameOverride:) NSString *_remoteInspectionNameOverride WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @property (nonatomic, setter=_setAddsVisitedLinks:) BOOL _addsVisitedLinks;
 
@@ -192,18 +192,18 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 // do something custom, return an object that conforms to the NSImmediateActionAnimationController protocol.
 - (id)_immediateActionAnimationControllerForHitTestResult:(_WKHitTestResult *)hitTestResult withType:(_WKImmediateActionType)type userData:(id<NSSecureCoding>)userData;
 
-@property (nonatomic, setter=_setMinimumLayoutWidth:) CGFloat _minimumLayoutWidth WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setMinimumLayoutWidth:) CGFloat _minimumLayoutWidth WK_API_AVAILABLE(macosx(10.12));
 
 // When using _minimumLayoutWidth, the web content will lay out to the intrinsic height
 // of the content; use this property to force it to lay out to the height of the view instead.
-@property (nonatomic, setter=_setShouldExpandContentToViewHeightForAutoLayout:) BOOL _shouldExpandContentToViewHeightForAutoLayout WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setShouldExpandContentToViewHeightForAutoLayout:) BOOL _shouldExpandContentToViewHeightForAutoLayout WK_API_AVAILABLE(macosx(10.12));
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
-- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 #endif
 
-- (WKNavigation *)_reloadWithoutContentBlockers WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (WKNavigation *)_reloadWithoutContentBlockers WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 - (void)_killWebContentProcessAndResetState;
 
@@ -230,7 +230,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)_hideFindUI;
 
-@property (nonatomic, weak, setter=_setInputDelegate:) id <_WKInputDelegate> _inputDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, weak, setter=_setInputDelegate:) id <_WKInputDelegate> _inputDelegate WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneImageDocument) BOOL _displayingStandaloneImageDocument;
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneMediaDocument) BOOL _displayingStandaloneMediaDocument;
@@ -242,7 +242,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 @property (nonatomic, getter=_allowsMediaDocumentInlinePlayback, setter=_setAllowsMediaDocumentInlinePlayback:) BOOL _allowsMediaDocumentInlinePlayback;
 
-@property (nonatomic, readonly) BOOL _webProcessIsResponsive WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) BOOL _webProcessIsResponsive WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @end
 
@@ -255,12 +255,12 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 #if TARGET_OS_IPHONE
 
-@property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (CGPoint)_convertPointFromContentsToView:(CGPoint)point WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(ios(10.0));
+- (CGPoint)_convertPointFromContentsToView:(CGPoint)point WK_API_AVAILABLE(ios(10.0));
+- (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_API_AVAILABLE(ios(10.0));
 
-- (void)keyboardAccessoryBarNext WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)keyboardAccessoryBarNext WK_API_AVAILABLE(ios(10.0));
+- (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(10.0));
 - (void)dismissFormAccessoryView WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)selectFormAccessoryPickerRow:(int)rowIndex WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
@@ -270,14 +270,13 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 #endif
 
 #if !TARGET_OS_IPHONE
-@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macosx(10.12));
 - (void)_requestControlledElementID WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_handleControlledElementIDResponse:(NSString *)identifier WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
-- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @end
-
 
 #endif

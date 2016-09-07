@@ -35,9 +35,9 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic) NSUInteger maximumProcessCount;
 @property (nonatomic) NSInteger diskCacheSizeOverride WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 @property (nonatomic, copy) NSArray *cachePartitionedURLSchemes;
-@property (nonatomic, copy) NSArray<NSString *> *alwaysRevalidatedURLSchemes WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) BOOL ignoreSynchronousMessagingTimeoutsForTesting WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, copy) NSArray<NSString *> *alwaysRevalidatedURLSchemes WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+@property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+@property (nonatomic) BOOL ignoreSynchronousMessagingTimeoutsForTesting WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @end
 

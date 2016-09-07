@@ -129,7 +129,7 @@ NS_ASSUME_NONNULL_BEGIN
  This method will only be invoked for elements that have default preview in WebKit, which is
  limited to links. In the future, it could be invoked for additional elements.
  */
-- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo WK_API_AVAILABLE(ios(10.0));
 
 /*! @abstract Allows your app to provide a custom view controller to show when the given element is peeked.
  @param webView The web view invoking the delegate method.
@@ -144,13 +144,13 @@ NS_ASSUME_NONNULL_BEGIN
  Returning nil will result in WebKit's default preview behavior. webView:commitPreviewingViewController: will only be invoked
  if a non-nil view controller was returned.
  */
-- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<id <WKPreviewActionItem>> *)previewActions WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<id <WKPreviewActionItem>> *)previewActions WK_API_AVAILABLE(ios(10.0));
 
 /*! @abstract Allows your app to pop to the view controller it created.
  @param webView The web view invoking the delegate method.
  @param previewingViewController The view controller that is being popped.
  */
-- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_AVAILABLE(ios(10.0));
 
 #endif // TARGET_OS_IPHONE
 
@@ -164,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macosx(10.12));
 
 #endif
 

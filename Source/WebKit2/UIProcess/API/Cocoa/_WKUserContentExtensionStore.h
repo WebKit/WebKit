@@ -41,13 +41,13 @@ WK_CLASS_AVAILABLE(macosx(10.11), ios(9.0))
 
 @end
 
-WK_EXTERN NSString * const _WKUserContentExtensionsDomain WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKUserContentExtensionsDomain WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 typedef NS_ENUM(NSInteger, _WKUserContentExtensionStoreErrorCode) {
     _WKUserContentExtensionStoreErrorLookupFailed = 1,
     _WKUserContentExtensionStoreErrorVersionMismatch,
     _WKUserContentExtensionStoreErrorCompileFailed,
     _WKUserContentExtensionStoreErrorRemoveFailed,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 #endif // WK_API_ENABLED

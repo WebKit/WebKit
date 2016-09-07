@@ -36,18 +36,18 @@ typedef NS_ENUM(NSInteger, _WKLegacyErrorCode) {
 
 /*! @constant _WKJavaScriptExceptionMessageErrorKey Key in userInfo representing
  the exception message (as an NSString) for WKErrorJavaScriptExceptionOccurred errors. */
-WK_EXTERN NSString * const _WKJavaScriptExceptionMessageErrorKey WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKJavaScriptExceptionMessageErrorKey WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 /*! @constant _WKJavaScriptExceptionLineNumberErrorKey Key in userInfo representing
  the exception line number (as an NSNumber) for WKErrorJavaScriptExceptionOccurred errors. */
-WK_EXTERN NSString * const _WKJavaScriptExceptionLineNumberErrorKey WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKJavaScriptExceptionLineNumberErrorKey WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 /*! @constant _WKJavaScriptExceptionColumnNumberErrorKey Key in userInfo representing
  the exception column number (as an NSNumber) for WKErrorJavaScriptExceptionOccurred errors. */
-WK_EXTERN NSString * const _WKJavaScriptExceptionColumnNumberErrorKey WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKJavaScriptExceptionColumnNumberErrorKey WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 /*! @constant _WKJavaScriptExceptionSourceURLErrorKey Key in userInfo representing
  the exception source URL (as an NSURL) for WKErrorJavaScriptExceptionOccurred errors. */
-WK_EXTERN NSString * const _WKJavaScriptExceptionSourceURLErrorKey WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKJavaScriptExceptionSourceURLErrorKey WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 #endif

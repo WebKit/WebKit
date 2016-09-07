@@ -1,3 +1,48 @@
+2016-09-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Update availability attributes per the macOS Sierra and iOS 10 GM seeds
+        https://bugs.webkit.org/show_bug.cgi?id=161704
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/_WKHitTestResult.h:
+        * UIProcess/API/Cocoa/WKErrorPrivate.h:
+        * UIProcess/API/Cocoa/WKFrameInfoPrivate.h:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItem.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.h:
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/API/Cocoa/WKUserScriptPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.h:
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKExperimentalFeature.h:
+        * UIProcess/API/Cocoa/_WKFormInputSession.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.h:
+        * UIProcess/API/Cocoa/_WKUserContentWorld.h:
+        * UIProcess/API/Cocoa/_WKUserInitiatedAction.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataSize.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h:
+
 2016-09-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [EFL] Switch to ENABLE_NETWORK_CACHE

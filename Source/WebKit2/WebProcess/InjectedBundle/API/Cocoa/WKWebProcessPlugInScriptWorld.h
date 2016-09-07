@@ -38,7 +38,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic, readonly, copy) NSString *name;
 
 - (void)clearWrappers;
-- (void)makeAllShadowRootsOpen WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)makeAllShadowRootsOpen WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @end
 

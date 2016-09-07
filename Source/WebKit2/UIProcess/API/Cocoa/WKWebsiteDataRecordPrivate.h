@@ -33,8 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 WK_EXTERN NSString * const _WKWebsiteDataTypeHSTSCache WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_API_AVAILABLE(macosx(10.11), ios(9.0));
-WK_EXTERN NSString * const _WKWebsiteDataTypeSearchFieldRecentSearches WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-WK_EXTERN NSString * const _WKWebsiteDataTypeResourceLoadStatistics WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKWebsiteDataTypeSearchFieldRecentSearches WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+WK_EXTERN NSString * const _WKWebsiteDataTypeResourceLoadStatistics WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 
 #if !TARGET_OS_IPHONE

@@ -29,7 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(ios(10.0))
 @interface WKPreviewElementInfo : NSObject <NSCopying>
 
 @property (nonatomic, readonly, nullable) NSURL *linkURL;

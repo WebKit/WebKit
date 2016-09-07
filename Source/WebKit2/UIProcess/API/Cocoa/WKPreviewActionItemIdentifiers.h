@@ -30,9 +30,9 @@
 
 #import <Foundation/Foundation.h>
 
-WK_EXTERN NSString * const WKPreviewActionItemIdentifierOpen WK_API_AVAILABLE(ios(WK_IOS_TBA));
-WK_EXTERN NSString * const WKPreviewActionItemIdentifierAddToReadingList WK_API_AVAILABLE(ios(WK_IOS_TBA));
-WK_EXTERN NSString * const WKPreviewActionItemIdentifierCopy WK_API_AVAILABLE(ios(WK_IOS_TBA));
-WK_EXTERN NSString * const WKPreviewActionItemIdentifierShare WK_API_AVAILABLE(ios(WK_IOS_TBA));
+WK_EXTERN NSString * const WKPreviewActionItemIdentifierOpen WK_API_AVAILABLE(ios(10.0));
+WK_EXTERN NSString * const WKPreviewActionItemIdentifierAddToReadingList WK_API_AVAILABLE(ios(10.0));
+WK_EXTERN NSString * const WKPreviewActionItemIdentifierCopy WK_API_AVAILABLE(ios(10.0));
+WK_EXTERN NSString * const WKPreviewActionItemIdentifierShare WK_API_AVAILABLE(ios(10.0));
 
 #endif

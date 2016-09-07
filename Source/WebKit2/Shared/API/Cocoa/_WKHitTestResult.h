@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA))
+WK_CLASS_AVAILABLE(macosx(10.12))
 @interface _WKHitTestResult : NSObject <NSCopying>
 
 @property (nonatomic, readonly, copy) NSURL *absoluteImageURL;

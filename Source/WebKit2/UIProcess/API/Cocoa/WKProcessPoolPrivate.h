@@ -49,17 +49,17 @@
 - (id)_objectForBundleParameter:(NSString *)parameter;
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
 // FIXME: This should be NSDictionary<NSString *, id <NSCopying, NSSecureCoding>>
-- (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
-@property (nonatomic, weak, setter=_setAutomationDelegate:) id <_WKAutomationDelegate> _automationDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, weak, setter=_setAutomationDelegate:) id <_WKAutomationDelegate> _automationDelegate WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL bundleIdentifierIfNotInContainer:(NSString *)bundleIdentifier;
 
-- (void)_warmInitialProcess WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_automationCapabilitiesDidChange WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_setAutomationSession:(_WKAutomationSession *)automationSession WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_warmInitialProcess WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+- (void)_automationCapabilitiesDidChange WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+- (void)_setAutomationSession:(_WKAutomationSession *)automationSession WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateDatabaseProcess;

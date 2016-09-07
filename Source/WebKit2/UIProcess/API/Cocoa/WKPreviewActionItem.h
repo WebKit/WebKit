@@ -29,7 +29,7 @@
 
 #import <UIKit/UIViewController.h>
 
-WK_API_AVAILABLE(ios(WK_IOS_TBA))
+WK_API_AVAILABLE(ios(10.0))
 @protocol WKPreviewActionItem <UIPreviewActionItem>
 
 @property (nonatomic, copy, readonly) NSString *identifier;
