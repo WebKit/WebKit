@@ -1,3 +1,12 @@
+2016-09-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the ENABLE(WEBASSEMBLY) build on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=161685
+
+        Unreviewed buildfix.
+
+        * wasm/JSWASMModule.cpp:
+
 2016-09-06  Saam Barati  <sbarati@apple.com>
 
         ProxyObject's structure should not have ObjectPrototype as its prototype and it should not have special behavior for intercepting "__proto__"

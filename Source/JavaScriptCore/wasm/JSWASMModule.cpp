@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AuxiliaryBarrierInlines.h"
+#include "HeapInlines.h"
 #include "JSArrayBuffer.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
