@@ -1,5 +1,16 @@
 2016-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Fix handling of negative radius in HTMLAreaElement's coords when in circle state
+        https://bugs.webkit.org/show_bug.cgi?id=161690
+
+        Reviewed by Daniel Bates.
+
+        Rebaseline existing test now that one more check is passing.
+
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-processing-expected.txt:
+
+2016-09-07  Chris Dumez  <cdumez@apple.com>
+
         Align HTMLAreaElement shape parsing with the specification
         https://bugs.webkit.org/show_bug.cgi?id=161698
 
