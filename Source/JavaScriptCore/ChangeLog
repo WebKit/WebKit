@@ -1,3 +1,24 @@
+2016-09-06  Saam Barati  <sbarati@apple.com>
+
+        ProxyObject's structure should not have ObjectPrototype as its prototype and it should not have special behavior for intercepting "__proto__"
+        https://bugs.webkit.org/show_bug.cgi?id=161558
+
+        Reviewed by Benjamin Poulain.
+
+        ProxyObject had ObjectPrototype as its direct prototype.
+        This could lead to infinite loops when doing a getDirectPrototype()
+        loop.
+
+        Fixing this bug revealed another bug, which I made when implementing Proxy.
+        We should not special case "__proto__" in get and set for Proxy Object's
+        hooks. "__proto__" should just go through the normal set and get path.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::put):
+
 2016-09-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Make JSC::PrivateName copyable

@@ -508,9 +508,9 @@ void JSGlobalObject::init(VM& vm)
     m_moduleNamespaceObjectStructure.set(vm, this, JSModuleNamespaceObject::createStructure(vm, this, jsNull()));
     {
         bool isCallable = false;
-        m_proxyObjectStructure.set(vm, this, ProxyObject::createStructure(vm, this, m_objectPrototype.get(), isCallable));
+        m_proxyObjectStructure.set(vm, this, ProxyObject::createStructure(vm, this, jsNull(), isCallable));
         isCallable = true;
-        m_callableProxyObjectStructure.set(vm, this, ProxyObject::createStructure(vm, this, m_objectPrototype.get(), isCallable));
+        m_callableProxyObjectStructure.set(vm, this, ProxyObject::createStructure(vm, this, jsNull(), isCallable));
     }
     m_proxyRevokeStructure.set(vm, this, ProxyRevoke::createStructure(vm, this, m_functionPrototype.get()));
 

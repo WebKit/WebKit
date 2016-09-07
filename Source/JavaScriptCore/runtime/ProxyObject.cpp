@@ -125,9 +125,6 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
 
     JSObject* target = proxyObject->target();
 
-    if (propertyName == vm.propertyNames->underscoreProto)
-        return proxyObject->performGetPrototype(exec);
-
     auto performDefaultGet = [&] {
         return target->get(exec, propertyName);
     };
@@ -458,8 +455,6 @@ bool ProxyObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
 {
     VM& vm = exec->vm();
     slot.disableCaching();
-    if (propertyName == vm.propertyNames->underscoreProto)
-        return Base::put(cell, exec, propertyName, value, slot);
 
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
     auto performDefaultPut = [&] () {
