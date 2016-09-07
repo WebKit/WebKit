@@ -1,3 +1,9 @@
+2016-09-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed CMake build fix after r205552
+
+        * CMakeLists.txt:
+
 2016-09-03  Keith Miller  <keith_miller@apple.com>
 
         Add support for WASM Loops and Branches

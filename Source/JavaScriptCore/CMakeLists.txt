@@ -851,10 +851,10 @@ set(JavaScriptCore_SOURCES
 
     wasm/JSWASMModule.cpp
     wasm/WASMB3IRGenerator.cpp
+    wasm/WASMCallingConvention.cpp
     wasm/WASMModuleParser.cpp
     wasm/WASMPlan.cpp
     wasm/WASMSections.cpp
-    wasm/WASMCallingConventions.cpp
 
     yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp
