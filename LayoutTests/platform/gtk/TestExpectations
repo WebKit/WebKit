@@ -2807,9 +2807,6 @@ webkit.org/b/160119 storage/indexeddb/objectstore-cursor.html [ Timeout Pass ]
 webkit.org/b/160119 svg/repaint/add-outline-property-on-root.html [ ImageOnlyFailure ]
 webkit.org/b/160119 svg/repaint/remove-outline-property-on-root.html [ ImageOnlyFailure ]
 
-webkit.org/b/161242 compositing/fixed-with-fixed-layout.html [ Skip ]
-webkit.org/b/161242 fast/fixed-layout/fixed-layout.html [ Skip ]
-
 webkit.org/b/161242 animations/negative-delay.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

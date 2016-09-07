@@ -1,5 +1,31 @@
 2016-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][Threaded Compositor] Several flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=161242
+
+        Reviewed by Michael Catanzaro.
+
+        Reset the viewport attributes on SimpleViewportController when viewport attributes change and fixed layout is
+        not used. We were only updating the viewport attributes when fixed layout was used, but not resetting them again
+        when it's no longer used. That caused that reference tests run after fast/fixed-layout/fixed-layout.html or
+        compositing/fixed-with-fixed-layout.html in the same worker thread were incorrectly rendered.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange): Remove ifdefs and call
+        WebPage::viewportPropertiesDidChange() unconditionally.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSize): Pass current page viewport arguments to sendViewportAttributesChanged().
+        (WebKit::WebPage::sendViewportAttributesChanged): It now receives the viewport arguments.
+        (WebKit::WebPage::viewportPropertiesDidChange): Move the iOS implementation from WebPageIOS.mm and for
+        coordinated graphics call sendViewportAttributesChanged() when fixed layout is used or reset the viewport
+        attributes when not used in case of threaded compositor.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::viewportPropertiesDidChange): Moved out of iOS ifdef.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportPropertiesDidChange): Deleted.
+
+2016-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix the GTK+ build after r205524.
 
         * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:

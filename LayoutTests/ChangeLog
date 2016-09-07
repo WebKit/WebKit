@@ -1,3 +1,14 @@
+2016-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Threaded Compositor] Several flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=161242
+
+        Reviewed by Michael Catanzaro.
+
+        Unskip compositing/fixed-with-fixed-layout.html and fast/fixed-layout/fixed-layout.html.
+
+        * platform/gtk/TestExpectations:
+
 2016-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/security/cross-origin-plugin-allowed.html as flaky on mac-wk2 release.

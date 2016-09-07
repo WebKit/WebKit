@@ -504,11 +504,12 @@ public:
     void elementDidBlur(WebCore::Node*);
     void resetAssistedNodeForFrame(WebFrame*);
 
+    void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
+
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize() const;
     WebCore::FloatSize availableScreenSize() const;
     int32_t deviceOrientation() const { return m_deviceOrientation; }
-    void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void didReceiveMobileDocType(bool);
 
     void setUseTestingViewportConfiguration(bool useTestingViewport) { m_useTestingViewportConfiguration = useTestingViewport; }
@@ -597,7 +598,6 @@ public:
     void pageDidScroll();
 #if USE(COORDINATED_GRAPHICS)
     void pageDidRequestScroll(const WebCore::IntPoint&);
-    void sendViewportAttributesChanged();
 #endif
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
@@ -1126,6 +1126,10 @@ private:
     void selectFindMatch(uint32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, uint32_t findOptions, uint32_t maxMatchCount);
+
+#if USE(COORDINATED_GRAPHICS)
+    void sendViewportAttributesChanged(const WebCore::ViewportArguments&);
+#endif
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize& area);
