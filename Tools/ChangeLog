@@ -1,3 +1,15 @@
+2016-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Using tests-options.json to compute whether tests are slow
+        https://bugs.webkit.org/show_bug.cgi?id=161626
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py: Updated first test to use a MockHost.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__): Loading tests-options.json
+        (Manager._test_is_slow): Computing timeout value based on tests-options.json.
+
 2016-09-07  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Need the libosmesa to support the software backend drawing.

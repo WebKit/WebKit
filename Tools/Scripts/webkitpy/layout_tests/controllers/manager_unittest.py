@@ -48,7 +48,8 @@ class ManagerTest(unittest.TestCase):
             return 'imported/w3c/wpt'
 
         def get_manager():
-            port = Mock()  # FIXME: Use a tighter mock.
+            host = MockHost()
+            port = host.port_factory.get()
             port.TEST_PATH_SEPARATOR = '/'
             port.web_platform_test_server_doc_root = get_wpt_doc_root
             manager = Manager(port, options=MockOptions(http=True), printer=Mock())

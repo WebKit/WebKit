@@ -86,6 +86,9 @@ class Manager(object):
         self._finder = LayoutTestFinder(self._port, self._options)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow)
 
+        test_options_json_path = self._port.path_from_webkit_base(self.LAYOUT_TESTS_DIRECTORY, "tests-options.json")
+        self._tests_options = json.loads(self._filesystem.read_text_file(test_options_json_path)) if self._filesystem.exists(test_options_json_path) else {}
+
     def _collect_tests(self, args):
         return self._finder.find_tests(self._options, args)
 
@@ -131,7 +134,9 @@ class Manager(object):
             self._is_http_test(test_file))
 
     def _test_is_slow(self, test_file):
-        return self._expectations.model().has_modifier(test_file, test_expectations.SLOW)
+        if self._expectations.model().has_modifier(test_file, test_expectations.SLOW):
+            return True
+        return "slow" in self._tests_options.get(test_file, [])
 
     def needs_servers(self, test_names):
         return any(self._is_http_test(test_name) for test_name in test_names) and self._options.http

@@ -1,3 +1,12 @@
+2016-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Using tests-options.json to compute whether tests are slow
+        https://bugs.webkit.org/show_bug.cgi?id=161626
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Removing slow WPT expectations now that they are handled through tests-options.json.
+
 2016-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Threaded Compositor] Several flaky tests
