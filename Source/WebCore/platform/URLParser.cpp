@@ -517,11 +517,13 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 break;
             case '?':
                 copyURLPartsUntil(base, URLPart::PathEnd);
+                m_buffer.append('?');
                 state = State::Query;
                 ++c;
                 break;
             case '#':
                 copyURLPartsUntil(base, URLPart::QueryEnd);
+                m_buffer.append('#');
                 state = State::Fragment;
                 ++c;
                 break;
