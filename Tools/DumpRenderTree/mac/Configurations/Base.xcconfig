@@ -98,6 +98,8 @@ WEBCORE_PRIVATE_HEADERS_DIR_engineering = $(BUILT_PRODUCTS_DIR)/WebCore.framewor
 
 WEBKIT_SYSTEM_INTERFACE_LIBRARY = WebKitSystemInterface
 
+AD_HOC_CODE_SIGNING_ALLOWED = YES;
+
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
 
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);

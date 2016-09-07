@@ -1,3 +1,16 @@
+2016-09-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] DumpRenderTree and WebKitTestRunner fail to build - "Ad Hoc code signing is not allowed with SDK 'Simulator - iOS 10.0'"
+        https://bugs.webkit.org/show_bug.cgi?id=161661
+
+        Reviewed by Darin Adler.
+
+        Allow ad-hoc code signing when building the dummy DumpRenderTree and WebKitTestRunner
+        command line tools for simulator with the iOS 10 beta SDK.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2016-09-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix query-only and fragment-only relative URLs when using URLParser
