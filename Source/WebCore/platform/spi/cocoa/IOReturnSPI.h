@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 #include <mach/kern_return.h>
 
 typedef kern_return_t IOReturn;
+
+#define kIOReturnSuccess KERN_SUCCESS
 
 #endif
 
