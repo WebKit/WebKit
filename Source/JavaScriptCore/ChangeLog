@@ -1,3 +1,17 @@
+2016-09-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Make JSC::PrivateName copyable
+        https://bugs.webkit.org/show_bug.cgi?id=161666
+
+        Reviewed by Ryosuke Niwa.
+
+        Define the custom copy constructor to make PrivateName copyable while using Ref<SymbolImpl>.
+        And since the custom copy constructor deletes the default move constructor, we explcitly define
+        it by `= default;`.
+
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+
 2016-09-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] Build fails in JSCLLIntOffsetsExtractor - Ad Hoc code signing is not allowed with SDK 'Simulator - iOS 10.0'

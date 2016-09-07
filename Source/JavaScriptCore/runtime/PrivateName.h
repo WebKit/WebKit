@@ -48,6 +48,13 @@ public:
     {
     }
 
+    PrivateName(const PrivateName& privateName)
+        : m_uid(privateName.m_uid.copyRef())
+    {
+    }
+
+    PrivateName(PrivateName&&) = default;
+
     SymbolImpl& uid() const { return const_cast<SymbolImpl&>(m_uid.get()); }
 
     bool operator==(const PrivateName& other) const { return &uid() == &other.uid(); }
