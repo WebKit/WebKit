@@ -1,4 +1,4 @@
 
 PASS Canvas support for supportsContext 
-FAIL Canvas support for probablySupportsContext assert_false: expected false got true
+PASS Canvas support for probablySupportsContext 
 

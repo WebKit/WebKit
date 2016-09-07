@@ -100,31 +100,6 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
     return toJS(&state, globalObject(), downcast<CanvasRenderingContext2D>(*context));
 }
 
-JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 1))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-
-    HTMLCanvasElement& canvas = wrapped();
-    const String& contextId = state.uncheckedArgument(0).toWTFString(&state);
-    if (state.hadException())
-        return jsUndefined();
-    
-    RefPtr<CanvasContextAttributes> attrs;
-#if ENABLE(WEBGL)
-    if (HTMLCanvasElement::is3dType(contextId)) {
-        get3DContextAttributes(state, attrs);
-        if (state.hadException())
-            return jsUndefined();
-    }
-#endif
-    
-    return jsBoolean(canvas.probablySupportsContext(contextId, attrs.get()));
-}
-
 JSValue JSHTMLCanvasElement::toDataURL(ExecState& state)
 {
     HTMLCanvasElement& canvas = wrapped();

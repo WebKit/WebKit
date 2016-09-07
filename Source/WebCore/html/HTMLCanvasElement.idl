@@ -36,6 +36,5 @@
 
     // The custom binding is needed to handle context creation attributes.
     [Custom] any getContext(DOMString contextId, any... arguments);
-    [Custom] boolean probablySupportsContext(DOMString contextId, any... arguments);
 };
 

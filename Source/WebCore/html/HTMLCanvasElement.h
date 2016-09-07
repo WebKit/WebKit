@@ -86,7 +86,6 @@ public:
     }
 
     CanvasRenderingContext* getContext(const String&, CanvasContextAttributes* = nullptr);
-    bool probablySupportsContext(const String&, CanvasContextAttributes* = nullptr);
     static bool is2dType(const String&);
 #if ENABLE(WEBGL)
     static bool is3dType(const String&);

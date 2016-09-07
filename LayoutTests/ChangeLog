@@ -1,3 +1,15 @@
+2016-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy canvas.probablySupportsContext()
+        https://bugs.webkit.org/show_bug.cgi?id=161692
+
+        Reviewed by Alex Christensen.
+
+        Drop legacy layout test.
+
+        * fast/canvas/webgl/canvas-supports-context-expected.txt: Removed.
+        * fast/canvas/webgl/canvas-supports-context.html: Removed.
+
 2016-09-07  Nan Wang  <n_wang@apple.com>
 
         [GTK] Layout test accessibility/media-emits-object-replacement.html fails
