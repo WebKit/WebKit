@@ -1,3 +1,13 @@
+2016-09-07  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [GTK] Make inspection of Inspector conditional on DEVELOPER_MODE
+        https://bugs.webkit.org/show_bug.cgi?id=161702
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2016-09-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Update availability attributes per the macOS Sierra and iOS 10 GM seeds
