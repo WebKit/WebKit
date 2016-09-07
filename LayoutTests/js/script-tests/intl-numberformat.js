@@ -189,6 +189,31 @@ shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-x')", "'RangeError: invali
 shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-*')", "'RangeError: invalid language tag: en-*'");
 shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-')", "'RangeError: invalid language tag: en-'");
 shouldThrow("Intl.NumberFormat.supportedLocalesOf('en--US')", "'RangeError: invalid language tag: en--US'");
+// Accepts valid tags
+var validLanguageTags = [
+    "de", // ISO 639 language code
+    "de-DE", // + ISO 3166-1 country code
+    "DE-de", // tags are case-insensitive
+    "cmn", // ISO 639 language code
+    "cmn-Hans", // + script code
+    "CMN-hANS", // tags are case-insensitive
+    "cmn-hans-cn", // + ISO 3166-1 country code
+    "es-419", // + UN M.49 region code
+    "es-419-u-nu-latn-cu-bob", // + Unicode locale extension sequence
+    "i-klingon", // grandfathered tag
+    "cmn-hans-cn-t-ca-u-ca-x-t-u", // singleton subtags can also be used as private use subtags
+    "enochian-enochian", // language and variant subtags may be the same
+    "de-gregory-u-ca-gregory", // variant and extension subtags may be the same
+    "aa-a-foo-x-a-foo-bar", // variant subtags can also be used as private use subtags
+    "x-en-US-12345", // anything goes in private use tags
+    "x-12345-12345-en-US",
+    "x-en-US-12345-12345",
+    "x-en-u-foo",
+    "x-en-u-foo-u-bar"
+];
+for (var validLanguageTag of validLanguageTags) {
+    shouldNotThrow("Intl.NumberFormat.supportedLocalesOf('" + validLanguageTag + "')");
+}
 
 // 11.3 Properties of the Intl.NumberFormat Prototype Object
 

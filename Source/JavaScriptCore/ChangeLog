@@ -1,3 +1,20 @@
+2016-09-07  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] some valid language tags cause errors in Intl constructors
+        https://bugs.webkit.org/show_bug.cgi?id=161672
+
+        Reviewed by Mark Lam.
+
+        Fix private use tag parsing to match spec, allowing single character parts.
+        https://www.rfc-editor.org/rfc/bcp/bcp47.txt
+
+        ```
+        privateuse    = "x" 1*("-" (1*8alphanum))
+        ```
+
+        * runtime/IntlObject.cpp:
+        (JSC::privateUseLangTag): Allow singleton parts in private use tag.
+
 2016-09-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove a couple of useless forward declaration

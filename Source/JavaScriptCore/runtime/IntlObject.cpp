@@ -258,7 +258,7 @@ static String privateUseLangTag(const Vector<String>& parts, size_t startIndex)
     size_t currentIndex = startIndex;
 
     // Check for privateuse.
-    // privateuse = "x" 1*("-" (2*8alphanum))
+    // privateuse = "x" 1*("-" (1*8alphanum))
     StringBuilder privateuse;
     while (currentIndex < numParts) {
         const String& singleton = parts[currentIndex];
@@ -277,7 +277,7 @@ static String privateUseLangTag(const Vector<String>& parts, size_t startIndex)
             const String& extPart = parts[currentIndex];
             unsigned extPartLength = extPart.length();
 
-            bool isValid = (extPartLength >= 2 && extPartLength <= 8 && extPart.isAllSpecialCharacters<isASCIIAlphanumeric>());
+            bool isValid = (extPartLength >= 1 && extPartLength <= 8 && extPart.isAllSpecialCharacters<isASCIIAlphanumeric>());
             if (!isValid)
                 break;
 

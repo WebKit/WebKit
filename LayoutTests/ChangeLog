@@ -1,3 +1,19 @@
+2016-09-07  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] some valid language tags cause errors in Intl constructors
+        https://bugs.webkit.org/show_bug.cgi?id=161672
+
+        Reviewed by Mark Lam.
+
+        Add list of valid language tags that should not throw from test262.
+
+        * js/intl-collator-expected.txt:
+        * js/intl-datetimeformat-expected.txt:
+        * js/intl-numberformat-expected.txt:
+        * js/script-tests/intl-collator.js:
+        * js/script-tests/intl-datetimeformat.js:
+        * js/script-tests/intl-numberformat.js:
+
 2016-09-07  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy canvas.probablySupportsContext()

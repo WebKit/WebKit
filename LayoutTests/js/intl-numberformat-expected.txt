@@ -111,6 +111,25 @@ PASS Intl.NumberFormat.supportedLocalesOf('en-x') threw exception RangeError: in
 PASS Intl.NumberFormat.supportedLocalesOf('en-*') threw exception RangeError: invalid language tag: en-*.
 PASS Intl.NumberFormat.supportedLocalesOf('en-') threw exception RangeError: invalid language tag: en-.
 PASS Intl.NumberFormat.supportedLocalesOf('en--US') threw exception RangeError: invalid language tag: en--US.
+PASS Intl.NumberFormat.supportedLocalesOf('de') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('de-DE') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('DE-de') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('cmn') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('cmn-Hans') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('CMN-hANS') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('cmn-hans-cn') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('es-419') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('es-419-u-nu-latn-cu-bob') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('i-klingon') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('cmn-hans-cn-t-ca-u-ca-x-t-u') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('enochian-enochian') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('de-gregory-u-ca-gregory') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('aa-a-foo-x-a-foo-bar') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-en-US-12345') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-12345-12345-en-US') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-en-u-foo') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
 PASS Intl.NumberFormat.prototype.constructor is Intl.NumberFormat
 PASS Intl.NumberFormat.prototype.format is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').get is an instance of Function
