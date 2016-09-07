@@ -90,6 +90,7 @@ function installDependenciesWithApt {
         libluajit-5.1-dev \
         libmpg123-dev \
         liborc-0.4-dev \
+        libosmesa6-dev \
         libp11-kit-dev \
         $(aptIfElse libpng-dev libpng12-dev) \
         libpoppler-cpp-dev \
