@@ -33,7 +33,7 @@
 #include "PaintPhase.h"
 #include "RenderObjectEnums.h"
 #include "RenderStyle.h"
-#include "ScrollBehavior.h"
+#include "ScrollAlignment.h"
 #include "StyleImage.h"
 #include "TextAffinity.h"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003, 2009, 2016 Apple Inc.  All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -41,25 +41,25 @@
  * version of this file under any of the LGPL, the MPL or the GPL.
  */
 
-#ifndef ScrollBehavior_h
-#define ScrollBehavior_h
+#pragma once
 
 namespace WebCore {
 
-enum ScrollBehavior {
-    noScroll,
-    alignCenter,
-    alignTop,
-    alignBottom, 
-    alignLeft,
-    alignRight,
-    alignToClosestEdge
-};
-
 struct ScrollAlignment {
-    static ScrollBehavior getVisibleBehavior(const ScrollAlignment& s) { return s.m_rectVisible; }
-    static ScrollBehavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
-    static ScrollBehavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
+
+    enum class Behavior {
+        NoScroll,
+        AlignCenter,
+        AlignTop,
+        AlignBottom,
+        AlignLeft,
+        AlignRight,
+        AlignToClosestEdge
+    };
+
+    static Behavior getVisibleBehavior(const ScrollAlignment& s) { return s.m_rectVisible; }
+    static Behavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
+    static Behavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
 
     static const ScrollAlignment alignCenterIfNotVisible;
     static const ScrollAlignment alignToEdgeIfNotVisible;
@@ -71,12 +71,9 @@ struct ScrollAlignment {
     static const ScrollAlignment alignLeftAlways;
     static const ScrollAlignment alignBottomAlways;
 
-    ScrollBehavior m_rectVisible;
-    ScrollBehavior m_rectHidden;
-    ScrollBehavior m_rectPartial;
+    Behavior m_rectVisible;
+    Behavior m_rectHidden;
+    Behavior m_rectPartial;
 };
 
-
 }; // namespace WebCore
-
-#endif // ScrollBehavior_h

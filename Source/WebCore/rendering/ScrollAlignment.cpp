@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2016 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -42,18 +42,18 @@
  */
 
 #include "config.h"
-#include "ScrollBehavior.h"
+#include "ScrollAlignment.h"
 
 namespace WebCore {
 
-const ScrollAlignment ScrollAlignment::alignCenterIfNotVisible = { noScroll, alignCenter, noScroll };
-const ScrollAlignment ScrollAlignment::alignToEdgeIfNotVisible = { noScroll, alignToClosestEdge, noScroll };
-const ScrollAlignment ScrollAlignment::alignCenterIfNeeded = { noScroll, alignCenter, alignToClosestEdge };
-WEBCORE_EXPORT const ScrollAlignment ScrollAlignment::alignToEdgeIfNeeded = { noScroll, alignToClosestEdge, alignToClosestEdge };
-WEBCORE_EXPORT const ScrollAlignment ScrollAlignment::alignCenterAlways = { alignCenter, alignCenter, alignCenter };
-const ScrollAlignment ScrollAlignment::alignTopAlways = { alignTop, alignTop, alignTop };
-const ScrollAlignment ScrollAlignment::alignRightAlways = { alignRight, alignRight, alignRight };
-const ScrollAlignment ScrollAlignment::alignLeftAlways = { alignLeft, alignLeft, alignLeft };
-const ScrollAlignment ScrollAlignment::alignBottomAlways = { alignBottom, alignBottom, alignBottom };
+const ScrollAlignment ScrollAlignment::alignCenterIfNotVisible = { Behavior::NoScroll, Behavior::AlignCenter, Behavior::NoScroll };
+const ScrollAlignment ScrollAlignment::alignToEdgeIfNotVisible = { Behavior::NoScroll, Behavior::AlignToClosestEdge, Behavior::NoScroll };
+const ScrollAlignment ScrollAlignment::alignCenterIfNeeded = { Behavior::NoScroll, Behavior::AlignCenter, Behavior::AlignToClosestEdge };
+WEBCORE_EXPORT const ScrollAlignment ScrollAlignment::alignToEdgeIfNeeded = { Behavior::NoScroll, Behavior::AlignToClosestEdge, Behavior::AlignToClosestEdge };
+WEBCORE_EXPORT const ScrollAlignment ScrollAlignment::alignCenterAlways = { Behavior::AlignCenter, Behavior::AlignCenter, Behavior::AlignCenter };
+const ScrollAlignment ScrollAlignment::alignTopAlways = { Behavior::AlignTop, Behavior::AlignTop, Behavior::AlignTop };
+const ScrollAlignment ScrollAlignment::alignRightAlways = { Behavior::AlignRight, Behavior::AlignRight, Behavior::AlignRight };
+const ScrollAlignment ScrollAlignment::alignLeftAlways = { Behavior::AlignLeft, Behavior::AlignLeft, Behavior::AlignLeft };
+const ScrollAlignment ScrollAlignment::alignBottomAlways = { Behavior::AlignBottom, Behavior::AlignBottom, Behavior::AlignBottom };
 
 }; // namespace WebCore
