@@ -3899,7 +3899,7 @@ sub GenerateParametersCheck
     } else {
         $functionName = "impl.${functionImplementationName}";
     }
-    
+
     my $quotedFunctionName;
     if (!$function->signature->extendedAttributes->{"Constructor"}) {
         my $name = $function->signature->name;
@@ -3975,23 +3975,19 @@ sub GenerateParametersCheck
             }
             $value = "WTFMove($name)";
         } elsif ($parameter->isVariadic) {
-            my $nativeElementType = GetNativeType($interface, $type);
-            if (!IsNativeType($type)) {
-                push(@$outputArray, "    Vector<$nativeElementType> $name;\n");
-                push(@$outputArray, "    ASSERT($argumentIndex <= state->argumentCount());\n");
-                push(@$outputArray, "    $name.reserveInitialCapacity(state->argumentCount() - $argumentIndex);\n");
-                push(@$outputArray, "    for (unsigned i = $argumentIndex, count = state->argumentCount(); i < count; ++i) {\n");
-                push(@$outputArray, "        auto* item = JS${type}::toWrapped(state->uncheckedArgument(i));\n");
-                push(@$outputArray, "        if (!item)\n");
-                push(@$outputArray, "            return throwArgumentTypeError(*state, throwScope, i, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, \"$type\");\n");
-                push(@$outputArray, "        $name.uncheckedAppend(item);\n");
-                push(@$outputArray, "    }\n")
-            } else {
-                push(@$outputArray, "    Vector<$nativeElementType> $name = toNativeArguments<$nativeElementType>(*state, $argumentIndex);\n");
+            my ($wrapperType, $wrappedType) = GetVariadicType($interface, $type);
+            push(@$outputArray, "    auto $name = toArguments<VariadicHelper<$wrapperType, $wrappedType>>(*state, $argumentIndex);\n");
+
+            if (IsNativeType($type)) {
                 push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
-            $value = "WTFMove($name)";
+            else {
+                push(@$outputArray, "    if (!$name.second)\n");
+                push(@$outputArray, "        return throwArgumentTypeError(*state, throwScope, $name.first, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, \"$type\");\n");
+            }
+            $value = "WTFMove(*$name.second)";
+
         } elsif ($codeGenerator->IsEnumType($type)) {
             my $className = GetEnumerationClassName($interface, $type);
 
@@ -4056,7 +4052,7 @@ sub GenerateParametersCheck
             } else {
                 if ($parameter->isOptional && defined($parameter->default) && !WillConvertUndefinedToDefaultParameterValue($type, $parameter->default)) {
                     my $defaultValue = $parameter->default;
-    
+
                     # String-related optimizations.
                     if ($codeGenerator->IsStringType($type)) {
                         my $useAtomicString = $parameter->extendedAttributes->{"AtomicString"};
@@ -4073,7 +4069,7 @@ sub GenerateParametersCheck
                         $defaultValue = "$nativeType()" if $defaultValue eq "[]";
                         $defaultValue = "JSValue::JSUndefined" if $defaultValue eq "undefined";
                     }
-    
+
                     $outer = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
                     $inner = "state->uncheckedArgument($argumentIndex)";
                 } elsif ($parameter->isOptional && !defined($parameter->default)) {
@@ -4603,6 +4599,16 @@ my %nativeType = (
     "unsigned long" => "uint32_t",
     "unsigned short" => "uint16_t",
 );
+
+sub GetVariadicType
+{
+    my ($interface, $type) = @_;
+
+    my $wrappedType = IsNativeType($type) ? GetNativeType($interface, $type) : $type;
+    my $wrapperType = IsNativeType($type) ? "JSC::JSValue" : "JS$wrappedType";
+
+    return ($wrapperType, $wrappedType);
+}
 
 sub GetNativeType
 {

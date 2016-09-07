@@ -296,7 +296,6 @@ RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue);
 
 template<typename T, typename JSType> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState*, JSC::JSValue);
 template<typename T> Vector<T> toNativeArray(JSC::ExecState&, JSC::JSValue);
-template<typename T> Vector<T> toNativeArguments(JSC::ExecState&, size_t startIndex = 0);
 bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
 
 bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
@@ -323,6 +322,45 @@ String propertyNameToString(JSC::PropertyName);
 AtomicString propertyNameToAtomicString(JSC::PropertyName);
 
 template<JSC::NativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+
+template<typename T> struct NativeValueTraits;
+
+template<typename JSClass, typename DOMClass, typename Enable = void>
+struct VariadicHelperBase {
+    using Item = DOMClass;
+
+    static Optional<Item> convert(JSC::ExecState& state, JSC::JSValue jsValue)
+    {
+        typedef NativeValueTraits<DOMClass> TraitsType;
+        DOMClass indexValue;
+        if (!TraitsType::nativeValue(state, jsValue, indexValue))
+            return Nullopt;
+        return indexValue;
+    }
+};
+
+template<typename JSClass, typename DOMClass>
+struct VariadicHelperBase<JSClass, DOMClass, typename std::enable_if<!JSDOMObjectInspector<JSClass>::isBuiltin>::type> {
+    using Class = typename std::remove_reference<decltype(std::declval<JSClass>().wrapped())>::type;
+    using Item = std::reference_wrapper<Class>;
+
+    static Optional<Item> convert(JSC::ExecState&, JSC::JSValue jsValue)
+    {
+        auto* value = JSClass::toWrapped(jsValue);
+        if (!value)
+            return Nullopt;
+        return Optional<Item>(*value);
+    }
+};
+
+template<typename JSClass, typename DOMClass>
+struct VariadicHelper : public VariadicHelperBase<JSClass, DOMClass> {
+    using Item = typename VariadicHelperBase<JSClass, DOMClass>::Item;
+    using Container = Vector<Item>;
+    using Result = typename std::pair<size_t, Optional<Container>>;
+};
+
+template<typename VariadicHelper> typename VariadicHelper::Result toArguments(JSC::ExecState&, size_t startIndex = 0);
 
 // Inline functions and template definitions.
 
@@ -704,8 +742,6 @@ inline RefPtr<JSC::Uint32Array> toUint32Array(JSC::JSValue value) { return JSC::
 inline RefPtr<JSC::Float32Array> toFloat32Array(JSC::JSValue value) { return JSC::toNativeTypedView<JSC::Float32Adaptor>(value); }
 inline RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue value) { return JSC::toNativeTypedView<JSC::Float64Adaptor>(value); }
 
-template<typename T> struct NativeValueTraits;
-
 template<> struct NativeValueTraits<String> {
     static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, String& indexedValue)
     {
@@ -781,24 +817,6 @@ template<typename T> Vector<T> toNativeArray(JSC::ExecState& exec, JSC::JSValue 
     return result;
 }
 
-template<typename T> Vector<T> toNativeArguments(JSC::ExecState& exec, size_t startIndex)
-{
-    size_t length = exec.argumentCount();
-    ASSERT(startIndex <= length);
-
-    Vector<T> result;
-    result.reserveInitialCapacity(length - startIndex);
-    typedef NativeValueTraits<T> TraitsType;
-
-    for (size_t i = startIndex; i < length; ++i) {
-        T indexValue;
-        if (!TraitsType::nativeValue(exec, exec.uncheckedArgument(i), indexValue))
-            return Vector<T>();
-        result.uncheckedAppend(indexValue);
-    }
-    return result;
-}
-
 inline String propertyNameToString(JSC::PropertyName propertyName)
 {
     ASSERT(!propertyName.isSymbol());
@@ -808,6 +826,24 @@ inline String propertyNameToString(JSC::PropertyName propertyName)
 inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
 {
     return AtomicString(propertyName.uid() ? propertyName.uid() : propertyName.publicName());
+}
+
+template<typename VariadicHelper> typename VariadicHelper::Result toArguments(JSC::ExecState& state, size_t startIndex)
+{
+    size_t length = state.argumentCount();
+    if (startIndex > length)
+        return { 0, Nullopt };
+
+    typename VariadicHelper::Container result;
+    result.reserveInitialCapacity(length - startIndex);
+
+    for (size_t i = startIndex; i < length; ++i) {
+        auto value = VariadicHelper::convert(state, state.uncheckedArgument(i));
+        if (!value)
+            return { i, Nullopt };
+        result.uncheckedAppend(WTFMove(value.value()));
+    }
+    return { length, WTFMove(result) };
 }
 
 template<JSC::NativeFunction nativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, JSC::EncodedJSValue, JSC::PropertyName propertyName)

@@ -72,7 +72,7 @@ public:
     // Part of legacy MediaStream-based API (mostly implemented as JS built-ins)
     Vector<RefPtr<MediaStream>> getRemoteStreams() const { return m_backend->getRemoteStreams(); }
 
-    RefPtr<RTCRtpSender> addTrack(Ref<MediaStreamTrack>&&, const Vector<MediaStream*>&, ExceptionCode&);
+    RefPtr<RTCRtpSender> addTrack(Ref<MediaStreamTrack>&&, const Vector<std::reference_wrapper<MediaStream>>&, ExceptionCode&);
     void removeTrack(RTCRtpSender&, ExceptionCode&);
 
     // This enum is mirrored in RTCRtpTransceiver.h

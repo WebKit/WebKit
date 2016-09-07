@@ -140,7 +140,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     ASSERT(castedThis);
-    Vector<int32_t> longArgs = toNativeArguments<int32_t>(*state, 0);
+    auto longArgs = toArguments<VariadicHelper<JSC::JSValue, int32_t>>(*state, 0);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto object = TestOverloadedConstructors::create(WTFMove(longArgs));

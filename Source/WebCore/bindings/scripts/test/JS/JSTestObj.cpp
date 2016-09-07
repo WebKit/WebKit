@@ -6475,16 +6475,10 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12(ExecSt
         return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    Vector<Blob*> blobArgs;
-    ASSERT(0 <= state->argumentCount());
-    blobArgs.reserveInitialCapacity(state->argumentCount() - 0);
-    for (unsigned i = 0, count = state->argumentCount(); i < count; ++i) {
-        auto* item = JSBlob::toWrapped(state->uncheckedArgument(i));
-        if (!item)
-            return throwArgumentTypeError(*state, throwScope, i, "blobArgs", "TestObject", "overloadedMethod", "Blob");
-        blobArgs.uncheckedAppend(item);
-    }
-    impl.overloadedMethod(WTFMove(blobArgs));
+    auto blobArgs = toArguments<VariadicHelper<JSBlob, Blob>>(*state, 0);
+    if (!blobArgs.second)
+        return throwArgumentTypeError(*state, throwScope, blobArgs.first, "blobArgs", "TestObject", "overloadedMethod", "Blob");
+    impl.overloadedMethod(WTFMove(*blobArgs.second));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7014,10 +7008,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
     auto head = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    Vector<String> tail = toNativeArguments<String>(*state, 1);
+    auto tail = toArguments<VariadicHelper<JSC::JSValue, String>>(*state, 1);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.variadicStringMethod(WTFMove(head), WTFMove(tail));
+    impl.variadicStringMethod(WTFMove(head), WTFMove(*tail.second));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7037,10 +7031,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
     auto head = convert<double>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    Vector<double> tail = toNativeArguments<double>(*state, 1);
+    auto tail = toArguments<VariadicHelper<JSC::JSValue, double>>(*state, 1);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.variadicDoubleMethod(WTFMove(head), WTFMove(tail));
+    impl.variadicDoubleMethod(WTFMove(head), WTFMove(*tail.second));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7060,16 +7054,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
     auto head = JSNode::toWrapped(state->argument(0));
     if (UNLIKELY(!head))
         return throwArgumentTypeError(*state, throwScope, 0, "head", "TestObject", "variadicNodeMethod", "Node");
-    Vector<Node*> tail;
-    ASSERT(1 <= state->argumentCount());
-    tail.reserveInitialCapacity(state->argumentCount() - 1);
-    for (unsigned i = 1, count = state->argumentCount(); i < count; ++i) {
-        auto* item = JSNode::toWrapped(state->uncheckedArgument(i));
-        if (!item)
-            return throwArgumentTypeError(*state, throwScope, i, "tail", "TestObject", "variadicNodeMethod", "Node");
-        tail.uncheckedAppend(item);
-    }
-    impl.variadicNodeMethod(*head, WTFMove(tail));
+    auto tail = toArguments<VariadicHelper<JSNode, Node>>(*state, 1);
+    if (!tail.second)
+        return throwArgumentTypeError(*state, throwScope, tail.first, "tail", "TestObject", "variadicNodeMethod", "Node");
+    impl.variadicNodeMethod(*head, WTFMove(*tail.second));
     return JSValue::encode(jsUndefined());
 }
 

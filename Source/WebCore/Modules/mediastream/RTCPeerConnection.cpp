@@ -93,7 +93,7 @@ void RTCPeerConnection::initializeWith(Document& document, const Dictionary& rtc
     setConfiguration(rtcConfiguration, ec);
 }
 
-RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<MediaStream*>& streams, ExceptionCode& ec)
+RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<std::reference_wrapper<MediaStream>>& streams, ExceptionCode& ec)
 {
     if (m_signalingState == SignalingState::Closed) {
         ec = INVALID_STATE_ERR;
@@ -115,7 +115,7 @@ RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, 
 
     Vector<String> mediaStreamIds;
     for (auto stream : streams)
-        mediaStreamIds.append(stream->id());
+        mediaStreamIds.append(stream.get().id());
 
     RTCRtpSender* sender = nullptr;
 
