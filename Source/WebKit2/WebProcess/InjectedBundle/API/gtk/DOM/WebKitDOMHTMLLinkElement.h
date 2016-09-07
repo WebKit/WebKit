@@ -221,6 +221,17 @@ WEBKIT_API WebKitDOMStyleSheet*
 webkit_dom_html_link_element_get_sheet(WebKitDOMHTMLLinkElement* self);
 
 /**
+ * webkit_dom_html_link_element_get_sizes:
+ * @self: A #WebKitDOMHTMLLinkElement
+ *
+ * Returns: (transfer full): A #WebKitDOMDOMTokenList
+ *
+ * Since: 2.16
+**/
+WEBKIT_API WebKitDOMDOMTokenList*
+webkit_dom_html_link_element_get_sizes(WebKitDOMHTMLLinkElement* self);
+
+/**
  * webkit_dom_html_link_element_set_sizes:
  * @self: A #WebKitDOMHTMLLinkElement
  * @value: a #gchar

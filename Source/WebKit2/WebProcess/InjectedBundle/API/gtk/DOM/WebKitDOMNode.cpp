@@ -29,7 +29,6 @@
 #include "WebKitDOMEventTarget.h"
 #include "WebKitDOMNodeListPrivate.h"
 #include "WebKitDOMNodePrivate.h"
-#include "WebKitDOMNodeUnstable.h"
 #include "WebKitDOMPrivate.h"
 #include <WebCore/CSSImportRule.h>
 #include <WebCore/Document.h>
@@ -123,7 +122,6 @@ enum {
     PROP_OWNER_DOCUMENT,
     PROP_BASE_URI,
     PROP_TEXT_CONTENT,
-    PROP_IS_CONNECTED,
     PROP_PARENT_ELEMENT,
 };
 
@@ -194,9 +192,6 @@ static void webkit_dom_node_get_property(GObject* object, guint propertyId, GVal
         break;
     case PROP_TEXT_CONTENT:
         g_value_take_string(value, webkit_dom_node_get_text_content(self));
-        break;
-    case PROP_IS_CONNECTED:
-        g_value_set_boolean(value, webkit_dom_node_get_is_connected(self));
         break;
     case PROP_PARENT_ELEMENT:
         g_value_set_object(value, webkit_dom_node_get_parent_element(self));
@@ -346,16 +341,6 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
             "read-write gchar* Node:text-content",
             "",
             WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_IS_CONNECTED,
-        g_param_spec_boolean(
-            "is-connected",
-            "Node:is-connected",
-            "read-only gboolean Node:is-connected",
-            FALSE,
-            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -708,15 +693,6 @@ void webkit_dom_node_set_text_content(WebKitDOMNode* self, const gchar* value, G
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
-}
-
-gboolean webkit_dom_node_get_is_connected(WebKitDOMNode* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), FALSE);
-    WebCore::Node* item = WebKit::core(self);
-    gboolean result = item->inDocument();
-    return result;
 }
 
 WebKitDOMElement* webkit_dom_node_get_parent_element(WebKitDOMNode* self)

@@ -114,7 +114,6 @@
 #include "WebKitDOMHTMLIFrameElementPrivate.h"
 #include "WebKitDOMHTMLImageElementPrivate.h"
 #include "WebKitDOMHTMLInputElementPrivate.h"
-#include "WebKitDOMHTMLKeygenElementPrivate.h"
 #include "WebKitDOMHTMLLIElementPrivate.h"
 #include "WebKitDOMHTMLLabelElementPrivate.h"
 #include "WebKitDOMHTMLLegendElementPrivate.h"
@@ -145,11 +144,6 @@
 #include "WebKitDOMHTMLTitleElementPrivate.h"
 #include "WebKitDOMHTMLUListElementPrivate.h"
 
-#if ENABLE(VIDEO)
-#include "WebKitDOMHTMLAudioElementPrivate.h"
-#include "WebKitDOMHTMLVideoElementPrivate.h"
-#endif
-
 namespace WebKit {
 
 using namespace WebCore;
@@ -157,16 +151,7 @@ using namespace WebCore::HTMLNames;
 
 // macro(TagName, ElementName)
 
-#if ENABLE(VIDEO)
-#define FOR_EACH_HTML_VIDEO_TAG(macro) \
-    macro(audio, Audio) \
-    macro(video, Video)
-#else
-#define FOR_EACH_HTML_VIDEO_TAG(macro)
-#endif
-
 #define FOR_EACH_HTML_TAG(macro) \
-    FOR_EACH_HTML_VIDEO_TAG(macro) \
     macro(a, Anchor) \
     macro(applet, Applet) \
     macro(area, Area) \
@@ -229,7 +214,6 @@ using namespace WebCore::HTMLNames;
     macro(h6, Heading) \
     macro(image, Image) \
     macro(ins, Mod) \
-    macro(keygen, Keygen) \
     macro(listing, Pre) \
     macro(tfoot, TableSection) \
     macro(th, TableCell) \

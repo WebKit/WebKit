@@ -39,9 +39,7 @@
 #include "WebKitDOMNodeListPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMValidityStatePrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLSelectElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -109,19 +107,13 @@ enum {
     PROP_FORM,
     PROP_MULTIPLE,
     PROP_NAME,
-    PROP_REQUIRED,
     PROP_SIZE,
     PROP_TYPE,
     PROP_OPTIONS,
     PROP_LENGTH,
-    PROP_SELECTED_OPTIONS,
     PROP_SELECTED_INDEX,
     PROP_VALUE,
     PROP_WILL_VALIDATE,
-    PROP_VALIDITY,
-    PROP_VALIDATION_MESSAGE,
-    PROP_LABELS,
-    PROP_AUTOCOMPLETE,
 };
 
 static void webkit_dom_html_select_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -141,9 +133,6 @@ static void webkit_dom_html_select_element_set_property(GObject* object, guint p
     case PROP_NAME:
         webkit_dom_html_select_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_REQUIRED:
-        webkit_dom_html_select_element_set_required(self, g_value_get_boolean(value));
-        break;
     case PROP_SIZE:
         webkit_dom_html_select_element_set_size(self, g_value_get_long(value));
         break;
@@ -155,9 +144,6 @@ static void webkit_dom_html_select_element_set_property(GObject* object, guint p
         break;
     case PROP_VALUE:
         webkit_dom_html_select_element_set_value(self, g_value_get_string(value));
-        break;
-    case PROP_AUTOCOMPLETE:
-        webkit_dom_html_select_element_set_autocomplete(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -185,9 +171,6 @@ static void webkit_dom_html_select_element_get_property(GObject* object, guint p
     case PROP_NAME:
         g_value_take_string(value, webkit_dom_html_select_element_get_name(self));
         break;
-    case PROP_REQUIRED:
-        g_value_set_boolean(value, webkit_dom_html_select_element_get_required(self));
-        break;
     case PROP_SIZE:
         g_value_set_long(value, webkit_dom_html_select_element_get_size(self));
         break;
@@ -200,9 +183,6 @@ static void webkit_dom_html_select_element_get_property(GObject* object, guint p
     case PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_html_select_element_get_length(self));
         break;
-    case PROP_SELECTED_OPTIONS:
-        g_value_set_object(value, webkit_dom_html_select_element_get_selected_options(self));
-        break;
     case PROP_SELECTED_INDEX:
         g_value_set_long(value, webkit_dom_html_select_element_get_selected_index(self));
         break;
@@ -211,18 +191,6 @@ static void webkit_dom_html_select_element_get_property(GObject* object, guint p
         break;
     case PROP_WILL_VALIDATE:
         g_value_set_boolean(value, webkit_dom_html_select_element_get_will_validate(self));
-        break;
-    case PROP_VALIDITY:
-        g_value_set_object(value, webkit_dom_html_select_element_get_validity(self));
-        break;
-    case PROP_VALIDATION_MESSAGE:
-        g_value_take_string(value, webkit_dom_html_select_element_get_validation_message(self));
-        break;
-    case PROP_LABELS:
-        g_value_set_object(value, webkit_dom_html_select_element_get_labels(self));
-        break;
-    case PROP_AUTOCOMPLETE:
-        g_value_take_string(value, webkit_dom_html_select_element_get_autocomplete(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -288,16 +256,6 @@ static void webkit_dom_html_select_element_class_init(WebKitDOMHTMLSelectElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_REQUIRED,
-        g_param_spec_boolean(
-            "required",
-            "HTMLSelectElement:required",
-            "read-write gboolean HTMLSelectElement:required",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_SIZE,
         g_param_spec_long(
             "size",
@@ -338,16 +296,6 @@ static void webkit_dom_html_select_element_class_init(WebKitDOMHTMLSelectElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SELECTED_OPTIONS,
-        g_param_spec_object(
-            "selected-options",
-            "HTMLSelectElement:selected-options",
-            "read-only WebKitDOMHTMLCollection* HTMLSelectElement:selected-options",
-            WEBKIT_DOM_TYPE_HTML_COLLECTION,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_SELECTED_INDEX,
         g_param_spec_long(
             "selected-index",
@@ -375,47 +323,6 @@ static void webkit_dom_html_select_element_class_init(WebKitDOMHTMLSelectElement
             "read-only gboolean HTMLSelectElement:will-validate",
             FALSE,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDITY,
-        g_param_spec_object(
-            "validity",
-            "HTMLSelectElement:validity",
-            "read-only WebKitDOMValidityState* HTMLSelectElement:validity",
-            WEBKIT_DOM_TYPE_VALIDITY_STATE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDATION_MESSAGE,
-        g_param_spec_string(
-            "validation-message",
-            "HTMLSelectElement:validation-message",
-            "read-only gchar* HTMLSelectElement:validation-message",
-            "",
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_LABELS,
-        g_param_spec_object(
-            "labels",
-            "HTMLSelectElement:labels",
-            "read-only WebKitDOMNodeList* HTMLSelectElement:labels",
-            WEBKIT_DOM_TYPE_NODE_LIST,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCOMPLETE,
-        g_param_spec_string(
-            "autocomplete",
-            "HTMLSelectElement:autocomplete",
-            "read-write gchar* HTMLSelectElement:autocomplete",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
 }
 
 static void webkit_dom_html_select_element_init(WebKitDOMHTMLSelectElement* request)
@@ -467,25 +374,6 @@ void webkit_dom_html_select_element_remove(WebKitDOMHTMLSelectElement* self, glo
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self));
     WebCore::HTMLSelectElement* item = WebKit::core(self);
     item->removeByIndex(index);
-}
-
-gboolean webkit_dom_html_select_element_check_validity(WebKitDOMHTMLSelectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self), FALSE);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    gboolean result = item->checkValidity();
-    return result;
-}
-
-void webkit_dom_html_select_element_set_custom_validity(WebKitDOMHTMLSelectElement* self, const gchar* error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self));
-    g_return_if_fail(error);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    WTF::String convertedError = WTF::String::fromUTF8(error);
-    item->setCustomValidity(convertedError);
 }
 
 gboolean webkit_dom_html_select_element_get_autofocus(WebKitDOMHTMLSelectElement* self)
@@ -567,23 +455,6 @@ void webkit_dom_html_select_element_set_name(WebKitDOMHTMLSelectElement* self, c
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
-gboolean webkit_dom_html_select_element_get_required(WebKitDOMHTMLSelectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self), FALSE);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::requiredAttr);
-    return result;
-}
-
-void webkit_dom_html_select_element_set_required(WebKitDOMHTMLSelectElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self));
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::requiredAttr, value);
-}
-
 glong webkit_dom_html_select_element_get_size(WebKitDOMHTMLSelectElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -642,15 +513,6 @@ void webkit_dom_html_select_element_set_length(WebKitDOMHTMLSelectElement* self,
     }
 }
 
-WebKitDOMHTMLCollection* webkit_dom_html_select_element_get_selected_options(WebKitDOMHTMLSelectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self), 0);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    RefPtr<WebCore::HTMLCollection> gobjectResult = WTF::getPtr(item->selectedOptions());
-    return WebKit::kit(gobjectResult.get());
-}
-
 glong webkit_dom_html_select_element_get_selected_index(WebKitDOMHTMLSelectElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -695,50 +557,3 @@ gboolean webkit_dom_html_select_element_get_will_validate(WebKitDOMHTMLSelectEle
     gboolean result = item->willValidate();
     return result;
 }
-
-WebKitDOMValidityState* webkit_dom_html_select_element_get_validity(WebKitDOMHTMLSelectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self), 0);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    RefPtr<WebCore::ValidityState> gobjectResult = WTF::getPtr(item->validity());
-    return WebKit::kit(gobjectResult.get());
-}
-
-gchar* webkit_dom_html_select_element_get_validation_message(WebKitDOMHTMLSelectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self), 0);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->validationMessage());
-    return result;
-}
-
-WebKitDOMNodeList* webkit_dom_html_select_element_get_labels(WebKitDOMHTMLSelectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self), 0);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    RefPtr<WebCore::NodeList> gobjectResult = WTF::getPtr(item->labels());
-    return WebKit::kit(gobjectResult.get());
-}
-
-gchar* webkit_dom_html_select_element_get_autocomplete(WebKitDOMHTMLSelectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self), 0);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->autocomplete());
-    return result;
-}
-
-void webkit_dom_html_select_element_set_autocomplete(WebKitDOMHTMLSelectElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLSelectElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAutocomplete(convertedValue);
-}
-

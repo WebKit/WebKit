@@ -35,7 +35,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMCharacterDataUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -100,8 +99,6 @@ enum {
     PROP_0,
     PROP_DATA,
     PROP_LENGTH,
-    PROP_PREVIOUS_ELEMENT_SIBLING,
-    PROP_NEXT_ELEMENT_SIBLING,
 };
 
 static void webkit_dom_character_data_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -128,12 +125,6 @@ static void webkit_dom_character_data_get_property(GObject* object, guint proper
         break;
     case PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_character_data_get_length(self));
-        break;
-    case PROP_PREVIOUS_ELEMENT_SIBLING:
-        g_value_set_object(value, webkit_dom_character_data_get_previous_element_sibling(self));
-        break;
-    case PROP_NEXT_ELEMENT_SIBLING:
-        g_value_set_object(value, webkit_dom_character_data_get_next_element_sibling(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -166,27 +157,6 @@ static void webkit_dom_character_data_class_init(WebKitDOMCharacterDataClass* re
             "read-only gulong CharacterData:length",
             0, G_MAXULONG, 0,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_PREVIOUS_ELEMENT_SIBLING,
-        g_param_spec_object(
-            "previous-element-sibling",
-            "CharacterData:previous-element-sibling",
-            "read-only WebKitDOMElement* CharacterData:previous-element-sibling",
-            WEBKIT_DOM_TYPE_ELEMENT,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_NEXT_ELEMENT_SIBLING,
-        g_param_spec_object(
-            "next-element-sibling",
-            "CharacterData:next-element-sibling",
-            "read-only WebKitDOMElement* CharacterData:next-element-sibling",
-            WEBKIT_DOM_TYPE_ELEMENT,
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_character_data_init(WebKitDOMCharacterData* request)
@@ -262,20 +232,6 @@ void webkit_dom_character_data_replace_data(WebKitDOMCharacterData* self, gulong
     }
 }
 
-void webkit_dom_character_data_remove(WebKitDOMCharacterData* self, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_CHARACTER_DATA(self));
-    g_return_if_fail(!error || !*error);
-    WebCore::CharacterData* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->remove(ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-}
-
 gchar* webkit_dom_character_data_get_data(WebKitDOMCharacterData* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -304,22 +260,3 @@ gulong webkit_dom_character_data_get_length(WebKitDOMCharacterData* self)
     gulong result = item->length();
     return result;
 }
-
-WebKitDOMElement* webkit_dom_character_data_get_previous_element_sibling(WebKitDOMCharacterData* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_CHARACTER_DATA(self), 0);
-    WebCore::CharacterData* item = WebKit::core(self);
-    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->previousElementSibling());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMElement* webkit_dom_character_data_get_next_element_sibling(WebKitDOMCharacterData* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_CHARACTER_DATA(self), 0);
-    WebCore::CharacterData* item = WebKit::core(self);
-    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->nextElementSibling());
-    return WebKit::kit(gobjectResult.get());
-}
-

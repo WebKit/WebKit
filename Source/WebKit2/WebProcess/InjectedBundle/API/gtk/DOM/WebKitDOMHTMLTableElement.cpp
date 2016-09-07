@@ -39,7 +39,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLTableElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -112,7 +111,6 @@ enum {
     PROP_BORDER,
     PROP_CELL_PADDING,
     PROP_CELL_SPACING,
-    PROP_FRAME,
     PROP_RULES,
     PROP_SUMMARY,
     PROP_WIDTH,
@@ -137,9 +135,6 @@ static void webkit_dom_html_table_element_set_property(GObject* object, guint pr
         break;
     case PROP_CELL_SPACING:
         webkit_dom_html_table_element_set_cell_spacing(self, g_value_get_string(value));
-        break;
-    case PROP_FRAME:
-        webkit_dom_html_table_element_set_frame(self, g_value_get_string(value));
         break;
     case PROP_RULES:
         webkit_dom_html_table_element_set_rules(self, g_value_get_string(value));
@@ -190,9 +185,6 @@ static void webkit_dom_html_table_element_get_property(GObject* object, guint pr
         break;
     case PROP_CELL_SPACING:
         g_value_take_string(value, webkit_dom_html_table_element_get_cell_spacing(self));
-        break;
-    case PROP_FRAME:
-        g_value_take_string(value, webkit_dom_html_table_element_get_frame(self));
         break;
     case PROP_RULES:
         g_value_take_string(value, webkit_dom_html_table_element_get_rules(self));
@@ -317,16 +309,6 @@ static void webkit_dom_html_table_element_class_init(WebKitDOMHTMLTableElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FRAME,
-        g_param_spec_string(
-            "frame",
-            "HTMLTableElement:frame",
-            "read-write gchar* HTMLTableElement:frame",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_RULES,
         g_param_spec_string(
             "rules",
@@ -394,15 +376,6 @@ void webkit_dom_html_table_element_delete_t_foot(WebKitDOMHTMLTableElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_ELEMENT(self));
     WebCore::HTMLTableElement* item = WebKit::core(self);
     item->deleteTFoot();
-}
-
-WebKitDOMHTMLElement* webkit_dom_html_table_element_create_t_body(WebKitDOMHTMLTableElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TABLE_ELEMENT(self), 0);
-    WebCore::HTMLTableElement* item = WebKit::core(self);
-    RefPtr<WebCore::HTMLElement> gobjectResult = WTF::getPtr(item->createTBody());
-    return WebKit::kit(gobjectResult.get());
 }
 
 WebKitDOMHTMLElement* webkit_dom_html_table_element_create_caption(WebKitDOMHTMLTableElement* self)
@@ -637,25 +610,6 @@ void webkit_dom_html_table_element_set_cell_spacing(WebKitDOMHTMLTableElement* s
     WebCore::HTMLTableElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::cellspacingAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_table_element_get_frame(WebKitDOMHTMLTableElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TABLE_ELEMENT(self), 0);
-    WebCore::HTMLTableElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::frameAttr));
-    return result;
-}
-
-void webkit_dom_html_table_element_set_frame(WebKitDOMHTMLTableElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLTableElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::frameAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_element_get_rules(WebKitDOMHTMLTableElement* self)

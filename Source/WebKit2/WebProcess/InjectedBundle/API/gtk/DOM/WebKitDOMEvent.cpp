@@ -31,7 +31,6 @@
 #include "WebKitDOMEventTargetPrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMEventUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -77,10 +76,7 @@ enum {
     PROP_EVENT_PHASE,
     PROP_BUBBLES,
     PROP_CANCELABLE,
-    PROP_COMPOSED,
     PROP_TIME_STAMP,
-    PROP_DEFAULT_PREVENTED,
-    PROP_IS_TRUSTED,
     PROP_SRC_ELEMENT,
     PROP_RETURN_VALUE,
     PROP_CANCEL_BUBBLE,
@@ -136,17 +132,8 @@ static void webkit_dom_event_get_property(GObject* object, guint propertyId, GVa
     case PROP_CANCELABLE:
         g_value_set_boolean(value, webkit_dom_event_get_cancelable(self));
         break;
-    case PROP_COMPOSED:
-        g_value_set_boolean(value, webkit_dom_event_get_composed(self));
-        break;
     case PROP_TIME_STAMP:
         g_value_set_uint(value, webkit_dom_event_get_time_stamp(self));
-        break;
-    case PROP_DEFAULT_PREVENTED:
-        g_value_set_boolean(value, webkit_dom_event_get_default_prevented(self));
-        break;
-    case PROP_IS_TRUSTED:
-        g_value_set_boolean(value, webkit_dom_event_get_is_trusted(self));
         break;
     case PROP_SRC_ELEMENT:
         g_value_set_object(value, webkit_dom_event_get_src_element(self));
@@ -245,42 +232,12 @@ static void webkit_dom_event_class_init(WebKitDOMEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COMPOSED,
-        g_param_spec_boolean(
-            "composed",
-            "Event:composed",
-            "read-only gboolean Event:composed",
-            FALSE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_TIME_STAMP,
         g_param_spec_uint(
             "time-stamp",
             "Event:time-stamp",
             "read-only guint32 Event:time-stamp",
             0, G_MAXUINT, 0,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_DEFAULT_PREVENTED,
-        g_param_spec_boolean(
-            "default-prevented",
-            "Event:default-prevented",
-            "read-only gboolean Event:default-prevented",
-            FALSE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_IS_TRUSTED,
-        g_param_spec_boolean(
-            "is-trusted",
-            "Event:is-trusted",
-            "read-only gboolean Event:is-trusted",
-            FALSE,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -347,14 +304,6 @@ void webkit_dom_event_init_event(WebKitDOMEvent* self, const gchar* eventTypeArg
     item->initEvent(convertedEventTypeArg, canBubbleArg, cancelableArg);
 }
 
-void webkit_dom_event_stop_immediate_propagation(WebKitDOMEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_EVENT(self));
-    WebCore::Event* item = WebKit::core(self);
-    item->stopImmediatePropagation();
-}
-
 gchar* webkit_dom_event_get_event_type(WebKitDOMEvent* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -409,39 +358,12 @@ gboolean webkit_dom_event_get_cancelable(WebKitDOMEvent* self)
     return result;
 }
 
-gboolean webkit_dom_event_get_composed(WebKitDOMEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_EVENT(self), FALSE);
-    WebCore::Event* item = WebKit::core(self);
-    gboolean result = item->composed();
-    return result;
-}
-
 guint32 webkit_dom_event_get_time_stamp(WebKitDOMEvent* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_EVENT(self), 0);
     WebCore::Event* item = WebKit::core(self);
     guint32 result = item->timeStamp();
-    return result;
-}
-
-gboolean webkit_dom_event_get_default_prevented(WebKitDOMEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_EVENT(self), FALSE);
-    WebCore::Event* item = WebKit::core(self);
-    gboolean result = item->defaultPrevented();
-    return result;
-}
-
-gboolean webkit_dom_event_get_is_trusted(WebKitDOMEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_EVENT(self), FALSE);
-    WebCore::Event* item = WebKit::core(self);
-    gboolean result = item->isTrusted();
     return result;
 }
 

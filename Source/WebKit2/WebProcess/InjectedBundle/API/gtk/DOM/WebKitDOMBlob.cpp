@@ -30,7 +30,6 @@
 #include "WebKitDOMBlobPrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMBlobUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -71,7 +70,6 @@ G_DEFINE_TYPE(WebKitDOMBlob, webkit_dom_blob, WEBKIT_DOM_TYPE_OBJECT)
 enum {
     PROP_0,
     PROP_SIZE,
-    PROP_TYPE,
 };
 
 static void webkit_dom_blob_finalize(GObject* object)
@@ -91,9 +89,6 @@ static void webkit_dom_blob_get_property(GObject* object, guint propertyId, GVal
     switch (propertyId) {
     case PROP_SIZE:
         g_value_set_uint64(value, webkit_dom_blob_get_size(self));
-        break;
-    case PROP_TYPE:
-        g_value_take_string(value, webkit_dom_blob_get_blob_type(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -129,34 +124,12 @@ static void webkit_dom_blob_class_init(WebKitDOMBlobClass* requestClass)
             "read-only guint64 Blob:size",
             0, G_MAXUINT64, 0,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_TYPE,
-        g_param_spec_string(
-            "type",
-            "Blob:type",
-            "read-only gchar* Blob:type",
-            "",
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_blob_init(WebKitDOMBlob* request)
 {
     WebKitDOMBlobPrivate* priv = WEBKIT_DOM_BLOB_GET_PRIVATE(request);
     new (priv) WebKitDOMBlobPrivate();
-}
-
-WebKitDOMBlob* webkit_dom_blob_slice(WebKitDOMBlob* self, gint64 start, gint64 end, const gchar* contentType)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_BLOB(self), 0);
-    g_return_val_if_fail(contentType, 0);
-    WebCore::Blob* item = WebKit::core(self);
-    WTF::String convertedContentType = WTF::String::fromUTF8(contentType);
-    RefPtr<WebCore::Blob> gobjectResult = WTF::getPtr(item->slice(start, end, convertedContentType));
-    return WebKit::kit(gobjectResult.get());
 }
 
 guint64 webkit_dom_blob_get_size(WebKitDOMBlob* self)
@@ -167,13 +140,3 @@ guint64 webkit_dom_blob_get_size(WebKitDOMBlob* self)
     guint64 result = item->size();
     return result;
 }
-
-gchar* webkit_dom_blob_get_blob_type(WebKitDOMBlob* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_BLOB(self), 0);
-    WebCore::Blob* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->type());
-    return result;
-}
-

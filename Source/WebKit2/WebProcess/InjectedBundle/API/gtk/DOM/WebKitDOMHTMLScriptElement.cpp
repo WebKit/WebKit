@@ -35,7 +35,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLScriptElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -102,12 +101,9 @@ enum {
     PROP_HTML_FOR,
     PROP_EVENT,
     PROP_CHARSET,
-    PROP_ASYNC,
     PROP_DEFER,
     PROP_SRC,
     PROP_TYPE,
-    PROP_CROSS_ORIGIN,
-    PROP_NONCE,
 };
 
 static void webkit_dom_html_script_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -127,9 +123,6 @@ static void webkit_dom_html_script_element_set_property(GObject* object, guint p
     case PROP_CHARSET:
         webkit_dom_html_script_element_set_charset(self, g_value_get_string(value));
         break;
-    case PROP_ASYNC:
-        webkit_dom_html_script_element_set_async(self, g_value_get_boolean(value));
-        break;
     case PROP_DEFER:
         webkit_dom_html_script_element_set_defer(self, g_value_get_boolean(value));
         break;
@@ -138,12 +131,6 @@ static void webkit_dom_html_script_element_set_property(GObject* object, guint p
         break;
     case PROP_TYPE:
         webkit_dom_html_script_element_set_type_attr(self, g_value_get_string(value));
-        break;
-    case PROP_CROSS_ORIGIN:
-        webkit_dom_html_script_element_set_cross_origin(self, g_value_get_string(value));
-        break;
-    case PROP_NONCE:
-        webkit_dom_html_script_element_set_nonce(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -168,9 +155,6 @@ static void webkit_dom_html_script_element_get_property(GObject* object, guint p
     case PROP_CHARSET:
         g_value_take_string(value, webkit_dom_html_script_element_get_charset(self));
         break;
-    case PROP_ASYNC:
-        g_value_set_boolean(value, webkit_dom_html_script_element_get_async(self));
-        break;
     case PROP_DEFER:
         g_value_set_boolean(value, webkit_dom_html_script_element_get_defer(self));
         break;
@@ -179,12 +163,6 @@ static void webkit_dom_html_script_element_get_property(GObject* object, guint p
         break;
     case PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_script_element_get_type_attr(self));
-        break;
-    case PROP_CROSS_ORIGIN:
-        g_value_take_string(value, webkit_dom_html_script_element_get_cross_origin(self));
-        break;
-    case PROP_NONCE:
-        g_value_take_string(value, webkit_dom_html_script_element_get_nonce(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -240,16 +218,6 @@ static void webkit_dom_html_script_element_class_init(WebKitDOMHTMLScriptElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ASYNC,
-        g_param_spec_boolean(
-            "async",
-            "HTMLScriptElement:async",
-            "read-write gboolean HTMLScriptElement:async",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_DEFER,
         g_param_spec_boolean(
             "defer",
@@ -277,27 +245,6 @@ static void webkit_dom_html_script_element_class_init(WebKitDOMHTMLScriptElement
             "read-write gchar* HTMLScriptElement:type",
             "",
             WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_CROSS_ORIGIN,
-        g_param_spec_string(
-            "cross-origin",
-            "HTMLScriptElement:cross-origin",
-            "read-write gchar* HTMLScriptElement:cross-origin",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_NONCE,
-        g_param_spec_string(
-            "nonce",
-            "HTMLScriptElement:nonce",
-            "read-write gchar* HTMLScriptElement:nonce",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
 }
 
 static void webkit_dom_html_script_element_init(WebKitDOMHTMLScriptElement* request)
@@ -381,23 +328,6 @@ void webkit_dom_html_script_element_set_charset(WebKitDOMHTMLScriptElement* self
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charsetAttr, convertedValue);
 }
 
-gboolean webkit_dom_html_script_element_get_async(WebKitDOMHTMLScriptElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self), FALSE);
-    WebCore::HTMLScriptElement* item = WebKit::core(self);
-    gboolean result = item->async();
-    return result;
-}
-
-void webkit_dom_html_script_element_set_async(WebKitDOMHTMLScriptElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
-    WebCore::HTMLScriptElement* item = WebKit::core(self);
-    item->setAsync(value);
-}
-
 gboolean webkit_dom_html_script_element_get_defer(WebKitDOMHTMLScriptElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -452,42 +382,3 @@ void webkit_dom_html_script_element_set_type_attr(WebKitDOMHTMLScriptElement* se
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
 }
-
-gchar* webkit_dom_html_script_element_get_cross_origin(WebKitDOMHTMLScriptElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self), 0);
-    WebCore::HTMLScriptElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->crossOrigin());
-    return result;
-}
-
-void webkit_dom_html_script_element_set_cross_origin(WebKitDOMHTMLScriptElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLScriptElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setCrossOrigin(convertedValue);
-}
-
-gchar* webkit_dom_html_script_element_get_nonce(WebKitDOMHTMLScriptElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self), 0);
-    WebCore::HTMLScriptElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::nonceAttr));
-    return result;
-}
-
-void webkit_dom_html_script_element_set_nonce(WebKitDOMHTMLScriptElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLScriptElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nonceAttr, convertedValue);
-}
-

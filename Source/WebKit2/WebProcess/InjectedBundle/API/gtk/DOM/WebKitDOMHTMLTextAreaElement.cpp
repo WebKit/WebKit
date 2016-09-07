@@ -36,9 +36,7 @@
 #include "WebKitDOMNodeListPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMValidityStatePrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLTextAreaElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -102,31 +100,18 @@ G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLTextAreaElement, webkit_dom_html_text_area_
 enum {
     PROP_0,
     PROP_AUTOFOCUS,
-    PROP_DIR_NAME,
     PROP_DISABLED,
     PROP_FORM,
-    PROP_MAX_LENGTH,
     PROP_NAME,
-    PROP_PLACEHOLDER,
     PROP_READ_ONLY,
-    PROP_REQUIRED,
     PROP_ROWS,
     PROP_COLS,
-    PROP_WRAP,
     PROP_TYPE,
     PROP_DEFAULT_VALUE,
     PROP_VALUE,
-    PROP_TEXT_LENGTH,
     PROP_WILL_VALIDATE,
-    PROP_VALIDITY,
-    PROP_VALIDATION_MESSAGE,
-    PROP_LABELS,
     PROP_SELECTION_START,
     PROP_SELECTION_END,
-    PROP_SELECTION_DIRECTION,
-    PROP_AUTOCORRECT,
-    PROP_AUTOCAPITALIZE,
-    PROP_AUTOCOMPLETE,
 };
 
 static void webkit_dom_html_text_area_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -137,35 +122,20 @@ static void webkit_dom_html_text_area_element_set_property(GObject* object, guin
     case PROP_AUTOFOCUS:
         webkit_dom_html_text_area_element_set_autofocus(self, g_value_get_boolean(value));
         break;
-    case PROP_DIR_NAME:
-        webkit_dom_html_text_area_element_set_dir_name(self, g_value_get_string(value));
-        break;
     case PROP_DISABLED:
         webkit_dom_html_text_area_element_set_disabled(self, g_value_get_boolean(value));
-        break;
-    case PROP_MAX_LENGTH:
-        webkit_dom_html_text_area_element_set_max_length(self, g_value_get_long(value), nullptr);
         break;
     case PROP_NAME:
         webkit_dom_html_text_area_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_PLACEHOLDER:
-        webkit_dom_html_text_area_element_set_placeholder(self, g_value_get_string(value));
-        break;
     case PROP_READ_ONLY:
         webkit_dom_html_text_area_element_set_read_only(self, g_value_get_boolean(value));
-        break;
-    case PROP_REQUIRED:
-        webkit_dom_html_text_area_element_set_required(self, g_value_get_boolean(value));
         break;
     case PROP_ROWS:
         webkit_dom_html_text_area_element_set_rows(self, g_value_get_long(value));
         break;
     case PROP_COLS:
         webkit_dom_html_text_area_element_set_cols(self, g_value_get_long(value));
-        break;
-    case PROP_WRAP:
-        webkit_dom_html_text_area_element_set_wrap(self, g_value_get_string(value));
         break;
     case PROP_DEFAULT_VALUE:
         webkit_dom_html_text_area_element_set_default_value(self, g_value_get_string(value));
@@ -178,18 +148,6 @@ static void webkit_dom_html_text_area_element_set_property(GObject* object, guin
         break;
     case PROP_SELECTION_END:
         webkit_dom_html_text_area_element_set_selection_end(self, g_value_get_long(value));
-        break;
-    case PROP_SELECTION_DIRECTION:
-        webkit_dom_html_text_area_element_set_selection_direction(self, g_value_get_string(value));
-        break;
-    case PROP_AUTOCORRECT:
-        webkit_dom_html_text_area_element_set_autocorrect(self, g_value_get_boolean(value));
-        break;
-    case PROP_AUTOCAPITALIZE:
-        webkit_dom_html_text_area_element_set_autocapitalize(self, g_value_get_string(value));
-        break;
-    case PROP_AUTOCOMPLETE:
-        webkit_dom_html_text_area_element_set_autocomplete(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -205,38 +163,23 @@ static void webkit_dom_html_text_area_element_get_property(GObject* object, guin
     case PROP_AUTOFOCUS:
         g_value_set_boolean(value, webkit_dom_html_text_area_element_get_autofocus(self));
         break;
-    case PROP_DIR_NAME:
-        g_value_take_string(value, webkit_dom_html_text_area_element_get_dir_name(self));
-        break;
     case PROP_DISABLED:
         g_value_set_boolean(value, webkit_dom_html_text_area_element_get_disabled(self));
         break;
     case PROP_FORM:
         g_value_set_object(value, webkit_dom_html_text_area_element_get_form(self));
         break;
-    case PROP_MAX_LENGTH:
-        g_value_set_long(value, webkit_dom_html_text_area_element_get_max_length(self));
-        break;
     case PROP_NAME:
         g_value_take_string(value, webkit_dom_html_text_area_element_get_name(self));
         break;
-    case PROP_PLACEHOLDER:
-        g_value_take_string(value, webkit_dom_html_text_area_element_get_placeholder(self));
-        break;
     case PROP_READ_ONLY:
         g_value_set_boolean(value, webkit_dom_html_text_area_element_get_read_only(self));
-        break;
-    case PROP_REQUIRED:
-        g_value_set_boolean(value, webkit_dom_html_text_area_element_get_required(self));
         break;
     case PROP_ROWS:
         g_value_set_long(value, webkit_dom_html_text_area_element_get_rows(self));
         break;
     case PROP_COLS:
         g_value_set_long(value, webkit_dom_html_text_area_element_get_cols(self));
-        break;
-    case PROP_WRAP:
-        g_value_take_string(value, webkit_dom_html_text_area_element_get_wrap(self));
         break;
     case PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_text_area_element_get_area_type(self));
@@ -247,38 +190,14 @@ static void webkit_dom_html_text_area_element_get_property(GObject* object, guin
     case PROP_VALUE:
         g_value_take_string(value, webkit_dom_html_text_area_element_get_value(self));
         break;
-    case PROP_TEXT_LENGTH:
-        g_value_set_ulong(value, webkit_dom_html_text_area_element_get_text_length(self));
-        break;
     case PROP_WILL_VALIDATE:
         g_value_set_boolean(value, webkit_dom_html_text_area_element_get_will_validate(self));
-        break;
-    case PROP_VALIDITY:
-        g_value_set_object(value, webkit_dom_html_text_area_element_get_validity(self));
-        break;
-    case PROP_VALIDATION_MESSAGE:
-        g_value_take_string(value, webkit_dom_html_text_area_element_get_validation_message(self));
-        break;
-    case PROP_LABELS:
-        g_value_set_object(value, webkit_dom_html_text_area_element_get_labels(self));
         break;
     case PROP_SELECTION_START:
         g_value_set_long(value, webkit_dom_html_text_area_element_get_selection_start(self));
         break;
     case PROP_SELECTION_END:
         g_value_set_long(value, webkit_dom_html_text_area_element_get_selection_end(self));
-        break;
-    case PROP_SELECTION_DIRECTION:
-        g_value_take_string(value, webkit_dom_html_text_area_element_get_selection_direction(self));
-        break;
-    case PROP_AUTOCORRECT:
-        g_value_set_boolean(value, webkit_dom_html_text_area_element_get_autocorrect(self));
-        break;
-    case PROP_AUTOCAPITALIZE:
-        g_value_take_string(value, webkit_dom_html_text_area_element_get_autocapitalize(self));
-        break;
-    case PROP_AUTOCOMPLETE:
-        g_value_take_string(value, webkit_dom_html_text_area_element_get_autocomplete(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -304,16 +223,6 @@ static void webkit_dom_html_text_area_element_class_init(WebKitDOMHTMLTextAreaEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DIR_NAME,
-        g_param_spec_string(
-            "dir-name",
-            "HTMLTextAreaElement:dir-name",
-            "read-write gchar* HTMLTextAreaElement:dir-name",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_DISABLED,
         g_param_spec_boolean(
             "disabled",
@@ -334,16 +243,6 @@ static void webkit_dom_html_text_area_element_class_init(WebKitDOMHTMLTextAreaEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_MAX_LENGTH,
-        g_param_spec_long(
-            "max-length",
-            "HTMLTextAreaElement:max-length",
-            "read-write glong HTMLTextAreaElement:max-length",
-            G_MINLONG, G_MAXLONG, 0,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_NAME,
         g_param_spec_string(
             "name",
@@ -354,31 +253,11 @@ static void webkit_dom_html_text_area_element_class_init(WebKitDOMHTMLTextAreaEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PLACEHOLDER,
-        g_param_spec_string(
-            "placeholder",
-            "HTMLTextAreaElement:placeholder",
-            "read-write gchar* HTMLTextAreaElement:placeholder",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_READ_ONLY,
         g_param_spec_boolean(
             "read-only",
             "HTMLTextAreaElement:read-only",
             "read-write gboolean HTMLTextAreaElement:read-only",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_REQUIRED,
-        g_param_spec_boolean(
-            "required",
-            "HTMLTextAreaElement:required",
-            "read-write gboolean HTMLTextAreaElement:required",
             FALSE,
             WEBKIT_PARAM_READWRITE));
 
@@ -400,16 +279,6 @@ static void webkit_dom_html_text_area_element_class_init(WebKitDOMHTMLTextAreaEl
             "HTMLTextAreaElement:cols",
             "read-write glong HTMLTextAreaElement:cols",
             G_MINLONG, G_MAXLONG, 0,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_WRAP,
-        g_param_spec_string(
-            "wrap",
-            "HTMLTextAreaElement:wrap",
-            "read-write gchar* HTMLTextAreaElement:wrap",
-            "",
             WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(
@@ -444,52 +313,12 @@ static void webkit_dom_html_text_area_element_class_init(WebKitDOMHTMLTextAreaEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TEXT_LENGTH,
-        g_param_spec_ulong(
-            "text-length",
-            "HTMLTextAreaElement:text-length",
-            "read-only gulong HTMLTextAreaElement:text-length",
-            0, G_MAXULONG, 0,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_WILL_VALIDATE,
         g_param_spec_boolean(
             "will-validate",
             "HTMLTextAreaElement:will-validate",
             "read-only gboolean HTMLTextAreaElement:will-validate",
             FALSE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDITY,
-        g_param_spec_object(
-            "validity",
-            "HTMLTextAreaElement:validity",
-            "read-only WebKitDOMValidityState* HTMLTextAreaElement:validity",
-            WEBKIT_DOM_TYPE_VALIDITY_STATE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDATION_MESSAGE,
-        g_param_spec_string(
-            "validation-message",
-            "HTMLTextAreaElement:validation-message",
-            "read-only gchar* HTMLTextAreaElement:validation-message",
-            "",
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_LABELS,
-        g_param_spec_object(
-            "labels",
-            "HTMLTextAreaElement:labels",
-            "read-only WebKitDOMNodeList* HTMLTextAreaElement:labels",
-            WEBKIT_DOM_TYPE_NODE_LIST,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -511,71 +340,11 @@ static void webkit_dom_html_text_area_element_class_init(WebKitDOMHTMLTextAreaEl
             "read-write glong HTMLTextAreaElement:selection-end",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_SELECTION_DIRECTION,
-        g_param_spec_string(
-            "selection-direction",
-            "HTMLTextAreaElement:selection-direction",
-            "read-write gchar* HTMLTextAreaElement:selection-direction",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCORRECT,
-        g_param_spec_boolean(
-            "autocorrect",
-            "HTMLTextAreaElement:autocorrect",
-            "read-write gboolean HTMLTextAreaElement:autocorrect",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCAPITALIZE,
-        g_param_spec_string(
-            "autocapitalize",
-            "HTMLTextAreaElement:autocapitalize",
-            "read-write gchar* HTMLTextAreaElement:autocapitalize",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCOMPLETE,
-        g_param_spec_string(
-            "autocomplete",
-            "HTMLTextAreaElement:autocomplete",
-            "read-write gchar* HTMLTextAreaElement:autocomplete",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
 }
 
 static void webkit_dom_html_text_area_element_init(WebKitDOMHTMLTextAreaElement* request)
 {
     UNUSED_PARAM(request);
-}
-
-gboolean webkit_dom_html_text_area_element_check_validity(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), FALSE);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gboolean result = item->checkValidity();
-    return result;
-}
-
-void webkit_dom_html_text_area_element_set_custom_validity(WebKitDOMHTMLTextAreaElement* self, const gchar* error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(error);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedError = WTF::String::fromUTF8(error);
-    item->setCustomValidity(convertedError);
 }
 
 void webkit_dom_html_text_area_element_select(WebKitDOMHTMLTextAreaElement* self)
@@ -584,24 +353,6 @@ void webkit_dom_html_text_area_element_select(WebKitDOMHTMLTextAreaElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
     item->select();
-}
-
-void webkit_dom_html_text_area_element_set_range_text(WebKitDOMHTMLTextAreaElement* self, const gchar* replacement, gulong start, gulong end, const gchar* selectionMode, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(replacement);
-    g_return_if_fail(selectionMode);
-    g_return_if_fail(!error || !*error);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedReplacement = WTF::String::fromUTF8(replacement);
-    WTF::String convertedSelectionMode = WTF::String::fromUTF8(selectionMode);
-    WebCore::ExceptionCode ec = 0;
-    item->setRangeText(convertedReplacement, start, end, convertedSelectionMode, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
 }
 
 void webkit_dom_html_text_area_element_set_selection_range(WebKitDOMHTMLTextAreaElement* self, glong start, glong end, const gchar* direction)
@@ -631,25 +382,6 @@ void webkit_dom_html_text_area_element_set_autofocus(WebKitDOMHTMLTextAreaElemen
     item->setBooleanAttribute(WebCore::HTMLNames::autofocusAttr, value);
 }
 
-gchar* webkit_dom_html_text_area_element_get_dir_name(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::dirnameAttr));
-    return result;
-}
-
-void webkit_dom_html_text_area_element_set_dir_name(WebKitDOMHTMLTextAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirnameAttr, convertedValue);
-}
-
 gboolean webkit_dom_html_text_area_element_get_disabled(WebKitDOMHTMLTextAreaElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -676,29 +408,6 @@ WebKitDOMHTMLFormElement* webkit_dom_html_text_area_element_get_form(WebKitDOMHT
     return WebKit::kit(gobjectResult.get());
 }
 
-glong webkit_dom_html_text_area_element_get_max_length(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    glong result = item->maxLength();
-    return result;
-}
-
-void webkit_dom_html_text_area_element_set_max_length(WebKitDOMHTMLTextAreaElement* self, glong value, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(!error || !*error);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->setMaxLength(value, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-}
-
 gchar* webkit_dom_html_text_area_element_get_name(WebKitDOMHTMLTextAreaElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -718,25 +427,6 @@ void webkit_dom_html_text_area_element_set_name(WebKitDOMHTMLTextAreaElement* se
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_text_area_element_get_placeholder(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr));
-    return result;
-}
-
-void webkit_dom_html_text_area_element_set_placeholder(WebKitDOMHTMLTextAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr, convertedValue);
-}
-
 gboolean webkit_dom_html_text_area_element_get_read_only(WebKitDOMHTMLTextAreaElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -752,23 +442,6 @@ void webkit_dom_html_text_area_element_set_read_only(WebKitDOMHTMLTextAreaElemen
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
     item->setBooleanAttribute(WebCore::HTMLNames::readonlyAttr, value);
-}
-
-gboolean webkit_dom_html_text_area_element_get_required(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), FALSE);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::requiredAttr);
-    return result;
-}
-
-void webkit_dom_html_text_area_element_set_required(WebKitDOMHTMLTextAreaElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::requiredAttr, value);
 }
 
 glong webkit_dom_html_text_area_element_get_rows(WebKitDOMHTMLTextAreaElement* self)
@@ -803,25 +476,6 @@ void webkit_dom_html_text_area_element_set_cols(WebKitDOMHTMLTextAreaElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
     item->setCols(value);
-}
-
-gchar* webkit_dom_html_text_area_element_get_wrap(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::wrapAttr));
-    return result;
-}
-
-void webkit_dom_html_text_area_element_set_wrap(WebKitDOMHTMLTextAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::wrapAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_text_area_element_get_area_type(WebKitDOMHTMLTextAreaElement* self)
@@ -871,15 +525,6 @@ void webkit_dom_html_text_area_element_set_value(WebKitDOMHTMLTextAreaElement* s
     item->setValue(convertedValue);
 }
 
-gulong webkit_dom_html_text_area_element_get_text_length(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gulong result = item->textLength();
-    return result;
-}
-
 gboolean webkit_dom_html_text_area_element_get_will_validate(WebKitDOMHTMLTextAreaElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -887,33 +532,6 @@ gboolean webkit_dom_html_text_area_element_get_will_validate(WebKitDOMHTMLTextAr
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
     gboolean result = item->willValidate();
     return result;
-}
-
-WebKitDOMValidityState* webkit_dom_html_text_area_element_get_validity(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    RefPtr<WebCore::ValidityState> gobjectResult = WTF::getPtr(item->validity());
-    return WebKit::kit(gobjectResult.get());
-}
-
-gchar* webkit_dom_html_text_area_element_get_validation_message(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->validationMessage());
-    return result;
-}
-
-WebKitDOMNodeList* webkit_dom_html_text_area_element_get_labels(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    RefPtr<WebCore::NodeList> gobjectResult = WTF::getPtr(item->labels());
-    return WebKit::kit(gobjectResult.get());
 }
 
 glong webkit_dom_html_text_area_element_get_selection_start(WebKitDOMHTMLTextAreaElement* self)
@@ -948,104 +566,6 @@ void webkit_dom_html_text_area_element_set_selection_end(WebKitDOMHTMLTextAreaEl
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
     item->setSelectionEnd(value);
-}
-
-gchar* webkit_dom_html_text_area_element_get_selection_direction(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->selectionDirection());
-    return result;
-}
-
-void webkit_dom_html_text_area_element_set_selection_direction(WebKitDOMHTMLTextAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setSelectionDirection(convertedValue);
-}
-
-gboolean webkit_dom_html_text_area_element_get_autocorrect(WebKitDOMHTMLTextAreaElement* self)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), FALSE);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gboolean result = item->autocorrect();
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-    return static_cast<gboolean>(0);
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-void webkit_dom_html_text_area_element_set_autocorrect(WebKitDOMHTMLTextAreaElement* self, gboolean value)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    item->setAutocorrect(value);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(value);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-gchar* webkit_dom_html_text_area_element_get_autocapitalize(WebKitDOMHTMLTextAreaElement* self)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->autocapitalize());
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-    return 0;
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-void webkit_dom_html_text_area_element_set_autocapitalize(WebKitDOMHTMLTextAreaElement* self, const gchar* value)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAutocapitalize(convertedValue);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(value);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-gchar* webkit_dom_html_text_area_element_get_autocomplete(WebKitDOMHTMLTextAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self), 0);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->autocomplete());
-    return result;
-}
-
-void webkit_dom_html_text_area_element_set_autocomplete(WebKitDOMHTMLTextAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAutocomplete(convertedValue);
 }
 
 gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTextAreaElement* area)

@@ -37,7 +37,6 @@
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMStyleSheetPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLLinkElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -110,10 +109,7 @@ enum {
     PROP_SIZES,
     PROP_TARGET,
     PROP_TYPE,
-    PROP_AS,
-    PROP_CROSS_ORIGIN,
     PROP_SHEET,
-    PROP_REL_LIST,
 };
 
 static void webkit_dom_html_link_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -147,12 +143,6 @@ static void webkit_dom_html_link_element_set_property(GObject* object, guint pro
         break;
     case PROP_TYPE:
         webkit_dom_html_link_element_set_type_attr(self, g_value_get_string(value));
-        break;
-    case PROP_AS:
-        webkit_dom_html_link_element_set_as(self, g_value_get_string(value));
-        break;
-    case PROP_CROSS_ORIGIN:
-        webkit_dom_html_link_element_set_cross_origin(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -195,17 +185,8 @@ static void webkit_dom_html_link_element_get_property(GObject* object, guint pro
     case PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_link_element_get_type_attr(self));
         break;
-    case PROP_AS:
-        g_value_take_string(value, webkit_dom_html_link_element_get_as(self));
-        break;
-    case PROP_CROSS_ORIGIN:
-        g_value_take_string(value, webkit_dom_html_link_element_get_cross_origin(self));
-        break;
     case PROP_SHEET:
         g_value_set_object(value, webkit_dom_html_link_element_get_sheet(self));
-        break;
-    case PROP_REL_LIST:
-        g_value_set_object(value, webkit_dom_html_link_element_get_rel_list(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -321,26 +302,6 @@ static void webkit_dom_html_link_element_class_init(WebKitDOMHTMLLinkElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_AS,
-        g_param_spec_string(
-            "as",
-            "HTMLLinkElement:as",
-            "read-write gchar* HTMLLinkElement:as",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_CROSS_ORIGIN,
-        g_param_spec_string(
-            "cross-origin",
-            "HTMLLinkElement:cross-origin",
-            "read-write gchar* HTMLLinkElement:cross-origin",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_SHEET,
         g_param_spec_object(
             "sheet",
@@ -348,17 +309,6 @@ static void webkit_dom_html_link_element_class_init(WebKitDOMHTMLLinkElementClas
             "read-only WebKitDOMStyleSheet* HTMLLinkElement:sheet",
             WEBKIT_DOM_TYPE_STYLE_SHEET,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_REL_LIST,
-        g_param_spec_object(
-            "rel-list",
-            "HTMLLinkElement:rel-list",
-            "read-only WebKitDOMDOMTokenList* HTMLLinkElement:rel-list",
-            WEBKIT_DOM_TYPE_DOM_TOKEN_LIST,
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_html_link_element_init(WebKitDOMHTMLLinkElement* request)
@@ -544,59 +494,12 @@ void webkit_dom_html_link_element_set_type_attr(WebKitDOMHTMLLinkElement* self, 
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_link_element_get_as(WebKitDOMHTMLLinkElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self), 0);
-    WebCore::HTMLLinkElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::asAttr));
-    return result;
-}
-
-void webkit_dom_html_link_element_set_as(WebKitDOMHTMLLinkElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLLinkElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::asAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_link_element_get_cross_origin(WebKitDOMHTMLLinkElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self), 0);
-    WebCore::HTMLLinkElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->crossOrigin());
-    return result;
-}
-
-void webkit_dom_html_link_element_set_cross_origin(WebKitDOMHTMLLinkElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLLinkElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setCrossOrigin(convertedValue);
-}
-
 WebKitDOMStyleSheet* webkit_dom_html_link_element_get_sheet(WebKitDOMHTMLLinkElement* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self), 0);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
     RefPtr<WebCore::StyleSheet> gobjectResult = WTF::getPtr(item->sheet());
-    return WebKit::kit(gobjectResult.get());
-}
-
-WebKitDOMDOMTokenList* webkit_dom_html_link_element_get_rel_list(WebKitDOMHTMLLinkElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self), 0);
-    WebCore::HTMLLinkElement* item = WebKit::core(self);
-    RefPtr<WebCore::DOMTokenList> gobjectResult = WTF::getPtr(item->relList());
     return WebKit::kit(gobjectResult.get());
 }
 

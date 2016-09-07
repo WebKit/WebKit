@@ -33,7 +33,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLOptionsCollectionUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -138,30 +137,6 @@ WebKitDOMNode* webkit_dom_html_options_collection_named_item(WebKitDOMHTMLOption
     WTF::String convertedName = WTF::String::fromUTF8(name);
     RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->namedItem(convertedName));
     return WebKit::kit(gobjectResult.get());
-}
-
-void webkit_dom_html_options_collection_add(WebKitDOMHTMLOptionsCollection* self, WebKitDOMHTMLOptionElement* option, gulong index, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_OPTIONS_COLLECTION(self));
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_OPTION_ELEMENT(option));
-    g_return_if_fail(!error || !*error);
-    WebCore::HTMLOptionsCollection* item = WebKit::core(self);
-    WebCore::HTMLOptionElement* convertedOption = WebKit::core(option);
-    WebCore::ExceptionCode ec = 0;
-    item->add(*convertedOption, index, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-}
-
-void webkit_dom_html_options_collection_remove(WebKitDOMHTMLOptionsCollection* self, glong index)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_OPTIONS_COLLECTION(self));
-    WebCore::HTMLOptionsCollection* item = WebKit::core(self);
-    item->remove(index);
 }
 
 glong webkit_dom_html_options_collection_get_selected_index(WebKitDOMHTMLOptionsCollection* self)

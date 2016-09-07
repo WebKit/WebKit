@@ -35,7 +35,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMAttrUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -102,7 +101,6 @@ enum {
     PROP_SPECIFIED,
     PROP_VALUE,
     PROP_OWNER_ELEMENT,
-    PROP_IS_ID,
     PROP_NAMESPACE_URI,
     PROP_PREFIX,
     PROP_LOCAL_NAME,
@@ -138,9 +136,6 @@ static void webkit_dom_attr_get_property(GObject* object, guint propertyId, GVal
         break;
     case PROP_OWNER_ELEMENT:
         g_value_set_object(value, webkit_dom_attr_get_owner_element(self));
-        break;
-    case PROP_IS_ID:
-        g_value_set_boolean(value, webkit_dom_attr_get_is_id(self));
         break;
     case PROP_NAMESPACE_URI:
         g_value_take_string(value, webkit_dom_attr_get_namespace_uri(self));
@@ -201,16 +196,6 @@ static void webkit_dom_attr_class_init(WebKitDOMAttrClass* requestClass)
             "Attr:owner-element",
             "read-only WebKitDOMElement* Attr:owner-element",
             WEBKIT_DOM_TYPE_ELEMENT,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_IS_ID,
-        g_param_spec_boolean(
-            "is-id",
-            "Attr:is-id",
-            "read-only gboolean Attr:is-id",
-            FALSE,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -295,15 +280,6 @@ WebKitDOMElement* webkit_dom_attr_get_owner_element(WebKitDOMAttr* self)
     WebCore::Attr* item = WebKit::core(self);
     RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->ownerElement());
     return WebKit::kit(gobjectResult.get());
-}
-
-gboolean webkit_dom_attr_get_is_id(WebKitDOMAttr* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_ATTR(self), FALSE);
-    WebCore::Attr* item = WebKit::core(self);
-    gboolean result = item->isId();
-    return result;
 }
 
 gchar* webkit_dom_attr_get_namespace_uri(WebKitDOMAttr* self)

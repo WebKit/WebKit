@@ -37,7 +37,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLIFrameElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -107,10 +106,8 @@ enum {
     PROP_MARGIN_HEIGHT,
     PROP_MARGIN_WIDTH,
     PROP_NAME,
-    PROP_SANDBOX,
     PROP_SCROLLING,
     PROP_SRC,
-    PROP_SRCDOC,
     PROP_WIDTH,
     PROP_CONTENT_DOCUMENT,
     PROP_CONTENT_WINDOW,
@@ -142,17 +139,11 @@ static void webkit_dom_html_iframe_element_set_property(GObject* object, guint p
     case PROP_NAME:
         webkit_dom_html_iframe_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_SANDBOX:
-        webkit_dom_html_iframe_element_set_sandbox(self, g_value_get_string(value));
-        break;
     case PROP_SCROLLING:
         webkit_dom_html_iframe_element_set_scrolling(self, g_value_get_string(value));
         break;
     case PROP_SRC:
         webkit_dom_html_iframe_element_set_src(self, g_value_get_string(value));
-        break;
-    case PROP_SRCDOC:
-        webkit_dom_html_iframe_element_set_srcdoc(self, g_value_get_string(value));
         break;
     case PROP_WIDTH:
         webkit_dom_html_iframe_element_set_width(self, g_value_get_string(value));
@@ -189,17 +180,11 @@ static void webkit_dom_html_iframe_element_get_property(GObject* object, guint p
     case PROP_NAME:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_name(self));
         break;
-    case PROP_SANDBOX:
-        g_value_take_string(value, webkit_dom_html_iframe_element_get_sandbox(self));
-        break;
     case PROP_SCROLLING:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_scrolling(self));
         break;
     case PROP_SRC:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_src(self));
-        break;
-    case PROP_SRCDOC:
-        g_value_take_string(value, webkit_dom_html_iframe_element_get_srcdoc(self));
         break;
     case PROP_WIDTH:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_width(self));
@@ -294,16 +279,6 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SANDBOX,
-        g_param_spec_string(
-            "sandbox",
-            "HTMLIFrameElement:sandbox",
-            "read-write gchar* HTMLIFrameElement:sandbox",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_SCROLLING,
         g_param_spec_string(
             "scrolling",
@@ -319,16 +294,6 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
             "src",
             "HTMLIFrameElement:src",
             "read-write gchar* HTMLIFrameElement:src",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_SRCDOC,
-        g_param_spec_string(
-            "srcdoc",
-            "HTMLIFrameElement:srcdoc",
-            "read-write gchar* HTMLIFrameElement:srcdoc",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -502,25 +467,6 @@ void webkit_dom_html_iframe_element_set_name(WebKitDOMHTMLIFrameElement* self, c
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_iframe_element_get_sandbox(WebKitDOMHTMLIFrameElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self), 0);
-    WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::sandboxAttr));
-    return result;
-}
-
-void webkit_dom_html_iframe_element_set_sandbox(WebKitDOMHTMLIFrameElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::sandboxAttr, convertedValue);
-}
-
 gchar* webkit_dom_html_iframe_element_get_scrolling(WebKitDOMHTMLIFrameElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -557,25 +503,6 @@ void webkit_dom_html_iframe_element_set_src(WebKitDOMHTMLIFrameElement* self, co
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_iframe_element_get_srcdoc(WebKitDOMHTMLIFrameElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self), 0);
-    WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::srcdocAttr));
-    return result;
-}
-
-void webkit_dom_html_iframe_element_set_srcdoc(WebKitDOMHTMLIFrameElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcdocAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_iframe_element_get_width(WebKitDOMHTMLIFrameElement* self)

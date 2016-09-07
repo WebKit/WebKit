@@ -36,7 +36,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLAnchorElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -101,22 +100,16 @@ enum {
     PROP_0,
     PROP_CHARSET,
     PROP_COORDS,
-    PROP_DOWNLOAD,
     PROP_HREFLANG,
     PROP_NAME,
-    PROP_PING,
     PROP_REL,
     PROP_REV,
     PROP_SHAPE,
     PROP_TARGET,
     PROP_TYPE,
     PROP_TEXT,
-    PROP_REL_LIST,
     PROP_HREF,
-    PROP_ORIGIN,
     PROP_PROTOCOL,
-    PROP_USERNAME,
-    PROP_PASSWORD,
     PROP_HOST,
     PROP_HOSTNAME,
     PROP_PORT,
@@ -136,17 +129,11 @@ static void webkit_dom_html_anchor_element_set_property(GObject* object, guint p
     case PROP_COORDS:
         webkit_dom_html_anchor_element_set_coords(self, g_value_get_string(value));
         break;
-    case PROP_DOWNLOAD:
-        webkit_dom_html_anchor_element_set_download(self, g_value_get_string(value));
-        break;
     case PROP_HREFLANG:
         webkit_dom_html_anchor_element_set_hreflang(self, g_value_get_string(value));
         break;
     case PROP_NAME:
         webkit_dom_html_anchor_element_set_name(self, g_value_get_string(value));
-        break;
-    case PROP_PING:
-        webkit_dom_html_anchor_element_set_ping(self, g_value_get_string(value));
         break;
     case PROP_REL:
         webkit_dom_html_anchor_element_set_rel(self, g_value_get_string(value));
@@ -171,12 +158,6 @@ static void webkit_dom_html_anchor_element_set_property(GObject* object, guint p
         break;
     case PROP_PROTOCOL:
         webkit_dom_html_anchor_element_set_protocol(self, g_value_get_string(value));
-        break;
-    case PROP_USERNAME:
-        webkit_dom_html_anchor_element_set_username(self, g_value_get_string(value));
-        break;
-    case PROP_PASSWORD:
-        webkit_dom_html_anchor_element_set_password(self, g_value_get_string(value));
         break;
     case PROP_HOST:
         webkit_dom_html_anchor_element_set_host(self, g_value_get_string(value));
@@ -213,17 +194,11 @@ static void webkit_dom_html_anchor_element_get_property(GObject* object, guint p
     case PROP_COORDS:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_coords(self));
         break;
-    case PROP_DOWNLOAD:
-        g_value_take_string(value, webkit_dom_html_anchor_element_get_download(self));
-        break;
     case PROP_HREFLANG:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_hreflang(self));
         break;
     case PROP_NAME:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_name(self));
-        break;
-    case PROP_PING:
-        g_value_take_string(value, webkit_dom_html_anchor_element_get_ping(self));
         break;
     case PROP_REL:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_rel(self));
@@ -243,23 +218,11 @@ static void webkit_dom_html_anchor_element_get_property(GObject* object, guint p
     case PROP_TEXT:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_text(self));
         break;
-    case PROP_REL_LIST:
-        g_value_set_object(value, webkit_dom_html_anchor_element_get_rel_list(self));
-        break;
     case PROP_HREF:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_href(self));
         break;
-    case PROP_ORIGIN:
-        g_value_take_string(value, webkit_dom_html_anchor_element_get_origin(self));
-        break;
     case PROP_PROTOCOL:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_protocol(self));
-        break;
-    case PROP_USERNAME:
-        g_value_take_string(value, webkit_dom_html_anchor_element_get_username(self));
-        break;
-    case PROP_PASSWORD:
-        g_value_take_string(value, webkit_dom_html_anchor_element_get_password(self));
         break;
     case PROP_HOST:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_host(self));
@@ -313,16 +276,6 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DOWNLOAD,
-        g_param_spec_string(
-            "download",
-            "HTMLAnchorElement:download",
-            "read-write gchar* HTMLAnchorElement:download",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_HREFLANG,
         g_param_spec_string(
             "hreflang",
@@ -338,16 +291,6 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
             "name",
             "HTMLAnchorElement:name",
             "read-write gchar* HTMLAnchorElement:name",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_PING,
-        g_param_spec_string(
-            "ping",
-            "HTMLAnchorElement:ping",
-            "read-write gchar* HTMLAnchorElement:ping",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -413,16 +356,6 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_REL_LIST,
-        g_param_spec_object(
-            "rel-list",
-            "HTMLAnchorElement:rel-list",
-            "read-only WebKitDOMDOMTokenList* HTMLAnchorElement:rel-list",
-            WEBKIT_DOM_TYPE_DOM_TOKEN_LIST,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_HREF,
         g_param_spec_string(
             "href",
@@ -433,41 +366,11 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ORIGIN,
-        g_param_spec_string(
-            "origin",
-            "HTMLAnchorElement:origin",
-            "read-only gchar* HTMLAnchorElement:origin",
-            "",
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_PROTOCOL,
         g_param_spec_string(
             "protocol",
             "HTMLAnchorElement:protocol",
             "read-write gchar* HTMLAnchorElement:protocol",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_USERNAME,
-        g_param_spec_string(
-            "username",
-            "HTMLAnchorElement:username",
-            "read-write gchar* HTMLAnchorElement:username",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_PASSWORD,
-        g_param_spec_string(
-            "password",
-            "HTMLAnchorElement:password",
-            "read-write gchar* HTMLAnchorElement:password",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -576,37 +479,6 @@ void webkit_dom_html_anchor_element_set_coords(WebKitDOMHTMLAnchorElement* self,
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::coordsAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_anchor_element_get_download(WebKitDOMHTMLAnchorElement* self)
-{
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self), 0);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::downloadAttr));
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Download Attribute")
-    return 0;
-#endif /* ENABLE(DOWNLOAD_ATTRIBUTE) */
-}
-
-void webkit_dom_html_anchor_element_set_download(WebKitDOMHTMLAnchorElement* self, const gchar* value)
-{
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::downloadAttr, convertedValue);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(value);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Download Attribute")
-#endif /* ENABLE(DOWNLOAD_ATTRIBUTE) */
-}
-
 gchar* webkit_dom_html_anchor_element_get_hreflang(WebKitDOMHTMLAnchorElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -643,25 +515,6 @@ void webkit_dom_html_anchor_element_set_name(WebKitDOMHTMLAnchorElement* self, c
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_anchor_element_get_ping(WebKitDOMHTMLAnchorElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self), 0);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::pingAttr));
-    return result;
-}
-
-void webkit_dom_html_anchor_element_set_ping(WebKitDOMHTMLAnchorElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::pingAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_anchor_element_get_rel(WebKitDOMHTMLAnchorElement* self)
@@ -778,15 +631,6 @@ void webkit_dom_html_anchor_element_set_text(WebKitDOMHTMLAnchorElement* self, c
     item->setText(convertedValue);
 }
 
-WebKitDOMDOMTokenList* webkit_dom_html_anchor_element_get_rel_list(WebKitDOMHTMLAnchorElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self), 0);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    RefPtr<WebCore::DOMTokenList> gobjectResult = WTF::getPtr(item->relList());
-    return WebKit::kit(gobjectResult.get());
-}
-
 gchar* webkit_dom_html_anchor_element_get_href(WebKitDOMHTMLAnchorElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -806,15 +650,6 @@ void webkit_dom_html_anchor_element_set_href(WebKitDOMHTMLAnchorElement* self, c
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_anchor_element_get_origin(WebKitDOMHTMLAnchorElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self), 0);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->origin());
-    return result;
-}
-
 gchar* webkit_dom_html_anchor_element_get_protocol(WebKitDOMHTMLAnchorElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -832,44 +667,6 @@ void webkit_dom_html_anchor_element_set_protocol(WebKitDOMHTMLAnchorElement* sel
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setProtocol(convertedValue);
-}
-
-gchar* webkit_dom_html_anchor_element_get_username(WebKitDOMHTMLAnchorElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self), 0);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->username());
-    return result;
-}
-
-void webkit_dom_html_anchor_element_set_username(WebKitDOMHTMLAnchorElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setUsername(convertedValue);
-}
-
-gchar* webkit_dom_html_anchor_element_get_password(WebKitDOMHTMLAnchorElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self), 0);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->password());
-    return result;
-}
-
-void webkit_dom_html_anchor_element_set_password(WebKitDOMHTMLAnchorElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setPassword(convertedValue);
 }
 
 gchar* webkit_dom_html_anchor_element_get_host(WebKitDOMHTMLAnchorElement* self)

@@ -167,6 +167,16 @@ WEBKIT_API gchar*
 webkit_dom_html_area_element_get_protocol(WebKitDOMHTMLAreaElement* self);
 
 /**
+ * webkit_dom_html_area_element_set_protocol:
+ * @self: A #WebKitDOMHTMLAreaElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_area_element_set_protocol(WebKitDOMHTMLAreaElement* self, const gchar* value);
+
+/**
  * webkit_dom_html_area_element_get_host:
  * @self: A #WebKitDOMHTMLAreaElement
  *
@@ -174,6 +184,16 @@ webkit_dom_html_area_element_get_protocol(WebKitDOMHTMLAreaElement* self);
 **/
 WEBKIT_API gchar*
 webkit_dom_html_area_element_get_host(WebKitDOMHTMLAreaElement* self);
+
+/**
+ * webkit_dom_html_area_element_set_host:
+ * @self: A #WebKitDOMHTMLAreaElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_area_element_set_host(WebKitDOMHTMLAreaElement* self, const gchar* value);
 
 /**
  * webkit_dom_html_area_element_get_hostname:
@@ -185,6 +205,16 @@ WEBKIT_API gchar*
 webkit_dom_html_area_element_get_hostname(WebKitDOMHTMLAreaElement* self);
 
 /**
+ * webkit_dom_html_area_element_set_hostname:
+ * @self: A #WebKitDOMHTMLAreaElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_area_element_set_hostname(WebKitDOMHTMLAreaElement* self, const gchar* value);
+
+/**
  * webkit_dom_html_area_element_get_port:
  * @self: A #WebKitDOMHTMLAreaElement
  *
@@ -192,6 +222,16 @@ webkit_dom_html_area_element_get_hostname(WebKitDOMHTMLAreaElement* self);
 **/
 WEBKIT_API gchar*
 webkit_dom_html_area_element_get_port(WebKitDOMHTMLAreaElement* self);
+
+/**
+ * webkit_dom_html_area_element_set_port:
+ * @self: A #WebKitDOMHTMLAreaElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_area_element_set_port(WebKitDOMHTMLAreaElement* self, const gchar* value);
 
 /**
  * webkit_dom_html_area_element_get_pathname:
@@ -203,6 +243,16 @@ WEBKIT_API gchar*
 webkit_dom_html_area_element_get_pathname(WebKitDOMHTMLAreaElement* self);
 
 /**
+ * webkit_dom_html_area_element_set_pathname:
+ * @self: A #WebKitDOMHTMLAreaElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_area_element_set_pathname(WebKitDOMHTMLAreaElement* self, const gchar* value);
+
+/**
  * webkit_dom_html_area_element_get_search:
  * @self: A #WebKitDOMHTMLAreaElement
  *
@@ -212,6 +262,16 @@ WEBKIT_API gchar*
 webkit_dom_html_area_element_get_search(WebKitDOMHTMLAreaElement* self);
 
 /**
+ * webkit_dom_html_area_element_set_search:
+ * @self: A #WebKitDOMHTMLAreaElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_area_element_set_search(WebKitDOMHTMLAreaElement* self, const gchar* value);
+
+/**
  * webkit_dom_html_area_element_get_hash:
  * @self: A #WebKitDOMHTMLAreaElement
  *
@@ -219,6 +279,16 @@ webkit_dom_html_area_element_get_search(WebKitDOMHTMLAreaElement* self);
 **/
 WEBKIT_API gchar*
 webkit_dom_html_area_element_get_hash(WebKitDOMHTMLAreaElement* self);
+
+/**
+ * webkit_dom_html_area_element_set_hash:
+ * @self: A #WebKitDOMHTMLAreaElement
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_html_area_element_set_hash(WebKitDOMHTMLAreaElement* self, const gchar* value);
 
 G_END_DECLS
 

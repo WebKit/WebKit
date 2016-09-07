@@ -36,9 +36,7 @@
 #include "WebKitDOMNodeListPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMValidityStatePrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLButtonElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -104,18 +102,10 @@ enum {
     PROP_AUTOFOCUS,
     PROP_DISABLED,
     PROP_FORM,
-    PROP_FORM_ACTION,
-    PROP_FORM_ENCTYPE,
-    PROP_FORM_METHOD,
     PROP_TYPE,
-    PROP_FORM_NO_VALIDATE,
-    PROP_FORM_TARGET,
     PROP_NAME,
     PROP_VALUE,
     PROP_WILL_VALIDATE,
-    PROP_VALIDITY,
-    PROP_VALIDATION_MESSAGE,
-    PROP_LABELS,
 };
 
 static void webkit_dom_html_button_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -129,23 +119,8 @@ static void webkit_dom_html_button_element_set_property(GObject* object, guint p
     case PROP_DISABLED:
         webkit_dom_html_button_element_set_disabled(self, g_value_get_boolean(value));
         break;
-    case PROP_FORM_ACTION:
-        webkit_dom_html_button_element_set_form_action(self, g_value_get_string(value));
-        break;
-    case PROP_FORM_ENCTYPE:
-        webkit_dom_html_button_element_set_form_enctype(self, g_value_get_string(value));
-        break;
-    case PROP_FORM_METHOD:
-        webkit_dom_html_button_element_set_form_method(self, g_value_get_string(value));
-        break;
     case PROP_TYPE:
         webkit_dom_html_button_element_set_button_type(self, g_value_get_string(value));
-        break;
-    case PROP_FORM_NO_VALIDATE:
-        webkit_dom_html_button_element_set_form_no_validate(self, g_value_get_boolean(value));
-        break;
-    case PROP_FORM_TARGET:
-        webkit_dom_html_button_element_set_form_target(self, g_value_get_string(value));
         break;
     case PROP_NAME:
         webkit_dom_html_button_element_set_name(self, g_value_get_string(value));
@@ -173,23 +148,8 @@ static void webkit_dom_html_button_element_get_property(GObject* object, guint p
     case PROP_FORM:
         g_value_set_object(value, webkit_dom_html_button_element_get_form(self));
         break;
-    case PROP_FORM_ACTION:
-        g_value_take_string(value, webkit_dom_html_button_element_get_form_action(self));
-        break;
-    case PROP_FORM_ENCTYPE:
-        g_value_take_string(value, webkit_dom_html_button_element_get_form_enctype(self));
-        break;
-    case PROP_FORM_METHOD:
-        g_value_take_string(value, webkit_dom_html_button_element_get_form_method(self));
-        break;
     case PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_button_element_get_button_type(self));
-        break;
-    case PROP_FORM_NO_VALIDATE:
-        g_value_set_boolean(value, webkit_dom_html_button_element_get_form_no_validate(self));
-        break;
-    case PROP_FORM_TARGET:
-        g_value_take_string(value, webkit_dom_html_button_element_get_form_target(self));
         break;
     case PROP_NAME:
         g_value_take_string(value, webkit_dom_html_button_element_get_name(self));
@@ -199,15 +159,6 @@ static void webkit_dom_html_button_element_get_property(GObject* object, guint p
         break;
     case PROP_WILL_VALIDATE:
         g_value_set_boolean(value, webkit_dom_html_button_element_get_will_validate(self));
-        break;
-    case PROP_VALIDITY:
-        g_value_set_object(value, webkit_dom_html_button_element_get_validity(self));
-        break;
-    case PROP_VALIDATION_MESSAGE:
-        g_value_take_string(value, webkit_dom_html_button_element_get_validation_message(self));
-        break;
-    case PROP_LABELS:
-        g_value_set_object(value, webkit_dom_html_button_element_get_labels(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -253,61 +204,11 @@ static void webkit_dom_html_button_element_class_init(WebKitDOMHTMLButtonElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FORM_ACTION,
-        g_param_spec_string(
-            "form-action",
-            "HTMLButtonElement:form-action",
-            "read-write gchar* HTMLButtonElement:form-action",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_FORM_ENCTYPE,
-        g_param_spec_string(
-            "form-enctype",
-            "HTMLButtonElement:form-enctype",
-            "read-write gchar* HTMLButtonElement:form-enctype",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_FORM_METHOD,
-        g_param_spec_string(
-            "form-method",
-            "HTMLButtonElement:form-method",
-            "read-write gchar* HTMLButtonElement:form-method",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_TYPE,
         g_param_spec_string(
             "type",
             "HTMLButtonElement:type",
             "read-write gchar* HTMLButtonElement:type",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_FORM_NO_VALIDATE,
-        g_param_spec_boolean(
-            "form-no-validate",
-            "HTMLButtonElement:form-no-validate",
-            "read-write gboolean HTMLButtonElement:form-no-validate",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_FORM_TARGET,
-        g_param_spec_string(
-            "form-target",
-            "HTMLButtonElement:form-target",
-            "read-write gchar* HTMLButtonElement:form-target",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -340,69 +241,11 @@ static void webkit_dom_html_button_element_class_init(WebKitDOMHTMLButtonElement
             "read-only gboolean HTMLButtonElement:will-validate",
             FALSE,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDITY,
-        g_param_spec_object(
-            "validity",
-            "HTMLButtonElement:validity",
-            "read-only WebKitDOMValidityState* HTMLButtonElement:validity",
-            WEBKIT_DOM_TYPE_VALIDITY_STATE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDATION_MESSAGE,
-        g_param_spec_string(
-            "validation-message",
-            "HTMLButtonElement:validation-message",
-            "read-only gchar* HTMLButtonElement:validation-message",
-            "",
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_LABELS,
-        g_param_spec_object(
-            "labels",
-            "HTMLButtonElement:labels",
-            "read-only WebKitDOMNodeList* HTMLButtonElement:labels",
-            WEBKIT_DOM_TYPE_NODE_LIST,
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_html_button_element_init(WebKitDOMHTMLButtonElement* request)
 {
     UNUSED_PARAM(request);
-}
-
-gboolean webkit_dom_html_button_element_check_validity(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), FALSE);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    gboolean result = item->checkValidity();
-    return result;
-}
-
-void webkit_dom_html_button_element_set_custom_validity(WebKitDOMHTMLButtonElement* self, const gchar* error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
-    g_return_if_fail(error);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    WTF::String convertedError = WTF::String::fromUTF8(error);
-    item->setCustomValidity(convertedError);
-}
-
-void webkit_dom_html_button_element_click(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    item->click();
 }
 
 gboolean webkit_dom_html_button_element_get_autofocus(WebKitDOMHTMLButtonElement* self)
@@ -448,63 +291,6 @@ WebKitDOMHTMLFormElement* webkit_dom_html_button_element_get_form(WebKitDOMHTMLB
     return WebKit::kit(gobjectResult.get());
 }
 
-gchar* webkit_dom_html_button_element_get_form_action(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), 0);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->formAction());
-    return result;
-}
-
-void webkit_dom_html_button_element_set_form_action(WebKitDOMHTMLButtonElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setFormAction(convertedValue);
-}
-
-gchar* webkit_dom_html_button_element_get_form_enctype(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), 0);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->formEnctype());
-    return result;
-}
-
-void webkit_dom_html_button_element_set_form_enctype(WebKitDOMHTMLButtonElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setFormEnctype(convertedValue);
-}
-
-gchar* webkit_dom_html_button_element_get_form_method(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), 0);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->formMethod());
-    return result;
-}
-
-void webkit_dom_html_button_element_set_form_method(WebKitDOMHTMLButtonElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setFormMethod(convertedValue);
-}
-
 gchar* webkit_dom_html_button_element_get_button_type(WebKitDOMHTMLButtonElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -522,42 +308,6 @@ void webkit_dom_html_button_element_set_button_type(WebKitDOMHTMLButtonElement* 
     WebCore::HTMLButtonElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setType(convertedValue);
-}
-
-gboolean webkit_dom_html_button_element_get_form_no_validate(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), FALSE);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::formnovalidateAttr);
-    return result;
-}
-
-void webkit_dom_html_button_element_set_form_no_validate(WebKitDOMHTMLButtonElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::formnovalidateAttr, value);
-}
-
-gchar* webkit_dom_html_button_element_get_form_target(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), 0);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::formtargetAttr));
-    return result;
-}
-
-void webkit_dom_html_button_element_set_form_target(WebKitDOMHTMLButtonElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::formtargetAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_button_element_get_name(WebKitDOMHTMLButtonElement* self)
@@ -606,31 +356,3 @@ gboolean webkit_dom_html_button_element_get_will_validate(WebKitDOMHTMLButtonEle
     gboolean result = item->willValidate();
     return result;
 }
-
-WebKitDOMValidityState* webkit_dom_html_button_element_get_validity(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), 0);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    RefPtr<WebCore::ValidityState> gobjectResult = WTF::getPtr(item->validity());
-    return WebKit::kit(gobjectResult.get());
-}
-
-gchar* webkit_dom_html_button_element_get_validation_message(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), 0);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->validationMessage());
-    return result;
-}
-
-WebKitDOMNodeList* webkit_dom_html_button_element_get_labels(WebKitDOMHTMLButtonElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self), 0);
-    WebCore::HTMLButtonElement* item = WebKit::core(self);
-    RefPtr<WebCore::NodeList> gobjectResult = WTF::getPtr(item->labels());
-    return WebKit::kit(gobjectResult.get());
-}
-

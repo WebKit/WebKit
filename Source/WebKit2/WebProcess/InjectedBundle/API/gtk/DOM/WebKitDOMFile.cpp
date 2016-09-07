@@ -31,7 +31,6 @@
 #include "WebKitDOMFilePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMFileUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -60,7 +59,6 @@ G_DEFINE_TYPE(WebKitDOMFile, webkit_dom_file, WEBKIT_DOM_TYPE_BLOB)
 enum {
     PROP_0,
     PROP_NAME,
-    PROP_LAST_MODIFIED,
 };
 
 static void webkit_dom_file_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
@@ -70,9 +68,6 @@ static void webkit_dom_file_get_property(GObject* object, guint propertyId, GVal
     switch (propertyId) {
     case PROP_NAME:
         g_value_take_string(value, webkit_dom_file_get_name(self));
-        break;
-    case PROP_LAST_MODIFIED:
-        g_value_set_int64(value, webkit_dom_file_get_last_modified(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -94,17 +89,6 @@ static void webkit_dom_file_class_init(WebKitDOMFileClass* requestClass)
             "read-only gchar* File:name",
             "",
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_LAST_MODIFIED,
-        g_param_spec_int64(
-            "last-modified",
-            "File:last-modified",
-            "read-only gint64 File:last-modified",
-            G_MININT64, G_MAXINT64, 0,
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_file_init(WebKitDOMFile* request)
@@ -120,13 +104,3 @@ gchar* webkit_dom_file_get_name(WebKitDOMFile* self)
     gchar* result = convertToUTF8String(item->name());
     return result;
 }
-
-gint64 webkit_dom_file_get_last_modified(WebKitDOMFile* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_FILE(self), 0);
-    WebCore::File* item = WebKit::core(self);
-    gint64 result = item->lastModified();
-    return result;
-}
-

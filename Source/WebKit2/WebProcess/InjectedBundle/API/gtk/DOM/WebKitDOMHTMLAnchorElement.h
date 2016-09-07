@@ -221,6 +221,16 @@ WEBKIT_API gchar*
 webkit_dom_html_anchor_element_get_text(WebKitDOMHTMLAnchorElement* self);
 
 /**
+ * webkit_dom_html_anchor_element_set_text:
+ * @self: A #WebKitDOMHTMLAnchorElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+**/
+WEBKIT_API void
+webkit_dom_html_anchor_element_set_text(WebKitDOMHTMLAnchorElement* self, const gchar* value);
+
+/**
  * webkit_dom_html_anchor_element_get_href:
  * @self: A #WebKitDOMHTMLAnchorElement
  *

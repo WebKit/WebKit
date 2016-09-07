@@ -62,14 +62,6 @@
 #include "WebKitDOMUIEventPrivate.h"
 #include "WebKitDOMWheelEventPrivate.h"
 
-#if ENABLE(VIDEO_TRACK)
-#include <WebCore/DataCue.h>
-#include <WebCore/VTTCue.h>
-#include "WebKitDOMDataCuePrivate.h"
-#include "WebKitDOMTextTrackCuePrivate.h"
-#include "WebKitDOMVTTCuePrivate.h"
-#endif
-
 namespace WebKit {
 
 using namespace WebCore;
@@ -167,21 +159,5 @@ WebKitDOMBlob* wrap(Blob* blob)
         return WEBKIT_DOM_BLOB(wrapFile(static_cast<File*>(blob)));
     return wrapBlob(blob);
 }
-
-#if ENABLE(VIDEO_TRACK)
-WebKitDOMTextTrackCue* wrap(TextTrackCue* cue)
-{
-    ASSERT(cue);
-
-    switch (cue->cueType()) {
-    case TextTrackCue::Data:
-        return WEBKIT_DOM_TEXT_TRACK_CUE(wrapDataCue(static_cast<DataCue*>(cue)));
-    case TextTrackCue::WebVTT:
-    case TextTrackCue::Generic:
-        return WEBKIT_DOM_TEXT_TRACK_CUE(wrapVTTCue(static_cast<VTTCue*>(cue)));
-    }
-    return wrapTextTrackCue(cue);
-}
-#endif
 
 } // namespace WebKit

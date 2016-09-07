@@ -38,9 +38,7 @@
 #include "WebKitDOMNodeListPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMValidityStatePrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLInputElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -105,48 +103,27 @@ enum {
     PROP_0,
     PROP_ACCEPT,
     PROP_ALT,
-    PROP_AUTOCOMPLETE,
     PROP_AUTOFOCUS,
     PROP_DEFAULT_CHECKED,
     PROP_CHECKED,
-    PROP_DIR_NAME,
     PROP_DISABLED,
     PROP_FORM,
     PROP_FILES,
-    PROP_FORM_ACTION,
-    PROP_FORM_ENCTYPE,
-    PROP_FORM_METHOD,
-    PROP_FORM_NO_VALIDATE,
-    PROP_FORM_TARGET,
     PROP_HEIGHT,
     PROP_INDETERMINATE,
-    PROP_LIST,
-    PROP_MAX,
     PROP_MAX_LENGTH,
-    PROP_MIN,
     PROP_MULTIPLE,
     PROP_NAME,
-    PROP_PATTERN,
-    PROP_PLACEHOLDER,
     PROP_READ_ONLY,
-    PROP_REQUIRED,
     PROP_SIZE,
     PROP_SRC,
-    PROP_STEP,
     PROP_TYPE,
     PROP_DEFAULT_VALUE,
     PROP_VALUE,
-    PROP_VALUE_AS_NUMBER,
     PROP_WIDTH,
     PROP_WILL_VALIDATE,
-    PROP_VALIDITY,
-    PROP_VALIDATION_MESSAGE,
-    PROP_LABELS,
     PROP_ALIGN,
     PROP_USE_MAP,
-    PROP_INCREMENTAL,
-    PROP_AUTOCORRECT,
-    PROP_AUTOCAPITALIZE,
     PROP_CAPTURE,
 };
 
@@ -161,9 +138,6 @@ static void webkit_dom_html_input_element_set_property(GObject* object, guint pr
     case PROP_ALT:
         webkit_dom_html_input_element_set_alt(self, g_value_get_string(value));
         break;
-    case PROP_AUTOCOMPLETE:
-        webkit_dom_html_input_element_set_autocomplete(self, g_value_get_string(value));
-        break;
     case PROP_AUTOFOCUS:
         webkit_dom_html_input_element_set_autofocus(self, g_value_get_boolean(value));
         break;
@@ -173,26 +147,8 @@ static void webkit_dom_html_input_element_set_property(GObject* object, guint pr
     case PROP_CHECKED:
         webkit_dom_html_input_element_set_checked(self, g_value_get_boolean(value));
         break;
-    case PROP_DIR_NAME:
-        webkit_dom_html_input_element_set_dir_name(self, g_value_get_string(value));
-        break;
     case PROP_DISABLED:
         webkit_dom_html_input_element_set_disabled(self, g_value_get_boolean(value));
-        break;
-    case PROP_FORM_ACTION:
-        webkit_dom_html_input_element_set_form_action(self, g_value_get_string(value));
-        break;
-    case PROP_FORM_ENCTYPE:
-        webkit_dom_html_input_element_set_form_enctype(self, g_value_get_string(value));
-        break;
-    case PROP_FORM_METHOD:
-        webkit_dom_html_input_element_set_form_method(self, g_value_get_string(value));
-        break;
-    case PROP_FORM_NO_VALIDATE:
-        webkit_dom_html_input_element_set_form_no_validate(self, g_value_get_boolean(value));
-        break;
-    case PROP_FORM_TARGET:
-        webkit_dom_html_input_element_set_form_target(self, g_value_get_string(value));
         break;
     case PROP_HEIGHT:
         webkit_dom_html_input_element_set_height(self, g_value_get_ulong(value));
@@ -200,14 +156,8 @@ static void webkit_dom_html_input_element_set_property(GObject* object, guint pr
     case PROP_INDETERMINATE:
         webkit_dom_html_input_element_set_indeterminate(self, g_value_get_boolean(value));
         break;
-    case PROP_MAX:
-        webkit_dom_html_input_element_set_max(self, g_value_get_string(value));
-        break;
     case PROP_MAX_LENGTH:
         webkit_dom_html_input_element_set_max_length(self, g_value_get_long(value), nullptr);
-        break;
-    case PROP_MIN:
-        webkit_dom_html_input_element_set_min(self, g_value_get_string(value));
         break;
     case PROP_MULTIPLE:
         webkit_dom_html_input_element_set_multiple(self, g_value_get_boolean(value));
@@ -215,26 +165,14 @@ static void webkit_dom_html_input_element_set_property(GObject* object, guint pr
     case PROP_NAME:
         webkit_dom_html_input_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_PATTERN:
-        webkit_dom_html_input_element_set_pattern(self, g_value_get_string(value));
-        break;
-    case PROP_PLACEHOLDER:
-        webkit_dom_html_input_element_set_placeholder(self, g_value_get_string(value));
-        break;
     case PROP_READ_ONLY:
         webkit_dom_html_input_element_set_read_only(self, g_value_get_boolean(value));
-        break;
-    case PROP_REQUIRED:
-        webkit_dom_html_input_element_set_required(self, g_value_get_boolean(value));
         break;
     case PROP_SIZE:
         webkit_dom_html_input_element_set_size(self, g_value_get_ulong(value), nullptr);
         break;
     case PROP_SRC:
         webkit_dom_html_input_element_set_src(self, g_value_get_string(value));
-        break;
-    case PROP_STEP:
-        webkit_dom_html_input_element_set_step(self, g_value_get_string(value));
         break;
     case PROP_TYPE:
         webkit_dom_html_input_element_set_input_type(self, g_value_get_string(value));
@@ -245,9 +183,6 @@ static void webkit_dom_html_input_element_set_property(GObject* object, guint pr
     case PROP_VALUE:
         webkit_dom_html_input_element_set_value(self, g_value_get_string(value));
         break;
-    case PROP_VALUE_AS_NUMBER:
-        webkit_dom_html_input_element_set_value_as_number(self, g_value_get_double(value), nullptr);
-        break;
     case PROP_WIDTH:
         webkit_dom_html_input_element_set_width(self, g_value_get_ulong(value));
         break;
@@ -257,17 +192,8 @@ static void webkit_dom_html_input_element_set_property(GObject* object, guint pr
     case PROP_USE_MAP:
         webkit_dom_html_input_element_set_use_map(self, g_value_get_string(value));
         break;
-    case PROP_INCREMENTAL:
-        webkit_dom_html_input_element_set_incremental(self, g_value_get_boolean(value));
-        break;
-    case PROP_AUTOCORRECT:
-        webkit_dom_html_input_element_set_autocorrect(self, g_value_get_boolean(value));
-        break;
-    case PROP_AUTOCAPITALIZE:
-        webkit_dom_html_input_element_set_autocapitalize(self, g_value_get_string(value));
-        break;
     case PROP_CAPTURE:
-        webkit_dom_html_input_element_set_capture(self, g_value_get_string(value));
+        webkit_dom_html_input_element_set_capture_type(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -286,9 +212,6 @@ static void webkit_dom_html_input_element_get_property(GObject* object, guint pr
     case PROP_ALT:
         g_value_take_string(value, webkit_dom_html_input_element_get_alt(self));
         break;
-    case PROP_AUTOCOMPLETE:
-        g_value_take_string(value, webkit_dom_html_input_element_get_autocomplete(self));
-        break;
     case PROP_AUTOFOCUS:
         g_value_set_boolean(value, webkit_dom_html_input_element_get_autofocus(self));
         break;
@@ -297,9 +220,6 @@ static void webkit_dom_html_input_element_get_property(GObject* object, guint pr
         break;
     case PROP_CHECKED:
         g_value_set_boolean(value, webkit_dom_html_input_element_get_checked(self));
-        break;
-    case PROP_DIR_NAME:
-        g_value_take_string(value, webkit_dom_html_input_element_get_dir_name(self));
         break;
     case PROP_DISABLED:
         g_value_set_boolean(value, webkit_dom_html_input_element_get_disabled(self));
@@ -310,38 +230,14 @@ static void webkit_dom_html_input_element_get_property(GObject* object, guint pr
     case PROP_FILES:
         g_value_set_object(value, webkit_dom_html_input_element_get_files(self));
         break;
-    case PROP_FORM_ACTION:
-        g_value_take_string(value, webkit_dom_html_input_element_get_form_action(self));
-        break;
-    case PROP_FORM_ENCTYPE:
-        g_value_take_string(value, webkit_dom_html_input_element_get_form_enctype(self));
-        break;
-    case PROP_FORM_METHOD:
-        g_value_take_string(value, webkit_dom_html_input_element_get_form_method(self));
-        break;
-    case PROP_FORM_NO_VALIDATE:
-        g_value_set_boolean(value, webkit_dom_html_input_element_get_form_no_validate(self));
-        break;
-    case PROP_FORM_TARGET:
-        g_value_take_string(value, webkit_dom_html_input_element_get_form_target(self));
-        break;
     case PROP_HEIGHT:
         g_value_set_ulong(value, webkit_dom_html_input_element_get_height(self));
         break;
     case PROP_INDETERMINATE:
         g_value_set_boolean(value, webkit_dom_html_input_element_get_indeterminate(self));
         break;
-    case PROP_LIST:
-        g_value_set_object(value, webkit_dom_html_input_element_get_list(self));
-        break;
-    case PROP_MAX:
-        g_value_take_string(value, webkit_dom_html_input_element_get_max(self));
-        break;
     case PROP_MAX_LENGTH:
         g_value_set_long(value, webkit_dom_html_input_element_get_max_length(self));
-        break;
-    case PROP_MIN:
-        g_value_take_string(value, webkit_dom_html_input_element_get_min(self));
         break;
     case PROP_MULTIPLE:
         g_value_set_boolean(value, webkit_dom_html_input_element_get_multiple(self));
@@ -349,26 +245,14 @@ static void webkit_dom_html_input_element_get_property(GObject* object, guint pr
     case PROP_NAME:
         g_value_take_string(value, webkit_dom_html_input_element_get_name(self));
         break;
-    case PROP_PATTERN:
-        g_value_take_string(value, webkit_dom_html_input_element_get_pattern(self));
-        break;
-    case PROP_PLACEHOLDER:
-        g_value_take_string(value, webkit_dom_html_input_element_get_placeholder(self));
-        break;
     case PROP_READ_ONLY:
         g_value_set_boolean(value, webkit_dom_html_input_element_get_read_only(self));
-        break;
-    case PROP_REQUIRED:
-        g_value_set_boolean(value, webkit_dom_html_input_element_get_required(self));
         break;
     case PROP_SIZE:
         g_value_set_ulong(value, webkit_dom_html_input_element_get_size(self));
         break;
     case PROP_SRC:
         g_value_take_string(value, webkit_dom_html_input_element_get_src(self));
-        break;
-    case PROP_STEP:
-        g_value_take_string(value, webkit_dom_html_input_element_get_step(self));
         break;
     case PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_input_element_get_input_type(self));
@@ -379,38 +263,17 @@ static void webkit_dom_html_input_element_get_property(GObject* object, guint pr
     case PROP_VALUE:
         g_value_take_string(value, webkit_dom_html_input_element_get_value(self));
         break;
-    case PROP_VALUE_AS_NUMBER:
-        g_value_set_double(value, webkit_dom_html_input_element_get_value_as_number(self));
-        break;
     case PROP_WIDTH:
         g_value_set_ulong(value, webkit_dom_html_input_element_get_width(self));
         break;
     case PROP_WILL_VALIDATE:
         g_value_set_boolean(value, webkit_dom_html_input_element_get_will_validate(self));
         break;
-    case PROP_VALIDITY:
-        g_value_set_object(value, webkit_dom_html_input_element_get_validity(self));
-        break;
-    case PROP_VALIDATION_MESSAGE:
-        g_value_take_string(value, webkit_dom_html_input_element_get_validation_message(self));
-        break;
-    case PROP_LABELS:
-        g_value_set_object(value, webkit_dom_html_input_element_get_labels(self));
-        break;
     case PROP_ALIGN:
         g_value_take_string(value, webkit_dom_html_input_element_get_align(self));
         break;
     case PROP_USE_MAP:
         g_value_take_string(value, webkit_dom_html_input_element_get_use_map(self));
-        break;
-    case PROP_INCREMENTAL:
-        g_value_set_boolean(value, webkit_dom_html_input_element_get_incremental(self));
-        break;
-    case PROP_AUTOCORRECT:
-        g_value_set_boolean(value, webkit_dom_html_input_element_get_autocorrect(self));
-        break;
-    case PROP_AUTOCAPITALIZE:
-        g_value_take_string(value, webkit_dom_html_input_element_get_autocapitalize(self));
         break;
     case PROP_CAPTURE:
         g_value_take_string(value, webkit_dom_html_input_element_get_capture_type(self));
@@ -449,16 +312,6 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_AUTOCOMPLETE,
-        g_param_spec_string(
-            "autocomplete",
-            "HTMLInputElement:autocomplete",
-            "read-write gchar* HTMLInputElement:autocomplete",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_AUTOFOCUS,
         g_param_spec_boolean(
             "autofocus",
@@ -485,16 +338,6 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
             "HTMLInputElement:checked",
             "read-write gboolean HTMLInputElement:checked",
             FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_DIR_NAME,
-        g_param_spec_string(
-            "dir-name",
-            "HTMLInputElement:dir-name",
-            "read-write gchar* HTMLInputElement:dir-name",
-            "",
             WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(
@@ -529,56 +372,6 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FORM_ACTION,
-        g_param_spec_string(
-            "form-action",
-            "HTMLInputElement:form-action",
-            "read-write gchar* HTMLInputElement:form-action",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_FORM_ENCTYPE,
-        g_param_spec_string(
-            "form-enctype",
-            "HTMLInputElement:form-enctype",
-            "read-write gchar* HTMLInputElement:form-enctype",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_FORM_METHOD,
-        g_param_spec_string(
-            "form-method",
-            "HTMLInputElement:form-method",
-            "read-write gchar* HTMLInputElement:form-method",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_FORM_NO_VALIDATE,
-        g_param_spec_boolean(
-            "form-no-validate",
-            "HTMLInputElement:form-no-validate",
-            "read-write gboolean HTMLInputElement:form-no-validate",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_FORM_TARGET,
-        g_param_spec_string(
-            "form-target",
-            "HTMLInputElement:form-target",
-            "read-write gchar* HTMLInputElement:form-target",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_HEIGHT,
         g_param_spec_ulong(
             "height",
@@ -599,42 +392,12 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LIST,
-        g_param_spec_object(
-            "list",
-            "HTMLInputElement:list",
-            "read-only WebKitDOMHTMLElement* HTMLInputElement:list",
-            WEBKIT_DOM_TYPE_HTML_ELEMENT,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_MAX,
-        g_param_spec_string(
-            "max",
-            "HTMLInputElement:max",
-            "read-write gchar* HTMLInputElement:max",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_MAX_LENGTH,
         g_param_spec_long(
             "max-length",
             "HTMLInputElement:max-length",
             "read-write glong HTMLInputElement:max-length",
             G_MINLONG, G_MAXLONG, 0,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_MIN,
-        g_param_spec_string(
-            "min",
-            "HTMLInputElement:min",
-            "read-write gchar* HTMLInputElement:min",
-            "",
             WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(
@@ -659,41 +422,11 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PATTERN,
-        g_param_spec_string(
-            "pattern",
-            "HTMLInputElement:pattern",
-            "read-write gchar* HTMLInputElement:pattern",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_PLACEHOLDER,
-        g_param_spec_string(
-            "placeholder",
-            "HTMLInputElement:placeholder",
-            "read-write gchar* HTMLInputElement:placeholder",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_READ_ONLY,
         g_param_spec_boolean(
             "read-only",
             "HTMLInputElement:read-only",
             "read-write gboolean HTMLInputElement:read-only",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_REQUIRED,
-        g_param_spec_boolean(
-            "required",
-            "HTMLInputElement:required",
-            "read-write gboolean HTMLInputElement:required",
             FALSE,
             WEBKIT_PARAM_READWRITE));
 
@@ -714,16 +447,6 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
             "src",
             "HTMLInputElement:src",
             "read-write gchar* HTMLInputElement:src",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_STEP,
-        g_param_spec_string(
-            "step",
-            "HTMLInputElement:step",
-            "read-write gchar* HTMLInputElement:step",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -759,16 +482,6 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VALUE_AS_NUMBER,
-        g_param_spec_double(
-            "value-as-number",
-            "HTMLInputElement:value-as-number",
-            "read-write gdouble HTMLInputElement:value-as-number",
-            -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_WIDTH,
         g_param_spec_ulong(
             "width",
@@ -785,36 +498,6 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
             "HTMLInputElement:will-validate",
             "read-only gboolean HTMLInputElement:will-validate",
             FALSE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDITY,
-        g_param_spec_object(
-            "validity",
-            "HTMLInputElement:validity",
-            "read-only WebKitDOMValidityState* HTMLInputElement:validity",
-            WEBKIT_DOM_TYPE_VALIDITY_STATE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDATION_MESSAGE,
-        g_param_spec_string(
-            "validation-message",
-            "HTMLInputElement:validation-message",
-            "read-only gchar* HTMLInputElement:validation-message",
-            "",
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_LABELS,
-        g_param_spec_object(
-            "labels",
-            "HTMLInputElement:labels",
-            "read-only WebKitDOMNodeList* HTMLInputElement:labels",
-            WEBKIT_DOM_TYPE_NODE_LIST,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -839,36 +522,6 @@ static void webkit_dom_html_input_element_class_init(WebKitDOMHTMLInputElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_INCREMENTAL,
-        g_param_spec_boolean(
-            "incremental",
-            "HTMLInputElement:incremental",
-            "read-write gboolean HTMLInputElement:incremental",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCORRECT,
-        g_param_spec_boolean(
-            "autocorrect",
-            "HTMLInputElement:autocorrect",
-            "read-write gboolean HTMLInputElement:autocorrect",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCAPITALIZE,
-        g_param_spec_string(
-            "autocapitalize",
-            "HTMLInputElement:autocapitalize",
-            "read-write gchar* HTMLInputElement:autocapitalize",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_CAPTURE,
         g_param_spec_string(
             "capture",
@@ -884,87 +537,12 @@ static void webkit_dom_html_input_element_init(WebKitDOMHTMLInputElement* reques
     UNUSED_PARAM(request);
 }
 
-void webkit_dom_html_input_element_step_up(WebKitDOMHTMLInputElement* self, glong n, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(!error || !*error);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->stepUp(n, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-}
-
-void webkit_dom_html_input_element_step_down(WebKitDOMHTMLInputElement* self, glong n, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(!error || !*error);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->stepDown(n, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-}
-
-gboolean webkit_dom_html_input_element_check_validity(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), FALSE);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gboolean result = item->checkValidity();
-    return result;
-}
-
-void webkit_dom_html_input_element_set_custom_validity(WebKitDOMHTMLInputElement* self, const gchar* error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(error);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedError = WTF::String::fromUTF8(error);
-    item->setCustomValidity(convertedError);
-}
-
 void webkit_dom_html_input_element_select(WebKitDOMHTMLInputElement* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     WebCore::HTMLInputElement* item = WebKit::core(self);
     item->select();
-}
-
-void webkit_dom_html_input_element_set_range_text(WebKitDOMHTMLInputElement* self, const gchar* replacement, gulong start, gulong end, const gchar* selectionMode, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(replacement);
-    g_return_if_fail(selectionMode);
-    g_return_if_fail(!error || !*error);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedReplacement = WTF::String::fromUTF8(replacement);
-    WTF::String convertedSelectionMode = WTF::String::fromUTF8(selectionMode);
-    WebCore::ExceptionCode ec = 0;
-    item->setRangeText(convertedReplacement, start, end, convertedSelectionMode, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-}
-
-void webkit_dom_html_input_element_set_value_for_user(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setValueForUser(convertedValue);
 }
 
 gchar* webkit_dom_html_input_element_get_accept(WebKitDOMHTMLInputElement* self)
@@ -1003,25 +581,6 @@ void webkit_dom_html_input_element_set_alt(WebKitDOMHTMLInputElement* self, cons
     WebCore::HTMLInputElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_input_element_get_autocomplete(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->autocomplete());
-    return result;
-}
-
-void webkit_dom_html_input_element_set_autocomplete(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAutocomplete(convertedValue);
 }
 
 gboolean webkit_dom_html_input_element_get_autofocus(WebKitDOMHTMLInputElement* self)
@@ -1075,25 +634,6 @@ void webkit_dom_html_input_element_set_checked(WebKitDOMHTMLInputElement* self, 
     item->setChecked(value);
 }
 
-gchar* webkit_dom_html_input_element_get_dir_name(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::dirnameAttr));
-    return result;
-}
-
-void webkit_dom_html_input_element_set_dir_name(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirnameAttr, convertedValue);
-}
-
 gboolean webkit_dom_html_input_element_get_disabled(WebKitDOMHTMLInputElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -1139,99 +679,6 @@ void webkit_dom_html_input_element_set_files(WebKitDOMHTMLInputElement* self, We
     item->setFiles(convertedValue);
 }
 
-gchar* webkit_dom_html_input_element_get_form_action(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->formAction());
-    return result;
-}
-
-void webkit_dom_html_input_element_set_form_action(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setFormAction(convertedValue);
-}
-
-gchar* webkit_dom_html_input_element_get_form_enctype(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->formEnctype());
-    return result;
-}
-
-void webkit_dom_html_input_element_set_form_enctype(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setFormEnctype(convertedValue);
-}
-
-gchar* webkit_dom_html_input_element_get_form_method(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->formMethod());
-    return result;
-}
-
-void webkit_dom_html_input_element_set_form_method(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setFormMethod(convertedValue);
-}
-
-gboolean webkit_dom_html_input_element_get_form_no_validate(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), FALSE);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::formnovalidateAttr);
-    return result;
-}
-
-void webkit_dom_html_input_element_set_form_no_validate(WebKitDOMHTMLInputElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::formnovalidateAttr, value);
-}
-
-gchar* webkit_dom_html_input_element_get_form_target(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::formtargetAttr));
-    return result;
-}
-
-void webkit_dom_html_input_element_set_form_target(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::formtargetAttr, convertedValue);
-}
-
 gulong webkit_dom_html_input_element_get_height(WebKitDOMHTMLInputElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -1266,40 +713,6 @@ void webkit_dom_html_input_element_set_indeterminate(WebKitDOMHTMLInputElement* 
     item->setIndeterminate(value);
 }
 
-WebKitDOMHTMLElement* webkit_dom_html_input_element_get_list(WebKitDOMHTMLInputElement* self)
-{
-#if ENABLE(DATALIST_ELEMENT)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    RefPtr<WebCore::HTMLElement> gobjectResult = WTF::getPtr(item->list());
-    return WebKit::kit(gobjectResult.get());
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Datalist Element")
-    return 0;
-#endif /* ENABLE(DATALIST_ELEMENT) */
-}
-
-gchar* webkit_dom_html_input_element_get_max(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::maxAttr));
-    return result;
-}
-
-void webkit_dom_html_input_element_set_max(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::maxAttr, convertedValue);
-}
-
 glong webkit_dom_html_input_element_get_max_length(WebKitDOMHTMLInputElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -1321,25 +734,6 @@ void webkit_dom_html_input_element_set_max_length(WebKitDOMHTMLInputElement* sel
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
-}
-
-gchar* webkit_dom_html_input_element_get_min(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::minAttr));
-    return result;
-}
-
-void webkit_dom_html_input_element_set_min(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::minAttr, convertedValue);
 }
 
 gboolean webkit_dom_html_input_element_get_multiple(WebKitDOMHTMLInputElement* self)
@@ -1378,44 +772,6 @@ void webkit_dom_html_input_element_set_name(WebKitDOMHTMLInputElement* self, con
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_input_element_get_pattern(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::patternAttr));
-    return result;
-}
-
-void webkit_dom_html_input_element_set_pattern(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::patternAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_input_element_get_placeholder(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr));
-    return result;
-}
-
-void webkit_dom_html_input_element_set_placeholder(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr, convertedValue);
-}
-
 gboolean webkit_dom_html_input_element_get_read_only(WebKitDOMHTMLInputElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -1431,23 +787,6 @@ void webkit_dom_html_input_element_set_read_only(WebKitDOMHTMLInputElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     WebCore::HTMLInputElement* item = WebKit::core(self);
     item->setBooleanAttribute(WebCore::HTMLNames::readonlyAttr, value);
-}
-
-gboolean webkit_dom_html_input_element_get_required(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), FALSE);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::requiredAttr);
-    return result;
-}
-
-void webkit_dom_html_input_element_set_required(WebKitDOMHTMLInputElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::requiredAttr, value);
 }
 
 gulong webkit_dom_html_input_element_get_size(WebKitDOMHTMLInputElement* self)
@@ -1490,25 +829,6 @@ void webkit_dom_html_input_element_set_src(WebKitDOMHTMLInputElement* self, cons
     WebCore::HTMLInputElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_input_element_get_step(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::stepAttr));
-    return result;
-}
-
-void webkit_dom_html_input_element_set_step(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::stepAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_input_element_get_input_type(WebKitDOMHTMLInputElement* self)
@@ -1568,29 +888,6 @@ void webkit_dom_html_input_element_set_value(WebKitDOMHTMLInputElement* self, co
     item->setValue(convertedValue);
 }
 
-gdouble webkit_dom_html_input_element_get_value_as_number(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gdouble result = item->valueAsNumber();
-    return result;
-}
-
-void webkit_dom_html_input_element_set_value_as_number(WebKitDOMHTMLInputElement* self, gdouble value, GError** error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(!error || !*error);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->setValueAsNumber(value, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
-    }
-}
-
 gulong webkit_dom_html_input_element_get_width(WebKitDOMHTMLInputElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -1615,33 +912,6 @@ gboolean webkit_dom_html_input_element_get_will_validate(WebKitDOMHTMLInputEleme
     WebCore::HTMLInputElement* item = WebKit::core(self);
     gboolean result = item->willValidate();
     return result;
-}
-
-WebKitDOMValidityState* webkit_dom_html_input_element_get_validity(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    RefPtr<WebCore::ValidityState> gobjectResult = WTF::getPtr(item->validity());
-    return WebKit::kit(gobjectResult.get());
-}
-
-gchar* webkit_dom_html_input_element_get_validation_message(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->validationMessage());
-    return result;
-}
-
-WebKitDOMNodeList* webkit_dom_html_input_element_get_labels(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    RefPtr<WebCore::NodeList> gobjectResult = WTF::getPtr(item->labels());
-    return WebKit::kit(gobjectResult.get());
 }
 
 gchar* webkit_dom_html_input_element_get_align(WebKitDOMHTMLInputElement* self)
@@ -1682,83 +952,6 @@ void webkit_dom_html_input_element_set_use_map(WebKitDOMHTMLInputElement* self, 
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::usemapAttr, convertedValue);
 }
 
-gboolean webkit_dom_html_input_element_get_incremental(WebKitDOMHTMLInputElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), FALSE);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::incrementalAttr);
-    return result;
-}
-
-void webkit_dom_html_input_element_set_incremental(WebKitDOMHTMLInputElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::incrementalAttr, value);
-}
-
-gboolean webkit_dom_html_input_element_get_autocorrect(WebKitDOMHTMLInputElement* self)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), FALSE);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gboolean result = item->autocorrect();
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-    return static_cast<gboolean>(0);
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-void webkit_dom_html_input_element_set_autocorrect(WebKitDOMHTMLInputElement* self, gboolean value)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setAutocorrect(value);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(value);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-gchar* webkit_dom_html_input_element_get_autocapitalize(WebKitDOMHTMLInputElement* self)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), 0);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->autocapitalize());
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-    return 0;
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-void webkit_dom_html_input_element_set_autocapitalize(WebKitDOMHTMLInputElement* self, const gchar* value)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAutocapitalize(convertedValue);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(value);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
 gchar* webkit_dom_html_input_element_get_capture_type(WebKitDOMHTMLInputElement* self)
 {
 #if ENABLE(MEDIA_CAPTURE)
@@ -1774,7 +967,7 @@ gchar* webkit_dom_html_input_element_get_capture_type(WebKitDOMHTMLInputElement*
 #endif /* ENABLE(MEDIA_CAPTURE) */
 }
 
-void webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement* self, const gchar* value)
+void webkit_dom_html_input_element_set_capture_type(WebKitDOMHTMLInputElement* self, const gchar* value)
 {
 #if ENABLE(MEDIA_CAPTURE)
     WebCore::JSMainThreadNullState state;

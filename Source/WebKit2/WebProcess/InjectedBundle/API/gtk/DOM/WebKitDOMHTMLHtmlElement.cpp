@@ -35,7 +35,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLHtmlElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -99,7 +98,6 @@ G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLHtmlElement, webkit_dom_html_html_element, 
 enum {
     PROP_0,
     PROP_VERSION,
-    PROP_MANIFEST,
 };
 
 static void webkit_dom_html_html_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -109,9 +107,6 @@ static void webkit_dom_html_html_element_set_property(GObject* object, guint pro
     switch (propertyId) {
     case PROP_VERSION:
         webkit_dom_html_html_element_set_version(self, g_value_get_string(value));
-        break;
-    case PROP_MANIFEST:
-        webkit_dom_html_html_element_set_manifest(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -126,9 +121,6 @@ static void webkit_dom_html_html_element_get_property(GObject* object, guint pro
     switch (propertyId) {
     case PROP_VERSION:
         g_value_take_string(value, webkit_dom_html_html_element_get_version(self));
-        break;
-    case PROP_MANIFEST:
-        g_value_take_string(value, webkit_dom_html_html_element_get_manifest(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -151,17 +143,6 @@ static void webkit_dom_html_html_element_class_init(WebKitDOMHTMLHtmlElementClas
             "read-write gchar* HTMLHtmlElement:version",
             "",
             WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_MANIFEST,
-        g_param_spec_string(
-            "manifest",
-            "HTMLHtmlElement:manifest",
-            "read-write gchar* HTMLHtmlElement:manifest",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
 }
 
 static void webkit_dom_html_html_element_init(WebKitDOMHTMLHtmlElement* request)
@@ -187,23 +168,3 @@ void webkit_dom_html_html_element_set_version(WebKitDOMHTMLHtmlElement* self, co
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::versionAttr, convertedValue);
 }
-
-gchar* webkit_dom_html_html_element_get_manifest(WebKitDOMHTMLHtmlElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_HTML_ELEMENT(self), 0);
-    WebCore::HTMLHtmlElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->getURLAttribute(WebCore::HTMLNames::manifestAttr));
-    return result;
-}
-
-void webkit_dom_html_html_element_set_manifest(WebKitDOMHTMLHtmlElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_HTML_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLHtmlElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::manifestAttr, convertedValue);
-}
-

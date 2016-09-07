@@ -35,7 +35,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLImageElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -102,15 +101,11 @@ enum {
     PROP_ALIGN,
     PROP_ALT,
     PROP_BORDER,
-    PROP_CROSS_ORIGIN,
     PROP_HEIGHT,
     PROP_HSPACE,
     PROP_IS_MAP,
     PROP_LONG_DESC,
     PROP_SRC,
-    PROP_SRCSET,
-    PROP_SIZES,
-    PROP_CURRENT_SRC,
     PROP_USE_MAP,
     PROP_VSPACE,
     PROP_WIDTH,
@@ -139,9 +134,6 @@ static void webkit_dom_html_image_element_set_property(GObject* object, guint pr
     case PROP_BORDER:
         webkit_dom_html_image_element_set_border(self, g_value_get_string(value));
         break;
-    case PROP_CROSS_ORIGIN:
-        webkit_dom_html_image_element_set_cross_origin(self, g_value_get_string(value));
-        break;
     case PROP_HEIGHT:
         webkit_dom_html_image_element_set_height(self, g_value_get_long(value));
         break;
@@ -156,12 +148,6 @@ static void webkit_dom_html_image_element_set_property(GObject* object, guint pr
         break;
     case PROP_SRC:
         webkit_dom_html_image_element_set_src(self, g_value_get_string(value));
-        break;
-    case PROP_SRCSET:
-        webkit_dom_html_image_element_set_srcset(self, g_value_get_string(value));
-        break;
-    case PROP_SIZES:
-        webkit_dom_html_image_element_set_sizes(self, g_value_get_string(value));
         break;
     case PROP_USE_MAP:
         webkit_dom_html_image_element_set_use_map(self, g_value_get_string(value));
@@ -198,9 +184,6 @@ static void webkit_dom_html_image_element_get_property(GObject* object, guint pr
     case PROP_BORDER:
         g_value_take_string(value, webkit_dom_html_image_element_get_border(self));
         break;
-    case PROP_CROSS_ORIGIN:
-        g_value_take_string(value, webkit_dom_html_image_element_get_cross_origin(self));
-        break;
     case PROP_HEIGHT:
         g_value_set_long(value, webkit_dom_html_image_element_get_height(self));
         break;
@@ -215,15 +198,6 @@ static void webkit_dom_html_image_element_get_property(GObject* object, guint pr
         break;
     case PROP_SRC:
         g_value_take_string(value, webkit_dom_html_image_element_get_src(self));
-        break;
-    case PROP_SRCSET:
-        g_value_take_string(value, webkit_dom_html_image_element_get_srcset(self));
-        break;
-    case PROP_SIZES:
-        g_value_take_string(value, webkit_dom_html_image_element_get_sizes(self));
-        break;
-    case PROP_CURRENT_SRC:
-        g_value_take_string(value, webkit_dom_html_image_element_get_current_src(self));
         break;
     case PROP_USE_MAP:
         g_value_take_string(value, webkit_dom_html_image_element_get_use_map(self));
@@ -306,16 +280,6 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CROSS_ORIGIN,
-        g_param_spec_string(
-            "cross-origin",
-            "HTMLImageElement:cross-origin",
-            "read-write gchar* HTMLImageElement:cross-origin",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_HEIGHT,
         g_param_spec_long(
             "height",
@@ -363,36 +327,6 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
             "read-write gchar* HTMLImageElement:src",
             "",
             WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_SRCSET,
-        g_param_spec_string(
-            "srcset",
-            "HTMLImageElement:srcset",
-            "read-write gchar* HTMLImageElement:srcset",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_SIZES,
-        g_param_spec_string(
-            "sizes",
-            "HTMLImageElement:sizes",
-            "read-write gchar* HTMLImageElement:sizes",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_CURRENT_SRC,
-        g_param_spec_string(
-            "current-src",
-            "HTMLImageElement:current-src",
-            "read-only gchar* HTMLImageElement:current-src",
-            "",
-            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -567,25 +501,6 @@ void webkit_dom_html_image_element_set_border(WebKitDOMHTMLImageElement* self, c
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::borderAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_image_element_get_cross_origin(WebKitDOMHTMLImageElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self), 0);
-    WebCore::HTMLImageElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->crossOrigin());
-    return result;
-}
-
-void webkit_dom_html_image_element_set_cross_origin(WebKitDOMHTMLImageElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setCrossOrigin(convertedValue);
-}
-
 glong webkit_dom_html_image_element_get_height(WebKitDOMHTMLImageElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -673,53 +588,6 @@ void webkit_dom_html_image_element_set_src(WebKitDOMHTMLImageElement* self, cons
     WebCore::HTMLImageElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_image_element_get_srcset(WebKitDOMHTMLImageElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self), 0);
-    WebCore::HTMLImageElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::srcsetAttr));
-    return result;
-}
-
-void webkit_dom_html_image_element_set_srcset(WebKitDOMHTMLImageElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcsetAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_image_element_get_sizes(WebKitDOMHTMLImageElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self), 0);
-    WebCore::HTMLImageElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::sizesAttr));
-    return result;
-}
-
-void webkit_dom_html_image_element_set_sizes(WebKitDOMHTMLImageElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::sizesAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_image_element_get_current_src(WebKitDOMHTMLImageElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self), 0);
-    WebCore::HTMLImageElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->currentSrc());
-    return result;
 }
 
 gchar* webkit_dom_html_image_element_get_use_map(WebKitDOMHTMLImageElement* self)

@@ -328,14 +328,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/InjectedBundle/API/gtk/DOM/GObjectEventListener.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/GObjectNodeFilterCondition.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/GObjectXPathNSResolver.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimatable.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationEffect.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationTimeline.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttr.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrack.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrackList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBarProp.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBatteryManager.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlob.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCDATASection.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRule.cpp
@@ -345,40 +338,22 @@ list(APPEND WebKit2_SOURCES
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMComment.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMApplicationCache.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMCSSNamespace.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeType.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeTypeArray.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMNamedFlowCollection.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPlugin.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPluginArray.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringMap.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindowSpeechSynthesis.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDataCue.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDatabase.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentAnimation.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentTimeline.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventTarget.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepad.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepadList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGeolocation.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAudioElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBRElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBaseElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBodyElement.cpp
@@ -386,7 +361,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCanvasElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCollection.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDListElement.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDetailsElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDirectoryElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDivElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDocument.cpp
@@ -404,14 +378,12 @@ list(APPEND WebKit2_SOURCES
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLKeygenElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLIElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLegendElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMapElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElement.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMediaElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMenuElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMetaElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLModElement.cpp
@@ -437,66 +409,23 @@ list(APPEND WebKit2_SOURCES
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTitleElement.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLUListElement.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLVideoElement.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHistory.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyboardEvent.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyframeEffect.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMLocation.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaController.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaDevices.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaError.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaQueryList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaTrackSupportedConstraints.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMessagePort.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigator.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigatorMediaDevices.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeFilter.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeList.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObject.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformance.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceEntry.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceNavigation.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceTiming.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivate.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMProcessingInstruction.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMScreen.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesis.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisEvent.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisUtterance.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisVoice.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorage.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageInfo.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageQuota.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleMedia.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheet.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheetList.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMText.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrack.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCue.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCueList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTimeRanges.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTouch.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTrackEvent.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTreeWalker.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEvent.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandler.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandlersNamespace.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVTTCue.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMValidityState.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoPlaybackQuality.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrack.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrackList.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebAnimation.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamedFlow.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamespace.cpp
-    WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitPoint.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathExpression.cpp
     WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathNSResolver.cpp
@@ -636,85 +565,46 @@ set(WebKit2WebExtension_INSTALLED_HEADERS
 
 set(WebKitDOM_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/webkitdomautocleanups.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/webkitdomautocleanups-unstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/webkitdomdefines.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/webkitdomdefines-unstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/webkitdom.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimatable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationEffect.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationTimeline.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttr.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttrUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrack.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrackList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBarProp.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBatteryManager.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlob.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlobUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCDATASection.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterDataUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMComment.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRule.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRuleList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRuleUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleDeclaration.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleSheet.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCustom.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCustomUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDatabase.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDataCue.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentAnimation.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragmentUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentTimeline.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentTypeUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMApplicationCache.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMCSSNamespace.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeTypeArray.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeType.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMNamedFlowCollection.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPluginArray.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPlugin.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringMap.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindowSpeechSynthesis.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindowUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventTarget.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepad.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepadList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGeolocation.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHistory.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElementUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAudioElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBaseElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBodyElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBRElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLButtonElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLButtonElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCanvasElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCollection.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDetailsElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDirectoryElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDivElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDListElement.h
@@ -723,137 +613,71 @@ set(WebKitDOM_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLEmbedElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFieldSetElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFieldSetElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFontElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFormElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFormElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameSetElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadingElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHRElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHtmlElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHtmlElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElementUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLKeygenElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLegendElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLIElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMapElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElementUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMediaElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMenuElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMetaElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLModElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptGroupElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionsCollection.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionsCollectionUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParagraphElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParamElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPreElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLQuoteElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLStyleElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLStyleElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCaptionElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCellElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableColElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableRowElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableSectionElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElementUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTitleElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLUListElement.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLVideoElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyboardEvent.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyframeEffect.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMLocation.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaController.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaDevices.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaError.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaQueryList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaTrackSupportedConstraints.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMessagePort.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEventUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigator.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigatorMediaDevices.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeFilter.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObject.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceEntry.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformance.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceNavigation.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceTiming.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMProcessingInstruction.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRangeUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMScreen.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisEvent.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesis.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisUtterance.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisVoice.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorage.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageInfo.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageQuota.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleMedia.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheet.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheetList.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMText.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCue.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCueList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrack.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTimeRanges.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTouch.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTrackEvent.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTreeWalker.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEvent.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEventUnstable.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandler.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandlersNamespace.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMValidityState.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoPlaybackQuality.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrack.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrackList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVTTCue.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebAnimation.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamedFlow.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamespace.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitPoint.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEventUnstable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathExpression.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathNSResolver.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathResult.h
 )
 
 set(WebKitDOM_GTKDOC_HEADERS
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimatable.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttr.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlob.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCDATASection.h
@@ -866,7 +690,6 @@ set(WebKitDOM_GTKDOC_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCustom.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentAnimation.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.h
@@ -879,8 +702,6 @@ set(WebKitDOM_GTKDOC_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventTarget.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileList.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepad.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepadList.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElement.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.h
@@ -942,7 +763,6 @@ set(WebKitDOM_GTKDOC_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigatorMediaDevices.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeFilter.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.h
@@ -950,8 +770,6 @@ set(WebKitDOM_GTKDOC_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObject.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMProcessingInstruction.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageInfo.h
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageQuota.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheet.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheetList.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMText.h

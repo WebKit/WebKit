@@ -37,7 +37,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLLabelElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -102,7 +101,6 @@ enum {
     PROP_0,
     PROP_FORM,
     PROP_HTML_FOR,
-    PROP_CONTROL,
 };
 
 static void webkit_dom_html_label_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -129,9 +127,6 @@ static void webkit_dom_html_label_element_get_property(GObject* object, guint pr
         break;
     case PROP_HTML_FOR:
         g_value_take_string(value, webkit_dom_html_label_element_get_html_for(self));
-        break;
-    case PROP_CONTROL:
-        g_value_set_object(value, webkit_dom_html_label_element_get_control(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -164,17 +159,6 @@ static void webkit_dom_html_label_element_class_init(WebKitDOMHTMLLabelElementCl
             "read-write gchar* HTMLLabelElement:html-for",
             "",
             WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_CONTROL,
-        g_param_spec_object(
-            "control",
-            "HTMLLabelElement:control",
-            "read-only WebKitDOMHTMLElement* HTMLLabelElement:control",
-            WEBKIT_DOM_TYPE_HTML_ELEMENT,
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_html_label_element_init(WebKitDOMHTMLLabelElement* request)
@@ -208,14 +192,5 @@ void webkit_dom_html_label_element_set_html_for(WebKitDOMHTMLLabelElement* self,
     WebCore::HTMLLabelElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::forAttr, convertedValue);
-}
-
-WebKitDOMHTMLElement* webkit_dom_html_label_element_get_control(WebKitDOMHTMLLabelElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_LABEL_ELEMENT(self), 0);
-    WebCore::HTMLLabelElement* item = WebKit::core(self);
-    RefPtr<WebCore::HTMLElement> gobjectResult = WTF::getPtr(item->control());
-    return WebKit::kit(gobjectResult.get());
 }
 

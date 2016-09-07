@@ -32,7 +32,6 @@
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMWheelEventPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMWheelEventUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -60,14 +59,9 @@ G_DEFINE_TYPE(WebKitDOMWheelEvent, webkit_dom_wheel_event, WEBKIT_DOM_TYPE_MOUSE
 
 enum {
     PROP_0,
-    PROP_DELTA_X,
-    PROP_DELTA_Y,
-    PROP_DELTA_Z,
-    PROP_DELTA_MODE,
     PROP_WHEEL_DELTA_X,
     PROP_WHEEL_DELTA_Y,
     PROP_WHEEL_DELTA,
-    PROP_WEBKIT_DIRECTION_INVERTED_FROM_DEVICE,
 };
 
 static void webkit_dom_wheel_event_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
@@ -75,18 +69,6 @@ static void webkit_dom_wheel_event_get_property(GObject* object, guint propertyI
     WebKitDOMWheelEvent* self = WEBKIT_DOM_WHEEL_EVENT(object);
 
     switch (propertyId) {
-    case PROP_DELTA_X:
-        g_value_set_double(value, webkit_dom_wheel_event_get_delta_x(self));
-        break;
-    case PROP_DELTA_Y:
-        g_value_set_double(value, webkit_dom_wheel_event_get_delta_y(self));
-        break;
-    case PROP_DELTA_Z:
-        g_value_set_double(value, webkit_dom_wheel_event_get_delta_z(self));
-        break;
-    case PROP_DELTA_MODE:
-        g_value_set_ulong(value, webkit_dom_wheel_event_get_delta_mode(self));
-        break;
     case PROP_WHEEL_DELTA_X:
         g_value_set_long(value, webkit_dom_wheel_event_get_wheel_delta_x(self));
         break;
@@ -95,9 +77,6 @@ static void webkit_dom_wheel_event_get_property(GObject* object, guint propertyI
         break;
     case PROP_WHEEL_DELTA:
         g_value_set_long(value, webkit_dom_wheel_event_get_wheel_delta(self));
-        break;
-    case PROP_WEBKIT_DIRECTION_INVERTED_FROM_DEVICE:
-        g_value_set_boolean(value, webkit_dom_wheel_event_get_webkit_direction_inverted_from_device(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -109,46 +88,6 @@ static void webkit_dom_wheel_event_class_init(WebKitDOMWheelEventClass* requestC
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->get_property = webkit_dom_wheel_event_get_property;
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_DELTA_X,
-        g_param_spec_double(
-            "delta-x",
-            "WheelEvent:delta-x",
-            "read-only gdouble WheelEvent:delta-x",
-            -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_DELTA_Y,
-        g_param_spec_double(
-            "delta-y",
-            "WheelEvent:delta-y",
-            "read-only gdouble WheelEvent:delta-y",
-            -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_DELTA_Z,
-        g_param_spec_double(
-            "delta-z",
-            "WheelEvent:delta-z",
-            "read-only gdouble WheelEvent:delta-z",
-            -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_DELTA_MODE,
-        g_param_spec_ulong(
-            "delta-mode",
-            "WheelEvent:delta-mode",
-            "read-only gulong WheelEvent:delta-mode",
-            0, G_MAXULONG, 0,
-            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -179,17 +118,6 @@ static void webkit_dom_wheel_event_class_init(WebKitDOMWheelEventClass* requestC
             "read-only glong WheelEvent:wheel-delta",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_WEBKIT_DIRECTION_INVERTED_FROM_DEVICE,
-        g_param_spec_boolean(
-            "webkit-direction-inverted-from-device",
-            "WheelEvent:webkit-direction-inverted-from-device",
-            "read-only gboolean WheelEvent:webkit-direction-inverted-from-device",
-            FALSE,
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_wheel_event_init(WebKitDOMWheelEvent* request)
@@ -205,42 +133,6 @@ void webkit_dom_wheel_event_init_wheel_event(WebKitDOMWheelEvent* self, glong wh
     WebCore::WheelEvent* item = WebKit::core(self);
     WebCore::DOMWindow* convertedView = WebKit::core(view);
     item->initWheelEvent(wheelDeltaX, wheelDeltaY, convertedView, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey);
-}
-
-gdouble webkit_dom_wheel_event_get_delta_x(WebKitDOMWheelEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_WHEEL_EVENT(self), 0);
-    WebCore::WheelEvent* item = WebKit::core(self);
-    gdouble result = item->deltaX();
-    return result;
-}
-
-gdouble webkit_dom_wheel_event_get_delta_y(WebKitDOMWheelEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_WHEEL_EVENT(self), 0);
-    WebCore::WheelEvent* item = WebKit::core(self);
-    gdouble result = item->deltaY();
-    return result;
-}
-
-gdouble webkit_dom_wheel_event_get_delta_z(WebKitDOMWheelEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_WHEEL_EVENT(self), 0);
-    WebCore::WheelEvent* item = WebKit::core(self);
-    gdouble result = item->deltaZ();
-    return result;
-}
-
-gulong webkit_dom_wheel_event_get_delta_mode(WebKitDOMWheelEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_WHEEL_EVENT(self), 0);
-    WebCore::WheelEvent* item = WebKit::core(self);
-    gulong result = item->deltaMode();
-    return result;
 }
 
 glong webkit_dom_wheel_event_get_wheel_delta_x(WebKitDOMWheelEvent* self)
@@ -269,13 +161,3 @@ glong webkit_dom_wheel_event_get_wheel_delta(WebKitDOMWheelEvent* self)
     glong result = item->wheelDelta();
     return result;
 }
-
-gboolean webkit_dom_wheel_event_get_webkit_direction_inverted_from_device(WebKitDOMWheelEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_WHEEL_EVENT(self), FALSE);
-    WebCore::WheelEvent* item = WebKit::core(self);
-    gboolean result = item->webkitDirectionInvertedFromDevice();
-    return result;
-}
-

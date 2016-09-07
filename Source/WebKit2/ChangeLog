@@ -1,5 +1,555 @@
 2016-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Remove unused GObject DOM unstable API
+        https://bugs.webkit.org/show_bug.cgi?id=161440
+
+        Reviewed by Philippe Normand.
+
+        Remove unstable GObject DOM API now that we no longer auto-generate the bindings.
+
+        * PlatformGTK.cmake:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimatable.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimatable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationEffect.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationEffect.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationEffectPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationTimeline.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationTimeline.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAnimationTimelinePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttr.cpp:
+        (webkit_dom_attr_get_property):
+        (webkit_dom_attr_class_init):
+        (webkit_dom_attr_get_prefix): Deleted.
+        (webkit_dom_attr_get_local_name): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttrUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrack.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrack.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrackList.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrackList.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrackListPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAudioTrackPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBarProp.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBarProp.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBarPropPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBatteryManager.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBatteryManager.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBatteryManagerPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlob.cpp:
+        (webkit_dom_blob_get_property):
+        (webkit_dom_blob_class_init):
+        (webkit_dom_blob_get_size):
+        (webkit_dom_blob_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlobUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRule.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRuleUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.cpp:
+        (webkit_dom_character_data_get_property):
+        (webkit_dom_character_data_class_init):
+        (webkit_dom_character_data_get_length):
+        (webkit_dom_character_data_set_property): Deleted.
+        (webkit_dom_character_data_substring_data): Deleted.
+        (webkit_dom_character_data_append_data): Deleted.
+        (webkit_dom_character_data_insert_data): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterDataUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMApplicationCache.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMApplicationCache.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMApplicationCachePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMCSSNamespace.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMCSSNamespace.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMCSSNamespacePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeType.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeType.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeTypeArray.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeTypeArray.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeTypeArrayPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMMimeTypePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMNamedFlowCollection.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMNamedFlowCollection.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMNamedFlowCollectionPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPlugin.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPlugin.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPluginArray.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPluginArray.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPluginArrayPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMPluginPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringList.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringList.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringListPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringMap.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringMap.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMStringMapPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindowSpeechSynthesis.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindowSpeechSynthesis.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDataCue.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDataCue.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDataCuePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDatabase.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDatabase.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDatabasePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentAnimation.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentAnimation.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentTimeline.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentTimeline.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentTimelinePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.cpp:
+        (webkit_dom_document_type_get_name): Deleted.
+        (webkit_dom_document_type_get_entities): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentTypeUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.cpp:
+        (webkit_dom_event_get_property):
+        (webkit_dom_event_class_init):
+        (webkit_dom_event_init): Deleted.
+        (webkit_dom_event_stop_propagation): Deleted.
+        (webkit_dom_event_get_bubbles): Deleted.
+        (webkit_dom_event_get_cancelable): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.cpp:
+        (webkit_dom_file_get_property):
+        (webkit_dom_file_class_init):
+        (webkit_dom_file_get_name):
+        (webkit_dom_file_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepad.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepad.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepadList.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGamepadList.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGeolocation.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGeolocation.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMGeolocationPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.cpp:
+        (webkit_dom_html_anchor_element_set_property):
+        (webkit_dom_html_anchor_element_get_property):
+        (webkit_dom_html_anchor_element_class_init):
+        (webkit_dom_html_anchor_element_init): Deleted.
+        (webkit_dom_html_anchor_element_get_charset): Deleted.
+        (webkit_dom_html_anchor_element_set_charset): Deleted.
+        (webkit_dom_html_anchor_element_get_coords): Deleted.
+        (webkit_dom_html_anchor_element_set_coords): Deleted.
+        (webkit_dom_html_anchor_element_get_target): Deleted.
+        (webkit_dom_html_anchor_element_set_target): Deleted.
+        (webkit_dom_html_anchor_element_get_type_attr): Deleted.
+        (webkit_dom_html_anchor_element_set_type_attr): Deleted.
+        (webkit_dom_html_anchor_element_set_href): Deleted.
+        (webkit_dom_html_anchor_element_get_protocol): Deleted.
+        (webkit_dom_html_anchor_element_set_protocol): Deleted.
+        (webkit_dom_html_anchor_element_set_hash): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.cpp:
+        (webkit_dom_html_area_element_set_property):
+        (webkit_dom_html_area_element_get_property):
+        (webkit_dom_html_area_element_class_init):
+        (webkit_dom_html_area_element_init): Deleted.
+        (webkit_dom_html_area_element_get_alt): Deleted.
+        (webkit_dom_html_area_element_set_alt): Deleted.
+        (webkit_dom_html_area_element_get_coords): Deleted.
+        (webkit_dom_html_area_element_set_coords): Deleted.
+        (webkit_dom_html_area_element_get_hostname): Deleted.
+        (webkit_dom_html_area_element_set_hostname): Deleted.
+        (webkit_dom_html_area_element_get_port): Deleted.
+        (webkit_dom_html_area_element_set_port): Deleted.
+        (webkit_dom_html_area_element_get_pathname): Deleted.
+        (webkit_dom_html_area_element_get_hash): Deleted.
+        (webkit_dom_html_area_element_set_hash): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAudioElement.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAudioElement.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAudioElementPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLButtonElement.cpp:
+        (webkit_dom_html_button_element_set_property):
+        (webkit_dom_html_button_element_get_property):
+        (webkit_dom_html_button_element_class_init):
+        (webkit_dom_html_button_element_get_will_validate):
+        (webkit_dom_html_button_element_get_autofocus): Deleted.
+        (webkit_dom_html_button_element_set_autofocus): Deleted.
+        (webkit_dom_html_button_element_get_disabled): Deleted.
+        (webkit_dom_html_button_element_set_disabled): Deleted.
+        (webkit_dom_html_button_element_get_form): Deleted.
+        (webkit_dom_html_button_element_get_button_type): Deleted.
+        (webkit_dom_html_button_element_set_button_type): Deleted.
+        (webkit_dom_html_button_element_get_name): Deleted.
+        (webkit_dom_html_button_element_set_value): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLButtonElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDetailsElement.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDetailsElement.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDetailsElementPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFieldSetElement.cpp:
+        (webkit_dom_html_field_set_element_get_property):
+        (webkit_dom_html_field_set_element_class_init):
+        (webkit_dom_html_field_set_element_get_form):
+        (webkit_dom_html_field_set_element_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFieldSetElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFormElement.cpp:
+        (webkit_dom_html_form_element_set_property):
+        (webkit_dom_html_form_element_get_property):
+        (webkit_dom_html_form_element_class_init):
+        (webkit_dom_html_form_element_get_length):
+        (webkit_dom_html_form_element_submit): Deleted.
+        (webkit_dom_html_form_element_reset): Deleted.
+        (webkit_dom_html_form_element_get_action): Deleted.
+        (webkit_dom_html_form_element_set_action): Deleted.
+        (webkit_dom_html_form_element_get_enctype): Deleted.
+        (webkit_dom_html_form_element_set_encoding): Deleted.
+        (webkit_dom_html_form_element_get_method): Deleted.
+        (webkit_dom_html_form_element_set_method): Deleted.
+        (webkit_dom_html_form_element_set_target): Deleted.
+        (webkit_dom_html_form_element_get_elements): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFormElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHtmlElement.cpp:
+        (webkit_dom_html_html_element_set_property):
+        (webkit_dom_html_html_element_get_property):
+        (webkit_dom_html_html_element_class_init):
+        (webkit_dom_html_html_element_set_version):
+        (webkit_dom_html_html_element_get_version): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHtmlElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElement.cpp:
+        (webkit_dom_html_iframe_element_set_property):
+        (webkit_dom_html_iframe_element_get_property):
+        (webkit_dom_html_iframe_element_class_init):
+        (webkit_dom_html_iframe_element_init): Deleted.
+        (webkit_dom_html_iframe_element_set_src): Deleted.
+        (webkit_dom_html_iframe_element_get_width): Deleted.
+        (webkit_dom_html_iframe_element_set_width): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElement.cpp:
+        (webkit_dom_html_image_element_set_property):
+        (webkit_dom_html_image_element_get_property):
+        (webkit_dom_html_image_element_class_init):
+        (webkit_dom_html_image_element_set_long_desc): Deleted.
+        (webkit_dom_html_image_element_get_src): Deleted.
+        (webkit_dom_html_image_element_set_src): Deleted.
+        (webkit_dom_html_image_element_get_natural_height): Deleted.
+        (webkit_dom_html_image_element_get_natural_width): Deleted.
+        (webkit_dom_html_image_element_get_x): Deleted.
+        (webkit_dom_html_image_element_get_y): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        (webkit_dom_html_input_element_set_property):
+        (webkit_dom_html_input_element_get_property):
+        (webkit_dom_html_input_element_class_init):
+        (webkit_dom_html_input_element_set_capture_type):
+        (webkit_dom_html_input_element_init): Deleted.
+        (webkit_dom_html_input_element_select): Deleted.
+        (webkit_dom_html_input_element_get_accept): Deleted.
+        (webkit_dom_html_input_element_set_accept): Deleted.
+        (webkit_dom_html_input_element_get_alt): Deleted.
+        (webkit_dom_html_input_element_set_alt): Deleted.
+        (webkit_dom_html_input_element_get_default_checked): Deleted.
+        (webkit_dom_html_input_element_set_default_checked): Deleted.
+        (webkit_dom_html_input_element_get_checked): Deleted.
+        (webkit_dom_html_input_element_set_checked): Deleted.
+        (webkit_dom_html_input_element_get_disabled): Deleted.
+        (webkit_dom_html_input_element_get_files): Deleted.
+        (webkit_dom_html_input_element_set_files): Deleted.
+        (webkit_dom_html_input_element_set_height): Deleted.
+        (webkit_dom_html_input_element_get_indeterminate): Deleted.
+        (webkit_dom_html_input_element_get_max_length): Deleted.
+        (webkit_dom_html_input_element_set_max_length): Deleted.
+        (webkit_dom_html_input_element_get_name): Deleted.
+        (webkit_dom_html_input_element_set_name): Deleted.
+        (webkit_dom_html_input_element_get_size): Deleted.
+        (webkit_dom_html_input_element_set_size): Deleted.
+        (webkit_dom_html_input_element_get_src): Deleted.
+        (webkit_dom_html_input_element_set_input_type): Deleted.
+        (webkit_dom_html_input_element_get_default_value): Deleted.
+        (webkit_dom_html_input_element_set_default_value): Deleted.
+        (webkit_dom_html_input_element_set_value): Deleted.
+        (webkit_dom_html_input_element_get_width): Deleted.
+        (webkit_dom_html_input_element_set_width): Deleted.
+        (webkit_dom_html_input_element_get_will_validate): Deleted.
+        (webkit_dom_html_input_element_get_align): Deleted.
+        (webkit_dom_html_input_element_set_align): Deleted.
+        (webkit_dom_html_input_element_get_use_map): Deleted.
+        (webkit_dom_html_input_element_set_use_map): Deleted.
+        (webkit_dom_html_input_element_get_capture_type): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLKeygenElement.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLKeygenElement.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLKeygenElementPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElement.cpp:
+        (webkit_dom_html_label_element_get_property):
+        (webkit_dom_html_label_element_class_init):
+        (webkit_dom_html_label_element_init): Deleted.
+        (webkit_dom_html_label_element_get_form): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.cpp:
+        (webkit_dom_html_link_element_set_property):
+        (webkit_dom_html_link_element_get_property):
+        (webkit_dom_html_link_element_class_init):
+        (webkit_dom_html_link_element_get_disabled): Deleted.
+        (webkit_dom_html_link_element_set_disabled): Deleted.
+        (webkit_dom_html_link_element_get_charset): Deleted.
+        (webkit_dom_html_link_element_set_charset): Deleted.
+        (webkit_dom_html_link_element_get_href): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElement.cpp:
+        (webkit_dom_html_marquee_element_class_init):
+        (webkit_dom_html_marquee_element_stop):
+        (webkit_dom_html_marquee_element_init): Deleted.
+        (webkit_dom_html_marquee_element_start): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMediaElement.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMediaElement.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMediaElementPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElement.cpp:
+        (webkit_dom_html_o_list_element_set_property):
+        (webkit_dom_html_o_list_element_get_property):
+        (webkit_dom_html_o_list_element_class_init):
+        (webkit_dom_html_o_list_element_init): Deleted.
+        (webkit_dom_html_o_list_element_get_compact): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElement.cpp:
+        (webkit_dom_html_object_element_get_property):
+        (webkit_dom_html_object_element_class_init):
+        (webkit_dom_html_object_element_set_property): Deleted.
+        (webkit_dom_html_object_element_get_form): Deleted.
+        (webkit_dom_html_object_element_get_code): Deleted.
+        (webkit_dom_html_object_element_set_code): Deleted.
+        (webkit_dom_html_object_element_get_align): Deleted.
+        (webkit_dom_html_object_element_set_align): Deleted.
+        (webkit_dom_html_object_element_get_archive): Deleted.
+        (webkit_dom_html_object_element_set_archive): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionsCollection.cpp:
+        (webkit_dom_html_options_collection_get_selected_index): Deleted.
+        (webkit_dom_html_options_collection_set_selected_index): Deleted.
+        (webkit_dom_html_options_collection_get_length): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionsCollectionUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPrivate.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElement.cpp:
+        (webkit_dom_html_script_element_set_property):
+        (webkit_dom_html_script_element_get_property):
+        (webkit_dom_html_script_element_class_init):
+        (webkit_dom_html_script_element_set_type_attr):
+        (webkit_dom_html_script_element_init): Deleted.
+        (webkit_dom_html_script_element_get_html_for): Deleted.
+        (webkit_dom_html_script_element_set_html_for): Deleted.
+        (webkit_dom_html_script_element_get_event): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:
+        (webkit_dom_html_select_element_set_property):
+        (webkit_dom_html_select_element_get_property):
+        (webkit_dom_html_select_element_class_init):
+        (webkit_dom_html_select_element_get_will_validate):
+        (webkit_dom_html_select_element_named_item): Deleted.
+        (webkit_dom_html_select_element_get_autofocus): Deleted.
+        (webkit_dom_html_select_element_set_autofocus): Deleted.
+        (webkit_dom_html_select_element_get_disabled): Deleted.
+        (webkit_dom_html_select_element_set_disabled): Deleted.
+        (webkit_dom_html_select_element_get_form): Deleted.
+        (webkit_dom_html_select_element_set_size): Deleted.
+        (webkit_dom_html_select_element_get_select_type): Deleted.
+        (webkit_dom_html_select_element_get_options): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLStyleElement.cpp:
+        (webkit_dom_html_style_element_set_property):
+        (webkit_dom_html_style_element_get_property):
+        (webkit_dom_html_style_element_class_init):
+        (webkit_dom_html_style_element_get_sheet):
+        (webkit_dom_html_style_element_get_disabled): Deleted.
+        (webkit_dom_html_style_element_set_disabled): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLStyleElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElement.cpp:
+        (webkit_dom_html_table_element_set_property):
+        (webkit_dom_html_table_element_get_property):
+        (webkit_dom_html_table_element_class_init):
+        (webkit_dom_html_table_element_insert_row): Deleted.
+        (webkit_dom_html_table_element_set_summary): Deleted.
+        (webkit_dom_html_table_element_get_width): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.cpp:
+        (webkit_dom_html_text_area_element_set_property):
+        (webkit_dom_html_text_area_element_get_property):
+        (webkit_dom_html_text_area_element_class_init):
+        (webkit_dom_html_text_area_element_init): Deleted.
+        (webkit_dom_html_text_area_element_set_selection_range): Deleted.
+        (webkit_dom_html_text_area_element_set_autofocus): Deleted.
+        (webkit_dom_html_text_area_element_get_disabled): Deleted.
+        (webkit_dom_html_text_area_element_get_form): Deleted.
+        (webkit_dom_html_text_area_element_get_name): Deleted.
+        (webkit_dom_html_text_area_element_get_rows): Deleted.
+        (webkit_dom_html_text_area_element_set_rows): Deleted.
+        (webkit_dom_html_text_area_element_get_cols): Deleted.
+        (webkit_dom_html_text_area_element_set_cols): Deleted.
+        (webkit_dom_html_text_area_element_get_area_type): Deleted.
+        (webkit_dom_html_text_area_element_get_default_value): Deleted.
+        (webkit_dom_html_text_area_element_get_value): Deleted.
+        (webkit_dom_html_text_area_element_set_value): Deleted.
+        (webkit_dom_html_text_area_element_get_will_validate): Deleted.
+        (webkit_dom_html_text_area_element_get_selection_start): Deleted.
+        (webkit_dom_html_text_area_element_set_selection_start): Deleted.
+        (webkit_dom_html_text_area_element_get_selection_end): Deleted.
+        (webkit_dom_html_text_area_element_set_selection_end): Deleted.
+        (webkit_dom_html_text_area_element_is_edited): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElementUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLVideoElement.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLVideoElement.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLVideoElementPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHistory.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHistory.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHistoryPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyframeEffect.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyframeEffect.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyframeEffectPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMLocation.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMLocation.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMLocationPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaController.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaController.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaControllerPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaDevices.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaDevices.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaDevicesPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaError.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaError.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaErrorPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaQueryList.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaQueryList.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaQueryListPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaTrackSupportedConstraints.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaTrackSupportedConstraints.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaTrackSupportedConstraintsPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMessagePort.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMessagePort.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMessagePortPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.cpp:
+        (webkit_dom_mouse_event_get_property):
+        (webkit_dom_mouse_event_class_init):
+        (webkit_dom_mouse_event_get_y): Deleted.
+        (webkit_dom_mouse_event_get_from_element): Deleted.
+        (webkit_dom_mouse_event_get_to_element): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEventUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigator.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigator.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigatorMediaDevices.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigatorMediaDevices.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNavigatorPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.cpp:
+        (webkit_dom_node_get_property):
+        (webkit_dom_node_class_init):
+        (webkit_dom_node_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformance.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformance.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceEntry.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceEntry.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceEntryPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceNavigation.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceNavigation.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceNavigationPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformancePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceTiming.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceTiming.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPerformanceTimingPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivate.cpp:
+        (WebKit::wrap): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMScreen.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMScreen.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMScreenPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesis.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesis.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisEvent.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisEvent.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisEventPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisUtterance.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisUtterance.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisUtterancePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisVoice.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisVoice.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMSpeechSynthesisVoicePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorage.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorage.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageInfo.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageInfo.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStoragePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageQuota.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStorageQuota.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleMedia.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleMedia.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleMediaPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrack.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrack.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCue.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCue.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCueList.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCueList.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCueListPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackCuePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackList.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackList.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackListPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTextTrackPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTimeRanges.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTimeRanges.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTimeRangesPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTouch.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTouch.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTouchPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTrackEvent.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTrackEvent.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTrackEventPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEvent.cpp:
+        (webkit_dom_ui_event_get_property):
+        (webkit_dom_ui_event_class_init):
+        (webkit_dom_ui_event_get_page_y):
+        (webkit_dom_ui_event_init): Deleted.
+        (webkit_dom_ui_event_init_ui_event): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEventUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandler.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandler.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandlerPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandlersNamespace.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandlersNamespace.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUserMessageHandlersNamespacePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVTTCue.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVTTCue.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVTTCuePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMValidityState.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMValidityState.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMValidityStatePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoPlaybackQuality.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoPlaybackQuality.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoPlaybackQualityPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrack.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrack.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrackList.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrackList.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrackListPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMVideoTrackPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebAnimation.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebAnimation.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebAnimationPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamedFlow.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamedFlow.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamedFlowPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamespace.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamespace.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitNamespacePrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitPoint.cpp: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitPoint.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWebKitPointPrivate.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.cpp:
+        (webkit_dom_wheel_event_get_property):
+        (webkit_dom_wheel_event_class_init):
+        (webkit_dom_wheel_event_get_wheel_delta):
+        (webkit_dom_wheel_event_init): Deleted.
+        (webkit_dom_wheel_event_init_wheel_event): Deleted.
+        (webkit_dom_wheel_event_get_wheel_delta_x): Deleted.
+        (webkit_dom_wheel_event_get_wheel_delta_y): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEventUnstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/docs/webkitdomgtk-4.0-sections.txt:
+        * WebProcess/InjectedBundle/API/gtk/DOM/webkitdomautocleanups-unstable.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/webkitdomdefines-unstable.h: Removed.
+
+2016-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Move some GObject DOM unstable API to stable
         https://bugs.webkit.org/show_bug.cgi?id=161681
 

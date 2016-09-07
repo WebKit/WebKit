@@ -27,7 +27,7 @@
 
 #include <glib-object.h>
 #include <webkitdom/WebKitDOMObject.h>
-#include <webkitdom/webkitdomdefines-unstable.h>
+#include <webkitdom/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 

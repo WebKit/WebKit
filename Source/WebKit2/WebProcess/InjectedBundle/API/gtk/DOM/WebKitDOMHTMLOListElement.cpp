@@ -35,7 +35,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLOListElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -100,7 +99,6 @@ enum {
     PROP_0,
     PROP_COMPACT,
     PROP_START,
-    PROP_REVERSED,
     PROP_TYPE,
 };
 
@@ -114,9 +112,6 @@ static void webkit_dom_html_o_list_element_set_property(GObject* object, guint p
         break;
     case PROP_START:
         webkit_dom_html_o_list_element_set_start(self, g_value_get_long(value));
-        break;
-    case PROP_REVERSED:
-        webkit_dom_html_o_list_element_set_reversed(self, g_value_get_boolean(value));
         break;
     case PROP_TYPE:
         webkit_dom_html_o_list_element_set_type_attr(self, g_value_get_string(value));
@@ -137,9 +132,6 @@ static void webkit_dom_html_o_list_element_get_property(GObject* object, guint p
         break;
     case PROP_START:
         g_value_set_long(value, webkit_dom_html_o_list_element_get_start(self));
-        break;
-    case PROP_REVERSED:
-        g_value_set_boolean(value, webkit_dom_html_o_list_element_get_reversed(self));
         break;
     case PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_o_list_element_get_type_attr(self));
@@ -174,16 +166,6 @@ static void webkit_dom_html_o_list_element_class_init(WebKitDOMHTMLOListElementC
             "HTMLOListElement:start",
             "read-write glong HTMLOListElement:start",
             G_MINLONG, G_MAXLONG, 0,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_REVERSED,
-        g_param_spec_boolean(
-            "reversed",
-            "HTMLOListElement:reversed",
-            "read-write gboolean HTMLOListElement:reversed",
-            FALSE,
             WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(
@@ -235,23 +217,6 @@ void webkit_dom_html_o_list_element_set_start(WebKitDOMHTMLOListElement* self, g
     g_return_if_fail(WEBKIT_DOM_IS_HTML_O_LIST_ELEMENT(self));
     WebCore::HTMLOListElement* item = WebKit::core(self);
     item->setStart(value);
-}
-
-gboolean webkit_dom_html_o_list_element_get_reversed(WebKitDOMHTMLOListElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_O_LIST_ELEMENT(self), FALSE);
-    WebCore::HTMLOListElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::reversedAttr);
-    return result;
-}
-
-void webkit_dom_html_o_list_element_set_reversed(WebKitDOMHTMLOListElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_O_LIST_ELEMENT(self));
-    WebCore::HTMLOListElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::reversedAttr, value);
 }
 
 gchar* webkit_dom_html_o_list_element_get_type_attr(WebKitDOMHTMLOListElement* self)

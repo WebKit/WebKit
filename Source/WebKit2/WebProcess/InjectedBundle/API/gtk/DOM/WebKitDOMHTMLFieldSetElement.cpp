@@ -36,9 +36,7 @@
 #include "WebKitDOMHTMLFormElementPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMValidityStatePrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLFieldSetElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -101,61 +99,16 @@ G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLFieldSetElement, webkit_dom_html_field_set_
 
 enum {
     PROP_0,
-    PROP_DISABLED,
     PROP_FORM,
-    PROP_NAME,
-    PROP_TYPE,
-    PROP_ELEMENTS,
-    PROP_WILL_VALIDATE,
-    PROP_VALIDITY,
-    PROP_VALIDATION_MESSAGE,
 };
-
-static void webkit_dom_html_field_set_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
-{
-    WebKitDOMHTMLFieldSetElement* self = WEBKIT_DOM_HTML_FIELD_SET_ELEMENT(object);
-
-    switch (propertyId) {
-    case PROP_DISABLED:
-        webkit_dom_html_field_set_element_set_disabled(self, g_value_get_boolean(value));
-        break;
-    case PROP_NAME:
-        webkit_dom_html_field_set_element_set_name(self, g_value_get_string(value));
-        break;
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
 
 static void webkit_dom_html_field_set_element_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebKitDOMHTMLFieldSetElement* self = WEBKIT_DOM_HTML_FIELD_SET_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_DISABLED:
-        g_value_set_boolean(value, webkit_dom_html_field_set_element_get_disabled(self));
-        break;
     case PROP_FORM:
         g_value_set_object(value, webkit_dom_html_field_set_element_get_form(self));
-        break;
-    case PROP_NAME:
-        g_value_take_string(value, webkit_dom_html_field_set_element_get_name(self));
-        break;
-    case PROP_TYPE:
-        g_value_take_string(value, webkit_dom_html_field_set_element_get_set_type(self));
-        break;
-    case PROP_ELEMENTS:
-        g_value_set_object(value, webkit_dom_html_field_set_element_get_elements(self));
-        break;
-    case PROP_WILL_VALIDATE:
-        g_value_set_boolean(value, webkit_dom_html_field_set_element_get_will_validate(self));
-        break;
-    case PROP_VALIDITY:
-        g_value_set_object(value, webkit_dom_html_field_set_element_get_validity(self));
-        break;
-    case PROP_VALIDATION_MESSAGE:
-        g_value_take_string(value, webkit_dom_html_field_set_element_get_validation_message(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -166,18 +119,7 @@ static void webkit_dom_html_field_set_element_get_property(GObject* object, guin
 static void webkit_dom_html_field_set_element_class_init(WebKitDOMHTMLFieldSetElementClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->set_property = webkit_dom_html_field_set_element_set_property;
     gobjectClass->get_property = webkit_dom_html_field_set_element_get_property;
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_DISABLED,
-        g_param_spec_boolean(
-            "disabled",
-            "HTMLFieldSetElement:disabled",
-            "read-write gboolean HTMLFieldSetElement:disabled",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -188,108 +130,11 @@ static void webkit_dom_html_field_set_element_class_init(WebKitDOMHTMLFieldSetEl
             "read-only WebKitDOMHTMLFormElement* HTMLFieldSetElement:form",
             WEBKIT_DOM_TYPE_HTML_FORM_ELEMENT,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_NAME,
-        g_param_spec_string(
-            "name",
-            "HTMLFieldSetElement:name",
-            "read-write gchar* HTMLFieldSetElement:name",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_TYPE,
-        g_param_spec_string(
-            "type",
-            "HTMLFieldSetElement:type",
-            "read-only gchar* HTMLFieldSetElement:type",
-            "",
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_ELEMENTS,
-        g_param_spec_object(
-            "elements",
-            "HTMLFieldSetElement:elements",
-            "read-only WebKitDOMHTMLCollection* HTMLFieldSetElement:elements",
-            WEBKIT_DOM_TYPE_HTML_COLLECTION,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_WILL_VALIDATE,
-        g_param_spec_boolean(
-            "will-validate",
-            "HTMLFieldSetElement:will-validate",
-            "read-only gboolean HTMLFieldSetElement:will-validate",
-            FALSE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDITY,
-        g_param_spec_object(
-            "validity",
-            "HTMLFieldSetElement:validity",
-            "read-only WebKitDOMValidityState* HTMLFieldSetElement:validity",
-            WEBKIT_DOM_TYPE_VALIDITY_STATE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDATION_MESSAGE,
-        g_param_spec_string(
-            "validation-message",
-            "HTMLFieldSetElement:validation-message",
-            "read-only gchar* HTMLFieldSetElement:validation-message",
-            "",
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_html_field_set_element_init(WebKitDOMHTMLFieldSetElement* request)
 {
     UNUSED_PARAM(request);
-}
-
-gboolean webkit_dom_html_field_set_element_check_validity(WebKitDOMHTMLFieldSetElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self), FALSE);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    gboolean result = item->checkValidity();
-    return result;
-}
-
-void webkit_dom_html_field_set_element_set_custom_validity(WebKitDOMHTMLFieldSetElement* self, const gchar* error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self));
-    g_return_if_fail(error);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    WTF::String convertedError = WTF::String::fromUTF8(error);
-    item->setCustomValidity(convertedError);
-}
-
-gboolean webkit_dom_html_field_set_element_get_disabled(WebKitDOMHTMLFieldSetElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self), FALSE);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr);
-    return result;
-}
-
-void webkit_dom_html_field_set_element_set_disabled(WebKitDOMHTMLFieldSetElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self));
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::disabledAttr, value);
 }
 
 WebKitDOMHTMLFormElement* webkit_dom_html_field_set_element_get_form(WebKitDOMHTMLFieldSetElement* self)
@@ -300,68 +145,3 @@ WebKitDOMHTMLFormElement* webkit_dom_html_field_set_element_get_form(WebKitDOMHT
     RefPtr<WebCore::HTMLFormElement> gobjectResult = WTF::getPtr(item->form());
     return WebKit::kit(gobjectResult.get());
 }
-
-gchar* webkit_dom_html_field_set_element_get_name(WebKitDOMHTMLFieldSetElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self), 0);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->getNameAttribute());
-    return result;
-}
-
-void webkit_dom_html_field_set_element_set_name(WebKitDOMHTMLFieldSetElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_field_set_element_get_set_type(WebKitDOMHTMLFieldSetElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self), 0);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->type());
-    return result;
-}
-
-WebKitDOMHTMLCollection* webkit_dom_html_field_set_element_get_elements(WebKitDOMHTMLFieldSetElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self), 0);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    RefPtr<WebCore::HTMLCollection> gobjectResult = WTF::getPtr(item->elementsForNativeBindings());
-    return WebKit::kit(gobjectResult.get());
-}
-
-gboolean webkit_dom_html_field_set_element_get_will_validate(WebKitDOMHTMLFieldSetElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self), FALSE);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    gboolean result = item->willValidate();
-    return result;
-}
-
-WebKitDOMValidityState* webkit_dom_html_field_set_element_get_validity(WebKitDOMHTMLFieldSetElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self), 0);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    RefPtr<WebCore::ValidityState> gobjectResult = WTF::getPtr(item->validity());
-    return WebKit::kit(gobjectResult.get());
-}
-
-gchar* webkit_dom_html_field_set_element_get_validation_message(WebKitDOMHTMLFieldSetElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FIELD_SET_ELEMENT(self), 0);
-    WebCore::HTMLFieldSetElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->validationMessage());
-    return result;
-}
-

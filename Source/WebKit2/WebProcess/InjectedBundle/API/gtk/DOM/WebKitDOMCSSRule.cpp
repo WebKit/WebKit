@@ -31,7 +31,6 @@
 #include "WebKitDOMCSSStyleSheetPrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMCSSRuleUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

@@ -36,9 +36,7 @@
 #include "WebKitDOMHTMLObjectElementPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMValidityStatePrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLObjectElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -118,9 +116,6 @@ enum {
     PROP_USE_MAP,
     PROP_VSPACE,
     PROP_WIDTH,
-    PROP_WILL_VALIDATE,
-    PROP_VALIDITY,
-    PROP_VALIDATION_MESSAGE,
     PROP_CONTENT_DOCUMENT,
 };
 
@@ -238,15 +233,6 @@ static void webkit_dom_html_object_element_get_property(GObject* object, guint p
         break;
     case PROP_WIDTH:
         g_value_take_string(value, webkit_dom_html_object_element_get_width(self));
-        break;
-    case PROP_WILL_VALIDATE:
-        g_value_set_boolean(value, webkit_dom_html_object_element_get_will_validate(self));
-        break;
-    case PROP_VALIDITY:
-        g_value_set_object(value, webkit_dom_html_object_element_get_validity(self));
-        break;
-    case PROP_VALIDATION_MESSAGE:
-        g_value_take_string(value, webkit_dom_html_object_element_get_validation_message(self));
         break;
     case PROP_CONTENT_DOCUMENT:
         g_value_set_object(value, webkit_dom_html_object_element_get_content_document(self));
@@ -435,36 +421,6 @@ static void webkit_dom_html_object_element_class_init(WebKitDOMHTMLObjectElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WILL_VALIDATE,
-        g_param_spec_boolean(
-            "will-validate",
-            "HTMLObjectElement:will-validate",
-            "read-only gboolean HTMLObjectElement:will-validate",
-            FALSE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDITY,
-        g_param_spec_object(
-            "validity",
-            "HTMLObjectElement:validity",
-            "read-only WebKitDOMValidityState* HTMLObjectElement:validity",
-            WEBKIT_DOM_TYPE_VALIDITY_STATE,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_VALIDATION_MESSAGE,
-        g_param_spec_string(
-            "validation-message",
-            "HTMLObjectElement:validation-message",
-            "read-only gchar* HTMLObjectElement:validation-message",
-            "",
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_CONTENT_DOCUMENT,
         g_param_spec_object(
             "content-document",
@@ -478,25 +434,6 @@ static void webkit_dom_html_object_element_class_init(WebKitDOMHTMLObjectElement
 static void webkit_dom_html_object_element_init(WebKitDOMHTMLObjectElement* request)
 {
     UNUSED_PARAM(request);
-}
-
-gboolean webkit_dom_html_object_element_check_validity(WebKitDOMHTMLObjectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self), FALSE);
-    WebCore::HTMLObjectElement* item = WebKit::core(self);
-    gboolean result = item->checkValidity();
-    return result;
-}
-
-void webkit_dom_html_object_element_set_custom_validity(WebKitDOMHTMLObjectElement* self, const gchar* error)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self));
-    g_return_if_fail(error);
-    WebCore::HTMLObjectElement* item = WebKit::core(self);
-    WTF::String convertedError = WTF::String::fromUTF8(error);
-    item->setCustomValidity(convertedError);
 }
 
 WebKitDOMHTMLFormElement* webkit_dom_html_object_element_get_form(WebKitDOMHTMLObjectElement* self)
@@ -804,33 +741,6 @@ void webkit_dom_html_object_element_set_width(WebKitDOMHTMLObjectElement* self, 
     WebCore::HTMLObjectElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, convertedValue);
-}
-
-gboolean webkit_dom_html_object_element_get_will_validate(WebKitDOMHTMLObjectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self), FALSE);
-    WebCore::HTMLObjectElement* item = WebKit::core(self);
-    gboolean result = item->willValidate();
-    return result;
-}
-
-WebKitDOMValidityState* webkit_dom_html_object_element_get_validity(WebKitDOMHTMLObjectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self), 0);
-    WebCore::HTMLObjectElement* item = WebKit::core(self);
-    RefPtr<WebCore::ValidityState> gobjectResult = WTF::getPtr(item->validity());
-    return WebKit::kit(gobjectResult.get());
-}
-
-gchar* webkit_dom_html_object_element_get_validation_message(WebKitDOMHTMLObjectElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self), 0);
-    WebCore::HTMLObjectElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->validationMessage());
-    return result;
 }
 
 WebKitDOMDocument* webkit_dom_html_object_element_get_content_document(WebKitDOMHTMLObjectElement* self)

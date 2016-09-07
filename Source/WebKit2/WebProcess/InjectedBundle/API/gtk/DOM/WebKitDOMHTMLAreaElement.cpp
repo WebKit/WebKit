@@ -36,7 +36,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLAreaElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -102,16 +101,10 @@ enum {
     PROP_ALT,
     PROP_COORDS,
     PROP_NO_HREF,
-    PROP_PING,
-    PROP_REL,
     PROP_SHAPE,
     PROP_TARGET,
-    PROP_REL_LIST,
     PROP_HREF,
-    PROP_ORIGIN,
     PROP_PROTOCOL,
-    PROP_USERNAME,
-    PROP_PASSWORD,
     PROP_HOST,
     PROP_HOSTNAME,
     PROP_PORT,
@@ -134,12 +127,6 @@ static void webkit_dom_html_area_element_set_property(GObject* object, guint pro
     case PROP_NO_HREF:
         webkit_dom_html_area_element_set_no_href(self, g_value_get_boolean(value));
         break;
-    case PROP_PING:
-        webkit_dom_html_area_element_set_ping(self, g_value_get_string(value));
-        break;
-    case PROP_REL:
-        webkit_dom_html_area_element_set_rel(self, g_value_get_string(value));
-        break;
     case PROP_SHAPE:
         webkit_dom_html_area_element_set_shape(self, g_value_get_string(value));
         break;
@@ -151,12 +138,6 @@ static void webkit_dom_html_area_element_set_property(GObject* object, guint pro
         break;
     case PROP_PROTOCOL:
         webkit_dom_html_area_element_set_protocol(self, g_value_get_string(value));
-        break;
-    case PROP_USERNAME:
-        webkit_dom_html_area_element_set_username(self, g_value_get_string(value));
-        break;
-    case PROP_PASSWORD:
-        webkit_dom_html_area_element_set_password(self, g_value_get_string(value));
         break;
     case PROP_HOST:
         webkit_dom_html_area_element_set_host(self, g_value_get_string(value));
@@ -196,35 +177,17 @@ static void webkit_dom_html_area_element_get_property(GObject* object, guint pro
     case PROP_NO_HREF:
         g_value_set_boolean(value, webkit_dom_html_area_element_get_no_href(self));
         break;
-    case PROP_PING:
-        g_value_take_string(value, webkit_dom_html_area_element_get_ping(self));
-        break;
-    case PROP_REL:
-        g_value_take_string(value, webkit_dom_html_area_element_get_rel(self));
-        break;
     case PROP_SHAPE:
         g_value_take_string(value, webkit_dom_html_area_element_get_shape(self));
         break;
     case PROP_TARGET:
         g_value_take_string(value, webkit_dom_html_area_element_get_target(self));
         break;
-    case PROP_REL_LIST:
-        g_value_set_object(value, webkit_dom_html_area_element_get_rel_list(self));
-        break;
     case PROP_HREF:
         g_value_take_string(value, webkit_dom_html_area_element_get_href(self));
         break;
-    case PROP_ORIGIN:
-        g_value_take_string(value, webkit_dom_html_area_element_get_origin(self));
-        break;
     case PROP_PROTOCOL:
         g_value_take_string(value, webkit_dom_html_area_element_get_protocol(self));
-        break;
-    case PROP_USERNAME:
-        g_value_take_string(value, webkit_dom_html_area_element_get_username(self));
-        break;
-    case PROP_PASSWORD:
-        g_value_take_string(value, webkit_dom_html_area_element_get_password(self));
         break;
     case PROP_HOST:
         g_value_take_string(value, webkit_dom_html_area_element_get_host(self));
@@ -288,26 +251,6 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PING,
-        g_param_spec_string(
-            "ping",
-            "HTMLAreaElement:ping",
-            "read-write gchar* HTMLAreaElement:ping",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_REL,
-        g_param_spec_string(
-            "rel",
-            "HTMLAreaElement:rel",
-            "read-write gchar* HTMLAreaElement:rel",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_SHAPE,
         g_param_spec_string(
             "shape",
@@ -328,16 +271,6 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_REL_LIST,
-        g_param_spec_object(
-            "rel-list",
-            "HTMLAreaElement:rel-list",
-            "read-only WebKitDOMDOMTokenList* HTMLAreaElement:rel-list",
-            WEBKIT_DOM_TYPE_DOM_TOKEN_LIST,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_HREF,
         g_param_spec_string(
             "href",
@@ -348,41 +281,11 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ORIGIN,
-        g_param_spec_string(
-            "origin",
-            "HTMLAreaElement:origin",
-            "read-only gchar* HTMLAreaElement:origin",
-            "",
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_PROTOCOL,
         g_param_spec_string(
             "protocol",
             "HTMLAreaElement:protocol",
             "read-write gchar* HTMLAreaElement:protocol",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_USERNAME,
-        g_param_spec_string(
-            "username",
-            "HTMLAreaElement:username",
-            "read-write gchar* HTMLAreaElement:username",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_PASSWORD,
-        g_param_spec_string(
-            "password",
-            "HTMLAreaElement:password",
-            "read-write gchar* HTMLAreaElement:password",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -508,44 +411,6 @@ void webkit_dom_html_area_element_set_no_href(WebKitDOMHTMLAreaElement* self, gb
     item->setBooleanAttribute(WebCore::HTMLNames::nohrefAttr, value);
 }
 
-gchar* webkit_dom_html_area_element_get_ping(WebKitDOMHTMLAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self), 0);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::pingAttr));
-    return result;
-}
-
-void webkit_dom_html_area_element_set_ping(WebKitDOMHTMLAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::pingAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_area_element_get_rel(WebKitDOMHTMLAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self), 0);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::relAttr));
-    return result;
-}
-
-void webkit_dom_html_area_element_set_rel(WebKitDOMHTMLAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::relAttr, convertedValue);
-}
-
 gchar* webkit_dom_html_area_element_get_shape(WebKitDOMHTMLAreaElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -584,15 +449,6 @@ void webkit_dom_html_area_element_set_target(WebKitDOMHTMLAreaElement* self, con
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, convertedValue);
 }
 
-WebKitDOMDOMTokenList* webkit_dom_html_area_element_get_rel_list(WebKitDOMHTMLAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self), 0);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    RefPtr<WebCore::DOMTokenList> gobjectResult = WTF::getPtr(item->relList());
-    return WebKit::kit(gobjectResult.get());
-}
-
 gchar* webkit_dom_html_area_element_get_href(WebKitDOMHTMLAreaElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -612,15 +468,6 @@ void webkit_dom_html_area_element_set_href(WebKitDOMHTMLAreaElement* self, const
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_area_element_get_origin(WebKitDOMHTMLAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self), 0);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->origin());
-    return result;
-}
-
 gchar* webkit_dom_html_area_element_get_protocol(WebKitDOMHTMLAreaElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -638,44 +485,6 @@ void webkit_dom_html_area_element_set_protocol(WebKitDOMHTMLAreaElement* self, c
     WebCore::HTMLAreaElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setProtocol(convertedValue);
-}
-
-gchar* webkit_dom_html_area_element_get_username(WebKitDOMHTMLAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self), 0);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->username());
-    return result;
-}
-
-void webkit_dom_html_area_element_set_username(WebKitDOMHTMLAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setUsername(convertedValue);
-}
-
-gchar* webkit_dom_html_area_element_get_password(WebKitDOMHTMLAreaElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self), 0);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->password());
-    return result;
-}
-
-void webkit_dom_html_area_element_set_password(WebKitDOMHTMLAreaElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setPassword(convertedValue);
 }
 
 gchar* webkit_dom_html_area_element_get_host(WebKitDOMHTMLAreaElement* self)

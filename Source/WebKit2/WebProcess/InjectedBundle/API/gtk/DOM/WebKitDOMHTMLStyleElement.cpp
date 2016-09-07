@@ -36,7 +36,6 @@
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMStyleSheetPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLStyleElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -103,7 +102,6 @@ enum {
     PROP_MEDIA,
     PROP_TYPE,
     PROP_SHEET,
-    PROP_NONCE,
 };
 
 static void webkit_dom_html_style_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -119,9 +117,6 @@ static void webkit_dom_html_style_element_set_property(GObject* object, guint pr
         break;
     case PROP_TYPE:
         webkit_dom_html_style_element_set_type_attr(self, g_value_get_string(value));
-        break;
-    case PROP_NONCE:
-        webkit_dom_html_style_element_set_nonce(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -145,9 +140,6 @@ static void webkit_dom_html_style_element_get_property(GObject* object, guint pr
         break;
     case PROP_SHEET:
         g_value_set_object(value, webkit_dom_html_style_element_get_sheet(self));
-        break;
-    case PROP_NONCE:
-        g_value_take_string(value, webkit_dom_html_style_element_get_nonce(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -200,17 +192,6 @@ static void webkit_dom_html_style_element_class_init(WebKitDOMHTMLStyleElementCl
             "read-only WebKitDOMStyleSheet* HTMLStyleElement:sheet",
             WEBKIT_DOM_TYPE_STYLE_SHEET,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_NONCE,
-        g_param_spec_string(
-            "nonce",
-            "HTMLStyleElement:nonce",
-            "read-write gchar* HTMLStyleElement:nonce",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
 }
 
 static void webkit_dom_html_style_element_init(WebKitDOMHTMLStyleElement* request)
@@ -281,23 +262,3 @@ WebKitDOMStyleSheet* webkit_dom_html_style_element_get_sheet(WebKitDOMHTMLStyleE
     RefPtr<WebCore::StyleSheet> gobjectResult = WTF::getPtr(item->sheet());
     return WebKit::kit(gobjectResult.get());
 }
-
-gchar* webkit_dom_html_style_element_get_nonce(WebKitDOMHTMLStyleElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_STYLE_ELEMENT(self), 0);
-    WebCore::HTMLStyleElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::nonceAttr));
-    return result;
-}
-
-void webkit_dom_html_style_element_set_nonce(WebKitDOMHTMLStyleElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_STYLE_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLStyleElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nonceAttr, convertedValue);
-}
-

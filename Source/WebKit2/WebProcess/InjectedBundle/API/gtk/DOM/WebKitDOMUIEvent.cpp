@@ -32,7 +32,6 @@
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMUIEventPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMUIEventUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -68,7 +67,6 @@ enum {
     PROP_LAYER_Y,
     PROP_PAGE_X,
     PROP_PAGE_Y,
-    PROP_WHICH,
 };
 
 static void webkit_dom_ui_event_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
@@ -99,9 +97,6 @@ static void webkit_dom_ui_event_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_PAGE_Y:
         g_value_set_long(value, webkit_dom_ui_event_get_page_y(self));
-        break;
-    case PROP_WHICH:
-        g_value_set_long(value, webkit_dom_ui_event_get_which(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -193,17 +188,6 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
             "read-only glong UIEvent:page-y",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_WHICH,
-        g_param_spec_long(
-            "which",
-            "UIEvent:which",
-            "read-only glong UIEvent:which",
-            G_MINLONG, G_MAXLONG, 0,
-            WEBKIT_PARAM_READABLE));
-
 }
 
 static void webkit_dom_ui_event_init(WebKitDOMUIEvent* request)
@@ -294,13 +278,3 @@ glong webkit_dom_ui_event_get_page_y(WebKitDOMUIEvent* self)
     glong result = item->pageY();
     return result;
 }
-
-glong webkit_dom_ui_event_get_which(WebKitDOMUIEvent* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_UI_EVENT(self), 0);
-    WebCore::UIEvent* item = WebKit::core(self);
-    glong result = item->which();
-    return result;
-}
-

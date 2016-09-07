@@ -34,7 +34,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMMouseEventUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -72,8 +71,6 @@ enum {
     PROP_META_KEY,
     PROP_BUTTON,
     PROP_RELATED_TARGET,
-    PROP_MOVEMENT_X,
-    PROP_MOVEMENT_Y,
     PROP_OFFSET_X,
     PROP_OFFSET_Y,
     PROP_X,
@@ -116,12 +113,6 @@ static void webkit_dom_mouse_event_get_property(GObject* object, guint propertyI
         break;
     case PROP_RELATED_TARGET:
         g_value_set_object(value, webkit_dom_mouse_event_get_related_target(self));
-        break;
-    case PROP_MOVEMENT_X:
-        g_value_set_long(value, webkit_dom_mouse_event_get_movement_x(self));
-        break;
-    case PROP_MOVEMENT_Y:
-        g_value_set_long(value, webkit_dom_mouse_event_get_movement_y(self));
         break;
     case PROP_OFFSET_X:
         g_value_set_long(value, webkit_dom_mouse_event_get_offset_x(self));
@@ -250,26 +241,6 @@ static void webkit_dom_mouse_event_class_init(WebKitDOMMouseEventClass* requestC
             "MouseEvent:related-target",
             "read-only WebKitDOMEventTarget* MouseEvent:related-target",
             WEBKIT_DOM_TYPE_EVENT_TARGET,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_MOVEMENT_X,
-        g_param_spec_long(
-            "movement-x",
-            "MouseEvent:movement-x",
-            "read-only glong MouseEvent:movement-x",
-            G_MINLONG, G_MAXLONG, 0,
-            WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_MOVEMENT_Y,
-        g_param_spec_long(
-            "movement-y",
-            "MouseEvent:movement-y",
-            "read-only glong MouseEvent:movement-y",
-            G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -441,36 +412,6 @@ WebKitDOMEventTarget* webkit_dom_mouse_event_get_related_target(WebKitDOMMouseEv
     WebCore::MouseEvent* item = WebKit::core(self);
     RefPtr<WebCore::EventTarget> gobjectResult = WTF::getPtr(item->relatedTarget());
     return WebKit::kit(gobjectResult.get());
-}
-
-glong webkit_dom_mouse_event_get_movement_x(WebKitDOMMouseEvent* self)
-{
-#if ENABLE(POINTER_LOCK)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_MOUSE_EVENT(self), 0);
-    WebCore::MouseEvent* item = WebKit::core(self);
-    glong result = item->movementX();
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Pointer Lock")
-    return static_cast<glong>(0);
-#endif /* ENABLE(POINTER_LOCK) */
-}
-
-glong webkit_dom_mouse_event_get_movement_y(WebKitDOMMouseEvent* self)
-{
-#if ENABLE(POINTER_LOCK)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_MOUSE_EVENT(self), 0);
-    WebCore::MouseEvent* item = WebKit::core(self);
-    glong result = item->movementY();
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Pointer Lock")
-    return static_cast<glong>(0);
-#endif /* ENABLE(POINTER_LOCK) */
 }
 
 glong webkit_dom_mouse_event_get_offset_x(WebKitDOMMouseEvent* self)

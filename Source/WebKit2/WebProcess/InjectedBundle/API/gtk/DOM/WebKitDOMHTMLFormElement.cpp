@@ -36,7 +36,6 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "ConvertToUTF8String.h"
-#include "WebKitDOMHTMLFormElementUnstable.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -101,17 +100,13 @@ enum {
     PROP_0,
     PROP_ACCEPT_CHARSET,
     PROP_ACTION,
-    PROP_AUTOCOMPLETE,
     PROP_ENCTYPE,
     PROP_ENCODING,
     PROP_METHOD,
     PROP_NAME,
-    PROP_NO_VALIDATE,
     PROP_TARGET,
     PROP_ELEMENTS,
     PROP_LENGTH,
-    PROP_AUTOCORRECT,
-    PROP_AUTOCAPITALIZE,
 };
 
 static void webkit_dom_html_form_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -125,9 +120,6 @@ static void webkit_dom_html_form_element_set_property(GObject* object, guint pro
     case PROP_ACTION:
         webkit_dom_html_form_element_set_action(self, g_value_get_string(value));
         break;
-    case PROP_AUTOCOMPLETE:
-        webkit_dom_html_form_element_set_autocomplete(self, g_value_get_string(value));
-        break;
     case PROP_ENCTYPE:
         webkit_dom_html_form_element_set_enctype(self, g_value_get_string(value));
         break;
@@ -140,17 +132,8 @@ static void webkit_dom_html_form_element_set_property(GObject* object, guint pro
     case PROP_NAME:
         webkit_dom_html_form_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_NO_VALIDATE:
-        webkit_dom_html_form_element_set_no_validate(self, g_value_get_boolean(value));
-        break;
     case PROP_TARGET:
         webkit_dom_html_form_element_set_target(self, g_value_get_string(value));
-        break;
-    case PROP_AUTOCORRECT:
-        webkit_dom_html_form_element_set_autocorrect(self, g_value_get_boolean(value));
-        break;
-    case PROP_AUTOCAPITALIZE:
-        webkit_dom_html_form_element_set_autocapitalize(self, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -169,9 +152,6 @@ static void webkit_dom_html_form_element_get_property(GObject* object, guint pro
     case PROP_ACTION:
         g_value_take_string(value, webkit_dom_html_form_element_get_action(self));
         break;
-    case PROP_AUTOCOMPLETE:
-        g_value_take_string(value, webkit_dom_html_form_element_get_autocomplete(self));
-        break;
     case PROP_ENCTYPE:
         g_value_take_string(value, webkit_dom_html_form_element_get_enctype(self));
         break;
@@ -184,9 +164,6 @@ static void webkit_dom_html_form_element_get_property(GObject* object, guint pro
     case PROP_NAME:
         g_value_take_string(value, webkit_dom_html_form_element_get_name(self));
         break;
-    case PROP_NO_VALIDATE:
-        g_value_set_boolean(value, webkit_dom_html_form_element_get_no_validate(self));
-        break;
     case PROP_TARGET:
         g_value_take_string(value, webkit_dom_html_form_element_get_target(self));
         break;
@@ -195,12 +172,6 @@ static void webkit_dom_html_form_element_get_property(GObject* object, guint pro
         break;
     case PROP_LENGTH:
         g_value_set_long(value, webkit_dom_html_form_element_get_length(self));
-        break;
-    case PROP_AUTOCORRECT:
-        g_value_set_boolean(value, webkit_dom_html_form_element_get_autocorrect(self));
-        break;
-    case PROP_AUTOCAPITALIZE:
-        g_value_take_string(value, webkit_dom_html_form_element_get_autocapitalize(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -231,16 +202,6 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
             "action",
             "HTMLFormElement:action",
             "read-write gchar* HTMLFormElement:action",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCOMPLETE,
-        g_param_spec_string(
-            "autocomplete",
-            "HTMLFormElement:autocomplete",
-            "read-write gchar* HTMLFormElement:autocomplete",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -286,16 +247,6 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NO_VALIDATE,
-        g_param_spec_boolean(
-            "no-validate",
-            "HTMLFormElement:no-validate",
-            "read-write gboolean HTMLFormElement:no-validate",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
         PROP_TARGET,
         g_param_spec_string(
             "target",
@@ -323,27 +274,6 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
             "read-only glong HTMLFormElement:length",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCORRECT,
-        g_param_spec_boolean(
-            "autocorrect",
-            "HTMLFormElement:autocorrect",
-            "read-write gboolean HTMLFormElement:autocorrect",
-            FALSE,
-            WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(
-        gobjectClass,
-        PROP_AUTOCAPITALIZE,
-        g_param_spec_string(
-            "autocapitalize",
-            "HTMLFormElement:autocapitalize",
-            "read-write gchar* HTMLFormElement:autocapitalize",
-            "",
-            WEBKIT_PARAM_READWRITE));
-
 }
 
 static void webkit_dom_html_form_element_init(WebKitDOMHTMLFormElement* request)
@@ -365,28 +295,6 @@ void webkit_dom_html_form_element_reset(WebKitDOMHTMLFormElement* self)
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self));
     WebCore::HTMLFormElement* item = WebKit::core(self);
     item->reset();
-}
-
-gboolean webkit_dom_html_form_element_check_validity(WebKitDOMHTMLFormElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self), FALSE);
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    gboolean result = item->checkValidity();
-    return result;
-}
-
-void webkit_dom_html_form_element_request_autocomplete(WebKitDOMHTMLFormElement* self)
-{
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self));
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    item->requestAutocomplete();
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Request Autocomplete")
-#endif /* ENABLE(REQUEST_AUTOCOMPLETE) */
 }
 
 gchar* webkit_dom_html_form_element_get_accept_charset(WebKitDOMHTMLFormElement* self)
@@ -425,25 +333,6 @@ void webkit_dom_html_form_element_set_action(WebKitDOMHTMLFormElement* self, con
     WebCore::HTMLFormElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::actionAttr, convertedValue);
-}
-
-gchar* webkit_dom_html_form_element_get_autocomplete(WebKitDOMHTMLFormElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self), 0);
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->autocomplete());
-    return result;
-}
-
-void webkit_dom_html_form_element_set_autocomplete(WebKitDOMHTMLFormElement* self, const gchar* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAutocomplete(convertedValue);
 }
 
 gchar* webkit_dom_html_form_element_get_enctype(WebKitDOMHTMLFormElement* self)
@@ -522,23 +411,6 @@ void webkit_dom_html_form_element_set_name(WebKitDOMHTMLFormElement* self, const
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
-gboolean webkit_dom_html_form_element_get_no_validate(WebKitDOMHTMLFormElement* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self), FALSE);
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    gboolean result = item->hasAttributeWithoutSynchronization(WebCore::HTMLNames::novalidateAttr);
-    return result;
-}
-
-void webkit_dom_html_form_element_set_no_validate(WebKitDOMHTMLFormElement* self, gboolean value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self));
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    item->setBooleanAttribute(WebCore::HTMLNames::novalidateAttr, value);
-}
-
 gchar* webkit_dom_html_form_element_get_target(WebKitDOMHTMLFormElement* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -575,64 +447,3 @@ glong webkit_dom_html_form_element_get_length(WebKitDOMHTMLFormElement* self)
     glong result = item->length();
     return result;
 }
-
-gboolean webkit_dom_html_form_element_get_autocorrect(WebKitDOMHTMLFormElement* self)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self), FALSE);
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    gboolean result = item->autocorrect();
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-    return static_cast<gboolean>(0);
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-void webkit_dom_html_form_element_set_autocorrect(WebKitDOMHTMLFormElement* self, gboolean value)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self));
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    item->setAutocorrect(value);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(value);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-gchar* webkit_dom_html_form_element_get_autocapitalize(WebKitDOMHTMLFormElement* self)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self), 0);
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->autocapitalize());
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-    return 0;
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
-void webkit_dom_html_form_element_set_autocapitalize(WebKitDOMHTMLFormElement* self, const gchar* value)
-{
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLFormElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAutocapitalize(convertedValue);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(value);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Ios Autocorrect And Autocapitalize")
-#endif /* ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE) */
-}
-
