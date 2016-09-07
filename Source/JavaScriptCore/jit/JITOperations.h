@@ -46,7 +46,6 @@ class Butterfly;
 class CallLinkInfo;
 class CodeBlock;
 class ExecState;
-class JITAddGenerator;
 class JSArray;
 class JSCell;
 class JSFunction;

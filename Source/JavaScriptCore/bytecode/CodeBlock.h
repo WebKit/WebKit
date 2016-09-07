@@ -80,7 +80,6 @@ namespace JSC {
 
 class BytecodeLivenessAnalysis;
 class ExecState;
-class JITAddGenerator;
 class JSModuleEnvironment;
 class LLIntOffsetsExtractor;
 class PCToCodeOriginMap;

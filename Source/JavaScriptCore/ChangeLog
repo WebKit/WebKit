@@ -1,3 +1,15 @@
+2016-09-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove a couple of useless forward declaration
+        https://bugs.webkit.org/show_bug.cgi?id=161676
+
+        Reviewed by Mark Lam.
+
+        JITMathICForwards.h should take care of declarating the Math ICs.
+
+        * bytecode/CodeBlock.h:
+        * jit/JITOperations.h:
+
 2016-09-07  Filip Pizlo  <fpizlo@apple.com>
 
         Make emitAllocateWithNonNullAllocator's sub32() disallow-scratch-friendly
