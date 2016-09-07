@@ -1,3 +1,15 @@
+2016-09-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WebKit2 fails to build with iOS 10 beta SDK - "'UIWKTextInteractionAssistant' may not respond to 'selectAll:'"
+        https://bugs.webkit.org/show_bug.cgi?id=161663
+
+        Reviewed by Darin Adler.
+
+        The UIResponderStandardEditActions extensions, including the selectAll: message, are now
+        part of a formal protocol by the same name as of the iOS 10 beta SDK.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2016-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable custom elements API in Safari Technology Preview

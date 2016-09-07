@@ -541,7 +541,12 @@ typedef NS_ENUM(NSInteger, UIWKHandlePosition) {
 @property (nonatomic, assign) NSRange rangeInMarkedText;
 @end
 
-@interface UIWKTextInteractionAssistant : UITextInteractionAssistant
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 100000
+@protocol UIResponderStandardEditActions
+@end
+#endif
+
+@interface UIWKTextInteractionAssistant : UITextInteractionAssistant <UIResponderStandardEditActions>
 @end
 
 @interface UIWKTextInteractionAssistant (UIWKTextInteractionAssistantDetails)
