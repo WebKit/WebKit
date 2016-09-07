@@ -1,3 +1,11 @@
+2016-09-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix after r205569
+
+        Tweak CMakeLists.txt
+
+        * CMakeLists.txt:
+
 2016-09-07  Mark Lam  <mark.lam@apple.com>
 
         Add CatchScope and force all exception checks to be via ThrowScope or CatchScope.

@@ -661,7 +661,6 @@ set(JavaScriptCore_SOURCES
     runtime/ErrorInstance.cpp
     runtime/ErrorPrototype.cpp
     runtime/Exception.cpp
-    runtime/ExceptionEvent.cpp
     runtime/ExceptionEventLocation.cpp
     runtime/ExceptionFuzz.cpp
     runtime/ExceptionHelpers.cpp
