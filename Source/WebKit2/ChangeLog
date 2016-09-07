@@ -1,3 +1,9 @@
+2016-09-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r205369, just for fun.
+
+        * PlatformMac.cmake: Added new files.
+
 2016-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove unused GObject DOM unstable API

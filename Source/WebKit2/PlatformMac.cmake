@@ -264,6 +264,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/mac/PageClientImpl.mm
     UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm
     UIProcess/mac/RemoteLayerTreeHost.mm
+    UIProcess/mac/RemoteWebInspectorProxyMac.mm
     UIProcess/mac/SecItemShimProxy.cpp
     UIProcess/mac/ServicesController.mm
     UIProcess/mac/TextCheckerMac.mm
@@ -278,6 +279,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/mac/WKTextFinderClient.mm
     UIProcess/mac/WKTextInputWindowController.mm
     UIProcess/mac/WKViewLayoutStrategy.mm
+    UIProcess/mac/WKWebInspectorWKWebView.mm
     UIProcess/mac/WebColorPickerMac.mm
     UIProcess/mac/WebContextMenuProxyMac.mm
     UIProcess/mac/WebCookieManagerProxyMac.mm
