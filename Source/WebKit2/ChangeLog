@@ -1,3 +1,15 @@
+2016-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable custom elements API in Safari Technology Preview
+        https://bugs.webkit.org/show_bug.cgi?id=161518
+
+        Reviewed by Chris Dumez.
+
+        Re-enable custom elements API in Safari Technology Preview after r203296
+        now that our implementation has caught up to the latest specification changes.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-09-01  Simon Fraser  <simon.fraser@apple.com>
 
         Use TemporaryChange<> to maintain m_userIsInteracting
