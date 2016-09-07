@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @conditional=ENABLE(STREAMS_API)
+
+// @conditional=ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
 // @internal
 
 function shieldingPromiseResolve(result)

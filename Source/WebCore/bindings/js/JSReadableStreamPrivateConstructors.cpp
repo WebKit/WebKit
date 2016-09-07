@@ -20,7 +20,7 @@
 #include "config.h"
 #include "JSReadableStreamPrivateConstructors.h"
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"

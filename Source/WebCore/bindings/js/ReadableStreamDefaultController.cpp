@@ -31,7 +31,7 @@
 #include "config.h"
 #include "ReadableStreamDefaultController.h"
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 
 #include "JSReadableStream.h"
 #include "JSReadableStreamSource.h"
@@ -89,4 +89,4 @@ bool ReadableStreamDefaultController::isControlledReadableStreamLocked() const
 
 } // namespace WebCore
 
-#endif // ENABLE(STREAMS_API)
+#endif // ENABLE(READABLE_STREAM_API)

@@ -1,3 +1,18 @@
+2016-09-07  Youenn Fablet  <youenn@apple.com>
+
+        [Streams API] Separate compile flag for ReadableStream and WritableStream
+        https://bugs.webkit.org/show_bug.cgi?id=161044
+
+        Reviewed by Alex Christensen.
+
+        Moving from STREAMS_API to READABLE_STREAM_API and WRITABLE_STREAM_API compilation flags.
+        Updated builtin test to cover the case of @conditional taking ENABLE(XX) || ENABLE(YY) flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Scripts/tests/builtins/WebCore-GuardedInternalBuiltin-Separate.js:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+
 2016-09-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the ENABLE(WEBASSEMBLY) build on Linux

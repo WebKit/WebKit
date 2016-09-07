@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JSReadableStreamSource.h"
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 
 using namespace JSC;
 
@@ -56,4 +56,4 @@ JSValue JSReadableStreamSource::controller(ExecState&) const
 
 }
 
-#endif // ENABLE(STREAMS_API)
+#endif // ENABLE(READABLE_STREAM_API)

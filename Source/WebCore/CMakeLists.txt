@@ -3716,15 +3716,15 @@ foreach (_builtinSource ${WebCore_BUILTINS_SOURCES})
         VERBATIM)
     list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.cpp)
     list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h)
+    list(APPEND WebCore_DERIVED_BUILTIN_HEADERS ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h)
 endforeach ()
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.cpp
-           ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.cpp
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.cpp
            ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.h
            ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.h
     MAIN_DEPENDENCY ${WebCore_BUILTINS_SOURCES}
-    DEPENDS ${BUILTINS_GENERATOR_SCRIPTS}
+    DEPENDS ${BUILTINS_GENERATOR_SCRIPTS} ${WebCore_DERIVED_BUILTIN_HEADERS}
     COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --wrappers-only --framework WebCore --output-directory ${DERIVED_SOURCES_WEBCORE_DIR} ${WebCore_BUILTINS_SOURCES}
     VERBATIM)
 list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.cpp)

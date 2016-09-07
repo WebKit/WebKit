@@ -49,7 +49,7 @@
 #include "JSCanvasPattern.cpp"
 #include "JSCanvasProxy.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 #include "JSByteLengthQueuingStrategy.cpp"
 #include "JSCountQueuingStrategy.cpp"
 #endif
@@ -394,11 +394,10 @@
 #include "JSProgressEvent.cpp"
 #include "JSRadioNodeList.cpp"
 #include "JSRange.cpp"
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 #include "JSReadableStream.cpp"
 #include "JSReadableStreamDefaultController.cpp"
 #include "JSReadableStreamDefaultReader.cpp"
-#include "JSWritableStream.cpp"
 #endif
 #include "JSRect.cpp"
 #include "JSRequestAnimationFrameCallback.cpp"
@@ -661,6 +660,9 @@
 #include "JSWorkerGlobalScopeNotifications.cpp"
 #include "JSWorkerLocation.cpp"
 #include "JSWorkerNavigator.cpp"
+#if ENABLE(WRITABLE_STREAM_API)
+#include "JSWritableStream.cpp"
+#endif
 #include "JSXMLDocument.cpp"
 #include "JSXMLHttpRequest.cpp"
 #include "JSXMLHttpRequestEventTarget.cpp"

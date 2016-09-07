@@ -125,7 +125,7 @@ void FetchResponse::BodyLoader::didSucceed()
     ASSERT(m_response.hasPendingActivity());
     m_response.m_body.loadingSucceeded();
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
     if (m_response.m_readableStreamSource && m_response.m_body.type() != FetchBody::Type::Loaded) {
         // We only close the stream if FetchBody already enqueued data.
         // Otherwise, FetchBody will close the stream when enqueuing data.
@@ -145,7 +145,7 @@ void FetchResponse::BodyLoader::didFail()
     if (m_promise)
         std::exchange(m_promise, Nullopt)->reject(TypeError);
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
     if (m_response.m_readableStreamSource) {
         if (!m_response.m_readableStreamSource->isCancelling())
             m_response.m_readableStreamSource->error(ASCIILiteral("Loading failed"));
@@ -181,7 +181,7 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
 
 void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
 {
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
     ASSERT(m_response.m_readableStreamSource);
 
     if (!m_response.m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size)))
@@ -229,7 +229,7 @@ void FetchResponse::consume(unsigned type, Ref<DeferredWrapper>&& wrapper)
     }
 }
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 void FetchResponse::startConsumingStream(unsigned type)
 {
     m_isDisturbed = true;

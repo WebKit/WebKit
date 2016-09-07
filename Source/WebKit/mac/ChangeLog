@@ -1,3 +1,14 @@
+2016-09-07  Youenn Fablet  <youenn@apple.com>
+
+        [Streams API] Separate compile flag for ReadableStream and WritableStream
+        https://bugs.webkit.org/show_bug.cgi?id=161044
+
+        Reviewed by Alex Christensen.
+
+        Moving from STREAMS_API to READABLE_STREAM_API and WRITABLE_STREAM_API compilation flags.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-09-06  Chris Dumez  <cdumez@apple.com>
 
         Add support for input.minLength / textArea.minLength

@@ -19,7 +19,7 @@
 #ifndef JSReadableStreamPrivateConstructors_h
 #define JSReadableStreamPrivateConstructors_h
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 
 namespace JSC {
 

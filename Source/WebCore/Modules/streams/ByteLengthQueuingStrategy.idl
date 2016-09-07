@@ -30,7 +30,7 @@
 [
     JSBuiltin,
     Constructor,
-    Conditional=STREAMS_API,
+    Conditional=READABLE_STREAM_API|WRITABLE_STREAM_API,
     Exposed=(Window,Worker),
 ] interface ByteLengthQueuingStrategy {
     double size();

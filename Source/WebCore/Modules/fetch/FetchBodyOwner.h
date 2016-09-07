@@ -92,7 +92,7 @@ private:
 protected:
     FetchBody m_body;
     bool m_isDisturbed { false };
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
     RefPtr<FetchResponseSource> m_readableStreamSource;
 #endif
 

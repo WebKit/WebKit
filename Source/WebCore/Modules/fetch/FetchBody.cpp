@@ -198,7 +198,7 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredWrapper>&& promise)
     }
 }
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& source)
 {
     // This should be handled by FetchResponse

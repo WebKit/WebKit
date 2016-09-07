@@ -28,10 +28,10 @@
  */
 
 [
-    Conditional=STREAMS_API,
+    Conditional=WRITABLE_STREAM_API,
     Constructor,
     JSBuiltin
-] interface WritableStream { 
+] interface WritableStream {
     Promise abort(optional any reason);
     Promise close();
     Promise write(any chunk);

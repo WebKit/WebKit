@@ -29,7 +29,7 @@
 #ifndef ReadableStreamDefaultController_h
 #define ReadableStreamDefaultController_h
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
 
 #include "JSDOMBinding.h"
 #include "JSReadableStreamDefaultController.h"
@@ -99,6 +99,6 @@ inline void ReadableStreamDefaultController::error<String>(const String& result)
 
 } // namespace WebCore
 
-#endif // ENABLE(STREAMS_API)
+#endif // ENABLE(READABLE_STREAM_API)
 
 #endif // ReadableStreamDefaultController_h

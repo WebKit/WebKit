@@ -99,7 +99,7 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 {
     m_builtinInternalFunctions.initialize(*this);
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API)
     JSObject* privateReadableStreamDefaultControllerConstructor = createReadableStreamDefaultControllerPrivateConstructor(vm, *this);
     JSObject* privateReadableStreamDefaultReaderConstructor = createReadableStreamDefaultReaderPrivateConstructor(vm, *this);
 
@@ -120,13 +120,15 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().structuredCloneArrayBufferViewPrivateName(),
             JSFunction::create(vm, this, 1, String(), structuredCloneArrayBufferView), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(vm.propertyNames->builtinNames().ArrayBufferPrivateName(), getDirect(vm, vm.propertyNames->ArrayBuffer), DontDelete | ReadOnly),
-#if ENABLE(STREAMS_API)
+#if ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamErroredPrivateName(), jsNumber(3), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamReadablePrivateName(), jsNumber(4), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWaitingPrivateName(), jsNumber(5), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWritablePrivateName(), jsNumber(6), DontDelete | ReadOnly),
+#endif
+#if ENABLE(READABLE_STREAM_API)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamDefaultControllerPrivateName(), privateReadableStreamDefaultControllerConstructor, DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamDefaultReaderPrivateName(), privateReadableStreamDefaultReaderConstructor, DontDelete | ReadOnly),
 #endif
