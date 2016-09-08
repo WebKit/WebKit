@@ -286,6 +286,8 @@ inline LayoutUnit RenderTableCell::logicalHeightForRowSizing() const
 {
     // FIXME: This function does too much work, and is very hot during table layout!
     LayoutUnit adjustedLogicalHeight = logicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
+    if (!style().logicalHeight().isSpecified())
+        return adjustedLogicalHeight;
     LayoutUnit styleLogicalHeight = valueForLength(style().logicalHeight(), 0);
     // In strict mode, box-sizing: content-box do the right thing and actually add in the border and padding.
     // Call computedCSSPadding* directly to avoid including implicitPadding.
