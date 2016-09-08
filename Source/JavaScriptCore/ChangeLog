@@ -1,3 +1,24 @@
+2016-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Object.setPrototypeOf() should throw when used on a cross-origin Window / Location object
+        https://bugs.webkit.org/show_bug.cgi?id=161396
+
+        Reviewed by Ryosuke Niwa.
+
+        Object.setPrototypeOf() should throw when used on a cross-origin Window / Location object:
+        - https://html.spec.whatwg.org/#windowproxy-setprototypeof
+        - https://html.spec.whatwg.org/#location-setprototypeof
+        - https://tc39.github.io/ecma262/#sec-object.setprototypeof (step 5)
+
+        Firefox and Chrome already throw. However, WebKit merely ignores the call and logs an error message.
+
+        Note that technically, we should also throw in the same origin case.
+        However, not all browsers agree on this yet so I haven't not changed
+        the behavior for the same origin case.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+
 2016-08-30  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Clean up the remaining compare nodes in FTLCapabilities

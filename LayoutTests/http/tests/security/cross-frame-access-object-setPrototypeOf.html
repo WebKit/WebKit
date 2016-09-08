@@ -1,11 +1,10 @@
 <html>
 <head>
+    <script src="/js-test-resources/js-test-pre.js"></script>
     <script src="resources/cross-frame-access.js"></script>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        description("This tests that you can't set the prototype of the window or location objects cross-origin using Object.setPrototypeOf()");
+        jsTestIsAsync = true;
 
         // Set up listener for message from iframe
         addEventListener('message', function(event) {
@@ -18,19 +17,20 @@
             targetWindow = document.getElementById("target").contentWindow;
 
             shouldBeFalse("targetWindow instanceof Array");
-
-            Object.setPrototypeOf(targetWindow, Array.prototype);
-
+            shouldThrowErrorName("Object.setPrototypeOf(targetWindow, Array.prototype)", "TypeError");
             shouldBeFalse("targetWindow instanceof Array");
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            shouldBeFalse("targetWindow.location instanceof Array");
+            shouldThrowErrorName("Object.setPrototypeOf(targetWindow.location, Array.prototype)", "TypeError");
+            shouldBeFalse("targetWindow.location instanceof Array");
+
+            finishJSTest();
         }
     </script>
 </head>
 <body>
-    <div>This tests that you can't set the prototype of the window or history objects cross-origin using Object.setPrototypeOf().</div>
     <iframe id="target" src="http://localhost:8000/security/resources/cross-frame-iframe-for-object-setPrototypeOf-test.html"></iframe>
     <pre id="console"></pre>
+    <script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>
