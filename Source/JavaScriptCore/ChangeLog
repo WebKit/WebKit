@@ -1,3 +1,13 @@
+2016-09-01  JF Bastien  <jfbastien@apple.com>
+
+        jsc: fix cmake build missing symbol getPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=161521
+
+        Reviewed by Saam Barati.
+
+        * runtime/IntlDateTimeFormat.cpp: include JSCInlines.h
+        * runtime/IntlNumberFormat.cpp: include JSCInlines.h
+
 2016-09-01  Mark Lam  <mark.lam@apple.com>
 
         Move some JSObject and JSArray inline functions to their respective Inlines.h files.
