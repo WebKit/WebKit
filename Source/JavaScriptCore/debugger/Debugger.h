@@ -219,8 +219,8 @@ private:
 
     ReasonForPause m_reasonForPause;
     JSValue m_currentException;
-    CallFrame* m_pauseOnCallFrame;
-    CallFrame* m_currentCallFrame;
+    CallFrame* m_pauseOnCallFrame { nullptr };
+    CallFrame* m_currentCallFrame { nullptr };
     unsigned m_lastExecutedLine;
     SourceID m_lastExecutedSourceID;
 

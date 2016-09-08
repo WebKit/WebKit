@@ -128,8 +128,6 @@ Debugger::Debugger(VM& vm)
     , m_suppressAllPauses(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_reasonForPause(NotPaused)
-    , m_pauseOnCallFrame(0)
-    , m_currentCallFrame(0)
     , m_lastExecutedLine(UINT_MAX)
     , m_lastExecutedSourceID(noSourceID)
     , m_topBreakpointID(noBreakpointID)
@@ -141,7 +139,7 @@ Debugger::~Debugger()
 {
     HashSet<JSGlobalObject*>::iterator end = m_globalObjects.end();
     for (HashSet<JSGlobalObject*>::iterator it = m_globalObjects.begin(); it != end; ++it)
-        (*it)->setDebugger(0);
+        (*it)->setDebugger(nullptr);
 }
 
 void Debugger::attach(JSGlobalObject* globalObject)
@@ -168,8 +166,8 @@ void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
     // stack, since we won't get further debugger callbacks to do so. Also, resume execution,
     // since there's no point in staying paused once a window closes.
     if (m_isPaused && m_currentCallFrame && m_currentCallFrame->vmEntryGlobalObject() == globalObject) {
-        m_currentCallFrame = 0;
-        m_pauseOnCallFrame = 0;
+        m_currentCallFrame = nullptr;
+        m_pauseOnCallFrame = nullptr;
         continueProgram();
     }
 
@@ -182,7 +180,7 @@ void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
     if (reason != GlobalObjectIsDestructing)
         clearDebuggerRequests(globalObject);
 
-    globalObject->setDebugger(0);
+    globalObject->setDebugger(nullptr);
 }
 
 bool Debugger::isAttached(JSGlobalObject* globalObject)
@@ -599,7 +597,7 @@ void Debugger::stepOutOfFunction()
         return;
 
     VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
-    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topVMEntryFrame) : 0;
+    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topVMEntryFrame) : nullptr;
     notifyDoneProcessingDebuggerEvents();
 }
 
@@ -618,7 +616,7 @@ void Debugger::updateCallFrameAndPauseIfNeeded(CallFrame* callFrame)
     updateCallFrame(callFrame);
     pauseIfNeeded(callFrame);
     if (!isStepping())
-        m_currentCallFrame = 0;
+        m_currentCallFrame = nullptr;
 }
 
 void Debugger::pauseIfNeeded(CallFrame* callFrame)
