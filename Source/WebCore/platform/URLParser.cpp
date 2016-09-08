@@ -857,7 +857,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         break;
     case State::SpecialAuthorityIgnoreSlashes:
         LOG_FINAL_STATE("SpecialAuthorityIgnoreSlashes");
-        break;
+        return { };
     case State::AuthorityOrHost:
         LOG_FINAL_STATE("AuthorityOrHost");
         m_url.m_userEnd = m_buffer.length();
@@ -974,13 +974,25 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
 
 void URLParser::parseAuthority(StringView::CodePoints::Iterator& iterator, const StringView::CodePoints::Iterator& end)
 {
+    if (iterator == end) {
+        m_url.m_userEnd = m_buffer.length();
+        m_url.m_passwordEnd = m_url.m_userEnd;
+        return;
+    }
     for (; iterator != end; ++iterator) {
-        m_buffer.append(*iterator);
         if (*iterator == ':') {
             ++iterator;
-            m_url.m_userEnd = m_buffer.length() - 1;
+            m_url.m_userEnd = m_buffer.length();
+            if (iterator == end) {
+                m_url.m_passwordEnd = m_url.m_userEnd;
+                if (m_url.m_userEnd > m_url.m_userStart)
+                    m_buffer.append('@');
+                return;
+            }
+            m_buffer.append(':');
             break;
         }
+        m_buffer.append(*iterator);
     }
     for (; iterator != end; ++iterator)
         m_buffer.append(*iterator);

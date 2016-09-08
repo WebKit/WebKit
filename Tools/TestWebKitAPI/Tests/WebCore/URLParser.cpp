@@ -178,6 +178,11 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://host/A b", {"http", "", "", "host", 0, "/A%20b", "", "", "http://host/A%20b"});
     checkURL("http://host/a%20B", {"http", "", "", "host", 0, "/a%20B", "", "", "http://host/a%20B"});
     checkURL("http://host?q=@ <>!#fragment", {"http", "", "", "host", 0, "/", "q=@%20%3C%3E!", "fragment", "http://host/?q=@%20%3C%3E!#fragment"});
+    checkURL("http://user:@host", {"http", "user", "", "host", 0, "/", "", "", "http://user@host/"});
+
+    // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
+    // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
+    checkURL("http://:@host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
 }
 
 static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts)
@@ -230,6 +235,8 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("?#", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar?#"});
     checkRelativeURL("#?", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "?", "http://example.org/foo/bar#?"});
     checkRelativeURL("/", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/", "", "", "http://example.org/"});
+    checkRelativeURL("http://@host", "about:blank", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
+    checkRelativeURL("http://:@host", "about:blank", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
@@ -354,11 +361,14 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences(wideString(L"#β"), "http://example.org/foo/bar",
         {"http", "", "", "example.org", 0, "/foo/bar", "", wideString(L"β"), wideString(L"http://example.org/foo/bar#β")},
         {"http", "", "", "example.org", 0, "/foo/bar", "", "%CE%B2", "http://example.org/foo/bar#%CE%B2"});
-
-    // FIXME: This behavior ought to be specified in the standard.
-    // With the existing URL::parse, WebKit returns "https:/", Firefox returns "https:///", and Chrome throws an error.
+    checkURLDifferences("http://@",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://@"});
+    checkURLDifferences("http://",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"http", "", "", "", 0, "/", "", "", "http:/"});
     checkRelativeURLDifferences("//", "https://www.webkit.org/path",
-        {"https", "", "", "", 0, "", "", "", "https://"},
+        {"", "", "", "", 0, "", "", "", ""},
         {"https", "", "", "", 0, "/", "", "", "https:/"});
     
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
@@ -436,6 +446,24 @@ TEST_F(URLParserTest, DefaultPort)
         {"wss", "", "", "host", 444, "", "", "", "wss://host:444"});
     
     // FIXME: Fix and check unknown schemes with ports, as well as ftps.
+
+    // Firefox returns http://a:@/ Chrome fails, URL::parse fails
+    checkRelativeURLDifferences("http://a:@", "about:blank",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://a:@"});
+    
+    checkRelativeURLDifferences("http://:@", "about:blank",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://:@"});
+    checkRelativeURLDifferences("http://:b@", "about:blank",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://:b@"});
+    checkURLDifferences("http://a:@",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://a:@"});
+    checkURLDifferences("http://:b@",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://:b@"});
 }
     
 static void shouldFail(const String& urlString)
