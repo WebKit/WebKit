@@ -1,3 +1,21 @@
+2016-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support new emoji group candidates
+        https://bugs.webkit.org/show_bug.cgi?id=161664
+        <rdar://problem/24802695>
+        <rdar://problem/27666433>
+
+        Reviewed by Simon Fraser.
+
+        Add tests.
+
+        * platform/ios-simulator/editing/deleting/delete-emoji-expected.txt:
+        * platform/mac-yosemite/editing/deleting/delete-emoji-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-expected.txt:
+        * editing/deleting/delete-emoji.html:
+        * fast/text/emoji-num-glyphs-expected.txt:
+        * fast/text/emoji-num-glyphs.html:
+
 2016-09-08  Chris Dumez  <cdumez@apple.com>
 
         HTMLImageElement.width / height attributes should be unsigned
