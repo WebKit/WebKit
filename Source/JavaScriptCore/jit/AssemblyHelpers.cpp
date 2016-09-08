@@ -672,6 +672,94 @@ void AssemblyHelpers::wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch)
 }
 #endif // USE(JSVALUE64)
 
+void AssemblyHelpers::emitConvertValueToBoolean(JSValueRegs value, GPRReg result, GPRReg scratch, FPRReg valueAsFPR, FPRReg tempFPR, bool shouldCheckMasqueradesAsUndefined, JSGlobalObject* globalObject, bool negateResult)
+{
+    // Implements the following control flow structure:
+    // if (value is boolean) {
+    //     result = value === true
+    // } else if (value is integer) {
+    //     result = value !== 0
+    // } else if (value is double) {
+    //     result = value !== 0.0 && !isNaN(value);
+    // } else if (value is cell) {
+    //     if (value is string) {
+    //          result = value.length() !== 0;
+    //     } else {
+    //          do crazy things for masquerades as undefined
+    //     }
+    // } else {
+    //     result = false;
+    // }
+    //
+    // if (negateResult)
+    //     result = !result;
+
+    JumpList done;
+    auto notBoolean = branchIfNotBoolean(value, result);
+#if USE(JSVALUE64)
+    compare32(negateResult ? NotEqual : Equal, value.gpr(), TrustedImm32(ValueTrue), result);
+#else
+    compare32(negateResult ? Equal : NotEqual, value.payloadGPR(), TrustedImm32(0), result);
+#endif
+    done.append(jump());
+
+    notBoolean.link(this);
+#if USE(JSVALUE64)
+    auto isNotNumber = branchIfNotNumber(value.gpr());
+#else
+    ASSERT(scratch != InvalidGPRReg);
+    auto isNotNumber = branchIfNotNumber(value, scratch);
+#endif
+    auto isDouble = branchIfNotInt32(value);
+
+    // It's an int32.
+    compare32(negateResult ? Equal : NotEqual, value.payloadGPR(), TrustedImm32(0), result);
+    done.append(jump());
+
+    isDouble.link(this);
+#if USE(JSVALUE64)
+    unboxDouble(value.gpr(), result, valueAsFPR);
+#else
+    unboxDouble(value, valueAsFPR, tempFPR);
+#endif
+    auto isZeroOrNaN = branchDoubleZeroOrNaN(valueAsFPR, tempFPR);
+    move(negateResult ? TrustedImm32(0) : TrustedImm32(1), result);
+    done.append(jump());
+    isZeroOrNaN.link(this);
+    move(negateResult ? TrustedImm32(1) : TrustedImm32(0), result);
+    done.append(jump());
+
+    isNotNumber.link(this);
+    auto isNotCellAndIsNotNumberAndIsNotBoolean = branchIfNotCell(value);
+    auto isCellButNotString = branch8(NotEqual,
+        Address(value.payloadGPR(), JSCell::typeInfoTypeOffset()), TrustedImm32(StringType));
+    load32(Address(value.payloadGPR(), JSString::offsetOfLength()), result);
+    compare32(negateResult ? Equal : NotEqual, result, TrustedImm32(0), result);
+    done.append(jump());
+
+    isCellButNotString.link(this);
+    if (shouldCheckMasqueradesAsUndefined) {
+        ASSERT(scratch != InvalidGPRReg);
+        JumpList isNotMasqueradesAsUndefined;
+        isNotMasqueradesAsUndefined.append(branchTest8(Zero, Address(value.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)));
+        emitLoadStructure(value.payloadGPR(), result, scratch);
+        move(TrustedImmPtr(globalObject), scratch);
+        isNotMasqueradesAsUndefined.append(branchPtr(NotEqual, Address(result, Structure::globalObjectOffset()), scratch));
+        // We act like we are "undefined" here.
+        move(negateResult ? TrustedImm32(1) : TrustedImm32(0), result);
+        done.append(jump());
+        isNotMasqueradesAsUndefined.link(this);
+    }
+    move(negateResult ? TrustedImm32(0) : TrustedImm32(1), result);
+    done.append(jump());
+
+    // null or undefined.
+    isNotCellAndIsNotNumberAndIsNotBoolean.link(this); 
+    move(negateResult ? TrustedImm32(1) : TrustedImm32(0), result);
+
+    done.link(this);
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

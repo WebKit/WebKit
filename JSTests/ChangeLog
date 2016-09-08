@@ -1,3 +1,16 @@
+2016-09-08  Saam Barati  <sbarati@apple.com>
+
+        We should inline operationConvertJSValueToBoolean into JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=161729
+
+        Reviewed by Filip Pizlo.
+
+        * stress/value-to-boolean.js: Added.
+        (assert):
+        (test1):
+        (test2):
+        (test3):
+
 2016-09-08  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION (r205569?): 32-bit JSC test timeout: stress/rest-parameter-many-arguments.js.dfg-maximal-flush-validate-no-cjit

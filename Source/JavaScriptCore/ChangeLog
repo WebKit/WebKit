@@ -1,3 +1,43 @@
+2016-09-08  Saam Barati  <sbarati@apple.com>
+
+        We should inline operationConvertJSValueToBoolean into JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=161729
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces an AssemblyHelpers emitter function
+        that replaces operationConvertJSValueToBoolean. This operation
+        was showing up when I was doing performance analysis for the
+        speedometer benchmark. I saw that it was spending about 1% of
+        its time in this function. Hopefully this patch can help us speedup
+        up speedometer by a little bit.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateDestructibleObject): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emitSlow_op_jfalse): Deleted.
+        (JSC::JIT::emitSlow_op_jtrue): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emitSlow_op_jfalse): Deleted.
+        (JSC::JIT::emitSlow_op_jtrue): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2016-09-08  Chris Dumez  <cdumez@apple.com>
 
         Align proto getter / setter behavior with other browsers

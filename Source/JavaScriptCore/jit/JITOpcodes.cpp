@@ -361,15 +361,16 @@ void JIT::emit_op_not(Instruction* currentInstruction)
 void JIT::emit_op_jfalse(Instruction* currentInstruction)
 {
     unsigned target = currentInstruction[2].u.operand;
-    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
-    addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsNumber(0)))), target);
-    Jump isNonZero = emitJumpIfInt(regT0);
+    GPRReg value = regT0;
+    GPRReg result = regT1;
+    GPRReg scratch = regT2;
+    bool shouldCheckMasqueradesAsUndefined = true;
 
-    addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsBoolean(false)))), target);
-    addSlowCase(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsBoolean(true)))));
+    emitGetVirtualRegister(currentInstruction[1].u.operand, value);
+    emitConvertValueToBoolean(JSValueRegs(value), result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
 
-    isNonZero.link(this);
+    addJump(branchTest32(Zero, result), target);
 }
 
 void JIT::emit_op_jeq_null(Instruction* currentInstruction)
@@ -443,15 +444,14 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
 {
     unsigned target = currentInstruction[2].u.operand;
-    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
-    Jump isZero = branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsNumber(0))));
-    addJump(emitJumpIfInt(regT0), target);
-
-    addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsBoolean(true)))), target);
-    addSlowCase(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsBoolean(false)))));
-
-    isZero.link(this);
+    GPRReg value = regT0;
+    GPRReg result = regT1;
+    GPRReg scratch = regT2;
+    bool shouldCheckMasqueradesAsUndefined = true;
+    emitGetVirtualRegister(currentInstruction[1].u.operand, value);
+    emitConvertValueToBoolean(JSValueRegs(value), result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
+    addJump(branchTest32(NonZero, result), target);
 }
 
 void JIT::emit_op_neq(Instruction* currentInstruction)
@@ -834,20 +834,6 @@ void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>
     
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_not);
     slowPathCall.call();
-}
-
-void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    callOperation(operationConvertJSValueToBoolean, regT0);
-    emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), currentInstruction[2].u.operand); // inverted!
-}
-
-void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    callOperation(operationConvertJSValueToBoolean, regT0);
-    emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), currentInstruction[2].u.operand);
 }
 
 void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

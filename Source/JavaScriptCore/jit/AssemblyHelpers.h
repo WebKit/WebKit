@@ -1525,6 +1525,8 @@ public:
         emitStoreStructureWithTypeInfo(structure, resultGPR, scratchGPR2);
         storePtr(TrustedImmPtr(0), Address(resultGPR, JSObject::butterflyOffset()));
     }
+
+    void emitConvertValueToBoolean(JSValueRegs value, GPRReg result, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg, FPRReg, bool shouldCheckMasqueradesAsUndefined, JSGlobalObject*, bool negateResult = false);
     
     template<typename ClassType>
     void emitAllocateDestructibleObject(GPRReg resultGPR, Structure* structure, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)

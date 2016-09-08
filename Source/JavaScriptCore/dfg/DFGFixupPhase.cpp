@@ -434,6 +434,11 @@ private:
                 fixEdge<StringUse>(node->child1());
             else if (node->child1()->shouldSpeculateStringOrOther())
                 fixEdge<StringOrOtherUse>(node->child1());
+            else {
+                WatchpointSet* masqueradesAsUndefinedWatchpoint = m_graph.globalObjectFor(node->origin.semantic)->masqueradesAsUndefinedWatchpoint();
+                if (masqueradesAsUndefinedWatchpoint->isStillValid())
+                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
+            }
             break;
         }
 
@@ -978,6 +983,11 @@ private:
                 fixEdge<StringUse>(node->child1());
             else if (node->child1()->shouldSpeculateStringOrOther())
                 fixEdge<StringOrOtherUse>(node->child1());
+            else {
+                WatchpointSet* masqueradesAsUndefinedWatchpoint = m_graph.globalObjectFor(node->origin.semantic)->masqueradesAsUndefinedWatchpoint();
+                if (masqueradesAsUndefinedWatchpoint->isStillValid())
+                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
+            }
             break;
         }
             

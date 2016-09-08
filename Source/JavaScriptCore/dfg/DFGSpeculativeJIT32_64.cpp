@@ -1685,24 +1685,18 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
 
     case UntypedUse: {
         JSValueOperand arg1(this, node->child1());
-        GPRTemporary resultPayload(this, Reuse, arg1, PayloadWord);
-        GPRReg arg1TagGPR = arg1.tagGPR();
-        GPRReg arg1PayloadGPR = arg1.payloadGPR();
-        JSValueRegs arg1Regs = arg1.jsValueRegs();
-        GPRReg resultPayloadGPR = resultPayload.gpr();
-        
-        arg1.use();
+        GPRTemporary result(this);
+        GPRTemporary temp(this);
+        FPRTemporary valueFPR(this);
+        FPRTemporary tempFPR(this);
 
-        JITCompiler::Jump slowCase = m_jit.branch32(JITCompiler::NotEqual, arg1TagGPR, TrustedImm32(JSValue::BooleanTag));
-    
-        m_jit.move(arg1PayloadGPR, resultPayloadGPR);
+        GPRReg resultGPR = result.gpr();
 
-        addSlowPathGenerator(
-            slowPathCall(
-                slowCase, this, operationConvertJSValueToBoolean, resultPayloadGPR, arg1Regs, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded));
-    
-        m_jit.xor32(TrustedImm32(1), resultPayloadGPR);
-        booleanResult(resultPayloadGPR, node, UseChildrenCalledExplicitly);
+        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+        bool negateResult = true;
+        m_jit.emitConvertValueToBoolean(arg1.jsValueRegs(), resultGPR, temp.gpr(), valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject, negateResult);
+        booleanResult(resultGPR, node);
         return;
     }
     case StringUse:
@@ -1834,30 +1828,22 @@ void SpeculativeJIT::emitBranch(Node* node)
     
     case UntypedUse: {
         JSValueOperand value(this, node->child1());
-        value.fill();
-        GPRReg valueTagGPR = value.tagGPR();
-        GPRReg valuePayloadGPR = value.payloadGPR();
-
+        FPRTemporary valueFPR(this);
+        FPRTemporary tempFPR(this);
         GPRTemporary result(this);
+        GPRTemporary temp(this);
+
+        JSValueRegs valueRegs = value.jsValueRegs();
         GPRReg resultGPR = result.gpr();
     
         use(node->child1());
-    
-        JITCompiler::Jump fastPath = m_jit.branch32(JITCompiler::Equal, valueTagGPR, JITCompiler::TrustedImm32(JSValue::Int32Tag));
-        JITCompiler::Jump slowPath = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, JITCompiler::TrustedImm32(JSValue::BooleanTag));
 
-        fastPath.link(&m_jit);
-        branchTest32(JITCompiler::Zero, valuePayloadGPR, notTaken);
+        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+        m_jit.emitConvertValueToBoolean(valueRegs, resultGPR, temp.gpr(), valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject);
+        branchTest32(JITCompiler::Zero, resultGPR, notTaken);
         jump(taken, ForceJump);
 
-        slowPath.link(&m_jit);
-        silentSpillAllRegisters(resultGPR);
-        callOperation(operationConvertJSValueToBoolean, resultGPR, value.jsValueRegs());
-        silentFillAllRegisters(resultGPR);
-    
-        branchTest32(JITCompiler::NonZero, resultGPR, taken);
-        jump(notTaken);
-    
         noResult(node, UseChildrenCalledExplicitly);
         return;
     }
