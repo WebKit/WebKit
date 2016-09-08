@@ -91,7 +91,7 @@ String IDBDatabaseException::getErrorName(ExceptionCode ec)
     const IDBDatabaseExceptionNameDescription* entry = getErrorEntry(ec);
     ASSERT(entry);
     if (!entry)
-        return "UnknownError";
+        return ASCIILiteral("UnknownError");
 
     return entry->name;
 }
@@ -101,7 +101,7 @@ String IDBDatabaseException::getErrorDescription(ExceptionCode ec)
     const IDBDatabaseExceptionNameDescription* entry = getErrorEntry(ec);
     ASSERT(entry);
     if (!entry)
-        return "Unknown error.";
+        return ASCIILiteral("Unknown error.");
 
     return entry->description;
 }

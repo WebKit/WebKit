@@ -453,9 +453,9 @@ String WebSocket::binaryType() const
 {
     switch (m_binaryType) {
     case BinaryTypeBlob:
-        return "blob";
+        return ASCIILiteral("blob");
     case BinaryTypeArrayBuffer:
-        return "arraybuffer";
+        return ASCIILiteral("arraybuffer");
     }
     ASSERT_NOT_REACHED();
     return String();

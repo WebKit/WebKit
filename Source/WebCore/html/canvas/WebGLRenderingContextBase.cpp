@@ -4873,17 +4873,17 @@ namespace {
     {
         switch (error) {
         case GraphicsContext3D::INVALID_ENUM:
-            return "INVALID_ENUM";
+            return ASCIILiteral("INVALID_ENUM");
         case GraphicsContext3D::INVALID_VALUE:
-            return "INVALID_VALUE";
+            return ASCIILiteral("INVALID_VALUE");
         case GraphicsContext3D::INVALID_OPERATION:
-            return "INVALID_OPERATION";
+            return ASCIILiteral("INVALID_OPERATION");
         case GraphicsContext3D::OUT_OF_MEMORY:
-            return "OUT_OF_MEMORY";
+            return ASCIILiteral("OUT_OF_MEMORY");
         case GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION:
-            return "INVALID_FRAMEBUFFER_OPERATION";
+            return ASCIILiteral("INVALID_FRAMEBUFFER_OPERATION");
         case GraphicsContext3D::CONTEXT_LOST_WEBGL:
-            return "CONTEXT_LOST_WEBGL";
+            return ASCIILiteral("CONTEXT_LOST_WEBGL");
         default:
             return String::format("WebGL ERROR(%04x)", error);
         }

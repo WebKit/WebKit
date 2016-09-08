@@ -490,7 +490,7 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
 
     RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
     if (!CGImageEncodeToData(image, uti.get(), quality, data.get()))
-        return "data:,";
+        return ASCIILiteral("data:,");
 
     Vector<char> base64Data;
     base64Encode(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()), base64Data);
@@ -515,12 +515,12 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
         premultipliedData = getPremultipliedImageData(IntRect(IntPoint(0, 0), logicalSize()));
         if (!premultipliedData)
-            return "data:,";
+            return ASCIILiteral("data:,");
 
         RetainPtr<CGDataProviderRef> dataProvider;
         dataProvider = adoptCF(CGDataProviderCreateWithData(0, premultipliedData->data(), 4 * logicalSize().width() * logicalSize().height(), 0));
         if (!dataProvider)
-            return "data:,";
+            return ASCIILiteral("data:,");
 
         image = adoptCF(CGImageCreate(logicalSize().width(), logicalSize().height(), 8, 32, 4 * logicalSize().width(),
                                     sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast,
@@ -556,7 +556,7 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
         size_t size = 4 * source.width() * source.height();
         if (!premultipliedData.tryReserveCapacity(size))
-            return "data:,";
+            return ASCIILiteral("data:,");
 
         premultipliedData.resize(size);
         unsigned char *buffer = premultipliedData.data();
@@ -580,7 +580,7 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
     RetainPtr<CGDataProviderRef> dataProvider;
     dataProvider = adoptCF(CGDataProviderCreateWithData(0, data, 4 * source.width() * source.height(), 0));
     if (!dataProvider)
-        return "data:,";
+        return ASCIILiteral("data:,");
 
     RetainPtr<CGImageRef> image;
     image = adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(),

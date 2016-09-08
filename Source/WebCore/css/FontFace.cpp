@@ -316,14 +316,14 @@ String FontFace::weight() const
 
 String FontFace::stretch() const
 {
-    return "normal";
+    return ASCIILiteral("normal");
 }
 
 String FontFace::unicodeRange() const
 {
     const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
     if (!m_backing->ranges().size())
-        return "U+0-10FFFF";
+        return ASCIILiteral("U+0-10FFFF");
     RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
     for (auto& range : m_backing->ranges())
         values->append(CSSUnicodeRangeValue::create(range.from, range.to));
@@ -340,7 +340,7 @@ String FontFace::featureSettings() const
 {
     const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
     if (!m_backing->featureSettings().size())
-        return "normal";
+        return ASCIILiteral("normal");
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     for (auto& feature : m_backing->featureSettings())
         list->append(CSSFontFeatureValue::create(FontFeatureTag(feature.tag()), feature.value()));
