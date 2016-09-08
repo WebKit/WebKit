@@ -1,3 +1,35 @@
+2016-09-08  JF Bastien  <jfbastien@apple.com>
+
+        Delete older WebAssembly tests
+        https://bugs.webkit.org/show_bug.cgi?id=161758
+
+        Reviewed by Filip Pizlo.
+
+        They're not running, rely on the older polyfill prototype, and the older code was deleted in: https://trac.webkit.org/changeset/204180
+
+        * stress/wasm-arithmetic-float32.js: Removed.
+        * stress/wasm-arithmetic-float64.js: Removed.
+        * stress/wasm-arithmetic-int32.js: Removed.
+        * stress/wasm-calls.js: Removed.
+        * stress/wasm-comma.js: Removed.
+        * stress/wasm-control-flow.js: Removed.
+        * stress/wasm-globals.js: Removed.
+        * stress/wasm-linear-memory.js: Removed.
+        * stress/wasm-locals.js: Removed.
+        * stress/wasm-relational.js: Removed.
+        * stress/wasm-type-conversion.js: Removed.
+        * stress/wasm/arithmetic-float32.wasm: Removed.
+        * stress/wasm/arithmetic-float64.wasm: Removed.
+        * stress/wasm/arithmetic-int32.wasm: Removed.
+        * stress/wasm/calls.wasm: Removed.
+        * stress/wasm/comma.wasm: Removed.
+        * stress/wasm/control-flow.wasm: Removed.
+        * stress/wasm/globals.wasm: Removed.
+        * stress/wasm/linear-memory.wasm: Removed.
+        * stress/wasm/locals.wasm: Removed.
+        * stress/wasm/relational.wasm: Removed.
+        * stress/wasm/type-conversion.wasm: Removed.
+
 2016-09-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Exception fuzz tests fail
