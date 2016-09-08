@@ -1,3 +1,11 @@
+2016-09-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove pass expectation for fast/text/emoji-num-glyphs.html after r205657.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-09-08  Chris Dumez  <cdumez@apple.com>
 
         Align proto getter / setter behavior with other browsers
