@@ -139,7 +139,7 @@ static bool isDefaultPort(const String& scheme, uint16_t port)
     return defaultPorts.get().get(scheme) == port;
 }
 
-static bool isSpecialScheme(const String& scheme)
+static bool isSpecialScheme(StringView scheme)
 {
     return scheme == "ftp"
         || scheme == "file"
@@ -148,6 +148,13 @@ static bool isSpecialScheme(const String& scheme)
         || scheme == "https"
         || scheme == "ws"
         || scheme == "wss";
+}
+
+static StringView bufferView(const StringBuilder& builder)
+{
+    if (builder.is8Bit())
+        return StringView(builder.characters8(), builder.length());
+    return StringView(builder.characters16(), builder.length());
 }
 
 enum class URLParser::URLPart {
@@ -394,6 +401,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
 #define LOG_STATE(x) LOG(URLParser, "State %s, code point %c, buffer length %d", x, *c, m_buffer.length())
 #define LOG_FINAL_STATE(x) LOG(URLParser, "Final State: %s", x)
 
+    bool urlIsSpecial = false;
     State state = State::SchemeStart;
     while (c != end) {
         if (isTabOrNewline(*c)) {
@@ -417,15 +425,17 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 m_buffer.append(toASCIILower(*c));
             else if (*c == ':') {
                 m_url.m_schemeEnd = m_buffer.length();
-                String urlScheme = m_buffer.toString(); // FIXME: Find a way to do this without shrinking the m_buffer.
+                StringView urlScheme = bufferView(m_buffer);
                 m_url.m_protocolIsInHTTPFamily = urlScheme == "http" || urlScheme == "https";
                 if (urlScheme == "file") {
+                    urlIsSpecial = true;
                     state = State::File;
                     m_buffer.append(':');
                     ++c;
                     break;
                 }
                 if (isSpecialScheme(urlScheme)) {
+                    urlIsSpecial = true;
                     if (base.protocol() == urlScheme)
                         state = State::SpecialRelativeOrAuthority;
                     else
@@ -746,7 +756,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             break;
         case State::Path:
             LOG_STATE("Path");
-            if (*c == '/') {
+            if (*c == '/' || (urlIsSpecial && *c == '\\')) {
                 m_buffer.append('/');
                 m_url.m_pathAfterLastSlash = m_buffer.length();
                 ++c;
