@@ -50,11 +50,18 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
 
         this._timelineRecordingWarningElement = document.createElement("div");
-        this._timelineRecordingWarningElement.classList.add("timeline-recording-warning");
+        this._timelineRecordingWarningElement.classList.add("warning-banner");
         this._timelineRecordingWarningElement.append(WebInspector.UIString("Debugger is disabled during a Timeline recording."), " ");
         let stopRecordingLink = this._timelineRecordingWarningElement.appendChild(document.createElement("a"));
         stopRecordingLink.textContent = WebInspector.UIString("Stop recording.");
         stopRecordingLink.addEventListener("click", () => { WebInspector.timelineManager.stopCapturing(); });
+
+        this._breakpointsDisabledWarningElement = document.createElement("div");
+        this._breakpointsDisabledWarningElement.classList.add("warning-banner");
+        this._breakpointsDisabledWarningElement.append(WebInspector.UIString("Breakpoints are disabled."), document.createElement("br"));
+        let enableBreakpointsLink = this._breakpointsDisabledWarningElement.appendChild(document.createElement("a"));
+        enableBreakpointsLink.textContent = WebInspector.UIString("Enable breakpoints.");
+        enableBreakpointsLink.addEventListener("click", () => { WebInspector.debuggerToggleBreakpoints(); });
 
         this._navigationBar = new WebInspector.NavigationBar;
         this.addSubview(this._navigationBar);
@@ -185,6 +192,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         if (WebInspector.timelineManager.isCapturing() && WebInspector.debuggerManager.breakpointsDisabledTemporarily)
             this._timelineCapturingWillStart(null);
+
+        this._updateBreakpointsDisabledBanner();
     }
 
     // Public
@@ -325,6 +334,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     _breakpointsEnabledDidChange(event)
     {
         this._debuggerBreakpointsButtonItem.activated = WebInspector.debuggerManager.breakpointsEnabled;
+
+        this._updateBreakpointsDisabledBanner();
     }
 
     _addBreakpoint(breakpoint)
@@ -443,6 +454,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._debuggerPauseResumeButtonItem.enabled = false;
 
         this.contentView.element.insertBefore(this._timelineRecordingWarningElement, this.contentView.element.firstChild);
+        this._updateBreakpointsDisabledBanner();
     }
 
     _timelineCapturingStopped(event)
@@ -451,6 +463,18 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._debuggerPauseResumeButtonItem.enabled = true;
 
         this._timelineRecordingWarningElement.remove();
+        this._updateBreakpointsDisabledBanner();
+    }
+
+    _updateBreakpointsDisabledBanner()
+    {
+        let breakpointsEnabled = WebInspector.debuggerManager.breakpointsEnabled;
+        let timelineWarningShowing = !!this._timelineRecordingWarningElement.parentElement;
+
+        if (!breakpointsEnabled && !timelineWarningShowing)
+            this.contentView.element.insertBefore(this._breakpointsDisabledWarningElement, this.contentView.element.firstChild);
+        else
+            this._breakpointsDisabledWarningElement.remove();
     }
 
     _scriptAdded(event)

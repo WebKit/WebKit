@@ -1,3 +1,29 @@
+2016-09-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Debugger sidebar should include a warning message breakpoints are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=156719
+        <rdar://problem/25787932>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings for breakpoints disabled warning banner.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .warning-banner):
+        (.sidebar > .panel.navigation.debugger .warning-banner > a):
+        Generalize the class name to "warning-banner".
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointsEnabledDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._timelineCapturingWillStart):
+        (WebInspector.DebuggerSidebarPanel.prototype._timelineCapturingStopped):
+        (WebInspector.DebuggerSidebarPanel.prototype._updateBreakpointsDisabledBanner):
+        Show / hide a breakpoints disabled warning banner as needed.
+        Only one banner shows at a time, so either the timing warning
+        or the generic breakpoints disabled banner will show.
+
 2016-09-07  Johan K. Jensen  <johan_jensen@apple.com>
 
         Web Inspector: Show resource timing details in Network waterfall
