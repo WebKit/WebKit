@@ -380,7 +380,7 @@ unsigned HTMLImageElement::width(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
-        Optional<int> width = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(widthAttr));
+        Optional<unsigned> width = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(widthAttr));
         if (width)
             return width.value();
 
@@ -405,7 +405,7 @@ unsigned HTMLImageElement::height(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
-        Optional<int> height = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(heightAttr));
+        Optional<unsigned> height = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(heightAttr));
         if (height)
             return height.value();
 

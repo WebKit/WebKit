@@ -102,7 +102,7 @@ static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
 
 unsigned HTMLElement::parseBorderWidthAttribute(const AtomicString& value) const
 {
-    if (Optional<int> borderWidth = parseHTMLNonNegativeInteger(value))
+    if (Optional<unsigned> borderWidth = parseHTMLNonNegativeInteger(value))
         return borderWidth.value();
 
     return hasTagName(tableTag) ? 1 : 0;

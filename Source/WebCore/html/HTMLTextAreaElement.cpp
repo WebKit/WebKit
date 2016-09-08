@@ -205,13 +205,21 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const Atomic
 
 void HTMLTextAreaElement::maxLengthAttributeChanged(const AtomicString& newValue)
 {
-    setMaxLength(parseHTMLNonNegativeInteger(newValue).valueOr(-1));
+    if (Optional<unsigned> maxLength = parseHTMLNonNegativeInteger(newValue))
+        setMaxLength(maxLength.value());
+    else
+        setMaxLength(-1);
+
     updateValidity();
 }
 
 void HTMLTextAreaElement::minLengthAttributeChanged(const AtomicString& newValue)
 {
-    setMinLength(parseHTMLNonNegativeInteger(newValue).valueOr(-1));
+    if (Optional<unsigned> minLength = parseHTMLNonNegativeInteger(newValue))
+        setMinLength(minLength.value());
+    else
+        setMinLength(-1);
+
     updateValidity();
 }
 

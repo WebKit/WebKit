@@ -1785,7 +1785,11 @@ bool HTMLInputElement::isEmptyValue() const
 void HTMLInputElement::maxLengthAttributeChanged(const AtomicString& newValue)
 {
     unsigned oldEffectiveMaxLength = effectiveMaxLength();
-    setMaxLength(parseHTMLNonNegativeInteger(newValue).valueOr(-1));
+    if (Optional<unsigned> maxLength = parseHTMLNonNegativeInteger(newValue))
+        setMaxLength(maxLength.value());
+    else
+        setMaxLength(-1);
+
     if (oldEffectiveMaxLength != effectiveMaxLength())
         updateValueIfNeeded();
 
@@ -1797,7 +1801,11 @@ void HTMLInputElement::maxLengthAttributeChanged(const AtomicString& newValue)
 void HTMLInputElement::minLengthAttributeChanged(const AtomicString& newValue)
 {
     int oldMinLength = minLength();
-    setMinLength(parseHTMLNonNegativeInteger(newValue).valueOr(-1));
+    if (Optional<unsigned> minLength = parseHTMLNonNegativeInteger(newValue))
+        setMinLength(minLength.value());
+    else
+        setMinLength(-1);
+
     if (oldMinLength != minLength())
         updateValueIfNeeded();
 

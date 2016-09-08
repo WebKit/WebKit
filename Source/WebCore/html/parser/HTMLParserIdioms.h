@@ -65,7 +65,7 @@ double parseToDoubleForNumberType(const String&, double fallbackValue);
 WEBCORE_EXPORT Optional<int> parseHTMLInteger(const String&);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
-WEBCORE_EXPORT Optional<int> parseHTMLNonNegativeInteger(const String&);
+WEBCORE_EXPORT Optional<unsigned> parseHTMLNonNegativeInteger(const String&);
 
 // https://html.spec.whatwg.org/#valid-non-negative-integer
 Optional<int> parseValidHTMLNonNegativeInteger(StringView);

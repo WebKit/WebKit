@@ -207,13 +207,13 @@ Optional<int> parseHTMLInteger(const String& input)
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
-Optional<int> parseHTMLNonNegativeInteger(const String& input)
+Optional<unsigned> parseHTMLNonNegativeInteger(const String& input)
 {
     Optional<int> signedValue = parseHTMLInteger(input);
     if (!signedValue || signedValue.value() < 0)
         return Nullopt;
 
-    return signedValue;
+    return static_cast<unsigned>(signedValue.value());
 }
 
 template <typename CharacterType>
@@ -363,7 +363,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     while (position < end && isASCIIDigit(*position))
         ++position;
 
-    Optional<int> number = parseHTMLNonNegativeInteger(StringView(numberStart, position - numberStart).toStringWithoutCopying());
+    Optional<unsigned> number = parseHTMLNonNegativeInteger(StringView(numberStart, position - numberStart).toStringWithoutCopying());
     if (!number)
         return false;
 
