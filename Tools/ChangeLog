@@ -1,3 +1,16 @@
+2016-09-07  Jonathan Bedard  <jbedard@apple.com>
+
+        Run spindumps on timeout on iOS 9 Simulator Release WK2 (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=161699
+
+        Reviewed by Alexey Proskuryakov.
+
+        This change does not have testing associated with it because the testing infrastructure does not exists, we cannot currently mock build-bot variables.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests): Enable sample on timeout for everything.
+        (RunWebKitTests.start): Disable sample on timeout for everything except iOS 9 WK2 release simulators.
+
 2016-09-06  Dean Jackson  <dino@apple.com>
 
         Expose Apple Pencil input to testing system
