@@ -1,3 +1,16 @@
+2016-09-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Exception fuzz tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=140928
+
+        Reviewed by Mark Lam.
+
+        Flush stdout when throwing the exception to make sure the output comes before output in the exception handler.
+        The tests depend on the output to stdout being written in the correct order.
+
+        * runtime/ExceptionFuzz.cpp:
+        (JSC::doExceptionFuzzing):
+
 2016-09-07  Simon Fraser  <simon.fraser@apple.com>
 
         Enable the <meter> element on iOS

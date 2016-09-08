@@ -49,6 +49,7 @@ void doExceptionFuzzing(ExecState* exec, const char* where, void* returnPC)
     unsigned fireTarget = Options::fireExceptionFuzzAt();
     if (fireTarget == s_numberOfExceptionFuzzChecks) {
         printf("JSC EXCEPTION FUZZ: Throwing fuzz exception with call frame %p, seen in %s and return address %p.\n", exec, where, returnPC);
+        fflush(stdout);
         throwException(exec, scope, createError(exec, ASCIILiteral("Exception Fuzz")));
     }
 }

@@ -1,3 +1,14 @@
+2016-09-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Exception fuzz tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=140928
+
+        Reviewed by Mark Lam.
+
+        Unskip tests.
+
+        * exceptionFuzz.yaml:
+
 2016-09-06  Saam Barati  <sbarati@apple.com>
 
         ProxyObject's structure should not have ObjectPrototype as its prototype and it should not have special behavior for intercepting "__proto__"
