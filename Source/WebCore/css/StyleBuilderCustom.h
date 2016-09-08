@@ -1147,7 +1147,7 @@ inline void StyleBuilderCustom::applyValueCursor(StyleResolver& styleResolver, C
     for (auto& item : list) {
         if (is<CSSCursorImageValue>(item.get())) {
             auto& image = downcast<CSSCursorImageValue>(item.get());
-            styleResolver.style()->addCursor(styleResolver.styleImage(CSSPropertyCursor, image), image.hotSpot());
+            styleResolver.style()->addCursor(styleResolver.styleImage(image), image.hotSpot());
             continue;
         }
 
@@ -1314,12 +1314,12 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
                 styleResolver.style()->setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(item.get())), didSet);
             didSet = true;
         } else if (is<CSSImageSetValue>(item.get())) {
-            styleResolver.style()->setContent(styleResolver.styleCachedImageFromValue(CSSPropertyContent, item), didSet);
+            styleResolver.style()->setContent(StyleCachedImage::create(item), didSet);
             didSet = true;
         }
 
         if (is<CSSImageValue>(item.get())) {
-            styleResolver.style()->setContent(styleResolver.styleCachedImageFromValue(CSSPropertyContent, item), didSet);
+            styleResolver.style()->setContent(StyleCachedImage::create(item), didSet);
             didSet = true;
             continue;
         }

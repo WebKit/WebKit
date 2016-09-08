@@ -42,8 +42,10 @@ namespace WebCore {
 
 // CSS Filters
 
+class CachedResourceLoader;
 class CachedSVGDocumentReference;
 class FilterEffect;
+struct ResourceLoaderOptions;
 
 class FilterOperation : public RefCounted<FilterOperation> {
 public:
@@ -184,8 +186,9 @@ public:
     const String& url() const { return m_url; }
     const String& fragment() const { return m_fragment; }
 
+    void loadExternalDocumentIfNeeded(CachedResourceLoader&, const ResourceLoaderOptions&);
+
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
-    CachedSVGDocumentReference* getOrCreateCachedSVGDocumentReference();
 
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }
     void setFilterEffect(PassRefPtr<FilterEffect>);

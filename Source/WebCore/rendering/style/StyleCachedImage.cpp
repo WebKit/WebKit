@@ -38,6 +38,10 @@ StyleCachedImage::StyleCachedImage(CSSValue& cssValue)
     ASSERT(is<CSSImageValue>(m_cssValue) || is<CSSImageSetValue>(m_cssValue) || is<CSSCursorImageValue>(m_cssValue));
 
     m_isCachedImage = true;
+
+    // CSSImageValue doesn't get invalidated so we can grab the CachedImage immediately if it exists.
+    if (is<CSSImageValue>(m_cssValue))
+        m_cachedImage = downcast<CSSImageValue>(m_cssValue.get()).cachedImage();
 }
 
 StyleCachedImage::~StyleCachedImage()

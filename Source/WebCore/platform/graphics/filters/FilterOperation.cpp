@@ -27,8 +27,10 @@
 #include "FilterOperation.h"
 
 #include "AnimationUtilities.h"
+#include "CachedResourceLoader.h"
 #include "CachedSVGDocumentReference.h"
 #include "FilterEffect.h"
+#include "SVGURIReference.h"
 #include "TextStream.h"
 
 namespace WebCore {
@@ -59,12 +61,15 @@ bool ReferenceFilterOperation::operator==(const FilterOperation& operation) cons
     
     return m_url == downcast<ReferenceFilterOperation>(operation).m_url;
 }
-    
-CachedSVGDocumentReference* ReferenceFilterOperation::getOrCreateCachedSVGDocumentReference()
+
+void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    if (!m_cachedSVGDocumentReference)
-        m_cachedSVGDocumentReference = std::make_unique<CachedSVGDocumentReference>(m_url);
-    return m_cachedSVGDocumentReference.get();
+    if (m_cachedSVGDocumentReference)
+        return;
+    if (!SVGURIReference::isExternalURIReference(m_url, *cachedResourceLoader.document()))
+        return;
+    m_cachedSVGDocumentReference = std::make_unique<CachedSVGDocumentReference>(m_url);
+    m_cachedSVGDocumentReference->load(cachedResourceLoader, options);
 }
 
 void ReferenceFilterOperation::setFilterEffect(PassRefPtr<FilterEffect> filterEffect)
