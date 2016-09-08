@@ -65,6 +65,7 @@
 #include "JSWebGLLoseContext.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLRenderbuffer.h"
+#include "JSWebGLRenderingContext.h"
 #include "JSWebGLShader.h"
 #include "JSWebGLTexture.h"
 #include "JSWebGLUniformLocation.h"
@@ -107,9 +108,27 @@
 #include "JSHTMLVideoElement.h"
 #endif
 
+#if ENABLE(WEBGL2)
+#include "JSWebGL2RenderingContext.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<WebGLRenderingContextBase>&& object)
+{
+#if ENABLE(WEBGL2)
+    if (is<WebGL2RenderingContext>(object))
+        return CREATE_DOM_WRAPPER(globalObject, WebGL2RenderingContext, WTFMove(object));
+#endif
+    return CREATE_DOM_WRAPPER(globalObject, WebGLRenderingContext, WTFMove(object));
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebGLRenderingContextBase& object)
+{
+    return wrap(state, globalObject, object);
+}
     
 static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebGLGetInfo& info)
 {
@@ -267,9 +286,17 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     return jsNull();
 }
 
+bool JSWebGLRenderingContextBaseOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+{
+    JSWebGLRenderingContextBase* jsWebGLRenderingContext = jsCast<JSWebGLRenderingContextBase*>(handle.slot()->asCell());
+    void* root = WebCore::root(jsWebGLRenderingContext->wrapped().canvas());
+    return visitor.containsOpaqueRoot(root);
+}
+
 void JSWebGLRenderingContextBase::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(&wrapped());
+    visitor.addOpaqueRoot(root(wrapped().canvas()));
 }
 
 JSValue JSWebGLRenderingContextBase::getAttachedShaders(ExecState& state)

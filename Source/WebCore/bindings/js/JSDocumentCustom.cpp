@@ -24,7 +24,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
-#include "JSCanvasRenderingContext.h"
 #include "JSCanvasRenderingContext2D.h"
 #include "JSDOMConvert.h"
 #include "JSDOMWindowCustom.h"
@@ -165,7 +164,17 @@ JSValue JSDocument::getCSSCanvasContext(JSC::ExecState& state)
     auto height = convert<int32_t>(state, state.uncheckedArgument(3), NormalConversion);
     if (UNLIKELY(state.hadException()))
         return jsUndefined();
-    return toJS(&state, globalObject(), wrapped().getCSSCanvasContext(WTFMove(contextId), WTFMove(name), WTFMove(width), WTFMove(height)));
+
+    auto* context = wrapped().getCSSCanvasContext(WTFMove(contextId), WTFMove(name), WTFMove(width), WTFMove(height));
+    if (!context)
+        return jsNull();
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(*context))
+        return toJS(&state, globalObject(), downcast<WebGLRenderingContextBase>(*context));
+#endif
+
+    return toJS(&state, globalObject(), downcast<CanvasRenderingContext2D>(*context));
 }
 
 void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)

@@ -29,7 +29,6 @@
 
 #include "CanvasContextAttributes.h"
 #include "HTMLCanvasElement.h"
-#include "JSCanvasRenderingContext.h"
 #include "JSCanvasRenderingContext2D.h"
 #include <bindings/ScriptObject.h>
 #include <wtf/GetPtr.h>
@@ -92,7 +91,13 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
     CanvasRenderingContext* context = canvas.getContext(contextId, attrs.get());
     if (!context)
         return jsNull();
-    return toJS(&state, globalObject(), *context);
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(*context))
+        return toJS(&state, globalObject(), downcast<WebGLRenderingContextBase>(*context));
+#endif
+
+    return toJS(&state, globalObject(), downcast<CanvasRenderingContext2D>(*context));
 }
 
 JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState& state)
