@@ -40,20 +40,12 @@ ScriptRunner::ScriptRunner(Document& document)
 
 ScriptRunner::~ScriptRunner()
 {
-    for (auto& pendingScript : m_scriptsToExecuteSoon) {
-        UNUSED_PARAM(pendingScript);
+    for (size_t i = 0; i < m_scriptsToExecuteSoon.size(); ++i)
         m_document.decrementLoadEventDelayCount();
-    }
-    for (auto& pendingScript : m_scriptsToExecuteInOrder) {
-        if (pendingScript->watchingForLoad())
-            pendingScript->clearClient();
+    for (size_t i = 0; i < m_scriptsToExecuteInOrder.size(); ++i)
         m_document.decrementLoadEventDelayCount();
-    }
-    for (auto& pendingScript : m_pendingAsyncScripts) {
-        if (pendingScript->watchingForLoad())
-            const_cast<PendingScript&>(pendingScript.get()).clearClient();
+    for (unsigned i = 0; i < m_pendingAsyncScripts.size(); ++i)
         m_document.decrementLoadEventDelayCount();
-    }
 }
 
 void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, LoadableScript& loadableScript, ExecutionType executionType)
@@ -65,17 +57,15 @@ void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, Loadabl
 
     m_document.incrementLoadEventDelayCount();
 
-    Ref<PendingScript> pendingScript = PendingScript::create(element, loadableScript);
     switch (executionType) {
     case ASYNC_EXECUTION:
-        m_pendingAsyncScripts.add(pendingScript.copyRef());
+        m_pendingAsyncScripts.add(scriptElement, PendingScript::create(element, loadableScript));
         break;
 
     case IN_ORDER_EXECUTION:
-        m_scriptsToExecuteInOrder.append(pendingScript.copyRef());
+        m_scriptsToExecuteInOrder.append(PendingScript::create(element, loadableScript));
         break;
     }
-    pendingScript->setClient(this);
 }
 
 void ScriptRunner::suspend()
@@ -89,17 +79,18 @@ void ScriptRunner::resume()
         m_timer.startOneShot(0);
 }
 
-void ScriptRunner::notifyFinished(PendingScript& pendingScript)
+void ScriptRunner::notifyScriptReady(ScriptElement* scriptElement, ExecutionType executionType)
 {
-    auto* scriptElement = toScriptElementIfPossible(&pendingScript.element());
-    ASSERT(scriptElement);
-    if (scriptElement->willExecuteInOrder())
+    switch (executionType) {
+    case ASYNC_EXECUTION:
+        ASSERT(m_pendingAsyncScripts.contains(scriptElement));
+        m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(scriptElement)->ptr());
+        break;
+
+    case IN_ORDER_EXECUTION:
         ASSERT(!m_scriptsToExecuteInOrder.isEmpty());
-    else {
-        ASSERT(m_pendingAsyncScripts.contains(pendingScript));
-        m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(pendingScript)->ptr());
+        break;
     }
-    pendingScript.clearClient();
     m_timer.startOneShot(0);
 }
 
@@ -125,7 +116,7 @@ void ScriptRunner::timerFired()
         auto* scriptElement = toScriptElementIfPossible(&script->element());
         ASSERT(scriptElement);
         ASSERT(script->needsLoading());
-        scriptElement->executeScriptForScriptRunner(*script);
+        scriptElement->executeScriptForScriptRunner(*script->loadableScript());
         m_document.decrementLoadEventDelayCount();
     }
 }

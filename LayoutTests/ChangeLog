@@ -1,3 +1,17 @@
+2016-09-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r205652.
+        https://bugs.webkit.org/show_bug.cgi?id=161748
+
+        Crashing under ASan (Requested by yusukesuzuki on #webkit).
+
+        Reverted changeset:
+
+        "ScriptRunner should be driven by PendingScript rather than
+        ScriptElement"
+        https://bugs.webkit.org/show_bug.cgi?id=161726
+        http://trac.webkit.org/changeset/205652
+
 2016-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ScriptRunner should be driven by PendingScript rather than ScriptElement

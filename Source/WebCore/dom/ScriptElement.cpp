@@ -75,6 +75,11 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
         m_startLineNumber = m_element.document().scriptableDocumentParser()->textPosition().m_line;
 }
 
+ScriptElement::~ScriptElement()
+{
+    stopLoadRequest();
+}
+
 bool ScriptElement::shouldCallFinishedInsertingSubtree(ContainerNode& insertionPoint)
 {
     return insertionPoint.inDocument() && !m_parserInserted;
@@ -240,9 +245,11 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         ASSERT(m_loadableScript);
         m_willExecuteInOrder = true;
         document.scriptRunner()->queueScriptForExecution(this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
+        m_loadableScript->addClient(*this);
     } else if (hasSourceAttribute()) {
         ASSERT(m_loadableScript);
         m_element.document().scriptRunner()->queueScriptForExecution(this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
+        m_loadableScript->addClient(*this);
     } else {
         // Reset line numbering for nested writes.
         TextPosition position = document.isInDocumentWrite() ? TextPosition() : scriptStartPosition;
@@ -329,6 +336,15 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
     }
 }
 
+void ScriptElement::stopLoadRequest()
+{
+    if (m_loadableScript) {
+        if (!m_willBeParserExecuted)
+            m_loadableScript->removeClient(*this);
+        m_loadableScript = nullptr;
+    }
+}
+
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)
 {
     if (Optional<LoadableScript::Error> error = loadableScript.wasErrored()) {
@@ -342,8 +358,16 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
     }
 }
 
-void ScriptElement::executeScriptForScriptRunner(PendingScript& pendingScript)
+void ScriptElement::executeScriptForScriptRunner(LoadableScript& loadableScript)
 {
+    ASSERT(!m_willBeParserExecuted);
+    executeScriptAndDispatchEvent(loadableScript);
+    loadableScript.removeClient(*this);
+}
+
+void ScriptElement::executeScriptForHTMLScriptRunner(PendingScript& pendingScript)
+{
+    IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(&m_element.document());
     if (auto* loadableScript = pendingScript.loadableScript())
         executeScriptAndDispatchEvent(*loadableScript);
     else {
@@ -351,6 +375,25 @@ void ScriptElement::executeScriptForScriptRunner(PendingScript& pendingScript)
         executeScript(ScriptSourceCode(scriptContent(), m_element.document().url(), pendingScript.startingPosition()));
         dispatchLoadEvent();
     }
+}
+
+void ScriptElement::notifyFinished(LoadableScript&)
+{
+    ASSERT(!m_willBeParserExecuted);
+
+    // LoadableScript possibly invokes this notifyFinished() more than
+    // once because ScriptElement doesn't unsubscribe itself from
+    // LoadableScript here and does it in execute() instead.
+    // We use m_loadableScript to check if this function is already called.
+    if (!m_loadableScript)
+        return;
+
+    if (m_willExecuteInOrder)
+        m_element.document().scriptRunner()->notifyScriptReady(this, ScriptRunner::IN_ORDER_EXECUTION);
+    else
+        m_element.document().scriptRunner()->notifyScriptReady(this, ScriptRunner::ASYNC_EXECUTION);
+
+    m_loadableScript = nullptr;
 }
 
 bool ScriptElement::ignoresLoadRequest() const

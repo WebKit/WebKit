@@ -38,9 +38,9 @@ class PendingScript;
 class ScriptElement;
 class ScriptSourceCode;
 
-class ScriptElement {
+class ScriptElement : private LoadableScriptClient {
 public:
-    virtual ~ScriptElement() { }
+    virtual ~ScriptElement();
 
     Element& element() { return m_element; }
     const Element& element() const { return m_element; }
@@ -52,7 +52,8 @@ public:
     WEBCORE_EXPORT String scriptContent() const;
     void executeScript(const ScriptSourceCode&);
 
-    void executeScriptForScriptRunner(PendingScript&);
+    void executeScriptForScriptRunner(LoadableScript&);
+    void executeScriptForHTMLScriptRunner(PendingScript&);
 
     // XML parser calls these
     virtual void dispatchLoadEvent() = 0;
@@ -62,7 +63,6 @@ public:
     bool willBeParserExecuted() const { return m_willBeParserExecuted; }
     bool readyToBeParserExecuted() const { return m_readyToBeParserExecuted; }
     bool willExecuteWhenDocumentFinishedParsing() const { return m_willExecuteWhenDocumentFinishedParsing; }
-    bool willExecuteInOrder() const { return m_willExecuteInOrder; }
     LoadableScript* loadableScript() { return m_loadableScript.get(); }
 
 protected:
@@ -92,6 +92,9 @@ private:
     CachedResourceHandle<CachedScript> requestScriptWithCache(const URL&, const String& nonceAttribute, const String& crossoriginAttribute);
 
     bool requestClassicScript(const String& sourceURL);
+    void stopLoadRequest();
+
+    void notifyFinished(LoadableScript&) override;
 
     virtual String sourceAttributeValue() const = 0;
     virtual String charsetAttributeValue() const = 0;

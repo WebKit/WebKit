@@ -25,9 +25,8 @@
 
 #pragma once
 
-#include "PendingScriptClient.h"
 #include "Timer.h"
-#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -38,7 +37,7 @@ class PendingScript;
 class ScriptElement;
 class LoadableScript;
 
-class ScriptRunner : private PendingScriptClient {
+class ScriptRunner {
     WTF_MAKE_NONCOPYABLE(ScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ScriptRunner(Document&);
@@ -54,12 +53,10 @@ public:
 private:
     void timerFired();
 
-    void notifyFinished(PendingScript&) override;
-
     Document& m_document;
     Vector<Ref<PendingScript>> m_scriptsToExecuteInOrder;
     Vector<RefPtr<PendingScript>> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
-    HashSet<Ref<PendingScript>> m_pendingAsyncScripts;
+    HashMap<ScriptElement*, Ref<PendingScript>> m_pendingAsyncScripts;
     Timer m_timer;
 };
 
