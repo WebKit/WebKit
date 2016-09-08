@@ -55,6 +55,17 @@ struct AbstractValue {
         : m_type(SpecNone)
         , m_arrayModes(0)
     {
+#if USE(JSVALUE64) && !defined(NDEBUG)
+        // The WTF Traits for AbstractValue allow the initialization of values with bzero().
+        // We verify the correctness of this assumption here.
+        static bool needsDefaultConstructorCheck = true;
+        if (needsDefaultConstructorCheck) {
+            needsDefaultConstructorCheck = false;
+
+            for (unsigned i = 0; i < sizeof(AbstractValue); ++i)
+                ASSERT(!(reinterpret_cast<char*>(this)[i]));
+        }
+#endif
     }
     
     void clear()
