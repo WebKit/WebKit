@@ -1547,10 +1547,10 @@ bool CSSPropertyAnimation::blendProperties(const AnimationBase* anim, CSSPropert
 
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(prop);
     if (wrapper) {
-        wrapper->blend(anim, dst, a, b, progress);
 #if !LOG_DISABLED
         wrapper->logBlend(a, b, dst, progress);
 #endif
+        wrapper->blend(anim, dst, a, b, progress);
         return !wrapper->animationIsAccelerated() || !anim->isAccelerated();
     }
     return false;
