@@ -74,7 +74,7 @@
     if (!_filterEditingServices)
         return proposedServices;
 
-    NSMutableArray *services = [[NSMutableArray alloc] initWithCapacity:[proposedServices count]];
+    NSMutableArray *services = [NSMutableArray arrayWithCapacity:proposedServices.count];
     
     for (NSSharingService *service in proposedServices) {
         if (service.type != NSSharingServiceTypeEditor)

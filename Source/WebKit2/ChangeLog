@@ -1,3 +1,18 @@
+2016-09-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Address some clang static analyzer warnings in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=161597
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (-[WKLayerHostView makeBackingLayer]):
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate sharingServicePicker:sharingServicesForItems:mask:proposedSharingServices:]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange rangeByExpandingToWordBoundaryByCharacters:inDirection:]):
+        Address leaks caught by the static analyzer.
+
 2016-09-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Remove stale WebSoupRequestManager headers

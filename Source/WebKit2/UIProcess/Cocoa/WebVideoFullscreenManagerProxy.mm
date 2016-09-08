@@ -57,7 +57,7 @@
 #else
 - (CALayer *)makeBackingLayer
 {
-    return [[CALayerHost alloc] init];
+    return [[[CALayerHost alloc] init] autorelease];
 }
 #endif
 

@@ -69,7 +69,6 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 
 @private
     WebIconDatabasePrivate *_private;
-    BOOL _isClosing;
 }
 
 

@@ -55,7 +55,6 @@ namespace WebCore {
     BOOL _isEnteringFullScreen;
     BOOL _isExitingFullScreen;
     BOOL _isFullScreen;
-    BOOL _isPlaying;
 }
 
 @property (readonly) NSRect initialFrame;

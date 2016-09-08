@@ -51,7 +51,6 @@ struct DictionaryPopupInfo;
 
     RetainPtr<QLPreviewMenuItem> _currentQLPreviewMenuItem;
     RetainPtr<DDActionContext> _currentActionContext;
-    BOOL _isShowingTextIndicator;
     BOOL _hasActivatedActionContext;
     BOOL _contentPreventsDefault;
 }
