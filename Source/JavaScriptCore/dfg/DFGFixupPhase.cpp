@@ -343,7 +343,7 @@ private:
                 break;
             }
 
-            if (node->child1()->shouldSpeculateNumberOrBoolean()) {
+            if (node->child1()->shouldSpeculateNotCell()) {
                 fixDoubleOrBooleanEdge(node->child1());
                 node->clearFlags(NodeMustGenerate);
             } else
@@ -400,7 +400,7 @@ private:
         case ArithSin:
         case ArithSqrt: {
             Edge& child1 = node->child1();
-            if (child1->shouldSpeculateNumberOrBoolean()) {
+            if (child1->shouldSpeculateNotCell()) {
                 fixDoubleOrBooleanEdge(child1);
                 node->clearFlags(NodeMustGenerate);
             } else
