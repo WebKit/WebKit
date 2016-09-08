@@ -42,7 +42,6 @@
 #include "MediaSample.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
-#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -171,13 +170,12 @@ protected:
 private:
     WeakPtr<RealtimeMediaSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
-    enum ConstraintSupport { Ignored, Supported, Unsupported };
-    ConstraintSupport supportsConstraint(const MediaConstraint&);
+    bool supportsConstraints(const MediaTrackConstraintSetMap&);
+    bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
+    double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);
 
     WeakPtrFactory<RealtimeMediaSource> m_weakPtrFactory;
-    Lock m_lock;
-
     String m_id;
     String m_persistentID;
     Type m_type;

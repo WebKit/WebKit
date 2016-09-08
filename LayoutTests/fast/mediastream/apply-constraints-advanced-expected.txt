@@ -1,0 +1,48 @@
+Tests applyConstraints on a video stream track.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stream.getVideoTracks().length is 1
+PASS stream.getAudioTracks().length is 0
+PASS video.videoTracks.length is 1
+PASS video.audioTracks.length is 0
+
+** Constraint: {"width":640,"height":480} - setup width and height.
+PASS settings['width'] is 640
+PASS settings['height'] is 480
+
+** Constraint: {"width":{"min":320},"height":{"min":240},"advanced":[{"width":1920,"height":1280}]} - advanced width and height are too big, minimums are less than current, nothing is changed.
+PASS settings['width'] is 640
+PASS settings['height'] is 480
+
+** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":1920,"height":1280},{"width":960,"height":720}]} - first width and height in advanced are too big, second is used.
+PASS settings['width'] is 960
+PASS settings['height'] is 720
+
+** Constraint: {"width":320,"height":240} - reset width and height.
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+
+** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":1920,"height":1280}]} - advanced width and height are too big, fall back to required minimums.
+PASS settings['width'] is 640
+PASS settings['height'] is 480
+
+** Constraint: {"width":320,"height":240} - reset width and height.
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+
+** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":1920,"height":1280},{"aspectRatio":1.777777}]} - advanced width and height are too big, aspectRatio is used.
+PASS settings['width'] is 640
+PASS settings['height'] is 360
+
+** Constraint: {"advanced":[{"facingMode":"left"},{"facingMode":"right"},{"facingMode":"environment"},{"facingMode":"user"}]} - no required constraints, advanced constraints are ignored.
+PASS settings['facingMode'] is "user"
+
+** Constraint: {"width":{"min":640},"advanced":[{"facingMode":"left"},{"facingMode":"right"},{"facingMode":"environment"},{"facingMode":"user"}]} - first two advanced facingModes are not supported, third is used.
+PASS settings['facingMode'] is "environment"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

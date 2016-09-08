@@ -150,144 +150,109 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
     stop(callingObserver);
 }
 
-RealtimeMediaSource::ConstraintSupport RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
+double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 {
     RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
 
     switch (constraint.type()) {
     case MediaConstraintType::Width: {
         if (!capabilities.supportsWidth())
-            return ConstraintSupport::Ignored;
+            return 0;
 
-        auto widthRange = capabilities.width();
-        return constraint.validForRange(widthRange.rangeMin().asInt, widthRange.rangeMax().asInt) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        auto range = capabilities.width();
+        return constraint.fitnessDistance(range.rangeMin().asInt, range.rangeMax().asInt);
         break;
     }
 
     case MediaConstraintType::Height: {
         if (!capabilities.supportsHeight())
-            return ConstraintSupport::Ignored;
+            return 0;
 
-        auto heightRange = capabilities.height();
-        return constraint.validForRange(heightRange.rangeMin().asInt, heightRange.rangeMax().asInt) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        auto range = capabilities.height();
+        return constraint.fitnessDistance(range.rangeMin().asInt, range.rangeMax().asInt);
         break;
     }
 
     case MediaConstraintType::FrameRate: {
         if (!capabilities.supportsFrameRate())
-            return ConstraintSupport::Ignored;
+            return 0;
 
-        auto rateRange = capabilities.frameRate();
-        return constraint.validForRange(rateRange.rangeMin().asDouble, rateRange.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        auto range = capabilities.frameRate();
+        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
         break;
     }
 
     case MediaConstraintType::AspectRatio: {
         if (!capabilities.supportsAspectRatio())
-            return ConstraintSupport::Ignored;
+            return 0;
 
         auto range = capabilities.aspectRatio();
-        return constraint.validForRange(range.rangeMin().asDouble, range.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
         break;
     }
 
     case MediaConstraintType::Volume: {
         if (!capabilities.supportsVolume())
-            return ConstraintSupport::Ignored;
+            return 0;
 
         auto range = capabilities.volume();
-        return constraint.validForRange(range.rangeMin().asDouble, range.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
         break;
     }
 
     case MediaConstraintType::SampleRate: {
         if (!capabilities.supportsSampleRate())
-            return ConstraintSupport::Ignored;
+            return 0;
 
         auto range = capabilities.sampleRate();
-        return constraint.validForRange(range.rangeMin().asDouble, range.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
         break;
     }
 
     case MediaConstraintType::SampleSize: {
         if (!capabilities.supportsSampleSize())
-            return ConstraintSupport::Ignored;
+            return 0;
 
         auto range = capabilities.sampleSize();
-        return constraint.validForRange(range.rangeMin().asDouble, range.rangeMax().asDouble) ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
+        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
         break;
     }
 
     case MediaConstraintType::FacingMode: {
         if (!capabilities.supportsFacingMode())
-            return ConstraintSupport::Ignored;
+            return 0;
 
-        ConstraintSupport support = ConstraintSupport::Ignored;
-        auto& supportedModes = capabilities.facingMode();
-        std::function<bool(MediaConstraint::ConstraintType, const String&)> filter = [supportedModes, &support](MediaConstraint::ConstraintType type, const String& modeString) {
-            if (type == MediaConstraint::ConstraintType::ExactConstraint)
-                support = ConstraintSupport::Unsupported;
-
-            auto mode = RealtimeMediaSourceSettings::videoFacingModeEnum(modeString);
-            for (auto& supportedMode : supportedModes) {
-                if (supportedMode == mode) {
-                    support = ConstraintSupport::Supported;
-                    break;
-                }
-            }
-
-            return type == MediaConstraint::ConstraintType::ExactConstraint ? true : false;
-        };
-
-        constraint.find(filter);
-        return support;
+        auto& modes = capabilities.facingMode();
+        Vector<String> supportedModes;
+        supportedModes.reserveInitialCapacity(modes.size());
+        for (auto& mode : modes)
+            supportedModes.append(RealtimeMediaSourceSettings::facingMode(mode));
+        return constraint.fitnessDistance(supportedModes);
         break;
     }
 
-    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::EchoCancellation: {
         if (!capabilities.supportsEchoCancellation())
-            return ConstraintSupport::Ignored;
+            return 0;
 
-        if (capabilities.echoCancellation() == RealtimeMediaSourceCapabilities::EchoCancellation::ReadOnly)
-            return constraint.isMandatory() ? ConstraintSupport::Unsupported : ConstraintSupport::Ignored;
-
-        return ConstraintSupport::Supported;
+        bool echoCancellationReadWrite = capabilities.echoCancellation() == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite;
+        return constraint.fitnessDistance(echoCancellationReadWrite);
         break;
+    }
 
     case MediaConstraintType::DeviceId: {
         if (!capabilities.supportsDeviceId())
-            return ConstraintSupport::Ignored;
+            return 0;
 
-        ConstraintSupport support = ConstraintSupport::Ignored;
-        std::function<bool(MediaConstraint::ConstraintType, const String&)> filter = [this, &support](MediaConstraint::ConstraintType type, const String& idString) {
-            if (type != MediaConstraint::ConstraintType::ExactConstraint)
-                return false; // Keep looking.
-
-            support = idString == m_id ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
-            return false;
-        };
-
-        constraint.find(filter);
-        return support;
+        return constraint.fitnessDistance(m_id);
         break;
     }
 
     case MediaConstraintType::GroupId: {
         if (!capabilities.supportsDeviceId())
-            return ConstraintSupport::Ignored;
+            return 0;
 
-        ConstraintSupport support = ConstraintSupport::Ignored;
-        String groupId = settings().groupId();
-        std::function<bool(MediaConstraint::ConstraintType, const String&)> filter = [groupId, &support](MediaConstraint::ConstraintType type, const String& idString) {
-            if (type != MediaConstraint::ConstraintType::ExactConstraint)
-                return false; // Keep looking.
-
-            support = idString == groupId ? ConstraintSupport::Supported : ConstraintSupport::Unsupported;
-            return false;
-        };
-
-        constraint.find(filter);
-        return support;
+        return constraint.fitnessDistance(settings().groupId());
         break;
     }
 
@@ -296,38 +261,49 @@ RealtimeMediaSource::ConstraintSupport RealtimeMediaSource::supportsConstraint(c
         break;
     }
 
-    return ConstraintSupport::Ignored;
+    return 0;
 }
 
-
-template <typename T>
-T value(const MediaConstraint& constraint, T rangeMin, T rangeMax)
+template <typename ValueType>
+static void applyNumericConstraint(const MediaConstraint& constraint, ValueType current, ValueType capabilityMin, ValueType capabilityMax, RealtimeMediaSource* source, void (RealtimeMediaSource::*function)(ValueType))
 {
-    T result;
+    ValueType value;
+    ValueType min = capabilityMin;
+    ValueType max = capabilityMax;
 
-    if (constraint.getExact(result)) {
-        ASSERT(result >= rangeMin && result <= rangeMax);
-        return result;
+    if (constraint.getExact(value)) {
+        ASSERT(constraint.validForRange(capabilityMin, capabilityMax));
+        (source->*function)(value);
+        return;
     }
 
-    if (constraint.getIdeal(result)) {
-        if (result < rangeMin)
-            result = rangeMin;
-        else if (result > rangeMax)
-            result = rangeMax;
+    if (constraint.getMin(value)) {
+        ASSERT(constraint.validForRange(value, capabilityMax));
+        if (value > min)
+            min = value;
 
-        return result;
+        // If there is no ideal, don't change if minimum is smaller than current.
+        ValueType ideal;
+        if (!constraint.getIdeal(ideal) && value < current)
+            value = current;
     }
 
-    if (constraint.getMin(result) && result > rangeMax)
-        return false;
+    if (constraint.getMax(value)) {
+        ASSERT(constraint.validForRange(capabilityMin, value));
+        if (value < max)
+            max = value;
+    }
 
-    if (constraint.getMax(result) && result < rangeMin)
-        return false;
-    
-    return result;
+    if (constraint.getIdeal(value)) {
+        if (value < min)
+            value = min;
+        if (value > max)
+            value = max;
+    }
+
+    if (value != current)
+        (source->*function)(value);
 }
-
 
 void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
 {
@@ -337,8 +313,8 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
         if (!capabilities.supportsWidth())
             return;
 
-        auto widthRange = capabilities.width();
-        setWidth(value(constraint, widthRange.rangeMin().asInt, widthRange.rangeMax().asInt));
+        auto range = capabilities.width();
+        applyNumericConstraint(constraint, size().width(), range.rangeMin().asInt, range.rangeMax().asInt, this, &RealtimeMediaSource::setWidth);
         break;
     }
 
@@ -346,8 +322,8 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
         if (!capabilities.supportsHeight())
             return;
 
-        auto heightRange = capabilities.height();
-        setHeight(value(constraint, heightRange.rangeMin().asInt, heightRange.rangeMax().asInt));
+        auto range = capabilities.height();
+        applyNumericConstraint(constraint, size().height(), range.rangeMin().asInt, range.rangeMax().asInt, this, &RealtimeMediaSource::setHeight);
         break;
     }
 
@@ -355,8 +331,8 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
         if (!capabilities.supportsFrameRate())
             return;
 
-        auto rateRange = capabilities.frameRate();
-        setFrameRate(value(constraint, rateRange.rangeMin().asDouble, rateRange.rangeMax().asDouble));
+        auto range = capabilities.frameRate();
+        applyNumericConstraint(constraint, frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setFrameRate);
         break;
     }
 
@@ -365,7 +341,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return;
 
         auto range = capabilities.aspectRatio();
-        setAspectRatio(value(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble));
+        applyNumericConstraint(constraint, aspectRatio(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setAspectRatio);
         break;
     }
 
@@ -374,8 +350,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return;
 
         auto range = capabilities.volume();
-        // std::pair<T, T> valuesForRange(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble)
-        setVolume(value(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble));
+        applyNumericConstraint(constraint, volume(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setVolume);
         break;
     }
 
@@ -384,7 +359,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return;
 
         auto range = capabilities.sampleRate();
-        setSampleRate(value(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble));
+        applyNumericConstraint(constraint, sampleRate(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setSampleRate);
         break;
     }
 
@@ -393,7 +368,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return;
 
         auto range = capabilities.sampleSize();
-        setSampleSize(value(constraint, range.rangeMin().asDouble, range.rangeMax().asDouble));
+        applyNumericConstraint(constraint, sampleSize(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setSampleSize);
         break;
     }
 
@@ -436,21 +411,100 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
     }
 }
 
+bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, FlattenedConstraint& candidates, String& failedConstraint)
+{
+    // https://w3c.github.io/mediacapture-main/#dfn-selectsettings
+    //
+    // 1. Each constraint specifies one or more values (or a range of values) for its property.
+    //    A property may appear more than once in the list of 'advanced' ConstraintSets. If an
+    //    empty object or list has been given as the value for a constraint, it must be interpreted
+    //    as if the constraint were not specified (in other words, an empty constraint == no constraint).
+    //
+    //    Note that unknown properties are discarded by WebIDL, which means that unknown/unsupported required
+    //    constraints will silently disappear. To avoid this being a surprise, application authors are
+    //    expected to first use the getSupportedConstraints() method as shown in the Examples below.
+
+    // 2. Let object be the ConstrainablePattern object on which this algorithm is applied. Let copy be an
+    //    unconstrained copy of object (i.e., copy should behave as if it were object with all ConstraintSets
+    //    removed.)
+
+    // 3. For every possible settings dictionary of copy compute its fitness distance, treating bare values of
+    //    properties as ideal values. Let candidates be the set of settings dictionaries for which the fitness
+    //    distance is finite.
+    auto& mandatoryConstraints = constraints.mandatoryConstraints();
+    for (auto& nameConstraintPair : mandatoryConstraints) {
+        const auto& constraint = nameConstraintPair.value;
+        if (fitnessDistance(*constraint) == std::numeric_limits<double>::infinity()) {
+            failedConstraint = constraint->name();
+            return false;
+        }
+
+        candidates.set(*constraint);
+    }
+
+    // 4. If candidates is empty, return undefined as the result of the SelectSettings() algorithm.
+    if (candidates.isEmpty())
+        return true;
+
+    // 5. Iterate over the 'advanced' ConstraintSets in newConstraints in the order in which they were specified.
+    //    For each ConstraintSet:
+
+    // 5.1 compute the fitness distance between it and each settings dictionary in candidates, treating bare
+    //     values of properties as exact.
+    Vector<std::pair<double, MediaTrackConstraintSetMap>> supportedConstraints;
+    double minimumDistance = std::numeric_limits<double>::infinity();
+    for (const auto& advancedConstraint : constraints.advancedConstraints()) {
+        double constraintDistance = 0;
+        bool supported = false;
+        for (auto& nameConstraintPair : advancedConstraint) {
+            double distance = fitnessDistance(*nameConstraintPair.value);
+            constraintDistance += distance;
+            if (distance != std::numeric_limits<double>::infinity())
+                supported = true;
+        }
+
+        if (constraintDistance < minimumDistance)
+            minimumDistance = constraintDistance;
+
+        // 5.2 If the fitness distance is finite for one or more settings dictionaries in candidates, keep those
+        //     settings dictionaries in candidates, discarding others.
+        //     If the fitness distance is infinite for all settings dictionaries in candidates, ignore this ConstraintSet.
+        if (supported)
+            supportedConstraints.append({constraintDistance, advancedConstraint});
+    }
+
+    // 6. Select one settings dictionary from candidates, and return it as the result of the SelectSettings() algorithm.
+    //    The UA should use the one with the smallest fitness distance, as calculated in step 3.
+    if (minimumDistance != std::numeric_limits<double>::infinity()) {
+        supportedConstraints.removeAllMatching( [&] (std::pair<double, MediaTrackConstraintSetMap> pair) -> bool {
+            return pair.first > minimumDistance;
+        });
+
+        if (!supportedConstraints.isEmpty()) {
+            auto& advancedConstraint = supportedConstraints[0].second;
+            for (auto& nameConstraintPair : advancedConstraint)
+                candidates.merge(*nameConstraintPair.value);
+        }
+    }
+
+    return true;
+}
+
+
 void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler successHandler, FailureHandler failureHandler)
 {
     ASSERT(constraints.isValid());
 
-    auto& mandatoryConstraints = constraints.mandatoryConstraints();
-    for (auto& nameConstraintPair : mandatoryConstraints) {
-        auto& constraint = *nameConstraintPair.value;
-        if (supportsConstraint(constraint) == ConstraintSupport::Unsupported) {
-            failureHandler(constraint.name(), "Constraint not supported");
-            return;
-        }
+    FlattenedConstraint candidates;
+
+    String failedConstraint;
+    if (!selectSettings(constraints, candidates, failedConstraint)) {
+        failureHandler(failedConstraint, "Constraint not supported");
+        return;
     }
 
-    for (auto& nameConstraintPair : mandatoryConstraints)
-        applyConstraint(*nameConstraintPair.value);
+    for (auto constraint : candidates)
+        applyConstraint(*constraint);
 
     successHandler();
 }

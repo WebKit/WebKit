@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/apply-constraints-utils.js"></script>
+        <script>
+
+            let tests = [
+                {
+                    message: "setup width and height.",
+                    constraint: { width: 640, height: 480 }, 
+                    expected: { width: 640, height: 480 }, 
+                },
+                {
+                    message: "advanced width and height are too big, minimums are less than current, nothing is changed.",
+                    constraint: {
+                                    width: { min: 320 },
+                                    height: { min: 240 },
+                                    advanced: [
+                                        { width: 1920, height: 1280 },
+                                    ]
+                                },
+                    expected: { width: 640, height: 480 }, 
+                },
+                {
+                    message: "first width and height in advanced are too big, second is used.",
+                    constraint: {
+                                    width: { min: 640 },
+                                    height: { min: 480 },
+                                    advanced: [
+                                        { width: 1920, height: 1280 },
+                                        { width: 960, height: 720 },
+                                    ]
+                                 },
+                    expected: { width: 960, height: 720 }, 
+                },
+                {
+                    message: "reset width and height.",
+                    constraint: { width: 320, height: 240 }, 
+                    expected: { width: 320, height: 240 }, 
+                },
+                {
+                    message: "advanced width and height are too big, fall back to required minimums.",
+                    constraint: {
+                                    width: { min: 640 },
+                                    height: {  min: 480 },
+                                    advanced: [
+                                        { width: 1920, height: 1280 },
+                                    ]
+                                },
+                    expected: { width: 640, height: 480 }, 
+                },
+                {
+                    message: "reset width and height.",
+                    constraint: { width: 320, height: 240 }, 
+                    expected: { width: 320, height: 240 }, 
+                },
+                {
+                    message: "advanced width and height are too big, aspectRatio is used.",
+                    constraint: {
+                                    width: { min: 640 },
+                                    height: { min: 480 },
+                                    advanced: [
+                                        { width: 1920, height: 1280 },
+                                        { aspectRatio: 1.777777 }
+                                    ]
+                                },
+                    expected: { width: 640, height: 360 }, 
+                },
+                {
+                    message: "no required constraints, advanced constraints are ignored.",
+                    constraint: {
+                                    advanced: [
+                                        { facingMode: "left" },
+                                        { facingMode: "right" },
+                                        { facingMode: "environment" },
+                                        { facingMode: "user" },
+                                    ]
+                                },
+                    expected: { facingMode: "user" }, 
+                },
+                {
+                    message: "first two advanced facingModes are not supported, third is used.",
+                    constraint: {
+                                    width: { min: 640 },
+                                    advanced: [
+                                        { facingMode: "left" },
+                                        { facingMode: "right" },
+                                        { facingMode: "environment" },
+                                        { facingMode: "user" },
+                                    ]
+                                },
+                    expected: { facingMode: "environment" }, 
+                },
+            ];
+
+            let tester = new ConstraintsTest({ video: true }, tests, "Tests applyConstraints on a video stream track.")
+                .onStreamReady((s) => {
+                    stream = s;
+                    shouldBe('stream.getVideoTracks().length', '1');
+                    shouldBe('stream.getAudioTracks().length', '0');
+                    tester.setStreamTrack(stream.getVideoTracks()[0]);
+                })
+                .onVideoReady((v) => {
+                    video = v;
+                    shouldBe('video.videoTracks.length', '1');
+                    shouldBe('video.audioTracks.length', '0');
+                })
+                .start();
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </head>
+    <body>
+        <video controls id="video"</video>
+        <br>
+        <div id="div"></div>
+
+    </body>
+</html>
+
