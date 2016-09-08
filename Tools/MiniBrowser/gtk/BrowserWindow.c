@@ -952,8 +952,6 @@ static void browser_window_init(BrowserWindow *window)
 
 static void browserWindowConstructed(GObject *gObject)
 {
-    BrowserWindow *window = BROWSER_WINDOW(gObject);
-
     G_OBJECT_CLASS(browser_window_parent_class)->constructed(gObject);
 }
 
