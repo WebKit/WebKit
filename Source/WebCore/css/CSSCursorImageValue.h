@@ -31,7 +31,6 @@ class Document;
 class Element;
 class SVGCursorElement;
 class SVGElement;
-class StyleCachedImage;
 
 class CSSCursorImageValue final : public CSSValue {
 public:
@@ -53,8 +52,7 @@ public:
 
     String customCSSText() const;
 
-    void loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
-    StyleCachedImage& styleImage(const Document&);
+    std::pair<CachedImage*, float> loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
 
     void removeReferencedElement(SVGElement*);
 

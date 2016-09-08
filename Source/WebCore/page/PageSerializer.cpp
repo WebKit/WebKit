@@ -331,9 +331,7 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
         if (!is<CSSImageValue>(*cssValue))
             continue;
 
-        auto& styleImage = downcast<CSSImageValue>(*cssValue).styleImage();
-
-        auto* image = styleImage.cachedImage();
+        auto* image = downcast<CSSImageValue>(*cssValue).cachedImage();
         if (!image)
             continue;
 
