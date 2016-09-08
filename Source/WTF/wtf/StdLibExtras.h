@@ -151,7 +151,7 @@ inline ToType bitwise_cast(FromType from)
     static_assert(__is_trivially_copyable(ToType), "bitwise_cast of non-trivially-copyable type!");
     static_assert(__is_trivially_copyable(FromType), "bitwise_cast of non-trivially-copyable type!");
 #endif
-    ToType to{ };
+    typename std::remove_const<ToType>::type to { };
     std::memcpy(&to, &from, sizeof(to));
     return to;
 }

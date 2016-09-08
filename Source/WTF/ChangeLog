@@ -1,3 +1,13 @@
+2016-09-07  JF Bastien  <jfbastien@apple.com>
+
+        bitwise_cast: allow const destination type
+        https://bugs.webkit.org/show_bug.cgi?id=161719
+
+        Reviewed by Saam Barati.
+
+        * wtf/StdLibExtras.h:
+        (WTF::bitwise_cast): allow `const To to = bitwise_cast<const To>(from);`
+
 2016-09-07  Mark Lam  <mark.lam@apple.com>
 
         Add CatchScope and force all exception checks to be via ThrowScope or CatchScope.
