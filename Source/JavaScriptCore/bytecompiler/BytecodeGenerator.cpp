@@ -2492,11 +2492,12 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, Re
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val.");
 
-    emitOpcode(op_get_by_id_with_this);
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_get_by_id_with_this);
     instructions().append(kill(dst));
     instructions().append(base->index());
     instructions().append(thisVal->index());
     instructions().append(addConstant(property));
+    instructions().append(profile);
     return dst;
 }
 
@@ -2664,11 +2665,12 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
 
 RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* thisValue, RegisterID* property)
 {
-    emitOpcode(op_get_by_val_with_this);
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_get_by_val_with_this);
     instructions().append(kill(dst));
     instructions().append(base->index());
     instructions().append(thisValue->index());
     instructions().append(property->index());
+    instructions().append(profile);
     return dst;
 }
 

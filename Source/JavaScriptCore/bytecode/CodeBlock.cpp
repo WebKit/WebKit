@@ -1149,6 +1149,7 @@ void CodeBlock::dumpBytecode(
             int r2 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), idName(id0, identifier(id0)).data());
+            dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
         case op_get_by_val_with_this: {
@@ -1158,6 +1159,7 @@ void CodeBlock::dumpBytecode(
             int r3 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "get_by_val_with_this");
             out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data());
+            dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
         case op_put_by_id: {
@@ -2076,7 +2078,9 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
         case op_get_direct_pname:
         case op_get_by_id:
+        case op_get_by_id_with_this:
         case op_try_get_by_id:
+        case op_get_by_val_with_this:
         case op_get_from_arguments:
         case op_to_number: {
             linkValueProfile(i, opLength);

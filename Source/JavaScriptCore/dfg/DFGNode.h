@@ -1395,8 +1395,10 @@ public:
         case GetDirectPname:
         case GetById:
         case GetByIdFlush:
+        case GetByIdWithThis:
         case TryGetById:
         case GetByVal:
+        case GetByValWithThis:
         case Call:
         case TailCallInlinedCaller:
         case Construct:

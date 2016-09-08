@@ -1806,12 +1806,12 @@ _llint_op_instanceof:
 _llint_op_get_by_id_with_this:
     traceExecution()
     callOpcodeSlowPath(_slow_path_get_by_id_with_this)
-    dispatch(5)
+    dispatch(6)
 
 _llint_op_get_by_val_with_this:
     traceExecution()
     callOpcodeSlowPath(_slow_path_get_by_val_with_this)
-    dispatch(5)
+    dispatch(6)
 
 _llint_op_put_by_id_with_this:
     traceExecution()

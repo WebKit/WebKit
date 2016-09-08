@@ -1,3 +1,28 @@
+2016-09-01  JF Bastien  <jfbastien@apple.com>
+
+        GetByIdWithThis/GetByValWithThis should have ValueProfiles so that they can predict their result types
+        https://bugs.webkit.org/show_bug.cgi?id=160922
+
+        Reviewed by Keith Miller.
+
+        Add value profiling to GetBy{Id,Val}WithThis.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitGetByVal):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2016-09-01  Keith Miller  <keith_miller@apple.com>
 
         Rename WASM classes dropping the WASM prefix
