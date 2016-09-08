@@ -4134,7 +4134,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* thisValue = get(VirtualRegister(currentInstruction[3].u.operand));
             Node* property = get(VirtualRegister(currentInstruction[4].u.operand));
-            Node* getByValWithThis = addToGraph(GetByValWithThis, OpInfo(prediction), base, thisValue, property);
+            Node* getByValWithThis = addToGraph(GetByValWithThis, OpInfo(), OpInfo(prediction), base, thisValue, property);
             set(VirtualRegister(currentInstruction[1].u.operand), getByValWithThis);
 
             NEXT_OPCODE(op_get_by_val_with_this);
