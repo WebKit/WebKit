@@ -575,7 +575,7 @@ public:
     }
     float measureText(const String& string) const override
     {
-        TextRun run = RenderBlock::constructTextRun(string, m_style, AllowTrailingExpansion | ForbidLeadingExpansion, DefaultTextRunFlags);
+        TextRun run = RenderBlock::constructTextRun(string, m_style);
         return m_font.width(run);
     }
 private:
