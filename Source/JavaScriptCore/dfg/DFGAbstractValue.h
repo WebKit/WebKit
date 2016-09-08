@@ -61,9 +61,7 @@ struct AbstractValue {
         static bool needsDefaultConstructorCheck = true;
         if (needsDefaultConstructorCheck) {
             needsDefaultConstructorCheck = false;
-
-            for (unsigned i = 0; i < sizeof(AbstractValue); ++i)
-                ASSERT(!(reinterpret_cast<char*>(this)[i]));
+            ensureCanInitializeWithZeros();
         }
 #endif
     }
@@ -459,6 +457,10 @@ private:
     
     void filterValueByType();
     void filterArrayModesByType();
+
+#if USE(JSVALUE64) && !defined(NDEBUG)
+    void ensureCanInitializeWithZeros();
+#endif
     
     bool shouldBeClear() const;
     FiltrationResult normalizeClarity();
