@@ -211,7 +211,9 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         if (!resourceTimelineRecord)
             resourceTimelineRecord = new WebInspector.ResourceTimelineRecord(resource);
 
-        let resourceDataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, true, this);
+        const includesGraph = true;
+        const shouldShowPopover = false;
+        let resourceDataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
         this._resourceDataGridNodeMap.set(resource, resourceDataGridNode);
 
         let expandedByDefault = false;

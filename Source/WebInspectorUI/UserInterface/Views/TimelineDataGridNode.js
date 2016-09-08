@@ -241,8 +241,10 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
                 timelineRecordBar.records = records;
             }
             timelineRecordBar.refresh(this._graphDataSource);
-            if (!timelineRecordBar.element.parentNode)
+            if (!timelineRecordBar.element.parentNode) {
                 this._graphContainerElement.appendChild(timelineRecordBar.element);
+                this.didAddRecordBar(timelineRecordBar);
+            }
             ++recordBarIndex;
         }
 
@@ -284,8 +286,9 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
 
         // Remove the remaining unused TimelineRecordBars.
         for (; recordBarIndex < this._timelineRecordBars.length; ++recordBarIndex) {
-            this._timelineRecordBars[recordBarIndex].records = null;
             this._timelineRecordBars[recordBarIndex].element.remove();
+            this.didRemoveRecordBar(this._timelineRecordBars[recordBarIndex]);
+            this._timelineRecordBars[recordBarIndex].records = null;
         }
     }
 
@@ -375,5 +378,15 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
             return [value.functionName, value.sourceCodeLocation.displayLocationString()];
 
         return super.filterableDataForColumn(columnIdentifier);
+    }
+
+    didAddRecordBar(recordBar)
+    {
+        // Implemented by subclasses.
+    }
+
+    didRemoveRecordBar(recordBar)
+    {
+        // Implemented by subclasses.
     }
 };

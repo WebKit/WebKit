@@ -1,3 +1,80 @@
+2016-09-07  Johan K. Jensen  <johan_jensen@apple.com>
+
+        Web Inspector: Show resource timing details in Network waterfall
+        https://bugs.webkit.org/show_bug.cgi?id=160062
+
+        This patch adds a popover to network tab's and timeline tab's resource rows, when hovering
+        the recordbar. It shows times for the various parts of the resource load if they are available,
+        or it shows the reason for why not as text (e.g. cached resource, data URI).
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Added new strings.
+
+        * UserInterface/Main.html:
+        Include new files.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.initialLayout):
+        Updated to use DataGrid property to hide header.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid.no-header > .header-wrapper):
+        (.data-grid.no-header > .header-wrapper > table.header): Deleted.
+        Hide the whole DataGrid header.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.get headerVisible):
+        (WebInspector.DataGrid.prototype.set headerVisible):
+        Add property to control header visibility, so grid clients aren't forced to manipulate internal grid styles.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype._processPendingRecords):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype._addResourceToDataGridIfNeeded):
+        Pass in new parameter for whether or not to show the popover for resources.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.css: Added.
+        (.resource-timing-popover-content .data-grid):
+        (.resource-timing-popover-content .data-grid .graph-column > .cell-content):
+        (.resource-timing-popover-content .data-grid td):
+        (.resource-timing-popover-content .data-grid td.graph-column):
+        (.resource-timing-popover-content .data-grid table.data):
+        (.resource-timing-popover-content .data-grid tr:nth-last-child(2)):
+        Add styling for the popover.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.didAddRecordBar):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.didRemoveRecordBar):
+        (WebInspector.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar):
+        Creates the popover for a RecordBar and shows detailed info about segments.
+
+        * UserInterface/Views/ResourceTimingPopoverDataGridNode.js: Added.
+        (WebInspector.ResourceTimingPopoverDataGridNode):
+        (WebInspector.ResourceTimingPopoverDataGridNode.prototype.get records):
+        (WebInspector.ResourceTimingPopoverDataGridNode.prototype.get data):
+        (WebInspector.ResourceTimingPopoverDataGridNode.prototype.get selectable):
+        (WebInspector.ResourceTimingPopoverDataGridNode.prototype.createCellContent):
+        DataGridNode for the popover.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.refreshGraph.createBar):
+        (WebInspector.TimelineDataGridNode.prototype.refreshGraph):
+        (WebInspector.TimelineDataGridNode.prototype.didAddRecordBar):
+        (WebInspector.TimelineDataGridNode.prototype.didRemoveRecordBar):
+        (WebInspector.TimelineDataGridNode):
+        Added hooks for notifying subclasses.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar):
+        (WebInspector.TimelineRecordBar.fromElement):
+        Added symbol and static method to get the recordBar from a given element.
+
 2016-09-07  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: clicking Computed Styles sidebar "Show All" checkbox doesn't trigger relayout of Properties section

@@ -39,6 +39,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._sortOrderSetting = null;
         this._hiddenColumnSetting = null;
         this._columnChooserEnabled = false;
+        this._headerVisible = true;
 
         this._rows = [];
 
@@ -207,6 +208,17 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         dataGrid.sortColumnIdentifier = columnNames[0];
 
         return dataGrid;
+    }
+
+    get headerVisible() { return this._headerVisible; }
+
+    set headerVisible(x)
+    {
+        if (x === this._headerVisible)
+            return;
+
+        this._headerVisible = x;
+        this.element.classList.toggle("no-header", !this._headerVisible);
     }
 
     get columnChooserEnabled() { return this._columnChooserEnabled; }

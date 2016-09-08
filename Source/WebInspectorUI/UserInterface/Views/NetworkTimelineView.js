@@ -241,7 +241,9 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
             if (dataGridNode)
                 continue;
 
-            dataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, false, this);
+            const includesGraph = false;
+            const shouldShowPopover = true;
+            dataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
             this._resourceDataGridNodeMap.set(resourceTimelineRecord.resource, dataGridNode);
 
             this._dataGrid.addRowInSortOrder(null, dataGridNode);

@@ -209,7 +209,10 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
                 continue;
 
             treeElement = new WebInspector.ResourceTreeElement(resourceTimelineRecord.resource);
-            var dataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, false, this);
+
+            const includesGraph = false;
+            const shouldShowPopover = true;
+            let dataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
 
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
         }

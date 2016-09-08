@@ -199,7 +199,7 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
         this._flowNamesSection = new WebInspector.DetailsSection("content-flow", WebInspector.UIString("Flows"), [flowNamesGroup]);
 
         this._containerRegionsDataGrid = new WebInspector.DOMTreeDataGrid;
-        this._containerRegionsDataGrid.element.classList.add("no-header");
+        this._containerRegionsDataGrid.headerVisible = false;
 
         let containerRegionsRow = new WebInspector.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
         let containerRegionsGroup = new WebInspector.DetailsSectionGroup([containerRegionsRow]);

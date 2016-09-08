@@ -31,6 +31,7 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
         this._element = document.createElement("div");
         this._element.classList.add("timeline-record-bar");
+        this._element[WebInspector.TimelineRecordBar.ElementReferenceSymbol] = this;
 
         this.renderMode = renderMode;
         this.records = records;
@@ -164,6 +165,11 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
         // Create the active bar for the last record if needed.
         if (!isNaN(activeStartTime))
             createBarCallback(activeRecords, WebInspector.TimelineRecordBar.RenderMode.ActiveOnly);
+    }
+
+    static fromElement(element)
+    {
+        return element[WebInspector.TimelineRecordBar.ElementReferenceSymbol] || null;
     }
 
     // Public
@@ -361,6 +367,8 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
             element.style[property] = (newPositionAprox / 100) + "%";
     }
 };
+
+WebInspector.TimelineRecordBar.ElementReferenceSymbol = Symbol("timeline-record-bar");
 
 WebInspector.TimelineRecordBar.MinimumWidthPixels = 4;
 WebInspector.TimelineRecordBar.MinimumMarginPixels = 1;
