@@ -291,7 +291,11 @@ static const struct wl_surface_interface surfaceInterface = {
     // setBufferTransformCallback
     [](struct wl_client*, struct wl_resource*, int32_t) { },
     // setBufferScaleCallback
-    [](struct wl_client*, struct wl_resource*, int32_t) { }
+    [](struct wl_client*, struct wl_resource*, int32_t) { },
+#if WAYLAND_VERSION_MAJOR > 1 || (WAYLAND_VERSION_MAJOR == 1 && WAYLAND_VERSION_MINOR >= 10)
+    // damageBufferCallback
+    [](struct wl_client*, struct wl_resource*, int32_t, int32_t, int32_t, int32_t) { },
+#endif
 };
 
 static const struct wl_compositor_interface compositorInterface = {
