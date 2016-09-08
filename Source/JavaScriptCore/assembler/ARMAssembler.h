@@ -1002,6 +1002,11 @@ namespace JSC {
             return sizeof(ARMWord) * 2;
         }
 
+        static constexpr ptrdiff_t patchableJumpSize()
+        {
+            return sizeof(ARMWord) * 3;
+        }
+
         static void replaceWithLoad(void* instructionStart)
         {
             ARMWord* instruction = reinterpret_cast<ARMWord*>(instructionStart);

@@ -1350,6 +1350,11 @@ public:
         return ARMv7Assembler::maxJumpReplacementSize();
     }
 
+    static ptrdiff_t patchableJumpSize()
+    {
+        return ARMv7Assembler::patchableJumpSize();
+    }
+
     // Forwards / external control flow operations:
     //
     // This set of jump and conditional branch operations return a Jump

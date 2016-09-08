@@ -2813,6 +2813,11 @@ public:
     {
         return 5;
     }
+
+    static constexpr ptrdiff_t patchableJumpSize()
+    {
+        return 5;
+    }
     
 #if CPU(X86_64)
     static void revertJumpTo_movq_i64r(void* instructionStart, int64_t imm, RegisterID dst)

@@ -2340,6 +2340,11 @@ public:
         return 4;
 #endif
     }
+
+    static constexpr ptrdiff_t patchableJumpSize()
+    {
+        return 10;
+    }
     
     static void replaceWithLoad(void* instructionStart)
     {

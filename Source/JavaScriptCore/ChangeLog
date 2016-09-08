@@ -1,3 +1,36 @@
+2016-09-01  Saam Barati  <sbarati@apple.com>
+
+        JITMathIC was misusing maxJumpReplacementSize
+        https://bugs.webkit.org/show_bug.cgi?id=161356
+        <rdar://problem/28065560>
+
+        Reviewed by Benjamin Poulain.
+
+        JITMathIC was assuming that maxJumpReplacementSize is the size
+        you'd get if you emitted a patchableJump() using the macro assembler.
+        This is not true, however. It happens to be true on arm64, x86 and x86-64,
+        however, it is not true on armv7. This patch introduces an alternative to
+        maxJumpReplacementSize called patchableJumpSize, and switches JITMathIC
+        to use that number instead.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::patchableJumpSize):
+        (JSC::ARM64Assembler::maxJumpReplacementSize): Deleted.
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::patchableJumpSize):
+        (JSC::ARMv7Assembler::maxJumpReplacementSize): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::patchableJumpSize):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::patchableJumpSize):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::patchableJumpSize):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::patchableJumpSize):
+        (JSC::X86Assembler::maxJumpReplacementSize): Deleted.
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateInline):
+
 2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add initiator parameter to module pipeline

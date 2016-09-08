@@ -2512,6 +2512,11 @@ public:
     {
         return 4;
     }
+
+    static constexpr ptrdiff_t patchableJumpSize()
+    {
+        return 4;
+    }
     
     static void replaceWithLoad(void* where)
     {
