@@ -1508,7 +1508,7 @@ void URLParser::setEnabled(bool enabled)
 
 bool URLParser::enabled()
 {
-    return true;
+    return urlParserEnabled;
 }
 
 } // namespace WebCore
