@@ -26,23 +26,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
 import optparse
-import sys
 import tempfile
 import unittest
 
-from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system import executive_mock
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.common.system.path import abspath_to_uri
-from webkitpy.thirdparty.mock import Mock
-from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
+from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
-from webkitpy.port import Port, Driver, DriverOutput
+from webkitpy.port import Port
 from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort
 
 
@@ -167,7 +162,6 @@ class PortTest(unittest.TestCase):
     def test_additional_platform_directory(self):
         port = self.make_port(port_name='foo')
         port.default_baseline_search_path = lambda: ['LayoutTests/platform/foo']
-        layout_test_dir = port.layout_tests_dir()
         test_file = 'fast/test.html'
 
         # No additional platform directory
@@ -238,7 +232,6 @@ class PortTest(unittest.TestCase):
 
     def test_find_no_paths_specified(self):
         port = self.make_port(with_tests=True)
-        layout_tests_dir = port.layout_tests_dir()
         tests = port.tests([])
         self.assertNotEqual(len(tests), 0)
 
@@ -263,24 +256,24 @@ class PortTest(unittest.TestCase):
         self.assertEqual(tests, [])
 
     def test_is_test_file(self):
-        filesystem = MockFileSystem()
-        self.assertTrue(Port._is_test_file(filesystem, '', 'foo.html'))
-        self.assertTrue(Port._is_test_file(filesystem, '', 'foo.shtml'))
-        self.assertTrue(Port._is_test_file(filesystem, '', 'foo.svg'))
-        self.assertTrue(Port._is_test_file(filesystem, '', 'test-ref-test.html'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo.png'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected.html'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected.svg'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected.xht'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected-mismatch.html'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected-mismatch.svg'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected-mismatch.xhtml'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-ref.html'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-notref.html'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-notref.xht'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-ref.xhtml'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'ref-foo.html'))
-        self.assertFalse(Port._is_test_file(filesystem, '', 'notref-foo.xhr'))
+        port = self.make_port()
+        self.assertTrue(port._is_test_file(port.host.filesystem, '', 'foo.html'))
+        self.assertTrue(port._is_test_file(port.host.filesystem, '', 'foo.shtml'))
+        self.assertTrue(port._is_test_file(port.host.filesystem, '', 'foo.svg'))
+        self.assertTrue(port._is_test_file(port.host.filesystem, '', 'test-ref-test.html'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo.png'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected.html'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected.svg'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected.xht'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected-mismatch.html'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected-mismatch.svg'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected-mismatch.xhtml'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-ref.html'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-notref.html'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-notref.xht'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-ref.xhtml'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'ref-foo.html'))
+        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'notref-foo.xhr'))
 
     def test_is_reference_html_file(self):
         filesystem = MockFileSystem()
@@ -378,6 +371,29 @@ class PortTest(unittest.TestCase):
         else:
             self.assertEqual(port._build_path(), '/my-build-directory/Release')
 
+    def test_is_w3c_resource_file(self):
+        port = self.make_port()
+        port.host.filesystem.write_text_file(port.layout_tests_dir() + "/imported/w3c/resources/resource-files.json", """
+{"directories": [
+"web-platform-tests/common",
+"web-platform-tests/dom/nodes/Document-createElement-namespace-tests",
+"web-platform-tests/fonts",
+"web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/support",
+"web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support",
+"web-platform-tests/html/browsers/history/the-history-interface/non-automated",
+"web-platform-tests/html/browsers/history/the-location-interface/non-automated",
+"web-platform-tests/images",
+"web-platform-tests/service-workers",
+"web-platform-tests/tools"
+], "files": [
+"web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html",
+"web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html"
+]}""")
+        self.assertFalse(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3", "resource_file.html"))
+        self.assertFalse(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3c", "resource_file.html"))
+        self.assertFalse(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3c/web-platform-tests/XMLHttpRequest", "xmlhttprequest-sync-block-defer-scripts-subframe.html.html"))
+        self.assertTrue(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3c/web-platform-tests/XMLHttpRequest", "xmlhttprequest-sync-block-defer-scripts-subframe.html"))
+        self.assertTrue(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests", "test.html"))
 
 class NaturalCompareTest(unittest.TestCase):
     def setUp(self):
