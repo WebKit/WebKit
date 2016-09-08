@@ -1290,66 +1290,6 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
     return false;
 }
 
-ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-{
-    VM& vm = exec->vm();
-    auto& structureIDTable = vm.heap.structureIDTable();
-    JSObject* object = this;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-    while (true) {
-        Structure& structure = *structureIDTable.get(object->structureID());
-        if (structure.classInfo()->methodTable.getOwnPropertySlotByIndex(object, exec, propertyName, slot))
-            return true;
-        if (UNLIKELY(vm.exception()))
-            return false;
-        JSValue prototype;
-        if (LIKELY(structure.classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
-            prototype = structure.storedPrototype();
-        else {
-            prototype = object->getPrototype(vm, exec);
-            if (vm.exception())
-                return false;
-        }
-        if (!prototype.isObject())
-            return false;
-        object = asObject(prototype);
-    }
-}
-
-ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    // This method only supports non-index PropertyNames.
-    ASSERT(!parseIndex(propertyName));
-
-    VM& vm = exec->vm();
-    auto& structureIDTable = vm.heap.structureIDTable();
-    JSObject* object = this;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-    while (true) {
-        Structure& structure = *structureIDTable.get(object->structureID());
-        if (LIKELY(!TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()))) {
-            if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
-                return true;
-        } else {
-            if (structure.classInfo()->methodTable.getOwnPropertySlot(object, exec, propertyName, slot))
-                return true;
-            if (UNLIKELY(vm.exception()))
-                return false;
-        }
-        JSValue prototype;
-        if (LIKELY(structure.classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
-            prototype = structure.storedPrototype();
-        else {
-            prototype = object->getPrototype(vm, exec);
-            if (vm.exception())
-                return false;
-        }
-        if (!prototype.isObject())
-            return false;
-        object = asObject(prototype);
-    }
-}
-
 inline JSValue JSObject::get(ExecState* exec, PropertyName propertyName) const
 {
     PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
@@ -1366,22 +1306,6 @@ inline JSValue JSObject::get(ExecState* exec, unsigned propertyName) const
         return slot.getValue(exec, propertyName);
 
     return jsUndefined();
-}
-
-template<typename CallbackWhenNoException>
-ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSObject::getPropertySlot(ExecState* exec, PropertyName propertyName, CallbackWhenNoException callback) const
-{
-    PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
-    return getPropertySlot(exec, propertyName, slot, callback);
-}
-
-template<typename CallbackWhenNoException>
-ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSObject::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
-{
-    bool found = const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
-    if (UNLIKELY(exec->hadException()))
-        return { };
-    return callback(found, slot);
 }
 
 template<JSObject::PutMode mode>

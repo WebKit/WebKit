@@ -26,7 +26,7 @@
 
 namespace JSC {
 
-IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other)
+inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other)
 {
     IndexingType type = indexingType();
     if (!(type & IsArray && other & IsArray))
@@ -56,7 +56,7 @@ IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other)
     return type;
 }
 
-bool JSArray::canFastCopy(VM& vm, JSArray* otherArray)
+inline bool JSArray::canFastCopy(VM& vm, JSArray* otherArray)
 {
     if (hasAnyArrayStorage(indexingType()) || hasAnyArrayStorage(otherArray->indexingType()))
         return false;
@@ -66,6 +66,30 @@ bool JSArray::canFastCopy(VM& vm, JSArray* otherArray)
         || otherArray->structure(vm)->holesMustForwardToPrototype(vm))
         return false;
     return true;
+}
+
+ALWAYS_INLINE unsigned getLength(ExecState* exec, JSObject* obj)
+{
+    if (isJSArray(obj))
+        return jsCast<JSArray*>(obj)->length();
+
+    VM& vm = exec->vm();
+    JSValue lengthValue = obj->get(exec, vm.propertyNames->length);
+    if (UNLIKELY(vm.exception()))
+        return UINT_MAX;
+    return lengthValue.toUInt32(exec);
+}
+
+ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
+{
+    if (isJSArray(obj))
+        return jsCast<JSArray*>(obj)->length();
+
+    VM& vm = exec->vm();
+    JSValue lengthValue = obj->get(exec, vm.propertyNames->length);
+    if (UNLIKELY(vm.exception()))
+        return PNaN;
+    return lengthValue.toLength(exec);
 }
 
 } // namespace JSC

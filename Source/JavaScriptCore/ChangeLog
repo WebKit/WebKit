@@ -1,3 +1,45 @@
+2016-09-01  Mark Lam  <mark.lam@apple.com>
+
+        Move some JSObject and JSArray inline functions to their respective Inlines.h files.
+        https://bugs.webkit.org/show_bug.cgi?id=161499
+
+        Reviewed by Saam Barati.
+
+        This is just a refactoring patch to move some inline functions to their Inlines.h
+        files.  This will be needed to enable https://bugs.webkit.org/show_bug.cgi?id=161498
+        later.
+
+        * bindings/ScriptValue.cpp:
+        * interpreter/Interpreter.cpp:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSArray.h:
+        (JSC::getLength): Deleted.
+        (JSC::toLength): Deleted.
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::mergeIndexingTypeForCopying):
+        (JSC::JSArray::canFastCopy):
+        (JSC::getLength):
+        (JSC::toLength):
+        * runtime/JSInternalPromise.cpp:
+        * runtime/JSInternalPromiseDeferred.cpp:
+        * runtime/JSJob.cpp:
+        * runtime/JSModuleRecord.cpp:
+        * runtime/JSObject.h:
+        (JSC::JSObject::getPropertySlot): Deleted.
+        (JSC::JSObject::getNonIndexPropertySlot): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        * runtime/JSPromiseDeferred.cpp:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        * runtime/MapConstructor.cpp:
+        * runtime/SamplingProfiler.cpp:
+        * runtime/SetConstructor.cpp:
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakSetConstructor.cpp:
+
 2016-09-01  JF Bastien  <jfbastien@apple.com>
 
         GetByIdWithThis/GetByValWithThis should have ValueProfiles so that they can predict their result types

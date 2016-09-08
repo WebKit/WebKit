@@ -37,6 +37,7 @@
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunction.h"
+#include "JSObjectInlines.h"
 #include "LLIntPCRanges.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"

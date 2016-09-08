@@ -35,7 +35,7 @@
 #include "JSBoundFunction.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
-#include "JSObject.h"
+#include "JSObjectInlines.h"
 #include "StructureInlines.h"
 
 namespace JSC {

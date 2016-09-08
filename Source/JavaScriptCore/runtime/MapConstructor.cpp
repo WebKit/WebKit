@@ -33,6 +33,7 @@
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSMap.h"
+#include "JSObjectInlines.h"
 #include "MapPrototype.h"
 #include "StructureInlines.h"
 

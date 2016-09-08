@@ -33,6 +33,7 @@
 #include "JSCellInlines.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
+#include "JSObjectInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 

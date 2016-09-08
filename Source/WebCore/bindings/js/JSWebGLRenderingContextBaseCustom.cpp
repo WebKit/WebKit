@@ -96,6 +96,7 @@
 #include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Error.h>
+#include <runtime/JSObjectInlines.h>
 #include <runtime/JSTypedArrays.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/TypedArrays.h>

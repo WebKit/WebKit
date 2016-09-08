@@ -34,6 +34,7 @@
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "JSObjectInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 

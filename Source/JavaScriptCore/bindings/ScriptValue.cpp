@@ -33,6 +33,7 @@
 #include "APICast.h"
 #include "InspectorValues.h"
 #include "JSLock.h"
+#include "JSObjectInlines.h"
 #include "StructureInlines.h"
 
 using namespace JSC;
