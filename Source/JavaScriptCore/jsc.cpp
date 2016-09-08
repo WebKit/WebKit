@@ -647,6 +647,8 @@ static EncodedJSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState*);
 
 static EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSetGlobalConstRedeclarationShouldNotThrow(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionGetRandomSeed(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionSetRandomSeed(ExecState*);
 
 struct Script {
     enum class StrictMode {
@@ -856,6 +858,9 @@ protected:
         addFunction(vm, "enableExceptionFuzz", functionEnableExceptionFuzz, 0);
 
         addFunction(vm, "drainMicrotasks", functionDrainMicrotasks, 0);
+
+        addFunction(vm, "getRandomSeed", functionGetRandomSeed, 0);
+        addFunction(vm, "setRandomSeed", functionSetRandomSeed, 1);
 
         addFunction(vm, "is32BitPlatform", functionIs32BitPlatform, 0);
 
@@ -1594,6 +1599,20 @@ EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(ExecState* ex
 EncodedJSValue JSC_HOST_CALL functionSetGlobalConstRedeclarationShouldNotThrow(ExecState* exec)
 {
     exec->vm().setGlobalConstRedeclarationShouldThrow(false);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionGetRandomSeed(ExecState* exec)
+{
+    return JSValue::encode(jsNumber(exec->lexicalGlobalObject()->weakRandom().seed()));
+}
+
+EncodedJSValue JSC_HOST_CALL functionSetRandomSeed(ExecState* exec)
+{
+    unsigned seed = exec->argument(0).toUInt32(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    exec->lexicalGlobalObject()->weakRandom().setSeed(seed);
     return JSValue::encode(jsUndefined());
 }
 

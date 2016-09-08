@@ -1,3 +1,22 @@
+2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        stress/random-53bit.js.ftl-no-cjit-no-inline-validate sometimes fails
+        https://bugs.webkit.org/show_bug.cgi?id=161436
+
+        Reviewed by Filip Pizlo.
+
+        The test checks Math.random() correctly produces 53bit random values.
+        The test can fail by design, but this should be fairly rare.
+
+        However, when introducing, we wrap the `test()` with 1e4 to ensure the FTL compilation, and this
+        increases the failure rate. By increasing the MAX in the test, we make the failures much more rare case.
+
+        And we also add getRandomSeed() and setRandomSeed(seed) JSC shell helpers to dump more useful information
+        and reproduce the situation easily.
+
+        * stress/random-53bit.js:
+        (test):
+
 2016-08-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve ArithAbs with polymorphic input

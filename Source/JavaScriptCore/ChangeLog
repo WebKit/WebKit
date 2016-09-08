@@ -1,3 +1,18 @@
+2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        stress/random-53bit.js.ftl-no-cjit-no-inline-validate sometimes fails
+        https://bugs.webkit.org/show_bug.cgi?id=161436
+
+        Reviewed by Filip Pizlo.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionGetRandomSeed):
+        (functionSetRandomSeed):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::weakRandom):
+        (JSC::JSGlobalObject::weakRandomInteger): Deleted.
+
 2016-08-31  Chris Dumez  <cdumez@apple.com>
 
         Object.getPrototypeOf() should return null cross-origin

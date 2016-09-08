@@ -766,6 +766,7 @@ public:
     static ptrdiff_t weakRandomOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_weakRandom); }
     double weakRandomNumber() { return m_weakRandom.get(); }
     unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
+    WeakRandom& weakRandom() { return m_weakRandom; }
 
     UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
     UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, const VariableEnvironment*);
