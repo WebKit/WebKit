@@ -732,6 +732,11 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         let value = this.data[columnIdentifier];
         return typeof value === "string" ? value : null;
     }
+
+    didResizeColumn(columnIdentifier)
+    {
+        // Override by subclasses.
+    }
 };
 
 // Used to create a new table row when entering new data by editing cells.

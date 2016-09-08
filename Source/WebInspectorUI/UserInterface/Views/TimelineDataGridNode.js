@@ -389,4 +389,12 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
     {
         // Implemented by subclasses.
     }
+
+    didResizeColumn(columnIdentifier)
+    {
+        if (columnIdentifier !== "graph")
+            return;
+
+        this.needsGraphRefresh();
+    }
 };

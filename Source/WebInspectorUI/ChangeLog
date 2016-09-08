@@ -1,3 +1,25 @@
+2016-09-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TimelineDataGridNode should refresh when graph column is resized
+        https://bugs.webkit.org/show_bug.cgi?id=161765
+        <rdar://problem/28215674>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.resizerDragging):
+        Call `DataGridNode.didResizeColumn` for all visible nodes in the columns
+        to the left and right of the column resizer.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WebInspector.DataGridNode.prototype.didResizeColumn):
+        Add protected base class method for subclasses to override.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.didResizeColumn):
+        Refresh the node's graph when the "graph" column is resized.
+        Renamed `left/rightCellIndex` -> `left/rightColumnIndex`.
+
 2016-09-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Add a button to navigation bar to toggle Control Flow Profiler
