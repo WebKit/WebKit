@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MapBase.h"
 
-#include "SlotVisitorInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

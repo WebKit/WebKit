@@ -35,7 +35,6 @@
 #include "JSMap.h"
 #include "JSMapIterator.h"
 #include "Lookup.h"
-#include "MapDataInlines.h"
 
 #include "MapPrototype.lut.h"
 

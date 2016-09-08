@@ -73,7 +73,6 @@
 #include "LLIntData.h"
 #include "Lexer.h"
 #include "Lookup.h"
-#include "MapData.h"
 #include "NativeStdFunctionCell.h"
 #include "Nodes.h"
 #include "Parser.h"

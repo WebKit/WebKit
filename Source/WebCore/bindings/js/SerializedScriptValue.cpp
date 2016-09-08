@@ -70,8 +70,6 @@
 #include <runtime/JSSet.h>
 #include <runtime/JSSetIterator.h>
 #include <runtime/JSTypedArrays.h>
-#include <runtime/MapData.h>
-#include <runtime/MapDataInlines.h>
 #include <runtime/ObjectConstructor.h>
 #include <runtime/PropertyNameArray.h>
 #include <runtime/RegExp.h>

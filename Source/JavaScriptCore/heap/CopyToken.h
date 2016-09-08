@@ -29,7 +29,6 @@
 namespace JSC {
 
 enum CopyToken {
-    MapBackingStoreCopyToken,
     DirectArgumentsOverridesCopyToken
 };
 

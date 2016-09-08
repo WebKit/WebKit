@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCInlines.h"
+#include "ExceptionHelpers.h"
 #include "JSObject.h"
 
 namespace JSC {
@@ -151,9 +151,8 @@ public:
     {
         auto scope = DECLARE_THROW_SCOPE(vm);
         size_t allocationSize = HashMapBuffer::allocationSize(capacity);
-        void* data = nullptr;
-        DeferGCForAWhile defer(vm.heap);
-        if (!vm.heap.tryAllocateStorage(owner, allocationSize, &data)) {
+        void* data = vm.heap.tryAllocateAuxiliary(owner, allocationSize);
+        if (!data) {
             throwOutOfMemoryError(exec, scope);
             return nullptr;
         }
@@ -259,7 +258,6 @@ public:
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
-    static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
 
     HashMapImpl(VM& vm, Structure* structure)
         : Base(vm, structure)
@@ -515,7 +513,7 @@ private:
 
     WriteBarrier<HashMapBucketType> m_head;
     WriteBarrier<HashMapBucketType> m_tail;
-    CopyBarrier<HashMapBufferType> m_buffer;
+    AuxiliaryBarrier<HashMapBufferType*> m_buffer;
     uint32_t m_size;
     uint32_t m_deleteCount;
     uint32_t m_capacity;

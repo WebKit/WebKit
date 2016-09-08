@@ -1,3 +1,36 @@
+2016-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Move JSMap/JSSet over to Auxiliary MarkedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=161744
+
+        Reviewed by Saam Barati.
+        
+        This moves the buffer out of CopiedSpace and into Auxiliary MarkedSpace.
+        
+        Also removes MapData.h/MapDataInlines.h since they are not used anywhere, but they still
+        speak of CopiedSpace.
+        
+        This is a purely mechanical change.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/CopyToken.h:
+        * runtime/HashMapImpl.cpp:
+        (JSC::HashMapImpl<HashMapBucket>::visitChildren):
+        (JSC::HashMapImpl<HashMapBucket>::copyBackingStore): Deleted.
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::create):
+        * runtime/JSMapIterator.cpp:
+        * runtime/JSMapIterator.h:
+        * runtime/JSSetIterator.cpp:
+        * runtime/JSSetIterator.h:
+        * runtime/MapBase.cpp:
+        * runtime/MapData.h: Removed.
+        * runtime/MapDataInlines.h: Removed.
+        * runtime/MapPrototype.cpp:
+        * runtime/SetConstructor.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/VM.cpp:
+
 2016-09-06  Filip Pizlo  <fpizlo@apple.com>
 
         Typed arrays should use MarkedSpace instead of CopiedSpace

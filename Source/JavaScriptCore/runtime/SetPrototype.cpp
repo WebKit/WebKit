@@ -35,7 +35,6 @@
 #include "JSSet.h"
 #include "JSSetIterator.h"
 #include "Lookup.h"
-#include "MapDataInlines.h"
 
 #include "SetPrototype.lut.h"
 

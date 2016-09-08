@@ -26,8 +26,7 @@
 #include "config.h"
 #include "HashMapImpl.h"
 
-#include "CopiedBlockInlines.h"
-#include "CopyVisitorInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
@@ -70,24 +69,9 @@ void HashMapImpl<HashMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visito
 
     visitor.append(&thisObject->m_head);
     visitor.append(&thisObject->m_tail);
-
-    visitor.copyLater(thisObject, MapBackingStoreCopyToken, thisObject->m_buffer.get(), thisObject->bufferSizeInBytes());
-}
-
-template <typename HashMapBucket>
-void HashMapImpl<HashMapBucket>::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
-{
-    Base::copyBackingStore(cell, visitor, token);
-
-    HashMapImpl* thisObject = jsCast<HashMapImpl*>(cell);
-    if (token == MapBackingStoreCopyToken && visitor.checkIfShouldCopy(thisObject->m_buffer.get())) {
-        HashMapBufferType* oldBuffer = thisObject->m_buffer.get();
-        size_t bufferSizeInBytes = thisObject->bufferSizeInBytes();
-        HashMapBufferType* newBuffer = static_cast<HashMapBufferType*>(visitor.allocateNewSpace(bufferSizeInBytes));
-        memcpy(newBuffer, oldBuffer, bufferSizeInBytes);
-        thisObject->m_buffer.setWithoutBarrier(newBuffer);
-        visitor.didCopy(oldBuffer, bufferSizeInBytes);
-    }
+    
+    if (thisObject->m_buffer)
+        visitor.markAuxiliary(thisObject->m_buffer.get());
 }
 
 } // namespace JSC

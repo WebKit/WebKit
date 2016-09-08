@@ -30,8 +30,6 @@
 #include "JSObject.h"
 #include "JSSet.h"
 
-#include "MapData.h"
-
 namespace JSC {
 
 class JSSetIterator : public JSNonFinalObject {

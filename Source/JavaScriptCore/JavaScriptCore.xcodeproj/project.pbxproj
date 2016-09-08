@@ -77,7 +77,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0A6441519420A6C61AD1882E /* MapDataInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 593D43CCA0BBE06D89C59707 /* MapDataInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0123321944EA1B00843A0C /* DFGValueStrength.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0123301944EA1B00843A0C /* DFGValueStrength.cpp */; };
 		0F0123331944EA1B00843A0C /* DFGValueStrength.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0123311944EA1B00843A0C /* DFGValueStrength.h */; };
 		0F0332C018ADFAE1005F979A /* ExitingJITType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0332BF18ADFAE1005F979A /* ExitingJITType.cpp */; };
@@ -1769,7 +1768,6 @@
 		A77F1825164192C700640A47 /* ParserModes.h in Headers */ = {isa = PBXBuildFile; fileRef = A77F18241641925400640A47 /* ParserModes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A784A26111D16622005776AC /* ASTBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A7EE7411B98B8D0065A14F /* ASTBuilder.h */; };
 		A784A26411D16622005776AC /* SyntaxChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A7EE7711B98B8D0065A14F /* SyntaxChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A78507D717CBC6FD0011F6E7 /* MapData.h in Headers */ = {isa = PBXBuildFile; fileRef = A78507D517CBC6FD0011F6E7 /* MapData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A785F6BC18C553FE00F10626 /* SpillRegistersMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FF647A18C52E8500B55307 /* SpillRegistersMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A78A9774179738B8009DF744 /* DFGFailedFinalizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78A976C179738B8009DF744 /* DFGFailedFinalizer.cpp */; };
 		A78A9775179738B8009DF744 /* DFGFailedFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A976D179738B8009DF744 /* DFGFailedFinalizer.h */; };
@@ -3445,7 +3443,6 @@
 		53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
 		53FD04D11D7AB187003287D3 /* WASMCallingConvention.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMCallingConvention.cpp; sourceTree = "<group>"; };
 		53FD04D21D7AB187003287D3 /* WASMCallingConvention.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMCallingConvention.h; sourceTree = "<group>"; };
-		593D43CCA0BBE06D89C59707 /* MapDataInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapDataInlines.h; sourceTree = "<group>"; };
 		5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libedit.dylib; path = /usr/lib/libedit.dylib; sourceTree = "<absolute>"; };
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
 		5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntDesiredOffsets.h; path = LLIntOffsets/LLIntDesiredOffsets.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4060,7 +4057,6 @@
 		A77F181F164088B200640A47 /* CodeCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeCache.cpp; sourceTree = "<group>"; };
 		A77F1820164088B200640A47 /* CodeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeCache.h; sourceTree = "<group>"; };
 		A77F18241641925400640A47 /* ParserModes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserModes.h; sourceTree = "<group>"; };
-		A78507D517CBC6FD0011F6E7 /* MapData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapData.h; sourceTree = "<group>"; };
 		A78A976C179738B8009DF744 /* DFGFailedFinalizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFailedFinalizer.cpp; path = dfg/DFGFailedFinalizer.cpp; sourceTree = "<group>"; };
 		A78A976D179738B8009DF744 /* DFGFailedFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFailedFinalizer.h; path = dfg/DFGFailedFinalizer.h; sourceTree = "<group>"; };
 		A78A976E179738B8009DF744 /* DFGFinalizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFinalizer.cpp; path = dfg/DFGFinalizer.cpp; sourceTree = "<group>"; };
@@ -6065,8 +6061,6 @@
 				795B19961D78BE3500262FA0 /* MapBase.h */,
 				A700873717CBE85300C3E643 /* MapConstructor.cpp */,
 				A700873817CBE85300C3E643 /* MapConstructor.h */,
-				A78507D517CBC6FD0011F6E7 /* MapData.h */,
-				593D43CCA0BBE06D89C59707 /* MapDataInlines.h */,
 				A74DEF8D182D991400522C22 /* MapIteratorPrototype.cpp */,
 				A74DEF8E182D991400522C22 /* MapIteratorPrototype.h */,
 				A700873B17CBE8D300C3E643 /* MapPrototype.cpp */,
@@ -8108,9 +8102,7 @@
 				860161E50F3A83C100F84710 /* MacroAssemblerX86_64.h in Headers */,
 				860161E60F3A83C100F84710 /* MacroAssemblerX86Common.h in Headers */,
 				A700873A17CBE85300C3E643 /* MapConstructor.h in Headers */,
-				A78507D717CBC6FD0011F6E7 /* MapData.h in Headers */,
 				0F37308F1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h in Headers */,
-				0A6441519420A6C61AD1882E /* MapDataInlines.h in Headers */,
 				A74DEF94182D991400522C22 /* MapIteratorPrototype.h in Headers */,
 				A700873E17CBE8D300C3E643 /* MapPrototype.h in Headers */,
 				C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */,

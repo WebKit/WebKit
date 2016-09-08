@@ -29,7 +29,6 @@
 #include "IterationKind.h"
 #include "JSMap.h"
 #include "JSObject.h"
-#include "MapData.h"
 
 namespace JSC {
 

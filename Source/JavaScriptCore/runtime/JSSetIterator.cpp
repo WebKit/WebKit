@@ -28,7 +28,6 @@
 
 #include "JSCInlines.h"
 #include "JSSet.h"
-#include "MapDataInlines.h"
 
 namespace JSC {
 
