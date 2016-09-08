@@ -37,28 +37,18 @@ namespace WebKit {
 class SimpleViewportController {
     WTF_MAKE_NONCOPYABLE(SimpleViewportController);
 public:
-    class Client {
-    public:
-        virtual void didChangeVisibleRect() = 0;
-    };
+    SimpleViewportController();
 
-    explicit SimpleViewportController(Client*);
-
-    void didChangeViewportSize(const WebCore::FloatSize&);
+    void didChangeViewportSize(const WebCore::IntSize&);
     void didChangeContentsSize(const WebCore::IntSize&);
-    void didChangeViewportAttribute(const WebCore::ViewportAttributes&);
-
-    void scrollBy(const WebCore::IntSize&);
-    void scrollTo(const WebCore::IntPoint&);
+    void didChangeViewportAttributes(const WebCore::ViewportAttributes&);
+    void didScroll(const WebCore::IntPoint&);
 
     WebCore::FloatRect visibleContentsRect() const;
     float pageScaleFactor() const { return m_pageScaleFactor; }
 
 private:
-
     WebCore::FloatSize visibleContentsSize() const;
-
-    void syncVisibleContents();
 
     void applyScaleAfterRenderingContents(float scale);
     void applyPositionAfterRenderingContents(const WebCore::FloatPoint& pos);
@@ -71,18 +61,16 @@ private:
 
     void resetViewportToDefaultState();
 
-    Client* m_client;
-
-    WebCore::FloatPoint m_contentsPosition;
+    WebCore::IntPoint m_contentsPosition;
     WebCore::FloatSize m_contentsSize;
     WebCore::FloatSize m_viewportSize;
-    float m_pageScaleFactor;
+    float m_pageScaleFactor { 1 };
 
-    bool m_allowsUserScaling;
-    float m_minimumScaleToFit;
-    bool m_initiallyFitToViewport;
+    bool m_allowsUserScaling { false };
+    float m_minimumScaleToFit { 1 };
+    bool m_initiallyFitToViewport { false };
 
-    bool m_hasViewportAttribute;
+    bool m_hasViewportAttribute { false };
     WebCore::ViewportAttributes m_rawAttributes;
 };
 
