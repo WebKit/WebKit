@@ -158,6 +158,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         this._dataGrid.reset();
 
         this._pendingRecords = [];
+        this._resourceDataGridNodeMap.clear();
     }
 
     // TimelineDataGrid sort delegate
@@ -209,12 +210,19 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
     {
         this.endTime = Math.min(this.endTime, this.currentTime);
 
+        let oldZeroTime = this._timelineRuler.zeroTime;
+        let oldStartTime = this._timelineRuler.startTime;
+        let oldEndTime = this._timelineRuler.endTime;
+
         this._timelineRuler.zeroTime = this.zeroTime;
         this._timelineRuler.startTime = this.startTime;
         this._timelineRuler.endTime = this.endTime;
 
-        for (let dataGridNode of this._resourceDataGridNodeMap.values())
-            dataGridNode.refreshGraph();
+        // We only need to refresh the graphs when the any of the times change.
+        if (this.zeroTime !== oldZeroTime || this.startTime !== oldStartTime || this.endTime !== oldEndTime) {
+            for (let dataGridNode of this._resourceDataGridNodeMap.values())
+                dataGridNode.refreshGraph();
+        }
 
         this._processPendingRecords();
     }
