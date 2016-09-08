@@ -121,7 +121,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(RefPtr<PendingScript
 
     if (auto* scriptElement = toScriptElementIfPossible(&pendingScript->element())) {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
-        scriptElement->executeScriptForHTMLScriptRunner(*pendingScript);
+        scriptElement->executeScriptForScriptRunner(*pendingScript);
     }
     ASSERT(!isExecutingScript());
 }
