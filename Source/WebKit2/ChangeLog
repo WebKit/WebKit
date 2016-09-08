@@ -1,3 +1,22 @@
+2016-09-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Remove stale WebSoupRequestManager headers
+        https://bugs.webkit.org/show_bug.cgi?id=161691
+
+        Reviewed by Sergio Villar Senin.
+
+        WebSoupRequestManager, WebSoupRequestManagerProxy and WebSoupRequestManagerClient
+        classes were used to implement custom URI scheme support for Soup. This API and
+        the implementations of these classes were removed in r174584, but curiously the
+        headers went unnoticed. This patch removes them, as well as the
+        WebSoupRequestManagerProxy forwarding declaration in WKAPICastSoup.h.
+
+        * UIProcess/API/C/soup/WKAPICastSoup.h:
+        * UIProcess/soup/WebSoupRequestManagerClient.h: Removed.
+        * UIProcess/soup/WebSoupRequestManagerProxy.h: Removed.
+        (WebKit::WebSoupRequestManagerProxy::registeredURISchemes): Deleted.
+        * WebProcess/soup/WebSoupRequestManager.h: Removed.
+
 2016-09-07  Simon Fraser  <simon.fraser@apple.com>
 
         Enable the <meter> element on iOS
