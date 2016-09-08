@@ -1426,11 +1426,11 @@ PASS img.hspace: IDL get with DOM attribute unset
 PASS img.hspace: setAttribute() to -2147483649 followed by getAttribute() 
 PASS img.hspace: setAttribute() to -2147483649 followed by IDL get 
 PASS img.hspace: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL img.hspace: setAttribute() to -2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS img.hspace: setAttribute() to -2147483648 followed by IDL get 
 PASS img.hspace: setAttribute() to -36 followed by getAttribute() 
-FAIL img.hspace: setAttribute() to -36 followed by IDL get assert_equals: expected 0 but got -36
+PASS img.hspace: setAttribute() to -36 followed by IDL get 
 PASS img.hspace: setAttribute() to -1 followed by getAttribute() 
-FAIL img.hspace: setAttribute() to -1 followed by IDL get assert_equals: expected 0 but got -1
+PASS img.hspace: setAttribute() to -1 followed by IDL get 
 PASS img.hspace: setAttribute() to 0 followed by getAttribute() 
 PASS img.hspace: setAttribute() to 0 followed by IDL get 
 PASS img.hspace: setAttribute() to 1 followed by getAttribute() 
@@ -1448,7 +1448,7 @@ PASS img.hspace: setAttribute() to 4294967296 followed by IDL get
 PASS img.hspace: setAttribute() to "" followed by getAttribute() 
 PASS img.hspace: setAttribute() to "" followed by IDL get 
 PASS img.hspace: setAttribute() to "-1" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to "-1" followed by IDL get assert_equals: expected 0 but got -1
+PASS img.hspace: setAttribute() to "-1" followed by IDL get 
 PASS img.hspace: setAttribute() to "-0" followed by getAttribute() 
 PASS img.hspace: setAttribute() to "-0" followed by IDL get 
 PASS img.hspace: setAttribute() to "0" followed by getAttribute() 
@@ -1545,21 +1545,21 @@ PASS img.hspace: IDL set to "-0" should not throw
 PASS img.hspace: IDL set to "-0" followed by getAttribute() 
 PASS img.hspace: IDL set to "-0" followed by IDL get 
 PASS img.hspace: IDL set to 2147483648 should not throw 
-FAIL img.hspace: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "-2147483648"
-FAIL img.hspace: IDL set to 2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS img.hspace: IDL set to 2147483648 followed by getAttribute() 
+PASS img.hspace: IDL set to 2147483648 followed by IDL get 
 PASS img.hspace: IDL set to 4294967295 should not throw 
-FAIL img.hspace: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "-1"
-FAIL img.hspace: IDL set to 4294967295 followed by IDL get assert_equals: expected 0 but got -1
+PASS img.hspace: IDL set to 4294967295 followed by getAttribute() 
+PASS img.hspace: IDL set to 4294967295 followed by IDL get 
 PASS img.vspace: typeof IDL attribute 
 PASS img.vspace: IDL get with DOM attribute unset 
 PASS img.vspace: setAttribute() to -2147483649 followed by getAttribute() 
 PASS img.vspace: setAttribute() to -2147483649 followed by IDL get 
 PASS img.vspace: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL img.vspace: setAttribute() to -2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS img.vspace: setAttribute() to -2147483648 followed by IDL get 
 PASS img.vspace: setAttribute() to -36 followed by getAttribute() 
-FAIL img.vspace: setAttribute() to -36 followed by IDL get assert_equals: expected 0 but got -36
+PASS img.vspace: setAttribute() to -36 followed by IDL get 
 PASS img.vspace: setAttribute() to -1 followed by getAttribute() 
-FAIL img.vspace: setAttribute() to -1 followed by IDL get assert_equals: expected 0 but got -1
+PASS img.vspace: setAttribute() to -1 followed by IDL get 
 PASS img.vspace: setAttribute() to 0 followed by getAttribute() 
 PASS img.vspace: setAttribute() to 0 followed by IDL get 
 PASS img.vspace: setAttribute() to 1 followed by getAttribute() 
@@ -1577,7 +1577,7 @@ PASS img.vspace: setAttribute() to 4294967296 followed by IDL get
 PASS img.vspace: setAttribute() to "" followed by getAttribute() 
 PASS img.vspace: setAttribute() to "" followed by IDL get 
 PASS img.vspace: setAttribute() to "-1" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to "-1" followed by IDL get assert_equals: expected 0 but got -1
+PASS img.vspace: setAttribute() to "-1" followed by IDL get 
 PASS img.vspace: setAttribute() to "-0" followed by getAttribute() 
 PASS img.vspace: setAttribute() to "-0" followed by IDL get 
 PASS img.vspace: setAttribute() to "0" followed by getAttribute() 
@@ -1674,11 +1674,11 @@ PASS img.vspace: IDL set to "-0" should not throw
 PASS img.vspace: IDL set to "-0" followed by getAttribute() 
 PASS img.vspace: IDL set to "-0" followed by IDL get 
 PASS img.vspace: IDL set to 2147483648 should not throw 
-FAIL img.vspace: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "-2147483648"
-FAIL img.vspace: IDL set to 2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS img.vspace: IDL set to 2147483648 followed by getAttribute() 
+PASS img.vspace: IDL set to 2147483648 followed by IDL get 
 PASS img.vspace: IDL set to 4294967295 should not throw 
-FAIL img.vspace: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "-1"
-FAIL img.vspace: IDL set to 4294967295 followed by IDL get assert_equals: expected 0 but got -1
+PASS img.vspace: IDL set to 4294967295 followed by getAttribute() 
+PASS img.vspace: IDL set to 4294967295 followed by IDL get 
 PASS img.longDesc: typeof IDL attribute 
 PASS img.longDesc: IDL get with DOM attribute unset 
 PASS img.longDesc: setAttribute() to "" followed by getAttribute() 
