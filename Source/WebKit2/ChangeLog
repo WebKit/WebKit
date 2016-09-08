@@ -1,3 +1,18 @@
+2016-09-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move webkit2gtk.pc.in, webkit2gtk-web-extension.pc.in files under Source/WebKit2/gtk/
+        https://bugs.webkit.org/show_bug.cgi?id=161703
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the pkg-config input files that are specific to the GTK+ port
+        under the Source/WebKit2/gtk/ directory. Build rules are updated
+        accordingly.
+
+        * PlatformGTK.cmake:
+        * gtk/webkit2gtk-web-extension.pc.in: Renamed from Source/WebKit2/webkit2gtk-web-extension.pc.in.
+        * gtk/webkit2gtk.pc.in: Renamed from Source/WebKit2/webkit2gtk.pc.in.
+
 2016-09-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Address some clang static analyzer warnings in WebKit
