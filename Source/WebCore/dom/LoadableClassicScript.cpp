@@ -96,7 +96,7 @@ void LoadableClassicScript::notifyFinished(CachedResource*)
                 MessageSource::Security,
                 MessageLevel::Error,
                 makeString(
-                    "Refused to execute script from '", m_cachedScript->url().stringCenterEllipsizedToLength()
+                    "Refused to execute script from '", m_cachedScript->url().stringCenterEllipsizedToLength(),
                     "' because its MIME type ('", m_cachedScript->mimeType(), "') is not executable, and strict MIME type checking is enabled.")
             }
         };
