@@ -1,3 +1,26 @@
+2016-08-30  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: speed up the lock slow path
+        https://bugs.webkit.org/show_bug.cgi?id=161058
+
+        Unreviewed roll-in - with regression fixed.
+
+        Revert to using yield() instead of swtch() because very low priority
+        background tasks can cause priority inversion and deadlock. In the
+        network process, that happened with com.apple.WebKit.Cache.Storage.serialBackground.
+
+        Still a big speedup on MallocBench.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/ScopeExit.h: Added.
+        (bmalloc::ScopeExit::ScopeExit):
+        (bmalloc::ScopeExit::~ScopeExit):
+        (bmalloc::makeScopeExit):
+        * bmalloc/StaticMutex.cpp:
+        (bmalloc::StaticMutex::lockSlowCase):
+        * bmalloc/StaticMutex.h:
+        (bmalloc::StaticMutex::init):
+
 2016-08-26  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed build fix.
