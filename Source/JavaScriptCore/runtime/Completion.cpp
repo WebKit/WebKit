@@ -229,7 +229,7 @@ JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source)
     return loadModule(lock, exec, globalObject, key, jsUndefined());
 }
 
-JSInternalPromise* linkAndEvaluateModule(ExecState* exec, const Identifier& moduleKey)
+JSValue linkAndEvaluateModule(ExecState* exec, const Identifier& moduleKey)
 {
     JSLockHolder lock(exec);
     RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());

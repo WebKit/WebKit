@@ -114,7 +114,7 @@ JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleNam
     return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
 }
 
-JSInternalPromise* JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey)
+JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey)
 {
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().linkAndEvaluateModulePublicName()));
     CallData callData;
@@ -124,7 +124,7 @@ JSInternalPromise* JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValu
     MarkedArgumentBuffer arguments;
     arguments.append(moduleKey);
 
-    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+    return call(exec, function, callType, callData, this, arguments);
 }
 
 JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValue referrer)
