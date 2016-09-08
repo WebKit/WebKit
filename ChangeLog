@@ -1,3 +1,19 @@
+2016-09-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Build failure with GCC 6 (fatal error: stdlib.h: No such file or directory)
+        https://bugs.webkit.org/show_bug.cgi?id=161697
+
+        Reviewed by Michael Catanzaro.
+
+        Get the list of system includes from GCC and add it to the CMake
+        list of implicit includes. This way, CMake will filter any of this
+        directories from the list of includes when calling the compiler.
+
+        This avoids an issue with GCC 6 that causes build failures when
+        including the default include path as a system include (-isystem).
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2016-09-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [EFL] Switch to ENABLE_NETWORK_CACHE
