@@ -130,7 +130,7 @@ WeakPtr<FontFace> FontFace::createWeakPtr() const
 RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID propertyID)
 {
     auto style = MutableStyleProperties::create();
-    if (CSSParser::parseValue(style, propertyID, string, true, CSSStrictMode, nullptr) == CSSParser::ParseResult::Error)
+    if (CSSParser::parseValue(style, propertyID, string, true, HTMLStandardMode, nullptr) == CSSParser::ParseResult::Error)
         return nullptr;
     return style->getPropertyCSSValue(propertyID);
 }
@@ -204,7 +204,7 @@ void FontFace::setVariant(const String& variant, ExceptionCode& ec)
     }
 
     auto style = MutableStyleProperties::create();
-    auto result = CSSParser::parseValue(style, CSSPropertyFontVariant, variant, true, CSSStrictMode, nullptr);
+    auto result = CSSParser::parseValue(style, CSSPropertyFontVariant, variant, true, HTMLStandardMode, nullptr);
     if (result == CSSParser::ParseResult::Error) {
         ec = SYNTAX_ERR;
         return;

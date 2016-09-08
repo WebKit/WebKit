@@ -138,8 +138,14 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
         case CSSSelector::ShadowDescendant:
             skipOverSubselectors = true;
             break;
+        case CSSSelector::ShadowSlot:
+            // Disable fastRejectSelector.
+            *identifierHashes = 0;
+            return;
         case CSSSelector::Descendant:
         case CSSSelector::Child:
+        case CSSSelector::ShadowPseudo:
+        case CSSSelector::ShadowDeep:
             skipOverSubselectors = false;
             collectDescendantSelectorIdentifierHashes(selector, hash);
             break;

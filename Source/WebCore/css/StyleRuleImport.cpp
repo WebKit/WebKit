@@ -66,7 +66,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, c
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
 
-    CSSParserContext context = m_parentStyleSheet ? m_parentStyleSheet->parserContext() : CSSStrictMode;
+    CSSParserContext context = m_parentStyleSheet ? m_parentStyleSheet->parserContext() : HTMLStandardMode;
     context.charset = charset;
     if (!baseURL.isNull())
         context.baseURL = baseURL;

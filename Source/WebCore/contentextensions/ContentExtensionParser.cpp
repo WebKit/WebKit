@@ -186,7 +186,7 @@ static std::error_code loadTrigger(ExecState& exec, const JSObject& ruleObject, 
 
 static bool isValidSelector(const String& selector)
 {
-    CSSParserContext context(CSSQuirksMode);
+    CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);
     CSSSelectorList selectorList;
     parser.parseSelector(selector, selectorList);

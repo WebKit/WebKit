@@ -55,7 +55,7 @@ private:
     bool consumeCSSWideKeyword(CSSPropertyID unresolvedProperty, bool important);
     const CSSValue* parseSingleValue(CSSPropertyID, CSSPropertyID = CSSPropertyInvalid);
 
-    bool inQuirksMode() const { return m_context.mode == CSSQuirksMode; }
+    bool inQuirksMode() const { return m_context.mode == HTMLQuirksMode; }
 
     bool parseViewportDescriptor(CSSPropertyID propId, bool important);
     bool parseFontFaceDescriptor(CSSPropertyID);

@@ -37,21 +37,50 @@ namespace WebCore {
 
 class Document;
 
+// Must not grow beyond 3 bits, due to packing in StyleProperties.
 enum CSSParserMode {
-    CSSQuirksMode,
-    CSSStrictMode,
-    // SVG should always be in strict mode. For SVG attributes, the rules differ to strict sometimes.
-    SVGAttributeMode
+    HTMLStandardMode,
+    HTMLQuirksMode,
+    // HTML attributes are parsed in quirks mode but also allows internal properties and values.
+    HTMLAttributeMode,
+    // SVG attributes are parsed in quirks mode but rules differ slightly.
+    SVGAttributeMode,
+    // @viewport rules are parsed in standards mode but CSSOM modifications (via StylePropertySet)
+    // must call parseViewportProperties so needs a special mode.
+    CSSViewportRuleMode,
+    // User agent stylesheets are parsed in standards mode but also allows internal properties and values.
+    UASheetMode
 };
 
+inline bool isQuirksModeBehavior(CSSParserMode mode)
+{
+    return mode == HTMLQuirksMode || mode == HTMLAttributeMode;
+}
+
+inline bool isUASheetBehavior(CSSParserMode mode)
+{
+    return mode == UASheetMode;
+}
+
+inline bool isUnitLessLengthParsingEnabledForMode(CSSParserMode mode)
+{
+    return mode == HTMLAttributeMode || mode == SVGAttributeMode;
+}
+
+inline bool isCSSViewportParsingEnabledForMode(CSSParserMode mode)
+{
+    return mode == CSSViewportRuleMode;
+}
+
+// FIXME-NEWPARSER: Next two functions should be removed eventually.
 inline CSSParserMode strictToCSSParserMode(bool inStrictMode)
 {
-    return inStrictMode ? CSSStrictMode : CSSQuirksMode;
+    return inStrictMode ? HTMLStandardMode : HTMLQuirksMode;
 }
 
 inline bool isStrictParserMode(CSSParserMode cssParserMode)
 {
-    return cssParserMode == CSSStrictMode || cssParserMode == SVGAttributeMode;
+    return cssParserMode == UASheetMode || cssParserMode == HTMLStandardMode || cssParserMode == SVGAttributeMode;
 }
 
 struct CSSParserContext {
@@ -62,7 +91,7 @@ public:
 
     URL baseURL;
     String charset;
-    CSSParserMode mode { CSSStrictMode };
+    CSSParserMode mode { HTMLStandardMode };
     bool isHTMLDocument { false };
 #if ENABLE(CSS_GRID_LAYOUT)
     bool cssGridLayoutEnabled { false };

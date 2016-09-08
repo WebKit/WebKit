@@ -1256,7 +1256,7 @@ specifier:
     IDSEL {
         $$ = new CSSParserSelector;
         $$->setMatch(CSSSelector::Id);
-        if (parser->m_context.mode == CSSQuirksMode)
+        if (parser->m_context.mode == HTMLQuirksMode)
             $1.convertToASCIILowercaseInPlace();
         $$->setValue($1);
     }
@@ -1266,7 +1266,7 @@ specifier:
         else {
             $$ = new CSSParserSelector;
             $$->setMatch(CSSSelector::Id);
-            if (parser->m_context.mode == CSSQuirksMode)
+            if (parser->m_context.mode == HTMLQuirksMode)
                 $1.convertToASCIILowercaseInPlace();
             $$->setValue($1);
         }
@@ -1280,7 +1280,7 @@ class:
     '.' IDENT {
         $$ = new CSSParserSelector;
         $$->setMatch(CSSSelector::Class);
-        if (parser->m_context.mode == CSSQuirksMode)
+        if (parser->m_context.mode == HTMLQuirksMode)
             $2.convertToASCIILowercaseInPlace();
         $$->setValue($2);
     }

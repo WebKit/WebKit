@@ -74,7 +74,7 @@ float parseSizesAttribute(Document& document, StringView sizesAttribute)
     if (!renderer)
         return 0;
     auto& style = renderer->style();
-    for (auto& sourceSize : CSSParser(CSSStrictMode).parseSizesAttribute(sizesAttribute)) {
+    for (auto& sourceSize : CSSParser(HTMLStandardMode).parseSizesAttribute(sizesAttribute)) {
         if (match(sourceSize.expression, style, document))
             return computeLength(sourceSize.length.get(), style, *renderer);
     }

@@ -735,6 +735,8 @@ String CSSSelector::selectorText(const String& rightSide) const
             return tagHistory->selectorText(" " + str.toString() + rightSide);
         case CSSSelector::Child:
             return tagHistory->selectorText(" > " + str.toString() + rightSide);
+        case CSSSelector::ShadowDeep:
+            return tagHistory->selectorText(" /deep/ " + str.toString() + rightSide);
         case CSSSelector::DirectAdjacent:
             return tagHistory->selectorText(" + " + str.toString() + rightSide);
         case CSSSelector::IndirectAdjacent:
@@ -745,6 +747,8 @@ String CSSSelector::selectorText(const String& rightSide) const
             FALLTHROUGH;
 #endif
         case CSSSelector::ShadowDescendant:
+        case CSSSelector::ShadowPseudo:
+        case CSSSelector::ShadowSlot:
             return tagHistory->selectorText(str.toString() + rightSide);
         }
     }

@@ -38,6 +38,7 @@ struct PseudoClassOrCompatibilityPseudoElement {
 };
 
 PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(const CSSParserString& pseudoTypeString);
+PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(const StringView& pseudoTypeString);
 CSSSelector::PseudoElementType parsePseudoElementString(const StringImpl& pseudoTypeString);
 
 } // namespace WebCore

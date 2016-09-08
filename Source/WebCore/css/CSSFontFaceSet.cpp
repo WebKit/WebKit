@@ -328,7 +328,7 @@ Vector<std::reference_wrapper<CSSFontFace>> CSSFontFaceSet::matchingFaces(const 
 {
     Vector<std::reference_wrapper<CSSFontFace>> result;
     auto style = MutableStyleProperties::create();
-    auto parseResult = CSSParser::parseValue(style, CSSPropertyFont, font, true, CSSStrictMode, nullptr);
+    auto parseResult = CSSParser::parseValue(style, CSSPropertyFont, font, true, HTMLStandardMode, nullptr);
     if (parseResult == CSSParser::ParseResult::Error) {
         ec = SYNTAX_ERR;
         return result;

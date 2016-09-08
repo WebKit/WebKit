@@ -27,7 +27,7 @@ first-of-type
 focus
 focus-within
 horizontal
-host
+host, PseudoClassHost, PseudoElementUnknown
 hover
 in-range
 increment

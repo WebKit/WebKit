@@ -87,7 +87,10 @@ namespace WebCore {
             DirectAdjacent,
             IndirectAdjacent,
             SubSelector,
-            ShadowDescendant,
+            ShadowDescendant, // FIXME-NEWPARSER: Remove this in favor of the new shadow values below.
+            ShadowPseudo, // Special case of shadow DOM pseudo elements / shadow pseudo element
+            ShadowDeep, // /deep/ combinator
+            ShadowSlot // slotted to <slot> e
         };
 
         enum PseudoClassType {
@@ -215,6 +218,11 @@ namespace WebCore {
             RightTopMarginBox,
             RightMiddleMarginBox,
             RightBottomMarginBox,
+        };
+
+        enum AttributeMatchType {
+            CaseSensitive,
+            CaseInsensitive,
         };
 
         static PseudoElementType parsePseudoElementType(const String&);

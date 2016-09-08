@@ -129,13 +129,13 @@ Optional<MediaQuery> MediaQuerySet::internalParse(CSSParser& parser, const Strin
 
 Optional<MediaQuery> MediaQuerySet::internalParse(const String& queryString)
 {
-    CSSParser parser(CSSStrictMode);
+    CSSParser parser(HTMLStandardMode);
     return internalParse(parser, queryString);
 }
 
 bool MediaQuerySet::parse(const String& mediaString)
 {
-    CSSParser parser(CSSStrictMode);
+    CSSParser parser(HTMLStandardMode);
     
     Vector<MediaQuery> result;
     Vector<String> list;

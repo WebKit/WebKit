@@ -193,7 +193,10 @@ enum class CSSParserSelectorCombinator {
     DescendantDoubleChild,
 #endif
     DirectAdjacent,
-    IndirectAdjacent
+    IndirectAdjacent,
+    ShadowPseudo, // Special case of shadow DOM pseudo elements / shadow pseudo element
+    ShadowDeep, // /deep/ combinator
+    ShadowSlot // slotted to <slot> e
 };
 
 class CSSParserSelector {
@@ -206,6 +209,9 @@ public:
     static CSSParserSelector* parsePseudoClassHostFunctionSelector(const CSSParserString& functionIdentifier, CSSParserSelector*);
     static CSSParserSelector* parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString);
 
+    static CSSParserSelector* parsePseudoClassSelectorFromStringView(StringView&);
+    static CSSParserSelector* parsePseudoElementSelectorFromStringView(StringView&);
+    
     CSSParserSelector();
     explicit CSSParserSelector(const QualifiedName&);
     ~CSSParserSelector();
@@ -220,8 +226,13 @@ public:
     void setRelation(CSSSelector::Relation value) { m_selector->setRelation(value); }
     void setForPage() { m_selector->setForPage(); }
 
+    CSSSelector::Match match() const { return m_selector->match(); }
+    CSSSelector::PseudoElementType pseudoElementType() const { return m_selector->pseudoElementType(); }
+    const CSSSelectorList* selectorList() const { return m_selector->selectorList(); }
+
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
     void setLangArgumentList(const Vector<CSSParserString>& stringVector);
+    void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
     void setPseudoClassValue(const CSSParserString& pseudoClassString);
     CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }
@@ -239,6 +250,11 @@ public:
     bool hasShadowDescendant() const;
     bool matchesPseudoElement() const;
 
+    bool isHostPseudoSelector() const;
+
+    // FIXME-NEWPARSER: Missing "shadow"
+    bool needsImplicitShadowCombinatorForMatching() const { return pseudoElementType() == CSSSelector::PseudoElementWebKitCustom || pseudoElementType() == CSSSelector::PseudoElementUserAgentCustom || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed || pseudoElementType() == CSSSelector::PseudoElementCue || pseudoElementType() == CSSSelector::PseudoElementSlotted; }
+
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }
     void clearTagHistory() { m_tagHistory.reset(); }
@@ -246,6 +262,7 @@ public:
     void appendTagHistory(CSSSelector::Relation, std::unique_ptr<CSSParserSelector>);
     void appendTagHistory(CSSParserSelectorCombinator, std::unique_ptr<CSSParserSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
+    std::unique_ptr<CSSParserSelector> releaseTagHistory();
 
 private:
 #if ENABLE(CSS_SELECTORS_LEVEL4)

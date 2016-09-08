@@ -331,7 +331,7 @@ void StyledElement::rebuildPresentationAttributeStyle()
         style = cacheIterator->value->value;
         presentationAttributeCacheCleaner().didHitPresentationAttributeCache();
     } else {
-        style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : CSSQuirksMode);
+        style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
         for (const Attribute& attribute : attributesIterator())
             collectStyleForPresentationAttribute(attribute.name(), attribute.value(), static_cast<MutableStyleProperties&>(*style));
     }

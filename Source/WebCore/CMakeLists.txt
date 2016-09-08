@@ -1359,6 +1359,7 @@ set(WebCore_SOURCES
     css/parser/CSSParserValues.cpp
     css/parser/CSSPropertyParser.cpp
     css/parser/CSSPropertyParserHelpers.cpp
+    css/parser/CSSSelectorParser.cpp
     css/parser/CSSTokenizer.cpp
     css/parser/CSSTokenizerInputStream.cpp
     css/parser/MediaQueryBlockWatcher.cpp

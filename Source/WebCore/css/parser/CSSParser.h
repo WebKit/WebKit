@@ -571,8 +571,8 @@ private:
 
     void setStyleSheet(StyleSheetContents* styleSheet) { m_styleSheet = styleSheet; }
 
-    inline bool inStrictMode() const { return m_context.mode == CSSStrictMode || m_context.mode == SVGAttributeMode; }
-    inline bool inQuirksMode() const { return m_context.mode == CSSQuirksMode; }
+    inline bool inStrictMode() const { return m_context.mode == UASheetMode || m_context.mode == HTMLStandardMode || m_context.mode == SVGAttributeMode; }
+    inline bool inQuirksMode() const { return m_context.mode == HTMLQuirksMode; }
     
     URL completeURL(const String& url) const;
 
