@@ -1,3 +1,23 @@
+2016-09-08  Alex Christensen  <achristensen@webkit.org>
+
+        Re-land r205580 after r205649 fixed the test failures
+        https://bugs.webkit.org/show_bug.cgi?id=161668
+
+        Re-landing changesets:
+
+        "Punycode encode non-ascii hosts in URLParser"
+        https://bugs.webkit.org/show_bug.cgi?id=161655
+        http://trac.webkit.org/changeset/205521
+
+        "Fix query-only and fragment-only relative URLs when using
+        URLParser"
+        https://bugs.webkit.org/show_bug.cgi?id=161657
+        http://trac.webkit.org/changeset/205526
+
+        "URLParser should parse / as a relative URL"
+        https://bugs.webkit.org/show_bug.cgi?id=161667
+        http://trac.webkit.org/changeset/205532
+
 2016-09-08  Dean Jackson  <dino@apple.com>
 
         Expose Apple Pencil input to testing system
