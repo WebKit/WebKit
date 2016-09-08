@@ -179,6 +179,19 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://host/a%20B", {"http", "", "", "host", 0, "/a%20B", "", "", "http://host/a%20B"});
     checkURL("http://host?q=@ <>!#fragment", {"http", "", "", "host", 0, "/", "q=@%20%3C%3E!", "fragment", "http://host/?q=@%20%3C%3E!#fragment"});
     checkURL("http://user:@host", {"http", "user", "", "host", 0, "/", "", "", "http://user@host/"});
+    checkURL("http://127.0.0.1:10100/path", {"http", "", "", "127.0.0.1", 10100, "/path", "", "", "http://127.0.0.1:10100/path"});
+    checkURL("http://127.0.0.1:/path", {"http", "", "", "127.0.0.1", 0, "/path", "", "", "http://127.0.0.1/path"});
+    checkURL("http://127.0.0.1:123", {"http", "", "", "127.0.0.1", 123, "/", "", "", "http://127.0.0.1:123/"});
+    checkURL("http://127.0.0.1:", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
+    checkURL("http://[0:f::f:f:0:0]:123/path", {"http", "", "", "[0:f::f:f:0:0]", 123, "/path", "", "", "http://[0:f::f:f:0:0]:123/path"});
+    checkURL("http://[0:f::f:f:0:0]:123", {"http", "", "", "[0:f::f:f:0:0]", 123, "/", "", "", "http://[0:f::f:f:0:0]:123/"});
+    checkURL("http://[0:f::f:f:0:0]:/path", {"http", "", "", "[0:f::f:f:0:0]", 0, "/path", "", "", "http://[0:f::f:f:0:0]/path"});
+    checkURL("http://[0:f::f:f:0:0]:", {"http", "", "", "[0:f::f:f:0:0]", 0, "/", "", "", "http://[0:f::f:f:0:0]/"});
+    checkURL("http://host:10100/path", {"http", "", "", "host", 10100, "/path", "", "", "http://host:10100/path"});
+    checkURL("http://host:/path", {"http", "", "", "host", 0, "/path", "", "", "http://host/path"});
+    checkURL("http://host:123", {"http", "", "", "host", 123, "/", "", "", "http://host:123/"});
+    checkURL("http://host:", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
+    checkURL("http://hos\tt\n:\t1\n2\t3\t/\npath", {"http", "", "", "host", 123, "/path", "", "", "http://host:123/path"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -372,6 +385,27 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("//", "https://www.webkit.org/path",
         {"", "", "", "", 0, "", "", "", ""},
         {"https", "", "", "", 0, "/", "", "", "https:/"});
+    checkURLDifferences("http://127.0.0.1:65536/path",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"http", "", "", "127.0.0.1", 65535, "/path", "", "", "http://127.0.0.1:65536/path"});
+    checkURLDifferences("http://host:abc",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://host:abc"});
+    checkURLDifferences("http://host:65536",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"http", "", "", "host", 65535, "/", "", "", "http://host:65536/"});
+    checkURLDifferences("http://127.0.0.1:abc",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://127.0.0.1:abc"});
+    checkURLDifferences("http://127.0.0.1:65536",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"http", "", "", "127.0.0.1", 65535, "/", "", "", "http://127.0.0.1:65536/"});
+    checkURLDifferences("http://[0:f::f:f:0:0]:abc",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://[0:f::f:f:0:0]:abc"});
+    checkURLDifferences("http://[0:f::f:f:0:0]:65536",
+        {"", "", "", "", 0, "", "", "", ""},
+        {"http", "", "", "[0:f::f:f:0:0]", 65535, "/", "", "", "http://[0:f::f:f:0:0]:65536/"});
     
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
     // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.

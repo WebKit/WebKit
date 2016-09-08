@@ -1355,7 +1355,11 @@ static bool hasInvalidDomainCharacter(const String& asciiDomain)
 bool URLParser::parsePort(StringView::CodePoints::Iterator& iterator, const StringView::CodePoints::Iterator& end)
 {
     uint32_t port = 0;
-    ASSERT(iterator != end);
+    if (iterator == end) {
+        m_url.m_portEnd = m_buffer.length();
+        return true;
+    }
+    m_buffer.append(':');
     for (; iterator != end; ++iterator) {
         if (isTabOrNewline(*iterator))
             continue;
@@ -1375,6 +1379,7 @@ bool URLParser::parsePort(StringView::CodePoints::Iterator& iterator, const Stri
     } else
         m_buffer.appendNumber(port);
 
+    m_url.m_portEnd = m_buffer.length();
     return true;
 }
 
@@ -1390,8 +1395,15 @@ bool URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
         if (auto address = parseIPv6Host(iterator, ipv6End)) {
             serializeIPv6(address.value(), m_buffer);
             m_url.m_hostEnd = m_buffer.length();
-            // FIXME: Handle the port correctly.
-            m_url.m_portEnd = m_buffer.length();            
+            if (ipv6End != end) {
+                ++ipv6End;
+                if (ipv6End != end && *ipv6End == ':') {
+                    ++ipv6End;
+                    return parsePort(ipv6End, end);
+                }
+                m_url.m_portEnd = m_buffer.length();
+                return true;
+            }
             return true;
         }
     }
@@ -1421,9 +1433,12 @@ bool URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
     if (auto address = parseIPv4Host(asciiDomainCodePoints.begin(), asciiDomainCodePoints.end())) {
         serializeIPv4(address.value(), m_buffer);
         m_url.m_hostEnd = m_buffer.length();
-        // FIXME: Handle the port correctly.
-        m_url.m_portEnd = m_buffer.length();
-        return true;
+        if (iterator == end) {
+            m_url.m_portEnd = m_buffer.length();
+            return true;
+        }
+        ++iterator;
+        return parsePort(iterator, end);
     }
     
     m_buffer.append(asciiDomain.value());
@@ -1433,11 +1448,7 @@ bool URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
         ++iterator;
         while (iterator != end && isTabOrNewline(*iterator))
             ++iterator;
-        if (iterator != end) {
-            m_buffer.append(':');
-            if (!parsePort(iterator, end))
-                return false;
-        }
+        return parsePort(iterator, end);
     }
     m_url.m_portEnd = m_buffer.length();
     return true;
@@ -1497,7 +1508,7 @@ void URLParser::setEnabled(bool enabled)
 
 bool URLParser::enabled()
 {
-    return urlParserEnabled;
+    return true;
 }
 
 } // namespace WebCore

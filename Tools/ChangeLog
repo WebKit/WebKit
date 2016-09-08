@@ -1,5 +1,15 @@
 2016-09-08  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should parse ports after IPv4 and IPv6 hosts
+        https://bugs.webkit.org/show_bug.cgi?id=161731
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
+2016-09-08  Alex Christensen  <achristensen@webkit.org>
+
         URLParser should correctly handle \ in path
         https://bugs.webkit.org/show_bug.cgi?id=161762
 
