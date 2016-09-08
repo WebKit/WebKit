@@ -1,3 +1,5 @@
+//@ if $architecture == "x86" then defaultSpotCheckNoMaximalFlush else defaultRun end
+
 function assert(b) {
     if (!b)
         throw new Error("Bad!")
