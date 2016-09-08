@@ -62,7 +62,7 @@ public:
 
     FrameEdgeInfo edgeInfo() const;
 
-    bool userResize(MouseEvent*);
+    bool userResize(MouseEvent&);
 
     bool isResizingRow() const;
     bool isResizingColumn() const;

@@ -755,12 +755,12 @@ void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget& widget)
     }
 }
 
-void HTMLPlugInImageElement::defaultEventHandler(Event* event)
+void HTMLPlugInImageElement::defaultEventHandler(Event& event)
 {
     RenderElement* r = renderer();
     if (r && r->isEmbeddedObject()) {
-        if (displayState() == WaitingForSnapshot && is<MouseEvent>(*event) && event->type() == eventNames().clickEvent) {
-            MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
+        if (displayState() == WaitingForSnapshot && is<MouseEvent>(event) && event.type() == eventNames().clickEvent) {
+            MouseEvent& mouseEvent = downcast<MouseEvent>(event);
             if (mouseEvent.button() == LeftButton) {
                 userDidClickSnapshot(&mouseEvent, true);
                 mouseEvent.setDefaultHandled();

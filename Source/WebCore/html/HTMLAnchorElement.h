@@ -91,8 +91,8 @@ protected:
 private:
     bool supportsFocus() const override;
     bool isMouseFocusable() const override;
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
-    void defaultEventHandler(Event*) final;
+    bool isKeyboardFocusable(KeyboardEvent&) const override;
+    void defaultEventHandler(Event&) final;
     void setActive(bool active = true, bool pause = false) final;
     void accessKeyAction(bool sendMouseEvents) final;
     bool isURLAttribute(const Attribute&) const final;
@@ -103,14 +103,14 @@ private:
 
     void sendPings(const URL& destinationURL);
 
-    void handleClick(Event*);
+    void handleClick(Event&);
 
     enum EventType {
         MouseEventWithoutShiftKey,
         MouseEventWithShiftKey,
         NonMouseEvent,
     };
-    static EventType eventType(Event*);
+    static EventType eventType(Event&);
     bool treatLinkAsLiveForEventType(EventType) const;
 
     Element* rootEditableElementForSelectionOnMouseDown() const;
@@ -134,7 +134,7 @@ inline LinkHash HTMLAnchorElement::visitedLinkHash() const
 
 // Functions shared with the other anchor elements (i.e., SVG).
 
-bool isEnterKeyKeydownEvent(Event*);
+bool isEnterKeyKeydownEvent(Event&);
 bool shouldProhibitLinks(Element*);
 
 } // namespace WebCore

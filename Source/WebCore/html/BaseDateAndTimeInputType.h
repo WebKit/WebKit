@@ -51,7 +51,7 @@ protected:
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
     String visibleValue() const override;
 #if PLATFORM(IOS)
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
+    bool isKeyboardFocusable(KeyboardEvent&) const override;
 #endif
 
 private:

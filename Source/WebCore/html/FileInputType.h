@@ -57,7 +57,7 @@ private:
     bool appendFormData(FormDataList&, bool) const override;
     bool valueMissing(const String&) const override;
     String valueMissingText() const override;
-    void handleDOMActivateEvent(Event*) override;
+    void handleDOMActivateEvent(Event&) override;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
     bool canSetStringValue() const override;
     bool canChangeFromAnotherType() const override;

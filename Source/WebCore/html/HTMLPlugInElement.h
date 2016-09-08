@@ -92,7 +92,7 @@ protected:
 
     virtual bool useFallbackContent() const { return false; }
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
     virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
@@ -114,7 +114,7 @@ private:
 
     bool supportsFocus() const override;
 
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
+    bool isKeyboardFocusable(KeyboardEvent&) const override;
     bool isPluginElement() const final;
 
     RefPtr<JSC::Bindings::Instance> m_instance;

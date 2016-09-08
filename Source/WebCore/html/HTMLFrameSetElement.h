@@ -58,7 +58,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     
-    void defaultEventHandler(Event*) final;
+    void defaultEventHandler(Event&) final;
 
     bool willRecalcStyle(Style::Change) final;
 

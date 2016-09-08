@@ -127,19 +127,19 @@ HTMLElement* SearchInputType::cancelButtonElement() const
     return m_cancelButton;
 }
 
-void SearchInputType::handleKeydownEvent(KeyboardEvent* event)
+void SearchInputType::handleKeydownEvent(KeyboardEvent& event)
 {
     if (element().isDisabledOrReadOnly()) {
         TextFieldInputType::handleKeydownEvent(event);
         return;
     }
 
-    const String& key = event->keyIdentifier();
+    const String& key = event.keyIdentifier();
     if (key == "U+001B") {
         Ref<HTMLInputElement> input(this->element());
         input->setValueForUser(emptyString());
         input->onSearch();
-        event->setDefaultHandled();
+        event.setDefaultHandled();
         return;
     }
     TextFieldInputType::handleKeydownEvent(event);

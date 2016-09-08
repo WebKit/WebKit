@@ -58,7 +58,7 @@ private:
     String sanitizeValue(const String&) const override;
     void createShadowSubtree() override;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
-    void handleDOMActivateEvent(Event*) override;
+    void handleDOMActivateEvent(Event&) override;
     void detach() override;
     bool shouldRespectListAttribute() override;
     bool typeMismatchFor(const String&) const override;

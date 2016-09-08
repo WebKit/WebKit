@@ -48,7 +48,7 @@ private:
     void setHovered(bool = true) final;
 
     // Overridden to either click() or focus() the corresponding control.
-    void defaultEventHandler(Event*) final;
+    void defaultEventHandler(Event&) final;
 
     void focus(bool restorePreviousSelection, FocusDirection) final;
 };

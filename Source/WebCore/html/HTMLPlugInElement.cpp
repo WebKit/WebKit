@@ -180,7 +180,7 @@ void HTMLPlugInElement::collectStyleForPresentationAttribute(const QualifiedName
         HTMLFrameOwnerElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void HTMLPlugInElement::defaultEventHandler(Event* event)
+void HTMLPlugInElement::defaultEventHandler(Event& event)
 {
     // Firefox seems to use a fake event listener to dispatch events to plug-in (tested with mouse events only).
     // This is observable via different order of events - in Firefox, event listeners specified in HTML attributes fires first, then an event
@@ -194,12 +194,12 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
 
     if (is<RenderEmbeddedObject>(*renderer)) {
         if (downcast<RenderEmbeddedObject>(*renderer).isPluginUnavailable()) {
-            downcast<RenderEmbeddedObject>(*renderer).handleUnavailablePluginIndicatorEvent(event);
+            downcast<RenderEmbeddedObject>(*renderer).handleUnavailablePluginIndicatorEvent(&event);
             return;
         }
 
         if (is<RenderSnapshottedPlugIn>(*renderer) && displayState() < Restarting) {
-            downcast<RenderSnapshottedPlugIn>(*renderer).handleEvent(event);
+            downcast<RenderSnapshottedPlugIn>(*renderer).handleEvent(&event);
             HTMLFrameOwnerElement::defaultEventHandler(event);
             return;
         }
@@ -213,14 +213,14 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
         RefPtr<Widget> widget = downcast<RenderWidget>(*renderer).widget();
         if (!widget)
             return;
-        widget->handleEvent(event);
-        if (event->defaultHandled())
+        widget->handleEvent(&event);
+        if (event.defaultHandled())
             return;
     }
     HTMLFrameOwnerElement::defaultEventHandler(event);
 }
 
-bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent*) const
+bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent&) const
 {
     // FIXME: Why is this check needed?
     if (!document().page())

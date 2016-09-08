@@ -48,7 +48,7 @@ private:
     bool appendFormData(FormDataList&, bool) const override;
     bool supportsValidation() const override;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
-    void handleDOMActivateEvent(Event*) override;
+    void handleDOMActivateEvent(Event&) override;
     void altAttributeChanged() override;
     void srcAttributeChanged() override;
     void attach() override;

@@ -105,12 +105,12 @@ Ref<TextControlInnerTextElement> TextControlInnerTextElement::create(Document& d
     return adoptRef(*new TextControlInnerTextElement(document));
 }
 
-void TextControlInnerTextElement::defaultEventHandler(Event* event)
+void TextControlInnerTextElement::defaultEventHandler(Event& event)
 {
     // FIXME: In the future, we should add a way to have default event listeners.
     // Then we would add one to the text field's inner div, and we wouldn't need this subclass.
     // Or possibly we could just use a normal event listener.
-    if (event->isBeforeTextInsertedEvent() || event->type() == eventNames().webkitEditableContentChangedEvent) {
+    if (event.isBeforeTextInsertedEvent() || event.type() == eventNames().webkitEditableContentChangedEvent) {
         Element* shadowAncestor = shadowHost();
         // A TextControlInnerTextElement can have no host if its been detached,
         // but kept alive by an EditCommand. In this case, an undo/redo can
@@ -120,7 +120,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event* event)
         if (shadowAncestor)
             shadowAncestor->defaultEventHandler(event);
     }
-    if (!event->defaultHandled())
+    if (!event.defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
 }
 
@@ -175,11 +175,11 @@ Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Doc
     return adoptRef(*new SearchFieldResultsButtonElement(document));
 }
 
-void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
+void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 {
     // On mousedown, bring up a menu, if needed
     auto* input = downcast<HTMLInputElement>(shadowHost());
-    if (input && event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
+    if (input && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
         input->focus();
         input->select();
 #if !PLATFORM(IOS)
@@ -191,10 +191,10 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
                 searchFieldRenderer.showPopup();
         }
 #endif
-        event->setDefaultHandled();
+        event.setDefaultHandled();
     }
 
-    if (!event->defaultHandled())
+    if (!event.defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
 }
 
@@ -222,28 +222,28 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
     return adoptRef(*new SearchFieldCancelButtonElement(document));
 }
 
-void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
+void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 {
     RefPtr<HTMLInputElement> input(downcast<HTMLInputElement>(shadowHost()));
     if (!input || input->isDisabledOrReadOnly()) {
-        if (!event->defaultHandled())
+        if (!event.defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
     }
 
-    if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
+    if (event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
         input->focus();
         input->select();
-        event->setDefaultHandled();
+        event.setDefaultHandled();
     }
 
-    if (event->type() == eventNames().clickEvent) {
+    if (event.type() == eventNames().clickEvent) {
         input->setValueForUser(emptyString());
         input->onSearch();
-        event->setDefaultHandled();
+        event.setDefaultHandled();
     }
 
-    if (!event->defaultHandled())
+    if (!event.defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
 }
 

@@ -2990,7 +2990,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
     m_pageDismissalEventBeingDispatched = PageDismissalType::None;
 
     if (!beforeUnloadEvent->defaultPrevented())
-        document->defaultEventHandler(beforeUnloadEvent.ptr());
+        document->defaultEventHandler(beforeUnloadEvent.get());
     if (beforeUnloadEvent->returnValue().isNull())
         return true;
 

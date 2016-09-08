@@ -51,9 +51,9 @@ private:
     StepRange createStepRange(AnyStepHandling) const override;
     bool isSteppable() const override;
 #if !PLATFORM(IOS)
-    void handleMouseDownEvent(MouseEvent*) override;
+    void handleMouseDownEvent(MouseEvent&) override;
 #endif
-    void handleKeydownEvent(KeyboardEvent*) override;
+    void handleKeydownEvent(KeyboardEvent&) override;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
     void createShadowSubtree() override;
     Decimal parseToNumber(const String&, const Decimal&) const override;
@@ -79,7 +79,7 @@ private:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    void handleTouchEvent(TouchEvent*) override;
+    void handleTouchEvent(TouchEvent&) override;
 
 #if PLATFORM(IOS)
     void disabledAttributeChanged() override;

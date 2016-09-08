@@ -133,7 +133,7 @@ void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldE
         m_chooser->setSelectedColor(valueAsColor());
 }
 
-void ColorInputType::handleDOMActivateEvent(Event* event)
+void ColorInputType::handleDOMActivateEvent(Event& event)
 {
     if (element().isDisabledOrReadOnly() || !element().renderer())
         return;
@@ -148,7 +148,7 @@ void ColorInputType::handleDOMActivateEvent(Event* event)
             m_chooser->reattachColorChooser(valueAsColor());
     }
 
-    event->setDefaultHandled();
+    event.setDefaultHandled();
 }
 
 void ColorInputType::detach()

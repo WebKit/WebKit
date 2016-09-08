@@ -113,23 +113,23 @@ RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style,
     return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
-void SVGAElement::defaultEventHandler(Event* event)
+void SVGAElement::defaultEventHandler(Event& event)
 {
     if (isLink()) {
         if (focused() && isEnterKeyKeydownEvent(event)) {
-            event->setDefaultHandled();
-            dispatchSimulatedClick(event);
+            event.setDefaultHandled();
+            dispatchSimulatedClick(&event);
             return;
         }
 
-        if (MouseEvent::canTriggerActivationBehavior(*event)) {
+        if (MouseEvent::canTriggerActivationBehavior(event)) {
             String url = stripLeadingAndTrailingHTMLSpaces(href());
 
             if (url[0] == '#') {
                 Element* targetElement = treeScope().getElementById(url.substringSharingImpl(1));
                 if (is<SVGSMILElement>(targetElement)) {
                     downcast<SVGSMILElement>(*targetElement).beginByLinkActivation();
-                    event->setDefaultHandled();
+                    event.setDefaultHandled();
                     return;
                 }
                 // Only allow navigation to internal <view> anchors.
@@ -140,12 +140,12 @@ void SVGAElement::defaultEventHandler(Event* event)
             String target = this->target();
             if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new")
                 target = "_blank";
-            event->setDefaultHandled();
+            event.setDefaultHandled();
 
             Frame* frame = document().frame();
             if (!frame)
                 return;
-            frame->loader().urlSelected(document().completeURL(url), target, event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
+            frame->loader().urlSelected(document().completeURL(url), target, &event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }
@@ -190,13 +190,13 @@ bool SVGAElement::isMouseFocusable() const
     return SVGElement::isMouseFocusable();
 }
 
-bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool SVGAElement::isKeyboardFocusable(KeyboardEvent& event) const
 {
     if (isFocusable() && Element::supportsFocus())
         return SVGElement::isKeyboardFocusable(event);
 
     if (isLink())
-        return document().frame()->eventHandler().tabsToLinks(event);
+        return document().frame()->eventHandler().tabsToLinks(&event);
 
     return SVGElement::isKeyboardFocusable(event);
 }

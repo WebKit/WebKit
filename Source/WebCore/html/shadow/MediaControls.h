@@ -110,9 +110,9 @@ class MediaControls : public HTMLDivElement {
 protected:
     explicit MediaControls(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
 
-    virtual bool containsRelatedTarget(Event*);
+    virtual bool containsRelatedTarget(Event&);
 
     void setSliderVolume();
 

@@ -454,11 +454,10 @@ bool HTMLLinkElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name().localName() == hrefAttr || HTMLElement::isURLAttribute(attribute);
 }
 
-void HTMLLinkElement::defaultEventHandler(Event* event)
+void HTMLLinkElement::defaultEventHandler(Event& event)
 {
-    ASSERT(event);
-    if (MouseEvent::canTriggerActivationBehavior(*event)) {
-        handleClick(*event);
+    if (MouseEvent::canTriggerActivationBehavior(event)) {
+        handleClick(event);
         return;
     }
     HTMLElement::defaultEventHandler(event);

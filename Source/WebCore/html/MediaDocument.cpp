@@ -178,24 +178,24 @@ static inline HTMLVideoElement* ancestorVideoElement(Node* node)
     return downcast<HTMLVideoElement>(node);
 }
 
-void MediaDocument::defaultEventHandler(Event* event)
+void MediaDocument::defaultEventHandler(Event& event)
 {
     // Match the default Quicktime plugin behavior to allow 
     // clicking and double-clicking to pause and play the media.
-    Node* targetNode = event->target()->toNode();
+    Node* targetNode = event.target()->toNode();
     if (!targetNode)
         return;
 
     if (HTMLVideoElement* video = ancestorVideoElement(targetNode)) {
-        if (event->type() == eventNames().clickEvent) {
+        if (event.type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
                 video->pause();
-                event->setDefaultHandled();
+                event.setDefaultHandled();
             }
-        } else if (event->type() == eventNames().dblclickEvent) {
+        } else if (event.type() == eventNames().dblclickEvent) {
             if (video->canPlay()) {
                 video->play();
-                event->setDefaultHandled();
+                event.setDefaultHandled();
             }
         }
     }
@@ -203,12 +203,12 @@ void MediaDocument::defaultEventHandler(Event* event)
     if (!is<ContainerNode>(*targetNode))
         return;
     ContainerNode& targetContainer = downcast<ContainerNode>(*targetNode);
-    if (event->type() == eventNames().keydownEvent && is<KeyboardEvent>(*event)) {
+    if (event.type() == eventNames().keydownEvent && is<KeyboardEvent>(event)) {
         HTMLVideoElement* video = descendantVideoElement(targetContainer);
         if (!video)
             return;
 
-        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
+        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
         if (keyboardEvent.keyIdentifier() == "U+0020") { // space
             if (video->paused()) {
                 if (video->canPlay())

@@ -80,7 +80,7 @@ bool ImageInputType::supportsValidation() const
     return false;
 }
 
-void ImageInputType::handleDOMActivateEvent(Event* event)
+void ImageInputType::handleDOMActivateEvent(Event& event)
 {
     Ref<HTMLInputElement> element(this->element());
     if (element->isDisabledFormControl() || !element->form())
@@ -88,8 +88,8 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
     element->setActivatedSubmit(true);
 
     m_clickLocation = IntPoint();
-    if (event->underlyingEvent()) {
-        Event& underlyingEvent = *event->underlyingEvent();
+    if (event.underlyingEvent()) {
+        Event& underlyingEvent = *event.underlyingEvent();
         if (is<MouseEvent>(underlyingEvent)) {
             MouseEvent& mouseEvent = downcast<MouseEvent>(underlyingEvent);
             if (!mouseEvent.isSimulated())
@@ -99,7 +99,7 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
 
     element->form()->prepareForSubmission(event); // Event handlers can run.
     element->setActivatedSubmit(false);
-    event->setDefaultHandled();
+    event.setDefaultHandled();
 }
 
 RenderPtr<RenderElement> ImageInputType::createInputRenderer(RenderStyle&& style)

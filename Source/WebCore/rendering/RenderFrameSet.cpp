@@ -677,7 +677,7 @@ void RenderFrameSet::continueResizing(GridAxis& axis, int position)
     setNeedsLayout();
 }
 
-bool RenderFrameSet::userResize(MouseEvent* evt)
+bool RenderFrameSet::userResize(MouseEvent& event)
 {
     if (flattenFrameSet())
         return false;
@@ -685,8 +685,8 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
     if (!m_isResizing) {
         if (needsLayout())
             return false;
-        if (evt->type() == eventNames().mousedownEvent && evt->button() == LeftButton) {
-            FloatPoint localPos = absoluteToLocal(evt->absoluteLocation(), UseTransforms);
+        if (event.type() == eventNames().mousedownEvent && event.button() == LeftButton) {
+            FloatPoint localPos = absoluteToLocal(event.absoluteLocation(), UseTransforms);
             startResizing(m_cols, localPos.x());
             startResizing(m_rows, localPos.y());
             if (m_cols.m_splitBeingResized != noSplit || m_rows.m_splitBeingResized != noSplit) {
@@ -695,11 +695,11 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
             }
         }
     } else {
-        if (evt->type() == eventNames().mousemoveEvent || (evt->type() == eventNames().mouseupEvent && evt->button() == LeftButton)) {
-            FloatPoint localPos = absoluteToLocal(evt->absoluteLocation(), UseTransforms);
+        if (event.type() == eventNames().mousemoveEvent || (event.type() == eventNames().mouseupEvent && event.button() == LeftButton)) {
+            FloatPoint localPos = absoluteToLocal(event.absoluteLocation(), UseTransforms);
             continueResizing(m_cols, localPos.x());
             continueResizing(m_rows, localPos.y());
-            if (evt->type() == eventNames().mouseupEvent && evt->button() == LeftButton) {
+            if (event.type() == eventNames().mouseupEvent && event.button() == LeftButton) {
                 setIsResizing(false);
                 return true;
             }

@@ -89,12 +89,12 @@ public:
     void closedCaptionTracksChanged() override;
 
     bool shouldClosedCaptionsContainerPreventPageScrolling(int wheelDeltaY);
-    void handleClickEvent(Event*);
+    void handleClickEvent(Event&);
 
 private:
     MediaControlsApple(Document&);
 
-    void defaultEventHandler(Event*) override;
+    void defaultEventHandler(Event&) override;
     MediaControlsAppleEventListener& eventListener();
 
     void showClosedCaptionTrackList();

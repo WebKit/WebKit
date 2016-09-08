@@ -44,10 +44,10 @@ private:
     const AtomicString& formControlType() const override;
     bool valueMissing(const String&) const override;
     String valueMissingText() const override;
-    void handleClickEvent(MouseEvent*) override;
-    void handleKeydownEvent(KeyboardEvent*) override;
-    void handleKeyupEvent(KeyboardEvent*) override;
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
+    void handleClickEvent(MouseEvent&) override;
+    void handleKeydownEvent(KeyboardEvent&) override;
+    void handleKeyupEvent(KeyboardEvent&) override;
+    bool isKeyboardFocusable(KeyboardEvent&) const override;
     bool shouldSendChangeEventAfterCheckedChanged() override;
     void willDispatchClick(InputElementClickState&) override;
     void didDispatchClick(Event*, const InputElementClickState&) override;

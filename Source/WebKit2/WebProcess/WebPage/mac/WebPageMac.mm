@@ -532,7 +532,7 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
 {
     // First give accessibility a chance to handle the event.
     Frame* frame = frameForEvent(event);
-    frame->eventHandler().handleKeyboardSelectionMovementForAccessibility(event);
+    frame->eventHandler().handleKeyboardSelectionMovementForAccessibility(*event);
     if (event->defaultHandled())
         return true;
 
