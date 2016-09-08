@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLParagraphElement.h"
 #include "HTMLProgressElement.h"
+#include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
@@ -213,6 +214,11 @@ static inline bool fullyClipsContents(Node& node)
     auto& box = downcast<RenderBox>(*renderer);
     if (!box.hasOverflowClip())
         return false;
+
+    // Quirk to keep copy/paste in the CodeMirror editor version used in Jenkins working.
+    if (is<HTMLTextAreaElement>(node))
+        return box.size().isEmpty();
+
     return box.contentSize().isEmpty();
 }
 
