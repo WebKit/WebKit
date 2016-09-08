@@ -1431,10 +1431,8 @@ public:
                 move(resultGPR, scratchGPR);
                 sub32(Address(allocatorGPR, MarkedAllocator::offsetOfCellSize()), scratchGPR);
             } else {
-                // FIXME: We need a 3-operand sub, and ARM totally has it!
                 load32(Address(allocatorGPR, MarkedAllocator::offsetOfCellSize()), scratchGPR);
-                neg32(scratchGPR);
-                add32(resultGPR, scratchGPR);
+                sub32(resultGPR, scratchGPR, scratchGPR);
             }
         }
         negPtr(resultGPR);

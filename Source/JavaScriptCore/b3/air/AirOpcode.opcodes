@@ -170,12 +170,18 @@ Sub32 U:G:32, UZD:G:32
     x86: Addr, Tmp
     x86: Tmp, Addr
 
+arm64: Sub32 U:G:32, U:G:32, D:G:32
+    Tmp, Tmp, Tmp
+
 64: Sub64 U:G:64, UD:G:64
     Tmp, Tmp
     x86: Imm, Addr
     Imm, Tmp
     x86: Addr, Tmp
     x86: Tmp, Addr
+
+arm64: Sub64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
 
 SubDouble U:F:64, U:F:64, D:F:64
     arm64: Tmp, Tmp, Tmp

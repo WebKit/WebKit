@@ -1,3 +1,30 @@
+2016-09-08  Mark Lam  <mark.lam@apple.com>
+
+        Add support for a ternary sub32 emitter for ARM64 and 32-bit ARM.
+        https://bugs.webkit.org/show_bug.cgi?id=161724
+
+        Reviewed by Filip Pizlo.
+
+        ARM architectures support ternary sub instructions.  We should make use of them
+        in emitAllocateWithNonNullAllocator().
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::sub32):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::sub32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::sub32):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::sub32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::sub32):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testTernarySubInstructionSelection):
+        (JSC::B3::run):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+
 2016-09-08  Filip Pizlo  <fpizlo@apple.com>
 
         Move JSMap/JSSet over to Auxiliary MarkedSpace
