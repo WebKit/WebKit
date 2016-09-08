@@ -1,3 +1,18 @@
+2016-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Use of uninitialised memory in TransformationMatrx::blend4()
+        https://bugs.webkit.org/show_bug.cgi?id=134621
+        <rdar://problem/27337539>
+
+        Reviewed by Dean Jackson.
+
+        Change is based on the Blink change (patch by <alancutter@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?revision=177453&view=revision>
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/TransformationMatrix.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2016-08-30  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should handle relative URLs that start with //
