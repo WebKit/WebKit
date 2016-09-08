@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSModuleLoader.h"
+#include "ScriptModuleLoader.h"
 
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -37,12 +37,12 @@
 
 namespace WebCore {
 
-JSModuleLoader::JSModuleLoader(Document& document)
+ScriptModuleLoader::ScriptModuleLoader(Document& document)
     : m_document(document)
 {
 }
 
-JSC::JSInternalPromise* JSModuleLoader::resolve(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey)
+JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey, JSC::JSValue)
 {
     JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
 
@@ -82,7 +82,7 @@ JSC::JSInternalPromise* JSModuleLoader::resolve(JSC::JSGlobalObject* globalObjec
     return deferred->resolve(exec, jsString(exec, completedUrl.string()));
 }
 
-JSC::JSInternalPromise* JSModuleLoader::fetch(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue)
+JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue)
 {
     JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
 
@@ -101,7 +101,7 @@ JSC::JSInternalPromise* JSModuleLoader::fetch(JSC::JSGlobalObject* globalObject,
     return deferred->promise();
 }
 
-JSC::JSValue JSModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue)
+JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue, JSC::JSValue)
 {
     JSC::VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

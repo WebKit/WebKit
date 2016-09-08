@@ -66,36 +66,36 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
 
 /* Source for ModuleLoaderPrototype.lut.h
 @begin moduleLoaderPrototypeTable
-    setStateToMax                  JSBuiltin                                        DontEnum|Function 2
-    newRegistryEntry               JSBuiltin                                        DontEnum|Function 1
-    ensureRegistered               JSBuiltin                                        DontEnum|Function 1
-    forceFulfillPromise            JSBuiltin                                        DontEnum|Function 2
-    fulfillFetch                   JSBuiltin                                        DontEnum|Function 2
-    fulfillTranslate               JSBuiltin                                        DontEnum|Function 2
-    fulfillInstantiate             JSBuiltin                                        DontEnum|Function 2
-    commitInstantiated             JSBuiltin                                        DontEnum|Function 3
-    instantiation                  JSBuiltin                                        DontEnum|Function 3
-    requestFetch                   JSBuiltin                                        DontEnum|Function 1
-    requestTranslate               JSBuiltin                                        DontEnum|Function 1
-    requestInstantiate             JSBuiltin                                        DontEnum|Function 1
-    requestResolveDependencies     JSBuiltin                                        DontEnum|Function 1
-    requestInstantiateAll          JSBuiltin                                        DontEnum|Function 1
-    requestLink                    JSBuiltin                                        DontEnum|Function 1
-    requestReady                   JSBuiltin                                        DontEnum|Function 1
-    link                           JSBuiltin                                        DontEnum|Function 1
+    setStateToMax                  JSBuiltin                                           DontEnum|Function 2
+    newRegistryEntry               JSBuiltin                                           DontEnum|Function 1
+    ensureRegistered               JSBuiltin                                           DontEnum|Function 1
+    forceFulfillPromise            JSBuiltin                                           DontEnum|Function 2
+    fulfillFetch                   JSBuiltin                                           DontEnum|Function 2
+    fulfillTranslate               JSBuiltin                                           DontEnum|Function 2
+    fulfillInstantiate             JSBuiltin                                           DontEnum|Function 2
+    commitInstantiated             JSBuiltin                                           DontEnum|Function 3
+    instantiation                  JSBuiltin                                           DontEnum|Function 3
+    requestFetch                   JSBuiltin                                           DontEnum|Function 2
+    requestTranslate               JSBuiltin                                           DontEnum|Function 2
+    requestInstantiate             JSBuiltin                                           DontEnum|Function 2
+    requestSatisfy                 JSBuiltin                                           DontEnum|Function 2
+    requestInstantiateAll          JSBuiltin                                           DontEnum|Function 2
+    requestLink                    JSBuiltin                                           DontEnum|Function 2
+    requestReady                   JSBuiltin                                           DontEnum|Function 2
+    link                           JSBuiltin                                           DontEnum|Function 2
     moduleDeclarationInstantiation moduleLoaderPrototypeModuleDeclarationInstantiation DontEnum|Function 2
-    moduleEvaluation               JSBuiltin                                        DontEnum|Function 2
-    evaluate                       moduleLoaderPrototypeEvaluate                       DontEnum|Function 2
-    provide                        JSBuiltin                                        DontEnum|Function 3
-    loadAndEvaluateModule          JSBuiltin                                        DontEnum|Function 2
-    loadModule                     JSBuiltin                                        DontEnum|Function 2
-    linkAndEvaluateModule          JSBuiltin                                        DontEnum|Function 1
+    moduleEvaluation               JSBuiltin                                           DontEnum|Function 2
+    evaluate                       moduleLoaderPrototypeEvaluate                       DontEnum|Function 3
+    provide                        JSBuiltin                                           DontEnum|Function 3
+    loadAndEvaluateModule          JSBuiltin                                           DontEnum|Function 3
+    loadModule                     JSBuiltin                                           DontEnum|Function 3
+    linkAndEvaluateModule          JSBuiltin                                           DontEnum|Function 2
     parseModule                    moduleLoaderPrototypeParseModule                    DontEnum|Function 2
     requestedModules               moduleLoaderPrototypeRequestedModules               DontEnum|Function 1
-    resolve                        moduleLoaderPrototypeResolve                        DontEnum|Function 1
-    fetch                          moduleLoaderPrototypeFetch                          DontEnum|Function 1
-    translate                      moduleLoaderPrototypeTranslate                      DontEnum|Function 2
-    instantiate                    moduleLoaderPrototypeInstantiate                    DontEnum|Function 2
+    resolve                        moduleLoaderPrototypeResolve                        DontEnum|Function 2
+    fetch                          moduleLoaderPrototypeFetch                          DontEnum|Function 2
+    translate                      moduleLoaderPrototypeTranslate                      DontEnum|Function 3
+    instantiate                    moduleLoaderPrototypeInstantiate                    DontEnum|Function 3
 @end
 */
 
@@ -183,7 +183,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolve(ExecState* exec)
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->resolve(exec, exec->argument(0), exec->argument(1)));
+    return JSValue::encode(loader->resolve(exec, exec->argument(0), exec->argument(1), exec->argument(2)));
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeFetch(ExecState* exec)
@@ -196,7 +196,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeFetch(ExecState* exec)
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->fetch(exec, exec->argument(0)));
+    return JSValue::encode(loader->fetch(exec, exec->argument(0), exec->argument(1)));
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeTranslate(ExecState* exec)
@@ -208,7 +208,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeTranslate(ExecState* exec)
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->translate(exec, exec->argument(0), exec->argument(1)));
+    return JSValue::encode(loader->translate(exec, exec->argument(0), exec->argument(1), exec->argument(2)));
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeInstantiate(ExecState* exec)
@@ -222,7 +222,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeInstantiate(ExecState* exec)
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->instantiate(exec, exec->argument(0), exec->argument(1)));
+    return JSValue::encode(loader->instantiate(exec, exec->argument(0), exec->argument(1), exec->argument(2)));
 }
 
 // ------------------- Additional Hook Functions ---------------------------
@@ -235,7 +235,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeEvaluate(ExecState* exec)
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->evaluate(exec, exec->argument(0), exec->argument(1)));
+    return JSValue::encode(loader->evaluate(exec, exec->argument(0), exec->argument(1), exec->argument(2)));
 }
 
 } // namespace JSC

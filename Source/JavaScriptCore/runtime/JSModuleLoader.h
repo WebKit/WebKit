@@ -42,7 +42,7 @@ public:
         Fetch = 1,
         Translate = 2,
         Instantiate = 3,
-        ResolveDependencies = 4,
+        Satisfy = 4,
         Link = 5,
         Ready = 6,
     };
@@ -63,18 +63,18 @@ public:
 
     // APIs to control the module loader.
     JSValue provide(ExecState*, JSValue key, Status, const String&);
-    JSInternalPromise* loadAndEvaluateModule(ExecState*, JSValue moduleName, JSValue referrer);
-    JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer);
-    JSValue linkAndEvaluateModule(ExecState*, JSValue moduleKey);
+    JSInternalPromise* loadAndEvaluateModule(ExecState*, JSValue moduleName, JSValue referrer, JSValue initiator);
+    JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer, JSValue initiator);
+    JSValue linkAndEvaluateModule(ExecState*, JSValue moduleKey, JSValue initiator);
 
     // Platform dependent hooked APIs.
-    JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer);
-    JSInternalPromise* fetch(ExecState*, JSValue key);
-    JSInternalPromise* translate(ExecState*, JSValue key, JSValue payload);
-    JSInternalPromise* instantiate(ExecState*, JSValue key, JSValue source);
+    JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer, JSValue initiator);
+    JSInternalPromise* fetch(ExecState*, JSValue key, JSValue initiator);
+    JSInternalPromise* translate(ExecState*, JSValue key, JSValue payload, JSValue initiator);
+    JSInternalPromise* instantiate(ExecState*, JSValue key, JSValue source, JSValue initiator);
 
     // Additional platform dependent hooked APIs.
-    JSValue evaluate(ExecState*, JSValue key, JSValue moduleRecord);
+    JSValue evaluate(ExecState*, JSValue key, JSValue moduleRecord, JSValue initiator);
 
 protected:
     void finishCreation(VM&, JSGlobalObject*);

@@ -124,7 +124,7 @@ class IntPoint;
 class LayoutPoint;
 class LayoutRect;
 class LiveNodeList;
-class JSModuleLoader;
+class ScriptModuleLoader;
 class JSNode;
 class Locale;
 class Location;
@@ -133,6 +133,7 @@ class MediaPlaybackTarget;
 class MediaPlaybackTargetClient;
 class MediaQueryList;
 class MediaQueryMatcher;
+class ScriptModuleLoader;
 class MouseEventWithHitTestResults;
 class NamedFlowCollection;
 class NodeFilter;
@@ -947,7 +948,7 @@ public:
     Document& topDocument() const;
     
     ScriptRunner* scriptRunner() { return m_scriptRunner.get(); }
-    JSModuleLoader* moduleLoader() { return m_moduleLoader.get(); }
+    ScriptModuleLoader* moduleLoader() { return m_moduleLoader.get(); }
 
     HTMLScriptElement* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : nullptr; }
     void pushCurrentScript(HTMLScriptElement*);
@@ -1551,7 +1552,7 @@ private:
     bool m_overMinimumLayoutThreshold;
     
     std::unique_ptr<ScriptRunner> m_scriptRunner;
-    std::unique_ptr<JSModuleLoader> m_moduleLoader;
+    std::unique_ptr<ScriptModuleLoader> m_moduleLoader;
 
     Vector<RefPtr<HTMLScriptElement>> m_currentScriptStack;
 

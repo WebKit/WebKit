@@ -1,5 +1,69 @@
 2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Add initiator parameter to module pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=161470
+
+        Reviewed by Saam Barati.
+
+        The fetching semantics of the <script type="module"> tag has per module-tag context.
+        For example, "nonce", "crossorigin" etc. attributes are shared in the fetching requests
+        issued from the module-tag. To transfer this information, we add a new parameter "initiator"
+        to the module loader pipeline. We are planning to transfer information by this parameter.
+
+        At the same time, we also perform some clean up.
+
+        - Use arrow function in ModuleLoaderPrototype.js.
+        - Rename "ResolveDependencies" to "Satisfy" to align to the loader spec.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (newRegistryEntry):
+        (commitInstantiated):
+        (requestFetch):
+        (requestTranslate):
+        (requestInstantiate):
+        (requestSatisfy):
+        (requestInstantiateAll):
+        (requestLink):
+        (moduleEvaluation):
+        (provide):
+        (loadAndEvaluateModule):
+        (requestResolveDependencies.): Deleted.
+        (requestResolveDependencies): Deleted.
+        (requestReady): Deleted.
+        (link): Deleted.
+        (loadModule): Deleted.
+        (linkAndEvaluateModule): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderResolve):
+        (GlobalObject::moduleLoaderFetch):
+        * runtime/Completion.cpp:
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        (JSC::linkAndEvaluateModule):
+        * runtime/Completion.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::JSModuleLoader::translate):
+        (JSC::JSModuleLoader::instantiate):
+        (JSC::JSModuleLoader::evaluate):
+        * runtime/JSModuleLoader.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeResolve):
+        (JSC::moduleLoaderPrototypeFetch):
+        (JSC::moduleLoaderPrototypeTranslate):
+        (JSC::moduleLoaderPrototypeInstantiate):
+        (JSC::moduleLoaderPrototypeEvaluate):
+
+2016-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] linking and evaluating the modules are done in a sync manner
         https://bugs.webkit.org/show_bug.cgi?id=161467
 

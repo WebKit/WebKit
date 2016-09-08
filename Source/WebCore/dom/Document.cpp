@@ -103,7 +103,6 @@
 #include "InspectorInstrumentation.h"
 #include "JSCustomElementInterface.h"
 #include "JSLazyEventListener.h"
-#include "JSModuleLoader.h"
 #include "KeyboardEvent.h"
 #include "Language.h"
 #include "LoaderStrategy.h"
@@ -153,6 +152,7 @@
 #include "SchemeRegistry.h"
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
+#include "ScriptModuleLoader.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScrollingCoordinator.h"
@@ -480,7 +480,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_startTime(std::chrono::steady_clock::now())
     , m_overMinimumLayoutThreshold(false)
     , m_scriptRunner(std::make_unique<ScriptRunner>(*this))
-    , m_moduleLoader(std::make_unique<JSModuleLoader>(*this))
+    , m_moduleLoader(std::make_unique<ScriptModuleLoader>(*this))
     , m_xmlVersion(ASCIILiteral("1.0"))
     , m_xmlStandalone(StandaloneUnspecified)
     , m_hasXMLDeclaration(false)

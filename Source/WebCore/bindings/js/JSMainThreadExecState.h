@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +91,30 @@ public:
     {
         JSMainThreadExecState currentState(exec);
         task.run(exec);
+    }
+
+    static JSC::JSInternalPromise* loadModule(JSC::ExecState* exec, const String& moduleName, JSC::JSValue initiator)
+    {
+        JSMainThreadExecState currentState(exec);
+        return JSC::loadModule(exec, moduleName, initiator);
+    }
+
+    static JSC::JSInternalPromise* loadModule(JSC::ExecState* exec, const JSC::SourceCode& sourceCode, JSC::JSValue initiator)
+    {
+        JSMainThreadExecState currentState(exec);
+        return JSC::loadModule(exec, sourceCode, initiator);
+    }
+
+    static JSC::JSValue linkAndEvaluateModule(JSC::ExecState* exec, const JSC::Identifier& moduleKey, JSC::JSValue initiator, NakedPtr<JSC::Exception>& returnedException)
+    {
+        JSMainThreadExecState currentState(exec);
+        JSC::JSValue returnValue = JSC::linkAndEvaluateModule(exec, moduleKey, initiator);
+        if (exec->hadException()) {
+            returnedException = exec->vm().exception();
+            exec->clearException();
+            return JSC::jsUndefined();
+        }
+        return returnValue;
     }
 
     static InspectorInstrumentationCookie instrumentFunctionCall(ScriptExecutionContext*, JSC::CallType, const JSC::CallData&);

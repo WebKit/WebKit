@@ -1208,7 +1208,6 @@ set(WebCore_SOURCES
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp
-    bindings/js/JSModuleLoader.cpp
     bindings/js/JSMutationCallback.cpp
     bindings/js/JSMutationObserverCustom.cpp
     bindings/js/JSNamedNodeMapCustom.cpp
@@ -1257,6 +1256,7 @@ set(WebCore_SOURCES
     bindings/js/ScriptCachedFrameData.cpp
     bindings/js/ScriptController.cpp
     bindings/js/ScriptGlobalObject.cpp
+    bindings/js/ScriptModuleLoader.cpp
     bindings/js/ScriptState.cpp
     bindings/js/StructuredClone.cpp
     bindings/js/SerializedScriptValue.cpp
