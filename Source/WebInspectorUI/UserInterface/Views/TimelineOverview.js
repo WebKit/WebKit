@@ -31,7 +31,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
         console.assert(timelineRecording instanceof WebInspector.TimelineRecording);
 
-        this._timelinesViewModeSettings = this._createViewModeSettings(WebInspector.TimelineOverview.ViewMode.Timelines, 0.0001, 60, 0.01, 0, 15);
+        this._timelinesViewModeSettings = this._createViewModeSettings(WebInspector.TimelineOverview.ViewMode.Timelines, WebInspector.TimelineOverview.MinimumDurationPerPixel, WebInspector.TimelineOverview.MaximumDurationPerPixel, 0.01, 0, 15);
         this._instrumentTypes = WebInspector.TimelineManager.availableTimelineTypes();
 
         if (WebInspector.FPSInstrument.supported()) {
@@ -995,6 +995,8 @@ WebInspector.TimelineOverview.PlaceholderOverviewGraph = Symbol("placeholder-ove
 
 WebInspector.TimelineOverview.ScrollDeltaDenominator = 500;
 WebInspector.TimelineOverview.EditInstrumentsStyleClassName = "edit-instruments";
+WebInspector.TimelineOverview.MinimumDurationPerPixel = 0.0001;
+WebInspector.TimelineOverview.MaximumDurationPerPixel = 60;
 
 WebInspector.TimelineOverview.ViewMode = {
     Timelines: "timeline-overview-view-mode-timelines",
