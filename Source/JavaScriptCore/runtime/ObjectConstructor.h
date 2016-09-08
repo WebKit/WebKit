@@ -125,7 +125,6 @@ inline JSObject* constructObjectFromPropertyDescriptor(ExecState* exec, const Pr
 
 
 JS_EXPORT_PRIVATE JSObject* objectConstructorFreeze(ExecState*, JSObject*);
-JSValue objectConstructorGetPrototypeOf(ExecState*, JSObject*);
 JSValue objectConstructorGetOwnPropertyDescriptor(ExecState*, JSObject*, const Identifier&);
 JSValue objectConstructorGetOwnPropertyDescriptors(ExecState*, JSObject*);
 JSArray* ownPropertyKeys(ExecState*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);

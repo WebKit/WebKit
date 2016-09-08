@@ -41,6 +41,7 @@ CustomConstructor
 CustomDeleteProperty
 CustomEnumerateProperty
 CustomGetOwnPropertySlot
+CustomGetPrototype
 CustomGetter
 CustomIndexedSetter
 CustomIsReachable
@@ -50,6 +51,7 @@ CustomPreventExtensions
 CustomProxyToJSObject
 CustomPutFunction
 CustomReturn
+CustomSetPrototype
 CustomSetter
 CustomToJSObject
 Deletable

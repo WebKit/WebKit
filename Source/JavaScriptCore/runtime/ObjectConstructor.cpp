@@ -167,49 +167,6 @@ CallType ObjectConstructor::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
-class ObjectConstructorGetPrototypeOfFunctor {
-public:
-    ObjectConstructorGetPrototypeOfFunctor(ExecState* exec, JSObject* object)
-        : m_exec(exec)
-        , m_hasSkippedFirstFrame(false)
-        , m_object(object)
-        , m_result(jsUndefined())
-    {
-    }
-
-    JSValue result() const { return m_result; }
-
-    StackVisitor::Status operator()(StackVisitor& visitor) const
-    {
-        if (!m_hasSkippedFirstFrame) {
-            m_hasSkippedFirstFrame = true;
-            return StackVisitor::Continue;
-        }
-
-        if (m_object->allowsAccessFrom(visitor->callFrame()))
-            m_result = m_object->getPrototype(m_exec->vm(), m_exec);
-        else
-            m_result = jsNull();
-        return StackVisitor::Done;
-    }
-
-private:
-    ExecState* m_exec;
-    mutable bool m_hasSkippedFirstFrame;
-    JSObject* m_object;
-    mutable JSValue m_result;
-};
-
-JSValue objectConstructorGetPrototypeOf(ExecState* exec, JSObject* object)
-{
-    ObjectConstructorGetPrototypeOfFunctor functor(exec, object);
-    // This can throw but it's just unneeded extra work to check for it. The return
-    // value from this function is only used as the return value from a host call.
-    // Therefore, the return value is only used if there wasn't an exception.
-    exec->iterate(functor);
-    return functor.result();
-}
-
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -217,7 +174,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
     JSObject* object = exec->argument(0).toObject(exec);
     if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(objectConstructorGetPrototypeOf(exec, object));
+    return JSValue::encode(object->getPrototype(exec->vm(), exec));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
@@ -236,11 +193,6 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
     JSObject* object = objectValue.toObject(exec);
     if (UNLIKELY(scope.exception()))
         return JSValue::encode(objectValue);
-
-    if (!checkProtoSetterAccessAllowed(exec, object)) {
-        throwTypeError(exec, scope, ASCIILiteral("Permission denied"));
-        return JSValue::encode(objectValue);
-    }
 
     bool shouldThrowIfCantSet = true;
     bool didSetPrototype = object->setPrototype(vm, exec, protoValue, shouldThrowIfCantSet);

@@ -11,7 +11,6 @@ PASS Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set(['foo']) 
 PASS (0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get)() threw exception TypeError: Can't convert undefined or null to object.
 PASS (0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set)(['foo']) threw exception TypeError: Can't convert undefined or null to object.
 PASS top_level_sloppy_getter(); did not throw exception.
-PASS top_level_sloppy_setter(['foo']); did not throw exception.
 PASS successfullyParsed is true
 
 TEST COMPLETE

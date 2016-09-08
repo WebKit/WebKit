@@ -866,38 +866,6 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(Ex
     return throwVMTypeError(exec, scope, "'arguments', 'callee', and 'caller' cannot be accessed in strict mode.");
 }
 
-class GlobalFuncProtoGetterFunctor {
-public:
-    GlobalFuncProtoGetterFunctor(ExecState* exec, JSObject* thisObject)
-        : m_exec(exec)
-        , m_hasSkippedFirstFrame(false)
-        , m_thisObject(thisObject)
-        , m_result(JSValue::encode(jsUndefined()))
-    {
-    }
-
-    EncodedJSValue result() { return m_result; }
-
-    StackVisitor::Status operator()(StackVisitor& visitor) const
-    {
-        if (!m_hasSkippedFirstFrame) {
-            m_hasSkippedFirstFrame = true;
-            return StackVisitor::Continue;
-        }
-
-        if (m_thisObject->allowsAccessFrom(visitor->callFrame()))
-            m_result = JSValue::encode(m_thisObject->getPrototype(m_exec->vm(), m_exec));
-
-        return StackVisitor::Done;
-    }
-
-private:
-    ExecState* m_exec;
-    mutable bool m_hasSkippedFirstFrame;
-    JSObject* m_thisObject;
-    mutable EncodedJSValue m_result;
-};
-
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -915,47 +883,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
         return JSValue::encode(prototype);
     }
 
-    GlobalFuncProtoGetterFunctor functor(exec, thisObject);
-    // This can throw but it's just unneeded extra work to check for it. The return
-    // value from this function is only used as the return value from a host call.
-    // Therefore, the return value is only used if there wasn't an exception.
-    exec->iterate(functor);
-    return functor.result();
-}
-
-class GlobalFuncProtoSetterFunctor {
-public:
-    GlobalFuncProtoSetterFunctor(JSObject* thisObject)
-        : m_hasSkippedFirstFrame(false)
-        , m_allowsAccess(false)
-        , m_thisObject(thisObject)
-    {
-    }
-
-    bool allowsAccess() const { return m_allowsAccess; }
-
-    StackVisitor::Status operator()(StackVisitor& visitor) const
-    {
-        if (!m_hasSkippedFirstFrame) {
-            m_hasSkippedFirstFrame = true;
-            return StackVisitor::Continue;
-        }
-
-        m_allowsAccess = m_thisObject->allowsAccessFrom(visitor->callFrame());
-        return StackVisitor::Done;
-    }
-
-private:
-    mutable bool m_hasSkippedFirstFrame;
-    mutable bool m_allowsAccess;
-    JSObject* m_thisObject;
-};
-
-bool checkProtoSetterAccessAllowed(ExecState* exec, JSObject* object)
-{
-    GlobalFuncProtoSetterFunctor functor(object);
-    exec->iterate(functor);
-    return functor.allowsAccess();
+    return JSValue::encode(thisObject->getPrototype(vm, exec));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
@@ -972,9 +900,6 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 
     // Setting __proto__ of a primitive should have no effect.
     if (!thisObject)
-        return JSValue::encode(jsUndefined());
-
-    if (!checkProtoSetterAccessAllowed(exec, thisObject))
         return JSValue::encode(jsUndefined());
 
     // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.

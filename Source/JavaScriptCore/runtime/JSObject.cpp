@@ -1299,14 +1299,17 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
     }
 
     JSValue nextPrototype = prototype;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
     while (nextPrototype && nextPrototype.isObject()) {
         if (nextPrototype == this) {
             if (shouldThrowIfCantSet)
                 throwTypeError(exec, scope, ASCIILiteral("cyclic __proto__ value"));
             return false;
         }
-        if (UNLIKELY(asObject(nextPrototype)->methodTable(vm)->getPrototype != defaultGetPrototype))
+        // FIXME: The specification currently says we should check if the [[GetPrototypeOf]] internal method of nextPrototype
+        // is not the ordinary object internal method. However, we currently restrict this to Proxy objects as it would allow
+        // for cycles with certain HTML objects (WindowProxy, Location) otherwise.
+        // https://bugs.webkit.org/show_bug.cgi?id=161534
+        if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType))
             break; // We're done. Set the prototype.
         nextPrototype = asObject(nextPrototype)->getPrototypeDirect();
     }
@@ -1327,12 +1330,6 @@ JSValue JSObject::getPrototype(JSObject* object, ExecState*)
 bool JSObject::setPrototype(VM& vm, ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
 {
     return methodTable(vm)->setPrototype(this, exec, prototype, shouldThrowIfCantSet);
-}
-
-bool JSObject::allowsAccessFrom(ExecState* exec)
-{
-    JSGlobalObject* globalObject = this->globalObject();
-    return globalObject->globalObjectMethodTable()->allowsAccessFrom(globalObject, exec);
 }
 
 bool JSObject::putGetter(ExecState* exec, PropertyName propertyName, JSValue getter, unsigned attributes)

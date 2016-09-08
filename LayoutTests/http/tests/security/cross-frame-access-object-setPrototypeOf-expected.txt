@@ -1,15 +1,19 @@
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 This tests that you can't set the prototype of the window or location objects cross-origin using Object.setPrototypeOf()
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS: targetWindow instanceof Array should be 'false' and is.
-PASS Object.setPrototypeOf(targetWindow, Array.prototype) threw exception TypeError: Permission denied.
+PASS Object.setPrototypeOf(targetWindow, Array.prototype) threw exception TypeError: Cannot set prototype of this object.
 PASS: targetWindow instanceof Array should be 'false' and is.
 PASS: targetWindow.location instanceof Array should be 'false' and is.
-PASS Object.setPrototypeOf(targetWindow.location, Array.prototype) threw exception TypeError: Permission denied.
+PASS Object.setPrototypeOf(targetWindow.location, Array.prototype) threw exception TypeError: Cannot set prototype of this object.
+PASS: targetWindow.location instanceof Array should be 'false' and is.
+PASS: targetWindow instanceof Array should be 'false' and is.
+PASS protoSetter.call(targetWindow, Array.prototype) threw exception TypeError: Cannot set prototype of this object.
+PASS: targetWindow instanceof Array should be 'false' and is.
+PASS: targetWindow.location instanceof Array should be 'false' and is.
+PASS protoSetter.call(targetWindow.location, Array.prototype) threw exception TypeError: Cannot set prototype of this object.
 PASS: targetWindow.location instanceof Array should be 'false' and is.
 PASS: successfullyParsed should be 'true' and is.
 

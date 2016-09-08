@@ -32,5 +32,3 @@ shouldThrow("(0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').se
 var top_level_sloppy_getter = Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get;
 shouldNotThrow("top_level_sloppy_getter();");
 
-var top_level_sloppy_setter = Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set;
-shouldNotThrow("top_level_sloppy_setter(['foo']);");

@@ -166,8 +166,6 @@ public:
     // being returned. Once this is fixed we should migrate code & remove this method.
     JS_EXPORT_PRIVATE bool getOwnPropertyDescriptor(ExecState*, PropertyName, PropertyDescriptor&);
 
-    JS_EXPORT_PRIVATE bool allowsAccessFrom(ExecState*);
-
     unsigned getArrayLength() const
     {
         if (!hasIndexedProperties(indexingType()))
