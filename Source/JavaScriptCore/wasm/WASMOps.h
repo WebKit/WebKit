@@ -106,15 +106,15 @@ namespace WASM {
 
 #define CREATE_ENUM_VALUE(name, id, b3op) name = id,
 
-enum WASMOpType : uint8_t {
+enum OpType : uint8_t {
     FOR_EACH_WASM_OP(CREATE_ENUM_VALUE)
 };
 
-enum class WASMBinaryOpType : uint8_t {
+enum class BinaryOpType : uint8_t {
     FOR_EACH_WASM_BINARY_OP(CREATE_ENUM_VALUE)
 };
 
-enum class WASMUnaryOpType : uint8_t {
+enum class UnaryOpType : uint8_t {
     FOR_EACH_WASM_UNARY_OP(CREATE_ENUM_VALUE)
 };
 

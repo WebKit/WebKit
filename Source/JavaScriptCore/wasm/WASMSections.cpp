@@ -42,14 +42,14 @@ struct SectionData {
 
 static const bool verbose = false;
 
-static const unsigned sectionDataLength = static_cast<unsigned>(WASMSections::Section::Unknown);
+static const unsigned sectionDataLength = static_cast<unsigned>(Sections::Unknown);
 static const SectionData sectionData[sectionDataLength] {
 #define CREATE_SECTION_DATA(name, str) { sizeof(str) - 1, str },
     FOR_EACH_WASM_SECTION_TYPE(CREATE_SECTION_DATA)
 #undef CREATE_SECTION_DATA
 };
 
-WASMSections::Section WASMSections::lookup(const uint8_t* name, unsigned length)
+Sections::Section Sections::lookup(const uint8_t* name, unsigned length)
 {
     if (verbose)
         dataLogLn("Decoding section with name: ", String(name, length));
@@ -57,9 +57,9 @@ WASMSections::Section WASMSections::lookup(const uint8_t* name, unsigned length)
         if (sectionData[i].length != length)
             continue;
         if (!memcmp(name, sectionData[i].name, length))
-            return static_cast<WASMSections::Section>(i);
+            return static_cast<Sections::Section>(i);
     }
-    return WASMSections::Section::Unknown;
+    return Sections::Unknown;
 }
 
 } // namespace WASM

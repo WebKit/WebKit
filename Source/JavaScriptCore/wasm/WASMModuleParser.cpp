@@ -38,7 +38,7 @@ namespace WASM {
 
 static const bool verbose = false;
 
-bool WASMModuleParser::parse()
+bool ModuleParser::parse()
 {
     if (m_sourceLength < 8)
         return false;
@@ -59,7 +59,7 @@ bool WASMModuleParser::parse()
     if (verbose)
         dataLogLn("Passed processing header.");
 
-    WASMSections::Section previousSection = WASMSections::Section::Unknown;
+    Sections::Section previousSection = Sections::Unknown;
     while (m_offset < m_sourceLength) {
         if (verbose)
             dataLogLn("Starting to parse next section at offset: ", m_offset);
@@ -71,8 +71,8 @@ bool WASMModuleParser::parse()
         if (m_offset + sectionNameLength + maxLEBByteLength >= m_sourceLength)
             return false;
 
-        WASMSections::Section section = WASMSections::lookup(m_source.data() + m_offset, sectionNameLength);
-        if (!WASMSections::validateOrder(previousSection, section))
+        Sections::Section section = Sections::lookup(m_source.data() + m_offset, sectionNameLength);
+        if (!Sections::validateOrder(previousSection, section))
             return false;
         m_offset += sectionNameLength;
 
@@ -83,10 +83,10 @@ bool WASMModuleParser::parse()
         unsigned end = m_offset + sectionLength;
 
         switch (section) {
-        case WASMSections::Section::End:
+        case Sections::End:
             return true;
 
-        case WASMSections::Section::FunctionTypes: {
+        case Sections::FunctionTypes: {
             if (verbose)
                 dataLogLn("Parsing types.");
             if (!parseFunctionTypes())
@@ -94,7 +94,7 @@ bool WASMModuleParser::parse()
             break;
         }
 
-        case WASMSections::Section::Signatures: {
+        case Sections::Signatures: {
             if (verbose)
                 dataLogLn("Parsing function signatures.");
             if (!parseFunctionSignatures())
@@ -102,7 +102,7 @@ bool WASMModuleParser::parse()
             break;
         }
 
-        case WASMSections::Section::Definitions: {
+        case Sections::Definitions: {
             if (verbose)
                 dataLogLn("Parsing function definitions.");
             if (!parseFunctionDefinitions())
@@ -110,7 +110,7 @@ bool WASMModuleParser::parse()
             break;
         }
 
-        case WASMSections::Section::Unknown: {
+        case Sections::Unknown: {
             if (verbose)
                 dataLogLn("Unknown section, skipping.");
             m_offset += sectionLength;
@@ -131,7 +131,7 @@ bool WASMModuleParser::parse()
     return true;
 }
 
-bool WASMModuleParser::parseFunctionTypes()
+bool ModuleParser::parseFunctionTypes()
 {
     uint32_t count;
     if (!parseVarUInt32(count))
@@ -157,27 +157,29 @@ bool WASMModuleParser::parseFunctionTypes()
         if (verbose)
             dataLogLn("argumentCount: ", argumentCount);
 
-        Vector<WASMValueType> argumentTypes;
+        Vector<Type> argumentTypes;
+        argumentTypes.resize(argumentCount);
+
         for (unsigned i = 0; i < argumentCount; ++i) {
-            if (!parseUInt7(type) || type >= static_cast<uint8_t>(WASMValueType::NumberOfTypes))
+            if (!parseUInt7(type) || type >= static_cast<uint8_t>(Type::LastValueType))
                 return false;
-            argumentTypes.append(static_cast<WASMValueType>(type));
+            argumentTypes.append(static_cast<Type>(type));
         }
 
         if (!parseVarUInt1(type))
             return false;
-        WASMFunctionReturnType returnType;
+        Type returnType;
 
         if (verbose)
             dataLogLn(type);
 
         if (type) {
-            WASMValueType value;
+            Type value;
             if (!parseValueType(value))
                 return false;
-            returnType = static_cast<WASMFunctionReturnType>(value);
+            returnType = static_cast<Type>(value);
         } else
-            returnType = WASMFunctionReturnType::Void;
+            returnType = Type::Void;
 
         // TODO: Actually do something with this data...
         UNUSED_PARAM(returnType);
@@ -185,7 +187,7 @@ bool WASMModuleParser::parseFunctionTypes()
     return true;
 }
 
-bool WASMModuleParser::parseFunctionSignatures()
+bool ModuleParser::parseFunctionSignatures()
 {
     uint32_t count;
     if (!parseVarUInt32(count))
@@ -202,7 +204,7 @@ bool WASMModuleParser::parseFunctionSignatures()
     return true;
 }
 
-bool WASMModuleParser::parseFunctionDefinitions()
+bool ModuleParser::parseFunctionDefinitions()
 {
     uint32_t count;
     if (!parseVarUInt32(count))
@@ -216,7 +218,7 @@ bool WASMModuleParser::parseFunctionDefinitions()
         if (!parseVarUInt32(functionSize))
             return false;
 
-        WASMFunctionInformation& info = m_functions[i];
+        FunctionInformation& info = m_functions[i];
         info.start = m_offset;
         info.end = m_offset + functionSize;
         m_offset = info.end;

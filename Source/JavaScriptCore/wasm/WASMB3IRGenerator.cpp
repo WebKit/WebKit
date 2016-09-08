@@ -41,20 +41,20 @@ namespace WASM {
 
 using namespace B3;
 
-inline B3::Opcode toB3Op(WASMBinaryOpType op)
+inline B3::Opcode toB3Op(BinaryOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, op, b3op) case WASMBinaryOpType::name: return b3op;
+#define CREATE_CASE(name, op, b3op) case BinaryOpType::name: return b3op;
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline B3::Opcode toB3Op(WASMUnaryOpType op)
+inline B3::Opcode toB3Op(UnaryOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, op, b3op) case WASMUnaryOpType::name: return b3op;
+#define CREATE_CASE(name, op, b3op) case UnaryOpType::name: return b3op;
     FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
     }
@@ -67,11 +67,11 @@ public:
 
     B3IRGenerator(Procedure&);
 
-    void addLocal(WASMValueType, uint32_t);
-    ExpressionType addConstant(WASMValueType, uint64_t);
+    void addLocal(Type, uint32_t);
+    ExpressionType addConstant(Type, uint64_t);
 
-    bool WARN_UNUSED_RETURN binaryOp(WASMBinaryOpType, ExpressionType left, ExpressionType right, ExpressionType& result);
-    bool WARN_UNUSED_RETURN unaryOp(WASMUnaryOpType, ExpressionType arg, ExpressionType& result);
+    bool WARN_UNUSED_RETURN binaryOp(BinaryOpType, ExpressionType left, ExpressionType right, ExpressionType& result);
+    bool WARN_UNUSED_RETURN unaryOp(UnaryOpType, ExpressionType arg, ExpressionType& result);
 
     bool WARN_UNUSED_RETURN addBlock();
     bool WARN_UNUSED_RETURN endBlock(Vector<ExpressionType>& expressionStack);
@@ -96,33 +96,33 @@ B3IRGenerator::B3IRGenerator(Procedure& procedure)
     m_currentBlock = m_proc.addBlock();
 }
 
-void B3IRGenerator::addLocal(WASMValueType, uint32_t)
+void B3IRGenerator::addLocal(Type, uint32_t)
 {
     // TODO: Add locals.
 }
 
-bool B3IRGenerator::unaryOp(WASMUnaryOpType op, ExpressionType arg, ExpressionType& result)
+bool B3IRGenerator::unaryOp(UnaryOpType op, ExpressionType arg, ExpressionType& result)
 {
     result = m_currentBlock->appendNew<Value>(m_proc, toB3Op(op), Origin(), arg);
     return true;
 }
 
-bool B3IRGenerator::binaryOp(WASMBinaryOpType op, ExpressionType left, ExpressionType right, ExpressionType& result)
+bool B3IRGenerator::binaryOp(BinaryOpType op, ExpressionType left, ExpressionType right, ExpressionType& result)
 {
     result = m_currentBlock->appendNew<Value>(m_proc, toB3Op(op), Origin(), left, right);
     return true;
 }
 
-B3IRGenerator::ExpressionType B3IRGenerator::addConstant(WASMValueType type, uint64_t value)
+B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t value)
 {
     switch (type) {
-    case WASMValueType::I32:
+    case Int32:
         return m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), static_cast<int32_t>(value));
-    case WASMValueType::I64:
+    case Int64:
         return m_currentBlock->appendNew<Const64Value>(m_proc, Origin(), value);
-    case WASMValueType::F32:
+    case Float:
         return m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), bitwise_cast<float>(static_cast<int32_t>(value)));
-    case WASMValueType::F64:
+    case Double:
         return m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), bitwise_cast<double>(value));
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -205,11 +205,11 @@ BasicBlock* B3IRGenerator::blockForControlLevel(unsigned level)
     return m_controlStack[m_controlStack.size() - 1 - level].first;
 }
 
-std::unique_ptr<Compilation> parseAndCompile(VM& vm, Vector<uint8_t>& source, WASMFunctionInformation info, unsigned optLevel)
+std::unique_ptr<Compilation> parseAndCompile(VM& vm, Vector<uint8_t>& source, FunctionInformation info, unsigned optLevel)
 {
     Procedure procedure;
     B3IRGenerator context(procedure);
-    WASMFunctionParser<B3IRGenerator> parser(context, source, info);
+    FunctionParser<B3IRGenerator> parser(context, source, info);
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();
 

@@ -35,7 +35,7 @@ namespace JSC {
 
 namespace WASM {
 
-std::unique_ptr<B3::Compilation> parseAndCompile(VM&, Vector<uint8_t>&, WASMFunctionInformation, unsigned optLevel = 1);
+std::unique_ptr<B3::Compilation> parseAndCompile(VM&, Vector<uint8_t>&, FunctionInformation, unsigned optLevel = 1);
 
 } // namespace WASM
 

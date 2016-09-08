@@ -38,9 +38,9 @@ namespace JSC {
 
 namespace WASM {
 
-class WASMParser {
+class Parser {
 protected:
-    WASMParser(const Vector<uint8_t>&, size_t start, size_t end);
+    Parser(const Vector<uint8_t>&, size_t start, size_t end);
 
     bool WARN_UNUSED_RETURN consumeCharacter(char);
     bool WARN_UNUSED_RETURN consumeString(const char*);
@@ -51,14 +51,14 @@ protected:
     bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t& result) { return decodeUInt32(m_source.data(), m_sourceLength, m_offset, result); }
 
 
-    bool WARN_UNUSED_RETURN parseValueType(WASMValueType& result);
+    bool WARN_UNUSED_RETURN parseValueType(Type& result);
 
     const Vector<uint8_t>& m_source;
     size_t m_sourceLength;
     size_t m_offset;
 };
 
-ALWAYS_INLINE WASMParser::WASMParser(const Vector<uint8_t>& sourceBuffer, size_t start, size_t end)
+ALWAYS_INLINE Parser::Parser(const Vector<uint8_t>& sourceBuffer, size_t start, size_t end)
     : m_source(sourceBuffer)
     , m_sourceLength(end)
     , m_offset(start)
@@ -67,7 +67,7 @@ ALWAYS_INLINE WASMParser::WASMParser(const Vector<uint8_t>& sourceBuffer, size_t
     ASSERT(start < end);
 }
 
-ALWAYS_INLINE bool WASMParser::consumeCharacter(char c)
+ALWAYS_INLINE bool Parser::consumeCharacter(char c)
 {
     if (m_offset >= m_sourceLength)
         return false;
@@ -78,7 +78,7 @@ ALWAYS_INLINE bool WASMParser::consumeCharacter(char c)
     return false;
 }
 
-ALWAYS_INLINE bool WASMParser::consumeString(const char* str)
+ALWAYS_INLINE bool Parser::consumeString(const char* str)
 {
     unsigned start = m_offset;
     for (unsigned i = 0; str[i]; i++) {
@@ -90,7 +90,7 @@ ALWAYS_INLINE bool WASMParser::consumeString(const char* str)
     return true;
 }
 
-ALWAYS_INLINE bool WASMParser::parseUInt32(uint32_t& result)
+ALWAYS_INLINE bool Parser::parseUInt32(uint32_t& result)
 {
     if (m_offset + 4 >= m_sourceLength)
         return false;
@@ -99,7 +99,7 @@ ALWAYS_INLINE bool WASMParser::parseUInt32(uint32_t& result)
     return true;
 }
 
-ALWAYS_INLINE bool WASMParser::parseUInt7(uint8_t& result)
+ALWAYS_INLINE bool Parser::parseUInt7(uint8_t& result)
 {
     if (m_offset >= m_sourceLength)
         return false;
@@ -107,7 +107,7 @@ ALWAYS_INLINE bool WASMParser::parseUInt7(uint8_t& result)
     return result < 0x80;
 }
 
-ALWAYS_INLINE bool WASMParser::parseVarUInt1(uint8_t& result)
+ALWAYS_INLINE bool Parser::parseVarUInt1(uint8_t& result)
 {
     uint32_t temp;
     if (!parseVarUInt32(temp))
@@ -116,14 +116,14 @@ ALWAYS_INLINE bool WASMParser::parseVarUInt1(uint8_t& result)
     return temp <= 1;
 }
 
-ALWAYS_INLINE bool WASMParser::parseValueType(WASMValueType& result)
+ALWAYS_INLINE bool Parser::parseValueType(Type& result)
 {
     uint8_t value;
     if (!parseUInt7(value))
         return false;
-    if (value >= static_cast<uint8_t>(WASMValueType::NumberOfTypes))
+    if (value >= static_cast<uint8_t>(Type::LastValueType))
         return false;
-    result = static_cast<WASMValueType>(value);
+    result = static_cast<Type>(value);
     return true;
 }
 

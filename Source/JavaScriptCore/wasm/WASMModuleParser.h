@@ -35,19 +35,19 @@ namespace JSC {
 
 namespace WASM {
 
-class WASMModuleParser : public WASMParser {
+class ModuleParser : public Parser {
 public:
 
     static const unsigned magicNumber = 0xc;
 
-    WASMModuleParser(const Vector<uint8_t>& sourceBuffer)
-        : WASMParser(sourceBuffer, 0, sourceBuffer.size())
+    ModuleParser(const Vector<uint8_t>& sourceBuffer)
+        : Parser(sourceBuffer, 0, sourceBuffer.size())
     {
     }
 
     bool WARN_UNUSED_RETURN parse();
 
-    const Vector<WASMFunctionInformation>& functionInformation() { return m_functions; }
+    const Vector<FunctionInformation>& functionInformation() { return m_functions; }
 
 private:
     bool WARN_UNUSED_RETURN parseFunctionTypes();
@@ -55,9 +55,9 @@ private:
     bool WARN_UNUSED_RETURN parseFunctionDefinitions();
     bool WARN_UNUSED_RETURN parseFunctionDefinition(uint32_t number);
     bool WARN_UNUSED_RETURN parseBlock();
-    bool WARN_UNUSED_RETURN parseExpression(WASMOpType);
+    bool WARN_UNUSED_RETURN parseExpression(OpType);
 
-    Vector<WASMFunctionInformation> m_functions;
+    Vector<FunctionInformation> m_functions;
 };
 
 } // namespace WASM
