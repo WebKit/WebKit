@@ -1,3 +1,13 @@
+2016-09-07  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] .tbd files for the shims end up installed when building with GENERATE_TEXT_BASED_STUBS=YES
+        https://bugs.webkit.org/show_bug.cgi?id=161722
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/Shim.xcconfig: Don’t install the shims. The Copy Shims build phase in the
+          WebKit target will copy them into place without bringing their .tbd files along.
+
 2016-09-07  Mark Lam  <mark.lam@apple.com>
 
         Add CatchScope and force all exception checks to be via ThrowScope or CatchScope.
