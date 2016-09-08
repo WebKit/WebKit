@@ -137,7 +137,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
 }
 
 template<typename ViewClass>
-char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size)
+char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size, char* vector)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -147,6 +147,10 @@ char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size)
         throwException(exec, scope, createRangeError(exec, ASCIILiteral("Requested length is negative")));
         return 0;
     }
+    
+    if (vector)
+        return bitwise_cast<char*>(ViewClass::createWithFastVector(exec, structure, size, vector));
+    
     return bitwise_cast<char*>(ViewClass::create(exec, structure, size));
 }
 
@@ -993,9 +997,9 @@ char* JIT_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStr
 }
 
 char* JIT_OPERATION operationNewInt8ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSInt8Array>(exec, structure, length);
+    return newTypedArrayWithSize<JSInt8Array>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewInt8ArrayWithOneArgument(
@@ -1007,9 +1011,9 @@ char* JIT_OPERATION operationNewInt8ArrayWithOneArgument(
 }
 
 char* JIT_OPERATION operationNewInt16ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSInt16Array>(exec, structure, length);
+    return newTypedArrayWithSize<JSInt16Array>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewInt16ArrayWithOneArgument(
@@ -1021,9 +1025,9 @@ char* JIT_OPERATION operationNewInt16ArrayWithOneArgument(
 }
 
 char* JIT_OPERATION operationNewInt32ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSInt32Array>(exec, structure, length);
+    return newTypedArrayWithSize<JSInt32Array>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewInt32ArrayWithOneArgument(
@@ -1035,9 +1039,9 @@ char* JIT_OPERATION operationNewInt32ArrayWithOneArgument(
 }
 
 char* JIT_OPERATION operationNewUint8ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSUint8Array>(exec, structure, length);
+    return newTypedArrayWithSize<JSUint8Array>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewUint8ArrayWithOneArgument(
@@ -1049,9 +1053,9 @@ char* JIT_OPERATION operationNewUint8ArrayWithOneArgument(
 }
 
 char* JIT_OPERATION operationNewUint8ClampedArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSUint8ClampedArray>(exec, structure, length);
+    return newTypedArrayWithSize<JSUint8ClampedArray>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewUint8ClampedArrayWithOneArgument(
@@ -1063,9 +1067,9 @@ char* JIT_OPERATION operationNewUint8ClampedArrayWithOneArgument(
 }
 
 char* JIT_OPERATION operationNewUint16ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSUint16Array>(exec, structure, length);
+    return newTypedArrayWithSize<JSUint16Array>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewUint16ArrayWithOneArgument(
@@ -1077,9 +1081,9 @@ char* JIT_OPERATION operationNewUint16ArrayWithOneArgument(
 }
 
 char* JIT_OPERATION operationNewUint32ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSUint32Array>(exec, structure, length);
+    return newTypedArrayWithSize<JSUint32Array>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewUint32ArrayWithOneArgument(
@@ -1091,9 +1095,9 @@ char* JIT_OPERATION operationNewUint32ArrayWithOneArgument(
 }
 
 char* JIT_OPERATION operationNewFloat32ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSFloat32Array>(exec, structure, length);
+    return newTypedArrayWithSize<JSFloat32Array>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(
@@ -1105,9 +1109,9 @@ char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(
 }
 
 char* JIT_OPERATION operationNewFloat64ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length)
+    ExecState* exec, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSFloat64Array>(exec, structure, length);
+    return newTypedArrayWithSize<JSFloat64Array>(exec, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(

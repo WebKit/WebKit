@@ -72,23 +72,23 @@ char* JIT_OPERATION operationNewArray(ExecState*, Structure*, void*, size_t) WTF
 char* JIT_OPERATION operationNewArrayBuffer(ExecState*, Structure*, size_t, size_t) WTF_INTERNAL;
 char* JIT_OPERATION operationNewEmptyArray(ExecState*, Structure*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewArrayWithSize(ExecState*, Structure*, int32_t, Butterfly*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt8ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt8ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewInt8ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt16ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt16ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewInt16ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt32ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt32ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewInt32ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint8ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint8ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewUint8ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint8ClampedArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint8ClampedArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewUint8ClampedArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint16ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint16ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewUint16ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint32ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint32ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewUint32ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewFloat32ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewFloat32ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewFloat64ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewFloat64ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
@@ -203,7 +203,7 @@ char* JIT_OPERATION triggerOSREntryNow(ExecState*, unsigned bytecodeIndex) WTF_I
 
 } // extern "C"
 
-inline P_JITOperation_EStZ operationNewTypedArrayWithSizeForType(TypedArrayType type)
+inline P_JITOperation_EStZP operationNewTypedArrayWithSizeForType(TypedArrayType type)
 {
     switch (type) {
     case TypeInt8:

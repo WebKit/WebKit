@@ -4152,6 +4152,8 @@ private:
             LBasicBlock nonZeroCase = m_out.newBlock();
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
+            
+            ValueFromBlock noStorage = m_out.anchor(m_out.intPtrZero);
 
             m_out.branch(
                 m_out.above(size, m_out.constInt32(JSArrayBufferView::fastSizeLimit)),
@@ -4171,7 +4173,18 @@ private:
                     m_out.constIntPtr(~static_cast<intptr_t>(7)));
             }
         
-            LValue storage = allocateBasicStorage(byteSize, slowCase);
+            LValue allocator = allocatorForSize(
+                vm().heap.subspaceForAuxiliaryData(), byteSize, slowCase);
+            LValue storage = allocateHeapCell(allocator, slowCase);
+            
+            splatWords(
+                storage,
+                m_out.int32Zero,
+                m_out.castToInt32(m_out.lShr(byteSize, m_out.constIntPtr(3))),
+                m_out.int64Zero,
+                m_heaps.typedArrayProperties);
+
+            ValueFromBlock haveStorage = m_out.anchor(storage);
 
             LValue fastResultValue =
                 allocateObject<JSArrayBufferView>(structure, m_out.intPtrZero, slowCase);
@@ -4179,19 +4192,21 @@ private:
             m_out.storePtr(storage, fastResultValue, m_heaps.JSArrayBufferView_vector);
             m_out.store32(size, fastResultValue, m_heaps.JSArrayBufferView_length);
             m_out.store32(m_out.constInt32(FastTypedArray), fastResultValue, m_heaps.JSArrayBufferView_mode);
-
+            
             ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             m_out.jump(continuation);
 
             m_out.appendTo(slowCase, continuation);
+            LValue storageValue = m_out.phi(pointerType(), noStorage, haveStorage);
 
             LValue slowResultValue = lazySlowPath(
                 [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                     return createLazyCallGenerator(
                         operationNewTypedArrayWithSizeForType(type), locations[0].directGPR(),
-                        CCallHelpers::TrustedImmPtr(structure), locations[1].directGPR());
+                        CCallHelpers::TrustedImmPtr(structure), locations[1].directGPR(),
+                        locations[2].directGPR());
                 },
-                size);
+                size, storageValue);
             ValueFromBlock slowResult = m_out.anchor(slowResultValue);
             m_out.jump(continuation);
 
@@ -8028,31 +8043,39 @@ private:
         else
             hole = m_out.constInt64(JSValue::encode(JSValue()));
         
+        splatWords(butterfly, begin, end, hole, heap->atAnyIndex());
+    }
+    
+    void splatWords(LValue base, LValue begin, LValue end, LValue value, const AbstractHeap& heap)
+    {
         const uint64_t unrollingLimit = 10;
         if (begin->hasInt() && end->hasInt()) {
             uint64_t beginConst = static_cast<uint64_t>(begin->asInt());
             uint64_t endConst = static_cast<uint64_t>(end->asInt());
             
             if (endConst - beginConst <= unrollingLimit) {
-                for (uint64_t i = beginConst; i < endConst; ++i)
-                    m_out.store64(hole, butterfly, heap->at(i));
+                for (uint64_t i = beginConst; i < endConst; ++i) {
+                    LValue pointer = m_out.add(base, m_out.constIntPtr(i * sizeof(uint64_t)));
+                    m_out.store64(value, TypedPointer(heap, pointer));
+                }
                 return;
             }
         }
 
-        // Doubles must be initialized to PNaN.
         LBasicBlock initLoop = m_out.newBlock();
         LBasicBlock initDone = m_out.newBlock();
         
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(initLoop);
+        
         ValueFromBlock originalIndex = m_out.anchor(end);
-        ValueFromBlock originalPointer = m_out.anchor(butterfly);
+        ValueFromBlock originalPointer = m_out.anchor(base);
         m_out.branch(m_out.notEqual(end, begin), unsure(initLoop), unsure(initDone));
         
-        LBasicBlock initLastNext = m_out.appendTo(initLoop, initDone);
+        m_out.appendTo(initLoop, initDone);
         LValue index = m_out.phi(Int32, originalIndex);
         LValue pointer = m_out.phi(pointerType(), originalPointer);
         
-        m_out.store64(hole, TypedPointer(heap->atAnyIndex(), pointer));
+        m_out.store64(value, TypedPointer(heap, pointer));
         
         LValue nextIndex = m_out.sub(index, m_out.int32One);
         m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
@@ -8060,7 +8083,7 @@ private:
         m_out.branch(
             m_out.notEqual(nextIndex, begin), unsure(initLoop), unsure(initDone));
         
-        m_out.appendTo(initDone, initLastNext);
+        m_out.appendTo(initDone, lastNext);
     }
     
     LValue allocatePropertyStorage(LValue object, Structure* previousStructure)
@@ -8836,32 +8859,6 @@ private:
         LValue allocator = allocatorForSize(
             vm().heap.subspaceForObjectOfType<ClassType>(), size, slowPath);
         return allocateObject(allocator, structure, butterfly, slowPath);
-    }
-    
-    // Returns a pointer to the end of the allocation.
-    LValue allocateBasicStorageAndGetEnd(LValue size, LBasicBlock slowPath)
-    {
-        CopiedAllocator& allocator = vm().heap.storageAllocator();
-        
-        LBasicBlock success = m_out.newBlock();
-        
-        LValue remaining = m_out.loadPtr(m_out.absolute(&allocator.m_currentRemaining));
-        LValue newRemaining = m_out.sub(remaining, size);
-        
-        m_out.branch(
-            m_out.lessThan(newRemaining, m_out.intPtrZero),
-            rarely(slowPath), usually(success));
-        
-        m_out.appendTo(success);
-        
-        m_out.storePtr(newRemaining, m_out.absolute(&allocator.m_currentRemaining));
-        return m_out.sub(
-            m_out.loadPtr(m_out.absolute(&allocator.m_currentPayloadEnd)), newRemaining);
-    }
-
-    LValue allocateBasicStorage(LValue size, LBasicBlock slowPath)
-    {
-        return m_out.sub(allocateBasicStorageAndGetEnd(size, slowPath), size);
     }
     
     LValue allocateObject(Structure* structure)

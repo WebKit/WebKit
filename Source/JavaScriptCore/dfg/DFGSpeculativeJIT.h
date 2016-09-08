@@ -988,19 +988,19 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(P_JITOperation_EStZ operation, GPRReg result, Structure* structure, GPRReg arg2)
+    JITCompiler::Call callOperation(P_JITOperation_EStZP operation, GPRReg result, Structure* structure, GPRReg arg2, GPRReg arg3)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2);
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2, arg3);
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(P_JITOperation_EStZ operation, GPRReg result, Structure* structure, size_t arg2)
+    JITCompiler::Call callOperation(P_JITOperation_EStZP operation, GPRReg result, Structure* structure, size_t arg2, GPRReg arg3)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), TrustedImm32(arg2));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), TrustedImm32(arg2), arg3);
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(P_JITOperation_EStZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(P_JITOperation_EStZP operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(P_JITOperation_EStZB operation, GPRReg result, Structure* structure, GPRReg arg2, GPRReg butterfly)
@@ -2572,31 +2572,6 @@ public:
     void moveFalseTo(GPRReg);
     void blessBoolean(GPRReg);
     
-    // size can be an immediate or a register, and must be in bytes. If size is a register,
-    // it must be a different register than resultGPR. Emits code that place a pointer to
-    // the end of the allocation. The returned jump is the jump to the slow path.
-    template<typename SizeType>
-    MacroAssembler::Jump emitAllocateBasicStorage(SizeType size, GPRReg resultGPR)
-    {
-        CopiedAllocator* copiedAllocator = &m_jit.vm()->heap.storageAllocator();
-
-        // It's invalid to allocate zero bytes in CopiedSpace. 
-#ifndef NDEBUG
-        m_jit.move(size, resultGPR);
-        MacroAssembler::Jump nonZeroSize = m_jit.branchTest32(MacroAssembler::NonZero, resultGPR);
-        m_jit.abortWithReason(DFGBasicStorageAllocatorZeroSize);
-        nonZeroSize.link(&m_jit);
-#endif
-
-        m_jit.loadPtr(&copiedAllocator->m_currentRemaining, resultGPR);
-        MacroAssembler::Jump slowPath = m_jit.branchSubPtr(JITCompiler::Signed, size, resultGPR);
-        m_jit.storePtr(resultGPR, &copiedAllocator->m_currentRemaining);
-        m_jit.negPtr(resultGPR);
-        m_jit.addPtr(JITCompiler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), resultGPR);
-        
-        return slowPath;
-    }
-
     // Allocator for a cell of a specific size.
     template <typename StructureType> // StructureType can be GPR or ImmPtr.
     void emitAllocateJSCell(
