@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AcceleratedSurface.h"
 
+#include "WebPage.h"
 #include <WebCore/PlatformDisplay.h>
 
 #if PLATFORM(WAYLAND)
