@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2008, 2010, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -46,10 +46,13 @@ template<> JSValue JSImageConstructor::prototypeForStructure(VM& vm, const JSDOM
 
 template<> EncodedJSValue JSImageConstructor::construct(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSImageConstructor* jsConstructor = jsCast<JSImageConstructor*>(state->callee());
     Document* document = jsConstructor->document();
     if (!document)
-        return throwVMError(state, createReferenceError(state, "Image constructor associated document is unavailable"));
+        return throwVMError(state, scope, createReferenceError(state, "Image constructor associated document is unavailable"));
 
     // Calling toJS on the document causes the JS document wrapper to be
     // added to the window object. This is done to ensure that JSDocument::visit

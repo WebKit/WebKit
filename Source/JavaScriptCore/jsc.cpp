@@ -365,12 +365,15 @@ public:
 private:
     static EncodedJSValue customGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
     {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
         CustomGetter* thisObject = jsDynamicCast<CustomGetter*>(JSValue::decode(thisValue));
         if (!thisObject)
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, scope);
         bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(exec, "shouldThrow"))).toBoolean(exec);
         if (shouldThrow)
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, scope);
         return JSValue::encode(jsNumber(100));
     }
 };
@@ -470,9 +473,12 @@ private:
 
     static EncodedJSValue lengthGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
     {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
         RuntimeArray* thisObject = jsDynamicCast<RuntimeArray*>(JSValue::decode(thisValue));
         if (!thisObject)
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, scope);
         return JSValue::encode(jsNumber(thisObject->getLength()));
     }
 
@@ -1232,11 +1238,14 @@ EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionCreateElement(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSLockHolder lock(exec);
     Root* root = jsDynamicCast<Root*>(exec->argument(0));
     if (!root)
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Cannot create Element without a Root."))));
-    return JSValue::encode(Element::create(exec->vm(), exec->lexicalGlobalObject(), root));
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Cannot create Element without a Root."))));
+    return JSValue::encode(Element::create(vm, exec->lexicalGlobalObject(), root));
 }
 
 EncodedJSValue JSC_HOST_CALL functionGetElement(ExecState* exec)
@@ -1416,20 +1425,23 @@ EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 
 EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
 
-    GlobalObject* globalObject = GlobalObject::create(exec->vm(), GlobalObject::createStructure(exec->vm(), jsNull()), Vector<String>());
+    GlobalObject* globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
 
     JSArray* array = constructEmptyArray(globalObject->globalExec(), 0);
     for (unsigned i = 1; i < exec->argumentCount(); ++i)
         array->putDirectIndex(globalObject->globalExec(), i - 1, exec->uncheckedArgument(i));
     globalObject->putDirect(
-        exec->vm(), Identifier::fromString(globalObject->globalExec(), "arguments"), array);
+        vm, Identifier::fromString(globalObject->globalExec(), "arguments"), array);
 
     NakedPtr<Exception> exception;
     StopWatch stopWatch;
@@ -1438,7 +1450,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     stopWatch.stop();
 
     if (exception) {
-        exec->vm().throwException(globalObject->globalExec(), exception);
+        throwException(globalObject->globalExec(), scope, exception);
         return JSValue::encode(jsUndefined());
     }
     
@@ -1447,23 +1459,26 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionRunString(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String source = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    GlobalObject* globalObject = GlobalObject::create(exec->vm(), GlobalObject::createStructure(exec->vm(), jsNull()), Vector<String>());
+    GlobalObject* globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
 
     JSArray* array = constructEmptyArray(globalObject->globalExec(), 0);
     for (unsigned i = 1; i < exec->argumentCount(); ++i)
         array->putDirectIndex(globalObject->globalExec(), i - 1, exec->uncheckedArgument(i));
     globalObject->putDirect(
-        exec->vm(), Identifier::fromString(globalObject->globalExec(), "arguments"), array);
+        vm, Identifier::fromString(globalObject->globalExec(), "arguments"), array);
 
     NakedPtr<Exception> exception;
     evaluate(globalObject->globalExec(), makeSource(source), JSValue(), exception);
 
     if (exception) {
-        exec->vm().throwException(globalObject->globalExec(), exception);
+        scope.throwException(globalObject->globalExec(), exception);
         return JSValue::encode(jsUndefined());
     }
     
@@ -1472,24 +1487,30 @@ EncodedJSValue JSC_HOST_CALL functionRunString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
     NakedPtr<Exception> evaluationException;
     JSValue result = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), evaluationException);
     if (evaluationException)
-        exec->vm().throwException(exec, evaluationException);
+        throwException(exec, scope, evaluationException);
     return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL functionLoadString(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String sourceCode = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1498,30 +1519,36 @@ EncodedJSValue JSC_HOST_CALL functionLoadString(ExecState* exec)
     NakedPtr<Exception> evaluationException;
     JSValue result = evaluate(globalObject->globalExec(), makeSource(sourceCode), JSValue(), evaluationException);
     if (evaluationException)
-        exec->vm().throwException(exec, evaluationException);
+        throwException(exec, scope, evaluationException);
     return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
 
     return JSValue::encode(jsString(exec, stringFromUTF(script)));
 }
 
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
@@ -1533,7 +1560,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
     stopWatch.stop();
 
     if (!validSyntax)
-        exec->vm().throwException(exec, syntaxException);
+        throwException(exec, scope, syntaxException);
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
 
@@ -1638,12 +1665,15 @@ EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (exec->argumentCount() < 1)
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Not enough arguments"))));
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Not enough arguments"))));
     
     JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(exec->argument(0));
     if (!buffer)
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Expected an array buffer"))));
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Expected an array buffer"))));
     
     ArrayBufferContents dummyContents;
     buffer->impl()->transfer(dummyContents);
@@ -1810,27 +1840,30 @@ EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*)
 
 EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String fileName = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSInternalPromise* promise = loadAndEvaluateModule(exec, fileName);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
     JSValue error;
-    JSFunction* errorHandler = JSNativeStdFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, String(), [&](ExecState* exec) {
+    JSFunction* errorHandler = JSNativeStdFunction::create(vm, exec->lexicalGlobalObject(), 1, String(), [&](ExecState* exec) {
         error = exec->argument(0);
         return JSValue::encode(jsUndefined());
     });
 
     promise->then(exec, nullptr, errorHandler);
-    exec->vm().drainMicrotasks();
+    vm.drainMicrotasks();
     if (error)
-        return JSValue::encode(exec->vm().throwException(exec, error));
+        return JSValue::encode(throwException(exec, scope, error));
     return JSValue::encode(jsUndefined());
 }
 
@@ -1858,6 +1891,9 @@ EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String source = exec->argument(0).toWTFString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1870,7 +1906,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
     stopWatch.stop();
 
     if (!validSyntax)
-        exec->vm().throwException(exec, jsNontrivialString(exec, toString("SyntaxError: ", error.message(), ":", error.line())));
+        throwException(exec, scope, jsNontrivialString(exec, toString("SyntaxError: ", error.message(), ":", error.line())));
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
 
@@ -1907,10 +1943,13 @@ EncodedJSValue JSC_HOST_CALL functionStartSamplingProfiler(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState* exec)
 {
-    if (!exec->vm().samplingProfiler())
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Sampling profiler was never started"))));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String jsonString = exec->vm().samplingProfiler()->stackTracesAsJSON();
+    if (!vm.samplingProfiler())
+        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Sampling profiler was never started"))));
+
+    String jsonString = vm.samplingProfiler()->stackTracesAsJSON();
     EncodedJSValue result = JSValue::encode(JSONParse(exec, jsonString));
     RELEASE_ASSERT(!exec->hadException());
     return result;

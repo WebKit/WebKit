@@ -31,6 +31,7 @@
 #include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
+#include "JSObjectInlines.h"
 #include "ObjectConstructor.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
@@ -79,19 +80,20 @@ Structure* ProxyObject::structureForTarget(JSGlobalObject* globalObject, JSValue
 
 void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValue handler)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
     Base::finishCreation(vm);
     if (!target.isObject()) {
-        throwTypeError(exec, ASCIILiteral("A Proxy's 'target' should be an Object"));
+        throwTypeError(exec, scope, ASCIILiteral("A Proxy's 'target' should be an Object"));
         return;
     }
     if (ProxyObject* targetAsProxy = jsDynamicCast<ProxyObject*>(target)) {
         if (targetAsProxy->handler().isNull()) {
-            throwTypeError(exec, ASCIILiteral("If a Proxy's handler is another Proxy object, the other Proxy should not have been revoked"));
+            throwTypeError(exec, scope, ASCIILiteral("If a Proxy's handler is another Proxy object, the other Proxy should not have been revoked"));
             return;
         }
     }
     if (!handler.isObject()) {
-        throwTypeError(exec, ASCIILiteral("A Proxy's 'handler' should be an Object"));
+        throwTypeError(exec, scope, ASCIILiteral("A Proxy's 'handler' should be an Object"));
         return;
     }
 
@@ -116,8 +118,9 @@ static const char* s_proxyAlreadyRevokedErrorMessage = "Proxy has already been r
 static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValue receiver, PropertyName propertyName)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return JSValue();
     }
 
@@ -135,7 +138,7 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
 
     JSValue handlerValue = proxyObject->handler();
     if (handlerValue.isNull())
-        return throwTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        return throwTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
 
     JSObject* handler = jsCast<JSObject*>(handlerValue);
     CallData callData;
@@ -159,10 +162,10 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
     if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
         if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
             if (!sameValue(exec, descriptor.value(), trapResult))
-                return throwTypeError(exec, ASCIILiteral("Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property"));
+                return throwTypeError(exec, scope, ASCIILiteral("Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property"));
         } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.getter().isUndefined()) {
             if (!trapResult.isUndefined())
-                return throwTypeError(exec, ASCIILiteral("Proxy handler's 'get' result of a non-configurable accessor property without a getter should be undefined"));
+                return throwTypeError(exec, scope, ASCIILiteral("Proxy handler's 'get' result of a non-configurable accessor property without a getter should be undefined"));
         }
     }
 
@@ -185,8 +188,9 @@ bool ProxyObject::performGet(ExecState* exec, PropertyName propertyName, Propert
 bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return false;
     }
     JSObject* target = this->target();
@@ -200,7 +204,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return false;
     }
 
@@ -221,7 +225,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         return false;
 
     if (!trapResult.isUndefined() && !trapResult.isObject()) {
-        throwVMTypeError(exec, ASCIILiteral("result of 'getOwnPropertyDescriptor' call should either be an Object or undefined"));
+        throwVMTypeError(exec, scope, ASCIILiteral("result of 'getOwnPropertyDescriptor' call should either be an Object or undefined"));
         return false;
     }
 
@@ -234,7 +238,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         if (!isTargetPropertyDescriptorDefined)
             return false;
         if (!targetPropertyDescriptor.configurable()) {
-            throwVMTypeError(exec, ASCIILiteral("When the result of 'getOwnPropertyDescriptor' is undefined the target must be configurable"));
+            throwVMTypeError(exec, scope, ASCIILiteral("When the result of 'getOwnPropertyDescriptor' is undefined the target must be configurable"));
             return false;
         }
         // FIXME: this doesn't work if 'target' is another Proxy. We don't have isExtensible implemented in a way that fits w/ Proxys.
@@ -246,7 +250,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
             // FIXME: Come up with a test for this error. I'm not sure how to because
             // Object.seal(o) will make all fields [[Configurable]] false.
             // https://bugs.webkit.org/show_bug.cgi?id=154376
-            throwVMTypeError(exec, ASCIILiteral("When 'getOwnPropertyDescriptor' returns undefined, the 'target' of a Proxy should be extensible"));
+            throwVMTypeError(exec, scope, ASCIILiteral("When 'getOwnPropertyDescriptor' returns undefined, the 'target' of a Proxy should be extensible"));
             return false;
         }
 
@@ -264,13 +268,13 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     bool valid = validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, isExtensible,
         trapResultAsDescriptor, isTargetPropertyDescriptorDefined, targetPropertyDescriptor, throwException);
     if (!valid) {
-        throwVMTypeError(exec, ASCIILiteral("Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test"));
+        throwVMTypeError(exec, scope, ASCIILiteral("Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test"));
         return false;
     }
 
     if (!trapResultAsDescriptor.configurable()) {
         if (!isTargetPropertyDescriptorDefined || targetPropertyDescriptor.configurable()) {
-            throwVMTypeError(exec, ASCIILiteral("Result from 'getOwnPropertyDescriptor' can't be non-configurable when the 'target' doesn't have it as an own property or if it is a configurable own property on 'target'"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Result from 'getOwnPropertyDescriptor' can't be non-configurable when the 'target' doesn't have it as an own property or if it is a configurable own property on 'target'"));
             return false;
         }
     }
@@ -291,8 +295,9 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return false;
     }
     JSObject* target = this->target();
@@ -307,7 +312,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return false;
     }
 
@@ -338,14 +343,14 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
             return false;
         if (isPropertyDescriptorDefined) {
             if (!descriptor.configurable()) {
-                throwVMTypeError(exec, ASCIILiteral("Proxy 'has' must return 'true' for non-configurable properties"));
+                throwVMTypeError(exec, scope, ASCIILiteral("Proxy 'has' must return 'true' for non-configurable properties"));
                 return false;
             }
             bool isExtensible = target->isExtensible(exec);
             if (exec->hadException())
                 return false;
             if (!isExtensible) {
-                throwVMTypeError(exec, ASCIILiteral("Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property"));
+                throwVMTypeError(exec, scope, ASCIILiteral("Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property"));
                 return false;
             }
         }
@@ -356,8 +361,10 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
 
 bool ProxyObject::getOwnPropertySlotCommon(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    if (UNLIKELY(!exec->vm().isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
+        throwStackOverflowError(exec, scope);
         return false;
     }
     slot.disableCaching();
@@ -394,8 +401,9 @@ template <typename PerformDefaultPutFunction>
 bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPut)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return false;
     }
 
@@ -404,7 +412,7 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return false;
     }
 
@@ -436,11 +444,11 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
     if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
         if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
             if (!sameValue(exec, descriptor.value(), putValue)) {
-                throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'"));
+                throwVMTypeError(exec, scope, ASCIILiteral("Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'"));
                 return false;
             }
         } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.setter().isUndefined()) {
-            throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false"));
             return false;
         }
     }
@@ -486,14 +494,15 @@ bool ProxyObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNam
 static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return JSValue::encode(JSValue());
     }
     ProxyObject* proxy = jsCast<ProxyObject*>(exec->callee());
     JSValue handlerValue = proxy->handler();
     if (handlerValue.isNull())
-        return throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        return throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
 
     JSObject* handler = jsCast<JSObject*>(handlerValue);
     CallData callData;
@@ -535,14 +544,15 @@ CallType ProxyObject::getCallData(JSCell* cell, CallData& callData)
 static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return JSValue::encode(JSValue());
     }
     ProxyObject* proxy = jsCast<ProxyObject*>(exec->callee());
     JSValue handlerValue = proxy->handler();
     if (handlerValue.isNull())
-        return throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        return throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
 
     JSObject* handler = jsCast<JSObject*>(handlerValue);
     CallData callData;
@@ -569,7 +579,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (!result.isObject())
-        return throwVMTypeError(exec, ASCIILiteral("Result from Proxy handler's 'construct' method should be an object"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Result from Proxy handler's 'construct' method should be an object"));
     return JSValue::encode(result);
 }
 
@@ -590,8 +600,9 @@ template <typename DefaultDeleteFunction>
 bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, DefaultDeleteFunction performDefaultDelete)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return false;
     }
 
@@ -600,7 +611,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return false;
     }
 
@@ -631,7 +642,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
     PropertyDescriptor descriptor;
     if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
         if (!descriptor.configurable()) {
-            throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable"));
             return false;
         }
     }
@@ -666,14 +677,15 @@ bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
 bool ProxyObject::performPreventExtensions(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return false;
     }
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return false;
     }
 
@@ -702,7 +714,7 @@ bool ProxyObject::performPreventExtensions(ExecState* exec)
         if (exec->hadException())
             return false;
         if (targetIsExtensible) {
-            throwVMTypeError(exec, ASCIILiteral("Proxy's 'preventExtensions' trap returned true even though its target is extensible. It should have returned false"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Proxy's 'preventExtensions' trap returned true even though its target is extensible. It should have returned false"));
             return false;
         }
     }
@@ -718,14 +730,15 @@ bool ProxyObject::preventExtensions(JSObject* object, ExecState* exec)
 bool ProxyObject::performIsExtensible(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return false;
     }
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return false;
     }
 
@@ -757,11 +770,11 @@ bool ProxyObject::performIsExtensible(ExecState* exec)
     if (trapResultAsBool != isTargetExtensible) {
         if (isTargetExtensible) {
             ASSERT(!trapResultAsBool);
-            throwVMTypeError(exec, ASCIILiteral("Proxy object's 'isExtensible' trap returned false when the target is extensible. It should have returned true"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Proxy object's 'isExtensible' trap returned false when the target is extensible. It should have returned true"));
         } else {
             ASSERT(!isTargetExtensible);
             ASSERT(trapResultAsBool);
-            throwVMTypeError(exec, ASCIILiteral("Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false"));
         }
     }
     
@@ -776,8 +789,9 @@ bool ProxyObject::isExtensible(JSObject* object, ExecState* exec)
 bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return false;
     }
 
@@ -791,7 +805,7 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return false;
     }
 
@@ -836,11 +850,11 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
 
     if (!isTargetDescriptorDefined) {
         if (!targetIsExtensible) {
-            throwVMTypeError(exec, ASCIILiteral("Proxy's 'defineProperty' trap returned true even though getOwnPropertyDescriptor of the Proxy's target returned undefined and the target is non-extensible"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Proxy's 'defineProperty' trap returned true even though getOwnPropertyDescriptor of the Proxy's target returned undefined and the target is non-extensible"));
             return false;
         }
         if (settingConfigurableToFalse) {
-            throwVMTypeError(exec, ASCIILiteral("Proxy's 'defineProperty' trap returned true for a non-configurable field even though getOwnPropertyDescriptor of the Proxy's target returned undefined"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Proxy's 'defineProperty' trap returned true for a non-configurable field even though getOwnPropertyDescriptor of the Proxy's target returned undefined"));
             return false;
         }
 
@@ -853,11 +867,11 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
     bool throwException = false;
     bool isCompatibleDescriptor = validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, targetIsExtensible, descriptor, isCurrentDefined, current, throwException);
     if (!isCompatibleDescriptor) {
-        throwVMTypeError(exec, ASCIILiteral("Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor"));
+        throwVMTypeError(exec, scope, ASCIILiteral("Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor"));
         return false;
     }
     if (settingConfigurableToFalse && targetDescriptor.configurable()) {
-        throwVMTypeError(exec, ASCIILiteral("Proxy's 'defineProperty' trap did not define a non-configurable property on its target even though the input descriptor to the trap said it must do so"));
+        throwVMTypeError(exec, scope, ASCIILiteral("Proxy's 'defineProperty' trap did not define a non-configurable property on its target even though the input descriptor to the trap said it must do so"));
         return false;
     }
     
@@ -873,13 +887,14 @@ bool ProxyObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyN
 void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray& trapResult, EnumerationMode enumerationMode)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return;
     }
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return;
     }
 
@@ -969,7 +984,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
 
     for (UniquedStringImpl* impl : targetNonConfigurableKeys) {
         if (removeIfContainedInUncheckedResultKeys(impl) == IsNotContainedIn) {
-            throwVMTypeError(exec, makeString("Proxy object's 'target' has the non-configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
+            throwVMTypeError(exec, scope, makeString("Proxy object's 'target' has the non-configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
             return;
         }
     }
@@ -979,13 +994,13 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
 
     for (UniquedStringImpl* impl : targetConfigurableKeys) {
         if (removeIfContainedInUncheckedResultKeys(impl) == IsNotContainedIn) {
-            throwVMTypeError(exec, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
+            throwVMTypeError(exec, scope, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
             return;
         }
     }
 
     if (uncheckedResultKeys.size()) {
-        throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target"));
+        throwVMTypeError(exec, scope, ASCIILiteral("Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target"));
         return;
     }
 }
@@ -1022,14 +1037,15 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     ASSERT(prototype.isObject() || prototype.isNull());
 
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return false;
     }
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return false;
     }
 
@@ -1057,7 +1073,7 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     
     if (!trapResultAsBool) {
         if (shouldThrowIfCantSet)
-            throwVMTypeError(exec, ASCIILiteral("Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed"));
+            throwVMTypeError(exec, scope, ASCIILiteral("Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed"));
         return false;
     }
 
@@ -1071,7 +1087,7 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     if (vm.exception())
         return false;
     if (!sameValue(exec, prototype, targetPrototype)) {
-        throwVMTypeError(exec, ASCIILiteral("Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false"));
+        throwVMTypeError(exec, scope, ASCIILiteral("Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false"));
         return false;
     }
 
@@ -1086,14 +1102,15 @@ bool ProxyObject::setPrototype(JSObject* object, ExecState* exec, JSValue protot
 JSValue ProxyObject::performGetPrototype(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(exec);
+        throwStackOverflowError(exec, scope);
         return JSValue();
     }
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
+        throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
         return JSValue();
     }
 
@@ -1115,7 +1132,7 @@ JSValue ProxyObject::performGetPrototype(ExecState* exec)
         return JSValue();
 
     if (!trapResult.isObject() && !trapResult.isNull()) {
-        throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'getPrototypeOf' trap should either return an object or null"));
+        throwVMTypeError(exec, scope, ASCIILiteral("Proxy handler's 'getPrototypeOf' trap should either return an object or null"));
         return JSValue();
     }
 
@@ -1129,7 +1146,7 @@ JSValue ProxyObject::performGetPrototype(ExecState* exec)
     if (vm.exception())
         return JSValue();
     if (!sameValue(exec, targetPrototype, trapResult)) {
-        throwVMTypeError(exec, ASCIILiteral("Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype"));
+        throwVMTypeError(exec, scope, ASCIILiteral("Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype"));
         return JSValue();
     }
 

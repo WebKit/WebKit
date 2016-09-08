@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -71,8 +71,11 @@ static void get3DContextAttributes(ExecState& state, RefPtr<CanvasContextAttribu
 
 JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 1))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     HTMLCanvasElement& canvas = wrapped();
     const String& contextId = state.uncheckedArgument(0).toWTFString(&state);
@@ -94,8 +97,11 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 
 JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 1))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     HTMLCanvasElement& canvas = wrapped();
     const String& contextId = state.uncheckedArgument(0).toWTFString(&state);

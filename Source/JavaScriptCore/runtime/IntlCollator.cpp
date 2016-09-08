@@ -367,11 +367,14 @@ void IntlCollator::createCollator(ExecState& state)
 
 JSValue IntlCollator::compareStrings(ExecState& state, StringView x, StringView y)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 10.3.4 CompareStrings abstract operation (ECMA-402 2.0)
     if (!m_collator) {
         createCollator(state);
         if (!m_collator)
-            return state.vm().throwException(&state, createError(&state, ASCIILiteral("Failed to compare strings.")));
+            return throwException(&state, scope, createError(&state, ASCIILiteral("Failed to compare strings.")));
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -379,7 +382,7 @@ JSValue IntlCollator::compareStrings(ExecState& state, StringView x, StringView 
     UCharIterator iteratorY = createIterator(y);
     auto result = ucol_strcollIter(m_collator.get(), &iteratorX, &iteratorY, &status);
     if (U_FAILURE(status))
-        return state.vm().throwException(&state, createError(&state, ASCIILiteral("Failed to compare strings.")));
+        return throwException(&state, scope, createError(&state, ASCIILiteral("Failed to compare strings.")));
     return jsNumber(result);
 }
 

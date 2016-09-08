@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,54 +35,72 @@ namespace WebCore {
 
 JSValue JSHTMLInputElement::selectionStart(ExecState& state) const
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     return jsNumber(input.selectionStart());
 }
 
 void JSHTMLInputElement::setSelectionStart(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
 
     input.setSelectionStart(value.toInt32(&state));
 }
 
 JSValue JSHTMLInputElement::selectionEnd(ExecState& state) const
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     return jsNumber(input.selectionEnd());
 }
 
 void JSHTMLInputElement::setSelectionEnd(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
 
     input.setSelectionEnd(value.toInt32(&state));
 }
 
 JSValue JSHTMLInputElement::selectionDirection(ExecState& state) const
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     return jsStringWithCache(&state, input.selectionDirection());
 }
 
 void JSHTMLInputElement::setSelectionDirection(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection()) {
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
         return;
     }
 
@@ -91,12 +109,15 @@ void JSHTMLInputElement::setSelectionDirection(ExecState& state, JSValue value)
 
 JSValue JSHTMLInputElement::setSelectionRange(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 2))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     int start = state.uncheckedArgument(0).toInt32(&state);
     int end = state.uncheckedArgument(1).toInt32(&state);

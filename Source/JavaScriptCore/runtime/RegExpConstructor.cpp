@@ -210,6 +210,9 @@ inline Structure* getRegExpStructure(ExecState* exec, JSGlobalObject* globalObje
 
 inline RegExpFlags toFlags(ExecState* exec, JSValue flags)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (flags.isUndefined())
         return NoFlags;
     JSString* flagsString = flags.toString(exec);
@@ -222,13 +225,15 @@ inline RegExpFlags toFlags(ExecState* exec, JSValue flags)
     if (exec->hadException())
         return InvalidFlags;
     if (result == InvalidFlags)
-        throwSyntaxError(exec, ASCIILiteral("Invalid flags supplied to RegExp constructor."));
+        throwSyntaxError(exec, scope, ASCIILiteral("Invalid flags supplied to RegExp constructor."));
     return result;
 }
 
 static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget, JSValue patternArg, JSValue flagsArg)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String pattern = patternArg.isUndefined() ? emptyString() : patternArg.toString(exec)->value(exec);
     if (exec->hadException())
         return nullptr;
@@ -239,7 +244,7 @@ static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSV
 
     RegExp* regExp = RegExp::create(vm, pattern, flags);
     if (!regExp->isValid())
-        return vm.throwException(exec, createSyntaxError(exec, regExp->errorMessage()));
+        return throwException(exec, scope, createSyntaxError(exec, regExp->errorMessage()));
 
     Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
     if (vm.exception())

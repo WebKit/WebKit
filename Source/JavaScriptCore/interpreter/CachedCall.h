@@ -44,12 +44,15 @@ namespace JSC {
             , m_interpreter(callFrame->interpreter())
             , m_entryScope(callFrame->vm(), function->scope()->globalObject())
         {
+            VM& vm = m_entryScope.vm();
+            auto scope = DECLARE_THROW_SCOPE(vm);
+
             ASSERT(!function->isHostFunctionNonInline());
-            if (UNLIKELY(callFrame->vm().isSafeToRecurseSoft())) {
+            if (UNLIKELY(vm.isSafeToRecurseSoft())) {
                 m_arguments.resize(argumentCount);
                 m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments.data());
             } else
-                throwStackOverflowError(callFrame);
+                throwStackOverflowError(callFrame, scope);
             m_valid = !callFrame->hadException();
         }
         

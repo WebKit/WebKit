@@ -100,6 +100,9 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* 
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 11.3.3 Intl.NumberFormat.prototype.format (ECMA-402 2.0)
     // 1. Let nf be this NumberFormat object.
     IntlNumberFormat* nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue());
@@ -107,22 +110,21 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!nf)
-        nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, state->vm().propertyNames->builtinNames().intlSubstituteValuePrivateName()));
+        nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName()));
 
     if (!nf)
-        return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat")));
+        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat")));
     
     JSBoundFunction* boundFormat = nf->boundFormat();
     // 2. If nf.[[boundFormat]] is undefined,
     if (!boundFormat) {
-        VM& vm = state->vm();
         JSGlobalObject* globalObject = nf->globalObject();
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 1.
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, ASCIILiteral("format"), IntlNumberFormatFuncFormatNumber, NoIntrinsic);
         JSArray* boundArgs = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
         if (!boundArgs)
-            return JSValue::encode(throwOutOfMemoryError(state));
+            return JSValue::encode(throwOutOfMemoryError(state, scope));
 
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, nf, boundArgs, 1, ASCIILiteral("format"));
@@ -137,16 +139,19 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 11.3.5 Intl.NumberFormat.prototype.resolvedOptions() (ECMA-402 2.0)
     IntlNumberFormat* numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue());
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!numberFormat)
-        numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, state->vm().propertyNames->builtinNames().intlSubstituteValuePrivateName()));
+        numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName()));
 
     if (!numberFormat)
-        return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat")));
+        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat")));
 
     return JSValue::encode(numberFormat->resolvedOptions(*state));
 }

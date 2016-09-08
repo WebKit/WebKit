@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,16 +72,19 @@ static const char* SymbolValueOfTypeError = "Symbol.prototype.valueOf requires t
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue thisValue = exec->thisValue();
     Symbol* symbol = nullptr;
     if (thisValue.isSymbol())
         symbol = asSymbol(thisValue);
     else {
         if (!thisValue.isObject())
-            return throwVMTypeError(exec, SymbolToStringTypeError);
+            return throwVMTypeError(exec, scope, SymbolToStringTypeError);
         JSObject* thisObject = asObject(thisValue);
         if (!thisObject->inherits(SymbolObject::info()))
-            return throwVMTypeError(exec, SymbolToStringTypeError);
+            return throwVMTypeError(exec, scope, SymbolToStringTypeError);
         symbol = asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
     }
 
@@ -90,16 +93,19 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue thisValue = exec->thisValue();
     if (thisValue.isSymbol())
         return JSValue::encode(thisValue);
 
     if (!thisValue.isObject())
-        return throwVMTypeError(exec, SymbolValueOfTypeError);
+        return throwVMTypeError(exec, scope, SymbolValueOfTypeError);
 
     JSObject* thisObject = asObject(thisValue);
     if (!thisObject->inherits(SymbolObject::info()))
-        return throwVMTypeError(exec, SymbolValueOfTypeError);
+        return throwVMTypeError(exec, scope, SymbolValueOfTypeError);
 
     return JSValue::encode(jsCast<SymbolObject*>(thisObject)->internalValue());
 }

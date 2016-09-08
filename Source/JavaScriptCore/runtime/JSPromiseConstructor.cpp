@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,12 +96,13 @@ void JSPromiseConstructor::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObj
 
 static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
 {
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSGlobalObject* globalObject = exec->callee()->globalObject();
 
     JSValue newTarget = exec->newTarget();
     if (newTarget.isUndefined())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     Structure* promiseStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->promiseStructure());
     if (exec->hadException())
@@ -114,7 +115,9 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL callPromise(ExecState* exec)
 {
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, "Promise"));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "Promise"));
 }
 
 ConstructType JSPromiseConstructor::getConstructData(JSCell*, ConstructData& constructData)

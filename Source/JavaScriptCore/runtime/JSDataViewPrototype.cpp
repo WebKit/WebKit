@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,12 +122,15 @@ Structure* JSDataViewPrototype::createStructure(
 template<typename Adaptor>
 EncodedJSValue getData(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!dataView)
-        return throwVMTypeError(exec, ASCIILiteral("Receiver of DataView method must be a DataView"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of DataView method must be a DataView"));
     
     if (!exec->argumentCount())
-        return throwVMTypeError(exec, ASCIILiteral("Need at least one argument (the byteOffset)"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Need at least one argument (the byteOffset)"));
     
     unsigned byteOffset = exec->uncheckedArgument(0).toUInt32(exec);
     if (exec->hadException())
@@ -143,7 +146,7 @@ EncodedJSValue getData(ExecState* exec)
     
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(exec, createRangeError(exec, ASCIILiteral("Out of bounds access")));
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("Out of bounds access")));
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);
     union {
@@ -167,12 +170,15 @@ EncodedJSValue getData(ExecState* exec)
 template<typename Adaptor>
 EncodedJSValue setData(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!dataView)
-        return throwVMTypeError(exec, ASCIILiteral("Receiver of DataView method must be a DataView"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of DataView method must be a DataView"));
     
     if (exec->argumentCount() < 2)
-        return throwVMTypeError(exec, ASCIILiteral("Need at least two argument (the byteOffset and value)"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Need at least two argument (the byteOffset and value)"));
     
     unsigned byteOffset = exec->uncheckedArgument(0).toUInt32(exec);
     if (exec->hadException())
@@ -198,7 +204,7 @@ EncodedJSValue setData(ExecState* exec)
     
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(exec, createRangeError(exec, ASCIILiteral("Out of bounds access")));
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("Out of bounds access")));
 
     uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
 
@@ -220,27 +226,36 @@ EncodedJSValue setData(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSDataView* view = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!view)
-        return throwVMTypeError(exec, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
     return JSValue::encode(view->jsBuffer(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSDataView* view = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!view)
-        return throwVMTypeError(exec, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
     return JSValue::encode(jsNumber(view->length()));
 }
 
 EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSDataView* view = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!view)
-        return throwVMTypeError(exec, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
     return JSValue::encode(jsNumber(view->byteOffset()));
 }

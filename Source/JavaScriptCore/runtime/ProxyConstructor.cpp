@@ -56,8 +56,9 @@ ProxyConstructor::ProxyConstructor(VM& vm, Structure* structure)
 
 static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
 {
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
     if (exec->argumentCount() < 2)
-        return throwVMTypeError(exec, ASCIILiteral("Proxy.revocable needs to be called with two arguments: the target and the handler"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Proxy.revocable needs to be called with two arguments: the target and the handler"));
 
     VM& vm = exec->vm();
     ArgList args(exec);
@@ -81,7 +82,8 @@ static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL proxyRevocableConstructorThrowError(ExecState* exec)
 {
-    return throwVMTypeError(exec, ASCIILiteral("Proxy.revocable cannot be constructed. It can only be called"));
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    return throwVMTypeError(exec, scope, ASCIILiteral("Proxy.revocable cannot be constructed. It can only be called"));
 }
 
 void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* globalObject)
@@ -94,8 +96,9 @@ void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* 
 
 static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState* exec)
 {
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
     if (exec->newTarget().isUndefined())
-        return throwVMTypeError(exec, ASCIILiteral("new.target of Proxy construct should not be undefined"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("new.target of Proxy construct should not be undefined"));
 
     ArgList args(exec);
     JSValue target = args.at(0);
@@ -111,7 +114,8 @@ ConstructType ProxyConstructor::getConstructData(JSCell*, ConstructData& constru
 
 static EncodedJSValue JSC_HOST_CALL callProxy(ExecState* exec)
 {
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, "Proxy"));
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "Proxy"));
 }
 
 CallType ProxyConstructor::getCallData(JSCell*, CallData& callData)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,9 @@ enum class HashRequirement {
 
 bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValue value, CryptoAlgorithmIdentifier& algorithmIdentifier)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // typedef (Algorithm or DOMString) AlgorithmIdentifier;
 
     String algorithmName;
@@ -81,7 +84,7 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValu
         return false;
 
     if (!algorithmName.containsOnlyASCII()) {
-        throwSyntaxError(exec);
+        throwSyntaxError(exec, scope);
         return false;
     }
 
@@ -122,8 +125,11 @@ static bool getHashAlgorithm(JSDictionary& dictionary, CryptoAlgorithmIdentifier
 
 static RefPtr<CryptoAlgorithmParameters> createAesCbcParams(ExecState* exec, JSValue value)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(exec);
+        throwTypeError(exec, scope);
         return nullptr;
     }
 
@@ -140,7 +146,7 @@ static RefPtr<CryptoAlgorithmParameters> createAesCbcParams(ExecState* exec, JSV
     }
 
     if (ivData.second != 16) {
-        exec->vm().throwException(exec, createError(exec, "AES-CBC initialization data must be 16 bytes"));
+        throwException(exec, scope, createError(exec, "AES-CBC initialization data must be 16 bytes"));
         return nullptr;
     }
 
@@ -151,8 +157,11 @@ static RefPtr<CryptoAlgorithmParameters> createAesCbcParams(ExecState* exec, JSV
 
 static RefPtr<CryptoAlgorithmParameters> createAesKeyGenParams(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
         return nullptr;
     }
 
@@ -169,8 +178,11 @@ static RefPtr<CryptoAlgorithmParameters> createAesKeyGenParams(ExecState& state,
 
 static RefPtr<CryptoAlgorithmParameters> createHmacParams(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
         return nullptr;
     }
 
@@ -187,8 +199,11 @@ static RefPtr<CryptoAlgorithmParameters> createHmacParams(ExecState& state, JSVa
 
 static RefPtr<CryptoAlgorithmParameters> createHmacKeyParams(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
         return nullptr;
     }
 
@@ -209,8 +224,11 @@ static RefPtr<CryptoAlgorithmParameters> createHmacKeyParams(ExecState& state, J
 
 static RefPtr<CryptoAlgorithmParameters> createRsaKeyGenParams(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
         return nullptr;
     }
 
@@ -232,7 +250,7 @@ static RefPtr<CryptoAlgorithmParameters> createRsaKeyGenParams(ExecState& state,
 
     RefPtr<Uint8Array> publicExponentArray = toUint8Array(publicExponentValue);
     if (!publicExponentArray) {
-        throwTypeError(&state, "Expected a Uint8Array in publicExponent");
+        throwTypeError(&state, scope, "Expected a Uint8Array in publicExponent");
         return nullptr;
     }
     result->publicExponent.append(publicExponentArray->data(), publicExponentArray->byteLength());
@@ -250,8 +268,11 @@ static RefPtr<CryptoAlgorithmParameters> createRsaKeyParamsWithHash(ExecState&, 
 
 static RefPtr<CryptoAlgorithmParameters> createRsaOaepParams(ExecState* exec, JSValue value)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(exec);
+        throwTypeError(exec, scope);
         return nullptr;
     }
 
@@ -284,8 +305,11 @@ static RefPtr<CryptoAlgorithmParameters> createRsaOaepParams(ExecState* exec, JS
 
 static RefPtr<CryptoAlgorithmParameters> createRsaSsaParams(ExecState& state, JSValue value)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
         return nullptr;
     }
 

@@ -75,6 +75,9 @@ static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, EncodedJSValue thisValu
 
 static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObject, Frame* frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot, String& errorMessage)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // We don't want any properties other than "close" and "closed" on a frameless window
     // (i.e. one whose page got closed, or whose iframe got removed).
     // FIXME: This handling for frameless windows duplicates similar behaviour for cross-origin
@@ -135,7 +138,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
         // For any other entries in the static property table, deny access. (Early return also prevents
         // named getter from returning frames with matching names - this seems a little questionable, see
         // FIXME comment on prototype search below.)
-        throwSecurityError(*exec, errorMessage);
+        throwSecurityError(*exec, scope, errorMessage);
         slot.setUndefined();
         return true;
     }
@@ -149,7 +152,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
         return true;
     }
 
-    throwSecurityError(*exec, errorMessage);
+    throwSecurityError(*exec, scope, errorMessage);
     slot.setUndefined();
     return true;
 }
@@ -230,6 +233,9 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
 
 bool JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
     if (!thisObject->wrapped().frame())
         return false;
@@ -243,7 +249,7 @@ bool JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
                 return putResult;
             return false;
         }
-        throwSecurityError(*exec, errorMessage);
+        throwSecurityError(*exec, scope, errorMessage);
         return false;
     }
 
@@ -434,8 +440,11 @@ inline JSValue DialogHandler::returnValue() const
 
 JSValue JSDOMWindow::showModalDialog(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 1))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     String urlString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(0));
     if (state.hadException())
@@ -455,8 +464,11 @@ JSValue JSDOMWindow::showModalDialog(ExecState& state)
 
 static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 2))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     MessagePortArray messagePorts;
     ArrayBufferArray arrayBuffers;
@@ -502,8 +514,11 @@ JSValue JSDOMWindow::postMessage(ExecState& state)
 
 JSValue JSDOMWindow::setTimeout(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 1))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     ContentSecurityPolicy* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
@@ -524,8 +539,11 @@ JSValue JSDOMWindow::setTimeout(ExecState& state)
 
 JSValue JSDOMWindow::setInterval(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 1))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     ContentSecurityPolicy* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);

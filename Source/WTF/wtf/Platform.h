@@ -918,6 +918,10 @@
 #define ENABLE_MASM_PROBE 0
 #endif
 
+#ifndef ENABLE_THROW_SCOPE_VERIFICATION
+#define ENABLE_THROW_SCOPE_VERIFICATION (!defined(NDEBUG))
+#endif
+
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
    On non-Windows x86-64, iOS, and ARM64 we use a single fixed mmap, on other platforms we mmap on demand. */
 #if ENABLE(ASSEMBLER)

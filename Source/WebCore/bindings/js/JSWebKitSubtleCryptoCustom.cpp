@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,6 +77,9 @@ static RefPtr<CryptoAlgorithm> createAlgorithmFromJSValue(ExecState& state, JSVa
 
 static bool cryptoKeyFormatFromJSValue(ExecState& state, JSValue value, CryptoKeyFormat& result)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     String keyFormatString = value.toString(&state)->value(&state);
     if (state.hadException())
         return false;
@@ -89,7 +92,7 @@ static bool cryptoKeyFormatFromJSValue(ExecState& state, JSValue value, CryptoKe
     else if (keyFormatString == "jwk")
         result = CryptoKeyFormat::JWK;
     else {
-        throwTypeError(&state, ASCIILiteral("Unknown key format"));
+        throwTypeError(&state, scope, ASCIILiteral("Unknown key format"));
         return false;
     }
     return true;
@@ -97,8 +100,11 @@ static bool cryptoKeyFormatFromJSValue(ExecState& state, JSValue value, CryptoKe
 
 static bool cryptoKeyUsagesFromJSValue(ExecState& state, JSValue value, CryptoKeyUsage& result)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!isJSArray(value)) {
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
         return false;
     }
 
@@ -132,8 +138,11 @@ static bool cryptoKeyUsagesFromJSValue(ExecState& state, JSValue value, CryptoKe
 
 JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 3)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     auto algorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(0));
     if (!algorithm) {
@@ -149,7 +158,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
 
     RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
     if (!key)
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     if (!key->allows(CryptoKeyUsageEncrypt)) {
         wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'encrypt'"));
@@ -185,8 +194,11 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
 
 JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 3)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     auto algorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(0));
     if (!algorithm) {
@@ -202,7 +214,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
 
     RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
     if (!key)
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     if (!key->allows(CryptoKeyUsageDecrypt)) {
         wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'decrypt'"));
@@ -237,8 +249,11 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
 
 JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 3)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     auto algorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(0));
     if (!algorithm) {
@@ -254,7 +269,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
 
     RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
     if (!key)
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     if (!key->allows(CryptoKeyUsageSign)) {
         wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'sign'"));
@@ -289,8 +304,11 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
 
 JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 4)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     auto algorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(0));
     if (!algorithm) {
@@ -306,7 +324,7 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
 
     RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
     if (!key)
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     if (!key->allows(CryptoKeyUsageVerify)) {
         wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'verify'"));
@@ -347,8 +365,11 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
 
 JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 2)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     auto algorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(0));
     if (!algorithm) {
@@ -389,8 +410,11 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
 
 JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 1)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     auto algorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(0));
     if (!algorithm) {
@@ -445,6 +469,9 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
 
 static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperationData data, RefPtr<CryptoAlgorithm> algorithm, RefPtr<CryptoAlgorithmParameters> parameters, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     std::unique_ptr<CryptoKeySerialization> keySerialization;
     switch (keyFormat) {
     case CryptoKeyFormat::Raw:
@@ -453,7 +480,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
     case CryptoKeyFormat::JWK: {
         String jwkString = String::fromUTF8(data.first, data.second);
         if (jwkString.isNull()) {
-            throwTypeError(&state, ASCIILiteral("JWK JSON serialization is not valid UTF-8"));
+            throwTypeError(&state, scope, ASCIILiteral("JWK JSON serialization is not valid UTF-8"));
             return;
         }
         keySerialization = std::make_unique<JSCryptoKeySerializationJWK>(&state, jwkString);
@@ -462,7 +489,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
         break;
     }
     default:
-        throwTypeError(&state, ASCIILiteral("Unsupported key format for import"));
+        throwTypeError(&state, scope, ASCIILiteral("Unsupported key format for import"));
         return;
     }
 
@@ -471,7 +498,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
     Optional<CryptoAlgorithmPair> reconciledResult = keySerialization->reconcileAlgorithm(algorithm.get(), parameters.get());
     if (!reconciledResult) {
         if (!state.hadException())
-            throwTypeError(&state, ASCIILiteral("Algorithm specified in key is not compatible with one passed to importKey as argument"));
+            throwTypeError(&state, scope, ASCIILiteral("Algorithm specified in key is not compatible with one passed to importKey as argument"));
         return;
     }
     if (state.hadException())
@@ -480,7 +507,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
     algorithm = reconciledResult->algorithm;
     parameters = reconciledResult->parameters;
     if (!algorithm) {
-        throwTypeError(&state, ASCIILiteral("Neither key nor function argument has crypto algorithm specified"));
+        throwTypeError(&state, scope, ASCIILiteral("Neither key nor function argument has crypto algorithm specified"));
         return;
     }
     ASSERT(parameters);
@@ -505,8 +532,11 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
 
 JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 3)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     CryptoKeyFormat keyFormat;
     if (!cryptoKeyFormatFromJSValue(state, state.argument(0), keyFormat)) {
@@ -568,8 +598,11 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
 
 static void exportKey(ExecState& state, CryptoKeyFormat keyFormat, const CryptoKey& key, CryptoAlgorithm::VectorCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!key.extractable()) {
-        throwTypeError(&state, ASCIILiteral("Key is not extractable"));
+        throwTypeError(&state, scope, ASCIILiteral("Key is not extractable"));
         return;
     }
 
@@ -593,15 +626,18 @@ static void exportKey(ExecState& state, CryptoKeyFormat keyFormat, const CryptoK
         break;
     }
     default:
-        throwTypeError(&state, ASCIILiteral("Unsupported key format for export"));
+        throwTypeError(&state, scope, ASCIILiteral("Unsupported key format for export"));
         break;
     }
 }
 
 JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 2)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     CryptoKeyFormat keyFormat;
     if (!cryptoKeyFormatFromJSValue(state, state.argument(0), keyFormat)) {
@@ -611,7 +647,7 @@ JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
 
     RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
     if (!key)
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
@@ -631,8 +667,11 @@ JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
 
 JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 4)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     CryptoKeyFormat keyFormat;
     if (!cryptoKeyFormatFromJSValue(state, state.argument(0), keyFormat)) {
@@ -642,11 +681,11 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
 
     RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
     if (!key)
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     RefPtr<CryptoKey> wrappingKey = JSCryptoKey::toWrapped(state.uncheckedArgument(2));
     if (!key)
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     if (!wrappingKey->allows(CryptoKeyUsageWrapKey)) {
         wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'wrapKey'"));
@@ -700,8 +739,11 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
 
 JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (state.argumentCount() < 5)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     CryptoKeyFormat keyFormat;
     if (!cryptoKeyFormatFromJSValue(state, state.argument(0), keyFormat)) {
@@ -717,7 +759,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
 
     RefPtr<CryptoKey> unwrappingKey = JSCryptoKey::toWrapped(state.uncheckedArgument(2));
     if (!unwrappingKey)
-        return throwTypeError(&state);
+        return throwTypeError(&state, scope);
 
     if (!unwrappingKey->allows(CryptoKeyUsageUnwrapKey)) {
         wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'unwrapKey'"));

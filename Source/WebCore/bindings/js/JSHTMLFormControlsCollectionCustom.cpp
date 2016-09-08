@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2008, 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,8 +56,11 @@ bool JSHTMLFormControlsCollection::nameGetter(ExecState* state, PropertyName pro
 
 JSValue JSHTMLFormControlsCollection::namedItem(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 1))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     JSValue value = namedItems(state, this, Identifier::fromString(&state, state.uncheckedArgument(0).toString(&state)->value(&state)));
     return value.isUndefined() ? jsNull() : value;

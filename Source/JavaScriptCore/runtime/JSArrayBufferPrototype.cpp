@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,14 +37,17 @@ namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSFunction* callee = jsCast<JSFunction*>(exec->callee());
     
     JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(exec->thisValue());
     if (!thisObject)
-        return throwVMTypeError(exec, ASCIILiteral("Receiver of slice must be an array buffer."));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of slice must be an array buffer."));
     
     if (!exec->argumentCount())
-        return throwVMTypeError(exec, ASCIILiteral("Slice requires at least one argument."));
+        return throwVMTypeError(exec, scope, ASCIILiteral("Slice requires at least one argument."));
     
     int32_t begin = exec->argument(0).toInt32(exec);
     if (exec->hadException())
@@ -60,11 +63,11 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     
     RefPtr<ArrayBuffer> newBuffer = thisObject->impl()->slice(begin, end);
     if (!newBuffer)
-        return JSValue::encode(throwOutOfMemoryError(exec));
+        return JSValue::encode(throwOutOfMemoryError(exec, scope));
     
     Structure* structure = callee->globalObject()->arrayBufferStructure();
     
-    JSArrayBuffer* result = JSArrayBuffer::create(exec->vm(), structure, newBuffer);
+    JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, newBuffer);
     
     return JSValue::encode(result);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2008, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,9 +62,12 @@ void RuntimeArray::destroy(JSCell* cell)
 
 EncodedJSValue RuntimeArray::lengthGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeArray* thisObject = jsDynamicCast<RuntimeArray*>(JSValue::decode(thisValue));
     if (!thisObject)
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
     return JSValue::encode(jsNumber(thisObject->getLength()));
 }
 
@@ -113,9 +116,12 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, ExecState *exec, 
 
 bool RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        exec->vm().throwException(exec, createRangeError(exec, "Range error"));
+        throwException(exec, scope, createRangeError(exec, "Range error"));
         return false;
     }
     
@@ -127,9 +133,12 @@ bool RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
 
 bool RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (index >= thisObject->getLength()) {
-        exec->vm().throwException(exec, createRangeError(exec, "Range error"));
+        throwException(exec, scope, createRangeError(exec, "Range error"));
         return false;
     }
     

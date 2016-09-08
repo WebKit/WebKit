@@ -73,9 +73,11 @@ template<typename T> inline EnableIfFloatingPointType<T> convert(JSC::ExecState&
 
 template<typename T, typename JST> inline T* convertWrapperType(JSC::ExecState& state, JSC::JSValue value, IsNullable isNullable)
 {
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     T* object = JST::toWrapped(value);
     if (!object && (isNullable == IsNullable::No || !value.isUndefinedOrNull()))
-        throwTypeError(&state);
+        throwTypeError(&state, scope);
     return object;
 }
 
@@ -275,9 +277,11 @@ template<> struct Converter<uint64_t> : DefaultConverter<uint64_t> {
 template<typename T> struct Converter<T, typename std::enable_if<std::is_floating_point<T>::value>::type> : DefaultConverter<T> {
     static T convert(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)
     {
+        JSC::VM& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         double number = value.toNumber(&state);
         if (allow == ShouldAllowNonFinite::No && UNLIKELY(!std::isfinite(number)))
-            throwNonFiniteTypeError(state);
+            throwNonFiniteTypeError(state, scope);
         return static_cast<T>(number);
     }
 };

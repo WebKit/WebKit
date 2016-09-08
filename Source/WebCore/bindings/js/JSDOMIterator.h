@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Canon, Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,9 +131,12 @@ JSC::EncodedJSValue iteratorForEach(JSC::ExecState&, const char*);
 template<typename JSWrapper>
 JSC::EncodedJSValue iteratorCreate(JSC::ExecState& state, IterationKind kind, const char* propertyName)
 {
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto wrapper = JSC::jsDynamicCast<JSWrapper*>(state.thisValue());
     if (UNLIKELY(!wrapper))
-        return throwThisTypeError(state, JSWrapper::info()->className, propertyName);
+        return throwThisTypeError(state, scope, JSWrapper::info()->className, propertyName);
     JSDOMGlobalObject& globalObject = *wrapper->globalObject();
     return JSC::JSValue::encode(JSDOMIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSDOMIterator<JSWrapper>>(globalObject.vm(), globalObject), *wrapper, kind));
 }
@@ -180,9 +184,12 @@ appendForEachArguments(JSC::ExecState& state, JSDOMGlobalObject* globalObject, J
 template<typename JSWrapper>
 JSC::EncodedJSValue iteratorForEach(JSC::ExecState& state, const char* propertyName)
 {
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto wrapper = JSC::jsDynamicCast<JSWrapper*>(state.thisValue());
     if (UNLIKELY(!wrapper))
-        return throwThisTypeError(state, JSWrapper::info()->className, propertyName);
+        return throwThisTypeError(state, scope, JSWrapper::info()->className, propertyName);
 
     JSC::JSValue callback = state.argument(0);
     JSC::JSValue thisValue = state.argument(1);
@@ -190,7 +197,7 @@ JSC::EncodedJSValue iteratorForEach(JSC::ExecState& state, const char* propertyN
     JSC::CallData callData;
     JSC::CallType callType = JSC::getCallData(callback, callData);
     if (callType == JSC::CallType::None)
-        return throwVMTypeError(&state);
+        return throwVMTypeError(&state, scope);
 
     auto iterator = wrapper->wrapped().createIterator();
     while (auto value = iterator.next()) {
@@ -226,9 +233,12 @@ JSC::JSValue JSDOMIterator<JSWrapper>::next(JSC::ExecState& state)
 template<typename JSWrapper>
 JSC::EncodedJSValue JSC_HOST_CALL JSDOMIteratorPrototype<JSWrapper>::next(JSC::ExecState* state)
 {
+    JSC::VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto iterator = JSC::jsDynamicCast<JSDOMIterator<JSWrapper>*>(state->thisValue());
     if (!iterator)
-        return JSC::JSValue::encode(throwTypeError(state, ASCIILiteral("Cannot call next() on a non-Iterator object")));
+        return JSC::JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Cannot call next() on a non-Iterator object")));
 
     return JSC::JSValue::encode(iterator->next(*state));
 }

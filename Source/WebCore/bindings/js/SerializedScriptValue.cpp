@@ -394,7 +394,9 @@ protected:
 
     void throwStackOverflow()
     {
-        m_exec->vm().throwException(m_exec, createStackOverflowError(m_exec));
+        VM& vm = m_exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        throwException(m_exec, scope, createStackOverflowError(m_exec));
     }
 
     void fail()
@@ -1570,7 +1572,9 @@ private:
 
     void throwValidationError()
     {
-        throwTypeError(m_exec, ASCIILiteral("Unable to deserialize data."));
+        VM& vm = m_exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        throwTypeError(m_exec, scope, ASCIILiteral("Unable to deserialize data."));
     }
 
     bool isValid() const { return m_version <= CurrentVersion; }
@@ -2756,15 +2760,18 @@ Ref<SerializedScriptValue> SerializedScriptValue::nullValue()
 
 void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* exec, SerializationReturnCode code)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (code == SuccessfullyCompleted)
         return;
     
     switch (code) {
     case StackOverflowError:
-        exec->vm().throwException(exec, createStackOverflowError(exec));
+        throwException(exec, scope, createStackOverflowError(exec));
         break;
     case ValidationError:
-        throwTypeError(exec, ASCIILiteral("Unable to deserialize data."));
+        throwTypeError(exec, scope, ASCIILiteral("Unable to deserialize data."));
         break;
     case DataCloneError:
         setDOMException(exec, DATA_CLONE_ERR);

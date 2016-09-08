@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,17 +38,18 @@ unsigned numberOfExceptionFuzzChecks() { return s_numberOfExceptionFuzzChecks; }
 // Call this only if you know that exception fuzzing is enabled.
 void doExceptionFuzzing(ExecState* exec, const char* where, void* returnPC)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(Options::useExceptionFuzz());
 
-    DeferGCForAWhile deferGC(exec->vm().heap);
+    DeferGCForAWhile deferGC(vm.heap);
     
     s_numberOfExceptionFuzzChecks++;
     
     unsigned fireTarget = Options::fireExceptionFuzzAt();
     if (fireTarget == s_numberOfExceptionFuzzChecks) {
         printf("JSC EXCEPTION FUZZ: Throwing fuzz exception with call frame %p, seen in %s and return address %p.\n", exec, where, returnPC);
-        exec->vm().throwException(
-            exec, createError(exec, ASCIILiteral("Exception Fuzz")));
+        throwException(exec, scope, createError(exec, ASCIILiteral("Exception Fuzz")));
     }
 }
 

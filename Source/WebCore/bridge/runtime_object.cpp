@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2008-2009, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,11 +64,14 @@ void RuntimeObject::invalidate()
 
 EncodedJSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
-        return JSValue::encode(throwInvalidAccessError(exec));
+        return JSValue::encode(throwInvalidAccessError(exec, scope));
     
     instance->begin();
 
@@ -82,11 +85,14 @@ EncodedJSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, EncodedJSVal
 
 EncodedJSValue RuntimeObject::fieldGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {    
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
-        return JSValue::encode(throwInvalidAccessError(exec));
+        return JSValue::encode(throwInvalidAccessError(exec, scope));
     
     instance->begin();
 
@@ -101,11 +107,14 @@ EncodedJSValue RuntimeObject::fieldGetter(ExecState* exec, EncodedJSValue thisVa
 
 EncodedJSValue RuntimeObject::methodGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
-        return JSValue::encode(throwInvalidAccessError(exec));
+        return JSValue::encode(throwInvalidAccessError(exec, scope));
     
     instance->begin();
 
@@ -118,9 +127,12 @@ EncodedJSValue RuntimeObject::methodGetter(ExecState* exec, EncodedJSValue thisV
 
 bool RuntimeObject::getOwnPropertySlot(JSObject* object, ExecState *exec, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(object);
     if (!thisObject->m_instance) {
-        throwInvalidAccessError(exec);
+        throwInvalidAccessError(exec, scope);
         return false;
     }
     
@@ -163,9 +175,12 @@ bool RuntimeObject::getOwnPropertySlot(JSObject* object, ExecState *exec, Proper
 
 bool RuntimeObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance) {
-        throwInvalidAccessError(exec);
+        throwInvalidAccessError(exec, scope);
         return false;
     }
     
@@ -192,9 +207,12 @@ bool RuntimeObject::deleteProperty(JSCell*, ExecState*, PropertyName)
 
 JSValue RuntimeObject::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     const RuntimeObject* thisObject = jsCast<const RuntimeObject*>(object);
     if (!thisObject->m_instance)
-        return throwInvalidAccessError(exec);
+        return throwInvalidAccessError(exec, scope);
     
     RefPtr<Instance> instance = thisObject->m_instance;
 
@@ -258,9 +276,12 @@ ConstructType RuntimeObject::getConstructData(JSCell* cell, ConstructData& const
 
 void RuntimeObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(object);
     if (!thisObject->m_instance) {
-        throwInvalidAccessError(exec);
+        throwInvalidAccessError(exec, scope);
         return;
     }
 
@@ -271,9 +292,9 @@ void RuntimeObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Prope
     instance->end();
 }
 
-JSObject* RuntimeObject::throwInvalidAccessError(ExecState* exec)
+JSObject* RuntimeObject::throwInvalidAccessError(ExecState* exec, ThrowScope& scope)
 {
-    return exec->vm().throwException(exec, createReferenceError(exec, "Trying to access object from destroyed plug-in."));
+    return throwException(exec, scope, createReferenceError(exec, "Trying to access object from destroyed plug-in."));
 }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,15 +54,18 @@ void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakSet function on non-object"));
+        throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakSet function on non-object"));
         return nullptr;
     }
 
     if (JSWeakSet* weakSet = jsDynamicCast<JSWeakSet*>(value))
         return weakSet->weakMapData();
 
-    throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakSet function on a non-WeakSet object"));
+    throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakSet function on a non-WeakSet object"));
     return nullptr;
 }
 
@@ -86,13 +89,16 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(CallFrame* callFrame)
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
-        return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Attempted to add a non-object key to a WeakSet")));
-    map->set(callFrame->vm(), asObject(key), jsUndefined());
+        return JSValue::encode(throwTypeError(callFrame, scope, WTF::ASCIILiteral("Attempted to add a non-object key to a WeakSet")));
+    map->set(vm, asObject(key), jsUndefined());
     return JSValue::encode(callFrame->thisValue());
 }
 

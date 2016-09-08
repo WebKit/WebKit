@@ -268,6 +268,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     CodeSpecializationKind kind, JSFunction* function, JSScope* scope, JSObject*& exception)
 {
     VM* vm = scope->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(*vm);
 
     ASSERT(vm->heap.isDeferred());
     ASSERT(startColumn() != UINT_MAX);
@@ -319,8 +320,8 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         executable->m_unlinkedExecutable->hasCapturedVariables(), firstLine(), 
         lastLine(), startColumn(), endColumn()); 
     if (!unlinkedCodeBlock) {
-        exception = vm->throwException(
-            globalObject->globalExec(),
+        exception = throwException(
+            globalObject->globalExec(), throwScope,
             error.toErrorObject(globalObject, executable->m_source));
         return nullptr;
     }
@@ -429,20 +430,23 @@ const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::
 
 EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (!globalObject->evalEnabled()) {
-        exec->vm().throwException(exec, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
+        throwException(exec, scope, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
         return 0;
     }
 
     EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext, derivedContextType, isArrowFunctionContext, evalContextType);
-    executable->finishCreation(exec->vm());
+    executable->finishCreation(vm);
 
     UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createEvalCodeBlock(exec, executable, variablesUnderTDZ);
     if (!unlinkedEvalCode)
         return 0;
 
-    executable->m_unlinkedEvalCodeBlock.set(exec->vm(), executable, unlinkedEvalCode);
+    executable->m_unlinkedEvalCodeBlock.set(vm, executable, unlinkedEvalCode);
 
     return executable;
 }

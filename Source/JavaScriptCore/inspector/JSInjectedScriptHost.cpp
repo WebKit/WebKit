@@ -95,9 +95,12 @@ JSValue JSInjectedScriptHost::evaluate(ExecState* exec) const
 
 JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue scriptValue = exec->argument(0);
     if (!scriptValue.isString())
-        return throwTypeError(exec, ASCIILiteral("InjectedScriptHost.evaluateWithScopeExtension first argument must be a string."));
+        return throwTypeError(exec, scope, ASCIILiteral("InjectedScriptHost.evaluateWithScopeExtension first argument must be a string."));
 
     String program = scriptValue.toString(exec)->value(exec);
     if (exec->hadException())
@@ -107,7 +110,7 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
     JSObject* scopeExtension = exec->argument(1).getObject();
     JSValue result = JSC::evaluateWithScopeExtension(exec, makeSource(program), scopeExtension, exception);
     if (exception)
-        exec->vm().throwException(exec, exception);
+        throwException(exec, scope, exception);
 
     return result;
 }

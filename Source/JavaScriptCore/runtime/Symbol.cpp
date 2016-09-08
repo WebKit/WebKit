@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -87,7 +87,9 @@ JSObject* Symbol::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 
 double Symbol::toNumber(ExecState* exec) const
 {
-    throwTypeError(exec, ASCIILiteral("Cannot convert a symbol to a number"));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    throwTypeError(exec, scope, ASCIILiteral("Cannot convert a symbol to a number"));
     return 0.0;
 }
 

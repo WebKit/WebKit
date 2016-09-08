@@ -91,7 +91,8 @@ namespace JSC {
 #define END_IMPL() RETURN_TWO(pc, exec)
 
 #define THROW(exceptionToThrow) do {                        \
-        vm.throwException(exec, exceptionToThrow);          \
+        auto scope = DECLARE_THROW_SCOPE(vm);               \
+        throwException(exec, scope, exceptionToThrow);      \
         RETURN_TO_THROW(exec, pc);                          \
         END_IMPL();                                         \
     } while (false)
@@ -139,13 +140,6 @@ namespace JSC {
     } while (false)
 
 #define CALL_END_IMPL(exec, callTarget) RETURN_TWO((callTarget), (exec))
-
-#define CALL_THROW(exec, pc, exceptionToThrow) do {                     \
-        ExecState* ctExec = (exec);                                     \
-        Instruction* ctPC = (pc);                                       \
-        vm.throwException(exec, exceptionToThrow);                      \
-        CALL_END_IMPL(ctExec, LLInt::callToThrow(ctExec));              \
-    } while (false)
 
 #define CALL_CHECK_EXCEPTION(exec, pc) do {                          \
         ExecState* cceExec = (exec);                                 \

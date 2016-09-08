@@ -41,13 +41,16 @@ namespace WebCore {
 
 static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype, const Identifier& id)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue callback = prototype.get(&state, id);
     if (state.hadException())
         return nullptr;
     if (callback.isUndefined())
         return nullptr;
     if (!callback.isFunction()) {
-        throwTypeError(&state, ASCIILiteral("A custom element callback must be a function"));
+        throwTypeError(&state, scope, ASCIILiteral("A custom element callback must be a function"));
         return nullptr;
     }
     return callback.getObject();
@@ -56,8 +59,11 @@ static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype,
 // https://html.spec.whatwg.org/#dom-customelementregistry-define
 JSValue JSCustomElementRegistry::define(ExecState& state)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (UNLIKELY(state.argumentCount() < 2))
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     AtomicString localName(state.uncheckedArgument(0).toString(&state)->toAtomicString(&state));
     if (UNLIKELY(state.hadException()))
@@ -65,7 +71,7 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
 
     JSValue constructorValue = state.uncheckedArgument(1);
     if (!constructorValue.isConstructor())
-        return throwTypeError(&state, ASCIILiteral("The second argument must be a constructor"));
+        return throwTypeError(&state, scope, ASCIILiteral("The second argument must be a constructor"));
     JSObject* constructor = constructorValue.getObject();
 
     // FIXME: Throw a TypeError if constructor doesn't inherit from HTMLElement.
@@ -75,11 +81,11 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     case CustomElementNameValidationStatus::Valid:
         break;
     case CustomElementNameValidationStatus::ConflictsWithBuiltinNames:
-        return throwSyntaxError(&state, ASCIILiteral("Custom element name cannot be same as one of the builtin elements"));
+        return throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot be same as one of the builtin elements"));
     case CustomElementNameValidationStatus::NoHyphen:
-        return throwSyntaxError(&state, ASCIILiteral("Custom element name must contain a hyphen"));
+        return throwSyntaxError(&state, scope, ASCIILiteral("Custom element name must contain a hyphen"));
     case CustomElementNameValidationStatus::ContainsUpperCase:
-        return throwSyntaxError(&state, ASCIILiteral("Custom element name cannot contain an upper case letter"));
+        return throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot contain an upper case letter"));
     }
 
     // FIXME: Check re-entrancy here.
@@ -87,21 +93,20 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
 
     CustomElementRegistry& registry = wrapped();
     if (registry.findInterface(localName)) {
-        throwNotSupportedError(state, ASCIILiteral("Cannot define multiple custom elements with the same tag name"));
+        throwNotSupportedError(state, scope, ASCIILiteral("Cannot define multiple custom elements with the same tag name"));
         return jsUndefined();
     }
 
     if (registry.containsConstructor(constructor)) {
-        throwNotSupportedError(state, ASCIILiteral("Cannot define multiple custom elements with the same class"));
+        throwNotSupportedError(state, scope, ASCIILiteral("Cannot define multiple custom elements with the same class"));
         return jsUndefined();
     }
 
-    auto& vm = globalObject()->vm();
     JSValue prototypeValue = constructor->get(&state, vm.propertyNames->prototype);
     if (state.hadException())
         return jsUndefined();
     if (!prototypeValue.isObject())
-        return throwTypeError(&state, ASCIILiteral("Custom element constructor's prototype must be an object"));
+        return throwTypeError(&state, scope, ASCIILiteral("Custom element constructor's prototype must be an object"));
     JSObject& prototypeObject = *asObject(prototypeValue);
 
     QualifiedName name(nullAtom, localName, HTMLNames::xhtmlNamespaceURI);

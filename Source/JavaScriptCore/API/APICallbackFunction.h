@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,8 @@ template <typename T> static EncodedJSValue JSC_HOST_CALL construct(ExecState*);
 template <typename T>
 EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSContextRef execRef = toRef(exec);
     JSObjectRef functionRef = toRef(exec->callee());
     JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode)));
@@ -61,7 +63,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(ExecState* exec)
         result = jsCast<T*>(toJS(functionRef))->functionCallback()(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception);
     }
     if (exception)
-        exec->vm().throwException(exec, toJS(exec, exception));
+        throwException(exec, scope, toJS(exec, exception));
 
     // result must be a valid JSValue.
     if (!result)
@@ -73,6 +75,8 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(ExecState* exec)
 template <typename T>
 EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* constructor = exec->callee();
     JSContextRef ctx = toRef(exec);
     JSObjectRef constructorRef = toRef(constructor);
@@ -92,12 +96,12 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(ExecState* exec)
             result = callback(ctx, constructorRef, argumentCount, arguments.data(), &exception);
         }
         if (exception) {
-            exec->vm().throwException(exec, toJS(exec, exception));
+            throwException(exec, scope, toJS(exec, exception));
             return JSValue::encode(toJS(exec, exception));
         }
         // result must be a valid JSValue.
         if (!result)
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, scope);
         return JSValue::encode(toJS(result));
     }
     

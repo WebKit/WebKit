@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,9 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
 
     Ref<JSCustomElementInterface> protectedThis(*this);
-    JSLockHolder lock(m_isolatedWorld->vm());
+    VM& vm = m_isolatedWorld->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!m_constructor)
         return;
@@ -144,7 +146,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     Element* wrappedElement = JSElement::toWrapped(returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
-        throwInvalidStateError(*state, "Custom element constructor failed to upgrade an element");
+        throwInvalidStateError(*state, scope, "Custom element constructor failed to upgrade an element");
         return;
     }
     wrappedElement->setCustomElementIsResolved(*this);

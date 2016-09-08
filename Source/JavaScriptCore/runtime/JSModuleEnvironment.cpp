@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,11 +110,14 @@ void JSModuleEnvironment::getOwnNonIndexPropertyNames(JSObject* cell, ExecState*
 
 bool JSModuleEnvironment::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
     // All imported bindings are immutable.
     JSModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(exec, Identifier::fromUid(exec, propertyName.uid()));
     if (resolution.type == JSModuleRecord::Resolution::Type::Resolved) {
-        throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+        throwTypeError(exec, scope, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
         return false;
     }
     return Base::put(thisObject, exec, propertyName, value, slot);

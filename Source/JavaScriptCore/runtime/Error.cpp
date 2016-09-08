@@ -198,34 +198,34 @@ bool hasErrorInfo(ExecState* exec, JSObject* error)
         || error->hasProperty(exec, Identifier::fromString(exec, sourceURLPropertyName));
 }
 
-JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState* exec, const char* constructorName)
+JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState* exec, ThrowScope& scope, const char* constructorName)
 {
-    return throwTypeError(exec, makeString("calling ", constructorName, " constructor without new is invalid"));
+    return throwTypeError(exec, scope, makeString("calling ", constructorName, " constructor without new is invalid"));
 }
 
-JSObject* throwTypeError(ExecState* exec)
+JSObject* throwTypeError(ExecState* exec, ThrowScope& scope)
 {
-    return exec->vm().throwException(exec, createTypeError(exec));
+    return throwException(exec, scope, createTypeError(exec));
 }
 
-JSObject* throwTypeError(ExecState* exec, ASCIILiteral errorMessage)
+JSObject* throwTypeError(ExecState* exec, ThrowScope& scope, ASCIILiteral errorMessage)
 {
-    return throwTypeError(exec, String(errorMessage));
+    return throwTypeError(exec, scope, String(errorMessage));
 }
 
-JSObject* throwTypeError(ExecState* exec, const String& message)
+JSObject* throwTypeError(ExecState* exec, ThrowScope& scope, const String& message)
 {
-    return exec->vm().throwException(exec, createTypeError(exec, message));
+    return throwException(exec, scope, createTypeError(exec, message));
 }
 
-JSObject* throwSyntaxError(ExecState* exec)
+JSObject* throwSyntaxError(ExecState* exec, ThrowScope& scope)
 {
-    return exec->vm().throwException(exec, createSyntaxError(exec, ASCIILiteral("Syntax error")));
+    return throwException(exec, scope, createSyntaxError(exec, ASCIILiteral("Syntax error")));
 }
 
-JSObject* throwSyntaxError(ExecState* exec, const String& message)
+JSObject* throwSyntaxError(ExecState* exec, ThrowScope& scope, const String& message)
 {
-    return exec->vm().throwException(exec, createSyntaxError(exec, message));
+    return throwException(exec, scope, createSyntaxError(exec, message));
 }
 
 JSObject* createError(ExecState* exec, const String& message)

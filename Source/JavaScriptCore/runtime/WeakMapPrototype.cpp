@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,15 +56,18 @@ void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isObject()) {
-        throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakMap function on non-object"));
+        throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakMap function on non-object"));
         return nullptr;
     }
 
     if (JSWeakMap* weakMap = jsDynamicCast<JSWeakMap*>(value))
         return weakMap->weakMapData();
 
-    throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakMap function on a non-WeakMap object"));
+    throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakMap function on a non-WeakMap object"));
     return nullptr;
 }
 
@@ -99,13 +102,16 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(CallFrame* callFrame)
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(CallFrame* callFrame)
 {
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
-        return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Attempted to set a non-object key in a WeakMap")));
-    map->set(callFrame->vm(), asObject(key), callFrame->argument(1));
+        return JSValue::encode(throwTypeError(callFrame, scope, WTF::ASCIILiteral("Attempted to set a non-object key in a WeakMap")));
+    map->set(vm, asObject(key), callFrame->argument(1));
     return JSValue::encode(callFrame->thisValue());
 }
 

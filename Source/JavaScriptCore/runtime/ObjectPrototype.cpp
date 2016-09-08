@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2011, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -127,6 +127,9 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -134,7 +137,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     JSValue get = exec->argument(1);
     CallData callData;
     if (getCallData(get, callData) == CallType::None)
-        return throwVMTypeError(exec, ASCIILiteral("invalid getter usage"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("invalid getter usage"));
 
     auto propertyName = exec->argument(0).toPropertyKey(exec);
     if (exec->hadException())
@@ -146,13 +149,16 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     descriptor.setConfigurable(true);
 
     bool shouldThrow = true;
-    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
+    thisObject->methodTable(vm)->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -160,7 +166,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     JSValue set = exec->argument(1);
     CallData callData;
     if (getCallData(set, callData) == CallType::None)
-        return throwVMTypeError(exec, ASCIILiteral("invalid setter usage"));
+        return throwVMTypeError(exec, scope, ASCIILiteral("invalid setter usage"));
 
     auto propertyName = exec->argument(0).toPropertyKey(exec);
     if (exec->hadException())
@@ -172,7 +178,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     descriptor.setConfigurable(true);
 
     bool shouldThrow = true;
-    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
+    thisObject->methodTable(vm)->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
 }
@@ -269,6 +275,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
@@ -303,7 +311,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
             return JSValue();
         String newString = WTF::tryMakeString("[object ", WTFMove(tag), "]");
         if (!newString)
-            return throwOutOfMemoryError(exec);
+            return throwOutOfMemoryError(exec, scope);
 
         auto result = jsNontrivialString(&vm, newString);
         thisObject->structure(vm)->setObjectToStringValue(exec, vm, result, toStringTagSlot);

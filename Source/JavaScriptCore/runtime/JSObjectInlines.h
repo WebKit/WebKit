@@ -30,6 +30,39 @@
 
 namespace JSC {
 
+// Section 7.3.17 of the spec.
+template <typename AddFunction> // Add function should have a type like: (JSValue, RuntimeType) -> bool
+void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTypeMask legalTypesFilter, const String& errorMessage, AddFunction addFunction)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
+    Vector<JSValue> result;
+    JSValue lengthProperty = arrayLikeValue.get(exec, vm.propertyNames->length);
+    if (vm.exception())
+        return;
+    double lengthAsDouble = lengthProperty.toLength(exec);
+    if (vm.exception())
+        return;
+    RELEASE_ASSERT(lengthAsDouble >= 0.0 && lengthAsDouble == std::trunc(lengthAsDouble));
+    uint64_t length = static_cast<uint64_t>(lengthAsDouble);
+    for (uint64_t index = 0; index < length; index++) {
+        JSValue next = arrayLikeValue.get(exec, index);
+        if (vm.exception())
+            return;
+        
+        RuntimeType type = runtimeTypeForValue(next);
+        if (!(type & legalTypesFilter)) {
+            throwTypeError(exec, scope, errorMessage);
+            return;
+        }
+        
+        bool exitEarly = addFunction(next, type);
+        if (exitEarly)
+            return;
+    }
+}
+
 ALWAYS_INLINE bool JSObject::canPerformFastPutInline(ExecState* exec, VM& vm, PropertyName propertyName)
 {
     if (UNLIKELY(propertyName == exec->propertyNames().underscoreProto))
@@ -55,10 +88,12 @@ ALWAYS_INLINE bool JSObject::canPerformFastPutInline(ExecState* exec, VM& vm, Pr
 // ECMA 8.6.2.2
 ALWAYS_INLINE bool JSObject::putInline(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
-    VM& vm = exec->vm();
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
@@ -69,10 +104,10 @@ ALWAYS_INLINE bool JSObject::putInline(JSCell* cell, ExecState* exec, PropertyNa
         return putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
 
     if (thisObject->canPerformFastPutInline(exec, vm, propertyName)) {
-        ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName));
+        ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(vm, propertyName));
         if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot)) {
             if (slot.isStrictMode())
-                throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+                throwTypeError(exec, scope, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
             return false;
         }
         return true;

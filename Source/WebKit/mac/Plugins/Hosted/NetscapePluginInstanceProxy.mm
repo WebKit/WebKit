@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2010, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1632,12 +1632,15 @@ void NetscapePluginInstanceProxy::setGlobalException(const String& exception)
 
 void NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (globalExceptionString().isNull())
         return;
 
     {
-        JSLockHolder lock(exec);
-        exec->vm().throwException(exec, createError(exec, globalExceptionString()));
+        JSLockHolder lock(vm);
+        throwException(exec, scope, createError(exec, globalExceptionString()));
     }
 
     globalExceptionString() = String();

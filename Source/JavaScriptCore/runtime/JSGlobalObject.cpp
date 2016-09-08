@@ -1202,19 +1202,22 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
 
 UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame, EvalExecutable* executable, const VariableEnvironment* variablesUnderTDZ)
 {
+    VM& vm = this->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     ParserError error;
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
     EvalContextType evalContextType = executable->executableInfo().evalContextType();
     
-    UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm().codeCache()->getEvalCodeBlock(
-        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
+    UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm.codeCache()->getEvalCodeBlock(
+        vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, debuggerMode, error, evalContextType, variablesUnderTDZ);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
 
     if (error.isValid()) {
-        throwVMError(callFrame, error.toErrorObject(this, executable->source()));
+        throwVMError(callFrame, scope, error.toErrorObject(this, executable->source()));
         return nullptr;
     }
 
@@ -1223,16 +1226,19 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
 
 UnlinkedModuleProgramCodeBlock* JSGlobalObject::createModuleProgramCodeBlock(CallFrame* callFrame, ModuleProgramExecutable* executable)
 {
+    VM& vm = this->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     ParserError error;
     DebuggerMode debuggerMode = hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
-    UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getModuleProgramCodeBlock(
-        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, debuggerMode, error);
+    UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = vm.codeCache()->getModuleProgramCodeBlock(
+        vm, executable, executable->source(), JSParserBuiltinMode::NotBuiltin, debuggerMode, error);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
 
     if (error.isValid()) {
-        throwVMError(callFrame, error.toErrorObject(this, executable->source()));
+        throwVMError(callFrame, scope, error.toErrorObject(this, executable->source()));
         return nullptr;
     }
 

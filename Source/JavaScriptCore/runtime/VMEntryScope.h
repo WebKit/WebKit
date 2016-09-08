@@ -41,6 +41,7 @@ public:
     JS_EXPORT_PRIVATE VMEntryScope(VM&, JSGlobalObject*);
     JS_EXPORT_PRIVATE ~VMEntryScope();
 
+    VM& vm() const { return m_vm; }
     JSGlobalObject* globalObject() const { return m_globalObject; }
 
     void addDidPopListener(std::function<void ()>);

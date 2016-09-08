@@ -420,6 +420,9 @@ void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
 
 void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue locales, JSValue originalOptions)
 {
+    VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 12.1.1 InitializeDateTimeFormat (dateTimeFormat, locales, options) (ECMA-402 2.0)
     // 1. If dateTimeFormat.[[initializedIntlObject]] is true, throw a TypeError exception.
     // 2. Set dateTimeFormat.[[initializedIntlObject]] to true.
@@ -440,7 +443,6 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     HashMap<String, String> localeOpt;
 
     // 8. Let matcher be GetOption(options, "localeMatcher", "string", «"lookup", "best fit"», "best fit").
-    VM& vm = exec.vm();
     String localeMatcher = intlStringOption(exec, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     // 9. ReturnIfAbrupt(matcher).
     if (exec.hadException())
@@ -487,7 +489,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
         // d. Let tz be CanonicalizeTimeZoneName(tz).
         tz = canonicalizeTimeZoneName(originalTz);
         if (tz.isNull()) {
-            throwRangeError(&exec, String::format("invalid time zone: %s", originalTz.utf8().data()));
+            throwRangeError(&exec, scope, String::format("invalid time zone: %s", originalTz.utf8().data()));
             return;
         }
     } else {
@@ -647,7 +649,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     UErrorCode status = U_ZERO_ERROR;
     UDateTimePatternGenerator* generator = udatpg_open(dataLocale.utf8().data(), &status);
     if (U_FAILURE(status)) {
-        throwTypeError(&exec, ASCIILiteral("failed to initialize DateTimeFormat"));
+        throwTypeError(&exec, scope, ASCIILiteral("failed to initialize DateTimeFormat"));
         return;
     }
 
@@ -663,7 +665,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
     udatpg_close(generator);
     if (U_FAILURE(status)) {
-        throwTypeError(&exec, ASCIILiteral("failed to initialize DateTimeFormat"));
+        throwTypeError(&exec, scope, ASCIILiteral("failed to initialize DateTimeFormat"));
         return;
     }
 
@@ -674,7 +676,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     StringView timeZoneView(m_timeZone);
     m_dateFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(UDAT_PATTERN, UDAT_PATTERN, m_locale.utf8().data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), pattern.upconvertedCharacters(), pattern.length(), &status));
     if (U_FAILURE(status)) {
-        throwTypeError(&exec, ASCIILiteral("failed to initialize DateTimeFormat"));
+        throwTypeError(&exec, scope, ASCIILiteral("failed to initialize DateTimeFormat"));
         return;
     }
 
@@ -883,6 +885,9 @@ JSObject* IntlDateTimeFormat::resolvedOptions(ExecState& exec)
 
 JSValue IntlDateTimeFormat::format(ExecState& exec, double value)
 {
+    VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 12.3.4 FormatDateTime abstract operation (ECMA-402 2.0)
     if (!m_initializedDateTimeFormat) {
         initializeDateTimeFormat(exec, jsUndefined(), jsUndefined());
@@ -891,7 +896,7 @@ JSValue IntlDateTimeFormat::format(ExecState& exec, double value)
 
     // 1. If x is not a finite Number, then throw a RangeError exception.
     if (!std::isfinite(value))
-        return throwRangeError(&exec, ASCIILiteral("date value is not finite in DateTimeFormat format()"));
+        return throwRangeError(&exec, scope, ASCIILiteral("date value is not finite in DateTimeFormat format()"));
 
     // Delegate remaining steps to ICU.
     UErrorCode status = U_ZERO_ERROR;
@@ -903,7 +908,7 @@ JSValue IntlDateTimeFormat::format(ExecState& exec, double value)
         udat_format(m_dateFormat.get(), value, result.data(), resultLength, nullptr, &status);
     }
     if (U_FAILURE(status))
-        return throwTypeError(&exec, ASCIILiteral("failed to format date value"));
+        return throwTypeError(&exec, scope, ASCIILiteral("failed to format date value"));
 
     return jsString(&exec, String(result.data(), resultLength));
 }

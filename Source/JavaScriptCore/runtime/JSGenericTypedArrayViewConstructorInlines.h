@@ -80,8 +80,11 @@ Structure* JSGenericTypedArrayViewConstructor<ViewClass>::createStructure(
 template<typename ViewClass>
 inline JSObject* constructGenericTypedArrayViewFromIterator(ExecState* exec, Structure* structure, JSValue iterator)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!iterator.isObject())
-        return throwTypeError(exec, ASCIILiteral("Symbol.Iterator for the first argument did not return an object."));
+        return throwTypeError(exec, scope, ASCIILiteral("Symbol.Iterator for the first argument did not return an object."));
 
     MarkedArgumentBuffer storage;
     while (true) {
@@ -118,8 +121,10 @@ inline JSObject* constructGenericTypedArrayViewFromIterator(ExecState* exec, Str
 template<typename ViewClass>
 inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, Structure* structure, EncodedJSValue firstArgument, unsigned offset, Optional<unsigned> lengthOpt)
 {
-    JSValue firstValue = JSValue::decode(firstArgument);
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue firstValue = JSValue::decode(firstArgument);
 
     if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(firstValue)) {
         RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
@@ -129,7 +134,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
             length = lengthOpt.value();
         else {
             if ((buffer->byteLength() - offset) % ViewClass::elementSize)
-                return throwRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size");
+                return throwRangeError(exec, scope, "ArrayBuffer length minus the byteOffset is not a multiple of the element size");
             length = (buffer->byteLength() - offset) / ViewClass::elementSize;
 
         }
@@ -139,7 +144,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
     ASSERT(!offset && !lengthOpt);
     
     if (ViewClass::TypedArrayStorageType == TypeDataView)
-        return throwTypeError(exec, ASCIILiteral("Expected ArrayBuffer for the first argument."));
+        return throwTypeError(exec, scope, ASCIILiteral("Expected ArrayBuffer for the first argument."));
     
     // For everything but DataView, we allow construction with any of:
     // - Another array. This creates a copy of the of that array.
@@ -174,7 +179,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
                     CallData callData;
                     CallType callType = getCallData(iteratorFunc, callData);
                     if (callType == CallType::None)
-                        return throwTypeError(exec, ASCIILiteral("Symbol.Iterator for the first argument cannot be called."));
+                        return throwTypeError(exec, scope, ASCIILiteral("Symbol.Iterator for the first argument cannot be called."));
 
                     ArgList arguments;
                     JSValue iterator = call(exec, iteratorFunc, callType, callData, object, arguments);
@@ -206,15 +211,15 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
     if (firstValue.isInt32())
         length = firstValue.asInt32();
     else if (!firstValue.isNumber())
-        return throwTypeError(exec, ASCIILiteral("Invalid array length argument"));
+        return throwTypeError(exec, scope, ASCIILiteral("Invalid array length argument"));
     else {
         length = static_cast<int>(firstValue.asNumber());
         if (length != firstValue.asNumber())
-            return throwTypeError(exec, ASCIILiteral("Invalid array length argument (fractional lengths not allowed)"));
+            return throwTypeError(exec, scope, ASCIILiteral("Invalid array length argument (fractional lengths not allowed)"));
     }
 
     if (length < 0)
-        return throwRangeError(exec, "Requested length is negative");
+        return throwRangeError(exec, scope, "Requested length is negative");
     return ViewClass::create(exec, structure, length);
 }
 
@@ -224,6 +229,9 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState*);
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     InternalFunction* function = asInternalFunction(exec->callee());
     Structure* parentStructure = function->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
     Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), parentStructure);
@@ -234,7 +242,7 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
 
     if (!argCount) {
         if (ViewClass::TypedArrayStorageType == TypeDataView)
-            return throwVMTypeError(exec, ASCIILiteral("DataView constructor requires at least one argument."));
+            return throwVMTypeError(exec, scope, ASCIILiteral("DataView constructor requires at least one argument."));
 
         return JSValue::encode(ViewClass::create(exec, structure, 0));
     }
@@ -268,7 +276,9 @@ ConstructType JSGenericTypedArrayViewConstructor<ViewClass>::getConstructData(JS
 template<typename ViewClass>
 static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(ExecState* exec)
 {
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, ViewClass::info()->className));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, ViewClass::info()->className));
 }
 
 template<typename ViewClass>

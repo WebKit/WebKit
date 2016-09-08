@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +103,9 @@ JSC::JSInternalPromise* JSModuleLoader::fetch(JSC::JSGlobalObject* globalObject,
 
 JSC::JSValue JSModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue)
 {
+    JSC::VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // FIXME: Currently, we only support JSModuleRecord.
     // Once the reflective part of the module loader is supported, we will handle arbitrary values.
     // https://whatwg.github.io/loader/#registry-prototype-provide
@@ -116,10 +119,10 @@ JSC::JSValue JSModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec
     else if (moduleKeyValue.isString())
         sourceUrl = URL(URL(), asString(moduleKeyValue)->value(exec));
     else
-        return JSC::throwTypeError(exec, ASCIILiteral("Module key is not Symbol or String."));
+        return JSC::throwTypeError(exec, scope, ASCIILiteral("Module key is not Symbol or String."));
 
     if (!sourceUrl.isValid())
-        return JSC::throwTypeError(exec, ASCIILiteral("Module key is an invalid URL."));
+        return JSC::throwTypeError(exec, scope, ASCIILiteral("Module key is an invalid URL."));
 
     // FIXME: Implement evaluating module code.
 

@@ -48,15 +48,17 @@ template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     ExecState* exec, Structure* structure, unsigned length)
 {
-    ConstructionContext context(exec->vm(), structure, length, sizeof(typename Adaptor::Type));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ConstructionContext context(vm, structure, length, sizeof(typename Adaptor::Type));
     if (!context) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
     JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(exec->vm().heap))
-        JSGenericTypedArrayView(exec->vm(), context);
-    result->finishCreation(exec->vm());
+        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
+        JSGenericTypedArrayView(vm, context);
+    result->finishCreation(vm);
     return result;
 }
 
@@ -64,17 +66,19 @@ template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninitialized(
     ExecState* exec, Structure* structure, unsigned length)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ConstructionContext context(
-        exec->vm(), structure, length, sizeof(typename Adaptor::Type),
+        vm, structure, length, sizeof(typename Adaptor::Type),
         ConstructionContext::DontInitialize);
     if (!context) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
     JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(exec->vm().heap))
-        JSGenericTypedArrayView(exec->vm(), context);
-    result->finishCreation(exec->vm());
+        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
+        JSGenericTypedArrayView(vm, context);
+    result->finishCreation(vm);
     return result;
 }
 
@@ -83,22 +87,24 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     ExecState* exec, Structure* structure, PassRefPtr<ArrayBuffer> passedBuffer,
     unsigned byteOffset, unsigned length)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     RefPtr<ArrayBuffer> buffer = passedBuffer;
     size_t size = sizeof(typename Adaptor::Type);
     if (!ArrayBufferView::verifySubRangeLength(buffer, byteOffset, length, size)) {
-        exec->vm().throwException(exec, createRangeError(exec, "Length out of range of buffer"));
+        throwException(exec, scope, createRangeError(exec, "Length out of range of buffer"));
         return nullptr;
     }
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, size)) {
-        exec->vm().throwException(exec, createRangeError(exec, "Byte offset is not aligned"));
+        throwException(exec, scope, createRangeError(exec, "Byte offset is not aligned"));
         return nullptr;
     }
-    ConstructionContext context(exec->vm(), structure, buffer, byteOffset, length);
+    ConstructionContext context(vm, structure, buffer, byteOffset, length);
     ASSERT(context);
     JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(exec->vm().heap))
-        JSGenericTypedArrayView(exec->vm(), context);
-    result->finishCreation(exec->vm());
+        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
+        JSGenericTypedArrayView(vm, context);
+    result->finishCreation(vm);
     return result;
 }
 
@@ -128,10 +134,12 @@ template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::validateRange(
     ExecState* exec, unsigned offset, unsigned length)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (canAccessRangeQuickly(offset, length))
         return true;
     
-    exec->vm().throwException(exec, createRangeError(exec, "Range consisting of offset and length are out of bounds"));
+    throwException(exec, scope, createRangeError(exec, "Range consisting of offset and length are out of bounds"));
     return false;
 }
 
@@ -290,8 +298,10 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::existingBuffer()
 template<typename Adaptor>
 EncodedJSValue JSGenericTypedArrayView<Adaptor>::throwNeuteredTypedArrayTypeError(ExecState* exec, EncodedJSValue object, PropertyName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT_UNUSED(object, jsCast<JSGenericTypedArrayView*>(JSValue::decode(object))->isNeutered());
-    return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
+    return throwVMTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 }
 
 template<typename Adaptor>

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2002, 2005, 2006, 2007, 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2002, 2005-2009, 2013-2014, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -40,6 +40,7 @@ size_t normalizePrototypeChain(CallFrame*, Structure*);
 ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     int32_t length1 = s1->length();
     if (!length1)
@@ -48,7 +49,7 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
     if (!length2)
         return s1;
     if (sumOverflows<int32_t>(length1, length2))
-        return throwOutOfMemoryError(exec);
+        return throwOutOfMemoryError(exec, scope);
 
     return JSRopeString::create(vm, s1, s2);
 }
@@ -56,13 +57,14 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
 ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& u2, const String& u3)
 {
     VM* vm = &exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(*vm);
 
     int32_t length1 = u1.length();
     int32_t length2 = u2.length();
     int32_t length3 = u3.length();
     
     if (length1 < 0 || length2 < 0 || length3 < 0)
-        return throwOutOfMemoryError(exec);
+        return throwOutOfMemoryError(exec, scope);
     
     if (!length1)
         return jsString(exec, jsString(vm, u2), jsString(vm, u3));
@@ -72,7 +74,7 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& 
         return jsString(exec, jsString(vm, u1), jsString(vm, u2));
 
     if (sumOverflows<int32_t>(length1, length2, length3))
-        return throwOutOfMemoryError(exec);
+        return throwOutOfMemoryError(exec, scope);
 
     return JSRopeString::create(exec->vm(), jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
 }
@@ -80,12 +82,13 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& 
 ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strings, unsigned count)
 {
     VM* vm = &exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(*vm);
     JSRopeString::RopeBuilder ropeBuilder(*vm);
 
     for (unsigned i = 0; i < count; ++i) {
         JSValue v = strings[-static_cast<int>(i)].jsValue();
         if (!ropeBuilder.append(v.toString(exec)))
-            return throwOutOfMemoryError(exec);
+            return throwOutOfMemoryError(exec, scope);
     }
 
     return ropeBuilder.release();
@@ -94,13 +97,14 @@ ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strin
 ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
 {
     VM* vm = &exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(*vm);
     JSRopeString::RopeBuilder ropeBuilder(*vm);
     ropeBuilder.append(thisValue.toString(exec));
 
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         JSValue v = exec->argument(i);
         if (!ropeBuilder.append(v.toString(exec)))
-            return throwOutOfMemoryError(exec);
+            return throwOutOfMemoryError(exec, scope);
     }
 
     return ropeBuilder.release();

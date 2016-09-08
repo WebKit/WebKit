@@ -48,11 +48,16 @@ void WeakSetConstructor::finishCreation(VM& vm, WeakSetPrototype* prototype)
 
 static EncodedJSValue JSC_HOST_CALL callWeakSet(ExecState* exec)
 {
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, "WeakSet"));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "WeakSet"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
     Structure* weakSetStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->weakSetStructure());
     if (exec->hadException())
@@ -69,7 +74,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(adderFunction, adderFunctionCallData);
     if (adderFunctionCallType == CallType::None)
-        return JSValue::encode(throwTypeError(exec));
+        return JSValue::encode(throwTypeError(exec, scope));
 
     forEachInIterable(exec, iterable, [&](VM&, ExecState* exec, JSValue nextValue) {
         MarkedArgumentBuffer arguments;

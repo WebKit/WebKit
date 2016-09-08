@@ -65,7 +65,8 @@ namespace JSC { namespace LLInt {
 
 #define LLINT_BEGIN_NO_SET_PC() \
     VM& vm = exec->vm();      \
-    NativeCallFrameTracer tracer(&vm, exec)
+    NativeCallFrameTracer tracer(&vm, exec); \
+    auto throwScope = DECLARE_THROW_SCOPE(vm)
 
 #ifndef NDEBUG
 #define LLINT_SET_PC_FOR_STUBS() do { \
@@ -92,14 +93,14 @@ namespace JSC { namespace LLInt {
 #define LLINT_END_IMPL() LLINT_RETURN_TWO(pc, 0)
 
 #define LLINT_THROW(exceptionToThrow) do {                        \
-        vm.throwException(exec, exceptionToThrow);                \
+        throwException(exec, throwScope, exceptionToThrow);       \
         pc = returnToThrow(exec);                                 \
         LLINT_END_IMPL();                                         \
     } while (false)
 
 #define LLINT_CHECK_EXCEPTION() do {                    \
         doExceptionFuzzingIfEnabled(exec, "LLIntSlowPaths", pc);    \
-        if (UNLIKELY(vm.exception())) {                 \
+        if (UNLIKELY(throwScope.exception())) {         \
             pc = returnToThrow(exec);                   \
             LLINT_END_IMPL();                           \
         }                                               \
@@ -152,7 +153,7 @@ namespace JSC { namespace LLInt {
 
 #define LLINT_CALL_THROW(exec, exceptionToThrow) do {                   \
         ExecState* __ct_exec = (exec);                                  \
-        vm.throwException(__ct_exec, exceptionToThrow);                 \
+        throwException(__ct_exec, throwScope, exceptionToThrow);        \
         LLINT_CALL_END_IMPL(0, callToThrow(__ct_exec));                 \
     } while (false)
 
@@ -160,7 +161,7 @@ namespace JSC { namespace LLInt {
         ExecState* __cce_exec = (exec);                                 \
         ExecState* __cce_execCallee = (execCallee);                     \
         doExceptionFuzzingIfEnabled(__cce_exec, "LLIntSlowPaths/call", nullptr); \
-        if (UNLIKELY(vm.exception()))                                   \
+        if (UNLIKELY(throwScope.exception()))                           \
             LLINT_CALL_END_IMPL(0, callToThrow(__cce_execCallee));      \
     } while (false)
 
@@ -466,6 +467,8 @@ LLINT_SLOW_PATH_DECL(replace)
 LLINT_SLOW_PATH_DECL(stack_check)
 {
     VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
     VMEntryFrame* vmEntryFrame = vm.topVMEntryFrame;
     CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
     if (!callerFrame) {
@@ -482,9 +485,9 @@ LLINT_SLOW_PATH_DECL(stack_check)
     dataLogF("Num callee registers = %u.\n", exec->codeBlock()->m_numCalleeLocals);
     dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
 
-    dataLogF("Current OS stack end is at %p.\n", exec->vm().softStackLimit());
+    dataLogF("Current OS stack end is at %p.\n", vm.softStackLimit());
 #if !ENABLE(JIT)
-    dataLogF("Current C Loop stack end is at %p.\n", exec->vm().cloopStackLimit());
+    dataLogF("Current C Loop stack end is at %p.\n", vm.cloopStackLimit());
 #endif
 
 #endif
@@ -502,7 +505,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
 #endif
 
     ErrorHandlingScope errorScope(vm);
-    throwStackOverflowError(callerFrame);
+    throwStackOverflowError(callerFrame, throwScope);
     pc = returnToThrow(callerFrame);
     LLINT_RETURN_TWO(pc, exec);
 }
@@ -784,10 +787,11 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
     LLINT_RETURN(jsBoolean(couldDelete));
 }
 
-inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
+static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, JSValue baseValue, JSValue subscript)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        VM& vm = exec->vm();
         Structure& structure = *baseValue.asCell()->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
             if (RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec)) {
@@ -806,10 +810,10 @@ inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
     }
 
     baseValue.requireObjectCoercible(exec);
-    if (exec->hadException())
+    if (scope.exception())
         return jsUndefined();
     auto property = subscript.toPropertyKey(exec);
-    if (exec->hadException())
+    if (scope.exception())
         return jsUndefined();
     return baseValue.get(exec, property);
 }
@@ -817,7 +821,7 @@ inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
 LLINT_SLOW_PATH_DECL(slow_path_get_by_val)
 {
     LLINT_BEGIN();
-    LLINT_RETURN_PROFILED(op_get_by_val, getByVal(exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue()));
+    LLINT_RETURN_PROFILED(op_get_by_val, getByVal(vm, exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
@@ -827,6 +831,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
     JSValue baseValue = LLINT_OP_C(1).jsValue();
     JSValue subscript = LLINT_OP_C(2).jsValue();
     JSValue value = LLINT_OP_C(3).jsValue();
+    bool isStrictMode = exec->codeBlock()->isStrictMode();
     
     if (LIKELY(subscript.isUInt32())) {
         uint32_t i = subscript.asUInt32();
@@ -835,16 +840,16 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
             if (object->canSetIndexQuickly(i))
                 object->setIndexQuickly(vm, i, value);
             else
-                object->methodTable()->putByIndex(object, exec, i, value, exec->codeBlock()->isStrictMode());
+                object->methodTable()->putByIndex(object, exec, i, value, isStrictMode);
             LLINT_END();
         }
-        baseValue.putByIndex(exec, i, value, exec->codeBlock()->isStrictMode());
+        baseValue.putByIndex(exec, i, value, isStrictMode);
         LLINT_END();
     }
 
     auto property = subscript.toPropertyKey(exec);
     LLINT_CHECK_EXCEPTION();
-    PutPropertySlot slot(baseValue, exec->codeBlock()->isStrictMode());
+    PutPropertySlot slot(baseValue, isStrictMode);
     baseValue.put(exec, property, value, slot);
     LLINT_END();
 }
@@ -1186,6 +1191,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
     
     ExecState* exec = execCallee->callerFrame();
     VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     execCallee->setCodeBlock(0);
     execCallee->clearReturnPC();
@@ -1238,18 +1244,20 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
 inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, CodeSpecializationKind kind, JSValue calleeAsValue, LLIntCallLinkInfo* callLinkInfo = 0)
 {
     ExecState* exec = execCallee->callerFrame();
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Performing call with recorded PC = %p\n", exec->currentVPC());
 #endif
     
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
-    if (!calleeAsFunctionCell)
+    if (!calleeAsFunctionCell) {
+        throwScope.release();
         return handleHostCall(execCallee, pc, calleeAsValue, kind);
-    
+    }
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     JSScope* scope = callee->scopeUnchecked();
-    VM& vm = *scope->vm();
     ExecutableBase* executable = callee->executable();
 
     MacroAssemblerCodePtr codePtr;
@@ -1335,12 +1343,14 @@ inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpec
 LLINT_SLOW_PATH_DECL(slow_path_call)
 {
     LLINT_BEGIN_NO_SET_PC();
+    throwScope.release();
     return genericCall(exec, pc, CodeForCall);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_construct)
 {
     LLINT_BEGIN_NO_SET_PC();
+    throwScope.release();
     return genericCall(exec, pc, CodeForConstruct);
 }
 
@@ -1498,6 +1508,7 @@ LLINT_SLOW_PATH_DECL(slow_path_debug)
 LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 {
     LLINT_BEGIN_NO_SET_PC();
+    UNUSED_PARAM(throwScope);
     genericUnwind(&vm, exec);
     LLINT_END_IMPL();
 }
@@ -1505,7 +1516,6 @@ LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
 {
     LLINT_BEGIN();
-
     const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
     JSObject* scope = jsCast<JSObject*>(LLINT_OP(2).jsValue());
     GetPutInfo getPutInfo(pc[4].u.operand);
@@ -1516,7 +1526,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     LLINT_RETURN(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
         if (!found) {
             if (getPutInfo.resolveMode() == ThrowIfNotFound)
-                return exec->vm().throwException(exec, createUndefinedVariableError(exec, ident));
+                return throwException(exec, throwScope, createUndefinedVariableError(exec, ident));
             return jsUndefined();
         }
 
@@ -1525,7 +1535,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
             // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
             result = slot.getValue(exec, ident);
             if (result == jsTDZValue())
-                return exec->vm().throwException(exec, createTDZError(exec));
+                return throwException(exec, throwScope, createTDZError(exec));
         }
 
         CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, pc, scope, slot, ident);
@@ -1582,9 +1592,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
 LLINT_SLOW_PATH_DECL(slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
 {
     LLINT_BEGIN();
-    RELEASE_ASSERT(!!vm.exception());
+    RELEASE_ASSERT(!!throwScope.exception());
 
-    if (isTerminatedExecutionException(vm.exception()))
+    if (isTerminatedExecutionException(throwScope.exception()))
         LLINT_RETURN_TWO(pc, bitwise_cast<void*>(static_cast<uintptr_t>(1)));
     LLINT_RETURN_TWO(pc, 0);
 }
@@ -1619,9 +1629,11 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_tail)
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)
 {
     ExecState* exec = vm->topCallFrame;
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
     if (!exec)
         exec = protoFrame->callee()->globalObject()->globalExec();
-    throwStackOverflowError(exec);
+    throwStackOverflowError(exec, scope);
     return encodeResult(0, 0);
 }
 

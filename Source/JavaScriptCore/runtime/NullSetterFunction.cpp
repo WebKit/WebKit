@@ -72,8 +72,11 @@ static bool callerIsStrict(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL callReturnUndefined(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (callerIsStrict(exec))
-        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Setting a property that has only a getter")));
+        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Setting a property that has only a getter")));
     return JSValue::encode(jsUndefined());
 }
 

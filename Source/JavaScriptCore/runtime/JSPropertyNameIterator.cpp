@@ -143,9 +143,12 @@ bool JSPropertyNameIterator::next(ExecState* exec, JSValue& output)
 
 EncodedJSValue JSC_HOST_CALL propertyNameIteratorFuncNext(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSPropertyNameIterator* iterator = jsDynamicCast<JSPropertyNameIterator*>(exec->thisValue());
     if (!iterator)
-        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Cannot call PropertyNameIterator.next() on a non-PropertyNameIterator object")));
+        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Cannot call PropertyNameIterator.next() on a non-PropertyNameIterator object")));
 
     JSValue result;
     if (iterator->next(exec, result))

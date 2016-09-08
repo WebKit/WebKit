@@ -681,6 +681,9 @@ static void getExportedNames(ExecState* exec, JSModuleRecord* root, IdentifierSe
 
 JSModuleNamespaceObject* JSModuleRecord::getModuleNamespace(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // http://www.ecma-international.org/ecma-262/6.0/#sec-getmodulenamespace
     if (m_moduleNamespaceObject)
         return m_moduleNamespaceObject.get();
@@ -694,11 +697,11 @@ JSModuleNamespaceObject* JSModuleRecord::getModuleNamespace(ExecState* exec)
         const JSModuleRecord::Resolution resolution = resolveExport(exec, Identifier::fromUid(exec, name.get()));
         switch (resolution.type) {
         case Resolution::Type::NotFound:
-            throwSyntaxError(exec, makeString("Exported binding name '", String(name.get()), "' is not found."));
+            throwSyntaxError(exec, scope, makeString("Exported binding name '", String(name.get()), "' is not found."));
             return nullptr;
 
         case Resolution::Type::Error:
-            throwSyntaxError(exec, makeString("Exported binding name 'default' cannot be resolved by star export entries."));
+            throwSyntaxError(exec, scope, makeString("Exported binding name 'default' cannot be resolved by star export entries."));
             return nullptr;
 
         case Resolution::Type::Ambiguous:
@@ -710,29 +713,33 @@ JSModuleNamespaceObject* JSModuleRecord::getModuleNamespace(ExecState* exec)
         }
     }
 
-    m_moduleNamespaceObject.set(exec->vm(), this, JSModuleNamespaceObject::create(exec, globalObject, globalObject->moduleNamespaceObjectStructure(), this, unambiguousNames));
+    m_moduleNamespaceObject.set(vm, this, JSModuleNamespaceObject::create(exec, globalObject, globalObject->moduleNamespaceObjectStructure(), this, unambiguousNames));
     return m_moduleNamespaceObject.get();
 }
 
 void JSModuleRecord::link(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     ModuleProgramExecutable* executable = ModuleProgramExecutable::create(exec, sourceCode());
     if (!executable) {
-        throwSyntaxError(exec);
+        throwSyntaxError(exec, scope);
         return;
     }
-    m_moduleProgramExecutable.set(exec->vm(), this, executable);
+    m_moduleProgramExecutable.set(vm, this, executable);
     instantiateDeclarations(exec, executable);
 }
 
 void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecutable* moduleProgramExecutable)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduledeclarationinstantiation
 
     SymbolTable* symbolTable = moduleProgramExecutable->moduleEnvironmentSymbolTable();
-    JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(exec->vm(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject(), symbolTable, jsTDZValue(), this);
-
-    VM& vm = exec->vm();
+    JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, exec->lexicalGlobalObject(), exec->lexicalGlobalObject(), symbolTable, jsTDZValue(), this);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduledeclarationinstantiation
     // section 15.2.1.16.4 step 9.
@@ -745,15 +752,15 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
             Resolution resolution = resolveExport(exec, exportEntry.exportName);
             switch (resolution.type) {
             case Resolution::Type::NotFound:
-                throwSyntaxError(exec, makeString("Indirectly exported binding name '", String(exportEntry.exportName.impl()), "' is not found."));
+                throwSyntaxError(exec, scope, makeString("Indirectly exported binding name '", String(exportEntry.exportName.impl()), "' is not found."));
                 return;
 
             case Resolution::Type::Ambiguous:
-                throwSyntaxError(exec, makeString("Indirectly exported binding name '", String(exportEntry.exportName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
+                throwSyntaxError(exec, scope, makeString("Indirectly exported binding name '", String(exportEntry.exportName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
                 return;
 
             case Resolution::Type::Error:
-                throwSyntaxError(exec, makeString("Indirectly exported binding name 'default' cannot be resolved by star export entries."));
+                throwSyntaxError(exec, scope, makeString("Indirectly exported binding name 'default' cannot be resolved by star export entries."));
                 return;
 
             case Resolution::Type::Resolved:
@@ -779,15 +786,15 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
             Resolution resolution = importedModule->resolveExport(exec, importEntry.importName);
             switch (resolution.type) {
             case Resolution::Type::NotFound:
-                throwSyntaxError(exec, makeString("Importing binding name '", String(importEntry.importName.impl()), "' is not found."));
+                throwSyntaxError(exec, scope, makeString("Importing binding name '", String(importEntry.importName.impl()), "' is not found."));
                 return;
 
             case Resolution::Type::Ambiguous:
-                throwSyntaxError(exec, makeString("Importing binding name '", String(importEntry.importName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
+                throwSyntaxError(exec, scope, makeString("Importing binding name '", String(importEntry.importName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
                 return;
 
             case Resolution::Type::Error:
-                throwSyntaxError(exec, makeString("Importing binding name 'default' cannot be resolved by star export entries."));
+                throwSyntaxError(exec, scope, makeString("Importing binding name 'default' cannot be resolved by star export entries."));
                 return;
 
             case Resolution::Type::Resolved:

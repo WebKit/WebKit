@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (thetalecrafter@gmail.com)
  * Copyright (C) 2016 Sukolsak Sakshuwong (sukolsak@gmail.com)
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -159,6 +160,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
 {
     // 11.1.1 InitializeNumberFormat (numberFormat, locales, options) (ECMA-402 2.0)
     VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 1. If numberFormat has an [[initializedIntlObject]] internal slot with value true, throw a TypeError exception.
     // 2. Set numberFormat.[[initializedIntlObject]] to true.
@@ -186,7 +188,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     HashMap<String, String> opt;
 
     // 8. Let matcher be GetOption(options, "localeMatcher", "string", «"lookup", "best fit"», "best fit").
-    String matcher = intlStringOption(state, options, state.vm().propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
+    String matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     // 9. ReturnIfAbrupt(matcher).
     if (state.hadException())
         return;
@@ -230,7 +232,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     if (!currency.isNull()) {
         // a. If the result of IsWellFormedCurrencyCode(c), is false, then throw a RangeError exception.
         if (currency.length() != 3 || !currency.isAllSpecialCharacters<isASCIIAlpha>()) {
-            state.vm().throwException(&state, createRangeError(&state, ASCIILiteral("currency is not a well-formed currency code")));
+            throwException(&state, scope, createRangeError(&state, ASCIILiteral("currency is not a well-formed currency code")));
             return;
         }
     }
@@ -239,7 +241,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     if (m_style == Style::Currency) {
         // 22. If s is "currency" and c is undefined, throw a TypeError exception.
         if (currency.isNull()) {
-            throwTypeError(&state, ASCIILiteral("currency must be a string"));
+            throwTypeError(&state, scope, ASCIILiteral("currency must be a string"));
             return;
         }
 
@@ -423,11 +425,14 @@ void IntlNumberFormat::createNumberFormat(ExecState& state)
 
 JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 11.3.4 FormatNumber abstract operation (ECMA-402 2.0)
     if (!m_numberFormat) {
         createNumberFormat(state);
         if (!m_numberFormat)
-            return state.vm().throwException(&state, createError(&state, ASCIILiteral("Failed to format a number.")));
+            return throwException(&state, scope, createError(&state, ASCIILiteral("Failed to format a number.")));
     }
 
     // Map negative zero to positive zero.
@@ -443,7 +448,7 @@ JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
         unum_formatDouble(m_numberFormat.get(), number, buffer.data(), length, nullptr, &status);
     }
     if (U_FAILURE(status))
-        return state.vm().throwException(&state, createError(&state, ASCIILiteral("Failed to format a number.")));
+        return throwException(&state, scope, createError(&state, ASCIILiteral("Failed to format a number.")));
 
     return jsString(&state, String(buffer.data(), length));
 }

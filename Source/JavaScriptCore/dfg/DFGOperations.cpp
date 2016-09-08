@@ -138,8 +138,10 @@ char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (size < 0) {
-        vm.throwException(exec, createRangeError(exec, ASCIILiteral("Requested length is negative")));
+        throwException(exec, scope, createRangeError(exec, ASCIILiteral("Requested length is negative")));
         return 0;
     }
     return bitwise_cast<char*>(ViewClass::create(exec, structure, size));
@@ -725,12 +727,13 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
     
     VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue base = JSValue::decode(encodedBase);
     JSValue argument = JSValue::decode(encodedArgument);
     
     if (!base.inherits(RegExpObject::info()))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, scope);
 
     JSString* input = argument.toStringOrNull(exec);
     if (!input)
@@ -769,12 +772,13 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
     
     VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue base = JSValue::decode(encodedBase);
     JSValue argument = JSValue::decode(encodedArgument);
 
     if (!base.inherits(RegExpObject::info())) {
-        throwTypeError(exec);
+        throwTypeError(exec, scope);
         return false;
     }
 
@@ -933,9 +937,10 @@ char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayS
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
 
     if (UNLIKELY(size < 0))
-        return bitwise_cast<char*>(exec->vm().throwException(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
+        return bitwise_cast<char*>(throwException(exec, scope, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
 
     JSArray* result = JSArray::create(*vm, arrayStructure, size);
     result->butterfly(); // Ensure that the backing store is in to-space.
@@ -1388,9 +1393,10 @@ JSCell* JIT_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSStri
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (sumOverflows<int32_t>(left->length(), right->length())) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
 
@@ -1401,9 +1407,10 @@ JSCell* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString*
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (sumOverflows<int32_t>(a->length(), b->length(), c->length())) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
 
@@ -1414,6 +1421,7 @@ JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, Encode
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSString* str1 = JSValue::decode(a).toString(exec);
     ASSERT(!vm.exception()); // Impossible, since we must have been given primitives.
@@ -1421,7 +1429,7 @@ JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, Encode
     ASSERT(!vm.exception());
 
     if (sumOverflows<int32_t>(str1->length(), str2->length())) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
 
@@ -1432,6 +1440,7 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, Encode
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSString* str1 = JSValue::decode(a).toString(exec);
     ASSERT(!vm.exception()); // Impossible, since we must have been given primitives.
@@ -1441,7 +1450,7 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, Encode
     ASSERT(!vm.exception());
 
     if (sumOverflows<int32_t>(str1->length(), str2->length(), str3->length())) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
 
@@ -1545,7 +1554,8 @@ void JIT_OPERATION operationThrowStackOverflowForVarargs(ExecState* exec)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    throwStackOverflowError(exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    throwStackOverflowError(exec, scope);
 }
 
 int32_t JIT_OPERATION operationSizeOfVarargs(ExecState* exec, EncodedJSValue encodedArguments, int32_t firstVarArgOffset)
@@ -1732,13 +1742,14 @@ EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState* exec, JSObject* s
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     Identifier ident = Identifier::fromUid(exec, impl);
     return JSValue::encode(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
         if (!found) {
             GetPutInfo getPutInfo(getPutInfoBits);
             if (getPutInfo.resolveMode() == ThrowIfNotFound)
-                vm.throwException(exec, createUndefinedVariableError(exec, ident));
+                throwException(exec, throwScope, createUndefinedVariableError(exec, ident));
             return jsUndefined();
         }
 
@@ -1746,7 +1757,7 @@ EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState* exec, JSObject* s
             // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
             JSValue result = slot.getValue(exec, ident);
             if (result == jsTDZValue()) {
-                exec->vm().throwException(exec, createTDZError(exec));
+                throwException(exec, throwScope, createTDZError(exec));
                 return jsUndefined();
             }
             return result;
@@ -1760,6 +1771,7 @@ void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, Enco
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     const Identifier& ident = Identifier::fromUid(exec, impl);
     GetPutInfo getPutInfo(getPutInfoBits);
@@ -1771,13 +1783,13 @@ void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, Enco
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
         JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, exec, ident, slot);
         if (slot.getValue(exec, ident) == jsTDZValue()) {
-            exec->vm().throwException(exec, createTDZError(exec));
+            throwException(exec, throwScope, createTDZError(exec));
             return;
         }
     }
 
     if (getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty) {
-        exec->vm().throwException(exec, createUndefinedVariableError(exec, ident));
+        throwException(exec, throwScope, createUndefinedVariableError(exec, ident));
         return;
     }
 
