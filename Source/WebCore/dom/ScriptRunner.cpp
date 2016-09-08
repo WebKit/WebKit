@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ScriptRunner.h"
 
-#include "CachedScript.h"
 #include "Element.h"
 #include "PendingScript.h"
 #include "ScriptElement.h"
@@ -49,10 +48,9 @@ ScriptRunner::~ScriptRunner()
         m_document.decrementLoadEventDelayCount();
 }
 
-void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, CachedResourceHandle<CachedScript> cachedScript, ExecutionType executionType)
+void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, LoadableScript& loadableScript, ExecutionType executionType)
 {
     ASSERT(scriptElement);
-    ASSERT(cachedScript.get());
 
     Element& element = scriptElement->element();
     ASSERT(element.inDocument());
@@ -61,11 +59,11 @@ void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, CachedR
 
     switch (executionType) {
     case ASYNC_EXECUTION:
-        m_pendingAsyncScripts.add(scriptElement, PendingScript::create(element, *cachedScript));
+        m_pendingAsyncScripts.add(scriptElement, PendingScript::create(element, loadableScript));
         break;
 
     case IN_ORDER_EXECUTION:
-        m_scriptsToExecuteInOrder.append(PendingScript::create(element, *cachedScript));
+        m_scriptsToExecuteInOrder.append(PendingScript::create(element, loadableScript));
         break;
     }
 }
@@ -117,7 +115,8 @@ void ScriptRunner::timerFired()
             continue;
         auto* scriptElement = toScriptElementIfPossible(&script->element());
         ASSERT(scriptElement);
-        scriptElement->execute(script->cachedScript());
+        ASSERT(script->needsLoading());
+        scriptElement->executeScriptForScriptRunner(*script->loadableScript());
         m_document.decrementLoadEventDelayCount();
     }
 }

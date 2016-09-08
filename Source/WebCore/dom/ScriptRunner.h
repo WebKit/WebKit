@@ -23,10 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScriptRunner_h
-#define ScriptRunner_h
+#pragma once
 
-#include "CachedResourceHandle.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -34,10 +32,10 @@
 
 namespace WebCore {
 
-class CachedScript;
 class Document;
 class PendingScript;
 class ScriptElement;
+class LoadableScript;
 
 class ScriptRunner {
     WTF_MAKE_NONCOPYABLE(ScriptRunner); WTF_MAKE_FAST_ALLOCATED;
@@ -46,7 +44,7 @@ public:
     ~ScriptRunner();
 
     enum ExecutionType { ASYNC_EXECUTION, IN_ORDER_EXECUTION };
-    void queueScriptForExecution(ScriptElement*, CachedResourceHandle<CachedScript>, ExecutionType);
+    void queueScriptForExecution(ScriptElement*, LoadableScript&, ExecutionType);
     bool hasPendingScripts() const { return !m_scriptsToExecuteSoon.isEmpty() || !m_scriptsToExecuteInOrder.isEmpty() || !m_pendingAsyncScripts.isEmpty(); }
     void suspend();
     void resume();
@@ -63,5 +61,3 @@ private:
 };
 
 }
-
-#endif

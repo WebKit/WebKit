@@ -26,16 +26,15 @@
 #include "config.h"
 #include "PendingScript.h"
 
-#include "CachedScript.h"
 #include "Element.h"
 #include "PendingScriptClient.h"
 
 namespace WebCore {
 
-Ref<PendingScript> PendingScript::create(Element& element, CachedScript& cachedScript)
+Ref<PendingScript> PendingScript::create(Element& element, LoadableScript& loadableScript)
 {
-    Ref<PendingScript> pendingScript = adoptRef(*new PendingScript(element, cachedScript));
-    cachedScript.addClient(&pendingScript.get());
+    Ref<PendingScript> pendingScript = adoptRef(*new PendingScript(element, loadableScript));
+    loadableScript.addClient(pendingScript.get());
     return pendingScript;
 }
 
@@ -50,21 +49,21 @@ PendingScript::PendingScript(Element& element, TextPosition startingPosition)
 {
 }
 
-PendingScript::PendingScript(Element& element, CachedScript& cachedScript)
+PendingScript::PendingScript(Element& element, LoadableScript& loadableScript)
     : m_element(element)
-    , m_cachedScript(&cachedScript)
+    , m_loadableScript(&loadableScript)
 {
 }
 
 PendingScript::~PendingScript()
 {
-    if (m_cachedScript)
-        m_cachedScript->removeClient(this);
+    if (m_loadableScript)
+        m_loadableScript->removeClient(*this);
 }
 
-CachedScript* PendingScript::cachedScript() const
+LoadableScript* PendingScript::loadableScript() const
 {
-    return m_cachedScript.get();
+    return m_loadableScript.get();
 }
 
 void PendingScript::notifyClientFinished()
@@ -74,14 +73,19 @@ void PendingScript::notifyClientFinished()
         m_client->notifyFinished(*this);
 }
 
-void PendingScript::notifyFinished(CachedResource*)
+void PendingScript::notifyFinished(LoadableScript&)
 {
     notifyClientFinished();
 }
 
 bool PendingScript::isLoaded() const
 {
-    return m_cachedScript && m_cachedScript->isLoaded();
+    return m_loadableScript && m_loadableScript->isLoaded();
+}
+
+bool PendingScript::wasErrored() const
+{
+    return m_loadableScript && m_loadableScript->wasErrored();
 }
 
 void PendingScript::setClient(PendingScriptClient* client)

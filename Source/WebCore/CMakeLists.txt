@@ -1437,6 +1437,8 @@ set(WebCore_SOURCES
     dom/InlineStyleSheetOwner.cpp
     dom/KeyboardEvent.cpp
     dom/LiveNodeList.cpp
+    dom/LoadableClassicScript.cpp
+    dom/LoadableScript.cpp
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp
     dom/MessagePort.cpp

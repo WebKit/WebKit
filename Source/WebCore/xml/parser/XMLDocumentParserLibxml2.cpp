@@ -45,6 +45,7 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTemplateElement.h"
+#include "LoadableClassicScript.h"
 #include "Page.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
@@ -920,8 +921,10 @@ void XMLDocumentParser::endElementNs()
 
         if (scriptElement->readyToBeParserExecuted())
             scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
-        else if (scriptElement->willBeParserExecuted()) {
-            m_pendingScript = scriptElement->cachedScript();
+        else if (scriptElement->willBeParserExecuted() && scriptElement->loadableScript() && is<LoadableClassicScript>(*scriptElement->loadableScript())) {
+            // FIXME: Allow "module" scripts for XML documents.
+            // https://bugs.webkit.org/show_bug.cgi?id=161651
+            m_pendingScript = &downcast<LoadableClassicScript>(*scriptElement->loadableScript()).cachedScript();
             m_scriptElement = &element;
             m_pendingScript->addClient(this);
 

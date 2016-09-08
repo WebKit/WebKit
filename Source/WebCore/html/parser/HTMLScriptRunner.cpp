@@ -26,8 +26,6 @@
 #include "config.h"
 #include "HTMLScriptRunner.h"
 
-#include "CachedScript.h"
-#include "CachedResourceLoader.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -89,17 +87,6 @@ inline Ref<Event> createScriptLoadEvent()
     return Event::create(eventNames().loadEvent, false, false);
 }
 
-ScriptSourceCode HTMLScriptRunner::sourceFromPendingScript(const PendingScript& script, bool& errorOccurred) const
-{
-    if (script.cachedScript()) {
-        errorOccurred = script.cachedScript()->errorOccurred();
-        ASSERT(script.cachedScript()->isLoaded());
-        return ScriptSourceCode(script.cachedScript());
-    }
-    errorOccurred = false;
-    return ScriptSourceCode(script.element().textContent(), documentURLForScriptExecution(m_document), script.startingPosition());
-}
-
 bool HTMLScriptRunner::isPendingScriptReady(const PendingScript& script)
 {
     if (!m_document)
@@ -125,9 +112,6 @@ void HTMLScriptRunner::executeParsingBlockingScript()
 
 void HTMLScriptRunner::executePendingScriptAndDispatchEvent(RefPtr<PendingScript> pendingScript)
 {
-    bool errorOccurred = false;
-    ScriptSourceCode sourceCode = sourceFromPendingScript(*pendingScript, errorOccurred);
-
     // Stop watching loads before executeScript to prevent recursion if the script reloads itself.
     if (pendingScript->watchingForLoad())
         stopWatchingForLoad(*pendingScript);
@@ -137,14 +121,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(RefPtr<PendingScript
 
     if (auto* scriptElement = toScriptElementIfPossible(&pendingScript->element())) {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
-        IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_document);
-        if (errorOccurred)
-            scriptElement->dispatchErrorEvent();
-        else {
-            ASSERT(isExecutingScript());
-            scriptElement->executeScript(sourceCode);
-            pendingScript->element().dispatchEvent(createScriptLoadEvent());
-        }
+        scriptElement->executeScriptForHTMLScriptRunner(*pendingScript);
     }
     ASSERT(!isExecutingScript());
 }
@@ -236,8 +213,8 @@ static Ref<PendingScript> requestPendingScript(Element* script)
 {
     auto& scriptElement = *toScriptElementIfPossible(script);
     ASSERT(scriptElement.willBeParserExecuted());
-    ASSERT(scriptElement.cachedScript());
-    return PendingScript::create(*script, *scriptElement.cachedScript());
+    ASSERT(scriptElement.loadableScript());
+    return PendingScript::create(*script, *scriptElement.loadableScript());
 }
 
 void HTMLScriptRunner::requestParsingBlockingScript(Element* element)
@@ -246,7 +223,7 @@ void HTMLScriptRunner::requestParsingBlockingScript(Element* element)
     m_parserBlockingScript = requestPendingScript(element);
     ASSERT(m_parserBlockingScript->needsLoading());
 
-    // We only care about a load callback if cachedScript is not already
+    // We only care about a load callback if LoadableScript is not already
     // in the cache. Callers will attempt to run the m_parserBlockingScript
     // if possible before returning control to the parser.
     if (!m_parserBlockingScript->isLoaded())

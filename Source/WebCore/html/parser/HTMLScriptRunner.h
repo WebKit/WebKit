@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-class CachedResource;
-class CachedScript;
 class Document;
 class Element;
 class Frame;
