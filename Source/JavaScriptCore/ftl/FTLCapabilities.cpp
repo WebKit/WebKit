@@ -179,6 +179,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Throw:
     case ThrowReferenceError:
     case Unreachable:
+    case In:
     case IsJSArray:
     case IsEmpty:
     case IsUndefined:
@@ -204,6 +205,7 @@ inline CapabilityLevel canCompile(Node* node)
     case HasStructureProperty:
     case GetDirectPname:
     case GetEnumerableLength:
+    case GetIndexedPropertyStorage:
     case GetPropertyEnumerator:
     case GetEnumeratorStructurePname:
     case GetEnumeratorGenericPname:
@@ -224,6 +226,10 @@ inline CapabilityLevel canCompile(Node* node)
     case ForwardVarargs:
     case Switch:
     case TypeOf:
+    case PutById:
+    case PutByIdDirect:
+    case PutByIdFlush:
+    case PutByIdWithThis:
     case PutGetterById:
     case PutSetterById:
     case PutGetterSetterById:
@@ -261,24 +267,6 @@ inline CapabilityLevel canCompile(Node* node)
         // case because it would prevent us from catching bugs where the FTL backend
         // pipeline failed to optimize out an Identity.
         break;
-    case In:
-        if (node->child2().useKind() == CellUse)
-            break;
-        return CannotCompile;
-    case PutByIdDirect:
-    case PutById:
-    case PutByIdFlush:
-        if (node->child1().useKind() == CellUse)
-            break;
-        return CannotCompile;
-    case PutByIdWithThis:
-        break;
-    case GetIndexedPropertyStorage:
-        if (node->arrayMode().type() == Array::String)
-            break;
-        if (isTypedView(node->arrayMode().typedArrayType()))
-            break;
-        return CannotCompile;
     case CheckArray:
         switch (node->arrayMode().type()) {
         case Array::Int32:
