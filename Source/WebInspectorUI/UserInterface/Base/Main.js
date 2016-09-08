@@ -162,9 +162,11 @@ WebInspector.loaded = function()
     this.showJavaScriptTypeInformationSetting = new WebInspector.Setting("show-javascript-type-information", false);
     if (this.showJavaScriptTypeInformationSetting.value && window.RuntimeAgent && RuntimeAgent.enableTypeProfiler) {
         RuntimeAgent.enableTypeProfiler();
-        if (RuntimeAgent.enableControlFlowProfiler)
-            RuntimeAgent.enableControlFlowProfiler();
     }
+
+    this.enableControlFlowProfilerSetting = new WebInspector.Setting("enable-control-flow-profiler", false);
+    if (this.enableControlFlowProfilerSetting.value && window.RuntimeAgent && RuntimeAgent.enableControlFlowProfiler)
+        RuntimeAgent.enableControlFlowProfiler();
 
     // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
     this.showPaintRectsSetting = new WebInspector.Setting("show-paint-rects", false);

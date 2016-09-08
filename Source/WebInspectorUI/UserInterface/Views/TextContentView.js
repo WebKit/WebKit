@@ -51,6 +51,11 @@ WebInspector.TextContentView = class TextContentView extends WebInspector.Conten
         var activatedToolTipTypes = WebInspector.UIString("Hide type information");
         this._showTypesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", 13, 14);
         this._showTypesButtonNavigationItem.enabled = false;
+
+        let toolTipCodeCoverage = WebInspector.UIString("Fade unexecuted code");
+        let activatedToolTipCodeCoverage = WebInspector.UIString("Do not fade unexecuted code");
+        this._codeCoverageButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("code-coverage", toolTipCodeCoverage, activatedToolTipCodeCoverage, "Images/NavigationItemCodeCoverage.svg", 13, 14);
+        this._codeCoverageButtonNavigationItem.enabled = false;
     }
 
     // Public
@@ -62,7 +67,7 @@ WebInspector.TextContentView = class TextContentView extends WebInspector.Conten
 
     get navigationItems()
     {
-        return [this._prettyPrintButtonNavigationItem, this._showTypesButtonNavigationItem];
+        return [this._prettyPrintButtonNavigationItem, this._showTypesButtonNavigationItem, this._codeCoverageButtonNavigationItem];
     }
 
     revealPosition(position, textRangeToSelect, forceUnformatted)

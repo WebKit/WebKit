@@ -137,6 +137,17 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         return this._formatted;
     }
 
+    get hasModified()
+    {
+        let historySize = this._codeMirror.historySize().undo;
+
+        // Formatting code creates a history item.
+        if (this._formatted)
+            historySize--;
+
+        return historySize > 0;
+    }
+
     updateFormattedState(formatted)
     {
         return this._format(formatted).catch(handlePromiseException);
@@ -155,6 +166,11 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
     }
 
     canShowTypeAnnotations()
+    {
+        return false;
+    }
+
+    canShowCoverageHints()
     {
         return false;
     }

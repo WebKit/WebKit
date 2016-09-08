@@ -1,3 +1,72 @@
+2016-09-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add a button to navigation bar to toggle Control Flow Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=160973
+        <rdar://problem/27912606>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Add "Fade unexecuted code" and "Do not fade unexecuted code".
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        Add a setting to remember whether Code Coverage Profiler is on or off between Web Inspector reloads.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.shown):
+        (WebInspector.SourceCodeTextEditor.prototype.canShowTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.canShowCoverageHints):
+        (WebInspector.SourceCodeTextEditor.prototype.contentDidChange):
+        (WebInspector.SourceCodeTextEditor.prototype.toggleTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.toggleUnexecutedCodeHighlights):
+        (WebInspector.SourceCodeTextEditor.prototype.prettyPrint):
+        (WebInspector.SourceCodeTextEditor.prototype._proceedPopulateWithContent):
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+        (WebInspector.SourceCodeTextEditor.prototype.set _basicBlockAnnotatorEnabled):
+        (WebInspector.SourceCodeTextEditor.prototype._enableScrollEventsForTypeTokenAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._enableScrollEventsForControlFlowAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._disableScrollEventsForControlFlowAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._createTypeTokenScrollEventHandler):
+        (WebInspector.SourceCodeTextEditor.prototype._createControlFlowScrollEventHandler):
+        (WebInspector.SourceCodeTextEditor.prototype.canBeFormatted): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.dialogWasDismissed): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.showPopoverForTypes): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._addBreakpointWithEditorLineInfo): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._removeBreakpointWithEditorLineInfo): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedMarkedExpression): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._dismissEditingController): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.editingControllerDidStartEditing): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.editingControllerDidFinishEditing): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._getAssociatedScript): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype._createTypeTokenAnnotator): Deleted.
+        Make Code Coverage profiler independent from Type Profiler.
+
+        * UserInterface/Views/TextContentView.js:
+        (WebInspector.TextContentView):
+        (WebInspector.TextContentView.prototype.get navigationItems):
+        (WebInspector.TextContentView.prototype.get textEditor): Deleted.
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.get hasModified):
+        (WebInspector.TextEditor.prototype.canShowCoverageHints):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView):
+        (WebInspector.TextResourceContentView.prototype.get navigationItems):
+        (WebInspector.TextResourceContentView.prototype._contentDidPopulate):
+        (WebInspector.TextResourceContentView.prototype._toggleTypeAnnotations):
+        (WebInspector.TextResourceContentView.prototype._toggleUnexecutedCodeHighlights):
+        (WebInspector.TextResourceContentView.prototype._enableControlFlowProfilerSettingChanged):
+        (WebInspector.TextResourceContentView.prototype._contentWillPopulate): Deleted.
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView):
+        (WebInspector.ScriptContentView.prototype.get navigationItems):
+        (WebInspector.ScriptContentView.prototype._contentDidPopulate):
+        (WebInspector.ScriptContentView.prototype._toggleTypeAnnotations):
+        (WebInspector.ScriptContentView.prototype._toggleUnexecutedCodeHighlights):
+        (WebInspector.ScriptContentView.prototype._enableControlFlowProfilerSettingChanged):
+        (WebInspector.ScriptContentView.prototype._contentWillPopulate): Deleted.
+        Add the [C] icon right next to the [T] (Type Profiler) icon.
+
 2016-09-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Debugger sidebar should include a warning message breakpoints are disabled
