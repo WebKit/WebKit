@@ -33,7 +33,7 @@ namespace JSC {
 #if USE(JSVALUE64)
 void clearArrayMemset(WriteBarrier<Unknown>* base, unsigned count)
 {
-#if CPU(X86_64)
+#if CPU(X86_64) && COMPILER(GCC_OR_CLANG)
     uint64_t zero = 0;
     asm volatile (
         "rep stosq\n\t"
@@ -48,7 +48,7 @@ void clearArrayMemset(WriteBarrier<Unknown>* base, unsigned count)
 
 void clearArrayMemset(double* base, unsigned count)
 {
-#if CPU(X86_64)
+#if CPU(X86_64) && COMPILER(GCC_OR_CLANG)
     uint64_t pnan = bitwise_cast<uint64_t>(PNaN);
     asm volatile (
         "rep stosq\n\t"

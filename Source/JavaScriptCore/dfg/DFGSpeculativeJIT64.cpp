@@ -691,7 +691,7 @@ void SpeculativeJIT::emitCall(Node* node)
         break;
     }
 
-    GPRReg calleeGPR;
+    GPRReg calleeGPR = InvalidGPRReg;
     CallFrameShuffleData shuffleData;
     
     // Gotta load the arguments somehow. Varargs is trickier.
