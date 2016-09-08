@@ -75,9 +75,15 @@ enum {
     kIOHIDDigitizerEventStart       = 1<<8,
     kIOHIDDigitizerEventEstimatedAltitude = 1<<28,
     kIOHIDDigitizerEventEstimatedAzimuth = 1<<29,
-    kIOHIDDigitizerEventEstimatedPressure = 1<<30,
+    kIOHIDDigitizerEventEstimatedPressure = 1<<30
 };
 typedef uint32_t IOHIDDigitizerEventMask;
+
+enum {
+    kIOHIDDigitizerEventUpdateAltitudeMask = 1<<28,
+    kIOHIDDigitizerEventUpdateAzimuthMask = 1<<29,
+    kIOHIDDigitizerEventUpdatePressureMask = 1<<30
+};
 
 enum {
     kIOHIDEventTypeNULL,

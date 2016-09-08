@@ -1,3 +1,13 @@
+2016-09-08  Dean Jackson  <dino@apple.com>
+
+        Expose Apple Pencil input to testing system
+        https://bugs.webkit.org/show_bug.cgi?id=161670
+        <rdar://problem/28183327>
+
+        I fixed the internal builds, now try to fix the public builds.
+
+        * WebKitTestRunner/ios/IOKitSPI.h: Add new enum values.
+
 2016-09-07  Dean Jackson  <dino@apple.com>
 
         Expose Apple Pencil input to testing system
