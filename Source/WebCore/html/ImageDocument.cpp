@@ -313,8 +313,8 @@ void ImageDocument::restoreImageSize()
         return;
 
     LayoutSize imageSize = this->imageSize();
-    m_imageElement->setWidth(imageSize.width());
-    m_imageElement->setHeight(imageSize.height());
+    m_imageElement->setWidth(imageSize.width().toUnsigned());
+    m_imageElement->setHeight(imageSize.height().toUnsigned());
 
     if (imageFitsInWindow())
         m_imageElement->removeInlineStyleProperty(CSSPropertyCursor);

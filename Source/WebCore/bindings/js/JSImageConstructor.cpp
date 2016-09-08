@@ -58,21 +58,16 @@ template<> EncodedJSValue JSImageConstructor::construct(ExecState* state)
     // added to the window object. This is done to ensure that JSDocument::visit
     // will be called, which will cause the image element to be marked if necessary.
     toJS(state, jsConstructor->globalObject(), *document);
-    int width;
-    int height;
-    int* optionalWidth = 0;
-    int* optionalHeight = 0;
+    Optional<unsigned> width;
+    Optional<unsigned> height;
     if (state->argumentCount() > 0) {
-        width = state->argument(0).toInt32(state);
-        optionalWidth = &width;
-    }
-    if (state->argumentCount() > 1) {
-        height = state->argument(1).toInt32(state);
-        optionalHeight = &height;
+        width = state->uncheckedArgument(0).toUInt32(state);
+        if (state->argumentCount() > 1)
+            height = state->uncheckedArgument(1).toUInt32(state);
     }
 
     return JSValue::encode(asObject(toJS(state, jsConstructor->globalObject(),
-        HTMLImageElement::createForJSConstructor(*document, optionalWidth, optionalHeight))));
+        HTMLImageElement::createForJSConstructor(*document, width, height))));
 }
 
 template<> const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSImageConstructor) };

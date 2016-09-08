@@ -89,13 +89,13 @@ HTMLImageElement::~HTMLImageElement()
     setPictureElement(nullptr);
 }
 
-Ref<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document& document, const int* optionalWidth, const int* optionalHeight)
+Ref<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document& document, Optional<unsigned> width, Optional<unsigned> height)
 {
-    Ref<HTMLImageElement> image = adoptRef(*new HTMLImageElement(imgTag, document));
-    if (optionalWidth)
-        image->setWidth(*optionalWidth);
-    if (optionalHeight)
-        image->setHeight(*optionalHeight);
+    auto image = adoptRef(*new HTMLImageElement(imgTag, document));
+    if (width)
+        image->setWidth(width.value());
+    if (height)
+        image->setHeight(height.value());
     return image;
 }
 
@@ -376,18 +376,17 @@ void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
     gPictureOwnerMap->add(this, pictureElement->createWeakPtr());
 }
     
-int HTMLImageElement::width(bool ignorePendingStylesheets)
+unsigned HTMLImageElement::width(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
-        bool ok;
-        int width = attributeWithoutSynchronization(widthAttr).toInt(&ok);
-        if (ok)
-            return width;
+        Optional<int> width = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(widthAttr));
+        if (width)
+            return width.value();
 
         // if the image is available, use its width
         if (m_imageLoader.image())
-            return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).width();
+            return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).width().toUnsigned();
     }
 
     if (ignorePendingStylesheets)
@@ -402,18 +401,17 @@ int HTMLImageElement::width(bool ignorePendingStylesheets)
     return adjustForAbsoluteZoom(snappedIntRect(contentRect).width(), *box);
 }
 
-int HTMLImageElement::height(bool ignorePendingStylesheets)
+unsigned HTMLImageElement::height(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
-        bool ok;
-        int height = attributeWithoutSynchronization(heightAttr).toInt(&ok);
-        if (ok)
-            return height;
+        Optional<int> height = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(heightAttr));
+        if (height)
+            return height.value();
 
         // if the image is available, use its height
         if (m_imageLoader.image())
-            return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).height();
+            return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).height().toUnsigned();
     }
 
     if (ignorePendingStylesheets)
@@ -501,9 +499,9 @@ bool HTMLImageElement::draggable() const
     return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(draggableAttr), "false");
 }
 
-void HTMLImageElement::setHeight(int value)
+void HTMLImageElement::setHeight(unsigned value)
 {
-    setIntegralAttribute(heightAttr, value);
+    setUnsignedIntegralAttribute(heightAttr, value);
 }
 
 URL HTMLImageElement::src() const
@@ -516,9 +514,9 @@ void HTMLImageElement::setSrc(const String& value)
     setAttributeWithoutSynchronization(srcAttr, value);
 }
 
-void HTMLImageElement::setWidth(int value)
+void HTMLImageElement::setWidth(unsigned value)
 {
-    setIntegralAttribute(widthAttr, value);
+    setUnsignedIntegralAttribute(widthAttr, value);
 }
 
 int HTMLImageElement::x() const

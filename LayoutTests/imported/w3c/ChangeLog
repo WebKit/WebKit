@@ -1,3 +1,14 @@
+2016-09-08  Chris Dumez  <cdumez@apple.com>
+
+        HTMLImageElement.width / height attributes should be unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=161730
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+
 2016-09-07  Chris Dumez  <cdumez@apple.com>
 
         Fix handling of negative radius in HTMLAreaElement's coords when in circle state

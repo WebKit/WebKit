@@ -1,3 +1,15 @@
+2016-09-08  Chris Dumez  <cdumez@apple.com>
+
+        HTMLImageElement.width / height attributes should be unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=161730
+
+        Reviewed by Alex Christensen.
+
+        Update existing test to reflect behavior change.
+
+        * js/dom/custom-constructors-expected.txt:
+        * js/dom/script-tests/custom-constructors.js:
+
 2016-09-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r205652.

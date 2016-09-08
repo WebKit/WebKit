@@ -27,7 +27,7 @@
     [Reflect] attribute DOMString alt;
     [Reflect, TreatNullAs=EmptyString] attribute DOMString border;
     attribute DOMString? crossOrigin;
-    attribute long height;
+    attribute unsigned long height;
     [Reflect] attribute long hspace;
     [Reflect] attribute boolean isMap;
     [Reflect, URL] attribute USVString longDesc;
@@ -37,7 +37,7 @@
     readonly attribute USVString currentSrc;
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute long vspace;
-    attribute long width;
+    attribute unsigned long width;
 
     // Extensions
     readonly attribute boolean complete;

@@ -9,8 +9,8 @@ PASS new Image().height is 0
 PASS new Image().width is 0
 PASS new Image(100).width is 100
 PASS new Image(100, 200).height is 200
-PASS new Image(-100).width is -100
-PASS new Image(-100, -200).height is -200
+PASS new Image(-100).width is 0
+PASS new Image(-100, -200).height is 0
 PASS new Image().outerHTML is "<img>"
 PASS new Image(100, 100).outerHTML.replace(/"/g, "'") is "<img width='100' height='100'>"
 PASS new Option() is non-null.

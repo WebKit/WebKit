@@ -1147,11 +1147,11 @@ PASS img.width: IDL set to "-0" should not throw
 PASS img.width: IDL set to "-0" followed by getAttribute() 
 PASS img.width: IDL set to "-0" followed by IDL get 
 PASS img.width: IDL set to 2147483648 should not throw 
-FAIL img.width: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "-2147483648"
-FAIL img.width: IDL set to 2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS img.width: IDL set to 2147483648 followed by getAttribute() 
+PASS img.width: IDL set to 2147483648 followed by IDL get 
 PASS img.width: IDL set to 4294967295 should not throw 
-FAIL img.width: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "-1"
-FAIL img.width: IDL set to 4294967295 followed by IDL get assert_equals: expected 0 but got -1
+PASS img.width: IDL set to 4294967295 followed by getAttribute() 
+PASS img.width: IDL set to 4294967295 followed by IDL get 
 PASS img.height: typeof IDL attribute 
 PASS img.height: IDL get with DOM attribute unset 
 PASS img.height: IDL set to 0 should not throw 
@@ -1170,11 +1170,11 @@ PASS img.height: IDL set to "-0" should not throw
 PASS img.height: IDL set to "-0" followed by getAttribute() 
 PASS img.height: IDL set to "-0" followed by IDL get 
 PASS img.height: IDL set to 2147483648 should not throw 
-FAIL img.height: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "-2147483648"
-FAIL img.height: IDL set to 2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS img.height: IDL set to 2147483648 followed by getAttribute() 
+PASS img.height: IDL set to 2147483648 followed by IDL get 
 PASS img.height: IDL set to 4294967295 should not throw 
-FAIL img.height: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "-1"
-FAIL img.height: IDL set to 4294967295 followed by IDL get assert_equals: expected 0 but got -1
+PASS img.height: IDL set to 4294967295 followed by getAttribute() 
+PASS img.height: IDL set to 4294967295 followed by IDL get 
 PASS img.name: typeof IDL attribute 
 PASS img.name: IDL get with DOM attribute unset 
 PASS img.name: setAttribute() to "" followed by getAttribute() 
