@@ -1045,7 +1045,7 @@ static void serializeIPv6(std::array<uint16_t, 8> address, StringBuilder& buffer
                 buffer.append(':');
             else
                 buffer.append("::");
-            while (!address[piece])
+            while (piece < 8 && !address[piece])
                 piece++;
             if (piece == 8)
                 break;
