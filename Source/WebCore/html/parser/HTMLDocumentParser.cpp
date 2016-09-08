@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
+#include "CachedScript.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
@@ -500,18 +501,18 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
     endIfDelayed();
 }
 
-void HTMLDocumentParser::watchForLoad(CachedResource* cachedScript)
+void HTMLDocumentParser::watchForLoad(PendingScript& pendingScript)
 {
-    ASSERT(!cachedScript->isLoaded());
-    // addClient would call notifyFinished if the load were complete.
+    ASSERT(!pendingScript.isLoaded());
+    // setClient would call notifyFinished if the load were complete.
     // Callers do not expect to be re-entered from this call, so they should
-    // not an already-loaded CachedResource.
-    cachedScript->addClient(this);
+    // not an already-loaded PendingScript.
+    pendingScript.setClient(this);
 }
 
-void HTMLDocumentParser::stopWatchingForLoad(CachedResource* cachedScript)
+void HTMLDocumentParser::stopWatchingForLoad(PendingScript& pendingScript)
 {
-    cachedScript->removeClient(this);
+    pendingScript.clearClient();
 }
 
 void HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan()
@@ -521,7 +522,7 @@ void HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan()
     m_preloadScanner->scan(*m_preloader, *document());
 }
 
-void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
+void HTMLDocumentParser::notifyFinished(PendingScript& pendingScript)
 {
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
@@ -534,7 +535,7 @@ void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
         return;
     }
 
-    m_scriptRunner->executeScriptsWaitingForLoad(cachedResource);
+    m_scriptRunner->executeScriptsWaitingForLoad(pendingScript);
     if (!isWaitingForScripts())
         resumeParsingAfterScriptExecution();
 }
