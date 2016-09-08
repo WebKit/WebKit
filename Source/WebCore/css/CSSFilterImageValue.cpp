@@ -73,7 +73,7 @@ FloatSize CSSFilterImageValue::fixedSize(const RenderElement* renderer)
     return cachedImage->imageForRenderer(renderer)->size();
 }
 
-bool CSSFilterImageValue::isPending()
+bool CSSFilterImageValue::isPending() const
 {
     return CSSImageGeneratorValue::subimageIsPending(m_imageValue);
 }

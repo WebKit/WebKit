@@ -45,10 +45,8 @@ public:
     }
     ~CSSImageSetValue();
 
-    StyleCachedImage* bestFitImage(CachedResourceLoader&, const ResourceLoaderOptions&);
-
-    // Returns a StyleCachedImage if the best fit image has been cached already, otherwise a StylePendingImage.
-    StyleImage* cachedOrPendingImageSet(const Document&);
+    void loadBestFitImage(CachedResourceLoader&, const ResourceLoaderOptions&);
+    StyleCachedImage& styleImage(const Document&);
 
     String customCSSText() const;
 
@@ -70,11 +68,10 @@ private:
     CSSImageSetValue();
     CSSImageSetValue(const CSSImageSetValue& cloneFrom);
 
-    void detachPendingImage();
     void fillImageSet();
     static inline bool compareByScaleFactor(ImageWithScale first, ImageWithScale second) { return first.scaleFactor < second.scaleFactor; }
 
-    RefPtr<StyleImage> m_image;
+    RefPtr<StyleCachedImage> m_image;
     bool m_accessedBestFitImage;
 
     // This represents the scale factor that we used to find the best fit image. It does not necessarily

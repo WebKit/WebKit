@@ -33,7 +33,6 @@
 #include "Element.h"
 #include "MemoryCache.h"
 #include "StyleCachedImage.h"
-#include "StylePendingImage.h"
 
 namespace WebCore {
 
@@ -44,63 +43,62 @@ CSSImageValue::CSSImageValue(const String& url)
 {
 }
 
-CSSImageValue::CSSImageValue(const String& url, StyleImage* image)
+CSSImageValue::CSSImageValue(CachedImage& image)
     : CSSValue(ImageClass)
-    , m_url(url)
-    , m_image(image)
+    , m_url(image.url())
+    , m_image(StyleCachedImage::create(*this))
     , m_accessedImage(true)
 {
+    m_image->setCachedImage(image);
 }
 
-inline void CSSImageValue::detachPendingImage()
-{
-    if (is<StylePendingImage>(m_image.get()))
-        downcast<StylePendingImage>(*m_image).detachFromCSSValue();
-}
 
 CSSImageValue::~CSSImageValue()
 {
-    detachPendingImage();
+    if (m_image)
+        m_image->detachFromCSSValue();
 }
 
-StyleImage& CSSImageValue::cachedOrPendingImage()
+bool CSSImageValue::isPending() const
+{
+    return !m_image || !m_image->cachedImage();
+}
+
+StyleCachedImage& CSSImageValue::styleImage()
 {
     if (!m_image)
-        m_image = StylePendingImage::create(this);
+        m_image = StyleCachedImage::create(*this);
 
     return *m_image;
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
+void CSSImageValue::loadImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-    if (!m_accessedImage) {
-        m_accessedImage = true;
+    if (m_accessedImage)
+        return;
+    m_accessedImage = true;
 
-        CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
-        if (m_initiatorName.isEmpty())
-            request.setInitiator(cachedResourceRequestInitiators().css);
-        else
-            request.setInitiator(m_initiatorName);
+    CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
+    if (m_initiatorName.isEmpty())
+        request.setInitiator(cachedResourceRequestInitiators().css);
+    else
+        request.setInitiator(m_initiatorName);
 
-        if (options.mode == FetchOptions::Mode::Cors) {
-            ASSERT(loader.document()->securityOrigin());
-            updateRequestForAccessControl(request.mutableResourceRequest(), *loader.document()->securityOrigin(), options.allowCredentials);
-        }
-        if (CachedResourceHandle<CachedImage> cachedImage = loader.requestImage(request)) {
-            detachPendingImage();
-            m_image = StyleCachedImage::create(cachedImage.get());
-        }
+    if (options.mode == FetchOptions::Mode::Cors) {
+        ASSERT(loader.document()->securityOrigin());
+        updateRequestForAccessControl(request.mutableResourceRequest(), *loader.document()->securityOrigin(), options.allowCredentials);
     }
-
-    return is<StyleCachedImage>(m_image.get()) ? downcast<StyleCachedImage>(m_image.get()) : nullptr;
+    if (CachedResourceHandle<CachedImage> cachedImage = loader.requestImage(request))
+        styleImage().setCachedImage(*cachedImage);
 }
 
 bool CSSImageValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
-    if (!is<StyleCachedImage>(m_image.get()))
+    if (!m_image)
         return false;
-    CachedResource* cachedResource = downcast<StyleCachedImage>(*m_image).cachedImage();
-    ASSERT(cachedResource);
+    CachedResource* cachedResource = m_image->cachedImage();
+    if (!cachedResource)
+        return false;
     return handler(*cachedResource);
 }
 
