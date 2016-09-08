@@ -1,3 +1,15 @@
+2016-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Align meta element http-equiv="refresh" parsing with the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=161543
+
+        Reviewed by Darin Adler.
+
+        Update layout test to only use HTML spaces in http-equiv="refresh"
+        content value.
+
+        * http/tests/misc/refresh-meta-with-newline.html:
+
 2016-09-03  Youenn Fablet  <youenn@apple.com>
 
         run-webkit-tests should detect w3c test resource files

@@ -291,4 +291,107 @@ String parseCORSSettingsAttribute(const AtomicString& value)
     return ASCIILiteral("anonymous");
 }
 
+// https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-refresh
+template <typename CharacterType>
+static bool parseHTTPRefreshInternal(const CharacterType* position, const CharacterType* end, double& parsedDelay, String& parsedURL)
+{
+    while (position < end && isHTMLSpace(*position))
+        ++position;
+
+    const CharacterType* numberStart = position;
+    while (position < end && isASCIIDigit(*position))
+        ++position;
+
+    Optional<int> number = parseHTMLNonNegativeInteger(StringView(numberStart, position - numberStart).toStringWithoutCopying());
+    if (!number)
+        return false;
+
+    while (position < end && (isASCIIDigit(*position) || *position == '.'))
+        ++position;
+
+    if (position == end) {
+        parsedDelay = number.value();
+        return true;
+    }
+
+    if (*position != ';' && *position != ',' && !isHTMLSpace(*position))
+        return false;
+
+    parsedDelay = number.value();
+
+    while (position < end && isHTMLSpace(*position))
+        ++position;
+
+    if (position < end && (*position == ';' || *position == ','))
+        ++position;
+
+    while (position < end && isHTMLSpace(*position))
+        ++position;
+
+    if (position == end)
+        return true;
+
+    if (*position == 'U' || *position == 'u') {
+        StringView url(position, end - position);
+
+        ++position;
+
+        if (position < end && (*position == 'R' || *position == 'r'))
+            ++position;
+        else {
+            parsedURL = url.toString();
+            return true;
+        }
+
+        if (position < end && (*position == 'L' || *position == 'l'))
+            ++position;
+        else {
+            parsedURL = url.toString();
+            return true;
+        }
+
+        while (position < end && isHTMLSpace(*position))
+            ++position;
+
+        if (position < end && *position == '=')
+            ++position;
+        else {
+            parsedURL = url.toString();
+            return true;
+        }
+
+        while (position < end && isHTMLSpace(*position))
+            ++position;
+    }
+
+    CharacterType quote;
+    if (position < end && (*position == '\'' || *position == '"')) {
+        quote = *position;
+        ++position;
+    } else
+        quote = '\0';
+
+    StringView url(position, end - position);
+
+    if (quote != '\0') {
+        size_t index = url.find(quote);
+        if (index != notFound)
+            url = url.substring(0, index);
+    }
+
+    parsedURL = url.toString();
+    return true;
+}
+
+bool parseMetaHTTPEquivRefresh(const StringView& input, double& delay, String& url)
+{
+    if (LIKELY(input.is8Bit())) {
+        auto* start = input.characters8();
+        return parseHTTPRefreshInternal(start, start + input.length(), delay, url);
+    }
+
+    auto* start = input.characters16();
+    return parseHTTPRefreshInternal(start, start + input.length(), delay, url);
+}
+
 }
