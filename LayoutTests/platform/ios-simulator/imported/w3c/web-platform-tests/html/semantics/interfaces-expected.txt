@@ -170,8 +170,8 @@ FAIL Interfaces for menuitem assert_equals: Element menuitem should have HTMLMen
 FAIL Interfaces for MENUITEM assert_equals: Element MENUITEM should have HTMLMenuItemElement as its primary interface. expected "[object HTMLMenuItemElement]" but got "[object HTMLUnknownElement]"
 PASS Interfaces for meta 
 PASS Interfaces for META 
-FAIL Interfaces for meter assert_equals: Element meter should have HTMLMeterElement as its primary interface. expected "[object HTMLMeterElement]" but got "[object HTMLUnknownElement]"
-FAIL Interfaces for METER assert_equals: Element METER should have HTMLMeterElement as its primary interface. expected "[object HTMLMeterElement]" but got "[object HTMLUnknownElement]"
+PASS Interfaces for meter 
+PASS Interfaces for METER 
 PASS Interfaces for mod 
 PASS Interfaces for MOD 
 PASS Interfaces for multicol 

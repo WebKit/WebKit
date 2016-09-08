@@ -1,3 +1,25 @@
+2016-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable the <meter> element on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=161714
+        rdar://problem/8978410
+
+        Reviewed by Tim Horton.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/ios-simulator/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/ios-simulator/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/ios-simulator/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
+        * platform/ios-simulator/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/ios-simulator/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/ios-simulator/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/the-meter-element/meter-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt:
+
 2016-09-07  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] applyConstraints pt. 2 - advanced constraints

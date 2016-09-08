@@ -1,3 +1,15 @@
+2016-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable the <meter> element on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=161714
+        rdar://problem/8978410
+
+        Reviewed by Tim Horton.
+
+        Define ENABLE_METER_ELEMENT unconditionally now.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-09-07  Dan Bernstein  <mitz@apple.com>
 
         [Mac] .tbd files for the shims end up installed when building with GENERATE_TEXT_BASED_STUBS=YES

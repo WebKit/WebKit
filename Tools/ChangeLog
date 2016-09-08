@@ -1,3 +1,15 @@
+2016-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable the <meter> element on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=161714
+        rdar://problem/8978410
+
+        Reviewed by Tim Horton.
+
+        Define ENABLE_METER_ELEMENT unconditionally now.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2016-09-07  Jonathan Bedard  <jbedard@apple.com>
 
         Run spindumps on timeout on iOS 9 Simulator Release WK2 (Tests)
