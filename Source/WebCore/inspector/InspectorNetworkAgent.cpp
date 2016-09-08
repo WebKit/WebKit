@@ -448,9 +448,9 @@ void InspectorNetworkAgent::didReceiveScriptResponse(unsigned long identifier)
     m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::ScriptResource);
 }
 
-void InspectorNetworkAgent::didFinishXHRLoading(ThreadableLoaderClient*, unsigned long identifier, const String& sourceString)
+void InspectorNetworkAgent::didFinishXHRLoading(ThreadableLoaderClient*, unsigned long identifier, const String& decodedText)
 {
-    m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
+    m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), decodedText);
 }
 
 void InspectorNetworkAgent::didReceiveXHRResponse(unsigned long identifier)

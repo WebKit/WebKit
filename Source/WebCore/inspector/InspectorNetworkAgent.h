@@ -82,7 +82,7 @@ public:
     void didFinishLoading(unsigned long identifier, DocumentLoader&, double finishTime);
     void didFailLoading(unsigned long identifier, DocumentLoader&, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader&, CachedResource&);
-    void didFinishXHRLoading(ThreadableLoaderClient*, unsigned long identifier, const String& sourceString);
+    void didFinishXHRLoading(ThreadableLoaderClient*, unsigned long identifier, const String& decodedText);
     void didReceiveXHRResponse(unsigned long identifier);
     void willLoadXHRSynchronously();
     void didLoadXHRSynchronously();

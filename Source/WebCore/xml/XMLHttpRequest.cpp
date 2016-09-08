@@ -1006,7 +1006,10 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
 
     m_responseBuilder.shrinkToFit();
 
-    InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), this, identifier, m_responseBuilder.toStringPreserveCapacity(), m_url, m_lastSendURL, m_lastSendLineNumber, m_lastSendColumnNumber);
+    Optional<String> decodedText;
+    if (!m_binaryResponseBuilder)
+        decodedText = m_responseBuilder.toStringPreserveCapacity();
+    InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), this, identifier, decodedText, m_url, m_lastSendURL, m_lastSendLineNumber, m_lastSendColumnNumber);
 
     bool hadLoader = m_loader;
     m_loader = nullptr;
