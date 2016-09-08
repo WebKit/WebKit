@@ -1302,6 +1302,12 @@ static Optional<String> domainToASCII(const String& domain)
     }
     
     UChar hostnameBuffer[hostnameBufferLength];
+
+    // FIXME: This is slow, but it covers up a mysterious bug on the bots when logging is disabled.
+    // The URLParser should not be enabled until this bug is found and resolved.
+    // See https://bugs.webkit.org/show_bug.cgi?id=161668
+    memset(hostnameBuffer, 0, sizeof(hostnameBuffer));
+
     UErrorCode error = U_ZERO_ERROR;
     
     int32_t numCharactersConverted = uidna_IDNToASCII(StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, nullptr, &error);
