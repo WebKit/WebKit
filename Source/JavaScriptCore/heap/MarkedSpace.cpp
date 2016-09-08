@@ -460,7 +460,16 @@ void MarkedSpace::flip()
         for (unsigned i = 0; i < m_blocksWithNewObjects.size(); ++i)
             m_blocksWithNewObjects[i]->flipForEdenCollection();
     } else {
-        m_version++; // Henceforth, flipIfNecessary() will trigger on all blocks.
+        HeapVersion nextVersion = m_version + 1;
+        if (UNLIKELY(nextVersion == initialVersion)) {
+            // Oh no! Version wrap-around! We handle this by flipping all blocks. This happens
+            // super rarely, probably never for most users.
+            forEachBlock(
+                [&] (MarkedBlock::Handle* handle) {
+                    handle->flipIfNecessary();
+                });
+        }
+        m_version = nextVersion; // Henceforth, flipIfNecessary() will trigger on all blocks.
         for (LargeAllocation* allocation : m_largeAllocations)
             allocation->flip();
     }

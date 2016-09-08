@@ -67,7 +67,7 @@ void ConservativeRoots::grow()
 }
 
 template<typename MarkHook>
-inline void ConservativeRoots::genericAddPointer(void* p, int64_t version, TinyBloomFilter filter, MarkHook& markHook)
+inline void ConservativeRoots::genericAddPointer(void* p, HeapVersion version, TinyBloomFilter filter, MarkHook& markHook)
 {
     markHook.mark(p);
 
@@ -97,7 +97,7 @@ void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHoo
     RELEASE_ASSERT(isPointerAligned(end));
 
     TinyBloomFilter filter = m_heap.objectSpace().blocks().filter(); // Make a local copy of filter to show the compiler it won't alias, and can be register-allocated.
-    int64_t version = m_heap.objectSpace().version();
+    HeapVersion version = m_heap.objectSpace().version();
     for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it)
         genericAddPointer(*it, version, filter, markHook);
 }

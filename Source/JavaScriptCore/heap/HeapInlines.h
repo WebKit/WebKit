@@ -94,7 +94,7 @@ ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
     return block.isMarked(cell);
 }
 
-ALWAYS_INLINE bool Heap::testAndSetMarked(int64_t version, const void* rawCell)
+ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion version, const void* rawCell)
 {
     HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
     if (cell->isLargeAllocation())

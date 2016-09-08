@@ -42,6 +42,7 @@ class JSCell;
 class MarkedAllocator;
 
 typedef uintptr_t Bits;
+typedef uint32_t HeapVersion;
 
 // Set to log state transitions of blocks.
 #define HEAP_LOG_BLOCK_STATE_TRANSITIONS 0
@@ -185,8 +186,8 @@ public:
             
         bool needsFlip();
             
-        void flipIfNecessaryConcurrently(uint64_t heapVersion);
-        void flipIfNecessary(uint64_t heapVersion);
+        void flipIfNecessaryConcurrently(HeapVersion);
+        void flipIfNecessary(HeapVersion);
         void flipIfNecessary();
             
         void assertFlipped();
@@ -265,8 +266,8 @@ public:
 
     bool needsFlip();
         
-    void flipIfNecessaryConcurrently(uint64_t heapVersion);
-    void flipIfNecessary(uint64_t heapVersion);
+    void flipIfNecessaryConcurrently(HeapVersion);
+    void flipIfNecessary(HeapVersion);
     void flipIfNecessary();
         
     void assertFlipped();
@@ -319,11 +320,11 @@ private:
     //
     //     m_biasedMarkCount != m_markCountBias
     int16_t m_markCountBias;
+
+    HeapVersion m_version;
     
     Handle& m_handle;
     VM* m_vm;
-        
-    uint64_t m_version;
 };
 
 inline MarkedBlock::Handle& MarkedBlock::handle()
@@ -461,25 +462,25 @@ inline size_t MarkedBlock::atomNumber(const void* p)
     return (reinterpret_cast<Bits>(p) - reinterpret_cast<Bits>(this)) / atomSize;
 }
 
-inline void MarkedBlock::flipIfNecessary(uint64_t heapVersion)
+inline void MarkedBlock::flipIfNecessary(HeapVersion heapVersion)
 {
     if (UNLIKELY(heapVersion != m_version))
         flipIfNecessarySlow();
 }
 
-inline void MarkedBlock::flipIfNecessaryConcurrently(uint64_t heapVersion)
+inline void MarkedBlock::flipIfNecessaryConcurrently(HeapVersion heapVersion)
 {
     if (UNLIKELY(heapVersion != m_version))
         flipIfNecessaryConcurrentlySlow();
     WTF::loadLoadFence();
 }
 
-inline void MarkedBlock::Handle::flipIfNecessary(uint64_t heapVersion)
+inline void MarkedBlock::Handle::flipIfNecessary(HeapVersion heapVersion)
 {
     block().flipIfNecessary(heapVersion);
 }
 
-inline void MarkedBlock::Handle::flipIfNecessaryConcurrently(uint64_t heapVersion)
+inline void MarkedBlock::Handle::flipIfNecessaryConcurrently(HeapVersion heapVersion)
 {
     block().flipIfNecessaryConcurrently(heapVersion);
 }

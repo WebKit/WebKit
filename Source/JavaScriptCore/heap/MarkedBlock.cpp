@@ -85,9 +85,9 @@ MarkedBlock::Handle::~Handle()
 
 MarkedBlock::MarkedBlock(VM& vm, Handle& handle)
     : m_needsDestruction(handle.needsDestruction())
+    , m_version(vm.heap.objectSpace().version())
     , m_handle(handle)
     , m_vm(&vm)
-    , m_version(vm.heap.objectSpace().version())
 {
     unsigned cellsPerBlock = MarkedSpace::blockPayload / handle.cellSize();
     double markCountBias = -(Options::minMarkedBlockUtilization() * cellsPerBlock);

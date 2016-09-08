@@ -81,7 +81,7 @@ SlotVisitor::SlotVisitor(Heap& heap)
     , m_bytesCopied(0)
     , m_visitCount(0)
     , m_isInParallelMode(false)
-    , m_version(42)
+    , m_version(MarkedSpace::initialVersion)
     , m_heap(heap)
 #if !ASSERT_DISABLED
     , m_isCheckingForDefaultMarkViolation(false)

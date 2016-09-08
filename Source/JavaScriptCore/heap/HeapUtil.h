@@ -46,7 +46,7 @@ public:
     // before liveness data is cleared to be accurate.
     template<typename Func>
     static void findGCObjectPointersForMarking(
-        Heap& heap, int64_t heapVersion, TinyBloomFilter filter, void* passedPointer,
+        Heap& heap, HeapVersion heapVersion, TinyBloomFilter filter, void* passedPointer,
         const Func& func)
     {
         const HashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
