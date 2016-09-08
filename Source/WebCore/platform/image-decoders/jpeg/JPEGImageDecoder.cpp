@@ -196,36 +196,6 @@ static ImageOrientation readImageOrientation(jpeg_decompress_struct* info)
     return ImageOrientation();
 }
 
-static ColorProfile readColorProfile(jpeg_decompress_struct* info)
-{
-#if USE(ICCJPEG)
-    JOCTET* profile;
-    unsigned int profileLength;
-
-    if (!read_icc_profile(info, &profile, &profileLength))
-        return ColorProfile();
-
-    // Only accept RGB color profiles from input class devices.
-    bool ignoreProfile = false;
-    char* profileData = reinterpret_cast<char*>(profile);
-    if (profileLength < ImageDecoder::iccColorProfileHeaderLength)
-        ignoreProfile = true;
-    else if (!ImageDecoder::rgbColorProfile(profileData, profileLength))
-        ignoreProfile = true;
-    else if (!ImageDecoder::inputDeviceColorProfile(profileData, profileLength))
-        ignoreProfile = true;
-
-    ColorProfile colorProfile;
-    if (!ignoreProfile)
-        colorProfile.append(profileData, profileLength);
-    free(profile);
-    return colorProfile;
-#else
-    UNUSED_PARAM(info);
-    return ColorProfile();
-#endif
-}
-
 class JPEGImageReader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -363,13 +333,6 @@ public:
             if (m_decoder->willDownSample() && turboSwizzled(m_info.out_color_space))
                 m_info.out_color_space = JCS_RGB;
 #endif
-            // Allow color management of the decoded RGBA pixels if possible.
-            if (!m_decoder->ignoresGammaAndColorProfile()) {
-                ColorProfile rgbInputDeviceColorProfile = readColorProfile(info());
-                if (!rgbInputDeviceColorProfile.isEmpty())
-                    m_decoder->setColorProfile(rgbInputDeviceColorProfile);
-            }
-
             // Don't allocate a giant and superfluous memory buffer when the
             // image is a sequential JPEG.
             m_info.buffered_image = jpeg_has_multiple_scans(&m_info);
@@ -660,7 +623,6 @@ bool JPEGImageDecoder::outputScanlines()
         // The buffer is transparent outside the decoded area while the image is
         // loading. The completed image will be marked fully opaque in jpegComplete().
         buffer.setHasAlpha(true);
-        buffer.setColorProfile(m_colorProfile);
 
         // For JPEGs, the frame always fills the entire image.
         buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));

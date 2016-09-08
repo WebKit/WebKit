@@ -276,37 +276,6 @@ bool PNGImageDecoder::setFailed()
     return ImageDecoder::setFailed();
 }
 
-static void readColorProfile(png_structp png, png_infop info, ColorProfile& colorProfile)
-{
-    ASSERT(colorProfile.isEmpty());
-
-#ifdef PNG_iCCP_SUPPORTED
-    char* profileName;
-    int compressionType;
-#if (PNG_LIBPNG_VER < 10500)
-    png_charp profile;
-#else
-    png_bytep profile;
-#endif
-    png_uint_32 profileLength;
-    if (!png_get_iCCP(png, info, &profileName, &compressionType, &profile, &profileLength))
-        return;
-
-    // Only accept RGB color profiles from input class devices.
-    bool ignoreProfile = false;
-    char* profileData = reinterpret_cast<char*>(profile);
-    if (profileLength < ImageDecoder::iccColorProfileHeaderLength)
-        ignoreProfile = true;
-    else if (!ImageDecoder::rgbColorProfile(profileData, profileLength))
-        ignoreProfile = true;
-    else if (!ImageDecoder::inputDeviceColorProfile(profileData, profileLength))
-        ignoreProfile = true;
-
-    if (!ignoreProfile)
-        colorProfile.append(profileData, profileLength);
-#endif
-}
-
 void PNGImageDecoder::headerAvailable()
 {
     png_structp png = m_reader->pngPtr();
@@ -405,16 +374,6 @@ void PNGImageDecoder::headerAvailable()
     if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
         png_set_gray_to_rgb(png);
 
-    if ((colorType & PNG_COLOR_MASK_COLOR) && !m_ignoreGammaAndColorProfile) {
-        // We only support color profiles for color PALETTE and RGB[A] PNG. Supporting
-        // color profiles for gray-scale images is slightly tricky, at least using the
-        // CoreGraphics ICC library, because we expand gray-scale images to RGB but we
-        // do not similarly transform the color profile. We'd either need to transform
-        // the color profile or we'd need to decode into a gray-scale image buffer and
-        // hand that to CoreGraphics.
-        readColorProfile(png, info, m_colorProfile);
-    }
-
     // Deal with gamma and keep it under our control.
     double gamma;
     if (!m_ignoreGammaAndColorProfile && png_get_gAMA(png, info, &gamma)) {
@@ -506,7 +465,6 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
         buffer.setStatus(ImageFrame::FramePartial);
         buffer.setHasAlpha(false);
-        buffer.setColorProfile(m_colorProfile);
 
 #if ENABLE(APNG)
         if (m_currentFrame)

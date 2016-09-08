@@ -220,11 +220,6 @@ void ImageFrame::setHasAlpha(bool alpha)
     m_hasAlpha = alpha;
 }
 
-void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
-{
-    m_colorProfile = colorProfile;
-}
-
 void ImageFrame::setStatus(FrameStatus status)
 {
     m_status = status;

@@ -110,7 +110,6 @@ using ColorProfile = Vector<char>;
         bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
         void setHasAlpha(bool alpha);
-        void setColorProfile(const ColorProfile&);
         void setOriginalFrameRect(const IntRect& r) { m_originalFrameRect = r; }
         void setStatus(FrameStatus status);
         void setDuration(unsigned duration) { m_duration = duration; }
@@ -214,8 +213,6 @@ using ColorProfile = Vector<char>;
         Vector<PixelData> m_backingStore;
         PixelData* m_bytes; // The memory is backed by m_backingStore.
         IntSize m_size;
-        // FIXME: Do we need m_colorProfile anymore?
-        ColorProfile m_colorProfile;
         bool m_hasAlpha;
         IntRect m_originalFrameRect; // This will always just be the entire
                                      // buffer except for GIF frames whose
@@ -381,8 +378,6 @@ using ColorProfile = Vector<char>;
 
         RefPtr<SharedBuffer> m_data; // The encoded data.
         Vector<ImageFrame, 1> m_frameBufferCache;
-        // FIXME: Do we need m_colorProfile any more, for any port?
-        ColorProfile m_colorProfile;
         bool m_scaled { false };
         Vector<int> m_scaledColumns;
         Vector<int> m_scaledRows;

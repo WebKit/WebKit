@@ -66,7 +66,6 @@ namespace WebCore {
         bool outputScanlines();
         void jpegComplete();
 
-        void setColorProfile(const ColorProfile& colorProfile) { m_colorProfile = colorProfile; }
         void setOrientation(ImageOrientation orientation) { m_orientation = orientation; }
 
     private:
