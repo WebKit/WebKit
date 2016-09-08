@@ -28,8 +28,6 @@
 
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
-#include "CopiedSpace.h"
-#include "CopiedSpaceInlines.h"
 #include "HeapInlines.h"
 #include "HeapUtil.h"
 #include "JITStubRoutineSet.h"
@@ -70,8 +68,6 @@ template<typename MarkHook>
 inline void ConservativeRoots::genericAddPointer(void* p, HeapVersion version, TinyBloomFilter filter, MarkHook& markHook)
 {
     markHook.mark(p);
-
-    m_heap.storageSpace().pinIfNecessary(p);
 
     HeapUtil::findGCObjectPointersForMarking(
         m_heap, version, filter, p,

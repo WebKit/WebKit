@@ -138,7 +138,6 @@ public:
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*);
 
     static void visitChildren(JSCell*, SlotVisitor&);
-    JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
 
     JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 

@@ -22,7 +22,6 @@
 #include "RegExpObject.h"
 
 #include "ButterflyInlines.h"
-#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"

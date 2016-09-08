@@ -26,7 +26,6 @@
 #include "BuiltinNames.h"
 #include "ButterflyInlines.h"
 #include "CachedCall.h"
-#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "Executable.h"
 #include "IntlObject.h"

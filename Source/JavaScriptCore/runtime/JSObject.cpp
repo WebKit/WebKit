@@ -25,10 +25,6 @@
 #include "JSObject.h"
 
 #include "ButterflyInlines.h"
-#include "CopiedBlockInlines.h"
-#include "CopiedSpaceInlines.h"
-#include "CopyVisitor.h"
-#include "CopyVisitorInlines.h"
 #include "CustomGetterSetter.h"
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"

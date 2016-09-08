@@ -27,8 +27,6 @@
 #include "DirectArguments.h"
 
 #include "CodeBlock.h"
-#include "CopiedBlockInlines.h"
-#include "CopyVisitorInlines.h"
 #include "GenericArgumentsInlines.h"
 #include "JSCInlines.h"
 
@@ -43,6 +41,8 @@ DirectArguments::DirectArguments(VM& vm, Structure* structure, unsigned length, 
     , m_length(length)
     , m_minCapacity(capacity)
 {
+    m_overrides.clear();
+    
     // When we construct the object from C++ code, we expect the capacity to be at least as large as
     // length. JIT-allocated DirectArguments objects play evil tricks, though.
     ASSERT(capacity >= length);
@@ -101,27 +101,8 @@ void DirectArguments::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
     visitor.appendValues(thisObject->storage(), std::max(thisObject->m_length, thisObject->m_minCapacity));
     visitor.append(&thisObject->m_callee);
     
-    if (thisObject->m_overrides) {
-        visitor.copyLater(
-            thisObject, DirectArgumentsOverridesCopyToken,
-            thisObject->m_overrides.get(), thisObject->overridesSize());
-    }
-}
-
-void DirectArguments::copyBackingStore(JSCell* thisCell, CopyVisitor& visitor, CopyToken token)
-{
-    DirectArguments* thisObject = static_cast<DirectArguments*>(thisCell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    
-    RELEASE_ASSERT(token == DirectArgumentsOverridesCopyToken);
-    
-    void* oldOverrides = thisObject->m_overrides.get();
-    if (visitor.checkIfShouldCopy(oldOverrides)) {
-        bool* newOverrides = static_cast<bool*>(visitor.allocateNewSpace(thisObject->overridesSize()));
-        memcpy(newOverrides, oldOverrides, thisObject->m_length);
-        thisObject->m_overrides.setWithoutBarrier(newOverrides);
-        visitor.didCopy(oldOverrides, thisObject->overridesSize());
-    }
+    if (thisObject->m_overrides)
+        visitor.markAuxiliary(thisObject->m_overrides.get());
 }
 
 Structure* DirectArguments::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -137,8 +118,8 @@ void DirectArguments::overrideThings(VM& vm)
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), DontEnum);
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), DontEnum);
     
-    void* backingStore;
-    RELEASE_ASSERT(vm.heap.tryAllocateStorage(this, overridesSize(), &backingStore));
+    void* backingStore = vm.heap.tryAllocateAuxiliary(this, overridesSize());
+    RELEASE_ASSERT(backingStore);
     bool* overrides = static_cast<bool*>(backingStore);
     m_overrides.set(vm, this, overrides);
     for (unsigned i = m_length; i--;)

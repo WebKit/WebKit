@@ -29,7 +29,6 @@
 #include "JIT.h"
 
 #include "BasicBlockLocation.h"
-#include "CopiedSpaceInlines.h"
 #include "Exception.h"
 #include "Heap.h"
 #include "Interpreter.h"

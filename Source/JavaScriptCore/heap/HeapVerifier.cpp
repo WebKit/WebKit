@@ -27,7 +27,6 @@
 #include "HeapVerifier.h"
 
 #include "ButterflyInlines.h"
-#include "CopiedSpaceInlines.h"
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"
 #include "JSObject.h"
@@ -75,27 +74,6 @@ const char* HeapVerifier::phaseName(HeapVerifier::Phase phase)
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr; // Silencing a compiler warning.
-}
-
-static void getButterflyDetails(JSObject* obj, void*& butterflyBase, size_t& butterflyCapacityInBytes, CopiedBlock*& butterflyBlock)
-{
-    Structure* structure = obj->structure();
-    Butterfly* butterfly = obj->butterfly();
-    butterflyBase = butterfly->base(structure);
-    butterflyBlock = CopiedSpace::blockFor(butterflyBase);
-
-    size_t propertyCapacity = structure->outOfLineCapacity();
-    size_t preCapacity;
-    size_t indexingPayloadSizeInBytes;
-    bool hasIndexingHeader = obj->hasIndexingHeader();
-    if (UNLIKELY(hasIndexingHeader)) {
-        preCapacity = butterfly->indexingHeader()->preCapacity(structure);
-        indexingPayloadSizeInBytes = butterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
-    } else {
-        preCapacity = 0;
-        indexingPayloadSizeInBytes = 0;
-    }
-    butterflyCapacityInBytes = Butterfly::totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
 }
 
 void HeapVerifier::initializeGCCycle()
@@ -197,42 +175,10 @@ void HeapVerifier::trimDeadObjects()
     }
 }
 
-bool HeapVerifier::verifyButterflyIsInStorageSpace(Phase phase, LiveObjectList& list)
+bool HeapVerifier::verifyButterflyIsInStorageSpace(Phase, LiveObjectList&)
 {
-    auto& liveObjects = list.liveObjects;
-
-    CopiedSpace& storageSpace = m_heap->m_storageSpace;
-    bool listNamePrinted = false;
-    bool success = true;
-    for (size_t i = 0; i < liveObjects.size(); i++) {
-        LiveObjectData& objectData = liveObjects[i];
-        if (objectData.isConfirmedDead)
-            continue;
-
-        JSObject* obj = objectData.obj;
-        Butterfly* butterfly = obj->butterfly();
-        if (butterfly) {
-            void* butterflyBase;
-            size_t butterflyCapacityInBytes;
-            CopiedBlock* butterflyBlock;
-            getButterflyDetails(obj, butterflyBase, butterflyCapacityInBytes, butterflyBlock);
-
-            if (!storageSpace.contains(butterflyBlock)) {
-                if (!listNamePrinted) {
-                    dataLogF("Verification @ phase %s FAILED in object list '%s' (size %zu)\n",
-                        phaseName(phase), list.name, liveObjects.size());
-                    listNamePrinted = true;
-                }
-
-                Structure* structure = obj->structure();
-                const char* structureClassName = structure->classInfo()->className;
-                dataLogF("    butterfly %p (base %p size %zu block %p) NOT in StorageSpace | obj %p type '%s'\n",
-                    butterfly, butterflyBase, butterflyCapacityInBytes, butterflyBlock, obj, structureClassName);
-                success = false;
-            }
-        }
-    }
-    return success;
+    // FIXME: Make this work again. https://bugs.webkit.org/show_bug.cgi?id=161752
+    return true;
 }
 
 void HeapVerifier::verify(HeapVerifier::Phase phase)
@@ -254,14 +200,11 @@ void HeapVerifier::reportObject(LiveObjectData& objData, int cycleIndex, HeapVer
 
     Structure* structure = obj->structure();
     Butterfly* butterfly = obj->butterfly();
-    void* butterflyBase;
-    size_t butterflyCapacityInBytes;
-    CopiedBlock* butterflyBlock;
-    getButterflyDetails(obj, butterflyBase, butterflyCapacityInBytes, butterflyBlock);
+    void* butterflyBase = butterfly->base(structure);
 
-    dataLogF("FOUND obj %p type '%s' butterfly %p (base %p size %zu block %p) in GC[%d] %s list '%s'\n",
+    dataLogF("FOUND obj %p type '%s' butterfly %p (base %p) in GC[%d] %s list '%s'\n",
         obj, structure->classInfo()->className,
-        butterfly, butterflyBase, butterflyCapacityInBytes, butterflyBlock,
+        butterfly, butterflyBase,
         cycleIndex, cycle.collectionTypeName(), list.name);
 }
 

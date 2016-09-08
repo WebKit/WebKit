@@ -27,7 +27,6 @@
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
 #include "Completion.h"
-#include "CopiedSpaceInlines.h"
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"

@@ -31,7 +31,6 @@
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
-#include "CopiedSpaceInlines.h"
 #include "DFGDriver.h"
 #include "DFGJITCode.h"
 #include "DFGOSRExit.h"

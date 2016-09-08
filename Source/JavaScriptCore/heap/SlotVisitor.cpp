@@ -28,9 +28,6 @@
 #include "SlotVisitorInlines.h"
 
 #include "ConservativeRoots.h"
-#include "CopiedBlockInlines.h"
-#include "CopiedSpace.h"
-#include "CopiedSpaceInlines.h"
 #include "HeapCellInlines.h"
 #include "HeapProfiler.h"
 #include "HeapSnapshotBuilder.h"
@@ -492,36 +489,6 @@ void SlotVisitor::donateAndDrain()
     drain();
 }
 
-void SlotVisitor::copyLater(JSCell* owner, CopyToken token, void* ptr, size_t bytes)
-{
-    ASSERT(bytes);
-    CopiedBlock* block = CopiedSpace::blockFor(ptr);
-    if (block->isOversize()) {
-        ASSERT(bytes <= block->size());
-        // FIXME: We should be able to shrink the allocation if bytes went below the block size.
-        // For now, we just make sure that our accounting of how much memory we are actually using
-        // is correct.
-        // https://bugs.webkit.org/show_bug.cgi?id=144749
-        bytes = block->size();
-        m_heap.m_storageSpace.pin(block);
-    }
-
-    ASSERT(heap()->m_storageSpace.contains(block));
-
-    LockHolder locker(&block->workListLock());
-    // We always report live bytes, except if during an eden collection we see an old object pointing to an
-    // old backing store and the old object is being marked because of the remembered set. Note that if we
-    // ask the object itself, it will always tell us that it's an old black object - because even during an
-    // eden collection we have already indicated that the object is old. That's why we use the
-    // SlotVisitor's cache of the object's old state.
-    if (heap()->operationInProgress() == FullCollection
-        || !block->isOld()
-        || m_currentObjectCellStateBeforeVisiting != CellState::OldGrey) {
-        m_bytesCopied += bytes;
-        block->reportLiveBytes(locker, owner, token, bytes);
-    }
-}
-    
 void SlotVisitor::mergeOpaqueRoots()
 {
     ASSERT(!m_opaqueRoots.isEmpty()); // Should only be called when opaque roots are non-empty.

@@ -27,7 +27,6 @@
 #define SlotVisitor_h
 
 #include "CellState.h"
-#include "CopyToken.h"
 #include "HandleTypes.h"
 #include "MarkStack.h"
 #include "OpaqueRootSet.h"
@@ -113,8 +112,6 @@ public:
     // this then the space will be freed at end of GC.
     void markAuxiliary(const void* base);
 
-    void copyLater(JSCell*, CopyToken, void*, size_t);
-    
     void reportExtraMemoryVisited(size_t);
 #if ENABLE(RESOURCE_USAGE)
     void reportExternalMemoryVisited(size_t);

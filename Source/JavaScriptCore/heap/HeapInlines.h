@@ -26,7 +26,6 @@
 #ifndef HeapInlines_h
 #define HeapInlines_h
 
-#include "CopyBarrier.h"
 #include "Heap.h"
 #include "HeapCellInlines.h"
 #include "IndexingHeader.h"
@@ -292,31 +291,6 @@ inline void* Heap::tryReallocateAuxiliary(JSCell* intendedOwner, void* oldBase, 
         return nullptr;
     memcpy(newBase, oldBase, oldSize);
     return newBase;
-}
-
-inline CheckedBoolean Heap::tryAllocateStorage(JSCell* intendedOwner, size_t bytes, void** outPtr)
-{
-    CheckedBoolean result = m_storageSpace.tryAllocate(bytes, outPtr);
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes of storage for %p: %p.\n", bytes, intendedOwner, *outPtr);
-#else
-    UNUSED_PARAM(intendedOwner);
-#endif
-    return result;
-}
-
-inline CheckedBoolean Heap::tryReallocateStorage(JSCell* intendedOwner, void** ptr, size_t oldSize, size_t newSize)
-{
-#if ENABLE(ALLOCATION_LOGGING)
-    void* oldPtr = *ptr;
-#endif
-    CheckedBoolean result = m_storageSpace.tryReallocate(ptr, oldSize, newSize);
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC reallocating %lu -> %lu bytes of storage for %p: %p -> %p.\n", oldSize, newSize, intendedOwner, oldPtr, *ptr);
-#else
-    UNUSED_PARAM(intendedOwner);
-#endif
-    return result;
 }
 
 inline void Heap::ascribeOwner(JSCell* intendedOwner, void* storage)

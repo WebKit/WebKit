@@ -29,7 +29,6 @@
 #include "BuiltinNames.h"
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
-#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "GetterSetter.h"
 #include "Interpreter.h"

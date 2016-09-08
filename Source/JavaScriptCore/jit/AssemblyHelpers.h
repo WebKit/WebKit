@@ -29,7 +29,6 @@
 #if ENABLE(JIT)
 
 #include "CodeBlock.h"
-#include "CopyBarrier.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "Heap.h"

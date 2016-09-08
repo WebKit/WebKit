@@ -23,7 +23,6 @@
 #define Heap_h
 
 #include "ArrayBuffer.h"
-#include "CopyVisitor.h"
 #include "GCIncomingRefCountedSet.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
@@ -52,7 +51,6 @@ namespace JSC {
 
 class CodeBlock;
 class CodeBlockSet;
-class CopiedSpace;
 class EdenGCActivityCallback;
 class ExecutableBase;
 class FullGCActivityCallback;
@@ -120,7 +118,6 @@ public:
 
     VM* vm() const { return m_vm; }
     MarkedSpace& objectSpace() { return m_objectSpace; }
-    CopiedSpace& storageSpace() { return m_storageSpace; }
     MachineThreads& machineThreads() { return m_machineThreads; }
 
     const SlotVisitor& slotVisitor() const { return m_slotVisitor; }
@@ -150,12 +147,9 @@ public:
     MarkedAllocator* allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
     template<typename ClassType> MarkedAllocator* allocatorForObjectOfType(size_t bytes);
     MarkedAllocator* allocatorForAuxiliaryData(size_t bytes) { return m_objectSpace.auxiliaryAllocatorFor(bytes); }
-    CopiedAllocator& storageAllocator() { return m_storageSpace.allocator(); }
     void* allocateAuxiliary(JSCell* intendedOwner, size_t);
     void* tryAllocateAuxiliary(JSCell* intendedOwner, size_t);
     void* tryReallocateAuxiliary(JSCell* intendedOwner, void* oldBase, size_t oldSize, size_t newSize);
-    CheckedBoolean tryAllocateStorage(JSCell* intendedOwner, size_t, void**);
-    CheckedBoolean tryReallocateStorage(JSCell* intendedOwner, void**, size_t, size_t);
     void ascribeOwner(JSCell* intendedOwner, void*);
 
     typedef void (*Finalizer)(JSCell*);
@@ -263,7 +257,6 @@ public:
 
 private:
     friend class CodeBlock;
-    friend class CopiedBlock;
     friend class DeferGC;
     friend class DeferGCForAWhile;
     friend class GCAwareJITStubRoutine;
@@ -277,8 +270,6 @@ private:
     friend class MarkedSpace;
     friend class MarkedAllocator;
     friend class MarkedBlock;
-    friend class CopiedSpace;
-    friend class CopyVisitor;
     friend class SlotVisitor;
     friend class IncrementalSweeper;
     friend class HeapStatistics;
@@ -343,7 +334,6 @@ private:
     void notifyIncrementalSweeper();
     void writeBarrierCurrentlyExecutingCodeBlocks();
     void resetAllocators();
-    void copyBackingStores();
     void harvestWeakReferences();
     void finalizeUnconditionalFinalizers();
     void clearUnmarkedExecutables();
@@ -368,7 +358,6 @@ private:
 
     size_t threadVisitCount();
     size_t threadBytesVisited();
-    size_t threadBytesCopied();
     
     void forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>&);
 
@@ -388,13 +377,10 @@ private:
     bool m_shouldDoFullCollection;
     size_t m_totalBytesVisited;
     size_t m_totalBytesVisitedThisCycle;
-    size_t m_totalBytesCopied;
-    size_t m_totalBytesCopiedThisCycle;
     
     HeapOperation m_operationInProgress;
     StructureIDTable m_structureIDTable;
     MarkedSpace m_objectSpace;
-    CopiedSpace m_storageSpace;
     GCIncomingRefCountedSet<ArrayBuffer> m_arrayBuffers;
     size_t m_extraMemorySize;
     size_t m_deprecatedExtraMemorySize;
@@ -464,7 +450,6 @@ private:
     Lock m_opaqueRootsMutex;
     HashSet<void*> m_opaqueRoots;
 
-    Vector<CopiedBlock*> m_blocksToCopy;
     static const size_t s_blockFragmentLength = 32;
 
     ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;

@@ -155,10 +155,11 @@ bool JSDollarVMPrototype::isInObjectSpace(Heap* heap, void* ptr)
     return false;
 }
 
-bool JSDollarVMPrototype::isInStorageSpace(Heap* heap, void* ptr)
+bool JSDollarVMPrototype::isInStorageSpace(Heap*, void*)
 {
-    CopiedBlock* candidate = CopiedSpace::blockFor(ptr);
-    return heap->storageSpace().contains(candidate);
+    // FIXME: Do something with this.
+    // https://bugs.webkit.org/show_bug.cgi?id=161753
+    return false;
 }
 
 struct CellAddressCheckFunctor : MarkedBlock::CountFunctor {

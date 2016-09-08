@@ -32,7 +32,6 @@
 #include "APIUtils.h"
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
-#include "CopiedSpaceInlines.h"
 #include "DateConstructor.h"
 #include "ErrorConstructor.h"
 #include "Exception.h"

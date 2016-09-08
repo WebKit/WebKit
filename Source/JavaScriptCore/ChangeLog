@@ -1,5 +1,95 @@
 2016-09-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove CopiedSpace and use MarkedSpace instead
+        https://bugs.webkit.org/show_bug.cgi?id=159658
+
+        Reviewed by Keith Miller.
+        
+        This removes the final client of CopiedSpace, the overrides array of DirectArguments. That
+        is a simple change.
+        
+        Then this stubs out some remaining internal debugging code that referenced CopiedSpace in
+        JSDollarVM and HeapVerifier. I filed FIXMEs to restore that debugging functionality.
+        
+        The rest of this patch is deleting CopiedSpace.
+
+        * API/JSObjectRef.cpp:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOperations.cpp:
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer):
+        * heap/CopiedAllocator.h: Removed.
+        * heap/CopiedBlock.cpp: Removed.
+        * heap/CopiedBlock.h: Removed.
+        * heap/CopiedBlockInlines.h: Removed.
+        * heap/CopiedSpace.cpp: Removed.
+        * heap/CopiedSpace.h: Removed.
+        * heap/CopiedSpaceInlines.h: Removed.
+        * heap/CopyBarrier.h: Removed.
+        * heap/CopyToken.h: Removed.
+        * heap/CopyVisitor.cpp: Removed.
+        * heap/CopyVisitor.h: Removed.
+        * heap/CopyVisitorInlines.h: Removed.
+        * heap/CopyWorkList.h: Removed.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::isPagedOut):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::size):
+        (JSC::Heap::capacity):
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::stopAllocation):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::copyBackingStores): Deleted.
+        (JSC::Heap::threadBytesCopied): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::objectSpace):
+        (JSC::Heap::allocatorForAuxiliaryData):
+        (JSC::Heap::storageSpace): Deleted.
+        (JSC::Heap::storageAllocator): Deleted.
+        * heap/HeapCellInlines.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::tryAllocateStorage): Deleted.
+        (JSC::Heap::tryReallocateStorage): Deleted.
+        * heap/HeapVerifier.cpp:
+        (JSC::HeapVerifier::verifyButterflyIsInStorageSpace):
+        (JSC::HeapVerifier::reportObject):
+        (JSC::getButterflyDetails): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::copyLater): Deleted.
+        * heap/SlotVisitor.h:
+        * jit/AssemblyHelpers.h:
+        * jit/JITOpcodes.cpp:
+        * jsc.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/Butterfly.h:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createUninitializedDuringCollection): Deleted.
+        * runtime/ClassInfo.h:
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::visitChildren):
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::copyBackingStore): Deleted.
+        * runtime/DirectArguments.h:
+        * runtime/JSArray.cpp:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::copyBackingStore): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSTypedArrays.cpp:
+        * runtime/LiteralParser.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/StringPrototype.cpp:
+        * runtime/WeakMapData.cpp:
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::isInStorageSpace):
+
+2016-09-08  Filip Pizlo  <fpizlo@apple.com>
+
         Heap version should be 32-bit
         https://bugs.webkit.org/show_bug.cgi?id=161751
 

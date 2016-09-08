@@ -29,6 +29,7 @@
 #include "HeapCell.h"
 #include "LargeAllocation.h"
 #include "MarkedBlock.h"
+#include "VM.h"
 
 namespace JSC {
 

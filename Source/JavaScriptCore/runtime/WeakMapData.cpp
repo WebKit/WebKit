@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WeakMapData.h"
 
-#include "CopiedAllocator.h"
-#include "CopyVisitorInlines.h"
 #include "ExceptionHelpers.h"
 #include "JSCInlines.h"
 

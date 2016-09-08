@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSTypedArrays.h"
 
-#include "CopiedBlockInlines.h"
-#include "CopyVisitorInlines.h"
 #include "GenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSCInlines.h"

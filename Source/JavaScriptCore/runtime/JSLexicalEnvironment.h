@@ -30,7 +30,6 @@
 #define JSLexicalEnvironment_h
 
 #include "CodeBlock.h"
-#include "CopiedSpaceInlines.h"
 #include "JSEnvironmentRecord.h"
 #include "SymbolTable.h"
 

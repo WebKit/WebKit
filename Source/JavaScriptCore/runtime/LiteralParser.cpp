@@ -29,7 +29,6 @@
 
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
-#include "CopiedSpaceInlines.h"
 #include "JSArray.h"
 #include "JSString.h"
 #include "Lexer.h"

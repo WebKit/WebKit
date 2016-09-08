@@ -23,9 +23,6 @@
 
 #include "CodeBlock.h"
 #include "ConservativeRoots.h"
-#include "CopiedSpace.h"
-#include "CopiedSpaceInlines.h"
-#include "CopyVisitorInlines.h"
 #include "DFGWorklist.h"
 #include "EdenGCActivityCallback.h"
 #include "FullGCActivityCallback.h"
@@ -202,10 +199,8 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_maxHeapSize(m_minBytesPerCycle)
     , m_shouldDoFullCollection(false)
     , m_totalBytesVisited(0)
-    , m_totalBytesCopied(0)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
-    , m_storageSpace(this)
     , m_extraMemorySize(0)
     , m_deprecatedExtraMemorySize(0)
     , m_machineThreads(this)
@@ -233,7 +228,6 @@ Heap::Heap(VM* vm, HeapType heapType)
 #endif
     , m_helperClient(&heapHelperPool())
 {
-    m_storageSpace.init();
     if (Options::verifyHeap())
         m_verifier = std::make_unique<HeapVerifier>(this, Options::numberOfGCCyclesToRecordForVerification());
 }
@@ -246,7 +240,7 @@ Heap::~Heap()
 
 bool Heap::isPagedOut(double deadline)
 {
-    return m_objectSpace.isPagedOut(deadline) || m_storageSpace.isPagedOut(deadline);
+    return m_objectSpace.isPagedOut(deadline);
 }
 
 // The VM is being destroyed and the collector will never run again.
@@ -494,58 +488,6 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
     m_helperClient.finish();
     updateObjectCounts(gcStartTime);
     resetVisitors();
-}
-
-void Heap::copyBackingStores()
-{
-    SuperSamplerScope superSamplerScope(false);
-    if (m_operationInProgress == EdenCollection)
-        m_storageSpace.startedCopying<EdenCollection>();
-    else {
-        ASSERT(m_operationInProgress == FullCollection);
-        m_storageSpace.startedCopying<FullCollection>();
-    }
-
-    if (m_storageSpace.shouldDoCopyPhase()) {
-        if (m_operationInProgress == EdenCollection) {
-            // Reset the vector to be empty, but don't throw away the backing store.
-            m_blocksToCopy.shrink(0);
-            for (CopiedBlock* block = m_storageSpace.m_newGen.fromSpace->head(); block; block = block->next())
-                m_blocksToCopy.append(block);
-        } else {
-            ASSERT(m_operationInProgress == FullCollection);
-            WTF::copyToVector(m_storageSpace.m_blockSet, m_blocksToCopy);
-        }
-
-        ParallelVectorIterator<Vector<CopiedBlock*>> iterator(
-            m_blocksToCopy, s_blockFragmentLength);
-
-        // Note that it's safe to use the [&] capture list here, even though we're creating a task
-        // that other threads run. That's because after runFunctionInParallel() returns, the task
-        // we have created is not going to be running anymore. Hence, everything on the stack here
-        // outlives the task.
-        m_helperClient.runFunctionInParallel(
-            [&] () {
-                CopyVisitor copyVisitor(*this);
-                
-                iterator.iterate(
-                    [&] (CopiedBlock* block) {
-                        if (!block->hasWorkList())
-                            return;
-                        
-                        CopyWorkList& workList = block->workList();
-                        for (CopyWorklistItem item : workList) {
-                            item.cell()->methodTable()->copyBackingStore(
-                                item.cell(), copyVisitor, item.token());
-                        }
-                        
-                        ASSERT(!block->liveBytes());
-                        m_storageSpace.recycleEvacuatedBlock(block, m_operationInProgress);
-                    });
-            });
-    }
-    
-    m_storageSpace.doneCopying();
 }
 
 void Heap::gatherStackRoots(ConservativeRoots& roots, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
@@ -822,20 +764,12 @@ void Heap::updateObjectCounts(double gcStartTime)
         dataLogF("\nNumber of live Objects after GC %lu, took %.6f secs\n", static_cast<unsigned long>(visitCount), WTF::monotonicallyIncreasingTime() - gcStartTime);
     }
     
-    size_t bytesRemovedFromOldSpaceDueToReallocation =
-        m_storageSpace.takeBytesRemovedFromOldSpaceDueToReallocation();
-    
-    if (m_operationInProgress == FullCollection) {
+    if (m_operationInProgress == FullCollection)
         m_totalBytesVisited = 0;
-        m_totalBytesCopied = 0;
-    } else
-        m_totalBytesCopied -= bytesRemovedFromOldSpaceDueToReallocation;
 
     m_totalBytesVisitedThisCycle = m_slotVisitor.bytesVisited() + threadBytesVisited();
-    m_totalBytesCopiedThisCycle = m_slotVisitor.bytesCopied() + threadBytesCopied();
     
     m_totalBytesVisited += m_totalBytesVisitedThisCycle;
-    m_totalBytesCopied += m_totalBytesCopiedThisCycle;
 }
 
 void Heap::resetVisitors()
@@ -861,12 +795,12 @@ size_t Heap::extraMemorySize()
 
 size_t Heap::size()
 {
-    return m_objectSpace.size() + m_storageSpace.size() + extraMemorySize();
+    return m_objectSpace.size() + extraMemorySize();
 }
 
 size_t Heap::capacity()
 {
-    return m_objectSpace.capacity() + m_storageSpace.capacity() + extraMemorySize();
+    return m_objectSpace.capacity() + extraMemorySize();
 }
 
 size_t Heap::protectedGlobalObjectCount()
@@ -1107,7 +1041,6 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     pruneStaleEntriesFromWeakGCMaps();
     sweepArrayBuffers();
     snapshotMarkedSpace();
-    copyBackingStores();
     finalizeUnconditionalFinalizers();
     removeDeadCompilerWorklistEntries();
     deleteUnmarkedCompiledCode();
@@ -1205,8 +1138,6 @@ void Heap::flushWriteBarrierBuffer()
 void Heap::stopAllocation()
 {
     m_objectSpace.stopAllocating();
-    if (m_operationInProgress == FullCollection)
-        m_storageSpace.didStartFullCollection();
 }
 
 void Heap::prepareForMarking()
@@ -1310,9 +1241,7 @@ void Heap::updateAllocationLimits()
     // run another collection. This isn't the same as either size() or capacity(), though it should
     // be somewhere between the two. The key is to match the size calculations involved calls to
     // didAllocate(), while never dangerously underestimating capacity(). In extreme cases of
-    // fragmentation, we may have size() much smaller than capacity(). Our collector sometimes
-    // temporarily allows very high fragmentation because it doesn't defragment old blocks in copied
-    // space.
+    // fragmentation, we may have size() much smaller than capacity().
     size_t currentHeapSize = 0;
 
     // For marked space, we use the total number of bytes visited. This matches the logic for
@@ -1323,23 +1252,6 @@ void Heap::updateAllocationLimits()
     currentHeapSize += m_totalBytesVisited;
     if (verbose)
         dataLog("totalBytesVisited = ", m_totalBytesVisited, ", currentHeapSize = ", currentHeapSize, "\n");
-
-    // For copied space, we use the capacity of storage space. This is because copied space may get
-    // badly fragmented between full collections. This arises when each eden collection evacuates
-    // much less than one CopiedBlock's worth of stuff. It can also happen when CopiedBlocks get
-    // pinned due to very short-lived objects. In such a case, we want to get to a full collection
-    // sooner rather than later. If we used m_totalBytesCopied, then for for each CopiedBlock that an
-    // eden allocation promoted, we would only deduct the one object's size from eden size. This
-    // would mean that we could "leak" many CopiedBlocks before we did a full collection and
-    // defragmented all of them. It would be great to use m_totalBytesCopied, but we'd need to
-    // augment it with something that accounts for those fragmented blocks.
-    // FIXME: Make it possible to compute heap size using m_totalBytesCopied rather than
-    // m_storageSpace.capacity()
-    // https://bugs.webkit.org/show_bug.cgi?id=150268
-    ASSERT(m_totalBytesCopied <= m_storageSpace.size());
-    currentHeapSize += m_storageSpace.capacity();
-    if (verbose)
-        dataLog("storageSpace.capacity() = ", m_storageSpace.capacity(), ", currentHeapSize = ", currentHeapSize, "\n");
 
     // It's up to the user to ensure that extraMemorySize() ends up corresponding to allocation-time
     // extra memory reporting.
@@ -1643,14 +1555,6 @@ size_t Heap::threadBytesVisited()
     size_t result = 0;
     for (auto& parallelVisitor : m_parallelSlotVisitors)
         result += parallelVisitor->bytesVisited();
-    return result;
-}
-
-size_t Heap::threadBytesCopied()
-{       
-    size_t result = 0;
-    for (auto& parallelVisitor : m_parallelSlotVisitors)
-        result += parallelVisitor->bytesCopied();
     return result;
 }
 

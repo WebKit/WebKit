@@ -26,7 +26,6 @@
 
 #include "ArrayPrototype.h"
 #include "ButterflyInlines.h"
-#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"

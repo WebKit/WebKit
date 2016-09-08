@@ -61,10 +61,6 @@ size_t JSCell::estimatedSize(JSCell* cell)
     return cell->cellSize();
 }
 
-void JSCell::copyBackingStore(JSCell*, CopyVisitor&, CopyToken)
-{
-}
-
 void JSCell::heapSnapshot(JSCell*, HeapSnapshotBuilder&)
 {
 }
