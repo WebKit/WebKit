@@ -1,5 +1,12 @@
 2016-09-07  Alex Christensen  <achristensen@webkit.org>
 
+        Roll out r205580 and r205582.
+        https://bugs.webkit.org/show_bug.cgi?id=161668
+
+        I need to figure out why this is failing on the bots before landing any more URLParser progress.
+
+2016-09-07  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, revert r205533.
         https://bugs.webkit.org/show_bug.cgi?id=161668
 
