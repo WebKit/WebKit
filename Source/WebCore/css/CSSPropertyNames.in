@@ -491,11 +491,11 @@ justify-content [Initial=initialContentAlignment, Converter=ContentAlignmentData
 #if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
 -webkit-backdrop-filter [ConditionalConverter=FilterOperations]
 #endif
-justify-self [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]
 -webkit-font-size-delta [SkipBuilder]
+#if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
+justify-self [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]
 justify-items [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]
 -webkit-justify-items = justify-items
-#if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 grid [Longhands=grid-template-rows|grid-template-columns|grid-template-areas|grid-auto-flow|grid-auto-rows|grid-auto-columns|grid-column-gap|grid-row-gap]
 grid-area [Longhands=grid-row-start|grid-column-start|grid-row-end|grid-column-end]
 grid-auto-columns [Converter=GridTrackSizeList]
