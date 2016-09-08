@@ -734,9 +734,13 @@ void JIT::emitMathICFast(JITMathIC<Generator>* mathIC, Instruction* currentInstr
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    if (!mathIC->isLeftOperandValidConstant())
+    mathIC->m_generator = Generator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, fpRegT0, fpRegT1, scratchGPR, scratchFPR, arithProfile);
+    
+    ASSERT(!(Generator::isLeftOperandValidConstant(leftOperand) && Generator::isRightOperandValidConstant(rightOperand)));
+    
+    if (!Generator::isLeftOperandValidConstant(leftOperand))
         emitGetVirtualRegister(op1, leftRegs);
-    if (!mathIC->isRightOperandValidConstant())
+    if (!Generator::isRightOperandValidConstant(rightOperand))
         emitGetVirtualRegister(op2, rightRegs);
 
 #if ENABLE(MATH_IC_STATS)
@@ -744,8 +748,6 @@ void JIT::emitMathICFast(JITMathIC<Generator>* mathIC, Instruction* currentInstr
 #endif
 
     MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.add(currentInstruction, MathICGenerationState()).iterator->value;
-
-    mathIC->m_generator = Generator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, fpRegT0, fpRegT1, scratchGPR, scratchFPR, arithProfile);
 
     bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState);
     if (!generatedInlineCode) {
@@ -801,9 +803,11 @@ void JIT::emitMathICSlow(JITMathIC<Generator>* mathIC, Instruction* currentInstr
     else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
 
-    if (mathIC->isLeftOperandValidConstant())
+    ASSERT(!(Generator::isLeftOperandValidConstant(leftOperand) && Generator::isRightOperandValidConstant(rightOperand)));
+
+    if (Generator::isLeftOperandValidConstant(leftOperand))
         emitGetVirtualRegister(op1, leftRegs);
-    if (mathIC->isRightOperandValidConstant())
+    else if (Generator::isRightOperandValidConstant(rightOperand))
         emitGetVirtualRegister(op2, rightRegs);
 
 #if ENABLE(MATH_IC_STATS)

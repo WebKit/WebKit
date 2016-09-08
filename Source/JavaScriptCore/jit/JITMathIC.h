@@ -58,10 +58,7 @@ public:
     CodeLocationLabel doneLocation() { return m_inlineStart.labelAtOffset(m_inlineSize); }
     CodeLocationLabel slowPathStartLocation() { return m_inlineStart.labelAtOffset(m_deltaFromStartToSlowPathStart); }
     CodeLocationCall slowPathCallLocation() { return m_inlineStart.callAtOffset(m_deltaFromStartToSlowPathCallLocation); }
-
-    bool isLeftOperandValidConstant() const { return m_generator.isLeftOperandValidConstant(); }
-    bool isRightOperandValidConstant() const { return m_generator.isRightOperandValidConstant(); }
-
+    
     bool generateInline(CCallHelpers& jit, MathICGenerationState& state, bool shouldEmitProfiling = true)
     {
 #if CPU(ARM_TRADITIONAL)

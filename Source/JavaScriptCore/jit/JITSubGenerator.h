@@ -59,8 +59,9 @@ public:
     JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&);
     bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, bool shouldEmitProfiling);
 
-    bool isLeftOperandValidConstant() const { return false; }
-    bool isRightOperandValidConstant() const { return false; }
+    static bool isLeftOperandValidConstant(SnippetOperand) { return false; }
+    static bool isRightOperandValidConstant(SnippetOperand) { return false; }
+
     ArithProfile* arithProfile() const { return m_arithProfile; }
 
 private:
