@@ -6004,11 +6004,11 @@ PASS object.hspace: IDL get with DOM attribute unset
 PASS object.hspace: setAttribute() to -2147483649 followed by getAttribute() 
 PASS object.hspace: setAttribute() to -2147483649 followed by IDL get 
 PASS object.hspace: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL object.hspace: setAttribute() to -2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS object.hspace: setAttribute() to -2147483648 followed by IDL get 
 PASS object.hspace: setAttribute() to -36 followed by getAttribute() 
-FAIL object.hspace: setAttribute() to -36 followed by IDL get assert_equals: expected 0 but got -36
+PASS object.hspace: setAttribute() to -36 followed by IDL get 
 PASS object.hspace: setAttribute() to -1 followed by getAttribute() 
-FAIL object.hspace: setAttribute() to -1 followed by IDL get assert_equals: expected 0 but got -1
+PASS object.hspace: setAttribute() to -1 followed by IDL get 
 PASS object.hspace: setAttribute() to 0 followed by getAttribute() 
 PASS object.hspace: setAttribute() to 0 followed by IDL get 
 PASS object.hspace: setAttribute() to 1 followed by getAttribute() 
@@ -6026,7 +6026,7 @@ PASS object.hspace: setAttribute() to 4294967296 followed by IDL get
 PASS object.hspace: setAttribute() to "" followed by getAttribute() 
 PASS object.hspace: setAttribute() to "" followed by IDL get 
 PASS object.hspace: setAttribute() to "-1" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to "-1" followed by IDL get assert_equals: expected 0 but got -1
+PASS object.hspace: setAttribute() to "-1" followed by IDL get 
 PASS object.hspace: setAttribute() to "-0" followed by getAttribute() 
 PASS object.hspace: setAttribute() to "-0" followed by IDL get 
 PASS object.hspace: setAttribute() to "0" followed by getAttribute() 
@@ -6123,11 +6123,11 @@ PASS object.hspace: IDL set to "-0" should not throw
 PASS object.hspace: IDL set to "-0" followed by getAttribute() 
 PASS object.hspace: IDL set to "-0" followed by IDL get 
 PASS object.hspace: IDL set to 2147483648 should not throw 
-FAIL object.hspace: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "-2147483648"
-FAIL object.hspace: IDL set to 2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS object.hspace: IDL set to 2147483648 followed by getAttribute() 
+PASS object.hspace: IDL set to 2147483648 followed by IDL get 
 PASS object.hspace: IDL set to 4294967295 should not throw 
-FAIL object.hspace: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "-1"
-FAIL object.hspace: IDL set to 4294967295 followed by IDL get assert_equals: expected 0 but got -1
+PASS object.hspace: IDL set to 4294967295 followed by getAttribute() 
+PASS object.hspace: IDL set to 4294967295 followed by IDL get 
 PASS object.standby: typeof IDL attribute 
 PASS object.standby: IDL get with DOM attribute unset 
 PASS object.standby: setAttribute() to "" followed by getAttribute() 
@@ -6210,11 +6210,11 @@ PASS object.vspace: IDL get with DOM attribute unset
 PASS object.vspace: setAttribute() to -2147483649 followed by getAttribute() 
 PASS object.vspace: setAttribute() to -2147483649 followed by IDL get 
 PASS object.vspace: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL object.vspace: setAttribute() to -2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS object.vspace: setAttribute() to -2147483648 followed by IDL get 
 PASS object.vspace: setAttribute() to -36 followed by getAttribute() 
-FAIL object.vspace: setAttribute() to -36 followed by IDL get assert_equals: expected 0 but got -36
+PASS object.vspace: setAttribute() to -36 followed by IDL get 
 PASS object.vspace: setAttribute() to -1 followed by getAttribute() 
-FAIL object.vspace: setAttribute() to -1 followed by IDL get assert_equals: expected 0 but got -1
+PASS object.vspace: setAttribute() to -1 followed by IDL get 
 PASS object.vspace: setAttribute() to 0 followed by getAttribute() 
 PASS object.vspace: setAttribute() to 0 followed by IDL get 
 PASS object.vspace: setAttribute() to 1 followed by getAttribute() 
@@ -6232,7 +6232,7 @@ PASS object.vspace: setAttribute() to 4294967296 followed by IDL get
 PASS object.vspace: setAttribute() to "" followed by getAttribute() 
 PASS object.vspace: setAttribute() to "" followed by IDL get 
 PASS object.vspace: setAttribute() to "-1" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to "-1" followed by IDL get assert_equals: expected 0 but got -1
+PASS object.vspace: setAttribute() to "-1" followed by IDL get 
 PASS object.vspace: setAttribute() to "-0" followed by getAttribute() 
 PASS object.vspace: setAttribute() to "-0" followed by IDL get 
 PASS object.vspace: setAttribute() to "0" followed by getAttribute() 
@@ -6329,11 +6329,11 @@ PASS object.vspace: IDL set to "-0" should not throw
 PASS object.vspace: IDL set to "-0" followed by getAttribute() 
 PASS object.vspace: IDL set to "-0" followed by IDL get 
 PASS object.vspace: IDL set to 2147483648 should not throw 
-FAIL object.vspace: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "-2147483648"
-FAIL object.vspace: IDL set to 2147483648 followed by IDL get assert_equals: expected 0 but got -2147483648
+PASS object.vspace: IDL set to 2147483648 followed by getAttribute() 
+PASS object.vspace: IDL set to 2147483648 followed by IDL get 
 PASS object.vspace: IDL set to 4294967295 should not throw 
-FAIL object.vspace: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "-1"
-FAIL object.vspace: IDL set to 4294967295 followed by IDL get assert_equals: expected 0 but got -1
+PASS object.vspace: IDL set to 4294967295 followed by getAttribute() 
+PASS object.vspace: IDL set to 4294967295 followed by IDL get 
 PASS object.codeBase: typeof IDL attribute 
 PASS object.codeBase: IDL get with DOM attribute unset 
 PASS object.codeBase: setAttribute() to "" followed by getAttribute() 

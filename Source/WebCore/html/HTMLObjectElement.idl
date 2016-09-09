@@ -33,12 +33,12 @@
     [Reflect, URL] attribute USVString data;
     [Reflect] attribute boolean declare;
     [Reflect] attribute DOMString height;
-    [Reflect] attribute long hspace;
+    [Reflect] attribute unsigned long hspace;
     [Reflect] attribute DOMString name;
     [Reflect] attribute DOMString standby;
     [Reflect] attribute DOMString type;
     [Reflect] attribute DOMString useMap;
-    [Reflect] attribute long vspace;
+    [Reflect] attribute unsigned long vspace;
     [Reflect] attribute DOMString width;
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;
