@@ -1,5 +1,18 @@
 2016-09-06  Saam Barati  <sbarati@apple.com>
 
+        ProxyObject's structure should not have ObjectPrototype as its prototype and it should not have special behavior for intercepting "__proto__"
+        https://bugs.webkit.org/show_bug.cgi?id=161558
+
+        Reviewed by Benjamin Poulain.
+
+        * stress/proxy-get-prototype-of.js:
+        * stress/proxy-set-prototype-of.js:
+        (let.handler.setPrototypeOf): Deleted.
+        * stress/proxy-underscore-proto.js: Added.
+        (assert):
+
+2016-09-06  Saam Barati  <sbarati@apple.com>
+
         Make JSMap and JSSet faster
         https://bugs.webkit.org/show_bug.cgi?id=160989
 

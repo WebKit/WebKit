@@ -18,7 +18,6 @@ function assert(b) {
         let setters = [
             () => Reflect.setPrototypeOf(proxy, {}),
             () => Object.setPrototypeOf(proxy, {}),
-            () => proxy.__proto__ = {},
         ];
         for (let set of setters) {
             let threw = false;
@@ -48,7 +47,6 @@ function assert(b) {
         let setters = [
             () => Reflect.setPrototypeOf(proxy, {}),
             () => Object.setPrototypeOf(proxy, {}),
-            () => proxy.__proto__ = {},
         ];
         for (let set of setters) {
             let threw = false;
@@ -75,7 +73,6 @@ function assert(b) {
         let setters = [
             () => Reflect.setPrototypeOf(proxy, {}),
             () => Object.setPrototypeOf(proxy, {}),
-            () => proxy.__proto__ = {},
         ];
         for (let set of setters) {
             let threw = false;
@@ -104,15 +101,13 @@ function assert(b) {
         let setters = [
             () => Reflect.setPrototypeOf(proxy, {}),
             () => Object.setPrototypeOf(proxy, {}),
-            () => proxy.__proto__ = {},
         ];
         for (let set of setters) {
             let result = set();
             assert(result);
             assert(Reflect.getPrototypeOf(target) === null);
-            // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-            //assert(Reflect.getPrototypeOf(proxy) === null);
-            //assert(proxy.__proto__ === null);
+            assert(Reflect.getPrototypeOf(proxy) === null);
+            assert(proxy.__proto__ === undefined);
         }
     }
 }
@@ -133,15 +128,13 @@ function assert(b) {
         let setters = [
             () => Reflect.setPrototypeOf(proxy, obj),
             () => Object.setPrototypeOf(proxy, obj),
-            () => proxy.__proto__ = obj,
         ];
         for (let set of setters) {
             let result = set();
             assert(result);
             assert(Reflect.getPrototypeOf(target) === obj);
-            // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-            //assert(Reflect.getPrototypeOf(proxy) === obj);
-            //assert(proxy.__proto__ === obj);
+            assert(Reflect.getPrototypeOf(proxy) === obj);
+            assert(proxy.__proto__ === obj);
         }
     }
 }
@@ -167,7 +160,6 @@ function assert(b) {
         let setters = [
             () => Reflect.setPrototypeOf(proxy, obj),
             () => Object.setPrototypeOf(proxy, obj),
-            () => proxy.__proto__ = obj,
         ];
         for (let set of setters) {
             let threw = false;
@@ -182,9 +174,8 @@ function assert(b) {
 
             assert(threw);
             assert(Reflect.getPrototypeOf(target) === null);
-            // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-            //assert(Reflect.getPrototypeOf(proxy) === null);
-            //assert(proxy.__proto__ === null);
+            assert(Reflect.getPrototypeOf(proxy) === null);
+            assert(proxy.__proto__ === undefined);
         }
     }
 }
@@ -209,7 +200,6 @@ function assert(b) {
         let setters = [
             [() => Reflect.setPrototypeOf(proxy, null), true],
             [() => Object.setPrototypeOf(proxy, null), proxy],
-            [() => proxy.__proto__ = null, null]
         ];
         for (let [set, expectedResult] of setters) {
             let result = set();
@@ -217,9 +207,8 @@ function assert(b) {
             assert(called);
             called = false;
             assert(Reflect.getPrototypeOf(target) === null);
-            // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-            //assert(Reflect.getPrototypeOf(proxy) === null);
-            //assert(proxy.__proto__ === null);
+            assert(Reflect.getPrototypeOf(proxy) === null);
+            assert(proxy.__proto__ === undefined);
         }
     }
 }
@@ -245,7 +234,6 @@ function assert(b) {
         let setters = [
             [() => Reflect.setPrototypeOf(proxy, obj), true],
             [() => Object.setPrototypeOf(proxy, obj), proxy],
-            [() => proxy.__proto__ = obj, obj]
         ];
         for (let [set, expectedResult] of setters) {
             let result = set();
@@ -253,9 +241,8 @@ function assert(b) {
             assert(called);
             called = false;
             assert(Reflect.getPrototypeOf(target) === obj);
-            // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-            //assert(Reflect.getPrototypeOf(proxy) === null);
-            //assert(proxy.__proto__ === null);
+            assert(Reflect.getPrototypeOf(proxy) === obj);
+            assert(proxy.__proto__ === obj);
         }
     }
 }
@@ -283,38 +270,8 @@ function assert(b) {
 
         assert(threw);
         assert(Reflect.getPrototypeOf(target) === null);
-        // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-        //assert(Reflect.getPrototypeOf(proxy) === null);
-        //assert(proxy.__proto__ === null);
-    }
-}
-
-{
-    let target = {};
-    target.__proto__ = null;
-    Reflect.preventExtensions(target);
-    let handler = {
-        setPrototypeOf: function(theTarget, value) {
-            return Reflect.setPrototypeOf(theTarget, value);
-        }
-    };
-    
-    let proxy = new Proxy(target, handler);
-    for (let i = 0; i < 500; i++) {
-        let obj = {};
-        let threw = false;
-        try {
-            proxy.__proto__ = obj;
-        } catch(e) {
-            threw = true;
-            assert(e.toString() === "TypeError: Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed");
-        }
-
-        assert(threw);
-        assert(Reflect.getPrototypeOf(target) === null);
-        // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-        //assert(Reflect.getPrototypeOf(proxy) === null);
-        //assert(proxy.__proto__ === null);
+        assert(Reflect.getPrototypeOf(proxy) === null);
+        assert(proxy.__proto__ === undefined);
     }
 }
 
@@ -339,9 +296,8 @@ function assert(b) {
 
         assert(called);
         called = false;
-        // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-        //assert(Reflect.getPrototypeOf(proxy) === null);
-        //assert(proxy.__proto__ === null);
+        assert(Reflect.getPrototypeOf(proxy) === null);
+        assert(proxy.__proto__ === undefined);
     }
 }
 
@@ -366,9 +322,8 @@ function assert(b) {
         assert(called);
         called = false;
 
-        // FIXME: when we implement Proxy.[[GetPrototypeOf]] this should work.
-        //assert(Reflect.getPrototypeOf(proxy) === null);
-        //assert(proxy.__proto__ === null);
+        assert(Reflect.getPrototypeOf(proxy) === null);
+        assert(proxy.__proto__ === undefined);
     }
 }
 

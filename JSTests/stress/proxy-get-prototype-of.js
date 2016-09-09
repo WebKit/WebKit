@@ -18,7 +18,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let threw = false;
@@ -48,7 +47,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let threw = false;
@@ -83,7 +81,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let threw = false;
@@ -109,7 +106,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let threw = false;
@@ -137,7 +133,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let threw = false;
@@ -165,7 +160,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let threw = false;
@@ -194,7 +188,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let threw = false;
@@ -224,7 +217,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let threw = false;
@@ -255,7 +247,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let result = get();
@@ -285,7 +276,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             let result = get();
@@ -308,7 +298,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             assert(get() === proto);
@@ -333,7 +322,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             assert(get() === proto);
@@ -360,7 +348,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             assert(get() === proto);
@@ -387,7 +374,6 @@ function assert(b) {
         let getters = [
             () => Reflect.getPrototypeOf(proxy),
             () => Object.getPrototypeOf(proxy),
-            () => proxy.__proto__,
         ];
         for (let get of getters) {
             assert(get() === proto);
