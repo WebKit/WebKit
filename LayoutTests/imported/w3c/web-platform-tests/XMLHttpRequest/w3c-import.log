@@ -36,8 +36,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/anonymous-mode-unsupported.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/data-uri.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-abort.htm
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-error-order.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-error.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-error.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-load.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-loadend.htm
@@ -45,7 +43,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-progress.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-readystate-sync-open.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-timeout-order.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-timeout.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/folder.txt

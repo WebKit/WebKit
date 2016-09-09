@@ -15,7 +15,7 @@
     {
         "name": "web-platform-tests",
         "url": "https://github.com/w3c/web-platform-tests.git", 
-        "revision": "e827374",
+        "revision": "6d9c836",
         "paths_to_skip": [
             "conformance-checkers",
             "docs",

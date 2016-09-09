@@ -9,6 +9,7 @@ PASS URL interface: existence and properties of interface prototype object's "co
 FAIL URL interface: operation domainToASCII(USVString) assert_own_property: interface object missing static operation expected property "domainToASCII" missing
 FAIL URL interface: operation domainToUnicode(USVString) assert_own_property: interface object missing static operation expected property "domainToUnicode" missing
 PASS URL interface: attribute href 
+FAIL URL interface: stringifier assert_true: property is not enumerable expected true got false
 PASS URL interface: attribute origin 
 PASS URL interface: attribute protocol 
 PASS URL interface: attribute username 

@@ -4,9 +4,9 @@ This test validates the ol element.
 
 
 PASS The prototype for OL is HTMLOListElement.prototype 
-FAIL 'reversed' property should be defined on OL. assert_own_property: expected property "reversed" missing
-FAIL 'start' property should be defined on OL. assert_own_property: expected property "start" missing
-FAIL 'type' property should be defined on OL. assert_own_property: expected property "type" missing
+PASS 'reversed' property should be defined on OL. 
+PASS 'start' property should be defined on OL. 
+PASS 'type' property should be defined on OL. 
 PASS OL's 'reversed' IDL property reflects content attribute. 
 PASS OL's 'start' IDL property reflects content attribute. 
 PASS OL's 'type' IDL property reflects content attribute. 

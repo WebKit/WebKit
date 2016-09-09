@@ -1,8 +1,8 @@
 if (this.document === undefined) {
   importScripts("/resources/testharness.js");
   importScripts("/common/utils.js");
+  importScripts("/common/get-host-info.sub.js");
   importScripts("../resources/utils.js");
-  importScripts("../resources/get-host-info.sub.js");
 }
 
 function corsRedirect(desc, redirectUrl, redirectLocation, redirectStatus, expectSuccess) {

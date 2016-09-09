@@ -18,15 +18,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/allow_prototype_cycle_through_location.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load-2.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load-2.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/cross_origin_joined_frame.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/document_location.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-stringifier.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html

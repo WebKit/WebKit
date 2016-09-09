@@ -2,7 +2,7 @@ if (this.document === undefined) {
   importScripts("/resources/testharness.js");
   importScripts("../resources/utils.js");
   importScripts("/common/utils.js");
-  importScripts("../resources/get-host-info.sub.js");
+  importScripts("/common/get-host-info.sub.js");
 }
 
 /* Check preflight is ok if status is ok status (200  to 299)*/

@@ -1,3 +1,256 @@
+2016-09-09  Youenn Fablet  <youenn@apple.com>
+
+        Sync web-platform-tests up to revision 6d9c836
+        https://bugs.webkit.org/show_bug.cgi?id=161738
+
+        Reviewed by Alex Christensen.
+
+        * resources/ImportExpectations:
+        * resources/TestRepositories:
+        * resources/resource-files.json:
+        * resources/web-platform-tests-modules.json:
+        * web-platform-tests/2dcontext/transformations/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/template/additions-to-the-in-table-insertion-mode/w3c-import.log.
+        * web-platform-tests/IndexedDB/idbindex-multientry-big-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/w3c-import.log: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/template/additions-to-the-in-frameset-insertion-mode/w3c-import.log.
+        * web-platform-tests/WebIDL/readme.txt: Added.
+        * web-platform-tests/WebIDL/testable_assertions.txt: Added.
+        * web-platform-tests/WebIDL/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/template/appending-to-a-template/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin.sub-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin.sub.htm:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/common/canvas-tests.js:
+        (addCrossOriginYellowImage):
+        * web-platform-tests/common/get-host-info.sub.js:
+        (get_host_info):
+        * web-platform-tests/config.json: Added.
+        * web-platform-tests/dom/historical-expected.txt:
+        * web-platform-tests/dom/historical.html:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument.html:
+        * web-platform-tests/dom/nodes/DOMImplementation-hasFeature-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-hasFeature.html:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-createElementNS-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElementNS.html:
+        * web-platform-tests/dom/nodes/Document-createElementNS.js:
+        * web-platform-tests/domparsing/w3c-import.log:
+        * web-platform-tests/fetch/api/basic/mode-same-origin.html:
+        * web-platform-tests/fetch/api/basic/mode-same-origin.js:
+        * web-platform-tests/fetch/api/basic/referrer.html:
+        * web-platform-tests/fetch/api/basic/referrer.js:
+        (runTest):
+        * web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers.js:
+        (requestHeaders):
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker.html:
+        * web-platform-tests/fetch/api/basic/scheme-blob.html:
+        * web-platform-tests/fetch/api/basic/scheme-blob.js:
+        (invalidRequestMethods.forEach):
+        * web-platform-tests/fetch/api/basic/w3c-import.log:
+        * web-platform-tests/fetch/api/cors/cors-basic.html:
+        * web-platform-tests/fetch/api/cors/cors-basic.js:
+        * web-platform-tests/fetch/api/cors/cors-cookies.html:
+        * web-platform-tests/fetch/api/cors/cors-cookies.js:
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.html:
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.js:
+        * web-platform-tests/fetch/api/cors/cors-origin.html:
+        * web-platform-tests/fetch/api/cors/cors-origin.js:
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.js:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.js:
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.js:
+        * web-platform-tests/fetch/api/cors/cors-preflight.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight.js:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.html:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.js:
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.html:
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.js:
+        * web-platform-tests/fetch/api/cors/cors-redirect.html:
+        * web-platform-tests/fetch/api/cors/cors-redirect.js:
+        * web-platform-tests/fetch/api/cors/w3c-import.log:
+        * web-platform-tests/fetch/api/headers/headers-combine-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-combine.html:
+        * web-platform-tests/fetch/api/redirect/redirect-mode.html:
+        * web-platform-tests/fetch/api/redirect/redirect-mode.js:
+        * web-platform-tests/fetch/api/redirect/redirect-origin.html:
+        * web-platform-tests/fetch/api/redirect/redirect-origin.js:
+        * web-platform-tests/fetch/api/redirect/w3c-import.log:
+        * web-platform-tests/fetch/api/request/request-cache-expected.txt:
+        * web-platform-tests/fetch/api/request/request-cache.html:
+        * web-platform-tests/fetch/api/request/request-disturbed.html:
+        * web-platform-tests/fetch/api/resources/get-host-info.sub.js: Removed.
+        * web-platform-tests/fetch/api/resources/w3c-import.log:
+        * web-platform-tests/fetch/api/response/response-init-001.html:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-history-interface/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/w3c-import.log:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-on-new-window-expected.txt: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-on-new-window.html: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/frame.html:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/w3c-import.log:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/win-documentdomain.sub.html:
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub.html:
+        * web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub-expected.txt:
+        * web-platform-tests/html/browsers/windows/w3c-import.log:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010-expected.txt:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-ref-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-bdi-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-bdi-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir_auto-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir_auto-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-script-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-script-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-style-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-style-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-textarea-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-textarea-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-EN-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-EN-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-EN-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-EN-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-L-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-R-expected.html:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-isolate-expected.html:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/support/refresh.sub.html: Removed.
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/support/w3c-import.log: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/template/additions-to-the-in-table-insertion-mode/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape.html:
+        * web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_constructor-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_constructor.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.canvas-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.canvas.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.canvas.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.canvas.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.image-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.image.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.image.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.image.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.fillStyle-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.fillStyle.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.fillStyle.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.fillStyle.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.strokeStyle-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.strokeStyle.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.strokeStyle.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.strokeStyle.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.timing-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.timing.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.timing.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.timing.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.sub-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-001-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-001-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-002-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-expected.txt:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-rev-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-rev-reftest-001-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-rev-reftest-001-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-001-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-001-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-002-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-002-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-002-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-001-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-001-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-002-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-002-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-002-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-003-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-003-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-003-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-pre-element/grouping-pre-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-pre-element/grouping-pre-reftest-001-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-pre-element/grouping-pre-reftest-001-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-pre-element/w3c-import.log:
+        * web-platform-tests/html/semantics/links/linktypes/alternate-css-expected.html:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/tFoot.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-foster-parenting/template-is-a-foster-parent-element.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-foster-parenting/template-is-not-a-foster-parent-element.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-foster-parenting/w3c-import.log:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/generating-of-implied-end-tags.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/ignore-body-token.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/ignore-frameset-token.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/ignore-head-token.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/ignore-html-token.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/start-tag-body.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/start-tag-html.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/template-end-tag-without-start-one.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-body-insertion-mode/w3c-import.log:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-frameset-insertion-mode/end-tag-frameset.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-frameset-insertion-mode/w3c-import.log:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-head-insertion-mode/generating-of-implied-end-tags.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-head-insertion-mode/template-end-tag-without-start-one.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-head-insertion-mode/w3c-import.log:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-table-insertion-mode/end-tag-table.html:
+        * web-platform-tests/html/syntax/parsing/template/additions-to-the-in-table-insertion-mode/w3c-import.log:
+        * web-platform-tests/html/syntax/parsing/template/appending-to-a-template/template-child-nodes.html:
+        * web-platform-tests/html/syntax/parsing/template/appending-to-a-template/w3c-import.log:
+        * web-platform-tests/html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html:
+        * web-platform-tests/html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-context.html:
+        * web-platform-tests/html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-row-context.html:
+        * web-platform-tests/html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/w3c-import.log:
+        * web-platform-tests/html/syntax/parsing/template/creating-an-element-for-the-token/template-owner-document.html:
+        * web-platform-tests/html/syntax/parsing/template/creating-an-element-for-the-token/w3c-import.log:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/resource-timing/SyntheticResponse.py:
+        (main):
+        * web-platform-tests/resource-timing/resource-timing-expected.txt:
+        * web-platform-tests/resource-timing/resource-timing.html:
+        * web-platform-tests/resource-timing/resource-timing.js:
+        (logResourceEntry): Deleted.
+        (window.onload): Deleted.
+        * web-platform-tests/resource-timing/resources/resource_timing_test0.xml:
+        * web-platform-tests/resource-timing/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/w3c-import.log.
+        * web-platform-tests/resource-timing/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/w3c-import.log.
+        * web-platform-tests/url/interfaces-expected.txt:
+
 2016-09-08  Chris Dumez  <cdumez@apple.com>
 
         HTMLObjectElement.hspace / vspace attributes should be unsigned

@@ -22,9 +22,11 @@ function checkContentType(contentType, body)
 function requestHeaders(desc, url, method, body, expectedOrigin, expectedContentLength) {
   var urlParameters = "?headers=origin|user-agent|accept-charset|content-length|content-type";
   var requestInit = {"method": method}
-  if (body)
-    requestInit["body"] = body;
   promise_test(function(test){
+    if (typeof body === "function")
+      body = body();
+    if (body)
+      requestInit["body"] = body;
     return fetch(url + urlParameters, requestInit).then(function(resp) {
       assert_equals(resp.status, 200, "HTTP status is 200");
       assert_equals(resp.type , "basic", "Response's type is basic");
@@ -46,8 +48,7 @@ requestHeaders("Fetch with PUT without body", url, "POST", null, location.origin
 requestHeaders("Fetch with PUT with body", url, "PUT", "Request's body", location.origin, "14");
 requestHeaders("Fetch with POST without body", url, "POST", null, location.origin, "0");
 requestHeaders("Fetch with POST with text body", url, "POST", "Request's body", location.origin, "14");
-if (self.FormData)
-    requestHeaders("Fetch with POST with FormData body", url, "POST", new FormData(), location.origin);
+requestHeaders("Fetch with POST with FormData body", url, "POST", function() { return new FormData(); }, location.origin);
 requestHeaders("Fetch with POST with Blob body", url, "POST", new Blob(["Test"]), location.origin, "4");
 requestHeaders("Fetch with POST with ArrayBuffer body", url, "POST", new ArrayBuffer(4), location.origin, "4");
 requestHeaders("Fetch with POST with Uint8Array body", url, "POST", new Uint8Array(4), location.origin, "4");

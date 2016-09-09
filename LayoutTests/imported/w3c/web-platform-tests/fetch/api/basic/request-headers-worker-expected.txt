@@ -5,6 +5,7 @@ PASS Fetch with PUT without body
 PASS Fetch with PUT with body 
 PASS Fetch with POST without body 
 PASS Fetch with POST with text body 
+FAIL Fetch with POST with FormData body Can't find variable: FormData
 FAIL Fetch with POST with Blob body assert_equals: Request should have header content-type: null expected (object) null but got (string) "application/x-www-form-urlencoded"
 FAIL Fetch with POST with ArrayBuffer body assert_equals: Request should have header content-type: null expected (object) null but got (string) "application/x-www-form-urlencoded"
 FAIL Fetch with POST with Uint8Array body assert_equals: Request should have header content-type: null expected (object) null but got (string) "application/x-www-form-urlencoded"

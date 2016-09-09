@@ -1,12 +1,12 @@
-CONSOLE MESSAGE: line 18: XMLHttpRequest cannot load mailto:test@example.org. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: line 18: XMLHttpRequest cannot load tel:+31600000000. Cross origin requests are only supported for HTTP.
-Blocked access to external URL http://www2.localhost:8800/
-CONSOLE MESSAGE: line 18: XMLHttpRequest cannot load javascript:alert('FAIL'). Cross origin requests are only supported for HTTP.
-Blocked access to external URL http://www2.localhost:8800/folder.txt
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load mailto:test@example.org. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load tel:+31600000000. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load http://127.0.0.1:8800/. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load javascript:alert('FAIL'). Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load http://127.0.0.1:8800/folder.txt. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 
 PASS XMLHttpRequest: send() - non same-origin (mailto:test@example.org) 
 PASS XMLHttpRequest: send() - non same-origin (tel:+31600000000) 
-FAIL XMLHttpRequest: send() - non same-origin (http://www2.localhost:8800/) assert_throws: function "function () { client.send() }" threw object "AbortError (DOM Exception 20): The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
+PASS XMLHttpRequest: send() - non same-origin (http://127.0.0.1:8800) 
 PASS XMLHttpRequest: send() - non same-origin (javascript:alert('FAIL')) 
-FAIL XMLHttpRequest: send() - non same-origin (folder.txt) assert_throws: function "function () { client.send() }" threw object "AbortError (DOM Exception 20): The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
+PASS XMLHttpRequest: send() - non same-origin (folder.txt) 
 

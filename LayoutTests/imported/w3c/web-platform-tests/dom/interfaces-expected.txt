@@ -141,7 +141,7 @@ PASS MutationObserver interface object length
 PASS MutationObserver interface object name 
 PASS MutationObserver interface: existence and properties of interface prototype object 
 PASS MutationObserver interface: existence and properties of interface prototype object's "constructor" property 
-PASS MutationObserver interface: operation observe(Node,MutationObserverInit) 
+FAIL MutationObserver interface: operation observe(Node,MutationObserverInit) assert_equals: property has wrong .length expected 1 but got 2
 PASS MutationObserver interface: operation disconnect() 
 PASS MutationObserver interface: operation takeRecords() 
 PASS MutationRecord interface: existence and properties of interface object 
@@ -250,6 +250,7 @@ PASS Document interface: operation createElement(DOMString,ElementCreationOption
 PASS Document interface: operation createElementNS(DOMString,DOMString,ElementCreationOptions) 
 PASS Document interface: operation createDocumentFragment() 
 PASS Document interface: operation createTextNode(DOMString) 
+PASS Document interface: operation createCDATASection(DOMString) 
 PASS Document interface: operation createComment(DOMString) 
 PASS Document interface: operation createProcessingInstruction(DOMString,DOMString) 
 PASS Document interface: operation importNode(Node,boolean) 
@@ -295,38 +296,40 @@ PASS Document interface: calling createElementNS(DOMString,DOMString,ElementCrea
 PASS Document interface: new Document() must inherit property "createDocumentFragment" with the proper type (16) 
 PASS Document interface: new Document() must inherit property "createTextNode" with the proper type (17) 
 PASS Document interface: calling createTextNode(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "createComment" with the proper type (18) 
+PASS Document interface: new Document() must inherit property "createCDATASection" with the proper type (18) 
+PASS Document interface: calling createCDATASection(DOMString) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "createComment" with the proper type (19) 
 PASS Document interface: calling createComment(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "createProcessingInstruction" with the proper type (19) 
+PASS Document interface: new Document() must inherit property "createProcessingInstruction" with the proper type (20) 
 PASS Document interface: calling createProcessingInstruction(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "importNode" with the proper type (20) 
+PASS Document interface: new Document() must inherit property "importNode" with the proper type (21) 
 PASS Document interface: calling importNode(Node,boolean) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "adoptNode" with the proper type (21) 
+PASS Document interface: new Document() must inherit property "adoptNode" with the proper type (22) 
 PASS Document interface: calling adoptNode(Node) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "createAttribute" with the proper type (22) 
+PASS Document interface: new Document() must inherit property "createAttribute" with the proper type (23) 
 PASS Document interface: calling createAttribute(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "createAttributeNS" with the proper type (23) 
+PASS Document interface: new Document() must inherit property "createAttributeNS" with the proper type (24) 
 PASS Document interface: calling createAttributeNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "createEvent" with the proper type (24) 
+PASS Document interface: new Document() must inherit property "createEvent" with the proper type (25) 
 PASS Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "createRange" with the proper type (25) 
-PASS Document interface: new Document() must inherit property "createNodeIterator" with the proper type (26) 
+PASS Document interface: new Document() must inherit property "createRange" with the proper type (26) 
+PASS Document interface: new Document() must inherit property "createNodeIterator" with the proper type (27) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "createTreeWalker" with the proper type (27) 
+PASS Document interface: new Document() must inherit property "createTreeWalker" with the proper type (28) 
 PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "getElementById" with the proper type (28) 
+PASS Document interface: new Document() must inherit property "getElementById" with the proper type (29) 
 PASS Document interface: calling getElementById(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "children" with the proper type (29) 
-PASS Document interface: new Document() must inherit property "firstElementChild" with the proper type (30) 
-PASS Document interface: new Document() must inherit property "lastElementChild" with the proper type (31) 
-PASS Document interface: new Document() must inherit property "childElementCount" with the proper type (32) 
-PASS Document interface: new Document() must inherit property "prepend" with the proper type (33) 
+PASS Document interface: new Document() must inherit property "children" with the proper type (30) 
+PASS Document interface: new Document() must inherit property "firstElementChild" with the proper type (31) 
+PASS Document interface: new Document() must inherit property "lastElementChild" with the proper type (32) 
+PASS Document interface: new Document() must inherit property "childElementCount" with the proper type (33) 
+PASS Document interface: new Document() must inherit property "prepend" with the proper type (34) 
 PASS Document interface: calling prepend([object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "append" with the proper type (34) 
+PASS Document interface: new Document() must inherit property "append" with the proper type (35) 
 PASS Document interface: calling append([object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "querySelector" with the proper type (35) 
+PASS Document interface: new Document() must inherit property "querySelector" with the proper type (36) 
 PASS Document interface: calling querySelector(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Document interface: new Document() must inherit property "querySelectorAll" with the proper type (36) 
+PASS Document interface: new Document() must inherit property "querySelectorAll" with the proper type (37) 
 PASS Document interface: calling querySelectorAll(DOMString) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: new Document() must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
@@ -423,38 +426,40 @@ PASS Document interface: calling createElementNS(DOMString,DOMString,ElementCrea
 PASS Document interface: xmlDoc must inherit property "createDocumentFragment" with the proper type (16) 
 PASS Document interface: xmlDoc must inherit property "createTextNode" with the proper type (17) 
 PASS Document interface: calling createTextNode(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createComment" with the proper type (18) 
+PASS Document interface: xmlDoc must inherit property "createCDATASection" with the proper type (18) 
+PASS Document interface: calling createCDATASection(DOMString) on xmlDoc with too few arguments must throw TypeError 
+PASS Document interface: xmlDoc must inherit property "createComment" with the proper type (19) 
 PASS Document interface: calling createComment(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createProcessingInstruction" with the proper type (19) 
+PASS Document interface: xmlDoc must inherit property "createProcessingInstruction" with the proper type (20) 
 PASS Document interface: calling createProcessingInstruction(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "importNode" with the proper type (20) 
+PASS Document interface: xmlDoc must inherit property "importNode" with the proper type (21) 
 PASS Document interface: calling importNode(Node,boolean) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "adoptNode" with the proper type (21) 
+PASS Document interface: xmlDoc must inherit property "adoptNode" with the proper type (22) 
 PASS Document interface: calling adoptNode(Node) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createAttribute" with the proper type (22) 
+PASS Document interface: xmlDoc must inherit property "createAttribute" with the proper type (23) 
 PASS Document interface: calling createAttribute(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createAttributeNS" with the proper type (23) 
+PASS Document interface: xmlDoc must inherit property "createAttributeNS" with the proper type (24) 
 PASS Document interface: calling createAttributeNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createEvent" with the proper type (24) 
+PASS Document interface: xmlDoc must inherit property "createEvent" with the proper type (25) 
 PASS Document interface: calling createEvent(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createRange" with the proper type (25) 
-PASS Document interface: xmlDoc must inherit property "createNodeIterator" with the proper type (26) 
+PASS Document interface: xmlDoc must inherit property "createRange" with the proper type (26) 
+PASS Document interface: xmlDoc must inherit property "createNodeIterator" with the proper type (27) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createTreeWalker" with the proper type (27) 
+PASS Document interface: xmlDoc must inherit property "createTreeWalker" with the proper type (28) 
 PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "getElementById" with the proper type (28) 
+PASS Document interface: xmlDoc must inherit property "getElementById" with the proper type (29) 
 PASS Document interface: calling getElementById(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "children" with the proper type (29) 
-PASS Document interface: xmlDoc must inherit property "firstElementChild" with the proper type (30) 
-PASS Document interface: xmlDoc must inherit property "lastElementChild" with the proper type (31) 
-PASS Document interface: xmlDoc must inherit property "childElementCount" with the proper type (32) 
-PASS Document interface: xmlDoc must inherit property "prepend" with the proper type (33) 
+PASS Document interface: xmlDoc must inherit property "children" with the proper type (30) 
+PASS Document interface: xmlDoc must inherit property "firstElementChild" with the proper type (31) 
+PASS Document interface: xmlDoc must inherit property "lastElementChild" with the proper type (32) 
+PASS Document interface: xmlDoc must inherit property "childElementCount" with the proper type (33) 
+PASS Document interface: xmlDoc must inherit property "prepend" with the proper type (34) 
 PASS Document interface: calling prepend([object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "append" with the proper type (34) 
+PASS Document interface: xmlDoc must inherit property "append" with the proper type (35) 
 PASS Document interface: calling append([object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "querySelector" with the proper type (35) 
+PASS Document interface: xmlDoc must inherit property "querySelector" with the proper type (36) 
 PASS Document interface: calling querySelector(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "querySelectorAll" with the proper type (36) 
+PASS Document interface: xmlDoc must inherit property "querySelectorAll" with the proper type (37) 
 PASS Document interface: calling querySelectorAll(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: xmlDoc must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
@@ -1140,6 +1145,11 @@ PASS EventTarget interface: document.createTextNode("abc") must inherit property
 PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createTextNode("abc") must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createTextNode("abc") with too few arguments must throw TypeError 
+PASS CDATASection interface: existence and properties of interface object 
+PASS CDATASection interface object length 
+PASS CDATASection interface object name 
+PASS CDATASection interface: existence and properties of interface prototype object 
+PASS CDATASection interface: existence and properties of interface prototype object's "constructor" property 
 PASS ProcessingInstruction interface: existence and properties of interface object 
 PASS ProcessingInstruction interface object length 
 PASS ProcessingInstruction interface object name 

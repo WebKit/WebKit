@@ -1,6 +1,6 @@
 if (this.document === undefined) {
   importScripts("/resources/testharness.js");
-  importScripts("../resources/get-host-info.sub.js")
+  importScripts("/common/get-host-info.sub.js")
 }
 
 function redirectMode(desc, redirectUrl, redirectLocation, redirectStatus, redirectMode) {

@@ -1,6 +1,6 @@
 
-PASS Create headers using same name for different values 
+FAIL Create headers using same name for different values assert_equals: name: double has value: doubleValue1,doubleValue2 expected "doubleValue1,doubleValue2" but got "doubleValue1, doubleValue2"
 PASS Check delete and has methods when using same name for different values 
 PASS Check set methods when called with already used name 
-PASS Check append methods when called with already used name 
+FAIL Check append methods when called with already used name assert_equals: name: single has value: singleValue, newSingleValue expected "singleValue,newSingleValue" but got "singleValue, newSingleValue"
 

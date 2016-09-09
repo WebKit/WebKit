@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset=utf-8>
-<!-- WARNING: These tests are preliminary and probably partly incorrect.  -->
+<!--  WARNING: These tests are preliminary and probably partly incorrect.   -->
 <title>HTML IDL tests</title>
 <meta name=timeout content=long>
 <script src=/resources/testharness.js></script>
@@ -165,7 +165,7 @@ interface Node : EventTarget {
   const unsigned short ELEMENT_NODE = 1;
   const unsigned short ATTRIBUTE_NODE = 2; // historical
   const unsigned short TEXT_NODE = 3;
-  const unsigned short CDATA_SECTION_NODE = 4; // historical
+  const unsigned short CDATA_SECTION_NODE = 4;
   const unsigned short ENTITY_REFERENCE_NODE = 5; // historical
   const unsigned short ENTITY_NODE = 6; // historical
   const unsigned short PROCESSING_INSTRUCTION_NODE = 7;
@@ -237,6 +237,7 @@ interface Document : Node {
   [NewObject] Element createElementNS(DOMString? namespace, DOMString qualifiedName);
   [NewObject] DocumentFragment createDocumentFragment();
   [NewObject] Text createTextNode(DOMString data);
+  [NewObject] CDATASection createCDATASection(DOMString data);
   [NewObject] Comment createComment(DOMString data);
   [NewObject] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
 
@@ -352,6 +353,10 @@ interface Text : CharacterData {
   readonly attribute DOMString wholeText;
 };
 
+[Exposed=Window]
+interface CDATASection : Text {
+};
+
 interface ProcessingInstruction : CharacterData {
   readonly attribute DOMString target;
 };
@@ -441,7 +446,7 @@ callback interface NodeFilter {
   const unsigned long SHOW_ELEMENT = 0x1;
   const unsigned long SHOW_ATTRIBUTE = 0x2; // historical
   const unsigned long SHOW_TEXT = 0x4;
-  const unsigned long SHOW_CDATA_SECTION = 0x8; // historical
+  const unsigned long SHOW_CDATA_SECTION = 0x8;
   const unsigned long SHOW_ENTITY_REFERENCE = 0x10; // historical
   const unsigned long SHOW_ENTITY = 0x20; // historical
   const unsigned long SHOW_PROCESSING_INSTRUCTION = 0x40;
@@ -458,16 +463,15 @@ interface DOMTokenList {
   readonly attribute unsigned long length;
   getter DOMString? item(unsigned long index);
   boolean contains(DOMString token);
-  void add(DOMString... tokens);
-  void remove(DOMString... tokens);
-  boolean toggle(DOMString token, optional boolean force);
-  void replace(DOMString token, DOMString newToken);
+  [CEReactions] void add(DOMString... tokens);
+  [CEReactions] void remove(DOMString... tokens);
+  [CEReactions] boolean toggle(DOMString token, optional boolean force);
+  [CEReactions] void replace(DOMString token, DOMString newToken);
   boolean supports(DOMString token);
-           attribute DOMString value;
-  stringifier;
-//  iterable<DOMString>;
+  [CEReactions] stringifier attribute DOMString value;
+  //  iterable<DOMString>;
 };</script>
-<!-- UI Events IDLs -->
+<!--  UI Events IDLs  -->
 <script type=text/plain class=untested>
 [Constructor(DOMString type, optional UIEventInit eventInitDict)]
 interface UIEvent : Event {
@@ -530,7 +534,7 @@ partial interface MouseEvent {
     void initMouseEvent (DOMString typeArg, boolean bubblesArg, boolean cancelableArg, Window? viewArg, long detailArg, long screenXArg, long screenYArg, long clientXArg, long clientYArg, boolean ctrlKeyArg, boolean altKeyArg, boolean shiftKeyArg, boolean metaKeyArg, short buttonArg, EventTarget? relatedTargetArg);
 };
 </script>
-<!-- Touch Events IDLs -->
+<!--  Touch Events IDLs  -->
 <script type=text/plain class=untested>
 interface Touch {
     readonly    attribute long        identifier;
@@ -543,7 +547,7 @@ interface Touch {
     readonly    attribute long        pageY;
 };
 </script>
-<!-- CSSOM IDLs -->
+<!--  CSSOM IDLs  -->
 <script type=text/plain class=untested>
 interface MediaList {
   stringifier attribute DOMString mediaText;
@@ -847,7 +851,7 @@ interface CSSPropertyValue {
 //};
 </script>
 
-<!-- HTML IDLs -->
+<!--  HTML IDLs  -->
 <script type=text/plain>
 typedef (Int8Array or Uint8Array or Uint8ClampedArray or
          Int16Array or Uint16Array or
@@ -905,63 +909,56 @@ interface DOMStringMap {
   deleter void (DOMString name);
 };
 
-interface DOMElementMap {
-  getter Element (DOMString name);
-  setter creator void (DOMString name, Element value);
-  deleter void (DOMString name);
-};
-
 typedef (ArrayBuffer or MessagePort) Transferable;
 
 callback FileCallback = void (File file);
 
 enum DocumentReadyState { "loading", "interactive", "complete" };
+typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 
 [OverrideBuiltins]
 partial /*sealed*/ interface Document {
   // resource metadata management
   [PutForwards=href, Unforgeable] readonly attribute Location? location;
-           attribute DOMString domain;
-  readonly attribute DOMString referrer;
-           attribute DOMString cookie;
+           attribute USVString domain;
+  readonly attribute USVString referrer;
+           attribute USVString cookie;
   readonly attribute DOMString lastModified;
   readonly attribute DocumentReadyState readyState;
 
   // DOM tree accessors
   getter object (DOMString name);
-           attribute DOMString title;
-           attribute DOMString dir;
-           attribute HTMLElement? body;
+  [CEReactions] attribute DOMString title;
+  [CEReactions] attribute DOMString dir;
+  [CEReactions] attribute HTMLElement? body;
   readonly attribute HTMLHeadElement? head;
-  readonly attribute HTMLCollection images;
-  readonly attribute HTMLCollection embeds;
-  readonly attribute HTMLCollection plugins;
-  readonly attribute HTMLCollection links;
-  readonly attribute HTMLCollection forms;
-  readonly attribute HTMLCollection scripts;
+  [SameObject] readonly attribute HTMLCollection images;
+  [SameObject] readonly attribute HTMLCollection embeds;
+  [SameObject] readonly attribute HTMLCollection plugins;
+  [SameObject] readonly attribute HTMLCollection links;
+  [SameObject] readonly attribute HTMLCollection forms;
+  [SameObject] readonly attribute HTMLCollection scripts;
   NodeList getElementsByName(DOMString elementName);
-  readonly attribute DOMElementMap cssElementMap;
-  readonly attribute HTMLScriptElement? currentScript;
+  readonly attribute HTMLOrSVGScriptElement? currentScript; // classic scripts in a document tree only
 
   // dynamic markup insertion
-  Document open(optional DOMString type = "text/html", optional DOMString replace = "");
-  WindowProxy open(DOMString url, DOMString name, DOMString features, optional boolean replace = false);
-  void close();
-  void write(DOMString... text);
-  void writeln(DOMString... text);
+  [CEReactions] Document open(optional DOMString type = "text/html", optional DOMString replace = "");
+  WindowProxy open(USVString url, DOMString name, DOMString features);
+  [CEReactions] void close();
+  [CEReactions] void write(DOMString... text);
+  [CEReactions] void writeln(DOMString... text);
 
   // user interaction
   readonly attribute WindowProxy? defaultView;
   readonly attribute Element? activeElement;
   boolean hasFocus();
-           attribute DOMString designMode;
-  boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
+  [CEReactions] attribute DOMString designMode;
+  [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
   boolean queryCommandEnabled(DOMString commandId);
   boolean queryCommandIndeterm(DOMString commandId);
   boolean queryCommandState(DOMString commandId);
   boolean queryCommandSupported(DOMString commandId);
   DOMString queryCommandValue(DOMString commandId);
-  readonly attribute HTMLCollection commands;
 
   // special event handler IDL attributes that only apply to Document objects
   [LenientThis] attribute EventHandler onreadystatechange;
@@ -969,42 +966,41 @@ partial /*sealed*/ interface Document {
   // also has obsolete members
 };
 Document implements GlobalEventHandlers;
+Document implements DocumentAndElementEventHandlers;
+
+[NoInterfaceObject]
+interface ElementContentEditable {
+  [CEReactions] attribute DOMString contentEditable;
+  readonly attribute boolean isContentEditable;
+};
 
 interface HTMLElement : Element {
   // metadata attributes
-           attribute DOMString title;
-           attribute DOMString lang;
-           attribute boolean translate;
-           attribute DOMString dir;
-  readonly attribute DOMStringMap dataset;
+  [CEReactions] attribute DOMString title;
+  [CEReactions] attribute DOMString lang;
+  [CEReactions] attribute boolean translate;
+  [CEReactions] attribute DOMString dir;
+  [SameObject] readonly attribute DOMStringMap dataset;
 
   // user interaction
-           attribute boolean hidden;
+  [CEReactions] attribute boolean hidden;
   void click();
-           attribute long tabIndex;
+  [CEReactions] attribute long tabIndex;
   void focus();
   void blur();
-           attribute DOMString accessKey;
+  [CEReactions] attribute DOMString accessKey;
   readonly attribute DOMString accessKeyLabel;
-           attribute boolean draggable;
-  [PutForwards=value] readonly attribute DOMTokenList dropzone;
-           attribute DOMString contentEditable;
-  readonly attribute boolean isContentEditable;
-           attribute HTMLMenuElement? contextMenu;
-           attribute boolean spellcheck;
+  [CEReactions] attribute boolean draggable;
+  [CEReactions, SameObject, PutForwards=value] readonly attribute DOMTokenList dropzone;
+  [CEReactions] attribute HTMLMenuElement? contextMenu;
+  [CEReactions] attribute boolean spellcheck;
   void forceSpellCheck();
 
   [CEReactions, TreatNullAs=EmptyString] attribute DOMString innerText;
-
-  // command API
-  readonly attribute DOMString? commandType;
-  readonly attribute DOMString? commandLabel;
-  readonly attribute DOMString? commandIcon;
-  readonly attribute boolean? commandHidden;
-  readonly attribute boolean? commandDisabled;
-  readonly attribute boolean? commandChecked;
 };
 HTMLElement implements GlobalEventHandlers;
+HTMLElement implements DocumentAndElementEventHandlers;
+HTMLElement implements ElementContentEditable;
 
 interface HTMLUnknownElement : HTMLElement { };
 
@@ -1046,9 +1042,9 @@ interface HTMLMetaElement : HTMLElement {
 };
 
 interface HTMLStyleElement : HTMLElement {
-           attribute DOMString media;
-           attribute DOMString type;
-           attribute boolean scoped;
+  [CEReactions] attribute DOMString media;
+  [CEReactions] attribute DOMString nonce;
+  [CEReactions] attribute DOMString type;
 };
 HTMLStyleElement implements LinkStyle;
 
@@ -1168,7 +1164,6 @@ interface HTMLIFrameElement : HTMLElement {
            attribute DOMString srcdoc;
            attribute DOMString name;
   [PutForwards=value] readonly attribute DOMTokenList sandbox;
-           attribute boolean seamless;
            attribute boolean allowFullscreen;
            attribute DOMString width;
            attribute DOMString height;
@@ -1296,12 +1291,8 @@ interface HTMLMediaElement : HTMLElement {
   readonly attribute boolean ended;
            attribute boolean autoplay;
            attribute boolean loop;
-  void play();
+  Promise<void> play();
   void pause();
-
-  // media controller
-           attribute DOMString mediaGroup;
-           attribute MediaController? controller;
 
   // controls
            attribute boolean controls;
@@ -1359,46 +1350,6 @@ interface VideoTrack {
   readonly attribute DOMString label;
   readonly attribute DOMString language;
            attribute boolean selected;
-};
-
-enum MediaControllerPlaybackState { "waiting", "playing", "ended" };
-[Constructor]
-interface MediaController : EventTarget {
-  readonly attribute unsigned short readyState; // uses HTMLMediaElement.readyState's values
-
-  readonly attribute TimeRanges buffered;
-  readonly attribute TimeRanges seekable;
-  readonly attribute unrestricted double duration;
-           attribute double currentTime;
-
-  readonly attribute boolean paused;
-  readonly attribute MediaControllerPlaybackState playbackState;
-  readonly attribute TimeRanges played;
-  void pause();
-  void unpause();
-  void play(); // calls play() on all media elements as well
-
-           attribute double defaultPlaybackRate;
-           attribute double playbackRate;
-
-           attribute double volume;
-           attribute boolean muted;
-
-           attribute EventHandler onemptied;
-           attribute EventHandler onloadedmetadata;
-           attribute EventHandler onloadeddata;
-           attribute EventHandler oncanplay;
-           attribute EventHandler oncanplaythrough;
-           attribute EventHandler onplaying;
-           attribute EventHandler onended;
-           attribute EventHandler onwaiting;
-
-           attribute EventHandler ondurationchange;
-           attribute EventHandler ontimeupdate;
-           attribute EventHandler onplay;
-           attribute EventHandler onpause;
-           attribute EventHandler onratechange;
-           attribute EventHandler onvolumechange;
 };
 
 interface TextTrackList : EventTarget {
@@ -1468,7 +1419,6 @@ dictionary TrackEventInit : EventInit {
 interface HTMLMapElement : HTMLElement {
            attribute DOMString name;
   readonly attribute HTMLCollection areas;
-  readonly attribute HTMLCollection images;
 };
 
 interface HTMLAreaElement : HTMLElement {
@@ -1564,8 +1514,6 @@ interface HTMLFormElement : HTMLElement {
   void reset();
   boolean checkValidity();
   boolean reportValidity();
-
-  void requestAutocomplete();
 };
 
 interface HTMLLabelElement : HTMLElement {
@@ -1612,8 +1560,6 @@ interface HTMLInputElement : HTMLElement {
   [TreatNullAs=EmptyString] attribute DOMString value;
            attribute Date? valueAsDate;
            attribute unrestricted double valueAsNumber;
-           attribute double valueLow;
-           attribute double valueHigh;
            attribute unsigned long width;
 
   void stepUp(optional long n = 1);
@@ -1837,17 +1783,6 @@ interface HTMLLegendElement : HTMLElement {
   readonly attribute HTMLFormElement? form;
 
   // also has obsolete members
-};
-
-enum AutocompleteErrorReason { "" /* empty string */, "cancel", "disabled", "invalid" };
-
-[Constructor(DOMString type, optional AutocompleteErrorEventInit eventInitDict)]
-interface AutocompleteErrorEvent : Event {
-  readonly attribute AutocompleteErrorReason reason;
-};
-
-dictionary AutocompleteErrorEventInit : EventInit {
-  AutocompleteErrorReason reason;
 };
 
 enum SelectionMode {
@@ -2465,8 +2400,6 @@ typedef OnBeforeUnloadEventHandlerNonNull? OnBeforeUnloadEventHandler;
 [NoInterfaceObject]
 interface GlobalEventHandlers {
            attribute EventHandler onabort;
-           attribute EventHandler onautocomplete;
-           attribute EventHandler onautocompleteerror;
            attribute EventHandler onblur;
            attribute EventHandler oncancel;
            attribute EventHandler oncanplay;
@@ -2529,6 +2462,13 @@ interface GlobalEventHandlers {
 };
 
 [NoInterfaceObject]
+interface DocumentAndElementEventHandlers {
+           attribute EventHandler oncopy;
+           attribute EventHandler oncut;
+           attribute EventHandler onpaste;
+};
+
+[NoInterfaceObject]
 interface WindowEventHandlers {
            attribute EventHandler onafterprint;
            attribute EventHandler onbeforeprint;
@@ -2576,47 +2516,49 @@ Navigator implements NavigatorID;
 Navigator implements NavigatorLanguage;
 Navigator implements NavigatorOnLine;
 Navigator implements NavigatorContentUtils;
-Navigator implements NavigatorStorageUtils;
+Navigator implements NavigatorCookies;
 Navigator implements NavigatorPlugins;
+Navigator implements NavigatorConcurrentHardware;
 
 [NoInterfaceObject, Exposed=(Window,Worker)]
 interface NavigatorID {
-  readonly attribute DOMString appCodeName; // constant "Mozilla"
-  readonly attribute DOMString appName;
+  [Exposed=Window] readonly attribute DOMString appCodeName; // constant "Mozilla"
+  readonly attribute DOMString appName; // constant "Netscape"
   readonly attribute DOMString appVersion;
   readonly attribute DOMString platform;
-  readonly attribute DOMString product; // constant "Gecko"
-  boolean taintEnabled(); // constant false
+  [Exposed=Window] readonly attribute DOMString product; // constant "Gecko"
+  [Exposed=Window] readonly attribute DOMString productSub;
   readonly attribute DOMString userAgent;
+  [Exposed=Window] readonly attribute DOMString vendor;
+  [Exposed=Window] readonly attribute DOMString vendorSub; // constant ""
 };
 
 [NoInterfaceObject, Exposed=(Window,Worker)]
 interface NavigatorLanguage {
-  readonly attribute DOMString? language;
-  readonly attribute DOMString[] languages;
+  readonly attribute DOMString language;
+  readonly attribute FrozenArray<DOMString> languages;
 };
 
 [NoInterfaceObject]
 interface NavigatorContentUtils {
   // content handler registration
-  void registerProtocolHandler(DOMString scheme, DOMString url, DOMString title);
-  void registerContentHandler(DOMString mimeType, DOMString url, DOMString title);
-  DOMString isProtocolHandlerRegistered(DOMString scheme, DOMString url);
-  DOMString isContentHandlerRegistered(DOMString mimeType, DOMString url);
-  void unregisterProtocolHandler(DOMString scheme, DOMString url);
-  void unregisterContentHandler(DOMString mimeType, DOMString url);
+  void registerProtocolHandler(DOMString scheme, USVString url, DOMString title);
+  void registerContentHandler(DOMString mimeType, USVString url, DOMString title);
+  DOMString isProtocolHandlerRegistered(DOMString scheme, USVString url);
+  DOMString isContentHandlerRegistered(DOMString mimeType, USVString url);
+  void unregisterProtocolHandler(DOMString scheme, USVString url);
+  void unregisterContentHandler(DOMString mimeType, USVString url);
 };
 
 [NoInterfaceObject]
-interface NavigatorStorageUtils {
+interface NavigatorCookies {
   readonly attribute boolean cookieEnabled;
-  void yieldForStorageUpdates();
 };
 
 [NoInterfaceObject]
 interface NavigatorPlugins {
-  readonly attribute PluginArray plugins;
-  readonly attribute MimeTypeArray mimeTypes;
+  [SameObject] readonly attribute PluginArray plugins;
+  [SameObject] readonly attribute MimeTypeArray mimeTypes;
   boolean javaEnabled();
 };
 
@@ -2625,6 +2567,11 @@ interface PluginArray {
   readonly attribute unsigned long length;
   getter Plugin? item(unsigned long index);
   getter Plugin? namedItem(DOMString name);
+};
+
+[NoInterfaceObject, Exposed=(Window,Worker)]
+interface NavigatorConcurrentHardware {
+  readonly attribute unsigned long long hardwareConcurrency;
 };
 
 interface MimeTypeArray {
@@ -3217,7 +3164,6 @@ window.onload = function() {
     RadioNodeList: [],
     HTMLOptionsCollection: ['document.createElement("select").options'],
     DOMStringMap: ['document.head.dataset'],
-    DOMElementMap: ['document.cssElementMap'],
     Transferable: [],
     Document: ['iframe.contentDocument', 'new Document()'],
     XMLDocument: ['document.implementation.createDocument(null, "", null)'],
@@ -3274,7 +3220,6 @@ window.onload = function() {
     AudioTrack: [],
     VideoTrackList: [],
     VideoTrack: [],
-    MediaController: ['new MediaController()'],
     TextTrackList: ['document.createElement("video").textTracks'],
     TextTrack: ['document.createElement("track").track'],
     TextTrackCueList: ['document.createElement("video").addTextTrack("subtitles").cues'],

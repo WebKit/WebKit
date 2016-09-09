@@ -1,176 +1,173 @@
 
 PASS Document.createElementNS 
-PASS createElementNS test 0: null,undefined,null 
-PASS createElementNS test 1: null,"foo",null 
-PASS createElementNS test 2: null,"1foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 3: null,"f1oo",null 
-PASS createElementNS test 4: null,"foo1",null 
-PASS createElementNS test 5: null,"1foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 6: null,"̀foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 7: null,"}foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 8: null,"f}oo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 9: null,"foo}","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 10: null,"￿foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 11: null,"f￿oo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 12: null,"foo￿","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 13: null,"<foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 14: null,"foo>","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 15: null,"<foo>","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 16: null,"f<oo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 17: null,"^^","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 18: null,":foo","NAMESPACE_ERR" 
-PASS createElementNS test 19: null,"f:oo","NAMESPACE_ERR" 
-PASS createElementNS test 20: null,"foo:","NAMESPACE_ERR" 
-PASS createElementNS test 21: null,":","NAMESPACE_ERR" 
-PASS createElementNS test 22: null,"xml",null 
-PASS createElementNS test 23: null,"xmlns","NAMESPACE_ERR" 
-PASS createElementNS test 24: null,"xmlfoo",null 
-PASS createElementNS test 25: null,"xml:foo","NAMESPACE_ERR" 
-PASS createElementNS test 26: null,"xmlns:foo","NAMESPACE_ERR" 
-PASS createElementNS test 27: null,"xmlfoo:bar","NAMESPACE_ERR" 
-PASS createElementNS test 28: null,"null:xml","NAMESPACE_ERR" 
-PASS createElementNS test 29: "",":foo","NAMESPACE_ERR" 
-PASS createElementNS test 30: "","f:oo","NAMESPACE_ERR" 
-PASS createElementNS test 31: "","foo:","NAMESPACE_ERR" 
-PASS createElementNS test 32: undefined,undefined,null 
-PASS createElementNS test 33: undefined,"foo",null 
-PASS createElementNS test 34: undefined,"1foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 35: undefined,"f1oo",null 
-PASS createElementNS test 36: undefined,"foo1",null 
-PASS createElementNS test 37: undefined,":foo","NAMESPACE_ERR" 
-PASS createElementNS test 38: undefined,"f:oo","NAMESPACE_ERR" 
-PASS createElementNS test 39: undefined,"foo:","NAMESPACE_ERR" 
-PASS createElementNS test 40: undefined,"xml",null 
-PASS createElementNS test 41: undefined,"xmlns","NAMESPACE_ERR" 
-PASS createElementNS test 42: undefined,"xmlfoo",null 
-PASS createElementNS test 43: undefined,"xml:foo","NAMESPACE_ERR" 
-PASS createElementNS test 44: undefined,"xmlns:foo","NAMESPACE_ERR" 
-PASS createElementNS test 45: undefined,"xmlfoo:bar","NAMESPACE_ERR" 
-PASS createElementNS test 46: "http://example.com/","foo",null 
-PASS createElementNS test 47: "http://example.com/","1foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 48: "http://example.com/","f1oo",null 
-PASS createElementNS test 49: "http://example.com/","foo1",null 
-PASS createElementNS test 50: "http://example.com/",":foo","NAMESPACE_ERR" 
-PASS createElementNS test 51: "http://example.com/","f:oo",null 
-PASS createElementNS test 52: "http://example.com/","foo:","NAMESPACE_ERR" 
-PASS createElementNS test 53: "http://example.com/","_:_",null 
-PASS createElementNS test 54: "http://example.com/","_:h0",null 
-PASS createElementNS test 55: "http://example.com/","_:test",null 
-PASS createElementNS test 56: "http://example.com/","l_:_",null 
-PASS createElementNS test 57: "http://example.com/","ns:_0",null 
-PASS createElementNS test 58: "http://example.com/","ns:a0",null 
-PASS createElementNS test 59: "http://example.com/","ns0:test",null 
-PASS createElementNS test 60: "http://example.com/","a.b:c",null 
-PASS createElementNS test 61: "http://example.com/","a-b:c",null 
-PASS createElementNS test 62: "http://example.com/","a-b:c",null 
-PASS createElementNS test 63: "http://example.com/","xml",null 
-PASS createElementNS test 64: "http://example.com/","xmlns","NAMESPACE_ERR" 
-PASS createElementNS test 65: "http://example.com/","XMLNS",null 
-PASS createElementNS test 66: "http://example.com/","xmlfoo",null 
-PASS createElementNS test 67: "http://example.com/","xml:foo","NAMESPACE_ERR" 
-PASS createElementNS test 68: "http://example.com/","XML:foo",null 
-PASS createElementNS test 69: "http://example.com/","xmlns:foo","NAMESPACE_ERR" 
-PASS createElementNS test 70: "http://example.com/","XMLNS:foo",null 
-PASS createElementNS test 71: "http://example.com/","xmlfoo:bar",null 
-PASS createElementNS test 72: "http://example.com/","prefix::local","NAMESPACE_ERR" 
-PASS createElementNS test 73: "http://example.com/","namespaceURI:{","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 74: "http://example.com/","namespaceURI:}","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 75: "http://example.com/","namespaceURI:~","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 76: "http://example.com/","namespaceURI:'","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 77: "http://example.com/","namespaceURI:!","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 78: "http://example.com/","namespaceURI:@","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 79: "http://example.com/","namespaceURI:#","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 80: "http://example.com/","namespaceURI:$","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 81: "http://example.com/","namespaceURI:%","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 82: "http://example.com/","namespaceURI:^","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 83: "http://example.com/","namespaceURI:&","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 84: "http://example.com/","namespaceURI:*","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 85: "http://example.com/","namespaceURI:(","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 86: "http://example.com/","namespaceURI:)","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 87: "http://example.com/","namespaceURI:+","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 88: "http://example.com/","namespaceURI:=","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 89: "http://example.com/","namespaceURI:[","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 90: "http://example.com/","namespaceURI:]","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 91: "http://example.com/","namespaceURI:\\","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 92: "http://example.com/","namespaceURI:/","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 93: "http://example.com/","namespaceURI:;","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 94: "http://example.com/","namespaceURI:`","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 95: "http://example.com/","namespaceURI:<","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 96: "http://example.com/","namespaceURI:>","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 97: "http://example.com/","namespaceURI:,","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 98: "http://example.com/","namespaceURI:a ","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 99: "http://example.com/","namespaceURI:\"","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 100: "/","foo",null 
-PASS createElementNS test 101: "/","1foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 102: "/","f1oo",null 
-PASS createElementNS test 103: "/","foo1",null 
-PASS createElementNS test 104: "/",":foo","NAMESPACE_ERR" 
-PASS createElementNS test 105: "/","f:oo",null 
-PASS createElementNS test 106: "/","foo:","NAMESPACE_ERR" 
-PASS createElementNS test 107: "/","xml",null 
-PASS createElementNS test 108: "/","xmlns","NAMESPACE_ERR" 
-PASS createElementNS test 109: "/","xmlfoo",null 
-PASS createElementNS test 110: "/","xml:foo","NAMESPACE_ERR" 
-PASS createElementNS test 111: "/","xmlns:foo","NAMESPACE_ERR" 
-PASS createElementNS test 112: "/","xmlfoo:bar",null 
-PASS createElementNS test 113: "http://www.w3.org/XML/1998/namespace","foo",null 
-PASS createElementNS test 114: "http://www.w3.org/XML/1998/namespace","1foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 115: "http://www.w3.org/XML/1998/namespace","f1oo",null 
-PASS createElementNS test 116: "http://www.w3.org/XML/1998/namespace","foo1",null 
-PASS createElementNS test 117: "http://www.w3.org/XML/1998/namespace",":foo","NAMESPACE_ERR" 
-PASS createElementNS test 118: "http://www.w3.org/XML/1998/namespace","f:oo",null 
-PASS createElementNS test 119: "http://www.w3.org/XML/1998/namespace","foo:","NAMESPACE_ERR" 
-PASS createElementNS test 120: "http://www.w3.org/XML/1998/namespace","xml",null 
-PASS createElementNS test 121: "http://www.w3.org/XML/1998/namespace","xmlns","NAMESPACE_ERR" 
-PASS createElementNS test 122: "http://www.w3.org/XML/1998/namespace","xmlfoo",null 
-PASS createElementNS test 123: "http://www.w3.org/XML/1998/namespace","xml:foo",null 
-PASS createElementNS test 124: "http://www.w3.org/XML/1998/namespace","xmlns:foo","NAMESPACE_ERR" 
-PASS createElementNS test 125: "http://www.w3.org/XML/1998/namespace","xmlfoo:bar",null 
-PASS createElementNS test 126: "http://www.w3.org/XML/1998/namespaces","xml:foo","NAMESPACE_ERR" 
-PASS createElementNS test 127: "http://www.w3.org/xml/1998/namespace","xml:foo","NAMESPACE_ERR" 
-PASS createElementNS test 128: "http://www.w3.org/2000/xmlns/","foo","NAMESPACE_ERR" 
-PASS createElementNS test 129: "http://www.w3.org/2000/xmlns/","1foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 130: "http://www.w3.org/2000/xmlns/","f1oo","NAMESPACE_ERR" 
-PASS createElementNS test 131: "http://www.w3.org/2000/xmlns/","foo1","NAMESPACE_ERR" 
-PASS createElementNS test 132: "http://www.w3.org/2000/xmlns/",":foo","NAMESPACE_ERR" 
-PASS createElementNS test 133: "http://www.w3.org/2000/xmlns/","f:oo","NAMESPACE_ERR" 
-PASS createElementNS test 134: "http://www.w3.org/2000/xmlns/","foo:","NAMESPACE_ERR" 
-PASS createElementNS test 135: "http://www.w3.org/2000/xmlns/","xml","NAMESPACE_ERR" 
-PASS createElementNS test 136: "http://www.w3.org/2000/xmlns/","xmlns",null 
-PASS createElementNS test 137: "http://www.w3.org/2000/xmlns/","xmlfoo","NAMESPACE_ERR" 
-PASS createElementNS test 138: "http://www.w3.org/2000/xmlns/","xml:foo","NAMESPACE_ERR" 
-PASS createElementNS test 139: "http://www.w3.org/2000/xmlns/","xmlns:foo",null 
-PASS createElementNS test 140: "http://www.w3.org/2000/xmlns/","xmlfoo:bar","NAMESPACE_ERR" 
-PASS createElementNS test 141: "http://www.w3.org/2000/xmlns/","foo:xmlns","NAMESPACE_ERR" 
-PASS createElementNS test 142: "foo:","foo",null 
-PASS createElementNS test 143: "foo:","1foo","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 144: "foo:","f1oo",null 
-PASS createElementNS test 145: "foo:","foo1",null 
-PASS createElementNS test 146: "foo:",":foo","NAMESPACE_ERR" 
-PASS createElementNS test 147: "foo:","f:oo",null 
-PASS createElementNS test 148: "foo:","foo:","NAMESPACE_ERR" 
-PASS createElementNS test 149: "foo:","xml",null 
-PASS createElementNS test 150: "foo:","xmlns","NAMESPACE_ERR" 
-PASS createElementNS test 151: "foo:","xmlfoo",null 
-PASS createElementNS test 152: "foo:","xml:foo","NAMESPACE_ERR" 
-PASS createElementNS test 153: "foo:","xmlns:foo","NAMESPACE_ERR" 
-PASS createElementNS test 154: "foo:","xmlfoo:bar",null 
-PASS createElementNS test 155: "","","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 156: null,null,null 
-PASS createElementNS test 157: null,"","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 158: undefined,null,null 
-PASS createElementNS test 159: undefined,undefined,null 
-PASS createElementNS test 160: undefined,"","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 161: "http://example.com/",null,null 
-PASS createElementNS test 162: "http://example.com/","","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 163: "/",null,null 
-PASS createElementNS test 164: "/","","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 165: "http://www.w3.org/XML/1998/namespace",null,null 
-PASS createElementNS test 166: "http://www.w3.org/XML/1998/namespace","","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 167: "http://www.w3.org/2000/xmlns/",null,"NAMESPACE_ERR" 
-PASS createElementNS test 168: "http://www.w3.org/2000/xmlns/","","INVALID_CHARACTER_ERR" 
-PASS createElementNS test 169: "foo:",null,null 
-PASS createElementNS test 170: "foo:","","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,undefined,null 
+PASS createElementNS test: null,"foo",null 
+PASS createElementNS test: null,"1foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"f1oo",null 
+PASS createElementNS test: null,"foo1",null 
+PASS createElementNS test: null,"̀foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"}foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"f}oo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"foo}","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"￿foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"f￿oo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"foo￿","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"<foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"foo>","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"<foo>","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"f<oo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,"^^","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,":foo","NAMESPACE_ERR" 
+PASS createElementNS test: null,"f:oo","NAMESPACE_ERR" 
+PASS createElementNS test: null,"foo:","NAMESPACE_ERR" 
+PASS createElementNS test: null,":","NAMESPACE_ERR" 
+PASS createElementNS test: null,"xml",null 
+PASS createElementNS test: null,"xmlns","NAMESPACE_ERR" 
+PASS createElementNS test: null,"xmlfoo",null 
+PASS createElementNS test: null,"xml:foo","NAMESPACE_ERR" 
+PASS createElementNS test: null,"xmlns:foo","NAMESPACE_ERR" 
+PASS createElementNS test: null,"xmlfoo:bar","NAMESPACE_ERR" 
+PASS createElementNS test: null,"null:xml","NAMESPACE_ERR" 
+PASS createElementNS test: "",":foo","NAMESPACE_ERR" 
+PASS createElementNS test: "","f:oo","NAMESPACE_ERR" 
+PASS createElementNS test: "","foo:","NAMESPACE_ERR" 
+PASS createElementNS test: undefined,undefined,null 
+PASS createElementNS test: undefined,"foo",null 
+PASS createElementNS test: undefined,"1foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: undefined,"f1oo",null 
+PASS createElementNS test: undefined,"foo1",null 
+PASS createElementNS test: undefined,":foo","NAMESPACE_ERR" 
+PASS createElementNS test: undefined,"f:oo","NAMESPACE_ERR" 
+PASS createElementNS test: undefined,"foo:","NAMESPACE_ERR" 
+PASS createElementNS test: undefined,"xml",null 
+PASS createElementNS test: undefined,"xmlns","NAMESPACE_ERR" 
+PASS createElementNS test: undefined,"xmlfoo",null 
+PASS createElementNS test: undefined,"xml:foo","NAMESPACE_ERR" 
+PASS createElementNS test: undefined,"xmlns:foo","NAMESPACE_ERR" 
+PASS createElementNS test: undefined,"xmlfoo:bar","NAMESPACE_ERR" 
+PASS createElementNS test: "http://example.com/","foo",null 
+PASS createElementNS test: "http://example.com/","1foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","f1oo",null 
+PASS createElementNS test: "http://example.com/","foo1",null 
+PASS createElementNS test: "http://example.com/",":foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://example.com/","f:oo",null 
+PASS createElementNS test: "http://example.com/","foo:","NAMESPACE_ERR" 
+PASS createElementNS test: "http://example.com/","_:_",null 
+PASS createElementNS test: "http://example.com/","_:h0",null 
+PASS createElementNS test: "http://example.com/","_:test",null 
+PASS createElementNS test: "http://example.com/","l_:_",null 
+PASS createElementNS test: "http://example.com/","ns:_0",null 
+PASS createElementNS test: "http://example.com/","ns:a0",null 
+PASS createElementNS test: "http://example.com/","ns0:test",null 
+PASS createElementNS test: "http://example.com/","a.b:c",null 
+PASS createElementNS test: "http://example.com/","a-b:c",null 
+PASS createElementNS test: "http://example.com/","xml",null 
+PASS createElementNS test: "http://example.com/","xmlns","NAMESPACE_ERR" 
+PASS createElementNS test: "http://example.com/","XMLNS",null 
+PASS createElementNS test: "http://example.com/","xmlfoo",null 
+PASS createElementNS test: "http://example.com/","xml:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://example.com/","XML:foo",null 
+PASS createElementNS test: "http://example.com/","xmlns:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://example.com/","XMLNS:foo",null 
+PASS createElementNS test: "http://example.com/","xmlfoo:bar",null 
+PASS createElementNS test: "http://example.com/","prefix::local","NAMESPACE_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:{","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:}","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:~","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:'","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:!","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:@","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:#","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:$","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:%","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:^","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:&","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:*","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:(","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:)","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:+","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:=","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:[","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:]","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:\\","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:/","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:;","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:`","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:<","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:>","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:,","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:a ","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/","namespaceURI:\"","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "/","foo",null 
+PASS createElementNS test: "/","1foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "/","f1oo",null 
+PASS createElementNS test: "/","foo1",null 
+PASS createElementNS test: "/",":foo","NAMESPACE_ERR" 
+PASS createElementNS test: "/","f:oo",null 
+PASS createElementNS test: "/","foo:","NAMESPACE_ERR" 
+PASS createElementNS test: "/","xml",null 
+PASS createElementNS test: "/","xmlns","NAMESPACE_ERR" 
+PASS createElementNS test: "/","xmlfoo",null 
+PASS createElementNS test: "/","xml:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "/","xmlns:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "/","xmlfoo:bar",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","foo",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","1foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","f1oo",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","foo1",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace",":foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","f:oo",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","foo:","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","xml",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","xmlns","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","xmlfoo",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","xml:foo",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","xmlns:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","xmlfoo:bar",null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespaces","xml:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/xml/1998/namespace","xml:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","1foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","f1oo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","foo1","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/",":foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","f:oo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","foo:","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","xml","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","xmlns",null 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","xmlfoo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","xml:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","xmlns:foo",null 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","xmlfoo:bar","NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","foo:xmlns","NAMESPACE_ERR" 
+PASS createElementNS test: "foo:","foo",null 
+PASS createElementNS test: "foo:","1foo","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "foo:","f1oo",null 
+PASS createElementNS test: "foo:","foo1",null 
+PASS createElementNS test: "foo:",":foo","NAMESPACE_ERR" 
+PASS createElementNS test: "foo:","f:oo",null 
+PASS createElementNS test: "foo:","foo:","NAMESPACE_ERR" 
+PASS createElementNS test: "foo:","xml",null 
+PASS createElementNS test: "foo:","xmlns","NAMESPACE_ERR" 
+PASS createElementNS test: "foo:","xmlfoo",null 
+PASS createElementNS test: "foo:","xml:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "foo:","xmlns:foo","NAMESPACE_ERR" 
+PASS createElementNS test: "foo:","xmlfoo:bar",null 
+PASS createElementNS test: "","","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: null,null,null 
+PASS createElementNS test: null,"","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: undefined,null,null 
+PASS createElementNS test: undefined,"","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://example.com/",null,null 
+PASS createElementNS test: "http://example.com/","","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "/",null,null 
+PASS createElementNS test: "/","","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace",null,null 
+PASS createElementNS test: "http://www.w3.org/XML/1998/namespace","","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/",null,"NAMESPACE_ERR" 
+PASS createElementNS test: "http://www.w3.org/2000/xmlns/","","INVALID_CHARACTER_ERR" 
+PASS createElementNS test: "foo:",null,null 
+PASS createElementNS test: "foo:","","INVALID_CHARACTER_ERR" 
 PASS Lower-case HTML element without a prefix 
 PASS Lower-case HTML element with a prefix 
 PASS Lower-case non-HTML element without a prefix 

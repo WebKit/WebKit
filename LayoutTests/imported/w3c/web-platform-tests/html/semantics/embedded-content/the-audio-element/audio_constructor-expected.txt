@@ -1,17 +1,12 @@
 
 PASS Audio constructor 
-FAIL No arguments, without new Constructor requires 'new' operator
-PASS No arguments, with new 
-FAIL Empty string argument, without new Constructor requires 'new' operator
-PASS Empty string argument, with new 
-FAIL Non-empty string argument, without new Constructor requires 'new' operator
-PASS Non-empty string argument, with new 
-FAIL Null argument, without new Constructor requires 'new' operator
-PASS Null argument, with new 
-FAIL Undefined argument, without new Constructor requires 'new' operator
-PASS Undefined argument, with new 
-FAIL Extra argument, without new Constructor requires 'new' operator
-PASS Extra argument, with new 
+PASS No arguments 
+PASS Empty string argument 
+PASS Non-empty string argument 
+PASS Null argument 
+PASS Undefined argument 
+PASS Extra argument 
+PASS Calling Audio should throw 
 PASS Calling HTMLAudioElement should throw 
 PASS Constructing HTMLAudioElement should throw 
 

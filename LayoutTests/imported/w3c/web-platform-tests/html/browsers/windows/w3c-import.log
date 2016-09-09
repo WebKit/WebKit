@@ -15,7 +15,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-first-created.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-cross-origin-close-manual.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-cross-origin-window-name.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html

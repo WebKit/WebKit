@@ -191,9 +191,13 @@ function fr_load() {
 }
 
 </script>
-<iframe id="fr" style="display:none"></iframe>
 <script>
-var frame = document.getElementById('fr');
-frame.setAttribute("onload", "fr_load()");
-frame.setAttribute('src', get_host_info().HTTP_REMOTE_ORIGIN + "/");
+onload = function() {
+  var frame = document.createElement('iframe');
+  frame.id = "fr";
+  frame.setAttribute("style", "display:none");
+  frame.setAttribute('src', get_host_info().HTTP_REMOTE_ORIGIN + "/");
+  frame.setAttribute("onload", "fr_load()");
+  document.body.appendChild(frame);
+}
 </script>

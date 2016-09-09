@@ -1,21 +1,18 @@
 if (this.document === undefined) {
-  importScripts("/resources/testharness.js");
-  importScripts("../resources/utils.js");
-  importScripts("../resources/get-host-info.sub.js")
+    importScripts("/resources/testharness.js");
+    importScripts("../resources/utils.js");
+    importScripts("/common/get-host-info.sub.js")
 }
 
 function runTest(url, init, expectedReferrer, title) {
     promise_test(function(test) {
-        if (url.indexOf('?') !== -1)
-            url += "&headers=referer&cors";
-        else
-            url += "?headers=referer&cors";
+        url += (url.indexOf('?') !== -1 ? '&' : '?') + "headers=referer&cors";
 
         return fetch(url , init).then(function(resp) {
             assert_equals(resp.status, 200, "HTTP status is 200");
             assert_equals(resp.headers.get("x-request-referer"), expectedReferrer, "Request's referrer is correct");
         });
-  }, title);
+    }, title);
 }
 
 var fetchedUrl = RESOURCES_DIR + "inspect-headers.py";

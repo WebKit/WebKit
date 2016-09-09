@@ -132,7 +132,6 @@
         "web-platform-tests/html/browsers/history/the-location-interface/scripted_click_location_assign_during_load-2.html",
         "web-platform-tests/html/browsers/history/the-location-interface/scripted_form_submit_assign_during_load-1.html",
         "web-platform-tests/html/browsers/history/the-location-interface/scripted_form_submit_assign_during_load-2.html",
-        "web-platform-tests/html/browsers/offline/resources/html/clock.html",
         "web-platform-tests/html/browsers/origin/cross-origin-objects/frame.html",
         "web-platform-tests/html/browsers/origin/cross-origin-objects/win-documentdomain.sub.html",
         "web-platform-tests/html/browsers/the-window-object/accessing-other-browsing-contexts/test1.html",

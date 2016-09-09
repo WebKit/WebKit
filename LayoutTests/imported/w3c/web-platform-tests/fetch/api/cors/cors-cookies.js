@@ -1,7 +1,7 @@
 if (this.document === undefined) {
   importScripts("/resources/testharness.js");
   importScripts("../resources/utils.js");
-  importScripts("../resources/get-host-info.sub.js")
+  importScripts("/common/get-host-info.sub.js")
 }
 
 function corsCookies(desc, baseURL1, baseURL2, credentialsMode, cookies) {

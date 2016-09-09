@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 31: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+security.pattern.canvas.strokeStyle
+Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean
+Actual output:
+
+PASS Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean 
+

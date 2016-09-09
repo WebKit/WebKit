@@ -48,6 +48,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-credentials.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-credentials.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect.js
