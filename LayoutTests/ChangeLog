@@ -1,3 +1,12 @@
+2016-09-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking tiled-drawing/scrolling/fixed/four-bars-zoomed.html as flaky on mac-wk2 debug.
+        https://bugs.webkit.org/show_bug.cgi?id=161547
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-09-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         Rename Key to CryptoKey
