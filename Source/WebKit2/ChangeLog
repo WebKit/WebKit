@@ -1,5 +1,16 @@
 2016-09-09  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r205371. rdar://problem/28020157
+
+    2016-09-02  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; partial roll out of r205365 to remove unintentional change in WKWebView.mm.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _initializeWithConfiguration:]):
+
+2016-09-09  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205365. rdar://problem/28020157
 
     2016-07-08  Jer Noble  <jer.noble@apple.com>
