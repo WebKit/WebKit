@@ -1,3 +1,9 @@
+2016-09-09  JF Bastien  <jfbastien@apple.com>
+
+        Unreviewed. Added myself to the list of committers.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-09-09  Michael Saboff  <msaboff@apple.com>
 
         Add ChakraCore tests to run-javascriptcore-tests
