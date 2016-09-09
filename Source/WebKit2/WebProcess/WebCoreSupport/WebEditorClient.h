@@ -64,6 +64,7 @@ private:
     void respondToChangedContents() override;
     void respondToChangedSelection(WebCore::Frame*) override;
     void didChangeSelectionAndUpdateLayout() override;
+    void updateEditorStateAfterLayoutIfEditabilityChanged() override;
     void discardedComposition(WebCore::Frame*) override;
     void didEndEditing() override;
     void willWriteSelectionToPasteboard(WebCore::Range*) override;
