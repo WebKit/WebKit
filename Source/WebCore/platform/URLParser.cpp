@@ -150,11 +150,12 @@ static bool isSpecialScheme(StringView scheme)
         || scheme == "wss";
 }
 
-static StringView bufferView(const StringBuilder& builder)
+static StringView bufferView(const StringBuilder& builder, unsigned length)
 {
+    ASSERT(builder.length() >= length);
     if (builder.is8Bit())
-        return StringView(builder.characters8(), builder.length());
-    return StringView(builder.characters16(), builder.length());
+        return StringView(builder.characters8(), length);
+    return StringView(builder.characters16(), length);
 }
 
 enum class URLParser::URLPart {
@@ -235,6 +236,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part)
         m_url.m_protocolIsInHTTPFamily = base.m_protocolIsInHTTPFamily;
         m_url.m_schemeEnd = base.m_schemeEnd;
     }
+    m_urlIsSpecial = isSpecialScheme(bufferView(m_buffer, m_url.m_schemeEnd));
 }
 
 static const char* dotASCIICode = "2e";
@@ -420,7 +422,6 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
 #define LOG_STATE(x) LOG(URLParser, "State %s, code point %c, buffer length %d", x, *c, m_buffer.length())
 #define LOG_FINAL_STATE(x) LOG(URLParser, "Final State: %s", x)
 
-    bool urlIsSpecial = false;
     State state = State::SchemeStart;
     while (c != end) {
         if (isTabOrNewline(*c)) {
@@ -444,17 +445,17 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 m_buffer.append(toASCIILower(*c));
             else if (*c == ':') {
                 m_url.m_schemeEnd = m_buffer.length();
-                StringView urlScheme = bufferView(m_buffer);
+                StringView urlScheme = bufferView(m_buffer, m_url.m_schemeEnd);
                 m_url.m_protocolIsInHTTPFamily = urlScheme == "http" || urlScheme == "https";
                 if (urlScheme == "file") {
-                    urlIsSpecial = true;
+                    m_urlIsSpecial = true;
                     state = State::File;
                     m_buffer.append(':');
                     ++c;
                     break;
                 }
                 if (isSpecialScheme(urlScheme)) {
-                    urlIsSpecial = true;
+                    m_urlIsSpecial = true;
                     if (base.protocol() == urlScheme)
                         state = State::SpecialRelativeOrAuthority;
                     else
@@ -775,7 +776,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             break;
         case State::Path:
             LOG_STATE("Path");
-            if (*c == '/' || (urlIsSpecial && *c == '\\')) {
+            if (*c == '/' || (m_urlIsSpecial && *c == '\\')) {
                 m_buffer.append('/');
                 m_url.m_pathAfterLastSlash = m_buffer.length();
                 ++c;
