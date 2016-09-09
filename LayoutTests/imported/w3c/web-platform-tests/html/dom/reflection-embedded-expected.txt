@@ -2764,85 +2764,85 @@ FAIL iframe.seamless: IDL set to object "test-toString" followed by IDL get asse
 PASS iframe.seamless: IDL set to object "test-valueOf" should not throw 
 PASS iframe.seamless: IDL set to object "test-valueOf" followed by hasAttribute() 
 FAIL iframe.seamless: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected (boolean) true but got (object) object "test-valueOf"
-FAIL iframe.allowFullscreen: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
-FAIL iframe.allowFullscreen: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+PASS iframe.allowFullscreen: typeof IDL attribute 
+PASS iframe.allowFullscreen: IDL get with DOM attribute unset 
 PASS iframe.allowFullscreen: setAttribute() to "" followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to "" followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to "" followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to " foo " followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to " foo " followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to " foo " followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to undefined followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to undefined followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to undefined followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to null followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to null followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to null followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to 7 followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to 7 followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to 7 followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to 1.5 followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to 1.5 followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to 1.5 followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to true followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to true followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to true followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to false followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to false followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to false followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to object "[object Object]" followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to NaN followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to NaN followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to NaN followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to Infinity followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to Infinity followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to Infinity followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to -Infinity followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to -Infinity followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to -Infinity followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to "\0" followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to "\0" followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to "\0" followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to object "test-toString" followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS iframe.allowFullscreen: setAttribute() to "allowFullscreen" followed by getAttribute() 
-FAIL iframe.allowFullscreen: setAttribute() to "allowFullscreen" followed by IDL get assert_equals: expected (boolean) true but got (undefined) undefined
+PASS iframe.allowFullscreen: setAttribute() to "allowFullscreen" followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to "" should not throw 
-FAIL iframe.allowFullscreen: IDL set to "" followed by hasAttribute() assert_equals: expected false but got true
-FAIL iframe.allowFullscreen: IDL set to "" followed by IDL get assert_equals: expected (boolean) false but got (string) ""
+PASS iframe.allowFullscreen: IDL set to "" followed by hasAttribute() 
+PASS iframe.allowFullscreen: IDL set to "" followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to " foo " should not throw 
 PASS iframe.allowFullscreen: IDL set to " foo " followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to " foo " followed by IDL get assert_equals: expected (boolean) true but got (string) " foo "
+PASS iframe.allowFullscreen: IDL set to " foo " followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to undefined should not throw 
-FAIL iframe.allowFullscreen: IDL set to undefined followed by hasAttribute() assert_equals: expected false but got true
-FAIL iframe.allowFullscreen: IDL set to undefined followed by IDL get assert_equals: expected (boolean) false but got (undefined) undefined
+PASS iframe.allowFullscreen: IDL set to undefined followed by hasAttribute() 
+PASS iframe.allowFullscreen: IDL set to undefined followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to null should not throw 
-FAIL iframe.allowFullscreen: IDL set to null followed by hasAttribute() assert_equals: expected false but got true
-FAIL iframe.allowFullscreen: IDL set to null followed by IDL get assert_equals: expected (boolean) false but got (object) null
+PASS iframe.allowFullscreen: IDL set to null followed by hasAttribute() 
+PASS iframe.allowFullscreen: IDL set to null followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to 7 should not throw 
 PASS iframe.allowFullscreen: IDL set to 7 followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to 7 followed by IDL get assert_equals: expected (boolean) true but got (number) 7
+PASS iframe.allowFullscreen: IDL set to 7 followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to 1.5 should not throw 
 PASS iframe.allowFullscreen: IDL set to 1.5 followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to 1.5 followed by IDL get assert_equals: expected (boolean) true but got (number) 1.5
+PASS iframe.allowFullscreen: IDL set to 1.5 followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to true should not throw 
 PASS iframe.allowFullscreen: IDL set to true followed by hasAttribute() 
 PASS iframe.allowFullscreen: IDL set to true followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to false should not throw 
-FAIL iframe.allowFullscreen: IDL set to false followed by hasAttribute() assert_equals: expected false but got true
+PASS iframe.allowFullscreen: IDL set to false followed by hasAttribute() 
 PASS iframe.allowFullscreen: IDL set to false followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to object "[object Object]" should not throw 
 PASS iframe.allowFullscreen: IDL set to object "[object Object]" followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to object "[object Object]" followed by IDL get assert_equals: expected (boolean) true but got (object) object "[object Object]"
+PASS iframe.allowFullscreen: IDL set to object "[object Object]" followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to NaN should not throw 
-FAIL iframe.allowFullscreen: IDL set to NaN followed by hasAttribute() assert_equals: expected false but got true
-FAIL iframe.allowFullscreen: IDL set to NaN followed by IDL get assert_equals: expected (boolean) false but got (number) NaN
+PASS iframe.allowFullscreen: IDL set to NaN followed by hasAttribute() 
+PASS iframe.allowFullscreen: IDL set to NaN followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to Infinity should not throw 
 PASS iframe.allowFullscreen: IDL set to Infinity followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to Infinity followed by IDL get assert_equals: expected (boolean) true but got (number) Infinity
+PASS iframe.allowFullscreen: IDL set to Infinity followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to -Infinity should not throw 
 PASS iframe.allowFullscreen: IDL set to -Infinity followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to -Infinity followed by IDL get assert_equals: expected (boolean) true but got (number) -Infinity
+PASS iframe.allowFullscreen: IDL set to -Infinity followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to "\0" should not throw 
 PASS iframe.allowFullscreen: IDL set to "\0" followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to "\0" followed by IDL get assert_equals: expected (boolean) true but got (string) "\0"
+PASS iframe.allowFullscreen: IDL set to "\0" followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to object "test-toString" should not throw 
 PASS iframe.allowFullscreen: IDL set to object "test-toString" followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to object "test-toString" followed by IDL get assert_equals: expected (boolean) true but got (object) object "test-toString"
+PASS iframe.allowFullscreen: IDL set to object "test-toString" followed by IDL get 
 PASS iframe.allowFullscreen: IDL set to object "test-valueOf" should not throw 
 PASS iframe.allowFullscreen: IDL set to object "test-valueOf" followed by hasAttribute() 
-FAIL iframe.allowFullscreen: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected (boolean) true but got (object) object "test-valueOf"
+PASS iframe.allowFullscreen: IDL set to object "test-valueOf" followed by IDL get 
 PASS iframe.width: typeof IDL attribute 
 PASS iframe.width: IDL get with DOM attribute unset 
 PASS iframe.width: setAttribute() to "" followed by getAttribute() 
