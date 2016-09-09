@@ -1007,6 +1007,8 @@ void URLParser::parseAuthority(StringView::CodePoints::Iterator& iterator, const
     for (; iterator != end; ++iterator)
         m_buffer.append(*iterator);
     m_url.m_passwordEnd = m_buffer.length();
+    if (!m_url.m_userEnd)
+        m_url.m_userEnd = m_url.m_passwordEnd;
     m_buffer.append('@');
 }
 

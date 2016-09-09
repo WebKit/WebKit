@@ -192,6 +192,7 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://host:123", {"http", "", "", "host", 123, "/", "", "", "http://host:123/"});
     checkURL("http://host:", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkURL("http://hos\tt\n:\t1\n2\t3\t/\npath", {"http", "", "", "host", 123, "/path", "", "", "http://host:123/path"});
+    checkURL("http://user@example.org/path3", {"http", "user", "", "example.org", 0, "/path3", "", "", "http://user@example.org/path3"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -252,6 +253,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("http://:@host", "about:blank", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkRelativeURL("http://foo.com/\\@", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "//@", "", "", "http://foo.com//@"});
     checkRelativeURL("\\@", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/@", "", "", "http://example.org/@"});
+    checkRelativeURL("/path3", "http://user@example.org/path1/path2", {"http", "user", "", "example.org", 0, "/path3", "", "", "http://user@example.org/path3"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
