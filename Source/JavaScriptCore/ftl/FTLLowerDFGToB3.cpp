@@ -1726,8 +1726,15 @@ private:
 
     void compileArithClz32()
     {
-        LValue operand = lowInt32(m_node->child1());
-        setInt32(m_out.ctlz32(operand));
+        if (m_node->child1().useKind() == Int32Use || m_node->child1().useKind() == KnownInt32Use) {
+            LValue operand = lowInt32(m_node->child1());
+            setInt32(m_out.ctlz32(operand));
+            return;
+        }
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+        LValue argument = lowJSValue(m_node->child1());
+        LValue result = vmCall(Int32, m_out.operation(operationArithClz32), m_callFrame, argument);
+        setInt32(result);
     }
     
     void compileArithMul()

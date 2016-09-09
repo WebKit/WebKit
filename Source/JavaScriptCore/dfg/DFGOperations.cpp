@@ -332,8 +332,20 @@ double JIT_OPERATION operationArithAbs(ExecState* exec, EncodedJSValue encodedOp
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
     if (UNLIKELY(vm->exception()))
-        return JSValue::encode(JSValue());
+        return PNaN;
     return fabs(a);
+}
+
+int32_t JIT_OPERATION operationArithClz32(ExecState* exec, EncodedJSValue encodedOp1)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    uint32_t value = op1.toUInt32(exec);
+    if (UNLIKELY(vm->exception()))
+        return 0;
+    return clz32(value);
 }
 
 double JIT_OPERATION operationArithCos(ExecState* exec, EncodedJSValue encodedOp1)
@@ -356,7 +368,7 @@ double JIT_OPERATION operationArithFRound(ExecState* exec, EncodedJSValue encode
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
     if (UNLIKELY(vm->exception()))
-        return JSValue::encode(JSValue());
+        return PNaN;
     return static_cast<float>(a);
 }
 
@@ -368,7 +380,7 @@ double JIT_OPERATION operationArithLog(ExecState* exec, EncodedJSValue encodedOp
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
     if (UNLIKELY(vm->exception()))
-        return JSValue::encode(JSValue());
+        return PNaN;
     return log(a);
 }
 
@@ -380,7 +392,7 @@ double JIT_OPERATION operationArithSin(ExecState* exec, EncodedJSValue encodedOp
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
     if (UNLIKELY(vm->exception()))
-        return JSValue::encode(JSValue());
+        return PNaN;
     return sin(a);
 }
 
@@ -392,7 +404,7 @@ double JIT_OPERATION operationArithSqrt(ExecState* exec, EncodedJSValue encodedO
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
     if (UNLIKELY(vm->exception()))
-        return JSValue::encode(JSValue());
+        return PNaN;
     return sqrt(a);
 }
 

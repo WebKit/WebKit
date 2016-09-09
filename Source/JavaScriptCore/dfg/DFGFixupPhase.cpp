@@ -126,8 +126,11 @@ private:
         }
 
         case ArithClz32: {
-            fixIntConvertingEdge(node->child1());
-            node->setArithMode(Arith::Unchecked);
+            if (node->child1()->shouldSpeculateNotCell()) {
+                fixIntConvertingEdge(node->child1());
+                node->clearFlags(NodeMustGenerate);
+            } else
+                fixEdge<UntypedUse>(node->child1());
             break;
         }
             

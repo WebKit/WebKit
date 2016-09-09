@@ -547,8 +547,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ArithClz32: {
         JSValue operand = forNode(node->child1()).value();
-        if (operand && operand.isNumber()) {
-            uint32_t value = toUInt32(operand.asNumber());
+        if (Optional<double> number = operand.toNumberFromPrimitive()) {
+            uint32_t value = toUInt32(*number);
             setConstant(node, jsNumber(clz32(value)));
             break;
         }
