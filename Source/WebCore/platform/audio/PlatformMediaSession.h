@@ -139,7 +139,6 @@ public:
 
     bool shouldOverrideBackgroundLoadingRestriction() const;
 
-    virtual bool canControlControlsManager() const { return false; }
     virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return m_isPlayingToWirelessPlaybackTarget; }
     void isPlayingToWirelessPlaybackTargetChanged(bool);
@@ -160,6 +159,7 @@ public:
     void setCanProduceAudio(bool);
 
     void scheduleClientDataBufferingCheck();
+    virtual void resetPlaybackSessionState() { }
 
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }

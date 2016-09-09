@@ -468,6 +468,9 @@ public:
 
     RenderMedia* renderer() const;
 
+    void resetPlaybackSessionState();
+    bool isVisibleInViewport() const;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();

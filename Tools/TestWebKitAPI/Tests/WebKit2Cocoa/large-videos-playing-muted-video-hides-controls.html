@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+    video {
+        width: 480px;
+        height: 320px;
+    }
+    #bar {
+        margin-top: 5000px;
+    }
+</style>
+<script>
+    function handleLoaded() {
+        document.querySelector("#foo").muted = true;
+        document.querySelector("#bar").scrollIntoView();
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.playingHandler.postMessage("playing");
+            } catch(e) { }
+        }, 0);
+    }
+</script>
+<body onload=handleLoaded()>
+    <video autoplay loop id="foo"><source src="large-video-with-audio.mp4"></video>
+    <br>
+    <video id="bar"><source src="large-video-with-audio.mp4"></video>
+</body>
+<html>
