@@ -357,14 +357,14 @@ void MarkedBlock::Handle::flipIfNecessary()
 
 void MarkedBlock::flipIfNecessarySlow()
 {
-    ASSERT(m_version != vm()->heap.objectSpace().version());
+    ASSERT(needsFlip());
     clearMarks();
 }
 
 void MarkedBlock::flipIfNecessaryConcurrentlySlow()
 {
     LockHolder locker(m_lock);
-    if (m_version != vm()->heap.objectSpace().version())
+    if (needsFlip())
         clearMarks();
 }
 
@@ -388,7 +388,7 @@ void MarkedBlock::assertFlipped()
 
 bool MarkedBlock::needsFlip()
 {
-    return vm()->heap.objectSpace().version() != m_version;
+    return needsFlip(vm()->heap.objectSpace().version());
 }
 
 bool MarkedBlock::Handle::needsFlip()

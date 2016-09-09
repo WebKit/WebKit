@@ -264,6 +264,7 @@ public:
         
     WeakSet& weakSet();
 
+    bool needsFlip(HeapVersion);
     bool needsFlip();
         
     void flipIfNecessaryConcurrently(HeapVersion);
@@ -462,15 +463,20 @@ inline size_t MarkedBlock::atomNumber(const void* p)
     return (reinterpret_cast<Bits>(p) - reinterpret_cast<Bits>(this)) / atomSize;
 }
 
+inline bool MarkedBlock::needsFlip(HeapVersion heapVersion)
+{
+    return heapVersion != m_version;
+}
+
 inline void MarkedBlock::flipIfNecessary(HeapVersion heapVersion)
 {
-    if (UNLIKELY(heapVersion != m_version))
+    if (UNLIKELY(needsFlip(heapVersion)))
         flipIfNecessarySlow();
 }
 
 inline void MarkedBlock::flipIfNecessaryConcurrently(HeapVersion heapVersion)
 {
-    if (UNLIKELY(heapVersion != m_version))
+    if (UNLIKELY(needsFlip(heapVersion)))
         flipIfNecessaryConcurrentlySlow();
     WTF::loadLoadFence();
 }

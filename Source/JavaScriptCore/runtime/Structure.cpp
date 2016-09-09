@@ -1140,14 +1140,14 @@ bool Structure::isCheapDuringGC()
     // has any large property names.
     // https://bugs.webkit.org/show_bug.cgi?id=157334
     
-    return (!m_globalObject || Heap::isMarked(m_globalObject.get()))
-        && (!storedPrototypeObject() || Heap::isMarked(storedPrototypeObject()));
+    return (!m_globalObject || Heap::isMarkedConcurrently(m_globalObject.get()))
+        && (!storedPrototypeObject() || Heap::isMarkedConcurrently(storedPrototypeObject()));
 }
 
 bool Structure::markIfCheap(SlotVisitor& visitor)
 {
     if (!isCheapDuringGC())
-        return Heap::isMarked(this);
+        return Heap::isMarkedConcurrently(this);
     
     visitor.appendUnbarrieredReadOnlyPointer(this);
     return true;

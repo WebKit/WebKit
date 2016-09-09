@@ -2485,7 +2485,7 @@ void CodeBlock::visitWeakly(SlotVisitor& visitor)
     if (!setByMe)
         return;
 
-    if (Heap::isMarked(this))
+    if (Heap::isMarkedConcurrently(this))
         return;
 
     if (shouldVisitStrongly()) {
@@ -2628,7 +2628,7 @@ static std::chrono::milliseconds timeToLive(JITCode::JITType jitType)
 
 bool CodeBlock::shouldJettisonDueToOldAge()
 {
-    if (Heap::isMarked(this))
+    if (Heap::isMarkedConcurrently(this))
         return false;
 
     if (UNLIKELY(Options::forceCodeBlockToJettisonDueToOldAge()))
@@ -2643,10 +2643,10 @@ bool CodeBlock::shouldJettisonDueToOldAge()
 #if ENABLE(DFG_JIT)
 static bool shouldMarkTransition(DFG::WeakReferenceTransition& transition)
 {
-    if (transition.m_codeOrigin && !Heap::isMarked(transition.m_codeOrigin.get()))
+    if (transition.m_codeOrigin && !Heap::isMarkedConcurrently(transition.m_codeOrigin.get()))
         return false;
     
-    if (!Heap::isMarked(transition.m_from.get()))
+    if (!Heap::isMarkedConcurrently(transition.m_from.get()))
         return false;
     
     return true;
@@ -2677,7 +2677,7 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
                     m_vm->heap.structureIDTable().get(oldStructureID);
                 Structure* newStructure =
                     m_vm->heap.structureIDTable().get(newStructureID);
-                if (Heap::isMarked(oldStructure))
+                if (Heap::isMarkedConcurrently(oldStructure))
                     visitor.appendUnbarrieredReadOnlyPointer(newStructure);
                 else
                     allAreMarkedSoFar = false;
@@ -2749,14 +2749,14 @@ void CodeBlock::determineLiveness(SlotVisitor& visitor)
     // GC we still have not proved liveness, then this code block is toast.
     bool allAreLiveSoFar = true;
     for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
-        if (!Heap::isMarked(dfgCommon->weakReferences[i].get())) {
+        if (!Heap::isMarkedConcurrently(dfgCommon->weakReferences[i].get())) {
             allAreLiveSoFar = false;
             break;
         }
     }
     if (allAreLiveSoFar) {
         for (unsigned i = 0; i < dfgCommon->weakStructureReferences.size(); ++i) {
-            if (!Heap::isMarked(dfgCommon->weakStructureReferences[i].get())) {
+            if (!Heap::isMarkedConcurrently(dfgCommon->weakStructureReferences[i].get())) {
                 allAreLiveSoFar = false;
                 break;
             }

@@ -1,3 +1,15 @@
+2016-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Heap::isMarked() shouldn't pay the price of concurrent lazy flipping
+        https://bugs.webkit.org/show_bug.cgi?id=161760
+
+        Reviewed by Mark Lam.
+
+        * wtf/MainThread.cpp:
+        (WTF::isMainThreadOrGCThread):
+        (WTF::mayBeGCThread):
+        * wtf/MainThread.h:
+
 2016-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Support new emoji group candidates

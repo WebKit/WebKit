@@ -1,3 +1,62 @@
+2016-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Heap::isMarked() shouldn't pay the price of concurrent lazy flipping
+        https://bugs.webkit.org/show_bug.cgi?id=161760
+
+        Reviewed by Mark Lam.
+        
+        To fix a race condition in marking, I made Heap::isMarked() and Heap::isLive() atomic by
+        using flipIfNecessaryConcurrently() instead of flipIfNecessary().
+        
+        This introduces three unnecessary overheads:
+        
+        - isLive() is not called by marking, so that change was not necessary.
+        
+        - isMarked() gets calls many times outside of marking, so it shouldn't always do the
+          concurrent thing. This adds isMarkedConcurrently() for use in marking, and reverts
+          isMarked().
+        
+        - isMarked() and isMarkedConcurrently() don't actually have to do the lazy flip. They can
+          return false if the flip is necessary.
+        
+        I added a bunch of debug assertions to make sure that isLive() and isMarked() are not called
+        during marking.
+        
+        If we needed to, we could remove most of the calls to isMarkedConcurrently(). As a kind of
+        optimization, CodeBlock does an initial fixpoint iteration during marking, and so all of the
+        code called from CodeBlock's fixpoint iterator needs to use isMarkedConcurrently(). But we
+        could probably arrange for CodeBlock only do fixpoint iterating during the weak reference
+        thing.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitWeakly):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+        (JSC::shouldMarkTransition):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::determineLiveness):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::propagateTransitions):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::isLive):
+        (JSC::Heap::isMarked):
+        (JSC::Heap::isMarkedConcurrently):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::flipIfNecessarySlow):
+        (JSC::MarkedBlock::flipIfNecessaryConcurrentlySlow):
+        (JSC::MarkedBlock::needsFlip):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::needsFlip):
+        (JSC::MarkedBlock::flipIfNecessary):
+        (JSC::MarkedBlock::flipIfNecessaryConcurrently):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::markAuxiliary):
+        (JSC::SlotVisitor::visitChildren):
+        * runtime/Structure.cpp:
+        (JSC::Structure::isCheapDuringGC):
+        (JSC::Structure::markIfCheap):
+
 2016-09-08  Saam Barati  <sbarati@apple.com>
 
         We should inline operationConvertJSValueToBoolean into JIT code

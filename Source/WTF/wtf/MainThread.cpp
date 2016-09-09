@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,10 +210,15 @@ void registerGCThread()
 
 bool isMainThreadOrGCThread()
 {
-    if (isGCThread->isSet() && **isGCThread)
+    if (mayBeGCThread())
         return true;
 
     return isMainThread();
+}
+
+bool mayBeGCThread()
+{
+    return isGCThread->isSet() && **isGCThread;
 }
 
 } // namespace WTF

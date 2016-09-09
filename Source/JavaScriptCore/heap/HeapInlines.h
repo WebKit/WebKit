@@ -34,6 +34,7 @@
 #include "Structure.h"
 #include <type_traits>
 #include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 #include <wtf/RandomNumber.h>
 
 namespace JSC {
@@ -75,21 +76,36 @@ inline Heap* Heap::heap(const JSValue v)
 
 inline bool Heap::isLive(const void* rawCell)
 {
+    ASSERT(!mayBeGCThread());
     HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isLive();
     MarkedBlock& block = cell->markedBlock();
-    block.flipIfNecessaryConcurrently(block.vm()->heap.objectSpace().version());
+    block.flipIfNecessary(block.vm()->heap.objectSpace().version());
     return block.handle().isLiveCell(cell);
 }
 
 ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
 {
+    ASSERT(!mayBeGCThread());
     HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isMarked();
     MarkedBlock& block = cell->markedBlock();
-    block.flipIfNecessaryConcurrently(block.vm()->heap.objectSpace().version());
+    if (block.needsFlip(block.vm()->heap.objectSpace().version()))
+        return false;
+    return block.isMarked(cell);
+}
+
+ALWAYS_INLINE bool Heap::isMarkedConcurrently(const void* rawCell)
+{
+    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
+    if (cell->isLargeAllocation())
+        return cell->largeAllocation().isMarked();
+    MarkedBlock& block = cell->markedBlock();
+    if (block.needsFlip(block.vm()->heap.objectSpace().version()))
+        return false;
+    WTF::loadLoadFence();
     return block.isMarked(cell);
 }
 
