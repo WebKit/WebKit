@@ -1,3 +1,15 @@
+2016-09-09  Michael Saboff  <msaboff@apple.com>
+
+        Add ChakraCore tests to run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=161808
+
+        Reviewed by Saam Barati.
+
+        Added ChakraCore tests to the default list of tests to run.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2016-09-09  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: Handle \ in path according to spec
