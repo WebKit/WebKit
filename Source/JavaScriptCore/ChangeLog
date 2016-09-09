@@ -1,3 +1,22 @@
+2016-09-09  Saam Barati  <sbarati@apple.com>
+
+        Make hasOwnProperty ALWAYS_INLINE
+        https://bugs.webkit.org/show_bug.cgi?id=161775
+
+        Reviewed by Ryosuke Niwa.
+
+        Speedometer spends around 2.5% of its time in hasOwnProperty.
+        Let's reduce the overhead of calling that function by marking
+        it as inline. Also, it's likely that the function will call into
+        JSObject::getOwnPropertySlot. I added a check to see if that's
+        the function we're calling, if it is, we do a direct call instead
+        of an indirect call.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasOwnProperty): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::hasOwnProperty):
+
 2016-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         HashMapImpl needs to m_buffer.clear() in its constructor

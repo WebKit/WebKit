@@ -1467,20 +1467,6 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
     return true;
 }
 
-// HasOwnProperty(O, P) from section 7.3.11 in the spec.
-// http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasownproperty
-bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName) const
-{
-    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
-    return const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
-}
-
-bool JSObject::hasOwnProperty(ExecState* exec, unsigned propertyName) const
-{
-    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
-    return const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlotByIndex(const_cast<JSObject*>(this), exec, propertyName, slot);
-}
-
 bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
