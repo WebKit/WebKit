@@ -45,7 +45,7 @@ public:
     void setFont(const FontCascade& font) { m_font = &font; }
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
     void setWidth(float width) { m_width = width; }
-    void setBaseline(int baseline) { m_baseline = baseline; }
+    void setBaseline(float baseline) { m_baseline = baseline; }
     void addTextShadow(const ShadowData* textShadow) { m_shadow = textShadow; }
 
     void paintTextDecoration(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
@@ -56,7 +56,7 @@ private:
     int m_wavyOffset { 0 };
     bool m_isPrinting { false };
     float m_width { 0 };
-    int m_baseline { 0 };
+    float m_baseline { 0 };
     FloatPoint m_boxOrigin;
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
