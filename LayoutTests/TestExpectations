@@ -953,7 +953,7 @@ imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
 editing/deleting/delete-emoji.html [ Slow ]
 
 # New emoji requires system support.
-webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Failure ]
+webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Failure Timeout ]
 webkit.org/b/159755 fast/text/emoji-gender-2-3.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-2-4.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-2-5.html [ ImageOnlyFailure ]
