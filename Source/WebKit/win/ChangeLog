@@ -1,3 +1,13 @@
+2016-09-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205393. rdar://problem/27806012
+
+    2016-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Build fix attempt after r205381.
+
+            * WebCoreSupport/WebEditorClient.h:
+
 2016-08-17  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204575. rdar://problem/27850667
