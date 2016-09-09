@@ -218,7 +218,7 @@ bool isMainThreadOrGCThread()
 
 bool mayBeGCThread()
 {
-    return isGCThread->isSet() && **isGCThread;
+    return isGCThread && isGCThread->isSet() && **isGCThread;
 }
 
 } // namespace WTF

@@ -1,3 +1,17 @@
+2016-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fixing a few JSC test failures.
+        https://bugs.webkit.org/show_bug.cgi?id=161760
+
+        Not reviewed.
+
+        Without this fix, the following tests will crash on a null dereference of isGCThread.
+            stress/slow-path-generator-updating-current-node-dfg.js.misc-ftl-no-cjit
+            stress/unshift-array-storage.js.misc-ftl-no-cjit
+
+        * wtf/MainThread.cpp:
+        (WTF::mayBeGCThread):
+
 2016-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] HashTable's rehash is not compatible to Ref<T> and ASan
