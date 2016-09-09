@@ -789,6 +789,18 @@ TEST(WTF_HashMap, Ref_Key)
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashMap<Ref<RefLogger>, int> map;
+        for (int i = 0; i < 64; ++i) {
+            Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
+            auto* pointer = ref.ptr();
+            map.add(WTFMove(ref), i + 1);
+            ASSERT_TRUE(map.contains(pointer));
+        }
+    }
+
+    ASSERT_STREQ("deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, Ref_Value)
@@ -890,6 +902,17 @@ TEST(WTF_HashMap, Ref_Value)
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashMap<int, Ref<RefLogger>> map;
+        for (int i = 0; i < 64; ++i) {
+            Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
+            map.add(i + 1, WTFMove(ref));
+            ASSERT_TRUE(map.contains(i + 1));
+        }
+    }
+
+    ASSERT_STREQ("deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, DeletedAddressOfOperator)

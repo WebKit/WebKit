@@ -428,6 +428,17 @@ TEST(WTF_HashSet, Ref)
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        HashSet<Ref<RefLogger>> set;
+        for (int i = 0; i < 64; ++i) {
+            Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
+            auto* pointer = ref.ptr();
+            set.add(WTFMove(ref));
+            ASSERT_TRUE(set.contains(pointer));
+        }
+    }
+    ASSERT_STREQ("deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashSet, DeletedAddressOfOperator)
