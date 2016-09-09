@@ -924,16 +924,7 @@ FloatSize WebChromeClient::availableScreenSize() const
 
 void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& viewportArguments) const
 {
-    UNUSED_PARAM(viewportArguments);
-#if PLATFORM(IOS)
     m_page->viewportPropertiesDidChange(viewportArguments);
-#endif
-#if USE(COORDINATED_GRAPHICS)
-    if (!m_page->useFixedLayout())
-        return;
-
-    m_page->sendViewportAttributesChanged();
-#endif
 }
 
 void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
