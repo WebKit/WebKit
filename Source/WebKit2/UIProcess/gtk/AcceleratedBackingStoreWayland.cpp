@@ -89,13 +89,28 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
-    glPixelStorei(GL_PACK_ROW_LENGTH, cairo_image_surface_get_stride(m_surface.get()) / 4);
+
 #if USE(OPENGL_ES_2)
-    glReadPixels(0, 0, textureSize.width(), textureSize.height(), GL_RGBA, GL_UNSIGNED_BYTE, cairo_image_surface_get_data(m_surface.get()));
+    unsigned char* data = cairo_image_surface_get_data(m_surface.get());
+    if (cairo_image_surface_get_stride(m_surface.get()) == textureSize.width() * 4)
+        glReadPixels(0, 0, textureSize.width(), textureSize.height(), GL_RGBA, GL_UNSIGNED_BYTE, data);
+    else {
+        int strideBytes = cairo_image_surface_get_stride(m_surface.get());
+        for (int i = 0; i < textureSize.height(); i++) {
+            unsigned char* dataOffset = data + i * strideBytes;
+            glReadPixels(0, i, textureSize.width(), 1, GL_RGBA, GL_UNSIGNED_BYTE, dataOffset);
+        }
+    }
+
+    // Convert to BGRA.
+    int totalBytes = size.width() * size.height() * 4;
+    for (int i = 0; i < totalBytes; i += 4)
+        std::swap(data[i], data[i + 2]);
 #else
+    glPixelStorei(GL_PACK_ROW_LENGTH, cairo_image_surface_get_stride(m_surface.get()) / 4);
     glReadPixels(0, 0, textureSize.width(), textureSize.height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, cairo_image_surface_get_data(m_surface.get()));
-#endif
     glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+#endif
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDeleteFramebuffers(1, &fb);
