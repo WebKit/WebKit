@@ -370,6 +370,14 @@ typedef enum {
 - (void)willStartScrollingOverflow;
 @end
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+@class UITextSuggestion;
+
+@protocol UITextInputSuggestionDelegate <UITextInputDelegate>
+- (void)setSuggestions:(NSArray <UITextSuggestion*> *)suggestions;
+@end
+#endif
+
 @interface UIViewController ()
 + (UIViewController *)_viewControllerForFullScreenPresentationFromView:(UIView *)view;
 + (UIViewController *)viewControllerForView:(UIView *)view;

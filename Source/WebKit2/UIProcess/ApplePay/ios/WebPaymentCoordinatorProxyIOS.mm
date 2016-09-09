@@ -32,7 +32,6 @@
 #import "WebPageProxy.h"
 #import "WebPaymentCoordinatorProxyCocoa.h"
 #import <PassKit/PassKit.h>
-#import <PassKitCore/PKPaymentMerchantSession.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/SoftLinking.h>
