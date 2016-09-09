@@ -365,7 +365,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
         // translation.
         if (glyphBuffer) {
             FloatSize size(offsetX, -offsetY);
-            glyphBuffer->add(glyph, fontData, advance, GlyphBuffer::noOffset, &size);
+            glyphBuffer->add(glyph, fontData, advance, GlyphBuffer::noOffset);
         }
 
         FloatRect glyphBounds = fontData->boundsForGlyph(glyph);

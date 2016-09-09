@@ -87,9 +87,6 @@ public:
         m_advances.clear();
         if (m_offsetsInString)
             m_offsetsInString->clear();
-#if PLATFORM(WIN)
-        m_offsets.clear();
-#endif
     }
 
     GlyphBufferGlyph* glyphs(unsigned from) { return m_glyphs.data() + from; }
@@ -118,19 +115,9 @@ public:
     {
         return m_advances[index];
     }
-
-    FloatSize offsetAt(unsigned index) const
-    {
-#if PLATFORM(WIN)
-        return m_offsets[index];
-#else
-        UNUSED_PARAM(index);
-        return FloatSize();
-#endif
-    }
     
     static const unsigned noOffset = UINT_MAX;
-    void add(Glyph glyph, const Font* font, float width, unsigned offsetInString = noOffset, const FloatSize* offset = 0)
+    void add(Glyph glyph, const Font* font, float width, unsigned offsetInString = noOffset)
     {
         m_font.append(font);
 
@@ -147,15 +134,6 @@ public:
         m_advances.append(advance);
 #else
         m_advances.append(FloatSize(width, 0));
-#endif
-
-#if PLATFORM(WIN)
-        if (offset)
-            m_offsets.append(*offset);
-        else
-            m_offsets.append(FloatSize());
-#else
-        UNUSED_PARAM(offset);
 #endif
         
         if (offsetInString != noOffset && m_offsetsInString)
@@ -212,9 +190,6 @@ public:
         m_advances.shrink(truncationPoint);
         if (m_offsetsInString)
             m_offsetsInString->shrink(truncationPoint);
-#if PLATFORM(WIN)
-        m_offsets.shrink(truncationPoint);
-#endif
     }
 
 private:
@@ -231,12 +206,6 @@ private:
         GlyphBufferAdvance s = m_advances[index1];
         m_advances[index1] = m_advances[index2];
         m_advances[index2] = s;
-
-#if PLATFORM(WIN)
-        FloatSize offset = m_offsets[index1];
-        m_offsets[index1] = m_offsets[index2];
-        m_offsets[index2] = offset;
-#endif
     }
 
     Vector<const Font*, 2048> m_font;
@@ -244,9 +213,6 @@ private:
     Vector<GlyphBufferAdvance, 2048> m_advances;
     GlyphBufferAdvance m_initialAdvance;
     std::unique_ptr<Vector<unsigned, 2048>> m_offsetsInString;
-#if PLATFORM(WIN)
-    Vector<FloatSize, 2048> m_offsets;
-#endif
     float m_leadingExpansion;
 };
 
