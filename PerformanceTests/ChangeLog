@@ -1,3 +1,18 @@
+2016-09-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a content-animation test with accelerated CSS animations
+        https://bugs.webkit.org/show_bug.cgi?id=161776
+
+        Reviewed by Dean Jackson.
+
+        Add a test that measures the frame rate of accelerated CSS animations.
+
+        This is like css-animation.html (which animates 'left' and 'top') but animates
+        transforms instead. In order to get animation in X and Y we make two nested elements
+        and set transformX() on one, and transformY() on the other.
+
+        * Animation/css-accelerated-animation.html: Added.
+
 2016-08-23  Saam Barati  <sbarati@apple.com>
 
         It should be easy to run ES6SampleBench from the jsc shell
