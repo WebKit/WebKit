@@ -50,6 +50,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PlatformUserPreferredLanguages.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

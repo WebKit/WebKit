@@ -53,6 +53,7 @@ private:
     bool m_doSample;
 };
 
+JS_EXPORT_PRIVATE void resetSuperSamplerState();
 JS_EXPORT_PRIVATE void printSuperSamplerState();
 
 } // namespace JSC

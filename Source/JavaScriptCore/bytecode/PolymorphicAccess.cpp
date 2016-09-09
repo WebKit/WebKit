@@ -1206,34 +1206,25 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             size_t newSize = newStructure()->outOfLineCapacity() * sizeof(JSValue);
             
             if (allocatingInline) {
-                CopiedAllocator* copiedAllocator = &vm.heap.storageAllocator();
-
-                if (!reallocating) {
-                    jit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR);
-                    slowPath.append(
-                        jit.branchSubPtr(
-                            CCallHelpers::Signed, CCallHelpers::TrustedImm32(newSize), scratchGPR));
-                    jit.storePtr(scratchGPR, &copiedAllocator->m_currentRemaining);
-                    jit.negPtr(scratchGPR);
-                    jit.addPtr(
-                        CCallHelpers::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR);
-                    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(JSValue)), scratchGPR);
-                } else {
+                MarkedAllocator* allocator = vm.heap.allocatorForAuxiliaryData(newSize);
+                
+                if (!allocator) {
+                    // Yuck, this case would suck!
+                    slowPath.append(jit.jump());
+                }
+                
+                jit.move(CCallHelpers::TrustedImmPtr(allocator), scratchGPR2);
+                jit.emitAllocate(scratchGPR, allocator, scratchGPR2, scratchGPR3, slowPath);
+                jit.addPtr(CCallHelpers::TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR);
+                
+                if (reallocating) {
                     // Handle the case where we are reallocating (i.e. the old structure/butterfly
                     // already had out-of-line property storage).
                     size_t oldSize = structure()->outOfLineCapacity() * sizeof(JSValue);
                     ASSERT(newSize > oldSize);
             
                     jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR3);
-                    jit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR);
-                    slowPath.append(
-                        jit.branchSubPtr(
-                            CCallHelpers::Signed, CCallHelpers::TrustedImm32(newSize), scratchGPR));
-                    jit.storePtr(scratchGPR, &copiedAllocator->m_currentRemaining);
-                    jit.negPtr(scratchGPR);
-                    jit.addPtr(
-                        CCallHelpers::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR);
-                    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(JSValue)), scratchGPR);
+                    
                     // We have scratchGPR = new storage, scratchGPR3 = old storage,
                     // scratchGPR2 = available
                     for (size_t offset = 0; offset < oldSize; offset += sizeof(void*)) {
@@ -1659,6 +1650,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         // Cascade through the list, preferring newer entries.
         for (unsigned i = cases.size(); i--;) {
             fallThrough.link(&jit);
+            fallThrough.clear();
             cases[i]->generateWithGuard(state, fallThrough);
         }
         state.failAndRepatch.append(fallThrough);

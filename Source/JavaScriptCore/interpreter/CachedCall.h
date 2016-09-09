@@ -42,7 +42,8 @@ namespace JSC {
         CachedCall(CallFrame* callFrame, JSFunction* function, int argumentCount)
             : m_valid(false)
             , m_interpreter(callFrame->interpreter())
-            , m_entryScope(callFrame->vm(), function->scope()->globalObject())
+            , m_vm(callFrame->vm())
+            , m_entryScope(m_vm, function->scope()->globalObject(m_vm))
         {
             VM& vm = m_entryScope.vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -67,6 +68,7 @@ namespace JSC {
     private:
         bool m_valid;
         Interpreter* m_interpreter;
+        VM& m_vm;
         VMEntryScope m_entryScope;
         ProtoCallFrame m_protoCallFrame;
         Vector<JSValue> m_arguments;

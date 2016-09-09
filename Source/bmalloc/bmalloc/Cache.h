@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@ public:
 
     static void* tryAllocate(size_t);
     static void* allocate(size_t);
+    static void* tryAllocate(size_t alignment, size_t);
     static void* allocate(size_t alignment, size_t);
     static void deallocate(void*);
     static void* reallocate(void*, size_t);
@@ -77,6 +78,14 @@ inline void* Cache::allocate(size_t size)
     if (!cache)
         return allocateSlowCaseNullCache(size);
     return cache->allocator().allocate(size);
+}
+
+inline void* Cache::tryAllocate(size_t alignment, size_t size)
+{
+    Cache* cache = PerThread<Cache>::getFastCase();
+    if (!cache)
+        return allocateSlowCaseNullCache(alignment, size);
+    return cache->allocator().tryAllocate(alignment, size);
 }
 
 inline void* Cache::allocate(size_t alignment, size_t size)

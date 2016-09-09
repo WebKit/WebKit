@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,9 @@
 #include "JSCallee.h"
 
 #include "GetterSetter.h"
-#include "JSCJSValueInlines.h"
-#include "JSCell.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
-#include "SlotVisitorInlines.h"
 #include "StackVisitor.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 
@@ -43,6 +39,7 @@ JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, structure)
     , m_scope(vm, this, globalObject)
 {
+    RELEASE_ASSERT(!isLargeAllocation());
 }
 
 JSCallee::JSCallee(VM& vm, JSScope* scope, Structure* structure)

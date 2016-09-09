@@ -25,7 +25,6 @@
 
 #include "ErrorInstance.h"
 #include "InternalFunction.h"
-#include "Interpreter.h"
 #include "JSObject.h"
 #include "ThrowScope.h"
 #include <stdint.h>

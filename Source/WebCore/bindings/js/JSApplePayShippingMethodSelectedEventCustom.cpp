@@ -28,10 +28,9 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <runtime/IdentifierInlines.h>
-#include <runtime/JSCJSValueInlines.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/ObjectConstructor.h>
-#include <runtime/StructureInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace JSC;
 

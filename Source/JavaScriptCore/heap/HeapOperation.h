@@ -32,4 +32,12 @@ enum HeapOperation { NoOperation, Allocation, FullCollection, EdenCollection, An
 
 } // namespace JSC
 
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream& out, JSC::HeapOperation);
+
+} // namespace WTF
+
 #endif // HeapOperation_h

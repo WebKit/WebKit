@@ -29,8 +29,7 @@
 #include "CopiedAllocator.h"
 #include "CopyVisitorInlines.h"
 #include "ExceptionHelpers.h"
-#include "JSCJSValueInlines.h"
-#include "SlotVisitorInlines.h"
+#include "JSCInlines.h"
 
 #include <wtf/MathExtras.h>
 

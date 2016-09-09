@@ -28,7 +28,7 @@
 
 #include "CodeBlock.h"
 #include "Instruction.h"
-#include "StructureInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
@@ -59,7 +59,7 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(const FireDetai
 
     StringFireDetail stringDetail(out.toCString().data());
 
-    clearLLIntGetByIdCache(m_getByIdInstruction);
+    CodeBlock::clearLLIntGetByIdCache(m_getByIdInstruction);
 }
 
 } // namespace JSC

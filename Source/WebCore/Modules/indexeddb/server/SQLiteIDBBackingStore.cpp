@@ -45,7 +45,9 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "ThreadSafeDataBuffer.h"
+#include <heap/HeapInlines.h>
 #include <heap/StrongInlines.h>
+#include <runtime/AuxiliaryBarrierInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/StructureInlines.h>

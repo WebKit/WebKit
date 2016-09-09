@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include <heap/HeapInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 
 namespace WebCore {

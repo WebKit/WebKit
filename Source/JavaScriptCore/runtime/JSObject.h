@@ -26,15 +26,14 @@
 #include "ArgList.h"
 #include "ArrayConventions.h"
 #include "ArrayStorage.h"
+#include "AuxiliaryBarrier.h"
 #include "Butterfly.h"
 #include "CallFrame.h"
 #include "ClassInfo.h"
 #include "CommonIdentifiers.h"
-#include "CopyBarrier.h"
 #include "CustomGetterSetter.h"
 #include "DeferGC.h"
 #include "Heap.h"
-#include "HeapInlines.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCell.h"
 #include "PropertySlot.h"
@@ -103,7 +102,6 @@ public:
 
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*);
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
-    JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
     JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*);
@@ -420,6 +418,8 @@ public:
         initializeIndex(vm, i, v, indexingType());
     }
 
+    // NOTE: Clients of this method may call it more than once for any index, and this is supposed
+    // to work.
     void initializeIndex(VM& vm, unsigned i, JSValue v, IndexingType indexingType)
     {
         Butterfly* butterfly = m_butterfly.get();
@@ -692,8 +692,6 @@ public:
         
     void setStructure(VM&, Structure*);
     void setStructureAndButterfly(VM&, Structure*, Butterfly*);
-    void setStructureAndReallocateStorageIfNecessary(VM&, unsigned oldCapacity, Structure*);
-    void setStructureAndReallocateStorageIfNecessary(VM&, Structure*);
 
     JS_EXPORT_PRIVATE void convertToDictionary(VM&);
 
@@ -708,6 +706,13 @@ public:
         ASSERT(structure()->globalObject());
         ASSERT(!isGlobalObject() || ((JSObject*)structure()->globalObject()) == this);
         return structure()->globalObject();
+    }
+        
+    JSGlobalObject* globalObject(VM& vm) const
+    {
+        ASSERT(structure(vm)->globalObject());
+        ASSERT(!isGlobalObject() || ((JSObject*)structure()->globalObject()) == this);
+        return structure(vm)->globalObject();
     }
         
     void switchToSlowPutArrayStorage(VM&);
@@ -803,7 +808,6 @@ protected:
     JSObject(VM&, Structure*, Butterfly* = 0);
         
     void visitButterfly(SlotVisitor&, Butterfly*, Structure*);
-    void copyButterfly(CopyVisitor&, Butterfly*, size_t storageSize);
 
     // Call this if you know that the object is in a mode where it has array
     // storage. This will assert otherwise.
@@ -914,7 +918,7 @@ private:
     void isObject();
     void isString();
         
-    Butterfly* createInitialIndexedStorage(VM&, unsigned length, size_t elementSize);
+    Butterfly* createInitialIndexedStorage(VM&, unsigned length);
         
     ArrayStorage* enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(VM&, ArrayStorage*);
         
@@ -938,7 +942,7 @@ private:
     bool putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState*, unsigned propertyName, JSValue, unsigned attributes, PutDirectIndexMode, ArrayStorage*);
     JS_EXPORT_PRIVATE bool putDirectIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, unsigned attributes, PutDirectIndexMode);
         
-    unsigned getNewVectorLength(unsigned currentVectorLength, unsigned currentLength, unsigned desiredLength);
+    unsigned getNewVectorLength(unsigned indexBias, unsigned currentVectorLength, unsigned currentLength, unsigned desiredLength);
     unsigned getNewVectorLength(unsigned desiredLength);
 
     ArrayStorage* constructConvertedArrayStorageWithoutCopyingElements(VM&, unsigned neededLength);
@@ -955,7 +959,7 @@ private:
     JS_EXPORT_PRIVATE ArrayStorage* ensureArrayStorageSlow(VM&);
 
 protected:
-    CopyBarrier<Butterfly> m_butterfly;
+    AuxiliaryBarrier<Butterfly*> m_butterfly;
 #if USE(JSVALUE32_64)
 private:
     uint32_t m_padding;
@@ -1417,34 +1421,21 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     
     validateOffset(offset);
     ASSERT(newStructure->isValidOffset(offset));
-    setStructureAndReallocateStorageIfNecessary(vm, newStructure);
-
+    DeferGC deferGC(vm.heap);
+    size_t oldCapacity = structure->outOfLineCapacity();
+    size_t newCapacity = newStructure->outOfLineCapacity();
+    ASSERT(oldCapacity <= newCapacity);
+    if (oldCapacity == newCapacity)
+        setStructure(vm, newStructure);
+    else {
+        Butterfly* newButterfly = growOutOfLineStorage(vm, oldCapacity, newCapacity);
+        setStructureAndButterfly(vm, newStructure, newButterfly);
+    }
     putDirect(vm, offset, value);
     slot.setNewProperty(this, offset);
     if (attributes & ReadOnly)
         newStructure->setContainsReadOnlyProperties();
     return true;
-}
-
-inline void JSObject::setStructureAndReallocateStorageIfNecessary(VM& vm, unsigned oldCapacity, Structure* newStructure)
-{
-    ASSERT(oldCapacity <= newStructure->outOfLineCapacity());
-    
-    if (oldCapacity == newStructure->outOfLineCapacity()) {
-        setStructure(vm, newStructure);
-        return;
-    }
-
-    DeferGC deferGC(vm.heap); 
-    Butterfly* newButterfly = growOutOfLineStorage(
-        vm, oldCapacity, newStructure->outOfLineCapacity());
-    setStructureAndButterfly(vm, newStructure, newButterfly);
-}
-
-inline void JSObject::setStructureAndReallocateStorageIfNecessary(VM& vm, Structure* newStructure)
-{
-    setStructureAndReallocateStorageIfNecessary(
-        vm, structure(vm)->outOfLineCapacity(), newStructure);
 }
 
 inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

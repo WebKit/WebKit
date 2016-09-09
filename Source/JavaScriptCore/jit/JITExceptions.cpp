@@ -90,4 +90,9 @@ void genericUnwind(VM* vm, ExecState* callFrame, UnwindStart unwindStart)
     RELEASE_ASSERT(catchRoutine);
 }
 
+void genericUnwind(VM* vm, ExecState* callFrame)
+{
+    genericUnwind(vm, callFrame, UnwindFromCurrentFrame);
+}
+
 } // namespace JSC

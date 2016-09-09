@@ -217,6 +217,7 @@ static inline bool isUnscopable(ExecState* exec, JSScope* scope, JSObject* objec
 
 JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident)
 {
+    VM& vm = exec->vm();
     ScopeChainIterator end = scope->end();
     ScopeChainIterator it = scope->begin();
     while (1) {
@@ -225,7 +226,7 @@ JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& id
 
         // Global scope.
         if (++it == end) {
-            JSScope* globalScopeExtension = scope->globalObject()->globalScopeExtension();
+            JSScope* globalScopeExtension = scope->globalObject(vm)->globalScopeExtension();
             if (UNLIKELY(globalScopeExtension)) {
                 if (object->hasProperty(exec, ident))
                     return object;

@@ -725,20 +725,18 @@ public:
                 append(jump);
         }
 
-        void link(AbstractMacroAssemblerType* masm)
+        void link(AbstractMacroAssemblerType* masm) const
         {
             size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
                 m_jumps[i].link(masm);
-            m_jumps.clear();
         }
         
-        void linkTo(Label label, AbstractMacroAssemblerType* masm)
+        void linkTo(Label label, AbstractMacroAssemblerType* masm) const
         {
             size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
                 m_jumps[i].linkTo(label, masm);
-            m_jumps.clear();
         }
         
         void append(Jump jump)

@@ -1405,33 +1405,74 @@ public:
     void emitRandomThunk(JSGlobalObject*, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, FPRReg result);
     void emitRandomThunk(GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, FPRReg result);
 #endif
-    
-    void emitAllocate(GPRReg resultGPR, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
+
+    // Call this if you know that the value held in allocatorGPR is non-null. This DOES NOT mean
+    // that allocator is non-null; allocator can be null as a signal that we don't know what the
+    // value of allocatorGPR is.
+    void emitAllocateWithNonNullAllocator(GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
     {
-        if (Options::forceGCSlowPaths())
+        // NOTE: This is carefully written so that we can call it while we disallow scratch
+        // register usage.
+        
+        if (Options::forceGCSlowPaths()) {
             slowPath.append(jump());
-        else {
-            loadPtr(Address(allocatorGPR, MarkedAllocator::offsetOfFreeListHead()), resultGPR);
-            slowPath.append(branchTestPtr(Zero, resultGPR));
+            return;
         }
+        
+        Jump popPath;
+        Jump done;
+        
+        load32(Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, remaining)), resultGPR);
+        popPath = branchTest32(Zero, resultGPR);
+        if (allocator)
+            add32(TrustedImm32(-allocator->cellSize()), resultGPR, scratchGPR);
+        else {
+            move(resultGPR, scratchGPR);
+            sub32(Address(allocatorGPR, MarkedAllocator::offsetOfCellSize()), scratchGPR);
+        }
+        negPtr(resultGPR);
+        store32(scratchGPR, Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, remaining)));
+        Address payloadEndAddr = Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, payloadEnd));
+        if (isX86())
+            addPtr(payloadEndAddr, resultGPR);
+        else {
+            loadPtr(payloadEndAddr, scratchGPR);
+            addPtr(scratchGPR, resultGPR);
+        }
+        
+        done = jump();
+        
+        popPath.link(this);
+        
+        loadPtr(Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, head)), resultGPR);
+        slowPath.append(branchTestPtr(Zero, resultGPR));
         
         // The object is half-allocated: we have what we know is a fresh object, but
         // it's still on the GC's free list.
         loadPtr(Address(resultGPR), scratchGPR);
-        storePtr(scratchGPR, Address(allocatorGPR, MarkedAllocator::offsetOfFreeListHead()));
+        storePtr(scratchGPR, Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, head)));
+        
+        done.link(this);
+    }
+    
+    void emitAllocate(GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
+    {
+        if (!allocator)
+            slowPath.append(branchTestPtr(Zero, allocatorGPR));
+        emitAllocateWithNonNullAllocator(resultGPR, allocator, allocatorGPR, scratchGPR, slowPath);
     }
     
     template<typename StructureType>
-    void emitAllocateJSCell(GPRReg resultGPR, GPRReg allocatorGPR, StructureType structure, GPRReg scratchGPR, JumpList& slowPath)
+    void emitAllocateJSCell(GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, StructureType structure, GPRReg scratchGPR, JumpList& slowPath)
     {
-        emitAllocate(resultGPR, allocatorGPR, scratchGPR, slowPath);
+        emitAllocate(resultGPR, allocator, allocatorGPR, scratchGPR, slowPath);
         emitStoreStructureWithTypeInfo(structure, resultGPR, scratchGPR);
     }
     
     template<typename StructureType, typename StorageType>
-    void emitAllocateJSObject(GPRReg resultGPR, GPRReg allocatorGPR, StructureType structure, StorageType storage, GPRReg scratchGPR, JumpList& slowPath)
+    void emitAllocateJSObject(GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, StructureType structure, StorageType storage, GPRReg scratchGPR, JumpList& slowPath)
     {
-        emitAllocateJSCell(resultGPR, allocatorGPR, structure, scratchGPR, slowPath);
+        emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
         storePtr(storage, Address(resultGPR, JSObject::butterflyOffset()));
     }
     
@@ -1440,9 +1481,13 @@ public:
         GPRReg resultGPR, StructureType structure, StorageType storage, GPRReg scratchGPR1,
         GPRReg scratchGPR2, JumpList& slowPath, size_t size)
     {
-        MarkedAllocator* allocator = &vm()->heap.allocatorForObjectOfType<ClassType>(size);
+        MarkedAllocator* allocator = vm()->heap.allocatorForObjectOfType<ClassType>(size);
+        if (!allocator) {
+            slowPath.append(jump());
+            return;
+        }
         move(TrustedImmPtr(allocator), scratchGPR1);
-        emitAllocateJSObject(resultGPR, scratchGPR1, structure, storage, scratchGPR2, slowPath);
+        emitAllocateJSObject(resultGPR, allocator, scratchGPR1, structure, storage, scratchGPR2, slowPath);
     }
     
     template<typename ClassType, typename StructureType, typename StorageType>
@@ -1451,27 +1496,21 @@ public:
         emitAllocateJSObjectWithKnownSize<ClassType>(resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath, ClassType::allocationSize(0));
     }
     
+    // allocationSize can be aliased with any of the other input GPRs. If it's not aliased then it
+    // won't be clobbered.
     void emitAllocateVariableSized(GPRReg resultGPR, MarkedSpace::Subspace& subspace, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
     {
-        static_assert(!(MarkedSpace::preciseStep & (MarkedSpace::preciseStep - 1)), "MarkedSpace::preciseStep must be a power of two.");
-        static_assert(!(MarkedSpace::impreciseStep & (MarkedSpace::impreciseStep - 1)), "MarkedSpace::impreciseStep must be a power of two.");
+        static_assert(!(MarkedSpace::sizeStep & (MarkedSpace::sizeStep - 1)), "MarkedSpace::sizeStep must be a power of two.");
         
-        add32(TrustedImm32(MarkedSpace::preciseStep - 1), allocationSize);
-        Jump notSmall = branch32(AboveOrEqual, allocationSize, TrustedImm32(MarkedSpace::preciseCutoff));
-        rshift32(allocationSize, TrustedImm32(getLSBSet(MarkedSpace::preciseStep)), scratchGPR1);
-        mul32(TrustedImm32(sizeof(MarkedAllocator)), scratchGPR1, scratchGPR1);
-        addPtr(TrustedImmPtr(&subspace.preciseAllocators[0]), scratchGPR1);
-
-        Jump selectedSmallSpace = jump();
-        notSmall.link(this);
-        slowPath.append(branch32(AboveOrEqual, allocationSize, TrustedImm32(MarkedSpace::impreciseCutoff)));
-        rshift32(allocationSize, TrustedImm32(getLSBSet(MarkedSpace::impreciseStep)), scratchGPR1);
-        mul32(TrustedImm32(sizeof(MarkedAllocator)), scratchGPR1, scratchGPR1);
-        addPtr(TrustedImmPtr(&subspace.impreciseAllocators[0]), scratchGPR1);
-
-        selectedSmallSpace.link(this);
+        unsigned stepShift = getLSBSet(MarkedSpace::sizeStep);
         
-        emitAllocate(resultGPR, scratchGPR1, scratchGPR2, slowPath);
+        add32(TrustedImm32(MarkedSpace::sizeStep - 1), allocationSize, scratchGPR1);
+        urshift32(TrustedImm32(stepShift), scratchGPR1);
+        slowPath.append(branch32(Above, scratchGPR1, TrustedImm32(MarkedSpace::largeCutoff >> stepShift)));
+        move(TrustedImmPtr(&subspace.allocatorForSizeStep[0] - 1), scratchGPR2);
+        loadPtr(BaseIndex(scratchGPR2, scratchGPR1, timesPtr()), scratchGPR1);
+        
+        emitAllocate(resultGPR, nullptr, scratchGPR1, scratchGPR2, slowPath);
     }
     
     template<typename ClassType, typename StructureType>

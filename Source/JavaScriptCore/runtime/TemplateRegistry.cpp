@@ -26,10 +26,9 @@
 #include "config.h"
 #include "TemplateRegistry.h"
 
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "ObjectConstructor.h"
-#include "StructureInlines.h"
 #include "WeakGCMapInlines.h"
 
 namespace JSC {

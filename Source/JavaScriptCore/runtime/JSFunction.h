@@ -189,11 +189,11 @@ private:
 
     bool hasReifiedLength() const;
     bool hasReifiedName() const;
-    void reifyLength(ExecState*);
-    void reifyName(ExecState*);
-    void reifyBoundNameIfNeeded(ExecState*, PropertyName);
-    void reifyName(ExecState*, String name);
-    void reifyLazyPropertyIfNeeded(ExecState*, PropertyName propertyName);
+    void reifyLength(VM&);
+    void reifyName(VM&, ExecState*);
+    void reifyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
+    void reifyName(VM&, ExecState*, String name);
+    void reifyLazyPropertyIfNeeded(VM&, ExecState*, PropertyName propertyName);
 
     friend class LLIntOffsetsExtractor;
 

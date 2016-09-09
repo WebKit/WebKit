@@ -27,12 +27,10 @@
 #include "config.h"
 #include "StringIteratorPrototype.h"
 
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSStringIterator.h"
 #include "ObjectConstructor.h"
-#include "StructureInlines.h"
 
 #include "StringIteratorPrototype.lut.h"
 

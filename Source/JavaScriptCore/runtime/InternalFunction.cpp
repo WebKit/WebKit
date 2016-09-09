@@ -37,6 +37,8 @@ const ClassInfo InternalFunction::s_info = { "Function", &Base::s_info, 0, CREAT
 InternalFunction::InternalFunction(VM& vm, Structure* structure)
     : JSDestructibleObject(vm, structure)
 {
+    // exec->vm() wants callees to not be large allocations.
+    RELEASE_ASSERT(!isLargeAllocation());
 }
 
 void InternalFunction::finishCreation(VM& vm, const String& name)

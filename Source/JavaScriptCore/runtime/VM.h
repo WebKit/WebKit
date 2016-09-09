@@ -39,7 +39,6 @@
 #include "JITThunks.h"
 #include "JSCJSValue.h"
 #include "JSLock.h"
-#include "LLIntData.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
 #include "NumericStrings.h"
@@ -60,7 +59,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/SimpleStats.h>
 #include <wtf/StackBounds.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -71,6 +69,11 @@
 #if ENABLE(REGEXP_TRACING)
 #include <wtf/ListHashSet.h>
 #endif
+
+namespace WTF {
+class SimpleStats;
+} // namespace WTF
+using WTF::SimpleStats;
 
 namespace JSC {
 
@@ -342,7 +345,7 @@ public:
     SmallStrings smallStrings;
     NumericStrings numericStrings;
     DateInstanceCache dateInstanceCache;
-    WTF::SimpleStats machineCodeBytesPerBytecodeWordForBaselineJIT;
+    std::unique_ptr<SimpleStats> machineCodeBytesPerBytecodeWordForBaselineJIT;
     WeakGCMap<std::pair<CustomGetterSetter*, int>, JSCustomGetterSetterFunction> customGetterSetterFunctionMap;
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> stringCache;
     Strong<JSString> lastCachedString;
@@ -641,6 +644,11 @@ private:
         m_exception = exception;
         m_lastException = exception;
     }
+
+#if !ENABLE(JIT)    
+    bool ensureStackCapacityForCLoop(Register* newTopOfStack);
+    bool isSafeToRecurseSoftCLoop() const;
+#endif // !ENABLE(JIT)
 
     JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
     JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);

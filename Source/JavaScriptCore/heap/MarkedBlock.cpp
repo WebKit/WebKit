@@ -29,74 +29,107 @@
 #include "JSCell.h"
 #include "JSDestructibleObject.h"
 #include "JSCInlines.h"
+#include "SuperSampler.h"
 
 namespace JSC {
 
 static const bool computeBalance = false;
 static size_t balance;
 
-MarkedBlock* MarkedBlock::create(Heap& heap, MarkedAllocator* allocator, size_t capacity, size_t cellSize, const AllocatorAttributes& attributes)
+MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap, MarkedAllocator* allocator, size_t cellSize, const AllocatorAttributes& attributes)
 {
     if (computeBalance) {
         balance++;
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
-    MarkedBlock* block = new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, attributes);
-    heap.didAllocateBlock(capacity);
-    return block;
+    void* blockSpace = tryFastAlignedMalloc(blockSize, blockSize);
+    if (!blockSpace)
+        return nullptr;
+    if (scribbleFreeCells())
+        scribble(blockSpace, blockSize);
+    return new Handle(heap, allocator, cellSize, attributes, blockSpace);
 }
 
-void MarkedBlock::destroy(Heap& heap, MarkedBlock* block)
+MarkedBlock::Handle::Handle(Heap& heap, MarkedAllocator* allocator, size_t cellSize, const AllocatorAttributes& attributes, void* blockSpace)
+    : m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
+    , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
+    , m_attributes(attributes)
+    , m_state(New) // All cells start out unmarked.
+    , m_allocator(allocator)
+    , m_weakSet(allocator->heap()->vm(), CellContainer())
 {
+    m_block = new (NotNull, blockSpace) MarkedBlock(*heap.vm(), *this);
+    
+    m_weakSet.setContainer(*m_block);
+    
+    heap.didAllocateBlock(blockSize);
+    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
+    ASSERT(allocator);
+    if (m_attributes.cellKind != HeapCell::JSCell)
+        RELEASE_ASSERT(m_attributes.destruction == DoesNotNeedDestruction);
+}
+
+MarkedBlock::Handle::~Handle()
+{
+    Heap& heap = *this->heap();
     if (computeBalance) {
         balance--;
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
-    size_t capacity = block->capacity();
-    block->~MarkedBlock();
-    fastAlignedFree(block);
-    heap.didFreeBlock(capacity);
+    m_block->~MarkedBlock();
+    fastAlignedFree(m_block);
+    heap.didFreeBlock(blockSize);
 }
 
-MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t capacity, size_t cellSize, const AllocatorAttributes& attributes)
-    : DoublyLinkedListNode<MarkedBlock>()
-    , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
-    , m_endAtom((allocator->cellSize() ? atomsPerBlock - m_atomsPerCell : firstAtom()) + 1)
-    , m_capacity(capacity)
-    , m_attributes(attributes)
-    , m_allocator(allocator)
-    , m_state(New) // All cells start out unmarked.
-    , m_weakSet(allocator->heap()->vm(), *this)
+MarkedBlock::MarkedBlock(VM& vm, Handle& handle)
+    : m_needsDestruction(handle.needsDestruction())
+    , m_handle(handle)
+    , m_vm(&vm)
+    , m_version(vm.heap.objectSpace().version())
 {
-    ASSERT(allocator);
-    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
-    if (m_attributes.cellKind != HeapCell::JSCell)
-        RELEASE_ASSERT(m_attributes.destruction == DoesNotNeedDestruction);
-}
-
-inline void MarkedBlock::callDestructor(HeapCell* cell)
-{
-    // A previous eager sweep may already have run cell's destructor.
-    if (cell->isZapped())
-        return;
+    unsigned cellsPerBlock = MarkedSpace::blockPayload / handle.cellSize();
+    double markCountBias = -(Options::minMarkedBlockUtilization() * cellsPerBlock);
     
-    JSCell* jsCell = static_cast<JSCell*>(cell);
-
-    ASSERT(jsCell->structureID());
-    if (jsCell->inlineTypeFlags() & StructureIsImmortal)
-        jsCell->structure(*vm())->classInfo()->methodTable.destroy(jsCell);
-    else
-        jsCast<JSDestructibleObject*>(jsCell)->classInfo()->methodTable.destroy(jsCell);
-    cell->zap();
+    // The mark count bias should be comfortably within this range.
+    RELEASE_ASSERT(markCountBias > static_cast<double>(std::numeric_limits<int16_t>::min()));
+    RELEASE_ASSERT(markCountBias < 0);
+    
+    m_markCountBias = static_cast<int16_t>(markCountBias);
+    
+    m_biasedMarkCount = m_markCountBias; // This means we haven't marked anything yet.
 }
 
-template<MarkedBlock::BlockState blockState, MarkedBlock::SweepMode sweepMode, bool callDestructors>
-MarkedBlock::FreeList MarkedBlock::specializedSweep()
+template<MarkedBlock::BlockState blockState, MarkedBlock::Handle::SweepMode sweepMode, DestructionMode destructionMode, MarkedBlock::Handle::ScribbleMode scribbleMode, MarkedBlock::Handle::NewlyAllocatedMode newlyAllocatedMode>
+FreeList MarkedBlock::Handle::specializedSweep()
 {
-    ASSERT(blockState != Allocated && blockState != FreeListed);
-    ASSERT(!(!callDestructors && sweepMode == SweepOnly));
+    SuperSamplerScope superSamplerScope(false);
+    ASSERT(blockState == New || blockState == Marked);
+    ASSERT(!(destructionMode == DoesNotNeedDestruction && sweepMode == SweepOnly));
+    
+    assertFlipped();
+    MarkedBlock& block = this->block();
+    
+    bool isNewBlock = blockState == New;
+    bool isEmptyBlock = !block.hasAnyMarked()
+        && newlyAllocatedMode == DoesNotHaveNewlyAllocated
+        && destructionMode == DoesNotNeedDestruction;
+    if (Options::useBumpAllocator() && (isNewBlock || isEmptyBlock)) {
+        ASSERT(block.m_marks.isEmpty());
+        
+        char* startOfLastCell = static_cast<char*>(cellAlign(block.atoms() + m_endAtom - 1));
+        char* payloadEnd = startOfLastCell + cellSize();
+        RELEASE_ASSERT(payloadEnd - MarkedBlock::blockSize <= bitwise_cast<char*>(&block));
+        char* payloadBegin = bitwise_cast<char*>(block.atoms() + firstAtom());
+        if (scribbleMode == Scribble)
+            scribble(payloadBegin, payloadEnd - payloadBegin);
+        m_state = ((sweepMode == SweepToFreeList) ? FreeListed : Marked);
+        FreeList result = FreeList::bump(payloadEnd, payloadEnd - payloadBegin);
+        if (false)
+            dataLog("Quickly swept block ", RawPointer(this), " with cell size ", cellSize(), " and attributes ", m_attributes, ": ", result, "\n");
+        return result;
+    }
 
     // This produces a free list that is ordered in reverse through the block.
     // This is fine, since the allocation code makes no assumptions about the
@@ -104,16 +137,20 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
     FreeCell* head = 0;
     size_t count = 0;
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
-        if (blockState == Marked && (m_marks.get(i) || (m_newlyAllocated && m_newlyAllocated->get(i))))
+        if (blockState == Marked
+            && (block.m_marks.get(i)
+                || (newlyAllocatedMode == HasNewlyAllocated && m_newlyAllocated->get(i))))
             continue;
 
-        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&atoms()[i]);
+        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block.atoms()[i]);
 
-        if (callDestructors && blockState != New)
-            callDestructor(cell);
+        if (destructionMode == NeedsDestruction && blockState != New)
+            static_cast<JSCell*>(cell)->callDestructor(*vm());
 
         if (sweepMode == SweepToFreeList) {
             FreeCell* freeCell = reinterpret_cast<FreeCell*>(cell);
+            if (scribbleMode == Scribble)
+                scribble(freeCell, cellSize());
             freeCell->next = head;
             head = freeCell;
             ++count;
@@ -122,15 +159,20 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
 
     // We only want to discard the newlyAllocated bits if we're creating a FreeList,
     // otherwise we would lose information on what's currently alive.
-    if (sweepMode == SweepToFreeList && m_newlyAllocated)
+    if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
         m_newlyAllocated = nullptr;
 
-    m_state = ((sweepMode == SweepToFreeList) ? FreeListed : Marked);
-    return FreeList(head, count * cellSize());
+    FreeList result = FreeList::list(head, count * cellSize());
+    m_state = (sweepMode == SweepToFreeList ? FreeListed : Marked);
+    if (false)
+        dataLog("Slowly swept block ", RawPointer(&block), " with cell size ", cellSize(), " and attributes ", m_attributes, ": ", result, "\n");
+    return result;
 }
 
-MarkedBlock::FreeList MarkedBlock::sweep(SweepMode sweepMode)
+FreeList MarkedBlock::Handle::sweep(SweepMode sweepMode)
 {
+    flipIfNecessary();
+    
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 
     m_weakSet.sweep();
@@ -139,68 +181,95 @@ MarkedBlock::FreeList MarkedBlock::sweep(SweepMode sweepMode)
         return FreeList();
 
     if (m_attributes.destruction == NeedsDestruction)
-        return sweepHelper<true>(sweepMode);
-    return sweepHelper<false>(sweepMode);
+        return sweepHelperSelectScribbleMode<NeedsDestruction>(sweepMode);
+    return sweepHelperSelectScribbleMode<DoesNotNeedDestruction>(sweepMode);
 }
 
-template<bool callDestructors>
-MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
+template<DestructionMode destructionMode>
+FreeList MarkedBlock::Handle::sweepHelperSelectScribbleMode(SweepMode sweepMode)
+{
+    if (scribbleFreeCells())
+        return sweepHelperSelectStateAndSweepMode<destructionMode, Scribble>(sweepMode);
+    return sweepHelperSelectStateAndSweepMode<destructionMode, DontScribble>(sweepMode);
+}
+
+template<DestructionMode destructionMode, MarkedBlock::Handle::ScribbleMode scribbleMode>
+FreeList MarkedBlock::Handle::sweepHelperSelectStateAndSweepMode(SweepMode sweepMode)
 {
     switch (m_state) {
     case New:
         ASSERT(sweepMode == SweepToFreeList);
-        return specializedSweep<New, SweepToFreeList, callDestructors>();
+        return specializedSweep<New, SweepToFreeList, destructionMode, scribbleMode, DoesNotHaveNewlyAllocated>();
     case FreeListed:
         // Happens when a block transitions to fully allocated.
         ASSERT(sweepMode == SweepToFreeList);
         return FreeList();
-    case Retired:
     case Allocated:
         RELEASE_ASSERT_NOT_REACHED();
         return FreeList();
     case Marked:
-        return sweepMode == SweepToFreeList
-            ? specializedSweep<Marked, SweepToFreeList, callDestructors>()
-            : specializedSweep<Marked, SweepOnly, callDestructors>();
+        if (m_newlyAllocated) {
+            return sweepMode == SweepToFreeList
+                ? specializedSweep<Marked, SweepToFreeList, destructionMode, scribbleMode, HasNewlyAllocated>()
+                : specializedSweep<Marked, SweepOnly, destructionMode, scribbleMode, HasNewlyAllocated>();
+        } else {
+            return sweepMode == SweepToFreeList
+                ? specializedSweep<Marked, SweepToFreeList, destructionMode, scribbleMode, DoesNotHaveNewlyAllocated>()
+                : specializedSweep<Marked, SweepOnly, destructionMode, scribbleMode, DoesNotHaveNewlyAllocated>();
+        }
     }
     RELEASE_ASSERT_NOT_REACHED();
     return FreeList();
 }
 
+void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
+{
+    flipIfNecessary();
+    
+    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
+    
+    RELEASE_ASSERT(m_state == FreeListed);
+    m_state = Marked;
+}
+
 class SetNewlyAllocatedFunctor : public MarkedBlock::VoidFunctor {
 public:
-    SetNewlyAllocatedFunctor(MarkedBlock* block)
+    SetNewlyAllocatedFunctor(MarkedBlock::Handle* block)
         : m_block(block)
     {
     }
 
     IterationStatus operator()(HeapCell* cell, HeapCell::Kind) const
     {
-        ASSERT(MarkedBlock::blockFor(cell) == m_block);
+        ASSERT(MarkedBlock::blockFor(cell) == &m_block->block());
         m_block->setNewlyAllocated(cell);
         return IterationStatus::Continue;
     }
 
 private:
-    MarkedBlock* m_block;
+    MarkedBlock::Handle* m_block;
 };
 
-void MarkedBlock::stopAllocating(const FreeList& freeList)
+void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
 {
+    flipIfNecessary();
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
-    FreeCell* head = freeList.head;
 
     if (m_state == Marked) {
-        // If the block is in the Marked state then we know that:
-        // 1) It was not used for allocation during the previous allocation cycle.
-        // 2) It may have dead objects, and we only know them to be dead by the
-        //    fact that their mark bits are unset.
+        // If the block is in the Marked state then we know that one of these
+        // conditions holds:
+        //
+        // - It was not used for allocation during the previous allocation cycle.
+        //   It may have dead objects, and we only know them to be dead by the
+        //   fact that their mark bits are unset.
+        //
+        // - Someone had already done stopAllocating(), for example because of
+        //   heap iteration, and they had already 
         // Hence if the block is Marked we need to leave it Marked.
-        
-        ASSERT(!head);
+        ASSERT(freeList.allocationWillFail());
         return;
     }
-   
+    
     ASSERT(m_state == FreeListed);
     
     // Roll back to a coherent state for Heap introspection. Cells newly
@@ -213,57 +282,29 @@ void MarkedBlock::stopAllocating(const FreeList& freeList)
     SetNewlyAllocatedFunctor functor(this);
     forEachCell(functor);
 
-    FreeCell* next;
-    for (FreeCell* current = head; current; current = next) {
-        next = current->next;
-        if (m_attributes.destruction == NeedsDestruction)
-            reinterpret_cast<HeapCell*>(current)->zap();
-        clearNewlyAllocated(current);
-    }
+    forEachFreeCell(
+        freeList,
+        [&] (HeapCell* cell) {
+            if (m_attributes.destruction == NeedsDestruction)
+                cell->zap();
+            clearNewlyAllocated(cell);
+        });
     
     m_state = Marked;
 }
 
-void MarkedBlock::clearMarks()
+void MarkedBlock::Handle::lastChanceToFinalize()
 {
-    if (heap()->operationInProgress() == JSC::EdenCollection)
-        this->clearMarksWithCollectionType<EdenCollection>();
-    else
-        this->clearMarksWithCollectionType<FullCollection>();
-}
-
-template <HeapOperation collectionType>
-void MarkedBlock::clearMarksWithCollectionType()
-{
-    ASSERT(collectionType == FullCollection || collectionType == EdenCollection);
-    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
-
-    ASSERT(m_state != New && m_state != FreeListed);
-    if (collectionType == FullCollection) {
-        m_marks.clearAll();
-        // This will become true at the end of the mark phase. We set it now to
-        // avoid an extra pass to do so later.
-        m_state = Marked;
-        return;
-    }
-
-    ASSERT(collectionType == EdenCollection);
-    // If a block was retired then there's no way an EdenCollection can un-retire it.
-    if (m_state != Retired)
-        m_state = Marked;
-}
-
-void MarkedBlock::lastChanceToFinalize()
-{
+    m_block->clearMarks();
     m_weakSet.lastChanceToFinalize();
 
     clearNewlyAllocated();
-    clearMarksWithCollectionType<FullCollection>();
     sweep();
 }
 
-MarkedBlock::FreeList MarkedBlock::resumeAllocating()
+FreeList MarkedBlock::Handle::resumeAllocating()
 {
+    flipIfNecessary();
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 
     ASSERT(m_state == Marked);
@@ -274,32 +315,148 @@ MarkedBlock::FreeList MarkedBlock::resumeAllocating()
         return FreeList();
     }
 
-    // Re-create our free list from before stopping allocation. 
+    // Re-create our free list from before stopping allocation. Note that this may return an empty
+    // freelist, in which case the block will still be Marked!
     return sweep(SweepToFreeList);
 }
 
-void MarkedBlock::didRetireBlock(const FreeList& freeList)
+void MarkedBlock::Handle::zap(const FreeList& freeList)
 {
-    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
-    FreeCell* head = freeList.head;
+    forEachFreeCell(
+        freeList,
+        [&] (HeapCell* cell) {
+            if (m_attributes.destruction == NeedsDestruction)
+                cell->zap();
+        });
+}
 
-    // Currently we don't notify the Heap that we're giving up on this block. 
-    // The Heap might be able to make a better decision about how many bytes should 
-    // be allocated before the next collection if it knew about this retired block.
-    // On the other hand we'll waste at most 10% of our Heap space between FullCollections 
-    // and only under heavy fragmentation.
-
-    // We need to zap the free list when retiring a block so that we don't try to destroy 
-    // previously destroyed objects when we re-sweep the block in the future.
-    FreeCell* next;
-    for (FreeCell* current = head; current; current = next) {
-        next = current->next;
-        if (m_attributes.destruction == NeedsDestruction)
-            reinterpret_cast<HeapCell*>(current)->zap();
+template<typename Func>
+void MarkedBlock::Handle::forEachFreeCell(const FreeList& freeList, const Func& func)
+{
+    if (freeList.remaining) {
+        for (unsigned remaining = freeList.remaining; remaining; remaining -= cellSize())
+            func(bitwise_cast<HeapCell*>(freeList.payloadEnd - remaining));
+    } else {
+        for (FreeCell* current = freeList.head; current;) {
+            FreeCell* next = current->next;
+            func(bitwise_cast<HeapCell*>(current));
+            current = next;
+        }
     }
+}
 
+void MarkedBlock::flipIfNecessary()
+{
+    flipIfNecessary(vm()->heap.objectSpace().version());
+}
+
+void MarkedBlock::Handle::flipIfNecessary()
+{
+    block().flipIfNecessary();
+}
+
+void MarkedBlock::flipIfNecessarySlow()
+{
+    ASSERT(m_version != vm()->heap.objectSpace().version());
+    clearMarks();
+}
+
+void MarkedBlock::flipIfNecessaryConcurrentlySlow()
+{
+    LockHolder locker(m_lock);
+    if (m_version != vm()->heap.objectSpace().version())
+        clearMarks();
+}
+
+void MarkedBlock::clearMarks()
+{
+    m_marks.clearAll();
+    clearHasAnyMarked();
+    // This will become true at the end of the mark phase. We set it now to
+    // avoid an extra pass to do so later.
+    handle().m_state = Marked;
+    WTF::storeStoreFence();
+    m_version = vm()->heap.objectSpace().version();
+}
+
+#if !ASSERT_DISABLED
+void MarkedBlock::assertFlipped()
+{
+    ASSERT(m_version == vm()->heap.objectSpace().version());
+}
+#endif // !ASSERT_DISABLED
+
+bool MarkedBlock::needsFlip()
+{
+    return vm()->heap.objectSpace().version() != m_version;
+}
+
+bool MarkedBlock::Handle::needsFlip()
+{
+    return m_block->needsFlip();
+}
+
+void MarkedBlock::Handle::willRemoveBlock()
+{
+    flipIfNecessary();
+}
+
+void MarkedBlock::Handle::didConsumeFreeList()
+{
+    flipIfNecessary();
+    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
+    
     ASSERT(m_state == FreeListed);
-    m_state = Retired;
+
+    m_state = Allocated;
+}
+
+size_t MarkedBlock::markCount()
+{
+    flipIfNecessary();
+    return m_marks.count();
+}
+
+bool MarkedBlock::Handle::isEmpty()
+{
+    flipIfNecessary();
+    return m_state == Marked && !block().hasAnyMarked() && m_weakSet.isEmpty() && (!m_newlyAllocated || m_newlyAllocated->isEmpty());
+}
+
+void MarkedBlock::clearHasAnyMarked()
+{
+    m_biasedMarkCount = m_markCountBias;
+}
+
+void MarkedBlock::noteMarkedSlow()
+{
+    handle().m_allocator->retire(&handle());
 }
 
 } // namespace JSC
+
+namespace WTF {
+
+using namespace JSC;
+
+void printInternal(PrintStream& out, MarkedBlock::BlockState blockState)
+{
+    switch (blockState) {
+    case MarkedBlock::New:
+        out.print("New");
+        return;
+    case MarkedBlock::FreeListed:
+        out.print("FreeListed");
+        return;
+    case MarkedBlock::Allocated:
+        out.print("Allocated");
+        return;
+    case MarkedBlock::Marked:
+        out.print("Marked");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
+

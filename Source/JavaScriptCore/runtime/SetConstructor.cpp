@@ -29,14 +29,12 @@
 #include "Error.h"
 #include "GetterSetter.h"
 #include "IteratorOperations.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "JSSet.h"
 #include "MapData.h"
 #include "SetPrototype.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

@@ -82,6 +82,7 @@ public:
 
     JS_EXPORT_PRIVATE Value* appendIntConstant(Procedure&, Origin, Type, int64_t value);
     Value* appendIntConstant(Procedure&, Value* likeValue, int64_t value);
+    Value* appendBoolConstant(Procedure&, Origin, bool);
 
     void removeLast(Procedure&);
     

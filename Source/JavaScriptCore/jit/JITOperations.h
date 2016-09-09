@@ -38,24 +38,34 @@
 
 namespace JSC {
 
+typedef int64_t EncodedJSValue;
+    
 class ArrayAllocationProfile;
 class ArrayProfile;
+class Butterfly;
 class CallLinkInfo;
 class CodeBlock;
 class ExecState;
 class JITAddGenerator;
 class JSArray;
+class JSCell;
 class JSFunction;
+class JSGlobalObject;
 class JSLexicalEnvironment;
+class JSObject;
 class JSScope;
+class JSString;
+class JSValue;
 class RegExpObject;
 class Register;
+class Structure;
 class StructureStubInfo;
 class SymbolTable;
 class WatchpointSet;
 
 struct ByValInfo;
 struct InlineCallFrame;
+struct Instruction;
 struct ArithProfile;
 
 typedef ExecState CallFrame;
@@ -72,6 +82,7 @@ typedef char* UnusedPtr;
     Aap: ArrayAllocationProfile*
     Ap: ArrayProfile*
     Arp: ArithProfile*
+    B: Butterfly*
     By: ByValInfo*
     C: JSCell*
     Cb: CodeBlock*
@@ -279,6 +290,7 @@ typedef char* (JIT_OPERATION *P_JITOperation_EStJ)(ExecState*, Structure*, Encod
 typedef char* (JIT_OPERATION *P_JITOperation_EStPS)(ExecState*, Structure*, void*, size_t);
 typedef char* (JIT_OPERATION *P_JITOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
 typedef char* (JIT_OPERATION *P_JITOperation_EStZ)(ExecState*, Structure*, int32_t);
+typedef char* (JIT_OPERATION *P_JITOperation_EStZB)(ExecState*, Structure*, int32_t, Butterfly*);
 typedef char* (JIT_OPERATION *P_JITOperation_EZZ)(ExecState*, int32_t, int32_t);
 typedef SlowPathReturnType (JIT_OPERATION *Sprt_JITOperation_ECli)(ExecState*, CallLinkInfo*);
 typedef StringImpl* (JIT_OPERATION *T_JITOperation_EJss)(ExecState*, JSString*);
@@ -320,7 +332,6 @@ void JIT_OPERATION operationPutByIdStrictBuildList(ExecState*, StructureStubInfo
 void JIT_OPERATION operationPutByIdNonStrictBuildList(ExecState*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDirectStrictBuildList(ExecState*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDirectNonStrictBuildList(ExecState*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl*) WTF_INTERNAL;
-void JIT_OPERATION operationReallocateStorageAndFinishPut(ExecState*, JSObject*, Structure*, PropertyOffset, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValOptimize(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
 void JIT_OPERATION operationDirectPutByValOptimize(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValGeneric(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;

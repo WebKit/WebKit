@@ -1,3 +1,31 @@
+2016-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
+        https://bugs.webkit.org/show_bug.cgi?id=160125
+
+        Reviewed by Geoffrey Garen and Keith Miller.
+        
+        I needed tryFastAlignedMalloc() so I added it.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::tryFastAlignedMalloc):
+        * wtf/FastMalloc.h:
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::forEachImpl):
+        (WTF::ParkingLot::forEach): Deleted.
+        * wtf/ParkingLot.h:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::forEach):
+        * wtf/ScopedLambda.h:
+        (WTF::scopedLambdaRef):
+        * wtf/SentinelLinkedList.h:
+        (WTF::SentinelLinkedList::forEach):
+        (WTF::RawNode>::takeFrom):
+        * wtf/SimpleStats.h:
+        (WTF::SimpleStats::operator bool):
+        (WTF::SimpleStats::operator!): Deleted.
+
 2016-09-02  JF Bastien  <jfbastien@apple.com>
 
         bitwise_cast infinite loops if called from the default constructor in ToType

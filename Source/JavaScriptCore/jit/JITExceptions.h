@@ -26,15 +26,15 @@
 #ifndef JITExceptions_h
 #define JITExceptions_h
 
-#include "Interpreter.h"
-#include "JSCJSValue.h"
-
 namespace JSC {
+
+enum UnwindStart : uint8_t;
 
 class ExecState;
 class VM;
 
-void genericUnwind(VM*, ExecState*, UnwindStart = UnwindFromCurrentFrame);
+void genericUnwind(VM*, ExecState*, UnwindStart);
+void genericUnwind(VM*, ExecState*);
 
 } // namespace JSC
 

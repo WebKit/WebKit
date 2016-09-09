@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,18 @@ void* Allocator::tryAllocate(size_t size)
 
 void* Allocator::allocate(size_t alignment, size_t size)
 {
+    bool crashOnFailure = true;
+    return allocateImpl(alignment, size, crashOnFailure);
+}
+
+void* Allocator::tryAllocate(size_t alignment, size_t size)
+{
+    bool crashOnFailure = false;
+    return allocateImpl(alignment, size, crashOnFailure);
+}
+
+void* Allocator::allocateImpl(size_t alignment, size_t size, bool crashOnFailure)
+{
     BASSERT(isPowerOfTwo(alignment));
 
     if (!m_isBmallocEnabled) {
@@ -80,7 +92,10 @@ void* Allocator::allocate(size_t alignment, size_t size)
         return allocate(roundUpToMultipleOf(alignment, size));
 
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-    return PerProcess<Heap>::getFastCase()->allocateLarge(lock, alignment, size);
+    Heap* heap = PerProcess<Heap>::getFastCase();
+    if (crashOnFailure)
+        return heap->allocateLarge(lock, alignment, size);
+    return heap->tryAllocateLarge(lock, alignment, size);
 }
 
 void* Allocator::reallocate(void* object, size_t newSize)
