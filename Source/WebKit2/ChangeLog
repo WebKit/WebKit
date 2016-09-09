@@ -1,3 +1,10 @@
+2016-09-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r205689.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElement.cpp:
+        (webkit_dom_html_o_list_element_set_start):
+
 2016-09-08  Dan Bernstein  <mitz@apple.com>
 
         Re-landing the fix for
