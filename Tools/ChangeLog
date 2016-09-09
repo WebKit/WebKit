@@ -1,3 +1,11 @@
+2016-09-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Revert r205770 because Ricky is already a committer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-09-09  Ricky Mondello  <rmondello@apple.com>
 
         Unreviewed. Added myself to the list of committers.
