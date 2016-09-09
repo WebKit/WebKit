@@ -1,5 +1,17 @@
 2016-09-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r205759.
+
+        This change broke all JSC tests
+
+        Reverted changeset:
+
+        "Add ChakraCore tests to run-javascriptcore-tests"
+        https://bugs.webkit.org/show_bug.cgi?id=161808
+        http://trac.webkit.org/changeset/205759
+
+2016-09-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Revert r205770 because Ricky is already a committer.
 
         Unreviewed.
