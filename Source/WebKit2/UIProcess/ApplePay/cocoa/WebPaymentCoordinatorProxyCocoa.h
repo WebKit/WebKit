@@ -27,8 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import <PassKit/PKPaymentAuthorizationViewController.h>
-#import <PassKit/PKPaymentAuthorizationViewController_Private.h>
+#import <WebCore/PassKitSPI.h>
 #import <WebCore/PaymentHeaders.h>
 #import <wtf/BlockPtr.h>
 

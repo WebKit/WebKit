@@ -29,7 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #import "SoftLinking.h"
-#import <PassKitCore/PKPaymentMerchantSession.h>
+#import "PassKitSPI.h"
 #import <runtime/JSONObject.h>
 
 #if PLATFORM(MAC)

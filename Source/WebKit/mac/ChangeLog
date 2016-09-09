@@ -1,5 +1,20 @@
 2016-09-09  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r203381. rdar://problem/27860536
+
+    2016-07-18  Anders Carlsson  <andersca@apple.com>
+
+            WebKit nightly fails to build on macOS Sierra
+            https://bugs.webkit.org/show_bug.cgi?id=159902
+            rdar://problem/27365672
+
+            Reviewed by Tim Horton.
+
+            * icu/unicode/ucurr.h: Added.
+            Add ucurr.h from ICU.
+
+2016-09-09  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205381. rdar://problem/27806012
 
     2016-09-02  Beth Dakin  <bdakin@apple.com>

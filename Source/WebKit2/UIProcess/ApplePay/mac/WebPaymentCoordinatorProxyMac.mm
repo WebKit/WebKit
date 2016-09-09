@@ -30,8 +30,7 @@
 
 #import "WebPageProxy.h"
 #import "WebPaymentCoordinatorProxyCocoa.h"
-#import <Foundation/NSExtension.h>
-#import <PassKit/PKPaymentAuthorizationViewController_Private.h>
+#import <WebCore/PassKitSPI.h>
 #import <WebCore/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(PassKit)
