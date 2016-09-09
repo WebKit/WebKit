@@ -630,8 +630,11 @@
 #include "JSUIEvent.cpp"
 #include "JSUIRequestEvent.cpp"
 #include "JSURLUtils.cpp"
+#if ENABLE(USER_MESSAGE_HANDLERS)
 #include "JSUserMessageHandler.cpp"
 #include "JSUserMessageHandlersNamespace.cpp"
+#include "JSWebKitNamespace.cpp"
+#endif
 #include "JSValidityState.cpp"
 #include "JSVideoPlaybackQuality.cpp"
 #include "JSVoidCallback.cpp"
@@ -643,7 +646,6 @@
 #include "JSWebKitCSSRegionRule.cpp"
 #include "JSWebKitCSSViewportRule.cpp"
 #include "JSWebKitNamedFlow.cpp"
-#include "JSWebKitNamespace.cpp"
 #include "JSWebKitPlaybackTargetAvailabilityEvent.cpp"
 #include "JSWebKitPoint.cpp"
 #include "JSWebKitSubtleCrypto.cpp"
