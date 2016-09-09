@@ -48,14 +48,14 @@ public:
 
     GlyphData glyphDataForCharacter(UChar32 c) const
     {
-        unsigned index = GlyphPage::indexForCharacter(c);
+        unsigned index = GlyphPage::indexForCodePoint(c);
         ASSERT_WITH_SECURITY_IMPLICATION(index < GlyphPage::size);
         return { m_glyphs[index], m_fonts[index] };
     }
 
     void setGlyphDataForCharacter(UChar32 c, GlyphData glyphData)
     {
-        setGlyphDataForIndex(GlyphPage::indexForCharacter(c), glyphData);
+        setGlyphDataForIndex(GlyphPage::indexForCodePoint(c), glyphData);
     }
 
 private:
@@ -428,7 +428,7 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDe
     if (variant != NormalVariant)
         return glyphDataForVariant(c, description, variant, 0);
 
-    const unsigned pageNumber = c / GlyphPage::size;
+    const unsigned pageNumber = GlyphPage::pageNumberForCodePoint(c);
 
     auto& cacheEntry = pageNumber ? m_cachedPages.add(pageNumber, GlyphPageCacheEntry()).iterator->value : m_cachedPageZero;
 

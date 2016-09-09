@@ -54,7 +54,7 @@ private:
     class GlyphMetricsPage {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static const size_t size = 256; // Usually covers Latin-1 in a single page.
+        static const size_t size = 16;
 
         GlyphMetricsPage() = default;
         explicit GlyphMetricsPage(const T& initialValue)

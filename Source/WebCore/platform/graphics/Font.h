@@ -337,13 +337,13 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
         return width;
 
 #if ENABLE(OPENTYPE_VERTICAL)
-    if (m_verticalData)
+    if (m_verticalData) {
 #if USE(CG) || USE(CAIRO)
         width = m_verticalData->advanceHeight(this, glyph) + m_syntheticBoldOffset;
 #else
         width = m_verticalData->advanceHeight(this, glyph);
 #endif
-    else
+    } else
 #endif
         width = platformWidthForGlyph(glyph);
 
