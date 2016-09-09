@@ -852,6 +852,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
     switch (state) {
     case State::SchemeStart:
         LOG_FINAL_STATE("SchemeStart");
+        if (!m_buffer.length() && !base.isNull())
+            return base;
         return failure(input);
     case State::Scheme:
         LOG_FINAL_STATE("Scheme");
