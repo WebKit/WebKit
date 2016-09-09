@@ -606,27 +606,31 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             break;
         case State::AuthorityOrHost:
             LOG_STATE("AuthorityOrHost");
-            if (*c == '@') {
-                parseAuthority(authorityOrHostBegin, c);
-                ++c;
-                while (c != end && isTabOrNewline(*c))
+            {
+                if (*c == '@') {
+                    parseAuthority(authorityOrHostBegin, c);
                     ++c;
-                authorityOrHostBegin = c;
-                state = State::Host;
-                break;
-            } else if (*c == '/' || *c == '?' || *c == '#') {
-                m_url.m_userEnd = m_buffer.length();
-                m_url.m_passwordEnd = m_url.m_userEnd;
-                if (!parseHost(authorityOrHostBegin, c))
-                    return failure(input);
-                if (*c != '/') {
-                    m_buffer.append('/');
-                    m_url.m_pathAfterLastSlash = m_buffer.length();
+                    while (c != end && isTabOrNewline(*c))
+                        ++c;
+                    authorityOrHostBegin = c;
+                    state = State::Host;
+                    break;
                 }
-                state = State::Path;
-                break;
+                bool isSlash = *c == '/' || (m_urlIsSpecial && *c == '\\');
+                if (isSlash || *c == '?' || *c == '#') {
+                    m_url.m_userEnd = m_buffer.length();
+                    m_url.m_passwordEnd = m_url.m_userEnd;
+                    if (!parseHost(authorityOrHostBegin, c))
+                        return failure(input);
+                    if (!isSlash) {
+                        m_buffer.append('/');
+                        m_url.m_pathAfterLastSlash = m_buffer.length();
+                    }
+                    state = State::Path;
+                    break;
+                }
+                ++c;
             }
-            ++c;
             break;
         case State::Host:
             LOG_STATE("Host");

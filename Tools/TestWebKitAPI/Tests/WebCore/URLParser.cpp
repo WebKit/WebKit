@@ -263,6 +263,9 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL(":foo.com\\", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/:foo.com/", "", "", "http://example.org/foo/:foo.com/"});
     checkRelativeURL("http:/example.com/", "about:blank", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
     checkRelativeURL("http:example.com/", "about:blank", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkRelativeURL("http:\\\\foo.com\\", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
+    checkRelativeURL("http:\\\\foo.com/", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
+    checkRelativeURL("http:\\\\foo.com", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
@@ -411,7 +414,15 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("sc://pa",
         {"sc", "", "", "pa", 0, "/", "", "", "sc://pa/"},
         {"sc", "", "", "pa", 0, "", "", "", "sc://pa"});
-
+    checkRelativeURLDifferences("notspecial:\\\\foo.com\\", "http://example.org/foo/bar",
+        {"notspecial", "", "", "", 0, "\\\\foo.com\\", "", "", "notspecial:\\\\foo.com\\"},
+        {"notspecial", "", "", "foo.com", 0, "/", "", "", "notspecial://foo.com/"});
+    checkRelativeURLDifferences("notspecial:\\\\foo.com/", "http://example.org/foo/bar",
+        {"notspecial", "", "", "", 0, "\\\\foo.com/", "", "", "notspecial:\\\\foo.com/"},
+        {"notspecial", "", "", "foo.com", 0, "/", "", "", "notspecial://foo.com/"});
+    checkRelativeURLDifferences("notspecial:\\\\foo.com", "http://example.org/foo/bar",
+        {"notspecial", "", "", "", 0, "\\\\foo.com", "", "", "notspecial:\\\\foo.com"},
+        {"notspecial", "", "", "foo.com", 0, "", "", "", "notspecial://foo.com"});
     
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
     // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.
