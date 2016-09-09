@@ -98,6 +98,7 @@ struct PromiseResultInspector<DOMClass, typename std::enable_if<TypeInspector<DO
 
 class DeferredWrapper : public RefCounted<DeferredWrapper>, public ActiveDOMCallback {
 public:
+    // FIXME: We should pass references here, not pointers, see bug 161787
     static Ref<DeferredWrapper> create(JSC::ExecState* state, JSDOMGlobalObject* globalObject, JSC::JSPromiseDeferred* deferred)
     {
         return adoptRef(*new DeferredWrapper(state, globalObject, deferred));
@@ -156,18 +157,23 @@ void fulfillPromiseWithArrayBuffer(Ref<DeferredWrapper>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredWrapper>&&, const void*, size_t);
 void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
 
-inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSC::EncodedJSValue promiseFunction(JSC::ExecState*, JSC::JSPromiseDeferred*))
+inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSC::EncodedJSValue promiseFunction(JSC::ExecState*, Ref<DeferredWrapper>&&))
 {
     JSC::VM& vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSDOMGlobalObject& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
-    JSC::JSPromiseDeferred& promiseDeferred = *JSC::JSPromiseDeferred::create(&state, &globalObject);
-    promiseFunction(&state, &promiseDeferred);
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
 
-    rejectPromiseWithExceptionIfAny(state, globalObject, promiseDeferred);
+    // promiseDeferred can be null when terminating a Worker abruptly.
+    if (!promiseDeferred)
+        return JSC::jsUndefined();
+
+    promiseFunction(&state, DeferredWrapper::create(&state, &globalObject, promiseDeferred));
+
+    rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
     ASSERT_UNUSED(scope, !scope.exception());
-    return promiseDeferred.promise();
+    return promiseDeferred->promise();
 }
 
 // At the moment, Value cannot be a Ref<T> or RefPtr<T>, it should be a DOM class.

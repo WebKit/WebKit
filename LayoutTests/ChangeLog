@@ -1,3 +1,16 @@
+2016-09-09  Youenn Fablet  <youenn@apple.com>
+
+        ASSERTION FAILED: promise.inherits(JSPromise::info())
+        https://bugs.webkit.org/show_bug.cgi?id=161632
+        <rdar://problem/28184743>
+
+        Reviewed by Mark Lam.
+
+        * TestExpectations: Reenabling skipped tests.
+        * fetch/fetch-worker-crash-expected.txt: Added.
+        * fetch/fetch-worker-crash.html: Added.
+        * fetch/fetch-worker-crash.js: Added.
+
 2016-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ScriptRunner should be driven by PendingScript rather than ScriptElement

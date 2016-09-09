@@ -3409,13 +3409,13 @@ sub GenerateImplementation
                 AddToImplIncludes("JSDOMPromise.h");
 
                 push(@implContent, <<END);
-static EncodedJSValue ${functionName}Promise(ExecState*, JSPromiseDeferred*);
+static EncodedJSValue ${functionName}Promise(ExecState*, Ref<DeferredWrapper>&&);
 ${functionReturn} ${functionName}(ExecState* state)
 {
     return JSValue::encode(callPromiseFunction(*state, ${functionName}Promise));
 }
 
-static inline EncodedJSValue ${functionName}Promise(ExecState* state, JSPromiseDeferred* promiseDeferred)
+static inline EncodedJSValue ${functionName}Promise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
 END
             }
             else {
@@ -4122,11 +4122,7 @@ sub GenerateReturnParameters
     my @arguments;
 
     if (IsReturningPromise($function)) {
-        if ($function->isStatic) {
-            push(@arguments, "DeferredWrapper::create(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), promiseDeferred)");
-        } else {
-            push(@arguments, "DeferredWrapper::create(state, castedThis->globalObject(), promiseDeferred)");
-        }
+        push(@arguments, "WTFMove(deferredWrapper)");
     }
     push(@arguments, "ec") if $function->signature->extendedAttributes->{"RaisesException"} || $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
     return @arguments;

@@ -1,3 +1,14 @@
+2016-09-09  Youenn Fablet  <youenn@apple.com>
+
+        ASSERTION FAILED: promise.inherits(JSPromise::info())
+        https://bugs.webkit.org/show_bug.cgi?id=161632
+        <rdar://problem/28184743>
+
+        Reviewed by Mark Lam.
+
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::create): Returning null if promise object is not created.
+
 2016-09-08  Filip Pizlo  <fpizlo@apple.com>
 
         Heap::isMarked() shouldn't pay the price of concurrent lazy flipping
