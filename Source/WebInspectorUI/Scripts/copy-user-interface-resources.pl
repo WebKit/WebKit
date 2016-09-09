@@ -90,7 +90,7 @@ sub readLicenseFile($)
 
 my $inspectorLicense = <<'EOF';
 /*
- * Copyright (C) 2007-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek. All rights reserved.
  * Copyright (C) 2008-2009 Anthony Ricaud <rik@webkit.org>
  * Copyright (C) 2009-2010 Joseph Pecoraro. All rights reserved.
@@ -135,6 +135,7 @@ my $perl = $^X;
 my $python = ($OSNAME =~ /cygwin/) ? "/usr/bin/python" : "python";
 my $derivedSourcesDir = $ENV{'DERIVED_SOURCES_DIR'};
 my $scriptsRoot = File::Spec->catdir($ENV{'SRCROOT'}, 'Scripts');
+my $sharedScriptsRoot = File::Spec->catdir($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'});
 my $uiRoot = File::Spec->catdir($ENV{'SRCROOT'}, 'UserInterface');
 my $targetResourcePath = File::Spec->catdir($ENV{'TARGET_BUILD_DIR'}, $ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'});
 my $protocolDir = File::Spec->catdir($targetResourcePath, 'Protocol');
@@ -222,8 +223,8 @@ if ($shouldCombineMain) {
     seedFile($targetESLintJS, $eslintLicense);
 
     # Minify the Main.js and Main.css files, with Main.js appending to the license that was exported above.
-    my $jsMinScript = File::Spec->catfile($scriptsRoot, 'jsmin.py');
-    my $cssMinScript = File::Spec->catfile($scriptsRoot, 'cssmin.py');
+    my $jsMinScript = File::Spec->catfile($sharedScriptsRoot, 'jsmin.py');
+    my $cssMinScript = File::Spec->catfile($sharedScriptsRoot, 'cssmin.py');
     system(qq("$python" "$jsMinScript" < "$derivedSourcesMainJS" >> "$targetMainJS")) and die "Failed to minify $derivedSourcesMainJS: $!";
     system(qq("$python" "$cssMinScript" < "$derivedSourcesMainCSS" >> "$targetMainCSS")) and die "Failed to minify $derivedSourcesMainCSS: $!";
 

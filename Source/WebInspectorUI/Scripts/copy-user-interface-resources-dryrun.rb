@@ -31,10 +31,16 @@ if ARGV.size != 1 || ARGV[0].include?("-h")
   exit 1
 end
 
+JAVASCRIPTCORE_PATH = File.expand_path File.join(File.dirname(__FILE__), "..", "..", "JavaScriptCore")
 WEB_INSPECTOR_PATH = File.expand_path File.join(File.dirname(__FILE__), "..")
 COPY_USER_INTERFACE_RESOURCES_PATH = File.join WEB_INSPECTOR_PATH, "Scripts", "copy-user-interface-resources.pl"
 
+# This script simulates processing user interface resources located in SRCROOT.
+# It places processed files in the specified output directory. This is most similar
+# to an isolated OBJROOT since it includes DerivedSources. It doesn't place files
+# into their DSTROOT locations, such as inside of WebInspectorUI.framework.
 $output_directory = File.expand_path ARGV[0]
+$start_directory = FileUtils.pwd
 
 Dir.mktmpdir do |tmpdir|
 
@@ -46,12 +52,17 @@ Dir.mktmpdir do |tmpdir|
   
   # Setup the environment and run.
   ENV["DERIVED_SOURCES_DIR"] = tmpdir
+  # Stage some scripts expected to be in various framework PrivateHeaders.
   ENV["JAVASCRIPTCORE_PRIVATE_HEADERS_DIR"] = tmpdir
+  FileUtils.cp(File.join(JAVASCRIPTCORE_PATH, "Scripts", "cssmin.py"), tmpdir)
+  FileUtils.cp(File.join(JAVASCRIPTCORE_PATH, "Scripts", "jsmin.py"), tmpdir)
   ENV["SRCROOT"] = WEB_INSPECTOR_PATH
   ENV["TARGET_BUILD_DIR"] = $output_directory
   ENV["UNLOCALIZED_RESOURCES_FOLDER_PATH"] = ""
   ENV["COMBINE_INSPECTOR_RESOURCES"] = "YES"
   ENV["COMBINE_TEST_RESOURCES"] = "YES"
-  exec COPY_USER_INTERFACE_RESOURCES_PATH
+  ENV["FORCE_TOOL_INSTALL"] = "NO"
+  FileUtils.cd $start_directory
+  system(COPY_USER_INTERFACE_RESOURCES_PATH) or raise "Failed to process user interface resources."
 
 end

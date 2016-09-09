@@ -1,3 +1,27 @@
+2016-09-08  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: get rid of extra copies of jsmin.py and cssmin.py
+        https://bugs.webkit.org/show_bug.cgi?id=161770
+        <rdar://problem/28216813>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/copy-user-interface-resources-dryrun.rb:
+        - Keep track of the original working directory.
+        - Stage scripts from PrivateHeaders into the temporary directory.
+        - Add a comment to clarify what this script is simulating.
+        - Use system instead of exec so we can print an error message.
+
+        * Scripts/copy-user-interface-resources.pl:
+        - Use jsmin.py and cssmin.py from JavaScriptCore instead of
+        WebInspectorUI. There are no differences between the two copies.
+
+        * Scripts/cssmin.py: Removed.
+        * Scripts/jsmin.py: Removed.
+
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+        - Remove unused copies of jsmin.py and cssmin.py.
+
 2016-09-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TimelineDataGridNode should refresh when graph column is resized

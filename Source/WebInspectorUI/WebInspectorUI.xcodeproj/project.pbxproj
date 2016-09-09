@@ -12,8 +12,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1C435CAC14E7B287004E10EA /* cssmin.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = cssmin.py; sourceTree = "<group>"; };
-		1C435CAD14E7B287004E10EA /* jsmin.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = jsmin.py; sourceTree = "<group>"; };
 		1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1C60FE3214E5F3CD006CD77D /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
@@ -54,8 +52,6 @@
 			children = (
 				1C60FF1914E73C64006CD77D /* combine-resources.pl */,
 				1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */,
-				1C435CAC14E7B287004E10EA /* cssmin.py */,
-				1C435CAD14E7B287004E10EA /* jsmin.py */,
 				1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */,
 			);
 			path = Scripts;
