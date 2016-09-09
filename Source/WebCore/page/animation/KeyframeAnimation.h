@@ -81,6 +81,7 @@ protected:
 
     bool computeExtentOfAnimationForMatchingTransformLists(const FloatRect& rendererBox, LayoutRect&) const;
 
+    void resolveKeyframeStyles();
     void validateTransformFunctionList();
     void checkForMatchingFilterFunctionLists();
 #if ENABLE(FILTERS_LEVEL_2)

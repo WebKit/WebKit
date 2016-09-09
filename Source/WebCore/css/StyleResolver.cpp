@@ -309,7 +309,8 @@ void StyleResolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 
 StyleResolver::~StyleResolver()
 {
-    RELEASE_ASSERT(!m_inLoadPendingImages);
+    RELEASE_ASSERT(!m_isDeleted);
+    m_isDeleted = true;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     m_viewportStyleResolver->clearDocument();
@@ -385,7 +386,7 @@ static inline bool isAtShadowBoundary(const Element& element)
 
 ElementStyle StyleResolver::styleForElement(const Element& element, const RenderStyle* parentStyle, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
 {
-    RELEASE_ASSERT(!m_inLoadPendingImages);
+    RELEASE_ASSERT(!m_isDeleted);
 
     m_state = State(element, parentStyle, m_overrideDocumentElementStyle, regionForStyling, selectorFilter);
     State& state = m_state;
@@ -446,7 +447,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
 
 std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
-    RELEASE_ASSERT(!m_inLoadPendingImages);
+    RELEASE_ASSERT(!m_isDeleted);
 
     MatchResult result;
     result.addMatchedProperties(keyframe->properties());
@@ -486,9 +487,6 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
 
     adjustRenderStyle(*state.style(), *state.parentStyle(), nullptr);
 
-    // Start loading resources referenced by this style.
-    loadPendingResources();
-    
     // Add all the animating properties to the keyframe.
     unsigned propertyCount = keyframe->properties().propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
@@ -642,16 +640,13 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
 
-    // Start loading resources referenced by this style.
-    loadPendingResources();
-
     // Now return the style.
     return state.takeStyle();
 }
 
 std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 {
-    RELEASE_ASSERT(!m_inLoadPendingImages);
+    RELEASE_ASSERT(!m_isDeleted);
 
     auto* documentElement = m_document.documentElement();
     if (!documentElement)
@@ -685,9 +680,6 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty, &result);
 
     cascade.applyDeferredProperties(*this, &result);
-
-    // Start loading resources referenced by this style.
-    loadPendingResources();
 
     // Now return the style.
     return m_state.takeStyle();
@@ -1413,9 +1405,6 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     // so to preserve behavior, we queue them up during cascade and flush here.
     cascade.applyDeferredProperties(*this, &matchResult);
 
-    // Start loading resources referenced by this style.
-    loadPendingResources();
-    
     ASSERT(!state.fontDirty());
     
     if (cacheItem || !cacheHash)
@@ -2041,18 +2030,6 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
 
     outOperations = operations;
     return true;
-}
-
-void StyleResolver::loadPendingResources()
-{
-    ASSERT(style());
-    if (!style())
-        return;
-
-    RELEASE_ASSERT(!m_inLoadPendingImages);
-    TemporaryChange<bool> changeInLoadPendingImages(m_inLoadPendingImages, true);
-
-    Style::loadPendingResources(*style(), document(), m_state.element());
 }
 
 inline StyleResolver::MatchedProperties::MatchedProperties()

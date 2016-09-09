@@ -220,9 +220,6 @@ public:
     void clearCachedPropertiesAffectedByViewportUnits();
 
     bool createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations);
-    void loadPendingSVGDocuments();
-
-    void loadPendingResources();
 
     struct RuleRange {
         RuleRange(int& firstRuleIndex, int& lastRuleIndex): firstRuleIndex(firstRuleIndex), lastRuleIndex(lastRuleIndex) { }
@@ -482,8 +479,6 @@ private:
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 
-    void loadPendingImages();
-
     static unsigned computeMatchedPropertiesHash(const MatchedProperties*, unsigned size);
     struct MatchedPropertiesCacheItem {
         Vector<MatchedProperties> matchedProperties;
@@ -525,8 +520,8 @@ private:
 
     State m_state;
 
-    // Try to catch a crash. https://bugs.webkit.org/show_bug.cgi?id=141561.
-    bool m_inLoadPendingImages { false };
+    // See if we still have crashes where StyleResolver gets deleted early.
+    bool m_isDeleted { false };
 
     friend bool operator==(const MatchedProperties&, const MatchedProperties&);
     friend bool operator!=(const MatchedProperties&, const MatchedProperties&);
