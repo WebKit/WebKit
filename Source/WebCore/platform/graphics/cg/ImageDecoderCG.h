@@ -57,7 +57,7 @@ public:
     int repetitionCount() const;
     Optional<IntPoint> hotSpot() const;
     
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel) const;
+    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = DefaultSubsamplingLevel) const;
     bool frameIsCompleteAtIndex(size_t) const;
     ImageOrientation orientationAtIndex(size_t) const;
     

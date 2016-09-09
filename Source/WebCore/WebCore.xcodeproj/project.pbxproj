@@ -1424,7 +1424,7 @@
 		375CD232119D43C800A2A859 /* Hyphenation.h in Headers */ = {isa = PBXBuildFile; fileRef = 375CD231119D43C800A2A859 /* Hyphenation.h */; };
 		376DCCE113B4F966002EBEFC /* TextRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376DCCE013B4F966002EBEFC /* TextRun.cpp */; };
 		3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		377A3A9015EFCE9B0059F5C7 /* BitmapImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377A3A8F15EFCE9A0059F5C7 /* BitmapImageCG.cpp */; };
+		377A3A9015EFCE9B0059F5C7 /* NativeImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377A3A8F15EFCE9A0059F5C7 /* NativeImageCG.cpp */; };
 		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
 		37919C240B7D188600A56998 /* PositionIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C220B7D188600A56998 /* PositionIterator.h */; settings = {ATTRIBUTES = (); }; };
 		3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 379291781985EF3900F4B661 /* CredentialBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2274,6 +2274,7 @@
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		555B87EC1CAAF0AB00349425 /* ImageDecoderCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */; };
 		555B87ED1CAAF0AB00349425 /* ImageDecoderCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */; };
+		55A336F71D8209F40022C4C7 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F61D8209F40022C4C7 /* NativeImage.h */; };
 		5709E8CD1D413D47003244AC /* WebKitSubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5709E8CA1D413CE3003244AC /* WebKitSubtleCrypto.cpp */; };
 		5709E8CE1D413D5B003244AC /* JSWebKitSubtleCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F661807460800132674 /* JSWebKitSubtleCryptoCustom.cpp */; };
 		5709E8CF1D413D9A003244AC /* WebKitSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 5709E8CB1D413CE3003244AC /* WebKitSubtleCrypto.h */; };
@@ -2513,7 +2514,7 @@
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		69A6CBAC1C6BE42C00B836E9 /* AccessibilitySVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 697101071C6BE1550018C7F1 /* AccessibilitySVGElement.cpp */; };
 		69A6CBAD1C6BE42C00B836E9 /* AccessibilitySVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 697101081C6BE1550018C7F1 /* AccessibilitySVGElement.h */; };
-		6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6B3480940EEF50D400AC1B41 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B693A2E1C51A82E00B03BEF /* ResourceLoadObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B693A2D1C51A82E00B03BEF /* ResourceLoadObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B693A341C51A95D00B03BEF /* ResourceLoadObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B693A331C51A95D00B03BEF /* ResourceLoadObserver.cpp */; };
 		6C4C96DE1AD4483500365A50 /* JSReadableStreamDefaultController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4C96DA1AD4483500365A50 /* JSReadableStreamDefaultController.cpp */; };
@@ -8354,7 +8355,7 @@
 		376DCCE013B4F966002EBEFC /* TextRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRun.cpp; sourceTree = "<group>"; };
 		3772B09516535856000A49CA /* PopupOpeningObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupOpeningObserver.h; sourceTree = "<group>"; };
 		3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlapTestRequestClient.h; sourceTree = "<group>"; };
-		377A3A8F15EFCE9A0059F5C7 /* BitmapImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImageCG.cpp; sourceTree = "<group>"; };
+		377A3A8F15EFCE9A0059F5C7 /* NativeImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeImageCG.cpp; sourceTree = "<group>"; };
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
 		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
 		379291781985EF3900F4B661 /* CredentialBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialBase.h; sourceTree = "<group>"; };
@@ -9289,6 +9290,7 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDecoderCG.cpp; sourceTree = "<group>"; };
 		555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDecoderCG.h; sourceTree = "<group>"; };
+		55A336F61D8209F40022C4C7 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
 		55D408F71A7C631800C78450 /* SVGImageClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageClients.h; sourceTree = "<group>"; };
 		5709E8CA1D413CE3003244AC /* WebKitSubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitSubtleCrypto.cpp; sourceTree = "<group>"; };
 		5709E8CB1D413CE3003244AC /* WebKitSubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitSubtleCrypto.h; sourceTree = "<group>"; };
@@ -9554,7 +9556,7 @@
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
 		697101071C6BE1550018C7F1 /* AccessibilitySVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySVGElement.cpp; sourceTree = "<group>"; };
 		697101081C6BE1550018C7F1 /* AccessibilitySVGElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySVGElement.h; sourceTree = "<group>"; };
-		6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NativeImagePtr.h; sourceTree = "<group>"; };
+		6B3480920EEF50D400AC1B41 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
 		6B693A2D1C51A82E00B03BEF /* ResourceLoadObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadObserver.h; sourceTree = "<group>"; };
 		6B693A331C51A95D00B03BEF /* ResourceLoadObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadObserver.cpp; sourceTree = "<group>"; };
 		6C4C96DA1AD4483500365A50 /* JSReadableStreamDefaultController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamDefaultController.cpp; sourceTree = "<group>"; };
@@ -20506,7 +20508,6 @@
 		B27535290B053814002CE64F /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				377A3A8F15EFCE9A0059F5C7 /* BitmapImageCG.cpp */,
 				0FCF33230F2B9715004B6795 /* ColorCG.cpp */,
 				B275352B0B053814002CE64F /* FloatPointCG.cpp */,
 				B275352C0B053814002CE64F /* FloatRectCG.cpp */,
@@ -20533,6 +20534,7 @@
 				A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */,
 				B27535360B053814002CE64F /* PDFDocumentImage.cpp */,
 				B27535370B053814002CE64F /* PDFDocumentImage.h */,
+				377A3A8F15EFCE9A0059F5C7 /* NativeImageCG.cpp */,
 				1FC40FB81655C5910040F29E /* SubimageCacheWithTimer.cpp */,
 				1FC40FB71655C5910040F29E /* SubimageCacheWithTimer.h */,
 				B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */,
@@ -20724,7 +20726,7 @@
 				CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */,
 				314BE3A41B3103FB00141982 /* NamedImageGeneratedImage.cpp */,
 				314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */,
-				6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */,
+				6B3480920EEF50D400AC1B41 /* NativeImage.h */,
 				B27535520B053814002CE64F /* Path.cpp */,
 				B27535530B053814002CE64F /* Path.h */,
 				A88DD4880B4629B000C02990 /* PathTraversalState.cpp */,
@@ -20766,6 +20768,7 @@
 				501BAAA813950E2C00F7ACEB /* WindRule.h */,
 				379919941200DDF400EA041C /* WOFFFileFormat.cpp */,
 				379919951200DDF400EA041C /* WOFFFileFormat.h */,
+				55A336F61D8209F40022C4C7 /* NativeImage.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -25702,7 +25705,7 @@
 				314BE3A71B3103FB00141982 /* NamedImageGeneratedImage.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
-				6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */,
+				6B3480940EEF50D400AC1B41 /* NativeImage.h in Headers */,
 				83B2D1751B8BCD6A00A02E47 /* NativeNodeFilter.h in Headers */,
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
@@ -25780,6 +25783,7 @@
 				1A569D150D7E2B82007C3983 /* objc_instance.h in Headers */,
 				1A569D170D7E2B82007C3983 /* objc_runtime.h in Headers */,
 				1A569D190D7E2B82007C3983 /* objc_utility.h in Headers */,
+				55A336F71D8209F40022C4C7 /* NativeImage.h in Headers */,
 				E16982551134629D00894115 /* ObjCRuntimeObject.h in Headers */,
 				7E5D7A77161D3F8F00896C34 /* OESElementIndexUint.h in Headers */,
 				9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */,
@@ -27599,7 +27603,7 @@
 				FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */,
 				FD31602612B0267600C1A359 /* BiquadProcessor.cpp in Sources */,
 				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
-				377A3A9015EFCE9B0059F5C7 /* BitmapImageCG.cpp in Sources */,
+				377A3A9015EFCE9B0059F5C7 /* NativeImageCG.cpp in Sources */,
 				1AFFC4541D5E81CB00267A66 /* BlacklistUpdater.mm in Sources */,
 				976D6C78122B8A3D001FD1F7 /* Blob.cpp in Sources */,
 				2EDEF1F3121B0EFC00726DB2 /* BlobData.cpp in Sources */,

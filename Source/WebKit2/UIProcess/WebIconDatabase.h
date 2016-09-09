@@ -31,7 +31,7 @@
 #include "WebIconDatabaseClient.h"
 #include <WebCore/IconDatabaseClient.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/NativeImagePtr.h>
+#include <WebCore/NativeImage.h>
 
 namespace API {
 class Data;

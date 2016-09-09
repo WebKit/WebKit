@@ -37,12 +37,23 @@ using namespace WebCore;
 CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef urlRef, WKSize size)
 {
     Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(urlRef));
-    return image ? image->getFirstCGImageRefOfSize(IntSize(static_cast<int>(size.width), static_cast<int>(size.height))) : 0;
+    return image ? image->nativeImageOfSize(IntSize(static_cast<int>(size.width), static_cast<int>(size.height))).get() : nullptr;
 }
 
 CFArrayRef WKIconDatabaseTryCopyCGImageArrayForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef urlRef)
 {
     Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(urlRef));
-    return image ? image->getCGImageArray().leakRef() : 0;
+    if (!image)
+        return nullptr;
+
+    auto nativeImages = image->framesNativeImages();
+    if (!nativeImages.size())
+        return nullptr;
+    
+    CFMutableArrayRef array = CFArrayCreateMutable(nullptr, nativeImages.size(), &kCFTypeArrayCallBacks);
+    for (auto nativeImage : nativeImages)
+        CFArrayAppendValue(array, nativeImage.get());
+    
+    return static_cast<CFArrayRef>(CFRetain(array));
 }
 

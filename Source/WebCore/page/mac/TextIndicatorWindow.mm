@@ -162,9 +162,9 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
     contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
     RetainPtr<CGImageRef> contentsImage;
     if (indicatorWantsContentCrossfade(*_textIndicator))
-        contentsImage = _textIndicator->contentImageWithHighlight()->getCGImageRef();
+        contentsImage = _textIndicator->contentImageWithHighlight()->nativeImage();
     else
-        contentsImage = _textIndicator->contentImage()->getCGImageRef();
+        contentsImage = _textIndicator->contentImage()->nativeImage();
 
     RetainPtr<NSMutableArray> bounceLayers = adoptNS([[NSMutableArray alloc] init]);
 
@@ -265,7 +265,7 @@ static RetainPtr<CAKeyframeAnimation> createBounceAnimation(CFTimeInterval durat
 static RetainPtr<CABasicAnimation> createContentCrossfadeAnimation(CFTimeInterval duration, TextIndicator& textIndicator)
 {
     RetainPtr<CABasicAnimation> crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
-    RetainPtr<CGImageRef> contentsImage = textIndicator.contentImage()->getCGImageRef();
+    RetainPtr<CGImageRef> contentsImage = textIndicator.contentImage()->nativeImage();
     [crossfadeAnimation setToValue:(id)contentsImage.get()];
     [crossfadeAnimation setFillMode:kCAFillModeForwards];
     [crossfadeAnimation setRemovedOnCompletion:NO];

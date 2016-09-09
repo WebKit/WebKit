@@ -29,7 +29,7 @@
 
 #include "ImageOrientation.h"
 #include "IntPoint.h"
-#include "NativeImagePtr.h"
+#include "NativeImage.h"
 #include "TextStream.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -62,7 +62,14 @@ const int cAnimationLoopInfinite = -1;
 const int cAnimationNone = -2;
 
 // SubsamplingLevel. 0 is no subsampling, 1 is half dimensions on each axis etc.
-typedef short SubsamplingLevel;
+using SubsamplingLevel = int;
+
+enum : SubsamplingLevel {
+    NilSubsamplingLevel = -1,
+    MinSubsamplingLevel = 0,
+    MaxSubsamplingLevel = 3,
+    DefaultSubsamplingLevel = MinSubsamplingLevel
+};
 
 class ImageSource {
     WTF_MAKE_NONCOPYABLE(ImageSource);
@@ -130,18 +137,18 @@ public:
     bool allowSubsamplingOfFrameAtIndex(size_t) const;
     
     // Size of optionally subsampled frame.
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = 0, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
+    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = DefaultSubsamplingLevel, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
     
     // Return the number of bytes in the decoded frame. If the frame is not yet
     // decoded then return 0.
-    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = 0) const;
+    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = DefaultSubsamplingLevel) const;
     
     float frameDurationAtIndex(size_t);
     ImageOrientation orientationAtIndex(size_t) const; // EXIF image orientation
     
     // Callers should not call this after calling clear() with a higher index;
     // see comments on clear() above.
-    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = 0);
+    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = DefaultSubsamplingLevel);
     
 private:
     void clearFrameBufferCache(size_t);
@@ -153,7 +160,7 @@ private:
     
     bool m_needsUpdateMetadata { false };
     size_t m_frameCount { 0 };
-    Optional<SubsamplingLevel> m_maximumSubsamplingLevel { 0 };
+    Optional<SubsamplingLevel> m_maximumSubsamplingLevel { DefaultSubsamplingLevel };
 
     // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
 #if PLATFORM(IOS)

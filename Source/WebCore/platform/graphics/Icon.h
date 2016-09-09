@@ -28,7 +28,7 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(IOS)
-#include "NativeImagePtr.h"
+#include "NativeImage.h"
 #include <CoreGraphics/CoreGraphics.h>
 #elif PLATFORM(MAC)
 OBJC_CLASS NSImage;

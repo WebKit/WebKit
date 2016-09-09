@@ -1,3 +1,26 @@
+2016-09-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Move the BitmapImage platform dependent code to a new file named NativeImage[CG|Cairo].cpp
+        https://bugs.webkit.org/show_bug.cgi?id=158684
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/C/cg/WKIconDatabaseCG.cpp:
+        (WKIconDatabaseTryGetCGImageForURL):
+        (WKIconDatabaseTryCopyCGImageArrayForURL):
+        It was the only place in the code which uses BitmapImage::getCGImageArray().
+        Call BitmapImage::framesNativeImages() instead and form the returned
+        Vector<NativeImagePtr> build the CFArrayRef.
+
+        * UIProcess/WebIconDatabase.h:
+        Include "NativeImage.h" instead of "NativeImagePtr.h".
+        
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _presentationSnapshotForPreviewItemController:]):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::isAlmostSolidColor):
+        Call BitmapImage::getCGImageRef() instead of calling BitmapImage::nativeImage().
+
 2016-09-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Move webkit2gtk.pc.in, webkit2gtk-web-extension.pc.in files under Source/WebKit2/gtk/

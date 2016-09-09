@@ -79,31 +79,22 @@ CFDataRef BitmapImage::getTIFFRepresentation()
     if (m_tiffRep)
         return m_tiffRep.get();
 
-    unsigned numFrames = frameCount();
+    auto nativeImages = this->framesNativeImages();
 
-    // If numFrames is zero, we know for certain this image doesn't have valid data
+    // If framesImages.size() is zero, we know for certain this image doesn't have valid data
     // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
     // in certain circumstances that call will spam the console with an error message
-    if (!numFrames)
-        return 0;
-
-    Vector<CGImageRef> images;
-    for (unsigned i = 0; i < numFrames; ++i ) {
-        CGImageRef cgImage = frameImageAtIndex(i).get();
-        if (cgImage)
-            images.append(cgImage);
-    }
-
-    unsigned numValidFrames = images.size();
+    if (!nativeImages.size())
+        return nullptr;
 
     RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(0, 0));
-    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, numValidFrames, 0));
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, nativeImages.size(), 0));
 
     if (!destination)
-        return 0;
+        return nullptr;
 
-    for (unsigned i = 0; i < numValidFrames; ++i)
-        CGImageDestinationAddImage(destination.get(), images[i], 0);
+    for (auto nativeImage : nativeImages)
+        CGImageDestinationAddImage(destination.get(), nativeImage.get(), 0);
 
     CGImageDestinationFinalize(destination.get());
 

@@ -1730,7 +1730,7 @@ void PluginView::windowedPluginVisibilityDidChange(bool isVisible, uint64_t wind
 #if PLATFORM(COCOA)
 static bool isAlmostSolidColor(BitmapImage* bitmap)
 {
-    CGImageRef image = bitmap->getCGImageRef();
+    CGImageRef image = bitmap->nativeImage().get();
     ASSERT(CGImageGetBitsPerComponent(image) == 8);
 
     CGBitmapInfo imageInfo = CGImageGetBitmapInfo(image);

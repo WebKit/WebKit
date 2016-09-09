@@ -142,7 +142,7 @@ void MockRealtimeVideoSourceMac::updatePlatformLayer() const
         if (!image)
             break;
 
-        m_previewImage = image->getCGImageRef();
+        m_previewImage = image->nativeImage();
         if (!m_previewImage)
             break;
 
@@ -154,7 +154,7 @@ void MockRealtimeVideoSourceMac::updatePlatformLayer() const
 
 void MockRealtimeVideoSourceMac::updateSampleBuffer()
 {
-    auto pixelBuffer = pixelBufferFromCGImage(imageBuffer()->copyImage()->getCGImageRef());
+    auto pixelBuffer = pixelBufferFromCGImage(imageBuffer()->copyImage()->nativeImage().get());
     auto sampleBuffer = CMSampleBufferFromPixelBuffer(pixelBuffer.get());
     
     mediaDataUpdated(MediaSampleAVFObjC::create(sampleBuffer.get()));

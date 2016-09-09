@@ -4131,7 +4131,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 {
     if (!_positionInformation.linkIndicator.contentImage)
         return nullptr;
-    return [[[UIImage alloc] initWithCGImage:_positionInformation.linkIndicator.contentImage->getCGImageRef()] autorelease];
+    return [[[UIImage alloc] initWithCGImage:_positionInformation.linkIndicator.contentImage->nativeImage().get()] autorelease];
 }
 
 - (NSArray *)_presentationRectsForPreviewItemController:(UIPreviewItemController *)controller

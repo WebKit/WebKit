@@ -47,24 +47,8 @@ typedef struct HBITMAP__ *HBITMAP;
 #endif
 
 namespace WebCore {
-    struct FrameData;
-}
-
-namespace WTF {
-    template<> struct VectorTraits<WebCore::FrameData> : public SimpleClassVectorTraits {
-        static const bool canInitializeWithMemset = false; // Not all FrameData members initialize to 0.
-    };
-}
-
-namespace WebCore {
 
 class Timer;
-
-namespace NativeImage {
-    IntSize size(const NativeImagePtr&);
-    bool hasAlpha(const NativeImagePtr&);
-    Color singlePixelSolidColor(const NativeImagePtr&);
-}
 
 // ================================================
 // FrameData Class
@@ -75,24 +59,33 @@ public:
     FrameData()
         : m_haveMetadata(false)
         , m_isComplete(false)
-        , m_hasAlpha(true)
+        , m_hasAlpha(false)
     {
     }
 
     ~FrameData()
-    { 
-        clear(true);
+    {
+        clearNativeImageSubImages(m_image);
     }
 
-    // Clear the cached image data on the frame, and (optionally) the metadata.
-    // Returns whether there was cached image data to clear.
-    bool clear(bool clearMetadata);
+    unsigned clear(bool clearMetadata)
+    {
+        unsigned frameBytes = usedFrameBytes();
+        
+        if (clearMetadata)
+            m_haveMetadata = false;
+
+        m_subsamplingLevel = DefaultSubsamplingLevel;
+        m_image = nullptr;
+
+        return frameBytes;
+    }
     
     unsigned usedFrameBytes() const { return m_image ? m_frameBytes : 0; }
 
     NativeImagePtr m_image;
     ImageOrientation m_orientation { DefaultImageOrientation };
-    SubsamplingLevel m_subsamplingLevel { 0 };
+    SubsamplingLevel m_subsamplingLevel { DefaultSubsamplingLevel };
     float m_duration { 0 };
     bool m_haveMetadata : 1;
     bool m_isComplete : 1;
@@ -105,10 +98,6 @@ public:
 // =================================================
 
 class BitmapImage final : public Image {
-    friend class GeneratedImage;
-    friend class CrossfadeGeneratedImage;
-    friend class GradientImage;
-    friend class GraphicsContext;
 public:
     static Ref<BitmapImage> create(NativeImagePtr&& nativeImage, ImageObserver* observer = nullptr)
     {
@@ -123,7 +112,7 @@ public:
 #endif
     virtual ~BitmapImage();
     
-    bool hasSingleSecurityOrigin() const override;
+    bool hasSingleSecurityOrigin() const override { return true; }
 
     // FloatSize due to override.
     FloatSize size() const override;
@@ -134,7 +123,7 @@ public:
     unsigned decodedSize() const { return m_decodedSize; }
 
     bool dataChanged(bool allDataReceived) override;
-    String filenameExtension() const override;
+    String filenameExtension() const override { return m_source.filenameExtension(); }
 
     // It may look unusual that there is no start animation call as public API. This is because
     // we start and stop animating lazily. Animation begins whenever someone draws the image. It will
@@ -155,12 +144,6 @@ public:
     CFDataRef getTIFFRepresentation() override;
 #endif
 
-#if USE(CG)
-    WEBCORE_EXPORT CGImageRef getCGImageRef() override;
-    CGImageRef getFirstCGImageRefOfSize(const IntSize&) override;
-    RetainPtr<CFArrayRef> getCGImageArray() override;
-#endif
-
 #if PLATFORM(WIN)
     bool getHBITMAP(HBITMAP) override;
     bool getHBITMAPOfSize(HBITMAP, const IntSize*) override;
@@ -174,7 +157,12 @@ public:
     Evas_Object* getEvasObject(Evas*) override;
 #endif
 
+    WEBCORE_EXPORT NativeImagePtr nativeImage() override;
     NativeImagePtr nativeImageForCurrentFrame() override;
+#if USE(CG)
+    NativeImagePtr nativeImageOfSize(const IntSize&) override;
+    Vector<NativeImagePtr> framesNativeImages() override;
+#endif
     ImageOrientation orientationForCurrentFrame() override { return frameOrientationAtIndex(currentFrame()); }
 
     bool currentFrameKnownToBeOpaque() override;
@@ -215,7 +203,6 @@ protected:
     size_t frameCount();
 
     NativeImagePtr frameImageAtIndex(size_t, float presentationScaleHint = 1);
-    NativeImagePtr copyUnscaledFrameImageAtIndex(size_t);
 
     bool haveFrameImageAtIndex(size_t);
 
@@ -229,7 +216,7 @@ protected:
     void cacheFrame(size_t index, SubsamplingLevel, ImageFrameCaching = CacheMetadataAndFrame);
 
     // Called before accessing m_frames[index] for info without decoding. Returns false on index out of bounds.
-    bool ensureFrameIsCached(size_t index, ImageFrameCaching = CacheMetadataAndFrame);
+    bool ensureFrameAtIndexIsCached(size_t index, ImageFrameCaching = CacheMetadataAndFrame);
 
     // Called to invalidate cached data. When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy

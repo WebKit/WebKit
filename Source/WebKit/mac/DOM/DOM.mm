@@ -561,7 +561,7 @@ id <DOMEventTarget> kit(EventTarget* eventTarget)
 
     if (textIndicator) {
         if (Image* image = textIndicator->contentImage())
-            *cgImage = (CGImageRef)CFAutorelease(CGImageRetain(image->getCGImageRef()));
+            *cgImage = image->nativeImage().autorelease();
     }
 
     RetainPtr<NSMutableArray> rectArray = adoptNS([[NSMutableArray alloc] init]);

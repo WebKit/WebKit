@@ -32,7 +32,7 @@
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
-#include "NativeImagePtr.h"
+#include "NativeImage.h"
 #include <wtf/Optional.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -137,8 +137,11 @@ public:
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
+    virtual NativeImagePtr nativeImage() { return nullptr; }
+    virtual NativeImagePtr nativeImageOfSize(const IntSize&) { return nullptr; }
     virtual NativeImagePtr nativeImageForCurrentFrame() { return nullptr; }
     virtual ImageOrientation orientationForCurrentFrame() { return ImageOrientation(); }
+    virtual Vector<NativeImagePtr> framesNativeImages() { return { }; }
 
     // Accessors for native image formats.
 
@@ -148,12 +151,6 @@ public:
 
 #if PLATFORM(COCOA)
     virtual CFDataRef getTIFFRepresentation() { return nullptr; }
-#endif
-
-#if USE(CG)
-    virtual CGImageRef getCGImageRef() { return nullptr; }
-    virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) { return nullptr; }
-    virtual RetainPtr<CFArrayRef> getCGImageArray() { return nullptr; }
 #endif
 
 #if PLATFORM(WIN)

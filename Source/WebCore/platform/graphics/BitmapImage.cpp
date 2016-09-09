@@ -70,11 +70,11 @@ BitmapImage::BitmapImage(NativeImagePtr&& image, ImageObserver* observer)
 {
     // Since we don't have a decoder, we can't figure out the image orientation.
     // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
-    m_sizeRespectingOrientation = m_size = NativeImage::size(image);
+    m_sizeRespectingOrientation = m_size = nativeImageSize(image);
     m_decodedSize = m_size.area() * 4;
-    
+
     m_frames.grow(1);
-    m_frames[0].m_hasAlpha = NativeImage::hasAlpha(image);
+    m_frames[0].m_hasAlpha = nativeImageHasAlpha(image);
     m_frames[0].m_haveMetadata = true;
     m_frames[0].m_image = WTFMove(image);
 }
@@ -83,18 +83,6 @@ BitmapImage::~BitmapImage()
 {
     invalidatePlatformData();
     stopAnimation();
-}
-
-void BitmapImage::clearTimer()
-{
-    m_frameTimer = nullptr;
-}
-
-void BitmapImage::startTimer(double delay)
-{
-    ASSERT(!m_frameTimer);
-    m_frameTimer = std::make_unique<Timer>(*this, &BitmapImage::advanceAnimation);
-    m_frameTimer->startOneShot(delay);
 }
 
 bool BitmapImage::haveFrameImageAtIndex(size_t index)
@@ -106,11 +94,6 @@ bool BitmapImage::haveFrameImageAtIndex(size_t index)
         return false;
 
     return m_frames[index].m_image;
-}
-
-bool BitmapImage::hasSingleSecurityOrigin() const
-{
-    return true;
 }
 
 void BitmapImage::destroyDecodedData(bool destroyAll)
@@ -125,9 +108,7 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
         // The underlying frame isn't actually changing (we're just trying to
         // save the memory for the framebuffer data), so we don't need to clear
         // the metadata.
-        unsigned frameBytes = m_frames[i].m_frameBytes;
-        if (m_frames[i].clear(false))
-            frameBytesCleared += frameBytes;
+        frameBytesCleared += m_frames[i].clear(false);
     }
 
     m_source.clear(destroyAll, clearBeforeFrame, data(), m_allDataReceived);
@@ -150,8 +131,8 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
         return;
 
     unsigned allFrameBytes = 0;
-    for (size_t i = 0; i < m_frames.size(); ++i)
-        allFrameBytes += m_frames[i].usedFrameBytes();
+    for (auto& frame : m_frames)
+        allFrameBytes += frame.usedFrameBytes();
 
     if (allFrameBytes > largeAnimationCutoff) {
         LOG(Images, "BitmapImage %p destroyDecodedDataIfNecessary destroyingData: allFrameBytes=%u cutoff=%u", this, allFrameBytes, largeAnimationCutoff);
@@ -288,21 +269,19 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     // frame affected by appending new data here. Thus we have to clear all the
     // incomplete frames to be safe.
     unsigned frameBytesCleared = 0;
-    for (size_t i = 0; i < m_frames.size(); ++i) {
+    for (auto& frame : m_frames) {
         // NOTE: Don't call frameIsCompleteAtIndex() here, that will try to
         // decode any uncached (i.e. never-decoded or
         // cleared-on-a-previous-pass) frames!
-        unsigned frameBytes = m_frames[i].m_frameBytes;
-        if (m_frames[i].m_haveMetadata && !m_frames[i].m_isComplete)
-            frameBytesCleared += (m_frames[i].clear(true) ? frameBytes : 0);
+        if (frame.m_haveMetadata && !frame.m_isComplete)
+            frameBytesCleared += frame.clear(true);
     }
     destroyMetadataAndNotify(frameBytesCleared, ClearedSource::No);
 #else
     // FIXME: why is this different for iOS?
     int deltaBytes = 0;
     if (!m_frames.isEmpty()) {
-        int bytes = m_frames[m_frames.size() - 1].m_frameBytes;
-        if (m_frames[m_frames.size() - 1].clear(true)) {
+        if (int bytes = m_frames[m_frames.size() - 1].clear(true)) {
             deltaBytes += bytes;
             deltaBytes += m_decodedPropertiesSize;
             m_decodedPropertiesSize = 0;
@@ -337,11 +316,6 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     return isSizeAvailable();
 }
 
-String BitmapImage::filenameExtension() const
-{
-    return m_source.filenameExtension();
-}
-
 size_t BitmapImage::frameCount()
 {
     if (!m_haveFrameCount) {
@@ -366,7 +340,7 @@ bool BitmapImage::isSizeAvailable()
     return m_sizeAvailable;
 }
 
-bool BitmapImage::ensureFrameIsCached(size_t index, ImageFrameCaching frameCaching)
+bool BitmapImage::ensureFrameAtIndexIsCached(size_t index, ImageFrameCaching frameCaching)
 {
     if (index >= frameCount())
         return false;
@@ -394,8 +368,7 @@ NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, float presentationSc
         LOG(Images, "  subsamplingLevel was %d, resampling", m_frames[index].m_subsamplingLevel);
 
         // If the image is already cached, but at too small a size, re-decode a larger version.
-        int sizeChange = -m_frames[index].m_frameBytes;
-        m_frames[index].clear(true);
+        int sizeChange = -m_frames[index].clear(true);
         invalidatePlatformData();
         m_decodedSize += sizeChange;
         if (imageObserver())
@@ -408,10 +381,49 @@ NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, float presentationSc
 
     return m_frames[index].m_image;
 }
+    
+NativeImagePtr BitmapImage::nativeImage()
+{
+    return frameImageAtIndex(0);
+}
+
+NativeImagePtr BitmapImage::nativeImageForCurrentFrame()
+{
+    return frameImageAtIndex(m_currentFrame);
+}
+    
+#if USE(CG)
+NativeImagePtr BitmapImage::nativeImageOfSize(const IntSize& size)
+{
+    size_t count = frameCount();
+    
+    for (size_t i = 0; i < count; ++i) {
+        auto image = frameImageAtIndex(i);
+        if (image && nativeImageSize(image) == size)
+            return image;
+    }
+    
+    // Fallback to the first frame image if we can't find the right size
+    return frameImageAtIndex(0);
+}
+    
+Vector<NativeImagePtr> BitmapImage::framesNativeImages()
+{
+    Vector<NativeImagePtr> images;
+    size_t count = frameCount();
+    
+    for (size_t i = 0; i < count; ++i) {
+        if (auto image = frameImageAtIndex(i))
+            images.append(image);
+    }
+    
+    return images;
+}
+#endif
 
 bool BitmapImage::frameIsCompleteAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index, CacheMetadataOnly))
+    if (!ensureFrameAtIndexIsCached(index, CacheMetadataOnly))
         return false;
 
     return m_frames[index].m_isComplete;
@@ -419,20 +431,15 @@ bool BitmapImage::frameIsCompleteAtIndex(size_t index)
 
 float BitmapImage::frameDurationAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index, CacheMetadataOnly))
+    if (!ensureFrameAtIndexIsCached(index, CacheMetadataOnly))
         return 0;
 
     return m_frames[index].m_duration;
 }
 
-NativeImagePtr BitmapImage::nativeImageForCurrentFrame()
-{
-    return frameImageAtIndex(currentFrame());
-}
-
 bool BitmapImage::frameHasAlphaAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index, CacheMetadataOnly))
+    if (!ensureFrameAtIndexIsCached(index, CacheMetadataOnly))
         return true;
 
     if (m_frames[index].m_haveMetadata)
@@ -448,13 +455,39 @@ bool BitmapImage::currentFrameKnownToBeOpaque()
 
 ImageOrientation BitmapImage::frameOrientationAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index, CacheMetadataOnly))
+    if (!ensureFrameAtIndexIsCached(index, CacheMetadataOnly))
         return ImageOrientation();
 
     if (m_frames[index].m_haveMetadata)
         return m_frames[index].m_orientation;
 
     return m_source.orientationAtIndex(index);
+}
+
+Color BitmapImage::singlePixelSolidColor()
+{
+    // If the image size is not available yet or if the image will be animating don't use the solid color optimization.
+    if (frameCount() != 1)
+        return Color();
+
+    if (m_solidColor)
+        return m_solidColor.value();
+
+    // If the frame image is not loaded, first use the decoder to get the size of the image.
+    if (!haveFrameImageAtIndex(0) && m_source.frameSizeAtIndex(0) != IntSize(1, 1)) {
+        m_solidColor = Color();
+        return m_solidColor.value();
+    }
+
+    // Cache the frame image. The size will be calculated from the NativeImagePtr.
+    if (!ensureFrameAtIndexIsCached(0))
+        return Color();
+
+    ASSERT(m_frames.size());
+    m_solidColor = nativeImageSinglePixelSolidColor(m_frames[0].m_image);
+    
+    ASSERT(m_solidColor);
+    return m_solidColor.value();
 }
 
 #if !ASSERT_DISABLED
@@ -478,9 +511,91 @@ int BitmapImage::repetitionCount(bool imageKnownToBeComplete)
     return m_repetitionCount;
 }
 
+void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode mode, ImageOrientationDescription description)
+{
+    if (destRect.isEmpty() || srcRect.isEmpty())
+        return;
+
+#if PLATFORM(IOS)
+    startAnimation(DoNotCatchUp);
+#else
+    startAnimation();
+#endif
+
+    Color color = singlePixelSolidColor();
+    if (color.isValid()) {
+        fillWithSolidColor(context, destRect, color, op);
+        return;
+    }
+
+    auto image = frameImageAtIndex(m_currentFrame, subsamplingScale(context, destRect, srcRect));
+    if (!image) // If it's too early we won't have an image yet.
+        return;
+
+    ImageOrientation orientation(description.imageOrientation());
+    if (description.respectImageOrientation() == RespectImageOrientation)
+        orientation = frameOrientationAtIndex(m_currentFrame);
+
+    drawNativeImage(image, context, destRect, srcRect, m_size, op, mode, orientation);
+
+    if (imageObserver())
+        imageObserver()->didDraw(this);
+}
+    
+void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+{
+    if (tileRect.isEmpty())
+        return;
+
+    if (!ctxt.drawLuminanceMask()) {
+        Image::drawPattern(ctxt, tileRect, transform, phase, spacing, op, destRect, blendMode);
+        return;
+    }
+
+    if (!m_cachedImage) {
+        auto buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(tileRect.size()), ColorSpaceSRGB, ctxt);
+        if (!buffer)
+            return;
+
+        ImageObserver* observer = imageObserver();
+
+        // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
+        setImageObserver(nullptr);
+
+        draw(buffer->context(), tileRect, tileRect, op, blendMode, ImageOrientationDescription());
+
+        setImageObserver(observer);
+        buffer->convertToLuminanceMask();
+
+        m_cachedImage = buffer->copyImage(DontCopyBackingStore, Unscaled);
+        if (!m_cachedImage)
+            return;
+    }
+    
+    ctxt.setDrawLuminanceMask(false);
+    m_cachedImage->drawPattern(ctxt, tileRect, transform, phase, spacing, op, destRect, blendMode);
+}
+
 bool BitmapImage::shouldAnimate()
 {
     return (repetitionCount(false) != cAnimationNone && !m_animationFinished && imageObserver());
+}
+
+bool BitmapImage::canAnimate()
+{
+    return shouldAnimate() && frameCount() > 1;
+}
+
+void BitmapImage::clearTimer()
+{
+    m_frameTimer = nullptr;
+}
+
+void BitmapImage::startTimer(double delay)
+{
+    ASSERT(!m_frameTimer);
+    m_frameTimer = std::make_unique<Timer>(*this, &BitmapImage::advanceAnimation);
+    m_frameTimer->startOneShot(delay);
 }
 
 void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
@@ -580,60 +695,6 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
     startTimer(0);
 }
 
-void BitmapImage::stopAnimation()
-{
-    // This timer is used to animate all occurrences of this image. Don't invalidate
-    // the timer unless all renderers have stopped drawing.
-    clearTimer();
-}
-
-void BitmapImage::resetAnimation()
-{
-    stopAnimation();
-    m_currentFrame = 0;
-    m_repetitionsComplete = 0;
-    m_desiredFrameStartTime = 0;
-    m_animationFinished = false;
-    
-    // For extremely large animations, when the animation is reset, we just throw everything away.
-    destroyDecodedDataIfNecessary(true);
-}
-
-void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const AffineTransform& transform,
-    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
-{
-    if (tileRect.isEmpty())
-        return;
-
-    if (!ctxt.drawLuminanceMask()) {
-        Image::drawPattern(ctxt, tileRect, transform, phase, spacing, op, destRect, blendMode);
-        return;
-    }
-    if (!m_cachedImage) {
-        auto buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(tileRect.size()), ColorSpaceSRGB, ctxt);
-        if (!buffer)
-            return;
-
-        ImageObserver* observer = imageObserver();
-
-        // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
-        setImageObserver(nullptr);
-
-        draw(buffer->context(), tileRect, tileRect, op, blendMode, ImageOrientationDescription());
-
-        setImageObserver(observer);
-        buffer->convertToLuminanceMask();
-
-        m_cachedImage = buffer->copyImage(DontCopyBackingStore, Unscaled);
-        if (!m_cachedImage)
-            return;
-    }
-
-    ctxt.setDrawLuminanceMask(false);
-    m_cachedImage->drawPattern(ctxt, tileRect, transform, phase, spacing, op, destRect, blendMode);
-}
-
-
 void BitmapImage::advanceAnimation()
 {
     internalAdvanceAnimation();
@@ -683,35 +744,23 @@ bool BitmapImage::internalAdvanceAnimation(AnimationAdvancement advancement)
     return advancedAnimation;
 }
 
-Color BitmapImage::singlePixelSolidColor()
+void BitmapImage::stopAnimation()
 {
-    // If the image size is not available yet or if the image will be animating don't use the solid color optimization.
-    if (frameCount() != 1)
-        return Color();
-    
-    if (m_solidColor)
-        return m_solidColor.value();
-
-    // If the frame image is not loaded, first use the decoder to get the size of the image.
-    if (!haveFrameImageAtIndex(0) && m_source.frameSizeAtIndex(0, 0) != IntSize(1, 1)) {
-        m_solidColor = Color();
-        return m_solidColor.value();
-    }
-
-    // Cache the frame image. The size will be calculated from the NativeImagePtr.
-    if (!ensureFrameIsCached(0))
-        return Color();
-    
-    ASSERT(m_frames.size());
-    m_solidColor = NativeImage::singlePixelSolidColor(m_frames[0].m_image.get());
-    
-    ASSERT(m_solidColor);
-    return m_solidColor.value();
+    // This timer is used to animate all occurrences of this image. Don't invalidate
+    // the timer unless all renderers have stopped drawing.
+    clearTimer();
 }
-    
-bool BitmapImage::canAnimate()
+
+void BitmapImage::resetAnimation()
 {
-    return shouldAnimate() && frameCount() > 1;
+    stopAnimation();
+    m_currentFrame = 0;
+    m_repetitionsComplete = 0;
+    m_desiredFrameStartTime = 0;
+    m_animationFinished = false;
+
+    // For extremely large animations, when the animation is reset, we just throw everything away.
+    destroyDecodedDataIfNecessary(true);
 }
 
 void BitmapImage::dump(TextStream& ts) const

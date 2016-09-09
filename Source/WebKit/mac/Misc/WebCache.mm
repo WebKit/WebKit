@@ -204,7 +204,7 @@
     WebCore::CachedImage& cachedImage = downcast<WebCore::CachedImage>(*cachedResource);
     if (!cachedImage.hasImage())
         return nullptr;
-    return cachedImage.image()->getCGImageRef();
+    return cachedImage.image()->nativeImage().get();
 }
 
 #endif // PLATFORM(IOS)

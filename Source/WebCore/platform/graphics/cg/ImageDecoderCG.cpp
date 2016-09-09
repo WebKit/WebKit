@@ -157,7 +157,7 @@ bool ImageDecoder::isSizeAvailable() const
 IntSize ImageDecoder::size() const
 {
     if (m_size.isEmpty())
-        m_size = frameSizeAtIndex(0, 0);
+        m_size = frameSizeAtIndex(0);
     return m_size;
 }
 

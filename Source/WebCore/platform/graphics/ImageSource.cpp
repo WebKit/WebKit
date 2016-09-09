@@ -94,20 +94,19 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 SubsamplingLevel ImageSource::calculateMaximumSubsamplingLevel() const
 {
     if (!m_allowSubsampling || !allowSubsamplingOfFrameAtIndex(0))
-        return 0;
+        return DefaultSubsamplingLevel;
     
     // FIXME: this value was chosen to be appropriate for iOS since the image
     // subsampling is only enabled by default on iOS. Choose a different value
     // if image subsampling is enabled on other platform.
     const int maximumImageAreaBeforeSubsampling = 5 * 1024 * 1024;
-    const SubsamplingLevel maxSubsamplingLevel = 3;
-    
-    for (SubsamplingLevel level = 0; level < maxSubsamplingLevel; ++level) {
+
+    for (SubsamplingLevel level = MinSubsamplingLevel; level < MaxSubsamplingLevel; ++level) {
         if (frameSizeAtIndex(0, level).area() < maximumImageAreaBeforeSubsampling)
             return level;
     }
     
-    return maxSubsamplingLevel;
+    return MaxSubsamplingLevel;
 }
 
 void ImageSource::updateMetadata()
@@ -148,12 +147,12 @@ bool ImageSource::isSizeAvailable() const
 
 IntSize ImageSource::size() const
 {
-    return frameSizeAtIndex(0, 0);
+    return frameSizeAtIndex(0, DefaultSubsamplingLevel);
 }
 
 IntSize ImageSource::sizeRespectingOrientation() const
 {
-    return frameSizeAtIndex(0, 0, RespectImageOrientation);
+    return frameSizeAtIndex(0, DefaultSubsamplingLevel, RespectImageOrientation);
 }
 
 size_t ImageSource::frameCount()

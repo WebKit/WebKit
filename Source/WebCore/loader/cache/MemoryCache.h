@@ -25,7 +25,7 @@
 #ifndef Cache_h
 #define Cache_h
 
-#include "NativeImagePtr.h"
+#include "NativeImage.h"
 #include "SecurityOriginHash.h"
 #include "SessionID.h"
 #include "Timer.h"

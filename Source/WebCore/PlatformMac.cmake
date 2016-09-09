@@ -385,7 +385,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/cocoa/WebSystemBackdropLayer.mm
     platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
 
-    platform/graphics/cg/BitmapImageCG.cpp
     platform/graphics/cg/ColorCG.cpp
     platform/graphics/cg/FloatPointCG.cpp
     platform/graphics/cg/FloatRectCG.cpp
@@ -402,6 +401,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/IntPointCG.cpp
     platform/graphics/cg/IntRectCG.cpp
     platform/graphics/cg/IntSizeCG.cpp
+    platform/graphics/cg/NativeImageCG.cpp
     platform/graphics/cg/PDFDocumentImage.cpp
     platform/graphics/cg/PathCG.cpp
     platform/graphics/cg/PatternCG.cpp

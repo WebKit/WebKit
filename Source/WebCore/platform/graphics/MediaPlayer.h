@@ -36,7 +36,7 @@
 #include "URL.h"
 #include "LayoutRect.h"
 #include "MediaPlayerEnums.h"
-#include "NativeImagePtr.h"
+#include "NativeImage.h"
 #include "PlatformLayer.h"
 #include "PlatformMediaResourceLoader.h"
 #include "PlatformMediaSession.h"
