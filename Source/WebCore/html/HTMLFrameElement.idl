@@ -21,7 +21,7 @@
 interface HTMLFrameElement : HTMLElement {
 
     [Reflect] attribute DOMString frameBorder;
-    [Reflect] attribute USVString longDesc;
+    [Reflect, URL] attribute USVString longDesc;
 
     [Reflect, TreatNullAs=EmptyString] attribute DOMString marginHeight;
     [Reflect, TreatNullAs=EmptyString] attribute DOMString marginWidth;

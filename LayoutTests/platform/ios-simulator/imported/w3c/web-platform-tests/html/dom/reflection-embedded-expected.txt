@@ -3231,95 +3231,95 @@ PASS iframe.frameBorder: IDL set to object "test-valueOf" followed by IDL get
 PASS iframe.longDesc: typeof IDL attribute 
 PASS iframe.longDesc: IDL get with DOM attribute unset 
 PASS iframe.longDesc: setAttribute() to "" followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to "" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got ""
+PASS iframe.longDesc: setAttribute() to "" followed by IDL get 
 PASS iframe.longDesc: setAttribute() to " foo " followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to " foo " followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/foo" but got " foo "
+PASS iframe.longDesc: setAttribute() to " foo " followed by IDL get 
 PASS iframe.longDesc: setAttribute() to "http://site.example/" followed by getAttribute() 
 PASS iframe.longDesc: setAttribute() to "http://site.example/" followed by IDL get 
 PASS iframe.longDesc: setAttribute() to "//site.example/path???@#l" followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to "//site.example/path???@#l" followed by IDL get assert_equals: expected "http://site.example/path???@#l" but got "//site.example/path???@#l"
+PASS iframe.longDesc: setAttribute() to "//site.example/path???@#l" followed by IDL get 
 PASS iframe.longDesc: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f "
+PASS iframe.longDesc: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by IDL get 
 PASS iframe.longDesc: setAttribute() to undefined followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to undefined followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/undefined" but got "undefined"
+PASS iframe.longDesc: setAttribute() to undefined followed by IDL get 
 PASS iframe.longDesc: setAttribute() to 7 followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to 7 followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/7" but got "7"
+PASS iframe.longDesc: setAttribute() to 7 followed by IDL get 
 PASS iframe.longDesc: setAttribute() to 1.5 followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to 1.5 followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/1.5" but got "1.5"
+PASS iframe.longDesc: setAttribute() to 1.5 followed by IDL get 
 PASS iframe.longDesc: setAttribute() to true followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to true followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/true" but got "true"
+PASS iframe.longDesc: setAttribute() to true followed by IDL get 
 PASS iframe.longDesc: setAttribute() to false followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to false followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/false" but got "false"
+PASS iframe.longDesc: setAttribute() to false followed by IDL get 
 PASS iframe.longDesc: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/[object%20Object]" but got "[object Object]"
+PASS iframe.longDesc: setAttribute() to object "[object Object]" followed by IDL get 
 PASS iframe.longDesc: setAttribute() to NaN followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to NaN followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/NaN" but got "NaN"
+PASS iframe.longDesc: setAttribute() to NaN followed by IDL get 
 PASS iframe.longDesc: setAttribute() to Infinity followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to Infinity followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/Infinity" but got "Infinity"
+PASS iframe.longDesc: setAttribute() to Infinity followed by IDL get 
 PASS iframe.longDesc: setAttribute() to -Infinity followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to -Infinity followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/-Infinity" but got "-Infinity"
+PASS iframe.longDesc: setAttribute() to -Infinity followed by IDL get 
 PASS iframe.longDesc: setAttribute() to "\0" followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to "\0" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got "\0"
+PASS iframe.longDesc: setAttribute() to "\0" followed by IDL get 
 PASS iframe.longDesc: setAttribute() to null followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to null followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/null" but got "null"
+PASS iframe.longDesc: setAttribute() to null followed by IDL get 
 PASS iframe.longDesc: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/test-toString" but got "test-toString"
+PASS iframe.longDesc: setAttribute() to object "test-toString" followed by IDL get 
 PASS iframe.longDesc: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL iframe.longDesc: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/test-valueOf" but got "test-valueOf"
+PASS iframe.longDesc: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS iframe.longDesc: IDL set to "" should not throw 
 PASS iframe.longDesc: IDL set to "" followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to "" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got ""
+PASS iframe.longDesc: IDL set to "" followed by IDL get 
 PASS iframe.longDesc: IDL set to " foo " should not throw 
 PASS iframe.longDesc: IDL set to " foo " followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to " foo " followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/foo" but got " foo "
+PASS iframe.longDesc: IDL set to " foo " followed by IDL get 
 PASS iframe.longDesc: IDL set to "http://site.example/" should not throw 
 PASS iframe.longDesc: IDL set to "http://site.example/" followed by getAttribute() 
 PASS iframe.longDesc: IDL set to "http://site.example/" followed by IDL get 
 PASS iframe.longDesc: IDL set to "//site.example/path???@#l" should not throw 
 PASS iframe.longDesc: IDL set to "//site.example/path???@#l" followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to "//site.example/path???@#l" followed by IDL get assert_equals: expected "http://site.example/path???@#l" but got "//site.example/path???@#l"
+PASS iframe.longDesc: IDL set to "//site.example/path???@#l" followed by IDL get 
 PASS iframe.longDesc: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " should not throw 
 PASS iframe.longDesc: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f "
+PASS iframe.longDesc: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by IDL get 
 PASS iframe.longDesc: IDL set to undefined should not throw 
 PASS iframe.longDesc: IDL set to undefined followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to undefined followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/undefined" but got "undefined"
+PASS iframe.longDesc: IDL set to undefined followed by IDL get 
 PASS iframe.longDesc: IDL set to 7 should not throw 
 PASS iframe.longDesc: IDL set to 7 followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to 7 followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/7" but got "7"
+PASS iframe.longDesc: IDL set to 7 followed by IDL get 
 PASS iframe.longDesc: IDL set to 1.5 should not throw 
 PASS iframe.longDesc: IDL set to 1.5 followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to 1.5 followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/1.5" but got "1.5"
+PASS iframe.longDesc: IDL set to 1.5 followed by IDL get 
 PASS iframe.longDesc: IDL set to true should not throw 
 PASS iframe.longDesc: IDL set to true followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to true followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/true" but got "true"
+PASS iframe.longDesc: IDL set to true followed by IDL get 
 PASS iframe.longDesc: IDL set to false should not throw 
 PASS iframe.longDesc: IDL set to false followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to false followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/false" but got "false"
+PASS iframe.longDesc: IDL set to false followed by IDL get 
 PASS iframe.longDesc: IDL set to object "[object Object]" should not throw 
 PASS iframe.longDesc: IDL set to object "[object Object]" followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to object "[object Object]" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/[object%20Object]" but got "[object Object]"
+PASS iframe.longDesc: IDL set to object "[object Object]" followed by IDL get 
 PASS iframe.longDesc: IDL set to NaN should not throw 
 PASS iframe.longDesc: IDL set to NaN followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to NaN followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/NaN" but got "NaN"
+PASS iframe.longDesc: IDL set to NaN followed by IDL get 
 PASS iframe.longDesc: IDL set to Infinity should not throw 
 PASS iframe.longDesc: IDL set to Infinity followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to Infinity followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/Infinity" but got "Infinity"
+PASS iframe.longDesc: IDL set to Infinity followed by IDL get 
 PASS iframe.longDesc: IDL set to -Infinity should not throw 
 PASS iframe.longDesc: IDL set to -Infinity followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to -Infinity followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/-Infinity" but got "-Infinity"
+PASS iframe.longDesc: IDL set to -Infinity followed by IDL get 
 PASS iframe.longDesc: IDL set to "\0" should not throw 
 PASS iframe.longDesc: IDL set to "\0" followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to "\0" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got "\0"
+PASS iframe.longDesc: IDL set to "\0" followed by IDL get 
 PASS iframe.longDesc: IDL set to null should not throw 
 PASS iframe.longDesc: IDL set to null followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to null followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/null" but got "null"
+PASS iframe.longDesc: IDL set to null followed by IDL get 
 PASS iframe.longDesc: IDL set to object "test-toString" should not throw 
 PASS iframe.longDesc: IDL set to object "test-toString" followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to object "test-toString" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/test-toString" but got "test-toString"
+PASS iframe.longDesc: IDL set to object "test-toString" followed by IDL get 
 PASS iframe.longDesc: IDL set to object "test-valueOf" should not throw 
 PASS iframe.longDesc: IDL set to object "test-valueOf" followed by getAttribute() 
-FAIL iframe.longDesc: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/test-valueOf" but got "test-valueOf"
+PASS iframe.longDesc: IDL set to object "test-valueOf" followed by IDL get 
 PASS iframe.marginHeight: typeof IDL attribute 
 PASS iframe.marginHeight: IDL get with DOM attribute unset 
 PASS iframe.marginHeight: setAttribute() to "" followed by getAttribute() 

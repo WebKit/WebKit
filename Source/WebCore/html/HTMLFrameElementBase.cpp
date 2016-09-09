@@ -202,7 +202,7 @@ void HTMLFrameElementBase::setFocus(bool received)
 
 bool HTMLFrameElementBase::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute.name() == srcAttr || HTMLFrameOwnerElement::isURLAttribute(attribute);
+    return attribute.name() == srcAttr || attribute.name() == longdescAttr || HTMLFrameOwnerElement::isURLAttribute(attribute);
 }
 
 bool HTMLFrameElementBase::isHTMLContentAttribute(const Attribute& attribute) const
