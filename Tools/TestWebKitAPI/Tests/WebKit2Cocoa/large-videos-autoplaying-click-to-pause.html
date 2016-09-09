@@ -29,10 +29,19 @@
                     } catch(e) { }
                 }, 0);
             }
+
+            function beganAutoplaying() {
+                setTimeout(function() {
+                    try {
+                        window.webkit.messageHandlers.playingHandler.postMessage("autoplayed");
+                    } catch(e) {
+                    }
+                }, 0)
+            }
         </script>
     </head>
     <body onmousedown=handleMouseDown()>
-        <video autoplay loop id="first" src="large-video-with-audio.mp4" onpause=handleFirstPause()></video>
-        <video autoplay loop id="second" src="large-video-with-audio.mp4" onpause=handleSecondPause()></video>
+        <video autoplay onplaying=beganAutoplaying() loop id="first" src="large-video-with-audio.mp4" onpause=handleFirstPause()></video>
+        <video autoplay onplaying=beganAutoplaying() loop id="second" src="large-video-with-audio.mp4" onpause=handleSecondPause()></video>
     </body>
 <html>

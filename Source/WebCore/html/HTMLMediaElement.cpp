@@ -481,6 +481,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_elementIsHidden(document.hidden())
     , m_creatingControls(false)
     , m_receivedLayoutSizeChanged(false)
+    , m_hasEverNotifiedAboutPlaying(false)
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     , m_mediaControlsDependOnPageScaleFactor(false)
     , m_haveSetUpCaptionContainer(false)
@@ -1014,6 +1015,14 @@ void HTMLMediaElement::notifyAboutPlaying()
 {
     dispatchEvent(Event::create(eventNames().playingEvent, false, true));
     resolvePendingPlayPromises();
+
+    m_hasEverNotifiedAboutPlaying = true;
+    scheduleUpdatePlaybackControlsManager();
+}
+
+bool HTMLMediaElement::hasEverNotifiedAboutPlaying() const
+{
+    return m_hasEverNotifiedAboutPlaying;
 }
 
 void HTMLMediaElement::pendingActionTimerFired()

@@ -10,7 +10,7 @@
     }
 </style>
 <script>
-    function handleLoaded() {
+    function muteFirstVideoAndScrollToSecondVideo() {
         document.querySelector("#foo").muted = true;
         document.querySelector("#bar").scrollIntoView();
         setTimeout(function() {
@@ -19,9 +19,17 @@
             } catch(e) { }
         }, 0);
     }
+    function beganAutoplaying() {
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.playingHandler.postMessage("autoplayed");
+            } catch(e) {
+            }
+        }, 0)
+    }
 </script>
-<body onload=handleLoaded()>
-    <video autoplay loop id="foo"><source src="large-video-with-audio.mp4"></video>
+<body>
+    <video autoplay onplaying=beganAutoplaying() loop id="foo"><source src="large-video-with-audio.mp4"></video>
     <br>
     <video id="bar"><source src="large-video-with-audio.mp4"></video>
 </body>
