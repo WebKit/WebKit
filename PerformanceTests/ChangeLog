@@ -1,3 +1,13 @@
+2016-09-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Perf test Animation/css-accelerated-animation.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=161795
+
+        Skip Animation/css-accelerated-animation.html since this only works as a MobileSafari
+        perf test.
+
+        * Skipped:
+
 2016-09-08  Simon Fraser  <simon.fraser@apple.com>
 
         Add a content-animation test with accelerated CSS animations
