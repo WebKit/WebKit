@@ -54,13 +54,13 @@
 - (int)start
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->start();
+    return IMPL->startForBindings();
 }
 
 - (void)setStart:(int)newStart
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setStart(newStart);
+    IMPL->setStartForBindings(newStart);
 }
 
 - (BOOL)reversed

@@ -1,5 +1,17 @@
 2016-09-08  Chris Dumez  <cdumez@apple.com>
 
+        ol.start may return incorrect value for reversed lists when not explicitly set
+        https://bugs.webkit.org/show_bug.cgi?id=161713
+
+        Reviewed by Zalan Bujtas.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-expected.txt:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/ol.start-reflection-2-expected.txt:
+
+2016-09-08  Chris Dumez  <cdumez@apple.com>
+
         Add support for HTMLIframeElement.allowFullscreen attribute
         https://bugs.webkit.org/show_bug.cgi?id=161757
 

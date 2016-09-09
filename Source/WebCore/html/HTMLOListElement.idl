@@ -19,7 +19,7 @@
 
 interface HTMLOListElement : HTMLElement {
     [Reflect] attribute boolean compact;
-    attribute long start;
+    [ImplementedAs=startForBindings] attribute long start;
     [Reflect] attribute boolean reversed;
     [Reflect] attribute DOMString type;
 };
