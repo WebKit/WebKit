@@ -139,7 +139,7 @@ void AcceleratedDrawingAreaProxy::didUpdateBackingStoreState(uint64_t backingSto
     else {
         m_hasReceivedFirstUpdate = true;
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
         if (m_pendingNativeSurfaceHandleForCompositing) {
             setNativeSurfaceHandleForCompositing(m_pendingNativeSurfaceHandleForCompositing);
             m_pendingNativeSurfaceHandleForCompositing = 0;
@@ -261,7 +261,7 @@ void AcceleratedDrawingAreaProxy::updateAcceleratedCompositingMode(const LayerTr
     m_webPageProxy.updateAcceleratedCompositingMode(layerTreeContext);
 }
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
 void AcceleratedDrawingAreaProxy::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     if (!m_hasReceivedFirstUpdate) {

@@ -40,7 +40,7 @@ messages -> DrawingArea {
     AddTransactionCallbackID(uint64_t callbackID)
 #endif
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     SetNativeSurfaceHandleForCompositing(uint64_t handle)
     DestroyNativeSurfaceHandleForCompositing() -> (bool handled)
 #endif

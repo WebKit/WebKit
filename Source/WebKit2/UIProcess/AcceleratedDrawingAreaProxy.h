@@ -46,7 +46,7 @@ public:
     CoordinatedLayerTreeHostProxy& coordinatedLayerTreeHostProxy() const { return *m_coordinatedLayerTreeHostProxy.get(); }
 #endif
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t);
     void destroyNativeSurfaceHandleForCompositing();
 #endif
@@ -99,7 +99,7 @@ protected:
     // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
     bool m_hasReceivedFirstUpdate { false };
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     uint64_t m_pendingNativeSurfaceHandleForCompositing { 0 };
 #endif
 };

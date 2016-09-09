@@ -408,7 +408,7 @@ void LayerTreeHostGtk::createTextureMapper()
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
 }
 
-#if !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
 void LayerTreeHostGtk::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     cancelPendingLayerFlush();

@@ -67,7 +67,7 @@ private:
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
 
-#if !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
 #endif
 

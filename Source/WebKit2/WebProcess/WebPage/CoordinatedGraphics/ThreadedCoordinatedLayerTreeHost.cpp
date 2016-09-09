@@ -123,7 +123,7 @@ void ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties(const Viewpor
     didChangeViewport();
 }
 
-#if PLATFORM(GTK) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
 void ThreadedCoordinatedLayerTreeHost::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     m_layerTreeContext.contextID = handle;
