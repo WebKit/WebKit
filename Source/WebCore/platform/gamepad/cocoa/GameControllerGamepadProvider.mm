@@ -30,7 +30,13 @@
 #import "GameControllerGamepad.h"
 #import "GamepadProviderClient.h"
 #import "Logging.h"
+#import "SoftLinking.h"
 #import <GameController/GameController.h>
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(GameController)
+SOFT_LINK_CLASS_OPTIONAL(GameController, GCController);
+SOFT_LINK_CONSTANT_MAY_FAIL(GameController, GCControllerDidConnectNotification, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(GameController, GCControllerDidDisconnectNotification, NSString *)
 
 namespace WebCore {
 
@@ -98,15 +104,19 @@ void GameControllerGamepadProvider::startMonitoringGamepads(GamepadProviderClien
     if (m_connectObserver)
         return;
 
-    m_connectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidConnectNotification object:nil queue:nil usingBlock:^(NSNotification *notification) {
-        GameControllerGamepadProvider::singleton().controllerDidConnect(notification.object, ConnectionVisibility::Visible);
-    }];
+    if (canLoadGCControllerDidConnectNotification()) {
+        m_connectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:getGCControllerDidConnectNotification() object:nil queue:nil usingBlock:^(NSNotification *notification) {
+            GameControllerGamepadProvider::singleton().controllerDidConnect(notification.object, ConnectionVisibility::Visible);
+        }];
+    }
 
-    m_disconnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidDisconnectNotification object:nil queue:nil usingBlock:^(NSNotification *notification) {
-        GameControllerGamepadProvider::singleton().controllerDidDisconnect(notification.object);
-    }];
+    if (canLoadGCControllerDidDisconnectNotification()) {
+        m_disconnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:getGCControllerDidDisconnectNotification() object:nil queue:nil usingBlock:^(NSNotification *notification) {
+            GameControllerGamepadProvider::singleton().controllerDidDisconnect(notification.object);
+        }];
+    }
 
-    for (GCController *controller in [GCController controllers])
+    for (GCController *controller in [getGCControllerClass() controllers])
         controllerDidConnect(controller, ConnectionVisibility::Invisible);
 }
 
