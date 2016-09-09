@@ -4802,10 +4802,8 @@ sub NativeToJSValue
     return "jsBoolean($value)" if $type eq "boolean";
 
     if ($type eq "Date") {
-        my $handlingForNaN = $signature->extendedAttributes->{"TreatReturnedNaNDateAs"};
-        return "jsDateOrNull(state, $value)" if !defined $handlingForNaN || $handlingForNaN eq "Null";
-        return "jsDateOrNaN(state, $value)" if $handlingForNaN eq "NaN";
-        die "Unknown value for TreatReturnedNaNDateAs extended attribute";
+        return "jsDateOrNull(state, $value)" if $signature->isNullable;
+        return "jsDate(state, $value)";
     }
 
     if ($codeGenerator->IsNumericType($type) or $type eq "DOMTimeStamp") {

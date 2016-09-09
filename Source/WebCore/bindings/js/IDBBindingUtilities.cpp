@@ -106,6 +106,8 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
     case KeyType::String:
         return jsStringWithCache(&state, key->string());
     case KeyType::Date:
+        // FIXME: This should probably be jsDate() as per:
+        // http://w3c.github.io/IndexedDB/#request-convert-a-key-to-a-value
         return jsDateOrNull(&state, key->date());
     case KeyType::Number:
         return jsNumber(key->number());

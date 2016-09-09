@@ -249,11 +249,8 @@ WEBCORE_EXPORT uint16_t toUInt16(JSC::ExecState&, JSC::JSValue);
 WEBCORE_EXPORT int64_t toInt64(JSC::ExecState&, JSC::JSValue);
 WEBCORE_EXPORT uint64_t toUInt64(JSC::ExecState&, JSC::JSValue);
 
-// Returns a Date instance for the specified value, or NaN if the date is not a number.
-JSC::JSValue jsDateOrNaN(JSC::ExecState*, double);
-
-// Returns a Date instance for the specified value, or null if the value is NaN or infinity.
-JSC::JSValue jsDateOrNull(JSC::ExecState*, double);
+JSC::JSValue jsDate(JSC::ExecState*, double value);
+JSC::JSValue jsDateOrNull(JSC::ExecState*, double value);
 
 // NaN if the value can't be converted to a date.
 double valueToDate(JSC::ExecState*, JSC::JSValue);

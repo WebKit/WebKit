@@ -119,7 +119,6 @@ SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|Acti
 SkipVTableValidation
 SuppressToJSObject
 TreatNullAs=EmptyString
-TreatReturnedNaNDateAs=Null|NaN
 TypedArray=*
 URL
 Unforgeable

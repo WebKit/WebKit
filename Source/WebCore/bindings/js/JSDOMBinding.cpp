@@ -165,16 +165,15 @@ String valueToUSVStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
     return value.isUndefinedOrNull() ? String() : valueToUSVString(exec, value);
 }
 
-JSValue jsDateOrNaN(ExecState* exec, double value)
+JSValue jsDate(ExecState* exec, double value)
 {
-    if (std::isnan(value))
-        return jsDoubleNumber(value);
-    return jsDateOrNull(exec, value);
+    return DateInstance::create(exec->vm(), exec->lexicalGlobalObject()->dateStructure(), value);
 }
 
 JSValue jsDateOrNull(ExecState* exec, double value)
 {
-    if (!std::isfinite(value))
+    // For nullable Date types, we use NaN as null value.
+    if (std::isnan(value))
         return jsNull();
     return DateInstance::create(exec->vm(), exec->lexicalGlobalObject()->dateStructure(), value);
 }

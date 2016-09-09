@@ -1138,6 +1138,8 @@ String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySy
 
 double HTMLMediaElement::getStartDate() const
 {
+    if (!m_player)
+        return std::numeric_limits<double>::quiet_NaN();
     return m_player->getStartDate().toDouble();
 }
 

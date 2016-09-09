@@ -66,7 +66,7 @@
     // playback state
     [SetterRaisesException] attribute unrestricted double currentTime;
     readonly attribute unrestricted double duration;
-    [TreatReturnedNaNDateAs=NaN] Date getStartDate();
+    Date getStartDate();
     readonly attribute boolean paused;
     attribute unrestricted double defaultPlaybackRate;
     attribute unrestricted double playbackRate;

@@ -60,7 +60,7 @@
     attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString value;
-    [SetterRaisesException] attribute Date valueAsDate;
+    [SetterRaisesException] attribute Date? valueAsDate;
     [SetterRaisesException] attribute unrestricted double valueAsNumber;
 
     [RaisesException] void stepUp(optional long n = 1);

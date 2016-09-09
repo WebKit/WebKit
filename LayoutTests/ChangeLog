@@ -1,3 +1,15 @@
+2016-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r186020): Null dereference in getStartDate()
+        https://bugs.webkit.org/show_bug.cgi?id=161733
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * fast/media/getStartDate-NaN-expected.txt: Added.
+        * fast/media/getStartDate-NaN.html: Added.
+
 2016-09-09  Youenn Fablet  <youenn@apple.com>
 
         Sync web-platform-tests up to revision 6d9c836
