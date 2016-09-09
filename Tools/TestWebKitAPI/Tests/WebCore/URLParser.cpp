@@ -164,7 +164,10 @@ TEST_F(URLParserTest, Basic)
     checkURL("file://localhost/path", {"file", "", "", "", 0, "/path", "", "", "file:///path"});
     checkURL("file://localhost/", {"file", "", "", "", 0, "/", "", "", "file:///"});
     checkURL("file://localhost", {"file", "", "", "", 0, "/", "", "", "file:///"});
-    // FIXME: check file://lOcAlHoSt etc.
+    checkURL("file://lOcAlHoSt", {"file", "", "", "", 0, "/", "", "", "file:///"});
+    checkURL("file://lOcAlHoSt/", {"file", "", "", "", 0, "/", "", "", "file:///"});
+    checkURL("file:/pAtH/", {"file", "", "", "", 0, "/pAtH/", "", "", "file:///pAtH/"});
+    checkURL("file:/pAtH", {"file", "", "", "", 0, "/pAtH", "", "", "file:///pAtH"});
     checkURL("file:?query", {"file", "", "", "", 0, "/", "query", "", "file:///?query"});
     checkURL("file:#fragment", {"file", "", "", "", 0, "/", "", "fragment", "file:///#fragment"});
     checkURL("file:?query#fragment", {"file", "", "", "", 0, "/", "query", "fragment", "file:///?query#fragment"});
@@ -268,6 +271,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("http:\\\\foo.com\\", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
     checkRelativeURL("http:\\\\foo.com/", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
     checkRelativeURL("http:\\\\foo.com", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
+    checkRelativeURL("http://ExAmPlE.CoM", "http://other.com", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
@@ -438,6 +442,12 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("file:path",
         {"file", "", "", "", 0, "/path", "", "", "file:///path"},
         {"file", "", "", "", 0, "path", "", "", "file://path"});
+    checkURLDifferences("file:pAtH",
+        {"file", "", "", "", 0, "/pAtH", "", "", "file:///pAtH"},
+        {"file", "", "", "", 0, "pAtH", "", "", "file://pAtH"});
+    checkURLDifferences("file:pAtH/",
+        {"file", "", "", "", 0, "/pAtH/", "", "", "file:///pAtH"},
+        {"file", "", "", "", 0, "pAtH/", "", "", "file://pAtH"});
     
     // FIXME: Fix and test incomplete percent encoded characters in the middle and end of the input string.
     // FIXME: Fix and test percent encoded upper case characters in the host.

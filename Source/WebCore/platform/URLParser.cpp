@@ -1334,12 +1334,12 @@ static Optional<String> domainToASCII(const String& domain)
 
     if (containsOnlyASCII(domain)) {
         if (domain.is8Bit())
-            return domain;
+            return domain.convertToASCIILowercase();
         Vector<LChar, hostnameBufferLength> buffer;
         size_t length = domain.length();
         buffer.reserveInitialCapacity(length);
         for (size_t i = 0; i < length; ++i)
-            buffer.append(domain[i]);
+            buffer.append(toASCIILower(domain[i]));
         return String(buffer.data(), length);
     }
     
