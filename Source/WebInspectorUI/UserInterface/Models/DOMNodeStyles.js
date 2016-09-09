@@ -45,6 +45,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         this._propertyNameToEffectivePropertyMap = {};
 
+        this._pendingRefreshTask = null;
         this.refresh();
     }
 
@@ -57,7 +58,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
     get needsRefresh()
     {
-        return this._refreshPending || this._needsRefresh;
+        return this._pendingRefreshTask || this._needsRefresh;
     }
 
     refreshIfNeeded()
@@ -69,11 +70,14 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
     refresh()
     {
-        if (this._refreshPending)
-            return;
+        if (this._pendingRefreshTask)
+            return this._pendingRefreshTask;
 
         this._needsRefresh = false;
-        this._refreshPending = true;
+
+        let fetchedMatchedStylesPromise = new WebInspector.WrappedPromise;
+        let fetchedInlineStylesPromise = new WebInspector.WrappedPromise;
+        let fetchedComputedStylesPromise = new WebInspector.WrappedPromise;
 
         function parseRuleMatchArrayPayload(matchArray, node, inherited)
         {
@@ -130,6 +134,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                 currentNode = currentNode.parentNode;
                 ++i;
             }
+
+            fetchedMatchedStylesPromise.resolve();
         }
 
         function fetchedInlineStyles(error, inlineStylePayload, attributesStylePayload)
@@ -138,6 +144,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             this._attributesStyle = attributesStylePayload ? this._parseStyleDeclarationPayload(attributesStylePayload, this._node, false, WebInspector.CSSStyleDeclaration.Type.Attribute) : null;
 
             this._updateStyleCascade();
+
+            fetchedComputedStylesPromise.resolve();
         }
 
         function fetchedComputedStyle(error, computedPropertiesPayload)
@@ -159,8 +167,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                 this._computedStyle.update(null, properties);
             else
                 this._computedStyle = new WebInspector.CSSStyleDeclaration(this, null, null, WebInspector.CSSStyleDeclaration.Type.Computed, this._node, false, null, properties);
-
-            this._refreshPending = false;
 
             let significantChange = false;
             for (let key in this._styleDeclarationsMap) {
@@ -226,6 +232,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             delete this._previousStyleDeclarationsMap;
 
             this.dispatchEventToListeners(WebInspector.DOMNodeStyles.Event.Refreshed, {significantChange});
+
+            fetchedComputedStylesPromise.resolve();
         }
 
         // FIXME: Convert to pushing StyleSheet information to the frontend. <rdar://problem/13213680>
@@ -234,6 +242,13 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, fetchedMatchedStyles.bind(this));
         CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, fetchedInlineStyles.bind(this));
         CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, fetchedComputedStyle.bind(this));
+
+        this._pendingRefreshTask = Promise.all([fetchedMatchedStylesPromise, fetchedInlineStylesPromise, fetchedComputedStylesPromise])
+        .then(() => {
+            this._pendingRefreshTask = null;
+        });
+
+        return this._pendingRefreshTask;
     }
 
     addRule(selector, text)
@@ -408,7 +423,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
     changeRuleSelector(rule, selector)
     {
         selector = selector || "";
-        var result = new WebInspector.WrappedPromise;
+        let result = new WebInspector.WrappedPromise;
 
         function ruleSelectorChanged(error, rulePayload)
         {
@@ -421,9 +436,9 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
             // Do a full refresh incase the rule no longer matches the node or the
             // matched selector indices changed.
-            this.refresh();
-
-            result.resolve(rulePayload);
+            this.refresh().then(() => {
+                result.resolve(rulePayload);
+            });
         }
 
         this._needsRefresh = true;

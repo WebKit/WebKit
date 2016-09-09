@@ -1,3 +1,66 @@
+2016-09-09  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Command-Z doesn't work when editing CSS selectors in Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=159734
+
+        Reviewed by Brian Burg.
+
+        Replace the current usage of -webkit-user-select with a textarea sized exactly the same as
+        the selector text which holds the current value of the selector.
+
+        * UserInterface/Test.html: Add WrappedPromise.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedMatchedStyles):
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedInlineStyles):
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        (WebInspector.DOMNodeStyles.prototype.refresh):
+        (WebInspector.DOMNodeStyles.prototype.changeRuleSelector.ruleSelectorChanged):
+        (WebInspector.DOMNodeStyles.prototype.changeRuleSelector):
+        Ensure that the promise returned by changeRuleSelector is only resolved once the initiated
+        refresh has completed, ensuring that all matched selectors are parsed and available.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section > .header):
+        (.style-declaration-section.locked > .header::before):
+        (.style-declaration-section.rule-disabled > .header > .icon):
+        (.style-declaration-section > .header > textarea):
+        (.style-declaration-section > .header > textarea:focus):
+        (.style-declaration-section > .header > textarea:focus + .selector):
+        (.style-declaration-section > .header > .selector):
+        (.style-declaration-section > .header > .selector:empty):
+        (.style-declaration-section > .header > .selector .matched):
+        (.style-declaration-section:not(.invalid-selector).rule-disabled > .header > .icon): Deleted.
+        (.style-declaration-section > .header > .selector:empty::before): Deleted.
+        (.style-declaration-section > .header > .selector:focus): Deleted.
+        (.style-declaration-section:matches(.locked, .selector-locked) > .header > .selector): Deleted.
+        (.style-declaration-section > .header > .selector > .matched): Deleted.
+        (.style-declaration-section.invalid-selector > .header > .icon): Deleted.
+        (.style-declaration-section.invalid-selector > .header > .selector): Deleted.
+        Added styling to make textarea invisible when not focused.
+        Also removed the .invalid-selector styles as the section now refreshed on all changes.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh.appendSelector):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh.appendSelectorTextKnownToMatch):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        (WebInspector.CSSStyleDeclarationSection.prototype.focusRuleSelector):
+        (WebInspector.CSSStyleDeclarationSection.prototype.get selectorEditable):
+        (WebInspector.CSSStyleDeclarationSection.prototype.get _currentSelectorText):
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleSelectorPaste.parseTextForRule):
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleSelectorPaste):
+        (WebInspector.CSSStyleDeclarationSection.prototype.get selectorLocked): Deleted.
+        Added a hidden textarea for modifying the selector of the represented style.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionEditorPreviousRule):
+        Now use new getters on CSSSTyleDeclarationSection for determining if a selector is editable.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Added --style-declaration-section-header-padding CSS variable.
+
 2016-09-08  Brian Burg  <bburg@apple.com>
 
         Web Inspector: make copy-user-interface-resources.pl easier to read

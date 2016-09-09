@@ -316,10 +316,6 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         }
     }
 
-    cssStyleDeclarationSectionBlurActiveEditor()
-    {
-    }
-
     cssStyleDeclarationSectionEditorNextRule(currentSection)
     {
         currentSection.clearSelection();
@@ -331,7 +327,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
     cssStyleDeclarationSectionEditorPreviousRule(currentSection, selectLastProperty) {
         currentSection.clearSelection();
 
-        if (selectLastProperty || currentSection.selectorLocked) {
+        if (selectLastProperty || !currentSection.selectorEditable) {
             var index = this._sections.indexOf(currentSection);
             index = index > 0 ? index - 1 : this._sections.length - 1;
 

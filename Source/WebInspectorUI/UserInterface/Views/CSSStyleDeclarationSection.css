@@ -55,11 +55,21 @@
 
 .style-declaration-section > .header {
     position: relative;
-
-    padding: 4px 5px 3px 25px;
-
+    padding: var(--style-declaration-section-header-padding);
     font-size: 11px;
     line-height: 12px;
+}
+
+.style-declaration-section.locked > .header::before {
+    float: right;
+    width: 8px;
+    height: 10px;
+    margin-left: 5px;
+    content: "";
+    background-image: url(../Images/Locked.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px 10px;
 }
 
 .style-declaration-section > .header > .icon {
@@ -80,57 +90,43 @@
     filter: brightness(0.8);
 }
 
-.style-declaration-section:not(.invalid-selector).rule-disabled > .header > .icon {
+.style-declaration-section.rule-disabled > .header > .icon {
     opacity: 0.5;
+}
+
+.style-declaration-section > .header > textarea {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: var(--style-declaration-section-header-padding);
+    font-family: Menlo, monospace;
+    color: black;
+    background: transparent;
+    border: none;
+    outline: none;
+    opacity: 0;
+    resize: none;
+    -webkit-appearance: none;
+}
+
+.style-declaration-section > .header > textarea:focus {
+    opacity: 1;
+}
+
+.style-declaration-section > .header > textarea:focus + .selector {
+    opacity: 0;
 }
 
 .style-declaration-section > .header > .selector {
     font-family: Menlo, monospace;
     color: hsl(0, 0%, 50%);
-
-    outline: none;
-
-    cursor: text;
-
     word-wrap: break-word;
-
-    -webkit-user-select: text;
-    -webkit-user-modify: read-write-plaintext-only;
-}
-
-.style-declaration-section > .header > .selector:empty {
-    /* This prevents the cursor from disappearing when empty. */
-    display: inline-block;
-    min-width: 1px;
-}
-
-.style-declaration-section > .header > .selector:empty::before {
-    /* This prevents the cursor from positioning badly when empty. */
-    content: "";
-}
-
-.style-declaration-section > .header > .selector:focus {
-    color: black;
-}
-
-.style-declaration-section:matches(.locked, .selector-locked) > .header > .selector {
-    -webkit-user-modify: read-only;
-}
-
-.style-declaration-section.locked > .header::before {
-    float: right;
-
-    content: "";
-
-    width: 8px;
-    height: 10px;
-
-    background-image: url(../Images/Locked.svg);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 8px 10px;
-
-    margin-left: 5px;
 }
 
 .style-declaration-section > .header > .selector > .matched {
@@ -152,19 +148,6 @@
 
 .style-declaration-section > .header > .origin > .go-to-link {
     color: inherit !important;
-}
-
-.style-declaration-section.invalid-selector > .header > .icon {
-    top: 4px;
-    left: 6px;
-    width: 12px;
-    height: 12px;
-    content: url(../Images/Error.svg);
-}
-
-.style-declaration-section.invalid-selector > .header > .selector,
-.style-declaration-section.invalid-selector > .header > .selector> * {
-    color: red;
 }
 
 @media (-webkit-min-device-pixel-ratio: 2) {
