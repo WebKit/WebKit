@@ -6,6 +6,12 @@ make:
 	@xcopy /y /e "..\Localizations\en.lproj\*" "%ConfigurationBuildDir%\bin%PlatformArchitecture%\WebKit.resources\WebInspectorUI"
 	if errorlevel 1 exit 1
 
+	@xcopy /y /e "..\UserInterface\*" "%ConfigurationBuildDir%\bin%PlatformArchitecture%\WebKit.resources\WebInspectorUI"
+	if errorlevel 1 exit 1
+
+	@xcopy /y /e "..\AppleInternal\include\private\JavaScriptCore\inspector\InspectorBackendCommands.js" "%ConfigurationBuildDir%\bin%PlatformArchitecture%\WebKit.resources\WebInspectorUI\Protocol"
+	if errorlevel 1 exit 1
+
 	if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"
 
 clean:

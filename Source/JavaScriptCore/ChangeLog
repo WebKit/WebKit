@@ -1,3 +1,17 @@
+2016-09-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205192. rdar://problem/28097740
+
+    2016-08-30  Alex Christensen  <achristensen@webkit.org>
+
+            Fix WebInspectorUI in internal Windows build
+            https://bugs.webkit.org/show_bug.cgi?id=161221
+            rdar://problem/28019023
+
+            Reviewed by Brent Fulgham and Joseph Pecoraro.
+
+            * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+
 2016-08-30  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204570. rdar://problem/27991567
