@@ -1,3 +1,15 @@
+2016-09-09  Tim Horton  <timothy_horton@apple.com>
+
+        Text replacement candidates don't always overwrite the entire original string
+        https://bugs.webkit.org/show_bug.cgi?id=161779
+        <rdar://problem/28033492>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformEditorState):
+        Make use of the shared implementation of contextRangeForCandidateRequest.
+
 2016-09-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r205689.

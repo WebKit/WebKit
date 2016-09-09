@@ -3610,18 +3610,37 @@ String Editor::stringForCandidateRequest() const
 
     return String();
 }
+    
+RefPtr<Range> Editor::contextRangeForCandidateRequest() const
+{
+    const VisibleSelection& selection = m_frame.selection().selection();
+    return makeRange(startOfParagraph(selection.visibleStart()), endOfParagraph(selection.visibleEnd()));
+}
+    
+void Editor::selectTextCheckingResult(const TextCheckingResult& result)
+{
+    if (!result.length)
+        return;
+    
+    RefPtr<Range> contextRange = contextRangeForCandidateRequest();
+    if (!contextRange)
+        return;
+    
+    RefPtr<Range> replacementRange = TextIterator::subrange(contextRange.get(), result.location, result.length);
+    if (!replacementRange)
+        return;
+    
+    m_frame.selection().setSelectedRange(replacementRange.get(), UPSTREAM, true);
+}
 
 void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
 {
     const VisibleSelection& selection = m_frame.selection().selection();
-    RefPtr<Range> candidateRange = candidateRangeForSelection(m_frame);
     int candidateLength = acceptedCandidate.length;
 
     m_isHandlingAcceptedCandidate = true;
 
-    if (candidateWouldReplaceText(selection))
-        m_frame.selection().setSelectedRange(candidateRange.get(), UPSTREAM, true);
-
+    selectTextCheckingResult(acceptedCandidate);
     insertText(acceptedCandidate.replacement, 0);
 
     // Some candidates come with a space built in, and we do not need to add another space in that case.
