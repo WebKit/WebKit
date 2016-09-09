@@ -1,3 +1,9 @@
+2016-09-09  Ricky Mondello  <rmondello@apple.com>
+
+        Unreviewed. Added myself to the list of committers.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-09-09  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: Fix and optimize parsing file URLs ending with a host but no slash
