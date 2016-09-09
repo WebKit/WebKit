@@ -28,7 +28,7 @@
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString archive;
     [Reflect, TreatNullAs=EmptyString] attribute DOMString border;
-    [Reflect] attribute DOMString codeBase;
+    [Reflect, URL] attribute USVString codeBase;
     [Reflect] attribute DOMString codeType;
     [Reflect, URL] attribute USVString data;
     [Reflect] attribute boolean declare;

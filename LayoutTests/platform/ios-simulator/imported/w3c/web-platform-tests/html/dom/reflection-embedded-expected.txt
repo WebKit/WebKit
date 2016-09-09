@@ -6337,95 +6337,95 @@ FAIL object.vspace: IDL set to 4294967295 followed by IDL get assert_equals: exp
 PASS object.codeBase: typeof IDL attribute 
 PASS object.codeBase: IDL get with DOM attribute unset 
 PASS object.codeBase: setAttribute() to "" followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to "" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got ""
+PASS object.codeBase: setAttribute() to "" followed by IDL get 
 PASS object.codeBase: setAttribute() to " foo " followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to " foo " followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/foo" but got " foo "
+PASS object.codeBase: setAttribute() to " foo " followed by IDL get 
 PASS object.codeBase: setAttribute() to "http://site.example/" followed by getAttribute() 
 PASS object.codeBase: setAttribute() to "http://site.example/" followed by IDL get 
 PASS object.codeBase: setAttribute() to "//site.example/path???@#l" followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to "//site.example/path???@#l" followed by IDL get assert_equals: expected "http://site.example/path???@#l" but got "//site.example/path???@#l"
+PASS object.codeBase: setAttribute() to "//site.example/path???@#l" followed by IDL get 
 PASS object.codeBase: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f "
+PASS object.codeBase: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by IDL get 
 PASS object.codeBase: setAttribute() to undefined followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to undefined followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/undefined" but got "undefined"
+PASS object.codeBase: setAttribute() to undefined followed by IDL get 
 PASS object.codeBase: setAttribute() to 7 followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to 7 followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/7" but got "7"
+PASS object.codeBase: setAttribute() to 7 followed by IDL get 
 PASS object.codeBase: setAttribute() to 1.5 followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to 1.5 followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/1.5" but got "1.5"
+PASS object.codeBase: setAttribute() to 1.5 followed by IDL get 
 PASS object.codeBase: setAttribute() to true followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to true followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/true" but got "true"
+PASS object.codeBase: setAttribute() to true followed by IDL get 
 PASS object.codeBase: setAttribute() to false followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to false followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/false" but got "false"
+PASS object.codeBase: setAttribute() to false followed by IDL get 
 PASS object.codeBase: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/[object%20Object]" but got "[object Object]"
+PASS object.codeBase: setAttribute() to object "[object Object]" followed by IDL get 
 PASS object.codeBase: setAttribute() to NaN followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to NaN followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/NaN" but got "NaN"
+PASS object.codeBase: setAttribute() to NaN followed by IDL get 
 PASS object.codeBase: setAttribute() to Infinity followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to Infinity followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/Infinity" but got "Infinity"
+PASS object.codeBase: setAttribute() to Infinity followed by IDL get 
 PASS object.codeBase: setAttribute() to -Infinity followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to -Infinity followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/-Infinity" but got "-Infinity"
+PASS object.codeBase: setAttribute() to -Infinity followed by IDL get 
 PASS object.codeBase: setAttribute() to "\0" followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to "\0" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got "\0"
+PASS object.codeBase: setAttribute() to "\0" followed by IDL get 
 PASS object.codeBase: setAttribute() to null followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to null followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/null" but got "null"
+PASS object.codeBase: setAttribute() to null followed by IDL get 
 PASS object.codeBase: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/test-toString" but got "test-toString"
+PASS object.codeBase: setAttribute() to object "test-toString" followed by IDL get 
 PASS object.codeBase: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL object.codeBase: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/test-valueOf" but got "test-valueOf"
+PASS object.codeBase: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS object.codeBase: IDL set to "" should not throw 
 PASS object.codeBase: IDL set to "" followed by getAttribute() 
-FAIL object.codeBase: IDL set to "" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got ""
+PASS object.codeBase: IDL set to "" followed by IDL get 
 PASS object.codeBase: IDL set to " foo " should not throw 
 PASS object.codeBase: IDL set to " foo " followed by getAttribute() 
-FAIL object.codeBase: IDL set to " foo " followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/foo" but got " foo "
+PASS object.codeBase: IDL set to " foo " followed by IDL get 
 PASS object.codeBase: IDL set to "http://site.example/" should not throw 
 PASS object.codeBase: IDL set to "http://site.example/" followed by getAttribute() 
 PASS object.codeBase: IDL set to "http://site.example/" followed by IDL get 
 PASS object.codeBase: IDL set to "//site.example/path???@#l" should not throw 
 PASS object.codeBase: IDL set to "//site.example/path???@#l" followed by getAttribute() 
-FAIL object.codeBase: IDL set to "//site.example/path???@#l" followed by IDL get assert_equals: expected "http://site.example/path???@#l" but got "//site.example/path???@#l"
+PASS object.codeBase: IDL set to "//site.example/path???@#l" followed by IDL get 
 PASS object.codeBase: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " should not throw 
 PASS object.codeBase: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by getAttribute() 
-FAIL object.codeBase: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f "
+PASS object.codeBase: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " followed by IDL get 
 PASS object.codeBase: IDL set to undefined should not throw 
 PASS object.codeBase: IDL set to undefined followed by getAttribute() 
-FAIL object.codeBase: IDL set to undefined followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/undefined" but got "undefined"
+PASS object.codeBase: IDL set to undefined followed by IDL get 
 PASS object.codeBase: IDL set to 7 should not throw 
 PASS object.codeBase: IDL set to 7 followed by getAttribute() 
-FAIL object.codeBase: IDL set to 7 followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/7" but got "7"
+PASS object.codeBase: IDL set to 7 followed by IDL get 
 PASS object.codeBase: IDL set to 1.5 should not throw 
 PASS object.codeBase: IDL set to 1.5 followed by getAttribute() 
-FAIL object.codeBase: IDL set to 1.5 followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/1.5" but got "1.5"
+PASS object.codeBase: IDL set to 1.5 followed by IDL get 
 PASS object.codeBase: IDL set to true should not throw 
 PASS object.codeBase: IDL set to true followed by getAttribute() 
-FAIL object.codeBase: IDL set to true followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/true" but got "true"
+PASS object.codeBase: IDL set to true followed by IDL get 
 PASS object.codeBase: IDL set to false should not throw 
 PASS object.codeBase: IDL set to false followed by getAttribute() 
-FAIL object.codeBase: IDL set to false followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/false" but got "false"
+PASS object.codeBase: IDL set to false followed by IDL get 
 PASS object.codeBase: IDL set to object "[object Object]" should not throw 
 PASS object.codeBase: IDL set to object "[object Object]" followed by getAttribute() 
-FAIL object.codeBase: IDL set to object "[object Object]" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/[object%20Object]" but got "[object Object]"
+PASS object.codeBase: IDL set to object "[object Object]" followed by IDL get 
 PASS object.codeBase: IDL set to NaN should not throw 
 PASS object.codeBase: IDL set to NaN followed by getAttribute() 
-FAIL object.codeBase: IDL set to NaN followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/NaN" but got "NaN"
+PASS object.codeBase: IDL set to NaN followed by IDL get 
 PASS object.codeBase: IDL set to Infinity should not throw 
 PASS object.codeBase: IDL set to Infinity followed by getAttribute() 
-FAIL object.codeBase: IDL set to Infinity followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/Infinity" but got "Infinity"
+PASS object.codeBase: IDL set to Infinity followed by IDL get 
 PASS object.codeBase: IDL set to -Infinity should not throw 
 PASS object.codeBase: IDL set to -Infinity followed by getAttribute() 
-FAIL object.codeBase: IDL set to -Infinity followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/-Infinity" but got "-Infinity"
+PASS object.codeBase: IDL set to -Infinity followed by IDL get 
 PASS object.codeBase: IDL set to "\0" should not throw 
 PASS object.codeBase: IDL set to "\0" followed by getAttribute() 
-FAIL object.codeBase: IDL set to "\0" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/reflection-embedded.html" but got "\0"
+PASS object.codeBase: IDL set to "\0" followed by IDL get 
 PASS object.codeBase: IDL set to null should not throw 
 PASS object.codeBase: IDL set to null followed by getAttribute() 
-FAIL object.codeBase: IDL set to null followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/null" but got "null"
+PASS object.codeBase: IDL set to null followed by IDL get 
 PASS object.codeBase: IDL set to object "test-toString" should not throw 
 PASS object.codeBase: IDL set to object "test-toString" followed by getAttribute() 
-FAIL object.codeBase: IDL set to object "test-toString" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/test-toString" but got "test-toString"
+PASS object.codeBase: IDL set to object "test-toString" followed by IDL get 
 PASS object.codeBase: IDL set to object "test-valueOf" should not throw 
 PASS object.codeBase: IDL set to object "test-valueOf" followed by getAttribute() 
-FAIL object.codeBase: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected "http://localhost:8800/html/dom/test-valueOf" but got "test-valueOf"
+PASS object.codeBase: IDL set to object "test-valueOf" followed by IDL get 
 PASS object.codeType: typeof IDL attribute 
 PASS object.codeType: IDL get with DOM attribute unset 
 PASS object.codeType: setAttribute() to "" followed by getAttribute() 

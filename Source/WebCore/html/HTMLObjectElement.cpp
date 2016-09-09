@@ -362,7 +362,7 @@ void HTMLObjectElement::childrenChanged(const ChildChange& change)
 
 bool HTMLObjectElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute.name() == dataAttr || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#') || HTMLPlugInImageElement::isURLAttribute(attribute);
+    return attribute.name() == dataAttr || attribute.name() == codebaseAttr || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#') || HTMLPlugInImageElement::isURLAttribute(attribute);
 }
 
 const AtomicString& HTMLObjectElement::imageSourceURL() const
