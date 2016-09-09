@@ -150,12 +150,12 @@ static bool isSpecialScheme(StringView scheme)
         || scheme == "wss";
 }
 
-static StringView bufferView(const StringBuilder& builder, unsigned length)
+static StringView bufferView(const StringBuilder& builder, unsigned start, unsigned length)
 {
     ASSERT(builder.length() >= length);
     if (builder.is8Bit())
-        return StringView(builder.characters8(), length);
-    return StringView(builder.characters16(), length);
+        return StringView(builder.characters8() + start, length);
+    return StringView(builder.characters16() + start, length);
 }
 
 enum class URLParser::URLPart {
@@ -236,7 +236,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part)
         m_url.m_protocolIsInHTTPFamily = base.m_protocolIsInHTTPFamily;
         m_url.m_schemeEnd = base.m_schemeEnd;
     }
-    m_urlIsSpecial = isSpecialScheme(bufferView(m_buffer, m_url.m_schemeEnd));
+    m_urlIsSpecial = isSpecialScheme(bufferView(m_buffer, 0, m_url.m_schemeEnd));
 }
 
 static const char* dotASCIICode = "2e";
@@ -444,7 +444,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 m_buffer.append(toASCIILower(*c));
             else if (*c == ':') {
                 m_url.m_schemeEnd = m_buffer.length();
-                StringView urlScheme = bufferView(m_buffer, m_url.m_schemeEnd);
+                StringView urlScheme = bufferView(m_buffer, 0, m_url.m_schemeEnd);
                 m_url.m_protocolIsInHTTPFamily = urlScheme == "http" || urlScheme == "https";
                 if (urlScheme == "file") {
                     m_urlIsSpecial = true;
@@ -761,8 +761,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 if (!parseHost(authorityOrHostBegin, c))
                     return failure(input);
                 
-                // FIXME: Don't allocate a new string for this comparison.
-                if (m_buffer.toString().substring(m_url.m_passwordEnd) == "localhost")  {
+                if (bufferView(m_buffer, m_url.m_passwordEnd, m_buffer.length() - m_url.m_passwordEnd) == "localhost")  {
                     m_buffer.resize(m_url.m_passwordEnd);
                     m_url.m_hostEnd = m_buffer.length();
                     m_url.m_portEnd = m_url.m_hostEnd;
@@ -954,24 +953,19 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             break;
         }
 
-        m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
-        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
-        m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
-        m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
         if (!parseHost(authorityOrHostBegin, c))
             return failure(input);
         
-        // FIXME: Don't allocate a new string for this comparison.
-        if (m_buffer.toString().substring(m_url.m_passwordEnd) == "localhost")  {
+        if (bufferView(m_buffer, m_url.m_passwordEnd, m_buffer.length() - m_url.m_passwordEnd) == "localhost")  {
             m_buffer.resize(m_url.m_passwordEnd);
             m_url.m_hostEnd = m_buffer.length();
             m_url.m_portEnd = m_url.m_hostEnd;
-            m_buffer.append('/');
-            m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
-            m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
-            m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
-            m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
         }
+        m_buffer.append('/');
+        m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
+        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
         break;
     case State::PathStart:
         LOG_FINAL_STATE("PathStart");

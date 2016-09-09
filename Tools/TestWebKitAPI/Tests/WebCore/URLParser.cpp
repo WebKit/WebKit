@@ -157,6 +157,8 @@ TEST_F(URLParserTest, Basic)
     checkURL("file:////", {"file", "", "", "", 0, "//", "", "", "file:////"}); // This matches Firefox and URL::parse which I believe are correct, but not Chrome.
     checkURL("file:/path", {"file", "", "", "", 0, "/path", "", "", "file:///path"});
     checkURL("file://host/path", {"file", "", "", "host", 0, "/path", "", "", "file://host/path"});
+    checkURL("file://host", {"file", "", "", "host", 0, "/", "", "", "file://host/"});
+    checkURL("file://host/", {"file", "", "", "host", 0, "/", "", "", "file://host/"});
     checkURL("file:///path", {"file", "", "", "", 0, "/path", "", "", "file:///path"});
     checkURL("file:////path", {"file", "", "", "", 0, "//path", "", "", "file:////path"});
     checkURL("file://localhost/path", {"file", "", "", "", 0, "/path", "", "", "file:///path"});
@@ -423,6 +425,12 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("notspecial:\\\\foo.com", "http://example.org/foo/bar",
         {"notspecial", "", "", "", 0, "\\\\foo.com", "", "", "notspecial:\\\\foo.com"},
         {"notspecial", "", "", "foo.com", 0, "", "", "", "notspecial://foo.com"});
+    checkURLDifferences("file://notuser:notpassword@test",
+        {"", "", "", "", 0, "", "", "", "file://notuser:notpassword@test"},
+        {"file", "notuser", "notpassword", "test", 0, "/", "", "", "file://notuser:notpassword@test/"});
+    checkURLDifferences("file://notuser:notpassword@test/",
+        {"", "", "", "", 0, "", "", "", "file://notuser:notpassword@test/"},
+        {"file", "notuser", "notpassword", "test", 0, "/", "", "", "file://notuser:notpassword@test/"});
     
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
     // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.

@@ -1,3 +1,13 @@
+2016-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser: Fix and optimize parsing file URLs ending with a host but no slash
+        https://bugs.webkit.org/show_bug.cgi?id=161815
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-09-08  Dean Jackson  <dino@apple.com>
 
         Expose Apple Pencil data to Touch events
