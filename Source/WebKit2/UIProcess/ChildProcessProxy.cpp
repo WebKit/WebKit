@@ -51,7 +51,7 @@ void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchO
     if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX"))
         launchOptions.extraInitializationData.add(ASCIILiteral("user-directory-suffix"), userDirectorySuffix);
 
-#if !defined(NDEBUG) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(EFL))
     const char* varname;
     switch (launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:

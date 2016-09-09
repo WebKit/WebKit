@@ -128,7 +128,7 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-#ifndef NDEBUG
+#if ENABLE(DEVELOPER_MODE)
     if (!m_launchOptions.processCmdPrefix.isEmpty())
         processCmdPrefix = m_launchOptions.processCmdPrefix;
 #endif
