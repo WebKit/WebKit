@@ -1,3 +1,22 @@
+2016-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        HashMapImpl needs to m_buffer.clear() in its constructor
+        https://bugs.webkit.org/show_bug.cgi?id=161796
+
+        Reviewed by Keith Miller.
+        
+        This is the second time that I'm fixing a bug because AuxiliaryBarrier does not initialize
+        itself. That seemed like a good idea because maybe sometimes the user knows better how to
+        initialize it. But, it's not worth it if it's a constant source of bugs.
+        
+        So, I'm fixing it for good by making AuxiliaryBarrier::AuxiliaryBarrier() initialize its
+        m_value.
+
+        * runtime/AuxiliaryBarrier.h:
+        (JSC::AuxiliaryBarrier::AuxiliaryBarrier):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::DirectArguments):
+
 2016-09-09  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: promise.inherits(JSPromise::info())

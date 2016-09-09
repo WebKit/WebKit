@@ -41,8 +41,6 @@ DirectArguments::DirectArguments(VM& vm, Structure* structure, unsigned length, 
     , m_length(length)
     , m_minCapacity(capacity)
 {
-    m_overrides.clear();
-    
     // When we construct the object from C++ code, we expect the capacity to be at least as large as
     // length. JIT-allocated DirectArguments objects play evil tricks, though.
     ASSERT(capacity >= length);

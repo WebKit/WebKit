@@ -37,8 +37,7 @@ class VM;
 template<typename T>
 class AuxiliaryBarrier {
 public:
-    // This doesn't initialize m_value because I worry about performance on PLT, or something.
-    AuxiliaryBarrier() { }
+    AuxiliaryBarrier(): m_value() { }
     
     template<typename U>
     AuxiliaryBarrier(VM&, JSCell*, U&&);
