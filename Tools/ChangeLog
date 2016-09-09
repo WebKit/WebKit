@@ -1,3 +1,13 @@
+2016-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should parse URLs with non-special schemes
+        https://bugs.webkit.org/show_bug.cgi?id=161786
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] HashTable's rehash is not compatible to Ref<T> and ASan

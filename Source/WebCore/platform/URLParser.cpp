@@ -399,7 +399,6 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
     enum class State : uint8_t {
         SchemeStart,
         Scheme,
-        SchemeEndCheckForSlashes,
         NoScheme,
         SpecialRelativeOrAuthority,
         PathOrAuthority,
@@ -454,15 +453,34 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                     ++c;
                     break;
                 }
+                m_buffer.append(':');
                 if (isSpecialScheme(urlScheme)) {
                     m_urlIsSpecial = true;
                     if (base.protocol() == urlScheme)
                         state = State::SpecialRelativeOrAuthority;
                     else
                         state = State::SpecialAuthoritySlashes;
-                } else
-                    state = State::SchemeEndCheckForSlashes;
-                m_buffer.append(':');
+                } else {
+                    m_url.m_userStart = m_buffer.length();
+                    m_url.m_userEnd = m_url.m_userStart;
+                    m_url.m_passwordEnd = m_url.m_userStart;
+                    m_url.m_hostEnd = m_url.m_userStart;
+                    m_url.m_portEnd = m_url.m_userStart;
+                    auto maybeSlash = c;
+                    ++maybeSlash;
+                    if (maybeSlash != end && *maybeSlash == '/') {
+                        m_buffer.append('/');
+                        m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                        state = State::PathOrAuthority;
+                        ++c;
+                        ASSERT(*c == '/');
+                    } else {
+                        m_url.m_pathAfterLastSlash = m_url.m_userStart;
+                        state = State::CannotBeABaseURLPath;
+                    }
+                    ++c;
+                    break;
+                }
             } else {
                 m_buffer.clear();
                 state = State::NoScheme;
@@ -476,23 +494,6 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 m_buffer.clear();
                 state = State::NoScheme;
                 c = codePoints.begin();
-            }
-            break;
-        case State::SchemeEndCheckForSlashes:
-            LOG_STATE("SchemeEndCheckForSlashes");
-            if (*c == '/') {
-                m_buffer.append("//");
-                m_url.m_userStart = m_buffer.length();
-                state = State::PathOrAuthority;
-                ++c;
-            } else {
-                m_url.m_userStart = m_buffer.length();
-                m_url.m_userEnd = m_url.m_userStart;
-                m_url.m_passwordEnd = m_url.m_userStart;
-                m_url.m_hostEnd = m_url.m_userStart;
-                m_url.m_portEnd = m_url.m_userStart;
-                m_url.m_pathAfterLastSlash = m_url.m_userStart,
-                state = State::CannotBeABaseURLPath;
             }
             break;
         case State::NoScheme:
@@ -531,6 +532,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         case State::PathOrAuthority:
             LOG_STATE("PathOrAuthority");
             if (*c == '/') {
+                m_buffer.append('/');
+                m_url.m_userStart = m_buffer.length();
                 state = State::AuthorityOrHost;
                 ++c;
                 authorityOrHostBegin = c;
@@ -579,17 +582,15 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             break;
         case State::SpecialAuthoritySlashes:
             LOG_STATE("SpecialAuthoritySlashes");
+            m_buffer.append("//");
             if (*c == '/') {
                 ++c;
                 while (c != end && isTabOrNewline(*c))
                     ++c;
                 if (c == end)
                     return failure(input);
-                m_buffer.append('/');
-                if (*c == '/') {
-                    m_buffer.append('/');
+                if (*c == '/')
                     ++c;
-                }
             }
             state = State::SpecialAuthorityIgnoreSlashes;
             break;
@@ -858,9 +859,6 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         return failure(input);
     case State::Scheme:
         LOG_FINAL_STATE("Scheme");
-        break;
-    case State::SchemeEndCheckForSlashes:
-        LOG_FINAL_STATE("SchemeEndCheckForSlashes");
         break;
     case State::NoScheme:
         LOG_FINAL_STATE("NoScheme");

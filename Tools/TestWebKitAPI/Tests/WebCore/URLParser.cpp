@@ -193,6 +193,10 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://host:", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkURL("http://hos\tt\n:\t1\n2\t3\t/\npath", {"http", "", "", "host", 123, "/path", "", "", "http://host:123/path"});
     checkURL("http://user@example.org/path3", {"http", "user", "", "example.org", 0, "/path3", "", "", "http://user@example.org/path3"});
+    checkURL("sc:/pa/pa", {"sc", "", "", "", 0, "/pa/pa", "", "", "sc:/pa/pa"});
+    checkURL("sc:/pa", {"sc", "", "", "", 0, "/pa", "", "", "sc:/pa"});
+    checkURL("sc:/pa/", {"sc", "", "", "", 0, "/pa/", "", "", "sc:/pa/"});
+    checkURL("sc://pa/", {"sc", "", "", "pa", 0, "/", "", "", "sc://pa/"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -257,6 +261,8 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar"});
     checkRelativeURL("  \a  \t\n", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar"});
     checkRelativeURL(":foo.com\\", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/:foo.com/", "", "", "http://example.org/foo/:foo.com/"});
+    checkRelativeURL("http:/example.com/", "about:blank", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkRelativeURL("http:example.com/", "about:blank", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
@@ -402,6 +408,10 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences(":foo.com\\", "notspecial://example.org/foo/bar",
         {"notspecial", "", "", "example.org", 0, "/foo/:foo.com\\", "", "", "notspecial://example.org/foo/:foo.com\\"},
         {"notspecial", "", "", "example.org", 0, "/foo/:foo.com/", "", "", "notspecial://example.org/foo/:foo.com/"});
+    checkURLDifferences("sc://pa",
+        {"sc", "", "", "pa", 0, "/", "", "", "sc://pa/"},
+        {"sc", "", "", "pa", 0, "", "", "", "sc://pa"});
+
     
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
     // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.
@@ -476,8 +486,25 @@ TEST_F(URLParserTest, DefaultPort)
     checkURLDifferences("wss://host:444",
         {"wss", "", "", "host", 444, "/", "", "", "wss://host:444/"},
         {"wss", "", "", "host", 444, "", "", "", "wss://host:444"});
-    
-    // FIXME: Fix and check unknown schemes with ports, as well as ftps.
+
+    // 990 is the default ftps port in URL::parse, but it's not in the URL spec. Maybe it should be.
+    checkURL("ftps://host:990/", {"ftps", "", "", "host", 990, "/", "", "", "ftps://host:990/"});
+    checkURL("ftps://host:991/", {"ftps", "", "", "host", 991, "/", "", "", "ftps://host:991/"});
+    checkURLDifferences("ftps://host:990",
+        {"ftps", "", "", "host", 990, "/", "", "", "ftps://host:990/"},
+        {"ftps", "", "", "host", 990, "", "", "", "ftps://host:990"});
+    checkURLDifferences("ftps://host:991",
+        {"ftps", "", "", "host", 991, "/", "", "", "ftps://host:991/"},
+        {"ftps", "", "", "host", 991, "", "", "", "ftps://host:991"});
+
+    checkURL("unknown://host:80/", {"unknown", "", "", "host", 80, "/", "", "", "unknown://host:80/"});
+    checkURL("unknown://host:81/", {"unknown", "", "", "host", 81, "/", "", "", "unknown://host:81/"});
+    checkURLDifferences("unknown://host:80",
+        {"unknown", "", "", "host", 80, "/", "", "", "unknown://host:80/"},
+        {"unknown", "", "", "host", 80, "", "", "", "unknown://host:80"});
+    checkURLDifferences("unknown://host:81",
+        {"unknown", "", "", "host", 81, "/", "", "", "unknown://host:81/"},
+        {"unknown", "", "", "host", 81, "", "", "", "unknown://host:81"});
 }
     
 static void shouldFail(const String& urlString)
