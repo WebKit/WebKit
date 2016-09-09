@@ -72,6 +72,15 @@ void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
     out.printf(">");
 }
 
+bool JSString::equalSlowCase(ExecState* exec, JSString* other) const
+{
+    String str1 = value(exec);
+    String str2 = other->value(exec);
+    if (exec->hadException())
+        return false;
+    return WTF::equal(*str1.impl(), *str2.impl());
+}
+
 size_t JSString::estimatedSize(JSCell* cell)
 {
     JSString* thisObject = jsCast<JSString*>(cell);
