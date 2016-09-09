@@ -169,24 +169,59 @@ if ($forceToolInstall) {
 
 if ($shouldCombineMain) {
     # Remove Debug JavaScript and CSS files in Production builds.
-    system($perl, $combineResourcesCmd, '--input-dir', 'Debug', '--input-html', File::Spec->catfile($uiRoot, 'Main.html'), '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'Debug.js', '--output-style-name', 'Debug.css', '--strip');
+    system($perl, $combineResourcesCmd,
+        '--input-dir', 'Debug',
+        '--input-html', File::Spec->catfile($uiRoot, 'Main.html'),
+        '--input-html-dir', $uiRoot,
+        '--derived-sources-dir', $derivedSourcesDir,
+        '--output-dir', $derivedSourcesDir,
+        '--output-script-name', 'Debug.js',
+        '--output-style-name', 'Debug.css',
+        '--strip');
 
     # Combine the JavaScript and CSS files in Production builds into single files (Main.js and Main.css).
     my $derivedSourcesMainHTML = File::Spec->catfile($derivedSourcesDir, 'Main.html');
-    system($perl, $combineResourcesCmd, '--input-html', $derivedSourcesMainHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'Main.js', '--output-style-name', 'Main.css');
+    system($perl, $combineResourcesCmd,
+       '--input-html', $derivedSourcesMainHTML,
+       '--input-html-dir', $uiRoot,
+       '--derived-sources-dir', $derivedSourcesDir,
+       '--output-dir', $derivedSourcesDir,
+       '--output-script-name', 'Main.js',
+       '--output-style-name', 'Main.css');
 
     # Combine the CodeMirror JavaScript and CSS files in Production builds into single files (CodeMirror.js and CodeMirror.css).
-    system($perl, $combineResourcesCmd, '--input-dir', 'External/CodeMirror', '--input-html', $derivedSourcesMainHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'CodeMirror.js', '--output-style-name', 'CodeMirror.css');
+    system($perl, $combineResourcesCmd,
+       '--input-dir', 'External/CodeMirror',
+       '--input-html', $derivedSourcesMainHTML,
+       '--input-html-dir', $uiRoot,
+       '--derived-sources-dir', $derivedSourcesDir,
+       '--output-dir', $derivedSourcesDir,
+       '--output-script-name', 'CodeMirror.js',
+       '--output-style-name', 'CodeMirror.css');
 
     # Combine the Esprima JavaScript files in Production builds into a single file (Esprima.js).
-    system($perl, $combineResourcesCmd, '--input-dir', 'External/Esprima', '--input-html', $derivedSourcesMainHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'Esprima.js');
+    system($perl, $combineResourcesCmd,
+       '--input-dir', 'External/Esprima',
+       '--input-html', $derivedSourcesMainHTML,
+       '--input-html-dir', $uiRoot,
+       '--derived-sources-dir', $derivedSourcesDir,
+       '--output-dir', $derivedSourcesDir,
+       '--output-script-name', 'Esprima.js');
 
     # Combine the ESLint JavaScript files in Production builds into a single file (ESLint.js).
-    system($perl, $combineResourcesCmd, '--input-dir', 'External/ESLint', '--input-html', $derivedSourcesMainHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'ESLint.js');
+    system($perl, $combineResourcesCmd,
+       '--input-dir', 'External/ESLint',
+       '--input-html', $derivedSourcesMainHTML,
+       '--input-html-dir', $uiRoot,
+       '--derived-sources-dir', $derivedSourcesDir,
+       '--output-dir', $derivedSourcesDir,
+       '--output-script-name', 'ESLint.js');
 
     # Remove console.assert calls from the Main.js file.
     my $derivedSourcesMainJS = File::Spec->catfile($derivedSourcesDir, 'Main.js');
-    system($perl, File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'), '--input-script', $derivedSourcesMainJS, '--output-script', $derivedSourcesMainJS);
+    system($perl, File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'),
+        '--input-script', $derivedSourcesMainJS,
+        '--output-script', $derivedSourcesMainJS);
 
     # Fix Image URLs in the Main.css file by removing the "../".
     my $derivedSourcesMainCSS = File::Spec->catfile($derivedSourcesDir, 'Main.css');
@@ -258,10 +293,12 @@ if ($shouldCombineMain) {
     ditto(File::Spec->catfile($uiRoot, 'Workers'), $workersDir);
 
     # Remove console.assert calls from the Worker js files.
-    system($perl, File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'), '--input-directory', $workersDir);
+    system($perl, File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'),
+        '--input-directory', $workersDir);
 
     # Fix import references in Workers directories. This rewrites "../../External/script.js" import paths to their new locations.
-    system($perl, File::Spec->catfile($scriptsRoot, 'fix-worker-imports-for-optimized-builds.pl'), '--input-directory', $workersDir) and die "Failed to update Worker imports for optimized builds.";
+    system($perl, File::Spec->catfile($scriptsRoot, 'fix-worker-imports-for-optimized-builds.pl'),
+        '--input-directory', $workersDir) and die "Failed to update Worker imports for optimized builds.";
 } else {
     # Keep the files separate for engineering builds.
     ditto($uiRoot, $targetResourcePath);
@@ -269,12 +306,23 @@ if ($shouldCombineMain) {
 
 if ($shouldCombineTest) {
     # Combine the JavaScript files for testing into a single file (TestCombined.js).
-    system($perl, $combineResourcesCmd, '--input-html', File::Spec->catfile($uiRoot, 'Test.html'), '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'TestCombined.js', '--output-style-name', 'TestCombined.css');
+    system($perl, $combineResourcesCmd,
+        '--input-html', File::Spec->catfile($uiRoot, 'Test.html'),
+        '--derived-sources-dir', $derivedSourcesDir,
+        '--output-dir', $derivedSourcesDir,
+        '--output-script-name', 'TestCombined.js',
+        '--output-style-name', 'TestCombined.css');
 
     my $derivedSourcesTestHTML = File::Spec->catfile($derivedSourcesDir, 'Test.html');
     my $derivedSourcesTestJS = File::Spec->catfile($derivedSourcesDir, 'TestCombined.js');
     # Combine the Esprima JavaScript files for testing into a single file (Esprima.js).
-    system($perl, $combineResourcesCmd, '--input-dir', 'External/Esprima', '--input-html', $derivedSourcesTestHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'TestEsprima.js');
+    system($perl, $combineResourcesCmd,
+        '--input-dir', 'External/Esprima',
+        '--input-html', $derivedSourcesTestHTML,
+        '--input-html-dir', $uiRoot,
+        '--derived-sources-dir', $derivedSourcesDir,
+        '--output-dir', $derivedSourcesDir,
+        '--output-script-name', 'TestEsprima.js');
 
     # Export the license into TestCombined.js.
     my $targetTestJS = File::Spec->catfile($targetResourcePath, 'TestCombined.js');

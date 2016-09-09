@@ -1,5 +1,16 @@
 2016-09-08  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: make copy-user-interface-resources.pl easier to read
+        https://bugs.webkit.org/show_bug.cgi?id=161772
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/copy-user-interface-resources.pl:
+        Break long script invocations across multiple lines so that the
+        options and values are paired together.
+
+2016-09-08  Brian Burg  <bburg@apple.com>
+
         Web Inspector: get rid of extra copies of jsmin.py and cssmin.py
         https://bugs.webkit.org/show_bug.cgi?id=161770
         <rdar://problem/28216813>
