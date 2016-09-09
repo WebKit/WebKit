@@ -25,12 +25,34 @@
 #include "PlatformDisplayX11.h"
 #include <GL/glx.h>
 #include <cairo.h>
+#include <cstdlib>
+#include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
 #include <cairo-gl.h>
 #endif
 
 namespace WebCore {
+
+// Because of driver bugs, exiting the program when there are active pbuffers
+// can crash the X server (this has been observed with the official Nvidia drivers).
+// We need to ensure that we clean everything up on exit. There are several reasons
+// that GraphicsContext3Ds will still be alive at exit, including user error (memory
+// leaks) and the page cache. In any case, we don't want the X server to crash.
+static HashSet<GLContextGLX*>& activeContexts()
+{
+    static std::once_flag onceFlag;
+    static LazyNeverDestroyed<HashSet<GLContextGLX*>> contexts;
+    std::call_once(onceFlag, [] {
+        contexts.construct();
+        std::atexit([] {
+            for (auto* context : activeContexts())
+                context->clear();
+        });
+    });
+    return contexts;
+}
 
 #if !defined(PFNGLXSWAPINTERVALSGIPROC)
 typedef int (*PFNGLXSWAPINTERVALSGIPROC) (int);
@@ -161,6 +183,7 @@ GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context
     , m_context(WTFMove(context))
     , m_window(window)
 {
+    activeContexts().add(this);
 }
 
 GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, XUniqueGLXPbuffer&& pbuffer)
@@ -168,6 +191,7 @@ GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context
     , m_context(WTFMove(context))
     , m_pbuffer(WTFMove(pbuffer))
 {
+    activeContexts().add(this);
 }
 
 GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, XUniquePixmap&& pixmap, XUniqueGLXPixmap&& glxPixmap)
@@ -176,19 +200,31 @@ GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context
     , m_pixmap(WTFMove(pixmap))
     , m_glxPixmap(WTFMove(glxPixmap))
 {
+    activeContexts().add(this);
 }
 
 GLContextGLX::~GLContextGLX()
 {
-    if (m_cairoDevice)
-        cairo_device_destroy(m_cairoDevice);
+    clear();
+    activeContexts().remove(this);
+}
 
-    if (m_context) {
-        // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
-        // from Mozilla's 3D canvas implementation at: http://bitbucket.org/ilmari/canvas3d/
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        glXMakeCurrent(downcast<PlatformDisplayX11>(m_display).native(), None, None);
+void GLContextGLX::clear()
+{
+    if (!m_context)
+        return;
+
+    if (m_cairoDevice) {
+        cairo_device_destroy(m_cairoDevice);
+        m_cairoDevice = nullptr;
     }
+
+    // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
+    // from Mozilla's 3D canvas implementation at: http://bitbucket.org/ilmari/canvas3d/
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glXMakeCurrent(downcast<PlatformDisplayX11>(m_display).native(), None, None);
+
+    m_context = nullptr;
 }
 
 bool GLContextGLX::canRenderToDefaultFramebuffer()

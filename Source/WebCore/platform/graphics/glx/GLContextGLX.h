@@ -53,6 +53,8 @@ public:
     PlatformGraphicsContext3D platformContext() override;
 #endif
 
+    void clear();
+
 private:
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XID);
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XUniqueGLXPbuffer&&);
