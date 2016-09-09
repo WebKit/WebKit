@@ -243,12 +243,22 @@ static WebCore::PlatformTouchPoint::TouchPhaseType touchEventType(const WebPlatf
     }
 }
 
+static WebCore::PlatformTouchPoint::TouchType webPlatformTouchTypeToPlatform(const WebPlatformTouchPoint::TouchType& webTouchType)
+{
+    switch (webTouchType) {
+    case WebPlatformTouchPoint::TouchType::Direct:
+        return WebCore::PlatformTouchPoint::TouchType::Direct;
+    case WebPlatformTouchPoint::TouchType::Stylus:
+        return WebCore::PlatformTouchPoint::TouchType::Stylus;
+    }
+}
+
 class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
 public:
 WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
     : PlatformTouchPoint(webTouchPoint.identifier(), webTouchPoint.location(), touchEventType(webTouchPoint)
 #if ENABLE(IOS_TOUCH_EVENTS)
-    , webTouchPoint.force()
+        , webTouchPoint.force(), webTouchPoint.altitudeAngle(), webTouchPoint.azimuthAngle(), webPlatformTouchTypeToPlatform(webTouchPoint.touchType())
 #endif
     )
 {

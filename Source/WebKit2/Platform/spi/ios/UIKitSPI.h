@@ -643,12 +643,22 @@ typedef enum {
     UIWebTouchEventTouchCancel = 3,
 } UIWebTouchEventType;
 
+typedef enum {
+    UIWebTouchPointTypeDirect = 0,
+    UIWebTouchPointTypeStylus
+} UIWebTouchPointType;
+
 struct _UIWebTouchPoint {
     CGPoint locationInScreenCoordinates;
     CGPoint locationInDocumentCoordinates;
     unsigned identifier;
     UITouchPhase phase;
-    CGFloat majorRadiusInScreenCoordinates;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > 100000
+    CGFloat force;
+    CGFloat altitudeAngle;
+    CGFloat azimuthAngle;
+    UIWebTouchPointType touchType;
+#endif
 };
 
 struct _UIWebTouchEvent {

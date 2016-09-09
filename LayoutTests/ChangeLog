@@ -1,3 +1,22 @@
+2016-09-08  Dean Jackson  <dino@apple.com>
+
+        Expose Apple Pencil data to Touch events
+        https://bugs.webkit.org/show_bug.cgi?id=161783
+        <rdar://problem/28218898>
+
+        Reviewed by Beth Dakin.
+
+        Four new tests that check data coming out of an Apple Pencil.
+
+        * fast/events/touch/ios/pencil-data-change-does-not-give-touchmove-expected.txt: Added.
+        * fast/events/touch/ios/pencil-data-change-does-not-give-touchmove.html: Added.
+        * fast/events/touch/ios/pencil-data-change-gives-touchforcechange-expected.txt: Added.
+        * fast/events/touch/ios/pencil-data-change-gives-touchforcechange.html: Added.
+        * fast/events/touch/ios/pencil-move-provides-stylus-data-expected.txt: Added.
+        * fast/events/touch/ios/pencil-move-provides-stylus-data.html: Added.
+        * fast/events/touch/ios/pencil-touch-registered-as-pencil-expected.txt: Added.
+        * fast/events/touch/ios/pencil-touch-registered-as-pencil.html: Added.
+
 2016-09-09  Tim Horton  <timothy_horton@apple.com>
 
         Text replacement candidates don't always overwrite the entire original string

@@ -41,6 +41,9 @@ void WebPlatformTouchPoint::encode(IPC::Encoder& encoder) const
     encoder << m_phase;
 #if ENABLE(IOS_TOUCH_EVENTS)
     encoder << m_force;
+    encoder << m_altitudeAngle;
+    encoder << m_azimuthAngle;
+    encoder << m_touchType;
 #endif
 }
 
@@ -54,6 +57,12 @@ bool WebPlatformTouchPoint::decode(IPC::Decoder& decoder, WebPlatformTouchPoint&
         return false;
 #if ENABLE(IOS_TOUCH_EVENTS)
     if (!decoder.decode(result.m_force))
+        return false;
+    if (!decoder.decode(result.m_altitudeAngle))
+        return false;
+    if (!decoder.decode(result.m_azimuthAngle))
+        return false;
+    if (!decoder.decode(result.m_touchType))
         return false;
 #endif
     return true;

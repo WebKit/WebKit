@@ -1,3 +1,19 @@
+2016-09-08  Dean Jackson  <dino@apple.com>
+
+        Expose Apple Pencil data to Touch events
+        https://bugs.webkit.org/show_bug.cgi?id=161783
+        <rdar://problem/28218898>
+
+        Reviewed by Beth Dakin.
+
+        The values that IOHID expects are different from their
+        documentation, and from what UITouch interprets. Tweak
+        incoming data so it will produce the output we expect.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator stylusDownAtPoint:azimuthAngle:altitudeAngle:pressure:]):
+        (-[HIDEventGenerator stylusMoveToPoint:azimuthAngle:altitudeAngle:pressure:]):
+
 2016-09-09  JF Bastien  <jfbastien@apple.com>
 
         Unreviewed. Added myself to the list of committers.

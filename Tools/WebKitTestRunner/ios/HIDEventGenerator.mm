@@ -434,9 +434,14 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     _activePointCount = 1;
     _activePoints[0].point = location;
     _activePoints[0].isStylus = YES;
-    _activePoints[0].pathPressure = pressure;
-    _activePoints[0].azimuthAngle = azimuthAngle;
-    _activePoints[0].altitudeAngle = altitudeAngle;
+
+    // At the time of writing, the IOKit documentation isn't always correct. For example
+    // it says that pressure is a value [0,1], but in practice it is [0,500] for stylus
+    // data. It does not mention that the azimuth angle is offset from a full rotation.
+    // Also, UIKit and IOHID interpret the altitude as different adjacent angles.
+    _activePoints[0].pathPressure = pressure * 500;
+    _activePoints[0].azimuthAngle = M_PI * 2 - azimuthAngle;
+    _activePoints[0].altitudeAngle = M_PI_2 - altitudeAngle;
 
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:StylusEventTouched]);
     [self _sendHIDEvent:eventRef.get()];
@@ -447,9 +452,10 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     _activePointCount = 1;
     _activePoints[0].point = location;
     _activePoints[0].isStylus = YES;
-    _activePoints[0].pathPressure = pressure;
-    _activePoints[0].azimuthAngle = azimuthAngle;
-    _activePoints[0].altitudeAngle = altitudeAngle;
+    // See notes above for details on these calculations.
+    _activePoints[0].pathPressure = pressure * 500;
+    _activePoints[0].azimuthAngle = M_PI * 2 - azimuthAngle;
+    _activePoints[0].altitudeAngle = M_PI_2 - altitudeAngle;
 
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:StylusEventMoved]);
     [self _sendHIDEvent:eventRef.get()];

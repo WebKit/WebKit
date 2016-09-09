@@ -1,3 +1,32 @@
+2016-09-08  Dean Jackson  <dino@apple.com>
+
+        Expose Apple Pencil data to Touch events
+        https://bugs.webkit.org/show_bug.cgi?id=161783
+        <rdar://problem/28218898>
+
+        Reviewed by Beth Dakin.
+
+        * Platform/spi/ios/UIKitSPI.h: Expose the new SPI. Since this is only used
+        on public builds, guard it against everything that is <= iOS 10.0.
+        * Shared/WebEvent.h: New properties.
+        (WebKit::WebPlatformTouchPoint::setAltitudeAngle):
+        (WebKit::WebPlatformTouchPoint::altitudeAngle):
+        (WebKit::WebPlatformTouchPoint::setAzimuthAngle):
+        (WebKit::WebPlatformTouchPoint::azimuthAngle):
+        (WebKit::WebPlatformTouchPoint::setTouchType):
+        (WebKit::WebPlatformTouchPoint::touchType):
+        (WebKit::WebPlatformTouchPoint::force): Deleted.
+        * Shared/WebEventConversion.cpp:
+        (WebKit::webPlatformTouchTypeToPlatform):
+        (WebKit::WebKit2PlatformTouchPoint::WebKit2PlatformTouchPoint): More
+        parameters sent to parent constructor.
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::convertTouchType):
+        (WebKit::NativeWebTouchEvent::extractWebTouchPoint):
+        * Shared/ios/WebPlatformTouchPointIOS.cpp:
+        (WebKit::WebPlatformTouchPoint::encode):
+        (WebKit::WebPlatformTouchPoint::decode):
+
 2016-09-09  Tim Horton  <timothy_horton@apple.com>
 
         Text replacement candidates don't always overwrite the entire original string

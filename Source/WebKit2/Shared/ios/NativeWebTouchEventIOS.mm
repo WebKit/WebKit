@@ -70,6 +70,21 @@ static WebPlatformTouchPoint::TouchPointState convertTouchPhase(UITouchPhase tou
     }
 }
 
+#if defined UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA && UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA
+static WebPlatformTouchPoint::TouchType convertTouchType(UIWebTouchPointType touchType)
+{
+    switch (touchType) {
+    case UIWebTouchPointTypeDirect:
+        return WebPlatformTouchPoint::TouchType::Direct;
+    case UIWebTouchPointTypeStylus:
+        return WebPlatformTouchPoint::TouchType::Stylus;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebPlatformTouchPoint::TouchType::Direct;
+    }
+}
+#endif
+
 static inline WebCore::IntPoint positionForCGPoint(CGPoint position)
 {
     return WebCore::IntPoint(position);
@@ -89,6 +104,11 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
         WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, location, phase);
 #if ENABLE(IOS_TOUCH_EVENTS)
         platformTouchPoint.setForce(touchPoint.force);
+#if defined UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA && UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA
+        platformTouchPoint.setAltitudeAngle(touchPoint.altitudeAngle);
+        platformTouchPoint.setAzimuthAngle(touchPoint.azimuthAngle);
+        platformTouchPoint.setTouchType(convertTouchType(touchPoint.touchType));
+#endif
 #endif
         touchPointList.uncheckedAppend(platformTouchPoint);
     }
