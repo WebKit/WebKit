@@ -38,7 +38,7 @@ var privateKeyJSON = {
 debug("Importing a public key...");
 crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)), null, extractable, ["sign", "verify"]).then(function(result) {
     publicKey = result;
-    shouldBe("publicKey.toString()", "'[object Key]'");
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
     shouldBe("publicKey.type", "'public'");
     shouldBe("publicKey.usages", "['sign','verify']");
     shouldBe("publicKey.algorithm.name", "'RSASSA-PKCS1-v1_5'");
@@ -49,7 +49,7 @@ crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)),
     return crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(privateKeyJSON)), null, extractable, ["sign", "verify"]);
 }).then(function(result) {
     privateKey = result;
-    shouldBe("privateKey.toString()", "'[object Key]'");
+    shouldBe("privateKey.toString()", "'[object CryptoKey]'");
     shouldBe("privateKey.type", "'private'");
     shouldBe("privateKey.usages", "['sign','verify']");
     shouldBe("privateKey.algorithm.name", "'RSASSA-PKCS1-v1_5'");

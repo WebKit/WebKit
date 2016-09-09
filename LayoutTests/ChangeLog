@@ -1,3 +1,26 @@
+2016-09-09  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Rename Key to CryptoKey
+        https://bugs.webkit.org/show_bug.cgi?id=161665
+        <rdar://problem/28083391>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/aes-cbc-unwrap-rsa-expected.txt:
+        * crypto/subtle/aes-cbc-unwrap-rsa.html:
+        * crypto/subtle/aes-kw-key-manipulation-expected.txt:
+        * crypto/subtle/aes-kw-key-manipulation.html:
+        * crypto/subtle/aes-kw-wrap-unwrap-aes-expected.txt:
+        * crypto/subtle/aes-kw-wrap-unwrap-aes.html:
+        * crypto/subtle/rsa-oaep-wrap-unwrap-aes-expected.txt:
+        * crypto/subtle/rsa-oaep-wrap-unwrap-aes.html:
+        * crypto/subtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes-expected.txt:
+        * crypto/subtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-expected.txt:
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+
 2016-09-09  Youenn Fablet  <youenn@apple.com>
 
         TextTrackLoader should use FetchOptions::mode according its crossOrigin attribute

@@ -18,7 +18,7 @@ var extractable = true;
 debug("Generating a key...");
 crypto.subtle.generateKey({name: "aes-kw", length: 256}, extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]).then(function(result) {
     key = result;
-    shouldBe("key.toString()", "'[object Key]'");
+    shouldBe("key.toString()", "'[object CryptoKey]'");
     shouldBe("key.type", "'secret'");
     shouldBe("key.algorithm.name", "'AES-KW'");
     shouldBe("key.algorithm.length", "256");
@@ -37,7 +37,7 @@ crypto.subtle.generateKey({name: "aes-kw", length: 256}, extractable, ["encrypt"
 }).then(function(result) {
     importedKey = result;
 
-    shouldBe("importedKey.toString()", "'[object Key]'");
+    shouldBe("importedKey.toString()", "'[object CryptoKey]'");
     shouldBe("importedKey.type", "'secret'");
     shouldBe("importedKey.algorithm.name", "'AES-KW'");
     shouldBe("importedKey.algorithm.length", "256");

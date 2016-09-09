@@ -15,15 +15,15 @@ PASS Stringification of crypto
 FAIL Crypto interface: crypto must inherit property "subtle" with the proper type (0) assert_inherits: property "subtle" not found in prototype chain
 PASS Crypto interface: crypto must inherit property "getRandomValues" with the proper type (1) 
 PASS Crypto interface: calling getRandomValues(ArrayBufferView) on crypto with too few arguments must throw TypeError 
-FAIL CryptoKey interface: existence and properties of interface object assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
-FAIL CryptoKey interface object length assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
-FAIL CryptoKey interface object name assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
-FAIL CryptoKey interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
-FAIL CryptoKey interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
-FAIL CryptoKey interface: attribute type assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
-FAIL CryptoKey interface: attribute extractable assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
-FAIL CryptoKey interface: attribute algorithm assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
-FAIL CryptoKey interface: attribute usages assert_own_property: self does not have own property "CryptoKey" expected property "CryptoKey" missing
+PASS CryptoKey interface: existence and properties of interface object 
+PASS CryptoKey interface object length 
+PASS CryptoKey interface object name 
+PASS CryptoKey interface: existence and properties of interface prototype object 
+PASS CryptoKey interface: existence and properties of interface prototype object's "constructor" property 
+PASS CryptoKey interface: attribute type 
+PASS CryptoKey interface: attribute extractable 
+PASS CryptoKey interface: attribute algorithm 
+PASS CryptoKey interface: attribute usages 
 FAIL SubtleCrypto interface: existence and properties of interface object assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing
 FAIL SubtleCrypto interface object length assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing
 FAIL SubtleCrypto interface object name assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing

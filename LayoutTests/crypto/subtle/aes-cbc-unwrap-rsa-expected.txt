@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Importing an unwrapping key...
 PASS unwrappingKey.algorithm.name is 'AES-CBC'
 Unwrapping a key...
-PASS unwrappedKey.toString() is '[object Key]'
+PASS unwrappedKey.toString() is '[object CryptoKey]'
 PASS unwrappedKey.type is 'public'
 PASS unwrappedKey.usages is ['sign','verify']
 PASS unwrappedKey.algorithm.name is 'RSASSA-PKCS1-v1_5'

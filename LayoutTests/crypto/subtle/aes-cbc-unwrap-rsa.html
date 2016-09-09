@@ -38,7 +38,7 @@ crypto.subtle.importKey("raw", unwrappingKeyOctets, "AES-CBC", nonExtractable, [
 }).then(function(result) {
     unwrappedKey = result;
 
-    shouldBe("unwrappedKey.toString()", "'[object Key]'");
+    shouldBe("unwrappedKey.toString()", "'[object CryptoKey]'");
     shouldBe("unwrappedKey.type", "'public'");
     shouldBe("unwrappedKey.usages", "['sign','verify']");
     shouldBe("unwrappedKey.algorithm.name", "'RSASSA-PKCS1-v1_5'");

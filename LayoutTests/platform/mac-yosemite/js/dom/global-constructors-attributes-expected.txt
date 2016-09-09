@@ -298,6 +298,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('get') is 
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').value is CryptoKey
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CustomElementRegistry').value is CustomElementRegistry
 PASS Object.getOwnPropertyDescriptor(global, 'CustomElementRegistry').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CustomElementRegistry').hasOwnProperty('set') is false

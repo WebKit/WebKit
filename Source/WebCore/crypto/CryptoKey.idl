@@ -24,9 +24,9 @@
  */
 
 enum KeyType {
-    "secret",
     "public",
-    "private"
+    "private",
+    "secret"
 };
 
 enum KeyUsage {
@@ -43,8 +43,6 @@ enum KeyUsage {
 [
     Conditional=SUBTLE_CRYPTO,
     GenerateIsReachable=Impl,
-    InterfaceName=Key,
-    NoInterfaceObject,
     SkipVTableValidation
 ] interface CryptoKey {
     readonly attribute KeyType type;

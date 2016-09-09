@@ -31,9 +31,9 @@
 namespace WebCore {
 
 enum class CryptoKeyType {
-    Secret,
     Public,
-    Private
+    Private,
+    Secret
 };
 
 } // namespace WebCore

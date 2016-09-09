@@ -8,7 +8,7 @@ Importing an AES key...
 Wrapping it...
 PASS wrappedKey.toString() is '[object ArrayBuffer]'
 Unwrapping it...
-PASS unwrappedKey.toString() is '[object Key]'
+PASS unwrappedKey.toString() is '[object CryptoKey]'
 PASS unwrappedKey.type is 'secret'
 PASS unwrappedKey.extractable is true
 PASS unwrappedKey.algorithm.name is 'AES-CBC'
@@ -20,7 +20,7 @@ PASS bytesToHexString(unwrappedKeyData) is bytesToHexString(aesKeyData)
 Wrapping the same key as JWK...
 PASS wrappedKey.toString() is '[object ArrayBuffer]'
 Unwrapping it...
-PASS unwrappedKey.toString() is '[object Key]'
+PASS unwrappedKey.toString() is '[object CryptoKey]'
 PASS unwrappedKey.type is 'secret'
 PASS unwrappedKey.extractable is true
 PASS unwrappedKey.algorithm.name is 'AES-CBC'

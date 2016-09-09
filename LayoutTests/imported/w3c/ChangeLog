@@ -1,3 +1,13 @@
+2016-09-09  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Rename Key to CryptoKey
+        https://bugs.webkit.org/show_bug.cgi?id=161665
+        <rdar://problem/28083391>
+
+        Reviewed by Brent Fulgham.
+
+        * WebCryptoAPI/idlharness-expected.txt:
+
 2016-09-09  Youenn Fablet  <youenn@apple.com>
 
         TextTrackLoader should use FetchOptions::mode according its crossOrigin attribute
