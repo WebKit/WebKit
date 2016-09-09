@@ -138,7 +138,8 @@
 - path: ChakraCore/test/Array/protoLookup.js
   cmd: runChakra :baseline, "NoException", "protoLookup.baseline-jsc", []
 - path: ChakraCore/test/Array/protoLookup_native.js
-  cmd: runChakra :baseline, "NoException", "protoLookup_native.baseline-jsc", []
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "protoLookup_native.baseline-jsc", []
 - path: ChakraCore/test/Array/protoLookupWithGetters.js
   # Different behavior.  Immediate unhandled exception in JSC.
   cmd: runChakra :skip, "NoException", "protoLookupWithGetters.baseline", []
@@ -796,7 +797,8 @@
 - path: ChakraCore/test/LetConst/defer5.js
   cmd: runChakra :baseline, "ReferenceError", "defer5.baseline-jsc", []
 - path: ChakraCore/test/LetConst/delete.js
-  cmd: runChakra :baseline, "NoException", "delete.baseline", []
+  # Differences in Object.seal().
+  cmd: runChakra :skip, "NoException", "delete.baseline", []
 - path: ChakraCore/test/LetConst/dop.js
   # Differences in Object.seal().
   cmd: runChakra :skip, "NoException", "dop.baseline", []
@@ -1956,7 +1958,8 @@
 - path: ChakraCore/test/fieldopts/fieldhoist_typeof.js
   cmd: runChakra :baseline, "NoException", "fieldhoist_typeof.baseline", []
 - path: ChakraCore/test/fieldopts/fieldhoist_sideeffect.js
-  cmd: runChakra :baseline, "NoException", "fieldhoist_sideeffect.baseline-jsc", []
+  # Different behavior.
+  cmd: runChakra :skip, "NoException", "fieldhoist_sideeffect.baseline-jsc", []
 - path: ChakraCore/test/fieldopts/fieldcopyprop_nonwritable.js
   # Different behavior.
   cmd: runChakra :skip, "NoException", "fieldcopyprop_nonwritable.baseline", []

@@ -1,3 +1,15 @@
+2016-09-09  Michael Saboff  <msaboff@apple.com>
+
+        Disable three flakey Chakra Tests
+        https://bugs.webkit.org/show_bug.cgi?id=161807
+
+        Reviewed by Saam Barati.
+
+        * ChakraCore.yaml: Disabled the flakey tests
+        ChakraCore/test/Array/protoLookup_native.js
+        ChakraCore/test/LetConst/delete.js
+        ChakraCore/test/fieldopts/fieldhoist_sideeffect.js
+
 2016-09-08  Saam Barati  <sbarati@apple.com>
 
         We should inline operationConvertJSValueToBoolean into JIT code
