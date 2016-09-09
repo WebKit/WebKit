@@ -155,7 +155,17 @@ static RetainPtr<NSDictionary> systemFontModificationAttributes(FontWeight weigh
     RetainPtr<NSMutableDictionary> traitsDictionary = adoptNS([[NSMutableDictionary alloc] init]);
 
     ASSERT(weight >= FontWeight100 && weight <= FontWeight900);
-    float ctWeights[] = { -0.7, -0.5, -0.23, 0, 0.2, 0.3, 0.4, 0.6, 0.8 };
+    float ctWeights[] = {
+        static_cast<float>(kCTFontWeightUltraLight),
+        static_cast<float>(kCTFontWeightThin),
+        static_cast<float>(kCTFontWeightLight),
+        static_cast<float>(kCTFontWeightRegular),
+        static_cast<float>(kCTFontWeightMedium),
+        static_cast<float>(kCTFontWeightSemibold),
+        static_cast<float>(kCTFontWeightBold),
+        static_cast<float>(kCTFontWeightHeavy),
+        static_cast<float>(kCTFontWeightBlack)
+    };
     [traitsDictionary setObject:[NSNumber numberWithFloat:ctWeights[weight]] forKey:static_cast<NSString *>(kCTFontWeightTrait)];
 
     [traitsDictionary setObject:@YES forKey:static_cast<NSString *>(kCTFontUIFontDesignTrait)];
