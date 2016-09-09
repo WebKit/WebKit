@@ -30,6 +30,7 @@
 
 #include "NetscapePluginModule.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/PlatformDisplay.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -42,6 +43,21 @@ PluginInfoCache& PluginInfoCache::singleton()
     return pluginInfoCache;
 }
 
+static inline const char* cacheFilenameForCurrentDisplay()
+{
+#if PLATFORM(X11)
+    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11)
+        return "plugins-x11";
+#endif
+#if PLATFORM(WAYLAND)
+    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::Wayland)
+        return "plugins-wayland";
+#endif
+
+    ASSERT_NOT_REACHED();
+    return "plugins";
+}
+
 PluginInfoCache::PluginInfoCache()
     : m_cacheFile(g_key_file_new())
     , m_saveToFileIdle(RunLoop::main(), this, &PluginInfoCache::saveToFile)
@@ -51,7 +67,11 @@ PluginInfoCache::PluginInfoCache()
 
     GUniquePtr<char> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", nullptr));
     if (WebCore::makeAllDirectories(cacheDirectory.get())) {
-        m_cachePath.reset(g_build_filename(cacheDirectory.get(), "plugins", nullptr));
+        // Delete old cache file.
+        GUniquePtr<char> oldCachePath(g_build_filename(cacheDirectory.get(), "plugins", nullptr));
+        WebCore::deleteFile(WebCore::filenameToString(oldCachePath.get()));
+
+        m_cachePath.reset(g_build_filename(cacheDirectory.get(), cacheFilenameForCurrentDisplay(), nullptr));
         g_key_file_load_from_file(m_cacheFile.get(), m_cachePath.get(), G_KEY_FILE_NONE, nullptr);
     }
 
