@@ -37,6 +37,8 @@ namespace JSC { namespace WASM {
 #define FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \
     macro(Block, 0x01, NA) \
     macro(Loop, 0x02, NA) \
+    macro(If, 0x03, NA) \
+    macro(Else, 0x04, NA) \
     macro(Branch, 0x06, NA) \
     macro(BranchIf, 0x07, NA) \
     macro(Return, 0x09, NA) \

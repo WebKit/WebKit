@@ -32,10 +32,17 @@
 
 namespace JSC { namespace WASM {
 
+enum class BlockType {
+    If,
+    Block,
+    Loop
+};
+
 template<typename Context>
 class FunctionParser : public Parser {
 public:
     typedef typename Context::ExpressionType ExpressionType;
+    typedef typename Context::ControlType ControlType;
 
     FunctionParser(Context&, const Vector<uint8_t>& sourceBuffer, const FunctionInformation&);
 
@@ -46,12 +53,13 @@ private:
 
     bool WARN_UNUSED_RETURN parseBlock();
     bool WARN_UNUSED_RETURN parseExpression(OpType);
+    bool WARN_UNUSED_RETURN parseUnreachableExpression(OpType);
     bool WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
-
-    Optional<Vector<ExpressionType>>& stackForControlLevel(unsigned level);
 
     Context& m_context;
     Vector<ExpressionType, 1> m_expressionStack;
+    Vector<ControlType> m_controlStack;
+    unsigned m_unreachableBlocks { 0 };
 };
 
 template<typename Context>
@@ -92,27 +100,37 @@ bool FunctionParser<Context>::parseBlock()
         if (!parseUInt7(op))
             return false;
 
-        if (!parseExpression(static_cast<OpType>(op))) {
+        if (verbose) {
+            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)));
+            m_context.dump(m_controlStack, m_expressionStack);
+        }
+
+        if (op == OpType::End && !m_controlStack.size())
+            break;
+
+        if (m_unreachableBlocks) {
+            if (!parseUnreachableExpression(static_cast<OpType>(op))) {
+                if (verbose)
+                    dataLogLn("failed to process unreachable op:", op);
+                return false;
+            }
+        } else if (!parseExpression(static_cast<OpType>(op))) {
             if (verbose)
                 dataLogLn("failed to process op:", op);
             return false;
         }
 
-        if (op == OpType::End)
-            break;
     }
 
+    // I'm not sure if we should check the expression stack here...
     return true;
 }
+#define CREATE_CASE(name, id, b3op) case name:
 
 template<typename Context>
 bool FunctionParser<Context>::parseExpression(OpType op)
 {
-    if (m_context.unreachable && !isControlOp(op))
-        return true;
-
     switch (op) {
-#define CREATE_CASE(name, id, b3op) case name:
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE) {
         ExpressionType right = m_expressionStack.takeLast();
         ExpressionType left = m_expressionStack.takeLast();
@@ -131,7 +149,6 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         m_expressionStack.append(result);
         return true;
     }
-#undef CREATE_CASE
 
     case OpType::I32Const: {
         uint32_t constant;
@@ -162,15 +179,23 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     }
 
     case OpType::Block: {
-        if (!m_context.addBlock())
-            return false;
-        return parseBlock();
+        m_controlStack.append(m_context.addBlock());
+        return true;
     }
 
     case OpType::Loop: {
-        if (!m_context.addLoop())
-            return false;
-        return parseBlock();
+        m_controlStack.append(m_context.addLoop());
+        return true;
+    }
+
+    case OpType::If: {
+        ExpressionType condition = m_expressionStack.takeLast();
+        m_controlStack.append(m_context.addIf(condition));
+        return true;
+    }
+
+    case OpType::Else: {
+        return m_context.addElse(m_controlStack.last());
     }
 
     case OpType::Branch:
@@ -186,13 +211,18 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         ExpressionType condition = Context::emptyExpression;
         if (op == OpType::BranchIf)
             condition = m_expressionStack.takeLast();
-
+        else
+            m_unreachableBlocks = 1;
 
         Vector<ExpressionType, 1> values(arity);
         for (unsigned i = arity; i; i--)
             values[i-1] = m_expressionStack.takeLast();
 
-        return m_context.addBranch(condition, values, target);
+        if (target >= m_controlStack.size())
+            return false;
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target];
+
+        return m_context.addBranch(data, condition, values);
     }
 
     case OpType::Return: {
@@ -203,17 +233,78 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (returnCount)
             returnValues.append(m_expressionStack.takeLast());
 
+        m_unreachableBlocks = 1;
         return m_context.addReturn(returnValues);
     }
 
-    case OpType::End:
-        return m_context.endBlock(m_expressionStack);
+    case OpType::End: {
+        ControlType data = m_controlStack.takeLast();
+        return m_context.endBlock(data, m_expressionStack);
+    }
 
     }
 
     // Unknown opcode.
     return false;
 }
+
+template<typename Context>
+bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
+{
+    ASSERT(m_unreachableBlocks);
+    switch (op) {
+    case OpType::Else: {
+        if (m_unreachableBlocks > 1)
+            return true;
+
+        ControlType& data = m_controlStack.last();
+        ASSERT(data.type() == BlockType::If);
+        m_unreachableBlocks = 0;
+        return m_context.addElse(data);
+    }
+
+    case OpType::End: {
+        if (m_unreachableBlocks == 1) {
+            ControlType data = m_controlStack.takeLast();
+            if (!m_context.isContinuationReachable(data))
+                return true;
+        }
+        m_unreachableBlocks--;
+        return true;
+    }
+
+    case OpType::Loop:
+    case OpType::If:
+    case OpType::Block: {
+        m_unreachableBlocks++;
+        return true;
+    }
+
+    // two immediate cases
+    case OpType::Branch:
+    case OpType::BranchIf: {
+        uint32_t unused;
+        if (!parseVarUInt32(unused))
+            return false;
+        return parseVarUInt32(unused);
+    }
+
+    // one immediate cases
+    case OpType::Return:
+    case OpType::I32Const:
+    case OpType::SetLocal:
+    case OpType::GetLocal: {
+        uint32_t unused;
+        return parseVarUInt32(unused);
+    }
+
+    default:
+        break;
+    }
+    return true;
+}
+
+#undef CREATE_CASE
 
 } } // namespace JSC::WASM
 

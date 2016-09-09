@@ -1,3 +1,44 @@
+2016-09-08  Keith Miller  <keith_miller@apple.com>
+
+        WASM should support if-then-else
+        https://bugs.webkit.org/show_bug.cgi?id=161778
+
+        Reviewed by Michael Saboff.
+
+        This patch makes some major changes to the way that the WASM
+        function parser works. First, the control stack has been moved
+        from the parser's context to the parser itself. This simplifies
+        the way that the parser works and allows us to make the decoder
+        iterative rather than recursive. Since the control stack has been
+        moved to the parser, any context operation that refers to some
+        block now receives that block by reference.
+
+        For any if block, regardless of whether or not it is an
+        if-then-else or not, we will allocate both the entire control flow
+        diamond. This is not a major issue in the if-then case since B3
+        will immediately cleanup these blocks. In order to support if-then
+        and if-then-else we needed to be able to distinguish what the type
+        of the top block on the control stack is. This will be necessary
+        when validating the else opcode in the future. In the B3 IR
+        generator we decide to the type of the block strictly by the
+        shape.
+
+        Currently, if blocks don't handle passed and returned stack values
+        correctly. I plan to fix this when I add support for the block
+        signatures. See: https://github.com/WebAssembly/design/pull/765
+
+        * testWASM.cpp:
+        (runWASMTests):
+        * wasm/WASMB3IRGenerator.cpp:
+        (dumpProcedure):
+        (JSC::WASM::parseAndCompile):
+        * wasm/WASMB3IRGenerator.h:
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::parseBlock):
+        (JSC::WASM::FunctionParser<Context>::parseExpression):
+        (JSC::WASM::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WASMOps.h:
+
 2016-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         jsc.cpp should call initializeMainThread() to make sure that GC thread assertions work

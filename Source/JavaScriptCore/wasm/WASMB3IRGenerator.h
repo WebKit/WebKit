@@ -31,6 +31,8 @@
 #include "VM.h"
 #include "WASMFormat.h"
 
+extern "C" void dumpProcedure(void*);
+
 namespace JSC { namespace WASM {
 
 std::unique_ptr<B3::Compilation> parseAndCompile(VM&, Vector<uint8_t>&, FunctionInformation, unsigned optLevel = 1);
