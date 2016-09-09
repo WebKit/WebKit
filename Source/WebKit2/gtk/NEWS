@@ -1,4 +1,20 @@
 ==================
+WebKitGTK+ 2.13.91
+==================
+
+What's new in WebKitGTK+ 2.13.91?
+
+  - Improve the performance when resizing the WebView with the threaded compositor.
+  - Do not try to use GL_PACK_ROW_LENGTH when compiling with GLES2, since it's not available.
+  - Use a different plugins cache file in Wayland and X11.
+  - Fix UI process crash visiting sites protected with HTTP auth when using GTK+ < 3.14.
+  - Fix a WebProcess crash when the last WebView is destroyed.
+  - Fix build configure without Wayland support.
+  - Fix the build when compiling with Clang.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish.
+
+==================
 WebKitGTK+ 2.13.90
 ==================
 
