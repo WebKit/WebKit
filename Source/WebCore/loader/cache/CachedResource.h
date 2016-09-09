@@ -307,7 +307,7 @@ private:
 
     virtual void checkNotify();
     virtual bool mayTryReplaceEncodedData() const { return false; }
-    virtual void setBodyDataFrom(const CachedResource&) { }
+    virtual void setBodyDataFrom(const CachedResource&);
 
     std::chrono::microseconds freshnessLifetime(const ResourceResponse&) const;
 

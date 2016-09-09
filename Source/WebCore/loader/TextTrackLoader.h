@@ -83,7 +83,6 @@ private:
     CachedResourceHandle<CachedTextTrack> m_resource;
     ScriptExecutionContext* m_scriptExecutionContext;
     Timer m_cueLoadTimer;
-    String m_crossOriginMode;
     State m_state;
     unsigned m_parseOffset;
     bool m_newCuesAvailable;

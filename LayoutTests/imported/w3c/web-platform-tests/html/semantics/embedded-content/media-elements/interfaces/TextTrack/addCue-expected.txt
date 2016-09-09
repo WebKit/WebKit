@@ -1,8 +1,7 @@
-CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
 
 PASS TextTrack.addCue(), adding a cue to two different tracks 
 PASS TextTrack.addCue(), adding a cue to a track twice 
 PASS TextTrack.addCue(), adding a removed cue to a different track 
 PASS TextTrack.addCue(), adding an associated but removed cue to the same track 
-FAIL TextTrack.addCue(), adding a cue associated with a track element to other track assert_unreached: got error event Reached unreachable code
+PASS TextTrack.addCue(), adding a cue associated with a track element to other track 
 

@@ -1,3 +1,14 @@
+2016-09-09  Youenn Fablet  <youenn@apple.com>
+
+        TextTrackLoader should use FetchOptions::mode according its crossOrigin attribute
+        https://bugs.webkit.org/show_bug.cgi?id=161792
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/security/text-track-crossorigin-expected.txt:
+        * http/tests/security/text-track-crossorigin.html: Updating test to be more robust against timeout.
+        Updated test to succeed doing no-cors loading of cross-origin resources.
+
 2016-09-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/IndexedDB/keyorder.htm as flaky on mac-wk2 debug.

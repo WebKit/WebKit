@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
 
 PASS TextTrackCue.endTime, script-created cue 
-FAIL TextTrackCue.endTime, parsed cue assert_unreached: got error event Reached unreachable code
+FAIL TextTrackCue.endTime, parsed cue null is not an object (evaluating 'assert_equals')
 

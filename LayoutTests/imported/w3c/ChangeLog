@@ -1,5 +1,22 @@
 2016-09-09  Youenn Fablet  <youenn@apple.com>
 
+        TextTrackLoader should use FetchOptions::mode according its crossOrigin attribute
+        https://bugs.webkit.org/show_bug.cgi?id=161792
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/addCue-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/removeCue-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/endTime-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/id-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/pauseOnExit-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/startTime-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/track-expected.txt:
+
+2016-09-09  Youenn Fablet  <youenn@apple.com>
+
         Sync web-platform-tests up to revision 6d9c836
         https://bugs.webkit.org/show_bug.cgi?id=161738
 

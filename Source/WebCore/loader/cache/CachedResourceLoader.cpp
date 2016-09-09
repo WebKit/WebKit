@@ -546,7 +546,7 @@ bool CachedResourceLoader::updateCachedResourceWithCurrentRequest(CachedResource
     CachedResource& resource = *resourceHandle;
 
     // FIXME: We should progressively extend this to other reusable resources
-    if (resource.type() != CachedResource::Type::ImageResource)
+    if (resource.type() != CachedResource::Type::ImageResource && resource.type() != CachedResource::Type::TextTrackResource)
         return false;
 
     bool shouldUpdate = resource.options().mode != request.options().mode || request.resourceRequest().httpOrigin() != resource.resourceRequest().httpOrigin();

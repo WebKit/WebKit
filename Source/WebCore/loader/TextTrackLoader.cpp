@@ -124,8 +124,7 @@ void TextTrackLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT(m_resource == resource);
 
-    Document* document = downcast<Document>(m_scriptExecutionContext);
-    if (!m_crossOriginMode.isNull() && !resource->passesSameOriginPolicyCheck(*document->securityOrigin()))
+    if (resource->resourceError().isAccessControl())
         corsPolicyPreventedLoad();
 
     if (m_state != Failed) {
@@ -141,7 +140,7 @@ void TextTrackLoader::notifyFinished(CachedResource* resource)
 
     if (!m_cueLoadTimer.isActive())
         m_cueLoadTimer.startOneShot(0);
-    
+
     cancelLoad();
 }
 
@@ -156,25 +155,14 @@ bool TextTrackLoader::load(const URL& url, const String& crossOriginMode, bool i
     options.contentSecurityPolicyImposition = isInitiatingElementInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     CachedResourceRequest cueRequest(ResourceRequest(document->completeURL(url)), options);
-
-    if (!crossOriginMode.isNull()) {
-        m_crossOriginMode = crossOriginMode;
-        StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-        updateRequestForAccessControl(cueRequest.mutableResourceRequest(), *document->securityOrigin(), allowCredentials);
-    } else {
-        // Cross-origin resources that are not suitably CORS-enabled may not load.
-        if (!document->securityOrigin()->canRequest(url)) {
-            corsPolicyPreventedLoad();
-            return false;
-        }
-    }
+    cueRequest.setAsPotentiallyCrossOrigin(crossOriginMode, *document);
 
     m_resource = document->cachedResourceLoader().requestTextTrack(cueRequest);
     if (!m_resource)
         return false;
 
     m_resource->addClient(this);
-    
+
     return true;
 }
 

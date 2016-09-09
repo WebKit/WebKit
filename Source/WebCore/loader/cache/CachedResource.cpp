@@ -358,6 +358,13 @@ void CachedResource::loadFrom(const CachedResource& resource, const ResourceLoad
     }
 
     setBodyDataFrom(resource);
+    setStatus(Status::Cached);
+    setLoading(false);
+}
+
+void CachedResource::setBodyDataFrom(const CachedResource& resource)
+{
+    m_data = resource.m_data;
 }
 
 void CachedResource::checkNotify()
