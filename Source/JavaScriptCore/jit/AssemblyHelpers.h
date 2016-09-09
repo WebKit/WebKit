@@ -61,7 +61,7 @@ public:
             ASSERT(m_baselineCodeBlock->jitType() == JITCode::None || JITCode::isBaselineCode(m_baselineCodeBlock->jitType()));
         }
     }
-    
+
     CodeBlock* codeBlock() { return m_codeBlock; }
     VM* vm() { return m_vm; }
     AssemblerType_T& assembler() { return m_assembler; }
@@ -1528,6 +1528,10 @@ public:
         emitAllocateJSObject<ClassType>(resultGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR1, scratchGPR2, slowPath);
         storePtr(TrustedImmPtr(structure->classInfo()), Address(resultGPR, JSDestructibleObject::classInfoOffset()));
     }
+
+#if USE(JSVALUE64)
+    void wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch);
+#endif
     
 protected:
     VM* m_vm;

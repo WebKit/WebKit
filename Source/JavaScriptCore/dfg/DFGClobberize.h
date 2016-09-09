@@ -1251,6 +1251,27 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case LogShadowChickenTail:
         write(SideState);
         return;
+
+    case MapHash:
+        def(PureValue(node));
+        return;
+    case GetMapBucket: {
+        read(MiscFields);
+        Edge& mapEdge = node->child1();
+        Edge& keyEdge = node->child2();
+        def(HeapLocation(MapBucketLoc, MiscFields, mapEdge, keyEdge), LazyNode(node));
+        return;
+    }
+    case LoadFromJSMapBucket: {
+        read(MiscFields);
+        Edge& bucketEdge = node->child1();
+        def(HeapLocation(JSMapGetLoc, MiscFields, bucketEdge), LazyNode(node));
+        return;
+    }
+    case IsNonEmptyMapBucket:
+        read(MiscFields);
+        def(HeapLocation(MapHasLoc, MiscFields, node->child1()), LazyNode(node));
+        return;
         
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();

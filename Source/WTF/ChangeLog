@@ -1,3 +1,14 @@
+2016-09-06  Saam Barati  <sbarati@apple.com>
+
+        Make JSMap and JSSet faster
+        https://bugs.webkit.org/show_bug.cgi?id=160989
+
+        Reviewed by Filip Pizlo.
+
+        I made s_flagCount public in StringImpl since JSC's JITs now use this field.
+
+        * wtf/text/StringImpl.h:
+
 2016-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression

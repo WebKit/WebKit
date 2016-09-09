@@ -68,7 +68,7 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->add, setProtoFuncAdd, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->clear, setProtoFuncClear, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, setProtoFuncDelete, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, setProtoFuncHas, DontEnum, 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, setProtoFuncHas, DontEnum, 1, JSSetHasIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().entriesPublicName(), setProtoFuncEntries, DontEnum, 0);
 
     JSFunction* values = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().valuesPublicName().string(), setProtoFuncValues);
@@ -85,16 +85,14 @@ ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSValue thisValue)
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!thisValue.isObject()) {
+    if (UNLIKELY(!thisValue.isCell())) {
         throwVMError(callFrame, scope, createNotAnObjectError(callFrame, thisValue));
         return nullptr;
     }
-    JSSet* set = jsDynamicCast<JSSet*>(thisValue);
-    if (!set) {
-        throwTypeError(callFrame, scope, ASCIILiteral("Set operation called on non-Set object"));
-        return nullptr;
-    }
-    return set;
+    if (LIKELY(thisValue.asCell()->type() == JSSetType))
+        return jsCast<JSSet*>(thisValue);
+    throwTypeError(callFrame, scope, ASCIILiteral("Set operation called on non-Set object"));
+    return nullptr;
 }
 
 EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(CallFrame* callFrame)
@@ -184,7 +182,6 @@ EncodedJSValue JSC_HOST_CALL privateFuncSetIteratorNext(ExecState* exec)
         resultArray->putDirectIndex(exec, 0, result);
         return JSValue::encode(jsBoolean(false));
     }
-    iterator->finish();
     return JSValue::encode(jsBoolean(true));
 }
 

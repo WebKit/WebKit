@@ -943,6 +943,11 @@ public:
         m_assembler.mvn<64>(dest, src);
     }
 
+    void not64(RegisterID srcDst)
+    {
+        m_assembler.mvn<64>(srcDst, srcDst);
+    }
+
     // Memory access operations:
 
     void load64(ImplicitAddress address, RegisterID dest)
