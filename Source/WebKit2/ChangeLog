@@ -1,5 +1,19 @@
 2016-09-06  Emanuele Aina  <emanuele.aina@collabora.com>
 
+        [GTK] glImageTargetTexture2D() is a GL function, rename accordingly
+        https://bugs.webkit.org/show_bug.cgi?id=161622
+
+        Reviewed by Carlos Garcia Campos.
+
+        glImageTargetTexture2D() is a GL function, not EGL, using the 'egl'
+        prefix is misleading.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::Surface::prepareTextureForPainting):
+        (WebKit::WaylandCompositor::initializeEGL):
+
+2016-09-06  Emanuele Aina  <emanuele.aina@collabora.com>
+
         [GTK][EFL] Make *_PROCESS_CMD_PREFIX conditional on DEVELOPER_MODE
         https://bugs.webkit.org/show_bug.cgi?id=161621
 

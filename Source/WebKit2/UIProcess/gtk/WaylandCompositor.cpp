@@ -77,7 +77,7 @@ static PFNEGLUNBINDWAYLANDDISPLAYWL eglUnbindWaylandDisplay;
 static PFNEGLQUERYWAYLANDBUFFERWL eglQueryWaylandBuffer;
 static PFNEGLCREATEIMAGEKHRPROC eglCreateImage;
 static PFNEGLDESTROYIMAGEKHRPROC eglDestroyImage;
-static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC eglImageTargetTexture2D;
+static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glImageTargetTexture2D;
 
 WaylandCompositor& WaylandCompositor::singleton()
 {
@@ -211,7 +211,7 @@ bool WaylandCompositor::Surface::prepareTextureForPainting(unsigned& texture, In
         return false;
 
     glBindTexture(GL_TEXTURE_2D, m_texture);
-    eglImageTargetTexture2D(GL_TEXTURE_2D, m_image);
+    glImageTargetTexture2D(GL_TEXTURE_2D, m_image);
 
     texture = m_texture;
     textureSize = m_buffer->size();
@@ -345,9 +345,9 @@ bool WaylandCompositor::initializeEGL()
         return false;
     }
 
-    eglImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
-    if (!eglImageTargetTexture2D) {
-        WTFLogAlways("WaylandCompositor requires glEGLImageTargetTexture.");
+    glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
+    if (!glImageTargetTexture2D) {
+        WTFLogAlways("WaylandCompositor requires glEGLImageTargetTexture2D.");
         return false;
     }
 
