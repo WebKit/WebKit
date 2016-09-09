@@ -358,6 +358,25 @@ void URLParser::popPath()
     m_buffer.resize(m_url.m_pathAfterLastSlash);
 }
 
+URL URLParser::failure(const String& input)
+{
+    URL url;
+    url.m_isValid = false;
+    url.m_protocolIsInHTTPFamily = false;
+    url.m_schemeEnd = 0;
+    url.m_userStart = 0;
+    url.m_userEnd = 0;
+    url.m_passwordEnd = 0;
+    url.m_hostEnd = 0;
+    url.m_portEnd = 0;
+    url.m_pathAfterLastSlash = 0;
+    url.m_pathEnd = 0;
+    url.m_queryEnd = 0;
+    url.m_fragmentEnd = 0;
+    url.m_string = input;
+    return url;
+}
+
 URL URLParser::parse(const String& input, const URL& base, const TextEncoding& encoding)
 {
     LOG(URLParser, "Parsing URL <%s> base <%s>", input.utf8().data(), base.string().utf8().data());
@@ -483,7 +502,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                     state = State::Fragment;
                     ++c;
                 } else
-                    return { };
+                    return failure(input);
             } else if (base.protocol() == "file") {
                 copyURLPartsUntil(base, URLPart::SchemeEnd);
                 m_buffer.append(':');
@@ -499,7 +518,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 while (c != end && isTabOrNewline(*c))
                     ++c;
                 if (c == end)
-                    return { };
+                    return failure(input);
                 if (*c == '/') {
                     m_buffer.append('/');
                     state = State::SpecialAuthorityIgnoreSlashes;
@@ -564,7 +583,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 while (c != end && isTabOrNewline(*c))
                     ++c;
                 if (c == end)
-                    return { };
+                    return failure(input);
                 m_buffer.append('/');
                 if (*c == '/') {
                     m_buffer.append('/');
@@ -597,7 +616,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 m_url.m_userEnd = m_buffer.length();
                 m_url.m_passwordEnd = m_url.m_userEnd;
                 if (!parseHost(authorityOrHostBegin, c))
-                    return { };
+                    return failure(input);
                 if (*c != '/') {
                     m_buffer.append('/');
                     m_url.m_pathAfterLastSlash = m_buffer.length();
@@ -611,7 +630,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             LOG_STATE("Host");
             if (*c == '/' || *c == '?' || *c == '#') {
                 if (!parseHost(authorityOrHostBegin, c))
-                    return { };
+                    return failure(input);
                 state = State::Path;
                 break;
             }
@@ -734,7 +753,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                     break;
                 }
                 if (!parseHost(authorityOrHostBegin, c))
-                    return { };
+                    return failure(input);
                 
                 // FIXME: Don't allocate a new string for this comparison.
                 if (m_buffer.toString().substring(m_url.m_passwordEnd) == "localhost")  {
@@ -833,7 +852,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
     switch (state) {
     case State::SchemeStart:
         LOG_FINAL_STATE("SchemeStart");
-        return { };
+        return failure(input);
     case State::Scheme:
         LOG_FINAL_STATE("Scheme");
         break;
@@ -867,7 +886,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         break;
     case State::SpecialAuthorityIgnoreSlashes:
         LOG_FINAL_STATE("SpecialAuthorityIgnoreSlashes");
-        return { };
+        return failure(input);
     case State::AuthorityOrHost:
         LOG_FINAL_STATE("AuthorityOrHost");
         m_url.m_userEnd = m_buffer.length();
@@ -877,7 +896,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         if (state == State::Host)
             LOG_FINAL_STATE("Host");
         if (!parseHost(authorityOrHostBegin, end))
-            return { };
+            return failure(input);
         m_buffer.append('/');
         m_url.m_pathEnd = m_url.m_portEnd + 1;
         m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
@@ -935,7 +954,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
         m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
         if (!parseHost(authorityOrHostBegin, c))
-            return { };
+            return failure(input);
         
         // FIXME: Don't allocate a new string for this comparison.
         if (m_buffer.toString().substring(m_url.m_passwordEnd) == "localhost")  {

@@ -378,35 +378,23 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences(wideString(L"#β"), "http://example.org/foo/bar",
         {"http", "", "", "example.org", 0, "/foo/bar", "", wideString(L"β"), wideString(L"http://example.org/foo/bar#β")},
         {"http", "", "", "example.org", 0, "/foo/bar", "", "%CE%B2", "http://example.org/foo/bar#%CE%B2"});
-    checkURLDifferences("http://@",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://@"});
     checkURLDifferences("http://",
-        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://"},
         {"http", "", "", "", 0, "/", "", "", "http:/"});
     checkRelativeURLDifferences("//", "https://www.webkit.org/path",
-        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "//"},
         {"https", "", "", "", 0, "/", "", "", "https:/"});
     checkURLDifferences("http://127.0.0.1:65536/path",
-        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://127.0.0.1:65536/path"},
         {"http", "", "", "127.0.0.1", 65535, "/path", "", "", "http://127.0.0.1:65536/path"});
-    checkURLDifferences("http://host:abc",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://host:abc"});
     checkURLDifferences("http://host:65536",
-        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://host:65536"},
         {"http", "", "", "host", 65535, "/", "", "", "http://host:65536/"});
-    checkURLDifferences("http://127.0.0.1:abc",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://127.0.0.1:abc"});
     checkURLDifferences("http://127.0.0.1:65536",
-        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://127.0.0.1:65536"},
         {"http", "", "", "127.0.0.1", 65535, "/", "", "", "http://127.0.0.1:65536/"});
-    checkURLDifferences("http://[0:f::f:f:0:0]:abc",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://[0:f::f:f:0:0]:abc"});
     checkURLDifferences("http://[0:f::f:f:0:0]:65536",
-        {"", "", "", "", 0, "", "", "", ""},
+        {"", "", "", "", 0, "", "", "", "http://[0:f::f:f:0:0]:65536"},
         {"http", "", "", "[0:f::f:f:0:0]", 65535, "/", "", "", "http://[0:f::f:f:0:0]:65536/"});
     
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
@@ -484,37 +472,35 @@ TEST_F(URLParserTest, DefaultPort)
         {"wss", "", "", "host", 444, "", "", "", "wss://host:444"});
     
     // FIXME: Fix and check unknown schemes with ports, as well as ftps.
-
-    // Firefox returns http://a:@/ Chrome fails, URL::parse fails
-    checkRelativeURLDifferences("http://a:@", "about:blank",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://a:@"});
-    
-    checkRelativeURLDifferences("http://:@", "about:blank",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://:@"});
-    checkRelativeURLDifferences("http://:b@", "about:blank",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://:b@"});
-    checkURLDifferences("http://a:@",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://a:@"});
-    checkURLDifferences("http://:b@",
-        {"", "", "", "", 0, "", "", "", ""},
-        {"", "", "", "", 0, "", "", "", "http://:b@"});
 }
     
 static void shouldFail(const String& urlString)
 {
     URLParser parser;
     auto invalidURL = parser.parse(urlString);
-    EXPECT_TRUE(URLParser::allValuesEqual(invalidURL, { }));
+    checkURL(urlString, {"", "", "", "", 0, "", "", "", urlString});
+}
+
+static void shouldFail(const String& urlString, const String& baseString)
+{
+    URLParser parser;
+    auto invalidURL = parser.parse(urlString);
+    checkRelativeURL(urlString, baseString, {"", "", "", "", 0, "", "", "", urlString});
 }
     
 TEST_F(URLParserTest, ParserFailures)
 {
     shouldFail("    ");
     shouldFail("");
+    shouldFail("http://127.0.0.1:abc");
+    shouldFail("http://host:abc");
+    shouldFail("http://a:@", "about:blank");
+    shouldFail("http://:b@", "about:blank");
+    shouldFail("http://:@", "about:blank");
+    shouldFail("http://a:@");
+    shouldFail("http://:b@");
+    shouldFail("http://@");
+    shouldFail("http://[0:f::f:f:0:0]:abc");
 }
 
 } // namespace TestWebKitAPI

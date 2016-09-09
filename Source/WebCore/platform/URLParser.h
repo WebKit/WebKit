@@ -45,6 +45,7 @@ private:
     void parseAuthority(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
     bool parseHost(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
     bool parsePort(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
+    URL failure(const String& input);
 
     enum class URLPart;
     void copyURLPartsUntil(const URL& base, URLPart);
