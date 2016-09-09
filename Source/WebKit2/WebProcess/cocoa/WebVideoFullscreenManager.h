@@ -45,6 +45,7 @@ class MessageReceiver;
 }
 
 namespace WebCore {
+class FloatSize;
 class Node;
 }
 
@@ -56,11 +57,14 @@ class WebPlaybackSessionInterfaceContext;
 class WebPlaybackSessionManager;
 class WebVideoFullscreenManager;
 
-class WebVideoFullscreenInterfaceContext : public RefCounted<WebVideoFullscreenInterfaceContext>, public WebCore::WebVideoFullscreenInterface {
+class WebVideoFullscreenInterfaceContext
+    : public RefCounted<WebVideoFullscreenInterfaceContext>
+    , public WebCore::WebVideoFullscreenInterface
+    , public WebCore::WebVideoFullscreenModelClient {
 public:
-    static Ref<WebVideoFullscreenInterfaceContext> create(WebVideoFullscreenManager& manager, WebPlaybackSessionInterfaceContext& playbackSessionInterface, uint64_t contextId)
+    static Ref<WebVideoFullscreenInterfaceContext> create(WebVideoFullscreenManager& manager, uint64_t contextId)
     {
-        return adoptRef(*new WebVideoFullscreenInterfaceContext(manager, playbackSessionInterface, contextId));
+        return adoptRef(*new WebVideoFullscreenInterfaceContext(manager, contextId));
     }
     virtual ~WebVideoFullscreenInterfaceContext();
 
@@ -82,26 +86,13 @@ public:
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
 
 private:
-    // WebPlaybackSessionInterface
-    void resetMediaState() override;
-    void setDuration(double) override;
-    void setCurrentTime(double currentTime, double anchorTime) override;
-    void setBufferedTime(double) override;
-    void setRate(bool isPlaying, float playbackRate) override;
-    void setSeekableRanges(const WebCore::TimeRanges&) override;
-    void setCanPlayFastReverse(bool value) override;
-    void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
-    void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
-    void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
-    void setWirelessVideoPlaybackDisabled(bool) override;
+    // WebVideoFullscreenModelClient
+    void hasVideoChanged(bool) override;
+    void videoDimensionsChanged(const WebCore::FloatSize&) override;
 
-    // WebVideoFullscreenInterface
-    void setVideoDimensions(bool hasVideo, float width, float height) override;
-
-    WebVideoFullscreenInterfaceContext(WebVideoFullscreenManager&, WebPlaybackSessionInterfaceContext&, uint64_t contextId);
+    WebVideoFullscreenInterfaceContext(WebVideoFullscreenManager&, uint64_t contextId);
 
     WebVideoFullscreenManager* m_manager;
-    Ref<WebPlaybackSessionInterfaceContext> m_playbackSessionInterface;
     uint64_t m_contextId;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     bool m_isAnimating { false };
@@ -138,7 +129,8 @@ protected:
     void removeClientForContext(uint64_t contextId);
 
     // Interface to WebVideoFullscreenInterfaceContext
-    void setVideoDimensions(uint64_t contextId, bool hasVideo, float width, float height);
+    void hasVideoChanged(uint64_t contextId, bool hasVideo);
+    void videoDimensionsChanged(uint64_t contextId, const WebCore::FloatSize&);
 
     // Messages from WebVideoFullscreenManagerProxy
     void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);

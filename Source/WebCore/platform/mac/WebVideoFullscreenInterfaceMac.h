@@ -30,7 +30,9 @@
 
 #include "HTMLMediaElementEnums.h"
 #include "WebPlaybackSessionInterfaceMac.h"
+#include "WebPlaybackSessionModel.h"
 #include "WebVideoFullscreenInterface.h"
+#include "WebVideoFullscreenModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -40,13 +42,14 @@ OBJC_CLASS WebVideoFullscreenInterfaceMacObjC;
 
 namespace WebCore {
 class IntRect;
+class FloatSize;
 class WebPlaybackSessionInterfaceMac;
 class WebVideoFullscreenChangeObserver;
-class WebVideoFullscreenModel;
 
 class WEBCORE_EXPORT WebVideoFullscreenInterfaceMac
     : public WebVideoFullscreenInterface
-    , private WebPlaybackSessionInterfaceMacClient
+    , public WebVideoFullscreenModelClient
+    , private WebPlaybackSessionModelClient
     , public RefCounted<WebVideoFullscreenInterfaceMac> {
 
 public:
@@ -61,18 +64,13 @@ public:
     WebVideoFullscreenChangeObserver* webVideoFullscreenChangeObserver() const { return m_fullscreenChangeObserver; }
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
 
-    WEBCORE_EXPORT void resetMediaState() override { }
-    WEBCORE_EXPORT void setDuration(double) override;
-    WEBCORE_EXPORT void setCurrentTime(double /*currentTime*/, double /*anchorTime*/) override;
-    WEBCORE_EXPORT void setBufferedTime(double) override { }
-    WEBCORE_EXPORT void setRate(bool /*isPlaying*/, float /*playbackRate*/) override;
-    WEBCORE_EXPORT void setVideoDimensions(bool hasVideo, float width, float height) final;
-    WEBCORE_EXPORT void setSeekableRanges(const TimeRanges&) override;
-    WEBCORE_EXPORT void setCanPlayFastReverse(bool) override { }
-    WEBCORE_EXPORT void setAudioMediaSelectionOptions(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) override;
-    WEBCORE_EXPORT void setLegibleMediaSelectionOptions(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) override;
-    WEBCORE_EXPORT void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String localizedDeviceName) override;
-    WEBCORE_EXPORT void setWirelessVideoPlaybackDisabled(bool) override { }
+    // WebPlaybackSessionModelClient
+    WEBCORE_EXPORT void rateChanged(bool isPlaying, float playbackRate) override;
+    WEBCORE_EXPORT void externalPlaybackChanged(bool  enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
+
+    // WebVideoFullscreenModelClient
+    WEBCORE_EXPORT void hasVideoChanged(bool) final;
+    WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
 
     WEBCORE_EXPORT void setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
     WEBCORE_EXPORT void enterFullscreen();
@@ -94,8 +92,6 @@ public:
 
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const { return false; }
     void applicationDidBecomeActive() { }
-
-    void rateChanged(bool isPlaying, float playbackRate) override;
 
     WEBCORE_EXPORT WebVideoFullscreenInterfaceMacObjC *videoFullscreenInterfaceObjC();
 

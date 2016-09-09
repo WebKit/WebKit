@@ -36,10 +36,9 @@ WEBCORE_EXPORT bool supportsPictureInPicture();
 
 class TimeRanges;
 
-class WebVideoFullscreenInterface : public WebPlaybackSessionInterface {
+class WebVideoFullscreenInterface {
 public:
     virtual ~WebVideoFullscreenInterface() { };
-    virtual void setVideoDimensions(bool hasVideo, float width, float height) = 0;
 };
 
 }

@@ -72,64 +72,64 @@ void WebPlaybackSessionInterfaceContext::resetMediaState()
         m_manager->resetMediaState(m_contextId);
 }
 
-void WebPlaybackSessionInterfaceContext::setDuration(double duration)
+void WebPlaybackSessionInterfaceContext::durationChanged(double duration)
 {
     if (m_manager)
-        m_manager->setDuration(m_contextId, duration);
+        m_manager->durationChanged(m_contextId, duration);
 }
 
-void WebPlaybackSessionInterfaceContext::setCurrentTime(double currentTime, double anchorTime)
+void WebPlaybackSessionInterfaceContext::currentTimeChanged(double currentTime, double anchorTime)
 {
     if (m_manager)
-        m_manager->setCurrentTime(m_contextId, currentTime, anchorTime);
+        m_manager->currentTimeChanged(m_contextId, currentTime, anchorTime);
 }
 
-void WebPlaybackSessionInterfaceContext::setBufferedTime(double bufferedTime)
+void WebPlaybackSessionInterfaceContext::bufferedTimeChanged(double bufferedTime)
 {
     if (m_manager)
-        m_manager->setBufferedTime(m_contextId, bufferedTime);
+        m_manager->bufferedTimeChanged(m_contextId, bufferedTime);
 }
 
-void WebPlaybackSessionInterfaceContext::setRate(bool isPlaying, float playbackRate)
+void WebPlaybackSessionInterfaceContext::rateChanged(bool isPlaying, float playbackRate)
 {
     if (m_manager)
-        m_manager->setRate(m_contextId, isPlaying, playbackRate);
+        m_manager->rateChanged(m_contextId, isPlaying, playbackRate);
 }
 
-void WebPlaybackSessionInterfaceContext::setSeekableRanges(const WebCore::TimeRanges& ranges)
+void WebPlaybackSessionInterfaceContext::seekableRangesChanged(const WebCore::TimeRanges& ranges)
 {
     if (m_manager)
-        m_manager->setSeekableRanges(m_contextId, ranges);
+        m_manager->seekableRangesChanged(m_contextId, ranges);
 }
 
-void WebPlaybackSessionInterfaceContext::setCanPlayFastReverse(bool value)
+void WebPlaybackSessionInterfaceContext::canPlayFastReverseChanged(bool value)
 {
     if (m_manager)
-        m_manager->setCanPlayFastReverse(m_contextId, value);
+        m_manager->canPlayFastReverseChanged(m_contextId, value);
 }
 
-void WebPlaybackSessionInterfaceContext::setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionInterfaceContext::audioMediaSelectionOptionsChanged(const Vector<String>& options, uint64_t selectedIndex)
 {
     if (m_manager)
-        m_manager->setAudioMediaSelectionOptions(m_contextId, options, selectedIndex);
+        m_manager->audioMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
 }
 
-void WebPlaybackSessionInterfaceContext::setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionInterfaceContext::legibleMediaSelectionOptionsChanged(const Vector<String>& options, uint64_t selectedIndex)
 {
     if (m_manager)
-        m_manager->setLegibleMediaSelectionOptions(m_contextId, options, selectedIndex);
+        m_manager->legibleMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
 }
 
-void WebPlaybackSessionInterfaceContext::setExternalPlayback(bool enabled, ExternalPlaybackTargetType type, WTF::String localizedDeviceName)
+void WebPlaybackSessionInterfaceContext::externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName)
 {
     if (m_manager)
-        m_manager->setExternalPlayback(m_contextId, enabled, type, localizedDeviceName);
+        m_manager->externalPlaybackChanged(m_contextId, enabled, type, localizedDeviceName);
 }
 
-void WebPlaybackSessionInterfaceContext::setWirelessVideoPlaybackDisabled(bool disabled)
+void WebPlaybackSessionInterfaceContext::wirelessVideoPlaybackDisabledChanged(bool disabled)
 {
     if (m_manager)
-        m_manager->setWirelessVideoPlaybackDisabled(m_contextId, disabled);
+        m_manager->wirelessVideoPlaybackDisabledChanged(m_contextId, disabled);
 }
 
 #pragma mark - WebPlaybackSessionManager
@@ -151,8 +151,7 @@ WebPlaybackSessionManager::~WebPlaybackSessionManager()
         RefPtr<WebPlaybackSessionModelMediaElement> model;
         RefPtr<WebPlaybackSessionInterfaceContext> interface;
         std::tie(model, interface) = tuple;
-
-        model->setWebPlaybackSessionInterface(nullptr);
+        model->removeClient(*interface);
         model->setMediaElement(nullptr);
 
         interface->invalidate();
@@ -169,8 +168,7 @@ WebPlaybackSessionManager::ModelInterfaceTuple WebPlaybackSessionManager::create
 {
     RefPtr<WebPlaybackSessionModelMediaElement> model = WebPlaybackSessionModelMediaElement::create();
     RefPtr<WebPlaybackSessionInterfaceContext> interface = WebPlaybackSessionInterfaceContext::create(*this, contextId);
-
-    model->setWebPlaybackSessionInterface(interface.get());
+    model->addClient(*interface);
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -201,7 +199,7 @@ void WebPlaybackSessionManager::removeContext(uint64_t contextId)
 
     RefPtr<HTMLMediaElement> mediaElement = model->mediaElement();
     model->setMediaElement(nullptr);
-    model->setWebPlaybackSessionInterface(nullptr);
+    model->removeClient(*interface);
     interface->invalidate();
     m_mediaElements.remove(mediaElement.get());
     m_contextMap.remove(contextId);
@@ -284,27 +282,27 @@ void WebPlaybackSessionManager::resetMediaState(uint64_t contextId)
     m_page->send(Messages::WebPlaybackSessionManagerProxy::ResetMediaState(contextId), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setDuration(uint64_t contextId, double duration)
+void WebPlaybackSessionManager::durationChanged(uint64_t contextId, double duration)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetDuration(contextId, duration), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setCurrentTime(uint64_t contextId, double currentTime, double anchorTime)
+void WebPlaybackSessionManager::currentTimeChanged(uint64_t contextId, double currentTime, double anchorTime)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetCurrentTime(contextId, currentTime, anchorTime), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setBufferedTime(uint64_t contextId, double bufferedTime)
+void WebPlaybackSessionManager::bufferedTimeChanged(uint64_t contextId, double bufferedTime)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetBufferedTime(contextId, bufferedTime), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setRate(uint64_t contextId, bool isPlaying, float playbackRate)
+void WebPlaybackSessionManager::rateChanged(uint64_t contextId, bool isPlaying, float playbackRate)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetRate(contextId, isPlaying, playbackRate), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setSeekableRanges(uint64_t contextId, const WebCore::TimeRanges& timeRanges)
+void WebPlaybackSessionManager::seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges& timeRanges)
 {
     Vector<std::pair<double, double>> rangesVector;
 
@@ -318,27 +316,27 @@ void WebPlaybackSessionManager::setSeekableRanges(uint64_t contextId, const WebC
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetSeekableRangesVector(contextId, WTFMove(rangesVector)), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setCanPlayFastReverse(uint64_t contextId, bool value)
+void WebPlaybackSessionManager::canPlayFastReverseChanged(uint64_t contextId, bool value)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetCanPlayFastReverse(contextId, value), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setAudioMediaSelectionOptions(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionManager::audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetAudioMediaSelectionOptions(contextId, options, selectedIndex), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setLegibleMediaSelectionOptions(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionManager::legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetLegibleMediaSelectionOptions(contextId, options, selectedIndex), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setExternalPlayback(uint64_t contextId, bool enabled, WebPlaybackSessionInterface::ExternalPlaybackTargetType targetType, String localizedDeviceName)
+void WebPlaybackSessionManager::externalPlaybackChanged(uint64_t contextId, bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetExternalPlaybackProperties(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::setWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
+void WebPlaybackSessionManager::wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool disabled)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetWirelessVideoPlaybackDisabled(contextId, disabled));
 }

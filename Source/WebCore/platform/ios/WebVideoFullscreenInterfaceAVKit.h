@@ -35,6 +35,7 @@
 #include "Timer.h"
 #include "WebPlaybackSessionInterfaceAVKit.h"
 #include "WebVideoFullscreenInterface.h"
+#include "WebVideoFullscreenModel.h"
 #include <functional>
 #include <objc/objc.h>
 #include <wtf/RefCounted.h>
@@ -57,12 +58,14 @@ class String;
 
 namespace WebCore {
 class IntRect;
+class FloatSize;
 class WebVideoFullscreenModel;
 class WebVideoFullscreenChangeObserver;
     
 class WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit final
     : public WebVideoFullscreenInterface
-    , public WebPlaybackSessionInterfaceAVKitClient
+    , public WebVideoFullscreenModelClient
+    , public WebPlaybackSessionModelClient
     , public RefCounted<WebVideoFullscreenInterfaceAVKit> {
 
 public:
@@ -72,18 +75,13 @@ public:
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
     WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionInterface->webPlaybackSessionModel(); }
 
-    WEBCORE_EXPORT void resetMediaState() final;
-    WEBCORE_EXPORT void setDuration(double) final;
-    WEBCORE_EXPORT void setCurrentTime(double currentTime, double anchorTime) final;
-    WEBCORE_EXPORT void setBufferedTime(double) final;
-    WEBCORE_EXPORT void setRate(bool isPlaying, float playbackRate) final;
-    WEBCORE_EXPORT void setVideoDimensions(bool hasVideo, float width, float height) final;
-    WEBCORE_EXPORT void setSeekableRanges(const TimeRanges&) final;
-    WEBCORE_EXPORT void setCanPlayFastReverse(bool) final;
-    WEBCORE_EXPORT void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) final;
-    WEBCORE_EXPORT void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) final;
-    WEBCORE_EXPORT void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) final;
-    WEBCORE_EXPORT void setWirelessVideoPlaybackDisabled(bool) final;
+    // WebVideoFullscreenModelClient
+    WEBCORE_EXPORT void hasVideoChanged(bool) final;
+    WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
+
+    // WebPlaybackSessionModelClient
+    WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
+
     WEBCORE_EXPORT virtual void setupFullscreen(UIView&, const IntRect& initialRect, UIView *, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
     WEBCORE_EXPORT virtual void enterFullscreen();
     WEBCORE_EXPORT virtual void exitFullscreen(const IntRect& finalRect);
@@ -127,7 +125,6 @@ protected:
     void enterPictureInPicture();
     void enterFullscreenStandard();
     void watchdogTimerFired();
-    void externalPlaybackEnabledChanged(bool) final;
     WebAVPlayerController *playerController() const;
 
     Ref<WebPlaybackSessionInterfaceAVKit> m_playbackSessionInterface;

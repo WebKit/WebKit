@@ -75,38 +75,6 @@ using namespace WebCore;
     [super dealloc];
 }
 
-- (void)resetState
-{
-    self.contentDuration = 0;
-    self.maxTime = 0;
-    self.contentDurationWithinEndTimes = 0;
-    self.loadedTimeRanges = @[];
-
-    self.canPlay = NO;
-    self.canPause = NO;
-    self.canTogglePlayback = NO;
-    self.hasEnabledAudio = NO;
-    self.canSeek = NO;
-    self.minTime = 0;
-    self.status = AVPlayerControllerStatusUnknown;
-
-    self.timing = nil;
-    self.rate = 0;
-
-    self.hasEnabledVideo = NO;
-    self.contentDimensions = CGSizeMake(0, 0);
-
-    self.seekableTimeRanges = [NSMutableArray array];
-
-    self.canScanBackward = NO;
-
-    self.audioMediaSelectionOptions = nil;
-    self.currentAudioMediaSelectionOption = nil;
-
-    self.legibleMediaSelectionOptions = nil;
-    self.currentLegibleMediaSelectionOption = nil;
-}
-
 - (AVPlayer *)player
 {
     return nil;

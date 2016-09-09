@@ -35,15 +35,30 @@
 
 namespace WebCore {
 
+class WebVideoFullscreenModelClient;
+
 class WebVideoFullscreenModel {
 public:
     virtual ~WebVideoFullscreenModel() { };
+    virtual void addClient(WebVideoFullscreenModelClient&) = 0;
+    virtual void removeClient(WebVideoFullscreenModelClient&)= 0;
+
     virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) = 0;
     virtual void setVideoLayerFrame(FloatRect) = 0;
     enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
     virtual void setVideoLayerGravity(VideoGravity) = 0;
     virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) = 0;
+
     virtual bool isVisible() const = 0;
+    virtual FloatSize videoDimensions() const = 0;
+    virtual bool hasVideo() const = 0;
+};
+
+class WebVideoFullscreenModelClient {
+public:
+    virtual ~WebVideoFullscreenModelClient() { }
+    virtual void hasVideoChanged(bool) = 0;
+    virtual void videoDimensionsChanged(const FloatSize&) = 0;
 };
 
 }

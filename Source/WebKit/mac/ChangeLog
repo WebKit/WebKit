@@ -1,3 +1,20 @@
+2016-09-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205365. rdar://problem/28020157
+
+    2016-07-08  Jer Noble  <jer.noble@apple.com>
+
+            Refactor WebPlaybackSessionModelMediaElement to be client based.
+            https://bugs.webkit.org/show_bug.cgi?id=159580
+
+            Reviewed by Eric Carlson.
+
+            No longer necessary to tell the models and interfaces about each other.
+
+            * WebView/WebView.mm:
+            (-[WebView _setUpPlaybackControlsManagerForMediaElement:]):
+            (-[WebView _clearPlaybackControlsManager]):
+
 2016-07-28  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r203855. rdar://problem/27557968

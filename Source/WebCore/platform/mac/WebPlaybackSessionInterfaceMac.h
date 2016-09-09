@@ -30,6 +30,7 @@
 
 #include "HTMLMediaElementEnums.h"
 #include "WebPlaybackSessionInterface.h"
+#include "WebPlaybackSessionModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -40,47 +41,34 @@ namespace WebCore {
 class IntRect;
 class WebPlaybackSessionModel;
 
-class WebPlaybackSessionInterfaceMacClient {
-public:
-    virtual ~WebPlaybackSessionInterfaceMacClient() { }
-
-    virtual void rateChanged(bool isPlaying, float playbackRate) = 0;
-};
-
 class WEBCORE_EXPORT WebPlaybackSessionInterfaceMac final
     : public WebPlaybackSessionInterface
+    , public WebPlaybackSessionModelClient
     , public RefCounted<WebPlaybackSessionInterfaceMac> {
 public:
-    static Ref<WebPlaybackSessionInterfaceMac> create()
-    {
-        return adoptRef(*new WebPlaybackSessionInterfaceMac());
-    }
+    static Ref<WebPlaybackSessionInterfaceMac> create(WebPlaybackSessionModel&);
     virtual ~WebPlaybackSessionInterfaceMac();
     WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionModel; }
-    WEBCORE_EXPORT void setWebPlaybackSessionModel(WebPlaybackSessionModel*);
-    WebPlaybackSessionInterfaceMacClient* client() const { return m_client; }
-    void setClient(WebPlaybackSessionInterfaceMacClient*);
 
+    // WebPlaybackSessionInterface
     WEBCORE_EXPORT void resetMediaState() final { }
-    WEBCORE_EXPORT void setDuration(double) final;
-    WEBCORE_EXPORT void setCurrentTime(double /*currentTime*/, double /*anchorTime*/) final;
-    WEBCORE_EXPORT void setBufferedTime(double) final { }
-    WEBCORE_EXPORT void setRate(bool /*isPlaying*/, float /*playbackRate*/) final;
-    WEBCORE_EXPORT void setSeekableRanges(const TimeRanges&) final;
-    WEBCORE_EXPORT void setCanPlayFastReverse(bool) final { }
-    WEBCORE_EXPORT void setAudioMediaSelectionOptions(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) final;
-    WEBCORE_EXPORT void setLegibleMediaSelectionOptions(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) final;
-    WEBCORE_EXPORT void setExternalPlayback(bool, ExternalPlaybackTargetType, String) final { }
-    WEBCORE_EXPORT void setWirelessVideoPlaybackDisabled(bool) final { }
+
+    // WebPlaybackSessionModelClient
+    WEBCORE_EXPORT void durationChanged(double) final;
+    WEBCORE_EXPORT void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;
+    WEBCORE_EXPORT void rateChanged(bool /*isPlaying*/, float /*playbackRate*/) final;
+    WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&) final;
+    WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) final;
+    WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) final;
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void ensureControlsManager();
     WEBCORE_EXPORT void setPlayBackControlsManager(WebPlaybackControlsManager *);
     WEBCORE_EXPORT WebPlaybackControlsManager *playBackControlsManager();
 
 private:
+    WebPlaybackSessionInterfaceMac(WebPlaybackSessionModel&);
     WebPlaybackSessionModel* m_playbackSessionModel { nullptr };
-    WebPlaybackControlsManager *m_playbackControlsManager;
-    WebPlaybackSessionInterfaceMacClient* m_client { nullptr };
+    WebPlaybackControlsManager *m_playbackControlsManager  { nullptr };
 };
 
 }

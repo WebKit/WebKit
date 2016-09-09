@@ -54,7 +54,10 @@ namespace WebKit {
 class WebPage;
 class WebPlaybackSessionManager;
 
-class WebPlaybackSessionInterfaceContext final : public RefCounted<WebPlaybackSessionInterfaceContext>, public WebCore::WebPlaybackSessionInterface {
+class WebPlaybackSessionInterfaceContext final
+    : public RefCounted<WebPlaybackSessionInterfaceContext>
+    , public WebCore::WebPlaybackSessionInterface
+    , public WebCore::WebPlaybackSessionModelClient {
 public:
     static Ref<WebPlaybackSessionInterfaceContext> create(WebPlaybackSessionManager& manager, uint64_t contextId)
     {
@@ -69,16 +72,18 @@ private:
 
     // WebPlaybackSessionInterface
     void resetMediaState() final;
-    void setDuration(double) final;
-    void setCurrentTime(double currentTime, double anchorTime) final;
-    void setBufferedTime(double) final;
-    void setRate(bool isPlaying, float playbackRate) final;
-    void setSeekableRanges(const WebCore::TimeRanges&) final;
-    void setCanPlayFastReverse(bool value) final;
-    void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) final;
-    void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) final;
-    void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) final;
-    void setWirelessVideoPlaybackDisabled(bool) final;
+
+    // WebPlaybackModelClient
+    void durationChanged(double) final;
+    void currentTimeChanged(double currentTime, double anchorTime) final;
+    void bufferedTimeChanged(double) final;
+    void rateChanged(bool isPlaying, float playbackRate) final;
+    void seekableRangesChanged(const WebCore::TimeRanges&) final;
+    void canPlayFastReverseChanged(bool value) final;
+    void audioMediaSelectionOptionsChanged(const Vector<String>& options, uint64_t selectedIndex) final;
+    void legibleMediaSelectionOptionsChanged(const Vector<String>& options, uint64_t selectedIndex) final;
+    void externalPlaybackChanged(bool enabled, WebCore::WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
+    void wirelessVideoPlaybackDisabledChanged(bool) final;
 
     WebPlaybackSessionInterfaceContext(WebPlaybackSessionManager&, uint64_t contextId);
 
@@ -114,16 +119,16 @@ protected:
 
     // Interface to WebPlaybackSessionInterfaceContext
     void resetMediaState(uint64_t contextId);
-    void setDuration(uint64_t contextId, double);
-    void setCurrentTime(uint64_t contextId, double currentTime, double anchorTime);
-    void setBufferedTime(uint64_t contextId, double bufferedTime);
-    void setRate(uint64_t contextId, bool isPlaying, float playbackRate);
-    void setSeekableRanges(uint64_t contextId, const WebCore::TimeRanges&);
-    void setCanPlayFastReverse(uint64_t contextId, bool value);
-    void setAudioMediaSelectionOptions(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex);
-    void setLegibleMediaSelectionOptions(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex);
-    void setExternalPlayback(uint64_t contextId, bool enabled, WebCore::WebPlaybackSessionInterface::ExternalPlaybackTargetType, String localizedDeviceName);
-    void setWirelessVideoPlaybackDisabled(uint64_t contextId, bool);
+    void durationChanged(uint64_t contextId, double);
+    void currentTimeChanged(uint64_t contextId, double currentTime, double anchorTime);
+    void bufferedTimeChanged(uint64_t contextId, double bufferedTime);
+    void rateChanged(uint64_t contextId, bool isPlaying, float playbackRate);
+    void seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges&);
+    void canPlayFastReverseChanged(uint64_t contextId, bool value);
+    void audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex);
+    void legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex);
+    void externalPlaybackChanged(uint64_t contextId, bool enabled, WebCore::WebPlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
+    void wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool);
 
     // Messages from WebPlaybackSessionManagerProxy
     void play(uint64_t contextId);

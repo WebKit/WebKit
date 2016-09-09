@@ -22,7 +22,8 @@
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 messages -> WebVideoFullscreenManagerProxy {
-    SetVideoDimensions(uint64_t contextId, bool hasVideo, unsigned width, unsigned height)
+    SetHasVideo(uint64_t contextId, bool hasVideo)
+    SetVideoDimensions(uint64_t contextId, WebCore::FloatSize videoDimensions)
     SetupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture)
     EnterFullscreen(uint64_t contextId)
     ExitFullscreen(uint64_t contextId, WebCore::IntRect finalRect)
