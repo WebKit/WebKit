@@ -1,3 +1,15 @@
+2016-09-09  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, rolling r205759 back in with a fix.
+
+        An expectation file, JSTests/ChakraCore/test/Lib/tostring.baseline-jsc,
+        should be named "toString.baseline-jsc".  For systems with case-insensitive
+        filesystems, the wrong name isn't an issue.  That rename is part of this
+        fix.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2016-09-09  Johan K. Jensen  <johan_jensen@apple.com>
 
         Unreviewed. Added myself to the list of committers.
