@@ -425,6 +425,7 @@ void URL::invalidate()
 {
     m_isValid = false;
     m_protocolIsInHTTPFamily = false;
+    m_cannotBeABaseURL = false;
     m_schemeEnd = 0;
     m_userStart = 0;
     m_userEnd = 0;

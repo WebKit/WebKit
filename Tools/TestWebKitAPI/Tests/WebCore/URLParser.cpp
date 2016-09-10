@@ -563,6 +563,12 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("http://:b@");
     shouldFail("http://@");
     shouldFail("http://[0:f::f:f:0:0]:abc");
+    shouldFail("../i", "sc:sd");
+    shouldFail("../i", "sc:sd/sd");
+    shouldFail("/i", "sc:sd");
+    shouldFail("/i", "sc:sd/sd");
+    shouldFail("?i", "sc:sd");
+    shouldFail("?i", "sc:sd/sd");
 }
 
 } // namespace TestWebKitAPI

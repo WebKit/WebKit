@@ -476,6 +476,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                         ASSERT(*c == '/');
                     } else {
                         m_url.m_pathAfterLastSlash = m_url.m_userStart;
+                        m_url.m_cannotBeABaseURL = true;
                         state = State::CannotBeABaseURLPath;
                     }
                     ++c;
@@ -498,19 +499,21 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             break;
         case State::NoScheme:
             LOG_STATE("NoScheme");
-            if (base.isNull()) {
-                if (*c == '#') {
-                    copyURLPartsUntil(base, URLPart::QueryEnd);
-                    state = State::Fragment;
-                    ++c;
-                } else
-                    return failure(input);
-            } else if (base.protocol() == "file") {
-                copyURLPartsUntil(base, URLPart::SchemeEnd);
-                m_buffer.append(':');
-                state = State::File;
-            } else
+            if (base.isNull() || (base.m_cannotBeABaseURL && *c != '#'))
+                return failure(input);
+            if (base.m_cannotBeABaseURL && *c == '#') {
+                copyURLPartsUntil(base, URLPart::QueryEnd);
+                state = State::Fragment;
+                ++c;
+                break;
+            }
+            if (base.protocol() != "file") {
                 state = State::Relative;
+                break;
+            }
+            copyURLPartsUntil(base, URLPart::SchemeEnd);
+            m_buffer.append(':');
+            state = State::File;
             break;
         case State::SpecialRelativeOrAuthority:
             LOG_STATE("SpecialRelativeOrAuthority");
@@ -1476,6 +1479,8 @@ bool URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
 
 bool URLParser::allValuesEqual(const URL& a, const URL& b)
 {
+    // FIXME: m_cannotBeABaseURL is not compared because the old URL::parse did not use it,
+    // but once we get rid of URL::parse its value should be tested.
     LOG(URLParser, "%d %d %d %d %d %d %d %d %d %d %d %d %s\n%d %d %d %d %d %d %d %d %d %d %d %d %s",
         a.m_isValid,
         a.m_protocolIsInHTTPFamily,

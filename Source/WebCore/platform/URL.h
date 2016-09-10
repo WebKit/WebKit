@@ -218,6 +218,7 @@ private:
     String m_string;
     bool m_isValid : 1;
     bool m_protocolIsInHTTPFamily : 1;
+    bool m_cannotBeABaseURL : 1;
 
     unsigned m_schemeEnd;
     unsigned m_userStart;
