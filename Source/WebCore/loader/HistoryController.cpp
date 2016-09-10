@@ -270,7 +270,7 @@ void HistoryController::invalidateCurrentItemCachedPage()
     
     ASSERT(cachedPage->document() == m_frame.document());
     if (cachedPage->document() == m_frame.document()) {
-        cachedPage->document()->setInPageCache(false);
+        cachedPage->document()->setPageCacheState(Document::NotInPageCache);
         cachedPage->clear();
     }
 }

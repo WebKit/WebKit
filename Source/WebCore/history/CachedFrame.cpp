@@ -264,7 +264,7 @@ void CachedFrame::destroy()
     // fully anyway, because the document won't be able to access its DOMWindow object (due to being frameless).
     m_document->removeAllEventListeners();
 
-    m_document->setInPageCache(false);
+    m_document->setPageCacheState(Document::NotInPageCache);
     m_document->prepareForDestruction();
 
     clear();

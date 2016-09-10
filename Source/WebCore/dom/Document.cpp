@@ -493,7 +493,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_annotatedRegionsDirty(false)
 #endif
     , m_createRenderers(true)
-    , m_inPageCache(false)
     , m_accessKeyMapValid(false)
     , m_documentClasses(documentClasses)
     , m_isSynthesized(constructionFlags & Synthesized)
@@ -602,7 +601,7 @@ Document::~Document()
     allDocuments().remove(this);
 
     ASSERT(!renderView());
-    ASSERT(!m_inPageCache);
+    ASSERT(m_pageCacheState != InPageCache);
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_disabledFieldsetElementsCount);
@@ -2237,7 +2236,7 @@ void Document::clearStyleResolver()
 void Document::createRenderTree()
 {
     ASSERT(!renderView());
-    ASSERT(!m_inPageCache);
+    ASSERT(m_pageCacheState != InPageCache);
     ASSERT(!m_axObjectCache || this != &topDocument());
 
     if (m_isNonRenderedPlaceholder)
@@ -2301,7 +2300,7 @@ void Document::disconnectFromFrame()
 void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
-    ASSERT(!m_inPageCache);
+    ASSERT(m_pageCacheState != InPageCache);
 
     TemporaryChange<bool> change(m_renderTreeBeingDestroyed, true);
 
@@ -3787,7 +3786,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
     if (m_focusedElement == newFocusedElement)
         return true;
 
-    if (m_inPageCache)
+    if (inPageCache())
         return false;
 
     bool focusChangeBlocked = false;
@@ -4715,17 +4714,18 @@ URL Document::completeURL(const String& url) const
     return completeURL(url, m_baseURL);
 }
 
-void Document::setInPageCache(bool flag)
+void Document::setPageCacheState(PageCacheState state)
 {
-    if (m_inPageCache == flag)
+    if (m_pageCacheState == state)
         return;
 
-    m_inPageCache = flag;
+    m_pageCacheState = state;
 
     FrameView* v = view();
     Page* page = this->page();
 
-    if (flag) {
+    switch (state) {
+    case InPageCache:
         if (v) {
             // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
             // page cache and similar work that needs to occur when it comes out. This is where we do the work
@@ -4745,9 +4745,13 @@ void Document::setInPageCache(bool flag)
         m_styleRecalcTimer.stop();
 
         clearSharedObjectPool();
-    } else {
+        break;
+    case NotInPageCache:
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
+        break;
+    case AboutToEnterPageCache:
+        break;
     }
 }
 
@@ -5066,7 +5070,7 @@ Document& Document::topDocument() const
 {
     // FIXME: This special-casing avoids incorrectly determined top documents during the process
     // of AXObjectCache teardown or notification posting for cached or being-destroyed documents.
-    if (!m_inPageCache && !m_renderTreeBeingDestroyed) {
+    if (!inPageCache() && !m_renderTreeBeingDestroyed) {
         if (!m_frame)
             return const_cast<Document&>(*this);
         // This should always be non-null.
