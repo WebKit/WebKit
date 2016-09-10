@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+enum class MediaSessionMainContentPurpose {
+    MediaControls,
+    Autoplay
+};
+
 class Document;
 class HTMLMediaElement;
 class SourceBuffer;
@@ -114,7 +119,7 @@ public:
     bool wantsToObserveViewportVisibilityForMediaControls() const;
     bool wantsToObserveViewportVisibilityForAutoplay() const;
     bool canShowControlsManager() const;
-    bool isLargeEnoughForMainContent() const;
+    bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
     double mostRecentUserInteractionTime() const;
 
 private:

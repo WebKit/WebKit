@@ -1,3 +1,18 @@
+2016-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Apple.com keynote does not display media controls
+        https://bugs.webkit.org/show_bug.cgi?id=161833
+        <rdar://problem/28230123>
+
+        Reviewed by Tim Horton.
+
+        New unit test verifying that wide videos (~2 aspect ratio) still get media controls.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/wide-autoplaying-video-with-audio.html: Added.
+
 2016-09-09  Tim Horton  <timothy_horton@apple.com>
 
         WKThumbnailView should expose a mode where it can be reparented without resnapshotting
