@@ -1284,6 +1284,7 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
 {
     // Draw each contiguous run of glyphs that use the same font data.
     const Font* fontData = glyphBuffer.fontAt(0);
+    FloatSize offset = glyphBuffer.offsetAt(0);
     FloatPoint startPoint(point.x(), point.y() - glyphBuffer.initialAdvance().height());
     float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
     float nextY = startPoint.y() + glyphBuffer.advanceAt(0).height();
@@ -1291,12 +1292,14 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
     unsigned nextGlyph = 1;
     while (nextGlyph < glyphBuffer.size()) {
         const Font* nextFontData = glyphBuffer.fontAt(nextGlyph);
+        FloatSize nextOffset = glyphBuffer.offsetAt(nextGlyph);
 
-        if (nextFontData != fontData) {
+        if (nextFontData != fontData || nextOffset != offset) {
             context.drawGlyphs(*this, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 
             lastFrom = nextGlyph;
             fontData = nextFontData;
+            offset = nextOffset;
             startPoint.setX(nextX);
             startPoint.setY(nextY);
         }
