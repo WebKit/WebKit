@@ -446,8 +446,8 @@ TEST_F(URLParserTest, ParserDifferences)
         {"file", "", "", "", 0, "/pAtH", "", "", "file:///pAtH"},
         {"file", "", "", "", 0, "pAtH", "", "", "file://pAtH"});
     checkURLDifferences("file:pAtH/",
-        {"file", "", "", "", 0, "/pAtH/", "", "", "file:///pAtH"},
-        {"file", "", "", "", 0, "pAtH/", "", "", "file://pAtH"});
+        {"file", "", "", "", 0, "/pAtH/", "", "", "file:///pAtH/"},
+        {"file", "", "", "", 0, "pAtH/", "", "", "file://pAtH/"});
     
     // FIXME: Fix and test incomplete percent encoded characters in the middle and end of the input string.
     // FIXME: Fix and test percent encoded upper case characters in the host.
