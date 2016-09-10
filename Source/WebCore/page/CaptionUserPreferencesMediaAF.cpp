@@ -432,7 +432,7 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
     
     builder.append(getPropertyNameString(CSSPropertyFontFamily));
     builder.appendLiteral(": \"");
-    builder.append(static_cast<CFStringRef>(name.get()));
+    builder.append(String(static_cast<CFStringRef>(name.get())));
     builder.append('"');
     if (behavior == kMACaptionAppearanceBehaviorUseValue)
         builder.appendLiteral(" !important");
@@ -642,7 +642,7 @@ static void buildDisplayStringForTrackBase(StringBuilder& displayName, const Tra
         else if (!language.isEmpty())
             displayName.append(language);
         else
-            displayName.append(localeIdentifier.get());
+            displayName.append(String(localeIdentifier.get()));
     }
 }
 

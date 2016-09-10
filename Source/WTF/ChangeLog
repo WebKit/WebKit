@@ -1,3 +1,30 @@
+2016-09-10  Chris Dumez  <cdumez@apple.com>
+
+        parseHTMLInteger() should take a StringView in parameter
+        https://bugs.webkit.org/show_bug.cgi?id=161669
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append):
+        Add StringBuilder::append() overload taking an AtomicString in parameter.
+        It used to call StringBuilder::append(const String&) implicitly when
+        passing an AtomicString. However, it is now ambiguous because there
+        is an overload taking a StringView, and it is now possible to construct
+        a StringView from an AtomicString.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::StringView):
+        - Add StringView constructor taking an AtomicString in parameter for
+          convenience. This avoids having to call AtomicString::string()
+          explicitly at call sites.
+        - Add StringView constructor taking a 'const char*' in parameter for
+          performance. There are several call sites that were passing a const
+          char* and implicitly constructing an unnecessary String to construct
+          a StringView. This became more obvious because the constructor taking
+          an AtomicString in parameter made such calls ambiguous.
+
+
 2016-09-09  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fixing a few JSC test failures.

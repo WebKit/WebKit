@@ -1,3 +1,16 @@
+2016-09-10  Chris Dumez  <cdumez@apple.com>
+
+        parseHTMLInteger() should take a StringView in parameter
+        https://bugs.webkit.org/show_bug.cgi?id=161669
+
+        Reviewed by Ryosuke Niwa.
+
+        * runtime/DateConversion.cpp:
+        (JSC::formatDateTime):
+        Explicitly construct a String from the const WCHAR* on Windows because
+        it is ambiguous otherwise now that there is a StringBuilder::append()
+        overload taking an AtomicString in.
+
 2016-09-08  Keith Miller  <keith_miller@apple.com>
 
         WASM should support if-then-else

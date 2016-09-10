@@ -50,6 +50,11 @@ public:
 
     ALWAYS_INLINE void append(const char* characters, unsigned length) { append(reinterpret_cast<const LChar*>(characters), length); }
 
+    void append(const AtomicString& atomicString)
+    {
+        append(atomicString.string());
+    }
+
     void append(const String& string)
     {
         if (!string.length())

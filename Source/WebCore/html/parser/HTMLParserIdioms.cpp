@@ -191,7 +191,7 @@ static Optional<int> parseHTMLIntegerInternal(const CharacterType* position, con
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-integers
-Optional<int> parseHTMLInteger(const String& input)
+Optional<int> parseHTMLInteger(StringView input)
 {
     unsigned length = input.length();
     if (!length)
@@ -207,7 +207,7 @@ Optional<int> parseHTMLInteger(const String& input)
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
-Optional<unsigned> parseHTMLNonNegativeInteger(const String& input)
+Optional<unsigned> parseHTMLNonNegativeInteger(StringView input)
 {
     Optional<int> signedValue = parseHTMLInteger(input);
     if (!signedValue || signedValue.value() < 0)
@@ -363,7 +363,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     while (position < end && isASCIIDigit(*position))
         ++position;
 
-    Optional<unsigned> number = parseHTMLNonNegativeInteger(StringView(numberStart, position - numberStart).toStringWithoutCopying());
+    Optional<unsigned> number = parseHTMLNonNegativeInteger(StringView(numberStart, position - numberStart));
     if (!number)
         return false;
 

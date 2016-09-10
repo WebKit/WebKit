@@ -7328,7 +7328,7 @@ bool CSSParser::parseFontFaceSrcLocal(CSSValueList& valueList)
                 return false;
             if (!builder.isEmpty())
                 builder.append(' ');
-            builder.append(localValue->string);
+            builder.append(localValue->string.toStringView());
         }
         valueList.append(CSSFontFaceSrcValue::createLocal(builder.toString()));
     } else

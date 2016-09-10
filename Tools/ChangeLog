@@ -1,3 +1,17 @@
+2016-09-10  Chris Dumez  <cdumez@apple.com>
+
+        parseHTMLInteger() should take a StringView in parameter
+        https://bugs.webkit.org/show_bug.cgi?id=161669
+
+        Reviewed by Ryosuke Niwa.
+
+        Explicitly construct a String from the CFStringRef in order to call
+        StringBuilder::append(). This is needed now that there is an append()
+        overload taking an AtomicString in parameter.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+
 2016-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Apple.com keynote does not display media controls

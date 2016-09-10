@@ -87,6 +87,7 @@ struct CSSParserString {
 
     operator String() const { return is8Bit() ? String(m_data.characters8, m_length) : String(m_data.characters16, m_length); }
     operator AtomicString() const { return is8Bit() ? AtomicString(m_data.characters8, m_length) : AtomicString(m_data.characters16, m_length); }
+    StringView toStringView() const { return is8Bit() ? StringView(m_data.characters8, m_length) : StringView(m_data.characters16, m_length); }
 
     union {
         LChar* characters8;
