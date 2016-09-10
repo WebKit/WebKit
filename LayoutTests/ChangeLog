@@ -1,3 +1,11 @@
+2016-09-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Mark new media source tests to failure
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: New added media source tests are failing.
+
 2016-09-09  Jer Noble  <jer.noble@apple.com>
 
         [Media Source] Import updated w3c/web-platform-tests and rebaseline
