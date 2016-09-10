@@ -1,3 +1,16 @@
+2016-09-09  Dean Jackson  <dino@apple.com>
+
+        [ANGLE] instantiation of variable 'gl::GLTypeToGLenum<float>::value' required here, but no definition is available
+        https://bugs.webkit.org/show_bug.cgi?id=161829
+        <rdar://problem/28051244>
+
+        Reviewed by Alex Christensen.
+
+        Newer versions of clang require explicit definition of some template types
+        if they are in another translation unit.
+
+        * src/libANGLE/Program.cpp: Add definitions for GLTypeToGLenum.
+
 2016-07-29  David Kilzer  <ddkilzer@apple.com>
 
         ANGLE: Fix global constructors and exit-time destructors

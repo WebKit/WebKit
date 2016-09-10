@@ -2493,6 +2493,10 @@ void Program::setMatrixUniformInternal(GLint location,
     }
 }
 
+extern template GLenum GLTypeToGLenum<float>::value;
+extern template GLenum GLTypeToGLenum<int>::value;
+extern template GLenum GLTypeToGLenum<unsigned int>::value;
+
 template <typename DestT>
 void Program::getUniformInternal(GLint location, DestT *dataOut) const
 {
