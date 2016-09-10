@@ -1,3 +1,53 @@
+2016-09-09  Jer Noble  <jer.noble@apple.com>
+
+        [Media Source] Import updated w3c/web-platform-tests and rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=161723
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/media/media-source/mediasource-append-buffer.html: Removed.
+        * http/tests/media/media-source/mediasource-buffered-expected.txt: Removed.
+        * http/tests/media/media-source/mediasource-closed.html: Removed.
+        * http/tests/media/media-source/mediasource-config-changes.js:
+        (resolutionFromFilename): Deleted.
+        (appendBuffer): Deleted.
+        (mediaSourceConfigChangeTest): Deleted.
+        * http/tests/media/media-source/mediasource-util.js:
+        (EventExpectationsManager): Deleted.
+        (EventExpectationsManager.prototype.expectEvent): Deleted.
+        (EventExpectationsManager.prototype.waitForExpectedEvents): Deleted.
+        (EventExpectationsManager.prototype.expectingEvents): Deleted.
+        (EventExpectationsManager.prototype.handleWaitCallback_): Deleted.
+        (EventExpectationsManager.prototype.getExpectations_): Deleted.
+        (loadData_): Deleted.
+        (onSourceOpen): Deleted.
+        (openMediaSource_): Deleted.
+        (MediaSourceUtil.loadTextData): Deleted.
+        (MediaSourceUtil.loadBinaryData): Deleted.
+        (MediaSourceUtil.fetchManifestAndData): Deleted.
+        (MediaSourceUtil.extractSegmentData): Deleted.
+        (MediaSourceUtil.getMediaDataForPlaybackTime): Deleted.
+        (getFirstSupportedType): Deleted.
+        (getSegmentInfo): Deleted.
+        (MediaSourceUtil.getSubType): Deleted.
+        (addExtraTestMethods.test.failOnEvent): Deleted.
+        (addExtraTestMethods.test.endOnEvent): Deleted.
+        (addExtraTestMethods.test.expectEvent): Deleted.
+        (addExtraTestMethods.test.waitForExpectedEvents): Deleted.
+        (addExtraTestMethods.test.waitForCurrentTimeChange): Deleted.
+        (addExtraTestMethods.test.done): Deleted.
+        (addExtraTestMethods): Deleted.
+        (window.string_appeared_here): Deleted.
+        * http/tests/media/media-source/mp4/test-a-128k-44100Hz-1ch.mp4: Removed.
+        * http/tests/media/media-source/mp4/test-a-192k-44100Hz-1ch.mp4: Removed.
+        * http/tests/media/media-source/webm/segment-info.js: Removed.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating-expected.txt: Added.
+
 2016-09-08  Dean Jackson  <dino@apple.com>
 
         Expose Apple Pencil data to Touch events

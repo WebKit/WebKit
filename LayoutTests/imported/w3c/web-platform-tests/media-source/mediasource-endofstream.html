@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Calls to MediaSource.endOfStream() without error</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="mediasource-util.js"></script>
+<script>
+    mediasource_test(function(test, mediaElement, mediaSource)
+    {
+        mediaSource.duration = 2;
+        mediaSource.endOfStream();
+        assert_equals(mediaSource.duration, 0);
+        test.done();
+    }, 'MediaSource.endOfStream(): duration truncated to 0 when there are no buffered coded frames');
+
+    mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+    {
+        sourceBuffer.appendBuffer(mediaData);
+        test.expectEvent(sourceBuffer, 'updateend',
+          'Media buffer appended to SourceBuffer');
+        test.waitForExpectedEvents(function()
+        {
+            mediaSource.endOfStream();
+            test.expectEvent(mediaElement, 'canplaythrough',
+              'Media element may render the media content until the end');
+            test.waitForExpectedEvents(function()
+            {
+                assert_equals(mediaElement.readyState, HTMLMediaElement.HAVE_ENOUGH_DATA,
+                  'Media element has enough data to render the content');
+                test.done();
+            });
+        });
+    }, 'MediaSource.endOfStream(): media element notified that it now has all of the media data');
+
+    mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+    {
+        sourceBuffer.appendBuffer(mediaData);
+        test.expectEvent(sourceBuffer, 'updateend',
+          'Media buffer appended to SourceBuffer');
+        test.waitForExpectedEvents(function()
+        {
+            assert_equals(sourceBuffer.buffered.length, 1,
+              'Media data properly buffered');
+            var highestEndTime = sourceBuffer.buffered.end(0);
+
+            mediaSource.endOfStream();
+
+            assert_equals(sourceBuffer.buffered.end(0), highestEndTime,
+              'Ending the stream does not affect buffered data');
+            test.done();
+        });
+    }, 'MediaSource.endOfStream(): buffered data not modified when endOfStream is called');
+
+    mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+    {
+        assert_less_than(segmentInfo.duration, 60, 'Sufficient test media duration');
+        sourceBuffer.appendBuffer(mediaData);
+        test.expectEvent(sourceBuffer, 'updateend',
+          'Media buffer appended to SourceBuffer');
+        test.waitForExpectedEvents(function()
+        {
+            assert_equals(sourceBuffer.buffered.length, 1,
+              'Media data properly buffered');
+
+            mediaSource.duration = 60;
+            mediaSource.endOfStream();
+
+            assert_equals(mediaSource.duration, sourceBuffer.buffered.end(0),
+              'Duration set to the higest end time');
+            test.done();
+        });
+    }, 'MediaSource.endOfStream(): duration set to the highest end time reported by the buffered attribute');
+</script>

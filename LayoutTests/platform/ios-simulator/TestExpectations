@@ -168,6 +168,8 @@ media/video-size-intrinsic-scale.html [ WontFix ]
 
 # MediaSource is not currently supported on iOS.
 media/media-source
+http/tests/media/media-source [ Skip ]
+imported/w3c/web-platform-tests/media-source/ [ Skip ]
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
 fast/history/page-cache-media-source-closed.html [ Skip ]
 fast/history/page-cache-media-source-opened.html [ Skip ]

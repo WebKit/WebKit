@@ -1,3 +1,203 @@
+2016-09-09  Jer Noble  <jer.noble@apple.com>
+
+        [Media Source] Import updated w3c/web-platform-tests and rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=161723
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/media-source/OWNERS: Added.
+        * web-platform-tests/media-source/SourceBuffer-abort-expected.txt: Added.
+        * web-platform-tests/media-source/SourceBuffer-abort-readyState-expected.txt: Added.
+        * web-platform-tests/media-source/SourceBuffer-abort-readyState.html: Renamed from LayoutTests/http/tests/media/media-source/SourceBuffer-abort-readyState.html.
+        * web-platform-tests/media-source/SourceBuffer-abort-removed-expected.txt: Added.
+        * web-platform-tests/media-source/SourceBuffer-abort-removed.html: Renamed from LayoutTests/http/tests/media/media-source/SourceBuffer-abort-removed.html.
+        * web-platform-tests/media-source/SourceBuffer-abort-updating-expected.txt: Added.
+        * web-platform-tests/media-source/SourceBuffer-abort-updating.html: Renamed from LayoutTests/http/tests/media/media-source/SourceBuffer-abort-updating.html.
+        * web-platform-tests/media-source/SourceBuffer-abort.html: Renamed from LayoutTests/http/tests/media/media-source/SourceBuffer-abort.html.
+        * web-platform-tests/media-source/URL-createObjectURL-expected.txt: Added.
+        * web-platform-tests/media-source/URL-createObjectURL-null-expected.txt: Added.
+        * web-platform-tests/media-source/URL-createObjectURL-null.html: Added.
+        * web-platform-tests/media-source/URL-createObjectURL-revoke-expected.txt: Added.
+        * web-platform-tests/media-source/URL-createObjectURL-revoke.html: Added.
+        * web-platform-tests/media-source/URL-createObjectURL.html: Added.
+        * web-platform-tests/media-source/import_tests.sh: Added.
+        * web-platform-tests/media-source/interfaces-expected.txt: Added.
+        * web-platform-tests/media-source/interfaces.html: Added.
+        * web-platform-tests/media-source/manifest.txt: Added.
+        * web-platform-tests/media-source/mediasource-activesourcebuffers-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-activesourcebuffers.html: Added.
+        * web-platform-tests/media-source/mediasource-addsourcebuffer-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-addsourcebuffer-expected.txt.
+        * web-platform-tests/media-source/mediasource-addsourcebuffer-mode-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html: Added.
+        * web-platform-tests/media-source/mediasource-addsourcebuffer.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-addsourcebuffer.html.
+        * web-platform-tests/media-source/mediasource-append-buffer-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-append-buffer-expected.txt.
+        * web-platform-tests/media-source/mediasource-append-buffer.html: Added.
+        * web-platform-tests/media-source/mediasource-appendbuffer-quota-exceeded-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-appendbuffer-quota-exceeded.html: Added.
+        * web-platform-tests/media-source/mediasource-appendwindow-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-appendwindow-expected.txt.
+        * web-platform-tests/media-source/mediasource-appendwindow.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-appendwindow.html.
+        * web-platform-tests/media-source/mediasource-avtracks-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-avtracks.html: Added.
+        * web-platform-tests/media-source/mediasource-buffered-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-buffered.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-buffered.html.
+        * web-platform-tests/media-source/mediasource-closed-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-closed-expected.txt.
+        * web-platform-tests/media-source/mediasource-closed.html: Added.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-a-bitrate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-a-bitrate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate.html.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate.html.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-av-framesize-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-av-framesize.html.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-av-video-bitrate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-av-video-bitrate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate.html.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-v-framerate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-v-framesize-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-mp4-v-framesize.html.
+        * web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-a-bitrate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-a-bitrate.html.
+        * web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-av-audio-bitrate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-av-audio-bitrate.html.
+        * web-platform-tests/media-source/mediasource-config-change-webm-av-framesize-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-av-framesize-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-av-framesize.html.
+        * web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-av-video-bitrate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-av-video-bitrate.html.
+        * web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-v-bitrate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-v-bitrate.html.
+        * web-platform-tests/media-source/mediasource-config-change-webm-v-framerate-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-v-framerate-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-v-framerate.html.
+        * web-platform-tests/media-source/mediasource-config-change-webm-v-framesize-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-v-framesize-expected.txt.
+        * web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-change-webm-v-framesize.html.
+        * web-platform-tests/media-source/mediasource-config-changes.js: Renamed from LayoutTests/http/tests/media/media-source/mediasource-config-changes.js.
+        (resolutionFromFilename):
+        (appendBuffer):
+        (mediaSourceConfigChangeTest):
+        * web-platform-tests/media-source/mediasource-detach-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-detach.html: Added.
+        * web-platform-tests/media-source/mediasource-duration-boundaryconditions-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-duration-boundaryconditions.html: Added.
+        * web-platform-tests/media-source/mediasource-duration-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-duration-expected.txt.
+        * web-platform-tests/media-source/mediasource-duration.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-duration.html.
+        * web-platform-tests/media-source/mediasource-endofstream-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-endofstream-invaliderror-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-endofstream-invaliderror-expected.txt.
+        * web-platform-tests/media-source/mediasource-endofstream-invaliderror.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-endofstream-invaliderror.html.
+        * web-platform-tests/media-source/mediasource-endofstream.html: Added.
+        * web-platform-tests/media-source/mediasource-errors-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-errors.html: Added.
+        * web-platform-tests/media-source/mediasource-getvideoplaybackquality-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-getvideoplaybackquality-expected.txt.
+        * web-platform-tests/media-source/mediasource-getvideoplaybackquality.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-getvideoplaybackquality.html.
+        * web-platform-tests/media-source/mediasource-is-type-supported-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-is-type-supported-expected.txt.
+        * web-platform-tests/media-source/mediasource-is-type-supported.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-is-type-supported.html.
+        * web-platform-tests/media-source/mediasource-liveseekable-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-liveseekable.html: Added.
+        * web-platform-tests/media-source/mediasource-multiple-attach-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-multiple-attach-expected.txt.
+        * web-platform-tests/media-source/mediasource-multiple-attach.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-multiple-attach.html.
+        * web-platform-tests/media-source/mediasource-play-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-play-expected.txt.
+        * web-platform-tests/media-source/mediasource-play-then-seek-back-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-play-then-seek-back-expected.txt.
+        * web-platform-tests/media-source/mediasource-play-then-seek-back.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-play-then-seek-back.html.
+        * web-platform-tests/media-source/mediasource-play.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-play.html.
+        * web-platform-tests/media-source/mediasource-preload-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-preload.html: Added.
+        * web-platform-tests/media-source/mediasource-redundant-seek-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-redundant-seek-expected.txt.
+        * web-platform-tests/media-source/mediasource-redundant-seek.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-redundant-seek.html.
+        * web-platform-tests/media-source/mediasource-remove-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-remove-expected.txt.
+        * web-platform-tests/media-source/mediasource-remove.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-remove.html.
+        * web-platform-tests/media-source/mediasource-removesourcebuffer-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-removesourcebuffer.html: Added.
+        * web-platform-tests/media-source/mediasource-seek-beyond-duration-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-seek-beyond-duration-expected.txt.
+        * web-platform-tests/media-source/mediasource-seek-beyond-duration.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-seek-beyond-duration.html.
+        * web-platform-tests/media-source/mediasource-seek-during-pending-seek-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-seek-during-pending-seek-expected.txt.
+        * web-platform-tests/media-source/mediasource-seek-during-pending-seek.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-seek-during-pending-seek.html.
+        * web-platform-tests/media-source/mediasource-seekable-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-seekable.html: Added.
+        * web-platform-tests/media-source/mediasource-sequencemode-append-buffer-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html: Added.
+        * web-platform-tests/media-source/mediasource-sourcebuffer-mode-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-sourcebuffer-mode-expected.txt.
+        * web-platform-tests/media-source/mediasource-sourcebuffer-mode.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-sourcebuffer-mode.html.
+        * web-platform-tests/media-source/mediasource-sourcebuffer-trackdefaults-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-sourcebuffer-trackdefaults.html: Added.
+        * web-platform-tests/media-source/mediasource-sourcebufferlist-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/mediasource-sourcebufferlist-expected.txt.
+        * web-platform-tests/media-source/mediasource-sourcebufferlist.html: Renamed from LayoutTests/http/tests/media/media-source/mediasource-sourcebufferlist.html.
+        * web-platform-tests/media-source/mediasource-timestamp-offset-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-timestamp-offset.html: Added.
+        * web-platform-tests/media-source/mediasource-trackdefault-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-trackdefault.html: Added.
+        * web-platform-tests/media-source/mediasource-trackdefaultlist-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-trackdefaultlist.html: Added.
+        * web-platform-tests/media-source/mediasource-util.js: Renamed from LayoutTests/http/tests/media/media-source/mediasource-util.js.
+        (EventExpectationsManager):
+        (EventExpectationsManager.prototype.expectEvent):
+        (EventExpectationsManager.prototype.waitForExpectedEvents):
+        (EventExpectationsManager.prototype.expectingEvents):
+        (EventExpectationsManager.prototype.handleWaitCallback_):
+        (EventExpectationsManager.prototype.getExpectations_):
+        (loadData_):
+        (onSourceOpen):
+        (openMediaSource_):
+        (MediaSourceUtil.loadTextData):
+        (MediaSourceUtil.loadBinaryData):
+        (MediaSourceUtil.fetchManifestAndData):
+        (MediaSourceUtil.extractSegmentData):
+        (MediaSourceUtil.getMediaDataForPlaybackTime):
+        (getFirstSupportedType):
+        (getSegmentInfo):
+        (MediaSourceUtil.getSubType):
+        (MediaSourceUtil.append):
+        (onEvent):
+        (onAppendDone):
+        (MediaSourceUtil.appendUntilEventFires):
+        (addExtraTestMethods.test.expectEvent):
+        (addExtraTestMethods.test.waitForExpectedEvents):
+        (addExtraTestMethods.test.waitForCurrentTimeChange):
+        (addExtraTestMethods.test.done):
+        (addExtraTestMethods):
+        (window.string_appeared_here):
+        * web-platform-tests/media-source/mp4/test-a-128k-44100Hz-1ch-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-a-128k-44100Hz-1ch-manifest.json.
+        * web-platform-tests/media-source/mp4/test-a-128k-44100Hz-1ch.mp4: Added.
+        * web-platform-tests/media-source/mp4/test-a-192k-44100Hz-1ch-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-a-192k-44100Hz-1ch-manifest.json.
+        * web-platform-tests/media-source/mp4/test-a-192k-44100Hz-1ch.mp4: Added.
+        * web-platform-tests/media-source/mp4/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/mp4/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr.mp4.
+        * web-platform-tests/media-source/mp4/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/mp4/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr.mp4.
+        * web-platform-tests/media-source/mp4/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/mp4/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr.mp4.
+        * web-platform-tests/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr.mp4.
+        * web-platform-tests/media-source/mp4/test-v-128k-320x240-24fps-8kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-v-128k-320x240-24fps-8kfr-manifest.json.
+        * web-platform-tests/media-source/mp4/test-v-128k-320x240-24fps-8kfr.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-v-128k-320x240-24fps-8kfr.mp4.
+        * web-platform-tests/media-source/mp4/test-v-128k-320x240-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-v-128k-320x240-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/mp4/test-v-128k-320x240-30fps-10kfr.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-v-128k-320x240-30fps-10kfr.mp4.
+        * web-platform-tests/media-source/mp4/test-v-128k-640x480-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-v-128k-640x480-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/mp4/test-v-128k-640x480-30fps-10kfr.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-v-128k-640x480-30fps-10kfr.mp4.
+        * web-platform-tests/media-source/mp4/test-v-256k-320x240-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-v-256k-320x240-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/mp4/test-v-256k-320x240-30fps-10kfr.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test-v-256k-320x240-30fps-10kfr.mp4.
+        * web-platform-tests/media-source/mp4/test.mp4: Renamed from LayoutTests/http/tests/media/media-source/mp4/test.mp4.
+        * web-platform-tests/media-source/webm/test-a-128k-44100Hz-1ch-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-a-128k-44100Hz-1ch-manifest.json.
+        * web-platform-tests/media-source/webm/test-a-128k-44100Hz-1ch.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-a-128k-44100Hz-1ch.webm.
+        * web-platform-tests/media-source/webm/test-a-192k-44100Hz-1ch-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-a-192k-44100Hz-1ch-manifest.json.
+        * web-platform-tests/media-source/webm/test-a-192k-44100Hz-1ch.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-a-192k-44100Hz-1ch.webm.
+        * web-platform-tests/media-source/webm/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/webm/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr.webm.
+        * web-platform-tests/media-source/webm/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/webm/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr.webm.
+        * web-platform-tests/media-source/webm/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/webm/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr.webm.
+        * web-platform-tests/media-source/webm/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/webm/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr.webm.
+        * web-platform-tests/media-source/webm/test-v-128k-320x240-24fps-8kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-v-128k-320x240-24fps-8kfr-manifest.json.
+        * web-platform-tests/media-source/webm/test-v-128k-320x240-24fps-8kfr.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-v-128k-320x240-24fps-8kfr.webm.
+        * web-platform-tests/media-source/webm/test-v-128k-320x240-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-v-128k-320x240-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/webm/test-v-128k-320x240-30fps-10kfr.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-v-128k-320x240-30fps-10kfr.webm.
+        * web-platform-tests/media-source/webm/test-v-128k-640x480-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-v-128k-640x480-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/webm/test-v-128k-640x480-30fps-10kfr.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-v-128k-640x480-30fps-10kfr.webm.
+        * web-platform-tests/media-source/webm/test-v-256k-320x240-30fps-10kfr-manifest.json: Renamed from LayoutTests/http/tests/media/media-source/webm/test-v-256k-320x240-30fps-10kfr-manifest.json.
+        * web-platform-tests/media-source/webm/test-v-256k-320x240-30fps-10kfr.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-v-256k-320x240-30fps-10kfr.webm.
+        * web-platform-tests/media-source/webm/test-vp8-vorbis-webvtt.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test-vp8-vorbis-webvtt.webm.
+        * web-platform-tests/media-source/webm/test.webm: Renamed from LayoutTests/http/tests/media/media-source/webm/test.webm.
+
 2016-09-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         Rename Key to CryptoKey

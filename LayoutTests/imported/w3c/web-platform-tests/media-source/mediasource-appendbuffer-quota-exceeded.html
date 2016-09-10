@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!-- Copyright © 2016 Chromium authors and World Wide Web Consortium, (Massachusetts Institute of Technology, ERCIM, Keio University, Beihang). -->
+<meta charset="utf-8">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="mediasource-util.js"></script>
+<script>
+    // Fill up a given SourceBuffer by appending data repeatedly via doAppendDataFunc until
+    // an exception is thrown. The thrown exception is passed to onCaughtExceptionCallback.
+    function fillUpSourceBuffer(test, sourceBuffer, doAppendDataFunc, onCaughtExceptionCallback) {
+        // We are appending data repeatedly in sequence mode, there should be no gaps.
+        assert_false(sourceBuffer.buffered.length > 1, "unexpected gap in buffered ranges.");
+        try {
+            doAppendDataFunc();
+        } catch(ex) {
+            onCaughtExceptionCallback(ex);
+        }
+        test.expectEvent(sourceBuffer, 'updateend', 'append ended.');
+        test.waitForExpectedEvents(function() { fillUpSourceBuffer(test, sourceBuffer, doAppendDataFunc, onCaughtExceptionCallback); });
+    }
+
+    mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+    {
+        sourceBuffer.mode = 'sequence';
+        fillUpSourceBuffer(test, sourceBuffer,
+            function () { // doAppendDataFunc
+                sourceBuffer.appendBuffer(mediaData);
+            },
+            function (ex) { // onCaughtExceptionCallback
+                assert_equals(ex.name, 'QuotaExceededError');
+                test.done();
+            });
+    }, 'Appending data repeatedly should fill up the buffer and throw a QuotaExceededError when buffer is full.');
+</script>

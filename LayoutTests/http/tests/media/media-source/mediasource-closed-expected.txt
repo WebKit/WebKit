@@ -1,7 +1,0 @@
- 
-PASS Test attribute values on a closed MediaSource object. 
-PASS Test addSourceBuffer() while closed. 
-PASS Test removeSourceBuffer() while closed. 
-PASS Test endOfStream() while closed. 
-PASS Test setting duration while closed. 
-

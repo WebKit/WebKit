@@ -1,0 +1,8 @@
+
+PASS Test initial value of SourceBuffer.mode is "segments" 
+PASS Test setting SourceBuffer.mode 
+PASS Test setting a removed SourceBuffer's mode 
+PASS Test setting SourceBuffer.mode while still updating 
+PASS Test setting SourceBuffer.mode triggers parent MediaSource 'ended' to 'open' transition. 
+PASS Test setting SourceBuffer.mode and SourceBuffer.timestampOffset while parsing media segment. 
+

@@ -1042,25 +1042,27 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] media/media-source/media-source-tracks.html [ Skip ]
 
 # Passing Media Source tests
-[ Yosemite+ ] http/tests/media/media-source/ [ Skip ]
-[ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-readyState.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-removed.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-addsourcebuffer.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-append-buffer.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-closed.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-endofstream-invaliderror.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-is-type-supported.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-multiple-attach.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-play.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-remove.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-sourcebufferlist.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/mediasource-sourcebuffer-mode.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/ [ Skip ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-closed.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-multiple-attach.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-sourcebufferlist.html [ Pass ]
 
 # Flaky Media Source tests
-webkit.org/b/149816 [ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-updating.html [ Pass Timeout ]
-webkit.org/b/161391 [ Yosemite+ ] http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure ]
+webkit.org/b/149816 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Pass Timeout ]
+webkit.org/b/161391 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure ]
+
+# Newly failing Media Source tests
+webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
+webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure ]
+webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate.html [ Failure ]
+webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Failure ]
+webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure ]
+webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
+webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Failure ]
 
 # These two tests have "InvalidStateError (DOM Exception 11): The object is in an invalid state." in output.
 [ Yosemite+ ] media/media-source/media-source-duplicate-seeked.html [ Failure ]
