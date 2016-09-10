@@ -1,3 +1,17 @@
+2016-09-09  Tim Horton  <timothy_horton@apple.com>
+
+        WKThumbnailView should expose a mode where it can be reparented without resnapshotting
+        https://bugs.webkit.org/show_bug.cgi?id=161828
+        <rdar://problem/28229756>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView initWithFrame:fromWKView:]):
+        (-[_WKThumbnailView _viewWasUnparented]):
+        Add such a mode. Bail from snapshot teardown when unparented if it is on.
+
 2016-09-08  Dean Jackson  <dino@apple.com>
 
         Expose Apple Pencil data to Touch events

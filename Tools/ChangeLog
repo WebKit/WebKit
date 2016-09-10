@@ -1,3 +1,19 @@
+2016-09-09  Tim Horton  <timothy_horton@apple.com>
+
+        WKThumbnailView should expose a mode where it can be reparented without resnapshotting
+        https://bugs.webkit.org/show_bug.cgi?id=161828
+        <rdar://problem/28229756>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/WKThumbnailView.mm: Added.
+        (-[SnapshotSizeObserver observeValueForKeyPath:ofObject:change:context:]):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        Add a test ensuring that this behaves correctly.
+
 2016-09-09  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: Keep track of cannot-be-a-base-url according to spec
