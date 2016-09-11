@@ -11822,73 +11822,73 @@ PASS track.tabIndex: IDL set to -2147483648 followed by IDL get
 PASS track.kind: typeof IDL attribute 
 PASS track.kind: IDL get with DOM attribute unset 
 PASS track.kind: setAttribute() to "" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to "" followed by IDL get 
 PASS track.kind: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL track.kind: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS track.kind: setAttribute() to undefined followed by getAttribute() 
-FAIL track.kind: setAttribute() to undefined followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to undefined followed by IDL get 
 PASS track.kind: setAttribute() to 7 followed by getAttribute() 
-FAIL track.kind: setAttribute() to 7 followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to 7 followed by IDL get 
 PASS track.kind: setAttribute() to 1.5 followed by getAttribute() 
-FAIL track.kind: setAttribute() to 1.5 followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to 1.5 followed by IDL get 
 PASS track.kind: setAttribute() to true followed by getAttribute() 
-FAIL track.kind: setAttribute() to true followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to true followed by IDL get 
 PASS track.kind: setAttribute() to false followed by getAttribute() 
-FAIL track.kind: setAttribute() to false followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to false followed by IDL get 
 PASS track.kind: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL track.kind: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to object "[object Object]" followed by IDL get 
 PASS track.kind: setAttribute() to NaN followed by getAttribute() 
-FAIL track.kind: setAttribute() to NaN followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to NaN followed by IDL get 
 PASS track.kind: setAttribute() to Infinity followed by getAttribute() 
-FAIL track.kind: setAttribute() to Infinity followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to Infinity followed by IDL get 
 PASS track.kind: setAttribute() to -Infinity followed by getAttribute() 
-FAIL track.kind: setAttribute() to -Infinity followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to -Infinity followed by IDL get 
 PASS track.kind: setAttribute() to "\0" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "\0" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to "\0" followed by IDL get 
 PASS track.kind: setAttribute() to null followed by getAttribute() 
-FAIL track.kind: setAttribute() to null followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to null followed by IDL get 
 PASS track.kind: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL track.kind: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to object "test-toString" followed by IDL get 
 PASS track.kind: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL track.kind: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS track.kind: setAttribute() to "subtitles" followed by getAttribute() 
 PASS track.kind: setAttribute() to "subtitles" followed by IDL get 
 PASS track.kind: setAttribute() to "xsubtitles" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "xsubtitles" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to "xsubtitles" followed by IDL get 
 PASS track.kind: setAttribute() to "subtitles\0" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "subtitles\0" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to "subtitles\0" followed by IDL get 
 PASS track.kind: setAttribute() to "ubtitles" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "ubtitles" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: setAttribute() to "ubtitles" followed by IDL get 
 PASS track.kind: setAttribute() to "SUBTITLES" followed by getAttribute() 
 PASS track.kind: setAttribute() to "SUBTITLES" followed by IDL get 
 PASS track.kind: setAttribute() to "captions" followed by getAttribute() 
 PASS track.kind: setAttribute() to "captions" followed by IDL get 
 PASS track.kind: setAttribute() to "xcaptions" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "xcaptions" followed by IDL get assert_equals: expected "metadata" but got "captions"
+PASS track.kind: setAttribute() to "xcaptions" followed by IDL get 
 PASS track.kind: setAttribute() to "captions\0" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "captions\0" followed by IDL get assert_equals: expected "metadata" but got "captions"
+PASS track.kind: setAttribute() to "captions\0" followed by IDL get 
 PASS track.kind: setAttribute() to "aptions" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "aptions" followed by IDL get assert_equals: expected "metadata" but got "captions"
+PASS track.kind: setAttribute() to "aptions" followed by IDL get 
 PASS track.kind: setAttribute() to "CAPTIONS" followed by getAttribute() 
 PASS track.kind: setAttribute() to "CAPTIONS" followed by IDL get 
 PASS track.kind: setAttribute() to "descriptions" followed by getAttribute() 
 PASS track.kind: setAttribute() to "descriptions" followed by IDL get 
 PASS track.kind: setAttribute() to "xdescriptions" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "xdescriptions" followed by IDL get assert_equals: expected "metadata" but got "descriptions"
+PASS track.kind: setAttribute() to "xdescriptions" followed by IDL get 
 PASS track.kind: setAttribute() to "descriptions\0" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "descriptions\0" followed by IDL get assert_equals: expected "metadata" but got "descriptions"
+PASS track.kind: setAttribute() to "descriptions\0" followed by IDL get 
 PASS track.kind: setAttribute() to "escriptions" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "escriptions" followed by IDL get assert_equals: expected "metadata" but got "descriptions"
+PASS track.kind: setAttribute() to "escriptions" followed by IDL get 
 PASS track.kind: setAttribute() to "DESCRIPTIONS" followed by getAttribute() 
 PASS track.kind: setAttribute() to "DESCRIPTIONS" followed by IDL get 
 PASS track.kind: setAttribute() to "chapters" followed by getAttribute() 
 PASS track.kind: setAttribute() to "chapters" followed by IDL get 
 PASS track.kind: setAttribute() to "xchapters" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "xchapters" followed by IDL get assert_equals: expected "metadata" but got "chapters"
+PASS track.kind: setAttribute() to "xchapters" followed by IDL get 
 PASS track.kind: setAttribute() to "chapters\0" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "chapters\0" followed by IDL get assert_equals: expected "metadata" but got "chapters"
+PASS track.kind: setAttribute() to "chapters\0" followed by IDL get 
 PASS track.kind: setAttribute() to "hapters" followed by getAttribute() 
-FAIL track.kind: setAttribute() to "hapters" followed by IDL get assert_equals: expected "metadata" but got "chapters"
+PASS track.kind: setAttribute() to "hapters" followed by IDL get 
 PASS track.kind: setAttribute() to "CHAPTERS" followed by getAttribute() 
 PASS track.kind: setAttribute() to "CHAPTERS" followed by IDL get 
 PASS track.kind: setAttribute() to "metadata" followed by getAttribute() 
@@ -11950,13 +11950,13 @@ PASS track.kind: IDL set to "subtitles" followed by getAttribute()
 PASS track.kind: IDL set to "subtitles" followed by IDL get 
 PASS track.kind: IDL set to "xsubtitles" should not throw 
 PASS track.kind: IDL set to "xsubtitles" followed by getAttribute() 
-FAIL track.kind: IDL set to "xsubtitles" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: IDL set to "xsubtitles" followed by IDL get 
 PASS track.kind: IDL set to "subtitles\0" should not throw 
 PASS track.kind: IDL set to "subtitles\0" followed by getAttribute() 
-FAIL track.kind: IDL set to "subtitles\0" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: IDL set to "subtitles\0" followed by IDL get 
 PASS track.kind: IDL set to "ubtitles" should not throw 
 PASS track.kind: IDL set to "ubtitles" followed by getAttribute() 
-FAIL track.kind: IDL set to "ubtitles" followed by IDL get assert_equals: expected "metadata" but got "subtitles"
+PASS track.kind: IDL set to "ubtitles" followed by IDL get 
 PASS track.kind: IDL set to "SUBTITLES" should not throw 
 PASS track.kind: IDL set to "SUBTITLES" followed by getAttribute() 
 PASS track.kind: IDL set to "SUBTITLES" followed by IDL get 
@@ -11965,13 +11965,13 @@ PASS track.kind: IDL set to "captions" followed by getAttribute()
 PASS track.kind: IDL set to "captions" followed by IDL get 
 PASS track.kind: IDL set to "xcaptions" should not throw 
 PASS track.kind: IDL set to "xcaptions" followed by getAttribute() 
-FAIL track.kind: IDL set to "xcaptions" followed by IDL get assert_equals: expected "metadata" but got "captions"
+PASS track.kind: IDL set to "xcaptions" followed by IDL get 
 PASS track.kind: IDL set to "captions\0" should not throw 
 PASS track.kind: IDL set to "captions\0" followed by getAttribute() 
-FAIL track.kind: IDL set to "captions\0" followed by IDL get assert_equals: expected "metadata" but got "captions"
+PASS track.kind: IDL set to "captions\0" followed by IDL get 
 PASS track.kind: IDL set to "aptions" should not throw 
 PASS track.kind: IDL set to "aptions" followed by getAttribute() 
-FAIL track.kind: IDL set to "aptions" followed by IDL get assert_equals: expected "metadata" but got "captions"
+PASS track.kind: IDL set to "aptions" followed by IDL get 
 PASS track.kind: IDL set to "CAPTIONS" should not throw 
 PASS track.kind: IDL set to "CAPTIONS" followed by getAttribute() 
 PASS track.kind: IDL set to "CAPTIONS" followed by IDL get 
@@ -11980,13 +11980,13 @@ PASS track.kind: IDL set to "descriptions" followed by getAttribute()
 PASS track.kind: IDL set to "descriptions" followed by IDL get 
 PASS track.kind: IDL set to "xdescriptions" should not throw 
 PASS track.kind: IDL set to "xdescriptions" followed by getAttribute() 
-FAIL track.kind: IDL set to "xdescriptions" followed by IDL get assert_equals: expected "metadata" but got "descriptions"
+PASS track.kind: IDL set to "xdescriptions" followed by IDL get 
 PASS track.kind: IDL set to "descriptions\0" should not throw 
 PASS track.kind: IDL set to "descriptions\0" followed by getAttribute() 
-FAIL track.kind: IDL set to "descriptions\0" followed by IDL get assert_equals: expected "metadata" but got "descriptions"
+PASS track.kind: IDL set to "descriptions\0" followed by IDL get 
 PASS track.kind: IDL set to "escriptions" should not throw 
 PASS track.kind: IDL set to "escriptions" followed by getAttribute() 
-FAIL track.kind: IDL set to "escriptions" followed by IDL get assert_equals: expected "metadata" but got "descriptions"
+PASS track.kind: IDL set to "escriptions" followed by IDL get 
 PASS track.kind: IDL set to "DESCRIPTIONS" should not throw 
 PASS track.kind: IDL set to "DESCRIPTIONS" followed by getAttribute() 
 PASS track.kind: IDL set to "DESCRIPTIONS" followed by IDL get 
@@ -11995,13 +11995,13 @@ PASS track.kind: IDL set to "chapters" followed by getAttribute()
 PASS track.kind: IDL set to "chapters" followed by IDL get 
 PASS track.kind: IDL set to "xchapters" should not throw 
 PASS track.kind: IDL set to "xchapters" followed by getAttribute() 
-FAIL track.kind: IDL set to "xchapters" followed by IDL get assert_equals: expected "metadata" but got "chapters"
+PASS track.kind: IDL set to "xchapters" followed by IDL get 
 PASS track.kind: IDL set to "chapters\0" should not throw 
 PASS track.kind: IDL set to "chapters\0" followed by getAttribute() 
-FAIL track.kind: IDL set to "chapters\0" followed by IDL get assert_equals: expected "metadata" but got "chapters"
+PASS track.kind: IDL set to "chapters\0" followed by IDL get 
 PASS track.kind: IDL set to "hapters" should not throw 
 PASS track.kind: IDL set to "hapters" followed by getAttribute() 
-FAIL track.kind: IDL set to "hapters" followed by IDL get assert_equals: expected "metadata" but got "chapters"
+PASS track.kind: IDL set to "hapters" followed by IDL get 
 PASS track.kind: IDL set to "CHAPTERS" should not throw 
 PASS track.kind: IDL set to "CHAPTERS" followed by getAttribute() 
 PASS track.kind: IDL set to "CHAPTERS" followed by IDL get 

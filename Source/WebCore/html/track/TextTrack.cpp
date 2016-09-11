@@ -202,6 +202,11 @@ void TextTrack::setKind(Kind newKind)
 
 void TextTrack::setKindKeywordIgnoringASCIICase(StringView keyword)
 {
+    if (keyword.isNull()) {
+        // The missing value default is the subtitles state.
+        setKind(Kind::Subtitles);
+        return;
+    }
     if (equalLettersIgnoringASCIICase(keyword, "captions"))
         setKind(Kind::Captions);
     else if (equalLettersIgnoringASCIICase(keyword, "chapters"))
@@ -214,14 +219,10 @@ void TextTrack::setKindKeywordIgnoringASCIICase(StringView keyword)
         setKind(Kind::Metadata);
     else if (equalLettersIgnoringASCIICase(keyword, "subtitles"))
         setKind(Kind::Subtitles);
-#if !ENABLE(MEDIA_SOURCE)
-    // FIXME: This preserves the behavior of an older version of this code before refactoring.
-    // !ENABLE(MEDIA_SOURCE): unknown keywords all get turned into Subtitles.
-    // ENABLE(MEDIA_SOURCE): unknown keywords leave the old value for kind untouched.
-    // I am not sure that either of those is the correct behavior; should test and fix.
-    else
-        setKind(Kind::Subtitles);
-#endif
+    else {
+        // The invalid value default is the metadata state.
+        setKind(Kind::Metadata);
+    }
 }
 
 void TextTrack::setMode(Mode mode)

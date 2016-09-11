@@ -1,3 +1,17 @@
+2016-09-11  Chris Dumez  <cdumez@apple.com>
+
+        HTMLTrackElement.kind's invalid value default should be the metadata state
+        https://bugs.webkit.org/show_bug.cgi?id=161840
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-kind-expected.txt:
+        * media/track/track-kind.html:
+        Update existing test to reflect behavior change.
+
+        * media/track/w3c/interfaces/TextTrack/kind.html:
+        Re-sync test from W3C as it was outdated.
+
 2016-09-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Skip to test some w3c/web-platform-tests

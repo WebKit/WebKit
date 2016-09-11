@@ -42,14 +42,19 @@
                 run("trackElement.removeAttribute('kind')");
                 run("trackElement.kind = '" + value + "'");
                 testExpected("trackElement.getAttribute('kind')", value);
-                testExpected("trackElement.kind", "subtitles");
-                testExpected("trackElement.track.kind", "subtitles");
+                testExpected("trackElement.kind", "metadata");
+                testExpected("trackElement.track.kind", "metadata");
                 consoleWrite("<b> and via attribute</b>");
                 run("trackElement.removeAttribute('kind')");
                 run("trackElement.setAttribute('kind', '" + value + "')");
-                testExpected("trackElement.kind", "subtitles");
-                testExpected("trackElement.track.kind", "subtitles");
+                testExpected("trackElement.kind", "metadata");
+                testExpected("trackElement.track.kind", "metadata");
                 testExpected("trackElement.getAttribute('kind')", value);
+                consoleWrite("");
+
+                run("trackElement.removeAttribute('kind')");
+                testExpected("trackElement.kind", "subtitles");
+                testExpected("video.textTracks[0].kind", "subtitles");
                 consoleWrite("");
 
                 consoleWrite("<b>*** Set to known values</b>");

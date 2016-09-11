@@ -11,14 +11,18 @@ set via DOM
 RUN(trackElement.removeAttribute('kind'))
 RUN(trackElement.kind = 'english-metadata')
 EXPECTED (trackElement.getAttribute('kind') == 'english-metadata') OK
-EXPECTED (trackElement.kind == 'subtitles') OK
-EXPECTED (trackElement.track.kind == 'subtitles') OK
+EXPECTED (trackElement.kind == 'metadata') OK
+EXPECTED (trackElement.track.kind == 'metadata') OK
 and via attribute
 RUN(trackElement.removeAttribute('kind'))
 RUN(trackElement.setAttribute('kind', 'english-metadata'))
-EXPECTED (trackElement.kind == 'subtitles') OK
-EXPECTED (trackElement.track.kind == 'subtitles') OK
+EXPECTED (trackElement.kind == 'metadata') OK
+EXPECTED (trackElement.track.kind == 'metadata') OK
 EXPECTED (trackElement.getAttribute('kind') == 'english-metadata') OK
+
+RUN(trackElement.removeAttribute('kind'))
+EXPECTED (trackElement.kind == 'subtitles') OK
+EXPECTED (video.textTracks[0].kind == 'subtitles') OK
 
 *** Set to known values
 ++ 'subtitles'
@@ -34,7 +38,7 @@ RUN(trackElement.setAttribute('kind', 'subtitles'))
 EXPECTED (trackElement.kind == 'subtitles') OK
 EXPECTED (trackElement.track.kind == 'subtitles') OK
 EXPECTED (trackElement.getAttribute('kind') == 'subtitles') OK
-EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem ipsum dolor sit amet, ') OK
+No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 ++ 'captions'
 set via DOM
@@ -49,7 +53,7 @@ RUN(trackElement.setAttribute('kind', 'captions'))
 EXPECTED (trackElement.kind == 'captions') OK
 EXPECTED (trackElement.track.kind == 'captions') OK
 EXPECTED (trackElement.getAttribute('kind') == 'captions') OK
-EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem ipsum dolor sit amet, ') OK
+No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 ++ 'descriptions'
 set via DOM

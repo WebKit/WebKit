@@ -1,3 +1,16 @@
+2016-09-11  Chris Dumez  <cdumez@apple.com>
+
+        HTMLTrackElement.kind's invalid value default should be the metadata state
+        https://bugs.webkit.org/show_bug.cgi?id=161840
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline existing tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/kind-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/kind-expected.txt:
+
 2016-09-09  Jer Noble  <jer.noble@apple.com>
 
         [Media Source] Import updated w3c/web-platform-tests and rebaseline
