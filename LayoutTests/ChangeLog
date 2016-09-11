@@ -1,3 +1,13 @@
+2016-09-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Skip to test some w3c/web-platform-tests
+
+        Unreviewed EFL gardening.
+
+        Some tests of w3c/web-platform-tests have been flaky since r205777.
+
+        * platform/efl/TestExpectations
+
 2016-09-11  Tim Horton  <timothy_horton@apple.com>
 
         Candidates that don't end in spaces shouldn't have spaces arbitrarily appended to them
