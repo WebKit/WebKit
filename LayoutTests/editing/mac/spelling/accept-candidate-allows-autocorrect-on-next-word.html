@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src=../../editing.js language="javascript" type="text/javascript"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+function editingTest() {
+    edit = document.getElementById('edit');
+    edit.focus();
+    var s = window.getSelection();
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('e');
+    typeCharacterCommand('x');
+    typeCharacterCommand('t');
+    typeCharacterCommand('r');
+    typeCharacterCommand('e');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('l');
+    typeCharacterCommand('y');
+    typeCharacterCommand('l');
+    typeCharacterCommand('o');
+    typeCharacterCommand('n');
+    typeCharacterCommand('g');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('s');
+    typeCharacterCommand('a');
+    typeCharacterCommand('g');
+    typeCharacterCommand('e');
+
+    if (window.internals)
+        internals.handleAcceptedCandidate("extremely long", 2, 13);
+
+    // Accepting the candidate is going to cause the selection to move to it, but we want
+    // to type a space after 'mesage' to get it autocorrected.
+    setSelectionCommand(edit.firstChild, 23, edit.firstChild, 23);
+
+    typeCharacterCommand(' ');
+
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
+}
+
+</script>
+</head>
+<body>
+<p>This test verifies that accepted candidates don't disable autocorrection on subsequent words. You should see the phrase "a extremely long message" The bug occurs if "mesage" was not corrected to "message".</p>
+<div contenteditable="true" id="edit"/>
+<script>
+runEditingTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

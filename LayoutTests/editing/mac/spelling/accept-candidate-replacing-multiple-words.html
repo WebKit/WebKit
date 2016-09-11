@@ -18,7 +18,7 @@ function editingTest() {
     typeCharacterCommand('a');
     
     if (window.internals)
-        internals.handleAcceptedCandidate("good idea", 0, 9);
+        internals.handleAcceptedCandidate("good idea ", 0, 9);
 
     if (window.testRunner)
         testRunner.dumpAsText(true);
