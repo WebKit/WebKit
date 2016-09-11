@@ -460,6 +460,7 @@ static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rul
 #endif
         case StyleRuleBase::Page:
         case StyleRuleBase::Keyframes:
+        case StyleRuleBase::Namespace:
         case StyleRuleBase::Unknown:
         case StyleRuleBase::Charset:
         case StyleRuleBase::Keyframe:

@@ -33,6 +33,7 @@ class CSSStyleRule;
 class CSSStyleSheet;
 class MediaQuerySet;
 class MutableStyleProperties;
+class StyleKeyframe;
 class StyleProperties;
 
 class StyleRuleBase : public WTF::RefCountedBase {
@@ -48,6 +49,7 @@ public:
         Page,
         Keyframes,
         Keyframe, // Not used. These are internally non-rule StyleKeyframe objects.
+        Namespace,
         Supports = 12,
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         Viewport = 15,
@@ -60,6 +62,8 @@ public:
     bool isCharsetRule() const { return type() == Charset; }
     bool isFontFaceRule() const { return type() == FontFace; }
     bool isKeyframesRule() const { return type() == Keyframes; }
+    bool isKeyframeRule() const { return type() == Keyframe; }
+    bool isNamespaceRule() const { return type() == Namespace; }
     bool isMediaRule() const { return type() == Media; }
     bool isPageRule() const { return type() == Page; }
     bool isStyleRule() const { return type() == Style; }
@@ -143,7 +147,6 @@ public:
     MutableStyleProperties& mutableProperties();
 
     Ref<StyleRuleFontFace> copy() const { return adoptRef(*new StyleRuleFontFace(*this)); }
-
 
 private:
     explicit StyleRuleFontFace(Ref<StyleProperties>&&);
@@ -265,6 +268,42 @@ private:
 };
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
+// This is only used by the CSS parser.
+class StyleRuleCharset final : public StyleRuleBase {
+public:
+    static Ref<StyleRuleCharset> create() { return adoptRef(*new StyleRuleCharset()); }
+    
+    ~StyleRuleCharset();
+    
+    Ref<StyleRuleCharset> copy() const { return adoptRef(*new StyleRuleCharset(*this)); }
+
+private:
+    explicit StyleRuleCharset();
+    StyleRuleCharset(const StyleRuleCharset&);
+};
+
+class StyleRuleNamespace final : public StyleRuleBase {
+public:
+    static Ref<StyleRuleNamespace> create(AtomicString prefix, AtomicString uri)
+    {
+        return adoptRef(*new StyleRuleNamespace(prefix, uri));
+    }
+    
+    ~StyleRuleNamespace();
+
+    Ref<StyleRuleNamespace> copy() const { return adoptRef(*new StyleRuleNamespace(*this)); }
+    
+    AtomicString prefix() const { return m_prefix; }
+    AtomicString uri() const { return m_uri; }
+
+private:
+    StyleRuleNamespace(AtomicString prefix, AtomicString uri);
+    StyleRuleNamespace(const StyleRuleNamespace&);
+    
+    AtomicString m_prefix;
+    AtomicString m_uri;
+};
+    
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRule)
@@ -296,3 +335,12 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleViewport)
     static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isViewportRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleNamespace)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isNamespaceRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleKeyframe)
+static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isKeyframeRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+

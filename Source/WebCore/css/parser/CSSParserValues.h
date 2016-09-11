@@ -203,6 +203,7 @@ enum class CSSParserSelectorCombinator {
 class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    // FIXME-NEWPARSER: Remove the CSSParserString-based parsing functions once the old parser is gone.
     static CSSParserSelector* parsePagePseudoSelector(const CSSParserString& pseudoTypeString);
     static CSSParserSelector* parsePseudoElementSelector(CSSParserString& pseudoTypeString);
     static CSSParserSelector* parsePseudoElementCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>*);
@@ -212,6 +213,7 @@ public:
 
     static CSSParserSelector* parsePseudoClassSelectorFromStringView(StringView&);
     static CSSParserSelector* parsePseudoElementSelectorFromStringView(StringView&);
+    static CSSParserSelector* parsePagePseudoSelector(const AtomicString&);
     
     CSSParserSelector();
     explicit CSSParserSelector(const QualifiedName&);

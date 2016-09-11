@@ -36,12 +36,18 @@ class CSSStyleDeclaration;
 class StyleRuleCSSStyleDeclaration;
 class CSSKeyframesRule;
 
-class StyleKeyframe final : public RefCounted<StyleKeyframe> {
-    WTF_MAKE_FAST_ALLOCATED;
+// FIXME-NEWPARSER: Rename this to StyleRuleKeyframe
+class StyleKeyframe final : public StyleRuleBase {
 public:
+    // FIXME-NEWPARSER: Remove this create function once we get rid of the old parser.
     static Ref<StyleKeyframe> create(Ref<StyleProperties>&& properties)
     {
         return adoptRef(*new StyleKeyframe(WTFMove(properties)));
+    }
+
+    static Ref<StyleKeyframe> create(std::unique_ptr<Vector<double>> keys, Ref<StyleProperties>&& properties)
+    {
+        return adoptRef(*new StyleKeyframe(WTFMove(keys), WTFMove(properties)));
     }
     ~StyleKeyframe();
 
@@ -63,6 +69,7 @@ public:
 
 private:
     explicit StyleKeyframe(Ref<StyleProperties>&&);
+    StyleKeyframe(std::unique_ptr<Vector<double>>, Ref<StyleProperties>&&);
 
     Ref<StyleProperties> m_properties;
     Vector<double> m_keys;

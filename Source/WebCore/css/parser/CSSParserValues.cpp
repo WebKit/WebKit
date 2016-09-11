@@ -199,6 +199,24 @@ CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const CSSParserStr
     return selector.release();
 }
 
+CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const AtomicString& pseudoTypeString)
+{
+    CSSSelector::PagePseudoClassType pseudoType;
+    if (equalLettersIgnoringASCIICase(pseudoTypeString, "first"))
+        pseudoType = CSSSelector::PagePseudoClassFirst;
+    else if (equalLettersIgnoringASCIICase(pseudoTypeString, "left"))
+        pseudoType = CSSSelector::PagePseudoClassLeft;
+    else if (equalLettersIgnoringASCIICase(pseudoTypeString, "right"))
+        pseudoType = CSSSelector::PagePseudoClassRight;
+    else
+        return nullptr;
+    
+    auto selector = std::make_unique<CSSParserSelector>();
+    selector->m_selector->setMatch(CSSSelector::PagePseudoClass);
+    selector->m_selector->setPagePseudoType(pseudoType);
+    return selector.release();
+}
+
 CSSParserSelector* CSSParserSelector::parsePseudoElementSelector(CSSParserString& pseudoTypeString)
 {
     pseudoTypeString.convertToASCIILowercaseInPlace();

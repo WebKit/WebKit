@@ -3377,6 +3377,10 @@
 		94DE5C821D7F3A1400164F2A /* CSSAtRuleID.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE5C801D7F39D000164F2A /* CSSAtRuleID.h */; };
 		94DE5C8D1D80802700164F2A /* CSSSelectorParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94DE5C8B1D80801500164F2A /* CSSSelectorParser.cpp */; };
 		94DE5C8E1D80802700164F2A /* CSSSelectorParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE5C8C1D80801500164F2A /* CSSSelectorParser.h */; };
+		94DE5C911D83011D00164F2A /* CSSSupportsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94DE5C8F1D8300CB00164F2A /* CSSSupportsParser.cpp */; };
+		94DE5C921D83011D00164F2A /* CSSSupportsParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE5C901D8300CB00164F2A /* CSSSupportsParser.h */; };
+		94DE5C951D8301BD00164F2A /* CSSParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94DE5C931D8301B000164F2A /* CSSParserImpl.cpp */; };
+		94DE5C961D8301BD00164F2A /* CSSParserImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE5C941D8301B000164F2A /* CSSParserImpl.h */; };
 		96ABA42314BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96ABA42214BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp */; };
 		9703E1BF15DC4E37001F24C8 /* JSVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E9EC8B15DC492F004F2E71 /* JSVoidCallback.cpp */; };
 		97059977107D975200A50A7C /* PolicyCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97059973107D975200A50A7C /* PolicyCallback.cpp */; };
@@ -10530,6 +10534,10 @@
 		94DE5C801D7F39D000164F2A /* CSSAtRuleID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSAtRuleID.h; path = parser/CSSAtRuleID.h; sourceTree = "<group>"; };
 		94DE5C8B1D80801500164F2A /* CSSSelectorParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSSelectorParser.cpp; path = parser/CSSSelectorParser.cpp; sourceTree = "<group>"; };
 		94DE5C8C1D80801500164F2A /* CSSSelectorParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSSelectorParser.h; path = parser/CSSSelectorParser.h; sourceTree = "<group>"; };
+		94DE5C8F1D8300CB00164F2A /* CSSSupportsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSSupportsParser.cpp; path = parser/CSSSupportsParser.cpp; sourceTree = "<group>"; };
+		94DE5C901D8300CB00164F2A /* CSSSupportsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSSupportsParser.h; path = parser/CSSSupportsParser.h; sourceTree = "<group>"; };
+		94DE5C931D8301B000164F2A /* CSSParserImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParserImpl.cpp; path = parser/CSSParserImpl.cpp; sourceTree = "<group>"; };
+		94DE5C941D8301B000164F2A /* CSSParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserImpl.h; path = parser/CSSParserImpl.h; sourceTree = "<group>"; };
 		950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGGraphicsElement.h; sourceTree = "<group>"; };
 		96ABA42214BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGLCommon.cpp; sourceTree = "<group>"; };
 		97059973107D975200A50A7C /* PolicyCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyCallback.cpp; sourceTree = "<group>"; };
@@ -18174,6 +18182,8 @@
 				949C76FF1D6E1D8C00C0DE4F /* CSSParserFastPaths.h */,
 				94DE5C7D1D78CB2500164F2A /* CSSParserIdioms.cpp */,
 				946D37431D6CF7880077084F /* CSSParserIdioms.h */,
+				94DE5C931D8301B000164F2A /* CSSParserImpl.cpp */,
+				94DE5C941D8301B000164F2A /* CSSParserImpl.h */,
 				946D372A1D6CB28B0077084F /* CSSParserMode.h */,
 				949C770A1D6E49C300C0DE4F /* CSSParserObserver.h */,
 				949C77061D6E48ED00C0DE4F /* CSSParserObserverWrapper.cpp */,
@@ -18190,6 +18200,8 @@
 				949C77031D6E393500C0DE4F /* CSSPropertyParserHelpers.h */,
 				94DE5C8B1D80801500164F2A /* CSSSelectorParser.cpp */,
 				94DE5C8C1D80801500164F2A /* CSSSelectorParser.h */,
+				94DE5C8F1D8300CB00164F2A /* CSSSupportsParser.cpp */,
+				94DE5C901D8300CB00164F2A /* CSSSupportsParser.h */,
 				946D37341D6CDF980077084F /* CSSTokenizer.cpp */,
 				946D37371D6CDF980077084F /* CSSTokenizer.h */,
 				946D37351D6CDF980077084F /* CSSTokenizerInputStream.cpp */,
@@ -24991,6 +25003,7 @@
 				7D4C96DD1AD4483500365A50 /* JSFetchHeaders.h in Headers */,
 				7E4C96DD1AD4483500365A50 /* JSFetchRequest.h in Headers */,
 				8E4C96DD1AD4483500365A50 /* JSFetchResponse.h in Headers */,
+				94DE5C961D8301BD00164F2A /* CSSParserImpl.h in Headers */,
 				BC00F0150E0A189500FD04E3 /* JSFile.h in Headers */,
 				2E3BC0CB117D3E0800B9409A /* JSFileError.h in Headers */,
 				898785F1122E1E87003AABDA /* JSFileException.h in Headers */,
@@ -26052,6 +26065,7 @@
 				1A3586E015264C450022A659 /* RenderMultiColumnFlowThread.h in Headers */,
 				9493B6C11D74B4120088E780 /* MediaQueryParser.h in Headers */,
 				BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */,
+				94DE5C921D83011D00164F2A /* CSSSupportsParser.h in Headers */,
 				BC1A7D9818FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.h in Headers */,
 				8AC822FD180FC03300FB64D5 /* RenderNamedFlowFragment.h in Headers */,
 				BC85F23D151915E000BC17BE /* RenderNamedFlowThread.h in Headers */,
@@ -27920,6 +27934,7 @@
 				59A85EA2119D68D900DEF1EF /* DeviceOrientationEvent.cpp in Sources */,
 				267725FC1A5B3AD9003C24DD /* DFA.cpp in Sources */,
 				5C9A7A751AA0F6EA00958ACF /* DFABytecodeCompiler.cpp in Sources */,
+				94DE5C911D83011D00164F2A /* CSSSupportsParser.cpp in Sources */,
 				5C9A7A761AA0F6ED00958ACF /* DFABytecodeInterpreter.cpp in Sources */,
 				26A807841B18F97700E219BE /* DFACombiner.cpp in Sources */,
 				26A517FD1AB92238006335DF /* DFAMinimizer.cpp in Sources */,
@@ -28465,6 +28480,7 @@
 				418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */,
 				FDA15EC912B03F50003A583A /* JSAnalyserNode.cpp in Sources */,
 				31A795C61888BADC00382F90 /* JSANGLEInstancedArrays.cpp in Sources */,
+				94DE5C951D8301BD00164F2A /* CSSParserImpl.cpp in Sources */,
 				12A253E21C8FFF6600C22295 /* JSAnimatable.cpp in Sources */,
 				120DE3FE1C87E18800B6D4DD /* JSAnimationEffect.cpp in Sources */,
 				3198480B1A1E6CE400A13318 /* JSAnimationEvent.cpp in Sources */,

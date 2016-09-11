@@ -235,11 +235,15 @@ void CSSPropertyParser::addExpandedPropertyForValue(CSSPropertyID property, cons
     for (unsigned i = 0; i < shorthandLength; ++i)
         addProperty(longhands[i], property, value, important);
 }
-
-bool CSSPropertyParser::parseValue(CSSPropertyID unresolvedProperty, bool important,
-    const CSSParserTokenRange& range, const CSSParserContext& context,
-    Vector<CSSProperty, 256>& parsedProperties, StyleRule::Type ruleType)
+*/
+    
+bool CSSPropertyParser::parseValue(CSSPropertyID /*unresolvedProperty*/, bool /*important*/,
+    const CSSParserTokenRange& /*range*/, const CSSParserContext& /*context*/,
+    ParsedPropertyVector& /*parsedProperties*/, StyleRule::Type /*ruleType*/)
 {
+    return false;
+    
+    /*
     int parsedPropertiesSize = parsedProperties.size();
 
     CSSPropertyParser parser(range, context, &parsedProperties);
@@ -263,8 +267,9 @@ bool CSSPropertyParser::parseValue(CSSPropertyID unresolvedProperty, bool import
         parsedProperties.shrink(parsedPropertiesSize);
 
     return parseSuccess;
+     */
 }
-
+/*
 const CSSValue* CSSPropertyParser::parseSingleValue(
     CSSPropertyID property, const CSSParserTokenRange& range, const CSSParserContext& context)
 {
