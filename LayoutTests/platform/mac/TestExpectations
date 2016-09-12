@@ -1047,8 +1047,10 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-closed.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-multiple-attach.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-sourcebufferlist.html [ Pass ]
 
 # Flaky Media Source tests
@@ -1060,7 +1062,6 @@ webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/m
 webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure ]
 webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate.html [ Failure ]
 webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Failure ]
-webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure ]
 webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
 webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Failure ]
 

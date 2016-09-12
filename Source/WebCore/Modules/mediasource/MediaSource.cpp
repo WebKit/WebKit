@@ -357,41 +357,49 @@ void MediaSource::setDuration(double duration, ExceptionCode& ec)
     }
 
     // 4. Run the duration change algorithm with new duration set to the value being assigned to this attribute.
-    setDurationInternal(MediaTime::createWithDouble(duration));
+    auto result = setDurationInternal(MediaTime::createWithDouble(duration));
+    if (result)
+        ec = result.value();
 }
 
-void MediaSource::setDurationInternal(const MediaTime& duration)
+Optional<ExceptionCode> MediaSource::setDurationInternal(const MediaTime& duration)
 {
-    // Duration Change Algorithm
-    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#duration-change-algorithm
+    // 2.4.6 Duration Change
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#duration-change-algorithm
+
+    MediaTime newDuration = duration;
 
     // 1. If the current value of duration is equal to new duration, then return.
-    if (duration == m_duration)
-        return;
+    if (newDuration == m_duration)
+        return { };
 
-    // 2. Set old duration to the current value of duration.
-    MediaTime oldDuration = m_duration;
-
-    // 3. Update duration to new duration.
-    m_duration = duration;
-
-    // 4. If the new duration is less than old duration, then call remove(new duration, old duration)
-    // on all objects in sourceBuffers.
-    if (oldDuration.isValid() && duration < oldDuration) {
-        for (auto& sourceBuffer : *m_sourceBuffers)
-            sourceBuffer->rangeRemoval(duration, oldDuration);
+    // 2. If new duration is less than the highest presentation timestamp of any buffered coded frames
+    // for all SourceBuffer objects in sourceBuffers, then throw an InvalidStateError exception and
+    // abort these steps.
+    // 3. Let highest end time be the largest track buffer ranges end time across all the track buffers
+    // across all SourceBuffer objects in sourceBuffers.
+    MediaTime highestPresentationTimestamp;
+    MediaTime highestEndTime;
+    for (auto& sourceBuffer : *m_sourceBuffers) {
+        highestPresentationTimestamp = std::max(highestPresentationTimestamp, sourceBuffer->highestPresentationTimestamp());
+        highestEndTime = std::max(highestEndTime, sourceBuffer->buffered()->ranges().maximumBufferedTime());
     }
+    if (highestPresentationTimestamp.isValid() && newDuration < highestPresentationTimestamp)
+        return INVALID_STATE_ERR;
 
-    // 5. If a user agent is unable to partially render audio frames or text cues that start before and end after the
-    // duration, then run the following steps:
-    // 5.1 Update new duration to the highest end time reported by the buffered attribute across all SourceBuffer objects
-    // in sourceBuffers.
-    // 5.2 Update duration to new duration.
-    // NOTE: Assume UA is able to partially render audio frames.
+    // 4. If new duration is less than highest end time, then
+    // 4.1. Update new duration to equal highest end time.
+    if (highestEndTime.isValid() && newDuration < highestEndTime)
+        newDuration = highestEndTime;
 
-    // 6. Update the media controller duration to new duration and run the HTMLMediaElement duration change algorithm.
+    // 5. Update duration to new duration.
+    m_duration = newDuration;
+
+    // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
     LOG(MediaSource, "MediaSource::setDurationInternal(%p) - duration(%g)", this, duration.toDouble());
     m_private->durationChanged();
+
+    return { };
 }
 
 void MediaSource::setReadyState(const AtomicString& state)

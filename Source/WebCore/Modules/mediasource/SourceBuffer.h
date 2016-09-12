@@ -124,6 +124,8 @@ public:
     bool isBufferedDirty() const { return m_bufferedDirty; }
     void setBufferedDirty(bool flag) { m_bufferedDirty = flag; }
 
+    MediaTime highestPresentationTimestamp() const;
+
     // ActiveDOMObject API.
     bool hasPendingActivity() const override;
 

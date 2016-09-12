@@ -395,6 +395,18 @@ void SourceBuffer::abortIfUpdating()
     scheduleEvent(eventNames().updateendEvent);
 }
 
+MediaTime SourceBuffer::highestPresentationTimestamp() const
+{
+    MediaTime highestTime;
+    for (auto& trackBuffer : m_trackBufferMap.values()) {
+        auto lastSampleIter = trackBuffer.samples.presentationOrder().rbegin();
+        if (lastSampleIter == trackBuffer.samples.presentationOrder().rend())
+            continue;
+        highestTime = std::max(highestTime, lastSampleIter->first);
+    }
+    return highestTime;
+}
+
 void SourceBuffer::removedFromMediaSource()
 {
     if (isRemoved())
@@ -741,9 +753,7 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
 
     // 2. Let end be the end presentation timestamp for the removal range.
     // 3. For each track buffer in this source buffer, run the following steps:
-    for (auto& iter : m_trackBufferMap) {
-        TrackBuffer& trackBuffer = iter.value;
-
+    for (auto& trackBuffer : m_trackBufferMap.values()) {
         // 3.1. Let remove end timestamp be the current value of duration
         // 3.2 If this track buffer has a random access point timestamp that is greater than or equal to end, then update
         // remove end timestamp to that random access point timestamp.

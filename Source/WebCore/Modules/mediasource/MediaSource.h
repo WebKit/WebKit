@@ -84,7 +84,7 @@ public:
     void completeSeek();
 
     void setDuration(double, ExceptionCode&);
-    void setDurationInternal(const MediaTime&);
+    Optional<ExceptionCode> setDurationInternal(const MediaTime&);
     MediaTime currentTime() const;
     const AtomicString& readyState() const { return m_readyState; }
     void setReadyState(const AtomicString&);

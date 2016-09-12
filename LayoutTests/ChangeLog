@@ -1,3 +1,14 @@
+2016-09-12  Jer Noble  <jer.noble@apple.com>
+
+        Fix failing mediasource-play.html and mediasource-config-change-mp4-v-bitrate.html tests
+        https://bugs.webkit.org/show_bug.cgi?id=161819
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-end-of-stream-readyState.html:
+        * media/media-source/media-source-end-of-stream-readyState-expected.txt:
+        * platform/mac/TestExpectations:
+
 2016-09-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Object.shallowEqual() should return false if object prototype chains differ

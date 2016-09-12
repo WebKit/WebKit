@@ -42,13 +42,19 @@ class PresentationOrderSampleMap {
 public:
     typedef std::map<MediaTime, RefPtr<MediaSample>> MapType;
     typedef MapType::iterator iterator;
+    typedef MapType::const_iterator const_iterator;
     typedef MapType::reverse_iterator reverse_iterator;
+    typedef MapType::const_reverse_iterator const_reverse_iterator;
     typedef std::pair<iterator, iterator> iterator_range;
 
     iterator begin() { return m_samples.begin(); }
+    const_iterator begin() const { return m_samples.begin(); }
     iterator end() { return m_samples.end(); }
+    const_iterator end() const { return m_samples.end(); }
     reverse_iterator rbegin() { return m_samples.rbegin(); }
+    const_reverse_iterator rbegin() const { return m_samples.rbegin(); }
     reverse_iterator rend() { return m_samples.rend(); }
+    const_reverse_iterator rend() const { return m_samples.rend(); }
 
     iterator findSampleWithPresentationTime(const MediaTime&);
     iterator findSampleContainingPresentationTime(const MediaTime&);
@@ -69,13 +75,19 @@ public:
     typedef std::pair<MediaTime, MediaTime> KeyType;
     typedef std::map<KeyType, RefPtr<MediaSample>> MapType;
     typedef MapType::iterator iterator;
+    typedef MapType::const_iterator const_iterator;
     typedef MapType::reverse_iterator reverse_iterator;
+    typedef MapType::const_reverse_iterator const_reverse_iterator;
     typedef std::pair<reverse_iterator, reverse_iterator> reverse_iterator_range;
 
     iterator begin() { return m_samples.begin(); }
+    const_iterator begin() const { return m_samples.begin(); }
     iterator end() { return m_samples.end(); }
+    const_iterator end() const { return m_samples.end(); }
     reverse_iterator rbegin() { return m_samples.rbegin(); }
+    const_reverse_iterator rbegin() const { return m_samples.rbegin(); }
     reverse_iterator rend() { return m_samples.rend(); }
+    const_reverse_iterator rend() const { return m_samples.rend(); }
 
     iterator findSampleWithDecodeKey(const KeyType&);
     reverse_iterator reverseFindSampleWithDecodeKey(const KeyType&);
