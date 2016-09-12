@@ -40,6 +40,4 @@ interface HTMLButtonElement : HTMLElement {
     void setCustomValidity(DOMString? error);
 
     readonly attribute NodeList labels;
-
-    void click();
 };

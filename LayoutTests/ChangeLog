@@ -1,3 +1,13 @@
+2016-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        HTMLButtonElement.prototype.click should be HTMLElement.prototype.click
+        https://bugs.webkit.org/show_bug.cgi?id=161874
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/HTMLButtonElement/click-expected.txt: Added.
+        * fast/dom/HTMLButtonElement/click.html: Added.
+
 2016-09-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-escapes-1.xhtml as flaky on mac.
