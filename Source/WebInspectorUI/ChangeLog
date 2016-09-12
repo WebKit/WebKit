@@ -1,5 +1,51 @@
 2016-09-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Combine similar SVG files for Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=161071
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/StyleRule.svg: Added.
+        * UserInterface/Images/StyleRulePseudoElement.svg: Added.
+        Replaced <defs> with <symbol> give CSS some access to the referenced DOM inside <symbol>.
+        Since <symbol> uses Shadow DOM, applying CSS variables to the :target element and using
+        them inside <symbol> allows for variable styling of the content.  Using a more basic
+        `#foo .bar` selector would not be valid since Shadow DOM separates the stylesheet selectors.
+
+        * UserInterface/Images/gtk/StyleRule.svg: Added.
+        * UserInterface/Images/gtk/StyleRulePseudoElement.svg: Added.
+
+        * UserInterface/Images/StyleRuleAuthor.svg: Removed.
+        * UserInterface/Images/StyleRuleInherited.svg: Removed.
+        * UserInterface/Images/StyleRuleInspector.svg: Removed.
+        * UserInterface/Images/StyleRuleUser.svg: Removed.
+        * UserInterface/Images/StyleRuleUserAgent.svg: Removed.
+        * UserInterface/Images/gtk/StyleRuleAuthor.svg: Removed.
+        * UserInterface/Images/gtk/StyleRuleInherited.svg: Removed.
+        * UserInterface/Images/gtk/StyleRuleInspector.svg: Removed.
+        * UserInterface/Images/gtk/StyleRuleUser.svg: Removed.
+        * UserInterface/Images/gtk/StyleRuleUserAgent.svg: Removed.
+        Merged into StyleRule.svg by using IDs in the URL.
+
+        * UserInterface/Images/StyleRuleAuthorPseudo.svg: Removed.
+        * UserInterface/Images/StyleRuleInspectorPseudo.svg: Removed.
+        * UserInterface/Images/StyleRuleUserAgentPseudo.svg: Removed.
+        * UserInterface/Images/StyleRuleUserPseudo.svg: Removed.
+        Merged into StyleRulePseudoElement.svg by using IDs in the URL.
+
+        * UserInterface/Views/StyleRuleIcons.css:
+        (.author-style-rule-icon .icon):
+        (.author-style-rule-icon.pseudo-element-selector .icon):
+        (.user-style-rule-icon .icon):
+        (.user-style-rule-icon.pseudo-element-selector .icon):
+        (.user-agent-style-rule-icon .icon):
+        (.user-agent-style-rule-icon.pseudo-element-selector .icon):
+        (.inspector-style-rule-icon .icon):
+        (.inspector-style-rule-icon.pseudo-element-selector .icon):
+        (.inherited-style-rule-icon .icon):
+
+2016-09-11  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         REGRESSION (r205754): Web Inspector: Cannot click on links to stylesheets in Rules sidebar
         https://bugs.webkit.org/show_bug.cgi?id=161838
 
