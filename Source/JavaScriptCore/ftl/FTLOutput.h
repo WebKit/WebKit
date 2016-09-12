@@ -163,6 +163,7 @@ public:
 
     LValue doubleSin(LValue);
     LValue doubleCos(LValue);
+    LValue doubleTan(LValue);
 
     LValue doublePow(LValue base, LValue exponent);
     LValue doublePowi(LValue base, LValue exponent);

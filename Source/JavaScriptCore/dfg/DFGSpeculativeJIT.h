@@ -2507,12 +2507,14 @@ public:
     template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
     void compileMathIC(Node*, JITMathIC<Generator>*, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction, NonRepatchingFunction);
 
+    void compileArithDoubleUnaryOp(Node*, double (*doubleFunction)(double), double (*operation)(ExecState*, EncodedJSValue));
     void compileValueAdd(Node*);
     void compileArithAdd(Node*);
     void compileMakeRope(Node*);
     void compileArithAbs(Node*);
     void compileArithClz32(Node*);
     void compileArithCos(Node*);
+    void compileArithTan(Node*);
     void compileArithSub(Node*);
     void compileArithNegate(Node*);
     void compileArithMul(Node*);

@@ -1,3 +1,34 @@
+2016-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Add ArithTan
+        https://bugs.webkit.org/show_bug.cgi?id=161857
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/tan.js: Added.
+        * stress/arith-tan-on-various-types.js: Added.
+        (let.validInputTypedTestCases.validInputTestCases.map):
+        (isIdentical):
+        (opaqueTanNoArgument):
+        (testNoArgument):
+        (opaqueAllTypesTan):
+        (testAllTypesCall):
+        (testTangleTypeCall):
+        (testConstant):
+        (opaqueTanForSideEffects):
+        (testSideEffect.let.testObject.valueOf):
+        (testSideEffect):
+        (opaqueTanForCSE):
+        (testCSE.let.testObject.valueOf):
+        (testCSE):
+        (opaqueTanForDCE):
+        (testDCE.let.testObject.valueOf):
+        (testDCE):
+        (testException.opaqueTanWithException):
+        (testException):
+        * stress/ftl-arithtan.js: Added.
+        (foo):
+
 2016-09-12  Saam Barati  <sbarati@apple.com>
 
         MapHash should do constant folding when it has a constant argument and its legal to hash that value

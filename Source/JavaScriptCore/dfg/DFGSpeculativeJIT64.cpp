@@ -2503,6 +2503,10 @@ void SpeculativeJIT::compile(Node* node)
         compileArithCos(node);
         break;
 
+    case ArithTan:
+        compileArithTan(node);
+        break;
+
     case ArithLog:
         compileArithLog(node);
         break;

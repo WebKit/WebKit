@@ -162,6 +162,7 @@ namespace JSC { namespace DFG {
     macro(ArithSqrt, NodeResultDouble | NodeMustGenerate) \
     macro(ArithSin, NodeResultDouble | NodeMustGenerate) \
     macro(ArithCos, NodeResultDouble | NodeMustGenerate) \
+    macro(ArithTan, NodeResultDouble | NodeMustGenerate) \
     macro(ArithLog, NodeResultDouble | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\

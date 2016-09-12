@@ -188,6 +188,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithLog:
     case ArithSin:
     case ArithSqrt:
+    case ArithTan:
         if (node->child1().useKind() == DoubleRepUse)
             def(PureValue(node));
         else {

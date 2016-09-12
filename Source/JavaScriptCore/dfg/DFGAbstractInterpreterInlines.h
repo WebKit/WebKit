@@ -959,6 +959,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         executeDoubleUnaryOpEffects(node, cos);
         break;
 
+    case ArithTan:
+        executeDoubleUnaryOpEffects(node, tan);
+        break;
+
     case ArithLog:
         executeDoubleUnaryOpEffects(node, log);
         break;

@@ -429,6 +429,19 @@ double JIT_OPERATION operationArithSqrt(ExecState* exec, EncodedJSValue encodedO
     return sqrt(a);
 }
 
+double JIT_OPERATION operationArithTan(ExecState* exec, EncodedJSValue encodedOp1)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    double a = op1.toNumber(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return tan(a);
+}
+
 static ALWAYS_INLINE EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
 {
     VM& vm = exec->vm();

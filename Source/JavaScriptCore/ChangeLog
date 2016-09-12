@@ -1,3 +1,58 @@
+2016-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Add ArithTan
+        https://bugs.webkit.org/show_bug.cgi?id=161857
+
+        Reviewed by Filip Pizlo.
+
+        While ArithSin and ArithCos are supported, ArithTan is not supported yet.
+        And we also find that Math.tan is included in MotionMark's Multiply benchmark.
+
+        This patch adds ArithTan support in DFG and FTL. And it also cleans up the
+        existing ArithSin, ArithCos, and ArithLog compilations by unifying them.
+        The microbenchmark shows the 9% perf improvement.
+
+            tan    322.4819+-0.3766     ^    295.8700+-0.3094        ^ definitely 1.0899x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithDoubleUnaryOp):
+        (JSC::DFG::SpeculativeJIT::compileArithCos):
+        (JSC::DFG::SpeculativeJIT::compileArithTan):
+        (JSC::DFG::SpeculativeJIT::compileArithSin):
+        (JSC::DFG::SpeculativeJIT::compileArithLog):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithTan):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::doubleTan):
+        * ftl/FTLOutput.h:
+        * runtime/Intrinsic.h:
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+
 2016-09-12  Saam Barati  <sbarati@apple.com>
 
         MapHash should do constant folding when it has a constant argument and its legal to hash that value

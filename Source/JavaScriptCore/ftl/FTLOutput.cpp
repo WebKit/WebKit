@@ -299,6 +299,12 @@ LValue Output::doubleCos(LValue value)
     return callWithoutSideEffects(B3::Double, cosDouble, value);
 }
 
+LValue Output::doubleTan(LValue value)
+{
+    double (*tanDouble)(double) = tan;
+    return callWithoutSideEffects(B3::Double, tanDouble, value);
+}
+
 LValue Output::doublePow(LValue xOperand, LValue yOperand)
 {
     double (*powDouble)(double, double) = pow;

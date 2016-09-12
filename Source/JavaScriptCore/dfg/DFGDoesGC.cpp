@@ -94,6 +94,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithFRound:
     case ArithSin:
     case ArithCos:
+    case ArithTan:
     case ArithLog:
     case ValueAdd:
     case TryGetById:
