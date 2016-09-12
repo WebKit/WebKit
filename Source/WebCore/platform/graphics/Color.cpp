@@ -49,6 +49,16 @@ const RGBA32 Color::transparent;
 static const RGBA32 lightenedBlack = 0xFF545454;
 static const RGBA32 darkenedWhite = 0xFFABABAB;
 
+static inline unsigned premultipliedChannel(unsigned c, unsigned a)
+{
+    return fastDivideBy255(c * a + 254);
+}
+
+static inline unsigned unpremultipliedChannel(unsigned c, unsigned a)
+{
+    return (fastMultiplyBy255(c) + a - 1) / a;
+}
+
 RGBA32 makeRGB(int r, int g, int b)
 {
     return 0xFF000000 | std::max(0, std::min(r, 255)) << 16 | std::max(0, std::min(g, 255)) << 8 | std::max(0, std::min(b, 255));
@@ -57,6 +67,16 @@ RGBA32 makeRGB(int r, int g, int b)
 RGBA32 makeRGBA(int r, int g, int b, int a)
 {
     return std::max(0, std::min(a, 255)) << 24 | std::max(0, std::min(r, 255)) << 16 | std::max(0, std::min(g, 255)) << 8 | std::max(0, std::min(b, 255));
+}
+
+RGBA32 makePremultipliedRGBA(int r, int g, int b, int a)
+{
+    return makeRGBA(premultipliedChannel(r, a), premultipliedChannel(g, a), premultipliedChannel(b, a), a);
+}
+
+RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a)
+{
+    return makeRGBA(unpremultipliedChannel(r, a), unpremultipliedChannel(g, a), unpremultipliedChannel(b, a), a);
 }
 
 static int colorFloatToRGBAByte(float f)
@@ -482,14 +502,9 @@ void Color::getHSV(double& hue, double& saturation, double& value) const
 Color colorFromPremultipliedARGB(RGBA32 pixelColor)
 {
     int alpha = alphaChannel(pixelColor);
-    if (alpha && alpha < 255) {
-        return Color::createUnchecked(
-            redChannel(pixelColor) * 255 / alpha,
-            greenChannel(pixelColor) * 255 / alpha,
-            blueChannel(pixelColor) * 255 / alpha,
-            alpha);
-    } else
-        return Color(pixelColor);
+    if (alpha && alpha < 255)
+        pixelColor = makeUnPremultipliedRGBA(redChannel(pixelColor), greenChannel(pixelColor), blueChannel(pixelColor), alpha);
+    return Color(pixelColor);
 }
 
 RGBA32 premultipliedARGBFromColor(const Color& color)
@@ -497,14 +512,10 @@ RGBA32 premultipliedARGBFromColor(const Color& color)
     unsigned pixelColor;
 
     unsigned alpha = color.alpha();
-    if (alpha < 255) {
-        pixelColor = Color::createUnchecked(
-            fastDivideBy255(color.red() * alpha + 254),
-            fastDivideBy255(color.green() * alpha + 254),
-            fastDivideBy255(color.blue() * alpha + 254),
-            alpha).rgb();
-    } else
-         pixelColor = color.rgb();
+    if (alpha < 255)
+        pixelColor = makePremultipliedRGBA(color.red(), color.green(), color.blue(), alpha);
+    else
+        pixelColor = color.rgb();
 
     return pixelColor;
 }

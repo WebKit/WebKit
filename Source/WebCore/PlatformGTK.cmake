@@ -155,7 +155,7 @@ list(APPEND WebCore_SOURCES
     platform/gtk/TemporaryLinkStubs.cpp
     platform/gtk/UserAgentGtk.cpp
 
-    platform/image-decoders/cairo/ImageDecoderCairo.cpp
+    platform/image-decoders/cairo/ImageBackingStoreCairo.cpp
 
     platform/mediastream/gtk/SDPProcessorScriptResourceGtk.cpp
 

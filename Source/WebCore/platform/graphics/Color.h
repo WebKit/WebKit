@@ -55,6 +55,9 @@ typedef unsigned RGBA32; // Deprecated: Type for an RGBA quadruplet. Use RGBA cl
 WEBCORE_EXPORT RGBA32 makeRGB(int r, int g, int b);
 WEBCORE_EXPORT RGBA32 makeRGBA(int r, int g, int b, int a);
 
+RGBA32 makePremultipliedRGBA(int r, int g, int b, int a);
+RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a);
+
 WEBCORE_EXPORT RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha);
 WEBCORE_EXPORT RGBA32 colorWithOverrideAlpha(RGBA32 color, Optional<float> overrideAlpha);
 
@@ -204,6 +207,7 @@ Color blend(const Color& from, const Color& to, double progress, bool blendPremu
 
 int differenceSquared(const Color&, const Color&);
 
+uint16_t fastMultiplyBy255(uint16_t value);
 uint16_t fastDivideBy255(uint16_t);
 
 #if USE(CG)
@@ -274,6 +278,11 @@ inline uint8_t roundAndClampColorChannel(int value)
 inline uint8_t roundAndClampColorChannel(float value)
 {
     return std::max(0.f, std::min(255.f, std::round(value)));
+}
+
+inline uint16_t fastMultiplyBy255(uint16_t value)
+{
+    return (value << 8) - value;
 }
 
 inline uint16_t fastDivideBy255(uint16_t value)

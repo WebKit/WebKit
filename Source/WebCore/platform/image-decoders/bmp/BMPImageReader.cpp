@@ -78,16 +78,13 @@ bool BMPImageReader::decodeBMP(bool onlySize)
     // Initialize the framebuffer if needed.
     ASSERT(m_buffer);  // Parent should set this before asking us to decode!
     if (m_buffer->status() == ImageFrame::FrameEmpty) {
-        if (!m_buffer->setSize(m_parent->size().width(), m_parent->size().height()))
+        if (!m_buffer->setSize(m_parent->size()))
             return m_parent->setFailed(); // Unable to allocate.
         m_buffer->setStatus(ImageFrame::FramePartial);
         // setSize() calls eraseARGB(), which resets the alpha flag, so we force
         // it back to false here.  We'll set it true below in all cases where
         // these 0s could actually show through.
         m_buffer->setHasAlpha(false);
-
-        // For BMPs, the frame always fills the entire image.
-        m_buffer->setOriginalFrameRect(IntRect(IntPoint(), m_parent->size()));
 
         if (!m_isTopDown)
             m_coord.setY(m_parent->size().height() - 1);
@@ -171,7 +168,7 @@ bool BMPImageReader::processInfoHeader()
         return m_parent->setFailed();
 
     // Set our size.
-    if (!m_parent->setSize(m_infoHeader.biWidth, m_infoHeader.biHeight))
+    if (!m_parent->setSize(IntSize(m_infoHeader.biWidth, m_infoHeader.biHeight)))
         return false;
 
     // For paletted images, bitmaps can set biClrUsed to 0 to mean "all
@@ -674,7 +671,7 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
                         // transparent, on the assumption that most ICOs on the
                         // web will not be doing a lot of inverting.
                         if (colorIndex) {
-                            setRGBA(0, 0, 0, 0);
+                            setPixel(0, 0, 0, 0);
                             m_buffer->setHasAlpha(true);
                         } else
                             m_coord.move(1, 0);
@@ -713,7 +710,7 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
                         m_buffer->setHasAlpha(true);
                 }
 
-                setRGBA(getComponent(pixel, 0), getComponent(pixel, 1),
+                setPixel(getComponent(pixel, 0), getComponent(pixel, 1),
                         getComponent(pixel, 2), alpha);
             }
         }

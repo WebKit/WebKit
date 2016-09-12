@@ -60,12 +60,12 @@ bool GIFImageDecoder::isSizeAvailable()
     return ImageDecoder::isSizeAvailable();
 }
 
-bool GIFImageDecoder::setSize(unsigned width, unsigned height)
+bool GIFImageDecoder::setSize(const IntSize& size)
 {
-    if (ImageDecoder::isSizeAvailable() && size() == IntSize(width, height))
+    if (ImageDecoder::isSizeAvailable() && this->size() == size)
         return true;
 
-    if (!ImageDecoder::setSize(width, height))
+    if (!ImageDecoder::setSize(size))
         return false;
 
     prepareScaleDataIfNecessary();
@@ -213,16 +213,16 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
 
     // Initialize the frame if necessary.
     ImageFrame& buffer = m_frameBufferCache[frameIndex];
-    if (((buffer.status() == ImageFrame::FrameEmpty) && !initFrameBuffer(frameIndex)) || !buffer.hasPixelData())
+    if (((buffer.status() == ImageFrame::FrameEmpty) && !initFrameBuffer(frameIndex)) || !buffer.hasBackingStore())
         return false;
 
-    ImageFrame::PixelData* currentAddress = buffer.getAddr(xBegin, yBegin);
+    RGBA32* currentAddress = buffer.pixelAt(xBegin, yBegin);
     // Write one row's worth of data into the frame.  
     for (int x = xBegin; x < xEnd; ++x) {
         const unsigned char sourceValue = rowBuffer[(m_scaled ? m_scaledColumns[x] : x) - frameContext->xOffset];
         if ((!frameContext->isTransparent || (sourceValue != frameContext->tpixel)) && (sourceValue < colorMapSize)) {
             const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
-            buffer.setRGBA(currentAddress, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
+            buffer.setPixel(currentAddress, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
         } else {
             m_currentBufferSawAlpha = true;
             // We may or may not need to write transparent pixels to the buffer.
@@ -233,7 +233,7 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
             // beyond the first, or the initial passes will "show through" the
             // later ones.
             if (writeTransparentPixels)
-                buffer.setRGBA(currentAddress, 0, 0, 0, 0);
+                buffer.setPixel(currentAddress, 0, 0, 0, 0);
         }
         ++currentAddress;
     }
@@ -361,7 +361,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 
     if (!frameIndex) {
         // This is the first frame, so we're not relying on any previous data.
-        if (!buffer->setSize(scaledSize().width(), scaledSize().height()))
+        if (!buffer->setSize(scaledSize()))
             return setFailed();
     } else {
         // The starting state for this frame depends on the previous frame's
@@ -387,12 +387,12 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
         } else {
             // We want to clear the previous frame to transparent, without
             // affecting pixels in the image outside of the frame.
-            const IntRect& prevRect = prevBuffer->originalFrameRect();
+            IntRect prevRect = prevBuffer->originalFrameRect();
             const IntSize& bufferSize = scaledSize();
             if (!frameIndex || prevRect.contains(IntRect(IntPoint(), scaledSize()))) {
                 // Clearing the first frame, or a frame the size of the whole
                 // image, results in a completely empty image.
-                if (!buffer->setSize(bufferSize.width(), bufferSize.height()))
+                if (!buffer->setSize(bufferSize))
                     return setFailed();
             } else {
                 // Copy the whole previous buffer, then clear just its frame.

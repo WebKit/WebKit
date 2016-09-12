@@ -183,9 +183,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/x11/PlatformDisplayX11.cpp
     platform/graphics/x11/XUniqueResource.cpp
 
+    platform/image-decoders/cairo/ImageBackingStoreCairo.cpp
     platform/image-encoders/JPEGImageEncoder.cpp
-
-    platform/image-decoders/cairo/ImageDecoderCairo.cpp
 
     platform/network/efl/NetworkStateNotifierEfl.cpp
 

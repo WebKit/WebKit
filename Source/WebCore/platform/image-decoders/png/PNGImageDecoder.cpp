@@ -235,9 +235,9 @@ bool PNGImageDecoder::isSizeAvailable()
     return ImageDecoder::isSizeAvailable();
 }
 
-bool PNGImageDecoder::setSize(unsigned width, unsigned height)
+bool PNGImageDecoder::setSize(const IntSize& size)
 {
-    if (!ImageDecoder::setSize(width, height))
+    if (!ImageDecoder::setSize(size))
         return false;
 
     prepareScaleDataIfNecessary();
@@ -295,7 +295,7 @@ void PNGImageDecoder::headerAvailable()
     // will cease to exist.  Note that we'll still properly set the failure flag
     // in this case as soon as we longjmp().
     m_doNothingOnFailure = true;
-    bool result = setSize(width, height);
+    bool result = setSize(IntSize(width, height));
     m_doNothingOnFailure = false;
     if (!result) {
         longjmp(JMPBUF(png), 1);
@@ -411,19 +411,19 @@ void PNGImageDecoder::headerAvailable()
     }
 }
 
-static inline void setPixelRGB(ImageFrame::PixelData* dest, png_bytep pixel)
+static inline void setPixelRGB(RGBA32* dest, png_bytep pixel)
 {
     *dest = 0xFF000000U | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
 }
 
-static inline void setPixelRGBA(ImageFrame::PixelData* dest, png_bytep pixel, unsigned char& nonTrivialAlphaMask)
+static inline void setPixelRGBA(RGBA32* dest, png_bytep pixel, unsigned char& nonTrivialAlphaMask)
 {
     unsigned char a = pixel[3];
     *dest = a << 24 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
     nonTrivialAlphaMask |= (255 - a);
 }
 
-static inline void setPixelPremultipliedRGBA(ImageFrame::PixelData* dest, png_bytep pixel, unsigned char& nonTrivialAlphaMask)
+static inline void setPixelPremultipliedRGBA(RGBA32* dest, png_bytep pixel, unsigned char& nonTrivialAlphaMask)
 {
     unsigned char a = pixel[3];
     unsigned char r = fastDivideBy255(pixel[0] * a);
@@ -447,7 +447,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     ImageFrame& buffer = m_frameBufferCache[m_currentFrame];
     if (buffer.status() == ImageFrame::FrameEmpty) {
         png_structp png = m_reader->pngPtr();
-        if (!buffer.setSize(scaledSize().width(), scaledSize().height())) {
+        if (!buffer.setSize(scaledSize())) {
             longjmp(JMPBUF(png), 1);
             return;
         }
@@ -469,10 +469,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 #if ENABLE(APNG)
         if (m_currentFrame)
             initFrameBuffer(m_currentFrame);
-        else
 #endif
-        // For PNGs, the frame always fills the entire image.
-        buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
     }
 
     /* libpng comments (here to explain what follows).
@@ -531,7 +528,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     }
 
     // Write the decoded row pixels to the frame buffer.
-    ImageFrame::PixelData* address = buffer.getAddr(0, y);
+    RGBA32* address = buffer.pixelAt(0, y);
     int width = scaledSize().width();
     unsigned char nonTrivialAlphaMask = 0;
 
@@ -540,7 +537,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         for (int x = 0; x < width; ++x) {
             png_bytep pixel = row + m_scaledColumns[x] * colorChannels;
             unsigned alpha = hasAlpha ? pixel[3] : 255;
-            buffer.setRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
+            buffer.setPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
             nonTrivialAlphaMask |= (255 - alpha);
         }
     } else
@@ -820,7 +817,7 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
     } else {
         // We want to clear the previous frame to transparent, without
         // affecting pixels in the image outside of the frame.
-        const IntRect& prevRect = prevBuffer->originalFrameRect();
+        IntRect prevRect = prevBuffer->originalFrameRect();
         if (!frameIndex || prevRect.contains(IntRect(IntPoint(), scaledSize()))) {
             // Clearing the first frame, or a frame the size of the whole
             // image, results in a completely empty image.
@@ -844,7 +841,7 @@ void PNGImageDecoder::frameComplete()
     png_bytep interlaceBuffer = m_reader->interlaceBuffer();
 
     if (m_currentFrame && interlaceBuffer) {
-        const IntRect& rect = buffer.originalFrameRect();
+        IntRect rect = buffer.originalFrameRect();
         bool hasAlpha = m_reader->hasAlpha();
         unsigned colorChannels = hasAlpha ? 4 : 3;
         bool nonTrivialAlpha = false;
@@ -854,15 +851,15 @@ void PNGImageDecoder::frameComplete()
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
         for (int y = 0; y < rect.maxY() - rect.y(); ++y) {
             png_bytep row = interlaceBuffer + (m_scaled ? m_scaledRows[y] : y) * colorChannels * size().width();
-            ImageFrame::PixelData* address = buffer.getAddr(rect.x(), y + rect.y());
+            RGBA32* address = buffer.pixelAt(rect.x(), y + rect.y());
             for (int x = 0; x < rect.maxX() - rect.x(); ++x) {
                 png_bytep pixel = row + (m_scaled ? m_scaledColumns[x] : x) * colorChannels;
                 unsigned alpha = hasAlpha ? pixel[3] : 255;
                 nonTrivialAlpha |= alpha < 255;
                 if (!m_blend)
-                    buffer.setRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
+                    buffer.setPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
                 else
-                    buffer.overRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
+                    buffer.blendPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
             }
         }
 #else
@@ -870,14 +867,14 @@ void PNGImageDecoder::frameComplete()
         png_bytep row = interlaceBuffer;
         for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
             png_bytep pixel = row;
-            ImageFrame::PixelData* address = buffer.getAddr(rect.x(), y);
+            RGBA32* address = buffer.pixelAt(rect.x(), y);
             for (int x = rect.x(); x < rect.maxX(); ++x, pixel += colorChannels) {
                 unsigned alpha = hasAlpha ? pixel[3] : 255;
                 nonTrivialAlpha |= alpha < 255;
                 if (!m_blend)
-                    buffer.setRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
+                    buffer.setPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
                 else
-                    buffer.overRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
+                    buffer.blendPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
             }
         }
 #endif

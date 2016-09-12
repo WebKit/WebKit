@@ -50,7 +50,7 @@ namespace WebCore {
         // ImageDecoder
         String filenameExtension() const override { return "jpg"; }
         bool isSizeAvailable() override;
-        bool setSize(unsigned width, unsigned height) override;
+        bool setSize(const IntSize&) override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside

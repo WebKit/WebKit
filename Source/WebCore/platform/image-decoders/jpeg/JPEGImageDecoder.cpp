@@ -322,7 +322,7 @@ public:
             m_state = JPEG_START_DECOMPRESS;
 
             // We can fill in the size now that the header is available.
-            if (!m_decoder->setSize(m_info.image_width, m_info.image_height))
+            if (!m_decoder->setSize(IntSize(m_info.image_width, m_info.image_height)))
                 return false;
 
             m_decoder->setOrientation(readImageOrientation(info()));
@@ -519,9 +519,9 @@ bool JPEGImageDecoder::isSizeAvailable()
     return ImageDecoder::isSizeAvailable();
 }
 
-bool JPEGImageDecoder::setSize(unsigned width, unsigned height)
+bool JPEGImageDecoder::setSize(const IntSize& size)
 {
-    if (!ImageDecoder::setSize(width, height))
+    if (!ImageDecoder::setSize(size))
         return false;
 
     prepareScaleDataIfNecessary();
@@ -551,13 +551,13 @@ bool JPEGImageDecoder::setFailed()
 }
 
 template <J_COLOR_SPACE colorSpace>
-void setPixel(ImageFrame& buffer, ImageFrame::PixelData* currentAddress, JSAMPARRAY samples, int column)
+void setPixel(ImageFrame& buffer, RGBA32* currentAddress, JSAMPARRAY samples, int column)
 {
     JSAMPLE* jsample = *samples + column * (colorSpace == JCS_RGB ? 3 : 4);
 
     switch (colorSpace) {
     case JCS_RGB:
-        buffer.setRGBA(currentAddress, jsample[0], jsample[1], jsample[2], 0xFF);
+        buffer.setPixel(currentAddress, jsample[0], jsample[1], jsample[2], 0xFF);
         break;
     case JCS_CMYK:
         // Source is 'Inverted CMYK', output is RGB.
@@ -570,7 +570,7 @@ void setPixel(ImageFrame& buffer, ImageFrame::PixelData* currentAddress, JSAMPAR
         // From CMY (0..1) to RGB (0..1):
         // R = 1 - C => 1 - (1 - iC*iK) => iC*iK  [G and B similar]
         unsigned k = jsample[3];
-        buffer.setRGBA(currentAddress, jsample[0] * k / 255, jsample[1] * k / 255, jsample[2] * k / 255, 0xFF);
+        buffer.setPixel(currentAddress, jsample[0] * k / 255, jsample[1] * k / 255, jsample[2] * k / 255, 0xFF);
         break;
     }
 }
@@ -594,7 +594,7 @@ bool JPEGImageDecoder::outputScanlines(ImageFrame& buffer)
         if (destY < 0)
             continue;
 
-        ImageFrame::PixelData* currentAddress = buffer.getAddr(0, destY);
+        RGBA32* currentAddress = buffer.pixelAt(0, destY);
         for (int x = 0; x < width; ++x) {
             setPixel<colorSpace>(buffer, currentAddress, samples, isScaled ? m_scaledColumns[x] : x);
             ++currentAddress;
@@ -617,15 +617,12 @@ bool JPEGImageDecoder::outputScanlines()
     // Initialize the framebuffer if needed.
     ImageFrame& buffer = m_frameBufferCache[0];
     if (buffer.status() == ImageFrame::FrameEmpty) {
-        if (!buffer.setSize(scaledSize().width(), scaledSize().height()))
+        if (!buffer.setSize(scaledSize()))
             return setFailed();
         buffer.setStatus(ImageFrame::FramePartial);
         // The buffer is transparent outside the decoded area while the image is
         // loading. The completed image will be marked fully opaque in jpegComplete().
         buffer.setHasAlpha(true);
-
-        // For JPEGs, the frame always fills the entire image.
-        buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
     }
 
     jpeg_decompress_struct* info = m_reader->info();
@@ -633,7 +630,7 @@ bool JPEGImageDecoder::outputScanlines()
 #if defined(TURBO_JPEG_RGB_SWIZZLE)
     if (!m_scaled && turboSwizzled(info->out_color_space)) {
         while (info->output_scanline < info->output_height) {
-            unsigned char* row = reinterpret_cast<unsigned char*>(buffer.getAddr(0, info->output_scanline));
+            unsigned char* row = reinterpret_cast<unsigned char*>(buffer.pixelAt(0, info->output_scanline));
             if (jpeg_read_scanlines(info, &row, 1) != 1)
                 return false;
          }

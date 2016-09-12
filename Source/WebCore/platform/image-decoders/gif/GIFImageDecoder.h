@@ -44,7 +44,7 @@ namespace WebCore {
         String filenameExtension() const override { return "gif"; }
         void setData(SharedBuffer& data, bool allDataReceived) override;
         bool isSizeAvailable() override;
-        bool setSize(unsigned width, unsigned height) override;
+        bool setSize(const IntSize&) override;
         size_t frameCount() override;
         int repetitionCount() const override;
         ImageFrame* frameBufferAtIndex(size_t index) override;

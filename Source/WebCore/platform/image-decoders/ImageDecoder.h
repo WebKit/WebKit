@@ -28,8 +28,10 @@
 
 #pragma once
 
-#include "IntRect.h"
+#include "ImageBackingStore.h"
 #include "ImageSource.h"
+#include "IntRect.h"
+#include "IntSize.h"
 #include "PlatformScreen.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
@@ -57,7 +59,6 @@ using ColorProfile = Vector<char>;
             DisposeOverwritePrevious  // Clear frame to previous framebuffer
                                       // contents
         };
-        typedef unsigned PixelData;
 
         ImageFrame();
 
@@ -82,142 +83,66 @@ using ColorProfile = Vector<char>;
         // endY.
         void copyRowNTimes(int startX, int endX, int startY, int endY)
         {
-            ASSERT(startX < width());
-            ASSERT(endX <= width());
-            ASSERT(startY < height());
-            ASSERT(endY <= height());
-            const int rowBytes = (endX - startX) * sizeof(PixelData);
-            const PixelData* const startAddr = getAddr(startX, startY);
-            for (int destY = startY + 1; destY < endY; ++destY)
-                memcpy(getAddr(startX, destY), startAddr, rowBytes);
+            m_backingStore->repeatFirstRow(IntRect(startX, startY, endX -startX , endY - startY));
         }
 
         // Allocates space for the pixel data.  Must be called before any pixels
         // are written.  Must only be called once.  Returns whether allocation
         // succeeded.
-        bool setSize(int newWidth, int newHeight);
+        bool setSize(const IntSize&);
+        IntSize size() const { return m_backingStore ? m_backingStore->size() : IntSize(); }
 
         // Returns a caller-owned pointer to the underlying native image data.
         // (Actual use: This pointer will be owned by BitmapImage and freed in
         // FrameData::clear()).
-        NativeImagePtr asNewNativeImage() const;
+        NativeImagePtr asNewNativeImage() const { return m_backingStore ? m_backingStore->image() : nullptr; }
 
+        inline ImageBackingStore* backingStore() const { return m_backingStore ? m_backingStore.get() : nullptr; }
+        inline bool hasBackingStore() const { return backingStore(); }
+        
         bool hasAlpha() const;
-        const IntRect& originalFrameRect() const { return m_originalFrameRect; }
+        IntRect originalFrameRect() const { return m_backingStore ? m_backingStore->frameRect() : IntRect(); }
         FrameStatus status() const { return m_status; }
         unsigned duration() const { return m_duration; }
         FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
         bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
         void setHasAlpha(bool alpha);
-        void setOriginalFrameRect(const IntRect& r) { m_originalFrameRect = r; }
+        void setOriginalFrameRect(const IntRect&);
         void setStatus(FrameStatus status);
         void setDuration(unsigned duration) { m_duration = duration; }
         void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
         void setPremultiplyAlpha(bool premultiplyAlpha) { m_premultiplyAlpha = premultiplyAlpha; }
 
-        inline void setRGBA(int x, int y, unsigned r, unsigned g, unsigned b, unsigned a)
+        inline RGBA32* pixelAt(int x, int y)
         {
-            setRGBA(getAddr(x, y), r, g, b, a);
+            ASSERT(m_backingStore);
+            return m_backingStore->pixelAt(x, y);
         }
 
-        inline PixelData* getAddr(int x, int y)
+        inline void setPixel(int x, int y, unsigned r, unsigned g, unsigned b, unsigned a)
         {
-            return m_bytes + (y * width()) + x;
+            ASSERT(m_backingStore);
+            m_backingStore->setPixel(x, y, r, g, b, a);
         }
 
-        inline bool hasPixelData() const
+        inline void setPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
         {
-            return m_bytes;
-        }
-
-        // Use fix point multiplier instead of integer division or floating point math.
-        // This multipler produces exactly the same result for all values in range 0 - 255.
-        static const unsigned fixPointShift = 24;
-        static const unsigned fixPointMult = static_cast<unsigned>(1.0 / 255.0 * (1 << fixPointShift)) + 1;
-        // Multiplies unsigned value by fixpoint value and converts back to unsigned.
-        static unsigned fixPointUnsignedMultiply(unsigned fixed, unsigned v)
-        {
-            return  (fixed * v) >> fixPointShift;
-        }
-
-        inline void setRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
-        {
-            if (m_premultiplyAlpha && a < 255) {
-                if (!a) {
-                    *dest = 0;
-                    return;
-                }
-
-                unsigned alphaMult = a * fixPointMult;
-                r = fixPointUnsignedMultiply(r, alphaMult);
-                g = fixPointUnsignedMultiply(g, alphaMult);
-                b = fixPointUnsignedMultiply(b, alphaMult);
-            }
-            *dest = (a << 24 | r << 16 | g << 8 | b);
+            ASSERT(m_backingStore);
+            m_backingStore->setPixel(dest, r, g, b, a);
         }
 
 #if ENABLE(APNG)
-        static inline unsigned divide255(unsigned a)
+        inline void blendPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
         {
-            return (a + (a >> 8) + 1) >> 8;
-        }
-
-        inline void overRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
-        {
-            if (!a)
-                return;
-
-            if (a < 255) {
-                unsigned aDest = ((*dest) >> 24) & 255;
-                if (aDest) {
-                    unsigned rDest = ((*dest) >> 16) & 255;
-                    unsigned gDest = ((*dest) >> 8) & 255;
-                    unsigned bDest = (*dest) & 255;
-                    unsigned aAux = 255 - a;
-                    if (!m_premultiplyAlpha) {
-                        rDest = divide255(rDest * aDest);
-                        gDest = divide255(gDest * aDest);
-                        bDest = divide255(bDest * aDest);
-                    }
-                    r = divide255(r * a + rDest * aAux);
-                    g = divide255(g * a + gDest * aAux);
-                    b = divide255(b * a + bDest * aAux);
-                    a += divide255(aDest * aAux);
-                    if (!m_premultiplyAlpha) {
-                        r = (r * 255 + a - 1) / a;
-                        g = (g * 255 + a - 1) / a;
-                        b = (b * 255 + a - 1) / a;
-                    }
-                } else if (m_premultiplyAlpha) {
-                    r = divide255(r * a);
-                    g = divide255(g * a);
-                    b = divide255(b * a);
-                }
-            }
-            *dest = (a << 24 | r << 16 | g << 8 | b);
+            ASSERT(m_backingStore);
+            m_backingStore->blendPixel(dest, r, g, b, a);
         }
 #endif
 
     private:
-        int width() const
-        {
-            return m_size.width();
-        }
-
-        int height() const
-        {
-            return m_size.height();
-        }
-
-        Vector<PixelData> m_backingStore;
-        PixelData* m_bytes; // The memory is backed by m_backingStore.
-        IntSize m_size;
+        std::unique_ptr<ImageBackingStore> m_backingStore;
         bool m_hasAlpha;
-        IntRect m_originalFrameRect; // This will always just be the entire
-                                     // buffer except for GIF frames whose
-                                     // original rect was smaller than the
-                                     // overall image size.
         FrameStatus m_status;
         unsigned m_duration;
         FrameDisposalMethod m_disposalMethod;
@@ -287,11 +212,11 @@ using ColorProfile = Vector<char>;
 
         // Returns whether the size is legal (i.e. not going to result in
         // overflow elsewhere).  If not, marks decoding as failed.
-        virtual bool setSize(unsigned width, unsigned height)
+        virtual bool setSize(const IntSize& size)
         {
-            if (isOverSize(width, height))
+            if (ImageBackingStore::isOverSize(size))
                 return setFailed();
-            m_size = IntSize(width, height);
+            m_size = size;
             m_sizeAvailable = true;
             return true;
         }
@@ -386,15 +311,6 @@ using ColorProfile = Vector<char>;
         ImageOrientation m_orientation;
 
     private:
-        // Some code paths compute the size of the image as "width * height * 4"
-        // and return it as a (signed) int.  Avoid overflow.
-        static bool isOverSize(unsigned width, unsigned height)
-        {
-            unsigned long long total_size = static_cast<unsigned long long>(width)
-                                          * static_cast<unsigned long long>(height);
-            return total_size > ((1 << 29) - 1);
-        }
-
         IntSize m_size;
         bool m_sizeAvailable { false };
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)

@@ -447,7 +447,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
 
             // CALLBACK: Inform the decoderplugin of our size.
             // Note: A subsequent frame might have dimensions larger than the "screen" dimensions.
-            if (m_client && !m_client->setSize(m_screenWidth, m_screenHeight))
+            if (m_client && !m_client->setSize(WebCore::IntSize(m_screenWidth, m_screenHeight)))
                 return false;
 
             m_screenBgcolor = currentComponent[5];
@@ -664,7 +664,7 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
                 yOffset = 0;
 
                 // CALLBACK: Inform the decoderplugin of our size.
-                if (m_client && !m_client->setSize(m_screenWidth, m_screenHeight))
+                if (m_client && !m_client->setSize(WebCore::IntSize(m_screenWidth, m_screenHeight)))
                     return false;
             }
 

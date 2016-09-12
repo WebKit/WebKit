@@ -88,11 +88,11 @@ IntSize ICOImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel)
     return (index && (index < m_dirEntries.size())) ? m_dirEntries[index].m_size : size();
 }
 
-bool ICOImageDecoder::setSize(unsigned width, unsigned height)
+bool ICOImageDecoder::setSize(const IntSize& size)
 {
     // The size calculated inside the BMPImageReader had better match the one in
     // the icon directory.
-    return m_frameSize.isEmpty() ? ImageDecoder::setSize(width, height) : ((IntSize(width, height) == m_frameSize) || setFailed());
+    return m_frameSize.isEmpty() ? ImageDecoder::setSize(size) : ((size == m_frameSize) || setFailed());
 }
 
 size_t ICOImageDecoder::frameCount()
@@ -279,7 +279,7 @@ bool ICOImageDecoder::processDirectoryEntries()
     const IconDirectoryEntry& dirEntry = m_dirEntries.first();
     // Technically, this next call shouldn't be able to fail, since the width
     // and height here are each <= 256, and |m_frameSize| is empty.
-    return setSize(dirEntry.m_size.width(), dirEntry.m_size.height());
+    return setSize(dirEntry.m_size);
 }
 
 ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry()

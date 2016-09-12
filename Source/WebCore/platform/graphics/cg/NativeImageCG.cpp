@@ -47,10 +47,10 @@ IntSize nativeImageSize(const NativeImagePtr& image)
     return image ? IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get())) : IntSize();
 }
 
-bool nativeImageHasAlpha(const NativeImagePtr&)
+bool nativeImageHasAlpha(const NativeImagePtr& image)
 {
-    // FIXME: Answer correctly the question: does the CGImageRef have alpha channnel?
-    return true;
+    CGImageAlphaInfo info = CGImageGetAlphaInfo(image.get());
+    return (info >= kCGImageAlphaPremultipliedLast) && (info <= kCGImageAlphaFirst);
 }
 
 Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)

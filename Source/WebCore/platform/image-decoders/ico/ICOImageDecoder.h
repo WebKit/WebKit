@@ -49,7 +49,7 @@ namespace WebCore {
         bool isSizeAvailable() override;
         IntSize size() override;
         IntSize frameSizeAtIndex(size_t, SubsamplingLevel) override;
-        bool setSize(unsigned width, unsigned height) override;
+        bool setSize(const IntSize&) override;
         size_t frameCount() override;
         ImageFrame* frameBufferAtIndex(size_t) override;
         // CAUTION: setFailed() deletes all readers and decoders.  Be careful to

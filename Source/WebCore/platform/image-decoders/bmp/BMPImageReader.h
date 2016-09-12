@@ -239,16 +239,16 @@ namespace WebCore {
         // right by one.
         inline void setI(size_t colorIndex)
         {
-            setRGBA(m_colorTable[colorIndex].rgbRed, m_colorTable[colorIndex].rgbGreen, m_colorTable[colorIndex].rgbBlue, 0xff);
+            setPixel(m_colorTable[colorIndex].rgbRed, m_colorTable[colorIndex].rgbGreen, m_colorTable[colorIndex].rgbBlue, 0xff);
         }
 
         // Like setI(), but with the individual component values specified.
-        inline void setRGBA(unsigned red,
+        inline void setPixel(unsigned red,
                             unsigned green,
                             unsigned blue,
                             unsigned alpha)
         {
-            m_buffer->setRGBA(m_coord.x(), m_coord.y(), red, green, blue, alpha);
+            m_buffer->setPixel(m_coord.x(), m_coord.y(), red, green, blue, alpha);
             m_coord.move(1, 0);
         }
 
@@ -263,7 +263,7 @@ namespace WebCore {
                              unsigned alpha)
         {
             while (m_coord.x() < endCoord)
-                setRGBA(red, green, blue, alpha);
+                setPixel(red, green, blue, alpha);
         }
 
         // Resets the relevant local variables to start drawing at the left edge
