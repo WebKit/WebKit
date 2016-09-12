@@ -1,3 +1,20 @@
+2016-09-11  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        REGRESSION (r205754): Web Inspector: Cannot click on links to stylesheets in Rules sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=161838
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section > .header > textarea):
+        (.style-declaration-section > .header > .origin):
+        Added z-index to the non-selector elements of the header.  Also limited the size of the
+        selector textarea to just the size of the displayed selector text.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor):
+        Fixed invalid enum value for propertyVisibilityMode.
+
 2016-09-09  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Command-Z doesn't work when editing CSS selectors in Styles sidebar

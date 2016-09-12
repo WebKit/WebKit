@@ -37,7 +37,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this._mouseDownCursorPosition = null;
 
-        this._propertyVisibilityMode = WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.Shown;
+        this._propertyVisibilityMode = WebInspector.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.ShowAll;
         this._showsImplicitProperties = true;
         this._alwaysShowPropertyNames = {};
         this._filterResultPropertyNames = null;
