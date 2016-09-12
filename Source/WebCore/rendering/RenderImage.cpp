@@ -233,7 +233,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     // FIXME (86669): Instead of the RenderImage determining whether its document is in the page
     // cache, the RenderImage should remove itself as a client when its document is put into the
     // page cache.
-    if (documentBeingDestroyed() || document().inPageCache())
+    if (documentBeingDestroyed() || document().pageCacheState() != Document::NotInPageCache)
         return;
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())

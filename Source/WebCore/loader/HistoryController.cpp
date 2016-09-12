@@ -75,7 +75,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     if (!item || !frameView)
         return;
 
-    if (m_frame.document()->inPageCache())
+    if (m_frame.document()->pageCacheState() != Document::NotInPageCache)
         item->setScrollPosition(frameView->cachedScrollPosition());
     else
         item->setScrollPosition(frameView->scrollPosition());

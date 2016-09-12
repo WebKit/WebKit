@@ -1435,7 +1435,7 @@ bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewpor
 static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const IntRect& visibleRect)
 {
     const Document& document = renderer.document();
-    if (document.inPageCache())
+    if (document.pageCacheState() != Document::NotInPageCache)
         return false;
     if (document.activeDOMObjectsAreSuspended())
         return false;
@@ -1495,7 +1495,7 @@ void RenderElement::visibleInViewportStateChanged(VisibleInViewportState state)
 
 void RenderElement::newImageAnimationFrameAvailable(CachedImage& image)
 {
-    if (document().inPageCache())
+    if (document().pageCacheState() != Document::NotInPageCache)
         return;
     auto& frameView = view().frameView();
     auto visibleRect = frameView.windowToContents(frameView.windowClipRect());

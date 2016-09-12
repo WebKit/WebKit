@@ -313,7 +313,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
         // Dispatch the event
         RefPtr<Element> element = m_object->element();
 
-        ASSERT(!element || !element->document().inPageCache());
+        ASSERT(!element || element->document().pageCacheState() == Document::NotInPageCache);
         if (!element)
             return false;
 

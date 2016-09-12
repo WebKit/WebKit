@@ -150,7 +150,7 @@ CachedFrame::CachedFrame(Frame& frame)
     // Custom scrollbar renderers will get reattached when the document comes out of the page cache
     m_view->detachCustomScrollbars();
 
-    ASSERT(m_document->inPageCache());
+    ASSERT(m_document->pageCacheState() == Document::InPageCache);
 
     // Create the CachedFrames for all Frames in the FrameTree.
     for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
@@ -220,7 +220,7 @@ void CachedFrame::clear()
     // This means the CachedFrame has been:
     // 1 - Successfully restore()'d by going back/forward.
     // 2 - destroy()'ed because the PageCache is pruning or the WebView was closed.
-    ASSERT(!m_document->inPageCache());
+    ASSERT(m_document->pageCacheState() == Document::NotInPageCache);
     ASSERT(m_view);
     ASSERT(!m_document->frame() || m_document->frame() == &m_view->frame());
 
@@ -241,7 +241,7 @@ void CachedFrame::destroy()
         return;
     
     // Only CachedFrames that are still in the PageCache should be destroyed in this manner
-    ASSERT(m_document->inPageCache());
+    ASSERT(m_document->pageCacheState() == Document::InPageCache);
     ASSERT(m_view);
     ASSERT(m_document->frame() == &m_view->frame());
 

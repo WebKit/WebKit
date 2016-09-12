@@ -1812,7 +1812,7 @@ void Document::scheduleForcedStyleRecalc()
 
 void Document::scheduleStyleRecalc()
 {
-    if (m_styleRecalcTimer.isActive() || inPageCache())
+    if (m_styleRecalcTimer.isActive() || pageCacheState() != NotInPageCache)
         return;
 
     ASSERT(childNeedsStyleRecalc() || m_pendingStyleRecalcShouldForce);
@@ -2220,7 +2220,7 @@ void Document::fontsNeedUpdate(FontSelector&)
 {
     if (m_styleResolver)
         m_styleResolver->invalidateMatchedPropertiesCache();
-    if (inPageCache() || !renderView())
+    if (pageCacheState() != NotInPageCache || !renderView())
         return;
     scheduleForcedStyleRecalc();
 }
@@ -3724,7 +3724,7 @@ static bool isNodeInSubtree(Node* node, Node* container, bool amongChildrenOnly)
 
 void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
 {
-    if (!m_focusedElement || this->inPageCache()) // If the document is in the page cache, then we don't need to clear out the focused node.
+    if (!m_focusedElement || pageCacheState() != NotInPageCache) // If the document is in the page cache, then we don't need to clear out the focused node.
         return;
 
     Element* focusedElement = node->treeScope().focusedElement();
@@ -3786,7 +3786,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
     if (m_focusedElement == newFocusedElement)
         return true;
 
-    if (inPageCache())
+    if (pageCacheState() != NotInPageCache)
         return false;
 
     bool focusChangeBlocked = false;
@@ -4198,7 +4198,7 @@ void Document::takeDOMWindowFrom(Document* document)
     ASSERT(!m_domWindow);
     ASSERT(document->m_domWindow);
     // A valid DOMWindow is needed by CachedFrame for its documents.
-    ASSERT(!document->inPageCache());
+    ASSERT(pageCacheState() == NotInPageCache);
 
     m_domWindow = WTFMove(document->m_domWindow);
     m_domWindow->didSecureTransitionTo(this);
@@ -5070,7 +5070,7 @@ Document& Document::topDocument() const
 {
     // FIXME: This special-casing avoids incorrectly determined top documents during the process
     // of AXObjectCache teardown or notification posting for cached or being-destroyed documents.
-    if (!inPageCache() && !m_renderTreeBeingDestroyed) {
+    if (pageCacheState() == NotInPageCache && !m_renderTreeBeingDestroyed) {
         if (!m_frame)
             return const_cast<Document&>(*this);
         // This should always be non-null.
@@ -5977,7 +5977,7 @@ static void unwrapFullScreenRenderer(RenderFullScreen* fullScreenRenderer, Eleme
 
 void Document::webkitWillEnterFullScreenForElement(Element* element)
 {
-    if (!hasLivingRenderTree() || inPageCache())
+    if (!hasLivingRenderTree() || pageCacheState() != NotInPageCache)
         return;
 
     ASSERT(element);
@@ -6024,7 +6024,7 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
     if (!m_fullScreenElement)
         return;
 
-    if (!hasLivingRenderTree() || inPageCache())
+    if (!hasLivingRenderTree() || pageCacheState() != NotInPageCache)
         return;
 
     m_fullScreenElement->didBecomeFullscreenElement();
@@ -6037,7 +6037,7 @@ void Document::webkitWillExitFullScreenForElement(Element*)
     if (!m_fullScreenElement)
         return;
 
-    if (!hasLivingRenderTree() || inPageCache())
+    if (!hasLivingRenderTree() || pageCacheState() != NotInPageCache)
         return;
 
     m_fullScreenElement->willStopBeingFullscreenElement();
@@ -6048,7 +6048,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     if (!m_fullScreenElement)
         return;
 
-    if (!hasLivingRenderTree() || inPageCache())
+    if (!hasLivingRenderTree() || pageCacheState() != NotInPageCache)
         return;
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);

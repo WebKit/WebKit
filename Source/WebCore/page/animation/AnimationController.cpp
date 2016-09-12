@@ -137,7 +137,7 @@ double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* 
                     break;
                 Element* element = compositeAnimation.key->element();
                 ASSERT(element);
-                ASSERT(!element->document().inPageCache());
+                ASSERT(element->document().pageCacheState() == Document::NotInPageCache);
                 element->setNeedsStyleRecalc(SyntheticStyleChange);
                 calledSetChanged = true;
             }
@@ -240,7 +240,7 @@ void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element,
 void AnimationControllerPrivate::addElementChangeToDispatch(Ref<Element>&& element)
 {
     m_elementChangesToDispatch.append(WTFMove(element));
-    ASSERT(!m_elementChangesToDispatch.last()->document().inPageCache());
+    ASSERT(m_elementChangesToDispatch.last()->document().pageCacheState() == Document::NotInPageCache);
     startUpdateStyleIfNeededDispatcher();
 }
 
@@ -588,7 +588,7 @@ void AnimationController::cancelAnimations(RenderElement& renderer)
         return;
 
     Element* element = renderer.element();
-    ASSERT(!element || !element->document().inPageCache());
+    ASSERT(!element || element->document().pageCacheState() == Document::NotInPageCache);
     if (element)
         element->setNeedsStyleRecalc(SyntheticStyleChange);
 }
@@ -599,7 +599,7 @@ bool AnimationController::updateAnimations(RenderElement& renderer, const Render
     if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.animations() && !newStyle.transitions()))
         return false;
 
-    if (renderer.document().inPageCache())
+    if (renderer.document().pageCacheState() != Document::NotInPageCache)
         return false;
 
     // Don't run transitions when printing.

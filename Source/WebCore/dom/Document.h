@@ -561,7 +561,7 @@ public:
 
     void recalcStyle(Style::Change = Style::NoChange);
     WEBCORE_EXPORT void updateStyleIfNeeded();
-    bool needsStyleRecalc() const { return !inPageCache() && (m_pendingStyleRecalcShouldForce || childNeedsStyleRecalc() || m_optimizedStyleSheetUpdateTimer.isActive()); }
+    bool needsStyleRecalc() const { return pageCacheState() == NotInPageCache && (m_pendingStyleRecalcShouldForce || childNeedsStyleRecalc() || m_optimizedStyleSheetUpdateTimer.isActive()); }
 
     WEBCORE_EXPORT void updateLayout();
     
@@ -1005,9 +1005,6 @@ public:
 
     PageCacheState pageCacheState() const { return m_pageCacheState; }
     void setPageCacheState(PageCacheState);
-
-    // FIXME: Update callers to use pageCacheState() instead.
-    bool inPageCache() const { return m_pageCacheState != NotInPageCache; }
 
     // Elements can register themselves for the "suspend()" and
     // "resume()" callbacks

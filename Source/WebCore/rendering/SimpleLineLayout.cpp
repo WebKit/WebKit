@@ -1095,7 +1095,7 @@ static void collectNonEmptyLeafRenderBlockFlows(const RenderObject& renderer, Ha
 static void collectNonEmptyLeafRenderBlockFlowsForCurrentPage(HashSet<const RenderBlockFlow*>& leafRenderers)
 {
     for (const auto* document : Document::allDocuments()) {
-        if (!document->renderView() || document->inPageCache())
+        if (!document->renderView() || document->pageCacheState() != Document::NotInPageCache)
             continue;
         if (!document->isHTMLDocument() && !document->isXHTMLDocument())
             continue;

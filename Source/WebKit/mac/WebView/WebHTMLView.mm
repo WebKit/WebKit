@@ -3627,7 +3627,7 @@ WEBCORE_COMMAND(toggleUnderline)
     if (!coreFrame)
         return;
     if (coreFrame->document()) {
-        if (coreFrame->document()->inPageCache())
+        if (coreFrame->document()->pageCacheState() != Document::NotInPageCache)
             return;
         coreFrame->document()->updateStyleIfNeeded();
     }
@@ -4127,7 +4127,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
     if (!flag)
         return; // There's no way to say you don't need a layout.
     if (Frame* frame = core([self _frame])) {
-        if (frame->document() && frame->document()->inPageCache())
+        if (frame->document() && frame->document()->pageCacheState() != Document::NotInPageCache)
             return;
         if (FrameView* view = frame->view())
             view->setNeedsLayout();
@@ -4140,7 +4140,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
     if (!flag)
         return; // There's no way to say you don't need a style recalc.
     if (Frame* frame = core([self _frame])) {
-        if (frame->document() && frame->document()->inPageCache())
+        if (frame->document() && frame->document()->pageCacheState() != Document::NotInPageCache)
             return;
         frame->document()->scheduleForcedStyleRecalc();
     }

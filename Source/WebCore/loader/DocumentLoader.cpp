@@ -1406,8 +1406,8 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
     ASSERT(!m_subresourceLoaders.contains(loader->identifier()));
     ASSERT(!mainResourceLoader() || mainResourceLoader() != loader);
 
-    // A page in the PageCache should not be able to start loads.
-    ASSERT_WITH_SECURITY_IMPLICATION(!document() || !document()->inPageCache());
+    // A page in the PageCache or about to enter PageCache should not be able to start loads.
+    ASSERT_WITH_SECURITY_IMPLICATION(!document() || document()->pageCacheState() == Document::NotInPageCache);
 
     m_subresourceLoaders.add(loader->identifier(), loader);
 }

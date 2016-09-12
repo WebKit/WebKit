@@ -661,7 +661,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     m_updateCompositingLayersTimer.stop();
 
-    ASSERT(!m_renderView.document().inPageCache());
+    ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
     
     // Compositing layers will be updated in Document::setVisualUpdatesAllowed(bool) if suppressed here.
     if (!m_renderView.document().visualUpdatesAllowed())
@@ -4097,7 +4097,7 @@ void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& lay
     m_scrollingLayersNeedingUpdate.remove(&layer);
     m_scrollingLayers.remove(&layer);
 
-    if (m_renderView.document().inPageCache())
+    if (m_renderView.document().pageCacheState() != Document::NotInPageCache)
         return;
 
     if (ChromeClient* client = this->chromeClient()) {
@@ -4119,7 +4119,7 @@ void RenderLayerCompositor::didAddScrollingLayer(RenderLayer& layer)
     }
 
 #if PLATFORM(IOS)
-    ASSERT(!m_renderView.document().inPageCache());
+    ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
     m_scrollingLayers.add(&layer);
 #endif
 }

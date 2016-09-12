@@ -188,7 +188,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
             // Dispatch the event
             RefPtr<Element> element = m_object->element();
 
-            ASSERT(!element || !element->document().inPageCache());
+            ASSERT(!element || element->document().pageCacheState() == Document::NotInPageCache);
             if (!element)
                 return false;
 

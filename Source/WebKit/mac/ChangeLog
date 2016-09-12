@@ -1,3 +1,19 @@
+2016-09-12  Chris Dumez  <cdumez@apple.com>
+
+        Switch remaining users of Document::inPageCache() to pageCacheState()
+        https://bugs.webkit.org/show_bug.cgi?id=161865
+
+        Reviewed by Darin Adler.
+
+        Switch remaining users of Document::inPageCache() to pageCacheState() as
+        the former one is confusing (given that it returns true while the
+        pagehide event is being fired).
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView layoutToMinimumPageWidth:height:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustingViewSize:]):
+        (-[WebHTMLView setNeedsLayout:]):
+        (-[WebHTMLView setNeedsToApplyStyles:]):
+
 2016-09-09  Tim Horton  <timothy_horton@apple.com>
 
         Text replacement candidates don't always overwrite the entire original string

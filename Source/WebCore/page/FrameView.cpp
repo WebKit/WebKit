@@ -1296,7 +1296,7 @@ void FrameView::layout(bool allowSubtree)
     ASSERT(frame().document());
 
     Document& document = *frame().document();
-    ASSERT(!document.inPageCache());
+    ASSERT(document.pageCacheState() == Document::NotInPageCache);
 
     {
         TemporaryChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);

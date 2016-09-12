@@ -198,7 +198,7 @@ bool HTMLPlugInImageElement::wouldLoadAsPlugIn(const String& url, const String& 
 
 RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
-    ASSERT(!document().inPageCache());
+    ASSERT(document().pageCacheState() == Document::NotInPageCache);
 
     if (displayState() >= PreparingPluginReplacement)
         return HTMLPlugInElement::createElementRenderer(WTFMove(style), insertionPosition);
