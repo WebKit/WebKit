@@ -2001,8 +2001,8 @@ public:
     static Length initialFlexBasis() { return Length(Auto); }
     static int initialOrder() { return 0; }
     static StyleSelfAlignmentData initialSelfAlignment() { return StyleSelfAlignmentData(ItemPositionAuto, OverflowAlignmentDefault); }
-    static StyleSelfAlignmentData initialDefaultAlignment() { return StyleSelfAlignmentData(ItemPositionNormal, OverflowAlignmentDefault); }
-    static StyleContentAlignmentData initialContentAlignment() { return StyleContentAlignmentData(ContentPositionNormal, ContentDistributionDefault, OverflowAlignmentDefault); }
+    static StyleSelfAlignmentData initialDefaultAlignment() { return StyleSelfAlignmentData(isCSSGridLayoutEnabled() ? ItemPositionNormal : ItemPositionStretch, OverflowAlignmentDefault); }
+    static StyleContentAlignmentData initialContentAlignment() { return StyleContentAlignmentData(isCSSGridLayoutEnabled() ? ContentPositionNormal : ContentPositionFlexStart, ContentDistributionDefault, OverflowAlignmentDefault); }
     static EFlexDirection initialFlexDirection() { return FlowRow; }
     static EFlexWrap initialFlexWrap() { return FlexNoWrap; }
     static int initialMarqueeLoopCount() { return -1; }
@@ -2065,6 +2065,8 @@ public:
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
     static QuotesData* initialQuotes() { return nullptr; }
     static const AtomicString& initialContentAltText() { return emptyAtom; }
+
+    static bool isCSSGridLayoutEnabled();
 
     static WillChangeData* initialWillChange() { return nullptr; }
 

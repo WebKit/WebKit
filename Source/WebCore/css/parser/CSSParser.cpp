@@ -819,6 +819,10 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueBalance)
             return true;
         break;
+    case CSSPropertyAlignContent:
+        // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
+        // FIXME: For now, we will do it behind the GRID_LAYOUT compile flag.
+        return valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch;
     case CSSPropertyAlignItems:
         // FIXME: Per CSS alignment, this property should accept the same arguments as 'justify-self' so we should share its parsing code.
         // FIXME: For now, we will do it behind the GRID_LAYOUT compile flag.
@@ -839,6 +843,10 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNowrap || valueID == CSSValueWrap || valueID == CSSValueWrapReverse)
              return true;
         break;
+    case CSSPropertyJustifyContent:
+        // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
+        // FIXME: For now, we will do it behind the GRID_LAYOUT compile flag.
+        return valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround;
     case CSSPropertyWebkitFontKerning:
         if (valueID == CSSValueAuto || valueID == CSSValueNormal || valueID == CSSValueNone)
             return true;
@@ -1155,6 +1163,8 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantAlternates:
         return true;
+    case CSSPropertyJustifyContent:
+    case CSSPropertyAlignContent:
     case CSSPropertyAlignItems:
     case CSSPropertyAlignSelf:
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -2738,10 +2748,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         return false;
     }
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyJustifyContent:
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         parsedValue = parseContentDistributionOverflowPosition();
         break;
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyJustifySelf:
         if (!isCSSGridLayoutEnabled())
             return false;
@@ -3162,10 +3173,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseImageResolution();
         break;
 #endif
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyAlignContent:
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         parsedValue = parseContentDistributionOverflowPosition();
         break;
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyAlignSelf:
         ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
         return parseItemPositionOverflowPosition(propId, important);

@@ -37,6 +37,7 @@
 #include "QuotesData.h"
 #include "RenderObject.h"
 #include "RenderTheme.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"
 #include "StyleImage.h"
@@ -187,6 +188,15 @@ RenderStyle::~RenderStyle()
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
     m_deletionHasBegun = true;
+#endif
+}
+
+bool RenderStyle::isCSSGridLayoutEnabled()
+{
+#if ENABLE(CSS_GRID_LAYOUT)
+    return RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
+#else
+    return false;
 #endif
 }
 

@@ -46,3 +46,9 @@ function checkLegacyValues(property, propertyID, value)
     parentElement.appendChild(element);
     checkValues(element, property, propertyID, "", value);
 }
+
+function checkSupportedValues(elementID, property)
+{
+    var value = eval("window.getComputedStyle(" + elementID + " , '').getPropertyValue('" + property + "')");
+    shouldBeTrue("CSS.supports('" + property + "', '" + value + "')");
+}

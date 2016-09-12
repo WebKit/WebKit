@@ -46,6 +46,7 @@
 #include "LengthRepeat.h"
 #include "Pair.h"
 #include "QuotesData.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "StyleResolver.h"
@@ -1253,13 +1254,33 @@ inline StyleSelfAlignmentData StyleBuilderConverter::convertSelfOrDefaultAlignme
 inline StyleContentAlignmentData StyleBuilderConverter::convertContentAlignmentData(StyleResolver&, CSSValue& value)
 {
     StyleContentAlignmentData alignmentData = RenderStyle::initialContentAlignment();
-    auto& contentValue = downcast<CSSContentDistributionValue>(value);
-    if (contentValue.distribution()->getValueID() != CSSValueInvalid)
-        alignmentData.setDistribution(contentValue.distribution().get());
-    if (contentValue.position()->getValueID() != CSSValueInvalid)
-        alignmentData.setPosition(contentValue.position().get());
-    if (contentValue.overflow()->getValueID() != CSSValueInvalid)
-        alignmentData.setOverflow(contentValue.overflow().get());
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled()) {
+        auto& contentValue = downcast<CSSContentDistributionValue>(value);
+        if (contentValue.distribution()->getValueID() != CSSValueInvalid)
+            alignmentData.setDistribution(contentValue.distribution().get());
+        if (contentValue.position()->getValueID() != CSSValueInvalid)
+            alignmentData.setPosition(contentValue.position().get());
+        if (contentValue.overflow()->getValueID() != CSSValueInvalid)
+            alignmentData.setOverflow(contentValue.overflow().get());
+        return alignmentData;
+    }
+#endif
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    switch (primitiveValue.getValueID()) {
+    case CSSValueStretch:
+    case CSSValueSpaceBetween:
+    case CSSValueSpaceAround:
+        alignmentData.setDistribution(primitiveValue);
+        break;
+    case CSSValueFlexStart:
+    case CSSValueFlexEnd:
+    case CSSValueCenter:
+        alignmentData.setPosition(primitiveValue);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
     return alignmentData;
 }
 
