@@ -42,6 +42,14 @@ WebInspector.HeapSnapshotEdgeProxy = class HeapSnapshotEdgeProxy
         this.to = null;
     }
 
+    isPrivateSymbol()
+    {
+        if (WebInspector.isDebugUIEnabled())
+            return false;
+
+        return typeof this.data === "string" && this.data.startsWith("PrivateSymbol");
+    }
+
     // Static
 
     static deserialize(objectId, serializedEdge)

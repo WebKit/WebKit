@@ -1,3 +1,18 @@
+2016-09-12  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Hide ["PrivateSymbol.concatSlowPath"] and other PrivateSymbols from memory edges
+        https://bugs.webkit.org/show_bug.cgi?id=156763
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Proxies/HeapSnapshotEdgeProxy.js:
+        (WebInspector.HeapSnapshotEdgeProxy.prototype.isPrivateSymbol):
+        Checks that the edge data does not begin with "PrivateSymbol".
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populate):
+        Only add child nodes if they are not PrivateSymbol nodes.
+
 2016-09-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Object.shallowEqual() should return false if object prototype chains differ

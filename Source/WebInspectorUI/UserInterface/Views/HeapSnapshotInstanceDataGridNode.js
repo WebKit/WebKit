@@ -221,8 +221,12 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
             // FIXME: This should gracefully handle a node that references many objects.
 
-            for (let instance of instances)
+            for (let instance of instances) {
+                if (instance.__edge && instance.__edge.isPrivateSymbol())
+                    continue;
+
                 this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree, instance.__edge, this._base || this));
+            }
         });
     }
 
