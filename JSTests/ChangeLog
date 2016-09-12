@@ -1,3 +1,10 @@
+2016-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, fix tests for different libm environments
+        https://bugs.webkit.org/show_bug.cgi?id=161857
+
+        * stress/ftl-arithtan.js:
+
 2016-09-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Use GetArrayLength for JSArray.length even when the array type is undecided

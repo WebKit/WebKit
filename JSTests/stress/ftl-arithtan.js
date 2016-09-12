@@ -4,10 +4,11 @@ function foo(x) {
 
 noInline(foo);
 
+var expected = foo(100000 - 1);
 var j = 0;
 for (var i = 0; i < 100000; ++i)
     j = foo(i);
 
-if (-1.6871736258025631 != j){
+if (expected != j){
     throw `Error: ${j}`;
 }
