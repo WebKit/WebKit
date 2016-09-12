@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ public:
             if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
                 unsigned catchBytecodeIndex = handler->target;
                 m_graph.forAllLocalsLiveInBytecode(CodeOrigin(catchBytecodeIndex, inlineCallFrame), [&] (VirtualRegister operand) {
-                    m_currentBlockLiveness.set(operand.toLocal(), true); 
+                    m_currentBlockLiveness[operand.toLocal()] = true;
                 });
                 return true;
             }
@@ -110,7 +110,7 @@ public:
                     VirtualRegister operand = node->local();
 
                     int stackOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;
-                    if ((operand.isLocal() && m_currentBlockLiveness.get(operand.toLocal()))
+                    if ((operand.isLocal() && m_currentBlockLiveness[operand.toLocal()])
                         || (operand.offset() == stackOffset + CallFrame::thisArgumentOffset())) {
 
                         VariableAccessData* variableAccessData = currentBlockAccessData.operand(operand);
@@ -131,7 +131,7 @@ public:
         {
             NodeOrigin origin = block->at(block->size() - 1)->origin;
             auto preserveLivenessAtEndOfBlock = [&] (VirtualRegister operand, bool alwaysInsert) {
-                if ((operand.isLocal() && m_currentBlockLiveness.get(operand.toLocal())) 
+                if ((operand.isLocal() && m_currentBlockLiveness[operand.toLocal()]) 
                     || operand.isArgument()
                     || alwaysInsert) {
                     VariableAccessData* accessData = currentBlockAccessData.operand(operand);

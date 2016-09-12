@@ -638,7 +638,7 @@ private:
             const FastBitVector& livenessAtBytecode = fullLiveness.getLiveness(bytecodeIndex);
 
             for (unsigned local = codeBlock->m_numCalleeLocals; local--;) {
-                if (livenessAtBytecode.get(local)) {
+                if (livenessAtBytecode[local]) {
                     VirtualRegister reg = virtualRegisterForLocal(local);
                     if (inlineCallFrame)
                         reg = inlineStackEntry->remapOperand(reg);

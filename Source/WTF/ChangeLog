@@ -1,3 +1,143 @@
+2016-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        FastBitVector should have efficient and easy-to-use vector-vector operations
+        https://bugs.webkit.org/show_bug.cgi?id=161847
+
+        Reviewed by Saam Barati.
+        
+        FastBitVector is a bitvector representation that supports manual dynamic resizing and is
+        optimized for speed, not space. (BitVector supports automatic dynamic resizing and is
+        optimized for space, while Bitmap is sized statically and is optimized for both speed and
+        space.) This change greatly increases the power of FastBitVector. We will use these new
+        powers for changing the JSC GC to use FastBitVectors to track sets of MarkedBlocks (bug
+        161581) instead of using a combination of Vectors and doubly-linked lists.
+        
+        This change splits FastBitVector into two parts:
+        
+        - A thing that manages the storage of a bitvector: a uint32_t array and a size_t numBits.
+          We call this the word view.
+        - A thing that takes some kind of abstract array of uint32_t's and does bitvector
+          operations to it. We call this the FastBitVectorImpl.
+        
+        FastBitVectorImpl and word views are immutable. The FastBitVector class is a subclass of
+        FastBitVectorImpl specialized on a word view that owns its words and has additional
+        support for mutable operations.
+        
+        Doing this allows us to efficiently support things like this without any unnecessary
+        memory allocation or copying:
+        
+        FastBitVector a, b, c; // Assume that there is code to initialize these.
+        a &= b | ~c;
+        
+        Previously, this kind of operation would not be efficient, because "~c" would have to
+        create a whole new FastBitVector. But now, it just returns a FastBitVectorImpl whose
+        underlying word view bitnots (~) its words on the fly. Using template magic, this can get
+        pretty complex. For example "b | ~c" returns a FastBitVectorImpl that wraps a word view
+        whose implementation of WordView::word(size_t index) is something like:
+        
+        uint32_t word(size_t index) { return b.m_words.word(index) | ~c.m_words.word(index); }
+        
+        FastBitVectorImpl supports all of the fast bulk bitvector operations, like
+        forEachSetBit(), bitCount(), etc. So, when you say "a &= b | ~c", the actual
+        implementation is going to run these bit operations on word granularity directly over the
+        storage inside a, b, c.
+        
+        The use of operator overloading is worth explaining a bit. Previously, FastBitVector
+        avoided operator overloading. For example, the &= operation was called filter(). I think
+        that this was a pretty good approach at the time. I tried using non-operator methods in
+        this FastBitVector rewrite, but I found it very odd to say things like:
+        
+        a.filter(b.bitOr(c.bitNot()));
+        
+        I think that it's harder to see what is going on here, then using operators, because infix
+        notation is always better.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BitVector.h:
+        (WTF::BitVector::findBitInWord): Deleted.
+        * wtf/CMakeLists.txt:
+        * wtf/Dominators.h:
+        (WTF::Dominators::NaiveDominators::NaiveDominators):
+        (WTF::Dominators::NaiveDominators::dominates):
+        (WTF::Dominators::NaiveDominators::pruneDominators):
+        * wtf/FastBitVector.cpp: Removed.
+        * wtf/FastBitVector.h:
+        (WTF::fastBitVectorArrayLength):
+        (WTF::FastBitVectorWordView::FastBitVectorWordView):
+        (WTF::FastBitVectorWordView::numBits):
+        (WTF::FastBitVectorWordView::word):
+        (WTF::FastBitVectorWordOwner::FastBitVectorWordOwner):
+        (WTF::FastBitVectorWordOwner::~FastBitVectorWordOwner):
+        (WTF::FastBitVectorWordOwner::view):
+        (WTF::FastBitVectorWordOwner::operator=):
+        (WTF::FastBitVectorWordOwner::setAll):
+        (WTF::FastBitVectorWordOwner::clearAll):
+        (WTF::FastBitVectorWordOwner::set):
+        (WTF::FastBitVectorWordOwner::numBits):
+        (WTF::FastBitVectorWordOwner::arrayLength):
+        (WTF::FastBitVectorWordOwner::resize):
+        (WTF::FastBitVectorWordOwner::word):
+        (WTF::FastBitVectorWordOwner::words):
+        (WTF::FastBitVectorAndWords::FastBitVectorAndWords):
+        (WTF::FastBitVectorAndWords::view):
+        (WTF::FastBitVectorAndWords::numBits):
+        (WTF::FastBitVectorAndWords::word):
+        (WTF::FastBitVectorOrWords::FastBitVectorOrWords):
+        (WTF::FastBitVectorOrWords::view):
+        (WTF::FastBitVectorOrWords::numBits):
+        (WTF::FastBitVectorOrWords::word):
+        (WTF::FastBitVectorNotWords::FastBitVectorNotWords):
+        (WTF::FastBitVectorNotWords::view):
+        (WTF::FastBitVectorNotWords::numBits):
+        (WTF::FastBitVectorNotWords::word):
+        (WTF::FastBitVectorImpl::FastBitVectorImpl):
+        (WTF::FastBitVectorImpl::numBits):
+        (WTF::FastBitVectorImpl::size):
+        (WTF::FastBitVectorImpl::arrayLength):
+        (WTF::FastBitVectorImpl::operator==):
+        (WTF::FastBitVectorImpl::operator!=):
+        (WTF::FastBitVectorImpl::at):
+        (WTF::FastBitVectorImpl::operator[]):
+        (WTF::FastBitVectorImpl::bitCount):
+        (WTF::FastBitVectorImpl::operator&):
+        (WTF::FastBitVectorImpl::operator|):
+        (WTF::FastBitVectorImpl::operator~):
+        (WTF::FastBitVectorImpl::forEachSetBit):
+        (WTF::FastBitVectorImpl::forEachClearBit):
+        (WTF::FastBitVectorImpl::forEachBit):
+        (WTF::FastBitVectorImpl::findBit):
+        (WTF::FastBitVectorImpl::findSetBit):
+        (WTF::FastBitVectorImpl::findClearBit):
+        (WTF::FastBitVectorImpl::dump):
+        (WTF::FastBitVectorImpl::atImpl):
+        (WTF::FastBitVector::FastBitVector):
+        (WTF::FastBitVector::operator=):
+        (WTF::FastBitVector::resize):
+        (WTF::FastBitVector::setAll):
+        (WTF::FastBitVector::clearAll):
+        (WTF::FastBitVector::setAndCheck):
+        (WTF::FastBitVector::operator|=):
+        (WTF::FastBitVector::operator&=):
+        (WTF::FastBitVector::at):
+        (WTF::FastBitVector::operator[]):
+        (WTF::FastBitVector::BitReference::BitReference):
+        (WTF::FastBitVector::BitReference::operator bool):
+        (WTF::FastBitVector::BitReference::operator=):
+        (WTF::FastBitVector::~FastBitVector): Deleted.
+        (WTF::FastBitVector::numBits): Deleted.
+        (WTF::FastBitVector::set): Deleted.
+        (WTF::FastBitVector::equals): Deleted.
+        (WTF::FastBitVector::merge): Deleted.
+        (WTF::FastBitVector::filter): Deleted.
+        (WTF::FastBitVector::exclude): Deleted.
+        (WTF::FastBitVector::clear): Deleted.
+        (WTF::FastBitVector::get): Deleted.
+        (WTF::FastBitVector::bitCount): Deleted.
+        (WTF::FastBitVector::forEachSetBit): Deleted.
+        (WTF::FastBitVector::arrayLength): Deleted.
+        * wtf/StdLibExtras.h:
+        (WTF::findBitInWord):
+
 2016-09-10  Chris Dumez  <cdumez@apple.com>
 
         parseHTMLInteger() should take a StringView in parameter

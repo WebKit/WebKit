@@ -105,7 +105,7 @@ NaturalLoops::NaturalLoops(Graph& graph)
             dataLog("Dealing with loop ", loop, "\n");
         
         for (unsigned j = loop.size(); j--;) {
-            seenBlocks.set(loop[j]->index);
+            seenBlocks[loop[j]->index] = true;
             blockWorklist.append(loop[j]);
         }
         
@@ -120,12 +120,12 @@ NaturalLoops::NaturalLoops(Graph& graph)
             
             for (unsigned j = block->predecessors.size(); j--;) {
                 BasicBlock* predecessor = block->predecessors[j];
-                if (seenBlocks.get(predecessor->index))
+                if (seenBlocks[predecessor->index])
                     continue;
                 
                 loop.addBlock(predecessor);
                 blockWorklist.append(predecessor);
-                seenBlocks.set(predecessor->index);
+                seenBlocks[predecessor->index] = true;
             }
         }
     }

@@ -745,7 +745,7 @@ public:
                 if (reg >= exclusionStart && reg < exclusionEnd)
                     continue;
                 
-                if (liveness.get(relativeLocal))
+                if (liveness[relativeLocal])
                     functor(reg);
             }
             

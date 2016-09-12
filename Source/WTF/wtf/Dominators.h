@@ -515,14 +515,14 @@ private:
 
             // We know that the entry block is only dominated by itself.
             m_results[0].clearAll();
-            m_results[0].set(0);
+            m_results[0][0] = true;
 
             // Find all of the valid blocks.
             m_scratch.clearAll();
             for (unsigned i = numBlocks; i--;) {
                 if (!graph.node(i))
                     continue;
-                m_scratch.set(i);
+                m_scratch[i] = true;
             }
     
             // Mark all nodes as dominated by everything.
@@ -530,7 +530,7 @@ private:
                 if (!graph.node(i) || !graph.predecessors(graph.node(i)).size())
                     m_results[i].clearAll();
                 else
-                    m_results[i].set(m_scratch);
+                    m_results[i] = m_scratch;
             }
 
             // Iteratively eliminate nodes that are not dominator.
@@ -553,7 +553,7 @@ private:
         
         bool dominates(unsigned from, unsigned to) const
         {
-            return m_results[to].get(from);
+            return m_results[to][from];
         }
     
         bool dominates(typename Graph::Node from, typename Graph::Node to) const
@@ -586,12 +586,12 @@ private:
                 return false;
 
             // Find the intersection of dom(preds).
-            m_scratch.set(m_results[m_graph.index(m_graph.predecessors(block)[0])]);
+            m_scratch = m_results[m_graph.index(m_graph.predecessors(block)[0])];
             for (unsigned j = m_graph.predecessors(block).size(); j-- > 1;)
-                m_scratch.filter(m_results[m_graph.index(m_graph.predecessors(block)[j])]);
+                m_scratch &= m_results[m_graph.index(m_graph.predecessors(block)[j])];
 
             // The block is also dominated by itself.
-            m_scratch.set(idx);
+            m_scratch[idx] = true;
 
             return m_results[idx].setAndCheck(m_scratch);
         }

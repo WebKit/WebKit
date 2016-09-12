@@ -43,7 +43,7 @@ inline bool operandThatIsNotAlwaysLiveIsLive(const FastBitVector& out, int opera
     unsigned local = VirtualRegister(operand).toLocal();
     if (local >= out.numBits())
         return false;
-    return out.get(local);
+    return out[local];
 }
 
 inline bool operandIsLive(const FastBitVector& out, int operand)
@@ -117,11 +117,11 @@ inline void BytecodeLivenessPropagation<DerivedAnalysis>::stepOverInstruction(Gr
         graph, bytecodeOffset, out,
         [&] (unsigned bitIndex) {
             // This is the use functor, so we set the bit.
-            out.set(bitIndex);
+            out[bitIndex] = true;
         },
         [&] (unsigned bitIndex) {
             // This is the def functor, so we clear the bit.
-            out.clear(bitIndex);
+            out[bitIndex] = false;
         });
 }
 
@@ -191,8 +191,8 @@ inline void BytecodeLivenessPropagation<DerivedAnalysis>::runLivenessFixpoint(Gr
         for (std::unique_ptr<BytecodeBasicBlock>& block : graph.basicBlocksInReverseOrder()) {
             newOut.clearAll();
             for (BytecodeBasicBlock* successor : block->successors())
-                newOut.merge(successor->in());
-            block->out().set(newOut);
+                newOut |= successor->in();
+            block->out() = newOut;
             changed |= computeLocalLivenessForBlock(graph, block.get());
         }
     } while (changed);

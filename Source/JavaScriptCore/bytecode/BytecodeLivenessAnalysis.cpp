@@ -121,14 +121,14 @@ void BytecodeLivenessAnalysis::computeKills(BytecodeKills& result)
                 m_graph, bytecodeOffset, out,
                 [&] (unsigned index) {
                     // This is for uses.
-                    if (out.get(index))
+                    if (out[index])
                         return;
                     result.m_killSets[bytecodeOffset].add(index);
-                    out.set(index);
+                    out[index] = true;
                 },
                 [&] (unsigned index) {
                     // This is for defs.
-                    out.clear(index);
+                    out[index] = false;
                 });
         }
     }
@@ -163,7 +163,7 @@ void BytecodeLivenessAnalysis::dumpResults()
             dataLogF("Live variables: ");
             FastBitVector liveBefore = getLivenessInfoAtBytecodeOffset(bytecodeOffset);
             for (unsigned j = 0; j < liveBefore.numBits(); j++) {
-                if (liveBefore.get(j))
+                if (liveBefore[j])
                     dataLogF("%u ", j);
             }
             dataLogF("\n");
@@ -177,7 +177,7 @@ void BytecodeLivenessAnalysis::dumpResults()
         dataLogF("Live variables: ");
         FastBitVector liveAfter = block->out();
         for (unsigned j = 0; j < liveAfter.numBits(); j++) {
-            if (liveAfter.get(j))
+            if (liveAfter[j])
                 dataLogF("%u ", j);
         }
         dataLogF("\n");

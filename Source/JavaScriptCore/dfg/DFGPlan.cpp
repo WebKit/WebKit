@@ -691,7 +691,7 @@ void Plan::cleanMustHandleValuesIfNecessary()
     FastBitVector liveness = codeBlock->alternative()->livenessAnalysis().getLivenessInfoAtBytecodeOffset(osrEntryBytecodeIndex);
     
     for (unsigned local = mustHandleValues.numberOfLocals(); local--;) {
-        if (!liveness.get(local))
+        if (!liveness[local])
             mustHandleValues.local(local) = jsUndefined();
     }
 }

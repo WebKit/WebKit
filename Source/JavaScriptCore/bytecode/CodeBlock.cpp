@@ -4292,7 +4292,7 @@ void CodeBlock::validate()
     for (unsigned i = m_numCalleeLocals; i--;) {
         VirtualRegister reg = virtualRegisterForLocal(i);
         
-        if (liveAtHead.get(i)) {
+        if (liveAtHead[i]) {
             beginValidationDidFail();
             dataLog("    Variable ", reg, " is expected to be dead.\n");
             dataLog("    Result: ", liveAtHead, "\n");

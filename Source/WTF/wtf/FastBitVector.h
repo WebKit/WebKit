@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,48 +27,116 @@
 
 #include <string.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
 class PrintStream;
 
-class FastBitVector {
-public:
-    FastBitVector() = default;
+inline size_t fastBitVectorArrayLength(size_t numBits) { return (numBits + 31) / 32; }
 
-    FastBitVector(FastBitVector&& other)
-        : m_array(std::exchange(other.m_array, nullptr))
+class FastBitVectorWordView {
+public:
+    typedef FastBitVectorWordView ViewType;
+    
+    FastBitVectorWordView() { }
+    
+    FastBitVectorWordView(const uint32_t* array, size_t numBits)
+        : m_words(array)
+        , m_numBits(numBits)
+    {
+    }
+    
+    size_t numBits() const
+    {
+        return m_numBits;
+    }
+    
+    uint32_t word(size_t index) const
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(index < fastBitVectorArrayLength(numBits()));
+        return m_words[index];
+    }
+    
+private:
+    const uint32_t* m_words { nullptr };
+    size_t m_numBits { 0 };
+};
+
+class FastBitVectorWordOwner {
+public:
+    typedef FastBitVectorWordView ViewType;
+    
+    FastBitVectorWordOwner() = default;
+    
+    FastBitVectorWordOwner(FastBitVectorWordOwner&& other)
+        : m_words(std::exchange(other.m_words, nullptr))
         , m_numBits(std::exchange(other.m_numBits, 0))
     {
     }
 
-    FastBitVector(const FastBitVector& other)
-        : m_array(0)
-        , m_numBits(0)
+    FastBitVectorWordOwner(const FastBitVectorWordOwner& other)
     {
         *this = other;
     }
     
-    ~FastBitVector()
+    ~FastBitVectorWordOwner()
     {
-        if (m_array)
-            fastFree(m_array);
+        if (m_words)
+            fastFree(m_words);
     }
     
-    FastBitVector& operator=(const FastBitVector& other)
+    FastBitVectorWordView view() const { return FastBitVectorWordView(m_words, m_numBits); }
+    
+    FastBitVectorWordOwner& operator=(const FastBitVectorWordOwner& other)
     {
         size_t length = other.arrayLength();
-        uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(length, 4));
-        memcpy(newArray, other.m_array, length * 4);
-        if (m_array)
-            fastFree(m_array);
-        m_array = newArray;
+        if (length == arrayLength()) {
+            memcpy(m_words, other.m_words, length * sizeof(uint32_t));
+            return *this;
+        }
+        uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(length, sizeof(uint32_t)));
+        memcpy(newArray, other.m_words, length * sizeof(uint32_t));
+        if (m_words)
+            fastFree(m_words);
+        m_words = newArray;
         m_numBits = other.m_numBits;
         return *this;
     }
     
-    size_t numBits() const { return m_numBits; }
+    FastBitVectorWordOwner& operator=(FastBitVectorWordOwner&& other)
+    {
+        std::swap(m_words, other.m_words);
+        std::swap(m_numBits, other.m_numBits);
+        return *this;
+    }
+    
+    void setAll()
+    {
+        memset(m_words, 255, arrayLength() * sizeof(uint32_t));
+    }
+    
+    void clearAll()
+    {
+        memset(m_words, 0, arrayLength() * sizeof(uint32_t));
+    }
+    
+    void set(const FastBitVectorWordOwner& other)
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(m_numBits == other.m_numBits);
+        memcpy(m_words, other.m_words, arrayLength() * sizeof(uint32_t));
+    }
+    
+    size_t numBits() const
+    {
+        return m_numBits;
+    }
+    
+    size_t arrayLength() const
+    {
+        return fastBitVectorArrayLength(numBits());
+    }
     
     void resize(size_t numBits)
     {
@@ -78,133 +146,408 @@ public:
         // Use fastCalloc instead of fastRealloc because we expect the common
         // use case for this method to be initializing the size of the bitvector.
         
-        size_t newLength = arrayLength(numBits);
-        uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(newLength, 4));
-        memcpy(newArray, m_array, arrayLength() * 4);
-        if (m_array)
-            fastFree(m_array);
-        m_array = newArray;
+        size_t newLength = fastBitVectorArrayLength(numBits);
+        uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(newLength, sizeof(uint32_t)));
+        memcpy(newArray, m_words, arrayLength() * sizeof(uint32_t));
+        if (m_words)
+            fastFree(m_words);
+        m_words = newArray;
         m_numBits = numBits;
     }
     
-    void setAll()
+    uint32_t word(size_t index) const
     {
-        memset(m_array, 255, arrayLength() * 4);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < arrayLength());
+        return m_words[index];
     }
     
-    void clearAll()
+    uint32_t& word(size_t index)
     {
-        memset(m_array, 0, arrayLength() * 4);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < arrayLength());
+        return m_words[index];
     }
     
-    void set(const FastBitVector& other)
+    const uint32_t* words() const { return m_words; }
+    uint32_t* words() { return m_words; }
+
+private:
+    uint32_t* m_words { nullptr };
+    size_t m_numBits { 0 };
+};
+
+template<typename Left, typename Right>
+class FastBitVectorAndWords {
+public:
+    typedef FastBitVectorAndWords ViewType;
+    
+    FastBitVectorAndWords(const Left& left, const Right& right)
+        : m_left(left)
+        , m_right(right)
     {
-        ASSERT(m_numBits == other.m_numBits);
-        memcpy(m_array, other.m_array, arrayLength() * 4);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_left.numBits() == m_right.numBits());
     }
     
-    bool setAndCheck(const FastBitVector& other)
+    FastBitVectorAndWords view() const { return *this; }
+    
+    size_t numBits() const
     {
-        bool changed = false;
-        ASSERT(m_numBits == other.m_numBits);
-        for (unsigned i = arrayLength(); i--;) {
-            changed |= m_array[i] != other.m_array[i];
-            m_array[i] = other.m_array[i];
-        }
-        return changed;
+        return m_left.numBits();
     }
     
-    bool equals(const FastBitVector& other) const
+    uint32_t word(size_t index) const
     {
-        ASSERT(m_numBits == other.m_numBits);
-        // Use my own comparison loop because memcmp does more than what I want
-        // and bcmp is not as standard.
-        for (unsigned i = arrayLength(); i--;) {
-            if (m_array[i] != other.m_array[i])
+        return m_left.word(index) & m_right.word(index);
+    }
+    
+private:
+    Left m_left;
+    Right m_right;
+};
+    
+template<typename Left, typename Right>
+class FastBitVectorOrWords {
+public:
+    typedef FastBitVectorOrWords ViewType;
+    
+    FastBitVectorOrWords(const Left& left, const Right& right)
+        : m_left(left)
+        , m_right(right)
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(m_left.numBits() == m_right.numBits());
+    }
+    
+    FastBitVectorOrWords view() const { return *this; }
+    
+    size_t numBits() const
+    {
+        return m_left.numBits();
+    }
+    
+    uint32_t word(size_t index) const
+    {
+        return m_left.word(index) | m_right.word(index);
+    }
+    
+private:
+    Left m_left;
+    Right m_right;
+};
+    
+template<typename View>
+class FastBitVectorNotWords {
+public:
+    typedef FastBitVectorNotWords ViewType;
+    
+    FastBitVectorNotWords(const View& view)
+        : m_view(view)
+    {
+    }
+    
+    FastBitVectorNotWords view() const { return *this; }
+    
+    size_t numBits() const
+    {
+        return m_view.numBits();
+    }
+    
+    uint32_t word(size_t index) const
+    {
+        return ~m_view.word(index);
+    }
+    
+private:
+    View m_view;
+};
+    
+class FastBitVector;
+
+template<typename Words>
+class FastBitVectorImpl {
+public:
+    FastBitVectorImpl()
+        : m_words()
+    {
+    }
+    
+    FastBitVectorImpl(const Words& words)
+        : m_words(words)
+    {
+    }
+    
+    FastBitVectorImpl(Words&& words)
+        : m_words(WTFMove(words))
+    {
+    }
+
+    size_t numBits() const { return m_words.numBits(); }
+    size_t size() const { return numBits(); }
+    
+    size_t arrayLength() const { return fastBitVectorArrayLength(numBits()); }
+    
+    template<typename Other>
+    bool operator==(const Other& other) const
+    {
+        if (numBits() != other.numBits())
+            return false;
+        for (size_t i = arrayLength(); i--;) {
+            if (m_words.word(i) != other.m_words.word(i))
                 return false;
         }
         return true;
     }
     
-    void merge(const FastBitVector& other)
+    template<typename Other>
+    bool operator!=(const Other& other) const
     {
-        ASSERT(m_numBits == other.m_numBits);
-        for (unsigned i = arrayLength(); i--;)
-            m_array[i] |= other.m_array[i];
+        return !(*this == other);
     }
     
-    void filter(const FastBitVector& other)
+    bool at(size_t index) const
     {
-        ASSERT(m_numBits == other.m_numBits);
-        for (unsigned i = arrayLength(); i--;)
-            m_array[i] &= other.m_array[i];
+        return atImpl(index);
     }
     
-    void exclude(const FastBitVector& other)
+    bool operator[](size_t index) const
     {
-        ASSERT(m_numBits == other.m_numBits);
-        for (unsigned i = arrayLength(); i--;)
-            m_array[i] &= ~other.m_array[i];
-    }
-    
-    void set(size_t i)
-    {
-        ASSERT_WITH_SECURITY_IMPLICATION(i < m_numBits);
-        m_array[i >> 5] |= (1 << (i & 31));
-    }
-    
-    void clear(size_t i)
-    {
-        ASSERT_WITH_SECURITY_IMPLICATION(i < m_numBits);
-        m_array[i >> 5] &= ~(1 << (i & 31));
-    }
-    
-    void set(size_t i, bool value)
-    {
-        if (value)
-            set(i);
-        else
-            clear(i);
-    }
-    
-    bool get(size_t i) const
-    {
-        ASSERT_WITH_SECURITY_IMPLICATION(i < m_numBits);
-        return !!(m_array[i >> 5] & (1 << (i & 31)));
+        return atImpl(index);
     }
     
     size_t bitCount() const
     {
         size_t result = 0;
-        for (unsigned i = arrayLength(); i--;)
-            result += WTF::bitCount(m_array[i]);
+        for (size_t index = arrayLength(); index--;)
+            result += WTF::bitCount(m_words.word(index));
         return result;
     }
     
-    template<typename Functor>
-    void forEachSetBit(const Functor& functor) const
+    template<typename OtherWords>
+    FastBitVectorImpl<FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>> operator&(const FastBitVectorImpl<OtherWords>& other) const
     {
-        unsigned n = arrayLength();
-        for (unsigned i = 0; i < n; ++i) {
-            uint32_t word = m_array[i];
-            unsigned j = i << 5;
+        return FastBitVectorImpl<FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>>(FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>(m_words.view(), other.m_words.view()));
+    }
+    
+    template<typename OtherWords>
+    FastBitVectorImpl<FastBitVectorOrWords<typename Words::ViewType, typename OtherWords::ViewType>> operator|(const FastBitVectorImpl<OtherWords>& other) const
+    {
+        return FastBitVectorImpl<FastBitVectorOrWords<typename Words::ViewType, typename OtherWords::ViewType>>(FastBitVectorOrWords<typename Words::ViewType, typename OtherWords::ViewType>(m_words.view(), other.m_words.view()));
+    }
+    
+    FastBitVectorImpl<FastBitVectorNotWords<typename Words::ViewType>> operator~() const
+    {
+        return FastBitVectorImpl<FastBitVectorNotWords<typename Words::ViewType>>(FastBitVectorNotWords<typename Words::ViewType>(m_words.view()));
+    }
+    
+    template<typename Func>
+    ALWAYS_INLINE void forEachSetBit(const Func& func) const
+    {
+        size_t n = m_words.arrayLength();
+        for (size_t i = 0; i < n; ++i) {
+            uint32_t word = m_words.word(i);
+            size_t j = i * 32;
             while (word) {
                 if (word & 1)
-                    functor(j);
+                    func(j);
                 word >>= 1;
                 j++;
             }
         }
     }
-
-    WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
+    
+    template<typename Func>
+    ALWAYS_INLINE void forEachClearBit(const Func& func) const
+    {
+        (~*this).forEachSetBit(func);
+    }
+    
+    template<typename Func>
+    void forEachBit(bool value, const Func& func) const
+    {
+        if (value)
+            forEachSetBit(func);
+        else
+            forEachClearBit(func);
+    }
+    
+    // Starts looking for bits at the index you pass. If that index contains the value you want,
+    // then it will return that index. Returns numBits when we get to the end. For example, you
+    // can write a loop to iterate over all set bits like this:
+    //
+    // for (size_t i = 0; i < bits.numBits(); i = bits.findBit(i + 1, true))
+    //     ...
+    ALWAYS_INLINE size_t findBit(size_t startIndex, bool value) const
+    {
+        // If value is true, this produces 0. If value is false, this produces UINT_MAX. It's
+        // written this way so that it performs well regardless of whether value is a constant.
+        uint32_t skipValue = -(static_cast<uint32_t>(value) ^ 1);
+        
+        size_t numWords = m_words.arrayLength();
+        
+        size_t wordIndex = startIndex / 32;
+        size_t startIndexInWord = startIndex - wordIndex * 32;
+        
+        while (wordIndex < numWords) {
+            uint32_t word = m_words.word(wordIndex);
+            if (word != skipValue) {
+                size_t index = startIndexInWord;
+                if (findBitInWord(word, index, 32, value))
+                    return wordIndex * 32 + index;
+            }
+            
+            wordIndex++;
+            startIndexInWord = 0;
+        }
+        
+        return numBits();
+    }
+    
+    ALWAYS_INLINE size_t findSetBit(size_t index) const
+    {
+        return findBit(index, true);
+    }
+    
+    ALWAYS_INLINE size_t findClearBit(size_t index) const
+    {
+        return findBit(index, false);
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        for (size_t i = 0; i < numBits(); ++i)
+            out.print((*this)[i] ? "1" : "-");
+    }
     
 private:
-    static size_t arrayLength(size_t numBits) { return (numBits + 31) >> 5; }
-    size_t arrayLength() const { return arrayLength(m_numBits); }
+    // You'd think that we could remove this friend if we used protected, but you'd be wrong,
+    // because templates.
+    friend class FastBitVector;
     
-    uint32_t* m_array { nullptr }; // No, this can't be an std::unique_ptr<uint32_t[]>.
-    size_t m_numBits { 0 };
+    bool atImpl(size_t index) const
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(index < numBits());
+        return !!(m_words.word(index >> 5) & (1 << (index & 31)));
+    }
+    
+    Words m_words;
+};
+
+class FastBitVector : public FastBitVectorImpl<FastBitVectorWordOwner> {
+public:
+    FastBitVector() { }
+    
+    FastBitVector(const FastBitVector&) = default;
+    FastBitVector& operator=(const FastBitVector&) = default;
+    
+    template<typename OtherWords>
+    FastBitVector(const FastBitVectorImpl<OtherWords>& other)
+    {
+        *this = other;
+    }
+    
+    template<typename OtherWords>
+    FastBitVector& operator=(const FastBitVectorImpl<OtherWords>& other)
+    {
+        if (UNLIKELY(numBits() != other.numBits()))
+            resize(other.numBits());
+        
+        for (unsigned i = arrayLength(); i--;)
+            m_words.word(i) = other.m_words.word(i);
+        return *this;
+    }
+    
+    void resize(size_t numBits)
+    {
+        m_words.resize(numBits);
+    }
+    
+    void setAll()
+    {
+        m_words.setAll();
+    }
+    
+    void clearAll()
+    {
+        m_words.clearAll();
+    }
+
+    template<typename OtherWords>
+    bool setAndCheck(const FastBitVectorImpl<OtherWords>& other)
+    {
+        bool changed = false;
+        ASSERT_WITH_SECURITY_IMPLICATION(numBits() == other.numBits());
+        for (unsigned i = arrayLength(); i--;) {
+            changed |= m_words.word(i) != other.m_words.word(i);
+            m_words.word(i) = other.m_words.word(i);
+        }
+        return changed;
+    }
+    
+    template<typename OtherWords>
+    FastBitVector& operator|=(const FastBitVectorImpl<OtherWords>& other)
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(numBits() == other.numBits());
+        for (unsigned i = arrayLength(); i--;)
+            m_words.word(i) |= other.m_words.word(i);
+        return *this;
+    }
+    
+    template<typename OtherWords>
+    FastBitVector& operator&=(const FastBitVectorImpl<OtherWords>& other)
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(numBits() == other.numBits());
+        for (unsigned i = arrayLength(); i--;)
+            m_words.word(i) &= other.m_words.word(i);
+        return *this;
+    }
+    
+    bool at(size_t index) const
+    {
+        return atImpl(index);
+    }
+    
+    bool operator[](size_t index) const
+    {
+        return atImpl(index);
+    }
+    
+    class BitReference {
+    public:
+        BitReference() { }
+        
+        BitReference(uint32_t* word, uint32_t mask)
+            : m_word(word)
+            , m_mask(mask)
+        {
+        }
+        
+        explicit operator bool() const
+        {
+            return !!(*m_word & m_mask);
+        }
+        
+        BitReference& operator=(bool value)
+        {
+            if (value)
+                *m_word |= m_mask;
+            else
+                *m_word &= ~m_mask;
+            return *this;
+        }
+        
+    private:
+        uint32_t* m_word { nullptr };
+        uint32_t m_mask { 0 };
+    };
+    
+    BitReference at(size_t index)
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(index < numBits());
+        return BitReference(&m_words.word(index >> 5), 1 << (index & 31));
+    }
+    
+    BitReference operator[](size_t index)
+    {
+        return at(index);
+    }
 };
 
 } // namespace WTF

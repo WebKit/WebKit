@@ -181,7 +181,6 @@ set(WTF_SOURCES
     DataLog.cpp
     DateMath.cpp
     DecimalNumber.cpp
-    FastBitVector.cpp
     FastMalloc.cpp
     FilePrintStream.cpp
     FunctionDispatcher.cpp

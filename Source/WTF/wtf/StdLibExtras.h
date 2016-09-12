@@ -317,6 +317,24 @@ bool checkAndSet(T& left, U right)
     return true;
 }
 
+template<typename T>
+bool findBitInWord(T word, size_t& index, size_t endIndex, bool value)
+{
+    static_assert(std::is_unsigned<T>::value, "Type used in findBitInWord must be unsigned");
+    
+    word >>= index;
+    
+    while (index < endIndex) {
+        if ((word & 1) == static_cast<T>(value))
+            return true;
+        index++;
+        word >>= 1;
+    }
+    
+    index = endIndex;
+    return false;
+}
+
 // Visitor adapted from http://stackoverflow.com/questions/25338795/is-there-a-name-for-this-tuple-creation-idiom
 
 template <class A, class... B>
@@ -421,6 +439,7 @@ using WTF::binarySearch;
 using WTF::bitwise_cast;
 using WTF::callStatelessLambda;
 using WTF::checkAndSet;
+using WTF::findBitInWord;
 using WTF::insertIntoBoundedVector;
 using WTF::isCompilationThread;
 using WTF::isPointerAligned;
