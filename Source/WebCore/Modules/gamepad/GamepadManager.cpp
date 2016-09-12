@@ -120,8 +120,10 @@ void GamepadManager::platformGamepadInputActivity()
     if (m_gamepadBlindNavigators.isEmpty() && m_gamepadBlindDOMWindows.isEmpty())
         return;
 
-    for (auto* gamepad : GamepadProvider::singleton().platformGamepads())
-        makeGamepadVisible(*gamepad, m_gamepadBlindNavigators, m_gamepadBlindDOMWindows);
+    for (auto* gamepad : GamepadProvider::singleton().platformGamepads()) {
+        if (gamepad)
+            makeGamepadVisible(*gamepad, m_gamepadBlindNavigators, m_gamepadBlindDOMWindows);
+    }
 
     m_gamepadBlindNavigators.clear();
     m_gamepadBlindDOMWindows.clear();
