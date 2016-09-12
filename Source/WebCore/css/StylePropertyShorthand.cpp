@@ -32,7 +32,7 @@ StylePropertyShorthand borderAbridgedShorthand()
     return StylePropertyShorthand(CSSPropertyBorder, borderAbridgedProperties, propertiesForInitialization);
 }
 
-StylePropertyShorthand animationShorthandForParsing(CSSPropertyID propId)
+StylePropertyShorthand animationShorthandForParsing()
 {
     // Animation-name must come last, so that keywords for other properties in the shorthand
     // preferentially match those properties.
@@ -47,20 +47,7 @@ StylePropertyShorthand animationShorthandForParsing(CSSPropertyID propId)
         CSSPropertyAnimationName
     };
 
-    static const CSSPropertyID prefixedAnimationPropertiesForParsing[] = {
-        CSSPropertyWebkitAnimationDuration,
-        CSSPropertyWebkitAnimationTimingFunction,
-        CSSPropertyWebkitAnimationDelay,
-        CSSPropertyWebkitAnimationIterationCount,
-        CSSPropertyWebkitAnimationDirection,
-        CSSPropertyWebkitAnimationFillMode,
-        CSSPropertyWebkitAnimationPlayState,
-        CSSPropertyWebkitAnimationName
-    };
-
-    if (propId == CSSPropertyAnimation)
-        return StylePropertyShorthand(CSSPropertyAnimation, animationPropertiesForParsing);
-    return StylePropertyShorthand(CSSPropertyWebkitAnimation, prefixedAnimationPropertiesForParsing);
+    return StylePropertyShorthand(CSSPropertyAnimation, animationPropertiesForParsing);
 }
 
 bool isShorthandCSSProperty(CSSPropertyID id)

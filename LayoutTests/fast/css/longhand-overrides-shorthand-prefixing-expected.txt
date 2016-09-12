@@ -1,0 +1,41 @@
+Test the prefixed or the unprefixed variant of a property allows reading from the CSS OM with both the prefixed and unprefixed variant.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting "animation" to "move 2s" then "animation-duration" to "10s" accessing "animation"
+PASS element.style.animation
+PASS element.style.cssText
+
+Setting "animation" to "move 2s" then "animation-duration" to "10s" accessing "webkitAnimation"
+PASS element.style.animation
+PASS element.style.cssText
+
+Setting "-webkit-animation" to "move 2s" then "animation-duration" to "10s" accessing "animation"
+PASS element.style.webkitAnimation
+PASS element.style.cssText
+
+Setting "-webkit-animation" to "move 2s" then "animation-duration" to "10s" accessing "webkitAnimation"
+PASS element.style.webkitAnimation
+PASS element.style.cssText
+
+Setting "animation" to "move 2s" then "-webkit-animation-duration" to "10s" accessing "animation"
+PASS element.style.animation
+PASS element.style.cssText
+
+Setting "animation" to "move 2s" then "-webkit-animation-duration" to "10s" accessing "webkitAnimation"
+PASS element.style.animation
+PASS element.style.cssText
+
+Setting "-webkit-animation" to "move 2s" then "-webkit-animation-duration" to "10s" accessing "animation"
+PASS element.style.webkitAnimation
+PASS element.style.cssText
+
+Setting "-webkit-animation" to "move 2s" then "-webkit-animation-duration" to "10s" accessing "webkitAnimation"
+PASS element.style.webkitAnimation
+PASS element.style.cssText
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

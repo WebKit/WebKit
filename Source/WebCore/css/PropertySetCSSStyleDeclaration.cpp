@@ -271,10 +271,6 @@ RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSS
     if (value)
         return value;
 
-    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propertyID);
-    if (prefixingVariant != propertyID)
-        return m_propertySet->getPropertyCSSValue(prefixingVariant);
-
     return nullptr;
 }
 
@@ -283,10 +279,6 @@ String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID pr
     String value = m_propertySet->getPropertyValue(propertyID);
     if (!value.isEmpty())
         return value;
-
-    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propertyID);
-    if (prefixingVariant != propertyID)
-        return m_propertySet->getPropertyValue(prefixingVariant);
 
     return String();
 }

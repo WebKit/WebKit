@@ -363,6 +363,36 @@ PASS getComputedStyle(element).getPropertyCSSValue("animation-fill-mode")
 PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-fill-mode")
 PASS element.style.cssText
 
+Setting "transform" to "matrix(1, 0, 0, 1, 1, 1)"
+PASS element.style.transform
+PASS element.style.webkitTransform
+PASS element.style.getPropertyValue("transform")
+PASS element.style.getPropertyValue("-webkit-transform")
+PASS element.style.getPropertyCSSValue("transform")
+PASS element.style.getPropertyCSSValue("-webkit-transform")
+PASS getComputedStyle(element).transform
+PASS getComputedStyle(element).webkitTransform
+PASS getComputedStyle(element).getPropertyValue("transform")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transform")
+PASS getComputedStyle(element).getPropertyCSSValue("transform")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transform")
+PASS element.style.cssText
+
+Setting "-webkit-transform" to "matrix(1, 0, 0, 1, 1, 1)"
+PASS element.style.transform
+PASS element.style.webkitTransform
+PASS element.style.getPropertyValue("transform")
+PASS element.style.getPropertyValue("-webkit-transform")
+PASS element.style.getPropertyCSSValue("transform")
+PASS element.style.getPropertyCSSValue("-webkit-transform")
+PASS getComputedStyle(element).transform
+PASS getComputedStyle(element).webkitTransform
+PASS getComputedStyle(element).getPropertyValue("transform")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transform")
+PASS getComputedStyle(element).getPropertyCSSValue("transform")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transform")
+PASS element.style.cssText
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

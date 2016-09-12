@@ -352,7 +352,6 @@ transition-delay [AnimationProperty, NameForMethods=Delay]
 transition-duration [AnimationProperty, NameForMethods=Duration]
 transition-property [AnimationProperty, NameForMethods=Property]
 transition-timing-function [AnimationProperty, NameForMethods=TimingFunction]
-
 unicode-bidi
 unicode-range [SkipBuilder]
 vector-effect [SVG]
@@ -372,15 +371,15 @@ y [Initial=initialZeroLength, Converter=Length]
 z-index [AutoFunctions]
 alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-alt = alt
--webkit-animation [Longhands=-webkit-animation-name|-webkit-animation-duration|-webkit-animation-timing-function|-webkit-animation-delay|-webkit-animation-iteration-count|-webkit-animation-direction|-webkit-animation-fill-mode|-webkit-animation-play-state]
--webkit-animation-delay [AnimationProperty, NameForMethods=Delay]
--webkit-animation-direction [AnimationProperty, NameForMethods=Direction]
--webkit-animation-duration [AnimationProperty, NameForMethods=Duration]
--webkit-animation-fill-mode [AnimationProperty, NameForMethods=FillMode]
--webkit-animation-iteration-count [AnimationProperty, NameForMethods=IterationCount]
--webkit-animation-name [AnimationProperty, NameForMethods=Name]
--webkit-animation-play-state [AnimationProperty, NameForMethods=PlayState]
--webkit-animation-timing-function [AnimationProperty, NameForMethods=TimingFunction]
+-webkit-animation = animation
+-webkit-animation-delay = animation-delay
+-webkit-animation-direction = animation-direction
+-webkit-animation-duration = animation-duration
+-webkit-animation-fill-mode = animation-fill-mode
+-webkit-animation-iteration-count = animation-iteration-count
+-webkit-animation-name = animation-name
+-webkit-animation-play-state = animation-play-state
+-webkit-animation-timing-function = animation-timing-function
 #if defined(ENABLE_CSS_ANIMATIONS_LEVEL_2) && ENABLE_CSS_ANIMATIONS_LEVEL_2
 -webkit-animation-trigger [AnimationProperty, NameForMethods=Trigger]
 #endif
@@ -622,6 +621,7 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-text-stroke [Inherited, Longhands=-webkit-text-stroke-width|-webkit-text-stroke-color]
 -webkit-text-stroke-color [Inherited, VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-text-stroke-width [Inherited, Converter=TextStrokeWidth]
+
 transform [Converter=Transform]
 -webkit-transform = transform
 transform-origin [Longhands=transform-origin-x|transform-origin-y|transform-origin-z]
@@ -635,11 +635,11 @@ transform-origin-z [Converter=ComputedLength<float>]
 transform-style [NameForMethods=TransformStyle3D]
 // Keeping -webkit-transform-style around is how we'll detect legacy content. At that point we'll have to add a custom builder and a new ETransformStyle3D type.
 -webkit-transform-style [NameForMethods=TransformStyle3D]
--webkit-transition [Longhands=-webkit-transition-property|-webkit-transition-duration|-webkit-transition-timing-function|-webkit-transition-delay]
--webkit-transition-delay [AnimationProperty, NameForMethods=Delay]
--webkit-transition-duration [AnimationProperty, NameForMethods=Duration]
--webkit-transition-property [AnimationProperty, NameForMethods=Property]
--webkit-transition-timing-function [AnimationProperty, NameForMethods=TimingFunction]
+-webkit-transition = transition
+-webkit-transition-delay = transition-delay
+-webkit-transition-duration = transition-duration
+-webkit-transition-property = transition-property
+-webkit-transition-timing-function = transition-timing-function
 -webkit-user-drag
 -webkit-user-modify [Inherited]
 -webkit-user-select [Inherited]

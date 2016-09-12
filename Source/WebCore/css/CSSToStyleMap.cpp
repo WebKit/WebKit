@@ -316,7 +316,7 @@ void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID propertyID, FillLayer& l
 
 void CSSToStyleMap::mapAnimationDelay(Animation& animation, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimationDelay)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationDelay)) {
         animation.setDelay(Animation::initialDelay());
         return;
     }
@@ -329,7 +329,7 @@ void CSSToStyleMap::mapAnimationDelay(Animation& animation, const CSSValue& valu
 
 void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimationDirection)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationDirection)) {
         layer.setDirection(Animation::initialDirection());
         return;
     }
@@ -357,7 +357,7 @@ void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& valu
 
 void CSSToStyleMap::mapAnimationDuration(Animation& animation, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimationDuration)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationDuration)) {
         animation.setDuration(Animation::initialDuration());
         return;
     }
@@ -370,7 +370,7 @@ void CSSToStyleMap::mapAnimationDuration(Animation& animation, const CSSValue& v
 
 void CSSToStyleMap::mapAnimationFillMode(Animation& layer, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimationFillMode)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationFillMode)) {
         layer.setFillMode(Animation::initialFillMode());
         return;
     }
@@ -398,7 +398,7 @@ void CSSToStyleMap::mapAnimationFillMode(Animation& layer, const CSSValue& value
 
 void CSSToStyleMap::mapAnimationIterationCount(Animation& animation, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimationIterationCount)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationIterationCount)) {
         animation.setIterationCount(Animation::initialIterationCount());
         return;
     }
@@ -415,7 +415,7 @@ void CSSToStyleMap::mapAnimationIterationCount(Animation& animation, const CSSVa
 
 void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimationName)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationName)) {
         layer.setName(Animation::initialName());
         return;
     }
@@ -432,7 +432,7 @@ void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
 
 void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimationPlayState)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationPlayState)) {
         layer.setPlayState(Animation::initialPlayState());
         return;
     }
@@ -446,7 +446,7 @@ void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& valu
 
 void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimation)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimation)) {
         animation.setAnimationMode(Animation::AnimateAll);
         animation.setProperty(CSSPropertyInvalid);
         return;
@@ -470,7 +470,7 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
 
 void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyWebkitAnimationTimingFunction)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationTimingFunction)) {
         animation.setTimingFunction(Animation::initialTimingFunction());
         return;
     }

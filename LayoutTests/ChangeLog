@@ -1,3 +1,23 @@
+2016-09-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Make -webkit-transition-* and -webkit-animation-* properties be pure aliases of the unprefixed ones
+        https://bugs.webkit.org/show_bug.cgi?id=160478
+
+        Reviewed by Dean Jackson.
+        
+        Updated results, and a new test to ensure that longhand properties override
+        shorthand ones, with various combinations of prefixing.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/longhand-overrides-shorthand-prefixing-expected.txt: Added.
+        * fast/css/longhand-overrides-shorthand-prefixing.html: Added.
+        * fast/css/prefixed-unprefixed-variant-style-declaration-expected.txt:
+        * fast/css/prefixed-unprefixed-variant-style-declaration.html:
+        * transitions/svg-transitions-expected.txt:
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+
 2016-09-12  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Initial values are parsed as invalid for some Alignment properties

@@ -56,7 +56,7 @@ function testProperty(propertyToSet, unprefixedProperty, prefixedProperty, unpre
     test(`getComputedStyle(element).getPropertyCSSValue("${unprefixedProperty}")`, computedStyle.getPropertyCSSValue(unprefixedProperty).cssText);
     test(`getComputedStyle(element).getPropertyCSSValue("${prefixedProperty}")`, computedStyle.getPropertyCSSValue(prefixedProperty).cssText);
 
-    test(`element.style.cssText`, element.style.cssText, `${propertyToSet}: ${value};`);
+    test(`element.style.cssText`, element.style.cssText, `${unprefixedProperty}: ${value};`);
 
     element.remove();
 
@@ -76,6 +76,8 @@ testPropertyVariants("animation-direction", "reverse");
 testPropertyVariants("animation-play-state", "paused");
 testPropertyVariants("animation-delay", "0.5s");
 testPropertyVariants("animation-fill-mode", "forwards");
+
+testPropertyVariants("transform", "matrix(1, 0, 0, 1, 1, 1)");
 
 successfullyParsed = true;
 

@@ -208,10 +208,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(perspectiveOriginShorthand());
     case CSSPropertyTransformOrigin:
         return getShorthandValue(transformOriginShorthand());
-    case CSSPropertyWebkitTransition:
-        return getLayeredShorthandValue(webkitTransitionShorthand());
-    case CSSPropertyWebkitAnimation:
-        return getLayeredShorthandValue(webkitAnimationShorthand());
     case CSSPropertyMarker: {
         RefPtr<CSSValue> value = getPropertyCSSValueInternal(CSSPropertyMarkerStart);
         if (value)
@@ -640,15 +636,7 @@ bool MutableStyleProperties::removeShorthandProperty(CSSPropertyID propertyID)
     if (!shorthand.length())
         return false;
 
-    bool propertiesWereRemoved = removePropertiesInSet(shorthand.properties(), shorthand.length());
-
-    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propertyID);
-    if (prefixingVariant == propertyID)
-        return propertiesWereRemoved;
-
-    StylePropertyShorthand shorthandPrefixingVariant = shorthandForProperty(prefixingVariant);
-    bool prefixedVariantPropertiesWereRemoved = removePropertiesInSet(shorthandPrefixingVariant.properties(), shorthandPrefixingVariant.length());
-    return propertiesWereRemoved || prefixedVariantPropertiesWereRemoved;
+    return removePropertiesInSet(shorthand.properties(), shorthand.length());
 }
 
 bool MutableStyleProperties::removeProperty(CSSPropertyID propertyID, String* returnText)
@@ -976,16 +964,6 @@ String StyleProperties::asText() const
             case CSSPropertyTransitionDelay:
                 shorthandPropertyID = CSSPropertyTransition;
                 break;
-            case CSSPropertyWebkitAnimationName:
-            case CSSPropertyWebkitAnimationDuration:
-            case CSSPropertyWebkitAnimationTimingFunction:
-            case CSSPropertyWebkitAnimationDelay:
-            case CSSPropertyWebkitAnimationIterationCount:
-            case CSSPropertyWebkitAnimationDirection:
-            case CSSPropertyWebkitAnimationFillMode:
-            case CSSPropertyWebkitAnimationPlayState:
-                shorthandPropertyID = CSSPropertyWebkitAnimation;
-                break;
             case CSSPropertyFlexDirection:
             case CSSPropertyFlexWrap:
                 shorthandPropertyID = CSSPropertyFlexFlow;
@@ -1014,12 +992,6 @@ String StyleProperties::asText() const
             case CSSPropertyTransformOriginY:
             case CSSPropertyTransformOriginZ:
                 shorthandPropertyID = CSSPropertyTransformOrigin;
-                break;
-            case CSSPropertyWebkitTransitionProperty:
-            case CSSPropertyWebkitTransitionDuration:
-            case CSSPropertyWebkitTransitionTimingFunction:
-            case CSSPropertyWebkitTransitionDelay:
-                shorthandPropertyID = CSSPropertyWebkitTransition;
                 break;
             default:
                 break;
