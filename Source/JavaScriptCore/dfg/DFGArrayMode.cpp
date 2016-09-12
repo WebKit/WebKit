@@ -150,6 +150,14 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
     }
 }
 
+static bool canBecomeGetArrayLength(Graph& graph, Node* node)
+{
+    if (node->op() != GetById)
+        return false;
+    auto uid = graph.identifiers()[node->identifierNumber()];
+    return uid == graph.m_vm.propertyNames->length.impl();
+}
+
 ArrayMode ArrayMode::refine(
     Graph& graph, Node* node,
     SpeculatedType base, SpeculatedType index, SpeculatedType value) const
@@ -192,7 +200,7 @@ ArrayMode ArrayMode::refine(
         // If we have an OriginalArray and the JSArray prototype chain is sane,
         // any indexed access always return undefined. We have a fast path for that.
         JSGlobalObject* globalObject = graph.globalObjectFor(node->origin.semantic);
-        if (node->op() == GetByVal
+        if ((node->op() == GetByVal || canBecomeGetArrayLength(graph, node))
             && arrayClass() == Array::OriginalArray
             && globalObject->arrayPrototypeChainIsSane()
             && !graph.hasExitSite(node->origin.semantic, OutOfBounds)) {

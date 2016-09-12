@@ -288,6 +288,7 @@ inline CapabilityLevel canCompile(Node* node)
         break;
     case GetArrayLength:
         switch (node->arrayMode().type()) {
+        case Array::Undecided:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:

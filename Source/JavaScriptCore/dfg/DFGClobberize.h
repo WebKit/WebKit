@@ -942,6 +942,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetArrayLength: {
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {
+        case Array::Undecided:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:

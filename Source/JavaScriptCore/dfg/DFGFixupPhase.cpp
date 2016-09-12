@@ -2102,7 +2102,7 @@ private:
         }
         
         if (!storageCheck(arrayMode))
-            return 0;
+            return nullptr;
         
         if (arrayMode.usesButterfly()) {
             return m_insertionSet.insertNode(

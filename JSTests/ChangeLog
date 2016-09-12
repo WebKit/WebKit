@@ -1,3 +1,12 @@
+2016-09-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Use GetArrayLength for JSArray.length even when the array type is undecided
+        https://bugs.webkit.org/show_bug.cgi?id=161671
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/get-array-length-on-undecided.js: Added.
+
 2016-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Add ArithTan

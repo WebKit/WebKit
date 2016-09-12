@@ -234,6 +234,7 @@ public:
     bool usesButterfly() const
     {
         switch (type()) {
+        case Array::Undecided:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
@@ -312,6 +313,7 @@ public:
     bool lengthNeedsStorage() const
     {
         switch (type()) {
+        case Array::Undecided:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:

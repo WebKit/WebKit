@@ -1,3 +1,33 @@
+2016-09-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Use GetArrayLength for JSArray.length even when the array type is undecided
+        https://bugs.webkit.org/show_bug.cgi?id=161671
+
+        Reviewed by Geoffrey Garen.
+
+        UndecidedShape is a type with storage. When we allocate an uninitialized JSArray,
+        it gets a butterfly with its length.
+        When we were querying that length, we were generating a generic GetById with inline cache.
+
+        This patch adds the missing bits to treat Undecided like the other types with storage.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::canBecomeGetArrayLength):
+        (JSC::DFG::ArrayMode::refine):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::usesButterfly):
+        (JSC::DFG::ArrayMode::lengthNeedsStorage):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+
 2016-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Add ArithTan

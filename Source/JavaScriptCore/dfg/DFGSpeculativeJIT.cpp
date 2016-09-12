@@ -6051,6 +6051,7 @@ void SpeculativeJIT::compileGetGlobalObject(Node* node)
 void SpeculativeJIT::compileGetArrayLength(Node* node)
 {
     switch (node->arrayMode().type()) {
+    case Array::Undecided:
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous: {
