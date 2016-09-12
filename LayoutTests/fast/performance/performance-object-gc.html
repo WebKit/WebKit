@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the Performance wrapper stays alive for as long as its frame.");
+jsTestIsAsync = true;
+
+shouldBe("window.performance.__proto__", "Performance.prototype");
+shouldBeUndefined("window.performance.customProperty");
+evalAndLog("window.performance.customProperty = 1");
+shouldBe("window.performance.customProperty", "1");
+gc();
+shouldBe("window.performance.customProperty", "1");
+
+onload = function() {
+    gc();
+    shouldBe("window.performance.customProperty", "1");
+    setTimeout(checkAndFinish, 0);
+}
+
+function checkAndFinish()
+{
+    gc();
+    shouldBe("window.performance.customProperty", "1");
+    finishJSTest();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

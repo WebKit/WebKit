@@ -32,6 +32,7 @@
 // See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/NavigationTiming/Overview.html
 [
     Conditional=WEB_TIMING,
+    GenerateIsReachable=ImplFrame,
 ] interface Performance : EventTarget {
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;

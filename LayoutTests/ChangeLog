@@ -1,3 +1,15 @@
+2016-09-12  Chris Dumez  <cdumez@apple.com>
+
+        window.performance object resets script-applied properties
+        https://bugs.webkit.org/show_bug.cgi?id=137407
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/performance/performance-object-gc-expected.txt: Added.
+        * fast/performance/performance-object-gc.html: Added.
+
 2016-09-12  Jer Noble  <jer.noble@apple.com>
 
         Fix failing mediasource-play.html and mediasource-config-change-mp4-v-bitrate.html tests
