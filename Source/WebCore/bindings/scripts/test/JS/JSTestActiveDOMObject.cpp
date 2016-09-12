@@ -149,7 +149,7 @@ EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValu
     if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestActiveDOMObject", "excitingAttr");
     }
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))
+    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.excitingAttr());
@@ -189,7 +189,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestActiveDOMObject", "excitingFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))
+    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
