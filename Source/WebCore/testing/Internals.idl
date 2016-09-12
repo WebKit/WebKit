@@ -214,7 +214,7 @@ enum UserInterfaceLayoutDirection {
     [RaisesException] void setAutomaticTextReplacementEnabled(boolean enabled);
     [RaisesException] void setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
-    [RaisesException] void handleAcceptedCandidate(DOMString candidate);
+    [RaisesException] void handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
 
     [RaisesException] boolean isOverwriteModeEnabled();
     [RaisesException] void toggleOverwriteModeEnabled();

@@ -1,3 +1,23 @@
+2016-09-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205765. rdar://problem/28033492
+
+    2016-09-09  Tim Horton  <timothy_horton@apple.com>
+
+            Text replacement candidates don't always overwrite the entire original string
+            https://bugs.webkit.org/show_bug.cgi?id=161779
+            <rdar://problem/28033492>
+
+            Reviewed by Simon Fraser.
+
+            * editing/mac/spelling/accept-candidate-without-crossing-editing-boundary.html:
+            * editing/mac/spelling/accept-misspelled-candidate.html:
+            Adjust tests to send the correct replacement range.
+
+            * editing/mac/spelling/accept-candidate-replacing-multiple-words.html:
+            Add a test that ensures that we will replace the entire string for a
+            candidate that replaces multiple words.
+
 2016-09-09  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204107. rdar://problem/27860536

@@ -1161,6 +1161,10 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
     RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
         return;
+    
+    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    if (!frame)
+        return;
 
     m_lastSelectionForRequestedCandidates = selection;
 
@@ -1173,7 +1177,7 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
     int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
     int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
     m_rangeForCandidates = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
-    m_paragraphContextForCandidateRequest = plainText(makeRange(paragraphStart, paragraphEnd).get());
+    m_paragraphContextForCandidateRequest = plainText(frame->editor().contextRangeForCandidateRequest().get());
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     auto weakEditor = m_weakPtrFactory.createWeakPtr();

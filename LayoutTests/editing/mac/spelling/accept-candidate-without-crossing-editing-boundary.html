@@ -10,7 +10,7 @@ function editingTest() {
     typeCharacterCommand('h');
     typeCharacterCommand('a');
     if (window.internals)
-        internals.handleAcceptedCandidate("happy");
+        internals.handleAcceptedCandidate("happy", 0, 2);
 
     if (window.testRunner)
         testRunner.dumpAsText(true);
