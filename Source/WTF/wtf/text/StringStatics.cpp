@@ -82,6 +82,17 @@ NEVER_INLINE unsigned StringImpl::hashSlowCase() const
     return existingHash();
 }
 
+unsigned StringImpl::concurrentHash() const
+{
+    unsigned hash;
+    if (is8Bit())
+        hash = StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length);
+    else
+        hash = StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length);
+    ASSERT(((hash << s_flagCount) >> s_flagCount) == hash);
+    return hash;
+}
+
 void AtomicString::init()
 {
     static bool initialized;

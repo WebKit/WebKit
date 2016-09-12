@@ -194,6 +194,19 @@ ALWAYS_INLINE JSValue normalizeMapKey(JSValue key)
     return key;
 }
 
+static ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key)
+{
+    key += ~(key << 32);
+    key ^= (key >> 22);
+    key += ~(key << 13);
+    key ^= (key >> 8);
+    key += (key << 3);
+    key ^= (key >> 15);
+    key += ~(key << 27);
+    key ^= (key >> 31);
+    return static_cast<unsigned>(key);
+}
+
 ALWAYS_INLINE uint32_t jsMapHash(ExecState* exec, VM& vm, JSValue value)
 {
     ASSERT_WITH_MESSAGE(normalizeMapKey(value) == value, "We expect normalized values flowing into this function.");
@@ -208,18 +221,24 @@ ALWAYS_INLINE uint32_t jsMapHash(ExecState* exec, VM& vm, JSValue value)
         return wtfString.impl()->hash();
     }
 
-    auto wangsInt64Hash = [] (uint64_t key) -> uint32_t {
-        key += ~(key << 32);
-        key ^= (key >> 22);
-        key += ~(key << 13);
-        key ^= (key >> 8);
-        key += (key << 3);
-        key ^= (key >> 15);
-        key += ~(key << 27);
-        key ^= (key >> 31);
-        return static_cast<unsigned>(key);
-    };
     uint64_t rawValue = JSValue::encode(value);
+    return wangsInt64Hash(rawValue);
+}
+
+ALWAYS_INLINE Optional<uint32_t> concurrentJSMapHash(JSValue key)
+{
+    key = normalizeMapKey(key);
+    if (key.isString()) {
+        JSString* string = asString(key);
+        if (string->length() > 10 * 1024)
+            return Nullopt;
+        const StringImpl* impl = string->tryGetValueImpl();
+        if (!impl)
+            return Nullopt;
+        return impl->concurrentHash();
+    }
+
+    uint64_t rawValue = JSValue::encode(key);
     return wangsInt64Hash(rawValue);
 }
 

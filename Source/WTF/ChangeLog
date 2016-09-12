@@ -1,3 +1,22 @@
+2016-09-12  Saam Barati  <sbarati@apple.com>
+
+        MapHash should do constant folding when it has a constant argument and its legal to hash that value
+        https://bugs.webkit.org/show_bug.cgi?id=161639
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a concurrentHash method to StringImpl. It's
+        probably safe to get the actual hash while being racy, however,
+        it's simpler and more future proof to not have to worry about
+        that and to just compute it on demand. Users of this API should
+        be aware that it's doing non-trivial work. Currently, the only
+        user is JSC's JIT compilers, and they only ask for hashes for small-ish
+        strings.
+
+        * wtf/text/StringImpl.h:
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::concurrentHash):
+
 2016-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::forAllKilledOperands() could use a faster bitvector scan in the same-inline-stack fast path

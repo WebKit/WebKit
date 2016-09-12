@@ -553,6 +553,8 @@ public:
         return hashSlowCase();
     }
 
+    WTF_EXPORT_PRIVATE unsigned concurrentHash() const;
+
     unsigned symbolAwareHash() const
     {
         if (isSymbol())

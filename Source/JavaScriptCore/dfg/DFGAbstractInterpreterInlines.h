@@ -32,6 +32,7 @@
 #include "DFGAbstractInterpreter.h"
 #include "GetByIdStatus.h"
 #include "GetterSetter.h"
+#include "HashMapImpl.h"
 #include "JITOperations.h"
 #include "MathCommon.h"
 #include "Operations.h"
@@ -977,9 +978,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case MapHash:
+    case MapHash: {
+        if (JSValue key = forNode(node->child1()).value()) {
+            if (Optional<uint32_t> hash = concurrentJSMapHash(key)) {
+                // Although C++ code uses uint32_t for the hash, the closest type in DFG IR is Int32
+                // and that's what MapHash returns. So, we have to cast to int32_t to avoid large
+                // unsigned values becoming doubles. This casting between signed and unsigned
+                // happens in the assembly code we emit when we don't constant fold this node.
+                setConstant(node, jsNumber(static_cast<int32_t>(*hash)));
+                break;
+            }
+        }
         forNode(node).setType(SpecInt32Only);
         break;
+    }
 
     case LoadFromJSMapBucket:
         forNode(node).makeHeapTop();

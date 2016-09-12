@@ -1,3 +1,22 @@
+2016-09-12  Saam Barati  <sbarati@apple.com>
+
+        MapHash should do constant folding when it has a constant argument and its legal to hash that value
+        https://bugs.webkit.org/show_bug.cgi?id=161639
+
+        Reviewed by Filip Pizlo.
+
+        We now constant fold the MapHash node. We're careful to not resolve
+        ropes from the compiler thread, and to only hash strings if they're
+        not too large. The microbenchmark I added runs about 12% faster with
+        this patch.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * runtime/HashMapImpl.h:
+        (JSC::wangsInt64Hash):
+        (JSC::jsMapHash):
+        (JSC::concurrentJSMapHash):
+
 2016-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::forAllKilledOperands() could use a faster bitvector scan in the same-inline-stack fast path
