@@ -341,7 +341,8 @@
 - path: ChakraCore/test/Bugs/bug56026_nested.js
   cmd: runChakra :pass, "NoException", "", []
 - path: ChakraCore/test/Bugs/bug56026_trycatch.js
-  cmd: runChakra :pass, "NoException", "", []
+  # This test times out on 32 bit builds.
+  cmd: runChakra :skip, "NoException", "", []
 - path: ChakraCore/test/Bugs/blue_245702.js
   cmd: runChakra :baseline, "NoException", "blue_245702.baseline-jsc", []
 - path: ChakraCore/test/Bugs/bug547302.js

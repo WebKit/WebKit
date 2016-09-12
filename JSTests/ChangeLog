@@ -1,3 +1,13 @@
+2016-09-12  Michael Saboff  <msaboff@apple.com>
+
+        JSC test timeout: ChakraCore.yaml/ChakraCore/test/Bugs/bug56026_trycatch.js.default
+        https://bugs.webkit.org/show_bug.cgi?id=161863
+
+        Reviewed by Saam Barati.
+
+        * ChakraCore.yaml:
+        Disabled Bugs/bug56026_trycatch.js.
+
 2016-09-09  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, rolling r205759 back in with a fix.
