@@ -1,5 +1,34 @@
 2016-09-12  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r205788. rdar://problem/28245097
+
+    2016-09-11  Tim Horton  <timothy_horton@apple.com>
+
+            Candidates that don't end in spaces shouldn't have spaces arbitrarily appended to them
+            https://bugs.webkit.org/show_bug.cgi?id=161846
+            <rdar://problem/28245097>
+
+            Reviewed by Beth Dakin.
+
+            * editing/mac/spelling/accept-candidate-replacing-multiple-words-expected.txt:
+            * editing/mac/spelling/accept-candidate-replacing-multiple-words.html:
+            * editing/mac/spelling/accept-candidate-without-crossing-editing-boundary-expected.txt:
+            * editing/mac/spelling/accept-candidate-without-crossing-editing-boundary.html:
+            Update existing tests to put spaces at the end of accepted candidates to make them
+            more similar to what the OS will return to us.
+
+            * editing/mac/spelling/accept-candidate-without-adding-space-expected.txt: Added.
+            * editing/mac/spelling/accept-candidate-without-adding-space.html: Added.
+            Add a test where the accepted candidate does *not* have a space at the end,
+            testing that we don't add one where the candidate didn't contain one.
+
+            * editing/mac/spelling/accept-candidate-allows-autocorrect-on-next-word-expected.txt: Added.
+            * editing/mac/spelling/accept-candidate-allows-autocorrect-on-next-word.html: Added.
+            Add a test ensuring that the document marker added by accepting a candidate
+            doesn't overlap the next word and prevent autocorrect from working on it.
+
+2016-09-12  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205154. rdar://problem/28233330
 
     2016-08-29  Chris Dumez  <cdumez@apple.com>
