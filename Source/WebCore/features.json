@@ -196,6 +196,16 @@
         }
     },
     {
+        "name": "Intersection Observer",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://wicg.github.io/IntersectionObserver/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=159475",
+        "keywords": ["intersection", "intersection observer"],
+        "description": "An API that can be used to understand the visibility and position of DOM elements relative to a containing element or to the top-level viewport."
+    },
+    {
         "name": "Preload",
         "status": {
             "status": "In Development",
