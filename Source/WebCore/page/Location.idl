@@ -28,6 +28,7 @@
 
 [
     JSCustomGetOwnPropertySlotAndDescriptor,
+    CheckSecurity,
     CustomNamedSetter,
     GenerateIsReachable=ImplFrame,
     CustomDeleteProperty,
@@ -40,7 +41,7 @@
     [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString href;
 
     [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void assign(DOMString url);
-    [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(DOMString url);
+    [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(DOMString url);
     [CallWith=ActiveWindow, ForwardDeclareInHeader] void reload();
 
     // URI decomposition attributes
