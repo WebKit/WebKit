@@ -274,6 +274,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("http:\\\\foo.com/", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
     checkRelativeURL("http:\\\\foo.com", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
     checkRelativeURL("http://ExAmPlE.CoM", "http://other.com", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    checkRelativeURL("http:", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar"});
     
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
@@ -593,6 +594,11 @@ TEST_F(URLParserTest, AdditionalTests)
     checkURLDifferences("notspecial\t\t\n\t:\t\t\n\t/\t\t\n\t/\t\t\n\thost",
         {"notspecial", "", "", "host", 0, "/", "", "", "notspecial://host/"},
         {"notspecial", "", "", "host", 0, "", "", "", "notspecial://host"});
+    checkRelativeURL("http:", "http://example.org/foo/bar?query#fragment", {"http", "", "", "example.org", 0, "/foo/bar", "query", "", "http://example.org/foo/bar?query"});
+    checkRelativeURLDifferences("ws:", "http://example.org/foo/bar",
+        {"ws", "", "", "", 0, "", "", "", "ws:"},
+        {"ws", "", "", "", 0, "s:", "", "", "ws:s:"});
+    checkRelativeURL("notspecial:", "http://example.org/foo/bar", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
 }
 
 } // namespace TestWebKitAPI

@@ -576,9 +576,9 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                         m_url.m_cannotBeABaseURL = true;
                         state = State::CannotBeABaseURLPath;
                     }
-                    ++c;
-                    break;
                 }
+                ++c;
+                break;
             } else {
                 m_buffer.clear();
                 state = State::NoScheme;
@@ -968,6 +968,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         break;
     case State::SpecialRelativeOrAuthority:
         LOG_FINAL_STATE("SpecialRelativeOrAuthority");
+        copyURLPartsUntil(base, URLPart::QueryEnd);
+        m_url.m_fragmentEnd = m_url.m_queryEnd;
         break;
     case State::PathOrAuthority:
         LOG_FINAL_STATE("PathOrAuthority");
@@ -987,6 +989,15 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         break;
     case State::SpecialAuthoritySlashes:
         LOG_FINAL_STATE("SpecialAuthoritySlashes");
+        m_url.m_userStart = m_buffer.length();
+        m_url.m_userEnd = m_url.m_userStart;
+        m_url.m_passwordEnd = m_url.m_userStart;
+        m_url.m_hostEnd = m_url.m_userStart;
+        m_url.m_portEnd = m_url.m_userStart;
+        m_url.m_pathAfterLastSlash = m_url.m_userStart;
+        m_url.m_pathEnd = m_url.m_userStart;
+        m_url.m_queryEnd = m_url.m_userStart;
+        m_url.m_fragmentEnd = m_url.m_userStart;
         break;
     case State::SpecialAuthorityIgnoreSlashes:
         LOG_FINAL_STATE("SpecialAuthorityIgnoreSlashes");
