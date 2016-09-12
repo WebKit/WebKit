@@ -59,8 +59,7 @@ namespace WebCore {
 
 static const double elementMainContentCheckInterval = .250;
 
-static bool isMainContent(const HTMLMediaElement&);
-static bool isElementLargeEnoughForMainContent(const HTMLMediaElement&);
+static bool isElementLargeEnoughForMainContent(const HTMLMediaElement&, MediaSessionMainContentPurpose);
 
 #if !LOG_DISABLED
 static String restrictionName(MediaElementSession::BehaviorRestrictions restriction)
@@ -274,7 +273,7 @@ bool MediaElementSession::canShowControlsManager() const
             return false;
         }
 
-        if (isLargeEnoughForMainContent()) {
+        if (isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls)) {
             LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Is main content");
             return true;
         }
@@ -284,9 +283,9 @@ bool MediaElementSession::canShowControlsManager() const
     return false;
 }
 
-bool MediaElementSession::isLargeEnoughForMainContent() const
+bool MediaElementSession::isLargeEnoughForMainContent(MediaSessionMainContentPurpose purpose) const
 {
-    return isElementLargeEnoughForMainContent(m_element);
+    return isElementLargeEnoughForMainContent(m_element, purpose);
 }
 
 double MediaElementSession::mostRecentUserInteractionTime() const
@@ -296,7 +295,7 @@ double MediaElementSession::mostRecentUserInteractionTime() const
 
 bool MediaElementSession::wantsToObserveViewportVisibilityForMediaControls() const
 {
-    return isLargeEnoughForMainContent();
+    return isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls);
 }
 
 bool MediaElementSession::wantsToObserveViewportVisibilityForAutoplay() const
@@ -582,7 +581,7 @@ size_t MediaElementSession::maximumMediaSourceBufferSize(const SourceBuffer& buf
 }
 #endif
 
-static bool isMainContent(const HTMLMediaElement& element)
+static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
 {
     if (!element.hasAudio() || !element.hasVideo())
         return false;
@@ -592,7 +591,7 @@ static bool isMainContent(const HTMLMediaElement& element)
     if (!renderer)
         return false;
 
-    if (!isElementLargeEnoughForMainContent(element))
+    if (!isElementLargeEnoughForMainContent(element, MediaSessionMainContentPurpose::Autoplay))
         return false;
 
     // Elements which are hidden by style, or have been scrolled out of view, cannot be main content.
@@ -652,10 +651,10 @@ static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)
     return maxVisibleClientWidth * maxVisibleClientHeight > minimumPercentageOfMainFrameAreaForMainContent * mainFrameView.visibleWidth() * mainFrameView.visibleHeight();
 }
 
-static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element)
+static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element, MediaSessionMainContentPurpose purpose)
 {
     static const double elementMainContentAreaMinimum = 400 * 300;
-    static const double maximumAspectRatio = 1.8; // Slightly larger than 16:9.
+    static const double maximumAspectRatio = purpose == MediaSessionMainContentPurpose::MediaControls ? 3 : 1.8;
     static const double minimumAspectRatio = .5; // Slightly smaller than 9:16.
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
@@ -688,7 +687,7 @@ void MediaElementSession::mainContentCheckTimerFired()
 bool MediaElementSession::updateIsMainContent() const
 {
     bool wasMainContent = m_isMainContent;
-    m_isMainContent = isMainContent(m_element);
+    m_isMainContent = isMainContentForPurposesOfAutoplay(m_element);
 
     if (m_isMainContent != wasMainContent)
         m_element.updateShouldPlay();

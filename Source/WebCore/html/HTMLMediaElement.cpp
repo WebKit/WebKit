@@ -364,7 +364,7 @@ static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElem
         session.mostRecentUserInteractionTime(),
         session.canShowControlsManager(),
         element.isFullscreen() || element.isVisibleInViewport(),
-        session.isLargeEnoughForMainContent(),
+        session.isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls),
         element.isPlaying() && element.hasAudio() && !element.muted()
     };
 }
