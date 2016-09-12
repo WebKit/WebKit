@@ -104,14 +104,18 @@ void HTMLOListElement::updateItemValues()
     RenderListItem::updateItemValuesForOrderedList(*this);
 }
 
-unsigned HTMLOListElement::itemCount(ShouldLayout shouldLayout) const
+unsigned HTMLOListElement::itemCount() const
 {
-    if (shouldLayout == ShouldLayout::Yes)
-        document().updateLayoutIgnorePendingStylesheets();
-
     if (m_shouldRecalculateItemCount)
         const_cast<HTMLOListElement*>(this)->recalculateItemCount();
     return m_itemCount;
+}
+
+unsigned HTMLOListElement::itemCountAfterLayout() const
+{
+    document().updateLayoutIgnorePendingStylesheets();
+
+    return itemCount();
 }
 
 void HTMLOListElement::recalculateItemCount()

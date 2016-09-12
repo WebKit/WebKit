@@ -35,8 +35,8 @@ public:
     // FIXME: The reason we have this start() function which does not trigger layout is because it is called
     // from rendering code and this is unfortunately one of the few cases where the render tree is mutated
     // while in layout.
-    int start() const { return m_start ? m_start.value() : (m_isReversed ? itemCount(ShouldLayout::No) : 1); }
-    int startForBindings() const { return m_start ? m_start.value() : (m_isReversed ? itemCount(ShouldLayout::Yes) : 1); }
+    int start() const { return m_start ? m_start.value() : (m_isReversed ? itemCount() : 1); }
+    int startForBindings() const { return m_start ? m_start.value() : (m_isReversed ? itemCountAfterLayout() : 1); }
 
     WEBCORE_EXPORT void setStartForBindings(int);
 
@@ -49,8 +49,8 @@ private:
         
     void updateItemValues();
 
-    enum class ShouldLayout { No, Yes };
-    WEBCORE_EXPORT unsigned itemCount(ShouldLayout) const;
+    WEBCORE_EXPORT unsigned itemCountAfterLayout() const;
+    WEBCORE_EXPORT unsigned itemCount() const;
 
     WEBCORE_EXPORT void recalculateItemCount();
 
