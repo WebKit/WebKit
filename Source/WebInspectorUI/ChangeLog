@@ -1,3 +1,18 @@
+2016-09-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Object.shallowEqual() should return false if object prototype chains differ
+        https://bugs.webkit.org/show_bug.cgi?id=161852
+
+        Reviewed by Joseph Pecoraro.
+
+        Improve Object.shallowEqual so it won't produce false positives.
+
+        * UserInterface/Base/Utilities.js:
+        (value):
+        Object.shallowEqual should return false for non-array arguments.
+        Since typeof null === "object", use `instanceof` instead to avoid separate
+        null checks. Also use Array.shallowEqual fast path when both arguments are arrays.
+
 2016-09-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Combine similar SVG files for Styles sidebar

@@ -47,12 +47,19 @@ Object.defineProperty(Object, "shallowEqual",
     {
         // Checks if two objects have the same top-level properties.
 
+        // Only objects can proceed.
+        if (!(a instanceof Object) || !(b instanceof Object))
+            return false;
+
         // Check for strict equality in case they are the same object.
         if (a === b)
             return true;
 
-        // Only objects can proceed. null is an object, but Object.keys throws for null.
-        if (typeof a !== "object" || typeof b !== "object" || a === null || b === null)
+        // Use an optimized version of shallowEqual for arrays.
+        if ((a instanceof Array) && (b instanceof Array))
+            return Array.shallowEqual(a, b);
+
+        if (a.constructor !== b.constructor)
             return false;
 
         var aKeys = Object.keys(a);
