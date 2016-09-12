@@ -1,3 +1,19 @@
+2016-09-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r205223): Web Inspector: Debugger popover title and code aren't horizontally aligned
+        https://bugs.webkit.org/show_bug.cgi?id=161848
+        <rdar://problem/28250703>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .debugger-popover-content > .title):
+        (.popover .debugger-popover-content.function > .body):
+        Make left and right padding the same.
+
+        (.popover .debugger-popover-content.function > .body .CodeMirror pre):
+        Override left padding defined in CodeMirrorOverrides.css by `.CodeMirror pre` rule.
+
 2016-09-12  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Hide ["PrivateSymbol.concatSlowPath"] and other PrivateSymbols from memory edges
