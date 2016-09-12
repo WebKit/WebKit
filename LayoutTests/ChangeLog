@@ -1,3 +1,12 @@
+2016-09-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking accessibility/mac/value-change/value-change-user-info-contenteditable.html as flaky on mac-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=160042
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-09-12  Simon Fraser  <simon.fraser@apple.com>
 
         Make -webkit-transition-* and -webkit-animation-* properties be pure aliases of the unprefixed ones
