@@ -517,7 +517,7 @@ bool FrameLoader::closeURL()
         unloadEventPolicy = UnloadEventPolicyNone;
     } else {
         // Should only send the pagehide event here if the current document exists and has not been placed in the page cache.
-        unloadEventPolicy = currentDocument && !currentDocument->inPageCache() ? UnloadEventPolicyUnloadAndPageHide : UnloadEventPolicyUnloadOnly;
+        unloadEventPolicy = currentDocument && currentDocument->pageCacheState() == Document::NotInPageCache ? UnloadEventPolicyUnloadAndPageHide : UnloadEventPolicyUnloadOnly;
     }
 
     stopLoading(unloadEventPolicy);
@@ -590,7 +590,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
         return;
     m_needsClear = false;
     
-    if (!m_frame.document()->inPageCache()) {
+    if (m_frame.document()->pageCacheState() != Document::InPageCache) {
         m_frame.document()->cancelParsing();
         m_frame.document()->stopActiveDOMObjects();
         bool hadLivingRenderTree = m_frame.document()->hasLivingRenderTree();
@@ -603,7 +603,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     if (clearWindowProperties) {
         InspectorInstrumentation::frameWindowDiscarded(&m_frame, m_frame.document()->domWindow());
         m_frame.document()->domWindow()->resetUnlessSuspendedForDocumentSuspension();
-        m_frame.script().clearWindowShell(newDocument->domWindow(), m_frame.document()->inPageCache());
+        m_frame.script().clearWindowShell(newDocument->domWindow(), m_frame.document()->pageCacheState() == Document::AboutToEnterPageCache);
     }
 
     m_frame.selection().prepareForDestruction();
@@ -2924,13 +2924,13 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
         if (m_pageDismissalEventBeingDispatched == PageDismissalType::None) {
             if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide) {
                 m_pageDismissalEventBeingDispatched = PageDismissalType::PageHide;
-                m_frame.document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame.document()->inPageCache()), m_frame.document());
+                m_frame.document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame.document()->pageCacheState() == Document::AboutToEnterPageCache), m_frame.document());
             }
 
             // FIXME: update Page Visibility state here.
             // https://bugs.webkit.org/show_bug.cgi?id=116770
 
-            if (!m_frame.document()->inPageCache()) {
+            if (m_frame.document()->pageCacheState() == Document::NotInPageCache) {
                 Ref<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
                 // The DocumentLoader (and thus its LoadTiming) might get destroyed
                 // while dispatching the event, so protect it to prevent writing the end
@@ -2956,7 +2956,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
     if (!m_frame.document())
         return;
 
-    if (m_frame.document()->inPageCache())
+    if (m_frame.document()->pageCacheState() != Document::NotInPageCache)
         return;
 
     // Don't remove event listeners from a transitional empty document (see bug 28716 for more information).

@@ -579,12 +579,6 @@ void Page::setCanStartMedia(bool canStartMedia)
     }
 }
 
-bool Page::inPageCache() const
-{
-    auto* document = mainFrame().document();
-    return document && document->inPageCache();
-}
-
 static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
 {
     return forward

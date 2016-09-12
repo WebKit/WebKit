@@ -166,8 +166,6 @@ public:
     MainFrame& mainFrame() { return m_mainFrame.get(); }
     const MainFrame& mainFrame() const { return m_mainFrame.get(); }
 
-    bool inPageCache() const;
-
     bool openedByDOM() const;
     void setOpenedByDOM();
 

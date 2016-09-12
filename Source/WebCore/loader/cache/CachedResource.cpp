@@ -268,9 +268,14 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
     Frame& frame = *cachedResourceLoader.frame();
 
     // Prevent new loads if we are in the PageCache or being added to the PageCache.
-    if (frame.page() && frame.page()->inPageCache()) {
-        failBeforeStarting();
-        return;
+    // We query the top document because new frames may be created in pagehide event handlers
+    // and their pageCacheState will not reflect the fact that they are about to enter page
+    // cache.
+    if (auto* topDocument = frame.mainFrame().document()) {
+        if (topDocument->pageCacheState() != Document::NotInPageCache) {
+            failBeforeStarting();
+            return;
+        }
     }
 
     FrameLoader& frameLoader = frame.loader();
