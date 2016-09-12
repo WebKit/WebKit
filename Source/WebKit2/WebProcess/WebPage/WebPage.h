@@ -909,6 +909,7 @@ public:
     void updateCachedDocumentLoader(WebDocumentLoader&, WebCore::Frame&);
 
     void getBytecodeProfile(uint64_t callbackID);
+    void getSamplingProfilerOutput(uint64_t callbackID);
     
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);

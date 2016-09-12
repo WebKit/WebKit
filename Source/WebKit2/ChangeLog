@@ -1,3 +1,28 @@
+2016-09-12  Saam Barati  <sbarati@apple.com>
+
+        Add WebKit support for an option in Safari's debug menu similar to "Get Bytecode Profile" but for the Sampling Profiler's data
+        https://bugs.webkit.org/show_bug.cgi?id=161785
+
+        Reviewed by Tim Horton.
+
+        This patch follows in the steps of how we dump output for the
+        internal JSC bytecode profiler tool, but now also for the internal
+        JSC sampling profiler tool. This can be used when doing performance
+        analysis work analyzing the JS execution of a page.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSamplingProfilerOutput):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getSamplingProfilerOutput):
+        (WebKit::WebPageProxy::invalidateStringCallback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getSamplingProfilerOutput):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-09-12  Keith Rollin  <krollin@apple.com>
 
         Enhance Network logging

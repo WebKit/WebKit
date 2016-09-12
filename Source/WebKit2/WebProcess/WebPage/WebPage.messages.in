@@ -402,6 +402,8 @@ messages -> WebPage LegacyReceiver {
     SetScrollbarOverlayStyle(Optional<uint32_t> scrollbarStyle)
 
     GetBytecodeProfile(uint64_t callbackID)
+
+    GetSamplingProfilerOutput(uint64_t callbackID)
     
     TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID)
 #if PLATFORM(MAC)

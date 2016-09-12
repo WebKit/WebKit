@@ -96,6 +96,9 @@ WK_EXPORT void WKPageSetMayStartMediaWhenInWindow(WKPageRef page, bool mayStartM
 typedef void (*WKPageGetBytecodeProfileFunction)(WKStringRef, WKErrorRef, void*);
 WK_EXPORT void WKPageGetBytecodeProfile(WKPageRef page, void* context, WKPageGetBytecodeProfileFunction function);
 
+typedef void (*WKPageGetSamplingProfilerOutputFunction)(WKStringRef, WKErrorRef, void*);
+WK_EXPORT void WKPageGetSamplingProfilerOutput(WKPageRef page, void* context, WKPageGetSamplingProfilerOutputFunction function);
+
 typedef void (*WKPageIsWebProcessResponsiveFunction)(bool isWebProcessResponsive, void* context);
 WK_EXPORT void WKPageIsWebProcessResponsive(WKPageRef page, void* context, WKPageIsWebProcessResponsiveFunction function);
     

@@ -759,6 +759,7 @@ public:
 
     void getContentsAsString(std::function<void (const String&, CallbackBase::Error)>);
     void getBytecodeProfile(std::function<void (const String&, CallbackBase::Error)>);
+    void getSamplingProfilerOutput(std::function<void (const String&, CallbackBase::Error)>);
     void isWebProcessResponsive(std::function<void (bool isWebProcessResponsive)>);
 
 #if ENABLE(MHTML)
@@ -1374,6 +1375,7 @@ private:
     void dataCallback(const IPC::DataReference&, uint64_t);
     void imageCallback(const ShareableBitmap::Handle&, uint64_t);
     void stringCallback(const String&, uint64_t);
+    void invalidateStringCallback(uint64_t);
     void scriptValueCallback(const IPC::DataReference&, bool hadException, const WebCore::ExceptionDetails&, uint64_t);
     void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, uint64_t);
     void validateCommandCallback(const String&, bool, int, uint64_t);

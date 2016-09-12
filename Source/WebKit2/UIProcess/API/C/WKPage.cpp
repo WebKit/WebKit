@@ -2438,6 +2438,11 @@ void WKPageGetBytecodeProfile(WKPageRef pageRef, void* context, WKPageGetBytecod
     toImpl(pageRef)->getBytecodeProfile(toGenericCallbackFunction(context, callback));
 }
 
+void WKPageGetSamplingProfilerOutput(WKPageRef pageRef, void* context, WKPageGetSamplingProfilerOutputFunction callback)
+{
+    toImpl(pageRef)->getSamplingProfilerOutput(toGenericCallbackFunction(context, callback));
+}
+
 void WKPageIsWebProcessResponsive(WKPageRef pageRef, void* context, WKPageIsWebProcessResponsiveFunction callback)
 {
     toImpl(pageRef)->isWebProcessResponsive([context, callback](bool isWebProcessResponsive) {

@@ -2877,6 +2877,18 @@ void WebPageProxy::getBytecodeProfile(std::function<void (const String&, Callbac
     m_process->send(Messages::WebPage::GetBytecodeProfile(callbackID), m_pageID);
 }
 
+void WebPageProxy::getSamplingProfilerOutput(std::function<void (const String&, CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(String(), CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    m_loadDependentStringCallbackIDs.add(callbackID);
+    m_process->send(Messages::WebPage::GetSamplingProfilerOutput(callbackID), m_pageID);
+}
+
 void WebPageProxy::isWebProcessResponsive(std::function<void (bool isWebProcessResponsive)> callbackFunction)
 {
     if (!isValid()) {
@@ -4982,6 +4994,20 @@ void WebPageProxy::stringCallback(const String& resultString, uint64_t callbackI
     m_loadDependentStringCallbackIDs.remove(callbackID);
 
     callback->performCallbackWithReturnValue(resultString.impl());
+}
+
+void WebPageProxy::invalidateStringCallback(uint64_t callbackID)
+{
+    auto callback = m_callbacks.take<StringCallback>(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        // this can validly happen if a load invalidated the callback, though
+        return;
+    }
+
+    m_loadDependentStringCallbackIDs.remove(callbackID);
+
+    callback->invalidate();
 }
 
 void WebPageProxy::scriptValueCallback(const IPC::DataReference& dataReference, bool hadException, const ExceptionDetails& details, uint64_t callbackID)

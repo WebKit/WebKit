@@ -183,6 +183,7 @@
 #include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
+#include <runtime/SamplingProfiler.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TemporaryChange.h>
 
@@ -5376,6 +5377,24 @@ void WebPage::getBytecodeProfile(uint64_t callbackID)
     String result = JSDOMWindow::commonVM().m_perBytecodeProfiler->toJSON();
     ASSERT(result.length());
     send(Messages::WebPageProxy::StringCallback(result, callbackID));
+}
+
+void WebPage::getSamplingProfilerOutput(uint64_t callbackID)
+{
+#if ENABLE(SAMPLING_PROFILER)
+    SamplingProfiler* samplingProfiler = JSDOMWindow::commonVM().samplingProfiler();
+    if (!samplingProfiler) {
+        send(Messages::WebPageProxy::InvalidateStringCallback(callbackID));
+        return;
+    }
+
+    StringPrintStream result;
+    samplingProfiler->reportTopFunctions(result);
+    samplingProfiler->reportTopBytecodes(result);
+    send(Messages::WebPageProxy::StringCallback(result.toString(), callbackID));
+#else
+    send(Messages::WebPageProxy::InvalidateStringCallback(callbackID));
+#endif
 }
 
 PassRefPtr<WebCore::Range> WebPage::rangeFromEditingRange(WebCore::Frame& frame, const EditingRange& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
