@@ -559,11 +559,13 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                     m_url.m_portEnd = m_url.m_userStart;
                     auto maybeSlash = c;
                     ++maybeSlash;
+                    while (maybeSlash != end && isTabOrNewline(*maybeSlash))
+                        ++maybeSlash;
                     if (maybeSlash != end && *maybeSlash == '/') {
                         m_buffer.append('/');
                         m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
                         state = State::PathOrAuthority;
-                        ++c;
+                        c = maybeSlash;
                         ASSERT(*c == '/');
                     } else {
                         m_url.m_pathAfterLastSlash = m_url.m_userStart;
@@ -677,13 +679,13 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         case State::SpecialAuthoritySlashes:
             LOG_STATE("SpecialAuthoritySlashes");
             m_buffer.append("//");
-            if (*c == '/') {
+            if (*c == '/' || *c == '\\') {
                 ++c;
                 while (c != end && isTabOrNewline(*c))
                     ++c;
                 if (c == end)
                     return failure(input);
-                if (*c == '/')
+                if (*c == '/' || *c == '\\')
                     ++c;
             }
             state = State::SpecialAuthorityIgnoreSlashes;
@@ -925,7 +927,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 m_url.m_queryEnd = m_url.m_pathEnd;
                 state = State::Fragment;
             } else {
-                m_buffer.append(*c);
+                utf8PercentEncode(*c, m_buffer, isInSimpleEncodeSet);
                 ++c;
             }
             break;

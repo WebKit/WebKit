@@ -272,6 +272,10 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("http:\\\\foo.com/", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
     checkRelativeURL("http:\\\\foo.com", "http://example.org/foo/bar", {"http", "", "", "foo.com", 0, "/", "", "", "http://foo.com/"});
     checkRelativeURL("http://ExAmPlE.CoM", "http://other.com", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
+    
+    // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
+    // but it is included in the web platform tests.
+    checkRelativeURL("http:\\\\host\\foo", "about:blank", {"http", "", "", "host", 0, "/foo", "", "", "http://host/foo"});
 }
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
@@ -577,6 +581,16 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("/i", "sc:sd/sd");
     shouldFail("?i", "sc:sd");
     shouldFail("?i", "sc:sd/sd");
+}
+
+// These are in the spec but not in the web platform tests.
+TEST_F(URLParserTest, AdditionalTests)
+{
+    checkURL("about:\a\aabc", {"about", "", "", "", 0, "%07%07abc", "", "", "about:%07%07abc"});
+    checkURL("notspecial:\t\t\n\t", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
+    checkURLDifferences("notspecial\t\t\n\t:\t\t\n\t/\t\t\n\t/\t\t\n\thost",
+        {"notspecial", "", "", "host", 0, "/", "", "", "notspecial://host/"},
+        {"notspecial", "", "", "host", 0, "", "", "", "notspecial://host"});
 }
 
 } // namespace TestWebKitAPI

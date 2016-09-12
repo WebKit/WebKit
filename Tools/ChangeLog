@@ -1,3 +1,13 @@
+2016-09-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix more URLParser quirks
+        https://bugs.webkit.org/show_bug.cgi?id=161834
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-09-10  Alex Christensen  <achristensen@webkit.org>
 
         Optimize URLParser performance
