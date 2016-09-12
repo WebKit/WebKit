@@ -241,12 +241,13 @@ static bool isSpecialScheme(StringView scheme)
     }
 }
 
-static StringView bufferView(const StringBuilder& builder, unsigned start, unsigned length)
+template<typename T>
+static StringView bufferView(const T& buffer, unsigned start, unsigned length)
 {
-    ASSERT(builder.length() >= length);
-    if (builder.is8Bit())
-        return StringView(builder.characters8() + start, length);
-    return StringView(builder.characters16() + start, length);
+    ASSERT(buffer.length() >= length);
+    if (buffer.is8Bit())
+        return StringView(buffer.characters8() + start, length);
+    return StringView(buffer.characters16() + start, length);
 }
 
 enum class URLParser::URLPart {
@@ -480,7 +481,10 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
     // FIXME: We shouldn't need to allocate another buffer for this.
     StringBuilder queryBuffer;
 
-    auto codePoints = StringView(input).codePoints();
+    unsigned endIndex = input.length();
+    while (endIndex && isC0ControlOrSpace(input[endIndex - 1]))
+        endIndex--;
+    auto codePoints = bufferView(input, 0, endIndex).codePoints();
     auto c = codePoints.begin();
     auto end = codePoints.end();
     auto authorityOrHostBegin = codePoints.begin();

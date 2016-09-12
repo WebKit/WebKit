@@ -202,6 +202,8 @@ TEST_F(URLParserTest, Basic)
     checkURL("sc:/pa", {"sc", "", "", "", 0, "/pa", "", "", "sc:/pa"});
     checkURL("sc:/pa/", {"sc", "", "", "", 0, "/pa/", "", "", "sc:/pa/"});
     checkURL("sc://pa/", {"sc", "", "", "pa", 0, "/", "", "", "sc://pa/"});
+    checkURL("http://host   \a   ", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
+    // FIXME: Fix and add a test with an invalid surrogate pair at the end with a space as the second code unit.
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
