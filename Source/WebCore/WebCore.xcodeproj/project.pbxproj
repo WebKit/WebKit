@@ -3342,6 +3342,10 @@
 		93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B79E0BA6032600854064 /* JSCDATASection.cpp */; };
 		93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B79F0BA6032600854064 /* JSCDATASection.h */; };
 		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9444CBD31D860C8B0073A074 /* SizesCalcParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9444CBD01D860C740073A074 /* SizesCalcParser.cpp */; };
+		9444CBD41D860C8B0073A074 /* SizesCalcParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 9444CBCF1D860C740073A074 /* SizesCalcParser.h */; };
+		9444CBD51D860C8B0073A074 /* SizesAttributeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9444CBD21D860C740073A074 /* SizesAttributeParser.cpp */; };
+		9444CBD61D860C8B0073A074 /* SizesAttributeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 9444CBD11D860C740073A074 /* SizesAttributeParser.h */; };
 		946D372D1D6CB2940077084F /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 946D37281D6CB28B0077084F /* CSSParser.cpp */; };
 		946D372E1D6CB2940077084F /* CSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D37291D6CB28B0077084F /* CSSParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		946D372F1D6CB2940077084F /* CSSParserMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D372A1D6CB28B0077084F /* CSSParserMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10499,6 +10503,10 @@
 		93F9B79E0BA6032600854064 /* JSCDATASection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCDATASection.cpp; sourceTree = "<group>"; };
 		93F9B79F0BA6032600854064 /* JSCDATASection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCDATASection.h; sourceTree = "<group>"; };
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
+		9444CBCF1D860C740073A074 /* SizesCalcParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizesCalcParser.h; path = parser/SizesCalcParser.h; sourceTree = "<group>"; };
+		9444CBD01D860C740073A074 /* SizesCalcParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SizesCalcParser.cpp; path = parser/SizesCalcParser.cpp; sourceTree = "<group>"; };
+		9444CBD11D860C740073A074 /* SizesAttributeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizesAttributeParser.h; path = parser/SizesAttributeParser.h; sourceTree = "<group>"; };
+		9444CBD21D860C740073A074 /* SizesAttributeParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SizesAttributeParser.cpp; path = parser/SizesAttributeParser.cpp; sourceTree = "<group>"; };
 		946D37281D6CB28B0077084F /* CSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParser.cpp; path = parser/CSSParser.cpp; sourceTree = "<group>"; };
 		946D37291D6CB28B0077084F /* CSSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParser.h; path = parser/CSSParser.h; sourceTree = "<group>"; };
 		946D372A1D6CB28B0077084F /* CSSParserMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserMode.h; path = parser/CSSParserMode.h; sourceTree = "<group>"; };
@@ -18210,6 +18218,10 @@
 				9493B6B71D74B3950088E780 /* MediaQueryBlockWatcher.h */,
 				9493B6B81D74B3950088E780 /* MediaQueryParser.cpp */,
 				9493B6B91D74B3950088E780 /* MediaQueryParser.h */,
+				9444CBD01D860C740073A074 /* SizesCalcParser.cpp */,
+				9444CBCF1D860C740073A074 /* SizesCalcParser.h */,
+				9444CBD21D860C740073A074 /* SizesAttributeParser.cpp */,
+				9444CBD11D860C740073A074 /* SizesAttributeParser.h */,
 				946D37321D6CC3720077084F /* SVGCSSParser.cpp */,
 			);
 			name = parser;
@@ -24809,6 +24821,7 @@
 				1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */,
 				510A58E51BAA40B100C19282 /* InProcessIDBServer.h in Headers */,
 				37E3524D12450C6600BAF5D9 /* InputType.h in Headers */,
+				9444CBD61D860C8B0073A074 /* SizesAttributeParser.h in Headers */,
 				C348612415FDE21E007A1CC9 /* InputTypeNames.h in Headers */,
 				93309DEA099E64920056E581 /* InsertIntoTextNodeCommand.h in Headers */,
 				93309DEC099E64920056E581 /* InsertLineBreakCommand.h in Headers */,
@@ -27035,6 +27048,7 @@
 				7C48A6D1191C9D6500026674 /* WebKitNamespace.h in Headers */,
 				A5DEBDA416FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h in Headers */,
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
+				9444CBD41D860C8B0073A074 /* SizesCalcParser.h in Headers */,
 				5709E8CF1D413D9A003244AC /* WebKitSubtleCrypto.h in Headers */,
 				414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
@@ -28408,6 +28422,7 @@
 				2D5A592F152525230036EE51 /* ImageOrientation.cpp in Sources */,
 				B51A2F4117D7D5DE0072517A /* ImageQualityController.cpp in Sources */,
 				0F3C725E1974874B00AEDD0C /* ImageSource.cpp in Sources */,
+				9444CBD31D860C8B0073A074 /* SizesCalcParser.cpp in Sources */,
 				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
 				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,
 				BE961C5418AD338500D07DC5 /* InbandDataTextTrack.cpp in Sources */,
@@ -29922,6 +29937,7 @@
 				4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */,
 				E4AFD00B0DAF335400F5F55C /* SMILTime.cpp in Sources */,
 				E4AFD00D0DAF335500F5F55C /* SMILTimeContainer.cpp in Sources */,
+				9444CBD51D860C8B0073A074 /* SizesAttributeParser.cpp in Sources */,
 				5C688AA31D3814BF000B54FA /* SocketProvider.cpp in Sources */,
 				510D4A36103165EE0049EA54 /* SocketStreamHandle.cpp in Sources */,
 				51ABAE1F103C1913008C5260 /* SocketStreamHandleImplCFNet.cpp in Sources */,

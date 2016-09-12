@@ -1366,6 +1366,8 @@ set(WebCore_SOURCES
     css/parser/CSSTokenizerInputStream.cpp
     css/parser/MediaQueryBlockWatcher.cpp
     css/parser/MediaQueryParser.cpp
+    css/parser/SizesAttributeParser.cpp
+    css/parser/SizesCalcParser.cpp
     css/parser/SVGCSSParser.cpp
 
     cssjit/SelectorCompiler.cpp
