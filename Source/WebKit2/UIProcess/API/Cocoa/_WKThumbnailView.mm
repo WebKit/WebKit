@@ -59,6 +59,7 @@ using namespace WebKit;
 @synthesize snapshotSize=_snapshotSize;
 @synthesize _waitingForSnapshot=_waitingForSnapshot;
 @synthesize exclusivelyUsesSnapshot=_exclusivelyUsesSnapshot;
+@synthesize shouldKeepSnapshotWhenRemovedFromSuperview=_shouldKeepSnapshotWhenRemovedFromSuperview;
 
 - (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView
 {
@@ -108,6 +109,9 @@ using namespace WebKit;
         [_wkView _setIgnoresAllEvents:NO];
         _webPageProxy->setMayStartMediaWhenInWindow(_originalMayStartMediaWhenInWindow);
     }
+
+    if (_shouldKeepSnapshotWhenRemovedFromSuperview)
+        return;
 
     self.layer.contents = nil;
     _lastSnapshotScale = NAN;

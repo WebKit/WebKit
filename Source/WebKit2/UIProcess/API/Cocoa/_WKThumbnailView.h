@@ -42,6 +42,9 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic, readonly) CGSize snapshotSize;
 @property (nonatomic) BOOL exclusivelyUsesSnapshot;
 
+// Defaults to NO.
+@property (nonatomic) BOOL shouldKeepSnapshotWhenRemovedFromSuperview;
+
 // This should be removed when all clients go away; it is always YES now.
 @property (nonatomic) BOOL usesSnapshot;
 
