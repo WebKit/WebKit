@@ -36,7 +36,12 @@ onload = function() {
     // The specification seems to allow access to href but Firefox does not.
     shouldBeUndefined("Object.getOwnPropertyDescriptor(window.location, 'href').get.call(frames[0].location)");
 
-    finishJSTest();
+    // Setting 'href' cross origin should be allowed.
+    shouldNotThrow("frames[0].location.href = 'about:blank'");
+    setTimeout(function() {
+        shouldBeEqualToString("frames[0].location.href", "about:blank");
+        finishJSTest();
+    }, 100);
 };
 </script>
 <script src="../../../resources/js-test-post.js"></script>

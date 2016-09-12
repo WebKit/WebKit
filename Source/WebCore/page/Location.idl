@@ -38,7 +38,7 @@
     JSCustomDefineOwnPropertyOnPrototype,
     Unforgeable
 ] interface Location {
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString href;
+    [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] attribute DOMString href;
 
     [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void assign(DOMString url);
     [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(DOMString url);
