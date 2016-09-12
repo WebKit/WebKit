@@ -1,3 +1,13 @@
+2016-09-12  DAN SAUNDERS  <dasau@microsoft.com>
+
+        AX: WKWebView for macOS does not allow configuration of tabsToLinks
+        https://bugs.webkit.org/show_bug.cgi?id=161394
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Coding.mm:
+        (TEST):
+
 2016-09-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove trailing control characters and spaces before parsing a URL

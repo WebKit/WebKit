@@ -1,3 +1,17 @@
+2016-09-12  DAN SAUNDERS  <dasau@microsoft.com>
+
+        AX: WKWebView for macOS does not allow configuration of tabsToLinks
+        https://bugs.webkit.org/show_bug.cgi?id=161394
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences encodeWithCoder:]):
+        (-[WKPreferences initWithCoder:]):
+        (-[WKPreferences tabFocusesLinks]):
+        (-[WKPreferences setTabFocusesLinks:]):
+
 2016-09-12  Saam Barati  <sbarati@apple.com>
 
         Add WebKit support for an option in Safari's debug menu similar to "Get Bytecode Profile" but for the Sampling Profiler's data

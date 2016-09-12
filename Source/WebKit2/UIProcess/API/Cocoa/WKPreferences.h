@@ -63,6 +63,13 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  @discussion The default value is NO.
  */
 @property (nonatomic) BOOL plugInsEnabled;
+
+/*!
+ @property tabFocusesLinks
+ @abstract If tabFocusesLinks is YES, the tab key will focus links and form controls.
+ The option key temporarily reverses this preference.
+ */
+@property (nonatomic) BOOL tabFocusesLinks WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 @end
