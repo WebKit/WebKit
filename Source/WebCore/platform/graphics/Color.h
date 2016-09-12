@@ -194,20 +194,6 @@ private:
     bool m_valid;
 };
 
-class OptionalColor : public Color {
-public:
-    OptionalColor();
-    OptionalColor(const Color&);
-
-    explicit operator bool() const;
-
-private:
-    // FIXME: Change to use Optional<Color>?
-    // FIXME: Convert all callers to use Optional<Color>?
-    bool m_isEngaged;
-    Color m_color;
-};
-
 bool operator==(const Color&, const Color&);
 bool operator!=(const Color&, const Color&);
 
