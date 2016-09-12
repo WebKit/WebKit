@@ -466,6 +466,7 @@ TEST_F(URLParserTest, ParserDifferences)
 
 TEST_F(URLParserTest, DefaultPort)
 {
+    checkURL("FtP://host:21/", {"ftp", "", "", "host", 0, "/", "", "", "ftp://host/"});
     checkURL("ftp://host:21/", {"ftp", "", "", "host", 0, "/", "", "", "ftp://host/"});
     checkURL("ftp://host:22/", {"ftp", "", "", "host", 22, "/", "", "", "ftp://host:22/"});
     checkURLDifferences("ftp://host:21",
@@ -475,6 +476,7 @@ TEST_F(URLParserTest, DefaultPort)
         {"ftp", "", "", "host", 22, "/", "", "", "ftp://host:22/"},
         {"ftp", "", "", "host", 22, "", "", "", "ftp://host:22"});
     
+    checkURL("gOpHeR://host:70/", {"gopher", "", "", "host", 0, "/", "", "", "gopher://host/"});
     checkURL("gopher://host:70/", {"gopher", "", "", "host", 0, "/", "", "", "gopher://host/"});
     checkURL("gopher://host:71/", {"gopher", "", "", "host", 71, "/", "", "", "gopher://host:71/"});
     // Spec, Chrome, Firefox, and URLParser have "/", URL::parse does not.
@@ -486,16 +488,19 @@ TEST_F(URLParserTest, DefaultPort)
         {"gopher", "", "", "host", 71, "/", "", "", "gopher://host:71/"},
         {"gopher", "", "", "host", 71, "", "", "", "gopher://host:71"});
     
+    checkURL("hTtP://host:80", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkURL("http://host:80", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkURL("http://host:80/", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkURL("http://host:81", {"http", "", "", "host", 81, "/", "", "", "http://host:81/"});
     checkURL("http://host:81/", {"http", "", "", "host", 81, "/", "", "", "http://host:81/"});
     
+    checkURL("hTtPs://host:443", {"https", "", "", "host", 0, "/", "", "", "https://host/"});
     checkURL("https://host:443", {"https", "", "", "host", 0, "/", "", "", "https://host/"});
     checkURL("https://host:443/", {"https", "", "", "host", 0, "/", "", "", "https://host/"});
     checkURL("https://host:444", {"https", "", "", "host", 444, "/", "", "", "https://host:444/"});
     checkURL("https://host:444/", {"https", "", "", "host", 444, "/", "", "", "https://host:444/"});
     
+    checkURL("wS://host:80/", {"ws", "", "", "host", 0, "/", "", "", "ws://host/"});
     checkURL("ws://host:80/", {"ws", "", "", "host", 0, "/", "", "", "ws://host/"});
     checkURL("ws://host:81/", {"ws", "", "", "host", 81, "/", "", "", "ws://host:81/"});
     // URLParser matches Chrome and Firefox, but not URL::parse
@@ -506,6 +511,7 @@ TEST_F(URLParserTest, DefaultPort)
         {"ws", "", "", "host", 81, "/", "", "", "ws://host:81/"},
         {"ws", "", "", "host", 81, "", "", "", "ws://host:81"});
     
+    checkURL("WsS://host:443/", {"wss", "", "", "host", 0, "/", "", "", "wss://host/"});
     checkURL("wss://host:443/", {"wss", "", "", "host", 0, "/", "", "", "wss://host/"});
     checkURL("wss://host:444/", {"wss", "", "", "host", 444, "/", "", "", "wss://host:444/"});
     // URLParser matches Chrome and Firefox, but not URL::parse
@@ -517,6 +523,7 @@ TEST_F(URLParserTest, DefaultPort)
         {"wss", "", "", "host", 444, "", "", "", "wss://host:444"});
 
     // 990 is the default ftps port in URL::parse, but it's not in the URL spec. Maybe it should be.
+    checkURL("fTpS://host:990/", {"ftps", "", "", "host", 990, "/", "", "", "ftps://host:990/"});
     checkURL("ftps://host:990/", {"ftps", "", "", "host", 990, "/", "", "", "ftps://host:990/"});
     checkURL("ftps://host:991/", {"ftps", "", "", "host", 991, "/", "", "", "ftps://host:991/"});
     checkURLDifferences("ftps://host:990",
@@ -526,6 +533,7 @@ TEST_F(URLParserTest, DefaultPort)
         {"ftps", "", "", "host", 991, "/", "", "", "ftps://host:991/"},
         {"ftps", "", "", "host", 991, "", "", "", "ftps://host:991"});
 
+    checkURL("uNkNoWn://host:80/", {"unknown", "", "", "host", 80, "/", "", "", "unknown://host:80/"});
     checkURL("unknown://host:80/", {"unknown", "", "", "host", 80, "/", "", "", "unknown://host:80/"});
     checkURL("unknown://host:81/", {"unknown", "", "", "host", 81, "/", "", "", "unknown://host:81/"});
     checkURLDifferences("unknown://host:80",

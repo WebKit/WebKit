@@ -127,27 +127,118 @@ static void encodeQuery(const StringBuilder& source, StringBuilder& destination,
     }
 }
 
-static bool isDefaultPort(const String& scheme, uint16_t port)
+static bool isDefaultPort(StringView scheme, uint16_t port)
 {
-    static NeverDestroyed<HashMap<String, uint16_t>> defaultPorts(HashMap<String, uint16_t>({
-        {"ftp", 21},
-        {"gopher", 70},
-        {"http", 80},
-        {"https", 443},
-        {"ws", 80},
-        {"wss", 443}}));
-    return defaultPorts.get().get(scheme) == port;
+    static const uint16_t ftpPort = 21;
+    static const uint16_t gopherPort = 70;
+    static const uint16_t httpPort = 80;
+    static const uint16_t httpsPort = 443;
+    static const uint16_t wsPort = 80;
+    static const uint16_t wssPort = 443;
+    
+    auto length = scheme.length();
+    if (!length)
+        return false;
+    switch (scheme[0]) {
+    case 'w':
+        switch (length) {
+        case 2:
+            return scheme[1] == 's'
+                && port == wsPort;
+        case 3:
+            return scheme[1] == 's'
+                && scheme[2] == 's'
+                && port == wssPort;
+        default:
+            return false;
+        }
+    case 'h':
+        switch (length) {
+        case 4:
+            return scheme[1] == 't'
+                && scheme[2] == 't'
+                && scheme[3] == 'p'
+                && port == httpPort;
+        case 5:
+            return scheme[1] == 't'
+                && scheme[2] == 't'
+                && scheme[3] == 'p'
+                && scheme[4] == 's'
+                && port == httpsPort;
+        default:
+            return false;
+        }
+    case 'g':
+        return length == 6
+            && scheme[1] == 'o'
+            && scheme[2] == 'p'
+            && scheme[3] == 'h'
+            && scheme[4] == 'e'
+            && scheme[5] == 'r'
+            && port == gopherPort;
+    case 'f':
+        return length == 3
+            && scheme[1] == 't'
+            && scheme[2] == 'p'
+            && port == ftpPort;
+        return false;
+    default:
+        return false;
+    }
 }
 
 static bool isSpecialScheme(StringView scheme)
 {
-    return scheme == "ftp"
-        || scheme == "file"
-        || scheme == "gopher"
-        || scheme == "http"
-        || scheme == "https"
-        || scheme == "ws"
-        || scheme == "wss";
+    auto length = scheme.length();
+    if (!length)
+        return false;
+    switch (scheme[0]) {
+    case 'f':
+        switch (length) {
+        case 3:
+            return scheme[1] == 't'
+                && scheme[2] == 'p';
+        case 4:
+            return scheme[1] == 'i'
+                && scheme[2] == 'l'
+                && scheme[3] == 'e';
+        default:
+            return false;
+        }
+    case 'g':
+        return length == 6
+            && scheme[1] == 'o'
+            && scheme[2] == 'p'
+            && scheme[3] == 'h'
+            && scheme[4] == 'e'
+            && scheme[5] == 'r';
+    case 'h':
+        switch (length) {
+        case 4:
+            return scheme[1] == 't'
+                && scheme[2] == 't'
+                && scheme[3] == 'p';
+        case 5:
+            return scheme[1] == 't'
+                && scheme[2] == 't'
+                && scheme[3] == 'p'
+                && scheme[4] == 's';
+        default:
+            return false;
+        }
+    case 'w':
+        switch (length) {
+        case 2:
+            return scheme[1] == 's';
+        case 3:
+            return scheme[1] == 's'
+                && scheme[2] == 's';
+        default:
+            return false;
+        }
+    default:
+        return false;
+    }
 }
 
 static StringView bufferView(const StringBuilder& builder, unsigned start, unsigned length)
@@ -1394,9 +1485,7 @@ bool URLParser::parsePort(StringView::CodePoints::Iterator& iterator, const Stri
             return false;
     }
     
-    // FIXME: This shouldn't need a String allocation.
-    String scheme = m_buffer.toStringPreserveCapacity().substring(0, m_url.m_schemeEnd);
-    if (isDefaultPort(scheme, port)) {
+    if (isDefaultPort(bufferView(m_buffer, 0, m_url.m_schemeEnd), port)) {
         ASSERT(m_buffer[m_buffer.length() - 1] == ':');
         m_buffer.resize(m_buffer.length() - 1);
     } else
