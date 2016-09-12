@@ -1,3 +1,12 @@
+2016-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Reduce uses of CGFonts in favor of CTFonts
+        https://bugs.webkit.org/show_bug.cgi?id=161809
+
+        Reviewed by Daniel Bates.
+
+        * wtf/unicode/CharacterNames.h:
+
 2016-09-12  Saam Barati  <sbarati@apple.com>
 
         MapHash should do constant folding when it has a constant argument and its legal to hash that value

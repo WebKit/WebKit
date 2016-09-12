@@ -187,6 +187,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
         overwriteCodePoint('\n', space);
         overwriteCodePoint('\t', space);
         overwriteCodePoint(noBreakSpace, space);
+        overwriteCodePoint(narrowNoBreakSpace, zeroWidthSpace);
         overwriteCodePoint(leftToRightMark, zeroWidthSpace);
         overwriteCodePoint(rightToLeftMark, zeroWidthSpace);
         overwriteCodePoint(leftToRightEmbed, zeroWidthSpace);

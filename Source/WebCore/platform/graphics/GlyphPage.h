@@ -31,7 +31,6 @@
 #define GlyphPage_h
 
 #include "Glyph.h"
-#include <string.h>
 #include <unicode/utypes.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
@@ -43,9 +42,9 @@ class Font;
 // Holds the glyph index and the corresponding Font information for a given
 // character.
 struct GlyphData {
-    GlyphData(Glyph g = 0, const Font* f = 0)
-        : glyph(g)
-        , font(f)
+    GlyphData(Glyph glyph = 0, const Font* font = nullptr)
+        : glyph(glyph)
+        , font(font)
     {
     }
 

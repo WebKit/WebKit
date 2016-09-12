@@ -40,21 +40,14 @@
 
 namespace WebCore {
 
-static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const Font& fontData)
+static bool shouldFillWithVerticalGlyphs(const UChar* buffer, unsigned bufferLength, const Font& font)
 {
-    // This needs to be kept in sync with GlyphPage::fill(). Currently, the CoreText paths are not able to handle
-    // every situtation. Returning true from this function in a new situation will require you to explicitly add
-    // handling for that situation in the CoreText paths of GlyphPage::fill().
-    if (fontData.platformData().isSystemFont())
-        return true;
-    if (fontData.platformData().isForTextCombine() || fontData.hasVerticalGlyphs()) {
-        // Ideographs don't have a vertical variant or width variants.
-        for (unsigned i = 0; i < bufferLength; ++i) {
-            if (!FontCascade::isCJKIdeograph(buffer[i]))
-                return true;
-        }
+    if (!font.hasVerticalGlyphs())
+        return false;
+    for (unsigned i = 0; i < bufferLength; ++i) {
+        if (!FontCascade::isCJKIdeograph(buffer[i]))
+            return true;
     }
-
     return false;
 }
 
@@ -64,26 +57,12 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 
     const Font& font = this->font();
     Vector<CGGlyph, 512> glyphs(bufferLength);
-    unsigned glyphStep;
-    if (!shouldUseCoreText(buffer, bufferLength, font)) {
-        // We pass in either 256 or 512 UTF-16 characters: 256 for U+FFFF and less, 512 (double character surrogates)
-        // for U+10000 and above. It is indeed possible to get back 512 glyphs back from the API, so the glyph buffer
-        // we pass in must be 512. If we get back more than 256 glyphs though we'll ignore all the ones after 256,
-        // this should not happen as the only time we pass in 512 characters is when they are surrogates.
-        CGFontGetGlyphsForUnichars(font.platformData().cgFont(), buffer, glyphs.data(), bufferLength);
-        glyphStep = 1;
-    } else {
-        // Because we know the implementation of shouldUseCoreText(), if the font isn't for text combine and it isn't a system font,
-        // we know it must have vertical glyphs.
-        if (font.platformData().isForTextCombine() || font.platformData().isSystemFont())
-            CTFontGetGlyphsForCharacters(font.platformData().ctFont(), buffer, glyphs.data(), bufferLength);
-        else
-            CTFontGetVerticalGlyphsForCharacters(font.platformData().ctFont(), buffer, glyphs.data(), bufferLength);
+    unsigned glyphStep = bufferLength / GlyphPage::size;
 
-        // When buffer consists of surrogate pairs, CTFontGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
-        // place the glyphs at indices corresponding to the first character of each pair.
-        glyphStep = bufferLength / GlyphPage::size;
-    }
+    if (shouldFillWithVerticalGlyphs(buffer, bufferLength, font))
+        CTFontGetVerticalGlyphsForCharacters(font.platformData().ctFont(), buffer, glyphs.data(), bufferLength);
+    else
+        CTFontGetGlyphsForCharacters(font.platformData().ctFont(), buffer, glyphs.data(), bufferLength);
 
     bool haveGlyphs = false;
     for (unsigned i = 0; i < GlyphPage::size; ++i) {
