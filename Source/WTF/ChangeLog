@@ -1,5 +1,23 @@
 2016-09-11  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::forAllKilledOperands() could use a faster bitvector scan in the same-inline-stack fast path
+        https://bugs.webkit.org/show_bug.cgi?id=161849
+
+        Reviewed by Saam Barati.
+        
+        It turns out that templates make private fields weird. FastBitVectorImpl can't necessarily
+        touch privates in instances of different template specializations of itself. So, I added a
+        public method called wordView() that exposes the necessary private field.
+
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVectorImpl::operator&):
+        (WTF::FastBitVectorImpl::operator|):
+        (WTF::FastBitVectorImpl::operator~):
+        (WTF::FastBitVectorImpl::forEachSetBit):
+        (WTF::FastBitVectorImpl::wordView):
+
+2016-09-11  Filip Pizlo  <fpizlo@apple.com>
+
         FastBitVector should have efficient and easy-to-use vector-vector operations
         https://bugs.webkit.org/show_bug.cgi?id=161847
 

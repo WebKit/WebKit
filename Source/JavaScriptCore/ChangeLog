@@ -1,5 +1,21 @@
 2016-09-11  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::forAllKilledOperands() could use a faster bitvector scan in the same-inline-stack fast path
+        https://bugs.webkit.org/show_bug.cgi?id=161849
+
+        Reviewed by Saam Barati.
+        
+        This is a fairly obvious change. This turns a loop that would query each bit individually
+        into a loop that will process a word at a time. I would expect a very tiny progression in
+        DFG compile times.
+        
+        This also gave me an opportunity to test and fix the new FastBitVector functionality.
+
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+
+2016-09-11  Filip Pizlo  <fpizlo@apple.com>
+
         FastBitVector should have efficient and easy-to-use vector-vector operations
         https://bugs.webkit.org/show_bug.cgi?id=161847
 

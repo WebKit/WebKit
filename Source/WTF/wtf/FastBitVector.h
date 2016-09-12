@@ -258,7 +258,7 @@ public:
 private:
     View m_view;
 };
-    
+
 class FastBitVector;
 
 template<typename Words>
@@ -323,24 +323,24 @@ public:
     template<typename OtherWords>
     FastBitVectorImpl<FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>> operator&(const FastBitVectorImpl<OtherWords>& other) const
     {
-        return FastBitVectorImpl<FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>>(FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>(m_words.view(), other.m_words.view()));
+        return FastBitVectorImpl<FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>>(FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>(wordView(), other.wordView()));
     }
     
     template<typename OtherWords>
     FastBitVectorImpl<FastBitVectorOrWords<typename Words::ViewType, typename OtherWords::ViewType>> operator|(const FastBitVectorImpl<OtherWords>& other) const
     {
-        return FastBitVectorImpl<FastBitVectorOrWords<typename Words::ViewType, typename OtherWords::ViewType>>(FastBitVectorOrWords<typename Words::ViewType, typename OtherWords::ViewType>(m_words.view(), other.m_words.view()));
+        return FastBitVectorImpl<FastBitVectorOrWords<typename Words::ViewType, typename OtherWords::ViewType>>(FastBitVectorOrWords<typename Words::ViewType, typename OtherWords::ViewType>(wordView(), other.wordView()));
     }
     
     FastBitVectorImpl<FastBitVectorNotWords<typename Words::ViewType>> operator~() const
     {
-        return FastBitVectorImpl<FastBitVectorNotWords<typename Words::ViewType>>(FastBitVectorNotWords<typename Words::ViewType>(m_words.view()));
+        return FastBitVectorImpl<FastBitVectorNotWords<typename Words::ViewType>>(FastBitVectorNotWords<typename Words::ViewType>(wordView()));
     }
     
     template<typename Func>
     ALWAYS_INLINE void forEachSetBit(const Func& func) const
     {
-        size_t n = m_words.arrayLength();
+        size_t n = arrayLength();
         for (size_t i = 0; i < n; ++i) {
             uint32_t word = m_words.word(i);
             size_t j = i * 32;
@@ -415,6 +415,8 @@ public:
         for (size_t i = 0; i < numBits(); ++i)
             out.print((*this)[i] ? "1" : "-");
     }
+    
+    typename Words::ViewType wordView() const { return m_words.view(); }
     
 private:
     // You'd think that we could remove this friend if we used protected, but you'd be wrong,
