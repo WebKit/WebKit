@@ -601,6 +601,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             if (base.m_cannotBeABaseURL && *c == '#') {
                 copyURLPartsUntil(base, URLPart::QueryEnd);
                 state = State::Fragment;
+                m_buffer.append('#');
                 ++c;
                 break;
             }
