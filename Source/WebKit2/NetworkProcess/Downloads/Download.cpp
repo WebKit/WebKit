@@ -38,8 +38,7 @@
 
 using namespace WebCore;
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - Download::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -86,7 +85,7 @@ void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& 
 
 void Download::didReceiveResponse(const ResourceResponse& response)
 {
-    RELEASE_LOG_IF_ALLOWED("Download task (%llu) created", downloadID().downloadID());
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Created (id = %llu)", downloadID().downloadID());
 
     send(Messages::DownloadProxy::DidReceiveResponse(response));
 }
@@ -95,7 +94,7 @@ void Download::didReceiveResponse(const ResourceResponse& response)
 void Download::didReceiveData(uint64_t length)
 {
     if (!m_hasReceivedData) {
-        RELEASE_LOG_IF_ALLOWED("Download task (%llu) started receiving data", downloadID().downloadID());
+        RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (id = %llu)", downloadID().downloadID());
         m_hasReceivedData = true;
     }
 
@@ -134,7 +133,7 @@ void Download::didCreateDestination(const String& path)
 
 void Download::didFinish()
 {
-    RELEASE_LOG_IF_ALLOWED("Download task (%llu) finished", downloadID().downloadID());
+    RELEASE_LOG_IF_ALLOWED("didFinish: (id = %llu)", downloadID().downloadID());
 
     platformDidFinish();
 
@@ -150,7 +149,7 @@ void Download::didFinish()
 
 void Download::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
-    RELEASE_LOG_IF_ALLOWED("Download task (%llu) failed, isTimeout = %d, isCancellation = %d, errCode = %d",
+    RELEASE_LOG_IF_ALLOWED("didFail: (id = %llu, isTimeout = %d, isCancellation = %d, errCode = %d)",
         downloadID().downloadID(), error.isTimeout(), error.isCancellation(), error.errorCode());
 
     send(Messages::DownloadProxy::DidFail(error, resumeData));
@@ -164,7 +163,7 @@ void Download::didFail(const ResourceError& error, const IPC::DataReference& res
 
 void Download::didCancel(const IPC::DataReference& resumeData)
 {
-    RELEASE_LOG_IF_ALLOWED("Download task (%llu) canceled", downloadID().downloadID());
+    RELEASE_LOG_IF_ALLOWED("didCancel: (id = %llu)", downloadID().downloadID());
 
     send(Messages::DownloadProxy::DidCancel(resumeData));
 

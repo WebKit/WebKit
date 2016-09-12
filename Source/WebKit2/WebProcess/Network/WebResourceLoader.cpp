@@ -42,7 +42,7 @@
 
 using namespace WebCore;
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - WebResourceLoader::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -78,7 +78,7 @@ void WebResourceLoader::detachFromCoreLoader()
 void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, ResourceResponse&& redirectResponse)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("WebResourceLoader::willSendRequest, WebResourceLoader = %p", this);
+    RELEASE_LOG_IF_ALLOWED("willSendRequest");
 
     RefPtr<WebResourceLoader> protectedThis(this);
 
@@ -101,7 +101,7 @@ void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeS
 void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponse for '%s'. Status %d.", m_coreLoader->url().string().latin1().data(), response.httpStatusCode());
-    RELEASE_LOG_IF_ALLOWED("WebResourceLoader::didReceiveResponse, WebResourceLoader = %p, status = %d.", this, response.httpStatusCode());
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (status = %d)", response.httpStatusCode());
 
     Ref<WebResourceLoader> protect(*this);
 
@@ -133,7 +133,7 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
 void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("WebResourceLoader::didReceiveData, WebResourceLoader = %p, size = %lu", this, data.size());
+    RELEASE_LOG_IF_ALLOWED("didReceiveData: (size = %lu)", data.size());
 
 #if USE(QUICK_LOOK)
     if (QuickLookHandle* quickLookHandle = m_coreLoader->documentLoader()->quickLookHandle()) {
@@ -147,7 +147,7 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
 void WebResourceLoader::didFinishResourceLoad(double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("WebResourceLoader::didFinishResourceLoad, WebResourceLoader = %p", this);
+    RELEASE_LOG_IF_ALLOWED("didFinishResourceLoad");
 
 #if USE(QUICK_LOOK)
     if (QuickLookHandle* quickLookHandle = m_coreLoader->documentLoader()->quickLookHandle()) {
@@ -161,7 +161,7 @@ void WebResourceLoader::didFinishResourceLoad(double finishTime)
 void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFailResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("WebResourceLoader::didFailResourceLoad, WebResourceLoader = %p", this);
+    RELEASE_LOG_IF_ALLOWED("didFailResourceLoad");
 
 #if USE(QUICK_LOOK)
     if (QuickLookHandle* quickLookHandle = m_coreLoader->documentLoader()->quickLookHandle())
@@ -176,7 +176,7 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle, double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("WebResourceLoader::didReceiveResource, WebResourceLoader = %p", this);
+    RELEASE_LOG_IF_ALLOWED("didReceiveResource");
 
     RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
 

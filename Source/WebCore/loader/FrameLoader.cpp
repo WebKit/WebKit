@@ -141,7 +141,7 @@
 #include "WKContentObservation.h"
 #endif
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - FrameLoader::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -1098,7 +1098,7 @@ void FrameLoader::started()
 
 void FrameLoader::prepareForLoadStart()
 {
-    RELEASE_LOG_IF_ALLOWED("Starting frame load, frame = %p, main = %d", &m_frame, m_frame.isMainFrame());
+    RELEASE_LOG_IF_ALLOWED("prepareForLoadStart: Starting frame load (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
 
     m_progressTracker->progressStarted();
     m_client.dispatchDidStartProvisionalLoad();
@@ -2303,11 +2303,11 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
             AXObjectCache::AXLoadingEvent loadingEvent;
             if (!error.isNull()) {
-                RELEASE_LOG_IF_ALLOWED("Finished frame load with error, frame = %p, main = %d, isTimeout = %d, isCancellation = %d, errorCode = %d", &m_frame, m_frame.isMainFrame(), error.isTimeout(), error.isCancellation(), error.errorCode());
+                RELEASE_LOG_IF_ALLOWED("checkLoadCompleteForThisFrame: Finished frame load with error (frame = %p, main = %d, isTimeout = %d, isCancellation = %d, errorCode = %d)", &m_frame, m_frame.isMainFrame(), error.isTimeout(), error.isCancellation(), error.errorCode());
                 m_client.dispatchDidFailLoad(error);
                 loadingEvent = AXObjectCache::AXLoadingFailed;
             } else {
-                RELEASE_LOG_IF_ALLOWED("Finished frame load without error, frame = %p, main = %d", &m_frame, m_frame.isMainFrame());
+                RELEASE_LOG_IF_ALLOWED("checkLoadCompleteForThisFrame: Finished frame load without error (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
 #if ENABLE(DATA_DETECTION)
                 auto* document = m_frame.document();
                 if (m_frame.settings().dataDetectorTypes() != DataDetectorTypeNone && document) {

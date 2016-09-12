@@ -49,8 +49,7 @@
 
 using namespace WebCore;
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), Network, __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkResourceLoader::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -206,7 +205,7 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
         m_bufferedDataForCache = SharedBuffer::create();
 #endif
 
-    RELEASE_LOG_IF_ALLOWED("Starting network resource load: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d", this, m_parameters.webPageID, m_parameters.webFrameID, isMainResource(), isSynchronous());
+    RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, isMainResource(), isSynchronous());
 
     NetworkLoadParameters parameters = m_parameters;
     parameters.defersLoading = m_defersLoading;
@@ -290,7 +289,7 @@ void NetworkResourceLoader::abort()
 
 auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse) -> ShouldContinueDidReceiveResponse
 {
-    RELEASE_LOG_IF_ALLOWED("Received network resource response: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d, httpStatusCode = %d", this, m_parameters.webPageID, m_parameters.webFrameID, isMainResource(), isSynchronous(), receivedResponse.httpStatusCode());
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d, httpStatusCode = %d)", m_parameters.webPageID, m_parameters.webFrameID, isMainResource(), isSynchronous(), receivedResponse.httpStatusCode());
 
     m_response = WTFMove(receivedResponse);
 
@@ -322,7 +321,7 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         if (isSynchronous())
             m_synchronousLoadData->response = m_response;
         else {
-            RELEASE_LOG_IF_ALLOWED("Sending didReceiveResponse message to the WebContent process: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d", this, static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
+            RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Sending didReceiveResponse message to the WebContent process (pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d)", static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
             send(Messages::WebResourceLoader::DidReceiveResponse(m_response, shouldWaitContinueDidReceiveResponse));
         }
     }
@@ -334,11 +333,11 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 #endif
 
     if (shouldContinueDidReceiveResponse) {
-        RELEASE_LOG_IF_ALLOWED("Should wait for message from WebContent process before continuing resource load: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d", this, static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
+        RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should wait for message from WebContent process before continuing resource load (pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d)", static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
         return ShouldContinueDidReceiveResponse::Yes;
     }
 
-    RELEASE_LOG_IF_ALLOWED("Should not wait for message from WebContent process before continuing resource load: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d", this, static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should not wait for message from WebContent process before continuing resource load (pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d)", static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
     return ShouldContinueDidReceiveResponse::No;
 }
 
@@ -371,7 +370,7 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
 
 void NetworkResourceLoader::didFinishLoading(double finishTime)
 {
-    RELEASE_LOG_IF_ALLOWED("Finished loading network resource: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d", this, static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
+    RELEASE_LOG_IF_ALLOWED("didFinishLoading: (pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d)", static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
 
 #if ENABLE(NETWORK_CACHE)
     if (m_cacheEntryForValidation) {
@@ -402,7 +401,7 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
 
 void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 {
-    RELEASE_LOG_IF_ALLOWED("Failed loading network resource: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d, isTimeout = %d, isCancellation = %d, errCode = %d", this, m_parameters.webPageID, m_parameters.webFrameID, isMainResource(), isSynchronous(), error.isTimeout(), error.isCancellation(), error.errorCode());
+    RELEASE_LOG_IF_ALLOWED("didFailLoading: (pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d, isTimeout = %d, isCancellation = %d, errCode = %d)", m_parameters.webPageID, m_parameters.webFrameID, isMainResource(), isSynchronous(), error.isTimeout(), error.isCancellation(), error.errorCode());
 
     ASSERT(!error.isNull());
 
@@ -448,7 +447,7 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest)
 {
-    RELEASE_LOG_IF_ALLOWED("Following redirect of network resource: loader = %p, pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d", this, static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
+    RELEASE_LOG_IF_ALLOWED("continueWillSendRequest: (pageID = %llu, frameID = %llu, isMainResource = %d, isSynchronous = %d)", static_cast<unsigned long long>(m_parameters.webPageID), static_cast<unsigned long long>(m_parameters.webFrameID), isMainResource(), isSynchronous());
 
 #if ENABLE(NETWORK_CACHE)
     if (m_isWaitingContinueWillSendRequestForCachedRedirect) {
