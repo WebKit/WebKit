@@ -1,3 +1,27 @@
+2016-09-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve clarity of inspector tests by adding TestHarness.expect* functions similar to XCTest
+        https://bugs.webkit.org/show_bug.cgi?id=161278
+        <rdar://problem/28039741>
+
+        Reviewed by Joseph Pecoraro.
+
+        Under the hood they all call TestHarness.expectThat.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.expectFalse):
+        (TestHarness.prototype.expectNull):
+        (TestHarness.prototype.expectNotNull):
+        (TestHarness.prototype.expectEqual):
+        (TestHarness.prototype.expectNotEqual):
+        (TestHarness.prototype.expectShallowEqual):
+        (TestHarness.prototype.expectNotShallowEqual):
+        (TestHarness.prototype.expectEqualWithAccuracy):
+        (TestHarness.prototype.expectLessThan):
+        (TestHarness.prototype.expectLessThanOrEqual):
+        (TestHarness.prototype.expectGreaterThan):
+        (TestHarness.prototype.expectGreaterThanOrEqual):
+
 2016-09-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r205223): Web Inspector: Debugger popover title and code aren't horizontally aligned

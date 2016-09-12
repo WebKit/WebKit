@@ -1,3 +1,19 @@
+2016-09-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add TestHarness assertions/expectations to provide additional semantics similar to XCTest
+        https://bugs.webkit.org/show_bug.cgi?id=161278
+        <rdar://problem/28039741>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add test to verify that the TestHarness.expect* family of functions
+        trivially work. Since it isn't possible to verify the TestPage results
+        directly without introducing additional complexity, simply log baseline
+        "PASS" and "FAIL" results for each function.
+
+        * inspector/unit-tests/test-harness-expect-functions-expected.txt: Added.
+        * inspector/unit-tests/test-harness-expect-functions.html: Added.
+
 2016-09-12  Chris Dumez  <cdumez@apple.com>
 
         window.performance object resets script-applied properties

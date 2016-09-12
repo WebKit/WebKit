@@ -1,0 +1,162 @@
+Testing TestHarness.expect* family of functions.
+
+
+== Running test suite: InspectorTestExpectFunctions
+-- Running test case: InspectorTest.expectThat
+Expected to PASS
+PASS: expectThat(true)
+PASS: expectThat(1)
+PASS: expectThat("abc")
+PASS: expectThat({})
+PASS: expectThat([])
+Expected to FAIL
+FAIL: expectThat(false)
+FAIL: expectThat(0)
+FAIL: expectThat("")
+FAIL: expectThat(null)
+FAIL: expectThat(undefined)
+FAIL: expectThat(NaN)
+
+-- Running test case: InspectorTest.expectFalse
+Expected to PASS
+PASS: expectFalse(false)
+PASS: expectFalse(0)
+PASS: expectFalse("")
+PASS: expectFalse(null)
+PASS: expectFalse(undefined)
+PASS: expectFalse(NaN)
+Expected to FAIL
+FAIL: expectFalse(true)
+FAIL: expectFalse(1)
+FAIL: expectFalse("abc")
+FAIL: expectFalse({})
+FAIL: expectFalse([])
+
+-- Running test case: InspectorTest.expectNull
+Expected to PASS
+PASS: expectNull(null)
+Expected to FAIL
+FAIL: expectNull(true)
+FAIL: expectNull(false)
+FAIL: expectNull(1)
+FAIL: expectNull("")
+FAIL: expectNull(undefined)
+FAIL: expectNull({})
+FAIL: expectNull([])
+
+-- Running test case: InspectorTest.expectNotNull
+Expected to PASS
+PASS: expectNotNull(true)
+PASS: expectNotNull(false)
+PASS: expectNotNull(1)
+PASS: expectNotNull("")
+PASS: expectNotNull(undefined)
+PASS: expectNotNull({})
+PASS: expectNotNull([])
+Expected to FAIL
+FAIL: expectNotNull(null)
+
+-- Running test case: InspectorTest.expectEqual
+Expected to PASS
+PASS: expectEqual(true, true)
+PASS: expectEqual({"a":1,"b":2}, {"a":1,"b":2})
+PASS: expectEqual(1.23, 1.23)
+PASS: expectEqual("abc", "abc")
+PASS: expectEqual(null, null)
+PASS: expectEqual(undefined, undefined)
+Expected to FAIL
+FAIL: expectEqual(true, false)
+FAIL: expectEqual({"a":1,"b":2}, {"c":3,"d":4})
+FAIL: expectEqual(1.23, 4.56)
+FAIL: expectEqual("abc", "def")
+FAIL: expectEqual(null, undefined)
+FAIL: expectEqual(NaN, NaN)
+FAIL: expectEqual({}, {})
+FAIL: expectEqual([], [])
+
+-- Running test case: InspectorTest.expectNotEqual
+Expected to PASS
+PASS: expectNotEqual(true, false)
+PASS: expectNotEqual({"a":1,"b":2}, {"c":3,"d":4})
+PASS: expectNotEqual(1.23, 4.56)
+PASS: expectNotEqual("abc", "def")
+PASS: expectNotEqual(null, undefined)
+PASS: expectNotEqual(NaN, NaN)
+PASS: expectNotEqual({}, {})
+PASS: expectNotEqual([], [])
+Expected to FAIL
+FAIL: expectNotEqual(true, true)
+FAIL: expectNotEqual({"a":1,"b":2}, {"a":1,"b":2})
+FAIL: expectNotEqual(1.23, 1.23)
+FAIL: expectNotEqual("abc", "abc")
+FAIL: expectNotEqual(null, null)
+FAIL: expectNotEqual(undefined, undefined)
+
+-- Running test case: InspectorTest.expectShallowEqual
+Expected to PASS
+PASS: expectShallowEqual({"a":1,"b":2}, {"a":1,"b":2})
+PASS: expectShallowEqual({}, {})
+PASS: expectShallowEqual([], [])
+Expected to FAIL
+FAIL: expectShallowEqual({"a":1,"b":2}, {"a":3,"b":4})
+FAIL: expectShallowEqual({}, [])
+
+-- Running test case: InspectorTest.expectNotShallowEqual
+Expected to PASS
+PASS: expectNotShallowEqual({"a":1,"b":2}, {"a":3,"b":4})
+PASS: expectNotShallowEqual({}, [])
+Expected to FAIL
+FAIL: expectNotShallowEqual({"a":1,"b":2}, {"a":1,"b":2})
+FAIL: expectNotShallowEqual({}, {})
+FAIL: expectNotShallowEqual([], [])
+
+-- Running test case: InspectorTest.expectEqualWithAccuracy
+Expected to PASS
+PASS: expectEqualWithAccuracy(0, 0, 0)
+PASS: expectEqualWithAccuracy(0, 0, 1)
+PASS: expectEqualWithAccuracy(0, 1, 1)
+PASS: expectEqualWithAccuracy(1, 0, 1)
+Expected to FAIL
+FAIL: expectEqualWithAccuracy(0, 2, 1)
+FAIL: expectEqualWithAccuracy(2, 0, 1)
+
+-- Running test case: InspectorTest.expectLessThan
+Expected to PASS
+PASS: expectLessThan(0, 1)
+PASS: expectLessThan("abc", "def")
+Expected to FAIL
+FAIL: expectLessThan(0, 0)
+FAIL: expectLessThan(1, 0)
+FAIL: expectLessThan("abc", "abc")
+FAIL: expectLessThan("def", "abc")
+
+-- Running test case: InspectorTest.expectLessThanOrEqual
+Expected to PASS
+PASS: expectLessThanOrEqual(0, 1)
+PASS: expectLessThanOrEqual(0, 0)
+PASS: expectLessThanOrEqual("abc", "def")
+PASS: expectLessThanOrEqual("abc", "abc")
+Expected to FAIL
+FAIL: expectLessThanOrEqual(1, 0)
+FAIL: expectLessThanOrEqual("def", "abc")
+
+-- Running test case: InspectorTest.expectGreaterThan
+Expected to PASS
+PASS: expectGreaterThan(1, 0)
+PASS: expectGreaterThan("def", "abc")
+Expected to FAIL
+FAIL: expectGreaterThan(0, 0)
+FAIL: expectGreaterThan(0, 1)
+FAIL: expectGreaterThan("abc", "abc")
+FAIL: expectGreaterThan("abc", "def")
+
+-- Running test case: InspectorTest.expectGreaterThanOrEqual
+Expected to PASS
+PASS: expectGreaterThanOrEqual(1, 0)
+PASS: expectGreaterThanOrEqual(0, 0)
+PASS: expectGreaterThanOrEqual("def", "abc")
+PASS: expectGreaterThanOrEqual("abc", "abc")
+Expected to FAIL
+FAIL: expectGreaterThanOrEqual(0, 1)
+FAIL: expectGreaterThanOrEqual("abc", "def")
+

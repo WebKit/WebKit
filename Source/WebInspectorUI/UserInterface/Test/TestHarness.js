@@ -99,6 +99,68 @@ TestHarness = class TestHarness extends WebInspector.Object
             this.fail(message);
     }
 
+    expectFalse(expression, message)
+    {
+        this.expectThat(!expression, message);
+    }
+
+    expectNull(expression, message)
+    {
+        this.expectThat(expression === null, message);
+    }
+
+    expectNotNull(expression, message)
+    {
+        this.expectThat(expression !== null, message);
+    }
+
+    expectEqual(expression1, expression2, message)
+    {
+        this.expectThat(expression1 === expression2, message);
+    }
+
+    expectNotEqual(expression1, expression2, message)
+    {
+        this.expectThat(expression1 !== expression2, message);
+    }
+
+    expectShallowEqual(expression1, expression2, message)
+    {
+        this.expectThat(Object.shallowEqual(expression1, expression2), message);
+    }
+
+    expectNotShallowEqual(expression1, expression2, message)
+    {
+        this.expectThat(!Object.shallowEqual(expression1, expression2), message);
+    }
+
+    expectEqualWithAccuracy(expression1, expression2, accuracy, message)
+    {
+        console.assert(typeof expression1 === "number");
+        console.assert(typeof expression2 === "number");
+        this.expectThat(Math.abs(expression1 - expression2) <= accuracy, message);
+    }
+
+    expectLessThan(expression1, expression2, message)
+    {
+        this.expectThat(expression1 < expression2, message);
+    }
+
+    expectLessThanOrEqual(expression1, expression2, message)
+    {
+        this.expectThat(expression1 <= expression2, message);
+    }
+
+    expectGreaterThan(expression1, expression2, message)
+    {
+        this.expectThat(expression1 > expression2, message);
+    }
+
+    expectGreaterThanOrEqual(expression1, expression2, message)
+    {
+        this.expectThat(expression1 >= expression2, message);
+    }
+
     pass(message)
     {
         let stringifiedMessage = TestHarness.messageAsString(message);
