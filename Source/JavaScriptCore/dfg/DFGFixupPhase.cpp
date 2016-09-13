@@ -1096,6 +1096,11 @@ private:
             break;
         }
 
+        case NewArrayBuffer: {
+            watchHavingABadTime(node);
+            break;
+        }
+
         case CallObjectConstructor: {
             if (node->child1()->shouldSpeculateObject()) {
                 fixEdge<ObjectUse>(node->child1());
@@ -1614,7 +1619,6 @@ private:
         case ForwardVarargs:
         case ProfileControlFlow:
         case NewObject:
-        case NewArrayBuffer:
         case NewRegexp:
         case DeleteById:
         case DeleteByVal:
