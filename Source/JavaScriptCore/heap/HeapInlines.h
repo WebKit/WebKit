@@ -74,17 +74,6 @@ inline Heap* Heap::heap(const JSValue v)
     return heap(v.asCell());
 }
 
-inline bool Heap::isLive(const void* rawCell)
-{
-    ASSERT(!mayBeGCThread());
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
-    if (cell->isLargeAllocation())
-        return cell->largeAllocation().isLive();
-    MarkedBlock& block = cell->markedBlock();
-    block.flipIfNecessary(block.vm()->heap.objectSpace().version());
-    return block.handle().isLiveCell(cell);
-}
-
 ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
 {
     ASSERT(!mayBeGCThread());

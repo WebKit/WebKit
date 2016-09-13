@@ -1,3 +1,17 @@
+2016-09-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove Heap::isLive()
+        https://bugs.webkit.org/show_bug.cgi?id=161933
+
+        Reviewed by Mark Lam.
+        
+        Before I put any more effort into maintaining this weird function, I decided to check how it
+        was used. It turns out it's not.
+
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::isLive): Deleted.
+
 2016-09-13  Mark Lam  <mark.lam@apple.com>
 
         DFG NewArrayBuffer node should watch for "have a bad time" state change.
