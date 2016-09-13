@@ -117,7 +117,29 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
     ASSERT(!m_private);
     ASSERT(m_mediaElement);
     m_private = WTFMove(mediaSourcePrivate);
+
+    // 2.4.1 Attaching to a media element
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-attach
+
+    // ↳ If readyState is NOT set to "closed"
+    //    Run the "If the media data cannot be fetched at all, due to network errors, causing the user agent to give up trying
+    //    to fetch the resource" steps of the resource fetch algorithm's media data processing steps list.
+    if (!isClosed()) {
+        m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::NetworkError);
+        return;
+    }
+
+    // ↳ Otherwise
+    // 1. Set the media element's delaying-the-load-event-flag to false.
+    m_mediaElement->setShouldDelayLoadEvent(false);
+
+    // 2. Set the readyState attribute to "open".
+    // 3. Queue a task to fire a simple event named sourceopen at the MediaSource.
     setReadyState(openKeyword());
+
+    // 4. Continue the resource fetch algorithm by running the remaining "Otherwise (mode is local)" steps,
+    // with these clarifications:
+    // NOTE: This is handled in HTMLMediaElement.
 }
 
 void MediaSource::addedToRegistry()

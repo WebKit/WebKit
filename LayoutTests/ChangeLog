@@ -1,3 +1,13 @@
+2016-09-12  Jer Noble  <jer.noble@apple.com>
+
+        Media-source backed elements block load event; cause web-platform-test flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=161881
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-delaying-load-event-expected.txt: Added.
+        * media/media-source/media-source-delaying-load-event.html: Added.
+
 2016-09-13  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; removed duplicate entry for mediasource-config-change-mp4-v-bitrate.html.

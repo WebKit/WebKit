@@ -471,6 +471,7 @@ public:
     void resetPlaybackSessionState();
     bool isVisibleInViewport() const;
     bool hasEverNotifiedAboutPlaying() const;
+    void setShouldDelayLoadEvent(bool);
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
@@ -719,7 +720,6 @@ private:
 
     void mediaCanStart() override;
 
-    void setShouldDelayLoadEvent(bool);
     void invalidateCachedTime() const;
     void refreshCachedTime() const;
 
