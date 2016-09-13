@@ -39,7 +39,7 @@ typedef struct CGAffineTransform CGAffineTransform;
 #endif
 
 #if PLATFORM(WIN)
-typedef struct D2D_MATRIX_3X2_F D2D_MATRIX_3X2_F;
+struct D2D_MATRIX_3X2_F;
 typedef D2D_MATRIX_3X2_F D2D1_MATRIX_3X2_F;
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,8 @@ typedef struct _cairo_rectangle cairo_rectangle_t;
 #endif
 
 #if PLATFORM(WIN)
-#include <d2d1.h>
+struct D2D_RECT_F;
+typedef D2D_RECT_F D2D1_RECT_F;
 #endif
 
 namespace WebCore {

@@ -29,10 +29,6 @@
 #include "IntPoint.h"
 #include "LayoutUnit.h"
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 #if USE(CG)
 typedef struct CGRect CGRect;
 #endif
@@ -53,6 +49,12 @@ typedef struct _NSRect NSRect;
 
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
+
+struct D2D_RECT_U;
+typedef D2D_RECT_U D2D1_RECT_U;
+
+struct D2D_RECT_F;
+typedef D2D_RECT_F D2D1_RECT_F;
 #endif
 
 #if USE(CAIRO)

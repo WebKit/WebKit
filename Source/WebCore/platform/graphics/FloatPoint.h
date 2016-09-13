@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,8 @@ typedef struct _NSPoint NSPoint;
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(WIN)
-#include <d2d1.h>
+struct D2D_POINT_2F;
+typedef D2D_POINT_2F D2D1_POINT_2F;
 #endif
 
 namespace WebCore {
@@ -153,8 +154,8 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT FloatPoint(const D2D_POINT_2F&);
-    WEBCORE_EXPORT operator D2D_POINT_2F() const;
+    WEBCORE_EXPORT FloatPoint(const D2D1_POINT_2F&);
+    WEBCORE_EXPORT operator D2D1_POINT_2F() const;
 #endif
 
     WEBCORE_EXPORT FloatPoint matrixTransform(const TransformationMatrix&) const;

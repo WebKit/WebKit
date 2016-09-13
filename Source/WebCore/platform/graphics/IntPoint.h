@@ -33,10 +33,6 @@
 #import <Foundation/NSGeometry.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 #if USE(CG)
 typedef struct CGPoint CGPoint;
 #endif
@@ -55,6 +51,12 @@ typedef struct _NSPoint NSPoint;
 #if PLATFORM(WIN)
 typedef struct tagPOINT POINT;
 typedef struct tagPOINTS POINTS;
+
+struct D2D_POINT_2U;
+typedef D2D_POINT_2U D2D1_POINT_2U;
+
+struct D2D_POINT_2F;
+typedef D2D_POINT_2F D2D1_POINT_2F;
 #endif
 
 namespace WebCore {

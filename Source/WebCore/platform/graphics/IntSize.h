@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,6 @@
 #import <Foundation/NSGeometry.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 #if USE(CG)
 typedef struct CGSize CGSize;
 #endif
@@ -57,6 +53,12 @@ typedef struct _NSSize NSSize;
 
 #if PLATFORM(WIN)
 typedef struct tagSIZE SIZE;
+
+struct D2D_SIZE_U;
+typedef D2D_SIZE_U D2D1_SIZE_U;
+
+struct D2D_SIZE_F;
+typedef D2D_SIZE_F D2D1_SIZE_F;
 #endif
 
 namespace WebCore {
