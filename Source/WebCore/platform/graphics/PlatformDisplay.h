@@ -80,6 +80,8 @@ protected:
     EGLDisplay m_eglDisplay;
 #endif
 
+    std::unique_ptr<GLContext> m_sharingGLContext;
+
 private:
     static std::unique_ptr<PlatformDisplay> createPlatformDisplay();
 
@@ -90,7 +92,6 @@ private:
     int m_eglMajorVersion { 0 };
     int m_eglMinorVersion { 0 };
 #endif
-    std::unique_ptr<GLContext> m_sharingGLContext;
 };
 
 } // namespace WebCore
