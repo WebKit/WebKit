@@ -490,6 +490,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
     auto authorityOrHostBegin = codePoints.begin();
     while (c != end && isC0ControlOrSpace(*c))
         ++c;
+    auto beginAfterControlAndSpace = c;
     
     enum class State : uint8_t {
         SchemeStart,
@@ -582,7 +583,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             } else {
                 m_buffer.clear();
                 state = State::NoScheme;
-                c = codePoints.begin();
+                c = beginAfterControlAndSpace;
                 break;
             }
             ++c;
@@ -591,7 +592,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
             if (c == end) {
                 m_buffer.clear();
                 state = State::NoScheme;
-                c = codePoints.begin();
+                c = beginAfterControlAndSpace;
             }
             break;
         case State::NoScheme:

@@ -277,6 +277,8 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("http:", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar"});
     checkRelativeURL("#x", "data:,", {"data", "", "", "", 0, ",", "", "x", "data:,#x"});
     checkRelativeURL("#x", "about:blank", {"about", "", "", "", 0, "blank", "", "x", "about:blank#x"});
+    checkRelativeURL("  foo.com  ", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/foo.com", "", "", "http://example.org/foo/foo.com"});
+    checkRelativeURL(" \a baz", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/baz", "", "", "http://example.org/foo/baz"});
     
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
