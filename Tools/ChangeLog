@@ -1,3 +1,31 @@
+2016-09-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch build.webkit.org to iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=161930
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests.start):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS10.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS10@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS10Simulator.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS10Simulator@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOSDevice.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOSDevice@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOSSimulator.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOSSimulator@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild_unittest.py:
+        * Scripts/webkitpy/port/ios.py:
+        * TestResultServer/static-dashboards/builders.jsonp:
+
 2016-09-13  Tim Horton  <timothy_horton@apple.com>
 
         Provide a mechanism to specify the maximum width of WKThumbnailView snapshots
