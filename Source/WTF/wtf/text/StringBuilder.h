@@ -101,6 +101,13 @@ public:
         else
             append(stringView.characters16(), stringView.length());
     }
+
+#if USE(CF)
+    WTF_EXPORT_PRIVATE void append(CFStringRef);
+#endif
+#if USE(CF) && defined(__OBJC__)
+    void append(NSString *string) { append((__bridge CFStringRef)string); }
+#endif
     
     void append(const String& string, unsigned offset, unsigned length)
     {

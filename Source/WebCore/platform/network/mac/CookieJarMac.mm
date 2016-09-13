@@ -155,9 +155,9 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
         if (!cookiesBuilder.isEmpty())
             cookiesBuilder.appendLiteral("; ");
 
-        cookiesBuilder.append(String([cookie name]));
+        cookiesBuilder.append([cookie name]);
         cookiesBuilder.append('=');
-        cookiesBuilder.append(String([cookie value]));
+        cookiesBuilder.append([cookie value]);
     }
     return cookiesBuilder.toString();
 

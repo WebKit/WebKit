@@ -306,6 +306,20 @@ void StringBuilder::append(const LChar* characters, unsigned length)
     }
 }
 
+#if USE(CF)
+
+void StringBuilder::append(CFStringRef string)
+{
+    // Fast path: avoid constructing a temporary String when possible.
+    if (auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1)) {
+        append(reinterpret_cast<const LChar*>(characters), CFStringGetLength(string));
+        return;
+    }
+    append(String(string));
+}
+
+#endif
+
 void StringBuilder::appendNumber(int number)
 {
     numberToStringSigned<StringBuilder>(number, this);

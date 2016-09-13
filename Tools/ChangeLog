@@ -1,3 +1,15 @@
+2016-09-12  Chris Dumez  <cdumez@apple.com>
+
+        Fix post-landing review comments after r205787
+        https://bugs.webkit.org/show_bug.cgi?id=161885
+
+        Reviewed by Darin Adler.
+
+        Leverage new StringBuilder::append(CFStringRef) overload.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+
 2016-09-12  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: Correctly ignore spaces before relative URLs with no scheme
