@@ -53,7 +53,7 @@ var expectedPropertyNamesSet = {
     "Object": "['assign', 'create', 'defineProperties', 'defineProperty', 'entries', 'freeze', 'getOwnPropertyDescriptor', 'getOwnPropertyDescriptors', 'getOwnPropertyNames', 'getOwnPropertySymbols', 'getPrototypeOf', 'is', 'isExtensible', 'isFrozen', 'isSealed', 'keys', 'length', 'name', 'preventExtensions', 'prototype', 'seal', 'setPrototypeOf', 'values']",
     "Object.prototype": "['__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__', '__proto__', 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf']",
     "Function": "['length', 'name', 'prototype']",
-    "Function.prototype": "['apply', 'bind', 'call', 'constructor', 'length', 'name', 'toString']",
+    "Function.prototype": "['apply', 'arguments', 'bind', 'call', 'caller', 'constructor', 'length', 'name', 'toString']",
     "Array": "['from', 'isArray', 'length', 'name', 'of', 'prototype']",
     "Array.prototype": "['concat', 'constructor', 'copyWithin', 'entries', 'every', 'fill', 'filter', 'find', 'findIndex', 'forEach', 'includes', 'indexOf', 'join', 'keys', 'lastIndexOf', 'length', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift', 'values']",
     "String": "['fromCharCode', 'fromCodePoint', 'length', 'name', 'prototype', 'raw']",

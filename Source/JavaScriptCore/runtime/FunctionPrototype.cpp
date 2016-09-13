@@ -23,10 +23,13 @@
 
 #include "BuiltinExecutables.h"
 #include "BuiltinNames.h"
+#include "ClonedArguments.h"
 #include "Error.h"
+#include "GetterSetter.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
 #include "JSFunction.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
 #include "Interpreter.h"
@@ -63,6 +66,14 @@ void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* g
     *callFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().callPublicName(), functionPrototypeCallCodeGenerator(vm), DontEnum);
     *hasInstanceSymbolFunction = putDirectBuiltinFunction(vm, globalObject, vm.propertyNames->hasInstanceSymbol, functionPrototypeSymbolHasInstanceCodeGenerator(vm), DontDelete | ReadOnly | DontEnum);
     putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->bind, functionPrototypeBindCodeGenerator(vm), DontEnum);
+}
+    
+void FunctionPrototype::initRestrictedProperties(ExecState* exec, JSGlobalObject* globalObject)
+{
+    VM& vm = exec->vm();
+    GetterSetter* errorGetterSetter = globalObject->throwTypeErrorArgumentsCalleeAndCallerGetterSetter();
+    putDirectAccessor(exec, vm.propertyNames->caller, errorGetterSetter, DontEnum | Accessor);
+    putDirectAccessor(exec, vm.propertyNames->arguments, errorGetterSetter, DontEnum | Accessor);
 }
 
 static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(ExecState*)

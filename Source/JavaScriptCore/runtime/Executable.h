@@ -654,6 +654,8 @@ public:
     bool isArrowFunction() const { return parseMode() == SourceParseMode::ArrowFunctionMode; }
     bool isGetter() const { return parseMode() == SourceParseMode::GetterMode; }
     bool isSetter() const { return parseMode() == SourceParseMode::SetterMode; }
+    bool isGenerator() const { return parseMode() == SourceParseMode::GeneratorBodyMode || parseMode() == SourceParseMode::GeneratorWrapperFunctionMode; }
+    bool isES6Function() const { return isClassConstructorFunction() || isArrowFunction() || isGenerator() || parseMode() == SourceParseMode::MethodMode;}
     DerivedContextType derivedContextType() const { return m_unlinkedExecutable->derivedContextType(); }
     bool isClassConstructorFunction() const { return m_unlinkedExecutable->isClassConstructorFunction(); }
     const Identifier& name() { return m_unlinkedExecutable->name(); }

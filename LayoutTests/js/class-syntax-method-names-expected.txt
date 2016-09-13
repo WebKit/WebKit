@@ -20,6 +20,32 @@ PASS class A { static get get() { return 104; } }; A.get is 104
 PASS class A { static get set() { return 105; } }; A.set is 105
 PASS setterValue = undefined; class A { static set get(x) { setterValue = x; } }; A.get = 106; setterValue is 106
 PASS setterValue = undefined; class A { static set set(x) { setterValue = x; } }; A.set = 107; setterValue is 107
+PASS class X {static arguments() {}} did not throw exception.
+PASS class X {static caller() {}} did not throw exception.
+PASS (class X {static arguments() {return staticMethodValue;}}).arguments() is staticMethodValue
+PASS (class X {static caller() {return staticMethodValue;}}).caller() is staticMethodValue
+PASS (class X {static arguments() {return staticMethodValue;}}).hasOwnProperty('arguments') is true
+PASS (class X {static caller() {return staticMethodValue;}}).hasOwnProperty('caller') is true
+PASS class X {static get arguments() {}} did not throw exception.
+PASS class X {static get caller() {}} did not throw exception.
+PASS (class X {static get arguments() {return staticMethodValue;}}).arguments is staticMethodValue
+PASS (class X {static get caller() {return staticMethodValue;}}).caller is staticMethodValue
+PASS (class X {static get arguments() {return staticMethodValue;}}).hasOwnProperty('arguments') is true
+PASS (class X {static get caller() {return staticMethodValue;}}).hasOwnProperty('caller') is true
+PASS class X {static caller() {return staticMethodValue;}};X.arguments = function(){} threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
+PASS class X {static arguments() {return staticMethodValue;}}; X.caller = function(){} threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
+PASS class X {static caller() {return "";}} X.caller = function(){ return staticMethodValue; };X.caller() is staticMethodValue
+PASS class X {static arguments() {return "";}}; X.arguments = function(){ return staticMethodValue; };X.arguments() is staticMethodValue
+PASS class X {static caller() {return "";}} X["caller"] = function(){ return staticMethodValue; };X.caller() is staticMethodValue
+PASS class X {static arguments() {return "";}}; X["arguments"] = function(){ return staticMethodValue; };X.arguments() is staticMethodValue
+PASS class X {static *caller() {yield staticMethodValue;}}; X.caller().next().value is staticMethodValue
+PASS class X {static *arguments() {yield staticMethodValue;}}; X.arguments().next().value is staticMethodValue
+PASS class X {static *caller() {yield;}}; X["caller"] = function*(){yield staticMethodValue;}; X.caller().next().value is staticMethodValue
+PASS class X {static *arguments() {yield;}}; X["arguments"] = function*(){yield staticMethodValue;}; X.arguments().next().value is staticMethodValue
+PASS class X {*caller() {yield staticMethodValue;}}; let x = new X; x.caller().next().value is staticMethodValue
+PASS class X {*arguments() {yield staticMethodValue;}}; let x = new X; x.arguments().next().value is staticMethodValue
+PASS class X {*caller() {yield;}}; let x = new X; x["caller"] = function*(){yield staticMethodValue;}; x.caller().next().value is staticMethodValue
+PASS class X {*arguments() {yield;}}; let x = new X; x["arguments"] = function*(){yield staticMethodValue;}; x.arguments().next().value is staticMethodValue
 
 Instance methods with computed names
 PASS class A { ['a' + 'b']() { return 211; } }; (new A).ab() is 211

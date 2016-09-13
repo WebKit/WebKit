@@ -1,3 +1,69 @@
+2016-09-13  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        ES6: Classes: Should be allowed to create a static method with name "arguments"
+        https://bugs.webkit.org/show_bug.cgi?id=152985
+
+        Reviewed by Keith Miller.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/basic-strict-mode-expected.txt:
+        * js/class-method-and-constructor-properties-expected.txt: Removed.
+        * js/class-syntax-method-names-expected.txt:
+        * js/es6-function-properties-expected.txt: Added.
+        * js/es6-function-properties.html: Copied from LayoutTests/js/class-method-and-constructor-properties.html.
+        * js/kde/script-tests/function_arguments.js:
+        (f):
+        * js/non-strict-function-properties-expected.txt: Added.
+        * js/non-strict-function-properties.html: Renamed from LayoutTests/js/class-method-and-constructor-properties.html.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/basic-strict-mode.js:
+        * js/script-tests/class-method-and-constructor-properties.js: Removed.
+        (shouldThrow): Deleted.
+        (shouldBe): Deleted.
+        (A): Deleted.
+        (B): Deleted.
+        (C): Deleted.
+        (D): Deleted.
+        (E.prototype.getItem): Deleted.
+        (E): Deleted.
+        (F.prototype.getElement): Deleted.
+        (F): Deleted.
+        (G.prototype.get item): Deleted.
+        (G): Deleted.
+        (H.prototype.caller): Deleted.
+        (H.prototype.arguments): Deleted.
+        (H): Deleted.
+        * js/script-tests/class-syntax-method-names.js:
+        * js/script-tests/es6-function-properties.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (A):
+        (B):
+        (C):
+        (D):
+        (E.prototype.getItem):
+        (E):
+        (F.prototype.getElement):
+        (F):
+        (G.prototype.get item):
+        (G):
+        (check):
+        (arr):
+        (H.prototype.caller):
+        (H.prototype.arguments):
+        (H):
+        (J.prototype.gen):
+        (J.gen):
+        (J):
+        * js/script-tests/non-strict-function-properties.js: Added.
+        (foo):
+        (boo):
+        (f):
+        (g):
+        (doSetCaller):
+        (doSetArguments):
+        * js/script-tests/strict-throw-type-error.js:
+
 2016-09-12  Youenn Fablet  <youenn@apple.com>
 
         ScriptElement should use FetchOptions::mode according its crossOrigin attribute

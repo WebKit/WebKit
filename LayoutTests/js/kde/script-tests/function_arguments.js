@@ -37,7 +37,7 @@ function f(a,b,c) {
 
   // DontDelete
   DontDeleteOK = !delete(f.arguments);
-  if (f.arguments == undefined || !f.hasOwnProperty("arguments"))
+  if (f.arguments == undefined || !f.__proto__.hasOwnProperty("arguments"))
     DontDeleteOK = false;
 
   // DontEnum

@@ -72,9 +72,11 @@ PASS (function a(a){'use strict'; return a+2; })(40) is 42
 PASS var foo = function a(a){'use strict'; return a+2; }; foo(40) is 42
 PASS var o = {foo: function a(a){'use strict'; return a+2; } }; o.foo(40) is 42
 PASS "caller" in function(){"use strict"} is true
-PASS (function(){"use strict";}).hasOwnProperty("caller") is true
+PASS (function(){"use strict";}).hasOwnProperty("caller") is false
+PASS (function(){"use strict";}).__proto__.hasOwnProperty("caller") is true
 PASS "arguments" in function(){"use strict"} is true
-PASS (function(){"use strict";}).hasOwnProperty("arguments") is true
+PASS (function(){"use strict";}).hasOwnProperty("arguments") is false
+PASS (function(){"use strict";}).__proto__.hasOwnProperty("arguments") is true
 PASS 'use strict'; (function (){with(1){};}) threw exception SyntaxError: 'with' statements are not valid in strict mode..
 PASS (function(){'use strict'; (function (){with(1){};})}) threw exception SyntaxError: 'with' statements are not valid in strict mode..
 PASS 'use strict'; (function (){var a; delete a;}) threw exception SyntaxError: Cannot delete unqualified property 'a' in strict mode..
@@ -179,14 +181,14 @@ PASS (function (a){'use strict'; var local; (function (){local;})(); arguments[0
 PASS (function (){'use strict';  var local; (function (){local;})(); arguments[0]=true; return arguments; })()[0] is true
 PASS 'use strict'; (function (){var a = true; eval('var a = false'); return a; })() is true
 PASS (function (){var a = true; eval('"use strict"; var a = false'); return a; })() is true
-PASS (function f(arg){'use strict'; return Object.getOwnPropertyDescriptor(f, 'arguments').value; })() is undefined.
-PASS (function f(arg){'use strict'; return Object.getOwnPropertyDescriptor(f, 'caller').value; })() is undefined.
+PASS (function f(arg){'use strict'; return Object.getOwnPropertyDescriptor(f.__proto__, 'arguments').value; })() is undefined.
+PASS (function f(arg){'use strict'; return Object.getOwnPropertyDescriptor(f.__proto__, 'caller').value; })() is undefined.
 PASS (function f(arg){'use strict'; return Object.getOwnPropertyDescriptor(arguments, 'callee').value; })() is undefined.
 PASS (function f(arg){'use strict'; return Object.getOwnPropertyDescriptor(arguments, 'caller').value; })() is undefined.
 PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(arguments, 'caller'); return descriptor.get === descriptor.set; })() is true
 PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(arguments, 'callee'); return descriptor.get === descriptor.set; })() is true
-PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f, 'caller'); return descriptor.get === descriptor.set; })() is true
-PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f, 'arguments'); return descriptor.get === descriptor.set; })() is true
+PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f.__proto__, 'caller'); return descriptor.get === descriptor.set; })() is true
+PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f.__proto__, 'arguments'); return descriptor.get === descriptor.set; })() is true
 PASS 'use strict'; (function f() { for(var i in this); })(); true; is true
 PASS 'use strict'̻ threw exception SyntaxError: Invalid character '\u0827'.
 PASS (function(){'use strict'̻}) threw exception SyntaxError: Invalid character '\u0827'.
@@ -212,7 +214,7 @@ PASS (function () {'use strict';  try { throw 1; } catch (e) { aGlobal = true; }
 PASS try { throw 1; } catch (e) { aGlobal = true; } is true
 PASS (function () { try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal; is true
 PASS (function () {try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal; is true
-PASS String(Object.getOwnPropertyDescriptor(function() { "use strict"; }, "caller").get) is 'function () {\n    [native code]\n}'
+PASS String(Object.getOwnPropertyDescriptor((function() { "use strict"; }).__proto__, "caller").get) is 'function () {\n    [native code]\n}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

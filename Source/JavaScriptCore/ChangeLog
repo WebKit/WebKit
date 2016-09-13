@@ -1,3 +1,39 @@
+2016-09-12  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        ES6: Classes: Should be allowed to create a static method with name "arguments"
+        https://bugs.webkit.org/show_bug.cgi?id=152985
+
+        Reviewed by Keith Miller.
+
+        Current patch covered 16.2 Forbidden Extensions - first topic 
+        (https://tc39.github.io/ecma262/#sec-forbidden-extensions) ECMAScript Functions 
+        should not have own properties named "caller" or "arguments".
+        Also added possibility to declare static methods and getters with 
+        name 'arguments' and 'caller' for classes. i.e.:
+        class A { static arguments() { return 'value'; } }
+        A.arguments() === 'value';
+        To implement this patch 'caller' and 'arguments' were put to the FunctionPrototype
+        object. Also was changed approach to init throwTypeErrorArgumentsCalleeAndCallerGetterSetter
+        property from Lazy to common because it necessary to use execState during init of the accessors 
+        properties.
+
+        * runtime/Executable.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::initRestrictedProperties):
+        (JSC::FunctionPrototype::addFunctionProperties): Deleted.
+        * runtime/FunctionPrototype.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::throwTypeErrorArgumentsCalleeAndCallerGetterSetter):
+
 2016-09-12  Filip Pizlo  <fpizlo@apple.com>
 
         MarkedBlock should be able to use flipIfNecessary() as the "I'm not empty" trigger
