@@ -234,14 +234,8 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
             } else
                 appendData(value.data().data(), value.data().length());
             appendData("\r\n", 2);
-        } else {
-            // Omit the name "isindex" if it's the first form data element.
-            // FIXME: Why is this a good rule? Is this obsolete now?
-            if (encodedData.isEmpty() && key.data() == "isindex")
-                FormDataBuilder::encodeStringAsFormData(encodedData, value.data());
-            else
-                FormDataBuilder::addKeyValuePairAsFormData(encodedData, key.data(), value.data(), encodingType);
-        }
+        } else
+            FormDataBuilder::addKeyValuePairAsFormData(encodedData, key.data(), value.data(), encodingType);
     }
 
     if (isMultiPartForm)

@@ -82,86 +82,16 @@
 |     <h1>
 
 #data
-<!doctype html><form><isindex>
-#errors
-(1,30): deprecated-tag
-(1,30): expected-closing-tag-but-got-eof
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <form>
-
-#data
-<!doctype html><isindex action="POST">
-#errors
-(1,38): deprecated-tag
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       action="POST"
-|       <hr>
-|       <label>
-|         "This is a searchable index. Enter search keywords: "
-|         <input>
-|           name="isindex"
-|       <hr>
-
-#data
-<!doctype html><isindex prompt="this is isindex">
-#errors
-(1,49): deprecated-tag
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       <hr>
-|       <label>
-|         "this is isindex"
-|         <input>
-|           name="isindex"
-|       <hr>
-
-#data
 <!doctype html><isindex type="hidden">
 #errors
-(1,38): deprecated-tag
+(1,38): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <form>
-|       <hr>
-|       <label>
-|         "This is a searchable index. Enter search keywords: "
-|         <input>
-|           name="isindex"
-|           type="hidden"
-|       <hr>
-
-#data
-<!doctype html><isindex name="foo">
-#errors
-(1,35): deprecated-tag
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       <hr>
-|       <label>
-|         "This is a searchable index. Enter search keywords: "
-|         <input>
-|           name="isindex"
-|       <hr>
+|     <isindex>
+|       type="hidden"
 
 #data
 <!doctype html><ruby><p><rp>
@@ -1324,6 +1254,7 @@
 (1,49): foster-parenting-end-tag
 (1,44): adoption-agency-1.3
 (1,44): adoption-agency-1.3
+(1,50): foster-parenting-character
 (1,50): eof-in-table
 #document
 | <!DOCTYPE html>

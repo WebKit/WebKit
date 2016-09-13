@@ -121,7 +121,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     // its shadow subtree, just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
     , m_inputType(createdByParser ? nullptr : InputType::createText(*this))
 {
-    ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
+    ASSERT(hasTagName(inputTag));
     setHasCustomStyleResolveCallbacks();
 }
 

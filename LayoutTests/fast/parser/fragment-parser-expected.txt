@@ -14,7 +14,6 @@ PASS parse('<html><link>') is ['<link>','<html><body></body></html>']
 PASS parse('<html><object>') is ['<object></object>','<html><body></body></html>']
 PASS parse('<html><embed>') is ['<embed>','<html><body></body></html>']
 PASS parse('<html><title>') is ['<title></title>','<html><body></body></html>']
-PASS parse('<html><isindex>') is ['<form><hr><label>This is a searchable index. Enter search keywords: <input name="isindex"></label><hr></form>','<html><body></body></html>']
 FAIL parse('<html><base>') should be ,<html><body></body></html>. Was <base>,<html><body></body></html>.
 PASS parse('<html><div>') is ['<div></div>','<html><body></body></html>']
 PASS parse('<frameset>') is ['','<html><body></body></html>']

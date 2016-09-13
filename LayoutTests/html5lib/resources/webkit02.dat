@@ -158,21 +158,6 @@ div
 |     <b>
 
 #data
-<isindex action="x">
-#errors
-#document-fragment
-table
-#document
-| <form>
-|   action="x"
-| <hr>
-| <label>
-|   "This is a searchable index. Enter search keywords: "
-|   <input>
-|     name="isindex"
-| <hr>
-
-#data
 <option><XH<optgroup></optgroup>
 #errors
 #document-fragment

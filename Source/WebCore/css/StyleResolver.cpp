@@ -1169,8 +1169,7 @@ static bool elementTypeHasAppearanceFromUAStyle(const Element& element)
         || localName == HTMLNames::buttonTag
         || localName == HTMLNames::progressTag
         || localName == HTMLNames::selectTag
-        || localName == HTMLNames::meterTag
-        || localName == HTMLNames::isindexTag;
+        || localName == HTMLNames::meterTag;
 }
 
 unsigned StyleResolver::computeMatchedPropertiesHash(const MatchedProperties* properties, unsigned size)

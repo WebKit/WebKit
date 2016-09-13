@@ -76,6 +76,35 @@
 |   <frameset>
 
 #data
+<!DOCTYPE html><frameset> te st
+#errors
+(1,29): unexpected-char-in-frameset
+(1,29): unexpected-char-in-frameset
+(1,29): unexpected-char-in-frameset
+(1,29): unexpected-char-in-frameset
+(1,29): eof-in-frameset
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|     "  "
+
+#data
+<!DOCTYPE html><frameset></frameset> te st
+#errors
+(1,29): unexpected-char-after-frameset
+(1,29): unexpected-char-after-frameset
+(1,29): unexpected-char-after-frameset
+(1,29): unexpected-char-after-frameset
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+|   "  "
+
+#data
 <!DOCTYPE html><frameset><!DOCTYPE html>
 #errors
 (1,40): unexpected-doctype
@@ -442,7 +471,6 @@
 <!DOCTYPE html><select><optgroup><option></optgroup><option><select><option>
 #errors
 (1,68): unexpected-select-in-select
-(1,76): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -523,24 +551,6 @@
 | <html>
 |   <head>
 |   <body>
-
-#data
-<isindex test=x name=x>
-#errors
-(1,23): expected-doctype-but-got-start-tag
-(1,23): deprecated-tag
-#document
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       <hr>
-|       <label>
-|         "This is a searchable index. Enter search keywords: "
-|         <input>
-|           name="isindex"
-|           test="x"
-|       <hr>
 
 #data
 test

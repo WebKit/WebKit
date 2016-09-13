@@ -3614,7 +3614,6 @@ bool Element::ieForbidsInsertHTML() const
         || hasTagName(imageTag)
         || hasTagName(imgTag)
         || hasTagName(inputTag)
-        || hasTagName(isindexTag)
         || hasTagName(linkTag)
         || hasTagName(metaTag)
         || hasTagName(paramTag)

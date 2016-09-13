@@ -1182,7 +1182,7 @@ static NSCellStateValue kit(TriState state)
             // Omit tags that will get stripped when converted to a fragment anyway.
             @"doctype", @"html", @"head", @"body",
             // Omit deprecated tags.
-            @"applet", @"basefont", @"center", @"dir", @"font", @"isindex", @"menu", @"s", @"strike", @"u",
+            @"applet", @"basefont", @"center", @"dir", @"font", @"menu", @"s", @"strike", @"u",
             // Omit object so no file attachments are part of the fragment.
             @"object", nil];
         CFRetain(elements);

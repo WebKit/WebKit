@@ -1,3 +1,17 @@
+2016-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for <isindex>
+        https://bugs.webkit.org/show_bug.cgi?id=7139
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop references to isindex.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (attributesForAttributedStringConversion):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView _excludedElementsForAttributedStringConversion]):
+
 2016-09-12  Chris Dumez  <cdumez@apple.com>
 
         Switch remaining users of Document::inPageCache() to pageCacheState()

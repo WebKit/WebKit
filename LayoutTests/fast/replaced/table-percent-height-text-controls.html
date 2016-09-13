@@ -74,10 +74,6 @@ function test()
     shouldBeTrue("getFullHeight('input-text-75') != '0px'");
     isEqual("getFullHeight('input-text-75')", "getFullHeight('input-text-100')");
 
-    shouldBe("getWidth('isindex-75')", "getWidth('isindex-100')");
-    shouldBeTrue("getFullHeight('isindex-75') != '0px'");
-    shouldBe("getFullHeight('isindex-75')", "getFullHeight('isindex-100')");
-
     shouldBe("getWidth('textarea-75')", "getWidth('textarea-100')");
     shouldBeTrue("getFullHeight('textarea-75') != '0px'");
     isEqual("getFullHeight('textarea-75')", "getFullHeight('textarea-100')");
@@ -97,9 +93,6 @@ function test()
 
 <table><tr><td><input type="text" id="input-text-75" style="height: 75%;"></td></tr></table>
 <table><tr><td><input type="text" id="input-text-100" style="height: 100%;"></td></tr></table>
-
-<table><tr><td><isindex id="isindex-75" style="height: 75%;"></td></tr></table>
-<table><tr><td><isindex id="isindex-100" style="height: 100%;"></td></tr></table>
 
 <table><tr><td><textarea id="textarea-75" style="height: 75%;"></textarea></td></tr></table>
 <table><tr><td><textarea id="textarea-100" style="height: 100%;"></textarea></td></tr></table>

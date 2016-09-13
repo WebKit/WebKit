@@ -1598,7 +1598,7 @@ WebInspector.DOMTreeElement.MaximumInlineTextChildLength = 80;
 // or implicitly (for HTML5) forbid the closing tag.
 WebInspector.DOMTreeElement.ForbiddenClosingTagElements = [
     "area", "base", "basefont", "br", "canvas", "col", "command", "embed", "frame",
-    "hr", "img", "input", "isindex", "keygen", "link", "meta", "param", "source",
+    "hr", "img", "input", "keygen", "link", "meta", "param", "source",
     "wbr", "track", "menuitem"
 ].keySet();
 

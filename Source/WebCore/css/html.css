@@ -353,11 +353,11 @@ button {
 }
 
 /* Form controls don't go vertical. */
-input, textarea, keygen, select, button, isindex, meter, progress {
+input, textarea, keygen, select, button, meter, progress {
     -webkit-writing-mode: horizontal-tb !important;
 }
 
-input, textarea, keygen, select, button, isindex {
+input, textarea, keygen, select, button {
     margin: 0__qem;
 #if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
     font: -webkit-small-control;
@@ -377,13 +377,12 @@ input[type="hidden"] {
     display: none;
 }
 
-input,
-input:matches([type="password"], [type="search"]),
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 textarea,
 input[type="range"],
 #endif
-isindex {
+input,
+input:matches([type="password"], [type="search"]) {
     -webkit-appearance: textfield;
     background-color: white;
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
@@ -625,7 +624,7 @@ textarea {
     pointer-events: none !important;
 }
 
-input::placeholder, isindex::placeholder {
+input::placeholder {
     white-space: pre;
     word-wrap: normal;
     overflow: hidden;
@@ -1132,7 +1131,7 @@ html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe
     outline: none;
 }
 
-input:focus, textarea:focus, isindex:focus, keygen:focus, select:focus {
+input:focus, textarea:focus, keygen:focus, select:focus {
     outline-offset: -2px;
 }
 

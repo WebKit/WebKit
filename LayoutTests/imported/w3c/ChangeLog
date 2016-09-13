@@ -1,3 +1,17 @@
+2016-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for <isindex>
+        https://bugs.webkit.org/show_bug.cgi?id=7139
+
+        Reviewed by Ryosuke Niwa.
+
+        Import layout test coverage from W3C web-platform-tests. We used to fail
+        the last check but we now pass it. Chrome also passes this last check.
+
+        * web-platform-tests/html/semantics/forms/historical-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/historical.html: Added.
+        * web-platform-tests/html/semantics/forms/w3c-import.log: Added.
+
 2016-09-11  Chris Dumez  <cdumez@apple.com>
 
         HTMLTrackElement.kind's invalid value default should be the metadata state

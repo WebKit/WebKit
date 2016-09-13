@@ -70,7 +70,6 @@ image interfaceName=HTMLUnknownElement
 img interfaceName=HTMLImageElement, constructorNeedsFormElement
 input constructorNeedsFormElement, constructorNeedsCreatedByParser
 ins interfaceName=HTMLModElement
-isindex interfaceName=HTMLUnknownElement
 kbd interfaceName=HTMLElement
 keygen constructorNeedsFormElement
 label

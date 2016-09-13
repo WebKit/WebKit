@@ -1,3 +1,83 @@
+2016-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for <isindex>
+        https://bugs.webkit.org/show_bug.cgi?id=7139
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop outdated tests / checks.
+
+        * dom/html/level2/html/HTMLIsIndexElement01-expected.txt: Removed.
+        * dom/html/level2/html/HTMLIsIndexElement01.html: Removed.
+        * dom/html/level2/html/HTMLIsIndexElement01.js: Removed.
+        * dom/html/level2/html/HTMLIsIndexElement02-expected.txt: Removed.
+        * dom/html/level2/html/HTMLIsIndexElement02.html: Removed.
+        * dom/html/level2/html/HTMLIsIndexElement02.js: Removed.
+        * dom/html/level2/html/HTMLIsIndexElement03-expected.txt: Removed.
+        * dom/html/level2/html/HTMLIsIndexElement03.html: Removed.
+        * dom/html/level2/html/HTMLIsIndexElement03.js: Removed.
+        * fast/dom/HTMLIsIndexElement/prototype-chain-expected.txt: Removed.
+        * fast/dom/HTMLIsIndexElement/prototype-chain.html: Removed.
+        * fast/dom/HTMLIsIndexElement/script-tests/prototype-chain.js: Removed.
+        * fast/dom/isindex-001.html: Removed.
+        * fast/dom/isindex-002.html: Removed.
+        * fast/events/resources/tabindex-focus-blur-all-frame1.html:
+        * fast/events/resources/tabindex-focus-blur-all-frame2.html:
+        * fast/events/resources/tabindex-focus-blur-all-iframe1.html:
+        * fast/events/resources/tabindex-focus-blur-all-iframe2.html:
+        * fast/forms/isindex-name-expected.txt: Removed.
+        * fast/forms/isindex-name.html: Removed.
+        * fast/forms/isindex-placeholder-expected.html: Removed.
+        * fast/forms/isindex-placeholder.html: Removed.
+        * fast/forms/text-style-color.html: Removed.
+        * fast/parser/fragment-parser-expected.txt:
+        * fast/parser/script-tests/fragment-parser.js:
+        * fast/replaced/table-percent-height-text-controls-expected.txt:
+        * fast/replaced/table-percent-height-text-controls.html:
+        * html5lib/generated/run-isindex-data-expected.txt: Removed.
+        * html5lib/generated/run-isindex-data.html: Removed.
+        * html5lib/generated/run-isindex-write-expected.txt: Removed.
+        * html5lib/generated/run-isindex-write.html: Removed.
+        * html5lib/resources/isindex.dat:
+        * html5lib/resources/tests19.dat:
+        * html5lib/resources/tests2.dat:
+        * html5lib/resources/webkit02.dat:
+        * http/tests/misc/isindex-formdata-expected.txt: Removed.
+        * http/tests/misc/isindex-formdata.html: Removed.
+        * http/tests/misc/isindex-with-no-form-base-href-expected.txt: Removed.
+        * http/tests/misc/isindex-with-no-form-base-href.html: Removed.
+        * http/tests/misc/isindex-with-no-form-expected.txt: Removed.
+        * http/tests/misc/isindex-with-no-form.html: Removed.
+        * http/tests/misc/resources/isindex-with-no-form-base-href-submit.html: Removed.
+        * http/tests/misc/resources/isindex-with-no-form-base-href.html: Removed.
+        * platform/efl/fast/dom/isindex-001-expected.png: Removed.
+        * platform/efl/fast/dom/isindex-001-expected.txt: Removed.
+        * platform/efl/fast/dom/isindex-002-expected.png: Removed.
+        * platform/efl/fast/dom/isindex-002-expected.txt: Removed.
+        * platform/efl/fast/forms/text-style-color-expected.png: Removed.
+        * platform/efl/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/gtk/fast/dom/isindex-001-expected.png: Removed.
+        * platform/gtk/fast/dom/isindex-001-expected.txt: Removed.
+        * platform/gtk/fast/dom/isindex-002-expected.png: Removed.
+        * platform/gtk/fast/dom/isindex-002-expected.txt: Removed.
+        * platform/gtk/fast/forms/text-style-color-expected.png: Removed.
+        * platform/gtk/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/ios-simulator/fast/dom/isindex-001-expected.txt: Removed.
+        * platform/ios-simulator/fast/dom/isindex-002-expected.txt: Removed.
+        * platform/ios-simulator/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/dom/isindex-001-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/dom/isindex-002-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/mac/fast/dom/isindex-001-expected.png: Removed.
+        * platform/mac/fast/dom/isindex-001-expected.txt: Removed.
+        * platform/mac/fast/dom/isindex-002-expected.png: Removed.
+        * platform/mac/fast/dom/isindex-002-expected.txt: Removed.
+        * platform/mac/fast/forms/text-style-color-expected.png: Removed.
+        * platform/mac/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/win/fast/dom/isindex-001-expected.txt: Removed.
+        * platform/win/fast/dom/isindex-002-expected.txt: Removed.
+        * platform/win/fast/forms/text-style-color-expected.txt: Removed.
+
 2016-09-13  Per Arne Vollan  <pvollan@apple.com>
 
         Skip media source tests since the feature is not enabled on Windows.

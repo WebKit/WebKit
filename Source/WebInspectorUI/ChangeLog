@@ -1,3 +1,14 @@
+2016-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for <isindex>
+        https://bugs.webkit.org/show_bug.cgi?id=7139
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop references to isindex.
+
+        * UserInterface/Views/DOMTreeElement.js:
+
 2016-09-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Improve clarity of inspector tests by adding TestHarness.expect* functions similar to XCTest

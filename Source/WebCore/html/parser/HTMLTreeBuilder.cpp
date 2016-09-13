@@ -448,42 +448,6 @@ void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
     processEndTag(endP);
 }
 
-Vector<Attribute> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
-{
-    Vector<Attribute> attributes = token.attributes();
-    attributes.removeAllMatching([] (const Attribute& attribute) {
-        const QualifiedName& name = attribute.name();
-        return name.matches(nameAttr) || name.matches(actionAttr) || name.matches(promptAttr);
-    });
-
-    attributes.append(Attribute(nameAttr, isindexTag.localName()));
-    return attributes;
-}
-
-void HTMLTreeBuilder::processIsindexStartTagForInBody(AtomicHTMLToken& token)
-{
-    ASSERT(token.type() == HTMLToken::StartTag);
-    ASSERT(token.name() == isindexTag);
-    parseError(token);
-    if (m_tree.form() && !isParsingTemplateContents())
-        return;
-    notImplemented(); // Acknowledge self-closing flag
-    processFakeStartTag(formTag);
-    if (Attribute* actionAttribute = findAttribute(token.attributes(), actionAttr))
-        m_tree.form()->setAttributeWithoutSynchronization(actionAttr, actionAttribute->value());
-    processFakeStartTag(hrTag);
-    processFakeStartTag(labelTag);
-    if (Attribute* promptAttribute = findAttribute(token.attributes(), promptAttr))
-        processFakeCharacters(promptAttribute->value());
-    else
-        processFakeCharacters(searchableIndexIntroduction());
-    processFakeStartTag(inputTag, attributesForIsindexInput(token));
-    notImplemented(); // This second set of characters may be needed by non-english locales.
-    processFakeEndTag(labelTag);
-    processFakeStartTag(hrTag);
-    processFakeEndTag(formTag);
-}
-
 namespace {
 
 bool isLi(const HTMLStackItem& item)
@@ -798,10 +762,6 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         processFakePEndTagIfPInButtonScope();
         m_tree.insertSelfClosingHTMLElement(token);
         m_framesetOk = false;
-        return;
-    }
-    if (token.name() == isindexTag) {
-        processIsindexStartTagForInBody(token);
         return;
     }
     if (token.name() == textareaTag) {
