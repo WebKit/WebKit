@@ -72,12 +72,7 @@ using ColorProfile = Vector<char>;
         void clearPixelData();
         void zeroFillPixelData();
         void zeroFillFrameRect(const IntRect&);
-
-        // Makes this frame have an independent copy of the provided image's
-        // pixel data, so that modifications in one frame are not reflected in
-        // the other.  Returns whether the copy succeeded.
-        bool copyBitmapData(const ImageFrame&);
-
+        
         // Copies the pixel data at [(startX, startY), (endX, startY)) to the
         // same X-coordinates on each subsequent row up to but not including
         // endY.
@@ -86,10 +81,14 @@ using ColorProfile = Vector<char>;
             m_backingStore->repeatFirstRow(IntRect(startX, startY, endX -startX , endY - startY));
         }
 
-        // Allocates space for the pixel data.  Must be called before any pixels
-        // are written.  Must only be called once.  Returns whether allocation
-        // succeeded.
-        bool setSize(const IntSize&);
+        // Makes this frame have an independent copy of the provided image's
+        // pixel data, so that modifications in one frame are not reflected in
+        // the other. Returns whether the copy succeeded.
+        bool initializeBackingStore(const ImageBackingStore&);
+
+        // Allocates space for the pixel data. Returns whether allocation succeeded.
+        bool initializeBackingStore(const IntSize&, bool premultiplyAlpha);
+
         IntSize size() const { return m_backingStore ? m_backingStore->size() : IntSize(); }
 
         // Returns a caller-owned pointer to the underlying native image data.
@@ -105,14 +104,12 @@ using ColorProfile = Vector<char>;
         FrameStatus status() const { return m_status; }
         unsigned duration() const { return m_duration; }
         FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
-        bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
         void setHasAlpha(bool alpha);
         void setOriginalFrameRect(const IntRect&);
         void setStatus(FrameStatus status);
         void setDuration(unsigned duration) { m_duration = duration; }
         void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
-        void setPremultiplyAlpha(bool premultiplyAlpha) { m_premultiplyAlpha = premultiplyAlpha; }
 
         inline RGBA32* pixelAt(int x, int y)
         {
@@ -146,7 +143,6 @@ using ColorProfile = Vector<char>;
         FrameStatus m_status;
         unsigned m_duration;
         FrameDisposalMethod m_disposalMethod;
-        bool m_premultiplyAlpha;
     };
 
     // ImageDecoder is a base for all format-specific decoders
@@ -174,6 +170,8 @@ using ColorProfile = Vector<char>;
         static std::unique_ptr<ImageDecoder> create(const SharedBuffer& data, ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
 
         virtual String filenameExtension() const = 0;
+        
+        bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
         bool isAllDataReceived() const { return m_isAllDataReceived; }
 

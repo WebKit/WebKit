@@ -257,10 +257,8 @@ ImageFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
         return nullptr;
 #endif
 
-    if (m_frameBufferCache.isEmpty()) {
+    if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.resize(1);
-        m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
-    }
 
     ImageFrame& frame = m_frameBufferCache[index];
     if (frame.status() != ImageFrame::FrameComplete)
@@ -411,29 +409,6 @@ void PNGImageDecoder::headerAvailable()
     }
 }
 
-static inline void setPixelRGB(RGBA32* dest, png_bytep pixel)
-{
-    *dest = 0xFF000000U | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
-}
-
-static inline void setPixelRGBA(RGBA32* dest, png_bytep pixel, unsigned char& nonTrivialAlphaMask)
-{
-    unsigned char a = pixel[3];
-    *dest = a << 24 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
-    nonTrivialAlphaMask |= (255 - a);
-}
-
-static inline void setPixelPremultipliedRGBA(RGBA32* dest, png_bytep pixel, unsigned char& nonTrivialAlphaMask)
-{
-    unsigned char a = pixel[3];
-    unsigned char r = fastDivideBy255(pixel[0] * a);
-    unsigned char g = fastDivideBy255(pixel[1] * a);
-    unsigned char b = fastDivideBy255(pixel[2] * a);
-
-    *dest = a << 24 | r << 16 | g << 8 | b;
-    nonTrivialAlphaMask |= (255 - a);
-}
-
 void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int)
 {
     if (m_frameBufferCache.isEmpty())
@@ -447,7 +422,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     ImageFrame& buffer = m_frameBufferCache[m_currentFrame];
     if (buffer.status() == ImageFrame::FrameEmpty) {
         png_structp png = m_reader->pngPtr();
-        if (!buffer.setSize(scaledSize())) {
+        if (!buffer.initializeBackingStore(scaledSize(), m_premultiplyAlpha)) {
             longjmp(JMPBUF(png), 1);
             return;
         }
@@ -534,10 +509,10 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     if (m_scaled) {
-        for (int x = 0; x < width; ++x) {
+        for (int x = 0; x < width; ++x, ++address) {
             png_bytep pixel = row + m_scaledColumns[x] * colorChannels;
             unsigned alpha = hasAlpha ? pixel[3] : 255;
-            buffer.setPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
+            buffer.setPixel(address, pixel[0], pixel[1], pixel[2], alpha);
             nonTrivialAlphaMask |= (255 - alpha);
         }
     } else
@@ -545,19 +520,16 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     {
         png_bytep pixel = row;
         if (hasAlpha) {
-            if (buffer.premultiplyAlpha()) {
-                for (int x = 0; x < width; ++x, pixel += 4)
-                    setPixelPremultipliedRGBA(address++, pixel, nonTrivialAlphaMask);
-            } else {
-                for (int x = 0; x < width; ++x, pixel += 4)
-                    setPixelRGBA(address++, pixel, nonTrivialAlphaMask);
+            for (int x = 0; x < width; ++x, pixel += 4, ++address) {
+                unsigned alpha = pixel[3];
+                buffer.setPixel(address, pixel[0], pixel[1], pixel[2], alpha);
+                nonTrivialAlphaMask |= (255 - alpha);
             }
         } else {
-            for (int x = 0; x < width; ++x, pixel += 3)
-                setPixelRGB(address++, pixel);
+            for (int x = 0; x < width; ++x, pixel += 3, ++address)
+                *address = makeRGB(pixel[0], pixel[1], pixel[2]);
         }
     }
-
 
     if (nonTrivialAlphaMask && !buffer.hasAlpha())
         buffer.setHasAlpha(true);
@@ -618,8 +590,6 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             return;
 
         m_frameBufferCache.resize(m_frameCount);
-        for (auto& imageFrame : m_frameBufferCache)
-            imageFrame.setPremultiplyAlpha(m_premultiplyAlpha);
     } else if (!memcmp(chunk->name, "fcTL", 4) && chunk->size == 26) {
         if (m_hasInfo && !m_isAnimated)
             return;
@@ -661,10 +631,8 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             return;
         }
 
-        if (m_frameBufferCache.isEmpty()) {
+        if (m_frameBufferCache.isEmpty())
             m_frameBufferCache.resize(1);
-            m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
-        }
 
         if (m_currentFrame < m_frameBufferCache.size()) {
             ImageFrame& buffer = m_frameBufferCache[m_currentFrame];
@@ -809,11 +777,14 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
         prevBuffer = &m_frameBufferCache[--frameIndex];
         prevMethod = prevBuffer->disposalMethod();
     }
+
+    png_structp png = m_reader->pngPtr();
     ASSERT(prevBuffer->status() == ImageFrame::FrameComplete);
 
     if (prevMethod == ImageFrame::DisposeKeep) {
         // Preserve the last frame as the starting state for this frame.
-        buffer.copyBitmapData(*prevBuffer);
+        if (!prevBuffer->backingStore() || !buffer.initializeBackingStore(*prevBuffer->backingStore()))
+            longjmp(JMPBUF(png), 1);
     } else {
         // We want to clear the previous frame to transparent, without
         // affecting pixels in the image outside of the frame.
@@ -824,7 +795,10 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
             buffer.zeroFillPixelData();
         } else {
             // Copy the whole previous buffer, then clear just its frame.
-            buffer.copyBitmapData(*prevBuffer);
+            if (!prevBuffer->backingStore() || !buffer.initializeBackingStore(*prevBuffer->backingStore())) {
+                longjmp(JMPBUF(png), 1);
+                return;
+            }
             buffer.zeroFillFrameRect(prevRect);
         }
     }

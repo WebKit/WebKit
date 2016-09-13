@@ -78,10 +78,8 @@ ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
     if (index)
         return 0;
 
-    if (m_frameBufferCache.isEmpty()) {
+    if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.resize(1);
-        m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
-    }
 
     ImageFrame& frame = m_frameBufferCache[0];
     if (frame.status() != ImageFrame::FrameComplete)
@@ -128,7 +126,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
     ASSERT(buffer.status() != ImageFrame::FrameComplete);
 
     if (buffer.status() == ImageFrame::FrameEmpty) {
-        if (!buffer.setSize(size()))
+        if (!buffer.initializeBackingStore(size(), m_premultiplyAlpha))
             return setFailed();
         buffer.setStatus(ImageFrame::FramePartial);
         buffer.setHasAlpha(m_hasAlpha);

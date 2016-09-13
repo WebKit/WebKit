@@ -78,12 +78,10 @@ bool BMPImageReader::decodeBMP(bool onlySize)
     // Initialize the framebuffer if needed.
     ASSERT(m_buffer);  // Parent should set this before asking us to decode!
     if (m_buffer->status() == ImageFrame::FrameEmpty) {
-        if (!m_buffer->setSize(m_parent->size()))
+        if (!m_buffer->initializeBackingStore(m_parent->size(), m_parent->premultiplyAlpha()))
             return m_parent->setFailed(); // Unable to allocate.
+
         m_buffer->setStatus(ImageFrame::FramePartial);
-        // setSize() calls eraseARGB(), which resets the alpha flag, so we force
-        // it back to false here.  We'll set it true below in all cases where
-        // these 0s could actually show through.
         m_buffer->setHasAlpha(false);
 
         if (!m_isTopDown)

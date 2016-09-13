@@ -321,10 +321,7 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
         return;
     }
 
-    const size_t oldSize = m_frameBufferCache.size();
     m_frameBufferCache.resize(m_reader->imagesCount());
-    for (size_t i = oldSize; i < m_reader->imagesCount(); ++i)
-        m_frameBufferCache[i].setPremultiplyAlpha(m_premultiplyAlpha);
 
     if (query == GIFFrameCountQuery)
         return;
@@ -361,7 +358,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 
     if (!frameIndex) {
         // This is the first frame, so we're not relying on any previous data.
-        if (!buffer->setSize(scaledSize()))
+        if (!buffer->initializeBackingStore(scaledSize(), m_premultiplyAlpha))
             return setFailed();
     } else {
         // The starting state for this frame depends on the previous frame's
@@ -382,7 +379,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 
         if ((prevMethod == ImageFrame::DisposeNotSpecified) || (prevMethod == ImageFrame::DisposeKeep)) {
             // Preserve the last frame as the starting state for this frame.
-            if (!buffer->copyBitmapData(*prevBuffer))
+            if (!prevBuffer->backingStore() || !buffer->initializeBackingStore(*prevBuffer->backingStore()))
                 return setFailed();
         } else {
             // We want to clear the previous frame to transparent, without
@@ -392,11 +389,11 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
             if (!frameIndex || prevRect.contains(IntRect(IntPoint(), scaledSize()))) {
                 // Clearing the first frame, or a frame the size of the whole
                 // image, results in a completely empty image.
-                if (!buffer->setSize(bufferSize))
+                if (!buffer->initializeBackingStore(bufferSize, m_premultiplyAlpha))
                     return setFailed();
             } else {
                 // Copy the whole previous buffer, then clear just its frame.
-                if (!buffer->copyBitmapData(*prevBuffer))
+                if (!prevBuffer->backingStore() || !buffer->initializeBackingStore(*prevBuffer->backingStore()))
                     return setFailed();
                 buffer->zeroFillFrameRect(prevRect);
             }

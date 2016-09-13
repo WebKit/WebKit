@@ -132,7 +132,6 @@ ImageFrame::ImageFrame()
     , m_status(FrameEmpty)
     , m_duration(0)
     , m_disposalMethod(DisposeNotSpecified)
-    , m_premultiplyAlpha(true)
 {
 } 
 
@@ -141,12 +140,13 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     if (this == &other)
         return *this;
 
-    copyBitmapData(other);
+    if (other.backingStore())
+        initializeBackingStore(*other.backingStore());
+
     setHasAlpha(other.m_hasAlpha);
     setStatus(other.status());
     setDuration(other.duration());
     setDisposalMethod(other.disposalMethod());
-    setPremultiplyAlpha(other.premultiplyAlpha());
     return *this;
 }
 
@@ -175,23 +175,21 @@ void ImageFrame::zeroFillFrameRect(const IntRect& rect)
     setHasAlpha(true);
 }
 
-bool ImageFrame::copyBitmapData(const ImageFrame& other)
+bool ImageFrame::initializeBackingStore(const ImageBackingStore& backingStore)
 {
-    if (this == &other)
+    if (&backingStore == this->backingStore())
         return true;
 
-    if (other.m_backingStore)
-        m_backingStore = ImageBackingStore::create(*other.m_backingStore.get());
-    else
-        m_backingStore = nullptr;
-    
-    return true;
+    m_backingStore = ImageBackingStore::create(backingStore);
+    return m_backingStore != nullptr;
 }
 
-bool ImageFrame::setSize(const IntSize& size)
+bool ImageFrame::initializeBackingStore(const IntSize& size, bool premultiplyAlpha)
 {
-    ASSERT(!m_backingStore);
-    m_backingStore = ImageBackingStore::create(size, m_premultiplyAlpha);
+    if (size.isEmpty())
+        return false;
+
+    m_backingStore = ImageBackingStore::create(size, premultiplyAlpha);
     return m_backingStore != nullptr;
 }
 

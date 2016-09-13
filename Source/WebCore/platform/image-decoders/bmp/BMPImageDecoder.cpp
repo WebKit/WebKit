@@ -70,10 +70,8 @@ ImageFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)
     if (index)
         return 0;
 
-    if (m_frameBufferCache.isEmpty()) {
+    if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.resize(1);
-        m_frameBufferCache.first().setPremultiplyAlpha(m_premultiplyAlpha);
-    }
 
     ImageFrame* buffer = &m_frameBufferCache.first();
     if (buffer->status() != ImageFrame::FrameComplete)
