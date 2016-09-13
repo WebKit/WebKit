@@ -123,6 +123,18 @@ void CachedScript::destroyDecodedData()
     setDecodedSize(0);
 }
 
+void CachedScript::setBodyDataFrom(const CachedResource& resource)
+{
+    ASSERT(resource.type() == type());
+    auto& script = static_cast<const CachedScript&>(resource);
+
+    m_data = script.m_data;
+    m_script = script.m_script;
+    m_scriptHash = script.m_scriptHash;
+    m_decodingState = script.m_decodingState;
+    m_decoder = script.m_decoder;
+}
+
 #if ENABLE(NOSNIFF)
 bool CachedScript::mimeTypeAllowedByNosniff() const
 {

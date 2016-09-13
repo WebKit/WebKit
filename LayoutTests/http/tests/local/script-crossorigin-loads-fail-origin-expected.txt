@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Origin  is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+This test fails if the script loads correctly.
+
+PASS

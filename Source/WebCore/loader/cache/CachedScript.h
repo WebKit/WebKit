@@ -47,16 +47,18 @@ public:
 #endif
 
 private:
-    bool mayTryReplaceEncodedData() const override { return true; }
+    bool mayTryReplaceEncodedData() const final { return true; }
 
-    bool shouldIgnoreHTTPStatusCodeErrors() const override;
+    bool shouldIgnoreHTTPStatusCodeErrors() const final;
 
-    void setEncoding(const String&) override;
-    String encoding() const override;
-    const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
-    void finishLoading(SharedBuffer*) override;
+    void setEncoding(const String&) final;
+    String encoding() const final;
+    const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.get(); }
+    void finishLoading(SharedBuffer*) final;
 
-    void destroyDecodedData() override;
+    void destroyDecodedData() final;
+
+    void setBodyDataFrom(const CachedResource&) final;
 
     String m_script;
     unsigned m_scriptHash { 0 };

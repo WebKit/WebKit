@@ -42,7 +42,7 @@ class LoadableClassicScript final : public LoadableScript, private CachedResourc
 public:
     ~LoadableClassicScript();
 
-    static Ref<LoadableClassicScript> create(CachedResourceHandle<CachedScript>&&, const String& crossOriginMode, SecurityOrigin&);
+    static Ref<LoadableClassicScript> create(CachedResourceHandle<CachedScript>&&);
     bool isLoaded() const override;
     Optional<Error> wasErrored() const override;
     bool wasCanceled() const override;
@@ -53,14 +53,12 @@ public:
     void execute(ScriptElement&) override;
 
 private:
-    LoadableClassicScript(CachedResourceHandle<CachedScript>&&, const String& crossOriginMode, SecurityOrigin&);
+    LoadableClassicScript(CachedResourceHandle<CachedScript>&& cachedScript) : m_cachedScript(WTFMove(cachedScript)) { }
 
     void notifyFinished(CachedResource*) override;
 
     CachedResourceHandle<CachedScript> m_cachedScript;
-    Ref<SecurityOrigin> m_securityOrigin;
     Optional<Error> m_error { Nullopt };
-    bool m_requestUsesAccessControl;
 };
 
 }

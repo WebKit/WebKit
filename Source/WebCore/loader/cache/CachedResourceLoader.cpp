@@ -546,7 +546,7 @@ bool CachedResourceLoader::updateCachedResourceWithCurrentRequest(CachedResource
     CachedResource& resource = *resourceHandle;
 
     // FIXME: We should progressively extend this to other reusable resources
-    if (resource.type() != CachedResource::Type::ImageResource && resource.type() != CachedResource::Type::TextTrackResource)
+    if (resource.type() != CachedResource::Type::ImageResource && resource.type() != CachedResource::Type::Script && resource.type() != CachedResource::Type::TextTrackResource)
         return false;
 
     bool shouldUpdate = resource.options().mode != request.options().mode || request.resourceRequest().httpOrigin() != resource.resourceRequest().httpOrigin();
@@ -647,7 +647,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 
     logMemoryCacheResourceRequest(frame(), resource ? DiagnosticLoggingKeys::inMemoryCacheKey() : DiagnosticLoggingKeys::notInMemoryCacheKey());
 
-    const RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get());
+    RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get());
     switch (policy) {
     case Reload:
         memoryCache.remove(*resource);
@@ -663,7 +663,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         resource = revalidateResource(request, resource.get());
         break;
     case Use:
-        if (!updateCachedResourceWithCurrentRequest(request, resource)) {
+        if (updateCachedResourceWithCurrentRequest(request, resource)) {
+            if (resource->status() != CachedResource::Status::Cached)
+                policy = Load;
+        } else {
+            ASSERT(policy == Use);
             if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(request, resource.get()))
                 return nullptr;
             logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::usedKey());

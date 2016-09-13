@@ -21,11 +21,18 @@ window.onmessage = function(evt)
         alert("Unknown message.");
 }
 
+function sortCookie(cookie)
+{
+    var items = cookie.split("; ");
+    items.sort();
+    return items.join("; ");
+}
+
 var stage = 1;
 function showCookies()
 {
-    alert("Test stage " + stage++ + " document.cookie is: " + document.cookie);
-    parent.window.postMessage("done", "*");    
+    alert("Test stage " + stage++ + " document.cookie is: " + sortCookie(document.cookie));
+    parent.window.postMessage("done", "*");
 }
 
 function sendXHR(queryCommand)

@@ -1,0 +1,47 @@
+<body>
+<p>Trying to load data URLs scripts. If being loaded, the scripts should throw error messages.</p>
+<pre></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done() {
+    log("DONE");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function log(msg) {
+    document.querySelector("pre").innerHTML += msg + "<br>";
+}
+
+window.onerror = function(message, source, lineno, colno, error)
+{
+    log("Received error '" + message + "' from '" + source + "', location " + lineno + ":" + colno + ".");
+}
+
+function test1()
+{
+    var script = document.createElement("script");
+    script.src = "data:text/script, throw 'PASS: my data URL in no-cors mode is throwing rich messages';";
+    script.onload = () => { log("PASS: loaded script in no-cors mode"); test2(); }
+    script.onerror = () => { log("FAIL: did not load script in no-cors mode"); test2(); }
+    document.body.appendChild(script);
+}
+
+function test2()
+{
+    var script = document.createElement("script");
+    script.crossOrigin = "";
+    script.src = "data:text/script, throw 'FAIL: my error is too rich!'";
+    script.onload = () => { log("FAIL: loaded script in cors mode"); done(); }
+    script.onerror = () => { log("PASS: did not load script in cors mode"); done(); }
+    document.body.appendChild(script);
+}
+
+test1();
+
+</script>
+</body>

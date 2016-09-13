@@ -33,19 +33,12 @@
 
 namespace WebCore {
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(CachedResourceHandle<CachedScript>&& cachedScript, const String& crossOriginMode, SecurityOrigin& securityOrigin)
+Ref<LoadableClassicScript> LoadableClassicScript::create(CachedResourceHandle<CachedScript>&& cachedScript)
 {
     ASSERT(cachedScript);
-    auto script = adoptRef(*new LoadableClassicScript(WTFMove(cachedScript), crossOriginMode, securityOrigin));
+    auto script = adoptRef(*new LoadableClassicScript(WTFMove(cachedScript)));
     cachedScript->addClient(script.ptr());
     return script;
-}
-
-LoadableClassicScript::LoadableClassicScript(CachedResourceHandle<CachedScript>&& cachedScript, const String& crossOriginMode, SecurityOrigin& securityOrigin)
-    : m_cachedScript(cachedScript)
-    , m_securityOrigin(securityOrigin)
-    , m_requestUsesAccessControl(!crossOriginMode.isNull())
-{
 }
 
 LoadableClassicScript::~LoadableClassicScript()
@@ -74,9 +67,10 @@ bool LoadableClassicScript::wasCanceled() const
     return m_cachedScript->wasCanceled();
 }
 
-void LoadableClassicScript::notifyFinished(CachedResource*)
+void LoadableClassicScript::notifyFinished(CachedResource* resource)
 {
-    if (!m_error && m_requestUsesAccessControl && !m_cachedScript->passesSameOriginPolicyCheck(m_securityOrigin.get())) {
+    ASSERT(resource);
+    if (resource->resourceError().isAccessControl()) {
         static NeverDestroyed<String> consoleMessage(ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
         m_error = Error {
             ErrorType::CrossOriginLoad,

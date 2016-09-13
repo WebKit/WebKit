@@ -1,0 +1,66 @@
+<html>
+<body>
+<p>Tests source origin difference for cached resources.</p
+<p>Trying to load sequentially the same image from different origins.</p>
+<div id="console"></div>
+<div>
+    <iframe id="iframe1"></iframe>
+    <iframe id="iframe2"></iframe>
+    <iframe id="iframe3"></iframe>
+    <iframe id="iframe4"></iframe>
+</div>
+<div>
+    <iframe id="iframe5"></iframe>
+    <iframe id="iframe6"></iframe>
+    <iframe id="iframe7"></iframe>
+    <iframe id="iframe8"></iframe>
+</div>
+<script>
+if (window.testRunner) {
+   testRunner.dumpAsText();
+   testRunner.waitUntilDone();
+}
+
+var counter = 0;
+var messages = [];
+window.addEventListener("message", function(event) {
+    messages.push(event.data);
+    if (messages.length == 8) {
+        messages.sort();
+        messages.forEach((message) => {
+            document.getElementById('console').innerHTML += message + "<br/>";
+        })
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+});
+
+var iframeURL8000 = "http://localhost:8000/security/resources/cross-origin-cached-resource-iframe.html";
+var iframeURL8080 = "http://localhost:8080/security/resources/cross-origin-cached-resource-iframe.html";
+
+var allowAllImage1 = "http://127.0.0.1:8000/security/resources/abe-allow-star.php?allowCache";
+var allow8000Image1 = "http://127.0.0.1:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&delay=200";
+
+var allowAllImage2 = "http://127.0.0.1:8080/security/resources/abe-allow-star.php?allowCache";
+var allow8000Image2 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&delay=200";
+
+document.getElementById('iframe1').src = iframeURL8000 + "#" +
+    encodeURIComponent(JSON.stringify({node: "img", url: allowAllImage1, shouldPass:true, crossOrigin: "anonymous", id: 1}));
+document.getElementById('iframe2').src = iframeURL8080 + "#" +
+    encodeURIComponent(JSON.stringify({node: "img", url: allowAllImage1, shouldPass: true, crossOrigin: "anonymous", id: 2}));
+document.getElementById('iframe3').src = iframeURL8000 + "#" +
+    encodeURIComponent(JSON.stringify({node: "img", url: allow8000Image1, shouldPass: true, crossOrigin: "anonymous", id: 3}));
+document.getElementById('iframe4').src = iframeURL8080 + "#" +
+    encodeURIComponent(JSON.stringify({node: "img", url: allow8000Image1, shouldPass: false, crossOrigin: "anonymous", id: 4}));
+
+document.getElementById('iframe5').src = iframeURL8000 + "#" +
+    encodeURIComponent(JSON.stringify({node: "img", url: allowAllImage2, shouldPass:true, id: 5}));
+document.getElementById('iframe6').src = iframeURL8000 + "#" +
+    encodeURIComponent(JSON.stringify({node: "img", url: allowAllImage2, shouldPass:true, crossOrigin: "anonymous", id: 6}));
+document.getElementById('iframe7').src = iframeURL8080 + "#" +
+    encodeURIComponent(JSON.stringify({node: "img", url: allow8000Image2, shouldPass:true, id: 7}));
+document.getElementById('iframe8').src = iframeURL8080 + "#" +
+    encodeURIComponent(JSON.stringify({node: "img", url: allow8000Image2, shouldPass:false, crossOrigin: "anonymous", id: 8}));
+</script>
+</body>
+</html>

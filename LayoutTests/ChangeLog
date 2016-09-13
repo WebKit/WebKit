@@ -1,3 +1,43 @@
+2016-09-12  Youenn Fablet  <youenn@apple.com>
+
+        ScriptElement should use FetchOptions::mode according its crossOrigin attribute
+        https://bugs.webkit.org/show_bug.cgi?id=161686
+
+        Reviewed by Darin Adler.
+
+        Added new tests.
+        Updated cookie test for robustness as the order of the cookie items when more than one may not be preserved.
+
+        Moved one of the blink test to http/tests as it requires HTTP to run properly.
+        Updated blink test expectation as it is run from file, while it should be run from http.
+
+        Copied a similar test to http/tests/local to ensure that script load fails when served from the filesystem , CORS check failing.
+        The test was previously passing in WebKit as the test file was served from filesystem and was granted universal access.
+        The CORS checks were done through SecurityOrigin::canRequest which was testing that first.
+        With the patch, CORS checks are done at a lower level and do not take in to account universal access.
+        This aligns with Chrome and Firefox behavior.
+
+        * http/tests/local/script-crossorigin-loads-fail-origin-expected.txt: Added.
+        * http/tests/local/script-crossorigin-loads-fail-origin.html: Copied from LayoutTests/imported/blink/http/tests/security/script-crossorigin-loads-correctly-credentials.html.
+        * http/tests/cookies/resources/third-party-cookie-relaxing-iframe.html: Sorting the cookie to make the test more resistant.
+        * http/tests/security/cross-origin-cached-images-expected.txt: Added.
+        * http/tests/security/cross-origin-cached-images-parallel-expected.txt: Added.
+        * http/tests/security/cross-origin-cached-images-parallel.html: Renamed from LayoutTests/http/tests/security/cross-origin-cached-resource-parallel.html.
+        * http/tests/security/cross-origin-cached-images.html: Renamed from LayoutTests/http/tests/security/cross-origin-cached-resource.html.
+        * http/tests/security/cross-origin-cached-resource-parallel-expected.txt: Removed.
+        * http/tests/security/cross-origin-cached-scripts-expected.txt: Added.
+        * http/tests/security/cross-origin-cached-scripts-parallel-expected.txt: Added.
+        * http/tests/security/cross-origin-cached-scripts-parallel.html: Added.
+        * http/tests/security/cross-origin-cached-scripts.html: Added.
+        * http/tests/security/resources/cors-script.php: Updated according chromium script to activate CORS credentials header if requested.
+        * http/tests/security/resources/cross-origin-cached-resource-iframe.html:
+        * http/tests/security/resources/notify-loaded.js: Added.
+        * http/tests/security/script-crossorigin-loads-correctly-credentials-expected.txt: Renamed from LayoutTests/imported/blink/http/tests/security/script-crossorigin-loads-correctly-credentials-expected.txt.
+        * http/tests/security/script-crossorigin-loads-correctly-credentials.html: Renamed from LayoutTests/imported/blink/http/tests/security/script-crossorigin-loads-correctly-credentials.html.
+        * http/tests/security/script-with-dataurl-expected.txt: Added.
+        * http/tests/security/script-with-dataurl.html: Added.
+        * http/tests/security/script-with-failed-cors-check-fails-to-load-expected.txt:
+
 2016-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Fix lint warnings of LayoutTests/platform/gtk/TestExpectations

@@ -263,10 +263,9 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
 
     ASSERT(!m_loadableScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
-        String crossOriginMode = m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
-        auto request = requestScriptWithCache(m_element.document().completeURL(sourceURL), m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), crossOriginMode);
+        auto request = requestScriptWithCache(m_element.document().completeURL(sourceURL), m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr));
         if (request) {
-            m_loadableScript = LoadableClassicScript::create(WTFMove(request), crossOriginMode, *m_element.document().securityOrigin());
+            m_loadableScript = LoadableClassicScript::create(WTFMove(request));
             m_isExternalScript = true;
         }
     }
@@ -280,21 +279,16 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     return false;
 }
 
-CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCache(const URL& sourceURL, const String& nonceAttribute, const String& crossOriginMode)
+CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCache(const URL& sourceURL, const String& nonceAttribute)
 {
     bool hasKnownNonce = m_element.document().contentSecurityPolicy()->allowScriptWithNonce(nonceAttribute, m_element.isInUserAgentShadowTree());
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     CachedResourceRequest request(ResourceRequest(sourceURL), options);
+    request.setAsPotentiallyCrossOrigin(m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), m_element.document());
 
     m_element.document().contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request.mutableResourceRequest(), ContentSecurityPolicy::InsecureRequestType::Load);
-
-    if (!crossOriginMode.isNull()) {
-        StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-        ASSERT(m_element.document().securityOrigin());
-        updateRequestForAccessControl(request.mutableResourceRequest(), *m_element.document().securityOrigin(), allowCredentials);
-    }
 
     request.setCharset(scriptCharset());
     request.setInitiator(&element());

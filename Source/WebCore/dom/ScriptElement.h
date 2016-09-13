@@ -89,7 +89,7 @@ private:
     bool ignoresLoadRequest() const;
     bool isScriptForEventSupported() const;
 
-    CachedResourceHandle<CachedScript> requestScriptWithCache(const URL&, const String& nonceAttribute, const String& crossoriginAttribute);
+    CachedResourceHandle<CachedScript> requestScriptWithCache(const URL&, const String&);
 
     bool requestClassicScript(const String& sourceURL);
 

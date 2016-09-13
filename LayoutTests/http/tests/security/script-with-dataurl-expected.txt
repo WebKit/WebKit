@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 1: PASS: my data URL in no-cors mode is throwing rich messages
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+Trying to load data URLs scripts. If being loaded, the scripts should throw error messages.
+
+Received error 'Script error.' from '', location 0:0.
+PASS: loaded script in no-cors mode
+PASS: did not load script in cors mode
+DONE
+
