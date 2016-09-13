@@ -361,10 +361,10 @@ WebInspector.Color = class Color
             return true;
 
         if (!this.simple)
-            return Object.shallowEqual(this._rgba, [0, 0, 0, 0]) || Object.shallowEqual(this._hsla, [0, 0, 0, 0]);
+            return Array.shallowEqual(this._rgba, [0, 0, 0, 0]) || Array.shallowEqual(this._hsla, [0, 0, 0, 0]);
 
         let rgb = (this._rgba && this._rgba.slice(0, 3)) || this._hslToRGB(this._hsla);
-        return Object.keys(WebInspector.Color.Keywords).some(key => Object.shallowEqual(WebInspector.Color.Keywords[key], rgb));
+        return Object.keys(WebInspector.Color.Keywords).some(key => Array.shallowEqual(WebInspector.Color.Keywords[key], rgb));
     }
 
     canBeSerializedAsShortHEX()

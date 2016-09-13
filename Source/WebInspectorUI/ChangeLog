@@ -1,3 +1,31 @@
+2016-09-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Use Array.shallowEqual instead of Object.shallowEqual in more places
+        https://bugs.webkit.org/show_bug.cgi?id=161867
+        <rdar://problem/28261328>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Utilities.js:
+        (value):
+        Array.shallowEqual should return false if passed a non-array.
+
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.update):
+        * UserInterface/Models/Color.js:
+        (WebInspector.Color.prototype.isKeyword):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        (WebInspector.DOMNodeStyles.prototype.refresh):
+        * UserInterface/Models/Geometry.js:
+        (WebInspector.CubicBezier.prototype.toString):
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.set classNames):
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView.prototype._updateShownTabs):
+        Prefer Array.shallowEqual over Obejct.shallowEqual if the arguments
+        will always be arrays.
+
 2016-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should be able to pretty print module code (import / export statements)

@@ -172,7 +172,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             for (let key in this._styleDeclarationsMap) {
                 // Check if the same key exists in the previous map and has the same style objects.
                 if (key in this._previousStyleDeclarationsMap) {
-                    if (Object.shallowEqual(this._styleDeclarationsMap[key], this._previousStyleDeclarationsMap[key]))
+                    if (Array.shallowEqual(this._styleDeclarationsMap[key], this._previousStyleDeclarationsMap[key]))
                         continue;
 
                     // Some styles have selectors such that they will match with the DOM node twice (for example "::before, ::after").

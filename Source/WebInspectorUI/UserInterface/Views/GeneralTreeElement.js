@@ -81,7 +81,7 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
         if (typeof x === "string")
             x = [x];
 
-        if (Object.shallowEqual(this._classNames, x))
+        if (Array.shallowEqual(this._classNames, x))
             return;
 
         if (this._listItemNode && this._classNames)

@@ -56,7 +56,7 @@ Object.defineProperty(Object, "shallowEqual",
             return true;
 
         // Use an optimized version of shallowEqual for arrays.
-        if ((a instanceof Array) && (b instanceof Array))
+        if (Array.isArray(a) && Array.isArray(b))
             return Array.shallowEqual(a, b);
 
         if (a.constructor !== b.constructor)
@@ -436,6 +436,9 @@ Object.defineProperty(Array, "shallowEqual",
 {
     value: function(a, b)
     {
+        if (!Array.isArray(a) || !Array.isArray(b))
+            return false;
+
         if (a === b)
             return true;
 

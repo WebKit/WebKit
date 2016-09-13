@@ -12,17 +12,17 @@ function test()
         test: () => {
             // Index:  0  1  2  3  4  5  6  7  8  9
             let arr = [0, 1, 2, 2, 2, 2, 2, 2, 6, 7];
-            InspectorTest.expectThat(arr.lowerBound(-100) === 0, "lowerBound of a value before the first value should produce the first index.");
-            InspectorTest.expectThat(arr.lowerBound(0) === 0, "lowerBound of a value in the list should return the value's index.");
-            InspectorTest.expectThat(arr.lowerBound(1) === 1, "lowerBound of a value in the list should return the value's index.");
-            InspectorTest.expectThat(arr.lowerBound(7) === 9, "lowerBound of a value in the list should return the value's index.");
-            InspectorTest.expectThat(arr.lowerBound(2) === 2, "lowerBound of a duplicate value in the list should return the value's first index.");
-            InspectorTest.expectThat(arr.lowerBound(5) === 8, "lowerBound of a value in a gap in the list should return the index where the value would be.");
-            InspectorTest.expectThat(arr.lowerBound(100) === arr.length, "lowerBound of a value after the last value should produce the index after the last index (length).");
+            InspectorTest.expectEqual(arr.lowerBound(-100), 0, "lowerBound of a value before the first value should produce the first index.");
+            InspectorTest.expectEqual(arr.lowerBound(0), 0, "lowerBound of a value in the list should return the value's index.");
+            InspectorTest.expectEqual(arr.lowerBound(1), 1, "lowerBound of a value in the list should return the value's index.");
+            InspectorTest.expectEqual(arr.lowerBound(7), 9, "lowerBound of a value in the list should return the value's index.");
+            InspectorTest.expectEqual(arr.lowerBound(2), 2, "lowerBound of a duplicate value in the list should return the value's first index.");
+            InspectorTest.expectEqual(arr.lowerBound(5), 8, "lowerBound of a value in a gap in the list should return the index where the value would be.");
+            InspectorTest.expectEqual(arr.lowerBound(100), arr.length, "lowerBound of a value after the last value should produce the index after the last index (length).");
 
             let objs = [{size: 100}, {size: 200}, {size: 300}];
             let comparator = (value, object) => value - object.size;
-            InspectorTest.expectThat(objs.lowerBound(150, comparator) === 1, "lowerBound with a comparator should invoke the comparator with the search value and a value in the list.");
+            InspectorTest.expectEqual(objs.lowerBound(150, comparator), 1, "lowerBound with a comparator should invoke the comparator with the search value and a value in the list.");
 
             return true;
         }
@@ -33,17 +33,17 @@ function test()
         test: () => {
             // Index:  0  1  2  3  4  5  6  7  8  9
             let arr = [0, 1, 2, 2, 2, 2, 2, 2, 6, 7];
-            InspectorTest.expectThat(arr.upperBound(-100) === 0, "upperBound of a value before the first value should produce the first index.");
-            InspectorTest.expectThat(arr.upperBound(0) === 1, "upperBound of a value in the list should return the next index after the value.");
-            InspectorTest.expectThat(arr.upperBound(1) === 2, "upperBound of a value in the list should return the next index after the value.");
-            InspectorTest.expectThat(arr.upperBound(7) === 10, "upperBound of a value in the list should return the next index after the value.");
-            InspectorTest.expectThat(arr.upperBound(2) === 8, "upperBound of a duplicate value in the list should return the next index after the value's last index.");
-            InspectorTest.expectThat(arr.upperBound(5) === 8, "upperBound of a value in a gap in the list should return the index where the value would be.");
-            InspectorTest.expectThat(arr.upperBound(100) === arr.length, "upperBound of a value after the last value should produce the index after the last index (length).");
+            InspectorTest.expectEqual(arr.upperBound(-100), 0, "upperBound of a value before the first value should produce the first index.");
+            InspectorTest.expectEqual(arr.upperBound(0), 1, "upperBound of a value in the list should return the next index after the value.");
+            InspectorTest.expectEqual(arr.upperBound(1), 2, "upperBound of a value in the list should return the next index after the value.");
+            InspectorTest.expectEqual(arr.upperBound(7), 10, "upperBound of a value in the list should return the next index after the value.");
+            InspectorTest.expectEqual(arr.upperBound(2), 8, "upperBound of a duplicate value in the list should return the next index after the value's last index.");
+            InspectorTest.expectEqual(arr.upperBound(5), 8, "upperBound of a value in a gap in the list should return the index where the value would be.");
+            InspectorTest.expectEqual(arr.upperBound(100), arr.length, "upperBound of a value after the last value should produce the index after the last index (length).");
 
             let objs = [{size: 100}, {size: 200}, {size: 300}];
             let comparator = (value, object) => value - object.size;
-            InspectorTest.expectThat(objs.upperBound(150, comparator) === 1, "upperBound with a comparator should invoke the comparator with the search value and a value in the list.");
+            InspectorTest.expectEqual(objs.upperBound(150, comparator), 1, "upperBound with a comparator should invoke the comparator with the search value and a value in the list.");
 
             return true;
         }
@@ -55,10 +55,10 @@ function test()
             // Index:  0  1  2  3  4  5  6  7  8  9
             let arr = [0, 1, 2, 2, 2, 2, 2, 2, 6, 7];
             let defaultComparator = (a, b) => a - b;
-            InspectorTest.expectThat(arr.binaryIndexOf(-100, defaultComparator) === -1, "binaryIndexOf of a value not in the list should be -1.");
-            InspectorTest.expectThat(arr.binaryIndexOf(100, defaultComparator) === -1, "binaryIndexOf of a value not in the list should be -1.");
-            InspectorTest.expectThat(arr.binaryIndexOf(0, defaultComparator) === arr.lowerBound(0), "binaryIndexOf of a value in the list should return the index of the value.");
-            InspectorTest.expectThat(arr.binaryIndexOf(2, defaultComparator) === arr.lowerBound(2), "binaryIndexOf of a duplicate value in the list should return the first index of the value.");            
+            InspectorTest.expectEqual(arr.binaryIndexOf(-100, defaultComparator), -1, "binaryIndexOf of a value not in the list should be -1.");
+            InspectorTest.expectEqual(arr.binaryIndexOf(100, defaultComparator), -1, "binaryIndexOf of a value not in the list should be -1.");
+            InspectorTest.expectEqual(arr.binaryIndexOf(0, defaultComparator), arr.lowerBound(0), "binaryIndexOf of a value in the list should return the index of the value.");
+            InspectorTest.expectEqual(arr.binaryIndexOf(2, defaultComparator), arr.lowerBound(2), "binaryIndexOf of a duplicate value in the list should return the first index of the value.");            
             return true;
         }
     });
@@ -66,22 +66,47 @@ function test()
     suite.addTestCase({
         name: "Array.prototype.partition",
         test: () => {
-            let quickEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-
             let arr1 = [1, 2, 3, 4];
             let [even, odd] = arr1.partition((x) => x % 2 === 0);
-            InspectorTest.expectThat(even.length + odd.length === arr1.length, "partition should not lose any elements.");
-            InspectorTest.expectThat(quickEqual(even, [2, 4]) && quickEqual(odd, [1, 3]), "partition should keep the order of elements in the sublists.");
+            InspectorTest.expectEqual(even.length + odd.length, arr1.length, "partition should not lose any elements.");
+            InspectorTest.expectThat(Array.shallowEqual(even, [2, 4]) && Array.shallowEqual(odd, [1, 3]), "partition should keep the order of elements in the sublists.");
 
             let arr2 = [1, 1, -1, -2, 5, -2, -6, 0];
             let [positive, negative] = arr2.partition((x) => x >= 0);
-            InspectorTest.expectThat(quickEqual(positive, [1, 1, 5, 0]) && quickEqual(negative, [-1, -2, -2, -6]), "partition should handle duplicates.");
+            InspectorTest.expectThat(Array.shallowEqual(positive, [1, 1, 5, 0]) && Array.shallowEqual(negative, [-1, -2, -2, -6]), "partition should handle duplicates.");
 
             let arr3 = [1, 2];
             let [full, empty] = arr3.partition((x) => true);
-            InspectorTest.expectThat(quickEqual(full, [1, 2]) && !empty.length, "partition should produce an empty list for the negative side.");
+            InspectorTest.expectThat(Array.shallowEqual(full, [1, 2]) && !empty.length, "partition should produce an empty list for the negative side.");
             [empty, full] = arr3.partition((x) => false);
-            InspectorTest.expectThat(quickEqual(full, [1, 2]) && !empty.length, "partition should produce an empty list for the positive side.");
+            InspectorTest.expectThat(Array.shallowEqual(full, [1, 2]) && !empty.length, "partition should produce an empty list for the positive side.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Array.shallowEqual",
+        test: () => {
+            InspectorTest.expectThat(Array.shallowEqual([], []), "shallowEqual of empty arrays should be true.");
+
+            let arr1 = [1, 2, 3, 4];
+            InspectorTest.expectThat(Array.shallowEqual(arr1, arr1), "shallowEqual of an array with itself should be true.");
+
+            let arr2 = [1, 2, 3, 4];
+            InspectorTest.expectThat(Array.shallowEqual(arr1, arr2), "shallowEqual of equal arrays should be true.");
+            InspectorTest.expectThat(Array.shallowEqual(arr2, arr1), "shallowEqual of equal arrays should be true.");
+
+            let arr3 = [1, 2, 3, 4, 5];
+            InspectorTest.expectFalse(Array.shallowEqual(arr1, arr3), "shallowEqual of inequal arrays should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual(arr3, arr1), "shallowEqual of inequal arrays should be false.");
+
+            InspectorTest.expectFalse(Array.shallowEqual([], null), "shallowEqual of an array and null should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual([], 1.23), "shallowEqual of an array and non-array should be false.");
+
+            let str = "abc";
+            InspectorTest.expectFalse(Array.shallowEqual(str, str), "shallowEqual of a non-array with itself should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual({}, {}), "shallowEqual of non-arrays should be false.");
 
             return true;
         }

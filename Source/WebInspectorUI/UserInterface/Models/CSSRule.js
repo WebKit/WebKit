@@ -67,8 +67,8 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
 
         var changed = false;
         if (!dontFireEvents) {
-            changed = this._selectorText !== selectorText || !Object.shallowEqual(this._selectors, selectors) ||
-                !Object.shallowEqual(this._matchedSelectorIndices, matchedSelectorIndices) || this._style !== style ||
+            changed = this._selectorText !== selectorText || !Array.shallowEqual(this._selectors, selectors) ||
+                !Array.shallowEqual(this._matchedSelectorIndices, matchedSelectorIndices) || this._style !== style ||
                 !!this._sourceCodeLocation !== !!sourceCodeLocation || this._mediaList.length !== mediaList.length;
             // FIXME: Look for differences in the media list arrays.
         }

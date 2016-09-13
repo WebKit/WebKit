@@ -134,7 +134,7 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
         let allowedTabClasses = allTabClasses.filter((tabClass) => tabClass.isTabAllowed() && !tabClass.isEphemeral());
         allowedTabClasses.sort((a, b) => a.tabInfo().title.localeCompare(b.tabInfo().title));
 
-        if (Object.shallowEqual(this._shownTabClasses, allowedTabClasses))
+        if (Array.shallowEqual(this._shownTabClasses, allowedTabClasses))
             return;
 
         this._shownTabClasses = allowedTabClasses;

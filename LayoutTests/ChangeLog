@@ -1,3 +1,17 @@
+2016-09-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Use Array.shallowEqual instead of Object.shallowEqual in more places
+        https://bugs.webkit.org/show_bug.cgi?id=161867
+        <rdar://problem/28261328>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/array-utilities-expected.txt:
+        * inspector/unit-tests/array-utilities.html:
+        Add test coverage for Array.shallowEqual.
+        Use Array.shallowEqual instead of JSON.stringify in tests.
+        Use expectFalse and expectEqual in tests where appropriate.
+
 2016-09-13  Tim Horton  <timothy_horton@apple.com>
 
         Undoing a candidate insertion results in the replaced text being selected

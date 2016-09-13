@@ -397,7 +397,7 @@ WebInspector.CubicBezier = class CubicBezier
     {
         var values = [this._inPoint.x, this._inPoint.y, this._outPoint.x, this._outPoint.y];
         for (var key in WebInspector.CubicBezier.keywordValues) {
-            if (Object.shallowEqual(WebInspector.CubicBezier.keywordValues[key], values))
+            if (Array.shallowEqual(WebInspector.CubicBezier.keywordValues[key], values))
                 return key;
         }
 
