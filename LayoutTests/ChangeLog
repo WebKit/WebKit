@@ -1,3 +1,15 @@
+2016-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Fix lint warnings of LayoutTests/platform/gtk/TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=161890
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Removed deleted test cases
+        js/regress/nested-function-parsing.html, js/regress/new-array-buffer-dead.html
+        and js/regress/method-on-number.html.
+        Skip imported/w3c/web-platform-tests/media-source/
+
 2016-09-12  Saam Barati  <sbarati@apple.com>
 
         Speed up Function.prototype.bind a bit by making it a builtin
