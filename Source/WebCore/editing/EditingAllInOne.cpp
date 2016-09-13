@@ -60,6 +60,7 @@
 #include <RemoveNodePreservingChildrenCommand.cpp>
 #include <RenderedPosition.cpp>
 #include <ReplaceNodeWithSpanCommand.cpp>
+#include <ReplaceRangeWithTextCommand.cpp>
 #include <ReplaceSelectionCommand.cpp>
 #include <SetNodeAttributeCommand.cpp>
 #include <SetSelectionCommand.cpp>

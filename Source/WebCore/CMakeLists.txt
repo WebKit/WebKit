@@ -1559,6 +1559,7 @@ set(WebCore_SOURCES
     editing/RemoveNodePreservingChildrenCommand.cpp
     editing/RenderedPosition.cpp
     editing/ReplaceNodeWithSpanCommand.cpp
+    editing/ReplaceRangeWithTextCommand.cpp
     editing/ReplaceSelectionCommand.cpp
     editing/SetNodeAttributeCommand.cpp
     editing/SetSelectionCommand.cpp
