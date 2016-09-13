@@ -36,8 +36,8 @@ typedef const struct __CTLine* CTLineRef;
 typedef UInt32 FourCharCode;
 typedef FourCharCode CTFontTableTag;
 
-extern const CFStringRef kCTFontAttributeName;
-extern const CFStringRef kCTForegroundColorFromContextAttributeName;
+CT_EXPORT const CFStringRef kCTFontAttributeName;
+CT_EXPORT const CFStringRef kCTForegroundColorFromContextAttributeName;
 
 typedef CF_OPTIONS(uint32_t, CTFontTableOptions)
 {
