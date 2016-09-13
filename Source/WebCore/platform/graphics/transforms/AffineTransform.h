@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2016 Apple Inc.  All rights reserved.
  *               2010 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,11 @@ typedef struct CGAffineTransform CGAffineTransform;
 #include <cairo.h>
 #endif
 
+#if PLATFORM(WIN)
+typedef struct D2D_MATRIX_3X2_F D2D_MATRIX_3X2_F;
+typedef D2D_MATRIX_3X2_F D2D1_MATRIX_3X2_F;
+#endif
+
 namespace WebCore {
 
 class FloatPoint;
@@ -57,7 +62,11 @@ public:
     WEBCORE_EXPORT AffineTransform(double a, double b, double c, double d, double e, double f);
 
 #if USE(CG)
-    AffineTransform(const CGAffineTransform&);
+    WEBCORE_EXPORT AffineTransform(const CGAffineTransform&);
+#endif
+
+#if PLATFORM(WIN)
+    AffineTransform(const D2D1_MATRIX_3X2_F&);
 #endif
 
     void setMatrix(double a, double b, double c, double d, double e, double f);
@@ -69,16 +78,16 @@ public:
 
     WEBCORE_EXPORT FloatPoint mapPoint(const FloatPoint&) const;
 
-    IntSize mapSize(const IntSize&) const;
+    WEBCORE_EXPORT IntSize mapSize(const IntSize&) const;
 
-    FloatSize mapSize(const FloatSize&) const;
+    WEBCORE_EXPORT FloatSize mapSize(const FloatSize&) const;
 
     // Rounds the resulting mapped rectangle out. This is helpful for bounding
     // box computations but may not be what is wanted in other contexts.
-    IntRect mapRect(const IntRect&) const;
+    WEBCORE_EXPORT IntRect mapRect(const IntRect&) const;
 
     WEBCORE_EXPORT FloatRect mapRect(const FloatRect&) const;
-    FloatQuad mapQuad(const FloatQuad&) const;
+    WEBCORE_EXPORT FloatQuad mapQuad(const FloatQuad&) const;
 
     WEBCORE_EXPORT bool isIdentity() const;
 
@@ -95,21 +104,21 @@ public:
     double f() const { return m_transform[5]; }
     void setF(double f) { m_transform[5] = f; }
 
-    void makeIdentity();
+    WEBCORE_EXPORT void makeIdentity();
 
     WEBCORE_EXPORT AffineTransform& multiply(const AffineTransform& other);
     WEBCORE_EXPORT AffineTransform& scale(double);
     AffineTransform& scale(double sx, double sy); 
-    AffineTransform& scaleNonUniform(double sx, double sy);
-    AffineTransform& scale(const FloatSize&);
-    AffineTransform& rotate(double d);
+    WEBCORE_EXPORT AffineTransform& scaleNonUniform(double sx, double sy);
+    WEBCORE_EXPORT AffineTransform& scale(const FloatSize&);
+    WEBCORE_EXPORT AffineTransform& rotate(double);
     AffineTransform& rotateFromVector(double x, double y);
     WEBCORE_EXPORT AffineTransform& translate(double tx, double ty);
-    AffineTransform& translate(const FloatPoint&);
-    AffineTransform& shear(double sx, double sy);
-    AffineTransform& flipX();
+    WEBCORE_EXPORT AffineTransform& translate(const FloatPoint&);
+    WEBCORE_EXPORT AffineTransform& shear(double sx, double sy);
+    WEBCORE_EXPORT AffineTransform& flipX();
     WEBCORE_EXPORT AffineTransform& flipY();
-    AffineTransform& skew(double angleX, double angleY);
+    WEBCORE_EXPORT AffineTransform& skew(double angleX, double angleY);
     AffineTransform& skewX(double angle);
     AffineTransform& skewY(double angle);
 
@@ -121,9 +130,9 @@ public:
     bool isInvertible() const; // If you call this this, you're probably doing it wrong.
     WEBCORE_EXPORT Optional<AffineTransform> inverse() const;
 
-    void blend(const AffineTransform& from, double progress);
+    WEBCORE_EXPORT void blend(const AffineTransform& from, double progress);
 
-    TransformationMatrix toTransformationMatrix() const;
+    WEBCORE_EXPORT TransformationMatrix toTransformationMatrix() const;
 
     bool isIdentityOrTranslation() const
     {
@@ -167,9 +176,13 @@ public:
     }
 
 #if USE(CG)
-    operator CGAffineTransform() const;
+    WEBCORE_EXPORT operator CGAffineTransform() const;
 #elif USE(CAIRO)
     operator cairo_matrix_t() const;
+#endif
+
+#if PLATFORM(WIN)
+    operator D2D1_MATRIX_3X2_F() const;
 #endif
 
     static AffineTransform translation(double x, double y)
@@ -192,7 +205,7 @@ private:
     std::array<double, 6> m_transform;
 };
 
-AffineTransform makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
+WEBCORE_EXPORT AffineTransform makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const AffineTransform&);
 

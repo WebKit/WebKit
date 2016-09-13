@@ -47,6 +47,10 @@ typedef struct _NSPoint NSPoint;
 #endif
 #endif // PLATFORM(MAC)
 
+#if PLATFORM(WIN)
+#include <d2d1.h>
+#endif
+
 namespace WebCore {
 
 class AffineTransform;
@@ -57,7 +61,7 @@ class TextStream;
 
 class FloatPoint {
 public:
-    FloatPoint() : m_x(0), m_y(0) { }
+    FloatPoint() { }
     FloatPoint(float x, float y) : m_x(x), m_y(y) { }
     WEBCORE_EXPORT FloatPoint(const IntPoint&);
     explicit FloatPoint(const FloatSize& size) : m_x(size.width()), m_y(size.height()) { }
@@ -107,7 +111,7 @@ public:
         m_y *= sy;
     }
 
-    void normalize();
+    WEBCORE_EXPORT void normalize();
 
     float dot(const FloatPoint& a) const
     {
@@ -148,11 +152,17 @@ public:
     WEBCORE_EXPORT operator NSPoint() const;
 #endif
 
-    FloatPoint matrixTransform(const TransformationMatrix&) const;
-    FloatPoint matrixTransform(const AffineTransform&) const;
+#if PLATFORM(WIN)
+    WEBCORE_EXPORT FloatPoint(const D2D_POINT_2F&);
+    WEBCORE_EXPORT operator D2D_POINT_2F() const;
+#endif
+
+    WEBCORE_EXPORT FloatPoint matrixTransform(const TransformationMatrix&) const;
+    WEBCORE_EXPORT FloatPoint matrixTransform(const AffineTransform&) const;
 
 private:
-    float m_x, m_y;
+    float m_x { 0 };
+    float m_y { 0 };
 };
 
 

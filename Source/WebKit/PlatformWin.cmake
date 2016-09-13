@@ -420,6 +420,7 @@ list(APPEND WebKit_LIBRARIES
     PRIVATE Comctl32
     PRIVATE Comsupp
     PRIVATE Crypt32
+    PRIVATE D2d1
     PRIVATE Iphlpapi
     PRIVATE Psapi
     PRIVATE Rpcrt4

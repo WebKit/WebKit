@@ -50,6 +50,11 @@ typedef struct tagXFORM XFORM;
 #endif
 #endif
 
+#if PLATFORM(WIN)
+typedef struct D2D_MATRIX_3X2_F D2D_MATRIX_3X2_F;
+typedef D2D_MATRIX_3X2_F D2D1_MATRIX_3X2_F;
+#endif
+
 namespace WebCore {
 
 class AffineTransform;
@@ -78,7 +83,7 @@ public:
 #endif
 
     TransformationMatrix() { makeIdentity(); }
-    TransformationMatrix(const AffineTransform& t);
+    WEBCORE_EXPORT TransformationMatrix(const AffineTransform&);
     TransformationMatrix(const TransformationMatrix& t) { *this = t; }
     TransformationMatrix(double a, double b, double c, double d, double e, double f) { setMatrix(a, b, c, d, e, f); }
     TransformationMatrix(double m11, double m12, double m13, double m14,
@@ -136,7 +141,7 @@ public:
 
     // Maps a 2D point through the transform, returning a 2D point.
     // Note that this ignores the z component, effectively projecting the point into the z=0 plane.
-    FloatPoint mapPoint(const FloatPoint&) const;
+    WEBCORE_EXPORT FloatPoint mapPoint(const FloatPoint&) const;
 
     // Like the version above, except that it rounds the mapped point to the nearest integer value.
     IntPoint mapPoint(const IntPoint& p) const
@@ -155,7 +160,7 @@ public:
 
     // If the matrix has 3D components, the z component of the result is
     // dropped, effectively projecting the quad into the z=0 plane.
-    FloatQuad mapQuad(const FloatQuad&) const;
+    WEBCORE_EXPORT FloatQuad mapQuad(const FloatQuad&) const;
 
     // Maps a point on the z=0 plane into a point on the plane with with the transform applied, by
     // extending a ray perpendicular to the source plane and computing the local x,y position of
@@ -219,16 +224,16 @@ public:
     void setF(double f) { m_matrix[3][1] = f; }
 
     // this = mat * this.
-    TransformationMatrix& multiply(const TransformationMatrix&);
+    WEBCORE_EXPORT TransformationMatrix& multiply(const TransformationMatrix&);
 
     WEBCORE_EXPORT TransformationMatrix& scale(double);
-    TransformationMatrix& scaleNonUniform(double sx, double sy);
+    WEBCORE_EXPORT TransformationMatrix& scaleNonUniform(double sx, double sy);
     TransformationMatrix& scale3d(double sx, double sy, double sz);
 
     // Angle is in degrees.
-    TransformationMatrix& rotate(double d) { return rotate3d(0, 0, d); }
+    WEBCORE_EXPORT TransformationMatrix& rotate(double d) { return rotate3d(0, 0, d); }
     TransformationMatrix& rotateFromVector(double x, double y);
-    TransformationMatrix& rotate3d(double rx, double ry, double rz);
+    WEBCORE_EXPORT TransformationMatrix& rotate3d(double rx, double ry, double rz);
     
     // The vector (x,y,z) is normalized if it's not already. A vector of (0,0,0) uses a vector of (0,0,1).
     TransformationMatrix& rotate3d(double x, double y, double z, double angle);
@@ -240,9 +245,9 @@ public:
     TransformationMatrix& translateRight(double tx, double ty);
     TransformationMatrix& translateRight3d(double tx, double ty, double tz);
     
-    TransformationMatrix& flipX();
-    TransformationMatrix& flipY();
-    TransformationMatrix& skew(double angleX, double angleY);
+    WEBCORE_EXPORT TransformationMatrix& flipX();
+    WEBCORE_EXPORT TransformationMatrix& flipY();
+    WEBCORE_EXPORT TransformationMatrix& skew(double angleX, double angleY);
     TransformationMatrix& skewX(double angle) { return skew(angle, 0); }
     TransformationMatrix& skewY(double angle) { return skew(0, angle); }
 
@@ -250,7 +255,7 @@ public:
     bool hasPerspective() const { return m_matrix[2][3] != 0.0f; }
 
     // Returns a transformation that maps a rect to a rect.
-    static TransformationMatrix rectToRect(const FloatRect&, const FloatRect&);
+    WEBCORE_EXPORT static TransformationMatrix rectToRect(const FloatRect&, const FloatRect&);
 
     bool isInvertible() const; // If you call this this, you're probably doing it wrong.
     WEBCORE_EXPORT Optional<TransformationMatrix> inverse() const;
@@ -295,8 +300,8 @@ public:
     void recompose4(const Decomposed4Type&);
 
     WEBCORE_EXPORT void blend(const TransformationMatrix& from, double progress);
-    void blend2(const TransformationMatrix& from, double progress);
-    void blend4(const TransformationMatrix& from, double progress);
+    WEBCORE_EXPORT void blend2(const TransformationMatrix& from, double progress);
+    WEBCORE_EXPORT void blend4(const TransformationMatrix& from, double progress);
 
     bool isAffine() const
     {
@@ -305,9 +310,9 @@ public:
     }
 
     // Throw away the non-affine parts of the matrix (lossy!).
-    void makeAffine();
+    WEBCORE_EXPORT void makeAffine();
 
-    AffineTransform toAffineTransform() const;
+    WEBCORE_EXPORT AffineTransform toAffineTransform() const;
 
     bool operator==(const TransformationMatrix& m2) const
     {
@@ -346,18 +351,23 @@ public:
     }
 
 #if USE(CA)
-    TransformationMatrix(const CATransform3D&);
+    WEBCORE_EXPORT TransformationMatrix(const CATransform3D&);
     WEBCORE_EXPORT operator CATransform3D() const;
 #endif
 #if USE(CG)
-    TransformationMatrix(const CGAffineTransform&);
-    operator CGAffineTransform() const;
+    WEBCORE_EXPORT TransformationMatrix(const CGAffineTransform&);
+    WEBCORE_EXPORT operator CGAffineTransform() const;
 #elif USE(CAIRO)
     operator cairo_matrix_t() const;
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
     operator XFORM() const;
+#endif
+
+#if PLATFORM(WIN)
+    TransformationMatrix(const D2D1_MATRIX_3X2_F&);
+    operator D2D1_MATRIX_3X2_F() const;
 #endif
 
     bool isIdentityOrTranslation() const

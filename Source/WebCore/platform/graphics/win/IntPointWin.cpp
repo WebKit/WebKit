@@ -25,7 +25,9 @@
 
 #include "config.h"
 #include "IntPoint.h"
+#include "MathExtras.h"
 
+#include <d2d1.h>
 #include <windows.h>
 
 namespace WebCore {
@@ -52,6 +54,28 @@ IntPoint::operator POINTS() const
 {
     POINTS p = {m_x, m_y};
     return p;
+}
+
+IntPoint::IntPoint(const D2D1_POINT_2F& p)
+    : m_x(clampToInteger(p.x))
+    , m_y(clampToInteger(p.y))
+{
+}
+
+IntPoint::IntPoint(const D2D1_POINT_2U& p)
+    : m_x(p.x)
+    , m_y(p.y)
+{
+}
+
+IntPoint::operator D2D1_POINT_2F() const
+{
+    return D2D1::Point2F(m_x, m_y);
+}
+
+IntPoint::operator D2D1_POINT_2U() const
+{
+    return D2D1::Point2U(m_x, m_y);
 }
 
 }

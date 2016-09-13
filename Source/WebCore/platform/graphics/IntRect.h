@@ -29,6 +29,10 @@
 #include "IntPoint.h"
 #include "LayoutUnit.h"
 
+#if PLATFORM(WIN)
+#include <d2d1.h>
+#endif
+
 #if USE(CG)
 typedef struct CGRect CGRect;
 #endif
@@ -170,6 +174,10 @@ public:
 #if PLATFORM(WIN)
     IntRect(const RECT&);
     operator RECT() const;
+    explicit IntRect(const D2D1_RECT_F&);
+    IntRect(const D2D1_RECT_U&);
+    operator D2D1_RECT_F() const;
+    operator D2D1_RECT_U() const;
 #elif PLATFORM(EFL)
     explicit IntRect(const Eina_Rectangle&);
     operator Eina_Rectangle() const;

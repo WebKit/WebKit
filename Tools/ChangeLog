@@ -1,3 +1,24 @@
+2016-09-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Provide Direct2D-based geometry and transform cast operations
+        https://bugs.webkit.org/show_bug.cgi?id=161818
+
+        Reviewed by Dean Jackson.
+
+        Add several new test suites for the various geometric primitives in WebCore.
+
+        * TestWebKitAPI/PlatformWin.cmake: Add new files for test cases.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Ditto.
+        * TestWebKitAPI/Tests/WebCore/AffineTransform.cpp: Added.
+        * TestWebKitAPI/Tests/WebCore/FloatPoint.cpp: Added.
+        * TestWebKitAPI/Tests/WebCore/FloatRect.cpp: Added.
+        * TestWebKitAPI/Tests/WebCore/FloatSize.cpp: Added.
+        * TestWebKitAPI/Tests/WebCore/IntPoint.cpp: Added.
+        * TestWebKitAPI/Tests/WebCore/IntRect.cpp: Added.
+        * TestWebKitAPI/Tests/WebCore/IntSize.cpp: Added.
+        * TestWebKitAPI/Tests/WebCore/TransformationMatrix.cpp: Add some new
+        Windows-focused test cases.
+
 2016-09-12  Chris Dumez  <cdumez@apple.com>
 
         Fix post-landing review comments after r205787

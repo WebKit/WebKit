@@ -33,6 +33,10 @@
 #import <Foundation/NSGeometry.h>
 #endif
 
+#if PLATFORM(WIN)
+#include <d2d1.h>
+#endif
+
 #if USE(CG)
 typedef struct CGSize CGSize;
 #endif
@@ -123,7 +127,7 @@ public:
             m_height = minimumSize.height();
     }
 
-    IntSize constrainedBetween(const IntSize& min, const IntSize& max) const;
+    WEBCORE_EXPORT IntSize constrainedBetween(const IntSize& min, const IntSize& max) const;
 
     unsigned area() const
     {
@@ -153,6 +157,10 @@ public:
 #if PLATFORM(WIN)
     IntSize(const SIZE&);
     operator SIZE() const;
+    IntSize(const D2D1_SIZE_U&);
+    explicit IntSize(const D2D1_SIZE_F&); // don't do this implicitly since it's lossy;
+    operator D2D1_SIZE_U() const;
+    operator D2D1_SIZE_F() const;
 #endif
 
 private:
