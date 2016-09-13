@@ -1,3 +1,35 @@
+2016-09-12  Saam Barati  <sbarati@apple.com>
+
+        HashMapImpl should take into account m_deleteCount in its load factor and it should be able to rehash the table to be smaller
+        https://bugs.webkit.org/show_bug.cgi?id=161640
+
+        Reviewed by Geoffrey Garen.
+
+        HashMapImpl now takes into account m_deleteCount in its load factor.
+        It now knows how to rehash to either decrease its capacity, stay at
+        the same capacity, or increase its capacity. The reason we can sometimes
+        stay at the same capacity is that we can reduce the load factor enough
+        by rehashing that growing isn't warranted. The reason for this is that
+        anytime we rehash, we remove all deleted sentinels from the buffer.
+        Therefore, staying at the same same capacity, when there are deleted entries,
+        can still reduce the load factor because it removes all deleted sentinels.
+
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::create):
+        (JSC::HashMapBuffer::reset):
+        (JSC::HashMapImpl::HashMapImpl):
+        (JSC::HashMapImpl::add):
+        (JSC::HashMapImpl::remove):
+        (JSC::HashMapImpl::size):
+        (JSC::HashMapImpl::clear):
+        (JSC::HashMapImpl::approximateSize):
+        (JSC::HashMapImpl::shouldRehashAfterAdd):
+        (JSC::HashMapImpl::shouldShrink):
+        (JSC::HashMapImpl::rehash):
+        (JSC::HashMapImpl::checkConsistency):
+        (JSC::HashMapImpl::makeAndSetNewBuffer):
+        (JSC::HashMapImpl::assertBufferIsEmpty):
+
 2016-09-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Use GetArrayLength for JSArray.length even when the array type is undecided

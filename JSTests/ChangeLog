@@ -1,3 +1,18 @@
+2016-09-12  Saam Barati  <sbarati@apple.com>
+
+        HashMapImpl should take into account m_deleteCount in its load factor and it should be able to rehash the table to be smaller
+        https://bugs.webkit.org/show_bug.cgi?id=161640
+
+        Reviewed by Geoffrey Garen.
+
+        * microbenchmarks/map-rehash.js: Added.
+        * stress/map-delete.js: Added.
+        (assert):
+        * stress/map-rehash-2.js: Added.
+        (assert):
+        * stress/map-rehash.js: Added.
+        (assert):
+
 2016-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, fix tests for different libm environments
