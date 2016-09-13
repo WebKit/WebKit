@@ -1,3 +1,11 @@
+2016-09-13  Per Arne Vollan  <pvollan@apple.com>
+
+        Skip media source tests since the feature is not enabled on Windows.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2016-09-13  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         ES6: Classes: Should be allowed to create a static method with name "arguments"
