@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include "ArrayBuffer.h"
 #include "ArrayPrototype.h"
 #include "BuiltinExecutableCreator.h"
 #include "ButterflyInlines.h"
@@ -48,6 +49,7 @@
 #include "JSONObject.h"
 #include "JSProxy.h"
 #include "JSString.h"
+#include "JSTypedArrays.h"
 #include "JSWASMModule.h"
 #include "LLIntData.h"
 #include "ParserError.h"
@@ -803,7 +805,8 @@ protected:
         addFunction(vm, "runString", functionRunString, 1);
         addFunction(vm, "load", functionLoad, 1);
         addFunction(vm, "loadString", functionLoadString, 1);
-        addFunction(vm, "readFile", functionReadFile, 1);
+        addFunction(vm, "readFile", functionReadFile, 2);
+        addFunction(vm, "read", functionReadFile, 2);
         addFunction(vm, "checkSyntax", functionCheckSyntax, 1);
         addFunction(vm, "jscStack", functionJSCStack, 1);
         addFunction(vm, "readline", functionReadline, 0);
@@ -1555,11 +1558,31 @@ EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
     String fileName = exec->argument(0).toWTFString(exec);
     if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
-    Vector<char> script;
-    if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
 
-    return JSValue::encode(jsString(exec, stringFromUTF(script)));
+    bool isBinary = false;
+    if (exec->argumentCount() > 1) {
+        String type = exec->argument(1).toWTFString(exec);
+        if (UNLIKELY(scope.exception()))
+            return EncodedJSValue();
+        if (type != "binary")
+            return throwVMError(exec, scope, "Expected 'binary' as second argument.");
+        isBinary = true;
+    }
+
+    Vector<char> content;
+    if (!fillBufferWithContentsOfFile(fileName, content))
+        return throwVMError(exec, scope, "Could not open file.");
+
+    if (!isBinary)
+        return JSValue::encode(jsString(exec, stringFromUTF(content)));
+
+    Structure* structure = exec->lexicalGlobalObject()->typedArrayStructure(TypeUint8);
+    auto length = content.size();
+    JSObject* result = createUint8TypedArray(exec, structure, ArrayBuffer::createFromBytes(content.releaseBuffer().leakPtr(), length, [] (void* p) { fastFree(p); }), 0, length);
+    if (UNLIKELY(scope.exception()))
+        return EncodedJSValue();
+
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)

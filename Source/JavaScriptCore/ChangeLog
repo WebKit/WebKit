@@ -1,3 +1,33 @@
+2016-09-13  JF Bastien  <jfbastien@apple.com>
+
+        Support jsc shell builtin `read`
+        https://bugs.webkit.org/show_bug.cgi?id=161662
+
+        Reviewed by Keith Miller.
+
+        The jsc shell currently supports a `readFile` method which returns
+        a string. SpiderMonkey's js shell and V8's d8 shell both support
+        similar file-to-string functions, as well as a
+        binary-file-to-Uint8Array function. jsc should support a similar
+        binary file method to simplify testing, including testing of
+        WebAssembly blobs.
+
+        Emscripten's shell.js (which is also used for some WebAssembly
+        things) has a polyfill [1] for a builtin called `read`. jsc should
+        therefore have a builtin with the same name if we want things to
+        "Just Work".
+
+          [1]: https://github.com/kripken/emscripten/blob/5f0918409a1407dd168f57cfa34b109cd1770a8a/src/shell.js#L138
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation): add `read`, make `readFile` take up to 2 arguments.
+        (functionReadFile): support binary files, as per SpiderMonkey.
+        * runtime/Error.h:
+        (JSC::throwVMError): convenience function, I'll add more uses in a follow-up
+        * runtime/JSTypedArrays.cpp:
+        (JSC::createUint8TypedArray): JS private export of JSUint8Array::create.
+        * runtime/JSTypedArrays.h: expose private export.
+
 2016-09-12  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         ES6: Classes: Should be allowed to create a static method with name "arguments"

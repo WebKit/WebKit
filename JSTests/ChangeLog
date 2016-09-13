@@ -1,3 +1,13 @@
+2016-09-13  JF Bastien  <jfbastien@apple.com>
+
+        Support jsc shell builtin `read`
+        https://bugs.webkit.org/show_bug.cgi?id=161662
+
+        Reviewed by Keith Miller.
+
+        * stress/jsc-read.js: Added.
+        (test): test `read` and `readFile` shell builtins, in string and binary mode.
+
 2016-09-12  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         ES6: Classes: Should be allowed to create a static method with name "arguments"
