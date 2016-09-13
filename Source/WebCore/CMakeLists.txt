@@ -1253,6 +1253,8 @@ set(WebCore_SOURCES
     css/CSSContentDistributionValue.cpp
     css/CSSCrossfadeValue.cpp
     css/CSSCursorImageValue.cpp
+    css/CSSCustomIdentValue.cpp
+    css/CSSCustomPropertyDeclaration.cpp
     css/CSSDefaultStyleSheets.cpp
     css/CSSFilterImageValue.cpp
     css/FontFaceSet.cpp
@@ -1307,7 +1309,9 @@ set(WebCore_SOURCES
     css/CSSValue.cpp
     css/CSSValueList.cpp
     css/CSSValuePool.cpp
+    css/CSSVariableData.cpp
     css/CSSVariableDependentValue.cpp
+    css/CSSVariableReferenceValue.cpp
     css/CSSVariableValue.cpp
     css/DOMCSSNamespace.cpp
     css/DocumentRuleSets.cpp
@@ -1364,6 +1368,7 @@ set(WebCore_SOURCES
     css/parser/CSSSupportsParser.cpp
     css/parser/CSSTokenizer.cpp
     css/parser/CSSTokenizerInputStream.cpp
+    css/parser/CSSVariableParser.cpp
     css/parser/MediaQueryBlockWatcher.cpp
     css/parser/MediaQueryParser.cpp
     css/parser/SizesAttributeParser.cpp

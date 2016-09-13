@@ -28,6 +28,7 @@
 
 #include "CSSValue.h"
 
+// FIXME-NEWPARSER: This will be removed in favor of the new variables implementation.
 namespace WebCore {
 
 class CSSValueList;

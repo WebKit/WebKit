@@ -31,7 +31,7 @@
 #include "CSSParserImpl.h"
 
 #include "CSSAtRuleID.h"
-#include "CSSCustomPropertyValue.h"
+#include "CSSCustomPropertyDeclaration.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSParserObserver.h"
@@ -42,7 +42,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
-// FIXME-NEWPARSER: #include "CSSVariableParser.h"
+#include "CSSVariableParser.h"
 #include "Document.h"
 #include "Element.h"
 #include "MediaQueryParser.h"
@@ -97,12 +97,11 @@ static inline void filterProperties(bool important, const ParsedPropertyVector& 
         const unsigned propertyIDIndex = property.id() - firstCSSProperty;
         
         if (property.id() == CSSPropertyCustom) {
-            if (property.value()) {
-                auto& name = downcast<CSSCustomPropertyValue>(*property.value()).name();
-                if (!seenCustomProperties.add(name).isNewEntry)
-                    continue;
-                output[--unusedEntries] = property;
-            }
+            CSSCustomPropertyDeclaration* customValue = downcast<CSSCustomPropertyDeclaration>(property.value());
+            const AtomicString& name = customValue->name();
+            if (seenCustomProperties.contains(name))
+                continue;
+            seenCustomProperties.add(name);
             continue;
         }
         
@@ -779,11 +778,10 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRule::Typ
     }
 
     size_t propertiesCount = m_parsedProperties.size();
-    // FIXME-NEWPARSER: Support variables
-    /*if (unresolvedProperty == CSSPropertyInvalid && CSSVariableParser::isValidVariableName(token)) {
+    if (unresolvedProperty == CSSPropertyInvalid && CSSVariableParser::isValidVariableName(token)) {
         AtomicString variableName = token.value().toAtomicString();
         consumeVariableValue(range.makeSubRange(&range.peek(), declarationValueEnd), variableName, important);
-    }*/
+    }
 
     if (important && (ruleType == StyleRule::FontFace || ruleType == StyleRule::Keyframe))
         return;
@@ -798,11 +796,10 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRule::Typ
     }
 }
 
-void CSSParserImpl::consumeVariableValue(CSSParserTokenRange /* range */, const AtomicString& /*variableName */, bool /* important */)
+void CSSParserImpl::consumeVariableValue(CSSParserTokenRange range, const AtomicString& variableName, bool important)
 {
-    // FIXME-NEWPARSER: Support variables
-    // if (CSSCustomPropertyDeclaration* value = CSSVariableParser::parseDeclarationValue(variableName, range))
-    //     m_parsedProperties.append(CSSProperty(CSSPropertyVariable, *value, important));
+    if (RefPtr<CSSCustomPropertyDeclaration> value = CSSVariableParser::parseDeclarationValue(variableName, range))
+        m_parsedProperties.append(CSSProperty(CSSPropertyCustom, WTFMove(value), important));
 }
 
 void CSSParserImpl::consumeDeclarationValue(CSSParserTokenRange range, CSSPropertyID unresolvedProperty, bool important, StyleRule::Type ruleType)

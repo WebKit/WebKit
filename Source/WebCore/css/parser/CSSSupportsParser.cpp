@@ -116,4 +116,4 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeConditionInParenthes
     return innerRange.peek().type() == IdentToken && m_parser.supportsDeclaration(innerRange) ? Supported : Unsupported;
 }
 
-} // namespace blink
+} // namespace WebCore

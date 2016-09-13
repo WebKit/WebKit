@@ -768,4 +768,4 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     return secondCompound;
 }
 
-} // namespace blink
+} // namespace WebCore

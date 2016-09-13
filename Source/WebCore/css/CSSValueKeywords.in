@@ -833,6 +833,12 @@ padding
 padding-box
 
 //
+// Variables Implementation
+//
+var
+-internal-variable-value
+
+//
 // CSS_PROP_BREAK_BEFORE/AFTER/INSIDE
 //
 avoid-column

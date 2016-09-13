@@ -30,6 +30,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+// FIXME-NEWPARSER: This will be removed in favor of CSSCustomPropertyDeclaration
 namespace WebCore {
 
 class CSSCustomPropertyValue final : public CSSValue {

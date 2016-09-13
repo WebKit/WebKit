@@ -59,5 +59,5 @@ CSSAtRuleID cssAtRuleID(StringView name)
     return CSSAtRuleInvalid;
 }
 
-} // namespace blink
+} // namespace WebCore
 

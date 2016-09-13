@@ -30,6 +30,7 @@
 #include "CSSValueList.h"
 #include <wtf/RefPtr.h>
 
+// FIXME-NEWPARSER: This will be removed in favor of CSSVariableReferenceValue
 namespace WebCore {
 
 class CSSVariableDependentValue final : public CSSValue {

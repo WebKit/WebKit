@@ -123,6 +123,10 @@ public:
     bool isAnimationTriggerScrollValue() const { return m_classType == AnimationTriggerScrollClass; }
 #endif
 
+    bool isCustomPropertyDeclaration() const { return m_classType == CustomPropertyDeclarationClass; }
+    bool isCustomIdentValue() const { return m_classType == CustomIdentClass; }
+    bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
+
     bool isCSSOMSafe() const { return m_isCSSOMSafe; }
     bool isSubtypeExposedToCSSOM() const
     { 
@@ -192,9 +196,16 @@ protected:
 #endif
 
         CSSContentDistributionClass,
+        
+        // FIXME-NEWPARSER: Remove in favor of new variables implementation.
         CustomPropertyClass,
         VariableDependentClass,
         VariableClass,
+
+        // New variables implementation.
+        CustomPropertyDeclarationClass,
+        CustomIdentClass,
+        VariableReferenceClass,
 
         // List class types must appear after ValueListClass.
         ValueListClass,
