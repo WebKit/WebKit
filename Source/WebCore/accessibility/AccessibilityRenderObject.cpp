@@ -1189,6 +1189,10 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     AccessibilityObject* controlObject = correspondingControlForLabelElement();
     if (controlObject && !controlObject->exposesTitleUIElement() && controlObject->isCheckboxOrRadio())
         return true;
+    
+    // https://webkit.org/b/161276 Getting the controlObject might cause the m_renderer to be nullptr.
+    if (!m_renderer)
+        return true;
 
     if (m_renderer->isBR())
         return true;
@@ -1207,6 +1211,10 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
             if (parent->roleValue() == TextFieldRole)
                 return true;
         }
+        
+        // Walking up the parent chain might reset the m_renderer.
+        if (!m_renderer)
+            return true;
         
         // The alt attribute may be set on a text fragment through CSS, which should be honored.
         if (is<RenderTextFragment>(renderText)) {
