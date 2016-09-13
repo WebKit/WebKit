@@ -1,3 +1,9 @@
+2016-09-13  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; removed duplicate entry for mediasource-config-change-mp4-v-bitrate.html.
+
+        * platform/mac/TestExpectations:
+
 2016-09-12  Zalan Bujtas  <zalan@apple.com>
 
         Input type object and the associated render can go out of sync.
