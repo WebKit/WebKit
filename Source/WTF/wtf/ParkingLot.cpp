@@ -45,7 +45,7 @@ namespace {
 
 const bool verbose = false;
 
-struct ThreadData {
+struct ThreadData : public ThreadSafeRefCounted<ThreadData> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     
@@ -245,7 +245,6 @@ struct Hashtable {
     }
 };
 
-ThreadSpecific<ThreadData>* threadData;
 Atomic<Hashtable*> hashtable;
 Atomic<unsigned> numThreads;
 
@@ -448,14 +447,20 @@ ThreadData::~ThreadData()
 
 ThreadData* myThreadData()
 {
+    static ThreadSpecific<RefPtr<ThreadData>>* threadData;
     static std::once_flag initializeOnce;
     std::call_once(
         initializeOnce,
         [] {
-            threadData = new ThreadSpecific<ThreadData>();
+            threadData = new ThreadSpecific<RefPtr<ThreadData>>();
         });
-
-    return *threadData;
+    
+    RefPtr<ThreadData>& result = **threadData;
+    
+    if (!result)
+        result = adoptRef(new ThreadData());
+    
+    return result.get();
 }
 
 template<typename Functor>
@@ -659,7 +664,7 @@ NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
     
     UnparkResult result;
 
-    ThreadData* threadData = nullptr;
+    RefPtr<ThreadData> threadData;
     result.mayHaveMoreThreads = dequeue(
         address,
         BucketMode::EnsureNonEmpty,
@@ -697,7 +702,7 @@ NEVER_INLINE void ParkingLot::unparkOneImpl(
     if (verbose)
         dataLog(toString(currentThread(), ": unparking one the hard way.\n"));
     
-    ThreadData* threadData = nullptr;
+    RefPtr<ThreadData> threadData;
     bool timeToBeFair = false;
     dequeue(
         address,
@@ -738,7 +743,7 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
     if (verbose)
         dataLog(toString(currentThread(), ": unparking all from ", RawPointer(address), ".\n"));
     
-    Vector<ThreadData*, 8> threadDatas;
+    Vector<RefPtr<ThreadData>, 8> threadDatas;
     dequeue(
         address,
         BucketMode::IgnoreEmpty,
@@ -752,9 +757,9 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
         },
         [] (bool) { });
 
-    for (ThreadData* threadData : threadDatas) {
+    for (RefPtr<ThreadData>& threadData : threadDatas) {
         if (verbose)
-            dataLog(toString(currentThread(), ": unparking ", RawPointer(threadData), " with address ", RawPointer(threadData->address), "\n"));
+            dataLog(toString(currentThread(), ": unparking ", RawPointer(threadData.get()), " with address ", RawPointer(threadData->address), "\n"));
         ASSERT(threadData->address);
         {
             std::unique_lock<std::mutex> locker(threadData->parkingLock);
