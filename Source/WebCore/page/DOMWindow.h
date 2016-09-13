@@ -30,8 +30,9 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "FrameDestructionObserver.h"
-#include "URL.h"
+#include "ScrollToOptions.h"
 #include "Supplementable.h"
+#include "URL.h"
 #include <functional>
 #include <memory>
 #include <wtf/HashSet.h>
@@ -247,11 +248,6 @@ namespace WebCore {
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
         void postMessageTimerFired(PostMessageTimer&);
         void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event&, PassRefPtr<Inspector::ScriptCallStack>);
-
-        struct ScrollToOptions {
-            Optional<double> left;
-            Optional<double> top;
-        };
 
         void scrollBy(const ScrollToOptions&) const;
         void scrollBy(double x, double y) const;

@@ -189,7 +189,9 @@ dictionary ShadowRootInit {
 };
 
 // FIXME: Support ScrollBehavior.
-dictionary ScrollToOptions {
+[
+    ImplementedAs=ScrollToOptions
+]  dictionary ScrollToOptions {
     unrestricted double left;
     unrestricted double top;
 };

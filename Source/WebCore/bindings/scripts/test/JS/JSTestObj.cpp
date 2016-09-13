@@ -513,7 +513,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::Confidence>()
     return "\"high\", \"kinda-low\"";
 }
 
-template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(ExecState& state, JSValue value)
+template<> inline Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -621,7 +621,7 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
     return TestObj::Dictionary { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault), WTFMove(smallIntegerClamped), WTFMove(smallIntegerWithDefault), WTFMove(smallUnsignedIntegerEnforcedRange), WTFMove(smallUnsignedIntegerWithDefault), WTFMove(integer), WTFMove(integerWithDefault), WTFMove(unsignedInteger), WTFMove(unsignedIntegerWithDefault), WTFMove(largeInteger), WTFMove(largeIntegerWithDefault), WTFMove(unsignedLargeInteger), WTFMove(unsignedLargeIntegerWithDefault), WTFMove(nullableNode), WTFMove(anyValue), WTFMove(anyTypedefValue), dictionaryMember.value() };
 }
 
-template<> Optional<TestObj::DictionaryThatShouldNotTolerateNull> convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)
+template<> inline Optional<TestObj::DictionaryThatShouldNotTolerateNull> convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -643,7 +643,7 @@ template<> Optional<TestObj::DictionaryThatShouldNotTolerateNull> convertDiction
     return TestObj::DictionaryThatShouldNotTolerateNull { WTFMove(requiredEnumerationValue), WTFMove(booleanWithoutDefault), *nonNullableNode, requiredDictionaryMember.value() };
 }
 
-template<> Optional<TestObj::DictionaryThatShouldTolerateNull> convertDictionary<TestObj::DictionaryThatShouldTolerateNull>(ExecState& state, JSValue value)
+template<> inline Optional<TestObj::DictionaryThatShouldTolerateNull> convertDictionary<TestObj::DictionaryThatShouldTolerateNull>(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -661,7 +661,7 @@ template<> Optional<TestObj::DictionaryThatShouldTolerateNull> convertDictionary
     return TestObj::DictionaryThatShouldTolerateNull { WTFMove(enumerationValue), WTFMove(booleanWithoutDefault) };
 }
 
-template<> Optional<AlternateDictionaryName> convertDictionary<AlternateDictionaryName>(ExecState& state, JSValue value)
+template<> inline Optional<AlternateDictionaryName> convertDictionary<AlternateDictionaryName>(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
