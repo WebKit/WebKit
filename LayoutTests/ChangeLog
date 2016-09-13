@@ -1,3 +1,90 @@
+2016-09-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Unify font's ascent, descent, and x-height between macOS and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=161877
+
+        Reviewed by Simon Fraser.
+
+        Updating expected results.
+
+        * imported/blink/svg/text/obb-paintserver-expected.html: Covered tiny unrelated 1px difference.
+        * imported/blink/svg/text/obb-paintserver.html: Ditto.
+        * platform/ios-simulator/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/ios-simulator/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+        * platform/ios-simulator/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/ios-simulator/svg/custom/glyph-transformation-with-hkern-expected.txt: Copied from LayoutTests/svg/custom/glyph-transformation-with-hkern-expected.txt.
+        * platform/ios-simulator/svg/custom/repaint-shadow-expected.txt: Copied from LayoutTests/svg/custom/repaint-shadow-expected.txt.
+        * platform/ios-simulator/svg/text/text-hkern-on-vertical-text-expected.txt: Copied from LayoutTests/svg/text/text-hkern-on-vertical-text-expected.txt.
+        * platform/ios-simulator/svg/text/text-vkern-on-horizontal-text-expected.txt: Copied from LayoutTests/svg/text/text-vkern-on-horizontal-text-expected.txt.
+        * platform/ios-simulator/tables/mozilla/bugs/bug55527-expected.txt:
+        * platform/mac-yosemite/fast/text/emoji-expected.txt:
+        * platform/mac-yosemite/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/mac/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/mac/fast/text/emoji-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-fonts-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/custom/glyph-selection-bidi-mirror-expected.txt:
+        * platform/mac/svg/custom/glyph-setting-d-attribute-expected.txt:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/mac/svg/text/kerning-expected.txt:
+        * platform/mac/svg/text/multichar-glyph-expected.txt:
+        * svg/custom/glyph-transformation-with-hkern-expected.txt:
+        * svg/custom/repaint-shadow-expected.txt:
+        * svg/text/text-hkern-on-vertical-text-expected.txt:
+        * svg/text/text-vkern-on-horizontal-text-expected.txt:
+
 2016-09-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Use Array.shallowEqual instead of Object.shallowEqual in more places

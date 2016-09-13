@@ -2,19 +2,19 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (15,32) size 403x187
+    RenderSVGContainer {g} at (15,31) size 403x188
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (15,43) size 241x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 241x21
           chunk 1 text run 1 at (15.00,60.00) startOffset 0 endOffset 32 width 240.76: "font-family = \"Haettenschweiler\""
-      RenderSVGText {text} at (340,32) size 42x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 42x35
+      RenderSVGText {text} at (340,31) size 42x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 42x36
           chunk 1 text run 1 at (340.00,60.00) startOffset 0 endOffset 3 width 41.58: "ABC"
       RenderSVGText {text} at (15,93) size 213x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 213x21
           chunk 1 text run 1 at (15.00,110.00) startOffset 0 endOffset 28 width 212.80: "font-family = \"Charlesworth\""
-      RenderSVGText {text} at (340,82) size 78x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 78x35
+      RenderSVGText {text} at (340,81) size 78x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x36
           chunk 1 text run 1 at (340.00,110.00) startOffset 0 endOffset 3 width 77.14: "ABC"
       RenderSVGText {text} at (15,143) size 215x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 215x21

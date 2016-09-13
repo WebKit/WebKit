@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 751x36
           text run at (0,0) width 751: "This test validate rendering of emoji sequences and emoji with modifiers. Horse racing emoji no longer supports skin"
           text run at (0,18) width 187: "tone. Added skin tone to spy."
-      RenderBlock {DIV} at (0,36) size 784x21
-        RenderText {#text} at (0,0) size 21x21
+      RenderBlock {DIV} at (0,36) size 784x26
+        RenderText {#text} at (0,0) size 21x26
           text run at (0,0) width 21: "\x{D83D}\x{DE01}"
-      RenderBlock {DIV} at (0,57) size 784x420
+      RenderBlock {DIV} at (0,62) size 784x420
         RenderText {#text} at (0,6) size 477x74
           text run at (0,6) width 477: "\x{D83D}\x{DC66}\x{D83C}\x{DFFB}\x{D83D}\x{DC69}\x{D83C}\x{DFFC}\x{D83D}\x{DC66}\x{D83C}\x{DFFE}\x{2764}\x{FE0F}\x{D83D}\x{DC8B}\x{D83D}\x{DD75}\x{D83C}\x{DFFB}\x{D83C}\x{DFC7}\x{D83C}\x{DFFB}"
         RenderBR {BR} at (476,64) size 1x0
