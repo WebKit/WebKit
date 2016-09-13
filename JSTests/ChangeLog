@@ -1,5 +1,23 @@
 2016-09-12  Saam Barati  <sbarati@apple.com>
 
+        Speed up Function.prototype.bind a bit by making it a builtin
+        https://bugs.webkit.org/show_bug.cgi?id=161879
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/function-bind-inlining.js: Added.
+        (assert):
+        (test):
+        (test2):
+        (foo):
+        * microbenchmarks/function-bind-no-inlining.js: Added.
+        (assert):
+        (test):
+        (test2):
+        (foo):
+
+2016-09-12  Saam Barati  <sbarati@apple.com>
+
         HashMapImpl should take into account m_deleteCount in its load factor and it should be able to rehash the table to be smaller
         https://bugs.webkit.org/show_bug.cgi?id=161640
 

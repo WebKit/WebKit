@@ -23,7 +23,7 @@ PASS h instanceof H is true
 PASS "prototype" in F is true
 PASS "prototype" in G is false
 PASS "prototype" in H is false
-PASS Function.bind.call(undefined) threw exception TypeError: Type error.
+PASS Function.bind.call(undefined) threw exception TypeError: |this| is not a function inside Function.prototype.bind.
 PASS abcAt(1) is "b"
 PASS new abcAt(1) threw exception TypeError: function is not a constructor (evaluating 'new abcAt(1)').
 PASS boundFunctionPrototypeAccessed is false

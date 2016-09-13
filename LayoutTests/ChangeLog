@@ -1,3 +1,12 @@
+2016-09-12  Saam Barati  <sbarati@apple.com>
+
+        Speed up Function.prototype.bind a bit by making it a builtin
+        https://bugs.webkit.org/show_bug.cgi?id=161879
+
+        Reviewed by Filip Pizlo.
+
+        * js/dom/function-bind-expected.txt:
+
 2016-09-12  Nan Wang  <n_wang@apple.com>
 
         AX: Crash at WebCore::Range::compareBoundaryPoints(WebCore::Range::CompareHow, WebCore::Range const&, int&) const + 23

@@ -160,7 +160,9 @@ namespace JSC {
     macro(regExpTestFast) \
     macro(stringIncludesInternal) \
     macro(stringSplitFast) \
-    macro(stringSubstrInternal)
+    macro(stringSubstrInternal) \
+    macro(makeBoundFunction) \
+    macro(hasOwnLengthProperty) \
 
 
 #define INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY(name) m_privateToPublicMap.add(m_##name##PrivateName.impl(), &m_##name);
