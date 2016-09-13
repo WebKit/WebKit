@@ -29,14 +29,13 @@
 
 EsprimaFormatter = class EsprimaFormatter
 {
-    constructor(sourceText, indentString = "    ")
+    constructor(sourceText, sourceType, indentString = "    ")
     {
         this._success = false;
 
         let tree = (function() {
             try {
-                // FIXME: Support "module" sourceType as well.
-                return esprima.parse(sourceText, {attachComment: true, range: true, tokens: true});
+                return esprima.parse(sourceText, {attachComment: true, range: true, tokens: true, sourceType});
             } catch (error) {
                 return null;
             }
@@ -738,7 +737,8 @@ EsprimaFormatter = class EsprimaFormatter
 
         if (nodeType === "ClassBody") {
             if (tokenValue === "{") {
-                builder.appendSpace();
+                if (node.parent.id)
+                    builder.appendSpace();
                 builder.appendToken(tokenValue, tokenOffset);
                 if (node.body.length)
                     builder.appendNewline();
@@ -775,6 +775,30 @@ EsprimaFormatter = class EsprimaFormatter
                 return;
             }
             builder.appendToken(tokenValue, tokenOffset);
+            return;
+        }
+
+        if (nodeType === "ImportDeclaration" || nodeType === "ExportNamedDeclaration") {
+            if (tokenValue === "}" || (tokenType === "Identifier" && tokenValue === "from"))
+                builder.appendSpace();
+            builder.appendToken(tokenValue, tokenOffset);
+            if (tokenValue !== "}")
+                builder.appendSpace();
+            return;
+        }
+
+        if (nodeType === "ExportSpecifier" || nodeType === "ImportSpecifier") {
+            if (tokenType === "Identifier" && tokenValue === "as")
+                builder.appendSpace();
+            builder.appendToken(tokenValue, tokenOffset);
+            builder.appendSpace();
+            return;            
+        }
+
+        if (nodeType === "ExportAllDeclaration" || nodeType === "ExportDefaultDeclaration" || nodeType === "ImportDefaultSpecifier" || nodeType === "ImportNamespaceSpecifier") {
+            builder.appendToken(tokenValue, tokenOffset);
+            if (tokenValue !== "(" && tokenValue !== ")")
+                builder.appendSpace();
             return;
         }
 
@@ -875,4 +899,9 @@ EsprimaFormatter = class EsprimaFormatter
             console.assert(!programNode.trailingComments);
         }
     }
+};
+
+EsprimaFormatter.SourceType = {
+    Script: "script",
+    Module: "module",
 };

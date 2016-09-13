@@ -34,7 +34,8 @@ function test()
 
     let suite = InspectorTest.createAsyncSuite("EsprimaFormatter.JSON");
 
-    let indentString = "    ";
+    const isModule = false;
+    const indentString = "    ";
     let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
 
     suite.addTestCase({
@@ -44,7 +45,7 @@ function test()
             let validJSON = JSON.stringify({"a":123,"b":[1,2,3],"c":{"d":"e"}});
             InspectorTest.log("JSON: " + doubleQuotedString(validJSON));
             ensureJSON(validJSON, "valid");
-            workerProxy.formatJavaScript(validJSON, indentString, ({formattedText, sourceMapData}) => {
+            workerProxy.formatJavaScript(validJSON, isModule, indentString, ({formattedText, sourceMapData}) => {
                 InspectorTest.log("FORMATTED:");
                 InspectorTest.log(formattedText);
                 resolve();
@@ -60,7 +61,7 @@ function test()
             InspectorTest.log("JSON: " + doubleQuotedString(invalidJSON));
             ensureJSON(invalidJSON, "invalid");
             ensureEval(invalidJSON, "object");
-            workerProxy.formatJavaScript(invalidJSON, indentString, ({formattedText, sourceMapData}) => {
+            workerProxy.formatJavaScript(invalidJSON, isModule, indentString, ({formattedText, sourceMapData}) => {
                 InspectorTest.log("FORMATTED:");
                 InspectorTest.log(formattedText);
                 resolve();
@@ -76,7 +77,7 @@ function test()
             InspectorTest.log("JSON: " + doubleQuotedString(invalidJSON));
             ensureJSON(invalidJSON, "invalid");
             ensureEval(invalidJSON, "object");
-            workerProxy.formatJavaScript(invalidJSON, indentString, ({formattedText, sourceMapData}) => {
+            workerProxy.formatJavaScript(invalidJSON, isModule, indentString, ({formattedText, sourceMapData}) => {
                 InspectorTest.log("FORMATTED:");
                 InspectorTest.log(formattedText);
                 resolve();
@@ -92,7 +93,7 @@ function test()
             InspectorTest.log("INPUT: " + doubleQuotedString(invalid));
             ensureJSON(invalid, "invalid");
             ensureEval(invalid, "bad");
-            workerProxy.formatJavaScript(invalid, indentString, ({formattedText, sourceMapData}) => {
+            workerProxy.formatJavaScript(invalid, isModule, indentString, ({formattedText, sourceMapData}) => {
                 InspectorTest.expectThat(formattedText === null, "Response should be null.");
                 resolve();
             });

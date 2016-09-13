@@ -47,7 +47,7 @@ WebInspector.FormatterWorkerProxy = class FormatterWorkerProxy extends WebInspec
 
     // Actions
 
-    formatJavaScript(sourceText, indentString, includeSourceMapData)
+    formatJavaScript(sourceText, isModule, indentString, includeSourceMapData)
     {
         this.performAction("formatJavaScript", ...arguments);
     }

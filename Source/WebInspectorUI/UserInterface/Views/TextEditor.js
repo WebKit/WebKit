@@ -792,8 +792,11 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         let sourceText = this._codeMirror.getValue();
         let includeSourceMapData = true;
 
+        // FIXME: Properly pass if this is a module or script.
+        const isModule = false;
+
         let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
-        workerProxy.formatJavaScript(sourceText, indentString, includeSourceMapData, ({formattedText, sourceMapData}) => {
+        workerProxy.formatJavaScript(sourceText, isModule, indentString, includeSourceMapData, ({formattedText, sourceMapData}) => {
             // Handle if formatting failed, which is possible for invalid programs.
             if (formattedText === null) {
                 callback();

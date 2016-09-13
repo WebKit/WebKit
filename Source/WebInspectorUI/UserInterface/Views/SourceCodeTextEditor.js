@@ -1523,8 +1523,9 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             });
 
             // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+            const isModule = false;
             let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
-            workerProxy.formatJavaScript(data.description, "    ", false, ({formattedText}) => {
+            workerProxy.formatJavaScript(data.description, isModule, "    ", false, ({formattedText}) => {
                 codeMirror.setValue(formattedText || data.description);
             });
 

@@ -20,6 +20,10 @@
     <!-- Controls -->
     <button id="populate">Populate</button>
     <select id="load-individual-test"><option>-- Load Test --</option></select>
+    <small>
+        <label><input id="program" type="radio" name="program-or-module"> Program</label>
+        <label><input id="module" type="radio" name="program-or-module" checked> Module</label>
+    </small>
     <button id="run-tests">Run All Tests</button>
     <button id="clear">Clear</button>
     <button id="select-output">Select Output</button>
@@ -65,7 +69,7 @@
         "sample-webinspector-object.js",
         "sample-normal-utilities.js",
         "sample-jquery.js",
-        // FIXME: Add a modules test when we support testing module source code.
+        "modules.js",
     ];
 
     // Initial values from URL.
@@ -83,6 +87,8 @@
     let content = "(function(){let a=1;return a+1;})();";
     if (queryParams.content)
         content = queryParams.content || "";
+    if (queryParams.program)
+        document.getElementById("program").checked = true;
 
     // Setup CodeMirror.
     let cm = CodeMirror.fromTextArea(document.getElementById("code"), {lineNumbers: true});
@@ -109,6 +115,12 @@
         option.textContent = test;
         option.value = test;
     }
+
+    // Program / Module checkboxes.
+    let programCheckbox = document.getElementById("program");
+    let moduleCheckbox = document.getElementById("module");
+    programCheckbox.addEventListener("change", refresh);
+    moduleCheckbox.addEventListener("change", refresh);
 
     // Run Tests button.
     document.getElementById("run-tests").addEventListener("click", function(event) {
@@ -140,7 +152,10 @@
     // Save as URL button.
     document.getElementById("save-as-url").addEventListener("click", function(event) {
         let content = cm.getValue();
-        window.location.search = "?content=" + window.encodeURIComponent(content);
+        let queryString = "?content=" + window.encodeURIComponent(content);
+        if (programCheckbox.checked)
+            queryString += "&program";
+        window.location.search = queryString;
     });
 
     // Refresh after changes after a short delay.
@@ -160,19 +175,29 @@
     let prettyPre = document.getElementById("pretty");
     let debugPre = document.getElementById("debug");
 
+    // Current value of checkboxes.
+    function currentSourceType() {
+        if (programCheckbox.checked)
+            return EsprimaFormatter.SourceType.Script;
+        if (moduleCheckbox.checked)
+            return EsprimaFormatter.SourceType.Module;
+        console.assert(false, "Program or Module radio button should be checked");
+        return undefined;
+    }
+
     function refresh() {
         if (timer)
             clearTimeout(timer);
 
         // Time the formatter.
         let startTime = Date.now();
-        let formatter = new EsprimaFormatter(cm.getValue());
+        let formatter = new EsprimaFormatter(cm.getValue(), currentSourceType());
         let endTime = Date.now();
 
         // Show debug info.
         let debugText;
         try {
-            let debugFormatter = new EsprimaFormatterDebug(cm.getValue());
+            let debugFormatter = new EsprimaFormatterDebug(cm.getValue(), currentSourceType());
             debugText = debugFormatter.debugText;
         } catch (error) {
             debugText = "Parse error";
@@ -188,12 +213,21 @@
 
     // Testing.
 
+    function isModuleTest(test) {
+        return test === "modules.js";
+    }
+
     function loadIndividualTest(test) {
         let testURL = testURLPrefix + test;
         let xhr = new XMLHttpRequest;
         xhr.open("GET", testURL, true);
         xhr.onload = () => { cm.setValue(xhr.responseText); setTimeout(refresh); }
         xhr.send();
+
+        if (isModuleTest(test))
+            moduleCheckbox.checked = true;
+        else
+            programCheckbox.checked = true;
     }
 
     function runAllTests() {
@@ -225,7 +259,8 @@
             let expectedData = xhr2.responseText;
 
             // Run the test.
-            let formatter = new EsprimaFormatter(testData);
+            let sourceType = isModuleTest(test) ? EsprimaFormatter.SourceType.Module : EsprimaFormatter.SourceType.Script;
+            let formatter = new EsprimaFormatter(testData, sourceType);
 
             // Compare results.
             let pass = formatter.formattedText === expectedData;

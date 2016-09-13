@@ -1,3 +1,23 @@
+2016-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to pretty print module code (import / export statements)
+        https://bugs.webkit.org/show_bug.cgi?id=161891
+        <rdar://problem/28272784>
+
+        Reviewed by Yusuke Suzuki.
+
+        * inspector/formatting/formatting-javascript-expected.txt:
+        * inspector/formatting/formatting-javascript.html:
+        * inspector/formatting/resources/javascript-tests/modules-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/modules.js: Added.
+        Include a new test for modules.
+
+        * inspector/formatting/formatting-json.html:
+        All of these are non-module source code.
+
+        * inspector/formatting/resources/utilities.js:
+        Determine if module or not based on the test name.
+
 2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/security/cross-origin-cached-scripts-parallel.html as flaky.

@@ -240,6 +240,36 @@ ESTreeWalker = class ESTreeWalker
             this._walk(node.argument, node);
             break;
 
+        case "ExportAllDeclaration":
+            this._walk(node.source, node);
+            break;
+        case "ExportNamedDeclaration":
+            this._walk(node.declaration, node);
+            this._walkArray(node.specifiers, node);
+            this._walk(node.source, node);
+            break;
+        case "ExportDefaultDeclaration":
+            this._walk(node.declaration, node);
+            break;
+        case "ExportSpecifier":
+            this._walk(node.local, node);
+            this._walk(node.exported, node);
+            break;
+        case "ImportDeclaration":
+            this._walkArray(node.specifiers, node);
+            this._walk(node.source, node);
+            break;
+        case "ImportDefaultSpecifier":
+            this._walk(node.local, node);
+            break;
+        case "ImportNamespaceSpecifier":
+            this._walk(node.local, node);
+            break;
+        case "ImportSpecifier":
+            this._walk(node.imported, node);
+            this._walk(node.local, node);
+            break;
+
         // Special case. We want to walk in program order,
         // so walk quasi, expression, quasi, expression, etc.
         case "TemplateLiteral":

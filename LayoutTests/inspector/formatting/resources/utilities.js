@@ -15,7 +15,8 @@ TestPage.registerInitializer(function() {
             return new Promise(function(resolve, reject) {
                 const indentString = "    ";
                 let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
-                workerProxy.formatJavaScript(testText, indentString, ({formattedText, sourceMapData}) => {
+                let isModule = /^module/.test(testName);
+                workerProxy.formatJavaScript(testText, isModule, indentString, ({formattedText, sourceMapData}) => {
                     let pass = formattedText === expectedText;
                     InspectorTest.log(pass ? "PASS" : "FAIL");
 

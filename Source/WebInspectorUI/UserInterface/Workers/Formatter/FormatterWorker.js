@@ -40,10 +40,12 @@ FormatterWorker = class FormatterWorker
 
     // Actions
 
-    formatJavaScript(sourceText, indentString, includeSourceMapData)
+    formatJavaScript(sourceText, isModule, indentString, includeSourceMapData)
     {
+        let sourceType = isModule ? EsprimaFormatter.SourceType.Module : EsprimaFormatter.SourceType.Script;
+
         // Format a JavaScript program.
-        let formatter = new EsprimaFormatter(sourceText, indentString);
+        let formatter = new EsprimaFormatter(sourceText, sourceType, indentString);
         if (formatter.success) {
             let result = {formattedText: formatter.formattedText};
             if (includeSourceMapData) {
@@ -74,7 +76,7 @@ FormatterWorker = class FormatterWorker
         // Likewise, an unnamed function's toString() produces a "function() { ... }", which is not
         // a valid program on its own. Wrap it in parenthesis to make it a function expression,
         // which is a valid program.
-        let invalidJSONFormatter = new EsprimaFormatter("(" + sourceText + ")", indentString);
+        let invalidJSONFormatter = new EsprimaFormatter("(" + sourceText + ")", sourceType, indentString);
         if (invalidJSONFormatter.success) {
             let formattedTextWithParens = invalidJSONFormatter.formattedText;
             let result = {formattedText: formattedTextWithParens.substring(1, formattedTextWithParens.length - 2)}; // Remove "(" and ")\n".

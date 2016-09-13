@@ -80,3 +80,6 @@ PASS
 -- Running test case: EsprimaFormatter.JavaScript.with-statement.js
 PASS
 
+-- Running test case: EsprimaFormatter.JavaScript.modules.js
+PASS
+
