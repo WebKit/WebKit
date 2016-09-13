@@ -1,3 +1,19 @@
+2016-09-13  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205873. rdar://problem/28208208
+
+    2016-09-13  Anders Carlsson  <andersca@apple.com>
+
+            REGRESSION (r196321): Amazon Videos are all black in Fullscreen
+            https://bugs.webkit.org/show_bug.cgi?id=161924
+            rdar://problem/28208208
+
+            Reviewed by Dan Bernstein.
+
+            * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+            (main):
+            Set AppleMagnifiedMode to true.
+
 2016-08-24  Babak Shafiei  <bshafiei@apple.com>
 
         Rollout r204922. rdar://problem/27896368
