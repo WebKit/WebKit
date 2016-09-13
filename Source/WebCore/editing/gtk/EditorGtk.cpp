@@ -53,16 +53,16 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
     if (!pasteboard.hasData())
         return nullptr;
 
-    DataObjectGtk* dataObject = pasteboard.dataObject();
-    if (dataObject->hasMarkup() && frame.document())
-        return createFragmentFromMarkup(*frame.document(), dataObject->markup(), emptyString(), DisallowScriptingAndPluginContent);
+    const auto& dataObject = pasteboard.dataObject();
+    if (dataObject.hasMarkup() && frame.document())
+        return createFragmentFromMarkup(*frame.document(), dataObject.markup(), emptyString(), DisallowScriptingAndPluginContent);
 
     if (!allowPlainText)
         return nullptr;
 
-    if (dataObject->hasText()) {
+    if (dataObject.hasText()) {
         chosePlainText = true;
-        return createFragmentFromText(range, dataObject->text());
+        return createFragmentFromText(range, dataObject.text());
     }
 
     return nullptr;

@@ -147,15 +147,4 @@ void DataObjectGtk::clearAll()
     m_filenames.clear();
 }
 
-DataObjectGtk* DataObjectGtk::forClipboard(GtkClipboard* clipboard)
-{
-    static HashMap<GtkClipboard*, RefPtr<DataObjectGtk> > objectMap;
-
-    auto addResult = objectMap.add(clipboard, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = DataObjectGtk::create();
-
-    return addResult.iterator->value.get();
-}
-
 }

@@ -65,8 +65,8 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosi
     if (bitmap && !bitmap->createHandle(handle))
         return;
 
-    RefPtr<DataObjectGtk> dataObject = dataTransfer.pasteboard().dataObject();
-    DragData dragData(dataObject.get(), clientPosition, globalPosition, dataTransfer.sourceOperation());
+    const auto& dataObject = dataTransfer.pasteboard().dataObject();
+    DragData dragData(const_cast<DataObjectGtk*>(&dataObject), clientPosition, globalPosition, dataTransfer.sourceOperation());
     m_page->send(Messages::WebPageProxy::StartDrag(dragData, handle));
 }
 

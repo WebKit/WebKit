@@ -115,10 +115,10 @@ void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<Shareabl
 {
 #if GTK_CHECK_VERSION(3, 16, 0)
     m_draggingDataObject = adoptRef(dragData.platformData());
-    GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::singleton().targetListForDataObject(m_draggingDataObject.get()));
+    GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForDataObject(*m_draggingDataObject);
 #else
     RefPtr<DataObjectGtk> dataObject = adoptRef(dragData.platformData());
-    GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::singleton().targetListForDataObject(dataObject.get()));
+    GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForDataObject(*dataObject);
 #endif
 
     GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
@@ -156,10 +156,10 @@ void DragAndDropHandler::fillDragData(GdkDragContext* context, GtkSelectionData*
         return;
 
     ASSERT(m_draggingDataObject);
-    PasteboardHelper::singleton().fillSelectionData(selectionData, info, m_draggingDataObject.get());
+    PasteboardHelper::singleton().fillSelectionData(selectionData, info, *m_draggingDataObject);
 #else
     if (DataObjectGtk* dataObject = m_draggingDataObjects.get(context))
-        PasteboardHelper::singleton().fillSelectionData(selectionData, info, dataObject);
+        PasteboardHelper::singleton().fillSelectionData(selectionData, info, *dataObject);
 #endif
 }
 
@@ -196,7 +196,7 @@ DataObjectGtk* DragAndDropHandler::dataObjectForDropData(GdkDragContext* context
         return nullptr;
 
     droppingContext->pendingDataRequests--;
-    PasteboardHelper::singleton().fillDataObjectFromDropData(selectionData, info, droppingContext->dataObject.get());
+    PasteboardHelper::singleton().fillDataObjectFromDropData(selectionData, info, *droppingContext->dataObject);
     if (droppingContext->pendingDataRequests)
         return nullptr;
 
