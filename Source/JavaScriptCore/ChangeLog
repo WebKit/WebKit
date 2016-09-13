@@ -1,3 +1,57 @@
+2016-09-12  Filip Pizlo  <fpizlo@apple.com>
+
+        MarkedBlock should be able to use flipIfNecessary() as the "I'm not empty" trigger
+        https://bugs.webkit.org/show_bug.cgi?id=161869
+
+        Reviewed by Saam Barati.
+        
+        In bug 161581, I'm going to use flipIfNecessary() during marking to trigger the "I'm not
+        empty" hook, which will set a bit in the markingNotEmpty bitvector.
+        
+        For this to work, we need to ensure that nobody else uses flipIfNecessary() during marking.
+        If anyone else does it but they aren't marking new objects, then this prevents
+        flipIfNecessary() from triggering when the first object is marked, which means we won't
+        always detect when a block became non-empty.
+        
+        I addressed this by adding a isMarking flag, and asserting in flipIfNecessary() that the flag
+        isn't set. flipIfNecessaryDuringMarking() is used only on the marking path, so that code
+        knows that it can trigger something like noteMarked(). The only places that were using
+        flipIfNecessary() should have been using needsFlip() anyway.
+
+        * heap/CellContainer.h:
+        * heap/CellContainerInlines.h:
+        (JSC::CellContainer::needsFlip):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::beginMarking):
+        (JSC::Heap::endMarking):
+        (JSC::Heap::clearLivenessData): Deleted.
+        (JSC::Heap::converge): Deleted.
+        (JSC::Heap::resetVisitors): Deleted.
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::testAndSetMarked):
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::flipIfNecessaryDuringMarking):
+        (JSC::LargeAllocation::flipIfNecessaryConcurrently): Deleted.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::flipIfNecessarySlow):
+        (JSC::MarkedBlock::flipIfNecessaryDuringMarkingSlow):
+        (JSC::MarkedBlock::flipIfNecessaryConcurrentlySlow): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::flipIfNecessaryDuringMarking):
+        (JSC::MarkedBlock::Handle::flipIfNecessaryDuringMarking):
+        (JSC::MarkedBlock::flipIfNecessaryConcurrently): Deleted.
+        (JSC::MarkedBlock::Handle::flipIfNecessaryConcurrently): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::isMarking):
+        (JSC::MarkedSpace::setIsMarking):
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionSize): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::visit):
+
 2016-09-12  Saam Barati  <sbarati@apple.com>
 
         HashMapImpl should take into account m_deleteCount in its load factor and it should be able to rehash the table to be smaller

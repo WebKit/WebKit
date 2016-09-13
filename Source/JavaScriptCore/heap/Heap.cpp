@@ -419,7 +419,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
             m_slotVisitor.clearMarkStack();
         }
 
-        clearLivenessData();
+        beginMarking();
 
         m_parallelMarkersShouldExit = false;
 
@@ -471,7 +471,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
         visitSamplingProfiler();
         visitShadowChicken();
         traceCodeBlocksAndJITStubRoutines();
-        converge();
+        m_slotVisitor.drainFromShared(SlotVisitor::MasterDrain);
     }
     
     TimingScope postConvergenceTimingScope(*this, "Heap::markRoots after convergence");
@@ -487,7 +487,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
     }
     m_helperClient.finish();
     updateObjectCounts(gcStartTime);
-    resetVisitors();
+    endMarking();
 }
 
 void Heap::gatherStackRoots(ConservativeRoots& roots, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
@@ -514,9 +514,9 @@ void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
 #endif
 }
 
-void Heap::clearLivenessData()
+void Heap::beginMarking()
 {
-    TimingScope timingScope(*this, "Heap::clearLivenessData");
+    TimingScope timingScope(*this, "Heap::beginMarking");
     if (m_operationInProgress == FullCollection)
         m_codeBlocks->clearMarksForFullCollection();
     
@@ -529,6 +529,8 @@ void Heap::clearLivenessData()
         TimingScope clearMarksTimingScope(*this, "m_objectSpace.clearMarks");
         m_objectSpace.flip();
     }
+    
+    m_objectSpace.setIsMarking(true);
 }
 
 void Heap::visitExternalRememberedSet()
@@ -727,11 +729,6 @@ void Heap::traceCodeBlocksAndJITStubRoutines()
     m_slotVisitor.donateAndDrain();
 }
 
-void Heap::converge()
-{
-    m_slotVisitor.drainFromShared(SlotVisitor::MasterDrain);
-}
-
 void Heap::visitWeakHandles(HeapRootVisitor& visitor)
 {
     TimingScope timingScope(*this, "Heap::visitWeakHandles");
@@ -772,7 +769,7 @@ void Heap::updateObjectCounts(double gcStartTime)
     m_totalBytesVisited += m_totalBytesVisitedThisCycle;
 }
 
-void Heap::resetVisitors()
+void Heap::endMarking()
 {
     m_slotVisitor.reset();
 
@@ -781,6 +778,8 @@ void Heap::resetVisitors()
 
     ASSERT(m_sharedMarkStack.isEmpty());
     m_weakReferenceHarvesters.removeAll();
+    
+    m_objectSpace.setIsMarking(false);
 }
 
 size_t Heap::objectCount()

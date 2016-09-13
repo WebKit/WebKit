@@ -72,6 +72,9 @@ public:
 
 private:
     static FreeCell* asFreeCell(WeakImpl*);
+    
+    template<typename ContainerType>
+    void specializedVisit(ContainerType&, HeapRootVisitor&);
 
     explicit WeakBlock(CellContainer);
     void finalize(WeakImpl*);

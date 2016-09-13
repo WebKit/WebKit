@@ -123,6 +123,8 @@ public:
     void dump(PrintStream&) const;
 
     bool isBuildingHeapSnapshot() const { return !!m_heapSnapshotBuilder; }
+    
+    HeapVersion version() const { return m_version; }
 
 private:
     friend class ParallelModeEnabler;

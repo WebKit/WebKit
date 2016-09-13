@@ -75,6 +75,7 @@ public:
     
     void flipIfNecessary(HeapVersion);
     void flipIfNecessary();
+    bool needsFlip() const;
     
     bool isMarked() const;
     bool isMarked(HeapCell*) const;

@@ -186,7 +186,7 @@ public:
             
         bool needsFlip();
             
-        void flipIfNecessaryConcurrently(HeapVersion);
+        void flipIfNecessaryDuringMarking(HeapVersion);
         void flipIfNecessary(HeapVersion);
         void flipIfNecessary();
             
@@ -251,6 +251,7 @@ public:
     bool testAndSetMarked(const void*);
         
     bool isMarkedOrNewlyAllocated(const HeapCell*);
+    bool isMarkedOrNewlyAllocatedDuringWeakVisiting(HeapVersion, const HeapCell*);
 
     bool isAtom(const void*);
     void setMarked(const void*);
@@ -267,7 +268,7 @@ public:
     bool needsFlip(HeapVersion);
     bool needsFlip();
         
-    void flipIfNecessaryConcurrently(HeapVersion);
+    void flipIfNecessaryDuringMarking(HeapVersion);
     void flipIfNecessary(HeapVersion);
     void flipIfNecessary();
         
@@ -283,7 +284,7 @@ private:
     MarkedBlock(VM&, Handle&);
     Atom* atoms();
         
-    void flipIfNecessaryConcurrentlySlow();
+    void flipIfNecessaryDuringMarkingSlow();
     void flipIfNecessarySlow();
     void clearMarks();
     void clearHasAnyMarked();
@@ -474,10 +475,10 @@ inline void MarkedBlock::flipIfNecessary(HeapVersion heapVersion)
         flipIfNecessarySlow();
 }
 
-inline void MarkedBlock::flipIfNecessaryConcurrently(HeapVersion heapVersion)
+inline void MarkedBlock::flipIfNecessaryDuringMarking(HeapVersion heapVersion)
 {
     if (UNLIKELY(needsFlip(heapVersion)))
-        flipIfNecessaryConcurrentlySlow();
+        flipIfNecessaryDuringMarkingSlow();
     WTF::loadLoadFence();
 }
 
@@ -486,9 +487,9 @@ inline void MarkedBlock::Handle::flipIfNecessary(HeapVersion heapVersion)
     block().flipIfNecessary(heapVersion);
 }
 
-inline void MarkedBlock::Handle::flipIfNecessaryConcurrently(HeapVersion heapVersion)
+inline void MarkedBlock::Handle::flipIfNecessaryDuringMarking(HeapVersion heapVersion)
 {
-    block().flipIfNecessaryConcurrently(heapVersion);
+    block().flipIfNecessaryDuringMarking(heapVersion);
 }
 
 inline void MarkedBlock::Handle::flipForEdenCollection()
@@ -559,6 +560,13 @@ inline bool MarkedBlock::isMarkedOrNewlyAllocated(const HeapCell* cell)
 {
     ASSERT(m_handle.m_state == Marked);
     return isMarked(cell) || (m_handle.m_newlyAllocated && m_handle.isNewlyAllocated(cell));
+}
+
+inline bool MarkedBlock::isMarkedOrNewlyAllocatedDuringWeakVisiting(HeapVersion heapVersion, const HeapCell* cell)
+{
+    if (needsFlip(heapVersion))
+        return false;
+    return isMarkedOrNewlyAllocated(cell);
 }
 
 inline bool MarkedBlock::Handle::isLive(const HeapCell* cell)

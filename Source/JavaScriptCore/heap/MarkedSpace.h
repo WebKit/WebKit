@@ -168,6 +168,13 @@ public:
     LargeAllocation** largeAllocationsForThisCollectionBegin() const { return m_largeAllocationsForThisCollectionBegin; }
     LargeAllocation** largeAllocationsForThisCollectionEnd() const { return m_largeAllocationsForThisCollectionEnd; }
     unsigned largeAllocationsForThisCollectionSize() const { return m_largeAllocationsForThisCollectionSize; }
+    
+    // When this is true it means that we have flipped but the mark bits haven't converged yet.
+    bool isMarking() const { return m_isMarking; }
+    
+    // FIXME: After https://bugs.webkit.org/show_bug.cgi?id=161581, MarkedSpace will control this
+    // flag directly.
+    void setIsMarking(bool value) { m_isMarking = value; }
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -196,6 +203,7 @@ private:
     HeapVersion m_version { initialVersion };
     size_t m_capacity;
     bool m_isIterating;
+    bool m_isMarking { false };
     MarkedBlockSet m_blocks;
     Vector<MarkedBlock::Handle*> m_blocksWithNewObjects;
     Vector<LargeAllocation*> m_largeAllocations;

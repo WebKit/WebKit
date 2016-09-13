@@ -85,5 +85,12 @@ inline void CellContainer::flipIfNecessary()
         markedBlock().flipIfNecessary();
 }
 
+inline bool CellContainer::needsFlip() const
+{
+    if (isLargeAllocation())
+        return false;
+    return markedBlock().needsFlip();
+}
+
 } // namespace JSC
 

@@ -71,6 +71,8 @@ public:
     bool isNewlyAllocated() const { return m_isNewlyAllocated; }
     ALWAYS_INLINE bool isMarked() { return m_isMarked.load(std::memory_order_relaxed); }
     bool isMarkedOrNewlyAllocated() { return isMarked() || isNewlyAllocated(); }
+    bool isMarkedOrNewlyAllocated(HeapCell*) { return isMarkedOrNewlyAllocated(); }
+    bool isMarkedOrNewlyAllocatedDuringWeakVisiting(HeapVersion, HeapCell*) { return isMarkedOrNewlyAllocated(); }
     bool isLive() { return isMarkedOrNewlyAllocated(); }
     
     bool hasValidCell() const { return m_hasValidCell; }
@@ -105,7 +107,7 @@ public:
     const AllocatorAttributes& attributes() const { return m_attributes; }
     
     void flipIfNecessary(uint64_t) { }
-    void flipIfNecessaryConcurrently(uint64_t) { }
+    void flipIfNecessaryDuringMarking(uint64_t) { }
     
     ALWAYS_INLINE bool testAndSetMarked()
     {

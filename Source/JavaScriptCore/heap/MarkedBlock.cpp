@@ -358,11 +358,13 @@ void MarkedBlock::Handle::flipIfNecessary()
 void MarkedBlock::flipIfNecessarySlow()
 {
     ASSERT(needsFlip());
+    ASSERT(!vm()->heap.objectSpace().isMarking());
     clearMarks();
 }
 
-void MarkedBlock::flipIfNecessaryConcurrentlySlow()
+void MarkedBlock::flipIfNecessaryDuringMarkingSlow()
 {
+    ASSERT(vm()->heap.objectSpace().isMarking());
     LockHolder locker(m_lock);
     if (needsFlip())
         clearMarks();

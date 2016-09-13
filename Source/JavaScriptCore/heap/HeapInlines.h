@@ -115,7 +115,7 @@ ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion version, const void* rawCe
     if (cell->isLargeAllocation())
         return cell->largeAllocation().testAndSetMarked();
     MarkedBlock& block = cell->markedBlock();
-    block.flipIfNecessaryConcurrently(version);
+    block.flipIfNecessaryDuringMarking(version);
     return block.testAndSetMarked(cell);
 }
 

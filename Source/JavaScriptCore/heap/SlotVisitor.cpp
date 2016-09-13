@@ -198,7 +198,7 @@ void SlotVisitor::setMarkedAndAppendToMarkStack(JSCell* cell)
 template<typename ContainerType>
 ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& container, JSCell* cell)
 {
-    container.flipIfNecessaryConcurrently(m_version);
+    container.flipIfNecessaryDuringMarking(m_version);
     
     if (container.testAndSetMarked(cell))
         return;

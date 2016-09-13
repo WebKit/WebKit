@@ -308,7 +308,7 @@ private:
     void gatherStackRoots(ConservativeRoots&, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
     void gatherJSStackRoots(ConservativeRoots&);
     void gatherScratchBufferRoots(ConservativeRoots&);
-    void clearLivenessData();
+    void beginMarking();
     void visitExternalRememberedSet();
     void visitSmallStrings();
     void visitConservativeRoots(ConservativeRoots&);
@@ -322,10 +322,9 @@ private:
     void visitSamplingProfiler();
     void visitShadowChicken();
     void traceCodeBlocksAndJITStubRoutines();
-    void converge();
     void visitWeakHandles(HeapRootVisitor&);
     void updateObjectCounts(double gcStartTime);
-    void resetVisitors();
+    void endMarking();
 
     void reapWeakHandles();
     void pruneStaleEntriesFromWeakGCMaps();
