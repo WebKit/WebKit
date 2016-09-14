@@ -1,3 +1,18 @@
+2016-09-14  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205882. rdar://problem/28233331
+
+    2016-09-13  Mark Lam  <mark.lam@apple.com>
+
+            DFG NewArrayBuffer node should watch for "have a bad time" state change.
+            https://bugs.webkit.org/show_bug.cgi?id=161927
+            <rdar://problem/27995222>
+
+            Reviewed by Geoffrey Garen.
+
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+
 2016-09-13  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r205895. rdar://problem/28287070
