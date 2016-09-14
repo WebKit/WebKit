@@ -653,6 +653,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueItalic || valueID == CSSValueOblique)
             return true;
         break;
+    case CSSPropertyFontStretch:
+        return false;
     case CSSPropertyImageRendering: // auto | optimizeSpeed | optimizeQuality | -webkit-crisp-edges | -webkit-optimize-contrast | crisp-edges | pixelated
         // optimizeSpeed and optimizeQuality are deprecated; a user agent must accept them as valid values but must treat them as having the same behavior as pixelated and auto respectively.
         if (valueID == CSSValueAuto || valueID == CSSValueOptimizespeed || valueID == CSSValueOptimizequality
@@ -736,6 +738,12 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueFixed)
             return true;
         break;
+    case CSSPropertyTextAlign:
+        // left | right | center | justify | -webkit-left | -webkit-right | -webkit-center | -webkit-match-parent
+        // | start | end | inherit | -webkit-auto (converted to start)
+        if ((valueID >= CSSValueWebkitAuto && valueID <= CSSValueWebkitMatchParent) || valueID == CSSValueStart || valueID == CSSValueEnd)
+            return true;
+        break;
     case CSSPropertyTextLineThroughMode:
     case CSSPropertyTextOverlineMode:
     case CSSPropertyTextUnderlineMode:
@@ -758,6 +766,11 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         break;
     case CSSPropertyTextTransform: // capitalize | uppercase | lowercase | none | inherit
         if ((valueID >= CSSValueCapitalize && valueID <= CSSValueLowercase) || valueID == CSSValueNone)
+            return true;
+        break;
+    case CSSPropertyUnicodeBidi:
+        if (valueID == CSSValueNormal || valueID == CSSValueEmbed || valueID == CSSValueBidiOverride || valueID == CSSValueWebkitIsolate
+            || valueID == CSSValueWebkitIsolateOverride || valueID == CSSValueWebkitPlaintext)
             return true;
         break;
     case CSSPropertyVisibility: // visible | hidden | collapse | inherit
@@ -815,8 +828,22 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueJustify)
             return true;
         break;
+#if ENABLE(CURSOR_VISIBILITY)
+    case CSSPropertyWebkitCursorVisibility:
+        if (valueID == CSSValueAuto || valueID == CSSValueAutoHide)
+            return true;
+        break;
+#endif
+    case CSSPropertyWebkitColumnAxis:
+        if (valueID == CSSValueHorizontal || valueID == CSSValueVertical || valueID == CSSValueAuto)
+            return true;
+        break;
     case CSSPropertyColumnFill:
         if (valueID == CSSValueAuto || valueID == CSSValueBalance)
+            return true;
+        break;
+    case CSSPropertyColumnProgression:
+        if (valueID == CSSValueNormal || valueID == CSSValueReverse)
             return true;
         break;
     case CSSPropertyAlignContent:
@@ -937,6 +964,10 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNone || valueID == CSSValueHorizontal)
             return true;
         break;
+    case CSSPropertyWebkitTextDecorationStyle:
+        if (valueID == CSSValueSolid || valueID == CSSValueDouble || valueID == CSSValueDotted || valueID == CSSValueDashed || valueID == CSSValueWavy)
+            return true;
+        break;
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextJustify:
         // auto | none | inter-word | distribute
@@ -944,9 +975,18 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
 #endif // CSS3_TEXT
+    case CSSPropertyWebkitTextOrientation:
+        if (valueID == CSSValueSideways || valueID == CSSValueSidewaysRight || valueID == CSSValueVerticalRight
+            || valueID == CSSValueMixed || valueID == CSSValueUpright)
+            return true;
+        break;
     case CSSPropertyWebkitTextSecurity:
         // disc | circle | square | none | inherit
         if (valueID == CSSValueDisc || valueID == CSSValueCircle || valueID == CSSValueSquare || valueID == CSSValueNone)
+            return true;
+        break;
+    case CSSPropertyWebkitTextZoom:
+        if (valueID == CSSValueNormal || valueID == CSSValueReset)
             return true;
         break;
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -955,6 +995,14 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return false;
 
         if (valueID == CSSValueAuto || valueID == CSSValueNone)
+            return true;
+        break;
+#endif
+#if PLATFORM(IOS)
+    // Apple specific property. These will never be standardized and is purely to
+    // support custom WebKit-based Apple applications.
+    case CSSPropertyWebkitTouchCallout:
+        if (valueID == CSSValueDefault || valueID == CSSValueNone)
             return true;
         break;
 #endif
@@ -1052,6 +1100,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyColumnFill:
+    case CSSPropertyColumnProgression:
     case CSSPropertyColumnRuleStyle:
     case CSSPropertyDirection:
     case CSSPropertyDisplay:
@@ -1059,6 +1108,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:
     case CSSPropertyFloat:
+    case CSSPropertyFontStretch:
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariantAlternates:
     case CSSPropertyFontVariantCaps:
@@ -1079,6 +1129,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyResize:
     case CSSPropertySpeak:
     case CSSPropertyTableLayout:
+    case CSSPropertyTextAlign:
     case CSSPropertyTextLineThroughMode:
     case CSSPropertyTextLineThroughStyle:
     case CSSPropertyTextOverflow:
@@ -1089,6 +1140,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyTextUnderlineMode:
     case CSSPropertyTextUnderlineStyle:
     case CSSPropertyTransformStyle:
+    case CSSPropertyUnicodeBidi:
     case CSSPropertyVisibility:
     case CSSPropertyWebkitAppearance:
     case CSSPropertyWebkitBackfaceVisibility:
@@ -1102,6 +1154,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitBoxLines:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
+    case CSSPropertyWebkitColumnAxis:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
@@ -1122,7 +1175,10 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitRubyPosition:
     case CSSPropertyWebkitTextCombine:
+    case CSSPropertyWebkitTextDecorationStyle:
+    case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:
+    case CSSPropertyWebkitTextZoom:
     case CSSPropertyWebkitTransformStyle:
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
@@ -1144,6 +1200,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     case CSSPropertyWebkitBoxDecorationBreak:
 #endif
+#if ENABLE(CURSOR_VISIBILITY)
+    case CSSPropertyWebkitCursorVisibility:
+#endif
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
@@ -1156,6 +1215,11 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextAlignLast:
     case CSSPropertyWebkitTextJustify:
+#endif
+#if PLATFORM(IOS)
+    // Apple specific property. These will never be standardized and is purely to
+    // support custom WebKit-based Apple applications.
+    case CSSPropertyWebkitTouchCallout:
 #endif
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType:
@@ -1980,15 +2044,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             return parseQuotes(propId, important);
         break;
-    case CSSPropertyUnicodeBidi: // normal | embed | bidi-override | isolate | isolate-override | plaintext | inherit
-        if (id == CSSValueNormal
-            || id == CSSValueEmbed
-            || id == CSSValueBidiOverride
-            || id == CSSValueWebkitIsolate
-            || id == CSSValueWebkitIsolateOverride
-            || id == CSSValueWebkitPlaintext)
-            validPrimitive = true;
-        break;
 
     case CSSPropertyContent:              // [ <string> | <uri> | <counter> | attr(X) | open-quote |
         // close-quote | no-open-quote | no-close-quote ]+ | inherit
@@ -2025,14 +2080,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         addProperty(CSSPropertyOverflowX, WTFMove(overflowXValue), important);
         return true;
     }
-
-    case CSSPropertyTextAlign:
-        // left | right | center | justify | -webkit-left | -webkit-right | -webkit-center | -webkit-match-parent
-        // | start | end | inherit | -webkit-auto (converted to start)
-        // NOTE: <string> is not supported.
-        if ((id >= CSSValueWebkitAuto && id <= CSSValueWebkitMatchParent) || id == CSSValueStart || id == CSSValueEnd)
-            validPrimitive = true;
-        break;
 
     case CSSPropertyFontWeight:  { // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
         if (m_valueList->size() != 1)
@@ -2183,13 +2230,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         break;
     }
-
-#if ENABLE(CURSOR_VISIBILITY)
-    case CSSPropertyWebkitCursorVisibility:
-        if (id == CSSValueAuto || id == CSSValueAutoHide)
-            validPrimitive = true;
-        break;
-#endif
 
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundBlendMode:
@@ -2404,12 +2444,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         // none | [ underline || overline || line-through || blink ] | inherit
         return parseTextDecoration(propId, important);
 
-    case CSSPropertyWebkitTextDecorationStyle:
-        // solid | double | dotted | dashed | wavy
-        if (id == CSSValueSolid || id == CSSValueDouble || id == CSSValueDotted || id == CSSValueDashed || id == CSSValueWavy)
-            validPrimitive = true;
-        break;
-
     case CSSPropertyWebkitTextDecorationSkip:
         // none | [ objects || spaces || ink || edges || box-decoration ]
         return parseTextDecorationSkip(important);
@@ -2424,12 +2458,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         else
             validPrimitive = (!id && validateUnit(valueWithCalculation, FNumber | FPercent | FNonNeg, HTMLStandardMode));
-        break;
-    
-    case CSSPropertyWebkitTextZoom:
-        // normal | reset
-        if (id == CSSValueNormal || id == CSSValueReset)
-            validPrimitive = true;
         break;
 
     case CSSPropertySrc: // Only used within @font-face and @-webkit-filter, so cannot use inherit | initial or be !important. This is a list of urls or local references.
@@ -2594,14 +2622,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return true;
         }
         break;
-#if ENABLE(CSS_COMPOSITING)
-    case CSSPropertyMixBlendMode:
-        validPrimitive = true;
-        break;
-    case CSSPropertyIsolation:
-        validPrimitive = true;
-        break;
-#endif
     case CSSPropertyFlex: {
         ShorthandScope scope(this, propId);
         if (id == CSSValueNone) {
@@ -2852,14 +2872,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             validPrimitive = validateUnit(valueWithCalculation, FLength | FNonNeg);
         break;
-    case CSSPropertyWebkitColumnAxis:
-        if (id == CSSValueHorizontal || id == CSSValueVertical || id == CSSValueAuto)
-            validPrimitive = true;
-        break;
-    case CSSPropertyColumnProgression:
-        if (id == CSSValueNormal || id == CSSValueReverse)
-            validPrimitive = true;
-        break;
     case CSSPropertyColumnSpan: // none | all | 1 (will be dropped in the unprefixed property)
         if (id == CSSValueAll || id == CSSValueNone)
             validPrimitive = true;
@@ -2954,12 +2966,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 #endif
 
-#if PLATFORM(IOS)
-    case CSSPropertyWebkitTouchCallout:
-        if (id == CSSValueDefault || id == CSSValueNone)
-            validPrimitive = true;
-        break;
-#endif
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyWebkitTapHighlightColor:
         if (isValidSystemColorValue(id) || id == CSSValueMenu
@@ -3063,7 +3069,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         return false;
     case CSSPropertyPage:
         return parsePage(propId, important);
-    case CSSPropertyFontStretch:
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextOverline:
     case CSSPropertyTextUnderline:
@@ -3077,11 +3082,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 
     case CSSPropertyWebkitTextEmphasisPosition:
         return parseTextEmphasisPosition(important);
-
-    case CSSPropertyWebkitTextOrientation:
-        if (id == CSSValueSideways || id == CSSValueSidewaysRight || id == CSSValueVerticalRight || id == CSSValueMixed || id == CSSValueUpright)
-            validPrimitive = true;
-        break;
 
     case CSSPropertyHangingPunctuation:
         return parseHangingPunctuation(important);
