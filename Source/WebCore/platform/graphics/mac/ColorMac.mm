@@ -34,7 +34,7 @@ namespace WebCore {
 
 static bool useOldAquaFocusRingColor;
 
-RGBA32 oldAquaFocusRingColor()
+Color oldAquaFocusRingColor()
 {
     return 0xFF7DADD9;
 }

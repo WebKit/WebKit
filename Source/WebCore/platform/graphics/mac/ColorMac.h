@@ -47,7 +47,7 @@ namespace WebCore {
     WEBCORE_EXPORT void setUsesTestModeFocusRingColor(bool);
     
     // Focus ring color used for testing purposes.
-    RGBA32 oldAquaFocusRingColor();
+    Color oldAquaFocusRingColor();
 
 }
 

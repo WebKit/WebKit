@@ -1,3 +1,27 @@
+2016-09-12  Dean Jackson  <dino@apple.com>
+
+        Replace RGBA32 with Color in member variables
+        https://bugs.webkit.org/show_bug.cgi?id=161856
+        <rdar://problem/28254324>
+
+        Reviewed by Simon Fraser.
+
+        In preparation for the Color class to become more than
+        just a 4-byte RGBA value, I went through a few places
+        that were using the RGBA32 type directly, and replaced
+        them with Color. This will make some objects a little
+        bigger e.g. BorderValue and its friends.
+
+        I mostly looked at the places that were using RGBA32 as
+        a member variable. There is still a lot of RGBA32 use
+        around the project, in particular the CSS parser.
+
+        There should be no behaviour change.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]): Explicitly
+        call a Color constructor, rather than passing an RGBA32.
+
 2016-09-13  Chris Dumez  <cdumez@apple.com>
 
         Drop support for <isindex>

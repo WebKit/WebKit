@@ -1336,4 +1336,14 @@ String RenderTheme::fileListNameForWidth(const FileList* fileList, const FontCas
     return StringTruncator::centerTruncate(string, width, font);
 }
 
+#if ENABLE(TOUCH_EVENTS)
+Color RenderTheme::platformTapHighlightColor() const
+{
+    // This color is expected to be drawn on a semi-transparent overlay,
+    // making it more transparent than its alpha value indicates.
+    static NeverDestroyed<const Color> defaultTapHighlightColor = Color(0, 0, 0, 102);
+    return defaultTapHighlightColor;
+}
+#endif
+
 } // namespace WebCore

@@ -42,7 +42,7 @@ namespace WebCore {
     class CanvasStyle {
     public:
         CanvasStyle();
-        explicit CanvasStyle(RGBA32);
+        explicit CanvasStyle(Color);
         CanvasStyle(float grayLevel, float alpha);
         CanvasStyle(float r, float g, float b, float alpha);
         CanvasStyle(float c, float m, float y, float k, float alpha);
@@ -80,9 +80,14 @@ namespace WebCore {
             WTF_MAKE_FAST_ALLOCATED;
             WTF_MAKE_NONCOPYABLE(CMYKAValues);
         public:
-            CMYKAValues() : rgba(0), c(0), m(0), y(0), k(0), a(0) { }
-            CMYKAValues(RGBA32 rgba, float cyan, float magenta, float yellow, float black, float alpha) : rgba(rgba), c(cyan), m(magenta), y(yellow), k(black), a(alpha) { }
-            RGBA32 rgba;
+            CMYKAValues()
+                : color(), c(0), m(0), y(0), k(0), a(0)
+            { }
+
+            CMYKAValues(Color color, float cyan, float magenta, float yellow, float black, float alpha)
+                : color(color), c(cyan), m(magenta), y(yellow), k(black), a(alpha)
+            { }
+            Color color;
             float c;
             float m;
             float y;
@@ -99,7 +104,7 @@ namespace WebCore {
         }
 
         union {
-            RGBA32 m_rgba;
+            Color m_color;
             float m_overrideAlpha;
             CanvasGradient* m_gradient;
             CanvasPattern* m_pattern;
@@ -134,8 +139,8 @@ namespace WebCore {
     {
         ASSERT(m_type == RGBA || m_type == CMYKA);
         if (m_type == RGBA)
-            return Color(m_rgba).serialized();
-        return Color(m_cmyka->rgba).serialized();
+            return m_color.serialized();
+        return m_cmyka->color.serialized();
     }
 
     inline CanvasStyle::CanvasStyle(CanvasStyle&& other)

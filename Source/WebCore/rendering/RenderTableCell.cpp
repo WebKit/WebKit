@@ -52,7 +52,7 @@ struct SameSizeAsRenderTableCell : public RenderBlockFlow {
 };
 
 COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), RenderTableCell_should_stay_small);
-COMPILE_ASSERT(sizeof(CollapsedBorderValue) == 12, CollapsedBorderValue_should_stay_small);
+COMPILE_ASSERT(sizeof(CollapsedBorderValue) == 16, CollapsedBorderValue_should_stay_small);
 
 RenderTableCell::RenderTableCell(Element& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))

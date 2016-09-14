@@ -1258,17 +1258,17 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, float grayLevel, float alpha)
 {
-    setShadow(FloatSize(width, height), blur, makeRGBA32FromFloats(grayLevel, grayLevel, grayLevel, alpha));
+    setShadow(FloatSize(width, height), blur, Color(grayLevel, grayLevel, grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, float r, float g, float b, float a)
 {
-    setShadow(FloatSize(width, height), blur, makeRGBA32FromFloats(r, g, b, a));
+    setShadow(FloatSize(width, height), blur, Color(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, float c, float m, float y, float k, float a)
 {
-    setShadow(FloatSize(width, height), blur, makeRGBAFromCMYKA(c, m, y, k, a));
+    setShadow(FloatSize(width, height), blur, Color(c, m, y, k, a));
 }
 
 void CanvasRenderingContext2D::clearShadow()
@@ -1276,7 +1276,7 @@ void CanvasRenderingContext2D::clearShadow()
     setShadow(FloatSize(), 0, Color::transparent);
 }
 
-void CanvasRenderingContext2D::setShadow(const FloatSize& offset, float blur, RGBA32 color)
+void CanvasRenderingContext2D::setShadow(const FloatSize& offset, float blur, Color color)
 {
     if (state().shadowOffset == offset && state().shadowBlur == blur && state().shadowColor == color)
         return;
@@ -1306,7 +1306,7 @@ void CanvasRenderingContext2D::applyShadow()
 
 bool CanvasRenderingContext2D::shouldDrawShadows() const
 {
-    return alphaChannel(state().shadowColor) && (state().shadowBlur || !state().shadowOffset.isZero());
+    return state().shadowColor.alpha() && (state().shadowBlur || !state().shadowOffset.isZero());
 }
 
 enum ImageSizeType {
@@ -1882,7 +1882,7 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         dirtyRect = ctm.mapRect(r);
     }
 
-    if (options & CanvasDidDrawApplyShadow && alphaChannel(state().shadowColor)) {
+    if (options & CanvasDidDrawApplyShadow && state().shadowColor.alpha()) {
         // The shadow gets applied after transformation
         FloatRect shadowRect(dirtyRect);
         shadowRect.move(state().shadowOffset);
