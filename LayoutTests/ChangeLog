@@ -1,3 +1,11 @@
+2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline js/dom/global-constructors-attributes.html for Yosemite.
+
+        Unreviewed test gardening.
+
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+
 2016-09-13  Alex Christensen  <achristensen@webkit.org>
 
         Implement URLSearchParams
