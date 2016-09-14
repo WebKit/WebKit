@@ -4294,6 +4294,11 @@ void WebPageProxy::setNeedsHiddenContentEditableQuirk(bool needsHiddenContentEdi
     m_needsHiddenContentEditableQuirk = needsHiddenContentEditableQuirk;
 }
 
+void WebPageProxy::setNeedsPlainTextQuirk(bool needsPlainTextQuirk)
+{
+    m_needsPlainTextQuirk = needsPlainTextQuirk;
+}
+
 // BackForwardList
 
 void WebPageProxy::backForwardAddItem(uint64_t itemID)

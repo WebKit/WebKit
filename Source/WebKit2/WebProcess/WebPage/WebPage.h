@@ -1408,6 +1408,7 @@ private:
     bool m_isAssistingNodeDueToUserInteraction { false };
     bool m_hasEverFocusedElementDueToUserInteractionSincePageTransition { false };
     bool m_needsHiddenContentEditableQuirk { false };
+    bool m_needsPlainTextQuirk { false };
 
 #if ENABLE(CONTEXT_MENUS)
     bool m_isShowingContextMenu;
