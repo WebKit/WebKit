@@ -31,6 +31,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
+#include "WebPasteboardProxy.h"
 #include "WebProcessPool.h"
 #include <WebCore/Image.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -52,6 +53,9 @@ WebFrameProxy::WebFrameProxy(WebPageProxy* page, uint64_t frameID)
 WebFrameProxy::~WebFrameProxy()
 {
     WebProcessPool::statistics().wkFrameCount--;
+#if PLATFORM(GTK)
+    WebPasteboardProxy::singleton().didDestroyFrame(this);
+#endif
 }
 
 void WebFrameProxy::webProcessWillShutDown()
@@ -251,6 +255,16 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const WebCore::Resou
         }
     });
     return true;
+}
+#endif
+
+#if PLATFORM(GTK)
+void WebFrameProxy::collapseSelection()
+{
+    if (!m_page)
+        return;
+
+    m_page->process().send(Messages::WebPage::CollapseSelectionInFrame(m_frameID), m_page->pageID());
 }
 #endif
 

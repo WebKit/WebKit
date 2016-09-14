@@ -124,6 +124,10 @@ public:
     bool didHandleContentFilterUnblockNavigation(const WebCore::ResourceRequest&);
 #endif
 
+#if PLATFORM(GTK)
+    void collapseSelection();
+#endif
+
 private:
     WebFrameProxy(WebPageProxy* page, uint64_t frameID);
 

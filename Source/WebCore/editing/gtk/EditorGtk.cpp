@@ -125,7 +125,6 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     pasteboardContent.canSmartCopyOrDelete = canSmartCopyOrDelete();
     pasteboardContent.text = selectedTextForDataTransfer();
     pasteboardContent.markup = createMarkup(*selectedRange(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
-    pasteboardContent.callback = nullptr;
     pasteboard.write(pasteboardContent);
 }
 

@@ -26,7 +26,6 @@
 #define PasteboardHelper_h
 
 #include "GRefPtrGtk.h"
-#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -43,24 +42,20 @@ public:
     enum SmartPasteInclusion { IncludeSmartPaste, DoNotIncludeSmartPaste };
 
     GtkTargetList* targetList() const;
-    GRefPtr<GtkTargetList> targetListForDataObject(const DataObjectGtk&, SmartPasteInclusion = DoNotIncludeSmartPaste);
+    GRefPtr<GtkTargetList> targetListForDataObject(const DataObjectGtk&);
     void fillSelectionData(GtkSelectionData*, guint, const DataObjectGtk&);
     void fillDataObjectFromDropData(GtkSelectionData*, guint, DataObjectGtk&);
     Vector<GdkAtom> dropAtomsForContext(GtkWidget*, GdkDragContext*);
-    void writeClipboardContents(GtkClipboard*, const DataObjectGtk&, SmartPasteInclusion = DoNotIncludeSmartPaste, GClosure* = 0);
+    void writeClipboardContents(GtkClipboard*, const DataObjectGtk&, std::function<void()>&& primarySelectionCleared = nullptr);
     void getClipboardContents(GtkClipboard*, DataObjectGtk&);
 
     enum PasteboardTargetType { TargetTypeMarkup, TargetTypeText, TargetTypeImage, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeSmartPaste, TargetTypeUnknown };
-    bool clipboardContentSupportsSmartReplace(GtkClipboard*);
-
-    void registerClipboard(GtkClipboard*);
 
 private:
     PasteboardHelper();
     ~PasteboardHelper();
 
     GRefPtr<GtkTargetList> m_targetList;
-    HashSet<GtkClipboard*> m_gtkClipboards;
 };
 
 }

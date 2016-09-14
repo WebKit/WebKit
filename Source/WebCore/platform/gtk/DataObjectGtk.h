@@ -47,6 +47,7 @@ public:
     bool hasURL() const { return !m_url.isEmpty() && m_url.isValid(); }
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
     bool hasImage() const { return m_image; }
+    bool canSmartReplace() const { return m_canSmartReplace; }
     void clearURIList() { m_uriList = emptyString(); }
     void clearURL() { m_url = URL(); }
     void clearImage() { m_image = nullptr; }
@@ -59,6 +60,7 @@ public:
     void setMarkup(const String&);
     void setUnknownTypeData(const String& type, const String& data) { m_unknownTypeData.set(type, data); }
     void setURIList(const String&);
+    void setCanSmartReplace(bool canSmartReplace) { m_canSmartReplace = canSmartReplace; }
     String urlLabel() const;
 
     void clearAllExceptFilenames();
@@ -74,6 +76,7 @@ private:
     Vector<String> m_filenames;
     GRefPtr<GdkPixbuf> m_image;
     HashMap<String, String> m_unknownTypeData;
+    bool m_canSmartReplace { false };
 };
 
 }

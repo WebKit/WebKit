@@ -52,6 +52,9 @@ bool decode(Decoder&, GRefPtr<GtkPrintSettings>&);
 void encode(Encoder&, GtkPageSetup*);
 bool decode(Decoder&, GRefPtr<GtkPageSetup>&);
 
+void encode(Encoder&, const WebCore::DataObjectGtk*);
+bool decode(Decoder&, RefPtr<WebCore::DataObjectGtk>&);
+
 } // namespace IPC
 
 #endif // ArgumentCodersGtk_h

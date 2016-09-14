@@ -82,7 +82,7 @@ static bool decodeImage(Decoder& decoder, GRefPtr<GdkPixbuf>& pixbuf)
     return true;
 }
 
-static void encodeDataObject(Encoder& encoder, const DataObjectGtk* dataObject)
+void encode(Encoder& encoder, const DataObjectGtk* dataObject)
 {
     bool hasText = dataObject->hasText();
     encoder << hasText;
@@ -113,9 +113,12 @@ static void encodeDataObject(Encoder& encoder, const DataObjectGtk* dataObject)
     encoder << hasUnknownTypeData;
     if (hasUnknownTypeData)
         encoder << dataObject->unknownTypes();
+
+    bool canSmartReplace = dataObject->canSmartReplace();
+    encoder << canSmartReplace;
 }
 
-static bool decodeDataObject(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
+bool decode(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
 {
     RefPtr<DataObjectGtk> data = DataObjectGtk::create();
 
@@ -182,6 +185,11 @@ static bool decodeDataObject(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject
             data->setUnknownTypeData(it->key, it->value);
     }
 
+    bool canSmartReplace;
+    if (!decoder.decode(canSmartReplace))
+        return false;
+    data->setCanSmartReplace(canSmartReplace);
+
     dataObject = data;
 
     return true;
@@ -198,7 +206,7 @@ void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
     DataObjectGtk* platformData = dragData.platformData();
     encoder << static_cast<bool>(platformData);
     if (platformData)
-        encodeDataObject(encoder, platformData);
+        IPC::encode(encoder, platformData);
 }
 
 bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
@@ -225,7 +233,7 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
 
     RefPtr<DataObjectGtk> platformData;
     if (hasPlatformData) {
-        if (!decodeDataObject(decoder, platformData))
+        if (!IPC::decode(decoder, platformData))
             return false;
     }
 

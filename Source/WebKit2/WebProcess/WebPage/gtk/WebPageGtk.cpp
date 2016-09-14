@@ -31,8 +31,10 @@
 #include "EditorState.h"
 #include "NotImplemented.h"
 #include "WebEvent.h"
+#include "WebFrame.h"
 #include "WebPageAccessibilityObject.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/BackForwardController.h>
 #include <WebCore/EventHandler.h>
@@ -214,6 +216,17 @@ void WebPage::setInputMethodState(bool enabled)
 
     m_inputMethodEnabled = enabled;
     send(Messages::WebPageProxy::SetInputMethodState(enabled));
+}
+
+void WebPage::collapseSelectionInFrame(uint64_t frameID)
+{
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame || !frame->coreFrame())
+        return;
+
+    // Collapse the selection without clearing it.
+    const VisibleSelection& selection = frame->coreFrame()->selection().selection();
+    frame->coreFrame()->selection().setBase(selection.extent(), selection.affinity());
 }
 
 } // namespace WebKit
