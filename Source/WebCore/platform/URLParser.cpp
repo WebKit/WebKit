@@ -112,6 +112,23 @@ static bool shouldPercentEncodeQueryByte(uint8_t byte)
     return byte == 0x3E;
 }
 
+static void utf8PercentEncodeQuery(UChar32 codePoint, StringBuilder& builder)
+{
+    uint8_t buffer[U8_MAX_LENGTH];
+    int32_t offset = 0;
+    UBool error = false;
+    U8_APPEND(buffer, offset, U8_MAX_LENGTH, codePoint, error);
+    ASSERT_WITH_SECURITY_IMPLICATION(offset <= static_cast<int32_t>(sizeof(buffer)));
+    // FIXME: Check error.
+    for (int32_t i = 0; i < offset; ++i) {
+        auto byte = buffer[i];
+        if (shouldPercentEncodeQueryByte(byte))
+            percentEncode(byte, builder);
+        else
+            builder.append(byte);
+    }
+}
+    
 static void encodeQuery(const StringBuilder& source, StringBuilder& destination, const TextEncoding& encoding)
 {
     // FIXME: It is unclear in the spec what to do when encoding fails. The behavior should be specified and tested.
@@ -478,7 +495,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
     m_buffer.clear();
     m_buffer.reserveCapacity(input.length());
     
-    // FIXME: We shouldn't need to allocate another buffer for this.
+    bool isUTF8Encoding = encoding == UTF8Encoding();
     StringBuilder queryBuffer;
 
     unsigned endIndex = input.length();
@@ -940,12 +957,16 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         case State::Query:
             LOG_STATE("Query");
             if (*c == '#') {
-                encodeQuery(queryBuffer, m_buffer, encoding);
+                if (!isUTF8Encoding)
+                    encodeQuery(queryBuffer, m_buffer, encoding);
                 m_url.m_queryEnd = m_buffer.length();
                 state = State::Fragment;
                 break;
             }
-            queryBuffer.append(*c);
+            if (isUTF8Encoding)
+                utf8PercentEncodeQuery(*c, m_buffer);
+            else
+                queryBuffer.append(*c);
             ++c;
             break;
         case State::Fragment:
@@ -1097,7 +1118,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
         break;
     case State::Query:
         LOG_FINAL_STATE("Query");
-        encodeQuery(queryBuffer, m_buffer, encoding);
+        if (!isUTF8Encoding)
+            encodeQuery(queryBuffer, m_buffer, encoding);
         m_url.m_queryEnd = m_buffer.length();
         m_url.m_fragmentEnd = m_url.m_queryEnd;
         break;
@@ -1548,6 +1570,7 @@ bool URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
         int32_t offset = 0;
         UBool error = false;
         U8_APPEND(buffer, offset, U8_MAX_LENGTH, *iterator, error);
+        ASSERT_WITH_SECURITY_IMPLICATION(offset <= static_cast<int32_t>(sizeof(buffer)));
         // FIXME: Check error.
         utf8Encoded.append(buffer, offset);
     }
