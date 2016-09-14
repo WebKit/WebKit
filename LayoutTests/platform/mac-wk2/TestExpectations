@@ -553,3 +553,5 @@ webkit.org/b/161539 [ Release ] http/tests/security/cross-origin-plugin-allowed.
 webkit.org/b/161742 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/keyorder.htm [ Pass Failure ]
 
 webkit.org/b/161547 [ Debug ] tiled-drawing/scrolling/fixed/four-bars-zoomed.html [ Pass Failure ]
+
+webkit.org/b/161549 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Pass Failure ]
