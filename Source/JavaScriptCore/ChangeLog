@@ -1,5 +1,11 @@
 2016-09-14  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix the Windows build.
+
+        * runtime/HashMapImpl.cpp:
+
+2016-09-14  Keith Miller  <keith_miller@apple.com>
+
         Pragma out undefined-var-template warnings in JSC for JSObjects that are templatized
         https://bugs.webkit.org/show_bug.cgi?id=161985
 
