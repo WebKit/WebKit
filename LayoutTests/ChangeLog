@@ -1,3 +1,14 @@
+2016-09-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline tests added with r205905 for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/dom/HTMLImageElement/sizes/image-sizes-w3c-1-expected.txt: Added.
+        * platform/ios-simulator/fast/dom/HTMLImageElement/sizes/image-sizes-w3c-2-expected.txt: Added.
+        * platform/ios-simulator/fast/dom/HTMLImageElement/sizes/image-sizes-w3c-3-expected.txt: Added.
+        * platform/ios-simulator/fast/dom/HTMLImageElement/sizes/image-sizes-w3c-4-expected.txt: Added.
+
 2016-09-14  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest http/tests/security/cross-origin-cached-scripts-parallel.html is a flaky failure
