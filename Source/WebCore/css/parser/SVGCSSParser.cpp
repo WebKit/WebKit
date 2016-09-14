@@ -52,15 +52,6 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
     switch (propId) {
     /* The comment to the right defines all valid value of these
      * properties as defined in SVG 1.1, Appendix N. Property index */
-    case CSSPropertyAlignmentBaseline:
-    // auto | baseline | before-edge | text-before-edge | middle |
-    // central | after-edge | text-after-edge | ideographic | alphabetic |
-    // hanging | mathematical | inherit
-        if (id == CSSValueAuto || id == CSSValueBaseline || id == CSSValueMiddle ||
-          (id >= CSSValueBeforeEdge && id <= CSSValueMathematical))
-            valid_primitive = true;
-        break;
-
     case CSSPropertyBaselineShift:
     // baseline | super | sub | <percentage> | <length> | inherit
         if (id == CSSValueBaseline || id == CSSValueSub ||
@@ -68,16 +59,6 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
             valid_primitive = true;
         else
             valid_primitive = validateUnit(valueWithCalculation, FLength | FPercent, SVGAttributeMode);
-        break;
-
-    case CSSPropertyDominantBaseline:
-    // auto | use-script | no-change | reset-size | ideographic |
-    // alphabetic | hanging | mathematical | central | middle |
-    // text-after-edge | text-before-edge | inherit
-        if (id == CSSValueAuto || id == CSSValueMiddle ||
-          (id >= CSSValueUseScript && id <= CSSValueResetSize) ||
-          (id >= CSSValueCentral && id <= CSSValueMathematical))
-            valid_primitive = true;
         break;
 
     case CSSPropertyEnableBackground:
@@ -99,24 +80,8 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
         }
         break;
 
-    case CSSPropertyClipRule:            // nonzero | evenodd | inherit
-    case CSSPropertyFillRule:
-        if (id == CSSValueNonzero || id == CSSValueEvenodd)
-            valid_primitive = true;
-        break;
-
     case CSSPropertyStrokeMiterlimit:   // <miterlimit> | inherit
         valid_primitive = validateUnit(valueWithCalculation, FNumber | FNonNeg, SVGAttributeMode);
-        break;
-
-    case CSSPropertyStrokeLinejoin:   // miter | round | bevel | inherit
-        if (id == CSSValueMiter || id == CSSValueRound || id == CSSValueBevel)
-            valid_primitive = true;
-        break;
-
-    case CSSPropertyStrokeLinecap:    // butt | round | square | inherit
-        if (id == CSSValueButt || id == CSSValueRound || id == CSSValueSquare)
-            valid_primitive = true;
         break;
 
     case CSSPropertyStrokeOpacity:   // <opacity-value> | inherit
@@ -126,43 +91,14 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
         valid_primitive = (!id && validateUnit(valueWithCalculation, FNumber | FPercent, SVGAttributeMode));
         break;
 
-    case CSSPropertyShapeRendering:
-    // auto | optimizeSpeed | crispEdges | geometricPrecision | inherit
-        if (id == CSSValueAuto || id == CSSValueOptimizespeed ||
-            id == CSSValueCrispedges || id == CSSValueGeometricprecision)
-            valid_primitive = true;
-        break;
-
-    case CSSPropertyColorRendering: // auto | optimizeSpeed | optimizeQuality | inherit
-        if (id == CSSValueAuto || id == CSSValueOptimizespeed ||
-            id == CSSValueOptimizequality)
-            valid_primitive = true;
-        break;
-
-    case CSSPropertyBufferedRendering: // auto | dynamic | static
-        if (id == CSSValueAuto || id == CSSValueDynamic || id == CSSValueStatic)
-            valid_primitive = true;
-        break;
-
     case CSSPropertyColorProfile: // auto | sRGB | <name> | <uri> inherit
         if (id == CSSValueAuto || id == CSSValueSrgb)
-            valid_primitive = true;
-        break;
-
-    case CSSPropertyColorInterpolation:   // auto | sRGB | linearRGB | inherit
-    case CSSPropertyColorInterpolationFilters:
-        if (id == CSSValueAuto || id == CSSValueSrgb || id == CSSValueLinearrgb)
             valid_primitive = true;
         break;
 
     /* Start of supported CSS properties with validation. This is needed for parseShortHand to work
      * correctly and allows optimization in applyRule(..)
      */
-
-    case CSSPropertyTextAnchor:    // start | middle | end | inherit
-        if (id == CSSValueStart || id == CSSValueMiddle || id == CSSValueEnd)
-            valid_primitive = true;
-        break;
 
     case CSSPropertyGlyphOrientationVertical: // auto | <angle> | inherit
         if (id == CSSValueAuto) {
@@ -228,17 +164,6 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
 
         break;
 
-    case CSSPropertyVectorEffect: // none | non-scaling-stroke | inherit
-        if (id == CSSValueNone || id == CSSValueNonScalingStroke)
-            valid_primitive = true;
-        break;
-
-    case CSSPropertyWritingMode:
-    // lr-tb | rl_tb | tb-rl | lr | rl | tb | inherit
-        if (id == CSSValueLrTb || id == CSSValueRlTb || id == CSSValueTbRl || id == CSSValueLr || id == CSSValueRl || id == CSSValueTb)
-            valid_primitive = true;
-        break;
-
     case CSSPropertyStrokeWidth:         // <length> | inherit
     case CSSPropertyStrokeDashoffset:
         valid_primitive = validateUnit(valueWithCalculation, FLength | FPercent, SVGAttributeMode);
@@ -280,11 +205,6 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
             }
             return false;
         }
-        break;
-
-    case CSSPropertyMaskType: // luminance | alpha | inherit
-        if (id == CSSValueLuminance || id == CSSValueAlpha)
-            valid_primitive = true;
         break;
 
     /* shorthand properties */

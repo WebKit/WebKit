@@ -742,123 +742,202 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return false;
     }
 }
+*/
 
 bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 {
     switch (propertyId) {
-    case CSSPropertyAlignmentBaseline:
-    case CSSPropertyAll:
-    case CSSPropertyMixBlendMode:
-    case CSSPropertyIsolation:
-    case CSSPropertyBackgroundRepeatX:
-    case CSSPropertyBackgroundRepeatY:
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:
     case CSSPropertyBorderLeftStyle:
     case CSSPropertyBorderRightStyle:
     case CSSPropertyBorderTopStyle:
     case CSSPropertyBoxSizing:
-    case CSSPropertyBufferedRendering:
-    case CSSPropertyCaptionSide:
-    case CSSPropertyClear:
-    case CSSPropertyClipRule:
-    case CSSPropertyColorInterpolation:
-    case CSSPropertyColorInterpolationFilters:
-    case CSSPropertyColorRendering:
-    case CSSPropertyDirection:
-    case CSSPropertyDisplay:
-    case CSSPropertyDominantBaseline:
-    case CSSPropertyEmptyCells:
-    case CSSPropertyFillRule:
-    case CSSPropertyFloat:
-    case CSSPropertyFontStyle:
-    case CSSPropertyFontStretch:
-    case CSSPropertyHyphens:
-    case CSSPropertyImageRendering:
-    case CSSPropertyListStylePosition:
-    case CSSPropertyListStyleType:
-    case CSSPropertyMaskType:
-    case CSSPropertyObjectFit:
-    case CSSPropertyOutlineStyle:
-    case CSSPropertyOverflowAnchor:
-    case CSSPropertyOverflowWrap:
-    case CSSPropertyOverflowX:
-    case CSSPropertyOverflowY:
     case CSSPropertyBreakAfter:
     case CSSPropertyBreakBefore:
     case CSSPropertyBreakInside:
+    case CSSPropertyCaptionSide:
+    case CSSPropertyClear:
+    case CSSPropertyColumnFill:
+    case CSSPropertyColumnProgression:
+    case CSSPropertyColumnRuleStyle:
+    case CSSPropertyDirection:
+    case CSSPropertyDisplay:
+    case CSSPropertyEmptyCells:
+    case CSSPropertyFlexDirection:
+    case CSSPropertyFlexWrap:
+    case CSSPropertyFloat:
+    case CSSPropertyFontStretch:
+    case CSSPropertyFontStyle:
+    case CSSPropertyFontVariantAlternates:
+    case CSSPropertyFontVariantCaps:
+    case CSSPropertyFontVariantPosition:
+    case CSSPropertyImageRendering:
+    case CSSPropertyListStylePosition:
+    case CSSPropertyListStyleType:
+    case CSSPropertyObjectFit:
+    case CSSPropertyOutlineStyle:
+    case CSSPropertyOverflowWrap:
+    case CSSPropertyOverflowX:
+    case CSSPropertyOverflowY:
+    case CSSPropertyPageBreakAfter:
+    case CSSPropertyPageBreakBefore:
+    case CSSPropertyPageBreakInside:
     case CSSPropertyPointerEvents:
     case CSSPropertyPosition:
     case CSSPropertyResize:
-    case CSSPropertyScrollBehavior:
-    case CSSPropertyShapeRendering:
     case CSSPropertySpeak:
-    case CSSPropertyStrokeLinecap:
-    case CSSPropertyStrokeLinejoin:
     case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
-    case CSSPropertyTextAlignLast:
-    case CSSPropertyTextAnchor:
-    case CSSPropertyTextCombineUpright:
-    case CSSPropertyTextDecorationStyle:
-    case CSSPropertyTextJustify:
-    case CSSPropertyTextOrientation:
-    case CSSPropertyWebkitTextOrientation:
+    case CSSPropertyTextLineThroughMode:
+    case CSSPropertyTextLineThroughStyle:
     case CSSPropertyTextOverflow:
+    case CSSPropertyTextOverlineMode:
+    case CSSPropertyTextOverlineStyle:
     case CSSPropertyTextRendering:
     case CSSPropertyTextTransform:
+    case CSSPropertyTextUnderlineMode:
+    case CSSPropertyTextUnderlineStyle:
+    case CSSPropertyTransformStyle:
     case CSSPropertyUnicodeBidi:
-    case CSSPropertyVectorEffect:
     case CSSPropertyVisibility:
     case CSSPropertyWebkitAppearance:
-    case CSSPropertyBackfaceVisibility:
+    case CSSPropertyWebkitBackfaceVisibility:
     case CSSPropertyWebkitBorderAfterStyle:
     case CSSPropertyWebkitBorderBeforeStyle:
     case CSSPropertyWebkitBorderEndStyle:
+    case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBorderStartStyle:
     case CSSPropertyWebkitBoxAlign:
-    case CSSPropertyWebkitBoxDecorationBreak:
     case CSSPropertyWebkitBoxDirection:
     case CSSPropertyWebkitBoxLines:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
-    case CSSPropertyColumnFill:
-    case CSSPropertyColumnRuleStyle:
-    case CSSPropertyFlexDirection:
-    case CSSPropertyFlexWrap:
-    case CSSPropertyFontKerning:
+    case CSSPropertyWebkitColumnAxis:
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+    case CSSPropertyWebkitColumnBreakInside:
+    case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
+    case CSSPropertyWebkitHyphens:
+    case CSSPropertyWebkitLineAlign:
     case CSSPropertyWebkitLineBreak:
+    case CSSPropertyWebkitLineSnap:
     case CSSPropertyWebkitMarginAfterCollapse:
     case CSSPropertyWebkitMarginBeforeCollapse:
     case CSSPropertyWebkitMarginBottomCollapse:
     case CSSPropertyWebkitMarginTopCollapse:
+    case CSSPropertyWebkitMarqueeDirection:
+    case CSSPropertyWebkitMarqueeStyle:
+    case CSSPropertyWebkitNbspMode:
     case CSSPropertyWebkitPrintColorAdjust:
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitRubyPosition:
     case CSSPropertyWebkitTextCombine:
-    case CSSPropertyWebkitTextEmphasisPosition:
+    case CSSPropertyWebkitTextDecorationStyle:
+    case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:
-    case CSSPropertyTransformStyle:
+    case CSSPropertyWebkitTextZoom:
+    case CSSPropertyWebkitTransformStyle:
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
-    case CSSPropertyUserSelect:
+    case CSSPropertyWebkitUserSelect:
     case CSSPropertyWebkitWritingMode:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
     case CSSPropertyWordWrap:
+
+    // SVG CSS properties from SVG 1.1, Appendix N: Property Index.
+    case CSSPropertyAlignmentBaseline:
+    case CSSPropertyBufferedRendering:
+    case CSSPropertyClipRule:
+    case CSSPropertyColorInterpolation:
+    case CSSPropertyColorInterpolationFilters:
+    case CSSPropertyColorRendering:
+    case CSSPropertyDominantBaseline:
+    case CSSPropertyFillRule:
+    case CSSPropertyMaskType:
+    case CSSPropertyShapeRendering:
+    case CSSPropertyStrokeLinecap:
+    case CSSPropertyStrokeLinejoin:
+    case CSSPropertyTextAnchor:
+    case CSSPropertyVectorEffect:
     case CSSPropertyWritingMode:
-    case CSSPropertyScrollSnapType:
+
+    // FIXME-NEWPARSER: Treat all as a keyword property.
+    // case CSSPropertyAll:
+
+    // FIXME-NEWPARSER: Treat the following properties as keyword properties:
+    // case CSSPropertyBackgroundRepeatX:
+    // case CSSPropertyBackgroundRepeatY:
+    // case CSSPropertyWebkitTextEmphasisPosition:
+
+    // FIXME-NEWPARSER: Add the following unprefixed properties:
+    // case CSSPropertyBackfaceVisibility:
+    // case CSSPropertyFontKerning:
+    // case CSSPropertyHyphens:
+    // case CSSPropertyOverflowAnchor:
+    // case CSSPropertyScrollBehavior:
+    // case CSSPropertyScrollSnapType:
+    // case CSSPropertyTextAlignLast:
+    // case CSSPropertyTextCombineUpright:
+    // case CSSPropertyTextDecorationStyle:
+    // case CSSPropertyTextJustify:
+    // case CSSPropertyTextOrientation:
+    // case CSSPropertyUserSelect:
+#if ENABLE(CSS_TRAILING_WORD)
+    case CSSPropertyAppleTrailingWord:
+#endif
+#if ENABLE(CSS_COMPOSITING)
+    case CSSPropertyIsolation:
+    case CSSPropertyMixBlendMode:
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    case CSSPropertyTouchAction:
+#endif
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+    case CSSPropertyWebkitBoxDecorationBreak:
+#endif
+#if ENABLE(CURSOR_VISIBILITY)
+    case CSSPropertyWebkitCursorVisibility:
+#endif
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    case CSSPropertyWebkitOverflowScrolling:
+#endif
+#if ENABLE(CSS_REGIONS)
+    case CSSPropertyWebkitRegionBreakAfter:
+    case CSSPropertyWebkitRegionBreakBefore:
+    case CSSPropertyWebkitRegionBreakInside:
+    case CSSPropertyWebkitRegionFragment:
+#endif
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextAlignLast:
+    case CSSPropertyWebkitTextJustify:
+#endif
+#if PLATFORM(IOS)
+    // Apple specific property. This will never be standardized and is purely to
+    // support custom WebKit-based Apple applications.
+    case CSSPropertyWebkitTouchCallout:
+#endif
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyWebkitScrollSnapType:
+#endif
         return true;
     case CSSPropertyJustifyContent:
     case CSSPropertyAlignContent:
     case CSSPropertyAlignItems:
     case CSSPropertyAlignSelf:
-        return !RuntimeEnabledFeatures::cssGridLayoutEnabled();
+#if ENABLE(CSS_GRID_LAYOUT)
+        return !RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
+#else
+        return true;
+#endif
     default:
         return false;
     }
 }
+
+/* FIXME-NEWPARSER: Turn off for now.
 
 static CSSValue* parseKeywordValue(CSSPropertyID propertyId, const String& string, CSSParserMode parserMode)
 {
