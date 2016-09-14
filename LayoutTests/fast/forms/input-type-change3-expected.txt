@@ -14,7 +14,7 @@ PASS input.type for "button" is correctly "button".
 PASS input.type for " button " is correctly "text".
 PASS input.type for "checkbox" is correctly "checkbox".
 PASS input.type for "email" is correctly "email".
-PASS input.type for "file" is correctly "email".
+PASS input.type for "file" is correctly "file".
 PASS input.type for "hidden" is correctly "hidden".
 PASS input.type for "image" is correctly "image".
 PASS input.type for "isindex" is correctly "text".

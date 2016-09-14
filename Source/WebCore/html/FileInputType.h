@@ -60,7 +60,6 @@ private:
     void handleDOMActivateEvent(Event&) override;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
     bool canSetStringValue() const override;
-    bool canChangeFromAnotherType() const override;
     FileList* files() override;
     void setFiles(PassRefPtr<FileList>) override;
 #if PLATFORM(IOS)

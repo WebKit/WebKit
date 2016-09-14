@@ -82,7 +82,6 @@ public:
     static bool themeSupportsDataListUI(InputType*);
 
     virtual const AtomicString& formControlType() const = 0;
-    virtual bool canChangeFromAnotherType() const;
 
     // Type query functions.
 

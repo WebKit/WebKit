@@ -6649,16 +6649,16 @@ PASS input.type: setAttribute() to "adio" followed by getAttribute()
 PASS input.type: setAttribute() to "adio" followed by IDL get 
 PASS input.type: setAttribute() to "RADIO" followed by getAttribute() 
 PASS input.type: setAttribute() to "RADIO" followed by IDL get 
-FAIL input.type: setAttribute() to "file" followed by getAttribute() assert_equals: expected "file" but got "radio"
-FAIL input.type: setAttribute() to "file" followed by IDL get assert_equals: expected "file" but got "radio"
+PASS input.type: setAttribute() to "file" followed by getAttribute() 
+PASS input.type: setAttribute() to "file" followed by IDL get 
 PASS input.type: setAttribute() to "xfile" followed by getAttribute() 
 PASS input.type: setAttribute() to "xfile" followed by IDL get 
 PASS input.type: setAttribute() to "file\0" followed by getAttribute() 
 PASS input.type: setAttribute() to "file\0" followed by IDL get 
 PASS input.type: setAttribute() to "ile" followed by getAttribute() 
 PASS input.type: setAttribute() to "ile" followed by IDL get 
-FAIL input.type: setAttribute() to "FILE" followed by getAttribute() assert_equals: expected "FILE" but got "text"
-FAIL input.type: setAttribute() to "FILE" followed by IDL get assert_equals: expected "file" but got "text"
+PASS input.type: setAttribute() to "FILE" followed by getAttribute() 
+PASS input.type: setAttribute() to "FILE" followed by IDL get 
 PASS input.type: setAttribute() to "submit" followed by getAttribute() 
 PASS input.type: setAttribute() to "submit" followed by IDL get 
 PASS input.type: setAttribute() to "xsubmit" followed by getAttribute() 
@@ -7014,8 +7014,8 @@ PASS input.type: IDL set to "RADIO" should not throw
 PASS input.type: IDL set to "RADIO" followed by getAttribute() 
 PASS input.type: IDL set to "RADIO" followed by IDL get 
 PASS input.type: IDL set to "file" should not throw 
-FAIL input.type: IDL set to "file" followed by getAttribute() assert_equals: expected "file" but got "radio"
-FAIL input.type: IDL set to "file" followed by IDL get assert_equals: expected "file" but got "radio"
+PASS input.type: IDL set to "file" followed by getAttribute() 
+PASS input.type: IDL set to "file" followed by IDL get 
 PASS input.type: IDL set to "xfile" should not throw 
 PASS input.type: IDL set to "xfile" followed by getAttribute() 
 PASS input.type: IDL set to "xfile" followed by IDL get 
@@ -7026,8 +7026,8 @@ PASS input.type: IDL set to "ile" should not throw
 PASS input.type: IDL set to "ile" followed by getAttribute() 
 PASS input.type: IDL set to "ile" followed by IDL get 
 PASS input.type: IDL set to "FILE" should not throw 
-FAIL input.type: IDL set to "FILE" followed by getAttribute() assert_equals: expected "FILE" but got "text"
-FAIL input.type: IDL set to "FILE" followed by IDL get assert_equals: expected "file" but got "text"
+PASS input.type: IDL set to "FILE" followed by getAttribute() 
+PASS input.type: IDL set to "FILE" followed by IDL get 
 PASS input.type: IDL set to "submit" should not throw 
 PASS input.type: IDL set to "submit" followed by getAttribute() 
 PASS input.type: IDL set to "submit" followed by IDL get 

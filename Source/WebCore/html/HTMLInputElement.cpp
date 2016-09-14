@@ -476,17 +476,9 @@ void HTMLInputElement::updateType()
 {
     ASSERT(m_inputType);
     auto newType = InputType::create(*this, attributeWithoutSynchronization(typeAttr));
-    bool hadType = m_hasType;
     m_hasType = true;
     if (m_inputType->formControlType() == newType->formControlType())
         return;
-
-    if (hadType && !newType->canChangeFromAnotherType()) {
-        // Set the attribute back to the old value.
-        // Useful in case we were called from inside parseAttribute.
-        setAttributeWithoutSynchronization(typeAttr, type());
-        return;
-    }
 
     removeFromRadioButtonGroup();
 

@@ -1,3 +1,23 @@
+2016-09-14  Chris Dumez  <cdumez@apple.com>
+
+        input.type cannot be set to "file" after being set to another type
+        https://bugs.webkit.org/show_bug.cgi?id=161943
+
+        Reviewed by Daniel Bates.
+
+        * fast/dom/HTMLInputElement/input-type-change-to-file-expected.txt: Added.
+        * fast/dom/HTMLInputElement/input-type-change-to-file.html: Added.
+        * fast/dom/HTMLInputElement/input-type-file-security-expected.txt: Added
+        * fast/dom/HTMLInputElement/input-type-file-security.html: Added
+        Add layout test coverage. I have verified that these tests are passing in both
+        Firefox and Chrome.
+
+        * fast/forms/input-type-change3-expected.txt:
+        * fast/forms/input-type-change3.html:
+        * fast/forms/input-valueasnumber-unsupported-expected.txt:
+        * fast/forms/input-valueasnumber-unsupported.html:
+        Update existing tests to reflect behavior change.
+
 2016-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline tests added with r205905 for ios-simulator.

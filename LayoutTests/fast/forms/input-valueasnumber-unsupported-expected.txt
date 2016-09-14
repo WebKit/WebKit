@@ -15,9 +15,6 @@ PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11
 Check for type=email
 PASS input.valueAsNumber is Number.NaN
 PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
-Check for type=file
-PASS input.valueAsNumber is Number.NaN
-PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
 Check for type=hidden
 PASS input.valueAsNumber is Number.NaN
 PASS input.valueAsNumber = 0 threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..

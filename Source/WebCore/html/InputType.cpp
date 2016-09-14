@@ -623,11 +623,6 @@ bool InputType::shouldRespectAlignAttribute()
     return false;
 }
 
-bool InputType::canChangeFromAnotherType() const
-{
-    return true;
-}
-
 void InputType::minOrMaxAttributeChanged()
 {
 }
