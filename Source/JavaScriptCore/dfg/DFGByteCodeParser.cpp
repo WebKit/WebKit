@@ -2450,25 +2450,22 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
             set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
             return true;
         }
-        if (argumentCountIncludingThis == 2) {
-            insertChecks();
-            Node* operand = get(virtualRegisterForArgument(1, registerOffset));
-            NodeType op;
-            if (intrinsic == RoundIntrinsic)
-                op = ArithRound;
-            else if (intrinsic == FloorIntrinsic)
-                op = ArithFloor;
-            else if (intrinsic == CeilIntrinsic)
-                op = ArithCeil;
-            else {
-                ASSERT(intrinsic == TruncIntrinsic);
-                op = ArithTrunc;
-            }
-            Node* roundNode = addToGraph(op, OpInfo(0), OpInfo(prediction), operand);
-            set(VirtualRegister(resultOperand), roundNode);
-            return true;
+        insertChecks();
+        Node* operand = get(virtualRegisterForArgument(1, registerOffset));
+        NodeType op;
+        if (intrinsic == RoundIntrinsic)
+            op = ArithRound;
+        else if (intrinsic == FloorIntrinsic)
+            op = ArithFloor;
+        else if (intrinsic == CeilIntrinsic)
+            op = ArithCeil;
+        else {
+            ASSERT(intrinsic == TruncIntrinsic);
+            op = ArithTrunc;
         }
-        return false;
+        Node* roundNode = addToGraph(op, OpInfo(0), OpInfo(prediction), operand);
+        set(VirtualRegister(resultOperand), roundNode);
+        return true;
     }
     case IMulIntrinsic: {
         if (argumentCountIncludingThis != 3)

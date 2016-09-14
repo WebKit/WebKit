@@ -442,6 +442,58 @@ double JIT_OPERATION operationArithTan(ExecState* exec, EncodedJSValue encodedOp
     return tan(a);
 }
 
+EncodedJSValue JIT_OPERATION operationArithRound(ExecState* exec, EncodedJSValue encodedArgument)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    JSValue argument = JSValue::decode(encodedArgument);
+    double valueOfArgument = argument.toNumber(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsNumber(jsRound(valueOfArgument)));
+}
+
+EncodedJSValue JIT_OPERATION operationArithFloor(ExecState* exec, EncodedJSValue encodedArgument)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    JSValue argument = JSValue::decode(encodedArgument);
+    double valueOfArgument = argument.toNumber(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsNumber(floor(valueOfArgument)));
+}
+
+EncodedJSValue JIT_OPERATION operationArithCeil(ExecState* exec, EncodedJSValue encodedArgument)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    JSValue argument = JSValue::decode(encodedArgument);
+    double valueOfArgument = argument.toNumber(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsNumber(ceil(valueOfArgument)));
+}
+
+EncodedJSValue JIT_OPERATION operationArithTrunc(ExecState* exec, EncodedJSValue encodedArgument)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    JSValue argument = JSValue::decode(encodedArgument);
+    double truncatedValueOfArgument = argument.toIntegerPreserveNaN(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsNumber(truncatedValueOfArgument));
+}
+
 static ALWAYS_INLINE EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
 {
     VM& vm = exec->vm();

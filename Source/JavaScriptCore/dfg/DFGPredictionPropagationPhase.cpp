@@ -318,17 +318,6 @@ private:
             break;
         }
 
-        case ArithRound:
-        case ArithFloor:
-        case ArithCeil:
-        case ArithTrunc: {
-            if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, m_pass))
-                changed |= setPrediction(SpecInt32Only);
-            else
-                changed |= setPrediction(SpecBytecodeDouble);
-            break;
-        }
-
         case ArithAbs: {
             SpeculatedType childPrediction = node->child1()->prediction();
             if (isInt32OrBooleanSpeculation(childPrediction)
@@ -776,6 +765,18 @@ private:
             break;
         }
 
+        case ArithRound:
+        case ArithFloor:
+        case ArithCeil:
+        case ArithTrunc: {
+            if (isInt32OrBooleanSpeculation(m_currentNode->getHeapPrediction())
+                && m_graph.roundShouldSpeculateInt32(m_currentNode, m_pass))
+                setPrediction(SpecInt32Only);
+            else
+                setPrediction(SpecBytecodeDouble);
+            break;
+        }
+
         case ArithRandom: {
             setPrediction(SpecDoubleReal);
             break;
@@ -950,10 +951,6 @@ private:
         case ArithMul:
         case ArithDiv:
         case ArithMod:
-        case ArithRound:
-        case ArithFloor:
-        case ArithCeil:
-        case ArithTrunc:
         case ArithAbs:
         case GetByVal:
         case ToThis:
