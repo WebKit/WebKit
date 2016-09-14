@@ -2721,3 +2721,5 @@ webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
 
 css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
+
+webkit.org/b/161949 imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm [ Failure ]
