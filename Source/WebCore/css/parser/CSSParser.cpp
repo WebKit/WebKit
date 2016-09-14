@@ -7600,7 +7600,7 @@ inline int CSSParser::colorIntFromValue(ValueWithCalculation& valueWithCalculati
     return static_cast<int>(doubleValue);
 }
 
-bool CSSParser::parseColorParameters(CSSParserValue& value, int* colorArray, bool parseAlpha)
+bool CSSParser::parseRGBParameters(CSSParserValue& value, int* colorArray, bool parseAlpha)
 {
     CSSParserValueList* args = value.function->args.get();
     ValueWithCalculation firstArgumentWithCalculation(*args->current());
@@ -7699,37 +7699,35 @@ bool CSSParser::parseColorFromValue(CSSParserValue& value, RGBA32& c)
         && value.function->args->size() == 5 /* rgb + two commas */
         && equalLettersIgnoringASCIICase(value.function->name, "rgb(")) {
         int colorValues[3];
-        if (!parseColorParameters(value, colorValues, false))
+        if (!parseRGBParameters(value, colorValues, false))
             return false;
         c = makeRGB(colorValues[0], colorValues[1], colorValues[2]);
-    } else {
-        if (value.unit == CSSParserValue::Function
-            && value.function->args
-            && value.function->args->size() == 7 /* rgba + three commas */
-            && equalLettersIgnoringASCIICase(value.function->name, "rgba(")) {
-            int colorValues[4];
-            if (!parseColorParameters(value, colorValues, true))
-                return false;
-            c = makeRGBA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
-        } else if (value.unit == CSSParserValue::Function
-            && value.function->args
-            && value.function->args->size() == 5 /* hsl + two commas */
-            && equalLettersIgnoringASCIICase(value.function->name, "hsl(")) {
-            double colorValues[3];
-            if (!parseHSLParameters(value, colorValues, false))
-                return false;
-            c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], 1.0);
-        } else if (value.unit == CSSParserValue::Function
-            && value.function->args
-            && value.function->args->size() == 7 /* hsla + three commas */
-            && equalLettersIgnoringASCIICase(value.function->name, "hsla(")) {
-            double colorValues[4];
-            if (!parseHSLParameters(value, colorValues, true))
-                return false;
-            c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
-        } else
+    } else if (value.unit == CSSParserValue::Function
+        && value.function->args
+        && value.function->args->size() == 7 /* rgba + three commas */
+        && equalLettersIgnoringASCIICase(value.function->name, "rgba(")) {
+        int colorValues[4];
+        if (!parseRGBParameters(value, colorValues, true))
             return false;
-    }
+        c = makeRGBA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+    } else if (value.unit == CSSParserValue::Function
+        && value.function->args
+        && value.function->args->size() == 5 /* hsl + two commas */
+        && equalLettersIgnoringASCIICase(value.function->name, "hsl(")) {
+        double colorValues[3];
+        if (!parseHSLParameters(value, colorValues, false))
+            return false;
+        c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], 1.0);
+    } else if (value.unit == CSSParserValue::Function
+        && value.function->args
+        && value.function->args->size() == 7 /* hsla + three commas */
+        && equalLettersIgnoringASCIICase(value.function->name, "hsla(")) {
+        double colorValues[4];
+        if (!parseHSLParameters(value, colorValues, true))
+            return false;
+        c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+    } else
+        return false;
 
     return true;
 }

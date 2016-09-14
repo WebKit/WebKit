@@ -275,7 +275,7 @@ public:
     bool parseCounter(CSSPropertyID, int defaultValue, bool important);
     RefPtr<CSSPrimitiveValue> parseCounterContent(CSSParserValueList& args, bool counters);
 
-    bool parseColorParameters(CSSParserValue&, int* colorValues, bool parseAlpha);
+    bool parseRGBParameters(CSSParserValue&, int* colorValues, bool parseAlpha);
     bool parseHSLParameters(CSSParserValue&, double* colorValues, bool parseAlpha);
     RefPtr<CSSPrimitiveValue> parseColor(CSSParserValue* = nullptr);
     bool parseColorFromValue(CSSParserValue&, RGBA32&);
