@@ -1,3 +1,15 @@
+2016-09-14  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest http/tests/security/cross-origin-cached-scripts-parallel.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=161912
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestExpectations: Removing flaky expectation.
+        * http/tests/security/cross-origin-cached-scripts-parallel-expected.txt:
+        * http/tests/security/cross-origin-cached-scripts-parallel.html: Increase timeout to ensure load is made in parallel.
+        Fixed flakiness by doing parallel loads in two shots of two, in lieu of 1 shot of 4.
+
 2016-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/console/messagesCleared.html as flaky on mac-debug.
