@@ -1,3 +1,13 @@
+2016-09-13  Jer Noble  <jer.noble@apple.com>
+
+        [media-source] MediaSource.addSourceBuffer(null) should throw an exception
+        https://bugs.webkit.org/show_bug.cgi?id=161884
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-expected.txt: Added.
+
 2016-09-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Unify font's ascent, descent, and x-height between macOS and iOS
