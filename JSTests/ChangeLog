@@ -1,3 +1,12 @@
+2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: TypedArray constructors length should be 3 and configurable
+        https://bugs.webkit.org/show_bug.cgi?id=161955
+
+        Reviewed by Mark Lam.
+
+        * test262.yaml:
+
 2016-09-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make the rounding-related nodes support any type

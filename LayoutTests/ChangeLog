@@ -1,3 +1,19 @@
+2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: TypedArray constructors length should be 3 and configurable
+        https://bugs.webkit.org/show_bug.cgi?id=161955
+
+        Reviewed by Mark Lam.
+
+        * js/script-tests/typedarray-constructors.js:
+        * js/typedarray-constructors-expected.txt:
+        * js/dom/constructor-length.html:
+        * platform/efl/js/dom/constructor-length-expected.txt:
+        * platform/gtk/js/dom/constructor-length-expected.txt:
+        * platform/ios-simulator/js/dom/constructor-length-expected.txt:
+        * platform/mac/js/dom/constructor-length-expected.txt:
+        * platform/win/js/dom/constructor-length-expected.txt:
+
 2016-09-14  Chris Dumez  <cdumez@apple.com>
 
         input.type cannot be set to "file" after being set to another type

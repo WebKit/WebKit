@@ -19,9 +19,9 @@ let arrayTypes = [
 for (let arrayType of arrayTypes) {
     shouldThrow("" + arrayType.name + "()");
     shouldNotThrow("new " + arrayType.name + "()");
-    shouldBe("" + arrayType.name + ".length", "0");
+    shouldBe("" + arrayType.name + ".length", "3");
 }
 
 shouldThrow("DataView(new ArrayBuffer())");
 shouldNotThrow("new DataView(new ArrayBuffer())");
-shouldBe("DataView.length", "0");
+shouldBe("DataView.length", "3");
