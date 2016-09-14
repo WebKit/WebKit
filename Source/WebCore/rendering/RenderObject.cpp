@@ -1116,7 +1116,10 @@ void RenderObject::showRenderObject(bool mark, int depth) const
         fprintf(stderr, "%s", name.utf8().data());
 
     if (is<RenderBox>(*this)) {
-        FloatRect boxRect = downcast<RenderBox>(*this).frameRect();
+        auto& renderBox = downcast<RenderBox>(*this);
+        FloatRect boxRect = renderBox.frameRect();
+        if (renderBox.isInFlowPositioned())
+            boxRect.move(renderBox.offsetForInFlowPosition());
         fprintf(stderr, "  (%.2f, %.2f) (%.2f, %.2f)", boxRect.x(), boxRect.y(), boxRect.width(), boxRect.height());
     } else if (is<RenderInline>(*this) && isInFlowPositioned()) {
         FloatSize inlineOffset = downcast<RenderInline>(*this).offsetForInFlowPosition();
