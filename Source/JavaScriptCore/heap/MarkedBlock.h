@@ -254,7 +254,6 @@ public:
     bool isMarkedOrNewlyAllocatedDuringWeakVisiting(HeapVersion, const HeapCell*);
 
     bool isAtom(const void*);
-    void setMarked(const void*);
     void clearMarked(const void*);
         
     size_t cellSize();

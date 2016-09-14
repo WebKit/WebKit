@@ -1,3 +1,19 @@
+2016-09-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove Heap::setMarked()
+
+        Rubber stamped by Keith Miller.
+        
+        Nobody uses this function.
+
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::setMarked): Deleted.
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::testAndSetMarked):
+        (JSC::LargeAllocation::setMarked): Deleted.
+        * heap/MarkedBlock.h:
+
 2016-09-14  Mark Lam  <mark.lam@apple.com>
 
         Use Options::validateExceptionChecks() instead of VM::m_verifyExceptionEvents.

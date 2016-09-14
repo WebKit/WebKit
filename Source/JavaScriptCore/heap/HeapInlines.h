@@ -108,18 +108,6 @@ ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion version, const void* rawCe
     return block.testAndSetMarked(cell);
 }
 
-inline void Heap::setMarked(const void* rawCell)
-{
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
-    if (cell->isLargeAllocation()) {
-        cell->largeAllocation().setMarked();
-        return;
-    }
-    MarkedBlock& block = cell->markedBlock();
-    block.flipIfNecessary(block.vm()->heap.objectSpace().version());
-    block.setMarked(cell);
-}
-
 ALWAYS_INLINE size_t Heap::cellSize(const void* rawCell)
 {
     return bitwise_cast<HeapCell*>(rawCell)->cellSize();

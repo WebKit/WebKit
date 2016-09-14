@@ -119,7 +119,6 @@ public:
         return !m_isMarked.compareExchangeStrong(false, true);
     }
     ALWAYS_INLINE bool testAndSetMarked(HeapCell*) { return testAndSetMarked(); }
-    void setMarked() { m_isMarked.store(true); }
     void clearMarked() { m_isMarked.store(false); }
     
     void noteMarked() { }
