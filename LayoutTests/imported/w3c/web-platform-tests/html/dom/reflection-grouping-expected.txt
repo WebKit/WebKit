@@ -1337,83 +1337,83 @@ PASS hr.align: IDL set to object "test-toString" followed by IDL get
 PASS hr.align: IDL set to object "test-valueOf" should not throw 
 PASS hr.align: IDL set to object "test-valueOf" followed by getAttribute() 
 PASS hr.align: IDL set to object "test-valueOf" followed by IDL get 
-FAIL hr.color: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL hr.color: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
+PASS hr.color: typeof IDL attribute 
+PASS hr.color: IDL get with DOM attribute unset 
 PASS hr.color: setAttribute() to "" followed by getAttribute() 
-FAIL hr.color: setAttribute() to "" followed by IDL get assert_equals: expected (string) "" but got (undefined) undefined
+PASS hr.color: setAttribute() to "" followed by IDL get 
 PASS hr.color: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL hr.color: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected (string) " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got (undefined) undefined
+PASS hr.color: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS hr.color: setAttribute() to undefined followed by getAttribute() 
-FAIL hr.color: setAttribute() to undefined followed by IDL get assert_equals: expected (string) "undefined" but got (undefined) undefined
+PASS hr.color: setAttribute() to undefined followed by IDL get 
 PASS hr.color: setAttribute() to 7 followed by getAttribute() 
-FAIL hr.color: setAttribute() to 7 followed by IDL get assert_equals: expected (string) "7" but got (undefined) undefined
+PASS hr.color: setAttribute() to 7 followed by IDL get 
 PASS hr.color: setAttribute() to 1.5 followed by getAttribute() 
-FAIL hr.color: setAttribute() to 1.5 followed by IDL get assert_equals: expected (string) "1.5" but got (undefined) undefined
+PASS hr.color: setAttribute() to 1.5 followed by IDL get 
 PASS hr.color: setAttribute() to true followed by getAttribute() 
-FAIL hr.color: setAttribute() to true followed by IDL get assert_equals: expected (string) "true" but got (undefined) undefined
+PASS hr.color: setAttribute() to true followed by IDL get 
 PASS hr.color: setAttribute() to false followed by getAttribute() 
-FAIL hr.color: setAttribute() to false followed by IDL get assert_equals: expected (string) "false" but got (undefined) undefined
+PASS hr.color: setAttribute() to false followed by IDL get 
 PASS hr.color: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL hr.color: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected (string) "[object Object]" but got (undefined) undefined
+PASS hr.color: setAttribute() to object "[object Object]" followed by IDL get 
 PASS hr.color: setAttribute() to NaN followed by getAttribute() 
-FAIL hr.color: setAttribute() to NaN followed by IDL get assert_equals: expected (string) "NaN" but got (undefined) undefined
+PASS hr.color: setAttribute() to NaN followed by IDL get 
 PASS hr.color: setAttribute() to Infinity followed by getAttribute() 
-FAIL hr.color: setAttribute() to Infinity followed by IDL get assert_equals: expected (string) "Infinity" but got (undefined) undefined
+PASS hr.color: setAttribute() to Infinity followed by IDL get 
 PASS hr.color: setAttribute() to -Infinity followed by getAttribute() 
-FAIL hr.color: setAttribute() to -Infinity followed by IDL get assert_equals: expected (string) "-Infinity" but got (undefined) undefined
+PASS hr.color: setAttribute() to -Infinity followed by IDL get 
 PASS hr.color: setAttribute() to "\0" followed by getAttribute() 
-FAIL hr.color: setAttribute() to "\0" followed by IDL get assert_equals: expected (string) "\0" but got (undefined) undefined
+PASS hr.color: setAttribute() to "\0" followed by IDL get 
 PASS hr.color: setAttribute() to null followed by getAttribute() 
-FAIL hr.color: setAttribute() to null followed by IDL get assert_equals: expected (string) "null" but got (undefined) undefined
+PASS hr.color: setAttribute() to null followed by IDL get 
 PASS hr.color: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL hr.color: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected (string) "test-toString" but got (undefined) undefined
+PASS hr.color: setAttribute() to object "test-toString" followed by IDL get 
 PASS hr.color: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL hr.color: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected (string) "test-valueOf" but got (undefined) undefined
+PASS hr.color: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS hr.color: IDL set to "" should not throw 
-FAIL hr.color: IDL set to "" followed by getAttribute() assert_equals: expected "" but got "test-valueOf"
+PASS hr.color: IDL set to "" followed by getAttribute() 
 PASS hr.color: IDL set to "" followed by IDL get 
 PASS hr.color: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " should not throw 
-FAIL hr.color: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() assert_equals: expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
+PASS hr.color: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS hr.color: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS hr.color: IDL set to undefined should not throw 
-FAIL hr.color: IDL set to undefined followed by getAttribute() assert_equals: expected "undefined" but got "test-valueOf"
-FAIL hr.color: IDL set to undefined followed by IDL get assert_equals: expected (string) "undefined" but got (undefined) undefined
+PASS hr.color: IDL set to undefined followed by getAttribute() 
+PASS hr.color: IDL set to undefined followed by IDL get 
 PASS hr.color: IDL set to 7 should not throw 
-FAIL hr.color: IDL set to 7 followed by getAttribute() assert_equals: expected "7" but got "test-valueOf"
-FAIL hr.color: IDL set to 7 followed by IDL get assert_equals: expected (string) "7" but got (number) 7
+PASS hr.color: IDL set to 7 followed by getAttribute() 
+PASS hr.color: IDL set to 7 followed by IDL get 
 PASS hr.color: IDL set to 1.5 should not throw 
-FAIL hr.color: IDL set to 1.5 followed by getAttribute() assert_equals: expected "1.5" but got "test-valueOf"
-FAIL hr.color: IDL set to 1.5 followed by IDL get assert_equals: expected (string) "1.5" but got (number) 1.5
+PASS hr.color: IDL set to 1.5 followed by getAttribute() 
+PASS hr.color: IDL set to 1.5 followed by IDL get 
 PASS hr.color: IDL set to true should not throw 
-FAIL hr.color: IDL set to true followed by getAttribute() assert_equals: expected "true" but got "test-valueOf"
-FAIL hr.color: IDL set to true followed by IDL get assert_equals: expected (string) "true" but got (boolean) true
+PASS hr.color: IDL set to true followed by getAttribute() 
+PASS hr.color: IDL set to true followed by IDL get 
 PASS hr.color: IDL set to false should not throw 
-FAIL hr.color: IDL set to false followed by getAttribute() assert_equals: expected "false" but got "test-valueOf"
-FAIL hr.color: IDL set to false followed by IDL get assert_equals: expected (string) "false" but got (boolean) false
+PASS hr.color: IDL set to false followed by getAttribute() 
+PASS hr.color: IDL set to false followed by IDL get 
 PASS hr.color: IDL set to object "[object Object]" should not throw 
-FAIL hr.color: IDL set to object "[object Object]" followed by getAttribute() assert_equals: expected "[object Object]" but got "test-valueOf"
-FAIL hr.color: IDL set to object "[object Object]" followed by IDL get assert_equals: expected (string) "[object Object]" but got (object) object "[object Object]"
+PASS hr.color: IDL set to object "[object Object]" followed by getAttribute() 
+PASS hr.color: IDL set to object "[object Object]" followed by IDL get 
 PASS hr.color: IDL set to NaN should not throw 
-FAIL hr.color: IDL set to NaN followed by getAttribute() assert_equals: expected "NaN" but got "test-valueOf"
-FAIL hr.color: IDL set to NaN followed by IDL get assert_equals: expected (string) "NaN" but got (number) NaN
+PASS hr.color: IDL set to NaN followed by getAttribute() 
+PASS hr.color: IDL set to NaN followed by IDL get 
 PASS hr.color: IDL set to Infinity should not throw 
-FAIL hr.color: IDL set to Infinity followed by getAttribute() assert_equals: expected "Infinity" but got "test-valueOf"
-FAIL hr.color: IDL set to Infinity followed by IDL get assert_equals: expected (string) "Infinity" but got (number) Infinity
+PASS hr.color: IDL set to Infinity followed by getAttribute() 
+PASS hr.color: IDL set to Infinity followed by IDL get 
 PASS hr.color: IDL set to -Infinity should not throw 
-FAIL hr.color: IDL set to -Infinity followed by getAttribute() assert_equals: expected "-Infinity" but got "test-valueOf"
-FAIL hr.color: IDL set to -Infinity followed by IDL get assert_equals: expected (string) "-Infinity" but got (number) -Infinity
+PASS hr.color: IDL set to -Infinity followed by getAttribute() 
+PASS hr.color: IDL set to -Infinity followed by IDL get 
 PASS hr.color: IDL set to "\0" should not throw 
-FAIL hr.color: IDL set to "\0" followed by getAttribute() assert_equals: expected "\0" but got "test-valueOf"
+PASS hr.color: IDL set to "\0" followed by getAttribute() 
 PASS hr.color: IDL set to "\0" followed by IDL get 
 PASS hr.color: IDL set to null should not throw 
-FAIL hr.color: IDL set to null followed by getAttribute() assert_equals: expected "null" but got "test-valueOf"
-FAIL hr.color: IDL set to null followed by IDL get assert_equals: expected (string) "null" but got (object) null
+PASS hr.color: IDL set to null followed by getAttribute() 
+PASS hr.color: IDL set to null followed by IDL get 
 PASS hr.color: IDL set to object "test-toString" should not throw 
-FAIL hr.color: IDL set to object "test-toString" followed by getAttribute() assert_equals: expected "test-toString" but got "test-valueOf"
-FAIL hr.color: IDL set to object "test-toString" followed by IDL get assert_equals: expected (string) "test-toString" but got (object) object "test-toString"
+PASS hr.color: IDL set to object "test-toString" followed by getAttribute() 
+PASS hr.color: IDL set to object "test-toString" followed by IDL get 
 PASS hr.color: IDL set to object "test-valueOf" should not throw 
 PASS hr.color: IDL set to object "test-valueOf" followed by getAttribute() 
-FAIL hr.color: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected (string) "test-valueOf" but got (object) object "test-valueOf"
+PASS hr.color: IDL set to object "test-valueOf" followed by IDL get 
 PASS hr.noShade: typeof IDL attribute 
 PASS hr.noShade: IDL get with DOM attribute unset 
 PASS hr.noShade: setAttribute() to "" followed by getAttribute() 
