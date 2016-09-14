@@ -9,9 +9,10 @@
     addEventListener("load", function() {
         for (var i = 1; i <= 9; ++i) {
             elementId = "crash" + i;
-            shouldBe('document.getElementById(elementId).clientWidth', '800');
+            shouldBe('document.getElementById(elementId).clientWidth', i == 8 ? '56' : '800');
             shouldBe('currentSrcFileName(elementId)', '"image-set-2x.png"');
         }
+        
         elementId = "crash10";
         shouldBe('document.getElementById(elementId).clientWidth', '1600');
         shouldBe('currentSrcFileName(elementId)', '"image-set-4x.png"');

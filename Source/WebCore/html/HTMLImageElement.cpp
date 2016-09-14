@@ -41,9 +41,10 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderImage.h"
+#include "RenderView.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "SourceSizeList.h"
+#include "SizesAttributeParser.h"
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -177,7 +178,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         if (!evaluation)
             continue;
 
-        auto sourceSize = parseSizesAttribute(document(), source.attributeWithoutSynchronization(sizesAttr).string());
+        auto sourceSize = SizesAttributeParser(source.attributeWithoutSynchronization(sizesAttr).string(), document()).length();
         auto candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom, srcset, sourceSize);
         if (!candidate.isEmpty())
             return candidate;
@@ -191,7 +192,7 @@ void HTMLImageElement::selectImageSource()
     ImageCandidate candidate = bestFitSourceFromPictureElement();
     if (candidate.isEmpty()) {
         // If we don't have a <picture> or didn't find a source, then we use our own attributes.
-        float sourceSize = parseSizesAttribute(document(), attributeWithoutSynchronization(sizesAttr).string());
+        auto sourceSize = SizesAttributeParser(attributeWithoutSynchronization(sizesAttr).string(), document()).length();
         candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), attributeWithoutSynchronization(srcAttr), attributeWithoutSynchronization(srcsetAttr), sourceSize);
     }
     setBestFitURLAndDPRFromImageCandidate(candidate);

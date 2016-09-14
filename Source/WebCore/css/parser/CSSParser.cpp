@@ -1597,59 +1597,6 @@ std::unique_ptr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     return WTFMove(m_mediaQuery);
 }
 
-Vector<CSSParser::SourceSize> CSSParser::parseSizesAttribute(StringView string)
-{
-    Vector<SourceSize> result;
-
-    if (string.isEmpty())
-        return result;
-
-    ASSERT(!m_sourceSizeList);
-
-    setupParser("@-webkit-sizesattr ", string, "}");
-    cssyyparse(this);
-
-    if (!m_sourceSizeList)
-        return result;
-
-    result = WTFMove(*m_sourceSizeList);
-    m_sourceSizeList = nullptr;
-    return result;
-}
-
-// FIXME(141289): The following two constructors are only needed because of a bug in MSVC 2013 (and prior).
-// We should remove this code as soon as a Visual Studio update that fixes this problem is released.
-
-CSSParser::SourceSize::SourceSize(CSSParser::SourceSize&& original)
-    : expression(WTFMove(original.expression))
-    , length(WTFMove(original.length))
-{
-}
-
-CSSParser::SourceSize::SourceSize(MediaQueryExpression&& expression, Ref<CSSValue>&& value)
-    : expression(WTFMove(expression))
-    , length(WTFMove(value))
-{
-}
-
-Optional<CSSParser::SourceSize> CSSParser::sourceSize(MediaQueryExpression&& expression, CSSParserValue& parserValue)
-{
-    RefPtr<CSSValue> value;
-    if (isCalculation(parserValue)) {
-        auto* args = parserValue.function->args.get();
-        if (args && args->size())
-            value = CSSCalcValue::create(parserValue.function->name, *args, CalculationRangeNonNegative);
-    }
-    if (!value)
-        value = parserValue.createCSSValue();
-    destroy(parserValue);
-    if (!value)
-        return Nullopt;
-    // FIXME: Calling the constructor explicitly here to work around an MSVC bug.
-    // For other compilers, we did not need to define the constructors and we could use aggregate initialization syntax.
-    return SourceSize(WTFMove(expression), value.releaseNonNull());
-}
-
 static inline void filterProperties(bool important, const ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenCustomProperties)
 {
     // Add properties in reverse order so that highest priority definitions are reached first. Duplicate definitions can then be ignored when found.

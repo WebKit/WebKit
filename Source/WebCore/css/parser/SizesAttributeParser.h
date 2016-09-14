@@ -36,17 +36,16 @@
 namespace WebCore {
 
 class CSSValue;
-class RenderStyle;
-class RenderView;
+class Document;
     
 class SizesAttributeParser {
 public:
-    SizesAttributeParser(const String&, const RenderStyle&, RenderView&);
+    SizesAttributeParser(const String&, const Document&);
 
     float length();
 
-    static float defaultLength(const RenderStyle&, RenderView&);
-    static float computeLength(double value, CSSPrimitiveValue::UnitTypes, const RenderStyle&, RenderView&);
+    static float defaultLength(const Document&);
+    static float computeLength(double value, CSSPrimitiveValue::UnitTypes, const Document&);
 
 private:
     bool parse(CSSParserTokenRange);
@@ -55,8 +54,7 @@ private:
     bool mediaConditionMatches(const MediaQuerySet& mediaCondition);
     unsigned effectiveSizeDefaultValue();
 
-    const RenderStyle& m_style;
-    RenderView& m_view;
+    const Document& m_document;
     RefPtr<MediaQuerySet> m_mediaCondition;
     float m_length;
     bool m_lengthWasSet;

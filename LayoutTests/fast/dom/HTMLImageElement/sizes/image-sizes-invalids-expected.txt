@@ -12,7 +12,7 @@ PASS document.getElementById(elementId).clientWidth is 800
 PASS currentSrcFileName(elementId) is "image-set-2x.png"
 PASS document.getElementById(elementId).clientWidth is 800
 PASS currentSrcFileName(elementId) is "image-set-2x.png"
-PASS document.getElementById(elementId).clientWidth is 800
+PASS document.getElementById(elementId).clientWidth is 56
 PASS currentSrcFileName(elementId) is "image-set-2x.png"
 PASS document.getElementById(elementId).clientWidth is 800
 PASS currentSrcFileName(elementId) is "image-set-2x.png"

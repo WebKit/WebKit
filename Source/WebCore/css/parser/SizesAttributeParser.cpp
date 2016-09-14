@@ -39,9 +39,14 @@
 
 namespace WebCore {
 
-float SizesAttributeParser::computeLength(double value, CSSPrimitiveValue::UnitTypes type, const RenderStyle& style, RenderView& renderer)
+float SizesAttributeParser::computeLength(double value, CSSPrimitiveValue::UnitTypes type, const Document& document)
 {
-    CSSToLengthConversionData conversionData(&style, &style, &renderer);
+    auto* renderer = document.renderView();
+    if (!renderer)
+        return 0;
+    auto& style = renderer->style();
+
+    CSSToLengthConversionData conversionData(&style, &style, renderer);
     
     // Because we evaluate "sizes" at parse time (before style has been resolved), the font metrics used for these specific units
     // are not available. The font selector's internal consistency isn't guaranteed just yet, so we can just temporarily clear
@@ -59,9 +64,8 @@ float SizesAttributeParser::computeLength(double value, CSSPrimitiveValue::UnitT
     return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, type, value));
 }
     
-SizesAttributeParser::SizesAttributeParser(const String& attribute, const RenderStyle& style, RenderView& view)
-    : m_style(style)
-    , m_view(view)
+SizesAttributeParser::SizesAttributeParser(const String& attribute, const Document& document)
+    : m_document(document)
     , m_length(0)
     , m_lengthWasSet(false)
 {
@@ -82,11 +86,11 @@ bool SizesAttributeParser::calculateLengthInPixels(CSSParserTokenRange range, fl
     if (type == DimensionToken) {
         if (!CSSPrimitiveValue::isLength(startToken.unitType()))
             return false;
-        result = computeLength(startToken.numericValue(), startToken.unitType(), m_style, m_view);
+        result = computeLength(startToken.numericValue(), startToken.unitType(), m_document);
         if (result >= 0)
             return true;
     } else if (type == FunctionToken) {
-        SizesCalcParser calcParser(range, m_style, m_view);
+        SizesCalcParser calcParser(range, m_document);
         if (!calcParser.isValid())
             return false;
         result = calcParser.result();
@@ -102,7 +106,11 @@ bool SizesAttributeParser::calculateLengthInPixels(CSSParserTokenRange range, fl
 bool SizesAttributeParser::mediaConditionMatches(const MediaQuerySet& mediaCondition)
 {
     // A Media Condition cannot have a media type other than screen.
-    return MediaQueryEvaluator { "screen", m_view.document(), &m_style }.evaluate(mediaCondition, m_view.document().styleResolverIfExists());
+    auto* renderer = m_document.renderView();
+    if (!renderer)
+        return false;
+    auto& style = renderer->style();
+    return MediaQueryEvaluator { "screen", m_document, &style }.evaluate(mediaCondition, m_document.styleResolverIfExists());
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)
@@ -143,7 +151,11 @@ float SizesAttributeParser::effectiveSize()
 
 unsigned SizesAttributeParser::effectiveSizeDefaultValue()
 {
-    return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble({ &m_style, &m_style, &m_view }, CSSPrimitiveValue::CSS_VW, 100.0));
+    auto* renderer = m_document.renderView();
+    if (!renderer)
+        return 0;
+    auto& style = renderer->style();
+    return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble({ &style, &style, renderer }, CSSPrimitiveValue::CSS_VW, 100.0));
 }
 
 } // namespace WebCore

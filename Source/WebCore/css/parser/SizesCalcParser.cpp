@@ -36,10 +36,9 @@
 
 namespace WebCore {
 
-SizesCalcParser::SizesCalcParser(CSSParserTokenRange range, const RenderStyle& style, RenderView& view)
+SizesCalcParser::SizesCalcParser(CSSParserTokenRange range, const Document& document)
     : m_result(0)
-    , m_style(style)
-    , m_view(view)
+    , m_document(document)
 {
     m_isValid = calcToReversePolishNotation(range) && calculate();
 }
@@ -96,7 +95,7 @@ void SizesCalcParser::appendNumber(const CSSParserToken& token)
 bool SizesCalcParser::appendLength(const CSSParserToken& token)
 {
     SizesCalcValue value;
-    double result = SizesAttributeParser::computeLength(token.numericValue(), token.unitType(), m_style, m_view);
+    double result = SizesAttributeParser::computeLength(token.numericValue(), token.unitType(), m_document);
     value.value = result;
     value.isLength = true;
     m_valueList.append(value);

@@ -1,3 +1,23 @@
+2016-09-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Enable the new sizes parser by default
+        https://bugs.webkit.org/show_bug.cgi?id=161931
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/dom/HTMLImageElement/resources/green-16x16.png: Added.
+        * fast/dom/HTMLImageElement/resources/green-1x1.png: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-invalids-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-invalids.html:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-1-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-1.html: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-2-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-2.html: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-3-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-3.html: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-4-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-4.html: Added.
+
 2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm as failing on ios-simulator.

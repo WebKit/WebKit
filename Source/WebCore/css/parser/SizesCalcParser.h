@@ -35,8 +35,7 @@
 
 namespace WebCore {
 
-class RenderStyle;
-class RenderView;
+class Document;
 
 struct SizesCalcValue {
     double value;
@@ -60,7 +59,7 @@ struct SizesCalcValue {
 
 class SizesCalcParser {
 public:
-    SizesCalcParser(CSSParserTokenRange, const RenderStyle&, RenderView&);
+    SizesCalcParser(CSSParserTokenRange, const Document&);
 
     float result() const;
     bool isValid() const { return m_isValid; }
@@ -76,8 +75,7 @@ private:
     Vector<SizesCalcValue> m_valueList;
     bool m_isValid;
     float m_result;
-    const RenderStyle& m_style;
-    RenderView& m_view;
+    const Document& m_document;
 };
 
 } // namespace WebCore

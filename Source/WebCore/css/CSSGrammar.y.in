@@ -38,7 +38,6 @@
     MediaQuery* mediaQuery;
     MediaQuery::Restrictor mediaQueryRestrictor;
     MediaQueryExpression* mediaQueryExpression;
-    Vector<CSSParser::SourceSize>* sourceSizeList;
     Vector<MediaQueryExpression>* mediaQueryExpressionList;
     StyleKeyframe* keyframe;
     Vector<RefPtr<StyleKeyframe>>* keyframeRuleList;
@@ -274,15 +273,6 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %type <mediaQueryExpression> media_query_expression base_media_query_expression
 %destructor { delete $$; } media_query_expression base_media_query_expression
 
-%type <sourceSizeList> source_size_list
-%destructor { delete $$; } source_size_list
-
-%type <mediaQueryExpression> maybe_source_media_query_expression
-%destructor { delete $$; } maybe_source_media_query_expression
-
-%type <value> source_size_length
-%destructor { destroy($$); } source_size_length
-
 %type <mediaQueryExpressionList> media_query_expression_list maybe_and_media_query_expression_list
 %destructor { delete $$; } media_query_expression_list maybe_and_media_query_expression_list
 
@@ -378,7 +368,6 @@ stylesheet:
   | webkit_decls maybe_space
   | webkit_value maybe_space
   | webkit_mediaquery maybe_space
-  | webkit_source_size_list maybe_space
   | webkit_selector maybe_space
   | webkit_keyframe_rule maybe_space
   | webkit_supports_condition maybe_space
@@ -566,35 +555,6 @@ maybe_ns_prefix: /* empty */ { $$.clear(); } | IDENT maybe_space;
 string_or_uri: STRING | URI ;
 
 maybe_media_value: /*empty*/ { $$ = nullptr; } | ':' maybe_space expr maybe_space { $$ = $3; } ;
-
-webkit_source_size_list:
-    WEBKIT_SIZESATTR_SYM WHITESPACE source_size_list maybe_space '}' {
-        parser->m_sourceSizeList = std::unique_ptr<Vector<CSSParser::SourceSize>>($3);
-    }
-    ;
-
-source_size_list:
-    maybe_source_media_query_expression source_size_length {
-        $$ = new Vector<CSSParser::SourceSize>;
-        if (auto result = parser->sourceSize(WTFMove(*$1), $2))
-            $$->append(WTFMove(result.value()));
-        delete $1;
-    }
-    | source_size_list maybe_space ',' maybe_space maybe_source_media_query_expression source_size_length {
-        $$ = $1;
-        if (auto result = parser->sourceSize(WTFMove(*$5), $6))
-            $$->append(WTFMove(result.value()));
-        delete $5;
-    }
-    ;
-
-maybe_source_media_query_expression:
-    /* empty */ {
-        $$ = new MediaQueryExpression;
-    }
-    | base_media_query_expression maybe_space;
-
-source_size_length: unary_term | calc_function;
 
 base_media_query_expression: '(' maybe_space IDENT maybe_space maybe_media_value ')' {
         std::unique_ptr<CSSParserValueList> mediaValue($5);
