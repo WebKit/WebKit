@@ -36,6 +36,7 @@ use constant FileNamePrefix => "JS";
 use Hasher;
 
 my $codeGenerator;
+my $writeDependencies;
 
 my @headerContentHeader = ();
 my @headerContent = ();
@@ -113,6 +114,7 @@ sub new
     my $reference = { };
 
     $codeGenerator = shift;
+    $writeDependencies = shift;
 
     bless($reference, $object);
     return $reference;
@@ -1599,6 +1601,17 @@ sub GenerateHeader
     if ($interface->extendedAttributes->{"AppleCopyright"}) {
         push(@headerContent, "\n");
         push(@headerContent, split("\r", $endAppleCopyright));
+    }
+
+    # - Generate dependencies.
+    if ($writeDependencies) {
+        my @ancestors;
+        $codeGenerator->ForAllParents($interface, sub {
+            my $currentInterface = shift;
+            push(@ancestors, $currentInterface->name);
+        }, 0);
+        push(@depsContent, "$className.h : ", join(" ", map { "$_.idl" } @ancestors), "\n");
+        push(@depsContent, map { "$_.idl :\n" } @ancestors);
     }
 }
 
