@@ -1,5 +1,19 @@
 2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        TaggedTemplateString function calls should emit tail position calls
+        https://bugs.webkit.org/show_bug.cgi?id=161948
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/tail-call-recognize.js:
+        (runTests):
+        Ensure a tagged template string function call is tail call.
+
+        * test262.yaml:
+        These now pass.
+
+2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: Array.prototype.slice should always set length
         https://bugs.webkit.org/show_bug.cgi?id=161953
 

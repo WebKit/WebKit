@@ -117,6 +117,11 @@ function runTests() {
         dummy: return callerMustBeRun();
     })();
 
+    (function tailCallInTaggedTemplateString() {
+        "use strict";
+        return callerMustBeRun`test`;
+    })();
+
     // Expression tests, we don't enumerate all the cases where there
     // *shouldn't* be a tail call
 

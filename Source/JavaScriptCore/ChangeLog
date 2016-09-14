@@ -1,5 +1,17 @@
 2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        TaggedTemplateString function calls should emit tail position calls
+        https://bugs.webkit.org/show_bug.cgi?id=161948
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TaggedTemplateNode::emitBytecode):
+        The tagged template string function call can be a tail call:
+        https://tc39.github.io/ecma262/#sec-tagged-templates-runtime-semantics-evaluation
+
+2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: Array.prototype.slice should always set length
         https://bugs.webkit.org/show_bug.cgi?id=161953
 
