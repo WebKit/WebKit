@@ -1,3 +1,46 @@
+2016-09-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Call Stack tree in the Debugger sidebar should mark the active call frame
+        https://bugs.webkit.org/show_bug.cgi?id=161945
+        <rdar://problem/28293451>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add an indicator for the active call frame tree element, patterned after
+        Xcode's call stack UI. The indicator should be positioned on the left,
+        with a fill color based on the tree element's selected/focused state.
+
+        * UserInterface/Images/ActiveCallFrame.svg: Added.
+        Image for "active call frame" tree element status.
+
+        * UserInterface/Main.html:
+        New file.
+
+        * UserInterface/Views/CallFrameTreeElement.css: Added.
+        (.tree-outline .item.call-frame .status):
+        (.tree-outline .item.call-frame .status > .status-image):
+        (.tree-outline .item.call-frame.selected .status > .status-image):
+        (.tree-outline:matches(:focus, .force-focus) .item.call-frame.selected .status > .status-image):
+        New tree element styles.
+
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WebInspector.CallFrameTreeElement):
+        (WebInspector.CallFrameTreeElement.prototype.get callFrame):
+        (WebInspector.CallFrameTreeElement.prototype.get isActiveCallFrame):
+        (WebInspector.CallFrameTreeElement.prototype.set isActiveCallFrame):
+        Add property for toggling active call frame indicator.
+        (WebInspector.CallFrameTreeElement.prototype.onattach):
+        (WebInspector.CallFrameTreeElement.prototype._updateStatus):
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerCallFramesDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerActiveCallFrameDidChange):
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        New global for dark border color.
+
 2016-09-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Use Array.shallowEqual instead of Object.shallowEqual in more places

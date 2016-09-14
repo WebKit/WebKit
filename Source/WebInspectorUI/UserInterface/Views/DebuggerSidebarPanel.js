@@ -162,6 +162,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         this._callStackContentTreeOutline = this.createContentTreeOutline(true, true);
         this._callStackContentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        this._activeCallFrameTreeElement = null;
 
         this._callStackRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Call Frames"));
         this._callStackRow.showEmptyMessage();
@@ -598,6 +599,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     _debuggerCallFramesDidChange()
     {
         this._callStackContentTreeOutline.removeChildren();
+        this._activeCallFrameTreeElement = null;
 
         var callFrames = WebInspector.debuggerManager.callFrames;
         if (!callFrames || !callFrames.length) {
@@ -608,18 +610,18 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._callStackRow.hideEmptyMessage();
         this._callStackRow.element.appendChild(this._callStackContentTreeOutline.element);
 
-        var treeElementToSelect = null;
-
         var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrameTreeElement = new WebInspector.CallFrameTreeElement(callFrames[i]);
             if (callFrames[i] === activeCallFrame)
-                treeElementToSelect = callFrameTreeElement;
+                this._activeCallFrameTreeElement = callFrameTreeElement;
             this._callStackContentTreeOutline.appendChild(callFrameTreeElement);
         }
 
-        if (treeElementToSelect)
-            treeElementToSelect.select(true, true);
+        if (this._activeCallFrameTreeElement) {
+            this._activeCallFrameTreeElement.select(true, true);
+            this._activeCallFrameTreeElement.isActiveCallFrame = true;
+        }
     }
 
     _debuggerActiveCallFrameDidChange()
@@ -627,6 +629,13 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         var callFrames = WebInspector.debuggerManager.callFrames;
         if (!callFrames)
             return;
+
+        if (this._activeCallFrameTreeElement)
+            this._activeCallFrameTreeElement.isActiveCallFrame = false;
+
+        this._activeCallFrameTreeElement = this._callStackContentTreeOutline.findTreeElement(WebInspector.debuggerManager.activeCallFrame);
+        if (this._activeCallFrameTreeElement)
+            this._activeCallFrameTreeElement.isActiveCallFrame = true;
 
         var indexOfActiveCallFrame = callFrames.indexOf(WebInspector.debuggerManager.activeCallFrame);
         // It is useful to turn off the step out button when there is no call frame to go through
