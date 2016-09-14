@@ -896,7 +896,7 @@ bool VM::isSafeToRecurseSoftCLoop() const
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionEventLocation& location)
 {
-    if (!m_verifyExceptionEvents)
+    if (!Options::validateExceptionChecks())
         return;
 
     if (UNLIKELY(m_needExceptionCheck)) {

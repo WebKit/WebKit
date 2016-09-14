@@ -703,9 +703,6 @@ private:
     ExceptionEventLocation m_simulatedThrowPointLocation;
     unsigned m_simulatedThrowPointRecursionDepth { 0 };
     mutable bool m_needExceptionCheck { false };
-
-    // Disabled temporarily until all known verification failures are fixed.
-    bool m_verifyExceptionEvents { false };
 #endif
 
     bool m_failNextNewCodeBlock { false };

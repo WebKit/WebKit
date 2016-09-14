@@ -1,3 +1,18 @@
+2016-09-14  Mark Lam  <mark.lam@apple.com>
+
+        Use Options::validateExceptionChecks() instead of VM::m_verifyExceptionEvents.
+        https://bugs.webkit.org/show_bug.cgi?id=161975
+
+        Reviewed by Keith Miller.
+
+        This makes it less burdensome (no longer needs a rebuild to enable checks) to do
+        incremental work towards enabling checks all the time.
+
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::verifyExceptionCheckNeedIsSatisfied):
+        * runtime/VM.h:
+
 2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         TaggedTemplateString function calls should emit tail position calls
