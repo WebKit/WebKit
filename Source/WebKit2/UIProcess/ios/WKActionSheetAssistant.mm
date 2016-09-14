@@ -367,8 +367,10 @@ static LSAppLink *appLinkForURL(NSURL *url)
     NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
 
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
-    if (!positionInformation.url.isEmpty())
+    if (!positionInformation.url.isEmpty()) {
         [self _appendOpenActionsForURL:targetURL actions:defaultActions.get() elementInfo:elementInfo];
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
+    }
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
     if ([getSSReadingListClass() supportsURL:targetURL])

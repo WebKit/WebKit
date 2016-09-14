@@ -1,3 +1,18 @@
+2016-09-14  Megan Gardner  <megan_gardner@apple.com>
+
+        Long tap menu on an image link no longer includes "Save Image" button
+        https://bugs.webkit.org/show_bug.cgi?id=161761
+        <rdar://27202717>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+        Added share to image sheet as to not regress current functionality
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        Gather information for images as well as links, and they can be both
+
 2016-09-14  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK][Wayland] Implement clipboard support
