@@ -56,7 +56,20 @@ class HashMapBucket : public JSCell {
     }
 
 public:
-    DECLARE_EXPORT_INFO;
+
+    // FIXME: We should fix the warnings for extern-template in JSObject template classes: https://bugs.webkit.org/show_bug.cgi?id=161979
+#if COMPILER(CLANG)
+#if __has_warning("-Wundefined-var-template")
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-var-template"
+#endif
+#endif
+    DECLARE_INFO;
+#if COMPILER(CLANG)
+#if __has_warning("-Wundefined-var-template")
+#pragma clang diagnostic pop
+#endif
+#endif
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -265,7 +278,19 @@ class HashMapImpl : public JSCell {
     }
 
 public:
-    DECLARE_EXPORT_INFO;
+    // FIXME: We should fix the warnings for extern-template in JSObject template classes: https://bugs.webkit.org/show_bug.cgi?id=161979
+#if COMPILER(CLANG)
+#if __has_warning("-Wundefined-var-template")
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-var-template"
+#endif
+#endif
+    DECLARE_INFO;
+#if COMPILER(CLANG)
+#if __has_warning("-Wundefined-var-template")
+#pragma clang diagnostic pop
+#endif
+#endif
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {

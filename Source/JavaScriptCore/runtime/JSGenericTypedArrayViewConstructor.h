@@ -43,7 +43,19 @@ public:
     static JSGenericTypedArrayViewConstructor* create(
         VM&, JSGlobalObject*, Structure*, JSObject* prototype, const String& name, FunctionExecutable* privateAllocator);
 
+    // FIXME: We should fix the warnings for extern-template in JSObject template classes: https://bugs.webkit.org/show_bug.cgi?id=161979
+#if COMPILER(CLANG)
+#if __has_warning("-Wundefined-var-template")
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-var-template"
+#endif
+#endif
     DECLARE_INFO;
+#if COMPILER(CLANG)
+#if __has_warning("-Wundefined-var-template")
+#pragma clang diagnostic pop
+#endif
+#endif
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
