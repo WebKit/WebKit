@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "CaptureDeviceManager.h"
-#include "MediaStreamTrackSourcesRequestClient.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/NeverDestroyed.h>
@@ -63,7 +62,7 @@ public:
     RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) override;
     Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, MediaConstraints&) override;
 
-    TrackSourceInfoVector getSourcesInfo(const String&) override;
+    Vector<CaptureDevice> getSourcesInfo() override;
     bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, const MediaConstraints&, const CaptureSessionInfo*, String&) override;
 
     void deviceConnected();

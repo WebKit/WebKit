@@ -20,7 +20,6 @@
 #include "UserMediaPermissionRequestProxy.h"
 
 #include "UserMediaPermissionRequestManagerProxy.h"
-#include <WebCore/MediaStreamTrackSourcesRequestClient.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <wtf/text/StringHash.h>
 

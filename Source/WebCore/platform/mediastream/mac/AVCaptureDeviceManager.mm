@@ -240,12 +240,12 @@ RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::sourceWithUID(const String& 
     return CaptureDeviceManager::sourceWithUID(deviceUID, type, constraints);
 }
 
-TrackSourceInfoVector AVCaptureDeviceManager::getSourcesInfo(const String& requestOrigin)
+Vector<CaptureDevice> AVCaptureDeviceManager::getSourcesInfo()
 {
     if (!isAvailable())
-        return TrackSourceInfoVector();
+        return Vector<CaptureDevice>();
 
-    return CaptureDeviceManager::getSourcesInfo(requestOrigin);
+    return CaptureDeviceManager::getSourcesInfo();
 }
 
 bool AVCaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::Type type, const MediaConstraints& constraints, const CaptureSessionInfo* session, String& invalidConstraint)

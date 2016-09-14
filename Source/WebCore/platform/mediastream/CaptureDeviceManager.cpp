@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,16 +44,15 @@ CaptureDeviceManager::~CaptureDeviceManager()
 {
 }
 
-Vector<RefPtr<TrackSourceInfo>> CaptureDeviceManager::getSourcesInfo(const String& requestOrigin)
+Vector<CaptureDevice> CaptureDeviceManager::getSourcesInfo()
 {
-    UNUSED_PARAM(requestOrigin);
-    Vector<RefPtr<TrackSourceInfo>> sourcesInfo;
+    Vector<CaptureDevice> sourcesInfo;
     for (auto captureDevice : captureDeviceList()) {
         if (!captureDevice.m_enabled || captureDevice.m_sourceType == RealtimeMediaSource::None)
             continue;
 
-        TrackSourceInfo::SourceKind trackSourceType = captureDevice.m_sourceType == RealtimeMediaSource::Video ? TrackSourceInfo::Video : TrackSourceInfo::Audio;
-        sourcesInfo.append(TrackSourceInfo::create(captureDevice.m_persistentDeviceID, captureDevice.m_sourceId, trackSourceType, captureDevice.m_localizedName, captureDevice.m_groupID));
+        CaptureDevice::SourceKind kind = captureDevice.m_sourceType == RealtimeMediaSource::Video ? CaptureDevice::SourceKind::Video : CaptureDevice::SourceKind::Audio;
+        sourcesInfo.append(CaptureDevice(captureDevice.m_persistentDeviceID, kind, captureDevice.m_localizedName, captureDevice.m_groupID));
     }
     LOG(Media, "CaptureDeviceManager::getSourcesInfo(%p), found %zu active devices", this, sourcesInfo.size());
     return sourcesInfo;

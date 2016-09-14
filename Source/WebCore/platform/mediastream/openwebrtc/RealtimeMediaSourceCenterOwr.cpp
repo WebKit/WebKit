@@ -36,12 +36,11 @@
 #if ENABLE(MEDIA_STREAM) && USE(OPENWEBRTC)
 #include "RealtimeMediaSourceCenterOwr.h"
 
+#include "CaptureDevice.h"
 #include "MediaStreamCreationClient.h"
 #include "MediaStreamPrivate.h"
-#include "MediaStreamTrackSourcesRequestClient.h"
 #include "NotImplemented.h"
 #include "OpenWebRTCUtilities.h"
-#include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "UUID.h"
 #include <owr/owr.h>
@@ -154,10 +153,10 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(MediaStreamCreationClient* 
     client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
-bool RealtimeMediaSourceCenterOwr::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>)
+Vector<CaptureDevice> RealtimeMediaSourceCenterOwr::getMediaStreamDevices()
 {
     notImplemented();
-    return false;
+    return Vector<CaptureDevice>();
 }
 
 void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
@@ -211,15 +210,6 @@ PassRefPtr<RealtimeMediaSource> RealtimeMediaSourceCenterOwr::firstSource(Realti
     return nullptr;
 }
 
-RefPtr<TrackSourceInfo> RealtimeMediaSourceCenterOwr::sourceWithUID(const String& UID, RealtimeMediaSource::Type, MediaConstraints*)
-{
-    for (auto& source : m_sourceMap.values()) {
-        if (source->id() == UID)
-            return TrackSourceInfo::create(source->persistentID(), source->id(), source->type() == RealtimeMediaSource::Type::Video ? TrackSourceInfo::SourceKind::Video : TrackSourceInfo::SourceKind::Audio , source->name());
-    }
-
-    return nullptr;
-}
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM) && USE(OPENWEBRTC)

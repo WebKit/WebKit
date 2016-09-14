@@ -29,6 +29,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDevice.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -83,20 +84,6 @@ void MediaDevicesRequest::start()
     m_permissionCheck->start();
 }
 
-void MediaDevicesRequest::didCompletePermissionCheck(const String& salt, bool canAccess)
-{
-    RefPtr<UserMediaPermissionCheck> permissionCheckProtector = m_permissionCheck;
-    m_permissionCheck->setClient(nullptr);
-    m_permissionCheck = nullptr;
-
-    m_idHashSalt = salt;
-    m_havePersistentPermission = canAccess;
-
-    callOnMainThread([this, permissionCheckProtector = WTFMove(permissionCheckProtector)] {
-        RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(this);
-    });
-}
-
 static void hashString(SHA1& sha1, const String& string)
 {
     if (string.isEmpty())
@@ -129,8 +116,14 @@ String MediaDevicesRequest::hashID(const String& id)
     return SHA1::hexDigest(digest).data();
 }
 
-void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInfoVector& captureDevices)
+void MediaDevicesRequest::didCompletePermissionCheck(const String& salt, bool canAccess)
 {
+    m_permissionCheck->setClient(nullptr);
+    m_permissionCheck = nullptr;
+
+    m_idHashSalt = salt;
+    m_havePersistentPermission = canAccess;
+
     if (!scriptExecutionContext()) {
         m_protector = nullptr;
         return;
@@ -144,19 +137,18 @@ void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInf
     }
 
     Vector<RefPtr<MediaDeviceInfo>> devices;
+    auto captureDevices = RealtimeMediaSourceCenter::singleton().getMediaStreamDevices();
     for (auto& deviceInfo : captureDevices) {
-        String label = emptyString();
+        auto label = emptyString();
         if (m_havePersistentPermission || document.hasHadActiveMediaStreamTrack())
-            label = deviceInfo->label();
+            label = deviceInfo.label();
 
-        String id = hashID(deviceInfo->persistentId());
+        auto id = hashID(deviceInfo.persistentId());
         if (id.isEmpty())
             continue;
 
-        String groupId = hashID(deviceInfo->groupId());
-
-        auto deviceType = deviceInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
-
+        auto groupId = hashID(deviceInfo.groupId());
+        auto deviceType = deviceInfo.kind() == CaptureDevice::SourceKind::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
         devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
     }
 
@@ -164,17 +156,6 @@ void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInf
         protectedThis->m_promise.resolve(devices);
     });
     m_protector = nullptr;
-}
-
-const String& MediaDevicesRequest::requestOrigin() const
-{
-    if (scriptExecutionContext()) {
-        Document* document = downcast<Document>(scriptExecutionContext());
-        if (document)
-            return document->url();
-    }
-
-    return emptyString();
 }
 
 } // namespace WebCore

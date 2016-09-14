@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CaptureDeviceInfo_h
-#define CaptureDeviceInfo_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <RealtimeMediaSource.h>
-#include <wtf/text/WTFString.h>
+#include "CaptureDevice.h"
 
 namespace WebCore {
 
 struct CaptureDeviceInfo {
+public:
     String m_persistentDeviceID;
     String m_localizedName;
     String m_groupID;
@@ -52,8 +51,28 @@ public:
     virtual String bestSessionPresetForVideoDimensions(int /* width */, int /* height */) const { return emptyString(); }
 };
 
+class CaptureDeviceManager {
+public:
+    virtual Vector<CaptureDeviceInfo>& captureDeviceList() = 0;
+    virtual void refreshCaptureDeviceList() { }
+    virtual Vector<CaptureDevice> getSourcesInfo();
+    virtual Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, MediaConstraints&);
+    virtual RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*);
+
+    virtual bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, const MediaConstraints&, const CaptureSessionInfo*, String&);
+
+protected:
+    virtual ~CaptureDeviceManager();
+    virtual RealtimeMediaSource* createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, MediaConstraints*) = 0;
+
+    virtual CaptureSessionInfo defaultCaptureSession() const { return CaptureSessionInfo(); }
+    virtual bool sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type, const MediaConstraint&);
+    virtual bool isSupportedFrameRate(const MediaConstraint&) const;
+
+    bool captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDeviceInfo& source);
+    CaptureDeviceInfo* bestDeviceForFacingMode(RealtimeMediaSourceSettings::VideoFacingMode);
+};
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif /* CaptureDeviceInfo_h */

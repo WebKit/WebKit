@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+class CaptureDevice;
 class MediaStreamPrivate;
 class RealtimeMediaSource;
 class MediaStreamSourcesQueryClient;
@@ -58,10 +59,9 @@ public:
     void createMediaStream(PassRefPtr<MediaStreamCreationClient>, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints) final;
     void createMediaStream(MediaStreamCreationClient*, const String& audioDeviceID, const String& videoDeviceID) final;
 
-    bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) final;
+    Vector<CaptureDevice> getMediaStreamDevices() final;
 
     void mediaSourcesAvailable(GList* sources);
-    RefPtr<TrackSourceInfo> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) final;
 
 private:
     PassRefPtr<RealtimeMediaSource> firstSource(RealtimeMediaSource::Type);

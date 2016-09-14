@@ -1,3 +1,12 @@
+2016-09-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Minor cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=161976
+
+        Reviewed by Youenn Fablet and Dean Jackson.
+
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+
 2016-09-14  Beth Dakin  <bdakin@apple.com>
 
         Add needsHiddenContentEditableQuirk and send it to the UIProcess

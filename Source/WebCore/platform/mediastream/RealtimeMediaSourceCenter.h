@@ -41,9 +41,9 @@
 
 namespace WebCore {
 
+class CaptureDevice;
 class MediaConstraints;
 class MediaStreamCreationClient;
-class MediaStreamTrackSourcesRequestClient;
 class RealtimeMediaSourceSettings;
 class RealtimeMediaSourceSupportedConstraints;
 class TrackSourceInfo;
@@ -61,10 +61,8 @@ public:
 
     virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints) = 0;
 
-    virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) = 0;
+    virtual Vector<CaptureDevice> getMediaStreamDevices() = 0;
     
-    virtual RefPtr<TrackSourceInfo> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) = 0;
-
     virtual const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
 protected:

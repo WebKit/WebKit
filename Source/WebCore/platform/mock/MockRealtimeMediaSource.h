@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class TrackSourceInfo;
+class CaptureDevice;
 
 class MockRealtimeMediaSource : public RealtimeMediaSource {
 public:
@@ -49,7 +49,8 @@ public:
     static const AtomicString& mockVideoSourcePersistentID();
     static const AtomicString& mockVideoSourceName();
 
-    static RefPtr<TrackSourceInfo> trackSourceWithUID(const String&, MediaConstraints*);
+    static CaptureDevice audioDeviceInfo();
+    static CaptureDevice videoDeviceInfo();
 
 protected:
     MockRealtimeMediaSource(const String& id, Type, const String& name);

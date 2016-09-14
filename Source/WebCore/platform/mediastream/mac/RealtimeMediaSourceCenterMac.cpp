@@ -36,7 +36,6 @@
 #include "AVCaptureDeviceManager.h"
 #include "MediaStreamCreationClient.h"
 #include "MediaStreamPrivate.h"
-#include "MediaStreamTrackSourcesRequestClient.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -160,24 +159,9 @@ void RealtimeMediaSourceCenterMac::createMediaStream(MediaStreamCreationClient* 
     client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
-bool RealtimeMediaSourceCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
+Vector<CaptureDevice> RealtimeMediaSourceCenterMac::getMediaStreamDevices()
 {
-    RefPtr<MediaStreamTrackSourcesRequestClient> requestClient = prpClient;
-    TrackSourceInfoVector sources = AVCaptureDeviceManager::singleton().getSourcesInfo(requestClient->requestOrigin());
-
-    callOnMainThread([this, requestClient = WTFMove(requestClient), sources = WTFMove(sources)] {
-        requestClient->didCompleteTrackSourceInfoRequest(sources);
-    });
-
-    return true;
-}
-
-RefPtr<TrackSourceInfo> RealtimeMediaSourceCenterMac::sourceWithUID(const String& UID, RealtimeMediaSource::Type type, MediaConstraints* constraints)
-{
-    RefPtr<RealtimeMediaSource> mediaSource = AVCaptureDeviceManager::singleton().sourceWithUID(UID, type, constraints);
-    if (!mediaSource)
-        return nullptr;
-    return TrackSourceInfo::create(mediaSource->persistentID(), mediaSource->id(), mediaSource->type() == RealtimeMediaSource::Type::Video ? TrackSourceInfo::SourceKind::Video : TrackSourceInfo::SourceKind::Audio, mediaSource->name());
+    return AVCaptureDeviceManager::singleton().getSourcesInfo();
 }
 
 } // namespace WebCore

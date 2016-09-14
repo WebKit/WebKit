@@ -32,7 +32,6 @@
 #include "ActiveDOMObject.h"
 #include "MediaDevices.h"
 #include "MediaStreamCreationClient.h"
-#include "MediaStreamTrackSourcesRequestClient.h"
 #include "UserMediaPermissionCheck.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +44,7 @@ class SecurityOrigin;
 
 typedef int ExceptionCode;
 
-class MediaDevicesRequest : public MediaStreamTrackSourcesRequestClient, public UserMediaPermissionCheckClient, public ContextDestructionObserver {
+class MediaDevicesRequest : public RefCounted<MediaDevicesRequest>, public UserMediaPermissionCheckClient, public ContextDestructionObserver {
 public:
     static RefPtr<MediaDevicesRequest> create(Document*, MediaDevices::EnumerateDevicesPromise&&, ExceptionCode&);
 
@@ -57,10 +56,6 @@ public:
 
 private:
     MediaDevicesRequest(ScriptExecutionContext*, MediaDevices::EnumerateDevicesPromise&&);
-
-    // MediaStreamTrackSourcesRequestClient
-    const String& requestOrigin() const final;
-    void didCompleteTrackSourceInfoRequest(const TrackSourceInfoVector&) final;
 
     // ContextDestructionObserver
     void contextDestroyed() final;
