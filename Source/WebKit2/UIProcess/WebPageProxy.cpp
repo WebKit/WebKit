@@ -4289,6 +4289,11 @@ void WebPageProxy::setHasHadSelectionChangesFromUserInteraction(bool hasHadUserS
     m_hasHadSelectionChangesFromUserInteraction = hasHadUserSelectionChanges;
 }
 
+void WebPageProxy::setNeedsHiddenContentEditableQuirk(bool needsHiddenContentEditableQuirk)
+{
+    m_needsHiddenContentEditableQuirk = needsHiddenContentEditableQuirk;
+}
+
 // BackForwardList
 
 void WebPageProxy::backForwardAddItem(uint64_t itemID)

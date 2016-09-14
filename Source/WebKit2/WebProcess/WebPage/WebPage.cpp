@@ -2646,6 +2646,10 @@ void WebPage::didStartPageTransition()
 #if PLATFORM(MAC)
     if (hasPreviouslyFocusedDueToUserInteraction)
         send(Messages::WebPageProxy::SetHasHadSelectionChangesFromUserInteraction(m_hasEverFocusedElementDueToUserInteractionSincePageTransition));
+    if (m_needsHiddenContentEditableQuirk) {
+        m_needsHiddenContentEditableQuirk = false;
+        send(Messages::WebPageProxy::SetNeedsHiddenContentEditableQuirk(m_needsHiddenContentEditableQuirk));
+    }
 #endif
 }
 
@@ -4791,6 +4795,18 @@ void WebPage::cancelComposition()
 }
 #endif
 
+#if PLATFORM(MAC)
+static bool needsHiddenContentEditableQuirk(bool needsQuirks, const URL& url)
+{
+    if (!needsQuirks)
+        return false;
+
+    String host = url.host();
+    String path = url.path();
+    return equalLettersIgnoringASCIICase(host, "docs.google.com") || (equalLettersIgnoringASCIICase(host, "www.icloud.com") && path.contains("/pages/"));
+}
+#endif
+
 void WebPage::didChangeSelection()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -4806,8 +4822,13 @@ void WebPage::didChangeSelection()
     bool hasPreviouslyFocusedDueToUserInteraction = m_hasEverFocusedElementDueToUserInteractionSincePageTransition;
     m_hasEverFocusedElementDueToUserInteractionSincePageTransition |= m_userIsInteracting;
 
-    if (!hasPreviouslyFocusedDueToUserInteraction && m_hasEverFocusedElementDueToUserInteractionSincePageTransition)
+    if (!hasPreviouslyFocusedDueToUserInteraction && m_hasEverFocusedElementDueToUserInteractionSincePageTransition) {
+        if (needsHiddenContentEditableQuirk(m_page->settings().needsSiteSpecificQuirks(), m_page->mainFrame().document()->url())) {
+            m_needsHiddenContentEditableQuirk = true;
+            send(Messages::WebPageProxy::SetNeedsHiddenContentEditableQuirk(m_needsHiddenContentEditableQuirk));
+        }
         send(Messages::WebPageProxy::SetHasHadSelectionChangesFromUserInteraction(m_hasEverFocusedElementDueToUserInteractionSincePageTransition));
+    }
 
     // Abandon the current inline input session if selection changed for any other reason but an input method direct action.
     // FIXME: This logic should be in WebCore.
