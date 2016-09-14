@@ -1,5 +1,11 @@
 2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        More unreviewed test gardening for iOS 10.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening for iOS 10.
 
         * platform/ios-simulator/TestExpectations:

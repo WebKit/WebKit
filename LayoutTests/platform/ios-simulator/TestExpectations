@@ -8,15 +8,11 @@
 
 accessibility/ios-simulator [ Pass ]
 displaylists [ Pass ]
-quicklook [ Pass ]
 http/tests/quicklook [ Pass ]
 media/controls/ipad [ Pass ]
 
 fast/text-autosizing/ios [ Pass ]
 fast/zooming/ios [ Pass ]
-
-# <rdar://problem/22898927> Crashes in iWorkImport.framework
-quicklook/pages.html [ Pass Crash ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
