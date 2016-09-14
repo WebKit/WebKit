@@ -907,7 +907,8 @@ const char* YarrPattern::errorMessage(YarrPattern::ErrorCode error)
         REGEXP_ERROR_PREFIX "invalid unicode {} escape",
         REGEXP_ERROR_PREFIX "invalid escaped character for unicode pattern",
         REGEXP_ERROR_PREFIX "too many nested disjunctions",
-        REGEXP_ERROR_PREFIX "pattern exceeds string length limits"
+        REGEXP_ERROR_PREFIX "pattern exceeds string length limits",
+        REGEXP_ERROR_PREFIX "invalid flags"
     };
 
     return errorMessages[error];
@@ -916,6 +917,9 @@ const char* YarrPattern::errorMessage(YarrPattern::ErrorCode error)
 const char* YarrPattern::compile(const String& patternString, void* stackLimit)
 {
     YarrPatternConstructor constructor(*this, stackLimit);
+
+    if (m_flags == InvalidFlags)
+        return errorMessage(InvalidRegularExpressionFlags);
 
     if (const char* error = parse(constructor, patternString, unicode()))
         return error;

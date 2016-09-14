@@ -1,3 +1,20 @@
+2016-09-14  Michael Saboff  <msaboff@apple.com>
+
+        YARR doesn't check for invalid flags for literal regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=161995
+
+        Reviewed by Mark Lam.
+
+        Added a new error and a check that the flags are valid when we create a
+        literal regular expression.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::errorMessage):
+        (JSC::Yarr::YarrPattern::compile):
+        * yarr/YarrPattern.h:
+
 2016-09-14  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix the Windows build.

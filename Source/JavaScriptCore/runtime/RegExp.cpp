@@ -223,7 +223,7 @@ void RegExp::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm.stackLimit());
-    if (m_constructionError)
+    if (!isValid())
         m_state = ParseError;
     else
         m_numSubpatterns = pattern.m_numSubpatterns;

@@ -321,6 +321,7 @@ struct YarrPattern {
         InvalidIdentityEscape,
         TooManyDisjunctions,
         OffsetTooLarge,
+        InvalidRegularExpressionFlags,
         NumberOfErrorCodes
     };
     
