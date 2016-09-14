@@ -954,6 +954,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         }
 
         setLength(exec, result, 0);
+        setLength(exec, thisObj, length);
         return JSValue::encode(result);
     }
 
