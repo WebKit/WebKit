@@ -267,7 +267,6 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm)
 {
     if (!m_vm)
         return;
-    wtfThreadData().resetCurrentAtomicStringTable();
     RELEASE_ASSERT(!m_vm->apiLock().currentThreadIsHoldingLock() || !m_vm->isCollectorBusy());
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
@@ -287,7 +286,6 @@ JSLock::DropAllLocks::~DropAllLocks()
     if (!m_vm)
         return;
     m_vm->apiLock().grabAllLocks(this, m_droppedLockCount);
-    wtfThreadData().setCurrentAtomicStringTable(m_vm->atomicStringTable());
 }
 
 } // namespace JSC
