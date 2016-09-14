@@ -30,7 +30,6 @@
 #include "ElementData.h"
 #include "HTMLNames.h"
 #include "RegionOversetState.h"
-#include "ScrollToOptions.h"
 #include "ScrollTypes.h"
 #include "SimulatedClickOptions.h"
 #include "StyleChange.h"
@@ -136,6 +135,11 @@ public:
     WEBCORE_EXPORT void scrollIntoView(bool alignToTop = true);
     WEBCORE_EXPORT void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
     WEBCORE_EXPORT void scrollIntoViewIfNotVisible(bool centerIfNotVisible = true);
+
+    struct ScrollToOptions {
+        Optional<double> left;
+        Optional<double> top;
+    };
 
     void scrollBy(const ScrollToOptions&);
     void scrollBy(double x, double y);

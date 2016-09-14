@@ -1009,7 +1009,7 @@ sub GenerateDictionaryImplementationContent
             $comma = ", ";
         }
 
-        $result .= "template<> inline Optional<$className> convertDictionary<$className>(ExecState& state, JSValue value)\n";
+        $result .= "template<> Optional<$className> convertDictionary<$className>(ExecState& state, JSValue value)\n";
         $result .= "{\n";
         $result .= "    VM& vm = state.vm();\n";
         $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";

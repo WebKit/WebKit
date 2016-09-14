@@ -306,7 +306,7 @@ void HTMLBodyElement::scrollTo(const ScrollToOptions& options)
         if (!window)
             return;
 
-        window->scrollTo(options);
+        window->scrollTo({ options.left, options.top });
         return;
     }
     return HTMLElement::scrollTo(options);
