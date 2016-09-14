@@ -579,6 +579,15 @@ static void testObjectiveCAPIMain()
     }
 
     @autoreleasepool {
+        JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
+        JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
+        TestObject* testObject = [TestObject testObject];
+        context[@"testObject"] = testObject;
+        [context evaluateScript:@"result = 0; callbackResult = 0; Promise.resolve(42).then(function (value) { result = value; }); callbackResult = testObject.getString();"];
+        checkResult(@"Microtask is drained with same VM", [context[@"result"]  isEqualToObject:@42] && [context[@"callbackResult"] isEqualToObject:@"42"]);
+    }
+
+    @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
         JSValue *result = [context evaluateScript:@"({ x:42 })"];
         checkResult(@"({ x:42 })", result.isObject && [result[@"x"] isEqualToObject:@42]);

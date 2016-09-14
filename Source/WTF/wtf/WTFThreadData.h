@@ -71,11 +71,6 @@ public:
         return oldAtomicStringTable;
     }
 
-    void resetCurrentAtomicStringTable()
-    {
-        m_currentAtomicStringTable = m_defaultAtomicStringTable;
-    }
-
     const StackBounds& stack()
     {
         // We need to always get a fresh StackBounds from the OS due to how fibers work.

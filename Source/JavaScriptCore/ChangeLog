@@ -1,3 +1,34 @@
+2016-09-13  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205895. rdar://problem/28287070
+
+    2016-09-13  Michael Saboff  <msaboff@apple.com>
+
+            Promises aren't resolved properly when making a ObjC API callback
+            https://bugs.webkit.org/show_bug.cgi?id=161929
+
+            Reviewed by Geoffrey Garen.
+
+            When we go to call out to an Objective C function registered via the API,
+            we first drop all JSC locks to make the call.  As part of dropping the locks,
+            we drain the microtask queue that is used among other things for handling deferred
+            promise resolution.  The DropAllLocks scope class that drops the locks while in
+            scope, resets the current thread's AtomicStringTable to the default table.  This
+            is wrong for two reasons, first it happens before we drain the microtask queue and
+            second it isn't needed as JSLock::willReleaseLock() restores the current thread's
+            AtomicStringTable to the table before the lock was acquired.
+
+            In fact, the manipulation of the current thread's AtomicStringTable is already
+            properly handled as a stack in JSLock::didAcquireLock() and willReleaseLock().
+            Therefore the manipulation of the AtomicStringTable in DropAllLocks constructor
+            and destructor should be removed.
+
+            * API/tests/testapi.mm:
+            (testObjectiveCAPIMain): Added a new test.
+            * runtime/JSLock.cpp:
+            (JSC::JSLock::DropAllLocks::DropAllLocks):
+            (JSC::JSLock::DropAllLocks::~DropAllLocks):
+
 2016-09-09  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204403. rdar://problem/27991568
