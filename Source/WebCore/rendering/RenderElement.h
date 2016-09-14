@@ -161,6 +161,11 @@ public:
     bool hasClipOrOverflowClip() const { return hasClip() || hasOverflowClip(); }
     bool hasClipPath() const { return style().clipPath(); }
     bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
+    bool hasOutlineAnnotation() const;
+    bool hasOutline() const { return style().hasOutline() || hasOutlineAnnotation(); }
+    bool hasSelfPaintingLayer() const;
+
+    bool checkForRepaintDuringLayout() const;
 
     // anchorRect() is conceptually similar to absoluteBoundingBoxRect(), but is intended for scrolling to an anchor.
     // For inline renderers, this gets the logical top left of the first leaf child and the logical bottom right of the
@@ -176,6 +181,7 @@ public:
         return false;
 #endif
     }
+
 
 #if ENABLE(CSS_COMPOSITING)
     bool hasBlendMode() const { return style().hasBlendMode(); }

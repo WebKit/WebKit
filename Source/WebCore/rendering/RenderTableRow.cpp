@@ -272,4 +272,44 @@ std::unique_ptr<RenderTableRow> RenderTableRow::createAnonymousWithParentRendere
     return RenderTableRow::createTableRowWithStyle(parent.document(), parent.style());
 }
 
+void RenderTableRow::destroyAndCollapseAnonymousSiblingRows()
+{
+    auto collapseAnonymousSiblingRows = [&] {
+        auto* section = this->section();
+        if (!section)
+            return;
+
+        // All siblings generated?
+        for (auto* current = section->firstRow(); current; current = current->nextRow()) {
+            if (current == this)
+                continue;
+            if (!current->isAnonymous())
+                return;
+        }
+
+        RenderTableRow* rowToInsertInto = nullptr;
+        auto* currentRow = section->firstRow();
+        while (currentRow) {
+            if (currentRow == this) {
+                currentRow = currentRow->nextRow();
+                continue;
+            }
+            if (!rowToInsertInto) {
+                rowToInsertInto = currentRow;
+                currentRow = currentRow->nextRow();
+                continue;
+            }
+            currentRow->moveAllChildrenTo(rowToInsertInto);
+            auto* destroyThis = currentRow;
+            currentRow = currentRow->nextRow();
+            destroyThis->destroy();
+        }
+        if (rowToInsertInto)
+            rowToInsertInto->setNeedsLayout();
+    };
+
+    collapseAnonymousSiblingRows();
+    destroy();
+}
+
 } // namespace WebCore

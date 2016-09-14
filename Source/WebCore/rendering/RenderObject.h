@@ -461,7 +461,6 @@ public:
     VisibleInViewportState visibleInViewportState() { return m_bitfields.hasRareData() ? rareData().visibleInViewportState() : VisibilityUnknown; }
 
     bool hasLayer() const { return m_bitfields.hasLayer(); }
-    bool hasSelfPaintingLayer() const;
 
     enum BoxDecorationState {
         NoBoxDecorations,
@@ -471,7 +470,6 @@ public:
     };
     bool hasVisibleBoxDecorations() const { return m_bitfields.boxDecorationState() != NoBoxDecorations; }
     bool backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset);
-    bool hasEntirelyFixedBackground() const;
 
     bool needsLayout() const
     {
@@ -519,9 +517,6 @@ public:
 
     Document& document() const { return m_node.document(); }
     Frame& frame() const;
-
-    bool hasOutlineAnnotation() const;
-    bool hasOutline() const { return style().hasOutline() || hasOutlineAnnotation(); }
 
     // Returns the object containing this one. Can be different from parent for positioned elements.
     // If repaintContainer and repaintContainerSkipped are not null, on return *repaintContainerSkipped
@@ -677,8 +672,6 @@ public:
     // Repaint a slow repaint object, which, at this time, means we are repainting an object with background-attachment:fixed.
     void repaintSlowRepaintObject() const;
 
-    bool checkForRepaintDuringLayout() const;
-
     // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's
     // coordinate space.  This method deals with outlines and overflow.
     LayoutRect absoluteClippedOverflowRect() const
@@ -735,7 +728,6 @@ public:
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return LayoutRect(); }
 
     virtual bool canBeSelectionLeaf() const { return false; }
-    bool hasSelectedChildren() const { return selectionState() != SelectionNone; }
 
     // Whether or not a given block needs to paint selection gaps.
     virtual bool shouldPaintSelectionGaps() const { return false; }

@@ -62,7 +62,6 @@
 #include "RenderSVGResourceContainer.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
-#include "RenderTableSection.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -907,22 +906,7 @@ IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
 {
     return snappedIntRect(absoluteClippedOverflowRect());
 }
-
-bool RenderObject::hasSelfPaintingLayer() const
-{
-    if (!hasLayer())
-        return false;
-    auto* layer = downcast<RenderLayerModelObject>(*this).layer();
-    if (!layer)
-        return false;
-    return layer->isSelfPaintingLayer();
-}
     
-bool RenderObject::checkForRepaintDuringLayout() const
-{
-    return !document().view()->needsFullRepaint() && everHadLayout() && !hasSelfPaintingLayer();
-}
-
 LayoutRect RenderObject::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
 {
     LayoutRect r(clippedOverflowRectForRepaint(repaintContainer));
@@ -1374,16 +1358,6 @@ RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const
     return (frame().settings().shouldRespectImageOrientation() && is<HTMLImageElement>(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
 }
 
-bool RenderObject::hasOutlineAnnotation() const
-{
-    return node() && node()->isLink() && document().printing();
-}
-
-bool RenderObject::hasEntirelyFixedBackground() const
-{
-    return style().hasEntirelyFixedBackground();
-}
-
 static inline RenderElement* containerForElement(const RenderObject& renderer, const RenderLayerModelObject* repaintContainer, bool* repaintContainerSkipped)
 {
     // This method is extremely similar to containingBlock(), but with a few notable
@@ -1538,45 +1512,6 @@ void RenderObject::invalidateFlowThreadContainingBlockIncludingDescendants(Rende
         child.invalidateFlowThreadContainingBlockIncludingDescendants(flowThread);
 }
 
-static void collapseAnonymousTableRowsIfNeeded(const RenderObject& rendererToBeDestroyed)
-{
-    if (!is<RenderTableRow>(rendererToBeDestroyed))
-        return;
-
-    auto& rowToBeDestroyed = downcast<RenderTableRow>(rendererToBeDestroyed);
-    auto* section = downcast<RenderTableSection>(rowToBeDestroyed.parent());
-    if (!section)
-        return;
-
-    // All siblings generated?
-    for (auto* current = section->firstRow(); current; current = current->nextRow()) {
-        if (current == &rendererToBeDestroyed)
-            continue;
-        if (!current->isAnonymous())
-            return;
-    }
-
-    RenderTableRow* rowToInsertInto = nullptr;
-    auto* currentRow = section->firstRow();
-    while (currentRow) {
-        if (currentRow == &rendererToBeDestroyed) {
-            currentRow = currentRow->nextRow();
-            continue;
-        }
-        if (!rowToInsertInto) {
-            rowToInsertInto = currentRow;
-            currentRow = currentRow->nextRow();
-            continue;
-        }
-        currentRow->moveAllChildrenTo(rowToInsertInto);
-        auto* destroyThis = currentRow;
-        currentRow = currentRow->nextRow();
-        destroyThis->destroy();
-    }
-    if (rowToInsertInto)
-        rowToInsertInto->setNeedsLayout();
-}
-
 void RenderObject::destroyAndCleanupAnonymousWrappers()
 {
     // If the tree is destroyed, there is no need for a clean-up phase.
@@ -1597,7 +1532,12 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
         destroyRoot = destroyRootParent;
         destroyRootParent = destroyRootParent->parent();
     }
-    collapseAnonymousTableRowsIfNeeded(*destroyRoot);
+
+    if (is<RenderTableRow>(*destroyRoot)) {
+        downcast<RenderTableRow>(*destroyRoot).destroyAndCollapseAnonymousSiblingRows();
+        return;
+    }
+
     destroyRoot->destroy();
     // WARNING: |this| is deleted here.
 }

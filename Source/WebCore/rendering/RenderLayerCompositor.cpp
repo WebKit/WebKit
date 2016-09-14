@@ -3233,7 +3233,7 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
         rootBackgroundTransparencyChanged();
 
     bool hadFixedBackground = oldStyle && oldStyle->hasEntirelyFixedBackground();
-    if (hadFixedBackground != renderer.hasEntirelyFixedBackground()) {
+    if (hadFixedBackground != renderer.style().hasEntirelyFixedBackground()) {
         setCompositingLayersNeedRebuild();
         scheduleCompositingLayerUpdate();
     }

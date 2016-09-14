@@ -2173,6 +2173,24 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
         downcast<RenderBoxModelObject>(*this).continuation()->updateOutlineAutoAncestor(hasOutlineAuto);
 }
 
+bool RenderElement::hasOutlineAnnotation() const
+{
+    return element() && element()->isLink() && document().printing();
+}
+
+bool RenderElement::hasSelfPaintingLayer() const
+{
+    if (!hasLayer())
+        return false;
+    auto& layerModelObject = downcast<RenderLayerModelObject>(*this);
+    return layerModelObject.hasSelfPaintingLayer();
+}
+
+bool RenderElement::checkForRepaintDuringLayout() const
+{
+    return !document().view()->needsFullRepaint() && everHadLayout() && !hasSelfPaintingLayer();
+}
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
 {
