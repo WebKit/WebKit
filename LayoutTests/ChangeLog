@@ -1,5 +1,14 @@
 2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed test gardening for iOS 10.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/editing/deleting/delete-emoji-expected.txt:
+        * platform/ios-simulator/fast/text/font-weights-expected.txt:
+        * platform/ios-simulator/fast/text/system-font-weight-expected.txt:
+
+2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline js/dom/global-constructors-attributes.html for Yosemite.
 
         Unreviewed test gardening.

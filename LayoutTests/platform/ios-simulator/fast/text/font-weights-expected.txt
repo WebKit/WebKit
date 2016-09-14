@@ -745,20 +745,20 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 395x22
           text run at (0,0) width 395: "Font: Avenir-LightOblique Weight: 900 Style: normal"
       RenderBlock {DIV} at (0,5304) size 784x22
-        RenderText {#text} at (0,0) size 377x22
-          text run at (0,0) width 377: "Font: Avenir-BookOblique Weight: 100 Style: normal"
+        RenderText {#text} at (0,0) size 376x22
+          text run at (0,0) width 376: "Font: Avenir-BookOblique Weight: 100 Style: normal"
       RenderBlock {DIV} at (0,5326) size 784x22
-        RenderText {#text} at (0,0) size 377x22
-          text run at (0,0) width 377: "Font: Avenir-BookOblique Weight: 200 Style: normal"
+        RenderText {#text} at (0,0) size 376x22
+          text run at (0,0) width 376: "Font: Avenir-BookOblique Weight: 200 Style: normal"
       RenderBlock {DIV} at (0,5348) size 784x22
-        RenderText {#text} at (0,0) size 377x22
-          text run at (0,0) width 377: "Font: Avenir-BookOblique Weight: 300 Style: normal"
+        RenderText {#text} at (0,0) size 376x22
+          text run at (0,0) width 376: "Font: Avenir-BookOblique Weight: 300 Style: normal"
       RenderBlock {DIV} at (0,5370) size 784x22
-        RenderText {#text} at (0,0) size 377x22
-          text run at (0,0) width 377: "Font: Avenir-BookOblique Weight: 400 Style: normal"
+        RenderText {#text} at (0,0) size 376x22
+          text run at (0,0) width 376: "Font: Avenir-BookOblique Weight: 400 Style: normal"
       RenderBlock {DIV} at (0,5392) size 784x22
-        RenderText {#text} at (0,0) size 377x22
-          text run at (0,0) width 377: "Font: Avenir-BookOblique Weight: 500 Style: normal"
+        RenderText {#text} at (0,0) size 376x22
+          text run at (0,0) width 376: "Font: Avenir-BookOblique Weight: 500 Style: normal"
       RenderBlock {DIV} at (0,5414) size 784x22
         RenderText {#text} at (0,0) size 399x22
           text run at (0,0) width 399: "Font: Avenir-BookOblique Weight: 600 Style: normal"
@@ -1015,20 +1015,20 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 378x22
           text run at (0,0) width 378: "Font: Avenir-LightOblique Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,7284) size 784x22
-        RenderText {#text} at (0,0) size 360x22
-          text run at (0,0) width 360: "Font: Avenir-BookOblique Weight: 100 Style: italic"
+        RenderText {#text} at (0,0) size 359x22
+          text run at (0,0) width 359: "Font: Avenir-BookOblique Weight: 100 Style: italic"
       RenderBlock {DIV} at (0,7306) size 784x22
-        RenderText {#text} at (0,0) size 360x22
-          text run at (0,0) width 360: "Font: Avenir-BookOblique Weight: 200 Style: italic"
+        RenderText {#text} at (0,0) size 359x22
+          text run at (0,0) width 359: "Font: Avenir-BookOblique Weight: 200 Style: italic"
       RenderBlock {DIV} at (0,7328) size 784x22
-        RenderText {#text} at (0,0) size 360x22
-          text run at (0,0) width 360: "Font: Avenir-BookOblique Weight: 300 Style: italic"
+        RenderText {#text} at (0,0) size 359x22
+          text run at (0,0) width 359: "Font: Avenir-BookOblique Weight: 300 Style: italic"
       RenderBlock {DIV} at (0,7350) size 784x22
-        RenderText {#text} at (0,0) size 360x22
-          text run at (0,0) width 360: "Font: Avenir-BookOblique Weight: 400 Style: italic"
+        RenderText {#text} at (0,0) size 359x22
+          text run at (0,0) width 359: "Font: Avenir-BookOblique Weight: 400 Style: italic"
       RenderBlock {DIV} at (0,7372) size 784x22
-        RenderText {#text} at (0,0) size 360x22
-          text run at (0,0) width 360: "Font: Avenir-BookOblique Weight: 500 Style: italic"
+        RenderText {#text} at (0,0) size 359x22
+          text run at (0,0) width 359: "Font: Avenir-BookOblique Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,7394) size 784x22
         RenderText {#text} at (0,0) size 382x22
           text run at (0,0) width 382: "Font: Avenir-BookOblique Weight: 600 Style: italic"
