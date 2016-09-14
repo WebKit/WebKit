@@ -1,5 +1,13 @@
 2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt:
+
+2016-09-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         More unreviewed test gardening for iOS 10.
 
         * platform/ios-simulator/TestExpectations:
