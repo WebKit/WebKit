@@ -1,3 +1,13 @@
+2016-09-13  Alex Christensen  <achristensen@webkit.org>
+
+        Implement URLSearchParams
+        https://bugs.webkit.org/show_bug.cgi?id=161920
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::split): Added.
+
 2016-09-12  Filip Pizlo  <fpizlo@apple.com>
 
         ParkingLot is going to have a bad time with threads dying

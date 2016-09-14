@@ -141,6 +141,21 @@ private:
     unsigned m_indexEnd;
 };
 
+Vector<StringView> StringView::split(UChar separator)
+{
+    Vector<StringView> result;
+    unsigned startPos = 0;
+    size_t endPos;
+    while ((endPos = find(separator, startPos)) != notFound) {
+        if (startPos != endPos)
+            result.append(substring(startPos, endPos - startPos));
+        startPos = endPos + 1;
+    }
+    if (startPos != length())
+        result.append(substring(startPos));
+    return result;
+}
+
 StringView::GraphemeClusters::Iterator::Iterator(const StringView& stringView, unsigned index)
     : m_impl(std::make_unique<Impl>(stringView, stringView.isNull() ? Nullopt : Optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
 {

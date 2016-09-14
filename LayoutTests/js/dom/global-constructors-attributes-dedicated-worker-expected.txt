@@ -244,6 +244,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('get
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URLSearchParams').value is URLSearchParams
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URLSearchParams').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URLSearchParams').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URLSearchParams').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URLSearchParams').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Uint16Array').value is Uint16Array
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Uint16Array').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Uint16Array').hasOwnProperty('set') is false

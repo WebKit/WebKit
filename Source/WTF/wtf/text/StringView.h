@@ -115,6 +115,7 @@ public:
     void getCharactersWithUpconvert(UChar*) const;
 
     StringView substring(unsigned start, unsigned length = std::numeric_limits<unsigned>::max()) const;
+    WTF_EXPORT_STRING_API Vector<StringView> split(UChar);
 
     size_t find(UChar, unsigned start = 0) const;
     size_t find(CharacterMatchFunction, unsigned start = 0) const;

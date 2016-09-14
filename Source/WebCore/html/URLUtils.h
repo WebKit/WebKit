@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef URLUtils_h
-#define URLUtils_h
+#pragma once
 
 #include "SecurityOrigin.h"
 
@@ -293,5 +292,3 @@ void URLUtils<T>::setHash(const String& value)
 }
 
 } // namespace WebCore
-
-#endif // URLUtils_h

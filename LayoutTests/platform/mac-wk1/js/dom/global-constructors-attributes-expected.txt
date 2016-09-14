@@ -2108,6 +2108,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('get') is fal
 PASS Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'URL').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'URL').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'URLSearchParams').value is URLSearchParams
+PASS Object.getOwnPropertyDescriptor(global, 'URLSearchParams').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'URLSearchParams').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'URLSearchParams').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'URLSearchParams').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Uint16Array').value is Uint16Array
 PASS Object.getOwnPropertyDescriptor(global, 'Uint16Array').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Uint16Array').hasOwnProperty('set') is false

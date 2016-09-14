@@ -39,4 +39,5 @@
     attribute USVString pathname;
     attribute USVString hash;
     attribute USVString search;
+    [CachedAttribute] readonly attribute URLSearchParams searchParams;
 };

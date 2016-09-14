@@ -34,6 +34,7 @@
 #include "PublicURLManager.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
+#include "URLSearchParams.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -82,6 +83,11 @@ void DOMURL::setHref(const String& url)
     m_url = URL(m_baseURL, url);
 }
 
+void DOMURL::setQuery(const String& query)
+{
+    m_url.setQuery(query);
+}
+
 void DOMURL::setHref(const String& url, ExceptionCode& ec)
 {
     setHref(url);
@@ -107,6 +113,11 @@ String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, U
     return publicURL.string();
 }
 
+Ref<URLSearchParams> DOMURL::searchParams()
+{
+    return URLSearchParams::create(m_url.query(), this);
+}
+    
 void DOMURL::revokeObjectURL(ScriptExecutionContext& scriptExecutionContext, const String& urlString)
 {
     URL url(URL(), urlString);

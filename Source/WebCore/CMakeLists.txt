@@ -538,6 +538,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/RadioNodeList.idl
     html/TextMetrics.idl
     html/TimeRanges.idl
+    html/URLSearchParams.idl
     html/URLUtils.idl
     html/ValidityState.idl
     html/VoidCallback.idl
@@ -1750,6 +1751,7 @@ set(WebCore_SOURCES
     html/TimeRanges.cpp
     html/TypeAhead.cpp
     html/URLInputType.cpp
+    html/URLSearchParams.cpp
     html/ValidationMessage.cpp
     html/WeekInputType.cpp
 

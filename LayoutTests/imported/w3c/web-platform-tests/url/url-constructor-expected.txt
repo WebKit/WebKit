@@ -1,8 +1,8 @@
 
-FAIL URL.searchParams getter assert_true: expected true got false
-FAIL URL.searchParams updating, clearing assert_true: expected true got false
-FAIL URL.searchParams setter, invalid values assert_throws: function "function () { url.searchParams = new URLSearchParams(urlS..." threw object "ReferenceError: Can't find variable: URLSearchParams" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL URL.searchParams and URL.search setters, update propagation assert_true: expected true got false
+PASS URL.searchParams getter 
+FAIL URL.searchParams updating, clearing assert_equals: expected "" but got "a=b"
+PASS URL.searchParams setter, invalid values 
+FAIL URL.searchParams and URL.search setters, update propagation assert_equals: expected "e=f&g=h" but got "a=b&c=d"
 PASS Loading data… 
 PASS Parsing: <http://example	.
 org> against <http://example.org/foo/bar> 
@@ -349,9 +349,9 @@ e
 ry#f	r
 a
 g> against <about:blank> 
-FAIL Parsing: <?a=b&c=d> against <http://example.org/foo/bar> assert_true: expected true got false
-FAIL Parsing: <??a=b&c=d> against <http://example.org/foo/bar> assert_true: expected true got false
-FAIL Parsing: <http:> against <http://example.org/foo/bar> assert_true: expected true got false
+PASS Parsing: <?a=b&c=d> against <http://example.org/foo/bar> 
+FAIL Parsing: <??a=b&c=d> against <http://example.org/foo/bar> assert_equals: searchParams expected "%3Fa=b&c=d" but got "a=b&c=d"
+PASS Parsing: <http:> against <http://example.org/foo/bar> 
 FAIL Parsing: <http:> against <https://example.org/foo/bar> assert_throws: function "function () {
           bURL(expected.input, expected.bas..." did not throw
 FAIL Parsing: <sc:> against <https://example.org/foo/bar> assert_equals: origin expected "null" but got "sc://"

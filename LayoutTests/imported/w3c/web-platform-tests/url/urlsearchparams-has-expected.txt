@@ -1,4 +1,4 @@
 
-FAIL Has basics Can't find variable: URLSearchParams
-FAIL has() following delete() Can't find variable: URLSearchParams
+PASS Has basics 
+PASS has() following delete() 
 

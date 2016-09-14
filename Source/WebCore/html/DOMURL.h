@@ -24,8 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMURL_h
-#define DOMURL_h
+#pragma once
 
 #include "ExceptionCode.h"
 #include "URL.h"
@@ -39,9 +38,9 @@ namespace WebCore {
 class Blob;
 class ScriptExecutionContext;
 class URLRegistrable;
+class URLSearchParams;
 
 class DOMURL : public RefCounted<DOMURL>, public URLUtils<DOMURL> {
-
 public:
     static Ref<DOMURL> create(const String& url, const String& base, ExceptionCode&);
     static Ref<DOMURL> create(const String& url, const DOMURL& base, ExceptionCode&);
@@ -50,6 +49,9 @@ public:
     URL href() const { return m_url; }
     void setHref(const String& url);
     void setHref(const String&, ExceptionCode&);
+    void setQuery(const String&);
+
+    Ref<URLSearchParams> searchParams();
 
     static String createObjectURL(ScriptExecutionContext&, Blob*);
     static void revokeObjectURL(ScriptExecutionContext&, const String&);
@@ -66,5 +68,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DOMURL_h

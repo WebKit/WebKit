@@ -2345,6 +2345,8 @@
 		5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */; };
 		5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */; };
 		5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */; };
+		5C5381B21D87D4B200E2EBE6 /* URLSearchParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5381B01D87D45700E2EBE6 /* URLSearchParams.cpp */; };
+		5C5381B51D87E08700E2EBE6 /* JSURLSearchParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5381B31D87E08100E2EBE6 /* JSURLSearchParams.cpp */; };
 		5C688AA11D380BF8000B54FA /* ThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */; };
 		5C688AA31D3814BF000B54FA /* SocketProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C688AA21D38126F000B54FA /* SocketProvider.cpp */; };
 		5C6E65421D5CEFB900F7862E /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E653F1D5CEDC900F7862E /* URLParser.cpp */; };
@@ -9392,6 +9394,12 @@
 		5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTShaderTextureLOD.idl; sourceTree = "<group>"; };
 		5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTShaderTextureLOD.cpp; sourceTree = "<group>"; };
 		5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTShaderTextureLOD.h; sourceTree = "<group>"; };
+		5C5381AE1D8791CA00E2EBE6 /* URLUtils.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = URLUtils.idl; sourceTree = "<group>"; };
+		5C5381AF1D8793E000E2EBE6 /* URLSearchParams.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = URLSearchParams.idl; sourceTree = "<group>"; };
+		5C5381B01D87D45700E2EBE6 /* URLSearchParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSearchParams.cpp; sourceTree = "<group>"; };
+		5C5381B11D87D45700E2EBE6 /* URLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSearchParams.h; sourceTree = "<group>"; };
+		5C5381B31D87E08100E2EBE6 /* JSURLSearchParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSURLSearchParams.cpp; path = JSURLSearchParams.cpp; sourceTree = "<group>"; };
+		5C5381B41D87E08100E2EBE6 /* JSURLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSURLSearchParams.h; path = JSURLSearchParams.h; sourceTree = "<group>"; };
 		5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		5C688AA21D38126F000B54FA /* SocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketProvider.cpp; sourceTree = "<group>"; };
 		5C6E653F1D5CEDC900F7862E /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
@@ -17774,6 +17782,10 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
+				5C5381B01D87D45700E2EBE6 /* URLSearchParams.cpp */,
+				5C5381B11D87D45700E2EBE6 /* URLSearchParams.h */,
+				5C5381AF1D8793E000E2EBE6 /* URLSearchParams.idl */,
+				5C5381AE1D8791CA00E2EBE6 /* URLUtils.idl */,
 				49484FAE102CF01E00187DD3 /* canvas */,
 				1A88A90117553CD7000C74F9 /* forms */,
 				97C1F5511228558800EDE616 /* parser */,
@@ -18882,6 +18894,8 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				5C5381B31D87E08100E2EBE6 /* JSURLSearchParams.cpp */,
+				5C5381B41D87E08100E2EBE6 /* JSURLSearchParams.h */,
 				31A795C41888BAD100382F90 /* JSANGLEInstancedArrays.cpp */,
 				31A795C51888BAD100382F90 /* JSANGLEInstancedArrays.h */,
 				BE8EF03E171C8FF9009B48C3 /* JSAudioTrack.cpp */,
@@ -27687,6 +27701,7 @@
 				E164A2ED191AE6350010737D /* BlobDataFileReferenceMac.mm in Sources */,
 				E14A94D716DFDF950068DE82 /* BlobRegistry.cpp in Sources */,
 				2EDEF1F6121B0EFC00726DB2 /* BlobRegistryImpl.cpp in Sources */,
+				5C5381B21D87D4B200E2EBE6 /* URLSearchParams.cpp in Sources */,
 				2EB4BCD2121F03E300EC4885 /* BlobResourceHandle.cpp in Sources */,
 				976D6C7E122B8A3D001FD1F7 /* BlobURL.cpp in Sources */,
 				58AEE2F418D4BCCF0022E7FE /* BorderEdge.cpp in Sources */,
@@ -29119,6 +29134,7 @@
 				B2FA3DBA0AB75A6F000E5AC4 /* JSSVGPathSegArcRel.cpp in Sources */,
 				B2FA3DBC0AB75A6F000E5AC4 /* JSSVGPathSegClosePath.cpp in Sources */,
 				B2FA3DBE0AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicAbs.cpp in Sources */,
+				5C5381B51D87E08700E2EBE6 /* JSURLSearchParams.cpp in Sources */,
 				B2FA3DC00AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicRel.cpp in Sources */,
 				B2FA3DC20AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicSmoothAbs.cpp in Sources */,
 				B2FA3DC40AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp in Sources */,

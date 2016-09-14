@@ -1,0 +1,12 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var u = new URL("http://example.com?q=foo");
+u.searchParams.foo = 1;
+if (window.GCController)
+	GCController.collect();
+console.log(u.searchParams.foo == 1 ? "PASS" : "FAIL");
+
+var x = new URLSearchParams("a=ß");
+console.log(x == "a=%C3%83%C5%B8" ? "PASS" : "FAIL");
+</script>
