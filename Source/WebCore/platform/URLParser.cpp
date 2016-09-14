@@ -43,6 +43,7 @@ template<typename CharacterType> static bool isInSimpleEncodeSet(CharacterType c
 template<typename CharacterType> static bool isInDefaultEncodeSet(CharacterType character) { return isInSimpleEncodeSet(character) || character == 0x0020 || character == '"' || character == '#' || character == '<' || character == '>' || character == '?' || character == '`' || character == '{' || character == '}'; }
 template<typename CharacterType> static bool isInUserInfoEncodeSet(CharacterType character) { return isInDefaultEncodeSet(character) || character == '/' || character == ':' || character == ';' || character == '=' || character == '@' || character == '[' || character == '\\' || character == ']' || character == '^' || character == '|'; }
 template<typename CharacterType> static bool isInvalidDomainCharacter(CharacterType character) { return character == 0x0000 || character == 0x0009 || character == 0x000A || character == 0x000D || character == 0x0020 || character == '#' || character == '%' || character == '/' || character == ':' || character == '?' || character == '@' || character == '[' || character == '\\' || character == ']'; }
+template<typename CharacterType> static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
     
 static bool isWindowsDriveLetter(StringView::CodePoints::Iterator iterator, const StringView::CodePoints::Iterator& end)
 {
@@ -733,6 +734,7 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                         ++c;
                     authorityOrHostBegin = c;
                     state = State::Host;
+                    m_hostHasPercentOrNonASCII = false;
                     break;
                 }
                 bool isSlash = *c == '/' || (m_urlIsSpecial && *c == '\\');
@@ -748,6 +750,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                     state = State::Path;
                     break;
                 }
+                if (isPercentOrNonASCII(*c))
+                    m_hostHasPercentOrNonASCII = true;
                 ++c;
             }
             break;
@@ -759,6 +763,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 state = State::Path;
                 break;
             }
+            if (isPercentOrNonASCII(*c))
+                m_hostHasPercentOrNonASCII = true;
             ++c;
             break;
         case State::File:
@@ -889,6 +895,8 @@ URL URLParser::parse(const String& input, const URL& base, const TextEncoding& e
                 state = State::PathStart;
                 break;
             }
+            if (isPercentOrNonASCII(*c))
+                m_hostHasPercentOrNonASCII = true;
             ++c;
             break;
         case State::PathStart:
@@ -1557,6 +1565,40 @@ bool URLParser::parseHost(StringView::CodePoints::Iterator& iterator, const Stri
             }
             return true;
         }
+    }
+    
+    if (!m_hostHasPercentOrNonASCII) {
+        auto hostIterator = iterator;
+        for (; iterator != end; ++iterator) {
+            if (isTabOrNewline(*iterator))
+                continue;
+            if (*iterator == ':')
+                break;
+        }
+        if (auto address = parseIPv4Host(hostIterator, iterator)) {
+            serializeIPv4(address.value(), m_buffer);
+            m_url.m_hostEnd = m_buffer.length();
+            if (iterator == end) {
+                m_url.m_portEnd = m_buffer.length();
+                return true;
+            }
+            ++iterator;
+            return parsePort(iterator, end);
+        }
+        for (; hostIterator != iterator; ++hostIterator) {
+            if (!isTabOrNewline(*hostIterator))
+                m_buffer.append(toASCIILower(*hostIterator));
+        }
+        m_url.m_hostEnd = m_buffer.length();
+        if (hostIterator != end) {
+            ASSERT(*hostIterator == ':');
+            ++hostIterator;
+            while (hostIterator != end && isTabOrNewline(*hostIterator))
+                ++hostIterator;
+            return parsePort(hostIterator, end);
+        }
+        m_url.m_portEnd = m_buffer.length();
+        return true;
     }
 
     // FIXME: We probably don't need to make so many buffers and String copies.
