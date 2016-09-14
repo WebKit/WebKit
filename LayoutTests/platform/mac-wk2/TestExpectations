@@ -291,8 +291,6 @@ webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [
 
 webkit.org/b/151729 [ Yosemite ] http/tests/xmlhttprequest/methods-async.html [ Pass Timeout ]
 
-webkit.org/b/152025 [ Debug ] inspector/console/messagesCleared.html [ Pass Timeout ]
-
 webkit.org/b/155138 [ Yosemite ElCapitan ] inspector/console/addInspectedNode.html [ Pass Timeout ]
 
 webkit.org/b/155151 [ Debug ElCapitan ] media/track/track-cues-pause-on-exit.html [ Pass Timeout ]
