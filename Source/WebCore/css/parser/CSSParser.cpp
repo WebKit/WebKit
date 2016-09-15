@@ -56,6 +56,7 @@
 #include "CSSNamedImageValue.h"
 #include "CSSPageRule.h"
 #include "CSSParserFastPaths.h"
+#include "CSSParserImpl.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertySourceData.h"
@@ -269,6 +270,7 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
         textAutosizingEnabled = settings->textAutosizingEnabled();
 #endif
         springTimingFunctionEnabled = settings->springTimingFunctionEnabled();
+        useNewParser = settings->newCSSParserEnabled();
     }
 
 #if PLATFORM(IOS)
@@ -371,8 +373,16 @@ void CSSParser::setupParser(const char* prefix, unsigned prefixLength, StringVie
     m_lexFunc = &CSSParser::realLex<UChar>;
 }
 
+// FIXME-NEWPARSER: This API needs to change. It's polluted with Inspector stuff, and that should
+// use the new obverver model instead.
 void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, const TextPosition& textPosition, RuleSourceDataList* ruleSourceDataResult, bool logErrors)
 {
+    // FIXME-NEWPARSER: It's easier for testing to let the entire UA sheet parse with the old
+    // parser. That way we can still have the default styles look correct while we add in support for
+    // properties.
+    if (m_context.useNewParser && m_context.mode != UASheetMode)
+        return CSSParserImpl::parseStyleSheet(string, m_context, sheet);
+    
     setStyleSheet(sheet);
     m_defaultNamespace = starAtom; // Reset the default namespace.
     if (ruleSourceDataResult)

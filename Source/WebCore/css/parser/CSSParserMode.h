@@ -103,6 +103,7 @@ public:
     bool enforcesCSSMIMETypeInNoQuirksMode { true };
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
+    bool useNewParser { false };
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);
