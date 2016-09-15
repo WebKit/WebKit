@@ -44,6 +44,15 @@ struct ContentAlignmentData;
 
 enum GridAxisPosition {GridAxisStart, GridAxisEnd, GridAxisCenter};
 
+enum TrackSizeComputationPhase {
+    ResolveIntrinsicMinimums,
+    ResolveContentBasedMinimums,
+    ResolveMaxContentMinimums,
+    ResolveIntrinsicMaximums,
+    ResolveMaxContentMaximums,
+    MaximizeTracks,
+};
+
 class RenderGrid final : public RenderBlock {
 public:
     RenderGrid(Element&, RenderStyle&&);
@@ -75,8 +84,8 @@ private:
     class GridSizingData;
     enum SizingOperation { TrackSizing, IntrinsicSizeComputation };
     void computeUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&, LayoutUnit& baseSizesWithoutMaximization, LayoutUnit& growthLimitsWithoutMaximization) const;
-    LayoutUnit computeUsedBreadthOfMinLength(const GridLength&, LayoutUnit maxSize) const;
-    LayoutUnit computeUsedBreadthOfMaxLength(const GridLength&, LayoutUnit usedBreadth, LayoutUnit maxSize) const;
+    LayoutUnit computeUsedBreadthOfMinLength(const GridTrackSize&, LayoutUnit maxSize) const;
+    LayoutUnit computeUsedBreadthOfMaxLength(const GridTrackSize&, LayoutUnit usedBreadth, LayoutUnit maxSize) const;
     void resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection, GridSizingData&) const;
 
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
@@ -114,19 +123,6 @@ private:
     void populateGridPositionsForDirection(GridSizingData&, GridTrackSizingDirection);
     void clearGrid();
 
-    enum TrackSizeRestriction {
-        AllowInfinity,
-        ForbidInfinity,
-    };
-    enum TrackSizeComputationPhase {
-        ResolveIntrinsicMinimums,
-        ResolveContentBasedMinimums,
-        ResolveMaxContentMinimums,
-        ResolveIntrinsicMaximums,
-        ResolveMaxContentMaximums,
-        MaximizeTracks,
-    };
-    static const LayoutUnit& trackSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, GridTrack&, TrackSizeRestriction);
     static bool shouldProcessTrackForTrackSizeComputationPhase(TrackSizeComputationPhase, const GridTrackSize&);
     static bool trackShouldGrowBeyondGrowthLimitsForTrackSizeComputationPhase(TrackSizeComputationPhase, const GridTrackSize&);
     static void markAsInfinitelyGrowableForTrackSizeComputationPhase(TrackSizeComputationPhase, GridTrack&);
@@ -136,7 +132,7 @@ private:
     typedef struct GridItemsSpanGroupRange GridItemsSpanGroupRange;
     void resolveContentBasedTrackSizingFunctionsForNonSpanningItems(GridTrackSizingDirection, const GridSpan&, RenderBox& gridItem, GridTrack&, GridSizingData&) const;
     template <TrackSizeComputationPhase> void resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizingDirection, GridSizingData&, const GridItemsSpanGroupRange&) const;
-    template <TrackSizeComputationPhase> void distributeSpaceToTracks(Vector<GridTrack*>&, const Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& availableLogicalSpace) const;
+    template <TrackSizeComputationPhase> void distributeSpaceToTracks(Vector<GridTrack*>&, Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& availableLogicalSpace) const;
 
     typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> TrackIndexSet;
     double computeFlexFactorUnitSize(const Vector<GridTrack>&, GridTrackSizingDirection, SizingOperation, double flexFactorSum, LayoutUnit leftOverSpace, const Vector<unsigned, 8>& flexibleTracksIndexes, std::unique_ptr<TrackIndexSet> tracksToTreatAsInflexible = nullptr) const;

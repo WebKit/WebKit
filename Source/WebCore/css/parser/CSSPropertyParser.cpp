@@ -2794,6 +2794,19 @@ static CSSValue* consumeJustifyItems(CSSParserTokenRange& range)
     return consumeSelfPositionOverflowPosition(range);
 }
 
+static CSSValue* consumeFitContent(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    CSSParserTokenRange rangeCopy = range;
+    CSSParserTokenRange args = consumeFunction(rangeCopy);
+    CSSPrimitiveValue* length = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative, UnitlessQuirk::Allow);
+    if (!length || !args.atEnd())
+        return nullptr;
+    range = rangeCopy;
+    CSSFunctionValue* result = CSSFunctionValue::create(CSSValueFitContent);
+    result->append(*length);
+    return result;
+}
+
 static CSSCustomIdentValue* consumeCustomIdentForGridLine(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueAuto || range.peek().id() == CSSValueSpan)
@@ -2864,8 +2877,13 @@ static bool isGridTrackFixedSized(const CSSValue& value)
     if (value.isPrimitiveValue())
         return isGridTrackFixedSized(toCSSPrimitiveValue(value));
 
-    const CSSPrimitiveValue& minPrimitiveValue = toCSSPrimitiveValue(toCSSFunctionValue(value).item(0));
-    const CSSPrimitiveValue& maxPrimitiveValue = toCSSPrimitiveValue(toCSSFunctionValue(value).item(1));
+    ASSERT(value.isFunctionValue());
+    auto& function = toCSSFunctionValue(value);
+    if (function.functionType() == CSSValueFitContent)
+        return false;
+
+    const CSSPrimitiveValue& minPrimitiveValue = toCSSPrimitiveValue(function.item(0));
+    const CSSPrimitiveValue& maxPrimitiveValue = toCSSPrimitiveValue(function.item(1));
     return isGridTrackFixedSized(minPrimitiveValue) || isGridTrackFixedSized(maxPrimitiveValue);
 }
 
@@ -2997,6 +3015,10 @@ static CSSValue* consumeGridTrackSize(CSSParserTokenRange& range, CSSParserMode 
         result->append(*maxTrackBreadth);
         return result;
     }
+
+    if (token.functionId() == CSSValueFitContent)
+        return consumeFitContent(range, cssParserMode);
+
     return consumeGridBreadth(range, cssParserMode);
 }
 
