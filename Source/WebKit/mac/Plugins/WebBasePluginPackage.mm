@@ -87,38 +87,6 @@ using namespace WebCore;
     return [pluginPackage autorelease];
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-// FIXME: Rewrite this in terms of -[NSURL URLByResolvingBookmarkData:…].
-static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
-{
-    NSString *newPath = [thePath stringByResolvingSymlinksInPath];
-
-#if !PLATFORM(IOS)
-    FSRef fref;
-    OSStatus err;
-
-    err = FSPathMakeRef((const UInt8 *)[thePath fileSystemRepresentation], &fref, NULL);
-    if (err != noErr)
-        return newPath;
-
-    Boolean targetIsFolder;
-    Boolean wasAliased;
-    err = FSResolveAliasFileWithMountFlags(&fref, TRUE, &targetIsFolder, &wasAliased, kResolveAliasFileNoUI);
-    if (err != noErr)
-        return newPath;
-
-    if (wasAliased) {
-        CFURLRef URL = CFURLCreateFromFSRef(kCFAllocatorDefault, &fref);
-        newPath = [(NSURL *)URL path];
-        CFRelease(URL);
-    }
-#endif
-
-    return newPath;
-}
-#pragma clang diagnostic pop
-
 - (id)initWithPath:(NSString *)pluginPath
 {
     if (!(self = [super init]))
