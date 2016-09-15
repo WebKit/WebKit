@@ -1,3 +1,36 @@
+2016-09-14  Filip Pizlo  <fpizlo@apple.com>
+
+        There is no good reason for WeakBlock to care about newly allocated objects
+        https://bugs.webkit.org/show_bug.cgi?id=162006
+
+        Reviewed by Geoffrey Garen.
+
+        WeakBlock scans itself in two modes:
+
+        visit: if a Weak in the block belongs to an unmarked object, ask the Weak to consider whether
+            it should do things.
+        
+        reap: if a Weak in a block belongs to an unmarked object, delete the Weak.
+
+        Except that "unmarked" has a peculiar meaning: WeakBlock defines it as
+        !markedOrNewlyAllocated. So, a newly allocated object will never be consulted about anything. 
+        That sounds scary until you realize that newlyAllocated must have been cleared before we even
+        got here.
+
+        So, we were paying the price of checking newlyAllocated for no reason. This switches the code
+        to using isMarked(). I don't know why the code previously checked newlyAllocated, but I do
+        trust my reasoning.
+
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::isMarkedDuringWeakVisiting):
+        (JSC::LargeAllocation::isMarkedOrNewlyAllocatedDuringWeakVisiting): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isMarkedDuringWeakVisiting):
+        (JSC::MarkedBlock::isMarkedOrNewlyAllocatedDuringWeakVisiting): Deleted.
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+        (JSC::WeakBlock::reap):
+
 2016-09-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r205931.

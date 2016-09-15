@@ -251,7 +251,8 @@ public:
     bool testAndSetMarked(const void*);
         
     bool isMarkedOrNewlyAllocated(const HeapCell*);
-    bool isMarkedOrNewlyAllocatedDuringWeakVisiting(HeapVersion, const HeapCell*);
+    
+    bool isMarkedDuringWeakVisiting(HeapVersion, const HeapCell*);
 
     bool isAtom(const void*);
     void clearMarked(const void*);
@@ -561,11 +562,11 @@ inline bool MarkedBlock::isMarkedOrNewlyAllocated(const HeapCell* cell)
     return isMarked(cell) || (m_handle.m_newlyAllocated && m_handle.isNewlyAllocated(cell));
 }
 
-inline bool MarkedBlock::isMarkedOrNewlyAllocatedDuringWeakVisiting(HeapVersion heapVersion, const HeapCell* cell)
+inline bool MarkedBlock::isMarkedDuringWeakVisiting(HeapVersion heapVersion, const HeapCell* cell)
 {
     if (needsFlip(heapVersion))
         return false;
-    return isMarkedOrNewlyAllocated(cell);
+    return isMarked(cell);
 }
 
 inline bool MarkedBlock::Handle::isLive(const HeapCell* cell)

@@ -113,7 +113,7 @@ void WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& heap
             continue;
 
         const JSValue& jsValue = weakImpl->jsValue();
-        if (container.isMarkedOrNewlyAllocatedDuringWeakVisiting(version, jsValue.asCell()))
+        if (container.isMarkedDuringWeakVisiting(version, jsValue.asCell()))
             continue;
         
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor))
@@ -157,7 +157,7 @@ void WeakBlock::reap()
         if (weakImpl->state() > WeakImpl::Dead)
             continue;
 
-        if (m_container.isMarkedOrNewlyAllocated(weakImpl->jsValue().asCell())) {
+        if (m_container.isMarked(weakImpl->jsValue().asCell())) {
             ASSERT(weakImpl->state() == WeakImpl::Live);
             continue;
         }
