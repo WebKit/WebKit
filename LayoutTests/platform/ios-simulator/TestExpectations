@@ -615,7 +615,6 @@ css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-015.html [ 
 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
-css3/shapes/shape-outside/values/shape-outside-computed-shape-000.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
@@ -1299,16 +1298,6 @@ fast/forms/input-select-webkit-user-select-none.html [ Failure ]
 fast/forms/input-set-composition-scroll.html [ Failure ]
 fast/forms/input-step-as-double.html [ Failure ]
 fast/forms/input-textarea-padding-match.html [ ImageOnlyFailure ]
-fast/forms/label/labelable-elements.html [ Failure ]
-fast/forms/label/labels-add-htmlFor-label.html [ Failure ]
-fast/forms/label/labels-add-parent-label.html [ Failure ]
-fast/forms/label/labels-change-htmlFor-attribute.html [ Failure ]
-fast/forms/label/labels-multiple-sibling-labels.html [ Failure ]
-fast/forms/label/labels-parent-and-sibling-labels.html [ Failure ]
-fast/forms/label/labels-remove-htmlFor-attribute.html [ Failure ]
-fast/forms/label/labels-remove-htmlFor-label.html [ Failure ]
-fast/forms/label/labels-remove-parent-label.html [ Failure ]
-fast/forms/label/labels-set-htmlFor-attribute.html [ Failure ]
 fast/forms/listbox-clip.html [ Failure ]
 fast/forms/listbox-deselect-scroll.html [ Failure ]
 fast/forms/listbox-non-contiguous-keyboard-selection.html [ Failure ]
@@ -1856,7 +1845,6 @@ fast/text/justify-ideograph-simple.html [ Failure ]
 fast/text/justify-ideograph-vertical.html [ Failure ]
 fast/text/justify-nbsp.html [ Failure ]
 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
-fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
 fast/text/offsetForPosition-complex-fallback.html [ Failure ]
 fast/text/reset-drag-on-mouse-down.html [ Failure ]
 fast/text/selection-in-initial-advance-region.html [ Failure ]
@@ -2482,7 +2470,6 @@ webkit.org/b/155095 fast/table/border-collapsing/table-ltr-rows-mixed-direction.
 fast/table/collapsed-border-with-odd-pixel-width.html [ ImageOnlyFailure ]
 
 # Uncategorized reftest failures, uncovered once we made reftests work. Needs triage.
-css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 fast/backgrounds/background-image-large-float-intrinsic-ratio.html [ ImageOnlyFailure ]
@@ -2491,7 +2478,6 @@ fast/borders/border-image-fill-inline-no-border.html [ ImageOnlyFailure ]
 fast/borders/border-image-space.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure ]
 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
-fast/css3-text/css3-text-decoration/text-decoration-line-through-mispositioned.html [ ImageOnlyFailure ]
 fast/forms/select-size.html [ ImageOnlyFailure ]
 fast/inline/inline-with-outline-offset.html [ ImageOnlyFailure ]
 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
@@ -2562,9 +2548,6 @@ webkit.org/b/142969 editing/spelling/copy-paste-crash.html
 
 # This test is iPad only
 platform/ios-simulator/media/video-interruption-suspendunderlock.html [ Skip ]
-
-# System font on iOS 9 cannot be bold and italic.
-fast/text/system-font-weight-italic.html [ Failure ]
 
 media/accessibility-closed-captions-has-aria-owns.html
 media/airplay-autoplay.html
@@ -2713,9 +2696,6 @@ http/tests/dom/document-contentType.html [ Failure ]
 
 # rdar://problem/26477897
 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_01.html [ Failure ]
-
-# rdar://problem/26477855
-http/tests/xmlhttprequest/logout.html [ Failure ]
 
 webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
 
