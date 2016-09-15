@@ -1,5 +1,28 @@
 2016-09-14  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r205878. rdar://problem/28229827
+
+    2016-09-13  Tim Horton  <timothy_horton@apple.com>
+
+            Provide a mechanism to specify the maximum size of WKThumbnailView snapshots
+            https://bugs.webkit.org/show_bug.cgi?id=161896
+            <rdar://problem/28229827>
+
+            Reviewed by Simon Fraser.
+
+            Some clients know that their thumbnail views will only be displayed up to
+            a specific size that is significantly smaller than the WKView size. Allow
+            them to avoid wasting lots of memory on unnecessarily large snapshots.
+
+            * UIProcess/API/Cocoa/_WKThumbnailView.h:
+            * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+            (-[_WKThumbnailView requestSnapshot]):
+            (-[_WKThumbnailView _requestSnapshotIfNeeded]):
+            (-[_WKThumbnailView setMaximumSnapshotSize:]):
+            Add a maximumSnapshotSize property which can be changed dynamically.
+
+2016-09-14  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205935. rdar://problem/26013388
 
     2016-09-14  Beth Dakin  <bdakin@apple.com>

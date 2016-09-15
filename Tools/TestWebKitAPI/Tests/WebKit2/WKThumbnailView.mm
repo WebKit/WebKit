@@ -76,11 +76,11 @@ static void setPageLoaderClient(WKPageRef page)
 
 TEST(WebKit2, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("MouseMoveAfterCrashTest"));
-
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());
     WKView *wkView = webView.platformView();
     setPageLoaderClient(webView.page());
+    WKPageSetCustomBackingScaleFactor(webView.page(), 1);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("lots-of-text", "html"));
     WKPageLoadURL(webView.page(), url.get());
@@ -115,6 +115,59 @@ TEST(WebKit2, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
     [thumbnailView removeFromSuperview];
 
     // This time, the snapshot should remain while unparented, because we unset shouldKeepSnapshotWhenRemovedFromSuperview.
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+
+    [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
+}
+
+TEST(WebKit2, WKThumbnailViewMaximumSnapshotSize)
+{
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    PlatformWebView webView(context.get());
+    WKView *wkView = webView.platformView();
+    setPageLoaderClient(webView.page());
+    WKPageSetCustomBackingScaleFactor(webView.page(), 1);
+
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("lots-of-text", "html"));
+    WKPageLoadURL(webView.page(), url.get());
+    Util::run(&didFinishLoad);
+    didFinishLoad = false;
+
+    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKView:wkView]);
+
+    RetainPtr<SnapshotSizeObserver> observer = adoptNS([[SnapshotSizeObserver alloc] init]);
+
+    [thumbnailView addObserver:observer.get() forKeyPath:@"snapshotSize" options:NSKeyValueObservingOptionNew context:snapshotSizeChangeKVOContext];
+
+    [wkView.window.contentView addSubview:thumbnailView.get()];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+
+    EXPECT_EQ([thumbnailView snapshotSize].width, 800);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+
+    [thumbnailView setMaximumSnapshotSize:CGSizeMake(200, 0)];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+
+    EXPECT_EQ([thumbnailView snapshotSize].width, 200);
+    EXPECT_EQ([thumbnailView snapshotSize].height, 150);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+
+    [thumbnailView setMaximumSnapshotSize:CGSizeMake(0, 300)];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+
+    EXPECT_EQ([thumbnailView snapshotSize].width, 400);
+    EXPECT_EQ([thumbnailView snapshotSize].height, 300);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+
+    [thumbnailView setMaximumSnapshotSize:CGSizeMake(200, 300)];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+
+    EXPECT_EQ([thumbnailView snapshotSize].width, 200);
+    EXPECT_EQ([thumbnailView snapshotSize].height, 150);
     EXPECT_FALSE([thumbnailView layer].contents == nil);
 
     [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
