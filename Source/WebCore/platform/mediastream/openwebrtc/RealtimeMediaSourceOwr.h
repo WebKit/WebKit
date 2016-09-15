@@ -48,11 +48,17 @@ namespace WebCore {
 
 class RealtimeMediaSourceCapabilities;
 
-class RealtimeMediaSourceOwr final : public RealtimeMediaSource {
+class RealtimeMediaSourceOwr : public RealtimeMediaSource {
 public:
 RealtimeMediaSourceOwr(OwrMediaSource* mediaSource, const String& id, RealtimeMediaSource::Type type, const String& name)
     : RealtimeMediaSource(id, type, name)
     , m_mediaSource(mediaSource)
+    {
+    }
+
+RealtimeMediaSourceOwr(const String& id, RealtimeMediaSource::Type type, const String& name)
+    : RealtimeMediaSource(id, type, name)
+    , m_mediaSource(nullptr)
     {
     }
 

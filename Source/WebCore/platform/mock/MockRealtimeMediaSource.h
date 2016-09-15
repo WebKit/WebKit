@@ -35,11 +35,21 @@
 
 #include "RealtimeMediaSource.h"
 
+#if USE(OPENWEBRTC)
+#include "RealtimeMediaSourceOwr.h"
+#endif
+
 namespace WebCore {
 
 class CaptureDevice;
 
-class MockRealtimeMediaSource : public RealtimeMediaSource {
+#if USE(OPENWEBRTC)
+using BaseRealtimeMediaSourceClass = RealtimeMediaSourceOwr;
+#else
+using BaseRealtimeMediaSourceClass = RealtimeMediaSource;
+#endif
+
+class MockRealtimeMediaSource : public BaseRealtimeMediaSourceClass {
 public:
     virtual ~MockRealtimeMediaSource() { }
 
