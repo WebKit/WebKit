@@ -706,6 +706,10 @@ http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
 # No support for font-variant-* properties in @font-face declarations
 webkit.org/b/161586 css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
 
+webkit.org/b/161962 fast/forms/implicit-submission.html [ Failure ]
+
+webkit.org/b/161960 fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1640,6 +1644,15 @@ webkit.org/b/160126 fast/forms/input-image-submit.html [ Timeout ]
 
 webkit.org/b/160127 js/regress-139548.html [ Timeout ]
 
+webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cookie.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-same-origin.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cookie.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/area-same-origin.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2462,14 +2475,16 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-accept-language.htm [ Failur
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Failure Timeout ]
+imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Pass ]
 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Pass ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-none.htm [ Pass ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-empty.htm  [ Pass ]
 
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Failure ]
 
 webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/will-change/stacking-context-creation.html [ ImageOnlyFailure ]
@@ -2549,6 +2564,7 @@ webkit.org/b/94952 platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-s
 webkit.org/b/153707 imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html [ Failure ]
 webkit.org/b/153707 imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.html [ Failure ]
 webkit.org/b/153707 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure ]
+webkit.org/b/153707 imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html [ Failure ]
 
 webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
 

@@ -1,5 +1,8 @@
-
-Harness Error (TIMEOUT), message = null
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
 
 PASS Redirect 301 in "follow" mode without location 
 PASS Redirect 301 in "manual" mode without location 
@@ -27,8 +30,8 @@ PASS Redirect 307 in "follow" mode with data location
 PASS Redirect 307 in "manual" mode with data location 
 PASS Redirect 308 in "follow" mode without location 
 PASS Redirect 308 in "manual" mode without location 
-TIMEOUT Redirect 308 in "follow" mode with invalid location Test timed out
-TIMEOUT Redirect 308 in "manual" mode with invalid location Test timed out
-TIMEOUT Redirect 308 in "follow" mode with data location Test timed out
-TIMEOUT Redirect 308 in "manual" mode with data location Test timed out
+PASS Redirect 308 in "follow" mode with invalid location 
+PASS Redirect 308 in "manual" mode with invalid location 
+PASS Redirect 308 in "follow" mode with data location 
+PASS Redirect 308 in "manual" mode with data location 
 
