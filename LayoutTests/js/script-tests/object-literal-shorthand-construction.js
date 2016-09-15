@@ -109,3 +109,6 @@ shouldBeTrue("!!Object.getOwnPropertyDescriptor({set x(value){}}, 'x').set");
 shouldBeTrue("!!Object.getOwnPropertyDescriptor({set 'x'(value){}}, 'x').set");
 shouldBeTrue("!!Object.getOwnPropertyDescriptor({set 42(value){}}, '42').set");
 
+// __proto__ shorthand should not modify the prototype.
+shouldThrow("__proto__ = []");
+shouldBeFalse("({__proto__: __proto__}) instanceof Array");

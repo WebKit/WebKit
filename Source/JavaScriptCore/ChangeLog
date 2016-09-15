@@ -1,3 +1,21 @@
+2016-09-14  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r205670): ASSERTION FAILED: methodTable(vm)->toThis(this, exec, NotStrictMode) == this
+        https://bugs.webkit.org/show_bug.cgi?id=161982
+
+        Reviewed by Saam Barati.
+
+        Update JSProxy::setPrototype() to return false unconditionally instead
+        of forwarding the call to its target. We used to forward to the target
+        and then the JSDOMWindow's [[SetPrototypeOf]] would return false.
+        However, the JSC tests use a different GlobalObject and forwarding
+        the setPrototypeOf() call to the GlobalObject lead to hitting an
+        assertion. This patch aligns the behavior of the GlobalObject used by
+        the JSC tests with JSDOMWindow.
+
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setPrototype):
+
 2016-09-14  Michael Saboff  <msaboff@apple.com>
 
         YARR doesn't check for invalid flags for literal regular expressions

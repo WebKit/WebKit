@@ -145,10 +145,14 @@ void JSProxy::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNam
     thisObject->target()->methodTable(exec->vm())->getOwnPropertyNames(thisObject->target(), exec, propertyNames, mode);
 }
 
-bool JSProxy::setPrototype(JSObject* object, ExecState* exec, JSValue value, bool shouldThrowIfCantSet)
+bool JSProxy::setPrototype(JSObject*, ExecState* exec, JSValue, bool shouldThrowIfCantSet)
 {
-    JSProxy* thisObject = jsCast<JSProxy*>(object);
-    return thisObject->target()->methodTable(exec->vm())->setPrototype(thisObject->target(), exec, value, shouldThrowIfCantSet);
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+
+    if (shouldThrowIfCantSet)
+        throwTypeError(exec, scope, ASCIILiteral("Cannot set prototype of this object"));
+
+    return false;
 }
 
 JSValue JSProxy::getPrototype(JSObject* object, ExecState* exec)
