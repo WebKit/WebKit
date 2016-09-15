@@ -1876,3 +1876,5 @@ webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 # rdar://problem/26477855
 http/tests/xmlhttprequest/logout.html [ Failure ]
+
+webkit.org/b/162032 js/date-constructor.html [ Pass Timeout ]
