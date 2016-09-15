@@ -2703,3 +2703,5 @@ css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 
 webkit.org/b/161949 imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm [ Failure ]
+
+webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Timeout ]
