@@ -116,14 +116,283 @@ auto CodePointIterator<UChar>::operator++() -> CodePointIterator&
     return *this;
 }
 
-template<typename CharacterType> static bool isC0Control(CharacterType character) { return character <= 0x0001F; }
-template<typename CharacterType> static bool isC0ControlOrSpace(CharacterType character) { return isC0Control(character) || character == 0x0020; }
-template<typename CharacterType> static bool isTabOrNewline(CharacterType character) { return character == 0x0009 || character == 0x000A || character == 0x000D; }
-template<typename CharacterType> static bool isInSimpleEncodeSet(CharacterType character) { return isC0Control(character) || character > 0x007E; }
-template<typename CharacterType> static bool isInDefaultEncodeSet(CharacterType character) { return isInSimpleEncodeSet(character) || character == 0x0020 || character == '"' || character == '#' || character == '<' || character == '>' || character == '?' || character == '`' || character == '{' || character == '}'; }
-template<typename CharacterType> static bool isInUserInfoEncodeSet(CharacterType character) { return isInDefaultEncodeSet(character) || character == '/' || character == ':' || character == ';' || character == '=' || character == '@' || character == '[' || character == '\\' || character == ']' || character == '^' || character == '|'; }
-template<typename CharacterType> static bool isInvalidDomainCharacter(CharacterType character) { return character == 0x0000 || character == 0x0009 || character == 0x000A || character == 0x000D || character == 0x0020 || character == '#' || character == '%' || character == '/' || character == ':' || character == '?' || character == '@' || character == '[' || character == '\\' || character == ']'; }
+enum URLCharacterClass {
+    UserInfo = 0x1,
+    Default = 0x2,
+    InvalidDomain = 0x4,
+    QueryPercent = 0x8,
+    SlashQuestionOrHash = 0x10,
+};
+
+static const uint8_t characterClassTable[256] = {
+    UserInfo | Default | InvalidDomain | QueryPercent, // 0x0
+    UserInfo | Default | QueryPercent, // 0x1
+    UserInfo | Default | QueryPercent, // 0x2
+    UserInfo | Default | QueryPercent, // 0x3
+    UserInfo | Default | QueryPercent, // 0x4
+    UserInfo | Default | QueryPercent, // 0x5
+    UserInfo | Default | QueryPercent, // 0x6
+    UserInfo | Default | QueryPercent, // 0x7
+    UserInfo | Default | QueryPercent, // 0x8
+    UserInfo | Default | InvalidDomain | QueryPercent, // 0x9
+    UserInfo | Default | InvalidDomain | QueryPercent, // 0xA
+    UserInfo | Default | QueryPercent, // 0xB
+    UserInfo | Default | QueryPercent, // 0xC
+    UserInfo | Default | InvalidDomain | QueryPercent, // 0xD
+    UserInfo | Default | QueryPercent, // 0xE
+    UserInfo | Default | QueryPercent, // 0xF
+    UserInfo | Default | QueryPercent, // 0x10
+    UserInfo | Default | QueryPercent, // 0x11
+    UserInfo | Default | QueryPercent, // 0x12
+    UserInfo | Default | QueryPercent, // 0x13
+    UserInfo | Default | QueryPercent, // 0x14
+    UserInfo | Default | QueryPercent, // 0x15
+    UserInfo | Default | QueryPercent, // 0x16
+    UserInfo | Default | QueryPercent, // 0x17
+    UserInfo | Default | QueryPercent, // 0x18
+    UserInfo | Default | QueryPercent, // 0x19
+    UserInfo | Default | QueryPercent, // 0x1A
+    UserInfo | Default | QueryPercent, // 0x1B
+    UserInfo | Default | QueryPercent, // 0x1C
+    UserInfo | Default | QueryPercent, // 0x1D
+    UserInfo | Default | QueryPercent, // 0x1E
+    UserInfo | Default | QueryPercent, // 0x1F
+    UserInfo | Default | InvalidDomain | QueryPercent, // ' '
+    0, // '!'
+    UserInfo | Default | QueryPercent, // '"'
+    UserInfo | Default | InvalidDomain | QueryPercent | SlashQuestionOrHash, // '#'
+    0, // '$'
+    InvalidDomain, // '%'
+    0, // '&'
+    0, // '''
+    0, // '('
+    0, // ')'
+    0, // '*'
+    0, // '+'
+    0, // ','
+    0, // '-'
+    0, // '.'
+    UserInfo | InvalidDomain | SlashQuestionOrHash, // '/'
+    0, // '0'
+    0, // '1'
+    0, // '2'
+    0, // '3'
+    0, // '4'
+    0, // '5'
+    0, // '6'
+    0, // '7'
+    0, // '8'
+    0, // '9'
+    UserInfo | InvalidDomain, // ':'
+    UserInfo, // ';'
+    UserInfo | Default | QueryPercent, // '<'
+    UserInfo, // '='
+    UserInfo | Default | QueryPercent, // '>'
+    UserInfo | Default | InvalidDomain | SlashQuestionOrHash, // '?'
+    UserInfo | InvalidDomain, // '@'
+    0, // 'A'
+    0, // 'B'
+    0, // 'C'
+    0, // 'D'
+    0, // 'E'
+    0, // 'F'
+    0, // 'G'
+    0, // 'H'
+    0, // 'I'
+    0, // 'J'
+    0, // 'K'
+    0, // 'L'
+    0, // 'M'
+    0, // 'N'
+    0, // 'O'
+    0, // 'P'
+    0, // 'Q'
+    0, // 'R'
+    0, // 'S'
+    0, // 'T'
+    0, // 'U'
+    0, // 'V'
+    0, // 'W'
+    0, // 'X'
+    0, // 'Y'
+    0, // 'Z'
+    UserInfo | InvalidDomain, // '['
+    UserInfo | InvalidDomain | SlashQuestionOrHash, // '\\'
+    UserInfo | InvalidDomain, // ']'
+    UserInfo, // '^'
+    0, // '_'
+    UserInfo | Default, // '`'
+    0, // 'a'
+    0, // 'b'
+    0, // 'c'
+    0, // 'd'
+    0, // 'e'
+    0, // 'f'
+    0, // 'g'
+    0, // 'h'
+    0, // 'i'
+    0, // 'j'
+    0, // 'k'
+    0, // 'l'
+    0, // 'm'
+    0, // 'n'
+    0, // 'o'
+    0, // 'p'
+    0, // 'q'
+    0, // 'r'
+    0, // 's'
+    0, // 't'
+    0, // 'u'
+    0, // 'v'
+    0, // 'w'
+    0, // 'x'
+    0, // 'y'
+    0, // 'z'
+    UserInfo | Default, // '{'
+    UserInfo, // '|'
+    UserInfo | Default, // '}'
+    0, // '~'
+    QueryPercent, // 0x7F
+    QueryPercent, // 0x80
+    QueryPercent, // 0x81
+    QueryPercent, // 0x82
+    QueryPercent, // 0x83
+    QueryPercent, // 0x84
+    QueryPercent, // 0x85
+    QueryPercent, // 0x86
+    QueryPercent, // 0x87
+    QueryPercent, // 0x88
+    QueryPercent, // 0x89
+    QueryPercent, // 0x8A
+    QueryPercent, // 0x8B
+    QueryPercent, // 0x8C
+    QueryPercent, // 0x8D
+    QueryPercent, // 0x8E
+    QueryPercent, // 0x8F
+    QueryPercent, // 0x90
+    QueryPercent, // 0x91
+    QueryPercent, // 0x92
+    QueryPercent, // 0x93
+    QueryPercent, // 0x94
+    QueryPercent, // 0x95
+    QueryPercent, // 0x96
+    QueryPercent, // 0x97
+    QueryPercent, // 0x98
+    QueryPercent, // 0x99
+    QueryPercent, // 0x9A
+    QueryPercent, // 0x9B
+    QueryPercent, // 0x9C
+    QueryPercent, // 0x9D
+    QueryPercent, // 0x9E
+    QueryPercent, // 0x9F
+    QueryPercent, // 0xA0
+    QueryPercent, // 0xA1
+    QueryPercent, // 0xA2
+    QueryPercent, // 0xA3
+    QueryPercent, // 0xA4
+    QueryPercent, // 0xA5
+    QueryPercent, // 0xA6
+    QueryPercent, // 0xA7
+    QueryPercent, // 0xA8
+    QueryPercent, // 0xA9
+    QueryPercent, // 0xAA
+    QueryPercent, // 0xAB
+    QueryPercent, // 0xAC
+    QueryPercent, // 0xAD
+    QueryPercent, // 0xAE
+    QueryPercent, // 0xAF
+    QueryPercent, // 0xB0
+    QueryPercent, // 0xB1
+    QueryPercent, // 0xB2
+    QueryPercent, // 0xB3
+    QueryPercent, // 0xB4
+    QueryPercent, // 0xB5
+    QueryPercent, // 0xB6
+    QueryPercent, // 0xB7
+    QueryPercent, // 0xB8
+    QueryPercent, // 0xB9
+    QueryPercent, // 0xBA
+    QueryPercent, // 0xBB
+    QueryPercent, // 0xBC
+    QueryPercent, // 0xBD
+    QueryPercent, // 0xBE
+    QueryPercent, // 0xBF
+    QueryPercent, // 0xC0
+    QueryPercent, // 0xC1
+    QueryPercent, // 0xC2
+    QueryPercent, // 0xC3
+    QueryPercent, // 0xC4
+    QueryPercent, // 0xC5
+    QueryPercent, // 0xC6
+    QueryPercent, // 0xC7
+    QueryPercent, // 0xC8
+    QueryPercent, // 0xC9
+    QueryPercent, // 0xCA
+    QueryPercent, // 0xCB
+    QueryPercent, // 0xCC
+    QueryPercent, // 0xCD
+    QueryPercent, // 0xCE
+    QueryPercent, // 0xCF
+    QueryPercent, // 0xD0
+    QueryPercent, // 0xD1
+    QueryPercent, // 0xD2
+    QueryPercent, // 0xD3
+    QueryPercent, // 0xD4
+    QueryPercent, // 0xD5
+    QueryPercent, // 0xD6
+    QueryPercent, // 0xD7
+    QueryPercent, // 0xD8
+    QueryPercent, // 0xD9
+    QueryPercent, // 0xDA
+    QueryPercent, // 0xDB
+    QueryPercent, // 0xDC
+    QueryPercent, // 0xDD
+    QueryPercent, // 0xDE
+    QueryPercent, // 0xDF
+    QueryPercent, // 0xE0
+    QueryPercent, // 0xE1
+    QueryPercent, // 0xE2
+    QueryPercent, // 0xE3
+    QueryPercent, // 0xE4
+    QueryPercent, // 0xE5
+    QueryPercent, // 0xE6
+    QueryPercent, // 0xE7
+    QueryPercent, // 0xE8
+    QueryPercent, // 0xE9
+    QueryPercent, // 0xEA
+    QueryPercent, // 0xEB
+    QueryPercent, // 0xEC
+    QueryPercent, // 0xED
+    QueryPercent, // 0xEE
+    QueryPercent, // 0xEF
+    QueryPercent, // 0xF0
+    QueryPercent, // 0xF1
+    QueryPercent, // 0xF2
+    QueryPercent, // 0xF3
+    QueryPercent, // 0xF4
+    QueryPercent, // 0xF5
+    QueryPercent, // 0xF6
+    QueryPercent, // 0xF7
+    QueryPercent, // 0xF8
+    QueryPercent, // 0xF9
+    QueryPercent, // 0xFA
+    QueryPercent, // 0xFB
+    QueryPercent, // 0xFC
+    QueryPercent, // 0xFD
+    QueryPercent, // 0xFE
+    QueryPercent, // 0xFF
+};
+
+template<typename CharacterType> static bool isC0Control(CharacterType character) { return character <= 0x1F; }
+template<typename CharacterType> static bool isC0ControlOrSpace(CharacterType character) { return character <= 0x20; }
+template<typename CharacterType> static bool isTabOrNewline(CharacterType character) { return character <= 0xD && character >= 0x9 && character != 0xB && character != 0xC; }
+template<typename CharacterType> static bool isInSimpleEncodeSet(CharacterType character) { return character > 0x7E || isC0Control(character); }
+template<typename CharacterType> static bool isInDefaultEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & Default; }
+template<typename CharacterType> static bool isInUserInfoEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & UserInfo; }
+template<typename CharacterType> static bool isInvalidDomainCharacter(CharacterType character) { return character <= ']' && characterClassTable[character] & InvalidDomain; }
 template<typename CharacterType> static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
+template<typename CharacterType> static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
+static bool shouldPercentEncodeQueryByte(uint8_t byte) { return characterClassTable[byte] & QueryPercent; }
     
 template<typename CharacterType>
 static bool isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
@@ -156,7 +425,7 @@ static bool shouldCopyFileURL(CodePointIterator<CharacterType> iterator)
     ++iterator;
     if (iterator.atEnd())
         return true;
-    return *iterator != '/' && *iterator != '\\' && *iterator != '?' && *iterator != '#';
+    return !isSlashQuestionOrHash(*iterator);
 }
 
 static void percentEncode(uint8_t byte, StringBuilder& builder)
@@ -178,21 +447,6 @@ static void utf8PercentEncode(UChar32 codePoint, StringBuilder& builder, bool(*i
             percentEncode(buffer[i], builder);
     } else
         builder.append(codePoint);
-}
-
-static bool shouldPercentEncodeQueryByte(uint8_t byte)
-{
-    if (byte < 0x21)
-        return true;
-    if (byte > 0x7E)
-        return true;
-    if (byte == 0x22)
-        return true;
-    if (byte == 0x23)
-        return true;
-    if (byte == 0x3C)
-        return true;
-    return byte == 0x3E;
 }
 
 static void utf8PercentEncodeQuery(UChar32 codePoint, StringBuilder& builder)
@@ -458,7 +712,7 @@ static bool isSingleDotPathSegment(CodePointIterator<CharacterType> c)
         return false;
     if (*c == '.') {
         ++c;
-        return c.atEnd() || *c == '/' || *c == '\\' || *c == '?' || *c == '#';
+        return c.atEnd() || isSlashQuestionOrHash(*c);
     }
     if (*c != '%')
         return false;
@@ -470,7 +724,7 @@ static bool isSingleDotPathSegment(CodePointIterator<CharacterType> c)
         return false;
     if (toASCIILower(*c) == dotASCIICode[1]) {
         ++c;
-        return c.atEnd() || *c == '/' || *c == '\\' || *c == '?' || *c == '#';
+        return c.atEnd() || isSlashQuestionOrHash(*c);
     }
     return false;
 }
@@ -956,7 +1210,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             break;
         case State::FileHost:
             LOG_STATE("FileHost");
-            if (*c == '/' || *c == '\\' || *c == '?' || *c == '#') {
+            if (isSlashQuestionOrHash(*c)) {
                 if (isWindowsDriveLetter(m_buffer, m_url.m_portEnd + 1)) {
                     state = State::Path;
                     break;
