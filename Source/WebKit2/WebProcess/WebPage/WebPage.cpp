@@ -2635,6 +2635,10 @@ void WebPage::didStartPageTransition()
         m_needsHiddenContentEditableQuirk = false;
         send(Messages::WebPageProxy::SetNeedsHiddenContentEditableQuirk(m_needsHiddenContentEditableQuirk));
     }
+    if (m_needsPlainTextQuirk) {
+        m_needsPlainTextQuirk = false;
+        send(Messages::WebPageProxy::SetNeedsPlainTextQuirk(m_needsPlainTextQuirk));
+    }
 #endif
 }
 
@@ -4772,6 +4776,30 @@ static bool needsHiddenContentEditableQuirk(bool needsQuirks, const URL& url)
     String path = url.path();
     return equalLettersIgnoringASCIICase(host, "docs.google.com") || (equalLettersIgnoringASCIICase(host, "www.icloud.com") && path.contains("/pages/"));
 }
+
+static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
+{
+    if (!needsQuirks)
+        return false;
+
+    String host = url.host();
+    String path = url.path();
+    String fragmentIdentifier = url.fragmentIdentifier();
+
+    if (equalLettersIgnoringASCIICase(host, "twitter.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "onedrive.live.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "www.icloud.com") && (path.contains("notes") || fragmentIdentifier.contains("notes") || path.contains("/keynote/")))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "trix-editor.org"))
+        return true;
+
+    return false;
+}
 #endif
 
 void WebPage::didChangeSelection()
@@ -4794,6 +4822,12 @@ void WebPage::didChangeSelection()
             m_needsHiddenContentEditableQuirk = true;
             send(Messages::WebPageProxy::SetNeedsHiddenContentEditableQuirk(m_needsHiddenContentEditableQuirk));
         }
+
+        if (needsPlainTextQuirk(m_page->settings().needsSiteSpecificQuirks(), m_page->mainFrame().document()->url())) {
+            m_needsPlainTextQuirk = true;
+            send(Messages::WebPageProxy::SetNeedsPlainTextQuirk(m_needsPlainTextQuirk));
+        }
+
         send(Messages::WebPageProxy::SetHasHadSelectionChangesFromUserInteraction(m_hasEverFocusedElementDueToUserInteractionSincePageTransition));
     }
 
