@@ -376,28 +376,24 @@ private:
         case ArithFloor:
         case ArithCeil:
         case ArithTrunc: {
-            if (node->child1()->shouldSpeculateInt32OrBoolean() && m_graph.roundShouldSpeculateInt32(node, FixupPass)) {
+            if (m_graph.unaryArithShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
                 insertCheck<Int32Use>(m_indexInBlock, node->child1().node());
                 node->convertToIdentity();
                 break;
             }
-            if (node->child1()->shouldSpeculateNotCell()) {
-                fixDoubleOrBooleanEdge(node->child1());
+            fixDoubleOrBooleanEdge(node->child1());
 
-                if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, FixupPass)) {
-                    node->setResult(NodeResultInt32);
-                    if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
-                        node->setArithRoundingMode(Arith::RoundingMode::Int32);
-                    else
-                        node->setArithRoundingMode(Arith::RoundingMode::Int32WithNegativeZeroCheck);
-                } else {
-                    node->setResult(NodeResultDouble);
-                    node->setArithRoundingMode(Arith::RoundingMode::Double);
-                }
-                node->clearFlags(NodeMustGenerate);
-            } else
-                fixEdge<UntypedUse>(node->child1());
+            if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, FixupPass)) {
+                node->setResult(NodeResultInt32);
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithRoundingMode(Arith::RoundingMode::Int32);
+                else
+                    node->setArithRoundingMode(Arith::RoundingMode::Int32WithNegativeZeroCheck);
+            } else {
+                node->setResult(NodeResultDouble);
+                node->setArithRoundingMode(Arith::RoundingMode::Double);
+            }
             break;
         }
 

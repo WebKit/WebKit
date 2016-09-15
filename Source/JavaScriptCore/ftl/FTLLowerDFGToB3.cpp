@@ -2266,91 +2266,67 @@ private:
 
     void compileArithRound()
     {
-        if (m_node->child1().useKind() == DoubleRepUse) {
-            LValue result = nullptr;
-            if (producesInteger(m_node->arithRoundingMode()) && !shouldCheckNegativeZero(m_node->arithRoundingMode())) {
-                LValue value = lowDouble(m_node->child1());
-                result = m_out.doubleFloor(m_out.doubleAdd(value, m_out.constDouble(0.5)));
-            } else {
-                LBasicBlock realPartIsMoreThanHalf = m_out.newBlock();
-                LBasicBlock continuation = m_out.newBlock();
+        LValue result = nullptr;
 
-                LValue value = lowDouble(m_node->child1());
-                LValue integerValue = m_out.doubleCeil(value);
-                ValueFromBlock integerValueResult = m_out.anchor(integerValue);
+        if (producesInteger(m_node->arithRoundingMode()) && !shouldCheckNegativeZero(m_node->arithRoundingMode())) {
+            LValue value = lowDouble(m_node->child1());
+            result = m_out.doubleFloor(m_out.doubleAdd(value, m_out.constDouble(0.5)));
+        } else {
+            LBasicBlock realPartIsMoreThanHalf = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
 
-                LValue realPart = m_out.doubleSub(integerValue, value);
+            LValue value = lowDouble(m_node->child1());
+            LValue integerValue = m_out.doubleCeil(value);
+            ValueFromBlock integerValueResult = m_out.anchor(integerValue);
 
-                m_out.branch(m_out.doubleGreaterThanOrUnordered(realPart, m_out.constDouble(0.5)), unsure(realPartIsMoreThanHalf), unsure(continuation));
+            LValue realPart = m_out.doubleSub(integerValue, value);
 
-                LBasicBlock lastNext = m_out.appendTo(realPartIsMoreThanHalf, continuation);
-                LValue integerValueRoundedDown = m_out.doubleSub(integerValue, m_out.constDouble(1));
-                ValueFromBlock integerValueRoundedDownResult = m_out.anchor(integerValueRoundedDown);
-                m_out.jump(continuation);
-                m_out.appendTo(continuation, lastNext);
+            m_out.branch(m_out.doubleGreaterThanOrUnordered(realPart, m_out.constDouble(0.5)), unsure(realPartIsMoreThanHalf), unsure(continuation));
 
-                result = m_out.phi(Double, integerValueResult, integerValueRoundedDownResult);
-            }
+            LBasicBlock lastNext = m_out.appendTo(realPartIsMoreThanHalf, continuation);
+            LValue integerValueRoundedDown = m_out.doubleSub(integerValue, m_out.constDouble(1));
+            ValueFromBlock integerValueRoundedDownResult = m_out.anchor(integerValueRoundedDown);
+            m_out.jump(continuation);
+            m_out.appendTo(continuation, lastNext);
 
-            if (producesInteger(m_node->arithRoundingMode())) {
-                LValue integerValue = convertDoubleToInt32(result, shouldCheckNegativeZero(m_node->arithRoundingMode()));
-                setInt32(integerValue);
-            } else
-                setDouble(result);
-            return;
+            result = m_out.phi(Double, integerValueResult, integerValueRoundedDownResult);
         }
 
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
-        LValue argument = lowJSValue(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationArithRound), m_callFrame, argument));
+        if (producesInteger(m_node->arithRoundingMode())) {
+            LValue integerValue = convertDoubleToInt32(result, shouldCheckNegativeZero(m_node->arithRoundingMode()));
+            setInt32(integerValue);
+        } else
+            setDouble(result);
     }
 
     void compileArithFloor()
     {
-        if (m_node->child1().useKind() == DoubleRepUse) {
-            LValue value = lowDouble(m_node->child1());
-            LValue integerValue = m_out.doubleFloor(value);
-            if (producesInteger(m_node->arithRoundingMode()))
-                setInt32(convertDoubleToInt32(integerValue, shouldCheckNegativeZero(m_node->arithRoundingMode())));
-            else
-                setDouble(integerValue);
-            return;
-        }
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
-        LValue argument = lowJSValue(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationArithFloor), m_callFrame, argument));
+        LValue value = lowDouble(m_node->child1());
+        LValue integerValue = m_out.doubleFloor(value);
+        if (producesInteger(m_node->arithRoundingMode()))
+            setInt32(convertDoubleToInt32(integerValue, shouldCheckNegativeZero(m_node->arithRoundingMode())));
+        else
+            setDouble(integerValue);
     }
 
     void compileArithCeil()
     {
-        if (m_node->child1().useKind() == DoubleRepUse) {
-            LValue value = lowDouble(m_node->child1());
-            LValue integerValue = m_out.doubleCeil(value);
-            if (producesInteger(m_node->arithRoundingMode()))
-                setInt32(convertDoubleToInt32(integerValue, shouldCheckNegativeZero(m_node->arithRoundingMode())));
-            else
-                setDouble(integerValue);
-            return;
-        }
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
-        LValue argument = lowJSValue(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationArithCeil), m_callFrame, argument));
+        LValue value = lowDouble(m_node->child1());
+        LValue integerValue = m_out.doubleCeil(value);
+        if (producesInteger(m_node->arithRoundingMode()))
+            setInt32(convertDoubleToInt32(integerValue, shouldCheckNegativeZero(m_node->arithRoundingMode())));
+        else
+            setDouble(integerValue);
     }
 
     void compileArithTrunc()
     {
-        if (m_node->child1().useKind() == DoubleRepUse) {
-            LValue value = lowDouble(m_node->child1());
-            LValue result = m_out.doubleTrunc(value);
-            if (producesInteger(m_node->arithRoundingMode()))
-                setInt32(convertDoubleToInt32(result, shouldCheckNegativeZero(m_node->arithRoundingMode())));
-            else
-                setDouble(result);
-            return;
-        }
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
-        LValue argument = lowJSValue(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationArithTrunc), m_callFrame, argument));
+        LValue value = lowDouble(m_node->child1());
+        LValue result = m_out.doubleTrunc(value);
+        if (producesInteger(m_node->arithRoundingMode()))
+            setInt32(convertDoubleToInt32(result, shouldCheckNegativeZero(m_node->arithRoundingMode())));
+        else
+            setDouble(result);
     }
 
     void compileArithSqrt()

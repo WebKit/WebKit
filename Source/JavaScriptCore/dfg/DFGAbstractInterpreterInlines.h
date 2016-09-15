@@ -905,23 +905,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithCeil:
     case ArithTrunc: {
         JSValue operand = forNode(node->child1()).value();
-        if (Optional<double> number = operand.toNumberFromPrimitive()) {
+        if (operand && operand.isNumber()) {
             double roundedValue = 0;
             if (node->op() == ArithRound)
-                roundedValue = jsRound(*number);
+                roundedValue = jsRound(operand.asNumber());
             else if (node->op() == ArithFloor)
-                roundedValue = floor(*number);
+                roundedValue = floor(operand.asNumber());
             else if (node->op() == ArithCeil)
-                roundedValue = ceil(*number);
+                roundedValue = ceil(operand.asNumber());
             else {
                 ASSERT(node->op() == ArithTrunc);
-                roundedValue = trunc(*number);
+                roundedValue = trunc(operand.asNumber());
             }
 
-            if (node->child1().useKind() == UntypedUse) {
-                setConstant(node, jsNumber(roundedValue));
-                break;
-            }
             if (producesInteger(node->arithRoundingMode())) {
                 int32_t roundedValueAsInt32 = static_cast<int32_t>(roundedValue);
                 if (roundedValueAsInt32 == roundedValue) {
@@ -940,15 +936,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
-        if (node->child1().useKind() == DoubleRepUse) {
-            if (producesInteger(node->arithRoundingMode()))
-                forNode(node).setType(SpecInt32Only);
-            else if (node->child1().useKind() == DoubleRepUse)
-                forNode(node).setType(typeOfDoubleRounding(forNode(node->child1()).m_type));
-        } else {
-            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
-            forNode(node).setType(SpecFullNumber);
-        }
+        if (producesInteger(node->arithRoundingMode()))
+            forNode(node).setType(SpecInt32Only);
+        else
+            forNode(node).setType(typeOfDoubleRounding(forNode(node->child1()).m_type));
         break;
     }
             
