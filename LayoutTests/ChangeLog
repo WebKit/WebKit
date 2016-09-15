@@ -1,3 +1,16 @@
+2016-09-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix intrinsic size computation with flexible sized tracks
+        https://bugs.webkit.org/show_bug.cgi?id=161903
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Added a couple of new test cases, grid with fr tracks inside a container with intrinsic
+        dimensions and and grid with fr tracks inside another grid with fr tracks.
+
+        * fast/css-grid-layout/flex-and-intrinsic-sizes-expected.txt:
+        * fast/css-grid-layout/flex-and-intrinsic-sizes.html:
+
 2016-09-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Too many gaps with trailing collapsing tracks

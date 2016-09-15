@@ -3,17 +3,19 @@ This test checks that fr tracks are properly sized whenever grid have intrinsic 
 XXX XXX
 PASS
 XXX XXX
-FAIL:
-Expected 30 for width, but got 70. 
-
-<div class="container">
-  <div class="grid min-content" data-expected-width="30" data-expected-height="10">
-    <div>XXX XXX</div>
-  </div>
-</div>
+PASS
 XXX XXX
 PASS
 XXX XXX
 PASS
 XXX XXX
+PASS
+XXX XXXX XX X XX XXX
+PASS
+XXX XXXX XX X XX XXX
+PASS
+XXXX
+XXXX XX XX
+XXX XX X
+XXXX XXX XXXX XXX XXXX
 PASS

@@ -762,8 +762,6 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
         if (LayoutUnit increment = baseSize - oldBaseSize) {
             track.setBaseSize(baseSize);
             freeSpace -= increment;
-
-            baseSizesWithoutMaximization += increment;
             growthLimitsWithoutMaximization += increment;
         }
     }
