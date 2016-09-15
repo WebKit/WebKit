@@ -119,6 +119,18 @@
     TestWebKitAPI::Util::run(&doneWaiting);
 }
 
+- (void)waitForMediaControlsToShow
+{
+    while (![self _hasActiveVideoForControlsManager])
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+}
+
+- (void)waitForMediaControlsToHide
+{
+    while ([self _hasActiveVideoForControlsManager])
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+}
+
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action
 {
     RetainPtr<MessageHandler> handler = adoptNS([[MessageHandler alloc] initWithMessage:message handler:action]);
@@ -319,9 +331,13 @@ TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAfterEn
 {
     RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
-    // Since the video has ended, the expectation is NO even if the page programmatically seeks to the beginning.
     [webView loadTestPageNamed:@"large-video-seek-after-ending"];
-    [webView expectControlsManager:NO afterReceivingMessage:@"ended"];
+
+    // Immediately after ending, the controls should still be present.
+    [webView expectControlsManager:YES afterReceivingMessage:@"ended"];
+
+    // At some point in the future, they should automatically hide.
+    [webView waitForMediaControlsToHide];
 }
 
 TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAndPlaysAfterEnding)
@@ -383,6 +399,33 @@ TEST(VideoControlsManager, VideoControlsManagerTearsDownMediaControlsOnDealloc)
     }];
 
     TestWebKitAPI::Util::run(&finishedTest);
+}
+
+TEST(VideoControlsManager, VideoControlsManagerDoesNotShowMediaControlsForOffscreenVideo)
+{
+    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1024, 768));
+
+    [webView loadTestPageNamed:@"large-video-offscreen"];
+    [webView expectControlsManager:NO afterReceivingMessage:@"moved"];
+}
+
+TEST(VideoControlsManager, VideoControlsManagerKeepsControlsStableDuringSrcChangeOnClick)
+{
+    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
+
+    [webView loadTestPageNamed:@"change-video-source-on-click"];
+    [webView waitForPageToLoadWithAutoplayingVideos:1];
+    [webView mouseDownAtPoint:NSMakePoint(400, 300)];
+
+    [webView expectControlsManager:YES afterReceivingMessage:@"changed"];
+}
+
+TEST(VideoControlsManager, VideoControlsManagerKeepsControlsStableDuringSrcChangeOnEnd)
+{
+    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
+
+    [webView loadTestPageNamed:@"change-video-source-on-end"];
+    [webView expectControlsManager:YES afterReceivingMessage:@"changed"];
 }
 
 TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)

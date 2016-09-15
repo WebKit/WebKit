@@ -163,6 +163,8 @@ static const double SeekTime = 0.2;
 static const double ScanRepeatDelay = 1.5;
 static const double ScanMaximumRate = 8;
 
+static const double HideMediaControlsAfterEndedDelay = 6;
+
 static void setFlags(unsigned& value, unsigned flags)
 {
     value |= flags;
@@ -426,6 +428,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
+    , m_playbackControlsManagerBehaviorRestrictionsTimer(*this, &HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired)
     , m_playedTimeRanges()
     , m_asyncEventQueue(*this)
     , m_requestedPlaybackRate(1)
@@ -482,6 +485,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_creatingControls(false)
     , m_receivedLayoutSizeChanged(false)
     , m_hasEverNotifiedAboutPlaying(false)
+    , m_hasEverHadAudio(false)
+    , m_hasEverHadVideo(false)
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     , m_mediaControlsDependOnPageScaleFactor(false)
     , m_haveSetUpCaptionContainer(false)
@@ -630,6 +635,7 @@ HTMLMediaElement::~HTMLMediaElement()
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
     m_updatePlaybackControlsManagerQueue.close();
+    m_playbackControlsManagerBehaviorRestrictionsQueue.close();
 
     m_completelyLoaded = true;
 
@@ -970,6 +976,12 @@ void HTMLMediaElement::scheduleNextSourceChild()
     LOG(Media, "HTMLMediaElement::scheduleNextSourceChild(%p) - setting %s flag", this, actionName(LoadMediaResource).utf8().data());
     setFlags(m_pendingActionFlags, LoadMediaResource);
     m_pendingActionTimer.startOneShot(0);
+}
+
+void HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged(const MediaPlayer*)
+{
+    m_hasEverHadAudio |= hasAudio();
+    m_hasEverHadVideo |= hasVideo();
 }
 
 void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
@@ -2674,6 +2686,9 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
         m_seekTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::seekTask, this));
     } else
         seekTask();
+
+    if (ScriptController::processingUserGestureForMedia())
+        m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
 }
 
 void HTMLMediaElement::seekTask()
@@ -3490,6 +3505,8 @@ void HTMLMediaElement::beginScrubbing()
             setPausedInternal(true);
         }
     }
+
+    m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
 }
 
 void HTMLMediaElement::endScrubbing()
@@ -4532,7 +4549,9 @@ void HTMLMediaElement::addBehaviorRestrictionsOnEndIfNecessary()
     if (isFullscreen())
         return;
 
-    m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePlaybackToControlControlsManager | MediaElementSession::RequireUserGestureToControlControlsManager);
+    m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
+    m_playbackControlsManagerBehaviorRestrictionsTimer.stop();
+    m_playbackControlsManagerBehaviorRestrictionsTimer.startOneShot(HideMediaControlsAfterEndedDelay);
 }
 
 void HTMLMediaElement::mediaPlayerVolumeChanged(MediaPlayer*)
@@ -4766,6 +4785,9 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
 #else
     document().updateIsPlayingMedia();
 #endif
+
+    m_hasEverHadAudio |= hasAudio();
+    m_hasEverHadVideo |= hasVideo();
 
     endProcessingMediaPlayerCallback();
 }
@@ -7275,6 +7297,25 @@ void HTMLMediaElement::scheduleUpdatePlaybackControlsManager()
 {
     if (!m_updatePlaybackControlsManagerQueue.hasPendingTasks())
         m_updatePlaybackControlsManagerQueue.enqueueTask(std::bind(&HTMLMediaElement::updatePlaybackControlsManager, this));
+}
+
+void HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired()
+{
+    if (m_playbackControlsManagerBehaviorRestrictionsQueue.hasPendingTasks())
+        return;
+
+    if (!m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager))
+        return;
+
+    RefPtr<HTMLMediaElement> protectedThis(this);
+    m_playbackControlsManagerBehaviorRestrictionsQueue.enqueueTask([protectedThis] () {
+        MediaElementSession* mediaElementSession = protectedThis->m_mediaSession.get();
+        if (protectedThis->isPlaying() || mediaElementSession->state() == PlatformMediaSession::Autoplaying || mediaElementSession->state() == PlatformMediaSession::Playing)
+            return;
+
+        mediaElementSession->addBehaviorRestriction(MediaElementSession::RequirePlaybackToControlControlsManager);
+        protectedThis->scheduleUpdatePlaybackControlsManager();
+    });
 }
 
 bool HTMLMediaElement::shouldOverrideBackgroundLoadingRestriction() const

@@ -59,6 +59,7 @@ namespace WebCore {
 
 static const double elementMainContentCheckInterval = .250;
 
+static bool isElementRectMostlyInMainFrame(const HTMLMediaElement&);
 static bool isElementLargeEnoughForMainContent(const HTMLMediaElement&, MediaSessionMainContentPurpose);
 
 #if !LOG_DISABLED
@@ -222,7 +223,12 @@ bool MediaElementSession::canShowControlsManager() const
         return true;
     }
 
-    if (!m_element.hasAudio()) {
+    if (!isElementRectMostlyInMainFrame(m_element)) {
+        LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: Not in main frame");
+        return false;
+    }
+
+    if (!m_element.hasAudio() && !m_element.hasEverHadAudio()) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: No audio");
         return false;
     }
@@ -268,7 +274,7 @@ bool MediaElementSession::canShowControlsManager() const
             return false;
         }
 
-        if (!m_element.hasVideo()) {
+        if (!m_element.hasVideo() && !m_element.hasEverHadVideo()) {
             LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: No video");
             return false;
         }
@@ -628,6 +634,27 @@ static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
         return false;
 
     return true;
+}
+
+static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
+{
+    if (!element.renderer())
+        return false;
+
+    auto* documentFrame = element.document().frame();
+    if (!documentFrame)
+        return false;
+
+    auto mainFrameView = documentFrame->mainFrame().view();
+    if (!mainFrameView)
+        return false;
+
+    IntRect mainFrameRectAdjustedForScrollPosition = IntRect(-mainFrameView->documentScrollPositionRelativeToViewOrigin(), mainFrameView->contentsSize());
+    IntRect elementRectInMainFrame = element.clientRect();
+    unsigned int totalElementArea = elementRectInMainFrame.area();
+    elementRectInMainFrame.intersect(mainFrameRectAdjustedForScrollPosition);
+
+    return elementRectInMainFrame.area() > totalElementArea / 2;
 }
 
 static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)

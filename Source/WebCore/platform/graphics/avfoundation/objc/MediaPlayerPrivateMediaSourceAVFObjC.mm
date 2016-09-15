@@ -556,6 +556,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
         destroyLayer();
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::notifyActiveSourceBuffersChanged()
+{
+    m_player->client().mediaPlayerActiveSourceBuffersChanged(m_player);
+}
+
 MediaPlayer::MovieLoadType MediaPlayerPrivateMediaSourceAVFObjC::movieLoadType() const
 {
     return MediaPlayer::StoredStream;

@@ -1,5 +1,24 @@
 2016-09-14  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r205938. rdar://problem/28227805
+
+    2016-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Media controls behave strangely when changing media sources
+            https://bugs.webkit.org/show_bug.cgi?id=161914
+            <rdar://problem/28227805>
+
+            Reviewed by Tim Horton.
+
+            Allows a web page to have an active video for a media control manager even if no audio or video is currently
+            being produced. This is because the media element may be in a state where it is changing its source and does not
+            currently have a video or audio track.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::hasActiveVideoForControlsManager):
+
+2016-09-14  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205878. rdar://problem/28229827
 
     2016-09-13  Tim Horton  <timothy_horton@apple.com>

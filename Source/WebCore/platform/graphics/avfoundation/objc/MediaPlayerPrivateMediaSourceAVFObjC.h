@@ -165,6 +165,7 @@ private:
     bool supportsAcceleratedRendering() const override;
     // called when the rendering system flips the into or out of accelerated rendering mode.
     void acceleratedRenderingStateChanged() override;
+    void notifyActiveSourceBuffersChanged() override;
 
     MediaPlayer::MovieLoadType movieLoadType() const override;
 

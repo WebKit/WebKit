@@ -84,8 +84,10 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
     ASSERT(m_sourceBuffers.contains(buffer));
 
     size_t pos = m_activeSourceBuffers.find(buffer);
-    if (pos != notFound)
+    if (pos != notFound) {
         m_activeSourceBuffers.remove(pos);
+        m_player->notifyActiveSourceBuffersChanged();
+    }
 
     pos = m_sourceBuffers.find(buffer);
     m_sourceBuffers[pos]->clearMediaSource();
@@ -142,13 +144,17 @@ void MediaSourcePrivateAVFObjC::seekCompleted()
 
 void MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC* buffer, bool active)
 {
-    if (active && !m_activeSourceBuffers.contains(buffer))
+    if (active && !m_activeSourceBuffers.contains(buffer)) {
         m_activeSourceBuffers.append(buffer);
+        m_player->notifyActiveSourceBuffersChanged();
+    }
 
     if (!active) {
         size_t position = m_activeSourceBuffers.find(buffer);
-        if (position != notFound)
+        if (position != notFound) {
             m_activeSourceBuffers.remove(position);
+            m_player->notifyActiveSourceBuffersChanged();
+        }
     }
 }
 
