@@ -58,7 +58,6 @@ using namespace WebCore;
 
 using JSC::CallData;
 using JSC::CallType;
-using JSC::CallType::None;
 using JSC::ExecState;
 using JSC::Identifier;
 using JSC::JSLockHolder;

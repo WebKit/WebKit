@@ -30,11 +30,23 @@
 
 namespace JSC {
 
+JS_EXPORT_PRIVATE const ClassInfo* getHashMapBucketKeyClassInfo();
+JS_EXPORT_PRIVATE const ClassInfo* getHashMapBucketKeyValueClassInfo();
+JS_EXPORT_PRIVATE const ClassInfo* getHashMapImplKeyClassInfo();
+JS_EXPORT_PRIVATE const ClassInfo* getHashMapImplKeyValueClassInfo();
+
+enum class HashTableType {
+    Key,
+    KeyValue
+};
+
 struct HashMapBucketDataKey {
+    static const HashTableType Type = HashTableType::Key;
     WriteBarrier<Unknown> key;
 };
 
 struct HashMapBucketDataKeyValue {
+    static const HashTableType Type = HashTableType::KeyValue;
     WriteBarrier<Unknown> key;
     WriteBarrier<Unknown> value;
 };
@@ -56,7 +68,19 @@ class HashMapBucket : public JSCell {
     }
 
 public:
-    DECLARE_EXPORT_INFO;
+    static const HashTableType Type = Data::Type;
+    static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
+
+    static const ClassInfo* info()
+    {
+        switch (Type) {
+        case HashTableType::Key:
+            return getHashMapBucketKeyClassInfo();
+        case HashTableType::KeyValue:
+            return getHashMapBucketKeyValueClassInfo();
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -265,7 +289,18 @@ class HashMapImpl : public JSCell {
     }
 
 public:
-    DECLARE_EXPORT_INFO;
+    static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
+
+    static const ClassInfo* info()
+    {
+        switch (HashMapBucketType::Type) {
+        case HashTableType::Key:
+            return getHashMapImplKeyClassInfo();
+        case HashTableType::KeyValue:
+            return getHashMapImplKeyValueClassInfo();
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {

@@ -1,3 +1,51 @@
+2016-09-15  Keith Miller  <keith_miller@apple.com>
+
+
+        Pragma out undefined-var-template warnings in JSC for JSObjects that are templatized
+        https://bugs.webkit.org/show_bug.cgi?id=161985
+
+        Reviewed by Alex Christensen.
+
+        I started a true fix for this in
+        https://bugs.webkit.org/show_bug.cgi?id=161979, however the fix
+        for this issue is not sustainable. Since the scope of this issue
+        is just limited to the static const ClassInfo member it is
+        simpler to just pragma out this warning. This works because
+        COMDAT will, AFAIK, pick the actual specialization.  If, in the
+        future, we want to expose these classes to WebCore we will need to
+        do what we do for JSGenericTypedArrayViews and create a custom
+        info() function with a switch.
+
+        This patch also fixes a bunch of weak external symbols due to one of:
+        1) out of line template member definitions functions not being marked inline.
+        2) inline member functions definitions being marked as exported.
+        3) missing header file includes for forward function declarations.
+
+        * API/JSCallbackObject.h:
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::as):
+        * runtime/HashMapImpl.cpp:
+        (JSC::getHashMapBucketKeyClassInfo):
+        (JSC::getHashMapBucketKeyValueClassInfo):
+        (JSC::getHashMapImplKeyClassInfo):
+        (JSC::getHashMapImplKeyValueClassInfo):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBucket::info):
+        (JSC::HashMapImpl::info):
+        * runtime/JSCJSValue.h:
+        (JSC::toUInt32): Deleted.
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::setIndexQuicklyToDouble):
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewPrototype.h:
+        * runtime/MathCommon.h:
+        (JSC::toUInt32):
+        * runtime/TypedArrayAdaptors.h:
+        * runtime/VM.h:
+        (JSC::VM::watchdog):
+        (JSC::VM::heapProfiler):
+        (JSC::VM::samplingProfiler):
+
 2016-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         There is no good reason for WeakBlock to care about newly allocated objects

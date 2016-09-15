@@ -118,17 +118,6 @@ enum WhichValueWord {
     PayloadWord
 };
 
-// This implements ToInt32, defined in ECMA-262 9.5.
-JS_EXPORT_PRIVATE int32_t toInt32(double);
-
-// This implements ToUInt32, defined in ECMA-262 9.6.
-inline uint32_t toUInt32(double number)
-{
-    // As commented in the spec, the operation of ToInt32 and ToUint32 only differ
-    // in how the result is interpreted; see NOTEs in sections 9.5 and 9.6.
-    return toInt32(number);
-}
-
 int64_t tryConvertToInt52(double);
 bool isInt52(double);
 
