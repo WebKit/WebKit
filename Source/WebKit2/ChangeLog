@@ -1,5 +1,22 @@
 2016-09-14  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r205935. rdar://problem/26013388
+
+    2016-09-14  Beth Dakin  <bdakin@apple.com>
+
+            Add needsPlainTextQuirk and send it to the UIProcess
+            https://bugs.webkit.org/show_bug.cgi?id=161996
+            -and corresponding-
+            rdar://problem/26013388
+
+            Rubber-stamped by Simon Fraser.
+
+            Quick clean-up.
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::needsPlainTextQuirk):
+
+2016-09-14  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205934. rdar://problem/26013388
 
     2016-09-14  Beth Dakin  <bdakin@apple.com>

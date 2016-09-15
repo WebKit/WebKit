@@ -4783,8 +4783,6 @@ static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
         return false;
 
     String host = url.host();
-    String path = url.path();
-    String fragmentIdentifier = url.fragmentIdentifier();
 
     if (equalLettersIgnoringASCIICase(host, "twitter.com"))
         return true;
@@ -4792,7 +4790,8 @@ static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
     if (equalLettersIgnoringASCIICase(host, "onedrive.live.com"))
         return true;
 
-    if (equalLettersIgnoringASCIICase(host, "www.icloud.com") && (path.contains("notes") || fragmentIdentifier.contains("notes") || path.contains("/keynote/")))
+    String path = url.path();
+    if (equalLettersIgnoringASCIICase(host, "www.icloud.com") && (path.contains("notes") || url.fragmentIdentifier().contains("notes") || path.contains("/keynote/")))
         return true;
 
     if (equalLettersIgnoringASCIICase(host, "trix-editor.org"))
