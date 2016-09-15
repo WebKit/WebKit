@@ -1,3 +1,23 @@
+2016-09-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Implement fit-content track size
+        https://bugs.webkit.org/show_bug.cgi?id=161379
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        New tests to verify that fit-content track sizes work as expected for columns and for
+        rows. Also added some more test cases to verify that we properly parse fit-content().
+
+        * fast/css-grid-layout/fit-content-columns-expected.html: Added.
+        * fast/css-grid-layout/fit-content-columns.html: Added.
+        * fast/css-grid-layout/fit-content-rows-expected.html: Added.
+        * fast/css-grid-layout/fit-content-rows.html: Added.
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+
 2016-09-15  Alejandro G. Castro  <alex@igalia.com>
 
         [WebRTC][OpenWebRTC] crash in maybeHandleChangeMutedState

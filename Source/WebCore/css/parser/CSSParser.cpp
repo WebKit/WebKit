@@ -5645,11 +5645,14 @@ static bool isGridTrackFixedSized(const CSSValue& value)
         return isGridTrackFixedSized(downcast<CSSPrimitiveValue>(value));
 
     ASSERT(value.isFunctionValue());
-    ASSERT(downcast<CSSFunctionValue>(value).arguments());
-    ASSERT(downcast<CSSFunctionValue>(value).arguments()->length() == 2);
+    auto& arguments = *downcast<CSSFunctionValue>(value).arguments();
+    // fit-content
+    if (arguments.length() == 1)
+        return false;
 
-    auto& min = downcast<CSSPrimitiveValue>(*downcast<CSSFunctionValue>(value).arguments()->item(0));
-    auto& max = downcast<CSSPrimitiveValue>(*downcast<CSSFunctionValue>(value).arguments()->item(1));
+    ASSERT(arguments.length() == 2);
+    auto& min = downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(0));
+    auto& max = downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(1));
     return isGridTrackFixedSized(min) || isGridTrackFixedSized(max);
 }
 
@@ -5794,6 +5797,21 @@ RefPtr<CSSValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList)
 
     if (currentValue.id == CSSValueAuto)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+
+    if (currentValue.unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(currentValue.function->name, "fit-content(")) {
+        CSSParserValueList* arguments = currentValue.function->args.get();
+        if (!arguments || arguments->size() != 1)
+            return nullptr;
+        ValueWithCalculation valueWithCalculation(*arguments->valueAt(0));
+        if (!validateUnit(valueWithCalculation, FNonNeg | FLength | FPercent))
+            return nullptr;
+        RefPtr<CSSPrimitiveValue> trackBreadth = createPrimitiveNumericValue(valueWithCalculation);
+        if (!trackBreadth)
+            return nullptr;
+        auto parsedArguments = CSSValueList::createCommaSeparated();
+        parsedArguments->append(trackBreadth.releaseNonNull());
+        return CSSFunctionValue::create("fit-content(", WTFMove(parsedArguments));
+    }
 
     if (currentValue.unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(currentValue.function->name, "minmax(")) {
         // The spec defines the following grammar: minmax( <track-breadth> , <track-breadth> )

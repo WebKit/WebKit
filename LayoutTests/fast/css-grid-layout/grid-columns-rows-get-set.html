@@ -91,6 +91,10 @@
     grid-template-columns: minmax(auto, 20px);
     grid-template-rows: minmax(max-content, auto);
 }
+.gridWithFitContentFunction {
+    grid-template-columns: fit-content(30%);
+    grid-template-rows: fit-content(20px):
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -128,6 +132,9 @@
 <div class="grid definite gridWithCalcInsideMinMax" id="gridWithCalcInsideMinMaxElement"></div>
 <div class="grid definite gridWithCalcComplexInsideMinMax" id="gridWithCalcComplexInsideMinMaxElement"></div>
 <div class="grid definite gridWithAutoInsideMinMax contentStart" id="gridWithAutoInsideMinMaxElement">
+    <div class="gridItem"></div>
+</div>
+<div class="grid definite gridWithFitContentFunction contentStart" id="gridWithFitContentFunctionElement">
     <div class="gridItem"></div>
 </div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>

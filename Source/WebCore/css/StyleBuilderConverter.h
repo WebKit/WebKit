@@ -843,9 +843,13 @@ inline GridTrackSize StyleBuilderConverter::createGridTrackSize(CSSValue& value,
     if (is<CSSPrimitiveValue>(value))
         return GridTrackSize(createGridTrackBreadth(downcast<CSSPrimitiveValue>(value), styleResolver));
 
+    ASSERT(is<CSSFunctionValue>(value));
     CSSValueList& arguments = *downcast<CSSFunctionValue>(value).arguments();
-    ASSERT_WITH_SECURITY_IMPLICATION(arguments.length() == 2);
 
+    if (arguments.length() == 1)
+        return GridTrackSize(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(0)), styleResolver), FitContentTrackSizing);
+
+    ASSERT_WITH_SECURITY_IMPLICATION(arguments.length() == 2);
     GridLength minTrackBreadth(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(0)), styleResolver));
     GridLength maxTrackBreadth(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(1)), styleResolver));
     return GridTrackSize(minTrackBreadth, maxTrackBreadth);
