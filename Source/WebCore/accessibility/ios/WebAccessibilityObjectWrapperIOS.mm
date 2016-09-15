@@ -2040,14 +2040,8 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     AXAttributeStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
                 
     int decor = style.textDecorationsInEffect();
-    if ((decor & (TextDecorationUnderline | TextDecorationLineThrough)) != 0) {
-        Color underlineColor, overlineColor, linethroughColor;
-        TextDecorationStyle underlineStyle, overlineStyle, linethroughStyle;
-        renderer->getTextDecorationColorsAndStyles(decor, underlineColor, overlineColor, linethroughColor, underlineStyle, overlineStyle, linethroughStyle);
-        
-        if (decor & TextDecorationUnderline)
-            AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, [NSNumber numberWithBool:YES], range);
-    }
+    if (decor & TextDecorationUnderline)
+        AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, [NSNumber numberWithBool:YES], range);
 }
 
 static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, NSString *text)

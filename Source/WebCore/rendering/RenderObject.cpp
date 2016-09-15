@@ -36,7 +36,6 @@
 #include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
-#include "HTMLAnchorElement.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
@@ -1641,79 +1640,6 @@ bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitT
 int RenderObject::innerLineHeight() const
 {
     return style().computedLineHeight();
-}
-
-static Color decorationColor(const RenderStyle* style)
-{
-    Color result;
-    // Check for text decoration color first.
-    result = style->visitedDependentColor(CSSPropertyWebkitTextDecorationColor);
-    if (result.isValid())
-        return result;
-    if (style->textStrokeWidth() > 0) {
-        // Prefer stroke color if possible but not if it's fully transparent.
-        result = style->visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
-        if (result.alpha())
-            return result;
-    }
-    
-    result = style->visitedDependentColor(CSSPropertyWebkitTextFillColor);
-    return result;
-}
-
-void RenderObject::getTextDecorationColorsAndStyles(int decorations, Color& underlineColor, Color& overlineColor, Color& linethroughColor,
-    TextDecorationStyle& underlineStyle, TextDecorationStyle& overlineStyle, TextDecorationStyle& linethroughStyle, bool firstlineStyle) const
-{
-    const RenderObject* current = this;
-    const RenderStyle* styleToUse = nullptr;
-    TextDecoration currDecs = TextDecorationNone;
-    Color resultColor;
-    do {
-        styleToUse = firstlineStyle ? &current->firstLineStyle() : &current->style();
-        currDecs = styleToUse->textDecoration();
-        resultColor = decorationColor(styleToUse);
-        // Parameter 'decorations' is cast as an int to enable the bitwise operations below.
-        if (currDecs) {
-            if (currDecs & TextDecorationUnderline) {
-                decorations &= ~TextDecorationUnderline;
-                underlineColor = resultColor;
-                underlineStyle = styleToUse->textDecorationStyle();
-            }
-            if (currDecs & TextDecorationOverline) {
-                decorations &= ~TextDecorationOverline;
-                overlineColor = resultColor;
-                overlineStyle = styleToUse->textDecorationStyle();
-            }
-            if (currDecs & TextDecorationLineThrough) {
-                decorations &= ~TextDecorationLineThrough;
-                linethroughColor = resultColor;
-                linethroughStyle = styleToUse->textDecorationStyle();
-            }
-        }
-        if (current->isRubyText())
-            return;
-        current = current->parent();
-        if (current && current->isAnonymousBlock() && downcast<RenderBlock>(*current).continuation())
-            current = downcast<RenderBlock>(*current).continuation();
-    } while (current && decorations && (!current->node() || (!is<HTMLAnchorElement>(*current->node()) && !current->node()->hasTagName(fontTag))));
-
-    // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
-    if (decorations && current) {
-        styleToUse = firstlineStyle ? &current->firstLineStyle() : &current->style();
-        resultColor = decorationColor(styleToUse);
-        if (decorations & TextDecorationUnderline) {
-            underlineColor = resultColor;
-            underlineStyle = styleToUse->textDecorationStyle();
-        }
-        if (decorations & TextDecorationOverline) {
-            overlineColor = resultColor;
-            overlineStyle = styleToUse->textDecorationStyle();
-        }
-        if (decorations & TextDecorationLineThrough) {
-            linethroughColor = resultColor;
-            linethroughStyle = styleToUse->textDecorationStyle();
-        }
-    }
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
