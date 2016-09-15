@@ -75,6 +75,9 @@ const AtomicString& RealtimeMediaSourceSupportedConstraints::nameForConstraint(M
     case MediaConstraintType::GroupId:
         return groupIdConstraintName;
     }
+
+    ASSERT_NOT_REACHED();
+    return emptyAtom;
 }
 
 MediaConstraintType RealtimeMediaSourceSupportedConstraints::constraintFromName(const String& constraintName)
@@ -126,6 +129,9 @@ bool RealtimeMediaSourceSupportedConstraints::supportsConstraint(MediaConstraint
     case MediaConstraintType::GroupId:
         return supportsGroupId();
     }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebCore

@@ -60,6 +60,9 @@ Ref<MediaConstraint> MediaConstraint::create(const String& name)
     case MediaConstraintType::Unknown:
         return UnknownConstraint::create(name, constraintType);
     }
+
+    ASSERT_NOT_REACHED();
+    return MediaConstraint::create(String());
 }
 
 Ref<MediaConstraint> MediaConstraint::copy() const
