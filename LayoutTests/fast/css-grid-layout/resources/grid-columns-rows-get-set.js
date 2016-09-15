@@ -21,7 +21,6 @@ testGridTemplatesValues(document.getElementById("gridWithCalcComplexElement"), "
 testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMaxElement"), "minmax(10%, 15px)", "minmax(20px, 50%)", "80px", "300px");
 testGridTemplatesValues(document.getElementById("gridWithCalcComplexInsideMinMaxElement"), "minmax(10%, 415px)", "minmax(80px, 50%)", "415px", "300px");
 testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMaxElement"), "20px", "11px");
-testGridTemplatesValues(document.getElementById("gridWithFitContentFunctionElement"), "7px", "11px");
 
 debug("");
 debug("Test getting wrong values for grid-template-columns and grid-template-rows through CSS (they should resolve to the default: 'none')");
@@ -45,7 +44,6 @@ testGridTemplatesSetJSValues("auto", "auto", "0px", "0px");
 testGridTemplatesSetJSValues("10vw", "25vh", "80px", "150px");
 testGridTemplatesSetJSValues("-webkit-min-content", "-webkit-min-content", "0px", "0px");
 testGridTemplatesSetJSValues("-webkit-max-content", "-webkit-max-content", "0px", "0px");
-testGridTemplatesSetJSValues("fit-content(100px)", "fit-content(25%)", "0px", "0px");
 
 debug("");
 debug("Test getting and setting grid-template-columns and grid-template-rows to minmax() values through JS");
@@ -82,14 +80,6 @@ testGridTemplatesSetBadJSValues("minmax()", "minmax(30px 30% 30em)");
 // Flexible lengths are invalid on the min slot of minmax().
 testGridTemplatesSetBadJSValues("minmax(0fr, 100px)", "minmax(.0fr, 200px)");
 testGridTemplatesSetBadJSValues("minmax(1fr, 100px)", "minmax(2.5fr, 200px)");
-testGridTemplatesSetBadJSValues("fit-content()", "fit-content( )");
-testGridTemplatesSetBadJSValues("fit-content(-10em)", "fit-content(-2px)");
-testGridTemplatesSetBadJSValues("fit-content(10px 2%)", "fit-content(5% 10em)");
-testGridTemplatesSetBadJSValues("fit-content(-webkit-max-content)", "fit-content(-webkit-min-content)");
-testGridTemplatesSetBadJSValues("fit-content(auto)", "fit-content(3fr)");
-testGridTemplatesSetBadJSValues("fit-content(repeat(2, 100px))", "fit-content(repeat(auto-fit), 1%)");
-testGridTemplatesSetBadJSValues("fit-content(fit-content(10px))", "fit-content(fit-content(30%))");
-testGridTemplatesSetBadJSValues("fit-content([a] 100px)", "fit-content(30px [b c])");
 
 testGridTemplatesSetBadJSValues("-2fr", "3ffr");
 testGridTemplatesSetBadJSValues("-2.05fr", "+-3fr");

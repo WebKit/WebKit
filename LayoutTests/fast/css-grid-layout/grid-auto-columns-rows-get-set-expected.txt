@@ -12,8 +12,6 @@ PASS window.getComputedStyle(gridAutoMinMaxContent, '').getPropertyValue('grid-a
 PASS window.getComputedStyle(gridAutoMinMaxContent, '').getPropertyValue('grid-auto-columns') is "-webkit-max-content"
 PASS window.getComputedStyle(gridAutoAutoInMinMax, '').getPropertyValue('grid-auto-rows') is "minmax(auto, 48px)"
 PASS window.getComputedStyle(gridAutoAutoInMinMax, '').getPropertyValue('grid-auto-columns') is "minmax(80px, auto)"
-PASS window.getComputedStyle(gridAutoFitContent, '').getPropertyValue('grid-auto-rows') is "fit-content(50%)"
-PASS window.getComputedStyle(gridAutoFitContent, '').getPropertyValue('grid-auto-columns') is "fit-content(30px)"
 
 Test that getting grid-template-columns and grid-template-rows set through CSS lists every track listed whether implicitly or explicitly created
 PASS window.getComputedStyle(gridAutoFixedFixedWithChildren, '').getPropertyValue('grid-auto-rows') is "30px"
@@ -50,12 +48,8 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "min
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "minmax(-webkit-max-content, -webkit-min-content)"
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "minmax(-webkit-min-content, 10px) 48px 5%"
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "auto 30px minmax(10%, 60%)"
-PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "fit-content(10px) fit-content(30%)"
-PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "fit-content(5%) fit-content(40px)"
 
 Test setting grid-auto-columns and grid-auto-rows to bad minmax value through JS
-PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "auto"
-PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "auto"

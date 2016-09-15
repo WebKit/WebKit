@@ -1013,12 +1013,7 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
 {
     switch (trackSize.type()) {
     case LengthTrackSizing:
-        return specifiedValueForGridTrackBreadth(trackSize.minTrackBreadth(), style);
-    case FitContentTrackSizing: {
-        auto fitContentTrackSize = CSSValueList::createCommaSeparated();
-        fitContentTrackSize->append(zoomAdjustedPixelValueForLength(trackSize.fitContentTrackBreadth().length(), style));
-        return CSSFunctionValue::create("fit-content(", WTFMove(fitContentTrackSize));
-    }
+        return specifiedValueForGridTrackBreadth(trackSize.length(), style);
     default:
         ASSERT(trackSize.type() == MinMaxTrackSizing);
         auto minMaxTrackBreadths = CSSValueList::createCommaSeparated();

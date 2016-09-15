@@ -1,3 +1,15 @@
+2016-09-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, rolling out r205966.
+
+        Triggered some assertions
+
+        Reverted changeset:
+
+        "[css-grid] Implement fit-content track size"
+        https://bugs.webkit.org/show_bug.cgi?id=161379
+        http://trac.webkit.org/changeset/205966
+
 2016-09-15  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup RenderLayer::shouldBeNormalFlowOnly
