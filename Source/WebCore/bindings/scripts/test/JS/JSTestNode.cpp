@@ -232,13 +232,14 @@ JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 }
 
 static EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState*, Ref<DeferredWrapper>&&);
+
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecState* state)
 {
     ASSERT(state);
-    return JSValue::encode(callPromiseFunction<jsTestNodePrototypeFunctionTestWorkerPromisePromise, true>(*state));
+    return JSValue::encode(callPromiseFunction<jsTestNodePrototypeFunctionTestWorkerPromisePromise, PromiseExecutionScope::WindowOrWorker>(*state));
 }
 
-static inline EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
+static inline EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState* state, Ref<DeferredWrapper>&& deferredWrapper)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
