@@ -1,3 +1,35 @@
+2016-09-15  JF Bastien  <jfbastien@apple.com>
+
+        TextBreakIterator: unconvolute character break cache
+        https://bugs.webkit.org/show_bug.cgi?id=162001
+
+        Reviewed by Michael Saboff.
+
+        Simplify the one-element cache.
+
+        Added here (fixed a bit after): https://bugs.webkit.org/attachment.cgi?id=144118&action=prettypatch
+        Updated to never use a lock, and always use weak cmpxchg here: https://bugs.webkit.org/attachment.cgi?id=261719&action=prettypatch
+
+        It's just trying to reduce the number of times it calls into ICU
+        to initialize a UBRK_CHARACTER. The implementation keeps a
+        one-element cache of the latest used one, which threads can
+        optimistically grab. Failure is fine (just create a new one), same
+        for failure to cache (just destroy it), but the logic is odd and
+        you technically need release / acquire semantics because the
+        UBRK_CHARACTER creation's store need to be visible on acquisition
+        (but realistically it was created and then used and *then* cached,
+        so it's probably been long ago enough that read reorders never
+        manifested).
+
+        Using exchange directly achieves this without the headache.
+
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::getNonSharedCharacterBreakIterator):
+        (WTF::cacheNonSharedCharacterBreakIterator):
+        (WTF::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator):
+        (WTF::NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator):
+        (WTF::compareAndSwapNonSharedCharacterBreakIterator): Deleted.
+
 2016-09-15  Keith Miller  <keith_miller@apple.com>
 
         Pragma out undefined-var-template warnings in JSC for JSObjects that are templatized

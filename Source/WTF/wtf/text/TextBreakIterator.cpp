@@ -25,8 +25,8 @@
 #include "LineBreakIteratorPoolICU.h"
 #include "UTextProviderLatin1.h"
 #include "UTextProviderUTF16.h"
+#include <atomic>
 #include <mutex>
-#include <wtf/Atomics.h>
 #include <wtf/text/StringView.h>
 
 // FIXME: This needs a better name
@@ -813,30 +813,31 @@ void closeLineBreakIterator(TextBreakIterator*& iterator)
     iterator = nullptr;
 }
 
-static TextBreakIterator* nonSharedCharacterBreakIterator;
+static std::atomic<TextBreakIterator*> nonSharedCharacterBreakIterator = ATOMIC_VAR_INIT(nullptr);
 
-static inline bool compareAndSwapNonSharedCharacterBreakIterator(TextBreakIterator* expected, TextBreakIterator* newValue)
+static inline TextBreakIterator* getNonSharedCharacterBreakIterator()
 {
-    return WTF::weakCompareAndSwap(&nonSharedCharacterBreakIterator, expected, newValue);
+    if (auto *res = nonSharedCharacterBreakIterator.exchange(nullptr, std::memory_order_acquire))
+        return res;
+    return initializeIterator(UBRK_CHARACTER);
+}
+
+static inline void cacheNonSharedCharacterBreakIterator(TextBreakIterator* cacheMe)
+{
+    if (auto *old = nonSharedCharacterBreakIterator.exchange(cacheMe, std::memory_order_release))
+        ubrk_close(reinterpret_cast<UBreakIterator*>(old));
 }
 
 NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(StringView string)
 {
-    m_iterator = nonSharedCharacterBreakIterator;
-
-    bool createdIterator = m_iterator && compareAndSwapNonSharedCharacterBreakIterator(m_iterator, nullptr);
-    if (!createdIterator)
-        m_iterator = initializeIterator(UBRK_CHARACTER);
-    if (!m_iterator)
-        return;
-
-    m_iterator = setTextForIterator(*m_iterator, string);
+    if ((m_iterator = getNonSharedCharacterBreakIterator()))
+        m_iterator = setTextForIterator(*m_iterator, string);
 }
 
 NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
 {
-    if (!compareAndSwapNonSharedCharacterBreakIterator(0, m_iterator))
-        ubrk_close(reinterpret_cast<UBreakIterator*>(m_iterator));
+    if (m_iterator)
+        cacheNonSharedCharacterBreakIterator(m_iterator);
 }
 
 NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(NonSharedCharacterBreakIterator&& other)
