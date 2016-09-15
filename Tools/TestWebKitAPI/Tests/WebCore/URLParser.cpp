@@ -588,6 +588,10 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("/i", "sc:sd/sd");
     shouldFail("?i", "sc:sd");
     shouldFail("?i", "sc:sd/sd");
+    shouldFail("http://example example.com", "http://other.com/");
+    shouldFail("http://[www.example.com]/", "about:blank");
+    shouldFail("http://192.168.0.1 hello", "http://other.com/");
+    shouldFail("http://[example.com]", "http://other.com/");
 }
 
 // These are in the spec but not in the web platform tests.

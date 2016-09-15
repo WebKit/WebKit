@@ -1680,6 +1680,8 @@ bool URLParser::parseHost(CodePointIterator<CharacterType> iterator)
                 continue;
             if (*iterator == ':')
                 break;
+            if (isInvalidDomainCharacter(*iterator))
+                return false;
         }
         if (auto address = parseIPv4Host(CodePointIterator<CharacterType>(hostIterator, iterator))) {
             serializeIPv4(address.value(), m_buffer);
