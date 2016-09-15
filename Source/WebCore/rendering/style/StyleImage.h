@@ -51,7 +51,7 @@ public:
 
     virtual PassRefPtr<CSSValue> cssValue() const = 0;
 
-    virtual bool canRender(const RenderObject*, float /*multiplier*/) const { return true; }
+    virtual bool canRender(const RenderElement*, float /*multiplier*/) const { return true; }
     virtual bool isPending() const = 0;
     virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) = 0;
     virtual bool isLoaded() const { return true; }

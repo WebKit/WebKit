@@ -37,6 +37,7 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "Logging.h"
 #include "Page.h"
@@ -2189,6 +2190,18 @@ bool RenderElement::hasSelfPaintingLayer() const
 bool RenderElement::checkForRepaintDuringLayout() const
 {
     return !document().view()->needsFullRepaint() && everHadLayout() && !hasSelfPaintingLayer();
+}
+
+RespectImageOrientationEnum RenderElement::shouldRespectImageOrientation() const
+{
+#if USE(CG) || USE(CAIRO)
+    // This can only be enabled for ports which honor the orientation flag in their drawing code.
+    if (document().isImageDocument())
+        return RespectImageOrientation;
+#endif
+    // Respect the image's orientation if it's being used as a full-page image or it's
+    // an <img> and the setting to respect it everywhere is set.
+    return (frame().settings().shouldRespectImageOrientation() && is<HTMLImageElement>(element())) ? RespectImageOrientation : DoNotRespectImageOrientation;
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)

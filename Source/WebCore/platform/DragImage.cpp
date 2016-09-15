@@ -31,6 +31,7 @@
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "Range.h"
+#include "RenderElement.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 
@@ -97,11 +98,12 @@ static DragImageRef createDragImageFromSnapshot(std::unique_ptr<ImageBuffer> sna
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     if (node) {
         RenderObject* renderer = node->renderer();
-        if (!renderer)
+        if (!renderer || !is<RenderElement>(renderer))
             return nullptr;
 
-        orientation.setRespectImageOrientation(renderer->shouldRespectImageOrientation());
-        orientation.setImageOrientationEnum(renderer->style().imageOrientation());
+        auto& renderElement = downcast<RenderElement>(*renderer);
+        orientation.setRespectImageOrientation(renderElement.shouldRespectImageOrientation());
+        orientation.setImageOrientationEnum(renderElement.style().imageOrientation());
     }
 #else
     UNUSED_PARAM(node);

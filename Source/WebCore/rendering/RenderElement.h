@@ -227,6 +227,8 @@ public:
     RenderBlock* containingBlockForFixedPosition() const;
     RenderBlock* containingBlockForAbsolutePosition() const;
 
+    RespectImageOrientationEnum shouldRespectImageOrientation() const;
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,

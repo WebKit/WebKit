@@ -1345,18 +1345,6 @@ bool RenderObject::isRooted() const
     return isDescendantOf(&view());
 }
 
-RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const
-{
-#if USE(CG) || USE(CAIRO)
-    // This can only be enabled for ports which honor the orientation flag in their drawing code.
-    if (document().isImageDocument())
-        return RespectImageOrientation;
-#endif
-    // Respect the image's orientation if it's being used as a full-page image or it's
-    // an <img> and the setting to respect it everywhere is set.
-    return (frame().settings().shouldRespectImageOrientation() && is<HTMLImageElement>(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
-}
-
 static inline RenderElement* containerForElement(const RenderObject& renderer, const RenderLayerModelObject* repaintContainer, bool* repaintContainerSkipped)
 {
     // This method is extremely similar to containingBlock(), but with a few notable

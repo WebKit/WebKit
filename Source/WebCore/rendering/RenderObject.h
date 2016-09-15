@@ -793,8 +793,6 @@ public:
         return outlineBoundsForRepaint(nullptr);
     }
 
-    RespectImageOrientationEnum shouldRespectImageOrientation() const;
-
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
