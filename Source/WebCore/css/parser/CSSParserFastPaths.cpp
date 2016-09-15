@@ -922,6 +922,10 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType:
 #endif
+#if ENABLE(APPLE_PAY)
+    case CSSPropertyApplePayButtonStyle:
+    case CSSPropertyApplePayButtonType:
+#endif
         return true;
     case CSSPropertyJustifyContent:
     case CSSPropertyAlignContent:

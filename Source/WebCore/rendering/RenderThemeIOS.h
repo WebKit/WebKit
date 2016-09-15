@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RenderThemeIOS_h
-#define RenderThemeIOS_h
+#pragma once
 
 #if PLATFORM(IOS)
 
-#include "RenderTheme.h"
+#include "RenderThemeCocoa.h"
 
 namespace WebCore {
     
@@ -36,7 +35,7 @@ class RenderStyle;
 class GraphicsContext;
 struct AttachmentLayout;
 
-class RenderThemeIOS final : public RenderTheme {
+class RenderThemeIOS final : public RenderThemeCocoa {
 public:
     static Ref<RenderTheme> create();
 
@@ -135,4 +134,3 @@ private:
 }
 
 #endif // PLATFORM(IOS)
-#endif // RenderThemeIOS_h

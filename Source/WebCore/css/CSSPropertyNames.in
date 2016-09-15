@@ -681,3 +681,8 @@ touch-action
 #if defined(ENABLE_CSS_TRAILING_WORD) && ENABLE_CSS_TRAILING_WORD
 -apple-trailing-word [Inherited, NameForMethods=TrailingWord]
 #endif
+
+#if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
+-apple-pay-button-style
+-apple-pay-button-type
+#endif

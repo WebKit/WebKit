@@ -1218,7 +1218,12 @@ public:
 #if ENABLE(CSS_TRAILING_WORD)
     TrailingWord trailingWord() const { return static_cast<TrailingWord>(rareInheritedData->trailingWord); }
 #endif
-    
+
+#if ENABLE(APPLE_PAY)
+    ApplePayButtonStyle applePayButtonStyle() const { return static_cast<ApplePayButtonStyle>(rareNonInheritedData->m_applePayButtonStyle); }
+    ApplePayButtonType applePayButtonType() const { return static_cast<ApplePayButtonType>(rareNonInheritedData->m_applePayButtonType); }
+#endif
+
     void checkVariablesInCustomProperties();
 
 // attribute setter methods
@@ -1735,6 +1740,11 @@ public:
     void setTrailingWord(TrailingWord v) { SET_VAR(rareInheritedData, trailingWord, static_cast<unsigned>(v)); }
 #endif
 
+#if ENABLE(APPLE_PAY)
+    void setApplePayButtonStyle(ApplePayButtonStyle v) { SET_VAR(rareNonInheritedData, m_applePayButtonStyle, static_cast<unsigned>(v)); }
+    void setApplePayButtonType(ApplePayButtonType v) { SET_VAR(rareNonInheritedData, m_applePayButtonType, static_cast<unsigned>(v)); }
+#endif
+
     const SVGRenderStyle& svgStyle() const { return *m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return *m_svgStyle.access(); }
 
@@ -2084,6 +2094,11 @@ public:
 
 #if ENABLE(CSS_TRAILING_WORD)
     static TrailingWord initialTrailingWord() { return TrailingWord::Auto; }
+#endif
+
+#if ENABLE(APPLE_PAY)
+    static ApplePayButtonStyle initialApplePayButtonStyle() { return ApplePayButtonStyle::Black; }
+    static ApplePayButtonType initialApplePayButtonType() { return ApplePayButtonType::Plain; }
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)

@@ -253,6 +253,10 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
 #endif
     case CapsLockIndicatorPart:
         return adjustCapsLockIndicatorStyle(styleResolver, style, element);
+#if ENABLE(APPLE_PAY)
+    case ApplePayButtonPart:
+        return adjustApplePayButtonStyle(styleResolver, style, element);
+#endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case AttachmentPart:
         return adjustAttachmentStyle(styleResolver, style, element);
@@ -401,6 +405,10 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 #endif
     case CapsLockIndicatorPart:
         return paintCapsLockIndicator(box, paintInfo, integralSnappedRect);
+#if ENABLE(APPLE_PAY)
+    case ApplePayButtonPart:
+        return paintApplePayButton(box, paintInfo, integralSnappedRect);
+#endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case AttachmentPart:
         return paintAttachment(box, paintInfo, integralSnappedRect);
