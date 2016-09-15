@@ -159,7 +159,7 @@ public:
     
     void setIndexQuicklyToDouble(unsigned i, double value)
     {
-        setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(jsNumber(value)));
+        setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(value));
     }
     
     void setIndexQuickly(unsigned i, JSValue value)

@@ -27,7 +27,6 @@
 #define TypedArrayAdaptors_h
 
 #include "JSCJSValue.h"
-#include "MathCommon.h"
 #include "TypedArrayType.h"
 #include <wtf/MathExtras.h>
 

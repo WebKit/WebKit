@@ -31,11 +31,11 @@
 namespace JSC {
 
 template<>
-const ClassInfo HashMapBucket<HashMapBucketDataKey>::s_info =
+const JS_EXPORTDATA ClassInfo HashMapBucket<HashMapBucketDataKey>::s_info =
     { "HashMapBucket", nullptr, 0, CREATE_METHOD_TABLE(HashMapBucket<HashMapBucketDataKey>) };
 
 template<>
-const ClassInfo HashMapBucket<HashMapBucketDataKeyValue>::s_info =
+const JS_EXPORTDATA ClassInfo HashMapBucket<HashMapBucketDataKeyValue>::s_info =
     { "HashMapBucket", nullptr, 0, CREATE_METHOD_TABLE(HashMapBucket<HashMapBucketDataKeyValue>) };
 
 template <typename Data>
@@ -53,11 +53,11 @@ void HashMapBucket<Data>::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 template<>
-const ClassInfo HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::s_info =
+const JS_EXPORTDATA ClassInfo HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::s_info =
     { "HashMapImpl", nullptr, 0, CREATE_METHOD_TABLE(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>) };
 
 template<>
-const ClassInfo HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::s_info =
+const JS_EXPORTDATA ClassInfo HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::s_info =
     { "HashMapImpl", nullptr, 0, CREATE_METHOD_TABLE(HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>) };
 
 template <typename HashMapBucket>
