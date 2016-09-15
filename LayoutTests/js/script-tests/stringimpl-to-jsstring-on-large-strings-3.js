@@ -1,3 +1,5 @@
+//@largeHeap
+
 "use strict"
 
 // This test passes if it does not crash.

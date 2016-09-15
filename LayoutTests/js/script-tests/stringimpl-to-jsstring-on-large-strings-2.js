@@ -1,3 +1,5 @@
+//@largeHeap
+
 "use strict"
 
 // Based on André Bargull's test case.

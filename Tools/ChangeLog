@@ -1,3 +1,16 @@
+2016-09-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        js/stringimpl-to-jsstring-on-large-strings tests consume huge memory
+        https://bugs.webkit.org/show_bug.cgi?id=159807
+
+        Reviewed by Saam Barati.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunRemoteJavaScriptCoreTests.start): JSCOnly bots are memory limited devices, tests should run with --memory-limited option.
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Pass through --memory-limited option to run-jsc-stress-tests.
+        * Scripts/run-jsc-stress-tests: Typo fix.
+
 2016-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Media controls behave strangely when changing media sources

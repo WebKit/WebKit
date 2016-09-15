@@ -125,7 +125,7 @@ def usage
     puts "--no-copy                   Do not copy the JavaScriptCore build product before testing."
     puts "                            --jsc specifies an already present JavaScriptCore to test."
     puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
-    puts "                            Skip tests tagged with //@large-heap"
+    puts "                            Skip tests tagged with //@largeHeap"
     puts "--no-jit                    Do not run JIT specific tests."
     puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--verbose            (-v)   Print more things while running."
