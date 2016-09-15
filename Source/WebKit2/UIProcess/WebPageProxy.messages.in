@@ -234,6 +234,7 @@ messages -> WebPageProxy {
     EditorStateChanged(struct WebKit::EditorState editorState)
     CompositionWasCanceled(struct WebKit::EditorState editorState)
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
+    SetNeedsHiddenContentEditableQuirk(bool needsHiddenContentEditableQuirk)
 
     # Find messages
     DidCountStringMatches(String string, uint32_t matchCount)
