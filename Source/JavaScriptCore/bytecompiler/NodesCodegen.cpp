@@ -413,6 +413,8 @@ bool ArrayNode::isSimpleArray() const
     for (ElementNode* ptr = m_element; ptr; ptr = ptr->next()) {
         if (ptr->elision())
             return false;
+        if (ptr->value()->isSpreadExpression())
+            return false;
     }
     return true;
 }

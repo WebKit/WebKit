@@ -1,3 +1,13 @@
+2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ASSERT_NOT_REACHED when using spread inside an array literal with Function.prototype.apply
+        https://bugs.webkit.org/show_bug.cgi?id=162003
+
+        Reviewed by Saam Barati.
+
+        * stress/spread-calling.js:
+        * test262.yaml:
+
 2016-09-14  Michael Saboff  <msaboff@apple.com>
 
         YARR doesn't check for invalid flags for literal regular expressions

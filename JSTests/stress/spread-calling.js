@@ -68,6 +68,8 @@ for (let i = 0; i < 10000; i++) {
     testFunction(0, ..."12345", ...object3);
     testEmpty(...[]);
     testFunction(...object4, ...object4);
+    testFunction.call(null, 0, ...[1, 2, 3], 4, 5, 6, 7, 8, 9);
+    testFunction.apply(null, [0, ...[1, 2, 3], 4, 5, 6, 7, 8, 9])
     let failed = false;
     try {
         testFunction(...objectThrow);
