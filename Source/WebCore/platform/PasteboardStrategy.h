@@ -38,6 +38,10 @@ class URL;
 struct PasteboardImage;
 struct PasteboardWebContent;
 
+#if PLATFORM(GTK)
+class DataObjectGtk;
+#endif
+
 class PasteboardStrategy {
 public:
 #if PLATFORM(IOS)
@@ -68,6 +72,10 @@ public:
     virtual long setPathnamesForType(const Vector<String>&, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) = 0;
 #endif
+#if PLATFORM(GTK)
+    virtual void writeToClipboard(const String& pasteboardName, const RefPtr<DataObjectGtk>&) = 0;
+    virtual RefPtr<DataObjectGtk> readFromClipboard(const String& pasteboardName) = 0;
+#endif // PLATFORM(GTK)
 protected:
     virtual ~PasteboardStrategy()
     {

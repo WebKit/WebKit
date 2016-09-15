@@ -70,6 +70,7 @@ list(APPEND WebKit2_SOURCES
     Shared/gtk/NativeWebMouseEventGtk.cpp
     Shared/gtk/NativeWebTouchEventGtk.cpp
     Shared/gtk/NativeWebWheelEventGtk.cpp
+    Shared/gtk/PasteboardContent.cpp
     Shared/gtk/PrintInfoGtk.cpp
     Shared/gtk/ProcessExecutablePathGtk.cpp
     Shared/gtk/WebContextMenuItemGtk.cpp
@@ -311,6 +312,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/WebInspectorClientGtk.cpp
     UIProcess/gtk/WebInspectorProxyGtk.cpp
     UIProcess/gtk/WebPageProxyGtk.cpp
+    UIProcess/gtk/WebPasteboardProxyGtk.cpp
     UIProcess/gtk/WebPopupMenuProxyGtk.cpp
     UIProcess/gtk/WebPreferencesGtk.cpp
     UIProcess/gtk/WebProcessPoolGtk.cpp

@@ -139,6 +139,7 @@ void DataObjectGtk::clearAllExceptFilenames()
     m_url = URL();
     m_image = nullptr;
     m_unknownTypeData.clear();
+    m_canSmartReplace = false;
 }
 
 void DataObjectGtk::clearAll()

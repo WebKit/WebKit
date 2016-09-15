@@ -76,8 +76,6 @@ PasteboardHelper::PasteboardHelper()
 
 PasteboardHelper::~PasteboardHelper()
 {
-    for (auto* clipboard : m_gtkClipboards)
-        gtk_clipboard_store(clipboard);
 }
 
 GtkTargetList* PasteboardHelper::targetList() const
@@ -115,6 +113,8 @@ void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard, DataObjectG
             gtk_selection_data_free(data);
         }
     }
+
+    dataObject.setCanSmartReplace(gtk_clipboard_wait_is_target_available(clipboard, smartPasteAtom));
 }
 
 void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint info, const DataObjectGtk& dataObject)
@@ -169,7 +169,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
     }
 }
 
-GRefPtr<GtkTargetList> PasteboardHelper::targetListForDataObject(const DataObjectGtk& dataObject, SmartPasteInclusion shouldInludeSmartPaste)
+GRefPtr<GtkTargetList> PasteboardHelper::targetListForDataObject(const DataObjectGtk& dataObject)
 {
     GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
 
@@ -190,7 +190,7 @@ GRefPtr<GtkTargetList> PasteboardHelper::targetListForDataObject(const DataObjec
     if (dataObject.hasUnknownTypeData())
         gtk_target_list_add(list.get(), unknownAtom, 0, TargetTypeUnknown);
 
-    if (shouldInludeSmartPaste == IncludeSmartPaste)
+    if (dataObject.canSmartReplace())
         gtk_target_list_add(list.get(), smartPasteAtom, 0, TargetTypeSmartPaste);
 
     return list;
@@ -257,9 +257,9 @@ Vector<GdkAtom> PasteboardHelper::dropAtomsForContext(GtkWidget* widget, GdkDrag
 static DataObjectGtk* settingClipboardDataObject = 0;
 
 struct ClipboardSetData {
-    ClipboardSetData(DataObjectGtk* dataObject, GClosure* callback)
+    ClipboardSetData(DataObjectGtk* dataObject, std::function<void()>&& selectionClearedCallback)
         : dataObject(dataObject)
-        , callback(callback)
+        , selectionClearedCallback(WTFMove(selectionClearedCallback))
     {
     }
 
@@ -268,7 +268,7 @@ struct ClipboardSetData {
     }
 
     RefPtr<DataObjectGtk> dataObject;
-    GRefPtr<GClosure> callback;
+    std::function<void()> selectionClearedCallback;
 };
 
 static void getClipboardContentsCallback(GtkClipboard*, GtkSelectionData *selectionData, guint info, gpointer userData)
@@ -277,7 +277,7 @@ static void getClipboardContentsCallback(GtkClipboard*, GtkSelectionData *select
     PasteboardHelper::singleton().fillSelectionData(selectionData, info, *data->dataObject);
 }
 
-static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer userData)
+static void clearClipboardContentsCallback(GtkClipboard*, gpointer userData)
 {
     std::unique_ptr<ClipboardSetData> data(static_cast<ClipboardSetData*>(userData));
 
@@ -285,18 +285,13 @@ static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer use
     if (data->dataObject.get() != settingClipboardDataObject)
         data->dataObject->clearAll();
 
-    if (!data->callback)
-        return;
-
-    GValue firstArgument = {0, {{0}}};
-    g_value_init(&firstArgument, G_TYPE_POINTER);
-    g_value_set_pointer(&firstArgument, clipboard);
-    g_closure_invoke(data->callback.get(), nullptr, 1, &firstArgument, 0);
+    if (data->selectionClearedCallback)
+        data->selectionClearedCallback();
 }
 
-void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const DataObjectGtk& dataObject, SmartPasteInclusion includeSmartPaste, GClosure* callback)
+void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const DataObjectGtk& dataObject, std::function<void()>&& primarySelectionCleared)
 {
-    GRefPtr<GtkTargetList> list = targetListForDataObject(dataObject, includeSmartPaste);
+    GRefPtr<GtkTargetList> list = targetListForDataObject(dataObject);
 
     int numberOfTargets;
     GtkTargetEntry* table = gtk_target_table_new_from_list(list.get(), &numberOfTargets);
@@ -304,7 +299,7 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const Dat
     if (numberOfTargets > 0 && table) {
         settingClipboardDataObject = const_cast<DataObjectGtk*>(&dataObject);
 
-        auto data = std::make_unique<ClipboardSetData>(settingClipboardDataObject, callback);
+        auto data = std::make_unique<ClipboardSetData>(settingClipboardDataObject, WTFMove(primarySelectionCleared));
         if (gtk_clipboard_set_with_data(clipboard, table, numberOfTargets, getClipboardContentsCallback, clearClipboardContentsCallback, data.get())) {
             gtk_clipboard_set_can_store(clipboard, nullptr, 0);
             // When gtk_clipboard_set_with_data() succeeds clearClipboardContentsCallback takes the ownership of data, so we leak it here.
@@ -317,17 +312,6 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const Dat
 
     if (table)
         gtk_target_table_free(table, numberOfTargets);
-}
-
-bool PasteboardHelper::clipboardContentSupportsSmartReplace(GtkClipboard* clipboard)
-{
-    return gtk_clipboard_wait_is_target_available(clipboard, smartPasteAtom);
-}
-
-void PasteboardHelper::registerClipboard(GtkClipboard* clipboard)
-{
-    ASSERT(clipboard);
-    m_gtkClipboards.add(clipboard);
 }
 
 }

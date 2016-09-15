@@ -47,6 +47,10 @@ class URL;
 struct PasteboardImage;
 struct PasteboardWebContent;
 
+#if PLATFORM(GTK)
+class DataObjectGtk;
+#endif
+
 class PlatformPasteboard {
 public:
     // FIXME: probably we don't need a constructor that takes a pasteboard name for iOS.
@@ -81,12 +85,20 @@ public:
     WEBCORE_EXPORT URL readURL(int index, const String& pasteboardType);
     WEBCORE_EXPORT int count();
 
+#if PLATFORM(GTK)
+    WEBCORE_EXPORT void writeToClipboard(const RefPtr<DataObjectGtk>&, std::function<void()>&& primarySelectionCleared);
+    WEBCORE_EXPORT RefPtr<DataObjectGtk> readFromClipboard();
+#endif
+
 private:
 #if PLATFORM(MAC)
     RetainPtr<NSPasteboard> m_pasteboard;
 #endif
 #if PLATFORM(IOS)
     RetainPtr<UIPasteboard> m_pasteboard;
+#endif
+#if PLATFORM(GTK)
+    GtkClipboard* m_clipboard;
 #endif
 };
 

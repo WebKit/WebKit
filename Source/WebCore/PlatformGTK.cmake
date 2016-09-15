@@ -221,6 +221,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/PasteboardHelper.cpp
     platform/gtk/PlatformKeyboardEventGtk.cpp
     platform/gtk/PlatformMouseEventGtk.cpp
+    platform/gtk/PlatformPasteboardGtk.cpp
     platform/gtk/PlatformScreenGtk.cpp
     platform/gtk/PlatformWheelEventGtk.cpp
     platform/gtk/RenderThemeGadget.cpp
