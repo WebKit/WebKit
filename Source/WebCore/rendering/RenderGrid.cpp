@@ -2010,7 +2010,7 @@ LayoutUnit RenderGrid::assumedRowsSizeForOrthogonalChild(const RenderBox& child,
     bool gridAreaIsIndefinite = false;
     LayoutUnit containingBlockAvailableSize = containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
     for (auto trackPosition : span) {
-        const GridLength& maxTrackSize = gridTrackSize(ForRows, trackPosition, sizingOperation).maxTrackBreadth();
+        GridLength maxTrackSize = gridTrackSize(ForRows, trackPosition, sizingOperation).maxTrackBreadth();
         if (maxTrackSize.isContentSized() || maxTrackSize.isFlex())
             gridAreaIsIndefinite = true;
         else
