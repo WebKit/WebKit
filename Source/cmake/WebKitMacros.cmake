@@ -1,3 +1,5 @@
+include(CMakeParseArguments)
+
 macro(WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS)
     set(_file ${CMAKE_CURRENT_SOURCE_DIR}/Platform${PORT}.cmake)
     if (EXISTS ${_file})
@@ -41,57 +43,84 @@ macro(ADD_PRECOMPILED_HEADER _header _cpp _source)
     #FIXME: Add support for Xcode.
 endmacro()
 
-# Helper macro which wraps generate-bindings.pl script.
-#   _output_source is a list name which will contain generated sources.(eg. WebCore_SOURCES)
-#   _input_files are IDL files to generate.
-#   _base_dir is base directory where script is called.
-#   _idl_includes is value of --include argument. (eg. --include=${WEBCORE_DIR}/bindings/js)
-#   _features is a value of --defines argument.
-#   _destination is a value of --outputDir argument.
-#   _prefix is a prefix of output files. (eg. JS - it makes JSXXX.cpp JSXXX.h from XXX.idl)
-#   _generator is a value of --generator argument.
-#   _supplemental_dependency_file is a value of --supplementalDependencyFile. (optional)
-macro(GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _features _destination _prefix _generator _extension _idl_attributes_file)
+# Helper macro which wraps preprocess-idls.pl and generate-bindings.pl scripts.
+#   OUTPUT_SOURCE is a list name which will contain generated sources.(eg. WebCore_SOURCES)
+#   INPUT_FILES are IDL files to generate.
+#   BASE_DIR is base directory where script is called.
+#   IDL_INCLUDES is value of --include argument. (eg. ${WEBCORE_DIR}/bindings/js)
+#   FEATURES is a value of --defines argument.
+#   DESTINATION is a value of --outputDir argument.
+#   GENERATOR is a value of --generator argument.
+#   SUPPLEMENTAL_DEPFILE is a value of --supplementalDependencyFile. (optional)
+#   PP_EXTRA_OUTPUT is extra outputs of preprocess-idls.pl. (optional)
+#   PP_EXTRA_ARGS is extra arguments for preprocess-idls.pl. (optional)
+function(GENERATE_BINDINGS)
+    set(options)
+    set(oneValueArgs OUTPUT_SOURCE BASE_DIR FEATURES DESTINATION GENERATOR SUPPLEMENTAL_DEPFILE)
+    set(multiValueArgs INPUT_FILES IDL_INCLUDES PP_EXTRA_OUTPUT PP_EXTRA_ARGS)
+    cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    set(binding_generator ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl)
+    set(idl_attributes_file ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
+    set(id ${arg_OUTPUT_SOURCE})
+    set(idl_files_list ${CMAKE_CURRENT_BINARY_DIR}/idl_files_${id}.tmp)
     set(_supplemental_dependency)
-    set(_supplemental_dependency_file)
-    set(_additional_dependencies)
-    set(BINDING_GENERATOR ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl)
-    set(_args ${ARGN})
-    list(LENGTH _args _argCount)
-    if (_argCount GREATER 0)
-        list(GET _args 0 _supplemental_dependency_file)
-        if (_supplemental_dependency_file)
-            set(_supplemental_dependency --supplementalDependencyFile ${_supplemental_dependency_file})
+
+    set(content)
+    foreach (f ${arg_INPUT_FILES})
+        if (NOT IS_ABSOLUTE ${f})
+            set(f ${CMAKE_CURRENT_SOURCE_DIR}/${f})
         endif ()
-        list(GET _args 1 _additional_dependencies)
+        set(content "${content}${f}\n")
+    endforeach ()
+    file(WRITE ${idl_files_list} ${content})
+
+    if (arg_SUPPLEMENTAL_DEPFILE)
+        set(_supplemental_dependency --supplementalDependencyFile ${arg_SUPPLEMENTAL_DEPFILE})
+
+        add_custom_command(
+            OUTPUT ${arg_SUPPLEMENTAL_DEPFILE} ${arg_PP_EXTRA_OUTPUT}
+            DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${arg_INPUT_FILES}
+            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines ${arg_FEATURES} --idlFilesList ${idl_files_list} --supplementalDependencyFile ${arg_SUPPLEMENTAL_DEPFILE} ${arg_PP_EXTRA_ARGS}
+            VERBATIM)
     endif ()
 
-    set(COMMON_GENERATOR_DEPENDENCIES
-        ${BINDING_GENERATOR}
+    set(idl_includes)
+    foreach (dir ${arg_IDL_INCLUDES})
+        if (IS_ABSOLUTE ${dir})
+            list(APPEND idl_includes --include=${dir})
+        else ()
+            list(APPEND idl_includes --include=${CMAKE_CURRENT_SOURCE_DIR}/${dir})
+        endif ()
+    endforeach ()
+
+    set(common_generator_dependencies
+        ${binding_generator}
         ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
         ${SCRIPTS_BINDINGS}
-        ${_supplemental_dependency_file}
-        ${_idl_attributes_file}
+        ${arg_SUPPLEMENTAL_DEPFILE}
+        ${idl_attributes_file}
     )
-    list(APPEND COMMON_GENERATOR_DEPENDENCIES ${_additional_dependencies})
+    list(APPEND common_generator_dependencies ${arg_PP_EXTRA_OUTPUT})
 
-    if (EXISTS ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${_generator}.pm)
-        list(APPEND COMMON_GENERATOR_DEPENDENCIES ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${_generator}.pm)
+    if (EXISTS ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
+        list(APPEND common_generator_dependencies ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
     endif ()
 
-    foreach (_file ${_input_files})
+    set(gen_sources)
+    foreach (_file ${arg_INPUT_FILES})
         get_filename_component(_name ${_file} NAME_WE)
 
         add_custom_command(
-            OUTPUT ${_destination}/${_prefix}${_name}.${_extension} ${_destination}/${_prefix}${_name}.h
+            OUTPUT ${arg_DESTINATION}/JS${_name}.cpp ${arg_DESTINATION}/JS${_name}.h
             MAIN_DEPENDENCY ${_file}
-            DEPENDS ${COMMON_GENERATOR_DEPENDENCIES}
-            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_GENERATOR} --defines "${_features}" --generator ${_generator} ${_idl_includes} --outputDir "${_destination}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --idlAttributesFile ${_idl_attributes_file} ${_supplemental_dependency} ${_file}
-            WORKING_DIRECTORY ${_base_dir}
+            DEPENDS ${common_generator_dependencies}
+            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${binding_generator} --defines ${arg_FEATURES} --generator ${arg_GENERATOR} ${idl_includes} --outputDir ${arg_DESTINATION} --preprocessor ${CODE_GENERATOR_PREPROCESSOR} --idlAttributesFile ${idl_attributes_file} ${_supplemental_dependency} ${_file}
+            WORKING_DIRECTORY ${arg_BASE_DIR}
             VERBATIM)
-        list(APPEND ${_output_source} ${_destination}/${_prefix}${_name}.${_extension})
+        list(APPEND gen_sources ${arg_DESTINATION}/JS${_name}.cpp)
     endforeach ()
-endmacro()
+    set(${arg_OUTPUT_SOURCE} ${${arg_OUTPUT_SOURCE}} ${gen_sources} PARENT_SCOPE)
+endfunction()
 
 macro(GENERATE_FONT_NAMES _infile)
     set(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)

@@ -1,3 +1,18 @@
+2016-09-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake] Refactor GENERATE_BINDINGS
+        https://bugs.webkit.org/show_bug.cgi?id=161854
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/WebKitMacros.cmake(GENERATE_BINDINGS): Use
+        CMakeParseArguments for argument parsing.  Defined as a function
+        instread of a macro because function has its own variable scope.
+        Wrapped both preprocess-idls.pl and generate-bindings.pl scripts.
+        Downcased local variables COMMON_GENERATOR_DEPENDENCIES and
+        BINDING_GENERATOR. Generate idl_files.tmp. Removed arguments
+        _prefix and _extension because they are always JS and cpp now.
+
 2016-09-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Build failure with GCC 6 (fatal error: stdlib.h: No such file or directory)
