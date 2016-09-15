@@ -123,8 +123,8 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     if (!(self = [super init]))
         return nil;
-        
-    path = pathByResolvingSymlinksAndAliases(pluginPath);
+    
+    path = [pluginPath stringByResolvingSymlinksInPath];
     cfBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:path]));
 
     if (!cfBundle) {
