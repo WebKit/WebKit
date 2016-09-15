@@ -6464,33 +6464,27 @@ void RenderLayer::repaintIncludingNonCompositingDescendants(RenderLayerModelObje
     }
 }
 
-static bool mayCreateGraphicalGroup(const RenderElement& renderer)
+static bool createsStackingContext(const RenderLayer& layer)
 {
-    bool createsGraphicalGroup = renderer.hasClipPath()
+    auto& renderer = layer.renderer();
+    return renderer.hasTransformRelatedProperty()
+        || renderer.hasClipPath()
         || renderer.hasFilter()
+        || renderer.hasMask()
         || renderer.hasBackdropFilter()
 #if ENABLE(CSS_COMPOSITING)
         || renderer.hasBlendMode()
 #endif
         || renderer.isTransparent()
-        || renderer.hasMask();
-    return createsGraphicalGroup || (renderer.style().willChange() && renderer.style().willChange()->canCreateGraphicalGroup());
-}
-
-static bool createsStackingContext(const RenderLayer& layer)
-{
-    auto& renderer = layer.renderer();
-    return renderer.hasTransformRelatedProperty()
         || renderer.isPositioned()
-        || layer.needsCompositedScrolling()
         || renderer.style().hasFlowFrom()
         || renderer.hasReflection()
         || renderer.style().hasIsolation()
+        || layer.needsCompositedScrolling()
 #if PLATFORM(IOS)
         || layer.hasAcceleratedTouchScrolling()
 #endif
-        // FIXME: Check if willChange()->canCreateStackingContext() is more accurate here.
-        || mayCreateGraphicalGroup(renderer);
+        || (renderer.style().willChange() && renderer.style().willChange()->canCreateStackingContext());
 }
 
 bool RenderLayer::shouldBeNormalFlowOnly() const
