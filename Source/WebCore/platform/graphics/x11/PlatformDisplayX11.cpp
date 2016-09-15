@@ -35,7 +35,13 @@
 
 #if USE(EGL)
 #include <EGL/egl.h>
+#include <EGL/eglplatform.h>
 #endif
+
+// FIXME: this needs to be here, after eglplatform.h, to avoid EGLNativeDisplayType to be defined as wl_display.
+// Since we support Wayland and X11 to be built at the same time, but eglplatform.h defines are decided at compile time
+// we need to ensure we only include eglplatform.h from X11 or Wayland specific files.
+#include "GLContext.h"
 
 namespace WebCore {
 
@@ -53,6 +59,8 @@ PlatformDisplayX11::PlatformDisplayX11(Display* display)
 
 PlatformDisplayX11::~PlatformDisplayX11()
 {
+    // Clear the sharing context before releasing the display.
+    m_sharingGLContext = nullptr;
     if (m_ownedDisplay)
         XCloseDisplay(m_display);
 }
