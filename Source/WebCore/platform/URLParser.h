@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+template<typename CharacterType> class CodePointIterator;
+
 class URLParser {
 public:
     WEBCORE_EXPORT URL parse(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
@@ -49,10 +51,12 @@ private:
     StringBuilder m_buffer;
     bool m_urlIsSpecial { false };
     bool m_hostHasPercentOrNonASCII { false };
-    void parseAuthority(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
-    bool parseHost(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
-    bool parsePort(StringView::CodePoints::Iterator&, const StringView::CodePoints::Iterator& end);
-    URL failure(const String& input);
+
+    template<typename CharacterType> URL parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
+    template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
+    template<typename CharacterType> bool parseHost(CodePointIterator<CharacterType>);
+    template<typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
+    template<typename CharacterType> URL failure(const CharacterType*, unsigned length);
 
     enum class URLPart;
     void copyURLPartsUntil(const URL& base, URLPart);
