@@ -36,7 +36,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this.contentView.element.addEventListener("scroll", this.soon._updateContentOverflowShadowVisibility);
 
         this._contentTreeOutline = this.createContentTreeOutline(true);
-        this._selectedContentTreeOutline = null;
 
         this._filterBar = new WebInspector.FilterBar;
         this._filterBar.addEventListener(WebInspector.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
@@ -440,21 +439,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         treeElement.hidden = true;
     }
 
-    show()
-    {
-        if (!this.parentSidebar)
-            return;
-
-        super.show();
-
-        let treeOutline = this._selectedContentTreeOutline;
-        if (!treeOutline && this._visibleContentTreeOutlines.length)
-            treeOutline = this._visibleContentTreeOutlines[0];
-
-        if (treeOutline)
-            treeOutline.element.focus();
-    }
-
     shown()
     {
         super.shown();
@@ -678,15 +662,17 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         if (!selectedElement)
             return;
 
-        // Prevent two selections in the sidebar, if the selected tree outline is changing.
-        let treeOutline = selectedElement.treeOutline;
-        if (this._selectedContentTreeOutline && this._selectedContentTreeOutline !== treeOutline) {
-            if (this._selectedContentTreeOutline.selectedTreeElement)
-                this._selectedContentTreeOutline.selectedTreeElement.deselect();
-        }
+        // Prevent two selections in the sidebar.
+        let selectedTreeOutline = selectedElement.treeOutline;
+        for (let treeOutline of this._visibleContentTreeOutlines) {
+            if (selectedTreeOutline === treeOutline)
+                continue;
 
-        treeOutline[WebInspector.NavigationSidebarPanel.PreviousSelectedTreeElementSymbol] = null;
-        this._selectedContentTreeOutline = treeOutline;
+            if (treeOutline.selectedTreeElement) {
+                treeOutline.selectedTreeElement.deselect();
+                break;
+            }
+        }
     }
 
     _checkForStaleResourcesIfNeeded()

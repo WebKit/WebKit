@@ -1,5 +1,23 @@
 2016-09-14  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Call frame is sometimes not selected in Debugger sidebar on initial pause
+        https://bugs.webkit.org/show_bug.cgi?id=161835
+        <rdar://problem/28236680>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype._contentTreeOutlineTreeSelectionDidChange):
+        If a tree other than the newly selected element's tree has the selection,
+        deselect it to prevent multiple tree selections.
+        (WebInspector.NavigationSidebarPanel.prototype.show): Deleted.
+        Not needed since the selected tree is no longer tracked. Incidentally,
+        SidebarPanel.show was only called by SearchSidebarPanel, which doesn't need
+        to manage selection across multiple tree outlines.
+
+2016-09-14  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Call Stack tree in the Debugger sidebar should mark the active call frame
         https://bugs.webkit.org/show_bug.cgi?id=161945
         <rdar://problem/28293451>
