@@ -18,6 +18,7 @@
 .gridAutoRepeatAndFixed { grid-template-columns: [start] repeat(2, 50px [a]) [middle] repeat(auto-fit, [autofoo] 15px [autobar]) minmax(5%, 10%) [end]; }
 .gridMultipleNames { grid-template-columns: [start] 20px [foo] 50% repeat(auto-fit, [bar] 20px [start foo]) [foo] 10% [end bar]; }
 .gridMultipleTracks { grid-template-columns: [start] 20px repeat(auto-fit, [a] 2em [b c] 10% [d]) [e] minmax(75px, 1fr) [last]; }
+.gridMinMaxFixedFlex { grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); }
 
 .item { background-color: cyan; }
 .item:nth-child(2n) { background-color: green; }
@@ -148,6 +149,15 @@
 
 <div class="grid gridMultipleTracks gap">
     <div class="item" style="grid-column: c / -1;"  data-offset-x="40" data-offset-y="0" data-expected-width="160" data-expected-height="25"></div>
+</div>
+
+<div class="grid gridMinMaxFixedFlex gap">
+    <div class="item" style="grid-column-start: 1" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="25"></div>
+</div>
+
+<div class="grid gridMinMaxFixedFlex gap">
+    <div class="item" style="grid-column-start: 1" data-offset-x="0" data-offset-y="0" data-expected-width="90" data-expected-height="25"></div>
+    <div class="item" style="grid-column-start: 2" data-offset-x="110" data-offset-y="0" data-expected-width="90" data-expected-height="25"></div>
 </div>
 
 </body>
