@@ -62,6 +62,9 @@ public:
     virtual FloatSize presentationSize() const = 0;
     virtual void offsetTimestampsBy(const MediaTime&) = 0;
     virtual void setTimestamps(const MediaTime&, const MediaTime&) = 0;
+    virtual bool isDivisable() const = 0;
+    enum DivideFlags { BeforePresentationTime, AfterPresentationTime };
+    virtual std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) = 0;
 
     enum SampleFlags {
         None = 0,

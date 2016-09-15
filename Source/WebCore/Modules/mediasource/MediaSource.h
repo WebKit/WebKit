@@ -114,6 +114,8 @@ public:
     // ActiveDOMObject API.
     bool hasPendingActivity() const override;
 
+    static const MediaTime& currentTimeFudgeFactor();
+
 protected:
     explicit MediaSource(ScriptExecutionContext&);
 
@@ -128,6 +130,10 @@ protected:
     RefPtr<SourceBufferPrivate> createSourceBufferPrivate(const ContentType&, ExceptionCode&);
     void scheduleEvent(const AtomicString& eventName);
     GenericEventQueue& asyncEventQueue() { return m_asyncEventQueue; }
+
+    bool hasBufferedTime(const MediaTime&);
+    bool hasCurrentTime();
+    bool hasFutureTime();
 
     void regenerateActiveSourceBuffers();
 

@@ -193,6 +193,9 @@ MediaTime PlatformTimeRanges::nearest(const MediaTime& time) const
     MediaTime closestDelta = MediaTime::positiveInfiniteTime();
     MediaTime closestTime = MediaTime::zeroTime();
     unsigned count = length();
+    if (!count)
+        return MediaTime::invalidTime();
+
     bool ignoreInvalid;
 
     for (unsigned ndx = 0; ndx < count; ndx++) {

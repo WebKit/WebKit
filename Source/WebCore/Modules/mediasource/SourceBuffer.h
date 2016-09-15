@@ -92,9 +92,7 @@ public:
     void removedFromMediaSource();
     void seekToTime(const MediaTime&);
 
-    bool hasCurrentTime() const;
-    bool hasFutureTime() const;
-    bool canPlayThrough();
+    bool canPlayThroughRange(PlatformTimeRanges&);
 
     bool hasVideo() const;
     bool hasAudio() const;
@@ -125,6 +123,7 @@ public:
     void setBufferedDirty(bool flag) { m_bufferedDirty = flag; }
 
     MediaTime highestPresentationTimestamp() const;
+    void readyStateChanged();
 
     // ActiveDOMObject API.
     bool hasPendingActivity() const override;
@@ -191,7 +190,7 @@ private:
     size_t extraMemoryCost() const;
     void reportExtraMemoryAllocated();
 
-    std::unique_ptr<PlatformTimeRanges> bufferedAccountingForEndOfStream() const;
+    void updateBufferedFromTrackBuffers();
 
     // Internals
     friend class Internals;

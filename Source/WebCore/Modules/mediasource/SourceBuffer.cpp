@@ -65,13 +65,6 @@ namespace WebCore {
 
 static const double ExponentialMovingAverageCoefficient = 0.1;
 
-// Allow hasCurrentTime() to be off by as much as the length of two 24fps video frames
-static const MediaTime& currentTimeFudgeFactor()
-{
-    static NeverDestroyed<MediaTime> fudgeFactor(2002, 24000);
-    return fudgeFactor;
-}
-
 struct SourceBuffer::TrackBuffer {
     MediaTime lastDecodeTimestamp;
     MediaTime lastFrameDuration;
@@ -84,6 +77,7 @@ struct SourceBuffer::TrackBuffer {
     SampleMap samples;
     DecodeOrderSampleMap::MapType decodeQueue;
     RefPtr<MediaDescription> description;
+    PlatformTimeRanges buffered;
 
     TrackBuffer()
         : lastDecodeTimestamp(MediaTime::invalidTime())
@@ -288,7 +282,7 @@ void SourceBuffer::resetParserState()
 void SourceBuffer::abort(ExceptionCode& ec)
 {
     // Section 3.2 abort() method steps.
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-abort-void
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-abort
     // 1. If this object has been removed from the sourceBuffers attribute of the parent media source
     //    then throw an INVALID_STATE_ERR exception and abort these steps.
     // 2. If the readyState attribute of the parent media source is not in the "open" state
@@ -298,16 +292,22 @@ void SourceBuffer::abort(ExceptionCode& ec)
         return;
     }
 
-    // 3. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
+    // 3. If the range removal algorithm is running, then throw an InvalidStateError exception and abort these steps.
+    if (m_removeTimer.isActive()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    // 4. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
     abortIfUpdating();
 
-    // 4. Run the reset parser state algorithm.
+    // 5. Run the reset parser state algorithm.
     resetParserState();
 
-    // 5. Set appendWindowStart to the presentation start time.
+    // 6. Set appendWindowStart to the presentation start time.
     m_appendWindowStart = MediaTime::zeroTime();
 
-    // 6. Set appendWindowEnd to positive Infinity.
+    // 7. Set appendWindowEnd to positive Infinity.
     m_appendWindowEnd = MediaTime::positiveInfiniteTime();
 }
 
@@ -320,25 +320,26 @@ void SourceBuffer::remove(const MediaTime& start, const MediaTime& end, Exceptio
 {
     LOG(MediaSource, "SourceBuffer::remove(%p) - start(%lf), end(%lf)", this, start.toDouble(), end.toDouble());
 
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-remove
     // Section 3.2 remove() method steps.
-    // 1. If duration equals NaN, then throw an InvalidAccessError exception and abort these steps.
-    // 2. If start is negative or greater than duration, then throw an InvalidAccessError exception and abort these steps.
-    // 3. If end is less than or equal to start, then throw an InvalidAccessError exception and abort these steps.
-
-    // FIXME: reorder/revisit this section once <https://www.w3.org/Bugs/Public/show_bug.cgi?id=27857> got resolved
-    // as it seems wrong to check mediaSource duration before checking isRemoved().
-    if ((m_source && m_source->duration().isInvalid())
-        || start < MediaTime::zeroTime() || (m_source && start > m_source->duration())
-        || end <= start) {
-        ec = INVALID_ACCESS_ERR;
+    // 1. If this object has been removed from the sourceBuffers attribute of the parent media source then throw
+    //    an InvalidStateError exception and abort these steps.
+    // 2. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
+    if (isRemoved() || m_updating) {
+        ec = INVALID_STATE_ERR;
         return;
     }
 
-    // 4. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an
-    //    InvalidStateError exception and abort these steps.
-    // 5. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
-    if (isRemoved() || m_updating) {
-        ec = INVALID_STATE_ERR;
+    // 3. If duration equals NaN, then throw a TypeError exception and abort these steps.
+    // 4. If start is negative or greater than duration, then throw a TypeError exception and abort these steps.
+    // 5. If end is less than or equal to start or end equals NaN, then throw a TypeError exception and abort these steps.
+    if (m_source->duration().isInvalid()
+        || end.isInvalid()
+        || start.isInvalid()
+        || start < MediaTime::zeroTime()
+        || start > m_source->duration()
+        || end <= start) {
+        ec = TypeError;
         return;
     }
 
@@ -371,27 +372,23 @@ void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
 
 void SourceBuffer::abortIfUpdating()
 {
-    // Section 3.2 abort() method step 3 substeps.
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-abort-void
+    // Section 3.2 abort() method step 4 substeps.
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-abort
 
     if (!m_updating)
         return;
 
-    // 3.1. Abort the buffer append and stream append loop algorithms if they are running.
+    // 4.1. Abort the buffer append algorithm if it is running.
     m_appendBufferTimer.stop();
     m_pendingAppendData.clear();
 
-    m_removeTimer.stop();
-    m_pendingRemoveStart = MediaTime::invalidTime();
-    m_pendingRemoveEnd = MediaTime::invalidTime();
-
-    // 3.2. Set the updating attribute to false.
+    // 4.2. Set the updating attribute to false.
     m_updating = false;
 
-    // 3.3. Queue a task to fire a simple event named abort at this SourceBuffer object.
+    // 4.3. Queue a task to fire a simple event named abort at this SourceBuffer object.
     scheduleEvent(eventNames().abortEvent);
 
-    // 3.4. Queue a task to fire a simple event named updateend at this SourceBuffer object.
+    // 4.4. Queue a task to fire a simple event named updateend at this SourceBuffer object.
     scheduleEvent(eventNames().updateendEvent);
 }
 
@@ -405,6 +402,11 @@ MediaTime SourceBuffer::highestPresentationTimestamp() const
         highestTime = std::max(highestTime, lastSampleIter->first);
     }
     return highestTime;
+}
+
+void SourceBuffer::readyStateChanged()
+{
+    updateBufferedFromTrackBuffers();
 }
 
 void SourceBuffer::removedFromMediaSource()
@@ -595,6 +597,10 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
     if (isRemoved())
         return;
 
+    // Resolve the changes it TrackBuffers' buffered ranges
+    // into the SourceBuffer's buffered ranges
+    updateBufferedFromTrackBuffers();
+
     // Section 3.5.5 Buffer Append Algorithm, ctd.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
 
@@ -757,6 +763,29 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         // 3.1. Let remove end timestamp be the current value of duration
         // 3.2 If this track buffer has a random access point timestamp that is greater than or equal to end, then update
         // remove end timestamp to that random access point timestamp.
+
+        // NOTE: To handle MediaSamples which may be an amalgamation of multiple shorter samples, find samples whose presentation
+        // interval straddles the start and end times, and divide them if possible:
+        auto divideSampleIfPossibleAtPresentationTime = [&] (const MediaTime& time) {
+            auto sampleIterator = trackBuffer.samples.presentationOrder().findSampleContainingPresentationTime(time);
+            if (sampleIterator == trackBuffer.samples.presentationOrder().end())
+                return;
+            if (!sampleIterator->second->isDivisable())
+                return;
+            std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> replacementSamples = sampleIterator->second->divide(time);
+            if (!replacementSamples.first || !replacementSamples.second)
+                return;
+            LOG(MediaSource, "SourceBuffer::removeCodedFrames(%p) - splitting sample (%s) into\n\t(%s)\n\t(%s)", this,
+                toString(sampleIterator->second).utf8().data(),
+                toString(replacementSamples.first).utf8().data(),
+                toString(replacementSamples.second).utf8().data());
+            trackBuffer.samples.removeSample(sampleIterator->second.get());
+            trackBuffer.samples.addSample(*replacementSamples.first);
+            trackBuffer.samples.addSample(*replacementSamples.second);
+        };
+        divideSampleIfPossibleAtPresentationTime(start);
+        divideSampleIfPossibleAtPresentationTime(end);
+
         // NOTE: findSyncSampleAfterPresentationTime will return the next sync sample on or after the presentation time
         // or decodeOrder().end() if no sync sample exists after that presentation time.
         DecodeOrderSampleMap::iterator removeDecodeEnd = trackBuffer.samples.decodeOrder().findSyncSampleAfterPresentationTime(end);
@@ -792,7 +821,7 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         }
 
         erasedRanges.invert();
-        m_buffered->ranges().intersectWith(erasedRanges);
+        trackBuffer.buffered.intersectWith(erasedRanges);
         setBufferedDirty(true);
 
         // 3.4 If this object is in activeSourceBuffers, the current playback position is greater than or equal to start
@@ -801,6 +830,8 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         if (m_active && currentMediaTime >= start && currentMediaTime < end && m_private->readyState() > MediaPlayer::HaveMetadata)
             m_private->setReadyState(MediaPlayer::HaveMetadata);
     }
+    
+    updateBufferedFromTrackBuffers();
 
     // 4. If buffer full flag equals true and this object is ready to accept more bytes, then set the buffer full flag to false.
     // No-op
@@ -1535,14 +1566,11 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Med
                 // NOTE: Searching from the end of the trackBuffer will be vastly more efficient if the search range is
                 // near the end of the buffered range. Use a linear-backwards search if the search range is within one
                 // frame duration of the end:
-                if (!m_buffered)
-                    break;
-
-                unsigned bufferedLength = m_buffered->ranges().length();
+                unsigned bufferedLength = trackBuffer.buffered.length();
                 if (!bufferedLength)
                     break;
 
-                MediaTime highestBufferedTime = m_buffered->ranges().maximumBufferedTime();
+                MediaTime highestBufferedTime = trackBuffer.buffered.maximumBufferedTime();
 
                 PresentationOrderSampleMap::iterator_range range;
                 if (highestBufferedTime - trackBuffer.highestPresentationTimestamp < trackBuffer.lastFrameDuration)
@@ -1581,7 +1609,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Med
             }
 
             erasedRanges.invert();
-            m_buffered->ranges().intersectWith(erasedRanges);
+            trackBuffer.buffered.intersectWith(erasedRanges);
             setBufferedDirty(true);
         }
 
@@ -1624,15 +1652,15 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Med
         // Eliminate small gaps between buffered ranges by coalescing
         // disjoint ranges separated by less than a "fudge factor".
         auto presentationEndTime = presentationTimestamp + frameDuration;
-        auto nearestToPresentationStartTime = m_buffered->ranges().nearest(presentationTimestamp);
-        if ((presentationTimestamp - nearestToPresentationStartTime).isBetween(MediaTime::zeroTime(), currentTimeFudgeFactor()))
+        auto nearestToPresentationStartTime = trackBuffer.buffered.nearest(presentationTimestamp);
+        if (nearestToPresentationStartTime.isValid() && (presentationTimestamp - nearestToPresentationStartTime).isBetween(MediaTime::zeroTime(), MediaSource::currentTimeFudgeFactor()))
             presentationTimestamp = nearestToPresentationStartTime;
 
-        auto nearestToPresentationEndTime = m_buffered->ranges().nearest(presentationEndTime);
-        if ((nearestToPresentationEndTime - presentationEndTime).isBetween(MediaTime::zeroTime(), currentTimeFudgeFactor()))
+        auto nearestToPresentationEndTime = trackBuffer.buffered.nearest(presentationEndTime);
+        if (nearestToPresentationStartTime.isValid() && (nearestToPresentationEndTime - presentationEndTime).isBetween(MediaTime::zeroTime(), MediaSource::currentTimeFudgeFactor()))
             presentationEndTime = nearestToPresentationEndTime;
 
-        m_buffered->ranges().add(presentationTimestamp, presentationEndTime);
+        trackBuffer.buffered.add(presentationTimestamp, presentationEndTime);
         m_bufferedSinceLastMonitor += frameDuration.toDouble();
         setBufferedDirty(true);
 
@@ -1878,9 +1906,6 @@ void SourceBuffer::didDropSample()
 
 void SourceBuffer::monitorBufferingRate()
 {
-    if (!m_bufferedSinceLastMonitor)
-        return;
-
     double now = monotonicallyIncreasingTime();
     double interval = now - m_timeOfBufferingMonitor;
     double rateSinceLastMonitor = m_bufferedSinceLastMonitor / interval;
@@ -1888,68 +1913,54 @@ void SourceBuffer::monitorBufferingRate()
     m_timeOfBufferingMonitor = now;
     m_bufferedSinceLastMonitor = 0;
 
-    m_averageBufferRate = m_averageBufferRate * (1 - ExponentialMovingAverageCoefficient) + rateSinceLastMonitor * ExponentialMovingAverageCoefficient;
+    m_averageBufferRate += (interval * ExponentialMovingAverageCoefficient) * (rateSinceLastMonitor - m_averageBufferRate);
 
     LOG(MediaSource, "SourceBuffer::monitorBufferingRate(%p) - m_avegareBufferRate: %lf", this, m_averageBufferRate);
 }
 
-std::unique_ptr<PlatformTimeRanges> SourceBuffer::bufferedAccountingForEndOfStream() const
+void SourceBuffer::updateBufferedFromTrackBuffers()
 {
-    // FIXME: Revisit this method once the spec bug <https://www.w3.org/Bugs/Public/show_bug.cgi?id=26436> is resolved.
-    auto virtualRanges = std::make_unique<PlatformTimeRanges>(m_buffered->ranges());
-    if (m_source->isEnded()) {
-        MediaTime start = virtualRanges->maximumBufferedTime();
-        MediaTime end = m_source->duration();
-        if (start <= end)
-            virtualRanges->add(start, end);
+    // 3.1 Attributes, buffered
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-buffered
+
+    // 2. Let highest end time be the largest track buffer ranges end time across all the track buffers managed by this SourceBuffer object.
+    MediaTime highestEndTime = MediaTime::negativeInfiniteTime();
+    for (auto& trackBuffer : m_trackBufferMap.values()) {
+        if (!trackBuffer.buffered.length())
+            continue;
+        highestEndTime = std::max(highestEndTime, trackBuffer.buffered.maximumBufferedTime());
     }
-    return virtualRanges;
+
+    // NOTE: Short circuit the following if none of the TrackBuffers have buffered ranges to avoid generating
+    // a single range of {0, 0}.
+    if (highestEndTime.isNegativeInfinite()) {
+        m_buffered->ranges() = PlatformTimeRanges();
+        return;
+    }
+
+    // 3. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
+    PlatformTimeRanges intersectionRanges { MediaTime::zeroTime(), highestEndTime };
+
+    // 4. For each audio and video track buffer managed by this SourceBuffer, run the following steps:
+    for (auto& trackBuffer : m_trackBufferMap.values()) {
+        // 4.1 Let track ranges equal the track buffer ranges for the current track buffer.
+        PlatformTimeRanges trackRanges = trackBuffer.buffered;
+        // 4.2 If readyState is "ended", then set the end time on the last range in track ranges to highest end time.
+        if (m_source->isEnded())
+            trackRanges.add(trackRanges.maximumBufferedTime(), highestEndTime);
+
+        // 4.3 Let new intersection ranges equal the intersection between the intersection ranges and the track ranges.
+        // 4.4 Replace the ranges in intersection ranges with the new intersection ranges.
+        intersectionRanges.intersectWith(trackRanges);
+    }
+
+    // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
+    //    then update the current value of this attribute to intersection ranges.
+    m_buffered->ranges() = intersectionRanges;
+    setBufferedDirty(true);
 }
 
-bool SourceBuffer::hasCurrentTime() const
-{
-    if (isRemoved() || !m_buffered->length())
-        return false;
-
-    MediaTime currentTime = m_source->currentTime();
-    MediaTime duration = m_source->duration();
-    if (currentTime >= duration)
-        return true;
-
-    std::unique_ptr<PlatformTimeRanges> ranges = bufferedAccountingForEndOfStream();
-    return abs(ranges->nearest(currentTime) - currentTime) <= currentTimeFudgeFactor();
-}
-
-bool SourceBuffer::hasFutureTime() const
-{
-    if (isRemoved())
-        return false;
-
-    std::unique_ptr<PlatformTimeRanges> ranges = bufferedAccountingForEndOfStream();
-    if (!ranges->length())
-        return false;
-
-    MediaTime currentTime = m_source->currentTime();
-    MediaTime duration = m_source->duration();
-    if (currentTime >= duration)
-        return true;
-
-    MediaTime nearest = ranges->nearest(currentTime);
-    if (abs(nearest - currentTime) > currentTimeFudgeFactor())
-        return false;
-
-    size_t found = ranges->find(nearest);
-    if (found == notFound)
-        return false;
-
-    MediaTime localEnd = ranges->end(found);
-    if (localEnd == duration)
-        return true;
-
-    return localEnd - currentTime > currentTimeFudgeFactor();
-}
-
-bool SourceBuffer::canPlayThrough()
+bool SourceBuffer::canPlayThroughRange(PlatformTimeRanges& ranges)
 {
     if (isRemoved())
         return false;
@@ -1965,10 +1976,10 @@ bool SourceBuffer::canPlayThrough()
     MediaTime currentTime = m_source->currentTime();
     MediaTime duration = m_source->duration();
 
-    std::unique_ptr<PlatformTimeRanges> unbufferedRanges = bufferedAccountingForEndOfStream();
-    unbufferedRanges->invert();
-    unbufferedRanges->intersectWith(PlatformTimeRanges(currentTime, std::max(currentTime, duration)));
-    MediaTime unbufferedTime = unbufferedRanges->totalDuration();
+    PlatformTimeRanges unbufferedRanges = ranges;
+    unbufferedRanges.invert();
+    unbufferedRanges.intersectWith(PlatformTimeRanges(currentTime, std::max(currentTime, duration)));
+    MediaTime unbufferedTime = unbufferedRanges.totalDuration();
     if (!unbufferedTime.isValid())
         return true;
 

@@ -214,32 +214,28 @@ std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 void MediaSource::seekToTime(const MediaTime& time)
 {
     // 2.4.3 Seeking
-    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#mediasource-seeking
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-seeking
 
     m_pendingSeekTime = time;
 
     // Run the following steps as part of the "Wait until the user agent has established whether or not the
     // media data for the new playback position is available, and, if it is, until it has decoded enough data
     // to play back that position" step of the seek algorithm:
-    // 1. The media element looks for media segments containing the new playback position in each SourceBuffer
-    // object in activeSourceBuffers.
-    for (auto& sourceBuffer : *m_activeSourceBuffers) {
-        // ↳ If one or more of the objects in activeSourceBuffers is missing media segments for the new
-        // playback position
-        if (!sourceBuffer->buffered()->ranges().contain(time)) {
-            // 1.1 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
-            m_private->setReadyState(MediaPlayer::HaveMetadata);
+    // ↳ If new playback position is not in any TimeRange of HTMLMediaElement.buffered
+    if (!hasBufferedTime(time)) {
+        // 1. If the HTMLMediaElement.readyState attribute is greater than HAVE_METADATA,
+        // then set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
+        m_private->setReadyState(MediaPlayer::HaveMetadata);
 
-            // 1.2 The media element waits until an appendBuffer() or an appendStream() call causes the coded
-            // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
-            // than HAVE_METADATA.
-            LOG(MediaSource, "MediaSource::seekToTime(%p) - waitForSeekCompleted()", this);
-            m_private->waitForSeekCompleted();
-            return;
-        }
-        // ↳ Otherwise
-        // Continue
+        // 2. The media element waits until an appendBuffer() or an appendStream() call causes the coded
+        // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
+        // than HAVE_METADATA.
+        LOG(MediaSource, "MediaSource::seekToTime(%p) - waitForSeekCompleted()", this);
+        m_private->waitForSeekCompleted();
+        return;
     }
+    // ↳ Otherwise
+    // Continue
 
     completeSeek();
 }
@@ -265,10 +261,58 @@ void MediaSource::completeSeek()
     monitorSourceBuffers();
 }
 
+const MediaTime& MediaSource::currentTimeFudgeFactor()
+{
+    // Allow hasCurrentTime() to be off by as much as the length of two 24fps video frames
+    static NeverDestroyed<MediaTime> fudgeFactor(2002, 24000);
+    return fudgeFactor;
+}
+
+bool MediaSource::hasBufferedTime(const MediaTime& time)
+{
+    if (time >= duration())
+        return false;
+
+    auto ranges = buffered();
+    if (!ranges->length())
+        return false;
+
+    return abs(ranges->nearest(time) - time) <= currentTimeFudgeFactor();
+}
+
+bool MediaSource::hasCurrentTime()
+{
+    return hasBufferedTime(currentTime());
+}
+
+bool MediaSource::hasFutureTime()
+{
+    MediaTime currentTime = this->currentTime();
+    MediaTime duration = this->duration();
+
+    if (currentTime >= duration)
+        return true;
+
+    auto ranges = buffered();
+    MediaTime nearest = ranges->nearest(currentTime);
+    if (abs(nearest - currentTime) > currentTimeFudgeFactor())
+        return false;
+
+    size_t found = ranges->find(nearest);
+    if (found == notFound)
+        return false;
+
+    MediaTime localEnd = ranges->end(found);
+    if (localEnd == duration)
+        return true;
+
+    return localEnd - currentTime > currentTimeFudgeFactor();
+}
+
 void MediaSource::monitorSourceBuffers()
 {
     // 2.4.4 SourceBuffer Monitoring
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#buffer-monitoring
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#buffer-monitoring
 
     // Note, the behavior if activeSourceBuffers is empty is undefined.
     if (!m_activeSourceBuffers) {
@@ -276,20 +320,14 @@ void MediaSource::monitorSourceBuffers()
         return;
     }
 
-    // http://w3c.github.io/media-source/#buffer-monitoring, change from 11 December 2014
     // ↳ If the the HTMLMediaElement.readyState attribute equals HAVE_NOTHING:
     if (mediaElement()->readyState() == HTMLMediaElement::HAVE_NOTHING) {
         // 1. Abort these steps.
         return;
     }
 
-    // ↳ If buffered for all objects in activeSourceBuffers do not contain TimeRanges for the current
-    // playback position:
-    auto begin = m_activeSourceBuffers->begin();
-    auto end = m_activeSourceBuffers->end();
-    if (std::all_of(begin, end, [](auto& sourceBuffer) {
-        return !sourceBuffer->hasCurrentTime();
-    })) {
+    // ↳ If HTMLMediaElement.buffered does not contain a TimeRange for the current playback position:
+    if (!hasCurrentTime()) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
         // 2. If this is the first transition to HAVE_METADATA, then queue a task to fire a simple event
         // named loadedmetadata at the media element.
@@ -299,10 +337,11 @@ void MediaSource::monitorSourceBuffers()
         return;
     }
 
-    // ↳ If buffered for all objects in activeSourceBuffers contain TimeRanges that include the current
-    // playback position and enough data to ensure uninterrupted playback:
-    if (std::all_of(begin, end, [](auto& sourceBuffer) {
-        return sourceBuffer->hasFutureTime() && sourceBuffer->canPlayThrough();
+    // ↳ If HTMLMediaElement.buffered contains a TimeRange that includes the current
+    //  playback position and enough data to ensure uninterrupted playback:
+    auto ranges = buffered();
+    if (std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [&](auto& sourceBuffer) {
+        return sourceBuffer->canPlayThroughRange(*ranges);
     })) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
         // 2. Queue a task to fire a simple event named canplaythrough at the media element.
@@ -316,11 +355,9 @@ void MediaSource::monitorSourceBuffers()
         return;
     }
 
-    // ↳ If buffered for all objects in activeSourceBuffers contain a TimeRange that includes
-    // the current playback position and some time beyond the current playback position, then run the following steps:
-    if (std::all_of(begin, end, [](auto& sourceBuffer) {
-        return sourceBuffer->hasFutureTime();
-    })) {
+    // ↳ If HTMLMediaElement.buffered contains a TimeRange that includes the current playback
+    //  position and some time beyond the current playback position, then run the following steps:
+    if (hasFutureTime()) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
         // 2. If the previous value of HTMLMediaElement.readyState was less than HAVE_FUTURE_DATA, then queue a task to fire a simple event named canplay at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
@@ -333,9 +370,7 @@ void MediaSource::monitorSourceBuffers()
         return;
     }
 
-    // ↳ If buffered for at least one object in activeSourceBuffers contains a TimeRange that ends
-    // at the current playback position and does not have a range covering the time immediately
-    // after the current position:
+    // ↳ If HTMLMediaElement.buffered contains a TimeRange that ends at the current playback position and does not have a range covering the time immediately after the current position:
     // NOTE: Logically, !(all objects do not contain currentTime) == (some objects contain current time)
 
     // 1. Set the HTMLMediaElement.readyState attribute to HAVE_CURRENT_DATA.
@@ -840,6 +875,9 @@ const char* MediaSource::activeDOMObjectName() const
 
 void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicString& newState)
 {
+    for (auto& buffer : *m_sourceBuffers)
+        buffer->readyStateChanged();
+
     if (isOpen()) {
         scheduleEvent(eventNames().sourceopenEvent);
         return;
