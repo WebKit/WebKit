@@ -1,3 +1,24 @@
+2016-09-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Should be a SyntaxError for duplicate parameter names in function with default parameters
+        https://bugs.webkit.org/show_bug.cgi?id=162013
+
+        Reviewed by Saam Barati.
+
+        https://tc39.github.io/ecma262/#sec-function-definitions-static-semantics-early-errors
+        It is a Syntax Error if IsSimpleParameterList of FormalParameterList is
+        false and BoundNames of FormalParameterList contains any duplicate elements.
+
+        Non-simple parameter lists include rest parameters, destructuring,
+        and default parameters.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        Previously, we were not failing if there were default parameters
+        early in the parameter list that were not yet identified as duplicates
+        and simple parameters later were duplicates. Now, we fail if there
+        are default parameters anywhere in the parameter list with a duplicate.
+
 2016-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         ASSERT_NOT_REACHED when using spread inside an array literal with Function.prototype.apply

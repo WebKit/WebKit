@@ -277,5 +277,8 @@ augmentsArguments5(20);
 shouldThrowSyntaxError("function b(a = 20, a = 40) {}");
 shouldThrowSyntaxError("function b(aaaaa = 20,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v, aaaaa = 40) {}");
 shouldThrowSyntaxError("function b(a = 20, {a}) {}");
+shouldThrowSyntaxError("function b(a = 20, a) {}");
+shouldThrowSyntaxError("function b(a, a = 20) {}");
+shouldThrowSyntaxError("function b(a, a, b = 20) {}");
 shouldThrowSyntaxError("function b({a, a} = 20) {}");
 shouldThrowSyntaxError("function b({a, a} = 20) {}");

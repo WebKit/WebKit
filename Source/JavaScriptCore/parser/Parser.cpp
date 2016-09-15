@@ -1748,11 +1748,12 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
 {
 #define failIfDuplicateIfViolation() \
     if (duplicateParameter) {\
-        semanticFailIfTrue(defaultValue, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with default parameter values");\
+        semanticFailIfTrue(hasDefaultParameterValues, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with default parameter values");\
         semanticFailIfTrue(hasDestructuringPattern, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with destructuring parameters");\
         semanticFailIfTrue(isRestParameter, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with a rest parameter");\
     }
 
+    bool hasDefaultParameterValues = false;
     bool hasDestructuringPattern = false;
     bool isRestParameter = false;
     const Identifier* duplicateParameter = nullptr;
@@ -1773,8 +1774,11 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
         } else
             parameter = parseDestructuringPattern(context, DestructuringKind::DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
         failIfFalse(parameter, "Cannot parse parameter pattern");
-        if (!isRestParameter)
+        if (!isRestParameter) {
             defaultValue = parseDefaultValueForDestructuringPattern(context);
+            if (defaultValue)
+                hasDefaultParameterValues = true;
+        }
         propagateError();
         failIfDuplicateIfViolation();
         if (isRestParameter || defaultValue || hasDestructuringPattern)
