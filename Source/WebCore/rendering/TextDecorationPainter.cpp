@@ -410,7 +410,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
     } while (current && !is<HTMLAnchorElement>(current->node()) && !is<HTMLFontElement>(current->node()));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
-    if (remainingDecoration     && current) {
+    if (remainingDecoration && current) {
         auto& style = firstLineStyle ? current->firstLineStyle() : current->style();
         extractDecorations(style, remainingDecoration);
     }
