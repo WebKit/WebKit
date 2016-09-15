@@ -1,3 +1,9 @@
+2016-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.92 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-09-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Build failure with GCC 6 (fatal error: stdlib.h: No such file or directory)

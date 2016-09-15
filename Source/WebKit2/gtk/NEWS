@@ -1,4 +1,15 @@
 ==================
+WebKitGTK+ 2.13.92
+==================
+
+What's new in WebKitGTK+ 2.13.92?
+
+  - Add clipboard support in Wayland.
+  - Improve rendering of scrollbars with themes setting a minimum width for the scrollbar CSS gadget.
+  - Fix another WebProcess crash when the last WebView is destroyed.
+  - Fix the build with GCC 6.
+
+==================
 WebKitGTK+ 2.13.91
 ==================
 
