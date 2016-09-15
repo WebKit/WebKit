@@ -460,7 +460,7 @@ public:
     WEBCORE_EXPORT String stringForCandidateRequest() const;
     WEBCORE_EXPORT void handleAcceptedCandidate(TextCheckingResult);
     WEBCORE_EXPORT RefPtr<Range> contextRangeForCandidateRequest() const;
-    void selectTextCheckingResult(const TextCheckingResult&);
+    RefPtr<Range> rangeForTextCheckingResult(const TextCheckingResult&) const;
     bool isHandlingAcceptedCandidate() const { return m_isHandlingAcceptedCandidate; }
 
 private:

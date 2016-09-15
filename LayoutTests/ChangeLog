@@ -1,3 +1,24 @@
+2016-09-14  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205870. rdar://problem/28225774
+
+    2016-09-13  Tim Horton  <timothy_horton@apple.com>
+
+            Undoing a candidate insertion results in the replaced text being selected
+            https://bugs.webkit.org/show_bug.cgi?id=161894
+            <rdar://problem/28225774>
+
+            Reviewed by Simon Fraser.
+
+            * editing/mac/spelling/accept-candidate-allows-autocorrect-on-next-word-expected.txt:
+            * editing/mac/spelling/accept-candidate-replacing-multiple-words-expected.txt:
+            * editing/mac/spelling/accept-candidate-undo-does-not-select-expected.txt: Copied from LayoutTests/editing/mac/spelling/accept-candidate-replacing-multiple-words-expected.txt.
+            * editing/mac/spelling/accept-candidate-undo-does-not-select.html: Added.
+            * editing/mac/spelling/accept-candidate-without-adding-space-expected.txt:
+            * editing/mac/spelling/accept-candidate-without-crossing-editing-boundary-expected.txt:
+            Adjust some test results, and add a new test that ensures that undoing
+            a candidate insertion does not select the replaced text.
+
 2016-09-12  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r205788. rdar://problem/28245097

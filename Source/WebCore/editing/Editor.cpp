@@ -74,6 +74,7 @@
 #include "RenderTextControl.h"
 #include "RenderedDocumentMarker.h"
 #include "RenderedPosition.h"
+#include "ReplaceRangeWithTextCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -3619,21 +3620,17 @@ RefPtr<Range> Editor::contextRangeForCandidateRequest() const
     const VisibleSelection& selection = m_frame.selection().selection();
     return makeRange(startOfParagraph(selection.visibleStart()), endOfParagraph(selection.visibleEnd()));
 }
-    
-void Editor::selectTextCheckingResult(const TextCheckingResult& result)
+
+RefPtr<Range> Editor::rangeForTextCheckingResult(const TextCheckingResult& result) const
 {
     if (!result.length)
-        return;
-    
+        return nullptr;
+
     RefPtr<Range> contextRange = contextRangeForCandidateRequest();
     if (!contextRange)
-        return;
-    
-    RefPtr<Range> replacementRange = TextIterator::subrange(contextRange.get(), result.location, result.length);
-    if (!replacementRange)
-        return;
-    
-    m_frame.selection().setSelectedRange(replacementRange.get(), UPSTREAM, true);
+        return nullptr;
+
+    return TextIterator::subrange(contextRange.get(), result.location, result.length);
 }
 
 void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
@@ -3642,8 +3639,13 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
 
     m_isHandlingAcceptedCandidate = true;
 
-    selectTextCheckingResult(acceptedCandidate);
-    insertText(acceptedCandidate.replacement, 0);
+    if (auto range = rangeForTextCheckingResult(acceptedCandidate)) {
+        if (shouldInsertText(acceptedCandidate.replacement, range.get(), EditorInsertActionTyped)) {
+            Ref<ReplaceRangeWithTextCommand> replaceCommand = ReplaceRangeWithTextCommand::create(range.get(), acceptedCandidate.replacement);
+            applyCommand(replaceCommand.ptr());
+        }
+    } else
+        insertText(acceptedCandidate.replacement, nullptr);
 
     RefPtr<Range> insertedCandidateRange = rangeExpandedByCharactersInDirectionAtWordBoundary(selection.visibleStart(), acceptedCandidate.replacement.length(), DirectionBackward);
     if (insertedCandidateRange)
