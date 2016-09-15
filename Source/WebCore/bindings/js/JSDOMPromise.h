@@ -157,7 +157,12 @@ void fulfillPromiseWithArrayBuffer(Ref<DeferredWrapper>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredWrapper>&&, const void*, size_t);
 void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
 
-inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSC::EncodedJSValue promiseFunction(JSC::ExecState*, Ref<DeferredWrapper>&&))
+using PromiseFunction = void(JSC::ExecState&, Ref<DeferredWrapper>&&);
+
+enum class PromiseExecutionScope { WindowOnly, WindowOrWorker };
+
+template<PromiseFunction promiseFunction, PromiseExecutionScope executionScope>
+inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
 {
     JSC::VM& vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -166,14 +171,27 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSC::EncodedJSVal
     JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
 
     // promiseDeferred can be null when terminating a Worker abruptly.
-    if (!promiseDeferred)
+    if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
         return JSC::jsUndefined();
 
-    promiseFunction(&state, DeferredWrapper::create(&state, &globalObject, promiseDeferred));
+    promiseFunction(state, DeferredWrapper::create(&state, &globalObject, promiseDeferred));
 
     rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
     ASSERT_UNUSED(scope, !scope.exception());
     return promiseDeferred->promise();
+}
+
+using BindingPromiseFunction = JSC::EncodedJSValue(JSC::ExecState*, Ref<DeferredWrapper>&&);
+template<BindingPromiseFunction bindingFunction>
+inline void bindingPromiseFunctionAdapter(JSC::ExecState& state, Ref<DeferredWrapper>&& promise)
+{
+    bindingFunction(&state, WTFMove(promise));
+}
+
+template<BindingPromiseFunction bindingPromiseFunction, PromiseExecutionScope executionScope>
+inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
+{
+    return callPromiseFunction<bindingPromiseFunctionAdapter<bindingPromiseFunction>, executionScope>(state);
 }
 
 // At the moment, Value cannot be a Ref<T> or RefPtr<T>, it should be a DOM class.

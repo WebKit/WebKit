@@ -7160,7 +7160,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* state)
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState*, Ref<DeferredWrapper>&&);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, jsTestObjPrototypeFunctionTestPromiseFunctionPromise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestObjPrototypeFunctionTestPromiseFunctionPromise, false>(*state));
 }
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
@@ -7181,7 +7182,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromis
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState*, Ref<DeferredWrapper>&&);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise, false>(*state));
 }
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
@@ -7207,7 +7209,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState*, Ref<DeferredWrapper>&&);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithException(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise, false>(*state));
 }
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
@@ -7230,7 +7233,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithEx
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState*, Ref<DeferredWrapper>&&);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise, false>(*state));
 }
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
@@ -7254,7 +7258,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOp
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise(ExecState*, Ref<DeferredWrapper>&&);
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise, false>(*state));
 }
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
@@ -7280,7 +7285,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise(ExecState*, Ref<DeferredWrapper>&&);
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise, false>(*state));
 }
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
@@ -7323,7 +7329,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
 static EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise(ExecState*, Ref<DeferredWrapper>&&);
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunction(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise, false>(*state));
 }
 
 static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
@@ -7338,7 +7345,8 @@ static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFuncti
 static EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise(ExecState*, Ref<DeferredWrapper>&&);
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise, false>(*state));
 }
 
 static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)

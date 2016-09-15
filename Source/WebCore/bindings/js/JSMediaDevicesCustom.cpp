@@ -340,13 +340,16 @@ void parseMediaConstraintsDictionary(const Dictionary& mediaTrackConstraints, Me
     }
 }
 
-JSValue JSMediaDevices::getUserMedia(ExecState& state)
+static void JSMediaDevicesGetUserMediaPromiseFunction(ExecState& state, Ref<DeferredWrapper>&& promise)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(state.argumentCount() < 1))
-        return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
+    if (UNLIKELY(state.argumentCount() < 1)) {
+        throwVMError(&state, scope, createNotEnoughArgumentsError(&state));
+        return;
+    }
+
     ExceptionCode ec = 0;
     auto constraintsDictionary = Dictionary(&state, state.uncheckedArgument(0));
 
@@ -374,10 +377,13 @@ JSValue JSMediaDevices::getUserMedia(ExecState& state)
 
     auto audioConstraints = MediaConstraintsImpl::create(WTFMove(mandatoryAudioConstraints), WTFMove(advancedAudioConstraints), areAudioConstraintsValid);
     auto videoConstraints = MediaConstraintsImpl::create(WTFMove(mandatoryVideoConstraints), WTFMove(advancedVideoConstraints), areVideoConstraintsValid);
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
-    wrapped().getUserMedia(WTFMove(audioConstraints), WTFMove(videoConstraints), DeferredWrapper::create(&state, globalObject(), promiseDeferred), ec);
+    castThisValue<JSMediaDevices>(state).wrapped().getUserMedia(WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise), ec);
     setDOMException(&state, ec);
-    return promiseDeferred->promise();
+}
+
+JSValue JSMediaDevices::getUserMedia(ExecState& state)
+{
+    return callPromiseFunction<JSMediaDevicesGetUserMediaPromiseFunction, PromiseExecutionScope::WindowOnly>(state);
 }
 
 }

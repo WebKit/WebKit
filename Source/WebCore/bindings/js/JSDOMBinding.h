@@ -173,6 +173,8 @@ template<typename DOMClass, typename T> auto createWrapper(JSDOMGlobalObject*, R
 
 template<typename DOMClass> JSC::JSValue wrap(JSC::ExecState*, JSDOMGlobalObject*, DOMClass&);
 
+template<typename JSClass> JSClass& castThisValue(JSC::ExecState&);
+
 void addImpureProperty(const AtomicString&);
 
 const JSC::HashTable& getHashTableForGlobalData(JSC::VM&, const JSC::HashTable& staticTable);
@@ -527,6 +529,14 @@ template<typename DOMClass> inline JSC::JSValue wrap(JSC::ExecState* state, JSDO
     if (auto* wrapper = getCachedWrapper(globalObject->world(), domObject))
         return wrapper;
     return toJSNewlyCreated(state, globalObject, Ref<DOMClass>(domObject));
+}
+
+template<typename JSClass> inline JSClass& castThisValue(JSC::ExecState& state)
+{
+    auto thisValue = state.thisValue();
+    auto castedThis = JSC::jsDynamicCast<JSClass*>(thisValue);
+    ASSERT(castedThis);
+    return *castedThis;
 }
 
 inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& okay)

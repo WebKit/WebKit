@@ -3421,14 +3421,17 @@ sub GenerateImplementation
             if (IsReturningPromise($function) && !$isCustom) {
                 AddToImplIncludes("JSDOMPromise.h");
 
+                my $scope = $interface->extendedAttributes->{"Exposed"} ? "WindowOrWorker" : "WindowOnly";
                 push(@implContent, <<END);
 static EncodedJSValue ${functionName}Promise(ExecState*, Ref<DeferredWrapper>&&);
+
 ${functionReturn} ${functionName}(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction(*state, ${functionName}Promise));
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<${functionName}Promise, PromiseExecutionScope::${scope}>(*state));
 }
 
-static inline EncodedJSValue ${functionName}Promise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
+static inline EncodedJSValue ${functionName}Promise(ExecState* state, Ref<DeferredWrapper>&& deferredWrapper)
 END
             }
             else {

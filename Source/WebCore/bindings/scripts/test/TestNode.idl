@@ -21,9 +21,10 @@
 [
     Constructor,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Exposed=(Window,Worker)
 ] interface TestNode : Node {
     attribute DOMString name;
 
     [EnabledAtRuntime=DOMIterator] iterable<TestNode>;
+    Promise testWorkerPromise();
 };
-

@@ -25,6 +25,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMIterator.h"
+#include "JSDOMPromise.h"
 #include "RuntimeEnabledFeatures.h"
 #include "URL.h"
 #include <runtime/Error.h>
@@ -37,6 +38,7 @@ namespace WebCore {
 
 // Functions
 
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState*);
@@ -108,6 +110,7 @@ static const HashTableValue JSTestNodePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNodeConstructor) } },
     { "name", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeName), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNodeName) } },
+    { "testWorkerPromise", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionTestWorkerPromise), (intptr_t) (0) } },
     { "entries", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionEntries), (intptr_t) (0) } },
     { "keys", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionKeys), (intptr_t) (0) } },
     { "values", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionValues), (intptr_t) (0) } },
@@ -226,6 +229,28 @@ bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValu
 JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSTestNodeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+}
+
+static EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState*, Ref<DeferredWrapper>&&);
+EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecState* state)
+{
+    ASSERT(state);
+    return JSValue::encode(callPromiseFunction<jsTestNodePrototypeFunctionTestWorkerPromisePromise, true>(*state));
+}
+
+static inline EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState* state, Ref<DeferredWrapper>&&  deferredWrapper)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestNode*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, throwScope, "TestNode", "testWorkerPromise");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestNode::info());
+    auto& impl = castedThis->wrapped();
+    impl.testWorkerPromise(WTFMove(deferredWrapper));
+    return JSValue::encode(jsUndefined());
 }
 
 using TestNodeIterator = JSDOMIterator<JSTestNode>;

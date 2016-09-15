@@ -136,9 +136,11 @@
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2);")
             }
 
-            shouldThrow("navigator.mediaDevices.getUserMedia().then(invalidGotStream);");
+            navigator.mediaDevices.getUserMedia().then(invalidGotStream, function(error) {
+                testPassed("navigator.mediaDevices.getUserMedia() rejected with error: " + error);
+            });
             navigator.mediaDevices.getUserMedia({}).then(invalidGotStream, function(error) {
-                testPassed(" navigator.mediaDevices.getUserMedia({}) rejected with error: " + error);
+                testPassed("navigator.mediaDevices.getUserMedia({}) rejected with error: " + error);
             });
             shouldBe("typeof navigator.mediaDevices.webkitGetUserMedia", "'undefined'");
             setUserMediaPermission(true);

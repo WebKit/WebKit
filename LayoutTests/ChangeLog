@@ -1,3 +1,13 @@
+2016-09-15  Youenn Fablet  <youenn@apple.com>
+
+        callPromiseFunction should be made usable for custom binding code
+        https://bugs.webkit.org/show_bug.cgi?id=161961
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/MediaDevices-getUserMedia-expected.txt:
+        * fast/mediastream/MediaDevices-getUserMedia.html: Updated to expect a rejected promise in lieu of an exception.
+
 2016-09-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update ios-simulator-wk1 test expectations after migrating to iOS 10
