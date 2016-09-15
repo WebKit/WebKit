@@ -6477,35 +6477,43 @@ static bool mayCreateGraphicalGroup(const RenderElement& renderer)
     return createsGraphicalGroup || (renderer.style().willChange() && renderer.style().willChange()->canCreateGraphicalGroup());
 }
 
+static bool createsStackingContext(const RenderLayer& layer)
+{
+    auto& renderer = layer.renderer();
+    return renderer.hasTransformRelatedProperty()
+        || renderer.isPositioned()
+        || layer.needsCompositedScrolling()
+        || renderer.style().hasFlowFrom()
+        || renderer.hasReflection()
+        || renderer.style().hasIsolation()
+#if PLATFORM(IOS)
+        || layer.hasAcceleratedTouchScrolling()
+#endif
+        // FIXME: Check if willChange()->canCreateStackingContext() is more accurate here.
+        || mayCreateGraphicalGroup(renderer);
+}
+
 bool RenderLayer::shouldBeNormalFlowOnly() const
 {
-    return (renderer().hasOverflowClip()
-        || renderer().hasReflection()
-        || renderer().hasMask()
+    if (createsStackingContext(*this))
+        return false;
+
+    return renderer().hasOverflowClip()
         || renderer().isCanvas()
         || renderer().isVideo()
         || renderer().isEmbeddedObject()
         || renderer().isRenderIFrame()
         || (renderer().style().specifiesColumns() && !isRootLayer())
-        || renderer().isInFlowRenderFlowThread())
-        && !renderer().hasTransformRelatedProperty()
-        && !renderer().isPositioned()
-        && !needsCompositedScrolling()
-        && !renderer().style().hasFlowFrom()
-#if PLATFORM(IOS)
-        && !hasAcceleratedTouchScrolling()
-#endif
-        && !mayCreateGraphicalGroup(renderer());
+        || renderer().isInFlowRenderFlowThread();
 }
 
 bool RenderLayer::shouldBeSelfPaintingLayer() const
 {
-    return !isNormalFlowOnly()
-        || hasOverlayScrollbars()
+    if (!isNormalFlowOnly())
+        return true;
+
+    return hasOverlayScrollbars()
         || needsCompositedScrolling()
-        || isolatesBlending()
-        || renderer().hasReflection()
-        || renderer().hasMask()
         || renderer().isTableRow()
         || renderer().isCanvas()
         || renderer().isVideo()
