@@ -193,7 +193,7 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    DataObjectGtk* dataObject() const;
+    const DataObjectGtk& dataObject() const;
     static std::unique_ptr<Pasteboard> createForGlobalSelection();
 #endif
 

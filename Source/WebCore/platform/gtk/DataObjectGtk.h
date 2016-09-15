@@ -66,8 +66,6 @@ public:
     void clearText();
     void clearMarkup();
 
-    static DataObjectGtk* forClipboard(GtkClipboard*);
-
 private:
     String m_text;
     String m_markup;

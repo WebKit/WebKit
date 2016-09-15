@@ -119,7 +119,6 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-#if PLATFORM(X11)
 class EditorClientFrameDestructionObserver : FrameDestructionObserver {
 public:
     EditorClientFrameDestructionObserver(Frame* frame, GClosure* closure)
@@ -158,11 +157,9 @@ static void collapseSelection(GtkClipboard*, Frame* frame)
     const VisibleSelection& selection = frame->selection().selection();
     frame->selection().setBase(selection.extent(), selection.affinity());
 }
-#endif
 
 void WebEditorClient::updateGlobalSelection(Frame* frame)
 {
-#if PLATFORM(X11)
     if (!frame->selection().isRange())
         return;
     RefPtr<Range> range = frame->selection().toNormalizedRange();
@@ -184,7 +181,6 @@ void WebEditorClient::updateGlobalSelection(Frame* frame)
     pasteboardContent.callback = callback;
     Pasteboard::createForGlobalSelection()->write(pasteboardContent);
     frameSettingClipboard = nullptr;
-#endif
 }
 
 bool WebEditorClient::shouldShowUnicodeMenu()
