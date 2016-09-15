@@ -93,6 +93,7 @@ public:
         if (!isValidEnum<E>(value))
             return false;
 
+        e = static_cast<E>(value);
         return true;
     }
 
