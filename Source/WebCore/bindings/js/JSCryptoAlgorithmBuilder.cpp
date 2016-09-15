@@ -48,11 +48,6 @@ JSCryptoAlgorithmBuilder::~JSCryptoAlgorithmBuilder()
 {
 }
 
-std::unique_ptr<CryptoAlgorithmDescriptionBuilder> JSCryptoAlgorithmBuilder::createEmptyClone() const
-{
-    return std::make_unique<JSCryptoAlgorithmBuilder>(m_exec);
-}
-
 void JSCryptoAlgorithmBuilder::add(const char* key, unsigned value)
 {
     VM& vm = m_exec->vm();
@@ -75,12 +70,11 @@ void JSCryptoAlgorithmBuilder::add(const char* key, const Vector<uint8_t>& buffe
     m_dictionary->putDirect(vm, identifier, arrayView->wrap(m_exec, vm.entryScope->globalObject()));
 }
 
-void JSCryptoAlgorithmBuilder::add(const char* key, const CryptoAlgorithmDescriptionBuilder& nestedBuilder)
+void JSCryptoAlgorithmBuilder::add(const char* key, const JSCryptoAlgorithmBuilder& nestedBuilder)
 {
     VM& vm = m_exec->vm();
     Identifier identifier = Identifier::fromString(&vm, key);
-    const JSCryptoAlgorithmBuilder& jsBuilder = static_cast<const JSCryptoAlgorithmBuilder&>(nestedBuilder);
-    m_dictionary->putDirect(vm, identifier, jsBuilder.result());
+    m_dictionary->putDirect(vm, identifier, nestedBuilder.result());
 }
 
 } // namespace WebCore

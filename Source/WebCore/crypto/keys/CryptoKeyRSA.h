@@ -47,6 +47,41 @@ class CryptoKeyDataRSAComponents;
 class CryptoKeyPair;
 class PromiseWrapper;
 
+class RsaKeyAlgorithm : public KeyAlgorithm {
+public:
+    RsaKeyAlgorithm(const String& name, size_t modulusLength, Vector<uint8_t>&& publicExponent)
+        : KeyAlgorithm(name)
+        , m_modulusLength(modulusLength)
+        , m_publicExponent(WTFMove(publicExponent))
+    {
+    }
+
+    KeyAlgorithmClass keyAlgorithmClass() const override { return KeyAlgorithmClass::RSA; }
+
+    size_t modulusLength() const { return m_modulusLength; }
+    const Vector<uint8_t>& publicExponent() const { return m_publicExponent; }
+
+private:
+    size_t m_modulusLength;
+    Vector<uint8_t> m_publicExponent;
+};
+
+class RsaHashedKeyAlgorithm final : public RsaKeyAlgorithm {
+public:
+    RsaHashedKeyAlgorithm(const String& name, size_t modulusLength, Vector<uint8_t>&& publicExponent, const String& hash)
+        : RsaKeyAlgorithm(name, modulusLength, WTFMove(publicExponent))
+        , m_hash(hash)
+    {
+    }
+
+    KeyAlgorithmClass keyAlgorithmClass() const final { return KeyAlgorithmClass::HRSA; }
+
+    const String& hash() const { return m_hash; }
+
+private:
+    String m_hash;
+};
+
 class CryptoKeyRSA final : public CryptoKey {
 public:
     static Ref<CryptoKeyRSA> create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
@@ -69,10 +104,10 @@ public:
 private:
     CryptoKeyRSA(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType, PlatformRSAKey, bool extractable, CryptoKeyUsage);
 
-    CryptoKeyClass keyClass() const override { return CryptoKeyClass::RSA; }
+    CryptoKeyClass keyClass() const final { return CryptoKeyClass::RSA; }
 
-    void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const override;
-    std::unique_ptr<CryptoKeyData> exportData() const override;
+    std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
+    std::unique_ptr<CryptoKeyData> exportData() const final;
 
     PlatformRSAKey m_platformKey;
 
@@ -83,6 +118,10 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyRSA, CryptoKeyClass::RSA)
+
+SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(RsaKeyAlgorithm, KeyAlgorithmClass::RSA)
+
+SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(RsaHashedKeyAlgorithm, KeyAlgorithmClass::HRSA)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoKeyRSA_h

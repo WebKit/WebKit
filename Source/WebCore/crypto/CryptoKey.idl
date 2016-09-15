@@ -47,6 +47,6 @@ enum KeyUsage {
 ] interface CryptoKey {
     readonly attribute KeyType type;
     readonly attribute boolean extractable;
-    [Custom] readonly attribute Algorithm algorithm;
-    readonly attribute sequence<KeyUsage> usages;
+    [CachedAttribute, CustomGetter] readonly attribute object algorithm;
+    [CachedAttribute] readonly attribute sequence<KeyUsage> usages;
 };

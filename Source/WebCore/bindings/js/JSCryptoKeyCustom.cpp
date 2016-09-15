@@ -28,7 +28,11 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoKeyAES.h"
+#include "CryptoKeyHMAC.h"
+#include "CryptoKeyRSA.h"
 #include "JSCryptoAlgorithmBuilder.h"
+#include <heap/HeapInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;
@@ -37,11 +41,50 @@ namespace WebCore {
 
 JSValue JSCryptoKey::algorithm(JSC::ExecState& state) const
 {
-    JSCryptoAlgorithmBuilder builder(&state);
-    wrapped().buildAlgorithmDescription(builder);
-    return builder.result();
-}
+    if (m_algorithm)
+        return m_algorithm.get();
 
+    JSCryptoAlgorithmBuilder builder(&state);
+
+    std::unique_ptr<KeyAlgorithm> algorithm = wrapped().buildAlgorithm();
+    switch (algorithm->keyAlgorithmClass()) {
+    case KeyAlgorithmClass::AES: {
+        auto& aesAlgorithm = downcast<AesKeyAlgorithm>(*algorithm);
+        builder.add("name", aesAlgorithm.name());
+        builder.add("length", aesAlgorithm.length());
+        break;
+    }
+    case KeyAlgorithmClass::HMAC: {
+        auto& hmacAlgorithm = downcast<HmacKeyAlgorithm>(*algorithm);
+        builder.add("name", hmacAlgorithm.name());
+        JSCryptoAlgorithmBuilder hmacHash(&state);
+        hmacHash.add("name", hmacAlgorithm.hash());
+        builder.add("hash", hmacHash);
+        builder.add("length", hmacAlgorithm.length());
+        break;
+    }
+    case KeyAlgorithmClass::HRSA: {
+        auto& rsaAlgorithm = downcast<RsaHashedKeyAlgorithm>(*algorithm);
+        builder.add("name", rsaAlgorithm.name());
+        builder.add("modulusLength", rsaAlgorithm.modulusLength());
+        builder.add("publicExponent", rsaAlgorithm.publicExponent());
+        JSCryptoAlgorithmBuilder rsaHash(&state);
+        rsaHash.add("name", rsaAlgorithm.hash());
+        builder.add("hash", rsaHash);
+        break;
+    }
+    case KeyAlgorithmClass::RSA: {
+        auto& rsaAlgorithm = downcast<RsaKeyAlgorithm>(*algorithm);
+        builder.add("name", rsaAlgorithm.name());
+        builder.add("modulusLength", rsaAlgorithm.modulusLength());
+        builder.add("publicExponent", rsaAlgorithm.publicExponent());
+        break;
+    }
+    }
+
+    m_algorithm.set(state.vm(), this, builder.result());
+    return m_algorithm.get();
+}
 
 } // namespace WebCore
 

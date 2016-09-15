@@ -28,7 +28,6 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmDescriptionBuilder.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataOctetSequence.h"
 #include <wtf/text/WTFString.h>
@@ -67,15 +66,10 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::generate(size_t lengthBytes, CryptoAlgorith
     return adoptRef(new CryptoKeyHMAC(randomData(lengthBytes), hash, extractable, usages));
 }
 
-void CryptoKeyHMAC::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
+std::unique_ptr<KeyAlgorithm> CryptoKeyHMAC::buildAlgorithm() const
 {
-    CryptoKey::buildAlgorithmDescription(builder);
-
-    auto hashDescriptionBuilder = builder.createEmptyClone();
-    hashDescriptionBuilder->add("name", CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_hash));
-    builder.add("hash", *hashDescriptionBuilder);
-
-    builder.add("length", m_key.size());
+    return std::make_unique<HmacKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().nameForIdentifier(algorithmIdentifier()),
+        CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_hash), m_key.size());
 }
 
 std::unique_ptr<CryptoKeyData> CryptoKeyHMAC::exportData() const

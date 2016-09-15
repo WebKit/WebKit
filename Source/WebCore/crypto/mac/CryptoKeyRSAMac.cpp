@@ -29,7 +29,6 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CommonCryptoUtilities.h"
-#include "CryptoAlgorithmDescriptionBuilder.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyPair.h"
@@ -160,26 +159,22 @@ size_t CryptoKeyRSA::keySizeInBits() const
     return modulus.size() * 8;
 }
 
-void CryptoKeyRSA::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
+std::unique_ptr<KeyAlgorithm> CryptoKeyRSA::buildAlgorithm() const
 {
-    CryptoKey::buildAlgorithmDescription(builder);
-
+    String name = CryptoAlgorithmRegistry::singleton().nameForIdentifier(algorithmIdentifier());
     Vector<uint8_t> modulus;
     Vector<uint8_t> publicExponent;
     CCCryptorStatus status = getPublicKeyComponents(m_platformKey, modulus, publicExponent);
     if (status) {
         WTFLogAlways("Couldn't get RSA key components, status %d", status);
-        return;
+        publicExponent.clear();
+        return std::make_unique<RsaKeyAlgorithm>(name, 0, WTFMove(publicExponent));
     }
 
-    builder.add("modulusLength", modulus.size() * 8);
-    builder.add("publicExponent", publicExponent);
-
-    if (m_restrictedToSpecificHash) {
-        auto hashDescriptionBuilder = builder.createEmptyClone();
-        hashDescriptionBuilder->add("name", CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_hash));
-        builder.add("hash", *hashDescriptionBuilder);
-    }
+    size_t modulusLength = modulus.size() * 8;
+    if (m_restrictedToSpecificHash)
+        return std::make_unique<RsaHashedKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent), CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_hash));
+    return std::make_unique<RsaKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent));
 }
 
 std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const

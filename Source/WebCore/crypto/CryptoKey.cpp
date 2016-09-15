@@ -28,15 +28,13 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmDescriptionBuilder.h"
 #include "CryptoAlgorithmRegistry.h"
 #include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithm, Type type, bool extractable, CryptoKeyUsage usages)
-    : m_algorithm(algorithm)
+CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithmIdentifier, Type type, bool extractable, CryptoKeyUsage usages)
+    : m_algorithmIdentifier(algorithmIdentifier)
     , m_type(type)
     , m_extractable(extractable)
     , m_usages(usages)
@@ -45,12 +43,6 @@ CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithm, Type type, bool extrac
 
 CryptoKey::~CryptoKey()
 {
-}
-
-void CryptoKey::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
-{
-    builder.add("name", CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_algorithm));
-    // Subclasses will add other keys.
 }
 
 auto CryptoKey::usages() const -> Vector<Usage>

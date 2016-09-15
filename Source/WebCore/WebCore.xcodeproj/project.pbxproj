@@ -5976,8 +5976,6 @@
 		E157A8E418173A3A009F821D /* CryptoKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E157A8E218173A3A009F821D /* CryptoKey.cpp */; };
 		E157A8E518173A3A009F821D /* CryptoKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8E318173A3A009F821D /* CryptoKey.h */; };
 		E157A8E818184C67009F821D /* JSCryptoKeyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */; };
-		E157A8EC181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E157A8EA181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.cpp */; };
-		E157A8ED181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8EB181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.h */; };
 		E157A8F018185425009F821D /* JSCryptoAlgorithmBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E157A8EE18185425009F821D /* JSCryptoAlgorithmBuilder.cpp */; };
 		E157A8F118185425009F821D /* JSCryptoAlgorithmBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8EF18185425009F821D /* JSCryptoAlgorithmBuilder.h */; };
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
@@ -13559,8 +13557,6 @@
 		E157A8E218173A3A009F821D /* CryptoKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKey.cpp; sourceTree = "<group>"; };
 		E157A8E318173A3A009F821D /* CryptoKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKey.h; sourceTree = "<group>"; };
 		E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyCustom.cpp; sourceTree = "<group>"; };
-		E157A8EA181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmDescriptionBuilder.cpp; sourceTree = "<group>"; };
-		E157A8EB181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmDescriptionBuilder.h; sourceTree = "<group>"; };
 		E157A8EE18185425009F821D /* JSCryptoAlgorithmBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoAlgorithmBuilder.cpp; sourceTree = "<group>"; };
 		E157A8EF18185425009F821D /* JSCryptoAlgorithmBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoAlgorithmBuilder.h; sourceTree = "<group>"; };
 		E15A36D61104572000B7B639 /* XMLNSNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLNSNames.h; sourceTree = "<group>"; };
@@ -22196,8 +22192,6 @@
 				E1FE137318402A6700892F13 /* CommonCryptoUtilities.h */,
 				E172AF6B180F24C600FBADB9 /* CryptoAlgorithm.cpp */,
 				E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */,
-				E157A8EA181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.cpp */,
-				E157A8EB181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.h */,
 				E1C657241816E69D00256CDD /* CryptoAlgorithmIdentifier.h */,
 				E1C657261816F9FE00256CDD /* CryptoAlgorithmParameters.h */,
 				E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */,
@@ -24094,7 +24088,6 @@
 				E1FE137B184D21BB00892F13 /* CryptoAlgorithmAES_KW.h in Headers */,
 				E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h in Headers */,
 				E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h in Headers */,
-				E157A8ED181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.h in Headers */,
 				E125F8321822F11B00D84CD9 /* CryptoAlgorithmHMAC.h in Headers */,
 				E19DA29C18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h in Headers */,
 				E1C6571F1816E50300256CDD /* CryptoAlgorithmHmacParams.h in Headers */,
@@ -27808,7 +27801,6 @@
 				E125F845182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp in Sources */,
 				E1FE137A184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp in Sources */,
 				E1FE137E184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp in Sources */,
-				E157A8EC181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.cpp in Sources */,
 				E125F8311822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp in Sources */,
 				E125F8381822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp in Sources */,
 				E1FF8F6C180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp in Sources */,
