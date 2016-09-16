@@ -1038,9 +1038,8 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 # FIXME: Needs bugzilla (<rdar://problem/17458211>)
 [ Yosemite+ ] platform/mac/fast/text/systemFont.html [ Pass Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/17476688>)
-[ Yosemite+ ] media/media-source/media-source-tracks.html [ Skip ]
-
+# --- Start Media Source Tests ---
+## --- Start W3C Imported Media Source Tests
 # Passing Media Source tests
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/ [ Skip ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html [ Pass ]
@@ -1074,13 +1073,11 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure ]
 webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Failure ]
 webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Failure ]
-
-# These two tests have "InvalidStateError (DOM Exception 11): The object is in an invalid state." in output.
-[ Yosemite+ ] media/media-source/media-source-duplicate-seeked.html [ Failure ]
-[ Yosemite+ ] media/media-source/media-source-play.html [ Failure ]
+## --- End W3C Imported Media Source Tests
 
 # This test times out.
 [ Yosemite+ ] media/media-source/media-source-seek-complete.html [ Timeout ]
+# --- End Media Source Tests ---
 
 # These tests used to only fail with WK2, but on Yosemite, they also fail with WK1.
 webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]

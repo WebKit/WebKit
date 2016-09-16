@@ -1,5 +1,11 @@
 2016-09-16  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed gardening; enable newly passing media/media-source/ tests.
+
+        * platform/mac/TestExpectations:
+
+2016-09-16  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed gardening; enable newly passing imported/w3c/web-platform-tests/media-source/ tests.
 
         * platform/mac/TestExpectations:
