@@ -3080,6 +3080,11 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
     m_pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
 }
 
+void WebPageProxy::hasInsecureContent(HasInsecureContent& hasInsecureContent)
+{
+    hasInsecureContent = m_pageLoadState.committedHasInsecureContent() ? HasInsecureContent::Yes : HasInsecureContent::No;
+}
+
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
 {
     PageClientProtector protector(m_pageClient);
@@ -3216,7 +3221,7 @@ void WebPageProxy::clearLoadDependentCallbacks()
     }
 }
 
-void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, const UserData& userData)
+void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, Optional<HasInsecureContent> hasInsecureContent, const UserData& userData)
 {
     PageClientProtector protector(m_pageClient);
 
@@ -3236,8 +3241,9 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 #endif
 
     auto transaction = m_pageLoadState.transaction();
-    bool markPageInsecure = m_treatsSHA1CertificatesAsInsecure && certificateInfo.containsNonRootSHA1SignedCertificate();
     Ref<WebCertificateInfo> webCertificateInfo = WebCertificateInfo::create(certificateInfo);
+    bool markPageInsecure = hasInsecureContent ? hasInsecureContent.value() == HasInsecureContent::Yes : m_treatsSHA1CertificatesAsInsecure && certificateInfo.containsNonRootSHA1SignedCertificate();
+
     if (frame->isMainFrame()) {
         m_pageLoadState.didCommitLoad(transaction, webCertificateInfo, markPageInsecure);
         m_suppressNavigationSnapshotting = false;

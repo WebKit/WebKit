@@ -1,5 +1,36 @@
 2016-09-16  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r206006. rdar://problem/27991573
+
+    2016-09-15  Brady Eidson  <beidson@apple.com>
+
+            WKWebView.hasOnlySecureContent always returns "YES" after going back to a CachedPage (even if it has http resources).
+            <rdar://problem/27681261> and https://bugs.webkit.org/show_bug.cgi?id=162043
+
+            Reviewed by Brent Fulgham.
+
+            * Scripts/webkit/messages.py:
+            (headers_for_type): Add a custom header, and alphabetize existing ones.
+
+            * Shared/WebCoreArgumentCoders.h: Add EnumTraits for HasInsecureContent.
+
+            * UIProcess/PageLoadState.h:
+            (WebKit::PageLoadState::committedHasInsecureContent):
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::hasInsecureContent):
+            (WebKit::WebPageProxy::didCommitLoadForFrame): If the WebProcess included an existing "HasInsecureContent" value, use it.
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+            (WebKit::WebFrameLoaderClient::savePlatformDataToCachedFrame): Save the "HasInsecureContent" value to the CachedFrame in
+              case we restore it in the future.
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2016-09-16  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r206003. rdar://problem/27991573
 
     2016-09-15  Anders Carlsson  <andersca@apple.com>

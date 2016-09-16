@@ -55,6 +55,7 @@
 #include "WebProcessPoolMessages.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObject.h>
+#include <WebCore/CachedFrame.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
@@ -438,7 +439,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title.string(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad()
+void WebFrameLoaderClient::dispatchDidCommitLoad(Optional<HasInsecureContent> hasInsecureContent)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -453,8 +454,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     webPage->sandboxExtensionTracker().didCommitProvisionalLoad(m_frame);
 
     // Notify the UIProcess.
-
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), documentLoader.response().mimeType(), m_frameHasCustomContentProvider, static_cast<uint32_t>(m_frame->coreFrame()->loader().loadType()), documentLoader.response().certificateInfo().valueOrCompute([] { return CertificateInfo(); }), m_frame->coreFrame()->document()->isPluginDocument(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), documentLoader.response().mimeType(), m_frameHasCustomContentProvider, static_cast<uint32_t>(m_frame->coreFrame()->loader().loadType()), documentLoader.response().certificateInfo().valueOrCompute([] { return CertificateInfo(); }), m_frame->coreFrame()->document()->isPluginDocument(), hasInsecureContent, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
     webPage->didCommitLoad(m_frame);
 }
 
@@ -1281,8 +1281,15 @@ String WebFrameLoaderClient::userAgent(const URL& url)
     return webPage->userAgent(m_frame, url);
 }
 
-void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
+void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    HasInsecureContent hasInsecureContent;
+    if (webPage->sendSync(Messages::WebPageProxy::HasInsecureContent(), Messages::WebPageProxy::HasInsecureContent::Reply(hasInsecureContent)))
+        cachedFrame->setHasInsecureContent(hasInsecureContent);
 }
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)

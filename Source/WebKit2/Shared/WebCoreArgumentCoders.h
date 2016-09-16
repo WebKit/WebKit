@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreArgumentCoders_h
-#define WebCoreArgumentCoders_h
+#pragma once
 
 #include "ArgumentCoders.h"
+#include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PaymentHeaders.h>
 
 namespace WebCore {
@@ -530,4 +530,14 @@ template<> struct ArgumentCoder<WebCore::PaymentRequest::TotalAndLineItems> {
 
 } // namespace IPC
 
-#endif // WebCoreArgumentCoders_h
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::HasInsecureContent> {
+    using values = EnumValues<
+        WebCore::HasInsecureContent,
+        WebCore::HasInsecureContent::No,
+        WebCore::HasInsecureContent::Yes
+    >;
+};
+
+} // namespace WTF

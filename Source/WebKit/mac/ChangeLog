@@ -1,5 +1,20 @@
 2016-09-16  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r206006. rdar://problem/27991573
+
+    2016-09-15  Brady Eidson  <beidson@apple.com>
+
+            WKWebView.hasOnlySecureContent always returns "YES" after going back to a CachedPage (even if it has http resources).
+            <rdar://problem/27681261> and https://bugs.webkit.org/show_bug.cgi?id=162043
+
+            Reviewed by Brent Fulgham.
+
+            * WebCoreSupport/WebFrameLoaderClient.h:
+            * WebCoreSupport/WebFrameLoaderClient.mm:
+            (WebFrameLoaderClient::dispatchDidCommitLoad):
+
+2016-09-16  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205991. rdar://problem/28272353
 
     2016-09-15  Beth Dakin  <bdakin@apple.com>

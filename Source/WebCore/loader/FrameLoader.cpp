@@ -639,7 +639,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
 
 void FrameLoader::receivedFirstData()
 {
-    dispatchDidCommitLoad();
+    dispatchDidCommitLoad(Nullopt);
     dispatchDidClearWindowObjectsInAllWorlds();
     dispatchGlobalObjectAvailableInAllWorlds();
 
@@ -1830,10 +1830,12 @@ void FrameLoader::commitProvisionalLoad()
         requestFromDelegate(mainResourceRequest, mainResourceIdentifier, mainResouceError);
         notifier().dispatchDidReceiveResponse(cachedPage->documentLoader(), mainResourceIdentifier, cachedPage->documentLoader()->response());
 
+        Optional<HasInsecureContent> hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
+
         // FIXME: This API should be turned around so that we ground CachedPage into the Page.
         cachedPage->restore(*m_frame.page());
 
-        dispatchDidCommitLoad();
+        dispatchDidCommitLoad(hasInsecureContent);
 #if PLATFORM(IOS)
         m_frame.page()->chrome().setDispatchViewportDataDidChangeSuppressed(false);
         m_frame.page()->chrome().dispatchViewportPropertiesDidChange(m_frame.page()->viewportArguments());
@@ -3530,12 +3532,12 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
 #endif
 }
 
-void FrameLoader::dispatchDidCommitLoad()
+void FrameLoader::dispatchDidCommitLoad(Optional<HasInsecureContent> initialHasInsecureContent)
 {
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;
 
-    m_client.dispatchDidCommitLoad();
+    m_client.dispatchDidCommitLoad(initialHasInsecureContent);
 
     if (m_frame.isMainFrame()) {
         m_frame.page()->resetSeenPlugins();
