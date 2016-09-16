@@ -125,12 +125,11 @@ void SampleMap::removeSample(MediaSample* sample)
     ASSERT(sample);
     MediaTime presentationTime = sample->presentationTime();
 
-    presentationOrder().m_samples.erase(presentationTime);
+    m_totalSize -= sample->sizeInBytes();
 
     auto decodeKey = DecodeOrderSampleMap::KeyType(sample->decodeTime(), presentationTime);
+    presentationOrder().m_samples.erase(presentationTime);
     decodeOrder().m_samples.erase(decodeKey);
-
-    m_totalSize -= sample->sizeInBytes();
 }
 
 PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleWithPresentationTime(const MediaTime& time)

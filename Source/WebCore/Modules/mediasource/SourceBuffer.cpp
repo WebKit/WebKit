@@ -770,16 +770,17 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
             auto sampleIterator = trackBuffer.samples.presentationOrder().findSampleContainingPresentationTime(time);
             if (sampleIterator == trackBuffer.samples.presentationOrder().end())
                 return;
-            if (!sampleIterator->second->isDivisable())
+            RefPtr<MediaSample> sample = sampleIterator->second;
+            if (!sample->isDivisable())
                 return;
-            std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> replacementSamples = sampleIterator->second->divide(time);
+            std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> replacementSamples = sample->divide(time);
             if (!replacementSamples.first || !replacementSamples.second)
                 return;
             LOG(MediaSource, "SourceBuffer::removeCodedFrames(%p) - splitting sample (%s) into\n\t(%s)\n\t(%s)", this,
-                toString(sampleIterator->second).utf8().data(),
+                toString(sample).utf8().data(),
                 toString(replacementSamples.first).utf8().data(),
                 toString(replacementSamples.second).utf8().data());
-            trackBuffer.samples.removeSample(sampleIterator->second.get());
+            trackBuffer.samples.removeSample(sample.get());
             trackBuffer.samples.addSample(*replacementSamples.first);
             trackBuffer.samples.addSample(*replacementSamples.second);
         };
