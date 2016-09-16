@@ -198,7 +198,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         newMIMEType = parseMIMEType(newMIMEType).type;
 
         this._mimeType = newMIMEType;
-        this._codeMirror.setOption("mode", newMIMEType);
+        this._codeMirror.setOption("mode", {name: newMIMEType, globalVars: true});
     }
 
     get executionLineNumber()

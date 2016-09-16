@@ -597,13 +597,21 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
         var insideParenthesis = localState.lexical.type === ")";
         var insideBrackets = localState.lexical.type === "]";
 
-        var allKeywords = ["break", "case", "catch", "const", "continue", "debugger", "default", "delete", "do", "else", "false", "finally", "for", "function", "if", "in",
-            "Infinity", "instanceof", "NaN", "new", "null", "return", "switch", "this", "throw", "true", "try", "typeof", "undefined", "var", "void", "while", "with"];
+        // FIXME: Include module keywords if we know this is a module environment.
+        // var moduleKeywords = ["default", "export", "import"];
+
+        var allKeywords = [
+            "break", "case", "catch", "class", "const", "continue", "debugger", "default",
+            "delete", "do", "else", "extends", "false", "finally", "for", "function",
+            "if", "in", "Infinity", "instanceof", "let", "NaN", "new", "null", "of",
+            "return", "static", "super", "switch", "this", "throw", "true", "try",
+            "typeof", "undefined", "var", "void", "while", "with", "yield"
+        ];
         var valueKeywords = ["false", "Infinity", "NaN", "null", "this", "true", "undefined"];
 
         var allowedKeywordsInsideBlocks = allKeywords.keySet();
         var allowedKeywordsWhenDeclaringVariable = valueKeywords.keySet();
-        var allowedKeywordsInsideParenthesis = valueKeywords.concat(["function"]).keySet();
+        var allowedKeywordsInsideParenthesis = valueKeywords.concat(["class", "function"]).keySet();
         var allowedKeywordsInsideBrackets = allowedKeywordsInsideParenthesis;
         var allowedKeywordsOnlyInsideSwitch = ["case", "default"].keySet();
 
@@ -667,11 +675,11 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
 
         case "(":
             matchVariables();
-            matchKeywords(["catch", "else", "for", "function", "if", "return", "switch", "throw", "while", "with"]);
+            matchKeywords(["catch", "else", "for", "function", "if", "return", "switch", "throw", "while", "with", "yield"]);
             break;
 
         case "{":
-            matchKeywords(["do", "else", "finally", "return", "try"]);
+            matchKeywords(["do", "else", "finally", "return", "try", "yield"]);
             break;
 
         case ":":

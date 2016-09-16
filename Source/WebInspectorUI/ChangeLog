@@ -1,3 +1,22 @@
+2016-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include JavaScript completion for ES6 keywords and global variables
+        https://bugs.webkit.org/show_bug.cgi?id=162027
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController.prototype._generateJavaScriptCompletions):
+        Include ES6 keywords and provide them when they may be available.
+
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.set mimeType):
+        For editors that might want to provide completion for global variables
+        use the mode with options way of setting the mode for CodeMirror. The
+        only mode that cares about "globalVars" are the JavaScript variants.
+
 2016-09-15  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: support drag and drop of CSS classes and ids onto DOM nodes
