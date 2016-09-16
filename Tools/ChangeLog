@@ -1,3 +1,14 @@
+2016-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Fix isValidEnum to work with older versions of GCC
+        https://bugs.webkit.org/show_bug.cgi?id=162065
+
+        Reviewed by Michael Catanzaro.
+
+        Add EnumTraits.cpp to the CMake build.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
 2016-09-16  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Unreviewed: Change my primary address for auto-complete in bugzilla.
