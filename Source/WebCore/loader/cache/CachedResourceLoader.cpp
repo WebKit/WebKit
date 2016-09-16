@@ -540,10 +540,34 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
 
 bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const CachedResource& resource, const CachedResourceRequest& request)
 {
-    // FIXME: We should progressively extend this to other reusable resources
-    if (resource.type() != CachedResource::Type::ImageResource && resource.type() != CachedResource::Type::Script && resource.type() != CachedResource::Type::TextTrackResource && resource.type() != CachedResource::Type::CSSStyleSheet)
+    if (resource.type() == CachedResource::Type::FontResource || resource.type() == CachedResource::Type::SVGFontResource) {
+        // WebKit is not supporting CORS for fonts (https://bugs.webkit.org/show_bug.cgi?id=86817), no need to update the resource before reusing it.
         return false;
+    }
 
+    // FIXME: We should enable resource reuse for these resource types
+    switch (resource.type()) {
+    case CachedResource::SVGDocumentResource:
+        return false;
+    case CachedResource::MediaResource:
+        return false;
+    case CachedResource::RawResource:
+        return false;
+    case CachedResource::MainResource:
+        return false;
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+        return false;
+#endif
+#if ENABLE(LINK_PREFETCH)
+    case CachedResource::LinkPrefetch:
+        return false;
+    case CachedResource::LinkSubresource:
+        return false;
+#endif
+    default:
+        break;
+    }
     return resource.options().mode != request.options().mode || request.resourceRequest().httpOrigin() != resource.resourceRequest().httpOrigin();
 }
 

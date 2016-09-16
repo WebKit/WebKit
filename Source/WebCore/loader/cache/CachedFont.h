@@ -65,6 +65,7 @@ private:
     bool mayTryReplaceEncodedData() const override;
 
     void load(CachedResourceLoader&) override;
+    NO_RETURN_DUE_TO_ASSERT void setBodyDataFrom(const CachedResource&) final { ASSERT_NOT_REACHED(); }
 
     void didAddClient(CachedResourceClient*) override;
     void finishLoading(SharedBuffer*) override;
