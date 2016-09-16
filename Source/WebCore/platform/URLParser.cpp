@@ -919,6 +919,8 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 m_buffer.append(':');
                 if (isSpecialScheme(urlScheme)) {
                     m_urlIsSpecial = true;
+                    // FIXME: This is unnecessarily allocating a String.
+                    // This should be easy to optimize once https://bugs.webkit.org/show_bug.cgi?id=162035 lands.
                     if (base.protocol() == urlScheme)
                         state = State::SpecialRelativeOrAuthority;
                     else
@@ -1056,9 +1058,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 ++c;
                 while (!c.atEnd() && isTabOrNewline(*c))
                     ++c;
-                if (c.atEnd())
-                    return failure(input, length);
-                if (*c == '/' || *c == '\\')
+                if (!c.atEnd() && (*c == '/' || *c == '\\'))
                     ++c;
             }
             state = State::SpecialAuthorityIgnoreSlashes;
@@ -1347,10 +1347,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         return failure(input, length);
     case State::Scheme:
         LOG_FINAL_STATE("Scheme");
-        break;
+        return failure(input, length);
     case State::NoScheme:
         LOG_FINAL_STATE("NoScheme");
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case State::SpecialRelativeOrAuthority:
         LOG_FINAL_STATE("SpecialRelativeOrAuthority");
         copyURLPartsUntil(base, URLPart::QueryEnd);
@@ -1358,6 +1358,9 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     case State::PathOrAuthority:
         LOG_FINAL_STATE("PathOrAuthority");
+        m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+        m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
         break;
     case State::Relative:
         LOG_FINAL_STATE("Relative");
@@ -1387,6 +1390,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
     case State::SpecialAuthorityIgnoreSlashes:
         LOG_FINAL_STATE("SpecialAuthorityIgnoreSlashes");
         return failure(input, length);
+        break;
     case State::AuthorityOrHost:
         LOG_FINAL_STATE("AuthorityOrHost");
         m_url.m_userEnd = m_buffer.length();
@@ -1465,7 +1469,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     case State::PathStart:
         LOG_FINAL_STATE("PathStart");
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case State::Path:
         LOG_FINAL_STATE("Path");
         m_url.m_pathEnd = m_buffer.length();

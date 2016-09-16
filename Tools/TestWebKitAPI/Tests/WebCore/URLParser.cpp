@@ -203,6 +203,10 @@ TEST_F(URLParserTest, Basic)
     checkURL("sc:/pa/", {"sc", "", "", "", 0, "/pa/", "", "", "sc:/pa/"});
     checkURL("sc://pa/", {"sc", "", "", "pa", 0, "/", "", "", "sc://pa/"});
     checkURL("http://host   \a   ", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
+    checkURL("notspecial:/", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
+    checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
+    checkURL("notspecial:", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
+    checkURL("http:/a", {"http", "", "", "a", 0, "/", "", "", "http://a/"});
     // FIXME: Fix and add a test with an invalid surrogate pair at the end with a space as the second code unit.
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
@@ -279,6 +283,12 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("#x", "about:blank", {"about", "", "", "", 0, "blank", "", "x", "about:blank#x"});
     checkRelativeURL("  foo.com  ", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/foo.com", "", "", "http://example.org/foo/foo.com"});
     checkRelativeURL(" \a baz", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/baz", "", "", "http://example.org/foo/baz"});
+    checkRelativeURL("~", "http://example.org", {"http", "", "", "example.org", 0, "/~", "", "", "http://example.org/~"});
+    checkRelativeURL("notspecial:/", "about:blank", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
+    checkRelativeURL("notspecial:", "about:blank", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
+    checkRelativeURL("notspecial:/", "http://host", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
+    checkRelativeURL("notspecial:", "http://host", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
+    checkRelativeURL("http:", "http://host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
@@ -446,6 +456,21 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("file://notuser:notpassword@test/",
         {"", "", "", "", 0, "", "", "", "file://notuser:notpassword@test/"},
         {"file", "notuser", "notpassword", "test", 0, "/", "", "", "file://notuser:notpassword@test/"});
+    checkRelativeURLDifferences("http:/", "about:blank",
+        {"", "", "", "", 0, "", "", "", "http:/"},
+        {"http", "", "", "", 0, "/", "", "", "http:/"});
+    checkRelativeURLDifferences("http:", "about:blank",
+        {"http", "", "", "", 0, "", "", "", "http:"},
+        {"http", "", "", "", 0, "/", "", "", "http:/"});
+    checkRelativeURLDifferences("http:/", "http://host",
+        {"", "", "", "", 0, "", "", "", "http:/"},
+        {"http", "", "", "", 0, "/", "", "", "http:/"});
+    checkURLDifferences("http:/",
+        {"", "", "", "", 0, "", "", "", "http:/"},
+        {"http", "", "", "", 0, "/", "", "", "http:/"});
+    checkURLDifferences("http:",
+        {"http", "", "", "", 0, "", "", "", "http:"},
+        {"http", "", "", "", 0, "/", "", "", "http:/"});
     
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
     // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.
@@ -572,6 +597,7 @@ static void shouldFail(const String& urlString, const String& baseString)
 TEST_F(URLParserTest, ParserFailures)
 {
     shouldFail("    ");
+    shouldFail("  \a  ");
     shouldFail("");
     shouldFail("http://127.0.0.1:abc");
     shouldFail("http://host:abc");
@@ -592,6 +618,13 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("http://[www.example.com]/", "about:blank");
     shouldFail("http://192.168.0.1 hello", "http://other.com/");
     shouldFail("http://[example.com]", "http://other.com/");
+    shouldFail("i", "sc:sd");
+    shouldFail("i", "sc:sd/sd");
+    shouldFail("i");
+    shouldFail("asdf");
+    shouldFail("~");
+    shouldFail("~", "about:blank");
+    shouldFail("~~~");
 }
 
 // These are in the spec but not in the web platform tests.

@@ -1,3 +1,13 @@
+2016-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix more edge cases in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=162051
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-09-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Inserting a space after inserting an accepted candidate scrolls the document and causes a flicker
