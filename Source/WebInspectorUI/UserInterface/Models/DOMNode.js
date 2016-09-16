@@ -410,6 +410,36 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
     }
 
+    toggleClass(className, flag)
+    {
+        if (!className || !className.length)
+            return;
+
+        if (this.isPseudoElement()) {
+            this.parentNode.toggleClass(className, flag);
+            return;
+        }
+
+        if (this.nodeType() !== Node.ELEMENT_NODE)
+            return;
+
+        function resolvedNode(object)
+        {
+            if (!object)
+                return;
+
+            function inspectedPage_node_toggleClass(className, flag)
+            {
+                this.classList.toggle(className, flag);
+            }
+
+            object.callFunction(inspectedPage_node_toggleClass, [className, flag]);
+            object.release();
+        }
+
+        WebInspector.RemoteObject.resolveNode(this, "", resolvedNode);
+    }
+
     getChildNodes(callback)
     {
         if (this.children) {

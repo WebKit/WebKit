@@ -1,3 +1,51 @@
+2016-09-15  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: support drag and drop of CSS classes and ids onto DOM nodes
+        https://bugs.webkit.org/show_bug.cgi?id=16529
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode.prototype.toggleClass.resolvedNode.inspectedPage_node_toggleClass):
+        (WebInspector.DOMNode.prototype.toggleClass.resolvedNode):
+        (WebInspector.DOMNode.prototype.toggleClass):
+        Moved from WebInspector.CSSStyleDetailsSidebarPanel.prototype._toggleClass.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container)):
+        Added z-index to fix overlapping with selector origin.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.initialLayout):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._switchPanels):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._classToggleButtonClicked):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._addClassInputBlur):
+        Added a setting for auto-expanding the Classes toggle list based on the previous state.
+        Also renamed the existing _lastSelectedSectionSetting to _lastSelectedPanelSetting since the
+        setting doesn't have anything to do with the last selected section.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._createToggleForClassName):
+        (WebInspector.CSSStyleDetailsSidebarPanel.ToggledClassesDragType):
+        Added functionality to allow dragging of a className toggle's text (not the checkbox) by
+        using a custom type, preventing the value from being dropped anywhere except the DOM tree.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._createToggleForClassName.classNameToggleChanged):
+        Restructured to use arrow function to avoid function binding.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._toggleClass.resolvedNode.toggleClass): Deleted.
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._toggleClass.resolvedNode): Deleted.
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._toggleClass): Deleted.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._ondragover):
+        (WebInspector.DOMTreeOutline.prototype._ondrop.callback):
+        (WebInspector.DOMTreeOutline.prototype._ondrop):
+        Allow dragging when the dataTransfer object contains the type specified by
+        WebInspector.CSSStyleDetailsSidebarPanel.ToggledClassesDragType.  The value for that type
+        will be added to the dropped element's classList.
+
 2016-09-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Use more global color variables in TreeOutline and DataGrid
