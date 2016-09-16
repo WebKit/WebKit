@@ -92,12 +92,12 @@ private:
     LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
     WebKit::WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
-    BOOL _treatsSHA1SignedCertificatesAsInsecure;
     RetainPtr<NSString> _groupIdentifier;
     LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
+    NSTimeInterval _incrementalRenderingSuppressionTimeout;
+    BOOL _treatsSHA1SignedCertificatesAsInsecure;
     BOOL _respectsImageOrientation;
     BOOL _printsBackgrounds;
-    CGFloat _incrementalRenderingSuppressionTimeout;
     BOOL _allowsJavaScriptMarkup;
     BOOL _convertsPositionStyleOnCopy;
     BOOL _allowsMetaRefresh;
@@ -497,12 +497,12 @@ static NSString *defaultApplicationNameForUserAgent()
     _printsBackgrounds = printsBackgrounds;
 }
 
-- (CGFloat)_incrementalRenderingSuppressionTimeout
+- (NSTimeInterval)_incrementalRenderingSuppressionTimeout
 {
     return _incrementalRenderingSuppressionTimeout;
 }
 
-- (void)_setIncrementalRenderingSuppressionTimeout:(CGFloat)incrementalRenderingSuppressionTimeout
+- (void)_setIncrementalRenderingSuppressionTimeout:(NSTimeInterval)incrementalRenderingSuppressionTimeout
 {
     _incrementalRenderingSuppressionTimeout = incrementalRenderingSuppressionTimeout;
 }

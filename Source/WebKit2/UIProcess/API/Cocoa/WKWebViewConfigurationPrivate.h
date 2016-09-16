@@ -44,7 +44,7 @@
 
 @property (nonatomic, setter=_setRespectsImageOrientation:) BOOL _respectsImageOrientation WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 @property (nonatomic, setter=_setPrintsBackgrounds:) BOOL _printsBackgrounds WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-@property (nonatomic, setter=_setIncrementalRenderingSuppressionTimeout:) CGFloat _incrementalRenderingSuppressionTimeout WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+@property (nonatomic, setter=_setIncrementalRenderingSuppressionTimeout:) NSTimeInterval _incrementalRenderingSuppressionTimeout WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 @property (nonatomic, setter=_setAllowsJavaScriptMarkup:) BOOL _allowsJavaScriptMarkup WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 @property (nonatomic, setter=_setConvertsPositionStyleOnCopy:) BOOL _convertsPositionStyleOnCopy WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 @property (nonatomic, setter=_setAllowsMetaRefresh:) BOOL _allowsMetaRefresh WK_API_AVAILABLE(macosx(10.12), ios(10.0));
