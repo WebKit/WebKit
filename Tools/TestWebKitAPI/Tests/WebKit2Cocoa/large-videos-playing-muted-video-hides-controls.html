@@ -15,14 +15,14 @@
         document.querySelector("#bar").scrollIntoView();
         setTimeout(function() {
             try {
-                window.webkit.messageHandlers.playingHandler.postMessage("playing");
+                window.webkit.messageHandlers.testHandler.postMessage("playing");
             } catch(e) { }
         }, 0);
     }
     function beganAutoplaying() {
         setTimeout(function() {
             try {
-                window.webkit.messageHandlers.playingHandler.postMessage("autoplayed");
+                window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
             } catch(e) {
             }
         }, 0)

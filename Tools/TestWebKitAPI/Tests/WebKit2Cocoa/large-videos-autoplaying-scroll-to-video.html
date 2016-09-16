@@ -14,13 +14,13 @@
             function scrollToSecondView() {
                 document.querySelector("#second").scrollIntoView();
                 setTimeout(function() {
-                    window.webkit.messageHandlers.playingHandler.postMessage("scrolled");
+                    window.webkit.messageHandlers.testHandler.postMessage("scrolled");
                 }, 0);
             }
             function beganAutoplaying() {
                 setTimeout(function() {
                     try {
-                        window.webkit.messageHandlers.playingHandler.postMessage("autoplayed");
+                        window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
                     } catch(e) {
                     }
                 }, 0)

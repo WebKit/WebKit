@@ -26,10 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
-
-#if PLATFORM(MAC)
-#import <Carbon/Carbon.h>
-#endif
+#import "TestWKWebViewMac.h"
 
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -43,65 +40,12 @@
 
 @end
 
-@interface MessageHandler : NSObject <WKScriptMessageHandler>
-@end
-
-@implementation MessageHandler {
-    dispatch_block_t _handler;
-    NSString *_message;
-}
-
-- (instancetype)initWithMessage:(NSString *)message handler:(dispatch_block_t)handler
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _handler = [handler copy];
-    _message = message;
-
-    return self;
-}
-
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    if ([(NSString *)[message body] isEqualToString:_message] && _handler)
-        _handler();
-}
-
-@end
-
-@interface VideoControlsManagerTestWebView : WKWebView
+@interface VideoControlsManagerTestWebView : TestWKWebView
 @end
 
 @implementation VideoControlsManagerTestWebView {
     bool _isDoneQueryingControlledElementID;
     NSString *_controlledElementID;
-}
-
-- (void)mouseDownAtPoint:(NSPoint)point {
-    [self mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(point.x, point.y) modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:0 clickCount:0 pressure:0]];
-}
-
-- (void)performAfterLoading:(dispatch_block_t)actions {
-    MessageHandler *handler = [[MessageHandler alloc] initWithMessage:@"loaded" handler:actions];
-    NSString *onloadScript = @"window.onload = function() { window.webkit.messageHandlers.onloadHandler.postMessage('loaded'); }";
-    WKUserScript *script = [[WKUserScript alloc] initWithSource:onloadScript injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
-
-    WKUserContentController* contentController = [[self configuration] userContentController];
-    [contentController addUserScript:script];
-    [contentController addScriptMessageHandler:handler name:@"onloadHandler"];
-}
-
-- (void)callJavascriptFunction:(NSString *)functionName
-{
-    NSString *command = [NSString stringWithFormat:@"%@()", functionName];
-    [self evaluateJavaScript:command completionHandler:nil];
-}
-
-- (void)loadTestPageNamed:(NSString *)pageName
-{
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [self loadRequest:request];
 }
 
 - (void)expectControlsManager:(BOOL)expectControlsManager afterReceivingMessage:(NSString *)message
@@ -129,14 +73,6 @@
 {
     while ([self _hasActiveVideoForControlsManager])
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-}
-
-- (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action
-{
-    RetainPtr<MessageHandler> handler = adoptNS([[MessageHandler alloc] initWithMessage:message handler:action]);
-    WKUserContentController* contentController = [[self configuration] userContentController];
-    [contentController removeScriptMessageHandlerForName:@"playingHandler"];
-    [contentController addScriptMessageHandler:handler.get() name:@"playingHandler"];
 }
 
 - (void)waitForPageToLoadWithAutoplayingVideos:(int)numberOfAutoplayingVideos
@@ -240,7 +176,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOu
     [webView loadTestPageNamed:@"large-videos-paused-video-hides-controls"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
 
-    [webView callJavascriptFunction:@"pauseFirstVideoAndScrollToSecondVideo"];
+    [webView stringByEvaluatingJavaScript:@"pauseFirstVideoAndScrollToSecondVideo()"];
     [webView expectControlsManager:NO afterReceivingMessage:@"paused"];
 }
 
@@ -251,7 +187,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoW
     [webView loadTestPageNamed:@"large-videos-playing-video-keeps-controls"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
 
-    [webView callJavascriptFunction:@"scrollToSecondVideo"];
+    [webView stringByEvaluatingJavaScript:@"scrollToSecondVideo()"];
     [webView expectControlsManager:YES afterReceivingMessage:@"scrolled"];
 }
 
@@ -262,7 +198,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedV
     [webView loadTestPageNamed:@"large-videos-playing-muted-video-hides-controls"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
 
-    [webView callJavascriptFunction:@"muteFirstVideoAndScrollToSecondVideo"];
+    [webView stringByEvaluatingJavaScript:@"muteFirstVideoAndScrollToSecondVideo()"];
     [webView expectControlsManager:NO afterReceivingMessage:@"playing"];
 }
 
@@ -300,7 +236,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosSwitchControlledVid
     [webView loadTestPageNamed:@"large-videos-autoplaying-scroll-to-video"];
     [webView waitForPageToLoadWithAutoplayingVideos:2];
 
-    [webView callJavascriptFunction:@"scrollToSecondView"];
+    [webView stringByEvaluatingJavaScript:@"scrollToSecondView()"];
     [webView expectControlsManager:YES afterReceivingMessage:@"scrolled"];
 
     EXPECT_TRUE([[webView controlledElementID] isEqualToString:@"second"]);
@@ -312,7 +248,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollOnlyLargeVide
 
     [webView loadTestPageNamed:@"large-video-playing-scroll-away"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
-    [webView callJavascriptFunction:@"scrollVideoOutOfView"];
+    [webView stringByEvaluatingJavaScript:@"scrollVideoOutOfView()"];
     [webView expectControlsManager:YES afterReceivingMessage:@"scrolled"];
 }
 

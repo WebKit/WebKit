@@ -441,6 +441,10 @@ void WebViewImpl::updateWebViewImplAdditions()
 {
 }
 
+void WebViewImpl::forceRequestCandidatesForTesting()
+{
+}
+
 bool WebViewImpl::shouldRequestCandidates() const
 {
     return false;
@@ -620,7 +624,7 @@ bool WebViewImpl::becomeFirstResponder()
         if ([event type] == NSKeyDown || [event type] == NSKeyUp)
             keyboardEvent = event;
 #pragma clang diagnostic pop
-        m_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, { }), [](WebKit::CallbackBase::Error) { });
+        m_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, false, { }), [](WebKit::CallbackBase::Error) { });
     }
     return true;
 }
@@ -2436,6 +2440,8 @@ void WebViewImpl::didChangeContentSize(CGSize newSize)
 void WebViewImpl::didHandleAcceptedCandidate()
 {
     m_isHandlingAcceptedCandidate = false;
+
+    [m_view _didHandleAcceptedCandidate];
 }
 
 void WebViewImpl::videoControlsManagerDidChange()
@@ -3567,11 +3573,11 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     } else
         text = string;
 
-    BOOL needToRemoveSoftSpace = NO;
+    m_isTextInsertionReplacingSoftSpace = false;
 #if HAVE(ADVANCED_SPELL_CHECKING)
     if (m_softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(m_softSpaceRange) || replacementRange.location == NSNotFound) && replacementRange.length == 0 && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text language:nil]) {
         replacementRange = m_softSpaceRange;
-        needToRemoveSoftSpace = YES;
+        m_isTextInsertionReplacingSoftSpace = true;
     }
 #endif
     m_softSpaceRange = NSMakeRange(NSNotFound, 0);
@@ -3582,7 +3588,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
     // then we also execute it immediately, as there will be no other chance.
     Vector<WebCore::KeypressCommand>* keypressCommands = m_collectedKeypressCommands;
-    if (keypressCommands && !needToRemoveSoftSpace) {
+    if (keypressCommands && !m_isTextInsertionReplacingSoftSpace) {
         ASSERT(replacementRange.location == NSNotFound);
         WebCore::KeypressCommand command("insertText:", text);
         keypressCommands->append(command);
@@ -3596,7 +3602,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     if (!dictationAlternatives.isEmpty())
         m_page->insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives, registerUndoGroup);
     else
-        m_page->insertTextAsync(eventText, replacementRange, registerUndoGroup, needToRemoveSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::EditableRoot);
+        m_page->insertTextAsync(eventText, replacementRange, registerUndoGroup, m_isTextInsertionReplacingSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::EditableRoot, m_isTextInsertionReplacingSoftSpace);
 }
 
 void WebViewImpl::selectedRangeWithCompletionHandler(void(^completionHandlerPtr)(NSRange selectedRange))
@@ -3870,7 +3876,7 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // FIXME: Why is the firstResponder check needed?
     if (m_view == m_view.window.firstResponder) {
         interpretKeyEvent(event, ^(BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-            m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+            m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, false, commands));
         });
         return YES;
     }
@@ -3885,9 +3891,10 @@ void WebViewImpl::keyUp(NSEvent *event)
 
     LOG(TextInput, "keyUp:%p %@", event, event);
 
+    m_isTextInsertionReplacingSoftSpace = false;
     interpretKeyEvent(event, ^(BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
         ASSERT(!handledByInputMethod || commands.isEmpty());
-        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, m_isTextInsertionReplacingSoftSpace, commands));
     });
 }
 
@@ -3912,9 +3919,10 @@ void WebViewImpl::keyDown(NSEvent *event)
         return;
     }
 
+    m_isTextInsertionReplacingSoftSpace = false;
     interpretKeyEvent(event, ^(BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
         ASSERT(!handledByInputMethod || commands.isEmpty());
-        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, m_isTextInsertionReplacingSoftSpace, commands));
     });
 }
 
@@ -3930,7 +3938,7 @@ void WebViewImpl::flagsChanged(NSEvent *event)
         return;
 
     interpretKeyEvent(event, ^(BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, false, commands));
     });
 }
 

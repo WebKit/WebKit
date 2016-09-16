@@ -12,7 +12,7 @@
         // Wait until the next runloop to allow media controls to update.
         setTimeout(function() {
             try {
-                window.webkit.messageHandlers.playingHandler.postMessage("paused");
+                window.webkit.messageHandlers.testHandler.postMessage("paused");
             } catch(e) { }
         }, 0);
     }
@@ -20,7 +20,7 @@
     function beganAutoplaying() {
         setTimeout(function() {
             try {
-                window.webkit.messageHandlers.playingHandler.postMessage("autoplayed");
+                window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
             } catch(e) {
             }
         }, 0)

@@ -236,8 +236,10 @@ static WebWheelEvent::Phase momentumPhaseForEvent(NSEvent *event)
     return static_cast<WebWheelEvent::Phase>(phase);
 }
 
-static inline String textFromEvent(NSEvent* event)
+static inline String textFromEvent(NSEvent* event, bool replacesSoftSpace)
 {
+    if (replacesSoftSpace)
+        return emptyString();
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([event type] == NSFlagsChanged)
@@ -246,8 +248,10 @@ static inline String textFromEvent(NSEvent* event)
     return String([event characters]);
 }
 
-static inline String unmodifiedTextFromEvent(NSEvent* event)
+static inline String unmodifiedTextFromEvent(NSEvent* event, bool replacesSoftSpace)
 {
+    if (replacesSoftSpace)
+        return emptyString();
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([event type] == NSFlagsChanged)
@@ -457,11 +461,11 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas, scrollCount, unacceleratedScrollingDelta, modifiers, timestamp);
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
 {
     WebEvent::Type type             = isKeyUpEvent(event) ? WebEvent::KeyUp : WebEvent::KeyDown;
-    String text                     = textFromEvent(event);
-    String unmodifiedText           = unmodifiedTextFromEvent(event);
+    String text                     = textFromEvent(event, replacesSoftSpace);
+    String unmodifiedText           = unmodifiedTextFromEvent(event, replacesSoftSpace);
     String keyIdentifier            = keyIdentifierForKeyEvent(event);
     int windowsVirtualKeyCode       = windowsKeyCodeForKeyEvent(event);
     int nativeVirtualKeyCode        = [event keyCode];

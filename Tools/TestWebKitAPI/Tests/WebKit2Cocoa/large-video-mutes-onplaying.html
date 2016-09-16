@@ -3,7 +3,7 @@
 <script>
     function handlePlaying() {
         try {
-            window.webkit.messageHandlers.playingHandler.postMessage("playing");
+            window.webkit.messageHandlers.testHandler.postMessage("playing");
         } catch(e) {
         }
         document.querySelector("video").muted = true;

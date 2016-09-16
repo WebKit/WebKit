@@ -60,7 +60,7 @@ namespace WebKit {
 class NativeWebKeyboardEvent : public WebKeyboardEvent {
 public:
 #if USE(APPKIT)
-    NativeWebKeyboardEvent(NSEvent *, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&);
+    NativeWebKeyboardEvent(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
     NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition, Vector<String>&& commands);

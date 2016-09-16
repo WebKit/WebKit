@@ -11,7 +11,7 @@
     function finishTest() {
         setTimeout(function() {
             try {
-                window.webkit.messageHandlers.playingHandler.postMessage("playing");
+                window.webkit.messageHandlers.testHandler.postMessage("playing");
             } catch(e) { }
         }, 0);
     }
