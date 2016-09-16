@@ -421,7 +421,6 @@
 #include "JSSecurityPolicyViolationEvent.cpp"
 #include "JSSourceBuffer.cpp"
 #include "JSSourceBufferList.cpp"
-#include "JSSourceInfo.cpp"
 #include "JSSpeechSynthesis.cpp"
 #include "JSSpeechSynthesisEvent.cpp"
 #include "JSSpeechSynthesisUtterance.cpp"
