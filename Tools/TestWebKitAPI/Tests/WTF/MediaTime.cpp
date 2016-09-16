@@ -185,6 +185,7 @@ TEST(WTF, MediaTime)
     // Floating Point Round Trip
     EXPECT_EQ(10.0123456789f, MediaTime::createWithFloat(10.0123456789f).toFloat());
     EXPECT_EQ(10.0123456789, MediaTime::createWithDouble(10.0123456789).toDouble());
+    EXPECT_EQ(MediaTime(1, 3), MediaTime::createWithDouble(MediaTime(1, 3).toDouble()));
 
     // Floating Point Math
     EXPECT_EQ(1.5 + 3.3, (MediaTime::createWithDouble(1.5) + MediaTime::createWithDouble(3.3)).toDouble());
