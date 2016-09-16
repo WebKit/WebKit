@@ -65,6 +65,7 @@ public:
     JSC::JSValue customMethod(JSC::ExecState&);
     JSC::JSValue customMethodWithArgs(JSC::ExecState&);
     static JSC::JSValue classMethod2(JSC::ExecState&);
+    JSC::JSValue testCustomPromiseFunction(JSC::ExecState&);
 public:
     static const unsigned StructureFlags = JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 protected:

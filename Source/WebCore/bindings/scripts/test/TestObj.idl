@@ -388,6 +388,7 @@ enum TestConfidence { "high", "kinda-low" };
     Promise testPromiseOverloadedFunction(FetchRequest request);
     static Promise testStaticPromiseFunction();
     [RaisesException] static Promise testStaticPromiseFunctionWithException();
+    [Custom] Promise testCustomPromiseFunction();
 
     // PutForwards
     [PutForwards=name] readonly attribute TestNode putForwardsAttribute;

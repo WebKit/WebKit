@@ -28,8 +28,10 @@
 
 #include "ExceptionCode.h"
 #include "JSDOMError.h"
+#include <builtins/BuiltinNames.h>
 #include <runtime/Exception.h>
 #include <runtime/JSONObject.h>
+#include <runtime/JSPromiseConstructor.h>
 
 using namespace JSC;
 
@@ -110,6 +112,25 @@ void rejectPromiseWithExceptionIfAny(JSC::ExecState& state, JSDOMGlobalObject& g
     scope.clearException();
 
     DeferredWrapper::create(&state, &globalObject, &promiseDeferred)->reject(error);
+}
+
+JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState& state, const String& errorMessage)
+{
+    ASSERT(state.lexicalGlobalObject());
+    auto& globalObject = *state.lexicalGlobalObject();
+
+    auto promiseConstructor = globalObject.promiseConstructor();
+    auto rejectFunction = promiseConstructor->get(&state, state.vm().propertyNames->builtinNames().rejectPrivateName());
+    auto rejectionValue = createTypeError(&state, errorMessage);
+
+    CallData callData;
+    auto callType = getCallData(rejectFunction, callData);
+    ASSERT(callType != CallType::None);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(rejectionValue);
+
+    return JSValue::encode(call(&state, rejectFunction, callType, callData, promiseConstructor, arguments));
 }
 
 static inline JSC::JSValue parseAsJSON(JSC::ExecState* state, const String& data)

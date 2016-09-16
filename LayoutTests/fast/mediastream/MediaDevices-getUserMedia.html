@@ -145,6 +145,9 @@
             shouldBe("typeof navigator.mediaDevices.webkitGetUserMedia", "'undefined'");
             setUserMediaPermission(true);
             shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream1);");
+            navigator.mediaDevices.getUserMedia.apply(undefined, {audio:true}).then(invalidGotStream, function(error) {
+                 testPassed("navigator.mediaDevices.getUserMedia.apply(undefined) rejected with error: " + error);
+            });
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

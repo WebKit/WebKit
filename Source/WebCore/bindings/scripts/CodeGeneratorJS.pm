@@ -3418,8 +3418,10 @@ sub GenerateImplementation
 
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
-            if (IsReturningPromise($function) && !$isCustom) {
+            if (IsReturningPromise($function)) {
                 AddToImplIncludes("JSDOMPromise.h");
+            }
+            if (IsReturningPromise($function) && !$isCustom) {
 
                 my $scope = $interface->extendedAttributes->{"Exposed"} ? "WindowOrWorker" : "WindowOnly";
                 push(@implContent, <<END);
@@ -3470,7 +3472,8 @@ END
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interface);
                 }
             } else {
-                GenerateFunctionCastedThis($interface, $className, $function);
+                my $shouldRejectCastedThis = $isCustom && IsReturningPromise($function);
+                GenerateFunctionCastedThis($interface, $className, $function, $shouldRejectCastedThis);
 
                 if ($interface->extendedAttributes->{"CheckSecurity"} and !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                     if ($interfaceName eq "DOMWindow") {
@@ -3760,7 +3763,7 @@ END
 
 sub GenerateFunctionCastedThis
 {
-    my ($interface, $className, $function) = @_;
+    my ($interface, $className, $function, $shouldRejectPromise) = @_;
 
     if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
         push(@implContent, "    $className* castedThis = to${className}(state->thisValue().toThis(state, NotStrictMode));\n");
@@ -3781,7 +3784,11 @@ sub GenerateFunctionCastedThis
         my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
         my $domFunctionName = $function->signature->name;
         push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-        push(@implContent, "        return throwThisTypeError(*state, throwScope, \"$visibleInterfaceName\", \"$domFunctionName\");\n");
+        if ($shouldRejectPromise) {
+            push(@implContent, "        return createRejectedPromiseWithTypeError(*state, makeThisTypeErrorMessage(\"$visibleInterfaceName\", \"$domFunctionName\"));\n");
+        } else {
+            push(@implContent, "        return throwThisTypeError(*state, throwScope, \"$visibleInterfaceName\", \"$domFunctionName\");\n");
+        }
     }
 
     push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n") unless $interface->name eq "EventTarget";

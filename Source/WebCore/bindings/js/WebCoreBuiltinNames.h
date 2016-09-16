@@ -48,7 +48,7 @@ namespace WebCore {
     macro(fillFromJS) \
     macro(finishConsumingStream) \
     macro(firstReadCallback) \
-    macro(getUserMediaFromJS) \
+    macro(getUserMedia) \
     macro(getRemoteStreams) \
     macro(getSenders) \
     macro(getTracks) \

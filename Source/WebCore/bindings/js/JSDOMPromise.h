@@ -156,6 +156,7 @@ void fulfillPromiseWithJSON(Ref<DeferredWrapper>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredWrapper>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredWrapper>&&, const void*, size_t);
 void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
+JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState&, const String&);
 
 using PromiseFunction = void(JSC::ExecState&, Ref<DeferredWrapper>&&);
 
