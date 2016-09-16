@@ -161,11 +161,7 @@ void LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL
     CachedResourceRequest linkRequest(resourceRequest, CachedResource::defaultPriorityForResourceType(type.value()));
     linkRequest.setInitiator("link");
 
-    if (!crossOriginMode.isNull()) {
-        ASSERT(document.securityOrigin());
-        StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-        updateRequestForAccessControl(linkRequest.mutableResourceRequest(), *document.securityOrigin(), allowCredentials);
-    }
+    linkRequest.setAsPotentiallyCrossOrigin(crossOriginMode, document);
     linkRequest.setForPreload(true);
     CachedResourceHandle<CachedResource> cachedLinkResource = document.cachedResourceLoader().preload(type.value(), linkRequest, emptyString(), CachedResourceLoader::ExplicitPreload);
 

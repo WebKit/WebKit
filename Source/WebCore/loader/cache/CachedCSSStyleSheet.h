@@ -48,18 +48,20 @@ namespace WebCore {
 
     private:
         bool canUseSheet(MIMETypeCheck, bool* hasValidMIMEType) const;
-        bool mayTryReplaceEncodedData() const override { return true; }
+        bool mayTryReplaceEncodedData() const final { return true; }
 
-        void didAddClient(CachedResourceClient*) override;
+        void didAddClient(CachedResourceClient*) final;
 
-        void setEncoding(const String&) override;
-        String encoding() const override;
-        const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
-        void finishLoading(SharedBuffer*) override;
-        void destroyDecodedData() override;
+        void setEncoding(const String&) final;
+        String encoding() const final;
+        const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.get(); }
+        void finishLoading(SharedBuffer*) final;
+        void destroyDecodedData() final;
+
+        void setBodyDataFrom(const CachedResource&) final;
 
     protected:
-        void checkNotify() override;
+        void checkNotify() final;
 
         RefPtr<TextResourceDecoder> m_decoder;
         String m_decodedSheetText;

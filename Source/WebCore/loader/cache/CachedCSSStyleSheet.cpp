@@ -76,17 +76,27 @@ String CachedCSSStyleSheet::encoding() const
 {
     return m_decoder->encoding().name();
 }
-    
+
 const String CachedCSSStyleSheet::sheetText(MIMETypeCheck mimeTypeCheck, bool* hasValidMIMEType) const
-{ 
+{
     if (!m_data || m_data->isEmpty() || !canUseSheet(mimeTypeCheck, hasValidMIMEType))
         return String();
-    
+
     if (!m_decodedSheetText.isNull())
         return m_decodedSheetText;
-    
+
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory
     return m_decoder->decodeAndFlush(m_data->data(), m_data->size());
+}
+
+void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
+{
+    ASSERT(resource.type() == type());
+    const CachedCSSStyleSheet& sheet = static_cast<const CachedCSSStyleSheet&>(resource);
+
+    m_decoder = sheet.m_decoder;
+    m_decodedSheetText = sheet.m_decodedSheetText;
+    m_parsedStyleSheetCache = sheet.m_parsedStyleSheetCache;
 }
 
 void CachedCSSStyleSheet::finishLoading(SharedBuffer* data)
