@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeContext_h
-#define LayerTreeContext_h
+#pragma once
 
 #include <stdint.h>
+#include <wtf/EnumTraits.h>
 
 namespace IPC {
 class Decoder;
@@ -62,6 +62,16 @@ inline bool operator!=(const LayerTreeContext& a, const LayerTreeContext& b)
     return !(a == b);
 }
 
-};
+}
 
-#endif // LayerTreeContext_h
+namespace WTF {
+template<> struct EnumTraits<WebKit::LayerHostingMode> {
+    using values = EnumValues<
+        WebKit::LayerHostingMode,
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
+        WebKit::LayerHostingMode::OutOfProcess,
+#endif
+        WebKit::LayerHostingMode::InProcess
+    >;
+};
+}

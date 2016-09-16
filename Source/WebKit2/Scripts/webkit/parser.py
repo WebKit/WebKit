@@ -133,6 +133,9 @@ def parse_parameters_string(parameters_string):
         if split[0].startswith('struct '):
             parameter_kind = 'struct'
             split[0] = split[0][7:]
+        elif split[0].startswith('enum '):
+            parameter_kind = 'enum'
+            split[0] = split[0][5:]
 
         parameter_type = split[0]
         parameter_name = split[1]
