@@ -1,3 +1,25 @@
+2016-09-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r205983. rdar://problem/28312297
+
+    2016-09-14  Beth Dakin  <bdakin@apple.com>
+
+            dictionaryPopupInfoForRange() can change selection temporarily; updates should not
+            be sent to the UIProcess.
+            https://bugs.webkit.org/show_bug.cgi?id=162008
+            -and corresponding-
+            rdar://problem/28312297
+
+            Reviewed by Tim Horton.
+
+            This patch prevents the selection changes that occur while gathering
+            dictionaryPopupInfo from being propagated to the UIProcess.
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::didChangeSelection):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::dictionaryPopupInfoForRange):
+
 2016-09-14  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r205938. rdar://problem/28227805
