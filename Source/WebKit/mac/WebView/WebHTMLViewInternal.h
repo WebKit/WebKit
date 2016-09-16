@@ -76,10 +76,10 @@ namespace WebCore {
 #endif
 @end
 
-#if PLATFORM(IOS)
 @interface WebHTMLView (RemovedAppKitSuperclassMethods)
+#if PLATFORM(IOS)
 - (void)delete:(id)sender;
 - (void)transpose:(id)sender;
+#endif
 - (BOOL)hasMarkedText;
 @end
-#endif
