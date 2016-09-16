@@ -1426,77 +1426,10 @@ void RenderObject::willBeRemovedFromTree()
 {
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
 
-    removeFromRenderFlowThread();
+    setFlowThreadState(NotInsideFlowThread);
 
     // Update cached boundaries in SVG renderers, if a child is removed.
     parent()->setNeedsBoundariesUpdate();
-}
-
-void RenderObject::removeFromRenderFlowThread()
-{
-    if (flowThreadState() == NotInsideFlowThread)
-        return;
-
-    // Sometimes we remove the element from the flow, but it's not destroyed at that time.
-    // It's only until later when we actually destroy it and remove all the children from it.
-    // Currently, that happens for firstLetter elements and list markers.
-    // Pass in the flow thread so that we don't have to look it up for all the children.
-    removeFromRenderFlowThreadIncludingDescendants(true);
-}
-
-void RenderObject::removeFromRenderFlowThreadIncludingDescendants(bool shouldUpdateState)
-{
-    // Once we reach another flow thread we don't need to update the flow thread state
-    // but we have to continue cleanup the flow thread info.
-    if (isRenderFlowThread())
-        shouldUpdateState = false;
-
-    if (is<RenderElement>(*this)) {
-        for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*this)))
-            child.removeFromRenderFlowThreadIncludingDescendants(shouldUpdateState);
-    }
-
-    // We have to ask for our containing flow thread as it may be above the removed sub-tree.
-    RenderFlowThread* flowThreadContainingBlock = this->flowThreadContainingBlock();
-    while (flowThreadContainingBlock) {
-        flowThreadContainingBlock->removeFlowChildInfo(this);
-        if (flowThreadContainingBlock->flowThreadState() == NotInsideFlowThread)
-            break;
-        RenderObject* parent = flowThreadContainingBlock->parent();
-        if (!parent)
-            break;
-        flowThreadContainingBlock = parent->flowThreadContainingBlock();
-    }
-    if (is<RenderBlock>(*this))
-        downcast<RenderBlock>(*this).setCachedFlowThreadContainingBlockNeedsUpdate();
-
-    if (shouldUpdateState)
-        setFlowThreadState(NotInsideFlowThread);
-}
-
-void RenderObject::invalidateFlowThreadContainingBlockIncludingDescendants(RenderFlowThread* flowThread)
-{
-    if (flowThreadState() == NotInsideFlowThread)
-        return;
-
-    if (is<RenderBlock>(*this)) {
-        RenderBlock& block = downcast<RenderBlock>(*this);
-
-        if (block.cachedFlowThreadContainingBlockNeedsUpdate())
-            return;
-
-        flowThread = block.cachedFlowThreadContainingBlock();
-        block.setCachedFlowThreadContainingBlockNeedsUpdate();
-    }
-
-    if (flowThread)
-        flowThread->removeFlowChildInfo(this);
-
-    if (!is<RenderElement>(*this))
-        return;
-
-    for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*this)))
-        child.invalidateFlowThreadContainingBlockIncludingDescendants(flowThread);
 }
 
 void RenderObject::destroyAndCleanupAnonymousWrappers()

@@ -91,9 +91,9 @@ public:
     bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }
     void checkRegionsWithStyling();
 
-    void clearRenderObjectCustomStyle(const RenderObject*);
+    void clearRenderObjectCustomStyle(const RenderElement*);
 
-    void removeFlowChildInfo(RenderObject*) override;
+    void removeFlowChildInfo(RenderElement*) override;
 
     LayoutUnit flowContentBottom() const { return m_flowContentBottom; }
     void dispatchNamedFlowEvents();

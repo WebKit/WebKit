@@ -812,7 +812,7 @@ void RenderNamedFlowThread::checkRegionsWithStyling()
     m_hasRegionsWithStyling = hasRegionsWithStyling;
 }
 
-void RenderNamedFlowThread::clearRenderObjectCustomStyle(const RenderObject* object)
+void RenderNamedFlowThread::clearRenderObjectCustomStyle(const RenderElement* object)
 {
     // Clear the styles for the object in the regions.
     // FIXME: Region styling is not computed only for the region range of the object so this is why we need to walk the whole chain.
@@ -820,7 +820,7 @@ void RenderNamedFlowThread::clearRenderObjectCustomStyle(const RenderObject* obj
         downcast<RenderNamedFlowFragment>(*region).clearObjectStyleInRegion(object);
 }
 
-void RenderNamedFlowThread::removeFlowChildInfo(RenderObject* child)
+void RenderNamedFlowThread::removeFlowChildInfo(RenderElement* child)
 {
     RenderFlowThread::removeFlowChildInfo(child);
     clearRenderObjectCustomStyle(child);

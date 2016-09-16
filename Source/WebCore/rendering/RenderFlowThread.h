@@ -60,7 +60,7 @@ class RenderFlowThread: public RenderBlockFlow {
 public:
     virtual ~RenderFlowThread() { }
 
-    virtual void removeFlowChildInfo(RenderObject*);
+    virtual void removeFlowChildInfo(RenderElement*);
 #ifndef NDEBUG
     bool hasChildInfo(RenderObject* child) const { return is<RenderBox>(child) && m_regionRangeMap.contains(downcast<RenderBox>(child)); }
 #endif
