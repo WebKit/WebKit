@@ -66,7 +66,7 @@ def surround_in_condition(string, condition):
     return '#if %s\n%s#endif\n' % (condition, string)
 
 
-def function_parameter_type(type):
+def function_parameter_type(type, kind):
     # Don't use references for built-in types.
     builtin_types = frozenset([
         'bool',
@@ -85,6 +85,9 @@ def function_parameter_type(type):
     if type in builtin_types:
         return type
 
+    if kind == 'enum':
+        return type
+
     return 'const %s&' % type
 
 
@@ -93,7 +96,7 @@ def reply_parameter_type(type):
 
 
 def arguments_type(message):
-    return 'std::tuple<%s>' % ', '.join(function_parameter_type(parameter.type) for parameter in message.parameters)
+    return 'std::tuple<%s>' % ', '.join(function_parameter_type(parameter.type, parameter.kind) for parameter in message.parameters)
 
 
 def reply_type(message):
@@ -106,7 +109,7 @@ def decode_type(message):
 
 def message_to_struct_declaration(message):
     result = []
-    function_parameters = [(function_parameter_type(x.type), x.name) for x in message.parameters]
+    function_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.parameters]
     result.append('class %s {\n' % message.name)
     result.append('public:\n')
     result.append('    typedef %s DecodeType;\n' % decode_type(message))
@@ -117,7 +120,7 @@ def message_to_struct_declaration(message):
     result.append('\n')
     if message.reply_parameters != None:
         if message.has_attribute(DELAYED_ATTRIBUTE):
-            send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
+            send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
             result.append('    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {\n')
             result.append('        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::MessageEncoder>);\n')
             result.append('        ~DelayedReply();\n')
@@ -147,20 +150,21 @@ def message_to_struct_declaration(message):
     return surround_in_condition(''.join(result), message.condition)
 
 
-def struct_or_class(namespace, kind_and_type):
+def forward_declaration(namespace, kind_and_type):
     kind, type = kind_and_type
 
     qualified_name = '%s::%s' % (namespace, type)
     if kind == 'struct':
         return 'struct %s' % type
+    elif kind == 'enum':
+        return 'enum class %s' % type
     else:
         return 'class %s' % type
-
 
 def forward_declarations_for_namespace(namespace, kind_and_types):
     result = []
     result.append('namespace %s {\n' % namespace)
-    result += ['    %s;\n' % struct_or_class(namespace, x) for x in kind_and_types]
+    result += ['    %s;\n' % forward_declaration(namespace, x) for x in kind_and_types]
     result.append('}\n')
     return ''.join(result)
 
@@ -381,6 +385,7 @@ def headers_for_type(type):
         'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
         'std::chrono::system_clock::time_point': ['<chrono>'],
+        'WebKit::LayerHostingMode': ['"LayerTreeContext.h"'],
     }
 
     headers = []
@@ -484,7 +489,7 @@ def generate_message_handler(file):
         result.append('namespace Messages {\n\nnamespace %s {\n\n' % receiver.name)
 
         for message in sync_delayed_messages:
-            send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
+            send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
 
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
