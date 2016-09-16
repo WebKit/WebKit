@@ -98,6 +98,7 @@ public:
     void clearHTTPContentType();
 
     WEBCORE_EXPORT String httpReferrer() const;
+    bool hasHTTPReferrer() const;
     WEBCORE_EXPORT void setHTTPReferrer(const String&);
     WEBCORE_EXPORT void clearHTTPReferrer();
 

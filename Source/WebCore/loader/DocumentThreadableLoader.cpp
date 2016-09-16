@@ -76,9 +76,9 @@ RefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& docu
     return loader;
 }
 
-RefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, ResourceRequest&& request, const ThreadableLoaderOptions& options)
+RefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, ResourceRequest&& request, const ThreadableLoaderOptions& options, String&& referrer)
 {
-    return create(document, client, WTFMove(request), options, nullptr, nullptr, String());
+    return create(document, client, WTFMove(request), options, nullptr, nullptr, WTFMove(referrer));
 }
 
 DocumentThreadableLoader::DocumentThreadableLoader(Document& document, ThreadableLoaderClient& client, BlockingBehavior blockingBehavior, ResourceRequest&& request, const ThreadableLoaderOptions& options, RefPtr<SecurityOrigin>&& origin, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy, String&& referrer)
@@ -92,8 +92,11 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     , m_async(blockingBehavior == LoadAsynchronously)
     , m_contentSecurityPolicy(WTFMove(contentSecurityPolicy))
 {
-    // Setting an outgoing referer is only supported in the async code path.
-    ASSERT(m_async || request.httpReferrer().isEmpty());
+    // Setting a referrer header is only supported in the async code path.
+    ASSERT(m_async || m_referrer.isEmpty());
+
+    // Referrer and Origin headers should be set after the preflight if any.
+    ASSERT(!request.hasHTTPReferrer() && !request.hasHTTPOrigin());
 
     ASSERT_WITH_SECURITY_IMPLICATION(isAllowedByContentSecurityPolicy(request.url()));
 

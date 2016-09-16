@@ -1,0 +1,3 @@
+
+PASS Ensure setting a referrer does not cause preflighting 
+

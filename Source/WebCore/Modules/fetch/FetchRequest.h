@@ -92,6 +92,8 @@ public:
     const FetchOptions& fetchOptions() const { return m_internalRequest.options; }
     ResourceRequest internalRequest() const;
 
+    const String& internalRequestReferrer() const { return m_internalRequest.referrer; }
+
 private:
     FetchRequest(ScriptExecutionContext&, FetchBody&&, Ref<FetchHeaders>&&, InternalRequest&&);
 

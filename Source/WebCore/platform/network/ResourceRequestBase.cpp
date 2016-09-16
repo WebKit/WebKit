@@ -288,6 +288,11 @@ String ResourceRequestBase::httpReferrer() const
     return httpHeaderField(HTTPHeaderName::Referer);
 }
 
+bool ResourceRequestBase::hasHTTPReferrer() const
+{
+    return m_httpHeaderFields.contains(HTTPHeaderName::Referer);
+}
+
 void ResourceRequestBase::setHTTPReferrer(const String& httpReferrer)
 {
     setHTTPHeaderField(HTTPHeaderName::Referer, httpReferrer);

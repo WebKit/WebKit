@@ -304,10 +304,6 @@ ResourceRequest FetchRequest::internalRequest() const
     request.setHTTPHeaderFields(m_headers->internalHeaders());
     request.setHTTPBody(body().bodyForInternalRequest(*scriptExecutionContext()));
 
-    // FIXME: Support no-referrer and client. Ensure this case-sensitive comparison is ok.
-    if (m_internalRequest.referrer != "no-referrer" && m_internalRequest.referrer != "client")
-        request.setHTTPReferrer(URL(URL(), m_internalRequest.referrer).strippedForUseAsReferrer());
-
     return request;
 }
 
@@ -318,7 +314,6 @@ RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext& context, Except
         return nullptr;
     }
 
-    // FIXME: Validate body teeing.
     return adoptRef(*new FetchRequest(context, FetchBody(m_body), FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
 }
 

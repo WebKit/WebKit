@@ -1,3 +1,13 @@
+2016-09-16  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Referrer and Origin header should not be considered as safe request headers
+        https://bugs.webkit.org/show_bug.cgi?id=161902
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/fetch/fetch-cors-with-referrer-expected.txt: Added.
+        * http/tests/fetch/fetch-cors-with-referrer.html: Added.
+
 2016-09-13  Jer Noble  <jer.noble@apple.com>
 
         [media-source] web-platform-test/media-source/mediasource-remove.html test failing

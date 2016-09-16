@@ -92,7 +92,14 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
         return;
     }
 
-    m_loader = ThreadableLoader::create(context, *this, WTFMove(fetchRequest), options);
+    String referrer = request.internalRequestReferrer();
+    if (referrer == "no-referrer") {
+        options.referrerPolicy = FetchOptions::ReferrerPolicy::NoReferrer;
+        referrer = String();
+    } else
+        referrer = (referrer == "client") ? context.url().strippedForUseAsReferrer() : URL(context.url(), referrer).strippedForUseAsReferrer();
+
+    m_loader = ThreadableLoader::create(context, *this, WTFMove(fetchRequest), options, WTFMove(referrer));
     m_isStarted = m_loader;
 }
 
