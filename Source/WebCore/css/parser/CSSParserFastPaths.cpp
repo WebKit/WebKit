@@ -30,22 +30,21 @@
 #include "config.h"
 #include "CSSParserFastPaths.h"
 
-// FIXME-NEWPARSER: #include "CSSColorValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSParserIdioms.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "HTMLParserIdioms.h"
 #include "RuntimeEnabledFeatures.h"
-// FIXME-NEWPARSER: #include "StyleColor.h"
+#include "StyleColor.h"
 #include "StylePropertyShorthand.h"
 
 namespace WebCore {
 
-/* FIXME-NEWPARSER: Turn off for now.
- 
 static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acceptsNegativeNumbers)
 {
     switch (propertyId) {
@@ -120,7 +119,7 @@ static inline bool parseSimpleLength(const CharacterType* characters, unsigned l
     return true;
 }
 
-static CSSValue* parseSimpleLengthValue(CSSPropertyID propertyId, const String& string, CSSParserMode cssParserMode)
+static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, const String& string, CSSParserMode cssParserMode)
 {
     ASSERT(!string.isEmpty());
     bool acceptsNegativeNumbers = false;
@@ -131,7 +130,7 @@ static CSSValue* parseSimpleLengthValue(CSSPropertyID propertyId, const String& 
 
     unsigned length = string.length();
     double number;
-    CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::UnitTypes::Number;
+    CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::UnitTypes::CSS_NUMBER;
 
     if (string.is8Bit()) {
         if (!parseSimpleLength(string.characters8(), length, unit, number))
@@ -141,12 +140,10 @@ static CSSValue* parseSimpleLengthValue(CSSPropertyID propertyId, const String& 
             return nullptr;
     }
 
-    if (unit == CSSPrimitiveValue::UnitTypes::Number) {
-        if (cssParserMode == SVGAttributeMode)
-            unit = CSSPrimitiveValue::UnitTypes::UserUnits;
-        else if (!number)
-            unit = CSSPrimitiveValue::UnitTypes::Pixels;
-        else
+    if (unit == CSSPrimitiveValue::UnitTypes::CSS_NUMBER) {
+        if (!number)
+            unit = CSSPrimitiveValue::UnitTypes::CSS_PX;
+        else if (cssParserMode != SVGAttributeMode)
             return nullptr;
     }
 
@@ -179,7 +176,7 @@ static inline bool isColorPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
-    case CSSPropertyTextDecorationColor:
+    case CSSPropertyWebkitTextDecorationColor:
         return true;
     default:
         return false;
@@ -284,7 +281,7 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
     if (current == end)
         return false;
 
-    if (expect == CSSPrimitiveValue::UnitTypes::Number && (*current == '.' || *current == '%'))
+    if (expect == CSSPrimitiveValue::UnitTypes::CSS_NUMBER && (*current == '.' || *current == '%'))
         return false;
 
     if (*current == '.') {
@@ -300,18 +297,18 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
         localValue += percentage;
     }
 
-    if (expect == CSSPrimitiveValue::UnitTypes::Percentage && *current != '%')
+    if (expect == CSSPrimitiveValue::UnitTypes::CSS_PERCENTAGE && *current != '%')
         return false;
 
     if (*current == '%') {
-        expect = CSSPrimitiveValue::UnitTypes::Percentage;
+        expect = CSSPrimitiveValue::UnitTypes::CSS_PERCENTAGE;
         localValue = localValue / 100.0 * 256.0;
         // Clamp values at 255 for percentages over 100%
         if (localValue > 255)
             localValue = 255;
         current++;
     } else {
-        expect = CSSPrimitiveValue::UnitTypes::Number;
+        expect = CSSPrimitiveValue::UnitTypes::CSS_NUMBER;
     }
 
     while (current != end && isHTMLSpace<CharacterType>(*current))
@@ -416,7 +413,7 @@ static inline bool mightBeRGB(const CharacterType* characters, unsigned length)
 template <typename CharacterType>
 static bool fastParseColorInternal(RGBA32& rgb, const CharacterType* characters, unsigned length, bool quirksMode)
 {
-    CSSPrimitiveValue::UnitTypes expect = CSSPrimitiveValue::UnitTypes::Unknown;
+    CSSPrimitiveValue::UnitTypes expect = CSSPrimitiveValue::UnitTypes::CSS_UNKNOWN;
 
     if (length >= 4 && characters[0] == '#')
         return Color::parseHexColor(characters + 1, length - 1, rgb);
@@ -471,7 +468,7 @@ static bool fastParseColorInternal(RGBA32& rgb, const CharacterType* characters,
     return false;
 }
 
-CSSValue* CSSParserFastPaths::parseColor(const String& string, CSSParserMode parserMode)
+RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserMode parserMode)
 {
     ASSERT(!string.isEmpty());
     CSSValueID valueID = cssValueKeywordID(string);
@@ -492,7 +489,7 @@ CSSValue* CSSParserFastPaths::parseColor(const String& string, CSSParserMode par
         parseResult = fastParseColorInternal(color, string.characters16(), string.length(), quirksMode);
     if (!parseResult)
         return nullptr;
-    return CSSColorValue::create(color);
+    return CSSValuePool::singleton().createColorValue(color);
 }
 
 bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId, CSSValueID valueID, CSSParserMode parserMode)
@@ -537,9 +534,9 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNonzero || valueID == CSSValueEvenodd;
     case CSSPropertyColorInterpolation:
     case CSSPropertyColorInterpolationFilters:
-        return valueID == CSSValueAuto || valueID == CSSValueSRGB || valueID == CSSValueLinearRGB;
+        return valueID == CSSValueAuto || valueID == CSSValueSrgb || valueID == CSSValueLinearrgb;
     case CSSPropertyColorRendering:
-        return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueOptimizeQuality;
+        return valueID == CSSValueAuto || valueID == CSSValueOptimizespeed || valueID == CSSValueOptimizequality;
     case CSSPropertyDirection: // ltr | rtl
         return valueID == CSSValueLtr || valueID == CSSValueRtl;
     case CSSPropertyDisplay:
@@ -548,7 +545,10 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none
         // flex | inline-flex | -webkit-flex | -webkit-inline-flex | grid | inline-grid
         return (valueID >= CSSValueInline && valueID <= CSSValueInlineFlex) || valueID == CSSValueWebkitFlex || valueID == CSSValueWebkitInlineFlex || valueID == CSSValueNone
-            || (RuntimeEnabledFeatures::cssGridLayoutEnabled() && (valueID == CSSValueGrid || valueID == CSSValueInlineGrid));
+#if ENABLE(CSS_GRID_LAYOUT)
+            || (RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled() && (valueID == CSSValueGrid || valueID == CSSValueInlineGrid))
+#endif
+        ;
     case CSSPropertyDominantBaseline:
         // auto | use-script | no-change | reset-size | ideographic |
         // alphabetic | hanging | mathematical | central | middle |
@@ -566,8 +566,10 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || (valueID >= CSSValueUltraCondensed && valueID <= CSSValueUltraExpanded);
     case CSSPropertyImageRendering: // auto | optimizeContrast | pixelated
         return valueID == CSSValueAuto || valueID == CSSValueWebkitOptimizeContrast || valueID == CSSValuePixelated;
+#if ENABLE(CSS_COMPOSITING)
     case CSSPropertyIsolation: // auto | isolate
         return valueID == CSSValueAuto || valueID == CSSValueIsolate;
+#endif
     case CSSPropertyListStylePosition: // inside | outside
         return valueID == CSSValueInside || valueID == CSSValueOutside;
     case CSSPropertyListStyleType:
@@ -580,8 +582,9 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueFill || valueID == CSSValueContain || valueID == CSSValueCover || valueID == CSSValueNone || valueID == CSSValueScaleDown;
     case CSSPropertyOutlineStyle: // (<border-style> except hidden) | auto
         return valueID == CSSValueAuto || valueID == CSSValueNone || (valueID >= CSSValueInset && valueID <= CSSValueDouble);
-    case CSSPropertyOverflowAnchor:
-        return valueID == CSSValueVisible || valueID == CSSValueNone || valueID == CSSValueAuto;
+    // FIXME-NEWPARSER: Support?
+    // case CSSPropertyOverflowAnchor:
+    //    return valueID == CSSValueVisible || valueID == CSSValueNone || valueID == CSSValueAuto;
     case CSSPropertyOverflowWrap: // normal | break-word
     case CSSPropertyWordWrap:
         return valueID == CSSValueNormal || valueID == CSSValueBreakWord;
@@ -597,16 +600,17 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyPointerEvents:
         // none | visiblePainted | visibleFill | visibleStroke | visible |
         // painted | fill | stroke | auto | all | bounding-box
-        return valueID == CSSValueVisible || valueID == CSSValueNone || valueID == CSSValueAll || valueID == CSSValueAuto || (valueID >= CSSValueVisiblePainted && valueID <= CSSValueBoundingBox);
+        return valueID == CSSValueVisible || valueID == CSSValueNone || valueID == CSSValueAll || valueID == CSSValueAuto || (valueID >= CSSValueVisiblepainted && valueID <= CSSValueStroke);
     case CSSPropertyPosition: // static | relative | absolute | fixed | sticky
-        return valueID == CSSValueStatic || valueID == CSSValueRelative || valueID == CSSValueAbsolute || valueID == CSSValueFixed || (RuntimeEnabledFeatures::cssStickyPositionEnabled() && valueID == CSSValueSticky);
+        return valueID == CSSValueStatic || valueID == CSSValueRelative || valueID == CSSValueAbsolute || valueID == CSSValueFixed || valueID == CSSValueWebkitSticky;
     case CSSPropertyResize: // none | both | horizontal | vertical | auto
         return valueID == CSSValueNone || valueID == CSSValueBoth || valueID == CSSValueHorizontal || valueID == CSSValueVertical || valueID == CSSValueAuto;
-    case CSSPropertyScrollBehavior: // auto | smooth
-        ASSERT(RuntimeEnabledFeatures::cssomSmoothScrollEnabled());
-        return valueID == CSSValueAuto || valueID == CSSValueSmooth;
+    // FIXME-NEWPARSER: Investigate this property.
+    // case CSSPropertyScrollBehavior: // auto | smooth
+    //     ASSERT(RuntimeEnabledFeatures::cssomSmoothScrollEnabled());
+    //   return valueID == CSSValueAuto || valueID == CSSValueSmooth;
     case CSSPropertyShapeRendering:
-        return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueCrispEdges || valueID == CSSValueGeometricPrecision;
+        return valueID == CSSValueAuto || valueID == CSSValueOptimizespeed || valueID == CSSValueCrispEdges || valueID == CSSValueGeometricprecision;
     case CSSPropertySpeak: // none | normal | spell-out | digits | literal-punctuation | no-punctuation
         return valueID == CSSValueNone || valueID == CSSValueNormal || valueID == CSSValueSpellOut || valueID == CSSValueDigits || valueID == CSSValueLiteralPunctuation || valueID == CSSValueNoPunctuation;
     case CSSPropertyStrokeLinejoin:
@@ -616,50 +620,54 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyTableLayout: // auto | fixed
         return valueID == CSSValueAuto || valueID == CSSValueFixed;
     case CSSPropertyTextAlign:
-        return (valueID >= CSSValueWebkitAuto && valueID <= CSSValueInternalCenter) || valueID == CSSValueStart || valueID == CSSValueEnd;
-    case CSSPropertyTextAlignLast:
+        return (valueID >= CSSValueWebkitAuto && valueID <= CSSValueWebkitMatchParent) || valueID == CSSValueStart || valueID == CSSValueEnd;
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextAlignLast:
         // auto | start | end | left | right | center | justify
         return (valueID >= CSSValueLeft && valueID <= CSSValueJustify) || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueAuto;
+#endif
     case CSSPropertyTextAnchor:
         return valueID == CSSValueStart || valueID == CSSValueMiddle || valueID == CSSValueEnd;
-    case CSSPropertyTextCombineUpright:
-        return valueID == CSSValueNone || valueID == CSSValueAll;
-    case CSSPropertyTextDecorationStyle:
+// FIXME-NEWPARSER: Support
+//    case CSSPropertyTextCombineUpright:
+//        return valueID == CSSValueNone || valueID == CSSValueAll;
+    case CSSPropertyWebkitTextDecorationStyle:
         // solid | double | dotted | dashed | wavy
-        ASSERT(RuntimeEnabledFeatures::css3TextDecorationsEnabled());
         return valueID == CSSValueSolid || valueID == CSSValueDouble || valueID == CSSValueDotted || valueID == CSSValueDashed || valueID == CSSValueWavy;
-    case CSSPropertyTextJustify:
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextJustify:
         // auto | none | inter-word | distribute
         ASSERT(RuntimeEnabledFeatures::css3TextEnabled());
         return valueID == CSSValueInterWord || valueID == CSSValueDistribute || valueID == CSSValueAuto || valueID == CSSValueNone;
-    case CSSPropertyTextOrientation: // mixed | upright | sideways | sideways-right
+#endif
+    case CSSPropertyWebkitTextOrientation: // mixed | upright | sideways | sideways-right
         return valueID == CSSValueMixed || valueID == CSSValueUpright || valueID == CSSValueSideways || valueID == CSSValueSidewaysRight;
-    case CSSPropertyWebkitTextOrientation:
-        return valueID == CSSValueSideways || valueID == CSSValueSidewaysRight || valueID == CSSValueVerticalRight || valueID == CSSValueUpright;
     case CSSPropertyTextOverflow: // clip | ellipsis
         return valueID == CSSValueClip || valueID == CSSValueEllipsis;
     case CSSPropertyTextRendering: // auto | optimizeSpeed | optimizeLegibility | geometricPrecision
-        return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueOptimizeLegibility || valueID == CSSValueGeometricPrecision;
+        return valueID == CSSValueAuto || valueID == CSSValueOptimizespeed || valueID == CSSValueOptimizelegibility || valueID == CSSValueGeometricprecision;
     case CSSPropertyTextTransform: // capitalize | uppercase | lowercase | none
         return (valueID >= CSSValueCapitalize && valueID <= CSSValueLowercase) || valueID == CSSValueNone;
     case CSSPropertyUnicodeBidi:
         return valueID == CSSValueNormal || valueID == CSSValueEmbed
             || valueID == CSSValueBidiOverride || valueID == CSSValueWebkitIsolate
             || valueID == CSSValueWebkitIsolateOverride || valueID == CSSValueWebkitPlaintext
-            || valueID == CSSValueIsolate || valueID == CSSValueIsolateOverride || valueID == CSSValuePlaintext;
+            || valueID == CSSValueIsolate || valueID == CSSValueWebkitIsolateOverride || valueID == CSSValueWebkitPlaintext;
     case CSSPropertyVectorEffect:
         return valueID == CSSValueNone || valueID == CSSValueNonScalingStroke;
     case CSSPropertyVisibility: // visible | hidden | collapse
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueCollapse;
     case CSSPropertyWebkitAppearance:
         return (valueID >= CSSValueCheckbox && valueID <= CSSValueTextarea) || valueID == CSSValueNone;
-    case CSSPropertyBackfaceVisibility:
+    case CSSPropertyWebkitBackfaceVisibility:
         return valueID == CSSValueVisible || valueID == CSSValueHidden;
+#if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:
         return valueID == CSSValueNormal || valueID == CSSValueMultiply || valueID == CSSValueScreen || valueID == CSSValueOverlay
             || valueID == CSSValueDarken || valueID == CSSValueLighten || valueID == CSSValueColorDodge || valueID == CSSValueColorBurn
             || valueID == CSSValueHardLight || valueID == CSSValueSoftLight || valueID == CSSValueDifference || valueID == CSSValueExclusion
             || valueID == CSSValueHue || valueID == CSSValueSaturation || valueID == CSSValueColor || valueID == CSSValueLuminosity;
+#endif
     case CSSPropertyWebkitBoxAlign:
         return valueID == CSSValueStretch || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline;
     case CSSPropertyWebkitBoxDecorationBreak:
@@ -687,12 +695,12 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueRow || valueID == CSSValueRowReverse || valueID == CSSValueColumn || valueID == CSSValueColumnReverse;
     case CSSPropertyFlexWrap:
         return valueID == CSSValueNowrap || valueID == CSSValueWrap || valueID == CSSValueWrapReverse;
-    case CSSPropertyHyphens:
+    case CSSPropertyWebkitHyphens:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueManual;
     case CSSPropertyJustifyContent:
         // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
         return valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround;
-    case CSSPropertyFontKerning:
+    case CSSPropertyWebkitFontKerning:
         return valueID == CSSValueAuto || valueID == CSSValueNormal || valueID == CSSValueNone;
     case CSSPropertyWebkitFontSmoothing:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAntialiased || valueID == CSSValueSubpixelAntialiased;
@@ -721,7 +729,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueElement;
     case CSSPropertyWebkitUserModify: // read-only | read-write
         return valueID == CSSValueReadOnly || valueID == CSSValueReadWrite || valueID == CSSValueReadWritePlaintextOnly;
-    case CSSPropertyUserSelect: // auto | none | text | all
+    case CSSPropertyWebkitUserSelect: // auto | none | text | all
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText || valueID == CSSValueAll;
     case CSSPropertyWebkitWritingMode:
         return valueID >= CSSValueHorizontalTb && valueID <= CSSValueVerticalLr;
@@ -734,15 +742,29 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValuePre || valueID == CSSValuePreWrap || valueID == CSSValuePreLine || valueID == CSSValueNowrap;
     case CSSPropertyWordBreak: // normal | break-all | keep-all | break-word (this is a custom extension)
         return valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueKeepAll || valueID == CSSValueBreakWord;
-    case CSSPropertyScrollSnapType: // none | mandatory | proximity
-        ASSERT(RuntimeEnabledFeatures::cssScrollSnapPointsEnabled());
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyWebkitScrollSnapType: // none | mandatory | proximity
         return valueID == CSSValueNone || valueID == CSSValueMandatory || valueID == CSSValueProximity;
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    case CSSPropertyTouchAction: // auto | manipulation
+        return valueID == CSSValueAuto || valueID == CSSValueManipulation;
+#endif
+#if ENABLE(CSS_TRAILING_WORD)
+    case CSSPropertyAppleTrailingWord: // auto | -apple-partially-balanced
+        return valueID == CSSValueAuto || valueID == CSSValueWebkitPartiallyBalanced;
+#endif
+#if ENABLE(APPLE_PAY)
+    case CSSPropertyApplePayButtonStyle: // white | white-outline | black
+        return valueID == CSSValueWhite || valueID == CSSValueWhiteOutline || valueID == CSSValueBlack;
+    case CSSPropertyApplePayButtonType: // plain | buy | set-up | in-store
+        return valueID == CSSValuePlain || valueID == CSSValueBuy || valueID == CSSValueSetUp || valueID == CSSValueInStore;
+#endif
     default:
         ASSERT_NOT_REACHED();
         return false;
     }
 }
-*/
 
 bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 {
@@ -941,15 +963,22 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     }
 }
 
-/* FIXME-NEWPARSER: Turn off for now.
+static bool isUniversalKeyword(const String& string)
+{
+    // These keywords can be used for all properties.
+    return equalLettersIgnoringASCIICase(string, "initial")
+    || equalLettersIgnoringASCIICase(string, "inherit")
+    || equalLettersIgnoringASCIICase(string, "unset")
+    || equalLettersIgnoringASCIICase(string, "revert");
+}
 
-static CSSValue* parseKeywordValue(CSSPropertyID propertyId, const String& string, CSSParserMode parserMode)
+static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, const String& string, CSSParserMode parserMode)
 {
     ASSERT(!string.isEmpty());
 
     if (!CSSParserFastPaths::isKeywordPropertyID(propertyId)) {
         // All properties accept the values of "initial" and "inherit".
-        if (!equalIgnoringASCIICase(string, "initial") && !equalIgnoringASCIICase(string, "inherit"))
+        if (!isUniversalKeyword(string))
             return nullptr;
 
         // Parse initial/inherit shorthands using the CSSPropertyParser.
@@ -957,7 +986,7 @@ static CSSValue* parseKeywordValue(CSSPropertyID propertyId, const String& strin
             return nullptr;
 
         // Descriptors do not support css wide keywords.
-        if (CSSPropertyMetadata::isDescriptorOnly(propertyId))
+        if (CSSProperty::isDescriptorOnly(propertyId))
             return nullptr;
     }
 
@@ -967,9 +996,14 @@ static CSSValue* parseKeywordValue(CSSPropertyID propertyId, const String& strin
         return nullptr;
 
     if (valueID == CSSValueInherit)
-        return CSSInheritedValue::create();
+        return CSSValuePool::singleton().createInheritedValue();
     if (valueID == CSSValueInitial)
-        return CSSInitialValue::create();
+        return CSSValuePool::singleton().createExplicitInitialValue();
+    if (valueID == CSSValueUnset)
+        return CSSValuePool::singleton().createUnsetValue();
+    if (valueID == CSSValueRevert)
+        return CSSValuePool::singleton().createRevertValue();
+    
     if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyId, valueID, parserMode))
         return CSSPrimitiveValue::createIdentifier(valueID);
     return nullptr;
@@ -980,16 +1014,16 @@ static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsi
 {
     while (expectedCount) {
         size_t delimiter = WTF::find(pos, end - pos, expectedCount == 1 ? ')' : ',');
-        if (delimiter == kNotFound)
+        if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
-        CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::UnitTypes::Number;
+        CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::UnitTypes::CSS_NUMBER;
         double number;
         if (!parseSimpleLength(pos, argumentLength, unit, number))
             return false;
-        if (unit != CSSPrimitiveValue::UnitTypes::Pixels && (number || unit != CSSPrimitiveValue::UnitTypes::Number))
+        if (unit != CSSPrimitiveValue::UnitTypes::CSS_PX && (number || unit != CSSPrimitiveValue::UnitTypes::CSS_NUMBER))
             return false;
-        transformValue->append(*CSSPrimitiveValue::create(number, CSSPrimitiveValue::UnitTypes::Pixels));
+        transformValue->append(CSSPrimitiveValue::create(number, CSSPrimitiveValue::UnitTypes::CSS_PX));
         pos += argumentLength + 1;
         --expectedCount;
     }
@@ -1001,14 +1035,14 @@ static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigne
 {
     while (expectedCount) {
         size_t delimiter = WTF::find(pos, end - pos, expectedCount == 1 ? ')' : ',');
-        if (delimiter == kNotFound)
+        if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
         bool ok;
         double number = charactersToDouble(pos, argumentLength, &ok);
         if (!ok)
             return false;
-        transformValue->append(*CSSPrimitiveValue::create(number, CSSPrimitiveValue::UnitTypes::Number));
+        transformValue->append(CSSPrimitiveValue::create(number, CSSPrimitiveValue::UnitTypes::CSS_NUMBER));
         pos += argumentLength + 1;
         --expectedCount;
     }
@@ -1018,7 +1052,7 @@ static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigne
 static const int kShortestValidTransformStringLength = 12;
 
 template <typename CharType>
-static CSSFunctionValue* parseSimpleTransformValue(CharType*& pos, CharType* end)
+static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharType* end)
 {
     if (end - pos < kShortestValidTransformStringLength)
         return nullptr;
@@ -1039,11 +1073,11 @@ static CSSFunctionValue* parseSimpleTransformValue(CharType*& pos, CharType* end
         unsigned argumentStart = 11;
         CharType c9 = toASCIILower(pos[9]);
         if (c9 == 'x' && pos[10] == '(') {
-            transformType = CSSValueTranslateX;
+            transformType = CSSValueTranslatex;
         } else if (c9 == 'y' && pos[10] == '(') {
-            transformType = CSSValueTranslateY;
+            transformType = CSSValueTranslatey;
         } else if (c9 == 'z' && pos[10] == '(') {
-            transformType = CSSValueTranslateZ;
+            transformType = CSSValueTranslatez;
         } else if (c9 == '(') {
             transformType = CSSValueTranslate;
             expectedArgumentCount = 2;
@@ -1056,8 +1090,8 @@ static CSSFunctionValue* parseSimpleTransformValue(CharType*& pos, CharType* end
             return nullptr;
         }
         pos += argumentStart;
-        CSSFunctionValue* transformValue = CSSFunctionValue::create(transformType);
-        if (!parseTransformTranslateArguments(pos, end, expectedArgumentCount, transformValue))
+        RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(transformType);
+        if (!parseTransformTranslateArguments(pos, end, expectedArgumentCount, transformValue.get()))
             return nullptr;
         return transformValue;
     }
@@ -1074,8 +1108,8 @@ static CSSFunctionValue* parseSimpleTransformValue(CharType*& pos, CharType* end
 
     if (isMatrix3d) {
         pos += 9;
-        CSSFunctionValue* transformValue = CSSFunctionValue::create(CSSValueMatrix3d);
-        if (!parseTransformNumberArguments(pos, end, 16, transformValue))
+        RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(CSSValueMatrix3d);
+        if (!parseTransformNumberArguments(pos, end, 16, transformValue.get()))
             return nullptr;
         return transformValue;
     }
@@ -1091,8 +1125,8 @@ static CSSFunctionValue* parseSimpleTransformValue(CharType*& pos, CharType* end
 
     if (isScale3d) {
         pos += 8;
-        CSSFunctionValue* transformValue = CSSFunctionValue::create(CSSValueScale3d);
-        if (!parseTransformNumberArguments(pos, end, 3, transformValue))
+        RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(CSSValueScale3d);
+        if (!parseTransformNumberArguments(pos, end, 3, transformValue.get()))
             return nullptr;
         return transformValue;
     }
@@ -1139,7 +1173,7 @@ static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length
             return false;
         }
         size_t argumentsEnd = WTF::find(chars, length, ')', i);
-        if (argumentsEnd == kNotFound)
+        if (argumentsEnd == notFound)
             return false;
         // Advance to the end of the arguments.
         i = argumentsEnd + 1;
@@ -1148,19 +1182,19 @@ static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length
 }
 
 template <typename CharType>
-static CSSValueList* parseSimpleTransformList(const CharType* chars, unsigned length)
+static RefPtr<CSSValueList> parseSimpleTransformList(const CharType* chars, unsigned length)
 {
     if (!transformCanLikelyUseFastPath(chars, length))
         return nullptr;
     const CharType*& pos = chars;
     const CharType* end = chars + length;
-    CSSValueList* transformList = nullptr;
+    RefPtr<CSSValueList> transformList;
     while (pos < end) {
         while (pos < end && isCSSSpace(*pos))
             ++pos;
         if (pos >= end)
             break;
-        CSSFunctionValue* transformValue = parseSimpleTransformValue(pos, end);
+        RefPtr<CSSFunctionValue> transformValue = parseSimpleTransformValue(pos, end);
         if (!transformValue)
             return nullptr;
         if (!transformList)
@@ -1170,7 +1204,7 @@ static CSSValueList* parseSimpleTransformList(const CharType* chars, unsigned le
     return transformList;
 }
 
-static CSSValue* parseSimpleTransform(CSSPropertyID propertyID, const String& string)
+static RefPtr<CSSValue> parseSimpleTransform(CSSPropertyID propertyID, const String& string)
 {
     ASSERT(!string.isEmpty());
 
@@ -1181,18 +1215,20 @@ static CSSValue* parseSimpleTransform(CSSPropertyID propertyID, const String& st
     return parseSimpleTransformList(string.characters16(), string.length());
 }
 
-CSSValue* CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, CSSParserMode parserMode)
+RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, CSSParserMode parserMode)
 {
-    if (CSSValue* length = parseSimpleLengthValue(propertyID, string, parserMode))
-        return length;
+    RefPtr<CSSValue> result = parseSimpleLengthValue(propertyID, string, parserMode);
+    if (result)
+        return result;
     if (isColorPropertyID(propertyID))
         return parseColor(string, parserMode);
-    if (CSSValue* keyword = parseKeywordValue(propertyID, string, parserMode))
-        return keyword;
-    if (CSSValue* transform = parseSimpleTransform(propertyID, string))
-        return transform;
+    result = parseKeywordValue(propertyID, string, parserMode);
+    if (result)
+        return result;
+    result = parseSimpleTransform(propertyID, string);
+    if (result)
+        return result;
     return nullptr;
 }
 
-     */
 } // namespace WebCore

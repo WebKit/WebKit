@@ -3339,6 +3339,8 @@
 		93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B79E0BA6032600854064 /* JSCDATASection.cpp */; };
 		93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B79F0BA6032600854064 /* JSCDATASection.h */; };
 		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9418278A1D8B244000492764 /* StyleColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941827881D8B242200492764 /* StyleColor.cpp */; };
+		9418278B1D8B244000492764 /* StyleColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 941827891D8B242200492764 /* StyleColor.h */; };
 		9444CBD31D860C8B0073A074 /* SizesCalcParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9444CBD01D860C740073A074 /* SizesCalcParser.cpp */; };
 		9444CBD41D860C8B0073A074 /* SizesCalcParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 9444CBCF1D860C740073A074 /* SizesCalcParser.h */; };
 		9444CBD51D860C8B0073A074 /* SizesAttributeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9444CBD21D860C740073A074 /* SizesAttributeParser.cpp */; };
@@ -9377,8 +9379,8 @@
 		5C5381AF1D8793E000E2EBE6 /* URLSearchParams.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = URLSearchParams.idl; sourceTree = "<group>"; };
 		5C5381B01D87D45700E2EBE6 /* URLSearchParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSearchParams.cpp; sourceTree = "<group>"; };
 		5C5381B11D87D45700E2EBE6 /* URLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSearchParams.h; sourceTree = "<group>"; };
-		5C5381B31D87E08100E2EBE6 /* JSURLSearchParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSURLSearchParams.cpp; path = JSURLSearchParams.cpp; sourceTree = "<group>"; };
-		5C5381B41D87E08100E2EBE6 /* JSURLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSURLSearchParams.h; path = JSURLSearchParams.h; sourceTree = "<group>"; };
+		5C5381B31D87E08100E2EBE6 /* JSURLSearchParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSURLSearchParams.cpp; sourceTree = "<group>"; };
+		5C5381B41D87E08100E2EBE6 /* JSURLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSURLSearchParams.h; sourceTree = "<group>"; };
 		5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		5C688AA21D38126F000B54FA /* SocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketProvider.cpp; sourceTree = "<group>"; };
 		5C6E653F1D5CEDC900F7862E /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
@@ -10507,6 +10509,8 @@
 		93F9B79E0BA6032600854064 /* JSCDATASection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCDATASection.cpp; sourceTree = "<group>"; };
 		93F9B79F0BA6032600854064 /* JSCDATASection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCDATASection.h; sourceTree = "<group>"; };
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
+		941827881D8B242200492764 /* StyleColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleColor.cpp; sourceTree = "<group>"; };
+		941827891D8B242200492764 /* StyleColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleColor.h; sourceTree = "<group>"; };
 		9444CBCF1D860C740073A074 /* SizesCalcParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizesCalcParser.h; path = parser/SizesCalcParser.h; sourceTree = "<group>"; };
 		9444CBD01D860C740073A074 /* SizesCalcParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SizesCalcParser.cpp; path = parser/SizesCalcParser.cpp; sourceTree = "<group>"; };
 		9444CBD11D860C740073A074 /* SizesAttributeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizesAttributeParser.h; path = parser/SizesAttributeParser.h; sourceTree = "<group>"; };
@@ -22548,6 +22552,8 @@
 				8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */,
 				83B9687919F8AB83004EF7AF /* StyleBuilderConverter.h */,
 				835D363619FF6193004C93AB /* StyleBuilderCustom.h */,
+				941827881D8B242200492764 /* StyleColor.cpp */,
+				941827891D8B242200492764 /* StyleColor.h */,
 				E47A97CE163059FC005DCD99 /* StyleInvalidationAnalysis.cpp */,
 				E47A97CF163059FC005DCD99 /* StyleInvalidationAnalysis.h */,
 				0FF5026E102BA9660066F39A /* StyleMedia.cpp */,
@@ -25657,6 +25663,7 @@
 				CEEFCD7A19DB31F7003876D7 /* MediaResourceLoader.h in Headers */,
 				1BF9DB3C1D3973AD0026AEB7 /* MediaSample.h in Headers */,
 				1B124D8D1D380B7000ECDFB0 /* MediaSampleAVFObjC.h in Headers */,
+				9418278B1D8B244000492764 /* StyleColor.h in Headers */,
 				CDBEAEAD19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h in Headers */,
 				C9027F421B1D0AD200BFBFEF /* MediaSession.h in Headers */,
 				C9F87CFE1B28F40E00979B83 /* MediaSessionEvents.h in Headers */,
@@ -27973,6 +27980,7 @@
 				5C9A7A761AA0F6ED00958ACF /* DFABytecodeInterpreter.cpp in Sources */,
 				26A807841B18F97700E219BE /* DFACombiner.cpp in Sources */,
 				26A517FD1AB92238006335DF /* DFAMinimizer.cpp in Sources */,
+				9418278A1D8B244000492764 /* StyleColor.cpp in Sources */,
 				26D4E8461B42539D00E033A2 /* DFANode.cpp in Sources */,
 				CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */,
 				CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */,

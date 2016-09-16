@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "CSSParserIdioms.h"
+#include "CSSValueKeywords.h"
 
 namespace WebCore {
 
@@ -46,6 +47,18 @@ void convertToASCIILowercaseInPlace(StringView& stringView)
         WebCore::convertToASCIILowercaseInPlace(const_cast<LChar*>(stringView.characters8()), stringView.length());
     else
         WebCore::convertToASCIILowercaseInPlace(const_cast<UChar*>(stringView.characters16()), stringView.length());
+}
+
+bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
+{
+    switch (id) {
+    case CSSValueInternalVariableValue:
+        return isUASheetBehavior(mode);
+    case CSSValueWebkitFocusRingColor:
+        return isUASheetBehavior(mode) || isQuirksModeBehavior(mode);
+    default:
+        return true;
+    }
 }
 
 } // namespace WebCore

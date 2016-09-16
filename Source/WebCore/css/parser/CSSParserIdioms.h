@@ -32,6 +32,7 @@
 #ifndef CSSParserIdioms_h
 #define CSSParserIdioms_h
 
+#include "CSSParserMode.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringView.h>
 
@@ -60,6 +61,8 @@ bool isNameCodePoint(CharacterType c)
 
 void convertToASCIILowercaseInPlace(StringView&);
 
+bool isValueAllowedInMode(unsigned short, CSSParserMode);
+    
 }
 
 #endif

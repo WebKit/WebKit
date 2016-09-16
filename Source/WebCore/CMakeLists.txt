@@ -1332,6 +1332,7 @@ set(WebCore_SOURCES
     css/SVGCSSComputedStyleDeclaration.cpp
     css/SelectorChecker.cpp
     css/SelectorFilter.cpp
+    css/StyleColor.cpp
     css/StyleInvalidationAnalysis.cpp
     css/StyleMedia.cpp
     css/StyleProperties.cpp

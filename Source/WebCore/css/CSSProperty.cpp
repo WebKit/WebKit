@@ -154,6 +154,23 @@ CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyI
     }
 }
 
+bool CSSProperty::isDescriptorOnly(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case CSSPropertyMinZoom:
+    case CSSPropertyMaxZoom:
+    case CSSPropertyOrientation:
+    case CSSPropertyUserZoom:
+#endif
+    case CSSPropertySrc:
+    case CSSPropertyUnicodeRange:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool CSSProperty::isDirectionAwareProperty(CSSPropertyID propertyID)
 {
     switch (propertyID) {

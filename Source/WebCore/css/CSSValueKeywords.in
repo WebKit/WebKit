@@ -1149,6 +1149,88 @@ isolate
 // none
 scale-down
 
+// background-image, etc.
+linear-gradient
+radial-gradient
+repeating-linear-gradient
+repeating-radial-gradient
+paint
+-webkit-cross-fade
+-webkit-gradient
+-webkit-linear-gradient
+-webkit-radial-gradient
+-webkit-repeating-linear-gradient
+-webkit-repeating-radial-gradient
+-webkit-image-set
+
+// deprecated gradients
+from
+to
+color-stop
+radial
+
+// content
+attr
+counter
+counters
+
+// clip
+rect
+
+// shapes
+polygon
+
+// @font-face src
+format
+
+// (-webkit-)filter
+// invert
+grayscale
+sepia
+saturate
+hue-rotate
+opacity
+brightness
+contrast
+blur
+drop-shadow
+url
+
+// colors
+rgb
+rgba
+hsl
+hsla
+
+// transform
+matrix
+matrix3d
+perspective
+rotate
+rotateX
+rotateY
+rotateZ
+rotate3d
+scale
+scaleX
+scaleY
+scaleZ
+scale3d
+skew
+skewX
+skewY
+translate
+translateX
+translateY
+translateZ
+translate3d
+
+// motion path
+path
+
+calc
+-webkit-calc
+
 #if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
 from-image
 snap
