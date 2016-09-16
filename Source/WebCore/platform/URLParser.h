@@ -48,7 +48,8 @@ public:
 
 private:
     URL m_url;
-    StringBuilder m_buffer;
+    Vector<LChar> m_asciiBuffer;
+    Vector<UChar32> m_unicodeFragmentBuffer;
     bool m_urlIsSpecial { false };
     bool m_hostHasPercentOrNonASCII { false };
 
