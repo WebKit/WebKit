@@ -1048,6 +1048,8 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-closed.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-video-bitrate.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass ]
