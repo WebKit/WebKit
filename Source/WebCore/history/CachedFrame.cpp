@@ -280,6 +280,11 @@ CachedFramePlatformData* CachedFrame::cachedFramePlatformData()
     return m_cachedFramePlatformData.get();
 }
 
+void CachedFrame::setHasInsecureContent(HasInsecureContent hasInsecureContent)
+{
+    m_hasInsecureContent = hasInsecureContent;
+}
+
 int CachedFrame::descendantFrameCount() const
 {
     int count = m_childFrames.size();

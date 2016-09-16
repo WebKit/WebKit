@@ -50,6 +50,7 @@
 namespace WebCore {
 
 class Archive;
+class CachedFrame;
 class CachedFrameBase;
 class CachedPage;
 class CachedResource;
@@ -350,7 +351,7 @@ private:
 
     bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
 
-    void dispatchDidCommitLoad();
+    void dispatchDidCommitLoad(Optional<HasInsecureContent> initialHasInsecureContent);
 
     void urlSelected(const FrameLoadRequest&, Event*);
 

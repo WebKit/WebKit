@@ -129,4 +129,9 @@ enum class AllowNavigationToInvalidURL {
     No
 };
 
+enum class HasInsecureContent {
+    Yes,
+    No,
+};
+
 } // namespace WebCore

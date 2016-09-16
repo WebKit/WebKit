@@ -165,6 +165,8 @@ public:
     void didFinishProgress(const Transaction::Token&);
     void setNetworkRequestsInProgress(const Transaction::Token&, bool);
 
+    bool committedHasInsecureContent() const { return m_committedState.hasInsecureContent; }
+
     // FIXME: We piggy-back off PageLoadState::Observer so that both WKWebView and WKObservablePageState
     // can listen for changes. Once we get rid of WKObservablePageState these could just be part of API::NavigationClient.
     void willChangeProcessIsResponsive();

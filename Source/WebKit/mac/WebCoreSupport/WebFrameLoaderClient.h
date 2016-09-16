@@ -111,7 +111,7 @@ private:
     void dispatchDidReceiveIcon() override;
     void dispatchDidStartProvisionalLoad() override;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) override;
-    void dispatchDidCommitLoad() override;
+    void dispatchDidCommitLoad(Optional<WebCore::HasInsecureContent>) override;
     void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&) override;
     void dispatchDidFailLoad(const WebCore::ResourceError&) override;
     void dispatchDidFinishDocumentLoad() override;
