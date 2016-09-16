@@ -105,6 +105,9 @@ function(GENERATE_BINDINGS)
     if (EXISTS ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
         list(APPEND common_generator_dependencies ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
     endif ()
+    if (EXISTS ${arg_BASE_DIR}/CodeGenerator${arg_GENERATOR}.pm)
+        list(APPEND common_generator_dependencies ${arg_BASE_DIR}/CodeGenerator${arg_GENERATOR}.pm)
+    endif ()
 
     set(gen_sources)
     foreach (_file ${arg_INPUT_FILES})
@@ -114,7 +117,7 @@ function(GENERATE_BINDINGS)
             OUTPUT ${arg_DESTINATION}/JS${_name}.cpp ${arg_DESTINATION}/JS${_name}.h
             MAIN_DEPENDENCY ${_file}
             DEPENDS ${common_generator_dependencies}
-            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${binding_generator} --defines ${arg_FEATURES} --generator ${arg_GENERATOR} ${idl_includes} --outputDir ${arg_DESTINATION} --preprocessor ${CODE_GENERATOR_PREPROCESSOR} --idlAttributesFile ${idl_attributes_file} ${_supplemental_dependency} ${_file}
+            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts -I${arg_BASE_DIR} ${binding_generator} --defines ${arg_FEATURES} --generator ${arg_GENERATOR} ${idl_includes} --outputDir ${arg_DESTINATION} --preprocessor ${CODE_GENERATOR_PREPROCESSOR} --idlAttributesFile ${idl_attributes_file} ${_supplemental_dependency} ${_file}
             WORKING_DIRECTORY ${arg_BASE_DIR}
             VERBATIM)
         list(APPEND gen_sources ${arg_DESTINATION}/JS${_name}.cpp)
