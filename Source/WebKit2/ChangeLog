@@ -1,3 +1,14 @@
+2016-09-16  David Kilzer  <ddkilzer@apple.com>
+
+        ASSERT accidentally commented out in r204916
+        <https://webkit.org/b/162077>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::terminateProcess): Comment in the ASSERT
+        back in.
+
 2016-09-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Inserting a space after inserting an accepted candidate scrolls the document and causes a flicker
