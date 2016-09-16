@@ -1,3 +1,9 @@
+2016-09-16  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Unreviewed: Change my primary address for auto-complete in bugzilla.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-09-15  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: Check for invalid characters in the host
