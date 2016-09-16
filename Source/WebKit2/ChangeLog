@@ -1,3 +1,18 @@
+2016-09-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r206000.
+        https://bugs.webkit.org/show_bug.cgi?id=162062
+
+        inadvertent GCC requirement bump (Requested by mcatanzaro on
+        #webkit).
+
+        Reverted changeset:
+
+        "Add support for enum class parameters in the message
+        generator"
+        https://bugs.webkit.org/show_bug.cgi?id=162036
+        http://trac.webkit.org/changeset/206000
+
 2016-09-15  Brady Eidson  <beidson@apple.com>
 
         WKWebView.hasOnlySecureContent always returns "YES" after going back to a CachedPage (even if it has http resources).
