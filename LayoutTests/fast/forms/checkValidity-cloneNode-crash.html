@@ -44,8 +44,8 @@ function checkTextArea() {
     element.value = "a";
     shouldBeTrue("element.checkValidity()");
     element2 = element.cloneNode();
-    shouldBeEqualToString("element2.value", "");
-    shouldBeFalse("element2.checkValidity()");
+    shouldBeEqualToString("element2.value", "a");
+    shouldBeTrue("element2.checkValidity()");
     element2.value = element.value;
     shouldBeTrue("element2.checkValidity()");
 }

@@ -954,7 +954,7 @@ float HTMLInputElement::decorationWidth() const
 
 void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& source)
 {
-    const HTMLInputElement& sourceElement = static_cast<const HTMLInputElement&>(source);
+    auto& sourceElement = downcast<HTMLInputElement>(source);
 
     m_valueIfDirty = sourceElement.m_valueIfDirty;
     m_wasModifiedByUser = false;

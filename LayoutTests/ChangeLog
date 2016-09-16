@@ -1,3 +1,15 @@
+2016-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Cloning a textarea does not clone the textarea's value
+        https://bugs.webkit.org/show_bug.cgi?id=156637
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing test to reflect behavior change.
+
+        * fast/forms/checkValidity-cloneNode-crash-expected.txt:
+        * fast/forms/checkValidity-cloneNode-crash.html:
+
 2016-09-16  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Headers should be combine with ',' and not ', '

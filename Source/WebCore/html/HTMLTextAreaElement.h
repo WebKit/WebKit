@@ -55,6 +55,7 @@ public:
     
     TextControlInnerTextElement* innerTextElement() const final;
     RenderStyle createInnerTextStyle(const RenderStyle&) const final;
+    void copyNonAttributePropertiesFromElement(const Element&) final;
 
     void rendererWillBeDestroyed();
 

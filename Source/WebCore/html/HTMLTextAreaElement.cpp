@@ -587,4 +587,15 @@ RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style) 
     return textBlockStyle;
 }
 
+void HTMLTextAreaElement::copyNonAttributePropertiesFromElement(const Element& source)
+{
+    auto& sourceElement = downcast<HTMLTextAreaElement>(source);
+
+    setValueCommon(sourceElement.value());
+    m_isDirty = sourceElement.m_isDirty;
+    HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);
+
+    updateValidity();
+}
+
 } // namespace WebCore
