@@ -1,3 +1,26 @@
+2016-09-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Use more global color variables in TreeOutline and DataGrid
+        https://bugs.webkit.org/show_bug.cgi?id=161940
+        <rdar://problem/28292555>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid tr.selected):
+        (.data-grid:matches(:focus, .force-focus) tr.selected):
+        Use global color vars.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline .item.selected):
+        Use global color vars.
+        (body.window-inactive .tree-outline .item.selected): Deleted.
+        Not needed. Unfocused color is the same when window is inactive.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add --selected-background-color-unfocused.
+
 2016-09-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Call frame is sometimes not selected in Debugger sidebar on initial pause

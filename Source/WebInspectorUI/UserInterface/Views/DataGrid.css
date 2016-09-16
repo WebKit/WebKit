@@ -272,13 +272,13 @@
 }
 
 .data-grid tr.selected {
-    background-color: hsl(0, 0%, 83%) !important;
+    background-color: var(--selected-background-color-unfocused) !important;
     color: inherit !important;
 }
 
 .data-grid:matches(:focus, .force-focus) tr.selected {
-    background-color: hsl(209, 100%, 49%) !important;
-    color: white !important;
+    background-color: var(--selected-background-color) !important;
+    color: var(--selected-foreground-color) !important;
 }
 
 .data-grid tr:not(.parent) td.disclosure {
