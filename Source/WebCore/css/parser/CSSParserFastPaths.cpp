@@ -637,7 +637,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextJustify:
         // auto | none | inter-word | distribute
-        ASSERT(RuntimeEnabledFeatures::css3TextEnabled());
         return valueID == CSSValueInterWord || valueID == CSSValueDistribute || valueID == CSSValueAuto || valueID == CSSValueNone;
 #endif
     case CSSPropertyWebkitTextOrientation: // mixed | upright | sideways | sideways-right
