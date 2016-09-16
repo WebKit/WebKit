@@ -2674,6 +2674,8 @@ public:
     void speculateCell(Edge);
     void speculateCellOrOther(Edge);
     void speculateObject(Edge);
+    void speculateArray(Edge, GPRReg cell);
+    void speculateArray(Edge);
     void speculateFunction(Edge);
     void speculateFinalObject(Edge);
     void speculateRegExpObject(Edge, GPRReg cell);

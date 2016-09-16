@@ -10676,6 +10676,9 @@ private:
         case ObjectUse:
             speculateObject(edge);
             break;
+        case ArrayUse:
+            speculateArray(edge);
+            break;
         case FunctionUse:
             speculateFunction(edge);
             break;
@@ -10959,6 +10962,17 @@ private:
     void speculateObject(Edge edge)
     {
         speculateObject(edge, lowCell(edge));
+    }
+
+    void speculateArray(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecArray, isNotType(cell, ArrayType));
+    }
+
+    void speculateArray(Edge edge)
+    {
+        speculateArray(edge, lowCell(edge));
     }
     
     void speculateFunction(Edge edge, LValue cell)

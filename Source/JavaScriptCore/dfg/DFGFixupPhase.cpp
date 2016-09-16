@@ -1417,6 +1417,16 @@ private:
             }
             break;
 
+        case IsJSArray:
+            if (node->child1()->shouldSpeculateArray()) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), ArrayUse));
+                m_graph.convertToConstant(node, jsBoolean(true));
+                observeUseKindOnNode<ArrayUse>(node);
+            }
+            break;
+
         case GetEnumerableLength: {
             fixEdge<CellUse>(node->child1());
             break;
@@ -1622,7 +1632,6 @@ private:
         case NewRegexp:
         case DeleteById:
         case DeleteByVal:
-        case IsJSArray:
         case IsTypedArrayView:
         case IsEmpty:
         case IsUndefined:

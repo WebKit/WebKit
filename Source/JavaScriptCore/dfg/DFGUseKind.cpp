@@ -85,6 +85,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case ObjectUse:
         out.print("Object");
         return;
+    case ArrayUse:
+        out.print("Array");
+        return;
     case FunctionUse:
         out.print("Function");
         return;

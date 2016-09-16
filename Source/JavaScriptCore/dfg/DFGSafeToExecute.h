@@ -55,6 +55,7 @@ public:
         case CellUse:
         case CellOrOtherUse:
         case ObjectUse:
+        case ArrayUse:
         case FunctionUse:
         case FinalObjectUse:
         case RegExpObjectUse:
