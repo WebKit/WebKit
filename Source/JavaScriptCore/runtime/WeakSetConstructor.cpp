@@ -42,7 +42,7 @@ void WeakSetConstructor::finishCreation(VM& vm, WeakSetPrototype* prototype)
 {
     Base::finishCreation(vm, prototype->classInfo()->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontEnum | ReadOnly);
 }
 
 static EncodedJSValue JSC_HOST_CALL callWeakSet(ExecState* exec)

@@ -1,3 +1,32 @@
+2016-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Various Constructors length properties should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=161998
+
+        Reviewed by Saam Barati.
+
+        https://tc39.github.io/ecma262/#sec-ecmascript-standard-built-in-objects
+        Unless otherwise specified, the length property of a built-in Function
+        object has the attributes:
+        { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }.
+
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::finishCreation):
+        * runtime/MapConstructor.cpp:
+        (JSC::MapConstructor::finishCreation):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::finishCreation):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::finishCreation):
+        * runtime/SetConstructor.cpp:
+        (JSC::SetConstructor::finishCreation):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::WeakMapConstructor::finishCreation):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::WeakSetConstructor::finishCreation):
+
 2016-09-16  Youenn Fablet  <youenn@apple.com>
 
         Custom promise-returning functions should not throw if callee has not the expected type

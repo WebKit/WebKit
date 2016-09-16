@@ -89,7 +89,7 @@ void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* 
 {
     Base::finishCreation(vm, name);
 
-    putDirect(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(2), DontEnum | ReadOnly);
     putDirect(vm, makeIdentifier(vm, "revocable"), JSFunction::create(vm, globalObject, 2, ASCIILiteral("revocable"), makeRevocableProxy, NoIntrinsic, proxyRevocableConstructorThrowError));
 }
 
