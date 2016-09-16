@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,8 +49,6 @@ CaptionUserPreferences::CaptionUserPreferences(PageGroup& group)
     : m_pageGroup(group)
     , m_displayMode(ForcedOnly)
     , m_timer(*this, &CaptionUserPreferences::timerFired)
-    , m_testingMode(false)
-    , m_havePreferences(false)
 {
 }
 
@@ -99,9 +97,17 @@ void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::Capti
     notify();
 }
 
+Page* CaptionUserPreferences::currentPage() const
+{
+    if (m_pageGroup.pages().isEmpty())
+        return nullptr;
+
+    return *(m_pageGroup.pages().begin());
+}
+
 bool CaptionUserPreferences::userPrefersCaptions() const
 {
-    Page* page = *(m_pageGroup.pages().begin());
+    Page* page = currentPage();
     if (!page)
         return false;
 
@@ -110,7 +116,7 @@ bool CaptionUserPreferences::userPrefersCaptions() const
 
 void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 {
-    Page* page = *(m_pageGroup.pages().begin());
+    Page* page = currentPage();
     if (!page)
         return;
 
@@ -120,7 +126,7 @@ void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 
 bool CaptionUserPreferences::userPrefersSubtitles() const
 {
-    Page* page = *(pageGroup().pages().begin());
+    Page* page = currentPage();
     if (!page)
         return false;
 
@@ -129,7 +135,7 @@ bool CaptionUserPreferences::userPrefersSubtitles() const
 
 void CaptionUserPreferences::setUserPrefersSubtitles(bool preference)
 {
-    Page* page = *(m_pageGroup.pages().begin());
+    Page* page = currentPage();
     if (!page)
         return;
 
@@ -139,7 +145,7 @@ void CaptionUserPreferences::setUserPrefersSubtitles(bool preference)
 
 bool CaptionUserPreferences::userPrefersTextDescriptions() const
 {
-    Page* page = *(m_pageGroup.pages().begin());
+    Page* page = currentPage();
     if (!page)
         return false;
     
@@ -148,7 +154,7 @@ bool CaptionUserPreferences::userPrefersTextDescriptions() const
 
 void CaptionUserPreferences::setUserPrefersTextDescriptions(bool preference)
 {
-    Page* page = *(m_pageGroup.pages().begin());
+    Page* page = currentPage();
     if (!page)
         return;
     
