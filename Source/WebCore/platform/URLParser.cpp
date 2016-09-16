@@ -1522,10 +1522,10 @@ void URLParser::parseAuthority(CodePointIterator<CharacterType> iterator)
             m_buffer.append(':');
             break;
         }
-        m_buffer.append(*iterator);
+        utf8PercentEncode(*iterator, m_buffer, isInUserInfoEncodeSet);
     }
     for (; !iterator.atEnd(); ++iterator)
-        m_buffer.append(*iterator);
+        utf8PercentEncode(*iterator, m_buffer, isInUserInfoEncodeSet);
     m_url.m_passwordEnd = m_buffer.length();
     if (!m_url.m_userEnd)
         m_url.m_userEnd = m_url.m_passwordEnd;
