@@ -1,5 +1,25 @@
 2016-09-16  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r204916. rdar://problem/27991573
+
+    2016-08-23  Anders Carlsson  <andersca@apple.com>
+
+            Add enum traits and use them in the IPC::Decoder
+            https://bugs.webkit.org/show_bug.cgi?id=161103
+
+            Reviewed by Sam Weinig.
+
+            * Platform/IPC/Decoder.h:
+            * Platform/IPC/Encoder.h:
+            Add new encode/decode functions.
+
+            * Shared/mac/ArgumentCodersMac.mm:
+            Change NSType to be a strongly typed enum. Use encode/decode
+            instead of encodeEnum/decodeEnum since the latter don't have the
+            enum check.
+
+2016-09-16  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r205983. rdar://problem/28312297
 
     2016-09-14  Beth Dakin  <bdakin@apple.com>

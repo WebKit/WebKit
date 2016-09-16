@@ -87,6 +87,7 @@
 		1A6EB1E0187D0BD30030126F /* StringView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6EB1DF187D0BD30030126F /* StringView.h */; };
 		1A944F471C3D8814005BD28C /* BlockPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A944F461C3D8814005BD28C /* BlockPtr.h */; };
 		1ACADD841884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACADD821884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm */; };
+		1AEA88E21D6BBCF400E5AD64 /* EnumTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */; };
 		1AFDE648195201C300C48FFA /* TypeCastsCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDE647195201C300C48FFA /* TypeCastsCF.h */; };
 		1AFDE6531953B23D00C48FFA /* Optional.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDE6521953B23D00C48FFA /* Optional.h */; };
 		1C181C7F1D3078DA00F5FA16 /* TextBreakIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C7D1D3078DA00F5FA16 /* TextBreakIterator.cpp */; };
@@ -421,6 +422,7 @@
 		1A6EB1DF187D0BD30030126F /* StringView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringView.h; sourceTree = "<group>"; };
 		1A944F461C3D8814005BD28C /* BlockPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockPtr.h; sourceTree = "<group>"; };
 		1ACADD821884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeprecatedSymbolsUsedBySafari.mm; sourceTree = "<group>"; };
+		1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumTraits.h; sourceTree = "<group>"; };
 		1AFDE647195201C300C48FFA /* TypeCastsCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastsCF.h; sourceTree = "<group>"; };
 		1AFDE6521953B23D00C48FFA /* Optional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Optional.h; sourceTree = "<group>"; };
 		1C181C7D1D3078DA00F5FA16 /* TextBreakIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIterator.cpp; sourceTree = "<group>"; };
@@ -867,6 +869,7 @@
 				A8A47280151A825A004123FF /* DoublyLinkedList.h */,
 				A8A47297151A825A004123FF /* dtoa.cpp */,
 				A8A47298151A825A004123FF /* dtoa.h */,
+				1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
 				0F885E0E1845AE9F00F1E3FA /* FastBitVector.cpp */,
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
@@ -1286,6 +1289,7 @@
 				2C05385415BC819000F21B96 /* GregorianDateTime.h in Headers */,
 				A8A473D3151A825B004123FF /* HashCountedSet.h in Headers */,
 				A8A4742D151A825B004123FF /* Hasher.h in Headers */,
+				1AEA88E21D6BBCF400E5AD64 /* EnumTraits.h in Headers */,
 				1C181C901D307AB800F5FA16 /* UTextProvider.h in Headers */,
 				A8A473D4151A825B004123FF /* HashFunctions.h in Headers */,
 				A8A473D5151A825B004123FF /* HashIterators.h in Headers */,
