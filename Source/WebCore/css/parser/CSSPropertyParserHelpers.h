@@ -31,17 +31,13 @@
 #ifndef CSSPropertyParserHelpers_h
 #define CSSPropertyParserHelpers_h
 
-// FIXME-NEWPARSER #include "CSSCustomIdentValue.h"
+#include "CSSCustomIdentValue.h"
 #include "CSSParserMode.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "Length.h" // For ValueRange
 
 namespace WebCore {
-
-class CSSStringValue;
-class CSSURIValue;
-class CSSValuePair;
 
 // When these functions are successful, they will consume all the relevant
 // tokens from the range and also consume any whitespace which follows. When
@@ -60,39 +56,39 @@ enum class UnitlessQuirk {
     Forbid
 };
 
-CSSPrimitiveValue* consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
-CSSPrimitiveValue* consumePositiveInteger(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
+RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
 bool consumeNumberRaw(CSSParserTokenRange&, double& result);
-CSSPrimitiveValue* consumeNumber(CSSParserTokenRange&, ValueRange);
-CSSPrimitiveValue* consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-CSSPrimitiveValue* consumePercent(CSSParserTokenRange&, ValueRange);
-CSSPrimitiveValue* consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-CSSPrimitiveValue* consumeAngle(CSSParserTokenRange&);
-CSSPrimitiveValue* consumeTime(CSSParserTokenRange&, ValueRange);
+RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
+RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
+RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
+RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
+RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
+RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 
-CSSPrimitiveValue* consumeIdent(CSSParserTokenRange&);
-CSSPrimitiveValue* consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
+RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
 template<CSSValueID, CSSValueID...> inline bool identMatches(CSSValueID id);
-template<CSSValueID... allowedIdents> CSSPrimitiveValue* consumeIdent(CSSParserTokenRange&);
+template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
 
-// FIXME-NEWPARSER CSSCustomIdentValue* consumeCustomIdent(CSSParserTokenRange&);
-CSSStringValue* consumeString(CSSParserTokenRange&);
+RefPtr<CSSCustomIdentValue> consumeCustomIdent(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
 StringView consumeUrlAsStringView(CSSParserTokenRange&);
-CSSURIValue* consumeUrl(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange&);
 
-CSSValue* consumeColor(CSSParserTokenRange&, CSSParserMode, bool acceptQuirkyColors = false);
+RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, CSSParserMode, bool acceptQuirkyColors = false);
 
-CSSValuePair* consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk);
-bool consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, CSSValue*& resultX, CSSValue*& resultY);
-bool consumeOneOrTwoValuedPosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, CSSValue*& resultX, CSSValue*& resultY);
+RefPtr<CSSPrimitiveValue> consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk);
+bool consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY);
+bool consumeOneOrTwoValuedPosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY);
 
 enum class ConsumeGeneratedImage {
     Allow,
     Forbid
 };
 
-CSSValue* consumeImage(CSSParserTokenRange&, CSSParserContext, ConsumeGeneratedImage = ConsumeGeneratedImage::Allow);
-CSSValue* consumeImageOrNone(CSSParserTokenRange&, CSSParserContext);
+RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, CSSParserContext, ConsumeGeneratedImage = ConsumeGeneratedImage::Allow);
+RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange&, CSSParserContext);
 
 // Template implementations are at the bottom of the file for readability.
 
@@ -112,7 +108,7 @@ template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTo
 
 static inline bool isCSSWideKeyword(const CSSValueID& id)
 {
-    return id == CSSValueInitial || id == CSSValueInherit || id == CSSValueUnset || id == CSSValueDefault;
+    return id == CSSValueInitial || id == CSSValueInherit || id == CSSValueUnset || id == CSSValueRevert || id == CSSValueDefault;
 }
 
 } // namespace CSSPropertyParserHelpers

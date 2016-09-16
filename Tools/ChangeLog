@@ -1,3 +1,14 @@
+2016-09-16  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Get CSSPropertyParserHelpers.cpp compiling
+        https://bugs.webkit.org/show_bug.cgi?id=162078
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+        (TestWebKitAPI::createTestValue):
+        Convert to ValueRange.
+
 2016-09-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix API tests after r206036

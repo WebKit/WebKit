@@ -1620,9 +1620,9 @@ bool CSSParser::validateCalculationUnit(ValueWithCalculation& valueWithCalculati
     if (valueWithCalculation.calculation()) {
         // The calculation value was already parsed so we reuse it. However, we may need to update its range.
         calculation = valueWithCalculation.calculation();
-        calculation->setPermittedValueRange(mustBeNonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
+        calculation->setPermittedValueRange(mustBeNonNegative ? ValueRangeNonNegative : ValueRangeAll);
     } else {
-        valueWithCalculation.setCalculation(parseCalculation(valueWithCalculation, mustBeNonNegative ? CalculationRangeNonNegative : CalculationRangeAll));
+        valueWithCalculation.setCalculation(parseCalculation(valueWithCalculation, mustBeNonNegative ? ValueRangeNonNegative : ValueRangeAll));
         calculation = valueWithCalculation.calculation();
         if (!calculation)
             return false;
@@ -11042,7 +11042,7 @@ bool CSSParser::parseWillChange(bool important)
     return true;
 }
 
-RefPtr<CSSCalcValue> CSSParser::parseCalculation(CSSParserValue& value, CalculationPermittedValueRange range)
+RefPtr<CSSCalcValue> CSSParser::parseCalculation(CSSParserValue& value, ValueRange range)
 {
     ASSERT(isCalculation(value));
     

@@ -359,7 +359,7 @@ public:
     bool parseHangingPunctuation(bool important);
 
     bool parseLineBoxContain(bool important);
-    RefPtr<CSSCalcValue> parseCalculation(CSSParserValue&, CalculationPermittedValueRange);
+    RefPtr<CSSCalcValue> parseCalculation(CSSParserValue&, ValueRange);
 
     bool parseFontFeatureTag(CSSValueList&);
     bool parseFontFeatureSettings(bool important);

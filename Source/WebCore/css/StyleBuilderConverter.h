@@ -318,7 +318,7 @@ inline Length StyleBuilderConverter::convertTo100PercentMinusLength(const Length
     auto lhs = std::make_unique<CalcExpressionLength>(Length(100, Percent));
     auto rhs = std::make_unique<CalcExpressionLength>(length);
     auto op = std::make_unique<CalcExpressionBinaryOperation>(WTFMove(lhs), WTFMove(rhs), CalcSubtract);
-    return Length(CalculationValue::create(WTFMove(op), CalculationRangeAll));
+    return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
 }
 
 inline Length StyleBuilderConverter::convertPositionComponent(StyleResolver& styleResolver, const CSSPrimitiveValue& value)

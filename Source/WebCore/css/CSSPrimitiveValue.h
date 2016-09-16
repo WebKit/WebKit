@@ -156,7 +156,13 @@ public:
         CSS_VALUE_ID = 118,
         
         // More internal parse stuff for CSS variables
-        CSS_PARSER_WHITESPACE = 119
+        CSS_PARSER_WHITESPACE = 119,
+        
+        // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
+        // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em.
+        // When the quirky value is used, if you're in quirks mode, the margin will collapse away
+        // inside a table cell. This quirk is specified in the HTML spec but our impl is different.
+        CSS_QUIRKY_EMS = 120
     };
 
     // This enum follows the CSSParser::Units enum augmented with UNIT_FREQUENCY for frequencies.
@@ -189,16 +195,19 @@ public:
         return primitiveUnitType == CSS_EMS
             || primitiveUnitType == CSS_EXS
             || primitiveUnitType == CSS_REMS
-            || primitiveUnitType == CSS_CHS;
+            || primitiveUnitType == CSS_CHS
+            || primitiveUnitType == CSS_QUIRKY_EMS;
     }
     bool isFontRelativeLength() const { return isFontRelativeLength(m_primitiveUnitType); }
+    
+    bool isQuirkyEms() const { return primitiveType() == UnitTypes::CSS_QUIRKY_EMS; }
 
     static bool isViewportPercentageLength(unsigned short type) { return type >= CSS_VW && type <= CSS_VMAX; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(m_primitiveUnitType); }
 
     static bool isLength(unsigned short type)
     {
-        return (type >= CSS_EMS && type <= CSS_PC) || type == CSS_REMS || type == CSS_CHS || isViewportPercentageLength(type);
+        return (type >= CSS_EMS && type <= CSS_PC) || type == CSS_REMS || type == CSS_CHS || isViewportPercentageLength(type) || type == CSS_QUIRKY_EMS;
     }
 
     bool isLength() const { return isLength(primitiveType()); }
@@ -369,7 +378,8 @@ public:
 
     String customCSSText() const;
 
-    bool isQuirkValue() const { return m_isQuirkValue; }
+    // FIXME-NEWPARSER: Can ditch the boolean and just use the unit type once old parser is gone.
+    bool isQuirkValue() const { return m_isQuirkValue || primitiveType() == CSS_QUIRKY_EMS; }
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 

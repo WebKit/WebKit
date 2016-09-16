@@ -126,6 +126,7 @@ RefPtr<CSSValue> CSSParserValue::createCSSValue()
         return CSSPrimitiveValue::create(string, primitiveUnit);
     case CSSPrimitiveValue::CSS_PERCENTAGE:
     case CSSPrimitiveValue::CSS_EMS:
+    case CSSPrimitiveValue::CSS_QUIRKY_EMS:
     case CSSPrimitiveValue::CSS_EXS:
     case CSSPrimitiveValue::CSS_PX:
     case CSSPrimitiveValue::CSS_CM:

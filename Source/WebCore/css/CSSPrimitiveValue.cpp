@@ -71,6 +71,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_DEG:
     case CSSPrimitiveValue::CSS_DIMENSION:
     case CSSPrimitiveValue::CSS_EMS:
+    case CSSPrimitiveValue::CSS_QUIRKY_EMS:
     case CSSPrimitiveValue::CSS_EXS:
     case CSSPrimitiveValue::CSS_FR:
     case CSSPrimitiveValue::CSS_GRAD:
@@ -160,6 +161,7 @@ static inline bool isStringType(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_DPI:
     case CSSPrimitiveValue::CSS_DPPX:
     case CSSPrimitiveValue::CSS_EMS:
+    case CSSPrimitiveValue::CSS_QUIRKY_EMS:
     case CSSPrimitiveValue::CSS_EXS:
     case CSSPrimitiveValue::CSS_FONT_FAMILY:
     case CSSPrimitiveValue::CSS_FR:
@@ -576,6 +578,7 @@ void CSSPrimitiveValue::cleanup()
     case CSS_PARSER_INTEGER:
     case CSS_PERCENTAGE:
     case CSS_EMS:
+    case CSS_QUIRKY_EMS:
     case CSS_EXS:
     case CSS_REMS:
     case CSS_CHS:
@@ -685,6 +688,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
 
     switch (primitiveType) {
     case CSS_EMS:
+    case CSS_QUIRKY_EMS:
         ASSERT(conversionData.style());
         factor = conversionData.computingFontSize() ? conversionData.style()->fontDescription().specifiedSize() : conversionData.style()->fontDescription().computedSize();
         break;
@@ -1071,6 +1075,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     case CSS_PERCENTAGE:
         return formatNumberValue("%");
     case CSS_EMS:
+    case CSS_QUIRKY_EMS:
         return formatNumberValue("em");
     case CSS_EXS:
         return formatNumberValue("ex");
@@ -1174,7 +1179,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     case CSS_PARSER_HEXCOLOR: {
         RGBA32 rgbColor = m_value.rgbcolor;
         if (m_primitiveUnitType == CSS_PARSER_HEXCOLOR)
-            Color::parseHexColor(m_value.string, rgbColor);
+            Color::parseHexColor((String)m_value.string, rgbColor);
         return Color(rgbColor).cssText();
     }
     case CSS_PAIR:
@@ -1315,6 +1320,7 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
     case CSS_PARSER_INTEGER:
     case CSS_PERCENTAGE:
     case CSS_EMS:
+    case CSS_QUIRKY_EMS:
     case CSS_EXS:
     case CSS_REMS:
     case CSS_CHS:
@@ -1379,6 +1385,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSS_PARSER_INTEGER:
     case CSS_PERCENTAGE:
     case CSS_EMS:
+    case CSS_QUIRKY_EMS:
     case CSS_EXS:
     case CSS_REMS:
     case CSS_PX:
@@ -1464,6 +1471,7 @@ bool CSSPrimitiveValue::buildParserValue(CSSParserValue* result) const
     case CSS_NUMBER:
     case CSS_PERCENTAGE:
     case CSS_EMS:
+    case CSS_QUIRKY_EMS:
     case CSS_EXS:
     case CSS_REMS:
     case CSS_PX:

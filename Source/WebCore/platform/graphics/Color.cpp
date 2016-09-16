@@ -204,6 +204,16 @@ bool Color::parseHexColor(const String& name, RGBA32& rgb)
     return parseHexColor(name.characters16(), name.length(), rgb);
 }
 
+bool Color::parseHexColor(const StringView& name, RGBA32& rgb)
+{
+    unsigned length = name.length();
+    if (!length)
+        return false;
+    if (name.is8Bit())
+        return parseHexColor(name.characters8(), name.length(), rgb);
+    return parseHexColor(name.characters16(), name.length(), rgb);
+}
+
 int differenceSquared(const Color& c1, const Color& c2)
 {
     int dR = c1.red() - c2.red();
@@ -226,7 +236,7 @@ Color::Color(const String& name)
 Color::Color(const char* name)
 {
     if (name[0] == '#')
-        m_valid = parseHexColor(&name[1], m_color);
+        m_valid = parseHexColor((String)&name[1], m_color);
     else {
         const NamedColor* foundColor = findColor(name, strlen(name));
         m_color = foundColor ? foundColor->ARGBValue : 0;

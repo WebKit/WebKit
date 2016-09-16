@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-Ref<CalculationValue> CalculationValue::create(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange range)
+Ref<CalculationValue> CalculationValue::create(std::unique_ptr<CalcExpressionNode> value, ValueRange range)
 {
     return adoptRef(*new CalculationValue(WTFMove(value), range));
 }

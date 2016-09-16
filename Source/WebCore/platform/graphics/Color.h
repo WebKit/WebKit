@@ -175,6 +175,7 @@ public:
 #endif
 
     static bool parseHexColor(const String&, RGBA32&);
+    static bool parseHexColor(const StringView&, RGBA32&);
     static bool parseHexColor(const LChar*, unsigned, RGBA32&);
     static bool parseHexColor(const UChar*, unsigned, RGBA32&);
 
