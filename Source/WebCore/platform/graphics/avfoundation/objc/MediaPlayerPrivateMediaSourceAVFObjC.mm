@@ -43,6 +43,7 @@
 #import <AVFoundation/AVTime.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
+#import <wtf/Deque.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -141,6 +142,7 @@ static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, cons
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
     : m_player(player)
     , m_weakPtrFactory(this)
+    , m_sizeChangeObserverWeakPtrFactory(this)
     , m_synchronizer(adoptNS([allocAVSampleBufferRenderSynchronizerInstance() init]))
     , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
     , m_session(nullptr)
@@ -195,6 +197,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
+    flushPendingSizeChanges();
 
     m_seekTimer.stop();
 }
@@ -360,10 +363,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setMuted(bool muted)
 
 FloatSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
 {
-    if (!m_mediaSourcePrivate)
-        return FloatSize();
-
-    return m_mediaSourcePrivate->naturalSize();
+    return m_naturalSize;
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasVideo() const
@@ -682,9 +682,27 @@ void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
     m_player->rateChanged();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::sizeChanged()
+void MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime& time, const FloatSize& size)
 {
-    m_player->sizeChanged();
+    auto weakThis = m_sizeChangeObserverWeakPtrFactory.createWeakPtr();
+    NSArray* times = @[[NSValue valueWithCMTime:toCMTime(time)]];
+    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis, size] {
+        if (!weakThis)
+            return;
+        RetainPtr<id> observer = weakThis->m_sizeChangeObservers.takeFirst();
+        weakThis->m_naturalSize = size;
+        weakThis->m_player->sizeChanged();
+    }];
+    m_sizeChangeObservers.append(WTFMove(observer));
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
+{
+    while (!m_sizeChangeObservers.isEmpty()) {
+        RetainPtr<id> observer = m_sizeChangeObservers.takeFirst();
+        [m_synchronizer removeTimeObserver:observer.get()];
+    }
+    m_sizeChangeObserverWeakPtrFactory.revokeAll();
 }
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)

@@ -154,6 +154,7 @@ private:
     CDMSessionMediaSourceAVFObjC* m_session { nullptr };
 
     FloatSize m_cachedSize;
+    FloatSize m_currentSize;
     bool m_parsingSucceeded;
     int m_enabledVideoTrackID;
     int m_protectedTrackID;

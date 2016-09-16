@@ -83,7 +83,8 @@ public:
     void durationChanged();
 
     void effectiveRateChanged();
-    void sizeChanged();
+    void sizeWillChangeAtTime(const MediaTime&, const FloatSize&);
+    void flushPendingSizeChanges();
     void characteristicsChanged();
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -210,6 +211,7 @@ private:
 
     MediaPlayer* m_player;
     WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_weakPtrFactory;
+    WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_sizeChangeObserverWeakPtrFactory;
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
@@ -218,11 +220,13 @@ private:
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
     RetainPtr<AVStreamSession> m_streamSession;
+    Deque<RetainPtr<id>> m_sizeChangeObservers;
     Timer m_seekTimer;
     CDMSessionMediaSourceAVFObjC* m_session;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     MediaTime m_lastSeekTime;
+    FloatSize m_naturalSize;
     double m_rate;
     bool m_playing;
     bool m_seeking;
