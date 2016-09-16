@@ -100,9 +100,9 @@ WebInspector.Object = class WebInspectorObject
 
     static awaitEvent(eventType)
     {
-        return new Promise((resolve, reject) => {
-            this.singleFireEventListener(eventType, (event) => resolve(event), null);
-        });
+        let wrapper = new WebInspector.WrappedPromise;
+        this.singleFireEventListener(eventType, (event) => wrapper.resolve(event));
+        return wrapper.promise;
     }
 
     // Only used by tests.
