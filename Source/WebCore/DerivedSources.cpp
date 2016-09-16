@@ -342,7 +342,6 @@
 #include "JSMediaStreamAudioSourceNode.cpp"
 #include "JSMediaStreamEvent.cpp"
 #include "JSMediaStreamTrack.cpp"
-#include "JSMediaStreamTrackSourcesCallback.cpp"
 #include "JSMediaTrackConstraint.cpp"
 #include "JSMediaTrackConstraintSet.cpp"
 #include "JSMediaTrackConstraints.cpp"
