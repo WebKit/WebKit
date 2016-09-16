@@ -36,8 +36,8 @@ namespace WebCore {
 
 #if ENABLE(XSLT)
 
-CachedXSLStyleSheet::CachedXSLStyleSheet(const ResourceRequest& resourceRequest, SessionID sessionID)
-    : CachedResource(resourceRequest, XSLStyleSheet, sessionID)
+CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, SessionID sessionID)
+    : CachedResource(WTFMove(request), XSLStyleSheet, sessionID)
     , m_decoder(TextResourceDecoder::create("text/xsl"))
 {
     // It's XML we want.
@@ -50,7 +50,7 @@ CachedXSLStyleSheet::~CachedXSLStyleSheet()
 }
 
 void CachedXSLStyleSheet::didAddClient(CachedResourceClient* c)
-{  
+{
     ASSERT(c->resourceClientType() == CachedStyleSheetClient::expectedType());
     if (!isLoading())
         static_cast<CachedStyleSheetClient*>(c)->setXSLStyleSheet(m_resourceRequest.url(), m_response.url(), m_sheet);

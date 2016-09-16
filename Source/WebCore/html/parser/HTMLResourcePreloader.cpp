@@ -68,8 +68,7 @@ void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
     if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document, &m_document.renderView()->style(), preload->media()))
         return;
 
-    CachedResourceRequest request = preload->resourceRequest(m_document);
-    m_document.cachedResourceLoader().preload(preload->resourceType(), request, preload->charset(), CachedResourceLoader::ImplicitPreload);
+    m_document.cachedResourceLoader().preload(preload->resourceType(), preload->resourceRequest(m_document), CachedResourceLoader::ImplicitPreload);
 }
 
 

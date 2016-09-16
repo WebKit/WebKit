@@ -36,7 +36,7 @@ class TextResourceDecoder;
 
 class CachedXSLStyleSheet final : public CachedResource {
 public:
-    CachedXSLStyleSheet(const ResourceRequest&, SessionID);
+    CachedXSLStyleSheet(CachedResourceRequest&&, SessionID);
     virtual ~CachedXSLStyleSheet();
 
     const String& sheet() const { return m_sheet; }

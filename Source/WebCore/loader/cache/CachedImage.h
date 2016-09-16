@@ -50,7 +50,7 @@ class CachedImage final : public CachedResource, public ImageObserver {
 public:
     enum CacheBehaviorType { AutomaticallyCached, ManuallyCached };
 
-    CachedImage(const ResourceRequest&, SessionID);
+    CachedImage(CachedResourceRequest&&, SessionID);
     CachedImage(Image*, SessionID);
     CachedImage(const URL&, Image*, SessionID);
     CachedImage(const URL&, Image*, CacheBehaviorType, SessionID);
@@ -62,7 +62,7 @@ public:
     bool currentFrameKnownToBeOpaque(const RenderElement*);
 
     std::pair<Image*, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
-    bool willPaintBrokenImage() const; 
+    bool willPaintBrokenImage() const;
 
     bool canRender(const RenderElement* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
 
@@ -84,7 +84,7 @@ public:
 
     bool isManuallyCached() const { return m_isManuallyCached; }
     RevalidationDecision makeRevalidationDecision(CachePolicy) const override;
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
+    void load(CachedResourceLoader&) override;
 
     bool isOriginClean(SecurityOrigin*);
 

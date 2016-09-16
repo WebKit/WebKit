@@ -54,7 +54,7 @@ void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const Resour
 
     CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
     request.setInitiator(cachedResourceRequestInitiators().css);
-    m_document = loader.requestSVGDocument(request);
+    m_document = loader.requestSVGDocument(WTFMove(request));
     if (m_document)
         m_document->addClient(this);
 

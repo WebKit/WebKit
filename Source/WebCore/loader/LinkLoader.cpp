@@ -163,7 +163,7 @@ void LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL
 
     linkRequest.setAsPotentiallyCrossOrigin(crossOriginMode, document);
     linkRequest.setForPreload(true);
-    CachedResourceHandle<CachedResource> cachedLinkResource = document.cachedResourceLoader().preload(type.value(), linkRequest, emptyString(), CachedResourceLoader::ExplicitPreload);
+    CachedResourceHandle<CachedResource> cachedLinkResource = document.cachedResourceLoader().preload(type.value(), WTFMove(linkRequest), CachedResourceLoader::ExplicitPreload);
 
     if (cachedLinkResource)
         m_preloadResourceClient = createLinkPreloadResourceClient(*cachedLinkResource, *this, type.value());
@@ -195,13 +195,12 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
             priority = ResourceLoadPriority::Low;
             type = CachedResource::LinkSubresource;
         }
-        CachedResourceRequest linkRequest(ResourceRequest(document.completeURL(href)), priority);
 
         if (m_cachedLinkResource) {
             m_cachedLinkResource->removeClient(this);
             m_cachedLinkResource = nullptr;
         }
-        m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, linkRequest);
+        m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, CachedResourceRequest(ResourceRequest(document.completeURL(href)), priority));
         if (m_cachedLinkResource)
             m_cachedLinkResource->addClient(this);
     }

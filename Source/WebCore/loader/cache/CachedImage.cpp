@@ -56,8 +56,8 @@
 
 namespace WebCore {
 
-CachedImage::CachedImage(const ResourceRequest& resourceRequest, SessionID sessionID)
-    : CachedResource(resourceRequest, ImageResource, sessionID)
+CachedImage::CachedImage(CachedResourceRequest&& request, SessionID sessionID)
+    : CachedResource(WTFMove(request), ImageResource, sessionID)
     , m_image(nullptr)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
@@ -66,7 +66,7 @@ CachedImage::CachedImage(const ResourceRequest& resourceRequest, SessionID sessi
 }
 
 CachedImage::CachedImage(Image* image, SessionID sessionID)
-    : CachedResource(ResourceRequest(), ImageResource, sessionID)
+    : CachedResource(CachedResourceRequest(ResourceRequest()), ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
@@ -76,7 +76,7 @@ CachedImage::CachedImage(Image* image, SessionID sessionID)
 }
 
 CachedImage::CachedImage(const URL& url, Image* image, SessionID sessionID)
-    : CachedResource(ResourceRequest(url), ImageResource, sessionID)
+    : CachedResource(CachedResourceRequest(ResourceRequest(url)), ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
@@ -86,7 +86,7 @@ CachedImage::CachedImage(const URL& url, Image* image, SessionID sessionID)
 }
 
 CachedImage::CachedImage(const URL& url, Image* image, CachedImage::CacheBehaviorType type, SessionID sessionID)
-    : CachedResource(ResourceRequest(url), ImageResource, sessionID)
+    : CachedResource(CachedResourceRequest(ResourceRequest(url)), ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(type == CachedImage::ManuallyCached)
     , m_shouldPaintBrokenImage(true)
@@ -106,10 +106,10 @@ CachedImage::~CachedImage()
     clearImage();
 }
 
-void CachedImage::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
+void CachedImage::load(CachedResourceLoader& loader)
 {
-    if (cachedResourceLoader.shouldPerformImageLoad(url()))
-        CachedResource::load(cachedResourceLoader, options);
+    if (loader.shouldPerformImageLoad(url()))
+        CachedResource::load(loader);
     else
         setLoading(false);
 }

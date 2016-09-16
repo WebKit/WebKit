@@ -37,7 +37,7 @@ namespace WebCore {
 
     class CachedCSSStyleSheet final : public CachedResource {
     public:
-        CachedCSSStyleSheet(const ResourceRequest&, const String& charset, SessionID);
+        CachedCSSStyleSheet(CachedResourceRequest&&, SessionID);
         virtual ~CachedCSSStyleSheet();
 
         enum class MIMETypeCheck { Strict, Lax };

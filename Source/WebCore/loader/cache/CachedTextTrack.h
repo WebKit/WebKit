@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CachedTextTrack final : public CachedResource {
 public:
-    CachedTextTrack(const ResourceRequest&, SessionID);
+    CachedTextTrack(CachedResourceRequest&&, SessionID);
 
 private:
     bool mayTryReplaceEncodedData() const override { return true; }

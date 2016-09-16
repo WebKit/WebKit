@@ -129,18 +129,18 @@ void ProcessingInstruction::checkStyleSheet()
                 m_cachedSheet->removeClient(this);
                 m_cachedSheet = nullptr;
             }
-            
+
             String url = document().completeURL(href).string();
             if (!dispatchBeforeLoadEvent(url))
                 return;
-            
+
             m_loading = true;
             document().authorStyleSheets().addPendingSheet();
-            
+
             CachedResourceRequest request(ResourceRequest(document().completeURL(href)));
 #if ENABLE(XSLT)
             if (m_isXSL)
-                m_cachedSheet = document().cachedResourceLoader().requestXSLStyleSheet(request);
+                m_cachedSheet = document().cachedResourceLoader().requestXSLStyleSheet(WTFMove(request));
             else
 #endif
             {
@@ -149,7 +149,7 @@ void ProcessingInstruction::checkStyleSheet()
                     charset = document().charset();
                 request.setCharset(charset);
 
-                m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(request);
+                m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
             }
             if (m_cachedSheet)
                 m_cachedSheet->addClient(this);

@@ -46,6 +46,7 @@ class MemoryCache;
 class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
+class CachedResourceRequest;
 class InspectorResource;
 class SecurityOrigin;
 class SharedBuffer;
@@ -93,10 +94,10 @@ public:
         DecodeError
     };
 
-    CachedResource(const ResourceRequest&, Type, SessionID);
+    CachedResource(CachedResourceRequest&&, Type, SessionID);
     virtual ~CachedResource();
 
-    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&);
+    virtual void load(CachedResourceLoader&);
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
@@ -111,6 +112,7 @@ public:
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return false; }
 
+    const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     ResourceRequest& resourceRequest() { return m_resourceRequest; }
     const URL& url() const { return m_resourceRequest.url();}
 #if ENABLE(CACHE_PARTITIONING)
@@ -209,7 +211,7 @@ public:
     bool isClean() const;
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
 
-    void loadFrom(const CachedResource&, const ResourceLoaderOptions&, CachedResourceLoader&);
+    void loadFrom(const CachedResource&, CachedResourceLoader&);
 
     SecurityOrigin* origin() const { return m_origin.get(); }
 

@@ -157,7 +157,7 @@ bool TextTrackLoader::load(const URL& url, const String& crossOriginMode, bool i
     CachedResourceRequest cueRequest(ResourceRequest(document->completeURL(url)), options);
     cueRequest.setAsPotentiallyCrossOrigin(crossOriginMode, *document);
 
-    m_resource = document->cachedResourceLoader().requestTextTrack(cueRequest);
+    m_resource = document->cachedResourceLoader().requestTextTrack(WTFMove(cueRequest));
     if (!m_resource)
         return false;
 

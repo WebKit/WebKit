@@ -43,14 +43,13 @@ struct FontCustomPlatformData;
 
 class CachedFont : public CachedResource {
 public:
-    CachedFont(const ResourceRequest&, SessionID, Type = FontResource);
+    CachedFont(CachedResourceRequest&&, SessionID, Type = FontResource);
     virtual ~CachedFont();
 
     void beginLoadIfNeeded(CachedResourceLoader&);
     bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
     virtual bool ensureCustomFontData(const AtomicString& remoteURI);
-
     static std::unique_ptr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, bool& wrapping);
     static FontPlatformData platformDataFromCustomData(FontCustomPlatformData&, const FontDescription&, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&);
 
@@ -65,7 +64,7 @@ private:
     void checkNotify() override;
     bool mayTryReplaceEncodedData() const override;
 
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
+    void load(CachedResourceLoader&) override;
 
     void didAddClient(CachedResourceClient*) override;
     void finishLoading(SharedBuffer*) override;

@@ -112,7 +112,7 @@ void CrossOriginPreflightChecker::startPreflight()
         preflightRequest.mutableResourceRequest().setHTTPReferrer(m_loader.referrer());
 
     ASSERT(!m_resource);
-    m_resource = m_loader.document().cachedResourceLoader().requestRawResource(preflightRequest);
+    m_resource = m_loader.document().cachedResourceLoader().requestRawResource(WTFMove(preflightRequest));
     if (m_resource)
         m_resource->addClient(this);
 }

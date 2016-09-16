@@ -72,23 +72,23 @@ public:
     static Ref<CachedResourceLoader> create(DocumentLoader* documentLoader) { return adoptRef(*new CachedResourceLoader(documentLoader)); }
     ~CachedResourceLoader();
 
-    CachedResourceHandle<CachedImage> requestImage(CachedResourceRequest&);
-    CachedResourceHandle<CachedCSSStyleSheet> requestCSSStyleSheet(CachedResourceRequest&);
-    CachedResourceHandle<CachedCSSStyleSheet> requestUserCSSStyleSheet(CachedResourceRequest&);
-    CachedResourceHandle<CachedScript> requestScript(CachedResourceRequest&);
-    CachedResourceHandle<CachedFont> requestFont(CachedResourceRequest&, bool isSVG);
-    CachedResourceHandle<CachedRawResource> requestMedia(CachedResourceRequest&);
-    CachedResourceHandle<CachedRawResource> requestRawResource(CachedResourceRequest&);
-    CachedResourceHandle<CachedRawResource> requestMainResource(CachedResourceRequest&);
-    CachedResourceHandle<CachedSVGDocument> requestSVGDocument(CachedResourceRequest&);
+    CachedResourceHandle<CachedImage> requestImage(CachedResourceRequest&&);
+    CachedResourceHandle<CachedCSSStyleSheet> requestCSSStyleSheet(CachedResourceRequest&&);
+    CachedResourceHandle<CachedCSSStyleSheet> requestUserCSSStyleSheet(CachedResourceRequest&&);
+    CachedResourceHandle<CachedScript> requestScript(CachedResourceRequest&&);
+    CachedResourceHandle<CachedFont> requestFont(CachedResourceRequest&&, bool isSVG);
+    CachedResourceHandle<CachedRawResource> requestMedia(CachedResourceRequest&&);
+    CachedResourceHandle<CachedRawResource> requestRawResource(CachedResourceRequest&&);
+    CachedResourceHandle<CachedRawResource> requestMainResource(CachedResourceRequest&&);
+    CachedResourceHandle<CachedSVGDocument> requestSVGDocument(CachedResourceRequest&&);
 #if ENABLE(XSLT)
-    CachedResourceHandle<CachedXSLStyleSheet> requestXSLStyleSheet(CachedResourceRequest&);
+    CachedResourceHandle<CachedXSLStyleSheet> requestXSLStyleSheet(CachedResourceRequest&&);
 #endif
 #if ENABLE(LINK_PREFETCH)
-    CachedResourceHandle<CachedResource> requestLinkResource(CachedResource::Type, CachedResourceRequest&);
+    CachedResourceHandle<CachedResource> requestLinkResource(CachedResource::Type, CachedResourceRequest&&);
 #endif
 #if ENABLE(VIDEO_TRACK)
-    CachedResourceHandle<CachedTextTrack> requestTextTrack(CachedResourceRequest&);
+    CachedResourceHandle<CachedTextTrack> requestTextTrack(CachedResourceRequest&&);
 #endif
 
     // Logs an access denied message to the console for the specified URL.
@@ -96,7 +96,7 @@ public:
 
     CachedResource* cachedResource(const String& url) const;
     CachedResource* cachedResource(const URL& url) const;
-    
+
     typedef HashMap<String, CachedResourceHandle<CachedResource>> DocumentResourceMap;
     const DocumentResourceMap& allCachedResources() const { return m_documentResources; }
 
@@ -131,7 +131,7 @@ public:
     void clearPreloads();
     void clearPendingPreloads();
     enum PreloadType { ImplicitPreload, ExplicitPreload };
-    CachedResourceHandle<CachedResource> preload(CachedResource::Type, CachedResourceRequest&, const String& charset, PreloadType);
+    CachedResourceHandle<CachedResource> preload(CachedResource::Type, CachedResourceRequest&&, PreloadType);
     void checkForPendingPreloads();
     void printPreloadStats();
 
@@ -148,15 +148,17 @@ public:
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 
-    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&);
-    CachedResourceHandle<CachedResource> revalidateResource(const CachedResourceRequest&, CachedResource*);
-    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&);
-    CachedResourceHandle<CachedResource> requestPreload(CachedResource::Type, CachedResourceRequest&, const String& charset);
+    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&&);
+    CachedResourceHandle<CachedResource> revalidateResource(CachedResourceRequest&&, CachedResource&);
+    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&&);
+    CachedResourceHandle<CachedResource> requestPreload(CachedResource::Type, CachedResourceRequest&&);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, CachedResourceRequest&, CachedResource* existingResource) const;
 
-    bool updateCachedResourceWithCurrentRequest(CachedResourceRequest&, CachedResourceHandle<CachedResource>&);
+    bool shouldUpdateCachedResourceWithCurrentRequest(const CachedResource&, const CachedResourceRequest&);
+    CachedResourceHandle<CachedResource> updateCachedResourceWithCurrentRequest(const CachedResource&, CachedResourceRequest&&);
+
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const URL&) const;
 
@@ -178,7 +180,6 @@ private:
     struct PendingPreload {
         CachedResource::Type m_type;
         CachedResourceRequest m_request;
-        String m_charset;
     };
     Deque<PendingPreload> m_pendingPreloads;
 

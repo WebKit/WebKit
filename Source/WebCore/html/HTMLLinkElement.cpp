@@ -271,7 +271,7 @@ void HTMLLinkElement::process()
         }
         request.setAsPotentiallyCrossOrigin(crossOrigin(), document());
 
-        m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(request);
+        m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
 
         if (m_cachedSheet)
             m_cachedSheet->addClient(this);

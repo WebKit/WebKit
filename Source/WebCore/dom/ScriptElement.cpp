@@ -293,7 +293,7 @@ CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCache(const U
     request.setCharset(scriptCharset());
     request.setInitiator(&element());
 
-    return m_element.document().cachedResourceLoader().requestScript(request);
+    return m_element.document().cachedResourceLoader().requestScript(WTFMove(request));
 }
 
 void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)

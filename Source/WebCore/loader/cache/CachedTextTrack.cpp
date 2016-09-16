@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-CachedTextTrack::CachedTextTrack(const ResourceRequest& resourceRequest, SessionID sessionID)
-    : CachedResource(resourceRequest, TextTrackResource, sessionID)
+CachedTextTrack::CachedTextTrack(CachedResourceRequest&& request, SessionID sessionID)
+    : CachedResource(WTFMove(request), TextTrackResource, sessionID)
 {
 }
 

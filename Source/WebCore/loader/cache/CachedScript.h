@@ -34,7 +34,7 @@ class TextResourceDecoder;
 
 class CachedScript final : public CachedResource {
 public:
-    CachedScript(const ResourceRequest&, const String& charset, SessionID);
+    CachedScript(CachedResourceRequest&&, SessionID);
     virtual ~CachedScript();
 
     StringView script();

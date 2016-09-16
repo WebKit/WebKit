@@ -59,7 +59,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Docu
     }
 }
 
-void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const CachedResourceRequest& request, Frame* frame)
+void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomicString& initiatorName, Frame* frame)
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
     ASSERT(resource.get());
@@ -71,7 +71,7 @@ void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const Ca
             m_initiatorMap.add(resource.get(), info);
         }
     } else {
-        InitiatorInfo info = { request.initiatorName(), monotonicallyIncreasingTime(), NotYetAdded };
+        InitiatorInfo info = { initiatorName, monotonicallyIncreasingTime(), NotYetAdded };
         m_initiatorMap.add(resource.get(), info);
     }
 }

@@ -91,7 +91,7 @@ std::pair<CachedImage*, float> CSSImageSetValue::loadBestFitImage(CachedResource
 {
     Document* document = loader.document();
     updateDeviceScaleFactor(*document);
-    
+
     if (!m_accessedBestFitImage) {
         m_accessedBestFitImage = true;
 
@@ -105,7 +105,7 @@ std::pair<CachedImage*, float> CSSImageSetValue::loadBestFitImage(CachedResource
             ASSERT(document->securityOrigin());
             updateRequestForAccessControl(request.mutableResourceRequest(), *document->securityOrigin(), options.allowCredentials);
         }
-        m_cachedImage = loader.requestImage(request);
+        m_cachedImage = loader.requestImage(WTFMove(request));
         m_bestFitImageScaleFactor = image.scaleFactor;
     }
     return { m_cachedImage.get(), m_bestFitImageScaleFactor };

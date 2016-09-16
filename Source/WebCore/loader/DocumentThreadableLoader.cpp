@@ -372,12 +372,14 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         newRequest.mutableResourceRequest().setAllowCookies(m_options.allowCredentials == AllowStoredCredentials);
 
         ASSERT(!m_resource);
-        m_resource = m_document.cachedResourceLoader().requestRawResource(newRequest);
+        // We create an URL here as the request will be moved in requestRawResource
+        URL requestUrl = newRequest.resourceRequest().url();
+        m_resource = m_document.cachedResourceLoader().requestRawResource(WTFMove(newRequest));
         if (m_resource)
             m_resource->addClient(this);
         else {
             // FIXME: Since we receive a synchronous error, this is probably due to some AccessControl checks. We should try to retrieve the actual error.
-            m_client->didFail(ResourceError(String(), 0, newRequest.resourceRequest().url(), String(), ResourceError::Type::AccessControl));
+            m_client->didFail(ResourceError(String(), 0, requestUrl, String(), ResourceError::Type::AccessControl));
         }
         return;
     }

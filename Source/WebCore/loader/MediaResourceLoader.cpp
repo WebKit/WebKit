@@ -79,7 +79,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(const Resourc
         cacheRequest.mutableResourceRequest().makeUnconditional();
 #endif
 
-    CachedResourceHandle<CachedRawResource> resource = m_document->cachedResourceLoader().requestMedia(cacheRequest);
+    CachedResourceHandle<CachedRawResource> resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cacheRequest));
     if (!resource)
         return nullptr;
 

@@ -43,7 +43,7 @@ class ResourceTimingInformation {
 public:
 
     void addResourceTiming(CachedResource*, Document&, const LoadTiming&);
-    void storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>&, const CachedResourceRequest&, Frame*);
+    void storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>&, const AtomicString&, Frame*);
 
 private:
     enum AlreadyAdded { NotYetAdded, Added };

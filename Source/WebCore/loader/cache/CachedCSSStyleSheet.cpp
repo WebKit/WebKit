@@ -29,6 +29,7 @@
 
 #include "CSSStyleSheet.h"
 #include "CachedResourceClientWalker.h"
+#include "CachedResourceRequest.h"
 #include "CachedStyleSheetClient.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
@@ -40,9 +41,9 @@
 
 namespace WebCore {
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(const ResourceRequest& resourceRequest, const String& charset, SessionID sessionID)
-    : CachedResource(resourceRequest, CSSStyleSheet, sessionID)
-    , m_decoder(TextResourceDecoder::create("text/css", charset))
+CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, SessionID sessionID)
+    : CachedResource(WTFMove(request), CSSStyleSheet, sessionID)
+    , m_decoder(TextResourceDecoder::create("text/css", request.charset()))
 {
     // Prefer text/css but accept any type (dell.com serves a stylesheet
     // as text/html; see <http://bugs.webkit.org/show_bug.cgi?id=11451>).

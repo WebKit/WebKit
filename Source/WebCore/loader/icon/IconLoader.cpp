@@ -64,7 +64,7 @@ void IconLoader::startLoading()
     request.mutableResourceRequest().setPriority(ResourceLoadPriority::Low);
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
-    m_resource = m_frame.document()->cachedResourceLoader().requestRawResource(request);
+    m_resource = m_frame.document()->cachedResourceLoader().requestRawResource(WTFMove(request));
     if (m_resource)
         m_resource->addClient(this);
     else

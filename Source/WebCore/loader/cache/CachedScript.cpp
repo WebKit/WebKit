@@ -29,6 +29,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
+#include "CachedResourceRequest.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -39,9 +40,9 @@
 
 namespace WebCore {
 
-CachedScript::CachedScript(const ResourceRequest& resourceRequest, const String& charset, SessionID sessionID)
-    : CachedResource(resourceRequest, Script, sessionID)
-    , m_decoder(TextResourceDecoder::create(ASCIILiteral("application/javascript"), charset))
+CachedScript::CachedScript(CachedResourceRequest&& request, SessionID sessionID)
+    : CachedResource(WTFMove(request), Script, sessionID)
+    , m_decoder(TextResourceDecoder::create(ASCIILiteral("application/javascript"), request.charset()))
 {
     // It's javascript we want.
     // But some websites think their scripts are <some wrong mimetype here>

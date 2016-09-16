@@ -185,14 +185,14 @@ void ImageLoader::updateFromElement()
         if (m_loadManually) {
             bool autoLoadOtherImages = document.cachedResourceLoader().autoLoadImages();
             document.cachedResourceLoader().setAutoLoadImages(false);
-            newImage = new CachedImage(request.resourceRequest(), m_element.document().page()->sessionID());
+            newImage = new CachedImage(WTFMove(request), m_element.document().page()->sessionID());
             newImage->setStatus(CachedResource::Pending);
             newImage->setLoading(true);
             newImage->setOwningCachedResourceLoader(&document.cachedResourceLoader());
             document.cachedResourceLoader().m_documentResources.set(newImage->url(), newImage.get());
             document.cachedResourceLoader().setAutoLoadImages(autoLoadOtherImages);
         } else
-            newImage = document.cachedResourceLoader().requestImage(request);
+            newImage = document.cachedResourceLoader().requestImage(WTFMove(request));
 
         // If we do not have an image here, it means that a cross-site
         // violation occurred, or that the image was blocked via Content

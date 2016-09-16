@@ -112,8 +112,9 @@ static std::chrono::milliseconds deadDecodedDataDeletionIntervalForResourceType(
 
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
-CachedResource::CachedResource(const ResourceRequest& request, Type type, SessionID sessionID)
-    : m_resourceRequest(request)
+CachedResource::CachedResource(CachedResourceRequest&& request, Type type, SessionID sessionID)
+    : m_resourceRequest(WTFMove(request.mutableResourceRequest()))
+    , m_options(request.options())
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
     , m_loadPriority(defaultPriorityForResourceType(type))
@@ -259,7 +260,7 @@ void CachedResource::computeOrigin(CachedResourceLoader& loader)
     addAdditionalRequestHeaders(loader);
 }
 
-void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
+void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 {
     if (!cachedResourceLoader.frame()) {
         failBeforeStarting();
@@ -279,12 +280,11 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
     }
 
     FrameLoader& frameLoader = frame.loader();
-    if (options.securityCheck == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
+    if (m_options.securityCheck == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
         failBeforeStarting();
         return;
     }
 
-    m_options = options;
     m_loading = true;
 
 #if USE(QUICK_LOOK)
@@ -335,7 +335,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
         m_fragmentIdentifierForRequest = String();
     }
 
-    m_loader = platformStrategies()->loaderStrategy()->loadResource(frame, *this, request, options);
+    m_loader = platformStrategies()->loaderStrategy()->loadResource(frame, *this, request, m_options);
     if (!m_loader) {
         failBeforeStarting();
         return;
@@ -344,16 +344,15 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
     m_status = Pending;
 }
 
-void CachedResource::loadFrom(const CachedResource& resource, const ResourceLoaderOptions& options, CachedResourceLoader& cachedResourceLoader)
+void CachedResource::loadFrom(const CachedResource& resource, CachedResourceLoader& cachedResourceLoader)
 {
     ASSERT(url() == resource.url());
     ASSERT(type() == resource.type());
     ASSERT(resource.status() == Status::Cached);
 
-    m_options = options;
     computeOrigin(cachedResourceLoader);
 
-    if (isCrossOrigin() && options.mode == FetchOptions::Mode::Cors) {
+    if (isCrossOrigin() && m_options.mode == FetchOptions::Mode::Cors) {
         ASSERT(m_origin);
         String errorMessage;
         if (!WebCore::passesAccessControlCheck(resource.response(), m_options.allowCredentials, *m_origin, errorMessage)) {

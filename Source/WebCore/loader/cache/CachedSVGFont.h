@@ -36,10 +36,10 @@ class SVGFontFaceElement;
 
 class CachedSVGFont final : public CachedFont {
 public:
-    CachedSVGFont(const ResourceRequest&, SessionID);
+    CachedSVGFont(CachedResourceRequest&&, SessionID);
 
     bool ensureCustomFontData(const AtomicString& remoteURI) override;
-    
+
     RefPtr<Font> createFont(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&) override;
 
 private:
