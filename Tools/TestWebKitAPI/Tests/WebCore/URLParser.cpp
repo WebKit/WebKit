@@ -499,9 +499,9 @@ TEST_F(URLParserTest, ParserDifferences)
         {"http", "", "", "host", 0, "/path...", "", "", "http://host/path..."},
         {"http", "", "", "host", 0, "/path%2e.%2E", "", "", "http://host/path%2e.%2E"});
 
-    checkRelativeURLDifferences(wideString(L"http://foo:ðŸ’©@example.com/bar"), "http://other.com/",
-        {"http", "foo", wideString(L"ðŸ’©"), "example.com", 0, "/bar", "", "", "http://foo:%F0%9F%92%A9@example.com/bar"},
-        {"", "", "", "", 0, "", "", "", wideString(L"http://foo:ðŸ’©@example.com/bar")});
+    checkRelativeURLDifferences(wideString(L"http://foo:💩@example.com/bar"), "http://other.com/",
+        {"http", "foo", wideString(L"💩"), "example.com", 0, "/bar", "", "", "http://foo:%F0%9F%92%A9@example.com/bar"},
+        {"", "", "", "", 0, "", "", "", wideString(L"http://foo:💩@example.com/bar")});
     checkRelativeURLDifferences("http://&a:foo(b]c@d:2/", "http://example.org/foo/bar",
         {"http", "&a", "foo(b]c", "d", 2, "/", "", "", "http://&a:foo(b%5Dc@d:2/"},
         {"", "", "", "", 0, "", "", "", "http://&a:foo(b]c@d:2/"});

@@ -1,3 +1,14 @@
+2016-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API tests after r206036
+        https://bugs.webkit.org/show_bug.cgi?id=162049
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+        An emoji had been UTF-8 encoded in the patch that was applied.
+        The test needed to check the encoding of the emoji, not the UTF-8 encoding of the emoji.
+        Everything was correct except applying the patch before committing.
+
 2016-09-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         RequiresUserActionForPlayback TestWebKitAPI tests are broken after r206033.
