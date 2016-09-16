@@ -128,9 +128,8 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
 
         bool appendComma = false;
         for (const auto& headerField : unsafeHeaders) {
-            // FIXME: header names should be separated by 0x2C, without space.
             if (appendComma)
-                headerBuffer.appendLiteral(", ");
+                headerBuffer.append(',');
             else
                 appendComma = true;
 

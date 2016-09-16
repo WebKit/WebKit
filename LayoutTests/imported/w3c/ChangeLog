@@ -1,5 +1,20 @@
 2016-09-16  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Headers should be combine with ',' and not ', '
+        https://bugs.webkit.org/show_bug.cgi?id=161736
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/XMLHttpRequest/setrequestheader-case-insensitive.htm: Making ',' combination as expected.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed-expected.txt: Some new header tests are failing.
+        This is due to the fact that the underlying HTTP code is probably reprocessing those headers and readding ', ' in lieu of ','.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm: Ditto.
+        * web-platform-tests/fetch/api/cors/cors-preflight.js:
+        (corsPreflight): Removing stripping of whitespaces
+        * web-platform-tests/fetch/api/headers/headers-combine.html: Making ',' combination as expected.
+
+2016-09-16  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Referrer and Origin header should not be considered as safe request headers
         https://bugs.webkit.org/show_bug.cgi?id=161902
 
