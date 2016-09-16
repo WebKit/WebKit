@@ -1054,6 +1054,7 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-sourcebufferlist.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-timestamp-offset.html [ Pass ]
 
 # Flaky Media Source tests
 webkit.org/b/149816 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Pass Timeout ]
