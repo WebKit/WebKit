@@ -203,6 +203,8 @@ MarkedSpace::~MarkedSpace()
         [&] (MarkedBlock::Handle* block) {
             freeBlock(block);
         });
+    for (LargeAllocation* allocation : m_largeAllocations)
+        allocation->destroy();
     ASSERT(!m_blocks.set().size());
 }
 

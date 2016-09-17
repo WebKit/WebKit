@@ -1,3 +1,15 @@
+2016-09-15  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r205462): Lot of leaks
+        https://bugs.webkit.org/show_bug.cgi?id=161946
+
+        Reviewed by Saam Barati.
+        
+        We were forgetting to delete LargeAllocations on VM exit!
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::~MarkedSpace):
+
 2016-09-06  Saam Barati  <sbarati@apple.com>
 
         ProxyObject's structure should not have ObjectPrototype as its prototype and it should not have special behavior for intercepting "__proto__"
