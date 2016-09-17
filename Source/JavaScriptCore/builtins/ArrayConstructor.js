@@ -102,3 +102,14 @@ function from(items /*, mapFn, thisArg */)
     result.length = arrayLikeLength;
     return result;
 }
+
+function isArray(array)
+{
+    "use strict";
+
+    if (@isJSArray(array) || @isDerivedArray(array))
+        return true;
+    if (!@isProxyObject(array))
+        return false;
+    return @isArraySlow(array);
+}

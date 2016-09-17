@@ -4632,11 +4632,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case IsJSArray: {
-        compileIsJSArray(node);
-        break;
-    }
-
     case MapHash: {
         JSValueOperand input(this, node->child1());
         GPRTemporary temp(this);
@@ -4830,8 +4825,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case IsRegExpObject: {
-        compileIsRegExpObject(node);
+    case IsCellWithType: {
+        compileIsCellWithType(node);
         break;
     }
 

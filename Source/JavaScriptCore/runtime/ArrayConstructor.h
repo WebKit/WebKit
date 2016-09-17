@@ -64,34 +64,23 @@ private:
 JSValue constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue length, JSValue prototype = JSValue());
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(ExecState*);
+bool isArraySlow(ExecState*, ProxyObject* argument);
 
 // ES6 7.2.2
 // https://tc39.github.io/ecma262/#sec-isarray
 inline bool isArray(ExecState* exec, JSValue argumentValue)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (!argumentValue.isObject())
         return false;
 
     JSObject* argument = jsCast<JSObject*>(argumentValue);
-    while (true) {
-        if (argument->inherits(JSArray::info()))
-            return true;
+    if (argument->type() == ArrayType || argument->type() == DerivedArrayType)
+        return true;
 
-        if (argument->type() != ProxyObjectType)
-            return false;
-
-        ProxyObject* proxy = jsCast<ProxyObject*>(argument);
-        if (proxy->isRevoked()) {
-            throwTypeError(exec, scope, ASCIILiteral("Array.isArray cannot be called on a Proxy that has been revoked"));
-            return false;
-        }
-        argument = proxy->target();
-    }
-
-    ASSERT_NOT_REACHED();
+    if (argument->type() != ProxyObjectType)
+        return false;
+    return isArraySlow(exec, jsCast<ProxyObject*>(argument));
 }
 
 inline bool isArrayConstructor(JSValue argumentValue)

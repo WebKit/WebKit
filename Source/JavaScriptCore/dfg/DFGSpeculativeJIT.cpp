@@ -3603,52 +3603,57 @@ void SpeculativeJIT::compileInstanceOfCustom(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileIsJSArray(Node* node)
+void SpeculativeJIT::compileIsCellWithType(Node* node)
 {
-    JSValueOperand value(this, node->child1());
-    GPRFlushedCallResult result(this);
+    switch (node->child1().useKind()) {
+    case UntypedUse: {
+        JSValueOperand value(this, node->child1());
+#if USE(JSVALUE64)
+        GPRTemporary result(this, Reuse, value);
+#else
+        GPRTemporary result(this, Reuse, value, PayloadWord);
+#endif
 
-    JSValueRegs valueRegs = value.jsValueRegs();
-    GPRReg resultGPR = result.gpr();
+        JSValueRegs valueRegs = value.jsValueRegs();
+        GPRReg resultGPR = result.gpr();
 
-    JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
+        JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
 
-    m_jit.compare8(JITCompiler::Equal,
-        JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()),
-        TrustedImm32(ArrayType),
-        resultGPR);
-    blessBoolean(resultGPR);
-    JITCompiler::Jump done = m_jit.jump();
+        m_jit.compare8(JITCompiler::Equal,
+            JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()),
+            TrustedImm32(node->queriedType()),
+            resultGPR);
+        blessBoolean(resultGPR);
+        JITCompiler::Jump done = m_jit.jump();
 
-    isNotCell.link(&m_jit);
-    moveFalseTo(resultGPR);
+        isNotCell.link(&m_jit);
+        moveFalseTo(resultGPR);
 
-    done.link(&m_jit);
-    blessedBooleanResult(resultGPR, node);
-}
+        done.link(&m_jit);
+        blessedBooleanResult(resultGPR, node);
+        return;
+    }
 
-void SpeculativeJIT::compileIsRegExpObject(Node* node)
-{
-    JSValueOperand value(this, node->child1());
-    GPRFlushedCallResult result(this);
+    case CellUse: {
+        SpeculateCellOperand cell(this, node->child1());
+        GPRTemporary result(this, Reuse, cell);
 
-    JSValueRegs valueRegs = value.jsValueRegs();
-    GPRReg resultGPR = result.gpr();
+        GPRReg cellGPR = cell.gpr();
+        GPRReg resultGPR = result.gpr();
 
-    JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
+        m_jit.compare8(JITCompiler::Equal,
+            JITCompiler::Address(cellGPR, JSCell::typeInfoTypeOffset()),
+            TrustedImm32(node->queriedType()),
+            resultGPR);
+        blessBoolean(resultGPR);
+        blessedBooleanResult(resultGPR, node);
+        return;
+    }
 
-    m_jit.compare8(JITCompiler::Equal,
-        JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()),
-        TrustedImm32(RegExpObjectType),
-        resultGPR);
-    blessBoolean(resultGPR);
-    JITCompiler::Jump done = m_jit.jump();
-
-    isNotCell.link(&m_jit);
-    moveFalseTo(resultGPR);
-
-    done.link(&m_jit);
-    blessedBooleanResult(resultGPR, node);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 void SpeculativeJIT::compileIsTypedArrayView(Node* node)
@@ -7408,6 +7413,34 @@ void SpeculativeJIT::speculateArray(Edge edge)
     speculateArray(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateProxyObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecProxyObject, ProxyObjectType);
+}
+
+void SpeculativeJIT::speculateProxyObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecProxyObject))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateProxyObject(edge, operand.gpr());
+}
+
+void SpeculativeJIT::speculateDerivedArray(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecDerivedArray, DerivedArrayType);
+}
+
+void SpeculativeJIT::speculateDerivedArray(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecDerivedArray))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateDerivedArray(edge, operand.gpr());
+}
+
 void SpeculativeJIT::speculateMapObject(Edge edge, GPRReg cell)
 {
     speculateCellType(edge, cell, SpecMapObject, JSMapType);
@@ -7725,6 +7758,12 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case RegExpObjectUse:
         speculateRegExpObject(edge);
+        break;
+    case ProxyObjectUse:
+        speculateProxyObject(edge);
+        break;
+    case DerivedArrayUse:
+        speculateDerivedArray(edge);
         break;
     case MapObjectUse:
         speculateMapObject(edge);

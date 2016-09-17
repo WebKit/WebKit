@@ -401,6 +401,8 @@ namespace JSC {
         int32_t getOperandConstantInt(int src);
         double getOperandConstantDouble(int src);
 
+        void emitIsCellWithType(Instruction*, JSType);
+
 #if USE(JSVALUE32_64)
         bool getOperandConstantInt(int op1, int op2, int& op, int32_t& constant);
 
@@ -516,7 +518,9 @@ namespace JSC {
         void emit_op_is_number(Instruction*);
         void emit_op_is_string(Instruction*);
         void emit_op_is_jsarray(Instruction*);
+        void emit_op_is_proxy_object(Instruction*);
         void emit_op_is_object(Instruction*);
+        void emit_op_is_derived_array(Instruction*);
         void emit_op_jeq_null(Instruction*);
         void emit_op_jfalse(Instruction*);
         void emit_op_jmp(Instruction*);

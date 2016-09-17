@@ -243,42 +243,43 @@ void JIT::emit_op_is_number(Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
-void JIT::emit_op_is_string(Instruction* currentInstruction)
+void JIT::emitIsCellWithType(Instruction* currentInstruction, JSType type)
 {
     int dst = currentInstruction[1].u.operand;
     int value = currentInstruction[2].u.operand;
-    
+
     emitGetVirtualRegister(value, regT0);
     Jump isNotCell = emitJumpIfNotJSCell(regT0);
-    
-    compare8(Equal, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(StringType), regT0);
+
+    compare8(Equal, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(type), regT0);
     emitTagBool(regT0);
     Jump done = jump();
-    
+
     isNotCell.link(this);
     move(TrustedImm32(ValueFalse), regT0);
-    
+
     done.link(this);
     emitPutVirtualRegister(dst);
 }
 
+void JIT::emit_op_is_string(Instruction* currentInstruction)
+{
+    emitIsCellWithType(currentInstruction, StringType);
+}
+
 void JIT::emit_op_is_jsarray(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
+    emitIsCellWithType(currentInstruction, ArrayType);
+}
 
-    emitGetVirtualRegister(value, regT0);
-    Jump isNotCell = emitJumpIfNotJSCell(regT0);
+void JIT::emit_op_is_proxy_object(Instruction* currentInstruction)
+{
+    emitIsCellWithType(currentInstruction, ProxyObjectType);
+}
 
-    compare8(Equal, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(ArrayType), regT0);
-    emitTagBool(regT0);
-    Jump done = jump();
-
-    isNotCell.link(this);
-    move(TrustedImm32(ValueFalse), regT0);
-
-    done.link(this);
-    emitPutVirtualRegister(dst);
+void JIT::emit_op_is_derived_array(Instruction* currentInstruction)
+{
+    emitIsCellWithType(currentInstruction, DerivedArrayType);
 }
 
 void JIT::emit_op_is_object(Instruction* currentInstruction)

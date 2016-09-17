@@ -1,5 +1,23 @@
 2016-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Introduce IsCellWithType node and unify IsJSArray, IsRegExpObject and newly added IsProxyObject
+        https://bugs.webkit.org/show_bug.cgi?id=162000
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/is-array-for-array.js: Added.
+        (isArray):
+        * microbenchmarks/is-array-for-mixed-case.js: Added.
+        (isArray):
+        * microbenchmarks/is-array-for-non-array-object.js: Added.
+        (isArray):
+        * microbenchmarks/is-array-for-proxy.js: Added.
+        (isArray):
+        (isArray.proxy.throw.new.Error.isArray):
+        (isArray.proxy.throw.new.Error):
+
+2016-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, gardening test262 results
 
         Some tests are now passed with JSC, but marked as failed.

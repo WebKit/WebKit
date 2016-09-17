@@ -686,6 +686,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSFunction* privateFuncThisTimeValue = JSFunction::create(vm, this, 0, String(), dateProtoFuncGetTime);
     JSFunction* privateFuncThisNumberValue = JSFunction::create(vm, this, 0, String(), numberProtoFuncValueOf);
     JSFunction* privateFuncIsArrayConstructor = JSFunction::create(vm, this, 0, String(), arrayConstructorPrivateFuncIsArrayConstructor);
+    JSFunction* privateFuncIsArraySlow = JSFunction::create(vm, this, 0, String(), arrayConstructorPrivateFuncIsArraySlow);
     JSFunction* privateFuncConcatMemcpy = JSFunction::create(vm, this, 0, String(), arrayProtoPrivateFuncConcatMemcpy);
     JSFunction* privateFuncAppendMemcpy = JSFunction::create(vm, this, 0, String(), arrayProtoPrivateFuncAppendMemcpy);
     JSFunction* privateFuncConcatSlowPath = JSFunction::createBuiltinFunction(vm, arrayPrototypeConcatSlowPathCodeGenerator(vm), this);
@@ -750,6 +751,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->builtinNames().setIteratorNextPrivateName(), JSFunction::create(vm, this, 0, String(), privateFuncSetIteratorNext), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().isMapPrivateName(), JSFunction::create(vm, this, 1, String(), privateFuncIsMap), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().isArrayPrivateName(), arrayConstructor->getDirect(vm, vm.propertyNames->isArray), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().isArraySlowPrivateName(), privateFuncIsArraySlow, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().isArrayConstructorPrivateName(), privateFuncIsArrayConstructor, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().concatMemcpyPrivateName(), privateFuncConcatMemcpy, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().appendMemcpyPrivateName(), privateFuncAppendMemcpy, DontEnum | DontDelete | ReadOnly),

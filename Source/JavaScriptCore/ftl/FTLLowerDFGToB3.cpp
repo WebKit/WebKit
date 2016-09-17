@@ -899,8 +899,8 @@ private:
         case IsString:
             compileIsString();
             break;
-        case IsJSArray:
-            compileIsJSArray();
+        case IsCellWithType:
+            compileIsCellWithType();
             break;
         case MapHash:
             compileMapHash();
@@ -922,9 +922,6 @@ private:
             break;
         case IsFunction:
             compileIsFunction();
-            break;
-        case IsRegExpObject:
-            compileIsRegExpObject();
             break;
         case IsTypedArrayView:
             compileIsTypedArrayView();
@@ -6286,23 +6283,28 @@ private:
         setBoolean(m_out.phi(Int32, notCellResult, cellResult));
     }
 
-    void compileIsJSArray()
+    void compileIsCellWithType()
     {
-        LValue value = lowJSValue(m_node->child1());
+        if (m_node->child1().useKind() == UntypedUse) {
+            LValue value = lowJSValue(m_node->child1());
 
-        LBasicBlock isCellCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
+            LBasicBlock isCellCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
 
-        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
-        m_out.branch(
-            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
+            ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+            m_out.branch(
+                isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
 
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock cellResult = m_out.anchor(isArray(value, provenType(m_node->child1())));
-        m_out.jump(continuation);
+            LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
+            ValueFromBlock cellResult = m_out.anchor(isCellWithType(value, m_node->queriedType(), m_node->speculatedTypeForQuery(), provenType(m_node->child1())));
+            m_out.jump(continuation);
 
-        m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(Int32, notCellResult, cellResult));
+            m_out.appendTo(continuation, lastNext);
+            setBoolean(m_out.phi(Int32, notCellResult, cellResult));
+        } else {
+            ASSERT(m_node->child1().useKind() == CellUse);
+            setBoolean(isCellWithType(lowCell(m_node->child1()), m_node->queriedType(), m_node->speculatedTypeForQuery(), provenType(m_node->child1())));
+        }
     }
 
     void compileIsObject()
@@ -6645,25 +6647,6 @@ private:
         LValue result = m_out.phi(
             Int32, notCellResult, functionResult, objectResult, slowResult);
         setBoolean(result);
-    }
-
-    void compileIsRegExpObject()
-    {
-        LValue value = lowJSValue(m_node->child1());
-
-        LBasicBlock isCellCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
-        m_out.branch(
-            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
-
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock cellResult = m_out.anchor(isRegExpObject(value, provenType(m_node->child1())));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(Int32, notCellResult, cellResult));
     }
 
     void compileIsTypedArrayView()
@@ -10691,6 +10674,12 @@ private:
         case RegExpObjectUse:
             speculateRegExpObject(edge);
             break;
+        case ProxyObjectUse:
+            speculateProxyObject(edge);
+            break;
+        case DerivedArrayUse:
+            speculateDerivedArray(edge);
+            break;
         case MapObjectUse:
             speculateMapObject(edge);
             break;
@@ -10786,13 +10775,13 @@ private:
         jsValueToStrictInt52(edge, lowJSValue(edge, ManualOperandSpeculation));
     }
 
-    LValue isArray(LValue cell, SpeculatedType type = SpecFullTop)
+    LValue isCellWithType(LValue cell, JSType queriedType, SpeculatedType speculatedTypeForQuery, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type & SpecCell, SpecArray))
+        if (LValue proven = isProvenValue(type & SpecCell, speculatedTypeForQuery))
             return proven;
         return m_out.equal(
             m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt32(ArrayType));
+            m_out.constInt32(queriedType));
     }
 
     LValue isTypedArrayView(LValue cell, SpeculatedType type = SpecFullTop)
@@ -10933,15 +10922,6 @@ private:
             m_out.constInt32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
     }
 
-    LValue isRegExpObject(LValue cell, SpeculatedType type = SpecFullTop)
-    {
-        if (LValue proven = isProvenValue(type & SpecCell, SpecRegExpObject))
-            return proven;
-        return m_out.equal(
-            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt32(RegExpObjectType));
-    }
-
     LValue isType(LValue cell, JSType type)
     {
         return m_out.equal(
@@ -11035,6 +11015,28 @@ private:
     void speculateRegExpObject(Edge edge)
     {
         speculateRegExpObject(edge, lowCell(edge));
+    }
+
+    void speculateProxyObject(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecProxyObject, isNotType(cell, ProxyObjectType));
+    }
+
+    void speculateProxyObject(Edge edge)
+    {
+        speculateProxyObject(edge, lowCell(edge));
+    }
+
+    void speculateDerivedArray(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecDerivedArray, isNotType(cell, DerivedArrayType));
+    }
+
+    void speculateDerivedArray(Edge edge)
+    {
+        speculateDerivedArray(edge, lowCell(edge));
     }
 
     void speculateMapObject(Edge edge, LValue cell)

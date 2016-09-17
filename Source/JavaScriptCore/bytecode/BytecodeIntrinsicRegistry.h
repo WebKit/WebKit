@@ -43,6 +43,8 @@ class Identifier;
     macro(assert) \
     macro(isObject) \
     macro(isJSArray) \
+    macro(isProxyObject) \
+    macro(isDerivedArray) \
     macro(tailCallForwardArguments) \
     macro(tryGetById) \
     macro(putByValDirect) \

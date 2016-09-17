@@ -35,6 +35,7 @@
 #include "JSFunction.h"
 #include "JSMap.h"
 #include "JSSet.h"
+#include "ProxyObject.h"
 #include "ScopedArguments.h"
 #include "StringObject.h"
 #include "ValueProfile.h"
@@ -146,6 +147,26 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
     
             if (value & SpecRegExpObject)
                 myOut.print("Regexpobject");
+            else
+                isTop = false;
+
+            if (value & SpecMapObject)
+                myOut.print("Mapobject");
+            else
+                isTop = false;
+
+            if (value & SpecSetObject)
+                myOut.print("Setobject");
+            else
+                isTop = false;
+
+            if (value & SpecProxyObject)
+                myOut.print("Proxyobject");
+            else
+                isTop = false;
+
+            if (value & SpecDerivedArray)
+                myOut.print("Derivedarray");
             else
                 isTop = false;
         }
@@ -354,6 +375,9 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
 
     if (classInfo == JSSet::info())
         return SpecSetObject;
+
+    if (classInfo == ProxyObject::info())
+        return SpecProxyObject;
     
     if (classInfo->isSubClassOf(JSFunction::info()))
         return SpecFunction;
@@ -373,6 +397,8 @@ SpeculatedType speculationFromStructure(Structure* structure)
         return SpecString;
     if (structure->typeInfo().type() == SymbolType)
         return SpecSymbol;
+    if (structure->typeInfo().type() == DerivedArrayType)
+        return SpecDerivedArray;
     return speculationFromClassInfo(structure->classInfo());
 }
 

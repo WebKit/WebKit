@@ -59,6 +59,8 @@ public:
         case FunctionUse:
         case FinalObjectUse:
         case RegExpObjectUse:
+        case ProxyObjectUse:
+        case DerivedArrayUse:
         case MapObjectUse:
         case SetObjectUse:
         case ObjectOrOtherUse:
@@ -261,7 +263,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case OverridesHasInstance:
     case InstanceOf:
     case InstanceOfCustom:
-    case IsJSArray:
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:
@@ -270,7 +271,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case IsObject:
     case IsObjectOrNull:
     case IsFunction:
-    case IsRegExpObject:
+    case IsCellWithType:
     case IsTypedArrayView:
     case TypeOf:
     case LogicalNot:

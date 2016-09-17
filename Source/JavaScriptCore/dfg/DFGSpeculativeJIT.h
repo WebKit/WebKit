@@ -755,8 +755,7 @@ public:
     void compileInstanceOf(Node*);
     void compileInstanceOfCustom(Node*);
 
-    void compileIsJSArray(Node*);
-    void compileIsRegExpObject(Node*);
+    void compileIsCellWithType(Node*);
     void compileIsTypedArrayView(Node*);
 
     void emitCall(Node*);
@@ -2680,6 +2679,10 @@ public:
     void speculateFinalObject(Edge);
     void speculateRegExpObject(Edge, GPRReg cell);
     void speculateRegExpObject(Edge);
+    void speculateProxyObject(Edge, GPRReg cell);
+    void speculateProxyObject(Edge);
+    void speculateDerivedArray(Edge, GPRReg cell);
+    void speculateDerivedArray(Edge);
     void speculateMapObject(Edge);
     void speculateMapObject(Edge, GPRReg cell);
     void speculateSetObject(Edge);

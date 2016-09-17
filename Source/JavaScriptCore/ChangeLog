@@ -1,5 +1,179 @@
 2016-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Introduce IsCellWithType node and unify IsJSArray, IsRegExpObject and newly added IsProxyObject
+        https://bugs.webkit.org/show_bug.cgi?id=162000
+
+        Reviewed by Filip Pizlo.
+
+        Sampling profiler tells that ES6SampleBench/Basic frequently calls Array.isArray(). This function is introduced in
+        ES5 and it is well-used to distinguish Array from the other objects. Moreover, this function is used in Array.prototype.xxx
+        methods as @isArray. So it's worth optimizing.
+
+        The difference between Array.isArray and @isJSArray is that Array.isArray need to consider about ProxyObject while
+        @isJSArray builtin intrinsic does not. So in this patch, we leverage the existing @isJSArray to implement Array.isArray.
+        Array.isArray is written in builtin JS code using @isJSArray and newly added @isProxyObject(). That allow us to inline
+        Array.isArray() code and the inlined code uses existing DFG nodes well.
+
+        Another problem is RuntimeArray and ArrayPrototype. They inherit JSArray and their JSType is ObjectType. But Array.isArray need
+        to return true for those types. While optimizing type checking in generic way by type display is nice, RuntimeArray and
+        ArrayPrototype are a bit tricky and it is super rare that these functions are passed to Array.isArray(). So instead of introducing
+        type display in this patch, we just introduce a new JSType, DerivedArrayType and use it in the above 2 use classes. Since
+        Array.isArray is specially handled in the spec (while we don't have any Date.isDate() like functions, only Array.isArray
+        is specified in the spec because we frequently want to distinguish Arrays from other Objects), optimizing Array.isArray specially
+        by introducing special DerivedArrayType is reasonable.
+
+        In LLInt level, we add a new opcode, op_is_proxy_object and op_is_derived_array. This works similar to op_is_jsarray.
+        And we also perform LLInt code cleanup by introducing a macro isCellWithType.
+
+        In baseline, we perform some clean up for op_is_proxy_object etc. Now duplicate code is reduced.
+
+        In DFG, we unify IsJSArray, IsRegExpObject, IsProxyObject, and IsDerivedArray into one IsCellWithType node. And we clean up
+        some AI code related to IsJSArray and IsRegExpObject since SpeculatedType now recognizes ProxyObject. IsJSArray and IsRegExpObject
+        does not do anything special for proxy objects.
+
+        The above change simplify things to create a new IsXXX DFG handling and paves the way for optimizing @isMap & @isSet in DFG.
+        Furthermore, introducing @isProxyObject() is nice for the first step to optimize ProxyObject handling.
+
+        Here is microbenchmark result. We can see stable performance improvement (Even if we use Proxies!).
+
+                                                    baseline                  patched
+
+            is-array-for-array                   2.5156+-0.0288     ^      2.0668+-0.0285        ^ definitely 1.2171x faster
+            is-array-for-mixed-case              4.7787+-0.0755     ^      4.4722+-0.0789        ^ definitely 1.0686x faster
+            is-array-for-non-array-object        2.3596+-0.0368     ^      1.8178+-0.0262        ^ definitely 1.2980x faster
+            is-array-for-proxy                   4.0469+-0.0437     ^      3.3845+-0.0404        ^ definitely 1.1957x faster
+
+        And ES6SampleBench/Basic reports 5.2% perf improvement. And now sampling result in ES6SampleBench/Basic does not pose Array.isArray.
+
+            Benchmark             First Iteration        Worst 2%               Steady State
+            baseline:Basic        28.59 ms +- 1.03 ms    15.08 ms +- 0.28 ms    1656.96 ms +- 18.02 ms
+            patched:Basic         27.82 ms +- 0.44 ms    14.59 ms +- 0.16 ms    1574.65 ms +- 8.44 ms
+
+        * builtins/ArrayConstructor.js:
+        (isArray):
+        (from): Deleted.
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromStructure):
+        * bytecode/SpeculatedType.h:
+        (JSC::isProxyObjectSpeculation):
+        (JSC::isDerivedArraySpeculation):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsProxyObject):
+        (JSC::BytecodeGenerator::emitIsDerivedArray):
+        (JSC::BytecodeGenerator::emitIsJSArray): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isProxyObject):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isDerivedArray):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupIsCellWithType):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasQueriedType):
+        (JSC::DFG::Node::queriedType):
+        (JSC::DFG::Node::hasSpeculatedTypeForQuery):
+        (JSC::DFG::Node::speculatedTypeForQuery):
+        (JSC::DFG::Node::shouldSpeculateProxyObject):
+        (JSC::DFG::Node::shouldSpeculateDerivedArray):
+        (JSC::DFG::Node::loadVarargsData): Deleted.
+        (JSC::DFG::Node::shouldSpeculateArray): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIsCellWithType):
+        (JSC::DFG::SpeculativeJIT::speculateProxyObject):
+        (JSC::DFG::SpeculativeJIT::speculateDerivedArray):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        (JSC::DFG::SpeculativeJIT::compileIsJSArray): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIsRegExpObject): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsCellWithType):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::isCellWithType):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateProxyObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateDerivedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsJSArray): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsRegExpObject): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isArray): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isRegExpObject): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitIsCellWithType):
+        (JSC::JIT::emit_op_is_string):
+        (JSC::JIT::emit_op_is_jsarray):
+        (JSC::JIT::emit_op_is_proxy_object):
+        (JSC::JIT::emit_op_is_derived_array):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitIsCellWithType):
+        (JSC::JIT::emit_op_is_string):
+        (JSC::JIT::emit_op_is_jsarray):
+        (JSC::JIT::emit_op_is_proxy_object):
+        (JSC::JIT::emit_op_is_derived_array):
+        * jsc.cpp:
+        (WTF::RuntimeArray::createStructure):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        (JSC::isArraySlowInline):
+        (JSC::isArraySlow):
+        (JSC::arrayConstructorPrivateFuncIsArraySlow):
+        (JSC::arrayConstructorIsArray): Deleted.
+        * runtime/ArrayConstructor.h:
+        (JSC::isArray):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::createStructure):
+        * runtime/JSArray.h:
+        (JSC::JSArray::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSType.h:
+
+2016-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] Introduce ArrayUse
         https://bugs.webkit.org/show_bug.cgi?id=162063
 

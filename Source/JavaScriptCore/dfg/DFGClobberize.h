@@ -158,14 +158,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case StringCharCodeAt:
     case CompareStrictEq:
     case CompareEqPtr:
-    case IsJSArray:
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:
     case IsNumber:
     case IsString:
     case IsObject:
-    case IsRegExpObject:
     case IsTypedArrayView:
     case LogicalNot:
     case CheckInBounds:
@@ -213,6 +211,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             read(World);
             write(Heap);
         }
+        return;
+
+    case IsCellWithType:
+        def(PureValue(node, node->queriedType()));
         return;
 
     case BitAnd:

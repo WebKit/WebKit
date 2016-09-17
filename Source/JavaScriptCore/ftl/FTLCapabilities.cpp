@@ -181,7 +181,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ThrowReferenceError:
     case Unreachable:
     case In:
-    case IsJSArray:
+    case IsCellWithType:
     case MapHash:
     case GetMapBucket:
     case LoadFromJSMapBucket:
@@ -194,7 +194,6 @@ inline CapabilityLevel canCompile(Node* node)
     case IsObject:
     case IsObjectOrNull:
     case IsFunction:
-    case IsRegExpObject:
     case IsTypedArrayView:
     case CheckTypeInfoFlags:
     case OverridesHasInstance:
@@ -436,6 +435,8 @@ CapabilityLevel canCompile(Graph& graph)
                 case SetObjectUse:
                 case FinalObjectUse:
                 case RegExpObjectUse:
+                case ProxyObjectUse:
+                case DerivedArrayUse:
                 case NotCellUse:
                 case OtherUse:
                 case MiscUse:

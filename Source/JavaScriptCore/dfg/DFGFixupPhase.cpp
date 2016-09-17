@@ -1417,15 +1417,10 @@ private:
             }
             break;
 
-        case IsJSArray:
-            if (node->child1()->shouldSpeculateArray()) {
-                m_insertionSet.insertNode(
-                    m_indexInBlock, SpecNone, Check, node->origin,
-                    Edge(node->child1().node(), ArrayUse));
-                m_graph.convertToConstant(node, jsBoolean(true));
-                observeUseKindOnNode<ArrayUse>(node);
-            }
+        case IsCellWithType: {
+            fixupIsCellWithType(node);
             break;
+        }
 
         case GetEnumerableLength: {
             fixEdge<CellUse>(node->child1());
@@ -1639,7 +1634,6 @@ private:
         case IsNumber:
         case IsObjectOrNull:
         case IsFunction:
-        case IsRegExpObject:
         case CreateDirectArguments:
         case CreateClonedArguments:
         case Jump:
@@ -1767,6 +1761,69 @@ private:
         if (!node->child2()) {
             ASSERT(!node->child3());
             node->convertToIdentity();
+        }
+    }
+
+    void fixupIsCellWithType(Node* node)
+    {
+        switch (node->speculatedTypeForQuery()) {
+        case SpecProxyObject:
+            if (node->child1()->shouldSpeculateProxyObject()) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), ProxyObjectUse));
+                m_graph.convertToConstant(node, jsBoolean(true));
+                observeUseKindOnNode<ProxyObjectUse>(node);
+                return;
+            }
+            break;
+
+        case SpecRegExpObject:
+            if (node->child1()->shouldSpeculateRegExpObject()) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), RegExpObjectUse));
+                m_graph.convertToConstant(node, jsBoolean(true));
+                observeUseKindOnNode<RegExpObjectUse>(node);
+                return;
+            }
+            break;
+
+        case SpecArray:
+            if (node->child1()->shouldSpeculateArray()) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), ArrayUse));
+                m_graph.convertToConstant(node, jsBoolean(true));
+                observeUseKindOnNode<ArrayUse>(node);
+                return;
+            }
+            break;
+
+        case SpecDerivedArray:
+            if (node->child1()->shouldSpeculateDerivedArray()) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), DerivedArrayUse));
+                m_graph.convertToConstant(node, jsBoolean(true));
+                observeUseKindOnNode<DerivedArrayUse>(node);
+                return;
+            }
+            break;
+        }
+
+        if (node->child1()->shouldSpeculateCell()) {
+            fixEdge<CellUse>(node->child1());
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateNotCell()) {
+            m_insertionSet.insertNode(
+                m_indexInBlock, SpecNone, Check, node->origin,
+                Edge(node->child1().node(), NotCellUse));
+            m_graph.convertToConstant(node, jsBoolean(false));
+            observeUseKindOnNode<NotCellUse>(node);
+            return;
         }
     }
 

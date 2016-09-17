@@ -1110,6 +1110,10 @@ void CodeBlock::dumpBytecode(
             printUnaryOp(out, exec, location, it, "is_jsarray");
             break;
         }
+        case op_is_proxy_object: {
+            printUnaryOp(out, exec, location, it, "is_proxy_object");
+            break;
+        }
         case op_is_object: {
             printUnaryOp(out, exec, location, it, "is_object");
             break;
@@ -1120,6 +1124,10 @@ void CodeBlock::dumpBytecode(
         }
         case op_is_function: {
             printUnaryOp(out, exec, location, it, "is_function");
+            break;
+        }
+        case op_is_derived_array: {
+            printUnaryOp(out, exec, location, it, "is_derived_array");
             break;
         }
         case op_in: {

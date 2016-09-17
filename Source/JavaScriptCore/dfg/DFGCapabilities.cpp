@@ -142,9 +142,11 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_is_number:
     case op_is_string:
     case op_is_jsarray:
+    case op_is_proxy_object:
     case op_is_object:
     case op_is_object_or_null:
     case op_is_function:
+    case op_is_derived_array:
     case op_not:
     case op_less:
     case op_lesseq:

@@ -631,9 +631,11 @@ namespace JSC {
         RegisterID* emitToIndexString(RegisterID* dst, RegisterID* index);
 
         RegisterID* emitIsJSArray(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_is_jsarray, dst, src); }
+        RegisterID* emitIsProxyObject(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_is_proxy_object, dst, src); }
         RegisterID* emitIsObject(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsUndefined(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsEmpty(RegisterID* dst, RegisterID* src);
+        RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_is_derived_array, dst, src); }
         void emitRequireObjectCoercible(RegisterID* value, const String& error);
 
         RegisterID* emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node);

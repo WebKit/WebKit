@@ -57,6 +57,8 @@ enum UseKind {
     FunctionUse,
     FinalObjectUse,
     RegExpObjectUse,
+    ProxyObjectUse,
+    DerivedArrayUse,
     ObjectOrOtherUse,
     StringIdentUse,
     StringUse,
@@ -126,6 +128,10 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecFinalObject;
     case RegExpObjectUse:
         return SpecRegExpObject;
+    case ProxyObjectUse:
+        return SpecProxyObject;
+    case DerivedArrayUse:
+        return SpecDerivedArray;
     case ObjectOrOtherUse:
         return SpecObject | SpecOther;
     case StringIdentUse:
@@ -225,6 +231,8 @@ inline bool isCell(UseKind kind)
     case FunctionUse:
     case FinalObjectUse:
     case RegExpObjectUse:
+    case ProxyObjectUse:
+    case DerivedArrayUse:
     case StringIdentUse:
     case StringUse:
     case KnownStringUse:

@@ -1010,7 +1010,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case IsEmpty:
-    case IsJSArray:
     case IsUndefined:
     case IsBoolean:
     case IsNumber:
@@ -1018,14 +1017,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsObject:
     case IsObjectOrNull:
     case IsFunction:
-    case IsRegExpObject:
+    case IsCellWithType:
     case IsTypedArrayView: {
         AbstractValue child = forNode(node->child1());
         if (child.value()) {
             bool constantWasSet = true;
             switch (node->op()) {
-            case IsJSArray:
-                setConstant(node, jsBoolean(child.value().isObject() && child.value().getObject()->type() == ArrayType));
+            case IsCellWithType:
+                setConstant(node, jsBoolean(child.value().isCell() && child.value().asCell()->type() == node->queriedType()));
                 break;
             case IsUndefined:
                 setConstant(node, jsBoolean(
@@ -1075,9 +1074,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 } else
                     setConstant(node, jsBoolean(false));
                 break;
-            case IsRegExpObject:
-                setConstant(node, jsBoolean(child.value().isObject() && child.value().getObject()->type() == RegExpObjectType));
-                break;
             case IsEmpty:
                 setConstant(node, jsBoolean(child.value().isEmpty()));
                 break;
@@ -1098,21 +1094,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         bool constantWasSet = false;
         switch (node->op()) {
-        case IsJSArray:
-            // We don't have a SpeculatedType for Proxies yet so we can't do better at proving false.
-            if (!(child.m_type & ~SpecArray)) {
-                setConstant(node, jsBoolean(true));
-                constantWasSet = true;
-                break;
-            }
-
-            if (!(child.m_type & SpecObject)) {
-                setConstant(node, jsBoolean(false));
-                constantWasSet = true;
-                break;
-            }
-
-            break;
         case IsEmpty: {
             if (child.m_type && !(child.m_type & SpecEmpty)) {
                 setConstant(node, jsBoolean(false));
@@ -1241,14 +1222,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             break;
 
-        case IsRegExpObject:
-            // We don't have a SpeculatedType for Proxies yet so we can't do better at proving false.
-            if (!(child.m_type & ~SpecRegExpObject)) {
+        case IsCellWithType:
+            if (!(child.m_type & ~node->speculatedTypeForQuery())) {
                 setConstant(node, jsBoolean(true));
                 constantWasSet = true;
                 break;
             }
-            if (!(child.m_type & SpecObject)) {
+            if (!(child.m_type & node->speculatedTypeForQuery())) {
                 setConstant(node, jsBoolean(false));
                 constantWasSet = true;
                 break;

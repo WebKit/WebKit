@@ -126,7 +126,7 @@ namespace JSC {
     macro(isBoundFunction) \
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \
-    macro(isArray) \
+    macro(isArraySlow) \
     macro(isArrayConstructor) \
     macro(isConstructor) \
     macro(isDerivedConstructor) \

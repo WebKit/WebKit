@@ -346,7 +346,9 @@ const SymbolType = 7
 const ObjectType = 20
 const FinalObjectType = 21
 const JSFunctionType = 23
-const ArrayType = 29
+const ArrayType = 31
+const DerivedArrayType = 32
+const ProxyObjectType = 116
 
 # The typed array types need to be numbered in a particular order because of the manually written
 # switch statement in get_by_val and put_by_val.

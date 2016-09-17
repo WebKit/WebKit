@@ -4660,11 +4660,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case IsJSArray: {
-        compileIsJSArray(node);
-        break;
-    }
-
     case IsObject: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value, TagWord);
@@ -4695,8 +4690,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case IsRegExpObject: {
-        compileIsRegExpObject(node);
+    case IsCellWithType: {
+        compileIsCellWithType(node);
         break;
     }
 

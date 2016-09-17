@@ -148,6 +148,12 @@ public:
     }
         
 protected:
+    void finishCreation(VM& vm)
+    {
+        Base::finishCreation(vm);
+        ASSERT_WITH_MESSAGE(type() == ArrayType || type() == DerivedArrayType, "Instance inheriting JSArray should have either ArrayType or DerivedArrayType");
+    }
+
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);

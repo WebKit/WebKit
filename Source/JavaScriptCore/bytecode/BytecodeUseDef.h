@@ -165,9 +165,11 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_is_number:
     case op_is_string:
     case op_is_jsarray:
+    case op_is_proxy_object:
     case op_is_object:
     case op_is_object_or_null:
     case op_is_function:
+    case op_is_derived_array:
     case op_to_number:
     case op_to_string:
     case op_negate:
@@ -398,9 +400,11 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_is_number:
     case op_is_string:
     case op_is_jsarray:
+    case op_is_proxy_object:
     case op_is_object:
     case op_is_object_or_null:
     case op_is_function:
+    case op_is_derived_array:
     case op_in:
     case op_to_number:
     case op_to_string:

@@ -35,12 +35,6 @@
 #include "ProxyObject.h"
 #include "JSCInlines.h"
 
-namespace JSC {
-
-static EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState*);
-
-}
-
 #include "ArrayConstructor.lut.h"
 
 namespace JSC {
@@ -67,7 +61,7 @@ void ArrayConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Arra
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
     putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isArray, arrayConstructorIsArray, DontEnum, 1);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isArray, arrayConstructorIsArrayCodeGenerator, DontEnum);
 }
 
 // ------------------------------ Functions ---------------------------
@@ -122,11 +116,41 @@ CallType ArrayConstructor::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
+static ALWAYS_INLINE bool isArraySlowInline(ExecState* exec, ProxyObject* proxy)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    while (true) {
+        if (proxy->isRevoked()) {
+            throwTypeError(exec, scope, ASCIILiteral("Array.isArray cannot be called on a Proxy that has been revoked"));
+            return false;
+        }
+        JSObject* argument = proxy->target();
+
+        if (argument->type() == ArrayType ||  argument->type() == DerivedArrayType)
+            return true;
+
+        if (argument->type() != ProxyObjectType)
+            return false;
+
+        proxy = jsCast<ProxyObject*>(argument);
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+bool isArraySlow(ExecState* exec, ProxyObject* argument)
+{
+    return isArraySlowInline(exec, argument);
+}
+
 // ES6 7.2.2
 // https://tc39.github.io/ecma262/#sec-isarray
-EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(ExecState* exec)
 {
-    return JSValue::encode(jsBoolean(isArray(exec, exec->argument(0))));
+    ASSERT(jsDynamicCast<ProxyObject*>(exec->argument(0)));
+    return JSValue::encode(jsBoolean(isArraySlowInline(exec, jsCast<ProxyObject*>(exec->uncheckedArgument(0)))));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecState* exec)
