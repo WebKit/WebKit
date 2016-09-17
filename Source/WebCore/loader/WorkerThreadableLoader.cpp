@@ -108,7 +108,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     ASSERT(securityOrigin);
     ASSERT(contentSecurityPolicy);
 
-    auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(*securityOrigin);
+    auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(securityOrigin->isolatedCopy());
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
 
     auto optionsCopy = std::make_unique<LoaderTaskOptions>(options, request.httpReferrer().isNull() ? outgoingReferrer : request.httpReferrer(), *securityOrigin);
