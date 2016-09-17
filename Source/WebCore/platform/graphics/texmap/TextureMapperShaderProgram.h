@@ -26,12 +26,18 @@
 #include "GraphicsContext3D.h"
 #include "TransformationMatrix.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
-#define TEXMAP_DECLARE_VARIABLE(Accessor, Name, Type) GC3Duint Accessor##Location() { static const AtomicString name(Name); return getLocation(name, Type); }
+#define TEXMAP_DECLARE_VARIABLE(Accessor, Name, Type) \
+    GC3Duint Accessor##Location() { \
+        static NeverDestroyed<const AtomicString> name(Name, AtomicString::ConstructFromLiteral); \
+        return getLocation(name.get(), Type); \
+    }
+
 #define TEXMAP_DECLARE_UNIFORM(Accessor) TEXMAP_DECLARE_VARIABLE(Accessor, "u_"#Accessor, UniformVariable)
 #define TEXMAP_DECLARE_ATTRIBUTE(Accessor) TEXMAP_DECLARE_VARIABLE(Accessor, "a_"#Accessor, AttribVariable)
 #define TEXMAP_DECLARE_SAMPLER(Accessor) TEXMAP_DECLARE_VARIABLE(Accessor, "s_"#Accessor, UniformVariable)
