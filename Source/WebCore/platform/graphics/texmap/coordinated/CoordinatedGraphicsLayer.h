@@ -207,6 +207,8 @@ private:
 
     void animationStartedTimerFired();
 
+    bool filtersCanBeComposited(const FilterOperations&) const;
+
     CoordinatedLayerID m_id;
     CoordinatedGraphicsLayerState m_layerState;
     GraphicsLayerTransform m_layerTransform;

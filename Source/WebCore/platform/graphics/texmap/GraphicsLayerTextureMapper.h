@@ -117,6 +117,8 @@ private:
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
 
+    bool filtersCanBeComposited(const FilterOperations&) const;
+
     // This set of flags help us defer which properties of the layer have been
     // modified by the compositor, so we can know what to look for in the next flush.
     enum ChangeMask {

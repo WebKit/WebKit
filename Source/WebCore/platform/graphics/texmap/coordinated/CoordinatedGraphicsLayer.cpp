@@ -426,16 +426,35 @@ void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platfor
 #endif
 }
 
-bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
+bool CoordinatedGraphicsLayer::filtersCanBeComposited(const FilterOperations& filters) const
 {
-    if (filters() == newFilters)
-        return true;
-
-    if (!GraphicsLayer::setFilters(newFilters))
+    if (!filters.size())
         return false;
 
-    didChangeFilters();
+    for (const auto& filterOperation : filters.operations()) {
+        if (filterOperation->type() == FilterOperation::REFERENCE)
+            return false;
+    }
+
     return true;
+}
+
+bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
+{
+    bool canCompositeFilters = filtersCanBeComposited(newFilters);
+    if (filters() == newFilters)
+        return canCompositeFilters;
+
+    if (canCompositeFilters) {
+        if (!GraphicsLayer::setFilters(newFilters))
+            return false;
+        didChangeFilters();
+    } else if (filters().size()) {
+        clearFilters();
+        didChangeFilters();
+    }
+
+    return canCompositeFilters;
 }
 
 void CoordinatedGraphicsLayer::setContentsToSolidColor(const Color& color)
@@ -1162,6 +1181,16 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
 
     if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyTransform && valueList.property() != AnimatedPropertyOpacity && valueList.property() != AnimatedPropertyFilter))
         return false;
+
+    if (valueList.property() == AnimatedPropertyFilter) {
+        int listIndex = validateFilterOperations(valueList);
+        if (listIndex < 0)
+            return false;
+
+        const auto& filters = static_cast<const FilterAnimationValue&>(valueList.at(listIndex)).value();
+        if (!filtersCanBeComposited(filters))
+            return false;
+    }
 
     bool listsMatch = false;
     bool ignoredHasBigRotation;
