@@ -1,3 +1,16 @@
+2016-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ThreadedCompositor] Scrolling artifacts on accelerated subframes
+        https://bugs.webkit.org/show_bug.cgi?id=149060
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that we are scrolling the main frame even when scrolling is not delegated.
+
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents): Return early if main frame view doesn't
+        delegate scrolling.
+
 2016-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         WKWebViewConfiguration's _incrementalRenderingSuppressionTimeout should be an NSTimeInterval

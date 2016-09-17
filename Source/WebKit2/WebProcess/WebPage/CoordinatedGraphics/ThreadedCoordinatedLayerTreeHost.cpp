@@ -79,6 +79,10 @@ void ThreadedCoordinatedLayerTreeHost::forceRepaint()
 
 void ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents(const IntRect& rect)
 {
+    FrameView* frameView = m_webPage.mainFrameView();
+    if (!frameView || !frameView->delegatesScrolling())
+        return;
+
     m_viewportController.didScroll(rect.location());
     didChangeViewport();
 }
