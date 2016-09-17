@@ -144,6 +144,9 @@ webkit.org/b/137130 inspector/replay [ Skip ]
 # This test is fast enough in release but quite slow in debug builds.
 [ Debug ] inspector/debugger/debugger-stack-overflow.html [ Skip ]
 
+# Debugger stepping tests can timeout if they run slowly due to a short timer scheduled in the frontend.
+webkit.org/b/161951 [ Debug ] inspector/debugger/paused-scopes.html [ Skip ]
+
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
 webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
 

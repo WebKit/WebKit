@@ -12,8 +12,6 @@ function test()
 
     let suite = InspectorTest.createAsyncSuite("BreakOnAnyException.Promise");
 
-    InspectorTest.debug();
-
     function addTestCase({name, description, expression}) {
         suite.addTestCase({
             name, description,

@@ -1,3 +1,18 @@
+2016-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed cleanup of some inspector tests.
+
+        * TestExpectations:
+        Start skipping some debugger stepping test flakeyness on
+        Debug builds until that bug is addressed.
+
+        * inspector/debugger/break-on-exception-throw-in-promise.html:
+        Remove debug only.
+
+        * inspector/debugger/paused-scopes.html: Added.
+        This test was missing for 3 months. Its expectations got added
+        but the test itself got lost after a rollout and re-land.
+
 2016-09-16  Chris Dumez  <cdumez@apple.com>
 
         Cancelling one frame's load cancels load in other frames that have the same URL as well
