@@ -82,10 +82,11 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
     {
         this._cleared = true;
 
-        this.startNewSession(true);
+        const clearPreviousSessions = true;
+        this.startNewSession(clearPreviousSessions, {newSessionReason: WebInspector.ConsoleSession.NewSessionReason.ConsoleCleared});
     }
 
-    startNewSession(clearPreviousSessions)
+    startNewSession(clearPreviousSessions = false, data = {})
     {
         if (this._sessions.length && clearPreviousSessions) {
             for (var i = 0; i < this._sessions.length; ++i)
@@ -95,15 +96,19 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             this._currentConsoleGroup = null;
         }
 
-        var lastSession = this._sessions.lastValue;
-        // Reuse the last session if it has no messages.
+        // First session shows the time when the console was opened.
+        if (!this._sessions.length)
+            data.timestamp = Date.now();
+
+        let lastSession = this._sessions.lastValue;
+
+        // Remove empty session.
         if (lastSession && !lastSession.hasMessages()) {
-            // Make sure the session is visible.
-            lastSession.element.scrollIntoView();
-            return;
+            this._sessions.pop();
+            lastSession.element.remove();
         }
 
-        var consoleSession = new WebInspector.ConsoleSession;
+        let consoleSession = new WebInspector.ConsoleSession(data);
 
         this._previousMessageView = null;
         this._lastCommitted = "";

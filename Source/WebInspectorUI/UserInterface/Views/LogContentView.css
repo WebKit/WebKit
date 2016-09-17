@@ -164,8 +164,22 @@
     position: relative;
 }
 
-.console-session + .console-session {
-    border-top: 3px dashed hsl(0, 0%, 94%);
+.console-session-header {
+    text-align: center;
+    padding: 6px 0;
+}
+
+.console-session:first-of-type .console-session-header {
+    color: hsl(0, 0%, 60%);
+}
+
+.console-session:not(:first-of-type) {
+    border-top: 0.5px dashed var(--border-color);
+}
+
+.console-session:not(:first-of-type) .console-session-header {
+    color: hsl(0, 0%, 30%);
+    background-color: hsl(0, 0%, 95%);
 }
 
 .console-messages a {

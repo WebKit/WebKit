@@ -1,3 +1,43 @@
+2016-09-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Make console session dividers more pronounced
+        https://bugs.webkit.org/show_bug.cgi?id=161938
+        <rdar://problem/28291166>
+
+        Reviewed by Brian Burg.
+
+        Instead of using a dim dashed line as a console session separator, include time and reason why
+        the new session started, which could be one of the following values:
+        - Console opened (for the first time)
+        - Console cleared
+        - Page reloaded
+        - Page navigated
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.clear):
+        (WebInspector.JavaScriptLogViewController.prototype.startNewSession):
+        Remove previous session if it doesn't have any messages.
+
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager.prototype._mainResourceDidChange):
+        (WebInspector.LogManager):
+        Session separator wasn't appended when navigating to a different web page. Always dispatch
+        SessionStarted events when the main resource changes. Distinguish between reload and navigation.
+
+        * UserInterface/Views/ConsoleSession.js:
+        (WebInspector.ConsoleSession):
+        (WebInspector.ConsoleSession.prototype.addMessageView):
+        (WebInspector.ConsoleSession.prototype.append):
+        (WebInspector.ConsoleSession.prototype.hasMessages):
+        * UserInterface/Views/LogContentView.css:
+        (.console-session-header):
+        (.console-session:first-of-type .console-session-header):
+        (.console-session:not(:first-of-type)):
+        (.console-session:not(:first-of-type) .console-session-header):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._sessionStarted):
+
 2016-09-16  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: make Object.awaitEvent synchronously add an event listener

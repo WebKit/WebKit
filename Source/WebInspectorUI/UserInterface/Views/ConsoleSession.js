@@ -28,12 +28,38 @@
 
 WebInspector.ConsoleSession = class ConsoleSession extends WebInspector.Object
 {
-    constructor()
+    constructor(data)
     {
         super();
 
-        var element = document.createElement("div");
+        this._hasMessages = false;
+
+        let element = document.createElement("div");
         element.className = "console-session";
+
+        let header = document.createElement("div");
+        header.classList.add("console-session-header");
+
+        let headerText = "";
+        switch (data.newSessionReason) {
+        case WebInspector.ConsoleSession.NewSessionReason.PageReloaded:
+            headerText =  WebInspector.UIString("Page reloaded at %s");
+            break;
+        case WebInspector.ConsoleSession.NewSessionReason.PageNavigated:
+            headerText = WebInspector.UIString("Page navigated at %s");
+            break;
+        case WebInspector.ConsoleSession.NewSessionReason.ConsoleCleared:
+            headerText = WebInspector.UIString("Console cleared at %s");
+            break;
+        default:
+            headerText = WebInspector.UIString("Console opened at %s");
+            break;
+        }
+
+        let timestamp = data.timestamp || Date.now();
+        header.textContent = headerText.format(new Date(timestamp).toLocaleTimeString());
+        element.append(header);
+
         this.element = element;
         this._messagesElement = element;
     }
@@ -44,16 +70,23 @@ WebInspector.ConsoleSession = class ConsoleSession extends WebInspector.Object
     {
         var messageElement = messageView.element;
         messageElement.classList.add(WebInspector.LogContentView.ItemWrapperStyleClassName);
-        this._messagesElement.appendChild(messageElement);
+        this.append(messageElement);
     }
 
     append(messageOrGroupElement)
     {
-        this._messagesElement.appendChild(messageOrGroupElement);
+        this._hasMessages = true;
+        this._messagesElement.append(messageOrGroupElement);
     }
 
     hasMessages()
     {
-        return !!this._messagesElement.childNodes.length;
+        return this._hasMessages;
     }
+};
+
+WebInspector.ConsoleSession.NewSessionReason = {
+    PageReloaded: Symbol("Page reloaded"),
+    PageNavigated: Symbol("Page navigated"),
+    ConsoleCleared: Symbol("Console cleared"),
 };

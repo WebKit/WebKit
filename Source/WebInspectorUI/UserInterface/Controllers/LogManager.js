@@ -114,8 +114,9 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
 
         this._isNewPageOrReload = true;
 
-        if (event.data.oldMainResource.url === event.target.mainResource.url)
-            this.dispatchEventToListeners(WebInspector.LogManager.Event.SessionStarted);
+        let timestamp = Date.now();
+        let wasReloaded = event.data.oldMainResource && event.data.oldMainResource.url === event.target.mainResource.url;
+        this.dispatchEventToListeners(WebInspector.LogManager.Event.SessionStarted, {timestamp, wasReloaded});
 
         WebInspector.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
     }

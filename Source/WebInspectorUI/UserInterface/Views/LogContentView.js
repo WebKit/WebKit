@@ -287,7 +287,9 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             return;
         }
 
-        this._logViewController.startNewSession();
+        const isFirstSession = false;
+        const newSessionReason = event.data.wasReloaded ? WebInspector.ConsoleSession.NewSessionReason.PageReloaded : WebInspector.ConsoleSession.NewSessionReason.PageNavigated;
+        this._logViewController.startNewSession(isFirstSession, {newSessionReason, timestamp: event.data.timestamp});
 
         this._clearProvisionalState();
     }
