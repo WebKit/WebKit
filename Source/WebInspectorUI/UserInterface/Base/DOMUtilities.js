@@ -80,3 +80,231 @@ function createSVGElement(tagName)
 {
     return document.createElementNS("http://www.w3.org/2000/svg", tagName);
 }
+
+WebInspector.cssPath = function(node)
+{
+    console.assert(node instanceof WebInspector.DOMNode, "Expected a DOMNode.");
+    if (node.nodeType() !== Node.ELEMENT_NODE)
+        return "";
+
+    let suffix = "";
+    if (node.isPseudoElement()) {
+        suffix = "::" + node.pseudoType();
+        node = node.parentNode;
+    }
+
+    let components = [];
+    while (node) {
+        let component = WebInspector.cssPathComponent(node);
+        if (!component)
+            break;
+        components.push(component);
+        if (component.done)
+            break;
+        node = node.parentNode;
+    }
+
+    components.reverse();
+    return components.map((x) => x.value).join(" > ") + suffix;
+};
+
+WebInspector.cssPathComponent = function(node)
+{
+    console.assert(node instanceof WebInspector.DOMNode, "Expected a DOMNode.");
+    console.assert(!node.isPseudoElement());
+    if (node.nodeType() !== Node.ELEMENT_NODE)
+        return null;
+
+    let nodeName = node.nodeNameInCorrectCase();
+    let lowerNodeName = node.nodeName().toLowerCase();
+
+    // html, head, and body are unique nodes.
+    if (lowerNodeName === "body" || lowerNodeName === "head" || lowerNodeName === "html")
+        return {value: nodeName, done: true};
+
+    // #id is unique.
+    let id = node.getAttribute("id");
+    if (id)
+        return {value: node.escapedIdSelector, done: true};
+
+    // Root node does not have siblings.
+    if (!node.parentNode || node.parentNode.nodeType() === Node.DOCUMENT_NODE)
+        return {value: nodeName, done: true};
+
+    // Find uniqueness among siblings.
+    //   - look for a unique className
+    //   - look for a unique tagName
+    //   - fallback to nth-child()
+
+    function classNames(node) {
+        let classAttribute = node.getAttribute("class");
+        return classAttribute ? classAttribute.trim().split(/\s+/) : [];
+    }
+
+    let nthChildIndex = -1;
+    let hasUniqueTagName = true;
+    let uniqueClasses = new Set(classNames(node));
+
+    let siblings = node.parentNode.children;
+    let elementIndex = 0;
+    for (let sibling of siblings) {
+        if (sibling.nodeType() !== Node.ELEMENT_NODE)
+            continue;
+
+        elementIndex++;
+        if (sibling === node) {
+            nthChildIndex = elementIndex;
+            continue;
+        }
+
+        if (sibling.nodeNameInCorrectCase() === nodeName)
+            hasUniqueTagName = false;
+
+        if (uniqueClasses.size) {
+            let siblingClassNames = classNames(sibling);
+            for (let className of siblingClassNames)
+                uniqueClasses.delete(className);
+        }
+    }
+
+    let selector = nodeName;
+    if (lowerNodeName === "input" && node.getAttribute("type") && !uniqueClasses.size)
+        selector += `[type="${node.getAttribute("type")}"]`;
+    if (!hasUniqueTagName) {
+        if (uniqueClasses.size)
+            selector += node.escapedClassSelector;
+        else
+            selector += `:nth-child(${nthChildIndex})`;
+    }
+
+    return {value: selector, done: false};
+};
+
+WebInspector.xpath = function(node)
+{
+    console.assert(node instanceof WebInspector.DOMNode, "Expected a DOMNode.");
+
+    if (node.nodeType() === Node.DOCUMENT_NODE)
+        return "/";
+
+    let components = [];
+    while (node) {
+        let component = WebInspector.xpathComponent(node);
+        if (!component)
+            break;
+        components.push(component);
+        if (component.done)
+            break;
+        node = node.parentNode;
+    }
+
+    components.reverse();
+
+    let prefix = components.length && components[0].done ? "" : "/";
+    return prefix + components.map((x) => x.value).join("/");
+};
+
+WebInspector.xpathComponent = function(node)
+{
+    console.assert(node instanceof WebInspector.DOMNode, "Expected a DOMNode.");
+
+    let index = WebInspector.xpathIndex(node);
+    if (index === -1)
+        return null;
+
+    let value;
+
+    switch (node.nodeType()) {
+    case Node.DOCUMENT_NODE:
+        return {value: "", done: true};
+    case Node.ELEMENT_NODE:
+        var id = node.getAttribute("id");
+        if (id)
+            return {value: `//*[@id="${id}"]`, done: true};
+        value = node.localName();
+        break;
+    case Node.ATTRIBUTE_NODE:
+        value = `@${node.nodeName()}`;
+        break;
+    case Node.TEXT_NODE:
+    case Node.CDATA_SECTION_NODE:
+        value = "text()";
+        break;
+    case Node.COMMENT_NODE:
+        value = "comment()";
+        break;
+    case Node.PROCESSING_INSTRUCTION_NODE:
+        value = "processing-instruction()";
+        break
+    default:
+        value = "";
+        break;
+    }
+
+    if (index > 0)
+        value += `[${index}]`;
+
+    return {value, done: false};
+};
+
+WebInspector.xpathIndex = function(node)
+{
+    // Root node.
+    if (!node.parentNode)
+        return 0;
+
+    // No siblings.
+    let siblings = node.parentNode.children;
+    if (siblings.length <= 1)
+        return 0;
+
+    // Find uniqueness among siblings.
+    //   - look for a unique localName
+    //   - fallback to index
+
+    function isSimiliarNode(a, b) {
+        if (a === b)
+            return true;
+
+        let aType = a.nodeType();
+        let bType = b.nodeType();
+
+        if (aType === Node.ELEMENT_NODE && bType === Node.ELEMENT_NODE)
+            return a.localName() === b.localName();
+
+        // XPath CDATA and text() are the same.
+        if (aType === Node.CDATA_SECTION_NODE)
+            aType === Node.TEXT_NODE;
+        if (bType === Node.CDATA_SECTION_NODE)
+            bType === Node.TEXT_NODE;
+
+        return aType === bType;
+    }
+
+    let unique = true;
+    let xPathIndex = -1;
+
+    let xPathIndexCounter = 1; // XPath indices start at 1.
+    for (let sibling of siblings) {
+        if (!isSimiliarNode(node, sibling))
+            continue;
+
+        if (node === sibling) {
+            xPathIndex = xPathIndexCounter;
+            if (!unique)
+                return xPathIndex;
+        } else {
+            unique = false;
+            if (xPathIndex !== -1)
+                return xPathIndex;
+        }
+
+        xPathIndexCounter++;
+    }
+
+    if (unique)
+        return 0;
+
+    console.assert(xPathIndex > 0, "Should have found the node.");
+    return xPathIndex;
+};

@@ -1,0 +1,29 @@
+Test for WebInspector.xpath.
+
+
+
+
+== Running test suite: WebInspector.xpath
+-- Running test case: WebInspector.xpath.TopLevelNode
+PASS: HTML element should have simple XPath '/html'.
+PASS: BODY element should have simple XPath '/html/body'.
+PASS: HEAD element should have simple XPath '/html/head'.
+
+-- Running test case: WebInspector.xpath.ElementWithID
+PASS: Element with id should have a single path component '//*[@id="id-test"]'.
+PASS: Element inside element with id should have path from id.
+
+-- Running test case: WebInspector.xpath.UniqueTagName
+PASS: Elements with unique tag name should not need XPath index.
+
+-- Running test case: WebInspector.xpath.NonUniqueTagName
+PASS: Elements with non-unique tag name should need XPath index.
+
+-- Running test case: WebInspector.xpath.DeepPath
+/html/body/div/div[7]/ul/li/div[3]/ul/li[2]/a/small
+PASS: Should be able to get XPath for deep elements.
+
+-- Running test case: WebInspector.xpath.TextAndCommentNode
+PASS: Should be able to get XPath for TEXT_NODE.
+PASS: Should be able to get XPath for COMMENT_NODE.
+

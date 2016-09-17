@@ -1,3 +1,34 @@
+2016-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement Copy CSS Selector and Copy Xpath Selector context menus
+        https://bugs.webkit.org/show_bug.cgi?id=158881
+        <rdar://problem/8181156>
+
+        Reviewed by Matt Baker.
+
+        This is based off of the Blink implementation (DOMPresentationUtils)
+        with some minor modifications and using our own utility methods.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New context menu strings.
+
+        * UserInterface/Base/DOMUtilities.js:
+        (WebInspector.cssPath):
+        (WebInspector.cssPathComponent.classNames):
+        (WebInspector.cssPathComponent):
+        (WebInspector.xpath):
+        (WebInspector.xpathIndex.isSimiliarNode):
+        (WebInspector.xpathIndex):
+        Build strings for a CSS selector path or XPath path to a node.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.populateContextMenu):
+        Include copy path context menu items on nodes.
+        Pseudo elements do not get Copy XPath.
+        Non-node elements do not get Copy Selector Path.
+
 2016-09-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Make console session dividers more pronounced

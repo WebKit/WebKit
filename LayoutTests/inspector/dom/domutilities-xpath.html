@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    function nodeForSelector(selector, callback) {
+        WebInspector.domTreeManager.querySelector(documentNode.id, selector, (nodeId) => {
+            callback(WebInspector.domTreeManager.nodeForId(nodeId));
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WebInspector.xpath");
+
+    suite.addTestCase({
+        name: "WebInspector.xpath.TopLevelNode",
+        description: "Top level nodes like html, body, and head are unique.",
+        test(resolve, reject) {
+            nodeForSelector("html", (node) => {
+                InspectorTest.expectEqual(WebInspector.xpath(node), "/html", "HTML element should have simple XPath '/html'.");
+            });
+            nodeForSelector("html > body", (node) => {
+                InspectorTest.expectEqual(WebInspector.xpath(node), "/html/body", "BODY element should have simple XPath '/html/body'.");
+            });
+            nodeForSelector("html > head", (node) => {
+                InspectorTest.expectEqual(WebInspector.xpath(node), "/html/head", "HEAD element should have simple XPath '/html/head'.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.xpath.ElementWithID",
+        description: "Element with ID is unique (#id). Path does not need to go past it.",
+        test(resolve, reject) {
+            nodeForSelector("#id-test", (node) => {
+                InspectorTest.expectEqual(WebInspector.xpath(node), "//*[@id=\"id-test\"]", "Element with id should have a single path component '//*[@id=\"id-test\"]'.");
+            });
+            nodeForSelector("#id-test > div", (node) => {
+                InspectorTest.expectEqual(WebInspector.xpath(node), "//*[@id=\"id-test\"]/div", "Element inside element with id should have path from id.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.xpath.UniqueTagName",
+        description: "Elements with unique tag name do not need nth-child.",
+        test(resolve, reject) {
+            nodeForSelector("#unique-tag-test > span", (node) => {
+                InspectorTest.expectEqual(WebInspector.xpath(node), "//*[@id=\"unique-tag-test\"]/span", "Elements with unique tag name should not need XPath index.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.xpath.NonUniqueTagName",
+        description: "Elements with non-unique tag name need index.",
+        test(resolve, reject) {
+            nodeForSelector("#non-unique-tag-test > span ~ span", (node) => {
+                InspectorTest.expectEqual(WebInspector.xpath(node), "//*[@id=\"non-unique-tag-test\"]/span[2]", "Elements with non-unique tag name should need XPath index.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.xpath.DeepPath",
+        description: "Tests for element with complex path.",
+        test(resolve, reject) {
+            nodeForSelector("small", (node) => {
+                InspectorTest.log(WebInspector.xpath(node));
+                InspectorTest.expectEqual(WebInspector.xpath(node), "/html/body/div/div[7]/ul/li/div[3]/ul/li[2]/a/small", "Should be able to get XPath for deep elements.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.xpath.TextAndCommentNode",
+        description: "Tests for non-Element nodes.",
+        test(resolve, reject) {
+            nodeForSelector("#non-element-test > p > br", (node) => {
+                let paragraphChildren = node.parentNode.children;
+                let lastTextChild = paragraphChildren[paragraphChildren.length - 1];
+                let lastCommentChild = paragraphChildren[paragraphChildren.length - 2];
+                InspectorTest.expectEqual(WebInspector.xpath(lastTextChild), "//*[@id=\"non-element-test\"]/p/text()[3]", "Should be able to get XPath for TEXT_NODE.");
+                InspectorTest.expectEqual(WebInspector.xpath(lastCommentChild), "//*[@id=\"non-element-test\"]/p/comment()", "Should be able to get XPath for COMMENT_NODE.");
+                resolve();
+            });
+        }
+    });
+
+    // FIXME: Write tests for nodes inside a Shadow DOM Tree.
+    // FIXME: Write test for CDATA.
+
+    WebInspector.domTreeManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for WebInspector.xpath.</p>
+<!-- If display:none pseudo elements are not created. -->
+<div style="visibility:hidden">
+    <div id="id-test">
+        <div></div>
+    </div>
+    <div id="unique-tag-test">
+        <div></div>
+        <span></span>
+        <div></div>
+    </div>
+    <div id="non-unique-tag-test">
+        <div></div>
+        <span></span>
+        <span></span>
+        <div></div>
+    </div>
+    <div id="unique-class-test">
+        <div class="alpha"></div>
+        <div class="alpha beta"></div>
+        <div class="alpha"></div>
+    </div>
+    <div id="non-unique-class-test">
+        <div class="alpha"></div>
+        <div class="alpha"></div>
+        <div class="alpha"></div>
+    </div>
+    <div id="unique-tag-and-class-test">
+        <div class="alpha"></div>
+    </div>
+    <div class="deep-path-test">
+        <ul>
+            <li>
+                <h1></h1>
+                <div></div>
+                <div></div>
+                <div>
+                    <ul class="list">
+                        <li></li>
+                        <li class="active"><a href="#"><small></small></a></li>
+                        <li></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="non-element-test">
+        <p>
+            Some leading text
+            <br>
+            Some trailing text
+            <!-- Comment -->
+            Some final text
+        </p>
+    </div>
+</div>
+</body>
+</html>

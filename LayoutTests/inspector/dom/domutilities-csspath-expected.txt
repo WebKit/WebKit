@@ -1,0 +1,38 @@
+Test for WebInspector.cssPath.
+
+
+== Running test suite: WebInspector.cssPath
+-- Running test case: WebInspector.cssPath.TopLevelNode
+PASS: HTML element should have simple selector 'html'.
+PASS: BODY element should have simple selector 'body'.
+PASS: HEAD element should have simple selector 'head'.
+
+-- Running test case: WebInspector.cssPath.ElementWithID
+PASS: Element with id should have simple selector '#id-test'.
+PASS: Element inside element with id should have path from id.
+
+-- Running test case: WebInspector.cssPath.InputElementFlair
+PASS: Input element should include type.
+
+-- Running test case: WebInspector.cssPath.UniqueTagName
+PASS: Elements with unique tag name should not need nth-child().
+
+-- Running test case: WebInspector.cssPath.NonUniqueTagName
+PASS: Elements with non-unique tag name should need nth-child().
+
+-- Running test case: WebInspector.cssPath.UniqueClassName
+PASS: Elements with unique class names should include their class names.
+
+-- Running test case: WebInspector.cssPath.NonUniqueClassName
+PASS: Elements with non-unique class names should not include their class names.
+
+-- Running test case: WebInspector.cssPath.UniqueTagAndClassName
+PASS: Elements with unique tag and class names should just have simple tag.
+
+-- Running test case: WebInspector.cssPath.DeepPath
+PASS: Should be able to create path for deep elements.
+
+-- Running test case: WebInspector.cssPath.PseudoElement
+PASS: Should be able to create path for ::before pseudo elements.
+PASS: Should be able to create path for ::after pseudo elements.
+

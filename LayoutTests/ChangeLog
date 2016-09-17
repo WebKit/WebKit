@@ -1,3 +1,18 @@
+2016-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement Copy CSS Selector and Copy Xpath Selector context menus
+        https://bugs.webkit.org/show_bug.cgi?id=158881
+        <rdar://problem/8181156>
+
+        Reviewed by Matt Baker.
+
+        * inspector/dom/domutilities-csspath-expected.txt: Added.
+        * inspector/dom/domutilities-csspath.html: Added.
+        * inspector/dom/domutilities-path-dump-expected.txt: Added.
+        * inspector/dom/domutilities-path-dump.html: Added.
+        * inspector/dom/domutilities-xpath-expected.txt: Added.
+        * inspector/dom/domutilities-xpath.html: Added.
+
 2016-09-16  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; enable newly passing media/media-source/ tests.

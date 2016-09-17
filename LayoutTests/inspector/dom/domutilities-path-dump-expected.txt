@@ -1,0 +1,111 @@
+Test for WebInspector.cssPath.
+
+ид
+класс
+
+-- CSS Selector Paths --
+html
+  head
+    head > meta
+    #script-id
+    #test-script
+  body
+    body > p
+    body > article:nth-child(2)
+    body > article:nth-child(3)
+    #ids
+      #ids > div:nth-child(1)
+      #ids > div:nth-child(2)
+      #inner-id
+      #__proto__
+      [id="\#\"ridiculous\"\.id"]
+      [id="\'quoted\.value\'"]
+      #\.foo\.bar
+      #\-
+      #-a
+      [id="-\30 "]
+      [id="\37 "]
+      #ид
+      #ids > p
+    #classes
+      #classes > div:nth-child(1)
+      #classes > div:nth-child(2)
+      #classes > div.\.foo
+      #classes > div.\.foo\.bar
+      #classes > div.\-
+      #classes > div.-a
+      #classes > div.-\30 
+      #classes > div.\37 
+      #classes > div.класс
+      #classes > div:nth-child(10)
+      #classes > div:nth-child(11)
+      #classes > span
+      #id-with-class
+    #non-unique-classes
+      #non-unique-classes > span:nth-child(1)
+      #non-unique-classes > span:nth-child(2)
+      #non-unique-classes > span:nth-child(3)
+      #non-unique-classes > span:nth-child(4)
+      #non-unique-classes > span:nth-child(5)
+      #non-unique-classes > div:nth-child(6)
+      #non-unique-classes > div:nth-child(7)
+      #non-unique-classes > div:nth-child(8)
+      #non-unique-classes > div:nth-child(9)
+      #non-unique-classes > div:nth-child(10)
+      #non-unique-classes > div:nth-child(11)
+
+-- XPaths --
+/html
+  /html/head
+    /html/head/meta
+    //*[@id="script-id"]
+    //*[@id="test-script"]
+      //*[@id="test-script"]/text()
+  /html/body
+    /html/body/p
+      /html/body/p/text()
+    /html/body/article[1]
+    /html/body/article[2]
+    //*[@id="ids"]
+      //*[@id="ids"]/div[1]
+      //*[@id="ids"]/div[2]
+      //*[@id="inner-id"]
+      //*[@id="__proto__"]
+      //*[@id="#"ridiculous".id"]
+      //*[@id="'quoted.value'"]
+      //*[@id=".foo.bar"]
+      //*[@id="-"]
+      //*[@id="-a"]
+      //*[@id="-0"]
+      //*[@id="7"]
+      //*[@id="ид"]
+        //*[@id="ид"]/text()
+      //*[@id="ids"]/p
+    //*[@id="classes"]
+      //*[@id="classes"]/div[1]
+      //*[@id="classes"]/div[2]
+      //*[@id="classes"]/div[3]
+      //*[@id="classes"]/div[4]
+      //*[@id="classes"]/div[5]
+      //*[@id="classes"]/div[6]
+      //*[@id="classes"]/div[7]
+      //*[@id="classes"]/div[8]
+      //*[@id="classes"]/div[9]
+        //*[@id="classes"]/div[9]/text()
+      //*[@id="classes"]/div[10]
+      //*[@id="classes"]/div[11]
+      //*[@id="classes"]/span
+      //*[@id="id-with-class"]
+    //*[@id="non-unique-classes"]
+      //*[@id="non-unique-classes"]/span[1]
+      //*[@id="non-unique-classes"]/span[2]
+      //*[@id="non-unique-classes"]/span[3]
+      //*[@id="non-unique-classes"]/span[4]
+      //*[@id="non-unique-classes"]/span[5]
+      //*[@id="non-unique-classes"]/div[1]
+      //*[@id="non-unique-classes"]/div[2]
+      //*[@id="non-unique-classes"]/div[3]
+      //*[@id="non-unique-classes"]/div[4]
+      //*[@id="non-unique-classes"]/div[5]
+      //*[@id="non-unique-classes"]/div[6]
+

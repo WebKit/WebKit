@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    function nodeForSelector(selector, callback) {
+        WebInspector.domTreeManager.querySelector(documentNode.id, selector, (nodeId) => {
+            callback(WebInspector.domTreeManager.nodeForId(nodeId));
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WebInspector.cssPath");
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.TopLevelNode",
+        description: "Top level nodes like html, body, and head are unique.",
+        test(resolve, reject) {
+            nodeForSelector("html", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "html", "HTML element should have simple selector 'html'.");
+            });
+            nodeForSelector("html > body", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "body", "BODY element should have simple selector 'body'.");
+            });
+            nodeForSelector("html > head", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "head", "HEAD element should have simple selector 'head'.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.ElementWithID",
+        description: "Element with ID is unique (#id). Path does not need to go past it.",
+        test(resolve, reject) {
+            nodeForSelector("#id-test", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "#id-test", "Element with id should have simple selector '#id-test'.");
+            });
+            nodeForSelector("#id-test > div", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "#id-test > div", "Element inside element with id should have path from id.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.InputElementFlair",
+        description: "Input elements include their type.",
+        test(resolve, reject) {
+            nodeForSelector("#input-test input", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "#input-test > input[type=\"password\"]", "Input element should include type.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.UniqueTagName",
+        description: "Elements with unique tag name do not need nth-child.",
+        test(resolve, reject) {
+            nodeForSelector("#unique-tag-test > span", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "#unique-tag-test > span", "Elements with unique tag name should not need nth-child().");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.NonUniqueTagName",
+        description: "Elements with non-unique tag name need nth-child.",
+        test(resolve, reject) {
+            nodeForSelector("#non-unique-tag-test > span ~ span", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "#non-unique-tag-test > span:nth-child(3)", "Elements with non-unique tag name should need nth-child().");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.UniqueClassName",
+        description: "Elements with unique class names should include their class names.",
+        test(resolve, reject) {
+            nodeForSelector("#unique-class-test > .beta", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "#unique-class-test > div.alpha.beta", "Elements with unique class names should include their class names.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.NonUniqueClassName",
+        description: "Elements with non-unique class names should not include their class names.",
+        test(resolve, reject) {
+            nodeForSelector("#non-unique-class-test > div ~ div", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "#non-unique-class-test > div:nth-child(2)", "Elements with non-unique class names should not include their class names.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.UniqueTagAndClassName",
+        description: "Elements with unique tag and class name just use tag for simplicity.",
+        test(resolve, reject) {
+            nodeForSelector("#unique-tag-and-class-test > .alpha", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "#unique-tag-and-class-test > div", "Elements with unique tag and class names should just have simple tag.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.DeepPath",
+        description: "Tests for element with complex path.",
+        test(resolve, reject) {
+            nodeForSelector("small", (node) => {
+                InspectorTest.expectEqual(WebInspector.cssPath(node), "body > div > div.deep-path-test > ul > li > div:nth-child(4) > ul > li.active > a > small", "Should be able to create path for deep elements.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.cssPath.PseudoElement",
+        description: "For a pseudo element we should get the path of the parent and append the pseudo element selector.",
+        test(resolve, reject) {
+            nodeForSelector("#pseudo-element-test > div ~ div", (node) => {
+                let pseudoElementBefore = node.beforePseudoElement();
+                InspectorTest.assert(pseudoElementBefore);
+                InspectorTest.expectEqual(WebInspector.cssPath(pseudoElementBefore), "#pseudo-element-test > div:nth-child(3)::before", "Should be able to create path for ::before pseudo elements.");
+                let pseudoElementAfter = node.afterPseudoElement();
+                InspectorTest.assert(pseudoElementAfter);
+                InspectorTest.expectEqual(WebInspector.cssPath(pseudoElementAfter), "#pseudo-element-test > div:nth-child(3)::after", "Should be able to create path for ::after pseudo elements.");
+                resolve();
+            });
+        }
+    });
+
+    // FIXME: Write tests for nodes inside a Shadow DOM Tree.
+
+    WebInspector.domTreeManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for WebInspector.cssPath.</p>
+<!-- If display:none pseudo elements are not created. -->
+<div style="visibility:hidden">
+    <div id="id-test">
+        <div></div>
+    </div>
+    <div id="input-test">
+        <input type="password">
+    </div>
+    <div id="unique-tag-test">
+        <div></div>
+        <span></span>
+        <div></div>
+    </div>
+    <div id="non-unique-tag-test">
+        <div></div>
+        <span></span>
+        <span></span>
+        <div></div>
+    </div>
+    <div id="unique-class-test">
+        <div class="alpha"></div>
+        <div class="alpha beta"></div>
+        <div class="alpha"></div>
+    </div>
+    <div id="non-unique-class-test">
+        <div class="alpha"></div>
+        <div class="alpha"></div>
+        <div class="alpha"></div>
+    </div>
+    <div id="unique-tag-and-class-test">
+        <div class="alpha"></div>
+    </div>
+    <div class="deep-path-test">
+        <ul>
+            <li>
+                <h1></h1>
+                <div></div>
+                <div></div>
+                <div>
+                    <ul class="list">
+                        <li></li>
+                        <li class="active"><a href="#"><small></small></a></li>
+                        <li></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="pseudo-element-test">
+        <style>
+        #pseudo-element-test > div~div::before { content: "before"; }
+        #pseudo-element-test > div~div::after { content: "after"; }
+        </style>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+</body>
+</html>

@@ -710,16 +710,33 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _populateNodeContextMenu(contextMenu)
     {
+        let node = this.representedObject;
+
         // Add free-form node-related actions.
         if (this.editable)
             contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
-        contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
+        if (!node.isPseudoElement())
+            contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
         if (this.editable)
             contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
-
-        let node = this.representedObject;
         if (node.nodeType() === Node.ELEMENT_NODE)
             contextMenu.appendItem(WebInspector.UIString("Scroll Into View"), this._scrollIntoView.bind(this));
+
+        contextMenu.appendSeparator();
+
+        if (node.nodeType() === Node.ELEMENT_NODE) {
+            contextMenu.appendItem(WebInspector.UIString("Copy Selector Path"), () => {
+                let cssPath = WebInspector.cssPath(this.representedObject);
+                InspectorFrontendHost.copyText(cssPath);
+            });
+        }
+
+        if (!node.isPseudoElement()) {
+            contextMenu.appendItem(WebInspector.UIString("Copy XPath"), () => {
+                let xpath = WebInspector.xpath(this.representedObject);
+                InspectorFrontendHost.copyText(xpath);
+            });
+        }
     }
 
     _startEditing()

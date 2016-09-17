@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js" id="script-id"></script>
+<script id="test-script">
+function verifySelector(selector) {
+    let nodes = document.querySelectorAll(selector);
+    if (nodes.length !== 1)
+        console.log("Selector was not unique: " + selector);
+}
+
+function verifyXPath(xpath) {
+    let nodes = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    if (nodes.snapshotLength !== 1)
+        console.log("XPath was not unique: " + xpath);
+}
+
+function test()
+{
+    let nodes = [];
+
+    function buildNodeList(node, depth) {
+        nodes.push({node, depth});
+        if (!node.children)
+            return;
+        for (let child of node.children)
+            buildNodeList(child, depth + 1);
+    }
+
+    function processList(func, verifier) {
+        for (let {node, depth} of nodes) {
+            let prefix = " ".repeat(depth * 2);
+            let path = func(node);
+            if (path) {
+                InspectorTest.log(prefix + path);
+                verifier(path);
+            }   
+        }
+    }
+
+    WebInspector.domTreeManager.requestDocument((documentNode) => {
+        // Push all the nodes to the frontend.
+        WebInspector.domTreeManager.querySelector(documentNode.id, "html", (nodeId) => {
+            let htmlNode = WebInspector.domTreeManager.nodeForId(nodeId);
+            htmlNode.getSubtree(10, () => {
+                buildNodeList(htmlNode, 0);
+
+                InspectorTest.log("");
+                InspectorTest.log("-- CSS Selector Paths --");
+                processList(WebInspector.cssPath, (selector) => {
+                    InspectorTest.evaluateInPage("verifySelector(" + JSON.stringify(selector) + ")");
+                });
+
+                InspectorTest.log("");
+                InspectorTest.log("-- XPaths --");
+                processList(WebInspector.xpath, (xpath) => {
+                    InspectorTest.evaluateInPage("verifyXPath(" + JSON.stringify(xpath) + ")");
+                });
+
+                InspectorBackend.runAfterPendingDispatches(() => {
+                    InspectorTest.completeTest();
+                })
+            });
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for WebInspector.cssPath.</p>
+
+<article></article>
+<article></article>
+
+<div id="ids">
+    <div></div>
+    <div></div>
+    <div id="inner-id"></div>
+    <div id="__proto__"></div>
+    <div id='#"ridiculous".id'></div>
+    <div id="'quoted.value'"></div>
+    <div id=".foo.bar"></div>
+    <div id="-"></div>
+    <div id="-a"></div>
+    <div id="-0"></div>
+    <div id="7"></div>
+    <div id="ид">ид</div>
+    <p></p>
+</div>
+
+<div id="classes">
+    <div class="foo bar"></div>
+    <div class=" foo foo "></div>
+    <div class=".foo"></div>
+    <div class=".foo.bar"></div>
+    <div class="-"></div>
+    <div class="-a"></div>
+    <div class="-0"></div>
+    <div class="7"></div>
+    <div class="класс">класс</div>
+    <div class="__proto__"></div>
+    <div class="__proto__ foo"></div>
+    <span class="bar"></span>
+    <div id="id-with-class" class="moo"></div>
+</div>
+
+<div id="non-unique-classes">
+  <span class="c1"></span>
+  <span class="c1"></span>
+  <span class="c1 c2"></span>
+  <span class="c1 c2 c3"></span>
+  <span></span>
+  <div class="c1"></div>
+  <div class="c1 c2"></div>
+  <div class="c3 c2"></div>
+  <div class="c3 c4"></div>
+  <div class="c1 c4"></div>
+  <div></div>
+</div>
+</body>
+</html>

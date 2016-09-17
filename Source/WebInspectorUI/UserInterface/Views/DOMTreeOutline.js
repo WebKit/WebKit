@@ -240,11 +240,12 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     populateContextMenu(contextMenu, event, treeElement)
     {
-        var tag = event.target.enclosingNodeOrSelfWithClass("html-tag");
-        var textNode = event.target.enclosingNodeOrSelfWithClass("html-text-node");
-        var commentNode = event.target.enclosingNodeOrSelfWithClass("html-comment");
+        let tag = event.target.enclosingNodeOrSelfWithClass("html-tag");
+        let textNode = event.target.enclosingNodeOrSelfWithClass("html-text-node");
+        let commentNode = event.target.enclosingNodeOrSelfWithClass("html-comment");
+        let pseudoElement = event.target.enclosingNodeOrSelfWithClass("html-pseudo-element");
 
-        var populated = false;
+        let populated = false;
         if (tag && treeElement._populateTagContextMenu) {
             if (populated)
                 contextMenu.appendSeparator();
@@ -255,7 +256,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
                 contextMenu.appendSeparator();
             treeElement._populateTextContextMenu(contextMenu, textNode);
             populated = true;
-        } else if (commentNode && treeElement._populateNodeContextMenu) {
+        } else if ((commentNode || pseudoElement) && treeElement._populateNodeContextMenu) {
             if (populated)
                 contextMenu.appendSeparator();
             treeElement._populateNodeContextMenu(contextMenu);
