@@ -75,13 +75,10 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     // FIXME: Use this when GTK+ >= 3.16. GTK+ expects the Y axis to be inverted to what we get, so we need to flip it somehow.
     gdk_cairo_draw_from_gl(cr, gtk_widget_get_window(m_webPage.viewWidget()), texture, GL_TEXTURE, 1, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
 #else
-    IntSize size = textureSize;
-    float deviceScaleFactor = m_webPage.deviceScaleFactor();
-    size.scale(deviceScaleFactor);
+    if (!m_surface || cairo_image_surface_get_width(m_surface.get()) != textureSize.width() || cairo_image_surface_get_height(m_surface.get()) != textureSize.height())
+        m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, textureSize.width(), textureSize.height()));
 
-    if (!m_surface || cairo_image_surface_get_width(m_surface.get()) != size.width() || cairo_image_surface_get_height(m_surface.get()) != size.height())
-        m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
-    cairoSurfaceSetDeviceScale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
+    cairoSurfaceSetDeviceScale(m_surface.get(), m_webPage.deviceScaleFactor(), m_webPage.deviceScaleFactor());
 
     GLuint fb;
     glGenFramebuffers(1, &fb);
@@ -103,7 +100,7 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     }
 
     // Convert to BGRA.
-    int totalBytes = size.width() * size.height() * 4;
+    int totalBytes = textureSize.width() * textureSize.height() * 4;
     for (int i = 0; i < totalBytes; i += 4)
         std::swap(data[i], data[i + 2]);
 #else

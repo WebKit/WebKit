@@ -1,3 +1,15 @@
+2016-09-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] Surface created for glReadPixels path on Wayland is bigger than needed
+        https://bugs.webkit.org/show_bug.cgi?id=162025
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::paint): the texture created by the Wayland
+        compositor is already scaled, so scaling its size when creating the surface causes it
+        to end up bigger than necessary.
+
 2016-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.13.92 release.
