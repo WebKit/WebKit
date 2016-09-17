@@ -542,12 +542,6 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
         drawingArea->paint(cr, clipRect, unpaintedRegion);
     }
 
-    if (webViewBase->priv->authenticationDialog) {
-        cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-        cairo_set_source_rgba(cr, 0, 0, 0, 0.5);
-        cairo_paint(cr);
-    }
-
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->draw(widget, cr);
 
     return FALSE;
@@ -602,15 +596,10 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
     // never overlaps the web inspector. Thus, we need to calculate the allocation here
     // after calculating the inspector allocation.
     if (priv->authenticationDialog) {
-        GtkRequisition naturalSize;
-        gtk_widget_get_preferred_size(priv->authenticationDialog, 0, &naturalSize);
+        GtkRequisition minimumSize;
+        gtk_widget_get_preferred_size(priv->authenticationDialog, &minimumSize, nullptr);
 
-        GtkAllocation childAllocation = {
-            (viewRect.width() - naturalSize.width) / 2,
-            (viewRect.height() - naturalSize.height) / 2,
-            naturalSize.width,
-            naturalSize.height
-        };
+        GtkAllocation childAllocation = { 0, 0, std::max(minimumSize.width, viewRect.width()), std::max(minimumSize.height, viewRect.height()) };
         gtk_widget_size_allocate(priv->authenticationDialog, &childAllocation);
     }
 

@@ -1,5 +1,23 @@
 2016-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Move the rendering of auth dialog shadow to the auth dialog widget
+        https://bugs.webkit.org/show_bug.cgi?id=162061
+
+        Reviewed by Michael Catanzaro.
+
+        Instead of rendering the shadow in the web view, we can let the auth dialog do it. This fixes the rendering of
+        the shadow in Wayland when using gdk_cairo_draw_from_gl().
+
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (webkitAuthenticationDialogDraw): Draw the shadow before rendering the child.
+        (webkitAuthenticationDialogSizeAllocate): Center the child on the allocated space.
+        (webkit_authentication_dialog_class_init): Add size_allocate implementation.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDraw): Do not draw the shadow when auth dialog is present.
+        (webkitWebViewBaseSizeAllocate): Give the whole web view allocation to the auth dialog.
+
+2016-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [ThreadedCompositor] Scrolling artifacts on accelerated subframes
         https://bugs.webkit.org/show_bug.cgi?id=149060
 

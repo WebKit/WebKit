@@ -204,10 +204,19 @@ static gboolean webkitAuthenticationDialogDraw(GtkWidget* widget, cairo_t* cr)
 {
     WebKitAuthenticationDialogPrivate* priv = WEBKIT_AUTHENTICATION_DIALOG(widget)->priv;
 
-    gtk_style_context_save(priv->styleContext.get());
-    gtk_style_context_add_class(priv->styleContext.get(), GTK_STYLE_CLASS_BACKGROUND);
-    gtk_render_background(priv->styleContext.get(), cr, 0, 0, gtk_widget_get_allocated_width(widget), gtk_widget_get_allocated_height(widget));
-    gtk_style_context_restore(priv->styleContext.get());
+    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+    cairo_set_source_rgba(cr, 0, 0, 0, 0.5);
+    cairo_paint(cr);
+
+    if (GtkWidget* child = gtk_bin_get_child(GTK_BIN(widget))) {
+        GtkAllocation allocation;
+        gtk_widget_get_allocation(child, &allocation);
+
+        gtk_style_context_save(priv->styleContext.get());
+        gtk_style_context_add_class(priv->styleContext.get(), GTK_STYLE_CLASS_BACKGROUND);
+        gtk_render_background(priv->styleContext.get(), cr, allocation.x, allocation.y, allocation.width, allocation.height);
+        gtk_style_context_restore(priv->styleContext.get());
+    }
 
     GTK_WIDGET_CLASS(webkit_authentication_dialog_parent_class)->draw(widget, cr);
 
@@ -220,6 +229,27 @@ static void webkitAuthenticationDialogMap(GtkWidget* widget)
     gtk_widget_grab_default(priv->defaultButton);
 
     GTK_WIDGET_CLASS(webkit_authentication_dialog_parent_class)->map(widget);
+}
+
+static void webkitAuthenticationDialogSizeAllocate(GtkWidget* widget, GtkAllocation* allocation)
+{
+    GTK_WIDGET_CLASS(webkit_authentication_dialog_parent_class)->size_allocate(widget, allocation);
+
+    GtkWidget* child = gtk_bin_get_child(GTK_BIN(widget));
+    if (!child)
+        return;
+
+    GtkRequisition naturalSize;
+    gtk_widget_get_preferred_size(child, 0, &naturalSize);
+
+    GtkAllocation childAllocation;
+    gtk_widget_get_allocation(child, &childAllocation);
+
+    childAllocation.x += (allocation->width - naturalSize.width) / 2;
+    childAllocation.y += (allocation->height - naturalSize.height) / 2;
+    childAllocation.width = naturalSize.width;
+    childAllocation.height = naturalSize.height;
+    gtk_widget_size_allocate(child, &childAllocation);
 }
 
 static void webkitAuthenticationDialogConstructed(GObject* object)
@@ -254,6 +284,7 @@ static void webkit_authentication_dialog_class_init(WebKitAuthenticationDialogCl
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(klass);
     widgetClass->draw = webkitAuthenticationDialogDraw;
     widgetClass->map = webkitAuthenticationDialogMap;
+    widgetClass->size_allocate = webkitAuthenticationDialogSizeAllocate;
 }
 
 GtkWidget* webkitAuthenticationDialogNew(WebKitAuthenticationRequest* request, CredentialStorageMode mode)
