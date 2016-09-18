@@ -1,3 +1,194 @@
+2016-09-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Adjust EFL coding style to EFL MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=162119
+
+        Reviewed by Michael Catanzaro.
+
+        Apply EFL coding style to main.c for MiniBrowser.
+          - Use _foo_cb instead of on_foo for callback function
+          - Use 3 spaces and use 2 spaces in keywords.
+
+        - EFL coding style.
+          https://phab.enlightenment.org/w/coding_convention/
+
+        Additionally this patch adds an exception rule that style checker doesn't
+        check indentation rule in EFL MiniBrowser.
+
+        * MiniBrowser/efl/main.c:
+        (miniBrowserViewSmartClass):
+        (window_find_with_ewk_view):
+        (_tooltip_show):
+        (window_tooltip_hide):
+        (window_tooltip_update):
+        (_mouse_in_cb):
+        (_mouse_move_cb):
+        (_mouse_out_cb):
+        (_mouse_wheel_cb):
+        (_window_resize_cb):
+        (update_view_favicon):
+        (_icon_changed_cb):
+        (window_free):
+        (window_close):
+        (search_icon_show):
+        (search_box_show):
+        (search_box_hide):
+        (history_list_hide):
+        (save_page_contents_callback):
+        (script_execute_callback):
+        (toggle_window_fullscreen):
+        (_key_down_cb):
+        (_mouse_down_cb):
+        (_title_changed_cb):
+        (_url_changed_cb):
+        (_back_forward_list_changed_cb):
+        (_progress_cb):
+        (_error_cb):
+        (_download_request_cb):
+        (close_file_picker):
+        (_filepicker_parent_deletion_cb):
+        (_filepicker_deletion_cb):
+        (_fileselector_done_cb):
+        (_file_chooser_request_cb):
+        (_download_finished_cb):
+        (_download_failed_cb):
+        (_color_changed_cb):
+        (_color_item_selected_cb):
+        (_color_picker_ok_clicked_cb):
+        (_color_picker_cancel_clicked_cb):
+        (_color_picker_dismiss_cb):
+        (_color_picker_request_cb):
+        (_url_bar_activated_cb):
+        (_url_bar_clicked_cb):
+        (_search_field_aborted_cb):
+        (_search_field_activated_cb):
+        (_search_field_clicked_cb):
+        (_back_button_clicked_cb):
+        (_forward_button_clicked_cb):
+        (_search_backward_button_clicked_cb):
+        (_search_forward_button_clicked_cb):
+        (_search_case_option_changed):
+        (_search_word_start_option_changed_cb):
+        (_search_close_button_clicked_cb):
+        (_refresh_button_clicked_cb):
+        (_stop_button_clicked_cb):
+        (_list_item_select_cb):
+        (navigation_button_longpress_process):
+        (_forward_button_longpress_cb):
+        (_back_button_longpress_cb):
+        (_ok_clicked_cb):
+        (_file_entry_dialog_show):
+        (_javascript_alert_cb):
+        (_javascript_confirm_cb):
+        (_javascript_prompt_cb):
+        (_javascript_before_unload_confirm_cb):
+        (_popup_menu_item_clicked_cb):
+        (popup_menu_populate):
+        (_popup_menu_show):
+        (_popup_menu_hide):
+        (_window_geometry_get):
+        (_window_geometry_set):
+        (_fullscreen_accept_cb):
+        (_fullscreen_deny_cb):
+        (_fullscreen_enter_cb):
+        (_fullscreen_exit_cb):
+        (_window_create_cb):
+        (_window_close_cb):
+        (_context_menu_item_selected_cb):
+        (context_menu_populate):
+        (_context_menu_show):
+        (_context_menu_hide):
+        (auth_popup_close):
+        (_auth_cancel_cb):
+        (_auth_ok_cb):
+        (_authentication_request_cb):
+        (_search_text_found_cb):
+        (_tooltip_text_set):
+        (_tooltip_text_unset):
+        (_navigation_policy_decision_cb):
+        (_home_button_clicked_cb):
+        (_window_deletion_cb):
+        (create_toolbar_button):
+        (window_create):
+        (configuration):
+        (parse_cookies_policy):
+        (parse_window_size):
+        (elm_main):
+        (on_tooltip_show): Deleted.
+        (on_mouse_in): Deleted.
+        (on_mouse_move): Deleted.
+        (on_mouse_out): Deleted.
+        (on_mouse_wheel): Deleted.
+        (on_window_resize): Deleted.
+        (on_icon_changed_cb): Deleted.
+        (on_key_down): Deleted.
+        (on_mouse_down): Deleted.
+        (on_title_changed): Deleted.
+        (on_url_changed): Deleted.
+        (on_back_forward_list_changed): Deleted.
+        (on_progress): Deleted.
+        (on_error): Deleted.
+        (on_download_request): Deleted.
+        (on_filepicker_parent_deletion): Deleted.
+        (on_filepicker_deletion): Deleted.
+        (on_fileselector_done): Deleted.
+        (on_file_chooser_request): Deleted.
+        (on_download_finished): Deleted.
+        (on_download_failed): Deleted.
+        (on_color_changed): Deleted.
+        (on_color_item_selected): Deleted.
+        (on_color_picker_ok_clicked): Deleted.
+        (on_color_picker_cancel_clicked): Deleted.
+        (on_color_picker_dismiss): Deleted.
+        (on_color_picker_request): Deleted.
+        (on_url_bar_activated): Deleted.
+        (on_url_bar_clicked): Deleted.
+        (on_search_field_aborted): Deleted.
+        (on_search_field_activated): Deleted.
+        (on_search_field_clicked): Deleted.
+        (on_back_button_clicked): Deleted.
+        (on_forward_button_clicked): Deleted.
+        (on_search_backward_button_clicked): Deleted.
+        (on_search_forward_button_clicked): Deleted.
+        (on_search_case_option_changed): Deleted.
+        (on_search_word_start_option_changed): Deleted.
+        (on_search_close_button_clicked): Deleted.
+        (on_refresh_button_clicked): Deleted.
+        (on_stop_button_clicked): Deleted.
+        (on_list_item_select): Deleted.
+        (on_forward_button_longpress): Deleted.
+        (on_back_button_longpress): Deleted.
+        (on_ok_clicked): Deleted.
+        (show_file_entry_dialog): Deleted.
+        (on_javascript_alert): Deleted.
+        (on_javascript_confirm): Deleted.
+        (on_javascript_prompt): Deleted.
+        (on_javascript_before_unload_confirm): Deleted.
+        (on_popup_menu_item_clicked): Deleted.
+        (on_popup_menu_show): Deleted.
+        (on_popup_menu_hide): Deleted.
+        (on_window_geometry_get): Deleted.
+        (on_window_geometry_set): Deleted.
+        (on_fullscreen_accept): Deleted.
+        (on_fullscreen_deny): Deleted.
+        (on_fullscreen_enter): Deleted.
+        (on_fullscreen_exit): Deleted.
+        (on_window_create): Deleted.
+        (on_window_close): Deleted.
+        (context_menu_item_selected_cb): Deleted.
+        (on_context_menu_show): Deleted.
+        (on_context_menu_hide): Deleted.
+        (on_auth_cancel): Deleted.
+        (on_auth_ok): Deleted.
+        (on_authentication_request): Deleted.
+        (on_search_text_found): Deleted.
+        (on_tooltip_text_set): Deleted.
+        (on_tooltip_text_unset): Deleted.
+        (on_navigation_policy_decision): Deleted.
+        (on_home_button_clicked): Deleted.
+        (on_window_deletion): Deleted.
+        * Scripts/webkitpy/style/checker.py:
+
 2016-09-16  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Get CSSPropertyParserHelpers.cpp compiling

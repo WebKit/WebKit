@@ -184,6 +184,7 @@ _PATH_RULES_SPECIFIER = [
       "-readability/parameter_name",
       "-runtime/ctype_function",
       "-whitespace/declaration",
+      "-whitespace/indent",
       "-build/include_order"]),
 
     # WebKit2 rules:
