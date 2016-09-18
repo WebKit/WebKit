@@ -9,7 +9,7 @@ function test()
 
     suite.addTestCase({
         name: "Array.prototype.lowerBound",
-        test: () => {
+        test() {
             // Index:  0  1  2  3  4  5  6  7  8  9
             let arr = [0, 1, 2, 2, 2, 2, 2, 2, 6, 7];
             InspectorTest.expectEqual(arr.lowerBound(-100), 0, "lowerBound of a value before the first value should produce the first index.");
@@ -30,7 +30,7 @@ function test()
 
     suite.addTestCase({
         name: "Array.prototype.upperBound",
-        test: () => {
+        test() {
             // Index:  0  1  2  3  4  5  6  7  8  9
             let arr = [0, 1, 2, 2, 2, 2, 2, 2, 6, 7];
             InspectorTest.expectEqual(arr.upperBound(-100), 0, "upperBound of a value before the first value should produce the first index.");
@@ -51,7 +51,7 @@ function test()
 
     suite.addTestCase({
         name: "Array.prototype.binaryIndexOf",
-        test: () => {
+        test() {
             // Index:  0  1  2  3  4  5  6  7  8  9
             let arr = [0, 1, 2, 2, 2, 2, 2, 2, 6, 7];
             let defaultComparator = (a, b) => a - b;
@@ -65,7 +65,7 @@ function test()
 
     suite.addTestCase({
         name: "Array.prototype.partition",
-        test: () => {
+        test() {
             let arr1 = [1, 2, 3, 4];
             let [even, odd] = arr1.partition((x) => x % 2 === 0);
             InspectorTest.expectEqual(even.length + odd.length, arr1.length, "partition should not lose any elements.");
@@ -87,7 +87,7 @@ function test()
 
     suite.addTestCase({
         name: "Array.shallowEqual",
-        test: () => {
+        test() {
             InspectorTest.expectThat(Array.shallowEqual([], []), "shallowEqual of empty arrays should be true.");
 
             let arr1 = [1, 2, 3, 4];
@@ -107,6 +107,103 @@ function test()
             let str = "abc";
             InspectorTest.expectFalse(Array.shallowEqual(str, str), "shallowEqual of a non-array with itself should be false.");
             InspectorTest.expectFalse(Array.shallowEqual({}, {}), "shallowEqual of non-arrays should be false.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Array.prototype.lastValue",
+        test() {
+            let object1 = {};
+            let object2 = {};
+            InspectorTest.expectEqual([object1, object2].lastValue, object2, "lastValue of a nonempty array should be the last value.")
+            InspectorTest.expectEqual([].lastValue, undefined, "lastValue of an empty array should be undefined.")
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Array.prototype.remove",
+        test() {
+            let arr1 = [1, 2, 3, 1];
+            arr1.remove(1, true);
+            // Note: Array.prototype.remove starts searching from the end of the array.
+            InspectorTest.expectShallowEqual(arr1, [1, 2, 3], "remove with onlyFirst equal to true should only remove the first matching value.");
+
+            let arr2 = [1, 2, 3, 1];
+            arr2.remove(1, false);
+            InspectorTest.expectShallowEqual(arr2, [2, 3], "remove with onlyFirst equal to false should remove all matching values.");
+
+            let arr3 = [1, 2, 3, 1];
+            arr3.remove(1);
+            InspectorTest.expectShallowEqual(arr3, [2, 3], "remove with onlyFirst unspecified should remove all matching values.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Array.prototype.toggleIncludes",
+        test() {
+            let arr1 = [1, 2, 3];
+            arr1.toggleIncludes(3, true);
+            InspectorTest.expectShallowEqual(arr1, [1, 2, 3], "toggleIncludes of an existing item with force true should have no effect.");
+
+            let arr2 = [1, 2, 3];
+            arr2.toggleIncludes(3, false);
+            InspectorTest.expectShallowEqual(arr2, [1, 2], "toggleIncludes of an existing item with force false should remove the item.");
+
+            let arr3 = [1, 2, 3];
+            arr3.toggleIncludes(4, true);
+            InspectorTest.expectShallowEqual(arr3, [1, 2, 3, 4], "toggleIncludes of a nonexistent item with force true should add the item.");
+
+            let arr4 = [1, 2, 3];
+            arr4.toggleIncludes(4, false);
+            InspectorTest.expectShallowEqual(arr4, [1, 2, 3], "toggleIncludes of a nonexistent item with force false should have no effect.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Array.prototype.insertAtIndex",
+        test() {
+            let arr1 = [1, 2, 3];
+            arr1.insertAtIndex("x");
+            InspectorTest.expectShallowEqual(arr1, ["x", 1, 2, 3], "insertAtIndex with index unspecified should insert at the beginning.");
+
+            let arr2 = [1, 2, 3];
+            arr2.insertAtIndex("x", 0);
+            InspectorTest.expectShallowEqual(arr2, ["x", 1, 2, 3], "insertAtIndex with index zero should insert at the beginning.");
+
+            let arr3 = [1, 2, 3];
+            arr3.insertAtIndex("x", 2);
+            InspectorTest.expectShallowEqual(arr3, [1, 2, "x", 3], "insertAtIndex with 0 < index < length should insert at the correct location.");
+
+            let arr4 = [1, 2, 3];
+            arr4.insertAtIndex("x", -1);
+            InspectorTest.expectShallowEqual(arr4, [1, 2, "x", 3], "insertAtIndex with negative index should insert from the end.");
+
+            let arr5 = [1, 2, 3];
+            arr5.insertAtIndex("x", 100);
+            InspectorTest.expectShallowEqual(arr5, [1, 2, 3, "x"], "insertAtIndex with index greater than array length should insert at the end.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Array.prototype.keySet",
+        test() {
+            let arr1 = ["abc", "def", "xyz"];
+            let keySet = arr1.keySet();
+            InspectorTest.expectShallowEqual(Object.keys(keySet), arr1, "keySet should create an object with keys equal to the array values.");
+            InspectorTest.expectShallowEqual(Object.values(keySet), [true, true, true], "keySet should create an object with all values equal to true.");
+
+            let arr2 = [1, 2, 3];
+            InspectorTest.expectShallowEqual(Object.keys(arr2.keySet()), arr2.map(x => x.toString()), "keySet should create an object with keys equal to stringified array values.");
 
             return true;
         }

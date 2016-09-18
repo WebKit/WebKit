@@ -1,3 +1,16 @@
+2016-09-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add test coverage for all array utility functions
+        https://bugs.webkit.org/show_bug.cgi?id=162044
+        <rdar://problem/28330846>
+
+        Reviewed by Joseph Pecoraro.
+
+        New test cases and expectations for Array utility functions.
+
+        * inspector/unit-tests/array-utilities-expected.txt:
+        * inspector/unit-tests/array-utilities.html:
+
 2016-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed cleanup of some inspector tests.

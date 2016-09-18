@@ -45,3 +45,30 @@ PASS: shallowEqual of an array and non-array should be false.
 PASS: shallowEqual of a non-array with itself should be false.
 PASS: shallowEqual of non-arrays should be false.
 
+-- Running test case: Array.prototype.lastValue
+PASS: lastValue of a nonempty array should be the last value.
+PASS: lastValue of an empty array should be undefined.
+
+-- Running test case: Array.prototype.remove
+PASS: remove with onlyFirst equal to true should only remove the first matching value.
+PASS: remove with onlyFirst equal to false should remove all matching values.
+PASS: remove with onlyFirst unspecified should remove all matching values.
+
+-- Running test case: Array.prototype.toggleIncludes
+PASS: toggleIncludes of an existing item with force true should have no effect.
+PASS: toggleIncludes of an existing item with force false should remove the item.
+PASS: toggleIncludes of a nonexistent item with force true should add the item.
+PASS: toggleIncludes of a nonexistent item with force false should have no effect.
+
+-- Running test case: Array.prototype.insertAtIndex
+PASS: insertAtIndex with index unspecified should insert at the beginning.
+PASS: insertAtIndex with index zero should insert at the beginning.
+PASS: insertAtIndex with 0 < index < length should insert at the correct location.
+PASS: insertAtIndex with negative index should insert from the end.
+PASS: insertAtIndex with index greater than array length should insert at the end.
+
+-- Running test case: Array.prototype.keySet
+PASS: keySet should create an object with keys equal to the array values.
+PASS: keySet should create an object with all values equal to true.
+PASS: keySet should create an object with keys equal to stringified array values.
+
