@@ -46,7 +46,7 @@
   <repository type="tarball" name="enlightenment.fr"
       href="http://git.enlightenment.fr/cgit.cgi/svn/"/>
   <repository type="tarball" name="xmlsoft.org"
-      href="ftp://xmlsoft.org"/> 
+      href="ftp://xmlsoft.org"/>
   <repository type="tarball" name="download.enlightenment.org"
       href="http://download.enlightenment.org"/>
   <repository type="tarball" name="gstreamer"
@@ -174,9 +174,9 @@
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="rel/libs/efl/efl-1.18.0.tar.gz" version="1.18.0"
+    <branch module="rel/libs/efl/efl-1.18.1.tar.gz" version="1.18.1"
             repo="download.enlightenment.org"
-            hash="sha256:a90255e97f6b768883276d3e04946798c31bc9bf57da12702ca7c3f4a401ec9f">
+            hash="sha256:008640c51e90481797984d0cb58a077af746922fb179b4af91ca591c37ad112d">
     </branch>
   </autotools>
 
