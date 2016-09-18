@@ -217,6 +217,11 @@ void Data::performAssertions(VM& vm)
 
     ASSERT(bitwise_cast<uintptr_t>(ShadowChicken::Packet::tailMarker()) == static_cast<uintptr_t>(0x7a11));
 
+    STATIC_ASSERT(OPCODE_LENGTH(op_is_string) == 3);
+    STATIC_ASSERT(OPCODE_LENGTH(op_is_jsarray) == 3);
+    STATIC_ASSERT(OPCODE_LENGTH(op_is_proxy_object) == 3);
+    STATIC_ASSERT(OPCODE_LENGTH(op_is_derived_array) == 3);
+
     // FIXME: make these assertions less horrible.
 #if !ASSERT_DISABLED
     Vector<int> testVector;
