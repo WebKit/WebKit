@@ -503,6 +503,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (this._elementCloseTag)
             return;
 
+        if (!this.listItemElement)
+            return;
+
         this.updateTitle();
     }
 
@@ -747,7 +750,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (!this.editable)
             return false;
 
-        var listItem = this._listItemNode;
+        var listItem = this.listItemElement;
 
         if (this._canAddAttributes) {
             var attribute = listItem.getElementsByClassName("html-attribute")[0];
@@ -1253,13 +1256,13 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 var fragmentElement = info.titleDOM.createChild("span", "html-fragment");
                 if (node.shadowRootType()) {
                     fragmentElement.textContent = WebInspector.UIString("Shadow Content (%s)").format(WebInspector.DOMTreeElement.shadowRootTypeDisplayName(node.shadowRootType()));
-                    this._listItemNode.classList.add("shadow");
+                    this.listItemElement.classList.add("shadow");
                 } else if (node.parentNode && node.parentNode.templateContent() === node) {
                     fragmentElement.textContent = WebInspector.UIString("Template Content");
-                    this._listItemNode.classList.add("template");
+                    this.listItemElement.classList.add("template");
                 } else {
                     fragmentElement.textContent = WebInspector.UIString("Document Fragment");
-                    this._listItemNode.classList.add("fragment");
+                    this.listItemElement.classList.add("fragment");
                 }
                 break;
 
@@ -1591,7 +1594,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             return;
 
         this.updateSelectionArea();
-        this._listItemNode.classList.toggle("pseudo-class-enabled", !!this.representedObject.enabledPseudoClasses.length);
+        this.listItemElement.classList.toggle("pseudo-class-enabled", !!this.representedObject.enabledPseudoClasses.length);
     }
 
     _fireDidChange()

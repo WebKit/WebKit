@@ -1,3 +1,22 @@
+2016-09-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: null is not an object (evaluating 'this.listItemElement.classList')
+        https://bugs.webkit.org/show_bug.cgi?id=162123
+        <rdar://problem/28352900>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.onexpand):
+        If not attached yet, don't update title. We will update title
+        when attaching, so this avoids work and avoids doing that
+        work when the tree element is not fully setup.
+
+        (WebInspector.DOMTreeElement.prototype._startEditing):
+        (WebInspector.DOMTreeElement.prototype._nodeTitleInfo):
+        (WebInspector.DOMTreeElement.prototype._nodePseudoClassesDidChange):
+        Switch to the public name instead of the private name.
+
 2016-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Implement Copy CSS Selector and Copy Xpath Selector context menus
