@@ -43,6 +43,7 @@ public:
     uint64_t window() const override { return reinterpret_cast<uint64_t>(m_window); }
     uint64_t surfaceID() const override { return m_webPage.pageID(); }
     bool resize(const WebCore::IntSize&) override;
+    bool shouldPaintMirrored() const override { return true; }
 
 private:
     AcceleratedSurfaceWayland(WebPage&);

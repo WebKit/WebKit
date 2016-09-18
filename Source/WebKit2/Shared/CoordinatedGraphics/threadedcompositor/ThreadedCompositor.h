@@ -32,6 +32,7 @@
 #include "CoordinatedGraphicsScene.h"
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/TextureMapper.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -57,7 +58,7 @@ public:
 
     enum class ShouldDoFrameSync { No, Yes };
 
-    static Ref<ThreadedCompositor> create(Client&, uint64_t nativeSurfaceHandle = 0, ShouldDoFrameSync = ShouldDoFrameSync::Yes);
+    static Ref<ThreadedCompositor> create(Client&, uint64_t nativeSurfaceHandle = 0, ShouldDoFrameSync = ShouldDoFrameSync::Yes, WebCore::TextureMapper::PaintFlags = 0);
     virtual ~ThreadedCompositor();
 
     void setNativeSurfaceHandleForCompositing(uint64_t);
@@ -73,7 +74,7 @@ public:
     void forceRepaint();
 
 private:
-    ThreadedCompositor(Client&, uint64_t nativeSurfaceHandle, ShouldDoFrameSync);
+    ThreadedCompositor(Client&, uint64_t nativeSurfaceHandle, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
 
     // CoordinatedGraphicsSceneClient
     void renderNextFrame() override;
@@ -95,6 +96,7 @@ private:
     bool m_drawsBackground { true };
     uint64_t m_nativeSurfaceHandle;
     ShouldDoFrameSync m_doFrameSync;
+    WebCore::TextureMapper::PaintFlags m_paintFlags { 0 };
     bool m_needsResize { false };
 
     std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;

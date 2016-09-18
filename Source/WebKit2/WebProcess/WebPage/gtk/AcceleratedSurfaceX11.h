@@ -47,6 +47,7 @@ public:
     uint64_t window() const override { return m_window.get(); }
     uint64_t surfaceID() const override { return m_pixmap.get(); }
     bool resize(const WebCore::IntSize&) override;
+    bool shouldPaintMirrored() const override { return false; }
 
 private:
     AcceleratedSurfaceX11(WebPage&);
