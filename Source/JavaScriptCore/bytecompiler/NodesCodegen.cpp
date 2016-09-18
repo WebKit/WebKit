@@ -587,21 +587,19 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, RegisterID* newObj, PropertyNode& node)
 {
     RefPtr<RegisterID> value = generator.emitNode(node.m_assign);
-    if (node.needsSuperBinding()) {
+    if (node.needsSuperBinding())
         emitPutHomeObject(generator, value.get(), newObj);
 
+    if (node.isClassProperty()) {
+        ASSERT(node.needsSuperBinding());
         RefPtr<RegisterID> propertyNameRegister;
         if (node.name())
             propertyNameRegister = generator.emitLoad(generator.newTemporary(), *node.name());
         else
             propertyNameRegister = generator.emitNode(node.m_expression);
 
-        unsigned attributes = BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable;
-        if (!node.isClassProperty())
-            attributes |= BytecodeGenerator::PropertyEnumerable;
         generator.emitSetFunctionNameIfNeeded(node.m_assign, value.get(), propertyNameRegister.get());
-        generator.emitCallDefineProperty(newObj, propertyNameRegister.get(),
-            value.get(), nullptr, nullptr, attributes, m_position);
+        generator.emitCallDefineProperty(newObj, propertyNameRegister.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
         return;
     }
     if (const auto* identifier = node.name()) {

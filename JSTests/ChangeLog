@@ -1,3 +1,18 @@
+2016-09-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Do not need to use defineProperty to define methods for object literals
+        https://bugs.webkit.org/show_bug.cgi?id=162111
+
+        Reviewed by Saam Barati.
+
+        * stress/object-literal-methods.js: Added.
+        (shouldBe):
+        (throw.new.Error.let.object.get name):
+        (throw.new.Error):
+        (shouldBe.let.object.get name):
+        (shouldBe.let.object.get prototype):
+        (shouldBe.let.object.get 42):
+
 2016-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Introduce IsCellWithType node and unify IsJSArray, IsRegExpObject and newly added IsProxyObject

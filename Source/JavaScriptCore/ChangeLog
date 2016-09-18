@@ -1,3 +1,38 @@
+2016-09-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Do not need to use defineProperty to define methods for object literals
+        https://bugs.webkit.org/show_bug.cgi?id=162111
+
+        Reviewed by Saam Barati.
+
+        When we receive the following code,
+
+            var object = { method() { } };
+
+        currently, we use defineProperty to define "method" function for "object".
+        This patch replaces it with the ordinary put_by_id_direct / put_by_val_direct
+        because the following 2 conditions are met.
+
+        1. While methods in classes have special attributes ({configurable: true, writable: true, enumerable: false}),
+           the attributes of methods in object literals is just the same to the other normal properties ({configurable: true, writable: true, enumerable: true}).
+           This means that we can use the usual put_by_id_direct / put_by_val_direct to define method properties for object literals.
+
+        2. Furthermore, all the own properties that can reside in objects created by object literals have {configurable: true}.
+           So there is no need to check conflict by defineProperty. Always overwriting is OK.
+
+                let name = 'method';
+                var object = { get [name]() { }, method() { } };
+                // Latter method wins.
+
+            On the other hand, in class syntax, conflict check is necessary since "prototype" own property is defined as {configurable: false}.
+
+                class Hello { static prototype() { } }  // Should throw error by defineProperty's check.
+
+            This means that conflict check done in defneProperty is not necessary for object literals' properties.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitPutConstantProperty):
+
 2016-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Introduce IsCellWithType node and unify IsJSArray, IsRegExpObject and newly added IsProxyObject
