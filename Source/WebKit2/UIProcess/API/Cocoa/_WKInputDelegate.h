@@ -44,8 +44,6 @@
 #if TARGET_OS_IPHONE
 - (BOOL)_webView:(WKWebView *)webView focusShouldStartInputSession:(id <_WKFocusedElementInfo>)info;
 - (void)_webView:(WKWebView *)webView accessoryViewCustomButtonTappedInFormInputSession:(id <_WKFormInputSession>)inputSession;
-- (BOOL)_webView:(WKWebView *)webView hasSuggestionsForCurrentStringInInputSession:(id <_WKFormInputSession>)inputSession;
-- (NSArray *)_webView:(WKWebView *)webView suggestionsForString:(NSString *)string inInputSession:(id <_WKFormInputSession>)inputSession;
 - (void)_webView:(WKWebView *)webView insertTextSuggestion:(UITextSuggestion *)suggestion inInputSession:(id <_WKFormInputSession>)inputSession WK_API_AVAILABLE(ios(10.0));
 #endif
 
