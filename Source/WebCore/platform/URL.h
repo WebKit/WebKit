@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef URL_h
-#define URL_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include <wtf/Forward.h>
@@ -130,6 +129,7 @@ public:
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
     WEBCORE_EXPORT bool protocolIs(const char*) const;
+    bool protocolIs(const LChar*, size_t) const;
     bool protocolIsBlob() const { return protocolIs("blob"); }
     bool protocolIsData() const { return protocolIs("data"); }
     bool protocolIsInHTTPFamily() const;
@@ -455,5 +455,3 @@ namespace WTF {
     };
 
 } // namespace WTF
-
-#endif // URL_h

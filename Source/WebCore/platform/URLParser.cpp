@@ -949,9 +949,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 m_asciiBuffer.append(':');
                 if (isSpecialScheme(urlScheme)) {
                     m_urlIsSpecial = true;
-                    // FIXME: This is unnecessarily allocating a String.
-                    // This should be easy to optimize once https://bugs.webkit.org/show_bug.cgi?id=162035 lands.
-                    if (base.protocol() == urlScheme)
+                    if (base.protocolIs(m_asciiBuffer.data(), m_asciiBuffer.size() - 1))
                         state = State::SpecialRelativeOrAuthority;
                     else
                         state = State::SpecialAuthoritySlashes;
@@ -1005,7 +1003,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 ++c;
                 break;
             }
-            if (base.protocol() != "file") {
+            if (!base.protocolIs("file")) {
                 state = State::Relative;
                 break;
             }
@@ -1442,7 +1440,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     case State::File:
         LOG_FINAL_STATE("File");
-        if (!base.isNull() && base.protocol() == "file") {
+        if (!base.isNull() && base.protocolIs("file")) {
             copyURLPartsUntil(base, URLPart::QueryEnd);
             m_asciiBuffer.append(':');
         }
