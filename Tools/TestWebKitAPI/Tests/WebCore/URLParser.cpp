@@ -207,6 +207,9 @@ TEST_F(URLParserTest, Basic)
     checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
     checkURL("notspecial:", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
     checkURL("http:/a", {"http", "", "", "a", 0, "/", "", "", "http://a/"});
+    checkURL("http://256/", {"http", "", "", "256", 0, "/", "", "", "http://256/"});
+    checkURL("http://256./", {"http", "", "", "256.", 0, "/", "", "", "http://256./"});
+    checkURL("http://123.256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
     // FIXME: Fix and add a test with an invalid surrogate pair at the end with a space as the second code unit.
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
@@ -508,6 +511,21 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("http://`{}:`{}@h/`{}?`{}", "http://doesnotmatter/",
         {"http", "`{}", "`{}", "h", 0, "/%60%7B%7D", "`{}", "", "http://%60%7B%7D:%60%7B%7D@h/%60%7B%7D?`{}"},
         {"", "", "", "", 0, "", "", "", "http://`{}:`{}@h/`{}?`{}"});
+    checkURLDifferences("http://[0:f::f::f]",
+        {"", "", "", "", 0, "" , "", "", "http://[0:f::f::f]"},
+        {"http", "", "", "[0:f::f::f]", 0, "/" , "", "", "http://[0:f::f::f]/"});
+    checkURLDifferences("http://123",
+        {"http", "", "", "0.0.0.123", 0, "/", "", "", "http://0.0.0.123/"},
+        {"http", "", "", "123", 0, "/", "", "", "http://123/"});
+    checkURLDifferences("http://123.234/",
+        {"http", "", "", "123.0.0.234", 0, "/", "", "", "http://123.0.0.234/"},
+        {"http", "", "", "123.234", 0, "/", "", "", "http://123.234/"});
+    checkURLDifferences("http://123.234.012",
+        {"http", "", "", "123.234.0.10", 0, "/", "", "", "http://123.234.0.10/"},
+        {"http", "", "", "123.234.012", 0, "/", "", "", "http://123.234.012/"});
+    checkURLDifferences("http://123.234.12",
+        {"http", "", "", "123.234.0.12", 0, "/", "", "", "http://123.234.0.12/"},
+        {"http", "", "", "123.234.12", 0, "/", "", "", "http://123.234.12/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)

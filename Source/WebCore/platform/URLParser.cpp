@@ -1769,9 +1769,11 @@ inline static Optional<uint32_t> parseIPv4Host(CodePointIterator<CharacterType> 
     }
     if (!items.size() || items.size() > 4)
         return Nullopt;
-    for (size_t i = 0; i < items.size() - 2; i++) {
-        if (items[i] > 255)
-            return Nullopt;
+    if (items.size() > 2) {
+        for (size_t i = 0; i < items.size() - 2; i++) {
+            if (items[i] > 255)
+                return Nullopt;
+        }
     }
     if (items[items.size() - 1] >= pow256(5 - items.size()))
         return Nullopt;
