@@ -227,11 +227,11 @@ WebInspector.contentLoaded = function()
     document.body.classList.add(this.debuggableType);
 
     // Create the user interface elements.
-    this.toolbar = new WebInspector.Toolbar("toolbar", null, true);
+    this.toolbar = new WebInspector.Toolbar(document.getElementById("toolbar"), null, true);
     this.toolbar.displayMode = WebInspector.Toolbar.DisplayMode.IconOnly;
     this.toolbar.sizeMode = WebInspector.Toolbar.SizeMode.Small;
 
-    this.tabBar = new WebInspector.TabBar("tab-bar");
+    this.tabBar = new WebInspector.TabBar(document.getElementById("tab-bar"));
     this.tabBar.addEventListener(WebInspector.TabBar.Event.NewTabItemClicked, this._newTabItemClicked, this);
     this.tabBar.addEventListener(WebInspector.TabBar.Event.OpenDefaultTab, this._openDefaultTab, this);
 
@@ -239,10 +239,10 @@ WebInspector.contentLoaded = function()
     this._contentElement.setAttribute("role", "main");
     this._contentElement.setAttribute("aria-label", WebInspector.UIString("Content"));
 
-    this.splitContentBrowser = new WebInspector.ContentBrowser("split-content-browser", this, true, true);
+    this.splitContentBrowser = new WebInspector.ContentBrowser(document.getElementById("split-content-browser"), this, true, true);
     this.splitContentBrowser.navigationBar.element.addEventListener("mousedown", this._consoleResizerMouseDown.bind(this));
 
-    this.quickConsole = new WebInspector.QuickConsole("quick-console");
+    this.quickConsole = new WebInspector.QuickConsole(document.getElementById("quick-console"));
     this.quickConsole.addEventListener(WebInspector.QuickConsole.Event.DidResize, this._quickConsoleDidResize, this);
 
     this._consoleRepresentedObject = new WebInspector.LogObject;
@@ -252,10 +252,10 @@ WebInspector.contentLoaded = function()
     this.breakpointPopoverController = new WebInspector.BreakpointPopoverController;
 
     // FIXME: The sidebars should be flipped in RTL languages.
-    this.navigationSidebar = new WebInspector.Sidebar("navigation-sidebar", WebInspector.Sidebar.Sides.Left);
+    this.navigationSidebar = new WebInspector.Sidebar(document.getElementById("navigation-sidebar"), WebInspector.Sidebar.Sides.Left);
     this.navigationSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
 
-    this.detailsSidebar = new WebInspector.Sidebar("details-sidebar", WebInspector.Sidebar.Sides.Right, null, null, WebInspector.UIString("Details"), true);
+    this.detailsSidebar = new WebInspector.Sidebar(document.getElementById("details-sidebar"), WebInspector.Sidebar.Sides.Right, null, null, WebInspector.UIString("Details"), true);
     this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
 
     this.searchKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "F", this._focusSearchField.bind(this));
@@ -276,7 +276,7 @@ WebInspector.contentLoaded = function()
     this._showTabAtIndexKeyboardShortcuts = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, `${i}`, this._showTabAtIndex.bind(this, i)));
     this._openNewTabKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, "T", this.showNewTabTab.bind(this));
 
-    this.tabBrowser = new WebInspector.TabBrowser("tab-browser", this.tabBar, this.navigationSidebar, this.detailsSidebar);
+    this.tabBrowser = new WebInspector.TabBrowser(document.getElementById("tab-browser"), this.tabBar, this.navigationSidebar, this.detailsSidebar);
     this.tabBrowser.addEventListener(WebInspector.TabBrowser.Event.SelectedTabContentViewDidChange, this._tabBrowserSelectedTabContentViewDidChange, this);
 
     this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemAdded, this._updateNewTabButtonState, this);

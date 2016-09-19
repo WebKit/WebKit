@@ -25,18 +25,11 @@
 
 WebInspector.View = class View extends WebInspector.Object
 {
-    constructor(elementOrIdentifier)
+    constructor(element)
     {
         super();
 
-        if (elementOrIdentifier instanceof HTMLElement)
-            this._element = elementOrIdentifier;
-        else if (typeof elementOrIdentifier === "string") {
-            this._element = document.getElementById(elementOrIdentifier);
-            console.assert(this._element, "Couldn't create view for unknown element " + elementOrIdentifier);
-        }
-
-        this._element = this._element || document.createElement("div");
+        this._element = element || document.createElement("div");
         this._element.__view = this;
         this._parentView = null;
         this._subviews = [];
