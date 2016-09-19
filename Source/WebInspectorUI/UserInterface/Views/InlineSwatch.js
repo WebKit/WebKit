@@ -92,6 +92,8 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
 
         if (typeof this._valueEditor.removeListeners === "function")
             this._valueEditor.removeListeners();
+
+        this.dispatchEventToListeners(WebInspector.InlineSwatch.Event.Deactivated);
     }
 
     // Private
@@ -162,6 +164,8 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
 
         popover.content = this._valueEditor.element;
         popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_X]);
+
+        this.dispatchEventToListeners(WebInspector.InlineSwatch.Event.Activated);
 
         let value = this._value || this._fallbackValue();
         if (this._type === WebInspector.InlineSwatch.Type.Bezier)
@@ -297,5 +301,7 @@ WebInspector.InlineSwatch.Type = {
 
 WebInspector.InlineSwatch.Event = {
     BeforeClicked: "inline-swatch-before-clicked",
-    ValueChanged: "inline-swatch-value-changed"
+    ValueChanged: "inline-swatch-value-changed",
+    Activated: "inline-swatch-activated",
+    Deactivated: "inline-swatch-deactivated",
 };

@@ -42,6 +42,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._alwaysShowPropertyNames = {};
         this._filterResultPropertyNames = null;
         this._sortProperties = false;
+        this._hasActiveInlineSwatchEditor = false;
 
         this._linePrefixWhitespace = "";
 
@@ -771,6 +772,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _updateTextMarkers(nonatomic)
     {
+        console.assert(!this._hasActiveInlineSwatchEditor, "We should never be recreating markers when we an active inline swatch editor.");
+
         function update()
         {
             this._clearTextMarkers(true);
@@ -854,6 +857,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         function createSwatch(swatch, marker, valueObject, valueString)
         {
             swatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._inlineSwatchValueChanged, this);
+            swatch.addEventListener(WebInspector.InlineSwatch.Event.Activated, this._inlineSwatchActivated, this);
+            swatch.addEventListener(WebInspector.InlineSwatch.Event.Dismissed, this._inlineSwatchDeactivated, this);
 
             let codeMirrorTextMarker = marker.codeMirrorTextMarker;
             let codeMirrorTextMarkerRange = codeMirrorTextMarker.find();
@@ -1325,6 +1330,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _inlineSwatchValueChanged(event)
     {
+        console.assert(this._hasActiveInlineSwatchEditor);
+
         let swatch = event && event.target;
         console.assert(swatch);
         if (!swatch)
@@ -1343,29 +1350,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         function update()
         {
-            // The original text marker might have been cleared by a style update,
-            // in this case we need to find the new text marker so we know the
-            // right range for the new style text.
-            if (!textMarker || !textMarker.find()) {
-                textMarker = null;
-
-                let marks = this._codeMirror.findMarksAt(range.from);
-                if (!marks.length)
-                    return;
-
-                for (let mark of marks) {
-                    let type = WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(mark).type;
-                    if (Object.values(WebInspector.TextMarker.Type).includes(type))
-                        continue;
-
-                    textMarker = mark;
-                    break;
-                }
-            }
-
-            if (!textMarker)
-                return;
-
             // Sometimes we still might find a stale text marker with findMarksAt.
             range = textMarker.find();
             if (!range)
@@ -1387,6 +1371,16 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._codeMirror.operation(update.bind(this));
     }
 
+    _inlineSwatchActivated()
+    {
+        this._hasActiveInlineSwatchEditor = true;
+    }
+
+    _inlineSwatchDeactivated()
+    {
+        this._hasActiveInlineSwatchEditor = false;
+    }    
+
     _propertyOverriddenStatusChanged(event)
     {
         this._updateTextMarkerForPropertyIfNeeded(event.target);
@@ -1398,6 +1392,15 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         // the completion hint and prevent further interaction with the completion.
         if (this._completionController.isShowingCompletions())
             return;
+
+        if (this._hasActiveInlineSwatchEditor)
+            return;
+
+        // Don't try to update the document after just modifying a swatch.
+        if (this._ignoreNextPropertiesChanged) {
+            this._ignoreNextPropertiesChanged = false;
+            return;
+        }
 
         // Reset the content if the text is different and we are not focused.
         if (!this.focused && (!this._style.text || this._style.text !== this._formattedContent())) {

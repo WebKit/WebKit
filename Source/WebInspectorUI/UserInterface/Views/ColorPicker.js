@@ -52,6 +52,8 @@ WebInspector.ColorPicker = class ColorPicker extends WebInspector.Object
         this._opacityPattern = "url(Images/Checkers.svg)";
 
         this._color = "white";
+
+        this._dontUpdateColor = false;
     }
 
     // Public
@@ -103,7 +105,7 @@ WebInspector.ColorPicker = class ColorPicker extends WebInspector.Object
         this._opacitySlider.value = color.alpha;
         this._updateSliders(this._colorWheel.rawColor, color);
 
-        delete this._dontUpdateColor;
+        this._dontUpdateColor = false;
     }
 
     colorWheelColorDidChange(colorWheel)

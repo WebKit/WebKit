@@ -1,3 +1,37 @@
+2016-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Color picker in Style sidebar stops working after 1st color change
+        https://bugs.webkit.org/show_bug.cgi?id=162115
+        <rdar://problem/28349875>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers.createSwatch):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._inlineSwatchActivated):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._inlineSwatchDeactivated):
+        Listen for swatch activated / inactivated events to set some state.
+
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._propertiesChanged):
+        Do not wipe markers if there is an active inline swatch. That
+        would break behavior for that active swatch.
+
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._inlineSwatchValueChanged):
+        Eliminate old, incorrect, and now unnecessary code for trying to recover
+        a textMarker for an inline swatch if the textMarker went away. Besides being
+        incorrect, if an inline swatch's textMarker goes away, then we will already
+        have issues, because any active popover will still be connected to the
+        original marker and swatch element that no longer appear in the editor.
+
+        * UserInterface/Views/ColorPicker.js:
+        (WebInspector.ColorPicker):
+        (WebInspector.ColorPicker.prototype.set color):
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch.prototype.didDismissPopover):
+        (WebInspector.InlineSwatch.prototype._swatchElementClicked):
+
 2016-09-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: null is not an object (evaluating 'this.listItemElement.classList')
