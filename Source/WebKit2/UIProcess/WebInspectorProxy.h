@@ -179,6 +179,7 @@ private:
     void platformDidCloseForCrash();
     void platformInvalidate();
     void platformBringToFront();
+    void platformBringInspectedPageToFront();
     void platformHide();
     bool platformIsFront();
     void platformAttachAvailabilityChanged(bool);

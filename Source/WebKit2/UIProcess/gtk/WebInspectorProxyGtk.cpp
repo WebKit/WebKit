@@ -237,6 +237,11 @@ void WebInspectorProxy::platformBringToFront()
         gtk_window_present(GTK_WINDOW(parent));
 }
 
+void WebInspectorProxy::platformBringInspectedPageToFront()
+{
+    notImplemented();
+}
+
 bool WebInspectorProxy::platformIsFront()
 {
     GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);

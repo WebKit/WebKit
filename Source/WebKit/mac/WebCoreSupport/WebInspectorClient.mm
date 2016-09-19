@@ -160,9 +160,11 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
 
     ASSERT(isMainThread());
 
-    if (enabled)
+    if (enabled) {
+        [[m_inspectedWebView window] makeKeyAndOrderFront:nil];
+        [[m_inspectedWebView window] makeFirstResponder:m_inspectedWebView];
         [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStartSearchingForNode object:inspector];
-    else
+    } else
         [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStopSearchingForNode object:inspector];
 }
 

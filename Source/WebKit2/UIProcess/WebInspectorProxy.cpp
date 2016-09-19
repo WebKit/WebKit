@@ -598,7 +598,9 @@ void WebInspectorProxy::elementSelectionChanged(bool active)
         return;
     }
 
-    if (!active && isConnected())
+    if (active)
+        platformBringInspectedPageToFront();
+    else if (isConnected())
         bringToFront();
 }
 
@@ -656,6 +658,11 @@ void WebInspectorProxy::platformInvalidate()
 }
 
 void WebInspectorProxy::platformBringToFront()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformBringInspectedPageToFront()
 {
     notImplemented();
 }

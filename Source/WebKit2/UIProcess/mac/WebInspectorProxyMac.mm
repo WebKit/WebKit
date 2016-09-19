@@ -394,6 +394,11 @@ void WebInspectorProxy::platformBringToFront()
     [m_inspectorView.get().window makeFirstResponder:m_inspectorView.get()];
 }
 
+void WebInspectorProxy::platformBringInspectedPageToFront()
+{
+    [inspectedPage()->platformWindow() makeKeyAndOrderFront:nil];
+}
+
 bool WebInspectorProxy::platformIsFront()
 {
     // FIXME <rdar://problem/10937688>: this will not return false for a background tab in Safari, only a background window.

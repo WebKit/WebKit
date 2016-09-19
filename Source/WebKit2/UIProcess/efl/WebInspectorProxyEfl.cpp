@@ -164,6 +164,11 @@ void WebInspectorProxy::platformBringToFront()
     notImplemented();
 }
 
+void WebInspectorProxy::platformBringInspectedPageToFront()
+{
+    notImplemented();
+}
+
 bool WebInspectorProxy::platformIsFront()
 {
     notImplemented();

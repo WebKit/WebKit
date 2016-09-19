@@ -1,3 +1,16 @@
+2016-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Bring the inspected page's window forward when activating element search
+        https://bugs.webkit.org/show_bug.cgi?id=162114
+        <rdar://problem/28349357>
+
+        Reviewed by Brian Burg.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::didSetSearchingForNode):
+        When element search is activated bring the window
+        containing the inspected page to the foreground.
+
 2016-09-15  Brady Eidson  <beidson@apple.com>
 
         WKWebView.hasOnlySecureContent always returns "YES" after going back to a CachedPage (even if it has http resources).
