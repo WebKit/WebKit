@@ -241,12 +241,13 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
 {
     m_history.reset();
     m_domEditor.reset();
+    m_mousedOverNode = nullptr;
 
     ErrorString unused;
-    setSearchingForNode(unused, false, 0);
+    setSearchingForNode(unused, false, nullptr);
     hideHighlight(unused);
 
-    m_instrumentingAgents.setInspectorDOMAgent(0);
+    m_instrumentingAgents.setInspectorDOMAgent(nullptr);
     m_documentRequested = false;
     reset();
 }
@@ -1005,10 +1006,17 @@ void InspectorDOMAgent::focusNode()
 
 void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
 {
+    m_mousedOverNode = result.innerNode();
+
     if (!m_searchingForNode)
         return;
 
-    Node* node = result.innerNode();
+    highlightMousedOverNode();
+}
+
+void InspectorDOMAgent::highlightMousedOverNode()
+{
+    Node* node = m_mousedOverNode.get();
     while (node && node->nodeType() == Node::TEXT_NODE)
         node = node->parentNode();
     if (node && m_inspectModeHighlightConfig)
@@ -1026,6 +1034,7 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabl
         m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(errorString, highlightInspectorObject);
         if (!m_inspectModeHighlightConfig)
             return;
+        highlightMousedOverNode();
     } else
         hideHighlight(errorString);
 

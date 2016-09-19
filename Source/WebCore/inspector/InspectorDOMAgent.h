@@ -215,6 +215,7 @@ public:
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
 
 private:
+    void highlightMousedOverNode();
     void setSearchingForNode(ErrorString&, bool enabled, const Inspector::InspectorObject* highlightConfig);
     std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString&, const Inspector::InspectorObject* highlightInspectorObject);
 
@@ -270,6 +271,7 @@ private:
     SearchResults m_searchResults;
     std::unique_ptr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_nodeToFocus;
+    RefPtr<Node> m_mousedOverNode;
     bool m_searchingForNode { false };
     std::unique_ptr<HighlightConfig> m_inspectModeHighlightConfig;
     std::unique_ptr<InspectorHistory> m_history;
