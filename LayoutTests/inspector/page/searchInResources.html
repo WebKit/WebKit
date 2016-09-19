@@ -32,7 +32,7 @@ function test()
     suite.addTestCase({
         name: "SearchAllResources",
         description: "Able to find text results in different resources.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             PageAgent.searchInResources(searchString, (error, results) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
@@ -47,7 +47,7 @@ function test()
     suite.addTestCase({
         name: "SearchInScriptResource",
         description: "Able to find text results in an individual Script resource.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let result = searchResults.find((result) => /search-script\.js$/.test(result.url));
             if (!result)
                 reject();
@@ -65,7 +65,7 @@ function test()
     suite.addTestCase({
         name: "SearchInXHRResource",
         description: "Able to find text results in an individual XHR resource.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let result = searchResults.find((result) => /search-xhr\.txt$/.test(result.url));
             if (!result)
                 reject();
@@ -83,10 +83,12 @@ function test()
         }
     });
 
-    InspectorTest.evaluateInPage("triggerDownloadingResources()");
-    InspectorTest.singleFireEventListener("PageIsReady", (event) => {
+    InspectorTest.awaitEvent("PageIsReady")
+    .then((event) => {
         suite.runTestCasesAndFinish();
     });
+
+    InspectorTest.evaluateInPage("triggerDownloadingResources()");
 }
 </script>
 </head>
