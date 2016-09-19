@@ -78,6 +78,17 @@
 
 namespace WebCore {
 
+struct SameSizeAsRenderElement : public RenderObject {
+    uint8_t bitfields0;
+    uint8_t bitfields1;
+    uint8_t bitfields2;
+    void* firstChild;
+    void* lastChild;
+    RenderStyle style;
+};
+
+static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
+
 bool RenderElement::s_affectsParentBlock = false;
 bool RenderElement::s_noLongerAffectsParentBlock = false;
     
@@ -1483,7 +1494,6 @@ void RenderElement::unregisterForVisibleInViewportCallback()
     setIsRegisteredForVisibleInViewportCallback(false);
 
     view().unregisterForVisibleInViewportCallback(*this);
-    m_visibleInViewportState = VisibilityUnknown;
 }
 
 void RenderElement::visibleInViewportStateChanged(VisibleInViewportState state)
