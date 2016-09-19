@@ -42,10 +42,45 @@
 
               assert_throws("NotFoundError",
                   function() { mediaSource.removeSourceBuffer(sourceBuffer); },
-                  "removeSourceBuffer() threw an exception when a SourceBuffer that was already removed.");
+                  "removeSourceBuffer() threw an exception for a SourceBuffer that was already removed.");
 
               test.done();
           }, "Test calling removeSourceBuffer() twice with the same object.");
+
+          mediasource_test(function(test, mediaElement1, mediaSource1)
+          {
+              var sourceBuffer1 = mediaSource1.addSourceBuffer(MediaSourceUtil.AUDIO_ONLY_TYPE);
+              assert_class_string(sourceBuffer1, "SourceBuffer", "New SourceBuffer returned");
+
+              var mediaElement2 = document.createElement("video");
+              document.body.appendChild(mediaElement2);
+              test.add_cleanup(function() { document.body.removeChild(mediaElement2); });
+
+              var mediaSource2 = new MediaSource();
+              var mediaSource2URL = URL.createObjectURL(mediaSource2);
+              mediaElement2.src = mediaSource2URL;
+              test.expectEvent(mediaSource2, "sourceopen", "Second MediaSource opened");
+              test.waitForExpectedEvents(function()
+              {
+                  URL.revokeObjectURL(mediaSource2URL);
+
+                  var sourceBuffer2 = mediaSource2.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE);
+                  assert_class_string(sourceBuffer2, "SourceBuffer", "Second new SourceBuffer returned");
+                  assert_not_equals(mediaSource1, mediaSource2, "MediaSources are different instances");
+                  assert_not_equals(sourceBuffer1, sourceBuffer2, "SourceBuffers are different instances");
+                  assert_equals(mediaSource1.sourceBuffers[0], sourceBuffer1);
+                  assert_equals(mediaSource2.sourceBuffers[0], sourceBuffer2);
+                  assert_throws("NotFoundError",
+                      function() { mediaSource1.removeSourceBuffer(sourceBuffer2); },
+                      "MediaSource1.removeSourceBuffer() threw an exception for SourceBuffer2");
+                  assert_throws("NotFoundError",
+                      function() { mediaSource2.removeSourceBuffer(sourceBuffer1); },
+                      "MediaSource2.removeSourceBuffer() threw an exception for SourceBuffer1");
+                  mediaSource1.removeSourceBuffer(sourceBuffer1);
+                  mediaSource2.removeSourceBuffer(sourceBuffer2);
+                  test.done();
+              });
+          }, "Test calling removeSourceBuffer() for a sourceBuffer belonging to a different mediaSource instance.");
 
           mediasource_test(function(test, mediaElement, mediaSource)
           {

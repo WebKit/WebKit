@@ -17,6 +17,9 @@
                   var segmentInfo = MediaSourceUtil.SEGMENT_INFO;
                   var sourceBuffer = mediaSource.addSourceBuffer(segmentInfo.type);
 
+                  assert_equals(sourceBuffer.timestampOffset, 0,
+                      "Initial timestampOffset of a SourceBuffer is 0");
+
                   if (expected == "TypeError")  {
                       assert_throws({name: "TypeError"},
                           function() { sourceBuffer.timestampOffset = value; },

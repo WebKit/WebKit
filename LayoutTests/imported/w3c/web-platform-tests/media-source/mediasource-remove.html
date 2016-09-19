@@ -2,6 +2,7 @@
 <!--  Copyright © 2016 Chromium authors and World Wide Web Consortium, (Massachusetts Institute of Technology, ERCIM, Keio University, Beihang).  -->
 <html>
     <head>
+        <meta  charset="utf-8">
         <title>SourceBuffer.remove() test cases.</title>
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
@@ -14,6 +15,8 @@
           {
               var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.AUDIO_VIDEO_TYPE);
 
+              mediaSource.duration = 10;
+
               assert_throws(new TypeError(), function()
               {
                   sourceBuffer.remove(-1, 2);
@@ -25,6 +28,8 @@
           mediasource_test(function(test, mediaElement, mediaSource)
           {
               var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.AUDIO_VIDEO_TYPE);
+
+              mediaSource.duration = 10;
 
               [ undefined, NaN, Infinity, -Infinity ].forEach(function(item)
               {
@@ -69,6 +74,8 @@
           {
               var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.AUDIO_VIDEO_TYPE);
 
+              mediaSource.duration = 10;
+
               assert_throws(new TypeError(), function()
               {
                   sourceBuffer.remove(0, Number.NEGATIVE_INFINITY);
@@ -80,6 +87,8 @@
           mediasource_test(function(test, mediaElement, mediaSource)
           {
               var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.AUDIO_VIDEO_TYPE);
+
+              mediaSource.duration = 10;
 
               assert_throws(new TypeError(), function()
               {
@@ -105,6 +114,20 @@
               test.done();
           }, "Test remove after SourceBuffer removed from mediaSource.");
 
+          mediasource_test(function(test, mediaElement, mediaSource)
+          {
+              var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.AUDIO_VIDEO_TYPE);
+
+              assert_false(sourceBuffer.updating, "updating is false");
+              assert_equals(mediaSource.duration, NaN, "duration isn't set");
+
+              assert_throws(new TypeError(), function()
+              {
+                  sourceBuffer.remove(0, 0);
+              }, "remove");
+
+              test.done();
+          }, "Test remove with a NaN duration.");
 
           mediasource_test(function(test, mediaElement, mediaSource)
           {
@@ -201,6 +224,7 @@
                   test.expectEvent(sourceBuffer, "updatestart");
                   test.expectEvent(sourceBuffer, "update");
                   test.expectEvent(sourceBuffer, "updateend");
+                  test.expectEvent(mediaSource, "sourceopen");
                   sourceBuffer.remove(1, 2);
 
                   assert_true(sourceBuffer.updating, "updating");

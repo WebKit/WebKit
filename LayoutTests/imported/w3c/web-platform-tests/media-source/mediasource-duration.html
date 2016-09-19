@@ -10,6 +10,11 @@
     <body>
         <div id="log"></div>
         <script>
+
+          var subType = MediaSourceUtil.getSubType(MediaSourceUtil.AUDIO_ONLY_TYPE);
+          var manifestFilenameAudio = subType + "/test-a-128k-44100Hz-1ch-manifest.json";
+          var manifestFilenameVideo = subType + "/test-v-128k-320x240-30fps-10kfr-manifest.json";
+
           function mediasource_truncated_duration_seek_test(testFunction, description, options)
           {
               return mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
@@ -53,14 +58,30 @@
 
                   test.waitForExpectedEvents(function()
                   {
-                      // remove will not remove partial frames. The truncated duration is as such the highest end time.
-                      truncatedDuration = sourceBuffer.buffered.end(sourceBuffer.buffered.length-1);
                       assert_greater_than_equal(mediaElement.currentTime, seekTo, 'Playback time has reached seekTo');
-                      test.expectEvent(mediaElement, 'seeking', 'Seeking to truncated duration');
-
                       assert_false(sourceBuffer.updating, 'sourceBuffer.updating');
 
+                      // Remove will not remove partial frames, so the resulting duration is the highest end time
+                      // of the track buffer ranges, and is greater than or equal to the highest coded frame
+                      // presentation time across all track buffer ranges. We first obtain the intersected track buffer
+                      // ranges end time and set the duration to that value.
+                      truncatedDuration = sourceBuffer.buffered.end(sourceBuffer.buffered.length-1);
+                      assert_less_than(truncatedDuration, seekTo,
+                                       'remove has removed the current playback position from at least one track buffer');
+
                       mediaSource.duration = truncatedDuration;
+                      test.expectEvent(mediaElement, 'seeking', 'Seeking to truncated duration');
+
+                      // The actual duration may be slightly higher than truncatedDuration because the
+                      // duration is adjusted upwards if necessary to be the highest end time across all track buffer
+                      // ranges. Allow that increase here.
+                      assert_less_than_equal(truncatedDuration, mediaSource.duration,
+                                              'Duration should not be less than what was set');
+                      // Here, we assume no test media coded frame duration is longer than 100ms.
+                      assert_less_than(mediaSource.duration - truncatedDuration, 0.1);
+
+                      // Update our truncatedDuration to be the actual new duration.
+                      truncatedDuration = mediaSource.duration;
 
                       assert_true(mediaElement.seeking, 'Seeking after setting truncatedDuration');
                   });
@@ -253,6 +274,110 @@
               });
           }, 'Test setting the duration to less than the highest starting presentation timestamp will throw');
 
+          mediasource_test(function(test, mediaElement, mediaSource)
+          {
+              mediaElement.addEventListener("error", test.unreached_func("Unexpected event 'error'"));
+              MediaSourceUtil.fetchManifestAndData(test, manifestFilenameAudio, function(typeAudio, dataAudio)
+              {
+                  MediaSourceUtil.fetchManifestAndData(test, manifestFilenameVideo, function(typeVideo, dataVideo)
+                  {
+                      var sourceBufferAudio = mediaSource.addSourceBuffer(typeAudio);
+                      var sourceBufferVideo = mediaSource.addSourceBuffer(typeVideo);
+                      var newDuration = 1.2;
+
+                      sourceBufferAudio.appendWindowEnd = 2.0;
+                      sourceBufferAudio.appendWindowStart = newDuration / 2.0;
+                      sourceBufferAudio.appendBuffer(dataAudio);
+
+                      sourceBufferVideo.appendWindowEnd = 2.0;
+                      sourceBufferVideo.appendWindowStart = newDuration * 1.3;
+                      sourceBufferVideo.appendBuffer(dataVideo);
+
+                      test.expectEvent(sourceBufferAudio, "updateend");
+                      test.expectEvent(sourceBufferVideo, "updateend");
+                      test.waitForExpectedEvents(function()
+                      {
+                          assert_equals(sourceBufferAudio.buffered.length, 1);
+                          assert_equals(sourceBufferVideo.buffered.length, 1);
+                          assert_less_than(sourceBufferAudio.buffered.start(0), newDuration);
+                          assert_greater_than(sourceBufferVideo.buffered.start(0), newDuration);
+                          assert_throws("InvalidStateError", function () { mediaSource.duration = newDuration; });
+                          test.done();
+                      });
+                  });
+              });
+          }, "Truncating the duration throws an InvalidStateError exception when new duration is less than the highest buffered range start time of one of the track buffers");
+
+          mediasource_test(function(test, mediaElement, mediaSource)
+          {
+              mediaElement.addEventListener("error", test.unreached_func("Unexpected event 'error'"));
+              MediaSourceUtil.fetchManifestAndData(test, manifestFilenameAudio, function(typeAudio, dataAudio)
+              {
+                  MediaSourceUtil.fetchManifestAndData(test, manifestFilenameVideo, function(typeVideo, dataVideo)
+                  {
+                      var sourceBufferAudio = mediaSource.addSourceBuffer(typeAudio);
+                      var sourceBufferVideo = mediaSource.addSourceBuffer(typeVideo);
+
+                      // Buffer audio [0.8,1.8)
+                      sourceBufferAudio.timestampOffset = 0.8;
+                      sourceBufferAudio.appendWindowEnd = 1.8;
+                      sourceBufferAudio.appendBuffer(dataAudio);
+
+                      // Buffer video [1.5,3)
+                      sourceBufferVideo.timestampOffset = 1.5;
+                      sourceBufferVideo.appendWindowEnd = 3;
+                      sourceBufferVideo.appendBuffer(dataVideo);
+
+                      test.expectEvent(sourceBufferAudio, "updateend");
+                      test.expectEvent(sourceBufferVideo, "updateend");
+                      test.waitForExpectedEvents(function()
+                      {
+                          var newDuration = 2.0;
+
+                          // Verify the test setup
+                          assert_equals(sourceBufferAudio.buffered.length, 1);
+                          assert_equals(sourceBufferVideo.buffered.length, 1);
+                          assert_greater_than(sourceBufferAudio.buffered.end(0), 1.5);
+                          assert_less_than(sourceBufferAudio.buffered.end(0), newDuration);
+                          assert_less_than(sourceBufferVideo.buffered.start(0), newDuration);
+                          assert_greater_than(sourceBufferVideo.buffered.end(0), newDuration + 0.5);
+
+                          // Verify the expected error
+                          // We assume relocated test video has at least one coded
+                          // frame presentation interval which fits in [>2.0,>2.5)
+                          assert_throws("InvalidStateError", function () { mediaSource.duration = newDuration; });
+                          test.done();
+                      });
+                  });
+              });
+          }, "Truncating the duration throws an InvalidStateError exception when new duration is less than a buffered coded frame presentation time");
+
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+          {
+              assert_less_than(segmentInfo.duration, 60, 'Sufficient test media duration');
+              sourceBuffer.appendBuffer(mediaData);
+              test.expectEvent(sourceBuffer, 'updateend', 'Media data appended to the SourceBuffer');
+              test.waitForExpectedEvents(function()
+              {
+                  mediaSource.duration = 60;
+                  assert_false(sourceBuffer.updating, 'No SourceBuffer update when duration is increased');
+                  test.done();
+              });
+          }, 'Increasing the duration does not trigger any SourceBuffer update');
+
+          mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+          {
+              assert_greater_than(segmentInfo.duration, 2, 'Sufficient test media duration');
+              mediaElement.play();
+              sourceBuffer.appendBuffer(mediaData);
+              test.expectEvent(sourceBuffer, 'updateend', 'Media data appended to the SourceBuffer');
+              test.waitForExpectedEvents(function()
+              {
+                  mediaSource.duration = 60;
+                  assert_false(sourceBuffer.updating, 'No SourceBuffer update when duration is increased');
+                  test.done();
+              });
+          }, 'Increasing the duration during media playback does not trigger any SourceBuffer update');
         </script>
     </body>
 </html>

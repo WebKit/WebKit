@@ -1,3 +1,35 @@
+2016-09-19  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; update LayoutTests/media-source to the most recent version (5a011ca).
+
+        * resources/TestRepositories:
+        * web-platform-tests/media-source/OWNERS:
+        * web-platform-tests/media-source/interfaces.html:
+        * web-platform-tests/media-source/manifest.txt:
+        * web-platform-tests/media-source/mediasource-appendbuffer-quota-exceeded.html:
+        * web-platform-tests/media-source/mediasource-attach-stops-delaying-load-event.html: Added.
+        * web-platform-tests/media-source/mediasource-avtracks.html:
+        * web-platform-tests/media-source/mediasource-detach.html:
+        * web-platform-tests/media-source/mediasource-duration-expected.txt:
+        * web-platform-tests/media-source/mediasource-duration.html:
+        * web-platform-tests/media-source/mediasource-endofstream.html:
+        * web-platform-tests/media-source/mediasource-errors.html:
+        * web-platform-tests/media-source/mediasource-getvideoplaybackquality-expected.txt:
+        * web-platform-tests/media-source/mediasource-getvideoplaybackquality.html:
+        * web-platform-tests/media-source/mediasource-is-type-supported.html:
+        * web-platform-tests/media-source/mediasource-liveseekable.html:
+        * web-platform-tests/media-source/mediasource-remove-expected.txt:
+        * web-platform-tests/media-source/mediasource-remove.html:
+        * web-platform-tests/media-source/mediasource-removesourcebuffer.html:
+        * web-platform-tests/media-source/mediasource-seekable.html:
+        * web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html: Added.
+        * web-platform-tests/media-source/mediasource-sourcebuffer-mode.html:
+        * web-platform-tests/media-source/mediasource-sourcebuffer-trackdefaults.html:
+        * web-platform-tests/media-source/mediasource-timestamp-offset.html:
+        * web-platform-tests/media-source/mediasource-trackdefault.html:
+        * web-platform-tests/media-source/mediasource-trackdefaultlist.html:
+        * web-platform-tests/media-source/mediasource-util.js:
+
 2016-09-19  Chris Dumez  <cdumez@apple.com>
 
         Update XHTMLParser to recognize "-//W3C//DTD MathML 2.0//EN" public identifier
