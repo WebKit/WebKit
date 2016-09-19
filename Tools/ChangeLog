@@ -1,3 +1,15 @@
+2016-09-19  Nan Wang  <n_wang@apple.com>
+
+        AX: Add accessibility support for details element on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=162041
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::isExpanded):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::isExpanded):
+
 2016-09-18  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         [EFL] Bump efl library to 1.18.1

@@ -74,6 +74,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
 - (NSString *)accessibilityExpandedTextValue;
+- (BOOL)accessibilityIsExpanded;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -568,7 +569,7 @@ bool AccessibilityUIElement::isIndeterminate() const
 
 bool AccessibilityUIElement::isExpanded() const
 {
-    return false;
+    return [m_element accessibilityIsExpanded];
 }
 
 bool AccessibilityUIElement::isChecked() const

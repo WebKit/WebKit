@@ -1,3 +1,13 @@
+2016-09-19  Nan Wang  <n_wang@apple.com>
+
+        AX: Add accessibility support for details element on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=162041
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/detail-summary-ios-expected.txt: Added.
+        * accessibility/ios-simulator/detail-summary-ios.html: Added.
+
 2016-09-19  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType] while loading guardian.co.uk
