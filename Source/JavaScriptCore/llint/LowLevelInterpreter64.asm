@@ -1146,39 +1146,20 @@ _llint_op_is_number:
     dispatch(3)
 
 
-macro isCellWithType(type)
+_llint_op_is_cell_with_type:
+    traceExecution()
+    loadisFromInstruction(3, t3)
     loadisFromInstruction(2, t1)
     loadisFromInstruction(1, t2)
     loadConstantOrVariable(t1, t0)
     btqnz t0, tagMask, .notCellCase
-    cbeq JSCell::m_type[t0], type, t1
+    cbeq JSCell::m_type[t0], t3, t1
     orq ValueFalse, t1
     storeq t1, [cfr, t2, 8]
-    dispatch(3)
+    dispatch(4)
 .notCellCase:
     storeq ValueFalse, [cfr, t2, 8]
-    dispatch(3)
-end
-
-
-_llint_op_is_string:
-    traceExecution()
-    isCellWithType(StringType)
-
-
-_llint_op_is_jsarray:
-    traceExecution()
-    isCellWithType(ArrayType)
-
-
-_llint_op_is_proxy_object:
-    traceExecution()
-    isCellWithType(ProxyObjectType)
-
-
-_llint_op_is_derived_array:
-    traceExecution()
-    isCellWithType(DerivedArrayType)
+    dispatch(4)
 
 
 _llint_op_is_object:

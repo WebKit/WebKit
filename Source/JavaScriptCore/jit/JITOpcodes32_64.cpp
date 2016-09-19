@@ -354,10 +354,11 @@ void JIT::emit_op_is_number(Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
-void JIT::emitIsCellWithType(Instruction* currentInstruction, JSType type)
+void JIT::emit_op_is_cell_with_type(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     int value = currentInstruction[2].u.operand;
+    int type = currentInstruction[3].u.operand;
 
     emitLoad(value, regT1, regT0);
     Jump isNotCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
@@ -370,26 +371,6 @@ void JIT::emitIsCellWithType(Instruction* currentInstruction, JSType type)
 
     done.link(this);
     emitStoreBool(dst, regT0);
-}
-
-void JIT::emit_op_is_string(Instruction* currentInstruction)
-{
-    emitIsCellWithType(currentInstruction, StringType);
-}
-
-void JIT::emit_op_is_jsarray(Instruction* currentInstruction)
-{
-    emitIsCellWithType(currentInstruction, ArrayType);
-}
-
-void JIT::emit_op_is_proxy_object(Instruction* currentInstruction)
-{
-    emitIsCellWithType(currentInstruction, ProxyObjectType);
-}
-
-void JIT::emit_op_is_derived_array(Instruction* currentInstruction)
-{
-    emitIsCellWithType(currentInstruction, DerivedArrayType);
 }
 
 void JIT::emit_op_is_object(Instruction* currentInstruction)

@@ -314,7 +314,6 @@ namespace JSC { namespace DFG {
     macro(IsUndefined, NodeResultBoolean) \
     macro(IsBoolean, NodeResultBoolean) \
     macro(IsNumber, NodeResultBoolean) \
-    macro(IsString, NodeResultBoolean) \
     macro(IsObject, NodeResultBoolean) \
     macro(IsObjectOrNull, NodeResultBoolean) \
     macro(IsFunction, NodeResultBoolean) \

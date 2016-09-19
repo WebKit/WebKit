@@ -896,9 +896,6 @@ private:
         case IsNumber:
             compileIsNumber();
             break;
-        case IsString:
-            compileIsString();
-            break;
         case IsCellWithType:
             compileIsCellWithType();
             break;
@@ -6264,25 +6261,6 @@ private:
         setBoolean(isNumber(lowJSValue(m_node->child1()), provenType(m_node->child1())));
     }
     
-    void compileIsString()
-    {
-        LValue value = lowJSValue(m_node->child1());
-        
-        LBasicBlock isCellCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-        
-        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
-        m_out.branch(
-            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
-        
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock cellResult = m_out.anchor(isString(value, provenType(m_node->child1())));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(Int32, notCellResult, cellResult));
-    }
-
     void compileIsCellWithType()
     {
         if (m_node->child1().useKind() == UntypedUse) {

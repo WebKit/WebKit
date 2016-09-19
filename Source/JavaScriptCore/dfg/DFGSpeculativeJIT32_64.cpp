@@ -4640,26 +4640,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case IsString: {
-        JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, Reuse, value, TagWord);
-        
-        JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(value.jsValueRegs());
-        
-        m_jit.compare8(JITCompiler::Equal, 
-            JITCompiler::Address(value.payloadGPR(), JSCell::typeInfoTypeOffset()), 
-            TrustedImm32(StringType), 
-            result.gpr());
-        JITCompiler::Jump done = m_jit.jump();
-        
-        isNotCell.link(&m_jit);
-        m_jit.move(TrustedImm32(0), result.gpr());
-        
-        done.link(&m_jit);
-        booleanResult(result.gpr(), node);
-        break;
-    }
-
     case IsObject: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value, TagWord);

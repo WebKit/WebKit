@@ -162,7 +162,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case IsUndefined:
     case IsBoolean:
     case IsNumber:
-    case IsString:
     case IsObject:
     case IsTypedArrayView:
     case LogicalNot:

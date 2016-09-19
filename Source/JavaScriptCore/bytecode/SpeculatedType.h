@@ -452,6 +452,7 @@ SpeculatedType speculationFromClassInfo(const ClassInfo*);
 SpeculatedType speculationFromStructure(Structure*);
 SpeculatedType speculationFromCell(JSCell*);
 SpeculatedType speculationFromValue(JSValue);
+SpeculatedType speculationFromJSType(JSType);
 
 SpeculatedType speculationFromTypedArrayType(TypedArrayType); // only valid for typed views.
 TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType);

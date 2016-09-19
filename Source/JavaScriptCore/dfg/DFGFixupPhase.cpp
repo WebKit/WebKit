@@ -1397,16 +1397,6 @@ private:
             break;
         }
 
-        case IsString:
-            if (node->child1()->shouldSpeculateString()) {
-                m_insertionSet.insertNode(
-                    m_indexInBlock, SpecNone, Check, node->origin,
-                    Edge(node->child1().node(), StringUse));
-                m_graph.convertToConstant(node, jsBoolean(true));
-                observeUseKindOnNode<StringUse>(node);
-            }
-            break;
-
         case IsObject:
             if (node->child1()->shouldSpeculateObject()) {
                 m_insertionSet.insertNode(
@@ -1767,6 +1757,17 @@ private:
     void fixupIsCellWithType(Node* node)
     {
         switch (node->speculatedTypeForQuery()) {
+        case SpecString:
+            if (node->child1()->shouldSpeculateString()) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), StringUse));
+                m_graph.convertToConstant(node, jsBoolean(true));
+                observeUseKindOnNode<StringUse>(node);
+                return;
+            }
+            break;
+
         case SpecProxyObject:
             if (node->child1()->shouldSpeculateProxyObject()) {
                 m_insertionSet.insertNode(

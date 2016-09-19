@@ -1257,39 +1257,20 @@ _llint_op_is_number:
     dispatch(3)
 
 
-macro isCellWithType(type)
+_llint_op_is_cell_with_type:
+    traceExecution()
     loadi 8[PC], t1
     loadi 4[PC], t2
     loadConstantOrVariable(t1, t0, t3)
     storei BooleanTag, TagOffset[cfr, t2, 8]
     bineq t0, CellTag, .notCellCase
-    cbeq JSCell::m_type[t3], type, t1
+    loadi 12[PC], t0
+    cbeq JSCell::m_type[t3], t0, t1
     storei t1, PayloadOffset[cfr, t2, 8]
-    dispatch(3)
+    dispatch(4)
 .notCellCase:
     storep 0, PayloadOffset[cfr, t2, 8]
-    dispatch(3)
-end
-
-
-_llint_op_is_string:
-    traceExecution()
-    isCellWithType(StringType)
-
-
-_llint_op_is_jsarray:
-    traceExecution()
-    isCellWithType(ArrayType)
-
-
-_llint_op_is_proxy_object:
-    traceExecution()
-    isCellWithType(ProxyObjectType)
-
-
-_llint_op_is_derived_array:
-    traceExecution()
-    isCellWithType(DerivedArrayType)
+    dispatch(4)
 
 
 _llint_op_is_object:

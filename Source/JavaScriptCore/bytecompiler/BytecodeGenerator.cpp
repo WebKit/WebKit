@@ -1659,9 +1659,10 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
             }
             if (value == "string") {
                 rewindUnaryOp();
-                emitOpcode(op_is_string);
+                emitOpcode(op_is_cell_with_type);
                 instructions().append(dst->index());
                 instructions().append(srcIndex);
+                instructions().append(StringType);
                 return dst;
             }
             if (value == "object") {
@@ -4217,6 +4218,14 @@ RegisterID* BytecodeGenerator::emitToIndexString(RegisterID* dst, RegisterID* in
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitIsCellWithType(RegisterID* dst, RegisterID* src, JSType type)
+{
+    emitOpcode(op_is_cell_with_type);
+    instructions().append(dst->index());
+    instructions().append(src->index());
+    instructions().append(type);
+    return dst;
+}
 
 RegisterID* BytecodeGenerator::emitIsObject(RegisterID* dst, RegisterID* src)
 {

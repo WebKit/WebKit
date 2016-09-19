@@ -1,3 +1,88 @@
+2016-09-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][LLInt] Introduce is_cell_with_type
+        https://bugs.webkit.org/show_bug.cgi?id=162132
+
+        Reviewed by Sam Weinig.
+
+        In this patch, we introduce is_cell_with_type bytecode. This bytecode can unify the following predicates,
+        op_is_string, op_is_jsarray, op_is_proxy_object, and op_is_derived_array!
+        And we now drop DFG node IsString since we can use IsCellWithType instead.
+        This automatically offers optimization to previous IsString node: dropping cell check by using CellUse edge filter.
+
+        Later, we are planning to use this is_cell_with_type to optimize @isRegExpObject, @isSet, and @isMap[1].
+
+        The performance results are neutral.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=162142
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromJSType):
+        * bytecode/SpeculatedType.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        (JSC::BytecodeGenerator::emitIsCellWithType):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsJSArray):
+        (JSC::BytecodeGenerator::emitIsProxyObject):
+        (JSC::BytecodeGenerator::emitIsDerivedArray):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupIsCellWithType):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::speculatedTypeForQuery):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsString): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_is_cell_with_type):
+        (JSC::JIT::emitIsCellWithType): Deleted.
+        (JSC::JIT::emit_op_is_string): Deleted.
+        (JSC::JIT::emit_op_is_jsarray): Deleted.
+        (JSC::JIT::emit_op_is_proxy_object): Deleted.
+        (JSC::JIT::emit_op_is_derived_array): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_is_cell_with_type):
+        (JSC::JIT::emitIsCellWithType): Deleted.
+        (JSC::JIT::emit_op_is_string): Deleted.
+        (JSC::JIT::emit_op_is_jsarray): Deleted.
+        (JSC::JIT::emit_op_is_proxy_object): Deleted.
+        (JSC::JIT::emit_op_is_derived_array): Deleted.
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2016-09-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Assert length of LLInt opcodes using isCellWithType is 3

@@ -1013,7 +1013,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsUndefined:
     case IsBoolean:
     case IsNumber:
-    case IsString:
     case IsObject:
     case IsObjectOrNull:
     case IsFunction:
@@ -1037,9 +1036,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             case IsNumber:
                 setConstant(node, jsBoolean(child.value().isNumber()));
-                break;
-            case IsString:
-                setConstant(node, jsBoolean(isJSString(child.value())));
                 break;
             case IsObject:
                 setConstant(node, jsBoolean(child.value().isObject()));
@@ -1142,20 +1138,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             
             if (!(child.m_type & SpecFullNumber)) {
-                setConstant(node, jsBoolean(false));
-                constantWasSet = true;
-                break;
-            }
-            
-            break;
-        case IsString:
-            if (!(child.m_type & ~SpecString)) {
-                setConstant(node, jsBoolean(true));
-                constantWasSet = true;
-                break;
-            }
-            
-            if (!(child.m_type & SpecString)) {
                 setConstant(node, jsBoolean(false));
                 constantWasSet = true;
                 break;

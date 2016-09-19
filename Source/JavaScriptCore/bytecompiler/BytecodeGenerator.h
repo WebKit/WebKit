@@ -630,12 +630,13 @@ namespace JSC {
         RegisterID* emitEnumeratorGenericPropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index);
         RegisterID* emitToIndexString(RegisterID* dst, RegisterID* index);
 
-        RegisterID* emitIsJSArray(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_is_jsarray, dst, src); }
-        RegisterID* emitIsProxyObject(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_is_proxy_object, dst, src); }
+        RegisterID* emitIsCellWithType(RegisterID* dst, RegisterID* src, JSType);
+        RegisterID* emitIsJSArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, ArrayType); }
+        RegisterID* emitIsProxyObject(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, ProxyObjectType); }
         RegisterID* emitIsObject(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsUndefined(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsEmpty(RegisterID* dst, RegisterID* src);
-        RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_is_derived_array, dst, src); }
+        RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, DerivedArrayType); }
         void emitRequireObjectCoercible(RegisterID* value, const String& error);
 
         RegisterID* emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node);

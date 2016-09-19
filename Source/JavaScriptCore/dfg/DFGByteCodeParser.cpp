@@ -2366,7 +2366,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         ASSERT(argumentCountIncludingThis == 2);
 
         insertChecks();
-        Node* isRegExpObject = addToGraph(IsCellWithType, OpInfo(RegExpObjectType), OpInfo(SpecRegExpObject), get(virtualRegisterForArgument(1, registerOffset)));
+        Node* isRegExpObject = addToGraph(IsCellWithType, OpInfo(RegExpObjectType), get(virtualRegisterForArgument(1, registerOffset)));
         set(VirtualRegister(resultOperand), isRegExpObject);
         return true;
     }
@@ -3970,22 +3970,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_is_number);
         }
 
-        case op_is_string: {
+        case op_is_cell_with_type: {
+            JSType type = static_cast<JSType>(currentInstruction[3].u.operand);
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsString, value));
-            NEXT_OPCODE(op_is_string);
-        }
-
-        case op_is_jsarray: {
-            Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsCellWithType, OpInfo(ArrayType), OpInfo(SpecArray), value));
-            NEXT_OPCODE(op_is_jsarray);
-        }
-
-        case op_is_proxy_object: {
-            Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsCellWithType, OpInfo(ProxyObjectType), OpInfo(SpecProxyObject), value));
-            NEXT_OPCODE(op_is_proxy_object);
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsCellWithType, OpInfo(type), value));
+            NEXT_OPCODE(op_is_cell_with_type);
         }
 
         case op_is_object: {
@@ -4004,12 +3993,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsFunction, value));
             NEXT_OPCODE(op_is_function);
-        }
-
-        case op_is_derived_array: {
-            Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsCellWithType, OpInfo(DerivedArrayType), OpInfo(SpecDerivedArray), value));
-            NEXT_OPCODE(op_is_derived_array);
         }
 
         case op_not: {

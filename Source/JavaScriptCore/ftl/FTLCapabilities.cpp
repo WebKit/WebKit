@@ -190,7 +190,6 @@ inline CapabilityLevel canCompile(Node* node)
     case IsUndefined:
     case IsBoolean:
     case IsNumber:
-    case IsString:
     case IsObject:
     case IsObjectOrNull:
     case IsFunction:

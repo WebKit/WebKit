@@ -1179,7 +1179,7 @@ public:
 
     SpeculatedType speculatedTypeForQuery()
     {
-        return m_opInfo2.as<SpeculatedType>();
+        return speculationFromJSType(queriedType());
     }
     
     bool hasResult()

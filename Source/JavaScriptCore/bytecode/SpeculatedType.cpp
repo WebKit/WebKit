@@ -471,6 +471,25 @@ TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
     return NotTypedArray;
 }
 
+SpeculatedType speculationFromJSType(JSType type)
+{
+    switch (type) {
+    case StringType:
+        return SpecString;
+    case ArrayType:
+        return SpecArray;
+    case DerivedArrayType:
+        return SpecDerivedArray;
+    case RegExpObjectType:
+        return SpecRegExpObject;
+    case ProxyObjectType:
+        return SpecProxyObject;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return SpecNone;
+}
+
 SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType type)
 {
     if (type & (SpecAnyInt | SpecAnyIntAsDouble))
