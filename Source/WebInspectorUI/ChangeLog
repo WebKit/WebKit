@@ -1,3 +1,21 @@
+2016-09-19  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Make it easier to create a view from an existing DOM element
+        https://bugs.webkit.org/show_bug.cgi?id=162165
+        <rdar://problem/28365848>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Pass id string for views created from existing DOM elements.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View):
+        Change `element` to `elementOrIdentifier`. If the value is a string,
+        treat it as an element identifier. If the identifier is invalid, create
+        a default element.
+
 2016-09-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Color picker in Style sidebar stops working after 1st color change
