@@ -1,3 +1,16 @@
+2016-09-19  Keith Rollin  <krollin@apple.com>
+
+        Reduce logging from WebResourceLoader::didReceiveData
+        https://bugs.webkit.org/show_bug.cgi?id=162233
+
+        Reviewed by Antti Koivisto.
+
+        Only log once even if called multiple times for a single resource.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveData):
+        * WebProcess/Network/WebResourceLoader.h:
+
 2016-09-19  Daniel Bates  <dabates@apple.com>
 
         Remove ENABLE(TEXT_AUTOSIZING) automatic text size adjustment code

@@ -133,7 +133,11 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
 void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("didReceiveData: (size = %lu)", data.size());
+
+    if (!m_hasReceivedData) {
+        RELEASE_LOG_IF_ALLOWED("didReceiveData: (size = %lu)", data.size());
+        m_hasReceivedData = true;
+    }
 
 #if USE(QUICK_LOOK)
     if (QuickLookHandle* quickLookHandle = m_coreLoader->documentLoader()->quickLookHandle()) {
