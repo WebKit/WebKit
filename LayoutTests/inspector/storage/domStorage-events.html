@@ -40,19 +40,22 @@ function test()
             InspectorTest.fail("Unexpected WebInspector.DOMStorageObject.Event.ItemAdded");
         });
 
-        storageObject.singleFireEventListener(WebInspector.DOMStorageObject.Event.ItemRemoved, (event) => {
+        storageObject.awaitEvent(WebInspector.DOMStorageObject.Event.ItemRemoved)
+        .then((event) => {
             InspectorTest.pass("WebInspector.DOMStorageObject.Event.ItemRemoved");
             InspectorTest.expectThat(event.data.key === "foo", "Should remove key 'x'.");
         });
 
-        storageObject.singleFireEventListener(WebInspector.DOMStorageObject.Event.ItemUpdated, (event) => {
+        storageObject.awaitEvent(WebInspector.DOMStorageObject.Event.ItemUpdated)
+        .then((event) => {
             InspectorTest.pass("WebInspector.DOMStorageObject.Event.ItemUpdated");
             InspectorTest.expectThat(event.data.key === "foo", "Should update key 'x'.");
             InspectorTest.expectThat(event.data.oldValue === "value1", "Should have oldValue 'value1'.");
             InspectorTest.expectThat(event.data.value === "value2", "Should have new value 'value2'.");
         });
 
-        storageObject.singleFireEventListener(WebInspector.DOMStorageObject.Event.ItemsCleared, (event) => {
+        storageObject.awaitEvent(WebInspector.DOMStorageObject.Event.ItemsCleared)
+        .then((event) => {
             InspectorTest.pass("WebInspector.DOMStorageObject.Event.ItemsCleared");
             storageObject.removeEventListener(WebInspector.DOMStorageObject.Event.ItemAdded, null, null);
             callback();
@@ -64,7 +67,7 @@ function test()
     suite.addTestCase({
         name: "TestSessionStorage",
         description: "Test backend generated DOMStorage added, removed, updated, and cleared events for sessionStorage.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerActions(sessionStorage)");
             let sessionStorage = WebInspector.storageManager.domStorageObjects.find((x) => !x.isLocalStorage());
             InspectorTest.expectThat(sessionStorage, "Should have a DOMStorageObject for sessionStorage.");
@@ -75,7 +78,7 @@ function test()
     suite.addTestCase({
         name: "TestLocalStorage",
         description: "Test backend generated DOMStorage added, removed, updated, and cleared events for localStorage.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerActions(localStorage)");
             let localStorage = WebInspector.storageManager.domStorageObjects.find((x) => x.isLocalStorage());
             InspectorTest.expectThat(localStorage, "Should have a DOMStorageObject for localStorage.");
