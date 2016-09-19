@@ -1,3 +1,13 @@
+2016-09-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for Win64
+        https://bugs.webkit.org/show_bug.cgi?id=162132
+
+        In Windows 64bit, t3 register in LLInt is not r[a-d]x.
+        It means that this cannot be used for byte operation.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2016-09-19  Daniel Bates  <dabates@apple.com>
 
         Remove ENABLE(TEXT_AUTOSIZING) automatic text size adjustment code

@@ -1148,12 +1148,12 @@ _llint_op_is_number:
 
 _llint_op_is_cell_with_type:
     traceExecution()
-    loadisFromInstruction(3, t3)
+    loadisFromInstruction(3, t0)
     loadisFromInstruction(2, t1)
     loadisFromInstruction(1, t2)
-    loadConstantOrVariable(t1, t0)
-    btqnz t0, tagMask, .notCellCase
-    cbeq JSCell::m_type[t0], t3, t1
+    loadConstantOrVariable(t1, t3)
+    btqnz t3, tagMask, .notCellCase
+    cbeq JSCell::m_type[t3], t0, t1
     orq ValueFalse, t1
     storeq t1, [cfr, t2, 8]
     dispatch(4)
