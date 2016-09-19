@@ -27,11 +27,11 @@
     [Reflect] attribute DOMString alt;
     [Reflect] attribute DOMString archive;
     [Reflect] attribute DOMString code;
-    [Reflect] attribute USVString codeBase;
+    [Reflect, URL] attribute USVString codeBase;
     [Reflect] attribute DOMString height;
-    [Reflect] attribute DOMString hspace;
+    [Reflect] attribute unsigned long hspace;
     [Reflect] attribute DOMString name;
-    [Reflect] attribute USVString object;
-    [Reflect] attribute DOMString vspace;
+    [Reflect, URL] attribute USVString object;
+    [Reflect] attribute unsigned long vspace;
     [Reflect] attribute DOMString width;
 };
