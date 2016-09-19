@@ -25,7 +25,16 @@ function entry() { // Global (entry)
                 let barLexicalVariable2 = window.navigator; // NestedBlockScope (barLexicalVariable2)
                 debugger;
                 secondPause();
+                thirdPause();
             }
         })();
     }
+}
+
+function thirdPause() {
+    let closureVariableInsideThirdPause = false;
+    (function() {
+        let localVariableInsideAnonymousFunction = true;
+        debugger;
+    })();
 }

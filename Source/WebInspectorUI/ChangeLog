@@ -1,3 +1,16 @@
+2016-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Scope sidebar shows "Closure" instead of "Local" when paused in anonymous function
+        https://bugs.webkit.org/show_bug.cgi?id=162113
+        <rdar://problem/28348954>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame):
+        Default the functionName to the empty string. This will compare
+        favorably against other empty function names instead of null.
+
 2016-09-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Make it easier to create a view from an existing DOM element

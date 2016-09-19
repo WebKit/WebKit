@@ -83,8 +83,8 @@ function test()
     let suite = InspectorTest.createAsyncSuite("PausedCallFrameScope");
 
     suite.addTestCase({
-        name: "TriggerFirstPause",
-        description: "Verify CallFrames and Scopes with the first pause.",
+        name: "PausedCallFrameScope.TriggerFirstPause",
+        description: "Dump CallFrames and Scopes with the first pause.",
         test: (resolve, reject) => {
             InspectorTest.evaluateInPage("setTimeout(entry)");
             WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
@@ -94,8 +94,22 @@ function test()
     });
 
     suite.addTestCase({
-        name: "TriggerSecondPause",
-        description: "Verify CallFrames and Scopes with the first pause.",
+        name: "PausedCallFrameScope.TriggerSecondPause",
+        description: "Dump CallFrames and Scopes with the second pause.",
+        test: (resolve, reject) => {
+            WebInspector.debuggerManager.resume();
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                dumpCallFrames().then(() => {
+                    WebInspector.debuggerManager.resume();
+                    resolve();
+                }, reject);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "PausedCallFrameScope.TriggerThirdPause",
+        description: "Dump CallFrames and Scopes with the third pause.",
         test: (resolve, reject) => {
             WebInspector.debuggerManager.resume();
             WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {

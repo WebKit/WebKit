@@ -35,7 +35,7 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 
         this._id = id || null;
         this._sourceCodeLocation = sourceCodeLocation || null;
-        this._functionName = functionName || null;
+        this._functionName = functionName || "";
         this._thisObject = thisObject || null;
         this._scopeChain = scopeChain || [];
         this._nativeCode = nativeCode || false;

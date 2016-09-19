@@ -1,3 +1,17 @@
+2016-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Scope sidebar shows "Closure" instead of "Local" when paused in anonymous function
+        https://bugs.webkit.org/show_bug.cgi?id=162113
+        <rdar://problem/28348954>
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/paused-scopes-expected.txt:
+        * inspector/debugger/paused-scopes.html:
+        * inspector/debugger/resources/paused-scopes.js:
+        Add a third pause to test behavior paused inside an
+        unnamed anonymous function.
+
 2016-09-19  Nan Wang  <n_wang@apple.com>
 
         AX: Add accessibility support for details element on iOS
