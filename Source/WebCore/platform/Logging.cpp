@@ -35,9 +35,9 @@
 #include <notify.h>
 #endif
 
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
 namespace WebCore {
+
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #define DEFINE_WEBCORE_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
 WEBCORE_LOG_CHANNELS(DEFINE_WEBCORE_LOG_CHANNEL)
@@ -93,11 +93,14 @@ void registerNotifyCallback(const String& notifyID, std::function<void()> callba
 }
 #endif
 
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#if !LOG_DISABLED
 void logFunctionResult(WTFLogChannel* channel, std::function<const char*()> function)
 {
     WTFLog(channel, "%s", function());
 }
 
-} // namespace WebCore
+#endif // !LOG_DISABLED
 
-#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+} // namespace WebCore
