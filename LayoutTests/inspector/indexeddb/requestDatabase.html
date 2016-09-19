@@ -11,7 +11,7 @@ function test()
     suite.addTestCase({
         name: "ClearDatabases",
         description: "Remove any existing IndexedDB databases.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
             // <https://webkit.org/b/148006> Each test should run with its own clean data store
             IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
@@ -22,9 +22,9 @@ function test()
 
     suite.addTestCase({
         name: "CreateAndRequestEmptyDatabase",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createEmptyDatabase('EmptyDatabase', 123)");
-            InspectorTest.singleFireEventListener("DatabaseCreated", (event) => {
+        test(resolve, reject) {
+            InspectorTest.awaitEvent("DatabaseCreated")
+            .then((event) => {
                 IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "EmptyDatabase", (error, databaseWithObjectStores) => {
                     InspectorTest.expectNoError(error);
                     InspectorTest.expectThat(databaseWithObjectStores.name === "EmptyDatabase", "Database name should be 'EmptyDatabase'.");
@@ -33,14 +33,16 @@ function test()
                     resolve();
                 });
             });
+
+            InspectorTest.evaluateInPage("createEmptyDatabase('EmptyDatabase', 123)");
         }
     });
 
     suite.addTestCase({
         name: "CreateAndRequestDatabaseWithStores",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createDatabaseWithStores('CompleteDatabase', 456)");
-            InspectorTest.singleFireEventListener("DatabaseCreated", (event) => {
+        test(resolve, reject) {
+            InspectorTest.awaitEvent("DatabaseCreated")
+            .then((event) => {
                 IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "CompleteDatabase", (error, databaseWithObjectStores) => {
                     InspectorTest.expectNoError(error);
                     let objectStores = databaseWithObjectStores.objectStores;
@@ -71,6 +73,8 @@ function test()
                     resolve();
                 });
             });
+
+            InspectorTest.evaluateInPage("createDatabaseWithStores('CompleteDatabase', 456)");
         }
     });
 

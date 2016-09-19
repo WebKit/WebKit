@@ -11,7 +11,7 @@ function test()
     suite.addTestCase({
         name: "ClearDatabases",
         description: "Remove any existing IndexedDB databases.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
             // <https://webkit.org/b/148006> Each test should run with its own clean data store
             IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
@@ -23,7 +23,7 @@ function test()
     suite.addTestCase({
         name: "CreateDatabaseAndClearObjectStore",
         description: "Ensure that clearing an object store clears entries in that object store.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('CompleteDatabase', 1)");
             IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "CompleteDatabase", (error, database) => {
                 InspectorTest.expectNoError(error);
@@ -69,9 +69,9 @@ function test()
 
     suite.addTestCase({
         name: "NoSuchObjectStore",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createEmptyDatabase('EmptyDatabase', 1)");
-            InspectorTest.singleFireEventListener("DatabaseCreated", (event) => {
+        test(resolve, reject) {
+            InspectorTest.awaitEvent("DatabaseCreated")
+            .then((event) => {
                 IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "EmptyDatabase", (error, database) => {
                     IndexedDBAgent.clearObjectStore(WebInspector.frameResourceManager.mainFrame.securityOrigin, database.name, "NoSuchObjectStore", (error) => {
                         InspectorTest.expectThat(error, "Should be an error attempting to clear an object store that does not exist.");
@@ -79,6 +79,8 @@ function test()
                     });
                 });
             });
+
+            InspectorTest.evaluateInPage("createEmptyDatabase('EmptyDatabase', 1)");
         }
     });
 
