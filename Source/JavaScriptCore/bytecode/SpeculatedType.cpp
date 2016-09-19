@@ -484,6 +484,10 @@ SpeculatedType speculationFromJSType(JSType type)
         return SpecRegExpObject;
     case ProxyObjectType:
         return SpecProxyObject;
+    case JSMapType:
+        return SpecMapObject;
+    case JSSetType:
+        return SpecSetObject;
     default:
         ASSERT_NOT_REACHED();
     }

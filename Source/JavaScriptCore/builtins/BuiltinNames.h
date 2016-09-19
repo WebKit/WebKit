@@ -130,13 +130,10 @@ namespace JSC {
     macro(isArrayConstructor) \
     macro(isConstructor) \
     macro(isDerivedConstructor) \
-    macro(isRegExpObject) \
     macro(concatMemcpy) \
     macro(appendMemcpy) \
     macro(predictFinalLengthFromArgumunts) \
     macro(print) \
-    macro(isSet) \
-    macro(isMap) \
     macro(regExpCreate) \
     macro(SetIterator) \
     macro(setIteratorNext) \

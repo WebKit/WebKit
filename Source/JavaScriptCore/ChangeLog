@@ -1,3 +1,43 @@
+2016-09-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use is_cell_with_type for @isRegExpObject, @isMap, and @isSet
+        https://bugs.webkit.org/show_bug.cgi?id=162142
+
+        Reviewed by Michael Saboff.
+
+        Use is_cell_with_type for @isRegExpObject, @isMap and @isSet.
+        Previously, they were implemented as functions and only @isRegExpObject was handled in the DFG and FTL.
+        The recently added op_is_cell_with_type bytecode and DFG IsCellWithType node allows us to simplify the above checks in all JIT tiers.
+        Changed these checks to bytecode intrinsics using op_is_cell_with_type.
+
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromJSType):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsRegExpObject):
+        (JSC::BytecodeGenerator::emitIsMap):
+        (JSC::BytecodeGenerator::emitIsSet):
+        (JSC::BytecodeGenerator::emitIsProxyObject): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isRegExpObject):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isMap):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isSet):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * runtime/ECMAScriptSpecInternalFunctions.cpp:
+        (JSC::esSpecIsRegExpObject): Deleted.
+        * runtime/ECMAScriptSpecInternalFunctions.h:
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/MapPrototype.cpp:
+        (JSC::privateFuncIsMap): Deleted.
+        * runtime/MapPrototype.h:
+        * runtime/SetPrototype.cpp:
+        (JSC::privateFuncIsSet): Deleted.
+        * runtime/SetPrototype.h:
+
 2016-09-19  Brian Burg  <bburg@apple.com>
 
         Web Replay: teach the replay inputs generator to encode and decode OptionSet<T>

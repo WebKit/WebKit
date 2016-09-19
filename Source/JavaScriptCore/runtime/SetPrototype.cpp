@@ -159,11 +159,6 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(CallFrame* callFrame)
     return JSValue::encode(JSSetIterator::create(vm, callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, IterateKeyValue));
 }
 
-EncodedJSValue JSC_HOST_CALL privateFuncIsSet(ExecState* exec)
-{
-    return JSValue::encode(jsBoolean(jsDynamicCast<JSSet*>(exec->uncheckedArgument(0))));
-}
-
 EncodedJSValue JSC_HOST_CALL privateFuncSetIterator(ExecState* exec)
 {
     ASSERT(jsDynamicCast<JSSet*>(exec->uncheckedArgument(0)));

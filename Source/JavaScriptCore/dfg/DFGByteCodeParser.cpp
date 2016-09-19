@@ -2362,15 +2362,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
-    case IsRegExpObjectIntrinsic: {
-        ASSERT(argumentCountIncludingThis == 2);
-
-        insertChecks();
-        Node* isRegExpObject = addToGraph(IsCellWithType, OpInfo(RegExpObjectType), get(virtualRegisterForArgument(1, registerOffset)));
-        set(VirtualRegister(resultOperand), isRegExpObject);
-        return true;
-    }
-
     case IsTypedArrayViewIntrinsic: {
         ASSERT(argumentCountIncludingThis == 2);
 

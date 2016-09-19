@@ -58,7 +58,6 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-EncodedJSValue JSC_HOST_CALL privateFuncIsSet(ExecState*);
 EncodedJSValue JSC_HOST_CALL privateFuncSetIterator(ExecState*);
 EncodedJSValue JSC_HOST_CALL privateFuncSetIteratorNext(ExecState*);
 

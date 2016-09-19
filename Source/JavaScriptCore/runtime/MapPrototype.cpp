@@ -100,12 +100,6 @@ ALWAYS_INLINE static JSMap* getMap(CallFrame* callFrame, JSValue thisValue)
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL privateFuncIsMap(ExecState* exec)
-{
-    JSValue value = exec->uncheckedArgument(0);
-    return JSValue::encode(jsBoolean(value.isCell() && value.asCell()->type() == JSMapType));
-}
-
 EncodedJSValue JSC_HOST_CALL mapProtoFuncClear(CallFrame* callFrame)
 {
     JSMap* map = getMap(callFrame, callFrame->thisValue());

@@ -39,12 +39,4 @@ EncodedJSValue JSC_HOST_CALL esSpecIsConstructor(ExecState* exec)
     return JSValue::encode(jsBoolean(isConstructor));
 }
 
-EncodedJSValue JSC_HOST_CALL esSpecIsRegExpObject(ExecState* exec)
-{
-    JSValue value = exec->uncheckedArgument(0);
-    if (value.isObject())
-        return JSValue::encode(jsBoolean(value.getObject()->type() == RegExpObjectType));
-    return JSValue::encode(jsBoolean(false));
-}
-
 } // namespace JSC

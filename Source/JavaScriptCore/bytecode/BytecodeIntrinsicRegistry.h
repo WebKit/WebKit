@@ -45,6 +45,9 @@ class Identifier;
     macro(isJSArray) \
     macro(isProxyObject) \
     macro(isDerivedArray) \
+    macro(isRegExpObject) \
+    macro(isMap) \
+    macro(isSet) \
     macro(tailCallForwardArguments) \
     macro(tryGetById) \
     macro(putByValDirect) \
