@@ -5726,7 +5726,8 @@ LayoutRect RenderLayer::selfClipRect() const
     LayoutRect layerBounds;
     ClipRect backgroundRect;
     ClipRect foregroundRect;
-    ClipRectsContext clipRectsContext(clippingRootLayer, PaintingClipRects);
+    auto clipRectType = !m_enclosingPaginationLayer || m_enclosingPaginationLayer == clippingRootLayer ? PaintingClipRects : TemporaryClipRects;
+    ClipRectsContext clipRectsContext(clippingRootLayer, clipRectType);
     calculateRects(clipRectsContext, renderer().view().documentRect(), layerBounds, backgroundRect, foregroundRect, offsetFromAncestor(clippingRootLayer));
     return clippingRootLayer->renderer().localToAbsoluteQuad(FloatQuad(backgroundRect.rect())).enclosingBoundingBox();
 }
@@ -5742,7 +5743,8 @@ LayoutRect RenderLayer::localClipRect(bool& clipExceedsBounds) const
     LayoutRect layerBounds;
     ClipRect backgroundRect;
     ClipRect foregroundRect;
-    ClipRectsContext clipRectsContext(clippingRootLayer, PaintingClipRects);
+    auto clipRectType = !m_enclosingPaginationLayer || m_enclosingPaginationLayer == clippingRootLayer ? PaintingClipRects : TemporaryClipRects;
+    ClipRectsContext clipRectsContext(clippingRootLayer, clipRectType);
     calculateRects(clipRectsContext, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, offsetFromRoot);
 
     LayoutRect clipRect = backgroundRect.rect();
