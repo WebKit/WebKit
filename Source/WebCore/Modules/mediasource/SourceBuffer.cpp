@@ -969,9 +969,6 @@ size_t SourceBuffer::maximumBufferSize() const
 
 VideoTrackList* SourceBuffer::videoTracks()
 {
-    if (!m_source || !m_source->mediaElement())
-        return nullptr;
-
     if (!m_videoTracks)
         m_videoTracks = VideoTrackList::create(m_source->mediaElement(), ActiveDOMObject::scriptExecutionContext());
 
@@ -980,9 +977,6 @@ VideoTrackList* SourceBuffer::videoTracks()
 
 AudioTrackList* SourceBuffer::audioTracks()
 {
-    if (!m_source || !m_source->mediaElement())
-        return nullptr;
-
     if (!m_audioTracks)
         m_audioTracks = AudioTrackList::create(m_source->mediaElement(), ActiveDOMObject::scriptExecutionContext());
 
@@ -991,9 +985,6 @@ AudioTrackList* SourceBuffer::audioTracks()
 
 TextTrackList* SourceBuffer::textTracks()
 {
-    if (!m_source || !m_source->mediaElement())
-        return nullptr;
-
     if (!m_textTracks)
         m_textTracks = TextTrackList::create(m_source->mediaElement(), ActiveDOMObject::scriptExecutionContext());
 

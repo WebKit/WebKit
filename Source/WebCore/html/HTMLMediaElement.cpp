@@ -610,7 +610,7 @@ HTMLMediaElement::~HTMLMediaElement()
     }
 
 #if ENABLE(MEDIA_SOURCE)
-    closeMediaSource();
+    detachMediaSource();
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
@@ -1206,7 +1206,7 @@ void HTMLMediaElement::prepareForLoad()
         scheduleEvent(eventNames().abortEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    closeMediaSource();
+    detachMediaSource();
 #endif
 
     createMediaPlayer();
@@ -1522,7 +1522,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         m_mediaSource = MediaSource::lookup(url.string());
 
     if (m_mediaSource) {
-        if (m_mediaSource->attachToElement(this))
+        if (m_mediaSource->attachToElement(*this))
             m_player->load(url, contentType, m_mediaSource.get());
         else {
             // Forget our reference to the MediaSource, so we leave it alone
@@ -2067,7 +2067,7 @@ void HTMLMediaElement::noneSupported()
     rejectPendingPlayPromises(DOMError::create("NotSupportedError", "The operation is not supported."));
 
 #if ENABLE(MEDIA_SOURCE)
-    closeMediaSource();
+    detachMediaSource();
 #endif
 
     // 8 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
@@ -2101,7 +2101,7 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
     scheduleEvent(eventNames().errorEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    closeMediaSource();
+    detachMediaSource();
 #endif
 
     // 4 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a
@@ -3286,12 +3286,12 @@ void HTMLMediaElement::pauseInternal()
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void HTMLMediaElement::closeMediaSource()
+void HTMLMediaElement::detachMediaSource()
 {
     if (!m_mediaSource)
         return;
 
-    m_mediaSource->close();
+    m_mediaSource->detachFromElement(*this);
     m_mediaSource = nullptr;
 }
 #endif
@@ -5110,7 +5110,7 @@ void HTMLMediaElement::userCancelledLoad()
     scheduleEvent(eventNames().abortEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    closeMediaSource();
+    detachMediaSource();
 #endif
 
     // 4 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the 
@@ -5142,12 +5142,12 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
 {
     LOG(Media, "HTMLMediaElement::clearMediaPlayer(%p) - flags = %s", this, actionName(flags).utf8().data());
 
-#if ENABLE(VIDEO_TRACK)
-    forgetResourceSpecificTracks();
+#if ENABLE(MEDIA_SOURCE)
+    detachMediaSource();
 #endif
 
-#if ENABLE(MEDIA_SOURCE)
-    closeMediaSource();
+#if ENABLE(VIDEO_TRACK)
+    forgetResourceSpecificTracks();
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -6096,7 +6096,7 @@ void HTMLMediaElement::createMediaPlayer()
 
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource)
-        m_mediaSource->close();
+        m_mediaSource->detachFromElement(*this);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

@@ -1,3 +1,13 @@
+2016-09-16  Jer Noble  <jer.noble@apple.com>
+
+        [media-source] Fix imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html
+        https://bugs.webkit.org/show_bug.cgi?id=162104
+
+        Reviewed by Eric Carlson.
+
+        * imported/w3c/web-platform-tests/media-source/mediasource-avtracks-expected.txt
+        * platform/mac/TestExpectations:
+
 2016-09-19  Daniel Bates  <dabates@apple.com>
 
         Remove ENABLE(TEXT_AUTOSIZING) automatic text size adjustment code

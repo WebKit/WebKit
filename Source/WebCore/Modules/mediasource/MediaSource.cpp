@@ -466,12 +466,6 @@ void MediaSource::setReadyState(const AtomicString& state)
     AtomicString oldState = readyState();
     LOG(MediaSource, "MediaSource::setReadyState(%p) : %s -> %s", this, oldState.string().ascii().data(), state.string().ascii().data());
 
-    if (state == closedKeyword()) {
-        m_private = nullptr;
-        m_mediaElement = nullptr;
-        m_duration = MediaTime::invalidTime();
-    }
-
     if (oldState == state)
         return;
 
@@ -819,9 +813,33 @@ bool MediaSource::isEnded() const
     return readyState() == endedKeyword();
 }
 
-void MediaSource::close()
+void MediaSource::detachFromElement(HTMLMediaElement& element)
 {
+    ASSERT_UNUSED(element, m_mediaElement == &element);
+    ASSERT(!isClosed());
+
+    // 2.4.2 Detaching from a media element
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-detach
+
+    // 1. Set the readyState attribute to "closed".
+    // 7. Queue a task to fire a simple event named sourceclose at the MediaSource.
     setReadyState(closedKeyword());
+
+    // 2. Update duration to NaN.
+    m_duration = MediaTime::invalidTime();
+
+    // 3. Remove all the SourceBuffer objects from activeSourceBuffers.
+    // 4. Queue a task to fire a simple event named removesourcebuffer at activeSourceBuffers.
+    while (m_activeSourceBuffers->length())
+        removeSourceBuffer(*m_activeSourceBuffers->item(0), IGNORE_EXCEPTION);
+
+    // 5. Remove all the SourceBuffer objects from sourceBuffers.
+    // 6. Queue a task to fire a simple event named removesourcebuffer at sourceBuffers.
+    while (m_sourceBuffers->length())
+        removeSourceBuffer(*m_sourceBuffers->item(0), IGNORE_EXCEPTION);
+
+    m_private = nullptr;
+    m_mediaElement = nullptr;
 }
 
 void MediaSource::sourceBufferDidChangeActiveState(SourceBuffer&, bool)
@@ -829,14 +847,14 @@ void MediaSource::sourceBufferDidChangeActiveState(SourceBuffer&, bool)
     regenerateActiveSourceBuffers();
 }
 
-bool MediaSource::attachToElement(HTMLMediaElement* element)
+bool MediaSource::attachToElement(HTMLMediaElement& element)
 {
     if (m_mediaElement)
         return false;
 
     ASSERT(isClosed());
 
-    m_mediaElement = element;
+    m_mediaElement = &element;
     return true;
 }
 
@@ -858,8 +876,8 @@ bool MediaSource::hasPendingActivity() const
 void MediaSource::stop()
 {
     m_asyncEventQueue.close();
-    if (!isClosed())
-        setReadyState(closedKeyword());
+    if (m_mediaElement)
+        m_mediaElement->detachMediaSource();
     m_private = nullptr;
 }
 
@@ -889,14 +907,6 @@ void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicS
     }
 
     ASSERT(isClosed());
-
-    m_activeSourceBuffers->clear();
-
-    // Clear SourceBuffer references to this object.
-    for (auto& buffer : *m_sourceBuffers)
-        buffer->removedFromMediaSource();
-    m_sourceBuffers->clear();
-    
     scheduleEvent(eventNames().sourcecloseEvent);
 }
 

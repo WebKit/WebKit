@@ -241,7 +241,7 @@ public:
 
 #if ENABLE(MEDIA_SOURCE)
 //  Media Source.
-    void closeMediaSource();
+    void detachMediaSource();
     void incrementDroppedFrameCount() { ++m_droppedVideoFrames; }
     size_t maximumSourceBufferSize(const SourceBuffer&) const;
 #endif

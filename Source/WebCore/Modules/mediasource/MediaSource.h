@@ -77,8 +77,8 @@ public:
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
     void seekToTime(const MediaTime&) override;
 
-    bool attachToElement(HTMLMediaElement*);
-    void close();
+    bool attachToElement(HTMLMediaElement&);
+    void detachFromElement(HTMLMediaElement&);
     void monitorSourceBuffers();
     bool isSeeking() const { return m_pendingSeekTime.isValid(); }
     void completeSeek();
