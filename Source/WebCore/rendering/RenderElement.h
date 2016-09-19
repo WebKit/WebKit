@@ -345,8 +345,6 @@ private:
     unsigned m_renderBlockFlowHasMarkupTruncation : 1;
     unsigned m_renderBlockFlowLineLayoutPath : 2;
 
-    VisibleInViewportState m_visibleInViewportState { VisibilityUnknown };
-
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
 
