@@ -16,37 +16,36 @@ function test() {
     suite.addTestCase({
         name: "CheckResourceTimingInformationForResource",
         description: "Check if a resource has timing information.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
+            Promise.all([
+                WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
+                WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.ResponseReceived),
+                WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish)
+            ])
+            .then(([resourceWasAddedEvent, responseReceivedEvent, loadingDidFinishEvent]) => {
+                let resource = resourceWasAddedEvent.data.resource;
+
+                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be createad.");
+                InspectorTest.expectThat(resource === responseReceivedEvent.target, "Added Resource received a response.");
+                InspectorTest.expectThat(resource === loadingDidFinishEvent.target, "Added Resource did finish loading.");
+
+                let timingData = resource.timingData;
+                InspectorTest.expectThat(timingData instanceof WebInspector.ResourceTimingData, "Newly added resource should have a resource timing model.");
+                InspectorTest.expectThat(timingData.startTime > 0, "Resource should have a start time.");
+                InspectorTest.expectThat(timingData.requestStart > 0, "Resource should have a request start time.");
+                InspectorTest.expectThat(timingData.responseStart > 0, "Resource should have a response start time.");
+
+                InspectorTest.expectThat(typeof timingData.domainLookupStart === "number" && typeof timingData.domainLookupEnd === "number", "domainLookupStart and domainLookupEnd should both be NaN or a number.");
+                InspectorTest.expectThat(typeof timingData.connectStart === "number" && typeof timingData.connectStart === "number", "connectStart and connectEnd should both be NaN or a number.");
+
+                InspectorTest.expectThat(timingData.startTime <= timingData.requestStart, "requestStart should come after startTime.");
+                InspectorTest.expectThat(isNaN(timingData.secureConnectionStart) || timingData.connectStart <= timingData.secureConnectionStart, "A secure connection should be reused or secureConnectionStart should come after connectStart.");
+                InspectorTest.expectThat(timingData.requestStart <= timingData.responseStart, "responseStart should come after requestStart.");
+                InspectorTest.expectThat(timingData.responseStart <= timingData.responseEnd, "responseEnd should come after responseStart.");
+            })
+            .then(resolve, reject);
+
             InspectorTest.evaluateInPage("createRequest()");
-            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
-                let resource = event.data.resource;
-
-                InspectorTest.expectThat(resource.timingData instanceof WebInspector.ResourceTimingData, "Newly added resource should have a resource timing model.");
-                InspectorTest.expectThat(resource.timingData.startTime, "Newly added resource should have a start time.");
-
-                resource.singleFireEventListener(WebInspector.Resource.Event.ResponseReceived, (event) => {
-                    let timingData = resource.timingData;
-
-                    InspectorTest.expectThat(timingData, "Resource should now contain timing information.");
-                    InspectorTest.expectThat(timingData.startTime > 0, "Resource should have a start time.");
-                    InspectorTest.expectThat(timingData.requestStart > 0, "Resource should have a request start time.");
-                    InspectorTest.expectThat(timingData.responseStart > 0, "Resource should have a response start time.");
-
-                    InspectorTest.expectThat(typeof timingData.domainLookupStart === "number" && typeof timingData.domainLookupEnd === "number", "domainLookupStart and domainLookupEnd should both be NaN or a number.");
-                    InspectorTest.expectThat(typeof timingData.connectStart === "number" && typeof timingData.connectStart === "number", "connectStart and connectEnd should both be NaN or a number.");
-
-                    InspectorTest.expectThat(timingData.startTime <= timingData.requestStart, "requestStart should come after startTime.");
-                    InspectorTest.expectThat(isNaN(timingData.secureConnectionStart) || timingData.connectStart <= timingData.secureConnectionStart, "A secure connection should be reused or secureConnectionStart should come after connectStart.");
-                    InspectorTest.expectThat(timingData.requestStart <= timingData.responseStart, "responseStart should come after requestStart.");
-                    InspectorTest.expectThat(isNaN(timingData.responseEnd), "responseEnd should not be available yet.");
-                });
-
-                resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFinish, (event) => {
-                    let timingData = resource.timingData;
-                    InspectorTest.expectThat(timingData.responseStart <= timingData.responseEnd, "responseEnd should come after responseStart.");
-                    resolve();
-                });
-            });
         }
     });
 

@@ -5,7 +5,7 @@
 <script src="../resources/inspector-test.js"></script>
 <script>
 function createXHRResource() {
-    var request = new XMLHttpRequest();
+    let request = new XMLHttpRequest();
     request.open("POST", "resources/", true);
     request.send("utf8=👍");
 }
@@ -17,20 +17,23 @@ function test()
     suite.addTestCase({
         name: "XHRWithRequestDataIsEncodedCorrectly",
         description: "XHR with request data is encoded correctly.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("createXHRResource()");
-            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+        test(resolve, reject) {
+            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            .then((event) => {
                 let resource = event.data.resource;
                 InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
                 InspectorTest.expectThat(resource.requestData === "utf8=👍", "Request data should have expected content.");
-                resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFinish, (event) => {
-                    InspectorTest.pass("Resource load should finish.");
-                    resolve();
-                });
-            });
+                return resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish);
+            })
+            .then((event) => {
+                InspectorTest.pass("Resource load should finish.");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("createXHRResource()");
         }
     });
-    
+
     suite.runTestCasesAndFinish();
 }
 </script>
