@@ -1,5 +1,23 @@
 2016-09-19  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: adopt Object.awaitEvent in LayoutTests/inspector/console
+        https://bugs.webkit.org/show_bug.cgi?id=162070
+
+        Reviewed by Brian Burg.
+
+        Replace instances of singleFireEventListener with awaitEvent and use promise logic to make
+        tests more readable.
+
+        * inspector/console/clearMessages.html:
+        * inspector/console/command-line-api.html:
+        * inspector/console/console-time.html:
+        * inspector/console/messageAdded-from-named-evaluations.html:
+        * inspector/console/messageAdded-from-worker.html:
+        * inspector/console/messageRepeatCountUpdated.html:
+        * inspector/console/messagesCleared.html:
+
+2016-09-19  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: adopt Object.awaitEvent in LayoutTests/inspector/script-profiler
         https://bugs.webkit.org/show_bug.cgi?id=162101
 

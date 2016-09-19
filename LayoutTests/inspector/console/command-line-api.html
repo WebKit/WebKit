@@ -53,12 +53,11 @@ function test()
 
     let suite = InspectorTest.createAsyncSuite("Console.TestCommandLineAPI");
 
-    function addAPITestCase(args) {
-        let {title, input, setup} = args;
+    function addAPITestCase({title, input, setup}) {
         suite.addTestCase({
             name: `Evaluate${title}`,
             setup,
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 InspectorTest.log(`Input: ${input}`);
 
                 function callback(result, wasThrown) {
@@ -91,14 +90,14 @@ function test()
     }
 
     function selectElementForDollarZero(resolve, reject) {
-        WebInspector.domTreeManager.requestDocument(function(documentNode) {
+        WebInspector.domTreeManager.requestDocument((documentNode) => {
             if (!documentNode) {
                 InspectorTest.log("FAIL: DOM node not found.");
                 return reject();
             }
 
             // Select div#foo for $0.
-            WebInspector.domTreeManager.querySelector(documentNode.id, "#foo", function(contentNodeId) {
+            WebInspector.domTreeManager.querySelector(documentNode.id, "#foo", (contentNodeId) => {
                 if (!contentNodeId) {
                     InspectorTest.log("FAIL: DOM node not found.");
                     return reject();

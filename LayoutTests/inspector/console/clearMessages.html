@@ -10,18 +10,20 @@ function test()
     suite.addTestCase({
         name: "CallClearMessages",
         description: "Calling the Console.clearMessages command should trigger Console.messagesCleared.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ConsoleAgent.clearMessages();
 
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 InspectorTest.assert(false, "MessageAdded event should not fire.");
-                reject();
-            });
+            })
+            .then(reject, reject);
 
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
         }
     });
 

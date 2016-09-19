@@ -15,15 +15,21 @@ function test()
     suite.addTestCase({
         name: "TriggerConsoleMessagesInWorker",
         description: "Triggered console messages in a Worker should be received.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("triggerWorkerConsoleLog()");
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
-                InspectorTest.expectThat(event.data.message.messageText === "WORKER STARTED", "MessageAdded event should fire for started log.");
-                WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+        test(resolve, reject) {
+            let eventCount = 0;
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                ++eventCount;
+
+                if (eventCount === 1)
+                    InspectorTest.expectThat(event.data.message.messageText === "WORKER STARTED", "MessageAdded event should fire for started log.");
+                else if (eventCount === 2) {
                     InspectorTest.expectThat(event.data.message.messageText === "WORKER RECEIVED MESSAGE", "MessageAdded event should fire for received message log.");
                     resolve();
-                });
+                } else
+                    reject();
             });
+
+            InspectorTest.evaluateInPage("triggerWorkerConsoleLog()");
         }
     });
 

@@ -13,20 +13,21 @@ function test()
     suite.addTestCase({
         name: "AddTestMessage",
         description: "Add a new message, it should have a single repeat count.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage(testMessage);
-
+        test(resolve, reject) {
             let listener = WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated yet.");
                 reject();
             });
 
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 InspectorTest.expectThat(event.data.message instanceof WebInspector.ConsoleMessage, "MessageAdded event should fire.");
                 InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
                 WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(testMessage);
         }
     });
 
@@ -34,20 +35,21 @@ function test()
         suite.addTestCase({
             name: `RepeatTestMessage${i}`,
             description: "Repeat the last message, it should trigger messageRepeatCountUpdated.",
-            test: (resolve, reject) => {
-                InspectorTest.evaluateInPage(testMessage);
-
+            test(resolve, reject) {
                 let listener = WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
                     InspectorTest.assert(false, "Should not fire MessageAdded, this should be a repeat.");
                     reject();
                 });
 
-                WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+                WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated)
+                .then((event) => {
                     InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire.");
                     InspectorTest.expectThat(event.data.count === (i + 1), `Count should be ${i + 1}.`);
                     WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, listener, null);
-                    resolve();
-                });
+                })
+                .then(resolve, reject);
+
+                InspectorTest.evaluateInPage(testMessage);
             }
         });
     }
@@ -55,60 +57,63 @@ function test()
     suite.addTestCase({
         name: "AddDifferentMessage",
         description: "Add a different message, it should reset the repeat count.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage(differentMessage);
-
+        test(resolve, reject) {
             let listener = WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated, this message is different.");
                 reject();
             });
 
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 InspectorTest.expectThat(event.data.message instanceof WebInspector.ConsoleMessage, "MessageAdded event should fire.");
                 InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
                 WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(differentMessage);
         }
     });
 
     suite.addTestCase({
         name: "RepeatDifferentMessage",
         description: "Repeat this different message, it should increment the repeat count.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage(differentMessage);
-
+        test(resolve, reject) {
             let listener = WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
                 InspectorTest.assert(false, "Should not fire MessageAdded, this should be a repeat.");
                 reject();
             });
 
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated)
+            .then((event) => {
                 InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire.");
                 InspectorTest.expectThat(event.data.count === 2, "Count should be 2.");
                 WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, listener, null);
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(differentMessage);
         }
     });
 
     suite.addTestCase({
         name: "AddTestMessageAgain",
         description: "Add the original message again, it should have a single repeat count.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage(testMessage);
-
+        test(resolve, reject) {
             let listener = WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated yet.");
                 reject();
             });
 
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 InspectorTest.expectThat(event.data.message instanceof WebInspector.ConsoleMessage, "MessageAdded event should fire.");
                 InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
                 WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(testMessage);
         }
     });
 
@@ -117,26 +122,23 @@ function test()
     suite.addTestCase({
         name: "MessagesWithEqualValuesRepeats",
         description: "Repeat messages with equal values should trigger messageRepeatCountUpdated.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated)
+            .then((event) => {
+                InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire for repeat messages with equal values.");
+            })
+            .then(resolve, reject);
+
             const messageWithValues = "console.log('equal parameter values', 1, 2)";
             InspectorTest.evaluateInPage(messageWithValues);
             InspectorTest.evaluateInPage(messageWithValues);
-
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
-                InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire for repeat messages with equal values.");
-                resolve();
-            });
         }
     });
 
     suite.addTestCase({
         name: "MessagesWithObjectsDoNotRepeat",
         description: "Repeat messages with objects should not trigger messageRepeatCountUpdated.",
-        test: (resolve, reject) => {
-            const messageWithObject = "console.log('object', window)";
-            InspectorTest.evaluateInPage(messageWithObject);
-            InspectorTest.evaluateInPage(messageWithObject);
-
+        test(resolve, reject) {
             let repeatListener = WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "PreviousMessageRepeatCountUpdated should not fire for repeat messages with object arguments.");
                 reject();
@@ -150,18 +152,19 @@ function test()
                     WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, repeatListener, null);
                     WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, addListener, null);
                     resolve();
-                }                
+                }
             });
+
+            const messageWithObject = "console.log('object', window)";
+            InspectorTest.evaluateInPage(messageWithObject);
+            InspectorTest.evaluateInPage(messageWithObject);
         }
     });
 
     suite.addTestCase({
         name: "MessagesWithDifferentLevelsDoNotRepeat",
         description: "Repeat messages with different levels should not trigger messageRepeatCountUpdated.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("console.warn('level')");
-            InspectorTest.evaluateInPage("console.error('level')");
-
+        test(resolve, reject) {
             let repeatListener = WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "PreviousMessageRepeatCountUpdated should not fire for repeat messages with different levels.");
                 reject();
@@ -175,8 +178,11 @@ function test()
                     WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, repeatListener, null);
                     WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, addListener, null);
                     resolve();
-                }                
+                }
             });
+
+            InspectorTest.evaluateInPage("console.warn('level')");
+            InspectorTest.evaluateInPage("console.error('level')");
         }
     });
 

@@ -10,48 +10,56 @@ function test()
     suite.addTestCase({
         name: "ClearViaConsoleClearMessagesAPI",
         description: "Calling Console.clearMessages should trigger Console.messagesCleared.",
-        test: (resolve, reject) => {
-            ConsoleAgent.clearMessages();
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            ConsoleAgent.clearMessages();
         }
     });
 
     suite.addTestCase({
         name: "ClearViaConsoleAPI",
         description: "Calling console.clear() should trigger Console.messagesCleared.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("console.clear()");
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("console.clear()");
         }
     });
 
     suite.addTestCase({
         name: "ClearViaCommandLineAPI",
         description: "Calling `clear()` in the command line API should trigger Console.messagesCleared.",
-        test: (resolve, reject) => {
-            WebInspector.runtimeManager.evaluateInInspectedWindow("clear()", {objectGroup: "test", includeCommandLineAPI: true}, function(){});
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            WebInspector.runtimeManager.evaluateInInspectedWindow("clear()", {objectGroup: "test", includeCommandLineAPI: true}, function(){});
         }
     });
 
     suite.addTestCase({
         name: "ClearViaPageReload",
         description: "Reloading the page should trigger Console.messagesCleared.",
-        test: (resolve, reject) => {
-            InspectorTest.reloadPage();
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.reloadPage();
         }
     });
 

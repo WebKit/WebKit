@@ -10,7 +10,7 @@ function test()
     suite.addTestCase({
         name: "DefaultLabel",
         description: "Test that default label works as expected.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let seen = 0;
             const expected = 3;
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
@@ -38,13 +38,14 @@ function test()
     suite.addTestCase({
         name: "UserLabels",
         description: "Test that user labels works as expected.",
-        test: (resolve, reject) => {
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 let message = event.data.message;
                 InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
                 InspectorTest.expectThat(message.messageText.includes("my-label"), "Message should contain the 'my-label' label name somewhere.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
 
             InspectorTest.evaluateInPage("console.time('my-label')");
             InspectorTest.evaluateInPage("console.timeEnd('my-label')");
@@ -54,7 +55,7 @@ function test()
     suite.addTestCase({
         name: "MultipleTimers",
         description: "Test that multiple timers running at the same time work as expected.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let seen = 0;
             const expected = 2;
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
@@ -79,7 +80,7 @@ function test()
     suite.addTestCase({
         name: "WarnWhenExisting",
         description: "Test for a warning when trying to start an already started timer.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
@@ -104,14 +105,15 @@ function test()
     suite.addTestCase({
         name: "WarnWhenNotExisting",
         description: "Test for a warning when trying to start an already started timer.",
-        test: (resolve, reject) => {
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 let message = event.data.message;
                 InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
                 InspectorTest.expectThat(message.level === WebInspector.ConsoleMessage.MessageLevel.Warning, "Should receive a Warning level message.");
                 InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
 
             InspectorTest.evaluateInPage("console.timeEnd()");
         }

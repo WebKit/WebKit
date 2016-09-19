@@ -20,28 +20,32 @@ function test()
     suite.addTestCase({
         name: "TriggerMessageFromNameEvaluation",
         description: "Message from named evaluation should have a source location.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("triggerMessageFromNamedEvaluation()");
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 let message = event.data.message;
                 let topCallFrame = message.stackTrace.callFrames[0];
                 InspectorTest.expectThat(topCallFrame.sourceCodeLocation.sourceCode.displayName === "named-eval.js", "Log ConsoleMessage top call frame should have sourceURL name.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("triggerMessageFromNamedEvaluation()");
         }
     });
 
     suite.addTestCase({
         name: "TriggerExceptionFromNameFunctionConstructorEvaluation",
         description: "Exception message from named Function constructor evaluation should have a source location.",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("setTimeout(triggerExceptionFromNamedFunctionConstructorEvaluation)");
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 let message = event.data.message;
                 let topCallFrame = message.stackTrace.callFrames[0];
                 InspectorTest.expectThat(topCallFrame.sourceCodeLocation.sourceCode.displayName === "named-function-constructor.js", "Exception ConsoleMessage top call frame should have sourceURL name.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("setTimeout(triggerExceptionFromNamedFunctionConstructorEvaluation)");
         }
     });
 
