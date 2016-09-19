@@ -4002,6 +4002,7 @@ sub GenerateParametersCheck
             }
             $value = "WTFMove($name)";
         } elsif ($parameter->isVariadic) {
+            AddToImplIncludes("JS${type}.h", $function->signature->extendedAttributes->{"Conditional"}) unless $codeGenerator->SkipIncludeHeader($type) or !$codeGenerator->IsWrapperType($type);
             my ($wrapperType, $wrappedType) = GetVariadicType($interface, $type);
             push(@$outputArray, "    auto $name = toArguments<VariadicHelper<$wrapperType, $wrappedType>>(*state, $argumentIndex);\n");
 

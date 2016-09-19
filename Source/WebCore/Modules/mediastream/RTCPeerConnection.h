@@ -38,8 +38,7 @@
 #include "ActiveDOMObject.h"
 #include "Dictionary.h"
 #include "EventTarget.h"
-// FIXME: Workaround for bindings bug http://webkit.org/b/150121
-#include "JSMediaStream.h"
+#include "MediaStream.h"
 #include "PeerConnectionBackend.h"
 #include "RTCRtpTransceiver.h"
 #include "ScriptWrappable.h"
@@ -48,7 +47,6 @@
 
 namespace WebCore {
 
-class MediaStream;
 class MediaStreamTrack;
 class PeerConnectionBackend;
 class RTCConfiguration;

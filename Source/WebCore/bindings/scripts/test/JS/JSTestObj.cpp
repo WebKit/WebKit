@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "JSBlob.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
