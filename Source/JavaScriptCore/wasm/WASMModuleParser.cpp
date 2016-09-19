@@ -61,18 +61,33 @@ bool ModuleParser::parse()
     while (m_offset < m_sourceLength) {
         if (verbose)
             dataLogLn("Starting to parse next section at offset: ", m_offset);
-        uint32_t sectionNameLength;
-        if (!parseVarUInt32(sectionNameLength))
+
+        Sections::Section section = Sections::Unknown;
+        uint8_t sectionByte;
+        if (!parseUInt7(sectionByte))
             return false;
 
-        // Make sure we can read up to the section's size.
-        if (m_offset + sectionNameLength + maxLEBByteLength >= m_sourceLength)
-            return false;
+        if (sectionByte) {
+            if (sectionByte >= Sections::Unknown)
+                section = Sections::Unknown;
+            else
+                section = static_cast<Sections::Section>(sectionByte);
+        } else {
+            uint32_t sectionNameLength;
+            if (!parseVarUInt32(sectionNameLength))
+                return false;
 
-        Sections::Section section = Sections::lookup(m_source.data() + m_offset, sectionNameLength);
+            // Make sure we can read up to the section's size.
+            if (m_offset + sectionNameLength + maxLEBByteLength >= m_sourceLength)
+                return false;
+
+            // We don't support any custom sections yet.
+
+            m_offset += sectionNameLength;
+        }
+
         if (!Sections::validateOrder(previousSection, section))
             return false;
-        m_offset += sectionNameLength;
 
         uint32_t sectionLength;
         if (!parseVarUInt32(sectionLength))
@@ -81,9 +96,6 @@ bool ModuleParser::parse()
         unsigned end = m_offset + sectionLength;
 
         switch (section) {
-        case Sections::End:
-            return true;
-
         case Sections::FunctionTypes: {
             if (verbose)
                 dataLogLn("Parsing types.");
@@ -108,7 +120,9 @@ bool ModuleParser::parse()
             break;
         }
 
-        case Sections::Unknown: {
+        case Sections::Unknown:
+        // FIXME: Delete this when we support all the sections.
+        default: {
             if (verbose)
                 dataLogLn("Unknown section, skipping.");
             m_offset += sectionLength;

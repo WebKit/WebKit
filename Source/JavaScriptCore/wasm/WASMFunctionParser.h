@@ -59,6 +59,7 @@ private:
     Context& m_context;
     Vector<ExpressionType, 1> m_expressionStack;
     Vector<ControlType> m_controlStack;
+    const Signature& m_signature;
     unsigned m_unreachableBlocks { 0 };
 };
 
@@ -66,8 +67,11 @@ template<typename Context>
 FunctionParser<Context>::FunctionParser(Context& context, const Vector<uint8_t>& sourceBuffer, const FunctionInformation& info)
     : Parser(sourceBuffer, info.start, info.end)
     , m_context(context)
+    , m_signature(*info.signature)
 {
-    m_context.addArguments(info.signature->arguments);
+    if (verbose)
+        dataLogLn("Parsing function starting at: ", info.start, " ending at: ", info.end);
+    m_context.addArguments(m_signature.arguments);
 }
 
 template<typename Context>
@@ -101,7 +105,7 @@ bool FunctionParser<Context>::parseBlock()
             return false;
 
         if (verbose) {
-            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)));
+            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
             m_context.dump(m_controlStack, m_expressionStack);
         }
 
@@ -179,18 +183,30 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     }
 
     case OpType::Block: {
-        m_controlStack.append(m_context.addBlock());
+        Type inlineSignature;
+        if (!parseValueType(inlineSignature))
+            return false;
+
+        m_controlStack.append(m_context.addBlock(inlineSignature));
         return true;
     }
 
     case OpType::Loop: {
-        m_controlStack.append(m_context.addLoop());
+        Type inlineSignature;
+        if (!parseValueType(inlineSignature))
+            return false;
+
+        m_controlStack.append(m_context.addLoop(inlineSignature));
         return true;
     }
 
     case OpType::If: {
+        Type inlineSignature;
+        if (!parseValueType(inlineSignature))
+            return false;
+
         ExpressionType condition = m_expressionStack.takeLast();
-        m_controlStack.append(m_context.addIf(condition));
+        m_controlStack.append(m_context.addIf(condition, inlineSignature));
         return true;
     }
 
@@ -200,12 +216,8 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::Branch:
     case OpType::BranchIf: {
-        uint32_t arity;
-        if (!parseVarUInt32(arity) || arity > m_expressionStack.size())
-            return false;
-
         uint32_t target;
-        if (!parseVarUInt32(target))
+        if (!parseVarUInt32(target) || target >= m_controlStack.size())
             return false;
 
         ExpressionType condition = Context::emptyExpression;
@@ -214,23 +226,14 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         else
             m_unreachableBlocks = 1;
 
-        Vector<ExpressionType, 1> values(arity);
-        for (unsigned i = arity; i; i--)
-            values[i-1] = m_expressionStack.takeLast();
-
-        if (target >= m_controlStack.size())
-            return false;
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target];
 
-        return m_context.addBranch(data, condition, values);
+        return m_context.addBranch(data, condition, m_expressionStack);
     }
 
     case OpType::Return: {
-        uint8_t returnCount;
-        if (!parseVarUInt1(returnCount))
-            return false;
         Vector<ExpressionType, 1> returnValues;
-        if (returnCount)
+        if (m_signature.returnType != Void)
             returnValues.append(m_expressionStack.takeLast());
 
         m_unreachableBlocks = 1;

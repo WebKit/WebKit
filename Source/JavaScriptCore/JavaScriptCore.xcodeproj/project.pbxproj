@@ -1205,7 +1205,6 @@
 		539EB0811D55608A00C82EF7 /* testWASM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539EB0711D553DF800C82EF7 /* testWASM.cpp */; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; };
 		53F40E851D58F9770099A1B6 /* WASMSections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E841D58F9770099A1B6 /* WASMSections.h */; };
-		53F40E871D58F9D60099A1B6 /* WASMSections.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F40E861D58F9D60099A1B6 /* WASMSections.cpp */; };
 		53F40E8B1D5901BB0099A1B6 /* WASMFunctionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8A1D5901BB0099A1B6 /* WASMFunctionParser.h */; };
 		53F40E8D1D5901F20099A1B6 /* WASMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8C1D5901F20099A1B6 /* WASMParser.h */; };
 		53F40E8F1D5902820099A1B6 /* WASMB3IRGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F40E8E1D5902820099A1B6 /* WASMB3IRGenerator.cpp */; };
@@ -3414,7 +3413,6 @@
 		539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayInlines.h; sourceTree = "<group>"; };
 		53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
 		53F40E841D58F9770099A1B6 /* WASMSections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMSections.h; sourceTree = "<group>"; };
-		53F40E861D58F9D60099A1B6 /* WASMSections.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMSections.cpp; sourceTree = "<group>"; };
 		53F40E8A1D5901BB0099A1B6 /* WASMFunctionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMFunctionParser.h; sourceTree = "<group>"; };
 		53F40E8C1D5901F20099A1B6 /* WASMParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMParser.h; sourceTree = "<group>"; };
 		53F40E8E1D5902820099A1B6 /* WASMB3IRGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMB3IRGenerator.cpp; sourceTree = "<group>"; };
@@ -5605,7 +5603,6 @@
 				531374BE1D5CE95000AF7A0B /* WASMPlan.cpp */,
 				531374BC1D5CE67600AF7A0B /* WASMPlan.h */,
 				53F40E8C1D5901F20099A1B6 /* WASMParser.h */,
-				53F40E861D58F9D60099A1B6 /* WASMSections.cpp */,
 				53F40E841D58F9770099A1B6 /* WASMSections.h */,
 			);
 			path = wasm;
@@ -9049,7 +9046,6 @@
 				0FBE0F7216C1DB030082C5E8 /* DFGCPSRethreadingPhase.cpp in Sources */,
 				A7D89CF517A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.cpp in Sources */,
 				0F6183291C45BF070072450B /* AirCCallingConvention.cpp in Sources */,
-				53F40E871D58F9D60099A1B6 /* WASMSections.cpp in Sources */,
 				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,
 				0F2FC77216E12F710038D976 /* DFGDCEPhase.cpp in Sources */,
 				0F338E121BF0276C0013C88F /* B3OpaqueByproducts.cpp in Sources */,

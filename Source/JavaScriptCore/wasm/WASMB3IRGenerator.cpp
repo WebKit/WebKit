@@ -105,11 +105,12 @@ private:
 
 public:
     struct ControlData {
-        ControlData(Optional<Vector<Variable*>>&& stack, BasicBlock* special = nullptr, BasicBlock* continuation = nullptr)
+        ControlData(Procedure& proc, Type signature, BasicBlock* special = nullptr, BasicBlock* continuation = nullptr)
             : continuation(continuation)
             , special(special)
-            , stack(stack)
         {
+            if (signature != Void)
+                result.append(proc.addVariable(toB3Type(signature)));
         }
 
         void dump(PrintStream& out) const
@@ -143,7 +144,7 @@ public:
 
         BasicBlock* targetBlockForBranch(Procedure& proc)
         {
-            if (special)
+            if (type() == BlockType::Loop)
                 return special;
             return continuation.get(proc);
         }
@@ -155,11 +156,13 @@ public:
         // that example, if we eagerly allocate a BasicBlock for the continuation it will never be reachable.
         LazyBlock continuation;
         BasicBlock* special;
-        Optional<Vector<Variable*>> stack;
+        Vector<Variable*, 1> result;
     };
 
     typedef Value* ExpressionType;
     typedef ControlData ControlType;
+    typedef Vector<ExpressionType, 1> ExpressionList;
+    typedef Vector<Variable*, 1> ResultList;
     static constexpr ExpressionType emptyExpression = nullptr;
 
     B3IRGenerator(Procedure&);
@@ -174,23 +177,22 @@ public:
     bool WARN_UNUSED_RETURN binaryOp(BinaryOpType, ExpressionType left, ExpressionType right, ExpressionType& result);
     bool WARN_UNUSED_RETURN unaryOp(UnaryOpType, ExpressionType arg, ExpressionType& result);
 
-    ControlData WARN_UNUSED_RETURN addBlock();
-    ControlData WARN_UNUSED_RETURN addLoop();
-    ControlData WARN_UNUSED_RETURN addIf(ExpressionType condition);
+    ControlData WARN_UNUSED_RETURN addBlock(Type signature);
+    ControlData WARN_UNUSED_RETURN addLoop(Type signature);
+    ControlData WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature);
     bool WARN_UNUSED_RETURN addElse(ControlData&);
 
-    bool WARN_UNUSED_RETURN addReturn(const Vector<ExpressionType, 1>& returnValues);
-    bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const Vector<ExpressionType, 1>& returnValues);
-    bool WARN_UNUSED_RETURN endBlock(ControlData&, Vector<ExpressionType, 1>& expressionStack);
+    bool WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
+    bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
+    bool WARN_UNUSED_RETURN endBlock(ControlData&, ExpressionList& expressionStack);
 
     bool isContinuationReachable(ControlData&);
 
-    void dump(const Vector<ControlType>& controlStack, const Vector<ExpressionType, 1>& expressionStack);
+    void dump(const Vector<ControlType>& controlStack, const ExpressionList& expressionStack);
 
 private:
     void unify(Variable* target, const ExpressionType source);
-    Vector<Variable*> initializeIncommingTypes(BasicBlock*, const Vector<ExpressionType, 1>&);
-    void unifyValuesWithBlock(const Vector<ExpressionType, 1>& resultStack, Optional<Vector<Variable*>>& stack, BasicBlock* target);
+    void unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& stack);
 
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
@@ -265,21 +267,21 @@ B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t val
     }
 }
 
-B3IRGenerator::ControlData B3IRGenerator::addBlock()
+B3IRGenerator::ControlData B3IRGenerator::addBlock(Type signature)
 {
-    return ControlData(Nullopt);
+    return ControlData(m_proc, signature);
 }
 
-B3IRGenerator::ControlData B3IRGenerator::addLoop()
+B3IRGenerator::ControlData B3IRGenerator::addLoop(Type signature)
 {
     BasicBlock* body = m_proc.addBlock();
     m_currentBlock->appendNewControlValue(m_proc, Jump, Origin(), body);
     body->addPredecessor(m_currentBlock);
     m_currentBlock = body;
-    return ControlData(Vector<Variable*>(), body);
+    return ControlData(m_proc, signature, body);
 }
 
-B3IRGenerator::ControlData B3IRGenerator::addIf(ExpressionType condition)
+B3IRGenerator::ControlData B3IRGenerator::addIf(ExpressionType condition, Type signature)
 {
     // FIXME: This needs to do some kind of stack passing.
 
@@ -293,7 +295,7 @@ B3IRGenerator::ControlData B3IRGenerator::addIf(ExpressionType condition)
     notTaken->addPredecessor(m_currentBlock);
 
     m_currentBlock = taken;
-    return ControlData(Nullopt, notTaken, continuation);
+    return ControlData(m_proc, signature, notTaken, continuation);
 }
 
 bool B3IRGenerator::addElse(ControlData& data)
@@ -306,7 +308,7 @@ bool B3IRGenerator::addElse(ControlData& data)
     return true;
 }
 
-bool B3IRGenerator::addReturn(const Vector<ExpressionType, 1>& returnValues)
+bool B3IRGenerator::addReturn(const ExpressionList& returnValues)
 {
     ASSERT(returnValues.size() <= 1);
     if (returnValues.size())
@@ -316,10 +318,10 @@ bool B3IRGenerator::addReturn(const Vector<ExpressionType, 1>& returnValues)
     return true;
 }
 
-bool B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const Vector<ExpressionType, 1>& returnValues)
+bool B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const ExpressionList& returnValues)
 {
     BasicBlock* target = data.targetBlockForBranch(m_proc);
-    unifyValuesWithBlock(returnValues, data.stack, target);
+    unifyValuesWithBlock(returnValues, data.result);
     if (condition) {
         BasicBlock* continuation = m_proc.addBlock();
         m_currentBlock->appendNew<Value>(m_proc, B3::Branch, Origin(), condition);
@@ -335,7 +337,7 @@ bool B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
     return true;
 }
 
-bool B3IRGenerator::endBlock(ControlData& data, Vector<ExpressionType, 1>& expressionStack)
+bool B3IRGenerator::endBlock(ControlData& data, ExpressionList& expressionStack)
 {
     if (!data.continuation)
         return true;
@@ -349,7 +351,7 @@ bool B3IRGenerator::endBlock(ControlData& data, Vector<ExpressionType, 1>& expre
         continuation->addPredecessor(data.special);
     }
 
-    unifyValuesWithBlock(expressionStack, data.stack, continuation);
+    unifyValuesWithBlock(expressionStack, data.result);
     m_currentBlock->appendNewControlValue(m_proc, Jump, Origin(), continuation);
     continuation->addPredecessor(m_currentBlock);
     m_currentBlock = continuation;
@@ -377,34 +379,15 @@ void B3IRGenerator::unify(Variable* variable, ExpressionType source)
     m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), variable, source);
 }
 
-Vector<Variable*> B3IRGenerator::initializeIncommingTypes(BasicBlock* block, const Vector<ExpressionType, 1>& source)
+void B3IRGenerator::unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& result)
 {
-    Vector<Variable*> result;
-    result.reserveInitialCapacity(source.size());
-    for (ExpressionType expr : source) {
-        ASSERT(expr->type() != B3::Void);
-        Variable* var = m_proc.addVariable(expr->type());
-        result.append(var);
-        block->appendNew<VariableValue>(m_proc, B3::Get, Origin(), var);
-    }
-
-    return result;
-}
-
-void B3IRGenerator::unifyValuesWithBlock(const Vector<ExpressionType, 1>& resultStack, Optional<Vector<Variable*>>& stack, BasicBlock* target)
-{
-    if (!stack) {
-        stack = initializeIncommingTypes(target, resultStack);
-        return;
-    }
-
-    ASSERT(stack.value().size() == resultStack.size());
+    ASSERT(result.size() >= resultStack.size());
 
     for (size_t i = 0; i < resultStack.size(); ++i)
-        unify(stack.value()[i], resultStack[i]);
+        unify(result[i], resultStack[i]);
 }
 
-void B3IRGenerator::dump(const Vector<ControlType>& controlStack, const Vector<ExpressionType, 1>& expressionStack)
+void B3IRGenerator::dump(const Vector<ControlType>& controlStack, const ExpressionList& expressionStack)
 {
     dataLogLn("Processing Graph:");
     dataLog(m_proc);

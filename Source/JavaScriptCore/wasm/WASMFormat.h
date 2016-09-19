@@ -55,12 +55,12 @@ class JSFunction;
 namespace WASM {
 
 enum Type : uint8_t {
-    I32 = 1,
+    Void,
+    I32,
     I64,
     F32,
     F64,
     LastValueType = F64,
-    Void
 };
 
 static_assert(I32 == 1, "WASM needs I32 to have the value 1");

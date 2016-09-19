@@ -1,3 +1,33 @@
+2016-09-19  Keith Miller  <keith_miller@apple.com>
+
+        Update WASM towards 0xc
+        https://bugs.webkit.org/show_bug.cgi?id=162067
+
+        Reviewed by Geoffrey Garen.
+
+        This patch updates some of the core parts of the WASM frontend to the 0xc standard.
+        First, it changes the section names from strings to bytecodes. It also adds support
+        for inline block signatures. This is a change from the old version that used to have
+        each branch indicate the arity. Finally, this patch updates all the tests and deletes
+        a duplicate test.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * testWASM.cpp:
+        (runWASMTests):
+        * wasm/WASMB3IRGenerator.cpp:
+        * wasm/WASMFormat.h:
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::FunctionParser):
+        (JSC::WASM::FunctionParser<Context>::parseBlock):
+        (JSC::WASM::FunctionParser<Context>::parseExpression):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASM::ModuleParser::parse):
+        * wasm/WASMSections.cpp: Removed.
+        (JSC::WASM::Sections::lookup): Deleted.
+        * wasm/WASMSections.h:
+        (JSC::WASM::Sections::validateOrder):
+
 2016-09-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use is_cell_with_type for @isRegExpObject, @isMap, and @isSet
