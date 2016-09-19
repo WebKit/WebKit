@@ -29,8 +29,9 @@ function test()
     suite.addTestCase({
         name: "TrackingSession",
         description: "Start a tracking session that includes multiple web script evaluations classified as an Other event type.",
-        test: function(resolve, reject) {
-            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then((messageObject) => {
+        test(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"})
+            .then((messageObject) => {
                 ProtocolTest.log("ScriptProfiler.trackingStart");
             });
 
@@ -39,18 +40,21 @@ function test()
                 ProtocolTest.expectThat(messageObject.params.event.type === "Other", "Event type should be Other.");
             });
 
-            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"})
+            .then((messageObject) => {
                 ProtocolTest.log("ScriptProfiler.trackingComplete");
-                resolve();
+            })
+            .then(resolve, reject);
+
+            ProtocolTest.awaitEvent("TestPageTimerEvaluated")
+            .then((event) => {
+                InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
             });
 
             InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {});
             ProtocolTest.evaluateInPage("triggerScriptEvaluation()");
             ProtocolTest.evaluateInPage("triggerEventDispatchEvaluation()");
             ProtocolTest.evaluateInPage("triggerTimerEvaluation()");
-            ProtocolTest.singleFireEventListener("TestPageTimerEvaluated", (event) => {
-                InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
-            });
         }
     });
 
