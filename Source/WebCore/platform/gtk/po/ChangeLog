@@ -1,3 +1,12 @@
+2016-09-18  Yuri Chornoivan  <yurchor@ukr.net>
+
+        [GTK] [l10n] Updated Ukrainian translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=162136
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * uk.po:
+
 2016-09-07  Piotr Drąg  <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+ for 2.14
