@@ -156,8 +156,8 @@ PASS Window replaceable attribute: length
 PASS Window replaceable attribute: screen 
 PASS Window replaceable attribute: scrollX 
 PASS Window replaceable attribute: scrollY 
-FAIL Window replaceable attribute: pageXOffset assert_equals: expected "function" but got "undefined"
-FAIL Window replaceable attribute: pageYOffset assert_equals: expected "function" but got "undefined"
+PASS Window replaceable attribute: pageXOffset 
+PASS Window replaceable attribute: pageYOffset 
 PASS Window replaceable attribute: innerWidth 
 PASS Window replaceable attribute: innerHeight 
 PASS Window replaceable attribute: screenX 

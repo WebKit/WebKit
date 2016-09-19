@@ -193,8 +193,6 @@ namespace WebCore {
         int screenTop() const { return screenY(); }
         int scrollX() const;
         int scrollY() const;
-        int pageXOffset() const { return scrollX(); }
-        int pageYOffset() const { return scrollY(); }
 
         bool closed() const;
 

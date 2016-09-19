@@ -243,6 +243,10 @@ PASS: canGet('scrollX') should be 'true' and is.
 PASS: canSet('scrollX') should be 'true' and is.
 PASS: canGet('scrollY') should be 'true' and is.
 PASS: canSet('scrollY') should be 'true' and is.
+PASS: canGet('pageXOffset') should be 'true' and is.
+PASS: canSet('pageXOffset') should be 'true' and is.
+PASS: canGet('pageYOffset') should be 'true' and is.
+PASS: canSet('pageYOffset') should be 'true' and is.
 PASS: canGet('scrollbars') should be 'true' and is.
 PASS: canSet('scrollbars') should be 'true' and is.
 PASS: canGet('self') should be 'true' and is.
@@ -262,10 +266,6 @@ PASS: canGet('history') should be 'true' and is.
 PASS: canSet('history') should be 'false' and is.
 PASS: canGet('navigator') should be 'true' and is.
 PASS: canSet('navigator') should be 'false' and is.
-PASS: canGet('pageXOffset') should be 'true' and is.
-PASS: canSet('pageXOffset') should be 'false' and is.
-PASS: canGet('pageYOffset') should be 'true' and is.
-PASS: canSet('pageYOffset') should be 'false' and is.
 PASS: canGet('window') should be 'true' and is.
 PASS: canSet('window') should be 'false' and is.
 PASS: canGet('top') should be 'true' and is.

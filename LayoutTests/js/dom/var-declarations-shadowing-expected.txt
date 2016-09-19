@@ -85,10 +85,10 @@ PASS: eval('history == marker') should be false and is.
 -----
 PASS: frameElement == marker should be false and is.
 PASS: eval('frameElement == marker') should be false and is.
-PASS: pageXOffset == marker should be false and is.
-PASS: eval('pageXOffset == marker') should be false and is.
-PASS: pageYOffset == marker should be false and is.
-PASS: eval('pageYOffset == marker') should be false and is.
+PASS: pageXOffset == marker should be true and is.
+PASS: eval('pageXOffset == marker') should be true and is.
+PASS: pageYOffset == marker should be true and is.
+PASS: eval('pageYOffset == marker') should be true and is.
 PASS: closed == marker should be false and is.
 PASS: eval('closed == marker') should be false and is.
 PASS: window == marker should be false and is.

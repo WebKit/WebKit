@@ -94,10 +94,11 @@
     [Replaceable] readonly attribute long screenY;
     [Replaceable] readonly attribute long screenLeft;
     [Replaceable] readonly attribute long screenTop;
-    [Replaceable] readonly attribute long scrollX;
-    [Replaceable] readonly attribute long scrollY;
-    readonly attribute long pageXOffset;
-    readonly attribute long pageYOffset;
+
+    [Replaceable] readonly attribute double scrollX;
+    [Replaceable] readonly attribute double scrollY;
+    [Replaceable, ImplementedAs=scrollX] readonly attribute double pageXOffset;
+    [Replaceable, ImplementedAs=scrollY] readonly attribute double pageYOffset;
 
     void scrollBy(unrestricted double x, unrestricted double y);
     void scrollTo(unrestricted double x, unrestricted double y);

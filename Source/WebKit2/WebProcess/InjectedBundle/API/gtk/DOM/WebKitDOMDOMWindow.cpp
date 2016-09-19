@@ -860,7 +860,7 @@ glong webkit_dom_dom_window_get_page_x_offset(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    glong result = item->pageXOffset();
+    glong result = item->scrollX();
     return result;
 }
 
@@ -869,7 +869,7 @@ glong webkit_dom_dom_window_get_page_y_offset(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    glong result = item->pageYOffset();
+    glong result = item->scrollY();
     return result;
 }
 

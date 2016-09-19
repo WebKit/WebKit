@@ -270,14 +270,14 @@ shouldBe(eval('frameElement == marker'), "eval('frameElement == marker')", false
 try {
     eval("var pageXOffset = marker");
 } catch(e) { }
-shouldBe(pageXOffset == marker, "pageXOffset == marker", false);
-shouldBe(eval('pageXOffset == marker'), "eval('pageXOffset == marker')", false);
+shouldBe(pageXOffset == marker, "pageXOffset == marker", true);
+shouldBe(eval('pageXOffset == marker'), "eval('pageXOffset == marker')", true);
 
 try {
     eval("var pageYOffset = marker");
 } catch(e) { }
-shouldBe(pageYOffset == marker, "pageYOffset == marker", false);
-shouldBe(eval('pageYOffset == marker'), "eval('pageYOffset == marker')", false);
+shouldBe(pageYOffset == marker, "pageYOffset == marker", true);
+shouldBe(eval('pageYOffset == marker'), "eval('pageYOffset == marker')", true);
 
 try {
     eval("var closed = marker");
