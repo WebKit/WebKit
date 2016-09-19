@@ -442,9 +442,8 @@ URL::URL(ParsedURLStringTag, const String& url)
 {
     if (URLParser::enabled()) {
         URLParser parser;
-        *this = parser.parse(url);
-        ASSERT((url.isEmpty() && m_string.isEmpty()) || url == m_string); // FIXME: Investigate parsing non-null empty ParsedURLStrings.
-    } else {
+        *this = parser.parseSerializedURL(url);
+    } else
         parse(url);
 #if OS(WINDOWS)
         // FIXME(148598): Work around Windows local file handling bug in CFNetwork
@@ -452,7 +451,6 @@ URL::URL(ParsedURLStringTag, const String& url)
 #else
         ASSERT(url == m_string);
 #endif
-    }
 }
 
 URL::URL(const URL& base, const String& relative)

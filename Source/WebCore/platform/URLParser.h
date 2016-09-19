@@ -37,6 +37,7 @@ template<typename CharacterType> class CodePointIterator;
 class URLParser {
 public:
     WEBCORE_EXPORT URL parse(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
+    WEBCORE_EXPORT URL parseSerializedURL(const String&);
     WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
 
     WEBCORE_EXPORT static bool enabled();
@@ -53,10 +54,10 @@ private:
     bool m_urlIsSpecial { false };
     bool m_hostHasPercentOrNonASCII { false };
 
-    template<typename CharacterType> URL parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
-    template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
-    template<typename CharacterType> bool parseHost(CodePointIterator<CharacterType>);
-    template<typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
+    template<bool serialized, typename CharacterType> URL parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
+    template<bool serialized, typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
+    template<bool serialized, typename CharacterType> bool parseHost(CodePointIterator<CharacterType>);
+    template<bool serialized, typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
     template<typename CharacterType> URL failure(const CharacterType*, unsigned length);
 
     enum class URLPart;
