@@ -10,7 +10,7 @@ function test()
     suite.addTestCase({
         name: "CheckNoStyleSheets",
         description: "Ensure there are currently no stylesheets.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 0, "Should be no stylesheets.");
             resolve();
         }
@@ -19,14 +19,16 @@ function test()
     suite.addTestCase({
         name: "CreateInspectorStyleSheet",
         description: "Creating an inspector stylesheet adds a stylesheet.",
-        test: (resolve, reject) => {
-            CSSAgent.createStyleSheet(WebInspector.frameResourceManager.mainFrame.id);
-            WebInspector.cssStyleManager.singleFireEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, function(event) {
+        test(resolve, reject) {
+            WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
+            .then((event) => {
                 InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 1, "Should be one stylesheet.");
                 InspectorTest.assert(event.data.styleSheet instanceof WebInspector.CSSStyleSheet, "Event data should be a CSSStyleSheet");
                 InspectorTest.expectThat(event.data.styleSheet.origin === WebInspector.CSSStyleSheet.Type.Inspector, "StyleSheet origin should be 'inspector'.");
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            CSSAgent.createStyleSheet(WebInspector.frameResourceManager.mainFrame.id);
         }
     });
 

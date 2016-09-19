@@ -23,7 +23,7 @@ function test() {
         suite.addTestCase({
             name: "InlineStyleString",
             description: "Check the formatting of the generated inline style string.",
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 InspectorTest.log(nodeStyles.inlineStyle.generateCSSRuleString());
                 resolve();
             }
@@ -34,7 +34,7 @@ function test() {
             suite.addTestCase({
                 name: "CSSRuleString" + i,
                 description: "Check the formatting of the generated string for the matched CSS rule.",
-                test: (resolve, reject) => {
+                test(resolve, reject) {
                     InspectorTest.log(rule.style.generateCSSRuleString());
                     resolve();
                 }
@@ -44,19 +44,21 @@ function test() {
         suite.runTestCasesAndFinish();
     }
 
-    WebInspector.domTreeManager.requestDocument(function(documentNode) {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "#test-node", function(contentNodeId) {
-            if (contentNodeId) {
-                let domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
-                nodeStyles = WebInspector.cssStyleManager.stylesForNode(domNode);
-                if (nodeStyles.needsRefresh)
-                    nodeStyles.singleFireEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, validateSelectors, this);
-                else
-                    validateSelectors();
-            } else {
+    WebInspector.domTreeManager.requestDocument((documentNode) => {
+        WebInspector.domTreeManager.querySelector(documentNode.id, "#test-node", (contentNodeId) => {
+            if (!contentNodeId) {
                 InspectorTest.log("DOM node not found.");
                 InspectorTest.completeTest();
+                return;
             }
+
+            let domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+            nodeStyles = WebInspector.cssStyleManager.stylesForNode(domNode);
+            if (nodeStyles.needsRefresh) {
+                nodeStyles.awaitEvent(WebInspector.DOMNodeStyles.Event.Refreshed)
+                .then(validateSelectors);
+            } else
+                validateSelectors();
         });
     });
 }

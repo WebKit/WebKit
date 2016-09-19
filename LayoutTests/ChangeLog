@@ -1,3 +1,21 @@
+2016-09-19  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: adopt Object.awaitEvent in LayoutTests/inspector/css
+        https://bugs.webkit.org/show_bug.cgi?id=162071
+
+        Reviewed by Brian Burg.
+
+        Replace instances of singleFireEventListener with awaitEvent and use promise logic to make
+        tests more readable.
+
+        * inspector/css/createStyleSheet.html:
+        * inspector/css/generate-css-rule-string.html:
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame-expected.txt:
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame.html:
+        * inspector/css/stylesheet-events-basic.html:
+        * inspector/css/stylesheet-events-inspector-stylesheet.html:
+        * inspector/css/stylesheet-events-multiple-documents.html:
+
 2016-09-19  Chris Dumez  <cdumez@apple.com>
 
         Align HTMLAppletElement with the specification

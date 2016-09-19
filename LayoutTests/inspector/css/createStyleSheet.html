@@ -13,7 +13,7 @@ function test()
     suite.addTestCase({
         name: "CheckNoStyleSheets",
         description: "Ensure there are no stylesheets.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 0, "Should be no stylesheets.");
             resolve();
         }
@@ -23,9 +23,9 @@ function test()
         suite.addTestCase({
             name: "CreateInspectorStyleSheetCall" + i,
             description: "Should create a new inspector stylesheet.",
-            test: (resolve, reject) => {
-                CSSAgent.createStyleSheet(mainFrame.id);
-                WebInspector.cssStyleManager.singleFireEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, function(event) {
+            test(resolve, reject) {
+                WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
+                .then((event) => {
                     InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === i, "Should increase the list of stylesheets.");
                     InspectorTest.expectThat(event.data.styleSheet.origin === WebInspector.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
                     InspectorTest.expectThat(event.data.styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
@@ -33,14 +33,17 @@ function test()
                     if (addedStyleSheet)
                         InspectorTest.expectThat(event.data.styleSheet !== addedStyleSheet, "Added StyleSheet should be different from the last added stylesheet.");
                     addedStyleSheet = event.data.styleSheet;
-                    resolve();
-                });
+                })
+                .then(resolve, reject);
+
+                CSSAgent.createStyleSheet(mainFrame.id);
             }
         });
     }
 
-    WebInspector.cssStyleManager.singleFireEventListener(WebInspector.CSSStyleManager.Event.StyleSheetRemoved, function(event) {
-        InspectorTest.assert(false, "Should not be removing any StyleSheets in this test.");
+    WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetRemoved)
+    .then((event) => {
+        InspectorTest.fail("Should not be removing any StyleSheets in this test.");
     });
 
     suite.runTestCasesAndFinish();
