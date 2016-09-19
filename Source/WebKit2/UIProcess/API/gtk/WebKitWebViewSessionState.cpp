@@ -293,7 +293,10 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
         &scrollPositionX, &scrollPositionY, &pageScaleFactor, &httpBodyVariant, &childrenIter.outPtr());
     frameState.urlString = String::fromUTF8(urlString);
     frameState.originalURLString = String::fromUTF8(originalURLString);
-    frameState.referrer = String::fromUTF8(referrer);
+    // frameState.referrer must not be an empty string since we never want to
+    // send an empty Referer header. Bug #159606.
+    if (strlen(referrer))
+        frameState.referrer = String::fromUTF8(referrer);
     frameState.target = String::fromUTF8(target);
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
         frameState.documentState.reserveInitialCapacity(documentStateLength);
