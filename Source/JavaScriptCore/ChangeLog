@@ -1,3 +1,56 @@
+2016-09-19  Brian Burg  <bburg@apple.com>
+
+        Web Replay: teach the replay inputs generator to encode and decode OptionSet<T>
+        https://bugs.webkit.org/show_bug.cgi?id=162107
+
+        Reviewed by Anders Carlsson.
+
+        Add a new type flag OPTION_SET. This means that the type is a typechecked enum class
+        declaration, but it's stored in an OptionSet object and can contain multiple
+        distinct enumeration values like an untyped enum declaration.
+
+        Do some cleanup since the generator now supports three different enumerable types:
+        'enum', 'enum class', and 'OptionSet<T>' where T is an enum class.
+
+        Also clean up some sloppy variable names. Using an 'enum_' prefix is really confusing now.
+
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Type.is_enum_declaration):
+        (Type.is_enum_class_declaration):
+        (Type.is_option_set):
+        (Type):
+        (Type.is_enumerable):
+        When we want all enumerable types, this property includes all three variants.
+
+        (Type.declaration_kind): Forward-declare OptionSet's type parameter as an enum class.
+        (VectorType.is_enum_declaration): Renamed from is_enum().
+        (VectorType.is_enum_class_declaration): Renamed from is_enum_class().
+        (VectorType.is_option_set): Added.
+        (InputsModel.enumerable_types): Added.
+        (InputsModel.parse_type_with_framework):
+        (Generator.generate_header):
+        (Generator.generate_implementation):
+        (Generator.generate_includes):
+        (Generator.generate_type_forward_declarations):
+        (Generator.generate_enumerable_type_trait_declaration):
+        (Generator.generate_enum_trait_declaration): Renamed.
+        (Generator.generate_enum_trait_implementation): Renamed.
+
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py:
+        Add new templates for OptionSet types. Clean up parameter names and simplify the
+        enumerable type declaration template, which is the same for all enumerable type variants.
+
+        * replay/scripts/tests/expected/fail-on-c-style-enum-no-storage.json-error:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.cpp:
+        (JSC::EncodingTraits<Test::PlatformEvent::OtherType>::encodeValue):
+        (JSC::EncodingTraits<Test::PlatformEvent::OtherType>::decodeValue):
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.h:
+        Rebaseline test results.
+
+        * replay/scripts/tests/generate-enum-encoding-helpers.json:
+        Add a new type for OptionSet<PlatformEvent::Modifier> to capture generated encode/decode methods.
+
 2016-09-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][LLInt] Introduce is_cell_with_type

@@ -302,16 +302,25 @@ class Type:
     def is_struct(self):
         return self.has_flag("STRUCT")
 
-    def is_enum(self):
+    def is_enum_declaration(self):
         return self.has_flag("ENUM")
 
-    def is_enum_class(self):
+    def is_enum_class_declaration(self):
         return self.has_flag("ENUM_CLASS")
 
+    def is_option_set(self):
+        return self.has_flag("OPTION_SET")
+
+    def is_enumerable(self):
+        return self.is_enum_declaration() or self.is_enum_class_declaration() or self.is_option_set()
+
     def declaration_kind(self):
-        if self.is_enum():
+        if self.is_enum_declaration():
             return "enum"
-        elif self.is_enum_class():
+        elif self.is_enum_class_declaration():
+            return "enum class"
+        # If the enumerable is an OptionSet<T>, then T must be forward declared as an enum class.
+        elif self.is_option_set():
             return "enum class"
         elif self.is_struct():
             return "struct"
@@ -380,10 +389,13 @@ class VectorType(Type):
     def is_struct(self):
         return False
 
-    def is_enum(self):
+    def is_enum_declaration(self):
         return False
 
-    def is_enum_class(self):
+    def is_enum_class_declaration(self):
+        return False
+
+    def is_option_set(self):
         return False
 
     def qualified_prefix(self):
@@ -409,9 +421,9 @@ class InputsModel:
         self.types_by_name = {}
         self.inputs_by_name = {}
 
-    def enum_types(self):
-        _enums = filter(lambda x: x.is_enum() or x.is_enum_class(), self.types)
-        return sorted(_enums, key=lambda _enum: _enum.type_name())
+    def enumerable_types(self):
+        _enumerables = filter(lambda x: x.is_enumerable(), self.types)
+        return sorted(_enumerables, key=lambda _enumerable: _enumerable.type_name())
 
     def get_type_for_member(self, member):
         if member.has_flag("VECTOR"):
@@ -453,19 +465,19 @@ class InputsModel:
         type_mode = TypeMode.fromString(json['mode'])
         header = json.get('header')
         enclosing_class = json.get('enclosing_class')
-        enum_values = json.get('values')
-        guarded_enum_values = json.get('guarded_values', {})
+        enumerable_values = json.get('values')
+        guarded_enumerable_values = json.get('guarded_values', {})
         type_storage = json.get('storage')
         type_flags = json.get('flags', [])
         guard = json.get('guard', None)
-        _type = Type(type_name, type_mode, framework, header, enclosing_class, enum_values, guarded_enum_values, type_storage, type_flags, guard)
-        if _type.is_enum() or _type.is_enum_class():
+        _type = Type(type_name, type_mode, framework, header, enclosing_class, enumerable_values, guarded_enumerable_values, type_storage, type_flags, guard)
+        if _type.is_enumerable():
             check_for_required_properties(['values'], json, 'enum')
             if not isinstance(json['values'], list) or len(_type.values) == 0:
-                raise ParseException("Malformed specification: enum %s does not supply a list of values" % type_name)
+                raise ParseException("Malformed specification: enumerable type %s does not supply a list of values" % type_name)
 
-            if _type.is_enum() and enclosing_class is None and type_storage is None:
-                raise ParseException("Could not parse enum %s: C-style enums not enclosed by a class must specify their storage type so they can be forward declared." % type_name)
+            if _type.is_enum_declaration() and enclosing_class is None and type_storage is None:
+                raise ParseException("Could not parse enumerable type %s: C-style enum declarations not enclosed by a class must specify their storage type so they can be forward declared." % type_name)
 
         self.types.append(_type)
 
@@ -597,7 +609,7 @@ class Generator:
         implementation_file.close()
 
     def generate_header(self):
-        enums_to_generate = filter(self.should_generate_item, self._model.enum_types())
+        enumerable_types_to_generate = filter(self.should_generate_item, self._model.enumerable_types())
         inputs_to_generate = filter(self.should_generate_item, self._model.inputs)
 
         template_arguments = {
@@ -613,14 +625,14 @@ class Generator:
             'inputClassDeclarations': "\n\n".join([self.generate_class_declaration(_input) for _input in inputs_to_generate]),
             'inputTraitDeclarations': "\n\n".join([self.generate_input_trait_declaration(_input) for _input in inputs_to_generate]),
             'inputTypeTraitDeclarations': "\n\n".join([self.generate_input_type_trait_declaration(_input) for _input in inputs_to_generate]),
-            'enumTraitDeclarations': "\n\n".join([wrap_with_guard(self.generate_enum_trait_declaration(_type), _type.guard) for _type in enums_to_generate]),
+            'enumerableTypeTraitDeclarations': "\n\n".join([wrap_with_guard(self.generate_enumerable_type_trait_declaration(_type), _type.guard) for _type in enumerable_types_to_generate]),
             'forEachMacro': self.generate_for_each_macro(),
         }
 
         return Template(Templates.HeaderSkeleton).substitute(template_arguments)
 
     def generate_implementation(self):
-        enums_to_generate = filter(self.should_generate_item, self._model.enum_types())
+        enumerable_types_to_generate = filter(self.should_generate_item, self._model.enumerable_types())
         inputs_to_generate = filter(self.should_generate_item, self._model.inputs)
 
         template_arguments = {
@@ -632,7 +644,7 @@ class Generator:
             'includes': self.generate_includes(defaults=self.setting('implIncludes'), includes_for_types=True),
             'inputClassImplementations': "\n\n".join([self.generate_class_implementation(_input) for _input in inputs_to_generate]),
             'inputTraitImplementations': "\n\n".join([self.generate_input_trait_implementation(_input) for _input in inputs_to_generate]),
-            'enumTraitImplementations': "\n\n".join([wrap_with_guard(self.generate_enum_trait_implementation(_type), _type.guard) for _type in enums_to_generate]),
+            'enumerableTypeTraitImplementations': "\n\n".join([wrap_with_guard(self.generate_enumerable_type_trait_implementation(_type), _type.guard) for _type in enumerable_types_to_generate]),
         }
 
         return Template(Templates.ImplementationSkeleton).substitute(template_arguments)
@@ -650,7 +662,7 @@ class Generator:
             # For RefCounted types, we reverse when to include the header so that the destructor can be
             # used in the header file.
             include_for_destructor = _type.mode is TypeModes.SHARED
-            # Enums within classes cannot be forward declared, so we include
+            # Enum declarations within classes cannot be forward declared, so we include
             # headers with the relevant class declaration.
             include_for_enclosing_class = _type.enclosing_class is not None
             # Include headers for types like URL and String which are copied, not owned or shared.
@@ -691,9 +703,9 @@ class Generator:
                 continue
             if _type.mode == TypeModes.HEAVY_SCALAR:
                 continue
-            if _type.mode == TypeModes.SCALAR and not (_type.is_enum() or _type.is_enum_class()):
+            if _type.mode == TypeModes.SCALAR and not _type.is_enumerable():
                 continue
-            if _type.is_enum():
+            if _type.is_enum_declaration():
                 declaration = "enum %s : %s;" % (_type.type_name(), _type.underlying_storage)
             else:
                 declaration = "%s %s;" % (_type.declaration_kind(), _type.type_name())
@@ -793,19 +805,22 @@ class Generator:
 
         return wrap_with_guard(Template(Templates.InputTypeTraitsDeclaration).substitute(template_arguments), _input.guard)
 
-    def generate_enum_trait_declaration(self, _type):
+    def generate_enumerable_type_trait_declaration(self, _type):
         decl_type = ['struct']
         if len(self.setting('exportMacro')) > 0:
             decl_type.append(self.setting('exportMacro'))
 
         should_qualify_type = _type.framework != self.traits_framework
-        template = Templates.EnumTraitDeclaration if _type.is_enum() else Templates.EnumClassTraitDeclaration
+        decoded_type = _type.type_name(qualified=should_qualify_type)
+        if _type.is_option_set():
+            decoded_type = "OptionSet<%s>" % decoded_type
+
         template_arguments = {
             'encodingTypeArgument': _type.encoding_type_argument(qualified=should_qualify_type),
-            'enumType': _type.type_name(qualified=should_qualify_type),
+            'enumerableType': decoded_type,
             'structOrClass': " ".join(decl_type)
         }
-        return Template(template).substitute(template_arguments)
+        return Template(Templates.EnumerableTypeTraitDeclaration).substitute(template_arguments)
 
     def generate_for_each_macro(self):
         inputs_to_generate = filter(self.should_generate_item, self._model.inputs)
@@ -828,33 +843,37 @@ class Generator:
 
         return wrap_with_guard(Template(Templates.InputClassImplementation).substitute(template_arguments), _input.guard)
 
-    def generate_enum_trait_implementation(self, _type):
+    def generate_enumerable_type_trait_implementation(self, _type):
         should_qualify_type = _type.framework != self.traits_framework
         prefix_components = []
         if should_qualify_type:
             prefix_components.append(_type.framework.setting('namespace'))
-        if _type.is_enum() and _type.enclosing_class is not None:
+        if _type.is_enum_declaration() and _type.enclosing_class is not None:
             prefix_components.append(_type.enclosing_class)
-        elif _type.is_enum_class():
+        elif _type.is_enum_class_declaration() or _type.is_option_set():
             prefix_components.append(_type.type_name(qualified=False))
         prefix_components.append("")
-        enum_prefix = "::".join(prefix_components)
+        enumerable_type_prefix = "::".join(prefix_components)
         encodeLines = []
 
-        if _type.is_enum():
-            encode_template = Templates.EnumEncodeCase
-            decode_template = Templates.EnumDecodeCase
-            enum_trait_template = Templates.EnumTraitImplementation
-        else:
-            encode_template = Templates.EnumClassEncodeCase
-            decode_template = Templates.EnumClassDecodeCase
-            enum_trait_template = Templates.EnumClassTraitImplementation
+        if _type.is_enum_declaration():
+            encode_template = Templates.EnumTypeEncodeCase
+            decode_template = Templates.EnumTypeDecodeCase
+            enumerable_type_trait_template = Templates.EnumTypeTraitImplementation
+        elif _type.is_enum_class_declaration():
+            encode_template = Templates.EnumClassTypeEncodeCase
+            decode_template = Templates.EnumClassTypeDecodeCase
+            enumerable_type_trait_template = Templates.EnumClassTypeTraitImplementation
+        else:  # Thus, _type.is_option_set().
+            encode_template = Templates.OptionSetTypeEncodeCase
+            decode_template = Templates.OptionSetTypeDecodeCase
+            enumerable_type_trait_template = Templates.OptionSetTypeTraitImplementation
 
         # Generate body for encode.
         for _value in _type.values:
             template_arguments = {
                 'enumStringValue': _value,
-                'qualifiedEnumValue': "%s%s" % (enum_prefix, _value),
+                'qualifiedEnumValue': "%s%s" % (enumerable_type_prefix, _value),
             }
             encodeLines.append(Template(encode_template).substitute(template_arguments))
 
@@ -863,7 +882,7 @@ class Generator:
             for guard_value in guard_values:
                 template_arguments = {
                     'enumStringValue': guard_value,
-                    'qualifiedEnumValue': "%s%s" % (enum_prefix, guard_value),
+                    'qualifiedEnumValue': "%s%s" % (enumerable_type_prefix, guard_value),
                 }
                 guardedLines.append(Template(encode_template).substitute(template_arguments))
             encodeLines.append(wrap_with_guard("\n".join(guardedLines), guard))
@@ -875,7 +894,7 @@ class Generator:
             template_arguments = {
                 'branchKeyword': "else if" if i > 0 else "if",
                 'enumStringValue': _value,
-                'qualifiedEnumValue': "%s%s" % (enum_prefix, _value),
+                'qualifiedEnumValue': "%s%s" % (enumerable_type_prefix, _value),
                 'qualifiedEnumName': _type.type_name(qualified=should_qualify_type)
             }
             decodeLines.append(Template(decode_template).substitute(template_arguments))
@@ -886,20 +905,24 @@ class Generator:
                 template_arguments = {
                     'branchKeyword': "else if" if i > 0 else "if",
                     'enumStringValue': guard_value,
-                    'qualifiedEnumValue': "%s%s" % (enum_prefix, guard_value),
+                    'qualifiedEnumValue': "%s%s" % (enumerable_type_prefix, guard_value),
                     'qualifiedEnumName': _type.type_name(qualified=should_qualify_type)
                 }
                 guardedLines.append(Template(decode_template).substitute(template_arguments))
             decodeLines.append(wrap_with_guard("\n".join(guardedLines), guard))
 
+        enumerable_type = _type.type_name(qualified=should_qualify_type)
+        if _type.is_option_set():
+            enumerable_type = "OptionSet<%s>" % enumerable_type
+
         template_arguments = {
             'encodingTypeArgument': _type.encoding_type_argument(qualified=should_qualify_type),
-            'enumType': _type.type_name(qualified=should_qualify_type),
+            'enumerableType': enumerable_type,
             'encodeCases': "\n".join(encodeLines),
             'decodeCases': "\n".join(decodeLines)
         }
 
-        return Template(enum_trait_template).substitute(template_arguments)
+        return Template(enumerable_type_trait_template).substitute(template_arguments)
 
     def generate_input_trait_implementation(self, _input):
         template_arguments = {

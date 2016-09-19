@@ -143,6 +143,41 @@ bool EncodingTraits<Test::MouseButton>::decodeValue(EncodedValue& encodedValue, 
     return true;
 }
 
+EncodedValue EncodingTraits<Test::PlatformEvent::OtherType>::encodeValue(const OptionSet<Test::PlatformEvent::OtherType>& enumValue)
+{
+    EncodedValue encodedValue = EncodedValue::createArray();
+    if (enumValue.contains(Test::PlatformEvent::OtherType::Mouse))
+        encodedValue.append<String>(ASCIILiteral("Mouse"));
+    if (enumValue.contains(Test::PlatformEvent::OtherType::Key))
+        encodedValue.append<String>(ASCIILiteral("Key"));
+    if (enumValue.contains(Test::PlatformEvent::OtherType::Touch))
+        encodedValue.append<String>(ASCIILiteral("Touch"));
+    if (enumValue.contains(Test::PlatformEvent::OtherType::Wheel))
+        encodedValue.append<String>(ASCIILiteral("Wheel"));
+
+    return encodedValue;
+}
+
+bool EncodingTraits<Test::PlatformEvent::OtherType>::decodeValue(EncodedValue& encodedValue, OptionSet<Test::PlatformEvent::OtherType>& enumValue)
+{
+    Vector<String> enumStrings;
+    if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
+        return false;
+
+    for (const String& enumString : enumStrings) {
+        if (enumString == "Mouse")
+            enumValue |= Test::PlatformEvent::OtherType::Mouse;
+        else if (enumString == "Key")
+            enumValue |= Test::PlatformEvent::OtherType::Key;
+        else if (enumString == "Touch")
+            enumValue |= Test::PlatformEvent::OtherType::Touch;
+        else if (enumString == "Wheel")
+            enumValue |= Test::PlatformEvent::OtherType::Wheel;
+    }
+
+    return true;
+}
+
 EncodedValue EncodingTraits<Test::PlatformEvent::Type>::encodeValue(const Test::PlatformEvent::Type& enumValue)
 {
     EncodedValue encodedValue = EncodedValue::createArray();

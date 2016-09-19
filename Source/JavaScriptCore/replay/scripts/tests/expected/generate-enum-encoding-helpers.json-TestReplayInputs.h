@@ -67,6 +67,13 @@ template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::MouseButton> {
     static bool decodeValue(EncodedValue&, Test::MouseButton& value);
 };
 
+template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::PlatformEvent::OtherType> {
+    typedef OptionSet<Test::PlatformEvent::OtherType> DecodedType;
+
+    static EncodedValue encodeValue(const OptionSet<Test::PlatformEvent::OtherType>& value);
+    static bool decodeValue(EncodedValue&, OptionSet<Test::PlatformEvent::OtherType>& value);
+};
+
 template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::PlatformEvent::Type> {
     typedef Test::PlatformEvent::Type DecodedType;
 

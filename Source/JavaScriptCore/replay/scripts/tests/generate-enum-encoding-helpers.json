@@ -19,6 +19,13 @@
                 "enclosing_class": "PlatformEvent",
                 "values": ["Mouse", "Key", "Touch", "Wheel"],
                 "header": "platform/PlatformEvent.h"
+            },
+            {
+                "name": "OtherType", "mode": "SCALAR",
+                "flags": ["OPTION_SET"],
+                "enclosing_class": "PlatformEvent",
+                "values": ["Mouse", "Key", "Touch", "Wheel"],
+                "header": "platform/PlatformEvent.h"
             }
         ]
     },
