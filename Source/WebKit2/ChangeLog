@@ -1,3 +1,18 @@
+2016-09-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Empty referer header after WebKit session state restoration trips Bad Behavior Wordpress plugin
+        https://bugs.webkit.org/show_bug.cgi?id=159606
+
+        Reviewed by Carlos Garcia Campos.
+
+        Leave the referrer member of FrameState unset when restoring from session state, unless
+        there is actually a nonempty referrer saved in the state. If we set it to an empty string,
+        then an empty referrer gets sent to the server, which some servers do not accept. It
+        triggers the Bad Behavior plugin on my WordPress blog, for instance. It also breaks vox.com.
+
+        * UIProcess/API/gtk/WebKitWebViewSessionState.cpp:
+        (decodeFrameState):
+
 2016-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move the rendering of auth dialog shadow to the auth dialog widget
