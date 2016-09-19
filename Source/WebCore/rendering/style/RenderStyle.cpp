@@ -56,10 +56,6 @@
 #include <wtf/text/StringHash.h>
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
-#include "TextAutosizer.h"
-#endif
-
 namespace WebCore {
 
 struct SameSizeAsBorderValue {
@@ -647,11 +643,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         if (textStrokeWidth() != other.textStrokeWidth())
             return true;
     }
-
-#if ENABLE(TEXT_AUTOSIZING)
-    if (visual->m_textAutosizingMultiplier != other.visual->m_textAutosizingMultiplier)
-        return true;
-#endif
 
     if (inherited->line_height != other.inherited->line_height
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -1479,17 +1470,7 @@ const Length& RenderStyle::specifiedLineHeight() const { return inherited->line_
 
 Length RenderStyle::lineHeight() const
 {
-    const Length& lh = inherited->line_height;
-#if ENABLE(TEXT_AUTOSIZING)
-    // Unlike fontDescription().computedSize() and hence fontSize(), this is
-    // recalculated on demand as we only store the specified line height.
-    // FIXME: Should consider scaling the fixed part of any calc expressions
-    // too, though this involves messily poking into CalcExpressionLength.
-    float multiplier = textAutosizingMultiplier();
-    if (multiplier > 1 && lh.isFixed())
-        return Length(TextAutosizer::computeAutosizedFontSize(lh.value(), multiplier), Fixed);
-#endif
-    return lh;
+    return inherited->line_height;
 }
 void RenderStyle::setLineHeight(Length specifiedLineHeight) { SET_VAR(inherited, line_height, specifiedLineHeight); }
 
@@ -1549,14 +1530,6 @@ void RenderStyle::setFontSize(float size)
     auto description = fontDescription();
     description.setSpecifiedSize(size);
     description.setComputedSize(size);
-
-#if ENABLE(TEXT_AUTOSIZING)
-    float multiplier = textAutosizingMultiplier();
-    if (multiplier > 1) {
-        float autosizedFontSize = TextAutosizer::computeAutosizedFontSize(size, multiplier);
-        description.setComputedSize(min(maximumAllowedFontSize, autosizedFontSize));
-    }
-#endif
 
     setFontDescription(description);
     fontCascade().update(currentFontSelector);

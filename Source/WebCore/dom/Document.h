@@ -197,10 +197,6 @@ class RequestAnimationFrameCallback;
 class ScriptedAnimationController;
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
-class TextAutosizer;
-#endif
-
 class FontFaceSet;
 
 typedef int ExceptionCode;
@@ -1236,10 +1232,6 @@ public:
     IntSize initialViewportSize() const;
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
-    TextAutosizer* textAutosizer() { return m_textAutosizer.get(); }
-#endif
-
     void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, const RenderStyle&);
     void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, const RenderStyle&);
 
@@ -1717,10 +1709,6 @@ public:
 private:
     using TextAutoSizingMap = HashMap<TextAutoSizingKey, std::unique_ptr<TextAutoSizingValue>, TextAutoSizingHash, TextAutoSizingTraits>;
     TextAutoSizingMap m_textAutoSizedNodes;
-#endif
-
-#if ENABLE(TEXT_AUTOSIZING)
-    std::unique_ptr<TextAutosizer> m_textAutosizer;
 #endif
 
     void platformSuspendOrStopActiveDOMObjects();

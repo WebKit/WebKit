@@ -1352,16 +1352,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskSize, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
 
-        new PropertyWrapper<float>(CSSPropertyFontSize,
-            // Must pass a specified size to setFontSize if Text Autosizing is enabled, but a computed size
-            // if text zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
-            // FIXME: Find some way to assert that text zoom isn't activated when Text Autosizing is compiled in.
-#if ENABLE(TEXT_AUTOSIZING)
-            &RenderStyle::specifiedFontSize,
-#else
-            &RenderStyle::computedFontSize,
-#endif
-            &RenderStyle::setFontSize),
+        new PropertyWrapper<float>(CSSPropertyFontSize, &RenderStyle::computedFontSize, &RenderStyle::setFontSize),
         new PropertyWrapper<unsigned short>(CSSPropertyColumnRuleWidth, &RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth),
         new PropertyWrapper<float>(CSSPropertyColumnGap, &RenderStyle::columnGap, &RenderStyle::setColumnGap),
         new PropertyWrapper<unsigned short>(CSSPropertyColumnCount, &RenderStyle::columnCount, &RenderStyle::setColumnCount),

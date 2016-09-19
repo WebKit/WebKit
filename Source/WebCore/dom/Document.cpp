@@ -244,10 +244,6 @@
 #include "ScriptedAnimationController.h"
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
-#include "TextAutosizer.h"
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
 #include "TouchEvent.h"
 #include "TouchList.h"
@@ -557,10 +553,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
         setURL(url);
 
     m_cachedResourceLoader->setDocument(this);
-
-#if ENABLE(TEXT_AUTOSIZING)
-    m_textAutosizer = std::make_unique<TextAutosizer>(this);
-#endif
 
     resetLinkColor();
     resetVisitedLinkColor();

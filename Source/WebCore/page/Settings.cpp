@@ -45,7 +45,6 @@
 #include "PageCache.h"
 #include "RuntimeApplicationChecks.h"
 #include "StorageMap.h"
-#include "TextAutosizer.h"
 #include <limits>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -191,9 +190,6 @@ Settings::Settings(Page* page)
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
     , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
-#if ENABLE(TEXT_AUTOSIZING)
-    , m_textAutosizingFontScaleFactor(1)
-#endif
     SETTINGS_INITIALIZER_LIST
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
@@ -328,22 +324,6 @@ void Settings::setPictographFontFamily(const AtomicString& family, UScriptCode s
     if (changes)
         invalidateAfterGenericFamilyChange(m_page);
 }
-
-#if ENABLE(TEXT_AUTOSIZING)
-void Settings::setTextAutosizingFontScaleFactor(float fontScaleFactor)
-{
-    m_textAutosizingFontScaleFactor = fontScaleFactor;
-
-    if (!m_page)
-        return;
-
-    // FIXME: I wonder if this needs to traverse frames like in WebViewImpl::resize, or whether there is only one document per Settings instance?
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext())
-        frame->document()->textAutosizer()->recalculateMultipliers();
-
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-#endif
 
 float Settings::defaultMinimumZoomFontSize()
 {

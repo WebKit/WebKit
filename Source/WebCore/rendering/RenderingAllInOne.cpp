@@ -146,7 +146,6 @@
 #include "SimpleLineLayoutFunctions.cpp"
 #include "SimpleLineLayoutResolver.cpp"
 #include "SimpleLineLayoutTextFragmentIterator.cpp"
-#include "TextAutosizer.cpp"
 #include "TextDecorationPainter.cpp"
 #include "TextPaintStyle.cpp"
 #include "TextPainter.cpp"

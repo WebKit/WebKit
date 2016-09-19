@@ -692,10 +692,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_SVG_FONTS 1
 #endif
 
-#if !defined(ENABLE_TEXT_AUTOSIZING)
-#define ENABLE_TEXT_AUTOSIZING 0
-#endif
-
 #if !defined(ENABLE_TEXT_CARET)
 #define ENABLE_TEXT_CARET 1
 #endif

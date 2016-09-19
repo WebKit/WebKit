@@ -1,3 +1,14 @@
+2016-09-19  Daniel Bates  <dabates@apple.com>
+
+        Remove ENABLE(TEXT_AUTOSIZING) automatic text size adjustment code
+        https://bugs.webkit.org/show_bug.cgi?id=162167
+
+        Reviewed by Simon Fraser.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2016-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Make ENABLE_THREADED_COMPOSITOR a public option

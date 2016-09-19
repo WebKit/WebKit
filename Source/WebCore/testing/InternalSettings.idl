@@ -44,7 +44,6 @@
 
     [RaisesException] void setTextAutosizingEnabled(boolean enabled);
     [RaisesException] void setTextAutosizingWindowSizeOverride(long width, long height);
-    [RaisesException] void setTextAutosizingFontScaleFactor(unrestricted float fontScaleFactor);
 
     // Media
     [RaisesException] void setCanStartMedia(boolean enabled);

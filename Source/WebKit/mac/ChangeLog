@@ -1,3 +1,12 @@
+2016-09-19  Daniel Bates  <dabates@apple.com>
+
+        Remove ENABLE(TEXT_AUTOSIZING) automatic text size adjustment code
+        https://bugs.webkit.org/show_bug.cgi?id=162167
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-09-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Bring the inspected page's window forward when activating element search

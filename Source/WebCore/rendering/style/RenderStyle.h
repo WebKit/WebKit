@@ -721,10 +721,6 @@ public:
     int fontSize() const;
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
-#if ENABLE(TEXT_AUTOSIZING)
-    float textAutosizingMultiplier() const { return visual->m_textAutosizingMultiplier; }
-#endif
-
     const Length& textIndent() const { return rareInheritedData->indent; }
 #if ENABLE(CSS3_TEXT)
     TextIndentLine textIndentLine() const { return static_cast<TextIndentLine>(rareInheritedData->m_textIndentLine); }
@@ -1371,14 +1367,6 @@ public:
     bool setFontDescription(const FontCascadeDescription&);
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
     void setFontSize(float);
-
-#if ENABLE(TEXT_AUTOSIZING)
-    void setTextAutosizingMultiplier(float v)
-    {
-        SET_VAR(visual, m_textAutosizingMultiplier, v);
-        setFontSize(fontDescription().specifiedSize());
-    }
-#endif
 
     void setColor(const Color&);
     void setTextIndent(Length length) { SET_VAR(rareInheritedData, indent, WTFMove(length)); }

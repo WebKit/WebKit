@@ -105,10 +105,6 @@
 #include "TiledBackingStore.h"
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
-#include "TextAutosizer.h"
-#endif
-
 #if ENABLE(CSS_SCROLL_SNAP)
 #include "AxisScrollSnapOffsets.h"
 #endif
@@ -496,16 +492,6 @@ void FrameView::setFrameRect(const IntRect& newRect)
     IntRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
-
-#if ENABLE(TEXT_AUTOSIZING)
-    // Autosized font sizes depend on the width of the viewing area.
-    if (newRect.width() != oldRect.width()) {
-        if (frame().isMainFrame() && page->settings().textAutosizingEnabled()) {
-            for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
-                frame().document()->textAutosizer()->recalculateMultipliers();
-        }
-    }
-#endif
 
     ScrollView::setFrameRect(newRect);
 
@@ -1452,10 +1438,6 @@ void FrameView::layout(bool allowSubtree)
                     root->layout();
             }
         }
-#endif
-#if ENABLE(TEXT_AUTOSIZING)
-        if (document.textAutosizer()->processSubtree(root) && root->needsLayout())
-            root->layout();
 #endif
 
         ASSERT(m_layoutPhase == InRenderTreeLayout);

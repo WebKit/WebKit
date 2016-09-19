@@ -119,11 +119,6 @@ public:
     WEBCORE_EXPORT void setPictographFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const AtomicString& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-#if ENABLE(TEXT_AUTOSIZING)
-    void setTextAutosizingFontScaleFactor(float);
-    float textAutosizingFontScaleFactor() const { return m_textAutosizingFontScaleFactor; }
-#endif
-
     WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
     WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
 
@@ -324,10 +319,6 @@ private:
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
     std::chrono::milliseconds m_layoutInterval;
     std::chrono::milliseconds m_minimumDOMTimerInterval;
-
-#if ENABLE(TEXT_AUTOSIZING)
-    float m_textAutosizingFontScaleFactor;
-#endif
 
     SETTINGS_MEMBER_VARIABLES
 

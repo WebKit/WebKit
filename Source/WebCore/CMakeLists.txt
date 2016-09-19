@@ -2504,7 +2504,6 @@ set(WebCore_SOURCES
     rendering/SimpleLineLayoutFunctions.cpp
     rendering/SimpleLineLayoutResolver.cpp
     rendering/SimpleLineLayoutTextFragmentIterator.cpp
-    rendering/TextAutosizer.cpp
     rendering/TextDecorationPainter.cpp
     rendering/TextPaintStyle.cpp
     rendering/TextPainter.cpp
