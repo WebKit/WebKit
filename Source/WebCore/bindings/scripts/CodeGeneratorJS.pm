@@ -4010,10 +4010,10 @@ sub GenerateParametersCheck
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
             else {
-                push(@$outputArray, "    if (!$name.second)\n");
-                push(@$outputArray, "        return throwArgumentTypeError(*state, throwScope, $name.first, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, \"$type\");\n");
+                push(@$outputArray, "    if (!$name.arguments)\n");
+                push(@$outputArray, "        return throwArgumentTypeError(*state, throwScope, $name.argumentIndex, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, \"$type\");\n");
             }
-            $value = "WTFMove(*$name.second)";
+            $value = "WTFMove($name.arguments.value())";
 
         } elsif ($codeGenerator->IsEnumType($type)) {
             my $className = GetEnumerationClassName($interface, $type);

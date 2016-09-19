@@ -6551,9 +6551,9 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12(ExecSt
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto blobArgs = toArguments<VariadicHelper<JSBlob, Blob>>(*state, 0);
-    if (!blobArgs.second)
-        return throwArgumentTypeError(*state, throwScope, blobArgs.first, "blobArgs", "TestObject", "overloadedMethod", "Blob");
-    impl.overloadedMethod(WTFMove(*blobArgs.second));
+    if (!blobArgs.arguments)
+        return throwArgumentTypeError(*state, throwScope, blobArgs.argumentIndex, "blobArgs", "TestObject", "overloadedMethod", "Blob");
+    impl.overloadedMethod(WTFMove(blobArgs.arguments.value()));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7086,7 +7086,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
     auto tail = toArguments<VariadicHelper<JSC::JSValue, String>>(*state, 1);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
-    impl.variadicStringMethod(WTFMove(head), WTFMove(*tail.second));
+    impl.variadicStringMethod(WTFMove(head), WTFMove(tail.arguments.value()));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7109,7 +7109,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
     auto tail = toArguments<VariadicHelper<JSC::JSValue, double>>(*state, 1);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
-    impl.variadicDoubleMethod(WTFMove(head), WTFMove(*tail.second));
+    impl.variadicDoubleMethod(WTFMove(head), WTFMove(tail.arguments.value()));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7130,9 +7130,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
     if (UNLIKELY(!head))
         return throwArgumentTypeError(*state, throwScope, 0, "head", "TestObject", "variadicNodeMethod", "Node");
     auto tail = toArguments<VariadicHelper<JSNode, Node>>(*state, 1);
-    if (!tail.second)
-        return throwArgumentTypeError(*state, throwScope, tail.first, "tail", "TestObject", "variadicNodeMethod", "Node");
-    impl.variadicNodeMethod(*head, WTFMove(*tail.second));
+    if (!tail.arguments)
+        return throwArgumentTypeError(*state, throwScope, tail.argumentIndex, "tail", "TestObject", "variadicNodeMethod", "Node");
+    impl.variadicNodeMethod(*head, WTFMove(tail.arguments.value()));
     return JSValue::encode(jsUndefined());
 }
 

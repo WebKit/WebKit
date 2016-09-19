@@ -356,7 +356,16 @@ template<typename JSClass, typename DOMClass>
 struct VariadicHelper : public VariadicHelperBase<JSClass, DOMClass> {
     using Item = typename VariadicHelperBase<JSClass, DOMClass>::Item;
     using Container = Vector<Item>;
-    using Result = typename std::pair<size_t, Optional<Container>>;
+
+    struct Result {
+        Result(size_t argumentIndex, Optional<Container>&& arguments)
+            : argumentIndex(argumentIndex)
+            , arguments(WTFMove(arguments))
+        {
+        }
+        size_t argumentIndex;
+        Optional<Container> arguments;
+    };
 };
 
 template<typename VariadicHelper> typename VariadicHelper::Result toArguments(JSC::ExecState&, size_t startIndex = 0);
