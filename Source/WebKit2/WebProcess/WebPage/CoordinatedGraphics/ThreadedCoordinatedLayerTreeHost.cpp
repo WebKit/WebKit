@@ -55,10 +55,15 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
     , m_surface(AcceleratedSurface::create(webPage))
 {
     if (m_surface) {
+        TextureMapper::PaintFlags paintFlags = 0;
+
+        if (m_surface->shouldPaintMirrored())
+            paintFlags |= TextureMapper::PaintingMirrored;
+
         // Do not do frame sync when rendering offscreen in the web process to ensure that SwapBuffers never blocks.
         // Rendering to the actual screen will happen later anyway since the UI process schedules a redraw for every update,
         // the compositor will take care of syncing to vblank.
-        m_compositor = ThreadedCompositor::create(m_compositorClient, m_surface->window(), ThreadedCompositor::ShouldDoFrameSync::No);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, m_surface->window(), ThreadedCompositor::ShouldDoFrameSync::No, paintFlags);
         m_layerTreeContext.contextID = m_surface->surfaceID();
     } else
         m_compositor = ThreadedCompositor::create(m_compositorClient);

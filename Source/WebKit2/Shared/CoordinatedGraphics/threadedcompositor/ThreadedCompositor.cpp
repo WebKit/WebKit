@@ -42,15 +42,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
 {
-    return adoptRef(*new ThreadedCompositor(client, nativeSurfaceHandle, doFrameSync));
+    return adoptRef(*new ThreadedCompositor(client, nativeSurfaceHandle, doFrameSync, paintFlags));
 }
 
-ThreadedCompositor::ThreadedCompositor(Client& client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync)
+ThreadedCompositor::ThreadedCompositor(Client& client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
     : m_client(client)
     , m_nativeSurfaceHandle(nativeSurfaceHandle)
     , m_doFrameSync(doFrameSync)
+    , m_paintFlags(paintFlags)
     , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
 {
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
@@ -196,7 +197,8 @@ void ThreadedCompositor::renderLayerTree()
         glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
-    m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::transparent, !m_drawsBackground, m_scrollPosition);
+
+    m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::transparent, !m_drawsBackground, m_scrollPosition, m_paintFlags);
 
     m_context->swapBuffers();
 }

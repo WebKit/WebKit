@@ -1,3 +1,31 @@
+2016-09-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] Stop using glReadPixels() to blit AC surfaces in the UIProcess under Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=161530
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use gdk_cairo_draw_from_gl when all necessary conditions exist.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create): take TextureMapper::PaintFlags as optional argument.
+        (WebKit::ThreadedCompositor::ThreadedCompositor): ditto.
+        (WebKit::ThreadedCompositor::renderLayerTree): relay paint flags to TextureMapper::beginPaint.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::paint): use the faster gdk_cairo_draw_from_gl when a new
+        enough GTK+ is in use.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost): create compositor
+        with PaintingMirrored flag if we have recent GTK+ and are running under Wayland.
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.h: implement shouldPaintMirrored by always
+        returning false.
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.h: implement shouldPaintMirrored by always
+        returning true.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::compositeLayersToContext): pass PaintingMirror flag to TextureMapper
+        when under a recent enough GTK+ and Wayland.
+
 2016-09-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Empty referer header after WebKit session state restoration trips Bad Behavior Wordpress plugin

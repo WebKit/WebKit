@@ -337,7 +337,13 @@ void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
     }
 
     ASSERT(m_textureMapper);
-    m_textureMapper->beginPainting();
+
+    TextureMapper::PaintFlags paintFlags = 0;
+
+    if (m_surface && m_surface->shouldPaintMirrored())
+        paintFlags |= TextureMapper::PaintingMirrored;
+
+    m_textureMapper->beginPainting(paintFlags);
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().paint();
     m_textureMapper->endPainting();
 
