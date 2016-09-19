@@ -28,7 +28,6 @@
 
 #include "LogInitialization.h"
 #include <WebCore/LogInitialization.h>
-#include <WebCore/URLParser.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>

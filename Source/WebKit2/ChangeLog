@@ -1,3 +1,17 @@
+2016-09-19  Alex Christensen  <achristensen@webkit.org>
+
+        Only override URLParser::enabled if NSUserDefaults object exists
+        https://bugs.webkit.org/show_bug.cgi?id=162131
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::platformInitializeWebKit2):
+        * Shared/WebKit2Initialize.cpp:
+        When I enable URLParser by default, I will want the default to only be overwritten if there is a
+        NSUserDefaults key for URLParserEnabled.  Right now it is setting URLParser::enabled to false always,
+        which isn't a problem because the default is also false.  When the default is true, that will overwrite the default.
+
 2016-09-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Bring the inspected page's window forward when activating element search

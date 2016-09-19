@@ -40,7 +40,9 @@ void platformInitializeWebKit2(ProcessType processType)
     // We don't want to use NSUserDefaults in the child processes.
     if (processType == UIProcess) {
         dispatch_once(&initOnce, ^ {
-            URLParser::setEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"URLParserEnabled"]);
+            NSString *key = @"URLParserEnabled";
+            if ([[NSUserDefaults standardUserDefaults] objectForKey:key])
+                URLParser::setEnabled([[NSUserDefaults standardUserDefaults] boolForKey:key]);
         });
     }
 }
