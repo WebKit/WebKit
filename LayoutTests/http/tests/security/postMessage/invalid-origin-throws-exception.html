@@ -29,7 +29,7 @@ function test() {
     tryPostMessage("/tmp/foo");
     tryPostMessage("//localhost");
 
-    // URLs without an origin should fail without generating any errors.
+    // URLs without an origin should fail with a syntax error.
     tryPostMessage("asdf:");
     tryPostMessage("http:");
     
