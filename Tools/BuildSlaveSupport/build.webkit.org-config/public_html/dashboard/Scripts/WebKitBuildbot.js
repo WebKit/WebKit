@@ -26,13 +26,6 @@
 WebKitBuildbot = function()
 {
     const queueInfo = {
-        "Apple Sierra Debug (Build)": {platform: Dashboard.Platform.macOSSierra, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple Sierra Release (Build)": {platform: Dashboard.Platform.macOSSierra, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple Sierra Release (32-bit Build)": {platform: Dashboard.Platform.macOSSierra, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
-        "Apple Sierra Debug WK1 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple Sierra Debug WK2 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple Sierra Release WK1 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple Sierra Release WK2 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple El Capitan Debug (Build)": {platform: Dashboard.Platform.MacOSXElCapitan, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple El Capitan Release (Build)": {platform: Dashboard.Platform.MacOSXElCapitan, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple El Capitan Release (32-bit Build)": {platform: Dashboard.Platform.MacOSXElCapitan, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
