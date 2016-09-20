@@ -1405,14 +1405,14 @@ PASS HTMLHRElement interface object name
 PASS HTMLHRElement interface: existence and properties of interface prototype object 
 PASS HTMLHRElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLHRElement interface: attribute align 
-FAIL HTMLHRElement interface: attribute color assert_true: The prototype object must have a property "color" expected true got false
+PASS HTMLHRElement interface: attribute color 
 PASS HTMLHRElement interface: attribute noShade 
 PASS HTMLHRElement interface: attribute size 
 PASS HTMLHRElement interface: attribute width 
 PASS HTMLHRElement must be primary interface of document.createElement("hr") 
 PASS Stringification of document.createElement("hr") 
 PASS HTMLHRElement interface: document.createElement("hr") must inherit property "align" with the proper type (0) 
-FAIL HTMLHRElement interface: document.createElement("hr") must inherit property "color" with the proper type (1) assert_inherits: property "color" not found in prototype chain
+PASS HTMLHRElement interface: document.createElement("hr") must inherit property "color" with the proper type (1) 
 PASS HTMLHRElement interface: document.createElement("hr") must inherit property "noShade" with the proper type (2) 
 PASS HTMLHRElement interface: document.createElement("hr") must inherit property "size" with the proper type (3) 
 PASS HTMLHRElement interface: document.createElement("hr") must inherit property "width" with the proper type (4) 
@@ -1950,15 +1950,15 @@ PASS HTMLSourceElement interface: existence and properties of interface prototyp
 PASS HTMLSourceElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLSourceElement interface: attribute src 
 PASS HTMLSourceElement interface: attribute type 
-FAIL HTMLSourceElement interface: attribute srcset assert_true: The prototype object must have a property "srcset" expected true got false
-FAIL HTMLSourceElement interface: attribute sizes assert_true: The prototype object must have a property "sizes" expected true got false
+PASS HTMLSourceElement interface: attribute srcset 
+PASS HTMLSourceElement interface: attribute sizes 
 PASS HTMLSourceElement interface: attribute media 
 PASS HTMLSourceElement must be primary interface of document.createElement("source") 
 PASS Stringification of document.createElement("source") 
 PASS HTMLSourceElement interface: document.createElement("source") must inherit property "src" with the proper type (0) 
 PASS HTMLSourceElement interface: document.createElement("source") must inherit property "type" with the proper type (1) 
-FAIL HTMLSourceElement interface: document.createElement("source") must inherit property "srcset" with the proper type (2) assert_inherits: property "srcset" not found in prototype chain
-FAIL HTMLSourceElement interface: document.createElement("source") must inherit property "sizes" with the proper type (3) assert_inherits: property "sizes" not found in prototype chain
+PASS HTMLSourceElement interface: document.createElement("source") must inherit property "srcset" with the proper type (2) 
+PASS HTMLSourceElement interface: document.createElement("source") must inherit property "sizes" with the proper type (3) 
 PASS HTMLSourceElement interface: document.createElement("source") must inherit property "media" with the proper type (4) 
 PASS HTMLTrackElement interface: existence and properties of interface object 
 PASS HTMLTrackElement interface object length 
