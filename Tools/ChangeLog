@@ -1,5 +1,16 @@
 2016-09-20  Alex Christensen  <achristensen@webkit.org>
 
+        Reduce allocations in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=162241
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::checkURL):
+
+2016-09-20  Alex Christensen  <achristensen@webkit.org>
+
         Align URLParser with web platform tests when parsing non-special relative URLs ending in AuthorityOrHost state
         https://bugs.webkit.org/show_bug.cgi?id=162251
 

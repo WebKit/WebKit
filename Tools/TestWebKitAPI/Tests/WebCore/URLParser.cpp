@@ -26,6 +26,7 @@
 #include "config.h"
 #include <WebCore/URLParser.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
@@ -558,6 +559,9 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("foo://", "http://example.org/foo/bar",
         {"foo", "", "", "", 0, "/", "", "", "foo:///"},
         {"foo", "", "", "", 0, "//", "", "", "foo://"});
+    checkURLDifferences(wideString(L"http://host?ß😍#ß😍"),
+        {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", wideString(L"ß😍"), wideString(L"http://host/?%C3%9F%F0%9F%98%8D#ß😍")},
+        {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", "http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D"});
 
     // This matches the spec and web platform tests, but not Chrome, Firefox, or URL::parse.
     checkRelativeURLDifferences("notspecial:/", "about:blank",
@@ -649,6 +653,10 @@ TEST_F(URLParserTest, DefaultPort)
     checkURLDifferences("unknown://host:81",
         {"unknown", "", "", "host", 81, "/", "", "", "unknown://host:81/"},
         {"unknown", "", "", "host", 81, "", "", "", "unknown://host:81"});
+    checkURLDifferences("http://%48OsT",
+        {"http", "", "", "host", 0, "/", "", "", "http://host/"},
+        {"http", "", "", "%48ost", 0, "/", "", "", "http://%48ost/"});
+
 }
     
 static void shouldFail(const String& urlString)
@@ -711,6 +719,27 @@ TEST_F(URLParserTest, AdditionalTests)
         {"ws", "", "", "", 0, "", "", "", "ws:"},
         {"ws", "", "", "", 0, "s:", "", "", "ws:s:"});
     checkRelativeURL("notspecial:", "http://example.org/foo/bar", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
+}
+
+static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts)
+{
+    URLParser parser;
+    auto url = parser.parse(urlString, { }, encoding);
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
+    EXPECT_TRUE(eq(parts.user, url.user()));
+    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.host, url.host()));
+    EXPECT_EQ(parts.port, url.port());
+    EXPECT_TRUE(eq(parts.path, url.path()));
+    EXPECT_TRUE(eq(parts.query, url.query()));
+    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
+    EXPECT_TRUE(eq(parts.string, url.string()));
+}
+
+TEST_F(URLParserTest, QueryEncoding)
+{
+    checkURL(wideString(L"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", wideString(L"ß😍"), wideString(L"http://host/?%C3%9F%F0%9F%98%8D#ß😍")});
+    // FIXME: Add tests with other encodings.
 }
 
 } // namespace TestWebKitAPI

@@ -52,7 +52,7 @@ public:
 private:
     URL m_url;
     Vector<LChar> m_asciiBuffer;
-    Vector<UChar32> m_unicodeFragmentBuffer;
+    Vector<UChar> m_unicodeFragmentBuffer;
     bool m_urlIsSpecial { false };
     bool m_hostHasPercentOrNonASCII { false };
 
