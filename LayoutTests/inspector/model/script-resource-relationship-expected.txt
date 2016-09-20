@@ -3,8 +3,7 @@ WebInspector.Script and WebInspector.Resource relationship.
 
 == Running test suite: WebInspector.Script and WebInspector.Resource relationship
 -- Running test case: ScriptWithResource
-PASS: Resource was added.
-PASS: Script was added.
+PASS: Only one Script should be added.
 PASS: Resource and Script have the same URL.
 PASS: Resource should be related to one script.
 PASS: Resource should be related to the newly added script.
@@ -12,8 +11,7 @@ PASS: Script should be related to the resource.
 PASS: Script should not have a sourceURL.
 
 -- Running test case: NamedScriptWithResource
-PASS: Resource was added.
-PASS: Script was added.
+PASS: Only one Script should be added.
 PASS: Resource and Script have the same URL.
 PASS: Resource should be related to one script.
 PASS: Resource should be related to the newly added script.

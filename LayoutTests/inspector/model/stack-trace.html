@@ -30,9 +30,9 @@ function test()
     suite.addTestCase({
         name: "WebInspector.ConsoleMessage.StackTrace",
         description: "Test we can create a StackTrace from console messages (Console.StackTrace).",
-        test: (resolve, reject) => {
-            InspectorTest.evaluateInPage("triggerConsoleMessage()");
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, function addListener(event) {
+        test(resolve, reject) {
+            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            .then((event) => {
                 // Trace message should always have a stack trace.
                 let consoleMessage = event.data.message;
                 let stackTrace = consoleMessage.stackTrace;
@@ -45,8 +45,10 @@ function test()
                 InspectorTest.expectThat(!stackTrace.callFrames[0].scopeChain.length, "CallFrame in StackTrace has no scopeChain.");
 
                 logStackTrace(consoleMessage.stackTrace);
-                resolve();
-            });
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("triggerConsoleMessage()");
         }
     });
 

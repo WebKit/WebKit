@@ -1,3 +1,19 @@
+2016-09-20  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: adopt Object.awaitEvent in LayoutTests/inspector/model
+        https://bugs.webkit.org/show_bug.cgi?id=162074
+
+        Reviewed by Brian Burg.
+
+        Replace instances of singleFireEventListener with awaitEvent and use promise logic to make
+        tests more readable.
+
+        * inspector/model/frame-extra-scripts.html:
+        * inspector/model/scope-chain-node.html:
+        * inspector/model/script-resource-relationship-expected.txt:
+        * inspector/model/script-resource-relationship.html:
+        * inspector/model/stack-trace.html:
+
 2016-09-20  Jer Noble  <jer.noble@apple.com>
 
         [media-source] Support MediaSource.setLiveSeekableRanges()

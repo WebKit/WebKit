@@ -46,24 +46,31 @@ function test()
     suite.addTestCase({
         name: "ScriptWithResource",
         description: "Normal relationship between a script and a resource.",
-        test: (resolve, reject) => {
-            let script = null, resource = null;
+        test(resolve, reject) {
+            let script = null;
+            let resource = null;
             
             WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
-            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
-                InspectorTest.pass("Resource was added.");
+            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            .then((event) => {
                 resource = event.data.resource;
+                validateRelationship();
             });
             
             function scriptListener(event) {
                 if (!event.data.script.url)
                     return;
-                InspectorTest.pass("Script was added.");
+
+                InspectorTest.expectThat(!script, "Only one Script should be added.");
+
                 script = event.data.script;
                 validateRelationship();
             }
 
             function validateRelationship() {
+                if (!resource || !script)
+                    return;
+
                 validateNormalRelationship(resource, script);
                 InspectorTest.expectThat(!script.sourceURL, "Script should not have a sourceURL.");
 
@@ -78,24 +85,31 @@ function test()
     suite.addTestCase({
         name: "NamedScriptWithResource",
         description: "Normal relationship between a named script and a resource.",
-        test: (resolve, reject) => {
-            let script = null, resource = null;
+        test(resolve, reject) {
+            let script = null;
+            let resource = null;
 
             WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
-            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
-                InspectorTest.pass("Resource was added.");
+            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            .then((event) => {
                 resource = event.data.resource;
+                validateRelationship();
             });
 
             function scriptListener(event) {
                 if (!event.data.script.url)
                     return;
-                InspectorTest.pass("Script was added.");
+
+                InspectorTest.expectThat(!script, "Only one Script should be added.");
+
                 script = event.data.script;
                 validateRelationship();
             }
 
             function validateRelationship() {
+                if (!resource || !script)
+                    return;
+
                 validateNormalRelationship(resource, script);
                 InspectorTest.expectThat(script.sourceURL === "foo.js", "Script should have a sourceURL.");
                 WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
@@ -109,7 +123,7 @@ function test()
     suite.addTestCase({
         name: "ScriptWithoutResource",
         description: "A named eval does not have a resource.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
             let resourceListener = WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
                 InspectorTest.fail("Resource should not be added.");
@@ -138,7 +152,7 @@ function test()
     suite.addTestCase({
         name: "DynamicallyAddedScriptElementNoResource",
         description: "A dynamically added script element has no resource.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
 
             function scriptListener(event) {
@@ -161,7 +175,7 @@ function test()
     suite.addTestCase({
         name: "DocumentWithInlineScripts",
         description: "A document resource may be associated with multiple inline scripts.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let mainResource = WebInspector.frameResourceManager.mainFrame.mainResource;
             let scripts = mainResource.scripts.slice().sort((a, b) => a.range.startLine - b.range.startLine);
 
