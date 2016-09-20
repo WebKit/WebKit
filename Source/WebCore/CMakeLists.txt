@@ -2220,6 +2220,7 @@ set(WebCore_SOURCES
     platform/graphics/ISOVTTCue.cpp
     platform/graphics/Image.cpp
     platform/graphics/ImageBuffer.cpp
+    platform/graphics/ImageFrame.cpp
     platform/graphics/ImageOrientation.cpp
     platform/graphics/ImageSource.cpp
     platform/graphics/IntPoint.cpp

@@ -59,15 +59,15 @@ const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata
 
 static RetainPtr<CFDictionaryRef> createImageSourceOptions(SubsamplingLevel subsamplingLevel)
 {
-    if (!subsamplingLevel) {
+    if (subsamplingLevel == SubsamplingLevel::First) {
         const unsigned numOptions = 3;
         const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceSkipMetadata };
         const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue, kCFBooleanTrue };
         return CFDictionaryCreate(nullptr, keys, values, numOptions, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
     
-    short constrainedSubsamplingLevel = std::min<short>(3, std::max<short>(0, subsamplingLevel));
-    int subsampleInt = 1 << constrainedSubsamplingLevel; // [0..3] => [1, 2, 4, 8]
+    subsamplingLevel = std::min(SubsamplingLevel::Last, std::max(SubsamplingLevel::First, subsamplingLevel));
+    int subsampleInt = 1 << static_cast<int>(subsamplingLevel); // [0..3] => [1, 2, 4, 8]
     
     RetainPtr<CFNumberRef> subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
     const CFIndex numOptions = 4;
@@ -76,12 +76,12 @@ static RetainPtr<CFDictionaryRef> createImageSourceOptions(SubsamplingLevel subs
     return adoptCF(CFDictionaryCreate(nullptr, keys, values, numOptions, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
-static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = 0)
+static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default)
 {
-    if (subsamplingLevel)
+    if (subsamplingLevel > SubsamplingLevel::First)
         return createImageSourceOptions(subsamplingLevel);
     
-    static NeverDestroyed<RetainPtr<CFDictionaryRef>> options = createImageSourceOptions(0);
+    static NeverDestroyed<RetainPtr<CFDictionaryRef>> options = createImageSourceOptions(SubsamplingLevel::First);
     return options;
 }
 
@@ -166,11 +166,11 @@ size_t ImageDecoder::frameCount() const
     return CGImageSourceGetCount(m_nativeDecoder.get());
 }
 
-int ImageDecoder::repetitionCount() const
+RepetitionCount ImageDecoder::repetitionCount() const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyProperties(m_nativeDecoder.get(), imageSourceOptions().get()));
     if (!properties)
-        return cAnimationLoopOnce;
+        return RepetitionCountOnce;
     
     CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
     if (gifProperties) {
@@ -178,28 +178,28 @@ int ImageDecoder::repetitionCount() const
         
         // No property means loop once.
         if (!num)
-            return cAnimationLoopOnce;
+            return RepetitionCountOnce;
         
-        int loopCount;
+        RepetitionCount loopCount;
         CFNumberGetValue(num, kCFNumberIntType, &loopCount);
         
         // A property with value 0 means loop forever.
-        return loopCount ? loopCount : cAnimationLoopInfinite;
+        return loopCount ? loopCount : RepetitionCountInfinite;
     }
     
     CFDictionaryRef pngProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyPNGDictionary);
     if (pngProperties) {
         CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(pngProperties, WebCoreCGImagePropertyAPNGLoopCount);
         if (!num)
-            return cAnimationLoopOnce;
+            return RepetitionCountOnce;
         
-        int loopCount;
+        RepetitionCount loopCount;
         CFNumberGetValue(num, kCFNumberIntType, &loopCount);
-        return loopCount ? loopCount : cAnimationLoopInfinite;
+        return loopCount ? loopCount : RepetitionCountInfinite;
     }
     
     // Turns out we're not an animated image after all, so we don't animate.
-    return cAnimationNone;
+    return RepetitionCountNone;
 }
 
 Optional<IntPoint> ImageDecoder::hotSpot() const
@@ -249,7 +249,7 @@ bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
     return CGImageSourceGetStatusAtIndex(m_nativeDecoder.get(), index) == kCGImageStatusComplete;
 }
 
-ImageOrientation ImageDecoder::orientationAtIndex(size_t index) const
+ImageOrientation ImageDecoder::frameOrientationAtIndex(size_t index) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
     if (!properties)
@@ -292,7 +292,7 @@ float ImageDecoder::frameDurationAtIndex(size_t index) const
     return duration;
 }
 
-bool ImageDecoder::allowSubsamplingOfFrameAtIndex(size_t) const
+bool ImageDecoder::frameAllowSubsamplingAtIndex(size_t) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
     if (!properties)

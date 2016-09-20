@@ -61,6 +61,6 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr&);
 float subsamplingScale(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect);
 
 void drawNativeImage(const NativeImagePtr&, GraphicsContext&, const FloatRect&, const FloatRect&, const IntSize&, CompositeOperator, BlendMode, const ImageOrientation&);
-void clearNativeImageSubImages(const NativeImagePtr&);
+void clearNativeImageSubimages(const NativeImagePtr&);
     
 }

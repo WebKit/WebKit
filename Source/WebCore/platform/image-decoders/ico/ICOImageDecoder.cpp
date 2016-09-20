@@ -113,7 +113,7 @@ ImageFrame* ICOImageDecoder::frameBufferAtIndex(size_t index)
         return 0;
 
     ImageFrame* buffer = &m_frameBufferCache[index];
-    if (buffer->status() != ImageFrame::FrameComplete)
+    if (!buffer->isComplete())
         decode(index, false);
     return buffer;
 }
@@ -176,7 +176,7 @@ void ICOImageDecoder::decode(size_t index, bool onlySize)
     // If we're done decoding this frame, we don't need the BMPImageReader or
     // PNGImageDecoder anymore.  (If we failed, these have already been
     // cleared.)
-    else if ((m_frameBufferCache.size() > index) && (m_frameBufferCache[index].status() == ImageFrame::FrameComplete)) {
+    else if ((m_frameBufferCache.size() > index) && m_frameBufferCache[index].isComplete()) {
         m_bmpReaders[index] = nullptr;
         m_pngDecoders[index] = nullptr;
     }

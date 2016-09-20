@@ -96,7 +96,7 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
     context.restore();
 }
 
-void clearNativeImageSubImages(const NativeImagePtr&)
+void clearNativeImageSubimages(const NativeImagePtr&)
 {
 }
 

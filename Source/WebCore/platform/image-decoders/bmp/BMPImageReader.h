@@ -248,7 +248,7 @@ namespace WebCore {
                             unsigned blue,
                             unsigned alpha)
         {
-            m_buffer->setPixel(m_coord.x(), m_coord.y(), red, green, blue, alpha);
+            m_buffer->backingStore()->setPixel(m_coord.x(), m_coord.y(), red, green, blue, alpha);
             m_coord.move(1, 0);
         }
 
@@ -262,8 +262,10 @@ namespace WebCore {
                              unsigned blue,
                              unsigned alpha)
         {
-            while (m_coord.x() < endCoord)
-                setPixel(red, green, blue, alpha);
+            if (endCoord <= m_coord.x())
+                return;
+            m_buffer->backingStore()->fillRect(IntRect(m_coord.x(), m_coord.y(), endCoord - m_coord.x(), 1), red, green, blue, alpha);
+            m_coord.setX(endCoord);
         }
 
         // Resets the relevant local variables to start drawing at the left edge

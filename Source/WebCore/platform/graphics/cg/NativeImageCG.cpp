@@ -96,7 +96,7 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
     context.drawNativeImage(image, subsampledImageSize, destRect, adjustedSrcRect, op, mode, orientation);
 }
 
-void clearNativeImageSubImages(const NativeImagePtr& image)
+void clearNativeImageSubimages(const NativeImagePtr& image)
 {
 #if CACHE_SUBIMAGES
     if (image)

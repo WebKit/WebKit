@@ -77,11 +77,11 @@ bool BMPImageReader::decodeBMP(bool onlySize)
 
     // Initialize the framebuffer if needed.
     ASSERT(m_buffer);  // Parent should set this before asking us to decode!
-    if (m_buffer->status() == ImageFrame::FrameEmpty) {
-        if (!m_buffer->initializeBackingStore(m_parent->size(), m_parent->premultiplyAlpha()))
+    if (m_buffer->isEmpty()) {
+        if (!m_buffer->initialize(m_parent->size(), m_parent->premultiplyAlpha()))
             return m_parent->setFailed(); // Unable to allocate.
 
-        m_buffer->setStatus(ImageFrame::FramePartial);
+        m_buffer->setDecoding(ImageFrame::Decoding::Partial);
         m_buffer->setHasAlpha(false);
 
         if (!m_isTopDown)
@@ -117,7 +117,7 @@ bool BMPImageReader::decodeBMP(bool onlySize)
     }
 
     // Done!
-    m_buffer->setStatus(ImageFrame::FrameComplete);
+    m_buffer->setDecoding(ImageFrame::Decoding::Complete);
     return true;
 }
 
@@ -702,7 +702,8 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
                 } else {
                     m_seenNonZeroAlphaPixel = true;
                     if (m_seenZeroAlphaPixel) {
-                        m_buffer->zeroFillPixelData();
+                        m_buffer->backingStore()->clear();
+                        m_buffer->setHasAlpha(true);
                         m_seenZeroAlphaPixel = false;
                     } else if (alpha != 255)
                         m_buffer->setHasAlpha(true);

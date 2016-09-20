@@ -54,19 +54,20 @@ public:
     // Always original size, without subsampling.
     IntSize size() const;
     size_t frameCount() const;
-    int repetitionCount() const;
+
+    RepetitionCount repetitionCount() const;
     Optional<IntPoint> hotSpot() const;
     
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = DefaultSubsamplingLevel) const;
+    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const;
     bool frameIsCompleteAtIndex(size_t) const;
-    ImageOrientation orientationAtIndex(size_t) const;
+    ImageOrientation frameOrientationAtIndex(size_t) const;
     
     float frameDurationAtIndex(size_t) const;
     bool frameHasAlphaAtIndex(size_t) const;
-    bool allowSubsamplingOfFrameAtIndex(size_t) const;
-    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = 0) const;
+    bool frameAllowSubsamplingAtIndex(size_t) const;
+    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const;
     
-    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel) const;
+    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const;
     
     void setData(CFDataRef, bool allDataReceived);
     void setData(SharedBuffer&, bool allDataReceived);

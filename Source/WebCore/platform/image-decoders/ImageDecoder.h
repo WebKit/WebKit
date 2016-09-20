@@ -44,107 +44,6 @@ namespace WebCore {
 
 using ColorProfile = Vector<char>;
 
-    // ImageFrame represents the decoded image data.  This buffer is what all
-    // decoders write a single frame into.
-    class ImageFrame {
-    public:
-        enum FrameStatus { FrameEmpty, FramePartial, FrameComplete };
-        enum FrameDisposalMethod {
-            // If you change the numeric values of these, make sure you audit
-            // all users, as some users may cast raw values to/from these
-            // constants.
-            DisposeNotSpecified,      // Leave frame in framebuffer
-            DisposeKeep,              // Leave frame in framebuffer
-            DisposeOverwriteBgcolor,  // Clear frame to transparent
-            DisposeOverwritePrevious  // Clear frame to previous framebuffer
-                                      // contents
-        };
-
-        ImageFrame();
-
-        ImageFrame(const ImageFrame& other) { operator=(other); }
-
-        // For backends which refcount their data, this operator doesn't need to
-        // create a new copy of the image data, only increase the ref count.
-        ImageFrame& operator=(const ImageFrame& other);
-
-        // These do not touch other metadata, only the raw pixel data.
-        void clearPixelData();
-        void zeroFillPixelData();
-        void zeroFillFrameRect(const IntRect&);
-        
-        // Copies the pixel data at [(startX, startY), (endX, startY)) to the
-        // same X-coordinates on each subsequent row up to but not including
-        // endY.
-        void copyRowNTimes(int startX, int endX, int startY, int endY)
-        {
-            m_backingStore->repeatFirstRow(IntRect(startX, startY, endX -startX , endY - startY));
-        }
-
-        // Makes this frame have an independent copy of the provided image's
-        // pixel data, so that modifications in one frame are not reflected in
-        // the other. Returns whether the copy succeeded.
-        bool initializeBackingStore(const ImageBackingStore&);
-
-        // Allocates space for the pixel data. Returns whether allocation succeeded.
-        bool initializeBackingStore(const IntSize&, bool premultiplyAlpha);
-
-        IntSize size() const { return m_backingStore ? m_backingStore->size() : IntSize(); }
-
-        // Returns a caller-owned pointer to the underlying native image data.
-        // (Actual use: This pointer will be owned by BitmapImage and freed in
-        // FrameData::clear()).
-        NativeImagePtr asNewNativeImage() const { return m_backingStore ? m_backingStore->image() : nullptr; }
-
-        inline ImageBackingStore* backingStore() const { return m_backingStore ? m_backingStore.get() : nullptr; }
-        inline bool hasBackingStore() const { return backingStore(); }
-        
-        bool hasAlpha() const;
-        IntRect originalFrameRect() const { return m_backingStore ? m_backingStore->frameRect() : IntRect(); }
-        FrameStatus status() const { return m_status; }
-        unsigned duration() const { return m_duration; }
-        FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
-
-        void setHasAlpha(bool alpha);
-        void setOriginalFrameRect(const IntRect&);
-        void setStatus(FrameStatus status);
-        void setDuration(unsigned duration) { m_duration = duration; }
-        void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
-
-        inline RGBA32* pixelAt(int x, int y)
-        {
-            ASSERT(m_backingStore);
-            return m_backingStore->pixelAt(x, y);
-        }
-
-        inline void setPixel(int x, int y, unsigned r, unsigned g, unsigned b, unsigned a)
-        {
-            ASSERT(m_backingStore);
-            m_backingStore->setPixel(x, y, r, g, b, a);
-        }
-
-        inline void setPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
-        {
-            ASSERT(m_backingStore);
-            m_backingStore->setPixel(dest, r, g, b, a);
-        }
-
-#if ENABLE(APNG)
-        inline void blendPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
-        {
-            ASSERT(m_backingStore);
-            m_backingStore->blendPixel(dest, r, g, b, a);
-        }
-#endif
-
-    private:
-        std::unique_ptr<ImageBackingStore> m_backingStore;
-        bool m_hasAlpha;
-        FrameStatus m_status;
-        unsigned m_duration;
-        FrameDisposalMethod m_disposalMethod;
-    };
-
     // ImageDecoder is a base for all format-specific decoders
     // (e.g. JPEGImageDecoder).  This base manages the ImageFrame cache.
     //
@@ -225,7 +124,7 @@ using ColorProfile = Vector<char>;
         // decode call out and use it here.
         virtual size_t frameCount() { return 1; }
 
-        virtual int repetitionCount() const { return cAnimationNone; }
+        virtual RepetitionCount repetitionCount() const { return RepetitionCountNone; }
 
         // Decodes as much of the requested frame as possible, and returns an
         // ImageDecoder-owned pointer.
@@ -246,9 +145,9 @@ using ColorProfile = Vector<char>;
         void setIgnoreGammaAndColorProfile(bool flag) { m_ignoreGammaAndColorProfile = flag; }
         bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }
 
-        ImageOrientation orientationAtIndex(size_t) const { return m_orientation; }
+        ImageOrientation frameOrientationAtIndex(size_t) const { return m_orientation; }
         
-        bool allowSubsamplingOfFrameAtIndex(size_t) const { return false; }
+        bool frameAllowSubsamplingAtIndex(size_t) const { return false; }
 
         enum { iccColorProfileHeaderLength = 128 };
 
@@ -261,7 +160,7 @@ using ColorProfile = Vector<char>;
 
         static size_t bytesDecodedToDetermineProperties() { return 0; }
         
-        static SubsamplingLevel subsamplingLevelForScale(float, SubsamplingLevel) { return 0; }
+        static SubsamplingLevel subsamplingLevelForScale(float, SubsamplingLevel) { return SubsamplingLevel::Default; }
 
         static bool inputDeviceColorProfile(const char* profileData, unsigned profileLength)
         {

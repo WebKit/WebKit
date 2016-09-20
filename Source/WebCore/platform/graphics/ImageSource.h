@@ -27,6 +27,7 @@
 #ifndef ImageSource_h
 #define ImageSource_h
 
+#include "ImageFrame.h"
 #include "ImageOrientation.h"
 #include "IntPoint.h"
 #include "NativeImage.h"
@@ -42,34 +43,6 @@ class IntPoint;
 class IntSize;
 class SharedBuffer;
 class ImageDecoder;
-
-// Right now GIFs are the only recognized image format that supports animation.
-// The animation system and the constants below are designed with this in mind.
-// GIFs have an optional 16-bit unsigned loop count that describes how an
-// animated GIF should be cycled.  If the loop count is absent, the animation
-// cycles once; if it is 0, the animation cycles infinitely; otherwise the
-// animation plays n + 1 cycles (where n is the specified loop count).  If the
-// GIF decoder defaults to cAnimationLoopOnce in the absence of any loop count
-// and translates an explicit "0" loop count to cAnimationLoopInfinite, then we
-// get a couple of nice side effects:
-//   * By making cAnimationLoopOnce be 0, we allow the animation cycling code in
-//     BitmapImage.cpp to avoid special-casing it, and simply treat all
-//     non-negative loop counts identically.
-//   * By making the other two constants negative, we avoid conflicts with any
-//     real loop count values.
-const int cAnimationLoopOnce = 0;
-const int cAnimationLoopInfinite = -1;
-const int cAnimationNone = -2;
-
-// SubsamplingLevel. 0 is no subsampling, 1 is half dimensions on each axis etc.
-using SubsamplingLevel = int;
-
-enum : SubsamplingLevel {
-    NilSubsamplingLevel = -1,
-    MinSubsamplingLevel = 0,
-    MaxSubsamplingLevel = 3,
-    DefaultSubsamplingLevel = MinSubsamplingLevel
-};
 
 class ImageSource {
     WTF_MAKE_NONCOPYABLE(ImageSource);
@@ -112,6 +85,8 @@ public:
     // decoders in some cases can reconstruct them correctly.
     void clear(bool destroyAll, size_t clearBeforeFrame = 0, SharedBuffer* data = nullptr, bool allDataReceived = false);
 
+    // FIXME: Remove the decoder() function from this class when caching the ImageFrame is moved outside BitmapImage.
+    ImageDecoder* decoder() const { return m_decoder.get(); }
     bool initialized() const { return m_decoder.get(); }
 
     void setData(SharedBuffer* data, bool allDataReceived);
@@ -128,27 +103,27 @@ public:
     IntSize sizeRespectingOrientation() const;
 
     size_t frameCount();
-    int repetitionCount();
+    RepetitionCount repetitionCount();
     String filenameExtension() const;
     Optional<IntPoint> hotSpot() const;
 
     bool frameIsCompleteAtIndex(size_t); // Whether or not the frame is completely decoded.
     bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.
-    bool allowSubsamplingOfFrameAtIndex(size_t) const;
+    bool frameAllowSubsamplingAtIndex(size_t) const;
     
     // Size of optionally subsampled frame.
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = DefaultSubsamplingLevel, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
+    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
     
     // Return the number of bytes in the decoded frame. If the frame is not yet
     // decoded then return 0.
-    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = DefaultSubsamplingLevel) const;
+    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const;
     
     float frameDurationAtIndex(size_t);
-    ImageOrientation orientationAtIndex(size_t) const; // EXIF image orientation
+    ImageOrientation frameOrientationAtIndex(size_t) const; // EXIF image orientation
     
     // Callers should not call this after calling clear() with a higher index;
     // see comments on clear() above.
-    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = DefaultSubsamplingLevel);
+    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     
 private:
     void clearFrameBufferCache(size_t);
@@ -160,7 +135,7 @@ private:
     
     bool m_needsUpdateMetadata { false };
     size_t m_frameCount { 0 };
-    Optional<SubsamplingLevel> m_maximumSubsamplingLevel { DefaultSubsamplingLevel };
+    Optional<SubsamplingLevel> m_maximumSubsamplingLevel { SubsamplingLevel::Default };
 
     // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
 #if PLATFORM(IOS)

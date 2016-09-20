@@ -93,20 +93,20 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 
 SubsamplingLevel ImageSource::calculateMaximumSubsamplingLevel() const
 {
-    if (!m_allowSubsampling || !allowSubsamplingOfFrameAtIndex(0))
-        return DefaultSubsamplingLevel;
+    if (!m_allowSubsampling || !frameAllowSubsamplingAtIndex(0))
+        return SubsamplingLevel::Default;
     
     // FIXME: this value was chosen to be appropriate for iOS since the image
     // subsampling is only enabled by default on iOS. Choose a different value
     // if image subsampling is enabled on other platform.
     const int maximumImageAreaBeforeSubsampling = 5 * 1024 * 1024;
 
-    for (SubsamplingLevel level = MinSubsamplingLevel; level < MaxSubsamplingLevel; ++level) {
+    for (SubsamplingLevel level = SubsamplingLevel::First; level <= SubsamplingLevel::Last; ++level) {
         if (frameSizeAtIndex(0, level).area() < maximumImageAreaBeforeSubsampling)
             return level;
     }
     
-    return MaxSubsamplingLevel;
+    return SubsamplingLevel::Last;
 }
 
 void ImageSource::updateMetadata()
@@ -124,15 +124,14 @@ void ImageSource::updateMetadata()
 SubsamplingLevel ImageSource::subsamplingLevelForScale(float scale)
 {
     if (!(scale > 0 && scale <= 1))
-        return 0;
+        return SubsamplingLevel::Default;
 
     updateMetadata();
     if (!m_maximumSubsamplingLevel)
-        return 0;
+        return SubsamplingLevel::Default;
 
-    // There are four subsampling levels: 0 = 1x, 1 = 0.5x, 2 = 0.25x, 3 = 0.125x.
-    SubsamplingLevel result = std::ceil(std::log2(1 / scale));
-    return std::min(result, m_maximumSubsamplingLevel.value());
+    int result = std::ceil(std::log2(1 / scale));
+    return static_cast<SubsamplingLevel>(std::min(result, static_cast<int>(m_maximumSubsamplingLevel.value())));
 }
 
 size_t ImageSource::bytesDecodedToDetermineProperties()
@@ -147,12 +146,12 @@ bool ImageSource::isSizeAvailable() const
 
 IntSize ImageSource::size() const
 {
-    return frameSizeAtIndex(0, DefaultSubsamplingLevel);
+    return frameSizeAtIndex(0, SubsamplingLevel::Default);
 }
 
 IntSize ImageSource::sizeRespectingOrientation() const
 {
-    return frameSizeAtIndex(0, DefaultSubsamplingLevel, RespectImageOrientation);
+    return frameSizeAtIndex(0, SubsamplingLevel::Default, RespectImageOrientation);
 }
 
 size_t ImageSource::frameCount()
@@ -161,9 +160,9 @@ size_t ImageSource::frameCount()
     return m_frameCount;
 }
 
-int ImageSource::repetitionCount()
+RepetitionCount ImageSource::repetitionCount()
 {
-    return initialized() ? m_decoder->repetitionCount() : cAnimationNone;
+    return initialized() ? m_decoder->repetitionCount() : RepetitionCountNone;
 }
 
 String ImageSource::filenameExtension() const
@@ -186,9 +185,9 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
     return !initialized() || m_decoder->frameHasAlphaAtIndex(index);
 }
 
-bool ImageSource::allowSubsamplingOfFrameAtIndex(size_t index) const
+bool ImageSource::frameAllowSubsamplingAtIndex(size_t index) const
 {
-    return initialized() && m_decoder->allowSubsamplingOfFrameAtIndex(index);
+    return initialized() && m_decoder->frameAllowSubsamplingAtIndex(index);
 }
 
 IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel, RespectImageOrientationEnum shouldRespectImageOrientation) const
@@ -200,7 +199,7 @@ IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel subsampling
     if (shouldRespectImageOrientation != RespectImageOrientation)
         return size;
 
-    return orientationAtIndex(index).usesWidthAsHeight() ? size.transposedSize() : size;
+    return frameOrientationAtIndex(index).usesWidthAsHeight() ? size.transposedSize() : size;
 }
 
 unsigned ImageSource::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
@@ -213,9 +212,9 @@ float ImageSource::frameDurationAtIndex(size_t index)
     return initialized() ? m_decoder->frameDurationAtIndex(index) : 0;
 }
 
-ImageOrientation ImageSource::orientationAtIndex(size_t index) const
+ImageOrientation ImageSource::frameOrientationAtIndex(size_t index) const
 {
-    return initialized() ? m_decoder->orientationAtIndex(index) : ImageOrientation();
+    return initialized() ? m_decoder->frameOrientationAtIndex(index) : ImageOrientation();
 }
     
 NativeImagePtr ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
@@ -228,7 +227,7 @@ void ImageSource::dump(TextStream& ts) const
     if (m_allowSubsampling)
         ts.dumpProperty("allow-subsampling", m_allowSubsampling);
     
-    ImageOrientation orientation = orientationAtIndex(0);
+    ImageOrientation orientation = frameOrientationAtIndex(0);
     if (orientation != OriginTopLeft)
         ts.dumpProperty("orientation", orientation);
 }

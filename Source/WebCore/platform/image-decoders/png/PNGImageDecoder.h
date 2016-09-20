@@ -45,7 +45,7 @@ namespace WebCore {
         String filenameExtension() const override { return "png"; }
 #if ENABLE(APNG)
         size_t frameCount() override { return m_frameCount; }
-        int repetitionCount() const override { return m_playCount-1; }
+        RepetitionCount repetitionCount() const override { return m_playCount-1; }
 #endif
         bool isSizeAvailable() override;
         bool setSize(const IntSize&) override;
@@ -73,7 +73,7 @@ namespace WebCore {
                 return false;
 
             for (auto& imageFrame : m_frameBufferCache) {
-                if (imageFrame.status() != ImageFrame::FrameComplete)
+                if (!imageFrame.isComplete())
                     return false;
             }
 
@@ -82,7 +82,7 @@ namespace WebCore {
 
         bool isCompleteAtIndex(size_t index)
         {
-            return (index < m_frameBufferCache.size() && m_frameBufferCache[index].status() == ImageFrame::FrameComplete);
+            return (index < m_frameBufferCache.size() && m_frameBufferCache[index].isComplete());
         }
 
     private:

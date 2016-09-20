@@ -90,6 +90,20 @@ public:
         }
     }
 
+    void fillRect(const IntRect &rect, unsigned r, unsigned g, unsigned b, unsigned a)
+    {
+        if (rect.isEmpty() || !inBounds(rect))
+            return;
+
+        RGBA32* start = pixelAt(rect.x(), rect.y());
+        RGBA32 pixelValue = this->pixelValue(r, g, b, a);
+        for (int i = 0; i < rect.height(); ++i) {
+            for (int j = 0; j < rect.width(); ++j)
+                start[j] = pixelValue;
+            start += m_size.width();
+        }
+    }
+
     void repeatFirstRow(const IntRect& rect)
     {
         if (rect.isEmpty() || !inBounds(rect))
@@ -106,7 +120,14 @@ public:
 
     RGBA32* pixelAt(int x, int y) const
     {
+        ASSERT(inBounds(IntPoint(x, y)));
         return m_pixelsPtr + y * m_size.width() + x;
+    }
+
+    void setPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
+    {
+        ASSERT(dest);
+        *dest = pixelValue(r, g, b, a);
     }
 
     void setPixel(int x, int y, unsigned r, unsigned g, unsigned b, unsigned a)
@@ -114,16 +135,7 @@ public:
         setPixel(pixelAt(x, y), r, g, b, a);
     }
 
-    void setPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
-    {
-        if (m_premultiplyAlpha && !a)
-            *dest = 0;
-        else if (m_premultiplyAlpha && a < 255)
-            *dest = makePremultipliedRGBA(r, g, b, a);
-        else
-            *dest = makeRGBA(r, g, b, a);
-    }
-
+#if ENABLE(APNG)
     void blendPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
     {
         if (!a)
@@ -149,11 +161,7 @@ public:
         else
             *dest = makeUnPremultipliedRGBA(r, g, b, a);
     }
-
-    bool inBounds(const IntRect& rect) const
-    {
-        return IntRect(IntPoint(), m_size).contains(rect);
-    }
+#endif
 
     static bool isOverSize(const IntSize& size)
     {
@@ -177,6 +185,27 @@ private:
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
         m_pixelsPtr = m_pixels.data();
+    }
+
+    bool inBounds(const IntPoint& point) const
+    {
+        return IntRect(IntPoint(), m_size).contains(point);
+    }
+
+    bool inBounds(const IntRect& rect) const
+    {
+        return IntRect(IntPoint(), m_size).contains(rect);
+    }
+
+    RGBA32 pixelValue(unsigned r, unsigned g, unsigned b, unsigned a) const
+    {
+        if (m_premultiplyAlpha && !a)
+            return 0;
+
+        if (m_premultiplyAlpha && a < 255)
+            return makePremultipliedRGBA(r, g, b, a);
+
+        return makeRGBA(r, g, b, a);
     }
 
     Vector<RGBA32> m_pixels;

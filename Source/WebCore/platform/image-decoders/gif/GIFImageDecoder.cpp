@@ -31,10 +31,8 @@
 
 namespace WebCore {
 
-GIFImageDecoder::GIFImageDecoder(ImageSource::AlphaOption alphaOption,
-                                 ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+GIFImageDecoder::GIFImageDecoder(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
-    , m_repetitionCount(cAnimationLoopOnce)
 {
 }
 
@@ -78,7 +76,7 @@ size_t GIFImageDecoder::frameCount()
     return m_frameBufferCache.size();
 }
 
-int GIFImageDecoder::repetitionCount() const
+RepetitionCount GIFImageDecoder::repetitionCount() const
 {
     // This value can arrive at any point in the image data stream.  Most GIFs
     // in the wild declare it near the beginning of the file, so it usually is
@@ -105,7 +103,7 @@ int GIFImageDecoder::repetitionCount() const
     // later in the stream. It is also possible that no frames are in the
     // stream. In these cases we should just loop once.
     if (failed() || (m_reader && (!m_reader->imagesCount())))
-        m_repetitionCount = cAnimationLoopOnce;
+        m_repetitionCount = RepetitionCountOnce;
     else if (m_reader && m_reader->loopCount() != cLoopCountNotSeen)
         m_repetitionCount = m_reader->loopCount();
     return m_repetitionCount;
@@ -117,7 +115,7 @@ ImageFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
         return 0;
 
     ImageFrame& frame = m_frameBufferCache[index];
-    if (frame.status() != ImageFrame::FrameComplete)
+    if (!frame.isComplete())
         decode(index + 1, GIFFullQuery);
     return &frame;
 }
@@ -156,25 +154,25 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     // not to have non-empty frames after the frame we're currently decoding.
     // So, scan backwards from |end| as follows:
     //   * If the frame is empty, we're still past any frames we care about.
-    //   * If the frame is complete, but is DisposeOverwritePrevious, we'll
+    //   * If the frame is complete, but is DisposalMethod::RestoreToPrevious, we'll
     //     skip over it in future initFrameBuffer() calls.  We can clear it
     //     unless it's |end|, and keep scanning.  For any other disposal method,
     //     stop scanning, as we've found the frame initFrameBuffer() will need
     //     next.
     //   * If the frame is partial, we're decoding it, so don't clear it; if it
-    //     has a disposal method other than DisposeOverwritePrevious, stop
+    //     has a disposal method other than DisposalMethod::RestoreToPrevious, stop
     //     scanning, as we'll only need this frame when decoding the next one.
     Vector<ImageFrame>::iterator i(end);
-    for (; (i != m_frameBufferCache.begin()) && ((i->status() == ImageFrame::FrameEmpty) || (i->disposalMethod() == ImageFrame::DisposeOverwritePrevious)); --i) {
-        if ((i->status() == ImageFrame::FrameComplete) && (i != end))
-            i->clearPixelData();
+    for (; (i != m_frameBufferCache.begin()) && (i->isEmpty() || (i->disposalMethod() == ImageFrame::DisposalMethod::RestoreToPrevious)); --i) {
+        if (i->isComplete() && (i != end))
+            i->clear();
     }
 
     // Now |i| holds the last frame we need to preserve; clear prior frames.
     for (Vector<ImageFrame>::iterator j(m_frameBufferCache.begin()); j != i; ++j) {
-        ASSERT(j->status() != ImageFrame::FramePartial);
-        if (j->status() != ImageFrame::FrameEmpty)
-            j->clearPixelData();
+        ASSERT(!j->isPartial());
+        if (j->isEmpty())
+            j->clear();
     }
 
     // When some frames are cleared, the reader is out of sync, since the caller might ask for any frame not
@@ -213,16 +211,16 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
 
     // Initialize the frame if necessary.
     ImageFrame& buffer = m_frameBufferCache[frameIndex];
-    if (((buffer.status() == ImageFrame::FrameEmpty) && !initFrameBuffer(frameIndex)) || !buffer.hasBackingStore())
+    if ((buffer.isEmpty() && !initFrameBuffer(frameIndex)) || !buffer.hasBackingStore())
         return false;
 
-    RGBA32* currentAddress = buffer.pixelAt(xBegin, yBegin);
+    RGBA32* currentAddress = buffer.backingStore()->pixelAt(xBegin, yBegin);
     // Write one row's worth of data into the frame.  
     for (int x = xBegin; x < xEnd; ++x) {
         const unsigned char sourceValue = rowBuffer[(m_scaled ? m_scaledColumns[x] : x) - frameContext->xOffset];
         if ((!frameContext->isTransparent || (sourceValue != frameContext->tpixel)) && (sourceValue < colorMapSize)) {
             const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
-            buffer.setPixel(currentAddress, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
+            buffer.backingStore()->setPixel(currentAddress, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
         } else {
             m_currentBufferSawAlpha = true;
             // We may or may not need to write transparent pixels to the buffer.
@@ -233,34 +231,36 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
             // beyond the first, or the initial passes will "show through" the
             // later ones.
             if (writeTransparentPixels)
-                buffer.setPixel(currentAddress, 0, 0, 0, 0);
+                buffer.backingStore()->setPixel(currentAddress, 0, 0, 0, 0);
         }
         ++currentAddress;
     }
 
     // Tell the frame to copy the row data if need be.
     if (repeatCount > 1)
-        buffer.copyRowNTimes(xBegin, xEnd, yBegin, yEnd);
+        buffer.backingStore()->repeatFirstRow(IntRect(xBegin, yBegin, xEnd - xBegin , yEnd - yBegin));
 
     return true;
 }
 
-bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, ImageFrame::FrameDisposalMethod disposalMethod)
+bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, ImageFrame::DisposalMethod disposalMethod)
 {
     // Initialize the frame if necessary.  Some GIFs insert do-nothing frames,
     // in which case we never reach haveDecodedRow() before getting here.
     ImageFrame& buffer = m_frameBufferCache[frameIndex];
-    if ((buffer.status() == ImageFrame::FrameEmpty) && !initFrameBuffer(frameIndex))
+    if (buffer.isEmpty() && !initFrameBuffer(frameIndex))
         return false; // initFrameBuffer() has already called setFailed().
 
-    buffer.setStatus(ImageFrame::FrameComplete);
+    buffer.setDecoding(ImageFrame::Decoding::Complete);
     buffer.setDuration(frameDuration);
     buffer.setDisposalMethod(disposalMethod);
 
     if (!m_currentBufferSawAlpha) {
+        IntRect rect = buffer.backingStore()->frameRect();
+        
         // The whole frame was non-transparent, so it's possible that the entire
         // resulting buffer was non-transparent, and we can setHasAlpha(false).
-        if (buffer.originalFrameRect().contains(IntRect(IntPoint(), scaledSize())))
+        if (rect.contains(IntRect(IntPoint(), scaledSize())))
             buffer.setHasAlpha(false);
         else if (frameIndex) {
             // Tricky case.  This frame does not have alpha only if everywhere
@@ -268,22 +268,23 @@ bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
             // true, we check the start state of the frame -- if it doesn't have
             // alpha, we're safe.
             //
-            // First skip over prior DisposeOverwritePrevious frames (since they
+            // First skip over prior DisposalMethod::RestoreToPrevious frames (since they
             // don't affect the start state of this frame) the same way we do in
             // initFrameBuffer().
             const ImageFrame* prevBuffer = &m_frameBufferCache[--frameIndex];
-            while (frameIndex && (prevBuffer->disposalMethod() == ImageFrame::DisposeOverwritePrevious))
+            while (frameIndex && (prevBuffer->disposalMethod() == ImageFrame::DisposalMethod::RestoreToPrevious))
                 prevBuffer = &m_frameBufferCache[--frameIndex];
 
-            // Now, if we're at a DisposeNotSpecified or DisposeKeep frame, then
+            // Now, if we're at a DisposalMethod::Unspecified or DisposalMethod::DoNotDispose frame, then
             // we can say we have no alpha if that frame had no alpha.  But
             // since in initFrameBuffer() we already copied that frame's alpha
             // state into the current frame's, we need do nothing at all here.
             //
-            // The only remaining case is a DisposeOverwriteBgcolor frame.  If
+            // The only remaining case is a DisposalMethod::RestoreToBackground frame. If
             // it had no alpha, and its rect is contained in the current frame's
             // rect, we know the current frame has no alpha.
-            if ((prevBuffer->disposalMethod() == ImageFrame::DisposeOverwriteBgcolor) && !prevBuffer->hasAlpha() && buffer.originalFrameRect().contains(prevBuffer->originalFrameRect()))
+            IntRect prevRect = prevBuffer->backingStore()->frameRect();
+            if ((prevBuffer->disposalMethod() == ImageFrame::DisposalMethod::RestoreToBackground) && !prevBuffer->hasAlpha() && rect.contains(prevRect))
                 buffer.setHasAlpha(false);
         }
     }
@@ -342,6 +343,53 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     // Initialize the frame rect in our buffer.
     const GIFFrameContext* frameContext = m_reader->frameContext();
     IntRect frameRect(frameContext->xOffset, frameContext->yOffset, frameContext->width, frameContext->height);
+    ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
+
+    if (!frameIndex) {
+        // This is the first frame, so we're not relying on any previous data.
+        if (!buffer->initialize(scaledSize(), m_premultiplyAlpha))
+            return setFailed();
+    } else {
+        // The starting state for this frame depends on the previous frame's
+        // disposal method.
+        //
+        // Frames that use the DisposalMethod::RestoreToPrevious method are effectively
+        // no-ops in terms of changing the starting state of a frame compared to
+        // the starting state of the previous frame, so skip over them.  (If the
+        // first frame specifies this method, it will get treated like
+        // DisposalMethod::RestoreToBackground below and reset to a completely empty image.)
+        const ImageFrame* prevBuffer = &m_frameBufferCache[--frameIndex];
+        ImageFrame::DisposalMethod prevMethod = prevBuffer->disposalMethod();
+        while (frameIndex && (prevMethod == ImageFrame::DisposalMethod::RestoreToPrevious)) {
+            prevBuffer = &m_frameBufferCache[--frameIndex];
+            prevMethod = prevBuffer->disposalMethod();
+        }
+
+        ASSERT(prevBuffer->isComplete());
+
+        if ((prevMethod == ImageFrame::DisposalMethod::Unspecified) || (prevMethod == ImageFrame::DisposalMethod::DoNotDispose)) {
+            // Preserve the last frame as the starting state for this frame.
+            if (!prevBuffer->backingStore() || !buffer->initialize(*prevBuffer->backingStore()))
+                return setFailed();
+        } else {
+            // We want to clear the previous frame to transparent, without
+            // affecting pixels in the image outside of the frame.
+            IntRect prevRect = prevBuffer->backingStore()->frameRect();
+            const IntSize& bufferSize = scaledSize();
+            if (!frameIndex || prevRect.contains(IntRect(IntPoint(), scaledSize()))) {
+                // Clearing the first frame, or a frame the size of the whole
+                // image, results in a completely empty image.
+                if (!buffer->initialize(bufferSize, m_premultiplyAlpha))
+                    return setFailed();
+            } else {
+                // Copy the whole previous buffer, then clear just its frame.
+                if (!prevBuffer->backingStore() || !buffer->initialize(*prevBuffer->backingStore()))
+                    return setFailed();
+                buffer->backingStore()->clearRect(prevRect);
+                buffer->setHasAlpha(true);
+            }
+        }
+    }
 
     // Make sure the frameRect doesn't extend outside the buffer.
     if (frameRect.maxX() > size().width())
@@ -349,59 +397,14 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     if (frameRect.maxY() > size().height())
         frameRect.setHeight(size().height() - frameContext->yOffset);
 
-    ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
     int left = upperBoundScaledX(frameRect.x());
     int right = lowerBoundScaledX(frameRect.maxX(), left);
     int top = upperBoundScaledY(frameRect.y());
     int bottom = lowerBoundScaledY(frameRect.maxY(), top);
-    buffer->setOriginalFrameRect(IntRect(left, top, right - left, bottom - top));
-
-    if (!frameIndex) {
-        // This is the first frame, so we're not relying on any previous data.
-        if (!buffer->initializeBackingStore(scaledSize(), m_premultiplyAlpha))
-            return setFailed();
-    } else {
-        // The starting state for this frame depends on the previous frame's
-        // disposal method.
-        //
-        // Frames that use the DisposeOverwritePrevious method are effectively
-        // no-ops in terms of changing the starting state of a frame compared to
-        // the starting state of the previous frame, so skip over them.  (If the
-        // first frame specifies this method, it will get treated like
-        // DisposeOverwriteBgcolor below and reset to a completely empty image.)
-        const ImageFrame* prevBuffer = &m_frameBufferCache[--frameIndex];
-        ImageFrame::FrameDisposalMethod prevMethod = prevBuffer->disposalMethod();
-        while (frameIndex && (prevMethod == ImageFrame::DisposeOverwritePrevious)) {
-            prevBuffer = &m_frameBufferCache[--frameIndex];
-            prevMethod = prevBuffer->disposalMethod();
-        }
-        ASSERT(prevBuffer->status() == ImageFrame::FrameComplete);
-
-        if ((prevMethod == ImageFrame::DisposeNotSpecified) || (prevMethod == ImageFrame::DisposeKeep)) {
-            // Preserve the last frame as the starting state for this frame.
-            if (!prevBuffer->backingStore() || !buffer->initializeBackingStore(*prevBuffer->backingStore()))
-                return setFailed();
-        } else {
-            // We want to clear the previous frame to transparent, without
-            // affecting pixels in the image outside of the frame.
-            IntRect prevRect = prevBuffer->originalFrameRect();
-            const IntSize& bufferSize = scaledSize();
-            if (!frameIndex || prevRect.contains(IntRect(IntPoint(), scaledSize()))) {
-                // Clearing the first frame, or a frame the size of the whole
-                // image, results in a completely empty image.
-                if (!buffer->initializeBackingStore(bufferSize, m_premultiplyAlpha))
-                    return setFailed();
-            } else {
-                // Copy the whole previous buffer, then clear just its frame.
-                if (!prevBuffer->backingStore() || !buffer->initializeBackingStore(*prevBuffer->backingStore()))
-                    return setFailed();
-                buffer->zeroFillFrameRect(prevRect);
-            }
-        }
-    }
+    buffer->backingStore()->setFrameRect(IntRect(left, top, right - left, bottom - top));
 
     // Update our status to be partially complete.
-    buffer->setStatus(ImageFrame::FramePartial);
+    buffer->setDecoding(ImageFrame::Decoding::Partial);
 
     // Reset the alpha pixel tracker for this frame.
     m_currentBufferSawAlpha = false;

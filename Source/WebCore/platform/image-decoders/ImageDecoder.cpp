@@ -127,93 +127,6 @@ std::unique_ptr<ImageDecoder> ImageDecoder::create(const SharedBuffer& data, Ima
     return nullptr;
 }
 
-ImageFrame::ImageFrame()
-    : m_hasAlpha(false)
-    , m_status(FrameEmpty)
-    , m_duration(0)
-    , m_disposalMethod(DisposeNotSpecified)
-{
-} 
-
-ImageFrame& ImageFrame::operator=(const ImageFrame& other)
-{
-    if (this == &other)
-        return *this;
-
-    if (other.backingStore())
-        initializeBackingStore(*other.backingStore());
-
-    setHasAlpha(other.m_hasAlpha);
-    setStatus(other.status());
-    setDuration(other.duration());
-    setDisposalMethod(other.disposalMethod());
-    return *this;
-}
-
-void ImageFrame::clearPixelData()
-{
-    m_backingStore = nullptr;
-    m_status = FrameEmpty;
-    // NOTE: Do not reset other members here; clearFrameBufferCache() calls this
-    // to free the bitmap data, but other functions like initFrameBuffer() and
-    // frameComplete() may still need to read other metadata out of this frame
-    // later.
-}
-
-void ImageFrame::zeroFillPixelData()
-{
-    m_backingStore->clear();
-    m_hasAlpha = true;
-}
-
-void ImageFrame::zeroFillFrameRect(const IntRect& rect)
-{
-    if (rect.isEmpty())
-        return;
-
-    m_backingStore->clearRect(rect);
-    setHasAlpha(true);
-}
-
-bool ImageFrame::initializeBackingStore(const ImageBackingStore& backingStore)
-{
-    if (&backingStore == this->backingStore())
-        return true;
-
-    m_backingStore = ImageBackingStore::create(backingStore);
-    return m_backingStore != nullptr;
-}
-
-bool ImageFrame::initializeBackingStore(const IntSize& size, bool premultiplyAlpha)
-{
-    if (size.isEmpty())
-        return false;
-
-    m_backingStore = ImageBackingStore::create(size, premultiplyAlpha);
-    return m_backingStore != nullptr;
-}
-
-bool ImageFrame::hasAlpha() const
-{
-    return m_hasAlpha;
-}
-
-void ImageFrame::setHasAlpha(bool alpha)
-{
-    m_hasAlpha = alpha;
-}
-
-void ImageFrame::setOriginalFrameRect(const IntRect& frameRect)
-{
-    if (m_backingStore)
-        m_backingStore->setFrameRect(frameRect);
-}
-
-void ImageFrame::setStatus(FrameStatus status)
-{
-    m_status = status;
-}
-
 namespace {
 
 enum MatchType {
@@ -258,14 +171,14 @@ template <MatchType type> int getScaledValue(const Vector<int>& scaledValues, in
 bool ImageDecoder::frameIsCompleteAtIndex(size_t index)
 {
     ImageFrame* buffer = frameBufferAtIndex(index);
-    return buffer && buffer->status() == ImageFrame::FrameComplete;
+    return buffer && buffer->isComplete();
 }
 
 bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
 {
     if (m_frameBufferCache.size() <= index)
         return true;
-    if (m_frameBufferCache[index].status() == ImageFrame::FrameComplete)
+    if (m_frameBufferCache[index].isComplete())
         return m_frameBufferCache[index].hasAlpha();
     return true;
 }
@@ -281,7 +194,7 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
 float ImageDecoder::frameDurationAtIndex(size_t index)
 {
     ImageFrame* buffer = frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
+    if (!buffer || buffer->isEmpty())
         return 0;
     
     // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
@@ -301,12 +214,12 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
         return nullptr;
 
     ImageFrame* buffer = frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
+    if (!buffer || buffer->isEmpty() || !buffer->hasBackingStore())
         return nullptr;
 
     // Return the buffer contents as a native image. For some ports, the data
     // is already in a native container, and this just increments its refcount.
-    return buffer->asNewNativeImage();
+    return buffer->backingStore()->image();
 }
 
 void ImageDecoder::prepareScaleDataIfNecessary()

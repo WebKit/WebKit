@@ -46,7 +46,7 @@ namespace WebCore {
         bool isSizeAvailable() override;
         bool setSize(const IntSize&) override;
         size_t frameCount() override;
-        int repetitionCount() const override;
+        RepetitionCount repetitionCount() const override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
@@ -56,7 +56,7 @@ namespace WebCore {
 
         // Callbacks from the GIF reader.
         bool haveDecodedRow(unsigned frameIndex, const Vector<unsigned char>& rowBuffer, size_t width, size_t rowNumber, unsigned repeatCount, bool writeTransparentPixels);
-        bool frameComplete(unsigned frameIndex, unsigned frameDuration, ImageFrame::FrameDisposalMethod disposalMethod);
+        bool frameComplete(unsigned frameIndex, unsigned frameDuration, ImageFrame::DisposalMethod);
         void gifComplete();
 
     private:
@@ -72,7 +72,7 @@ namespace WebCore {
         bool initFrameBuffer(unsigned frameIndex);
 
         bool m_currentBufferSawAlpha;
-        mutable int m_repetitionCount;
+        mutable RepetitionCount m_repetitionCount { RepetitionCountOnce };
         std::unique_ptr<GIFImageReader> m_reader;
     };
 

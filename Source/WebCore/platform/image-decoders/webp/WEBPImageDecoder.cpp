@@ -82,7 +82,7 @@ ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
         m_frameBufferCache.resize(1);
 
     ImageFrame& frame = m_frameBufferCache[0];
-    if (frame.status() != ImageFrame::FrameComplete)
+    if (!frame.isComplete())
         decode(false);
     return &frame;
 }
@@ -123,12 +123,12 @@ bool WEBPImageDecoder::decode(bool onlySize)
 
     ASSERT(!m_frameBufferCache.isEmpty());
     ImageFrame& buffer = m_frameBufferCache[0];
-    ASSERT(buffer.status() != ImageFrame::FrameComplete);
+    ASSERT(!buffer.isComplete());
 
-    if (buffer.status() == ImageFrame::FrameEmpty) {
-        if (!buffer.initializeBackingStore(size(), m_premultiplyAlpha))
+    if (buffer.isEmpty()) {
+        if (!buffer.initialize(size(), m_premultiplyAlpha))
             return setFailed();
-        buffer.setStatus(ImageFrame::FramePartial);
+        buffer.setDecoding(ImageFrame::Decoding::Partial);
         buffer.setHasAlpha(m_hasAlpha);
     }
 
@@ -137,7 +137,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
         if (!m_premultiplyAlpha)
             mode = outputMode(false);
         int rowStride = size().width() * sizeof(RGBA32);
-        uint8_t* output = reinterpret_cast<uint8_t*>(buffer.pixelAt(0, 0));
+        uint8_t* output = reinterpret_cast<uint8_t*>(buffer.backingStore()->pixelAt(0, 0));
         int outputSize = size().height() * rowStride;
         m_decoder = WebPINewRGB(mode, output, outputSize, rowStride);
         if (!m_decoder)
@@ -146,7 +146,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
 
     switch (WebPIUpdate(m_decoder, dataBytes, dataSize)) {
     case VP8_STATUS_OK:
-        buffer.setStatus(ImageFrame::FrameComplete);
+        buffer.setDecoding(ImageFrame::Decoding::Complete);
         clear();
         return true;
     case VP8_STATUS_SUSPENDED:
