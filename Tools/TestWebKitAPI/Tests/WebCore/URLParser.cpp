@@ -474,6 +474,9 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http:",
         {"http", "", "", "", 0, "", "", "", "http:"},
         {"http", "", "", "", 0, "/", "", "", "http:/"});
+    checkRelativeURLDifferences("http:/example.com/", "http://example.org/foo/bar",
+        {"http", "", "", "example.org", 0, "/example.com/", "", "", "http://example.org/example.com/"},
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
     
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
     // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.

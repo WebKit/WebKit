@@ -1063,7 +1063,8 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                     m_asciiBuffer.append('/');
                     state = State::SpecialAuthorityIgnoreSlashes;
                     ++c;
-                }
+                } else
+                    state = State::RelativeSlash;
             } else
                 state = State::Relative;
             break;
