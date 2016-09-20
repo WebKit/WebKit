@@ -1,5 +1,11 @@
 2016-09-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed build fix on 10.10 bots.
+
+        * TestWebKitAPI/mac/TestWKWebViewMac.h:
+
+2016-09-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         VideoControlsManager.VideoControlsManagerSingleLargeVideo fails intermittently on the Mac WK2 bot
         https://bugs.webkit.org/show_bug.cgi?id=162255
 

@@ -35,9 +35,6 @@
 @end
 
 @interface TestWKWebView : WKWebView
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
-
 // Simulates clicking with a pressure-sensitive device, if possible.
 - (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure;
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
