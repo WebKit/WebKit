@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebViewMac.h"
 
+#import <Carbon/Carbon.h>
 #import <WebKit/WebKitPrivate.h>
 
 static NSString *GetInputValueJSExpression = @"document.querySelector('input').value";
@@ -112,81 +113,134 @@ static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
         _candidateListVisibilityChangeCount++;
 }
 
+- (void)typeString:(NSString *)string inputMessage:(NSString *)inputMessage
+{
+    for (uint64_t i = 0; i < string.length; ++i) {
+        dispatch_async(dispatch_get_main_queue(), ^()
+        {
+            [self typeCharacter:[string characterAtIndex:i]];
+        });
+        [self waitForMessage:inputMessage];
+    }
+}
+
++ (instancetype)setUpWithFrame:(NSRect)frame testPage:(NSString *)testPageName
+{
+    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:frame];
+
+    [wkWebView loadTestPageNamed:testPageName];
+    [wkWebView waitForMessage:@"focused"];
+    [wkWebView _forceRequestCandidates];
+
+    return wkWebView;
+}
+
 @end
 
 TEST(WKWebViewCandidateTests, SoftSpaceReplacementAfterCandidateInsertionWithoutReplacement)
 {
-    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
-    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"input-field-in-scrollable-document" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    [wkWebView loadRequest:[NSURLRequest requestWithURL:contentURL]];
-
-    [wkWebView waitForMessage:@"focused"];
-    [wkWebView _forceRequestCandidates];
     [wkWebView insertCandidatesAndWaitForResponse:@"apple " range:NSMakeRange(0, 0)];
-
     EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"apple "]);
 
     [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
     {
-        [wkWebView typeCharacter:' '];
-        [wkWebView waitForMessage:@"input"];
+        [wkWebView typeString:@" " inputMessage:@"input"];
     }];
-
     EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"apple "]);
     EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
 }
 
 TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpace)
 {
-    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
-    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"input-field-in-scrollable-document" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    [wkWebView loadRequest:[NSURLRequest requestWithURL:contentURL]];
-
-    [wkWebView waitForMessage:@"focused"];
-    [wkWebView _forceRequestCandidates];
     [wkWebView insertCandidatesAndWaitForResponse:@"foo " range:NSMakeRange(0, 0)];
-
     EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"foo "]);
 
-    [wkWebView typeCharacter:'a'];
-    [wkWebView waitForMessage:@"input"];
-
+    [wkWebView typeString:@"a" inputMessage:@"input"];
     EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"foo a"]);
 }
 
 TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
 {
-    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
-    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"input-field-in-scrollable-document" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    [wkWebView loadRequest:[NSURLRequest requestWithURL:contentURL]];
-
-    [wkWebView waitForMessage:@"focused"];
-    [wkWebView _forceRequestCandidates];
-
-    NSString *initialValue = @"hel";
-    for (uint64_t i = 0; i < initialValue.length; ++i) {
-        [wkWebView typeCharacter:[initialValue characterAtIndex:i]];
-        [wkWebView waitForMessage:@"input"];
-    }
-
+    [wkWebView typeString:@"hel" inputMessage:@"input"];
     [wkWebView insertCandidatesAndWaitForResponse:@"hello " range:NSMakeRange(0, 3)];
     EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello "]);
 
     [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
     {
-        [wkWebView typeCharacter:' '];
-        [wkWebView waitForMessage:@"input"];
+        [wkWebView typeString:@" " inputMessage:@"input"];
         EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello "]);
         EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
 
-        [wkWebView typeCharacter:' '];
-        [wkWebView waitForMessage:@"input"];
+        [wkWebView typeString:@" " inputMessage:@"input"];
         EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello  "]);
         EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
     }];
 }
+
+TEST(WKWebViewCandidateTests, ClickingInTextFieldDoesNotThrashCandidateVisibility)
+{
+    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"large-input-field-focus-onload"];
+
+    [wkWebView typeString:@"test" inputMessage:@"input"];
+    [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
+    {
+        dispatch_async(dispatch_get_main_queue(), ^()
+        {
+            [wkWebView mouseDownAtPoint:NSMakePoint(100, 300) simulatePressure:YES];
+        });
+        [wkWebView waitForMessage:@"mousedown"];
+    }];
+    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"test"]);
+}
+
+TEST(WKWebViewCandidateTests, ShouldNotRequestCandidatesInPasswordField)
+{
+    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    [wkWebView loadTestPageNamed:@"text-and-password-inputs"];
+    [wkWebView waitForMessage:@"loaded"];
+    [wkWebView _forceRequestCandidates];
+
+    dispatch_async(dispatch_get_main_queue(), ^()
+    {
+        [wkWebView mouseDownAtPoint:NSMakePoint(400, 150) simulatePressure:YES];
+    });
+    [wkWebView waitForMessage:@"password-focused"];
+
+    [wkWebView typeString:@"foo" inputMessage:@"password-input"];
+    EXPECT_FALSE([wkWebView _shouldRequestCandidates]);
+
+    NSString *passwordFieldValue = [wkWebView stringByEvaluatingJavaScript:@"document.querySelector('#password').value"];
+    EXPECT_STREQ(passwordFieldValue.UTF8String, "foo");
+}
+
+#if USE(APPLE_INTERNAL_SDK)
+
+TEST(WKWebViewCandidateTests, ShouldRequestCandidatesInTextField)
+{
+    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    [wkWebView loadTestPageNamed:@"text-and-password-inputs"];
+    [wkWebView waitForMessage:@"loaded"];
+    [wkWebView _forceRequestCandidates];
+
+    dispatch_async(dispatch_get_main_queue(), ^()
+    {
+        [wkWebView mouseDownAtPoint:NSMakePoint(400, 450) simulatePressure:YES];
+    });
+    [wkWebView waitForMessage:@"text-focused"];
+
+    [wkWebView typeString:@"bar" inputMessage:@"text-input"];
+    EXPECT_TRUE([wkWebView _shouldRequestCandidates]);
+
+    NSString *textFieldValue = [wkWebView stringByEvaluatingJavaScript:@"document.querySelector('#text').value"];
+    EXPECT_STREQ(textFieldValue.UTF8String, "bar");
+}
+
+#endif
 
 #endif /* WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 */
