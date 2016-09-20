@@ -1,3 +1,19 @@
+2016-09-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add `typeof value === "symbol"` handling to bytecode compiler
+        https://bugs.webkit.org/show_bug.cgi?id=162253
+
+        Reviewed by Sam Weinig.
+
+        Add `typeof value === "symbol"` handling to the bytecode compiler.
+        The effect is tiny, but it keeps consistency since the bytecode compiler
+        already has the similar optimization for "string" case.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromJSType):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOp):
+
 2016-09-19  Saam Barati  <sbarati@apple.com>
 
         Make HasOwnProperty faster

@@ -476,6 +476,8 @@ SpeculatedType speculationFromJSType(JSType type)
     switch (type) {
     case StringType:
         return SpecString;
+    case SymbolType:
+        return SpecSymbol;
     case ArrayType:
         return SpecArray;
     case DerivedArrayType:

@@ -1665,6 +1665,14 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
                 instructions().append(StringType);
                 return dst;
             }
+            if (value == "symbol") {
+                rewindUnaryOp();
+                emitOpcode(op_is_cell_with_type);
+                instructions().append(dst->index());
+                instructions().append(srcIndex);
+                instructions().append(SymbolType);
+                return dst;
+            }
             if (value == "object") {
                 rewindUnaryOp();
                 emitOpcode(op_is_object_or_null);
