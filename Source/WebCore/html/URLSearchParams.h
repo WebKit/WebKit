@@ -51,7 +51,7 @@ private:
     explicit URLSearchParams(const Vector<std::pair<String, String>>&);
     void updateURL();
 
-    DOMURL* m_associatedURL;
+    DOMURL* m_associatedURL { nullptr };
     Vector<std::pair<String, String>> m_pairs;
 };
 
