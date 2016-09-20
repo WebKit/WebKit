@@ -55,8 +55,8 @@ bool MarkedAllocator::isPagedOut(double deadline)
         MarkedBlock::Handle* block = m_blocks[index];
         if (block) {
             // Forces us to touch the memory of the block, but has no semantic effect.
-            if (block->needsFlip())
-                block->block().resetVersion();
+            if (block->areMarksStale())
+                block->block().resetMarkingVersion();
         }
         ++itersSinceLastTimeCheck;
         if (itersSinceLastTimeCheck >= Heap::s_timeCheckResolution) {

@@ -1,3 +1,122 @@
+2016-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename MarkedSpace::version/MarkedBlock::version to MarkedSpace::markingVersion/MarkedBlock::markingVersion
+        https://bugs.webkit.org/show_bug.cgi?id=162310
+
+        Reviewed by Geoffrey Garen.
+        
+        In bug 162309, which is part of my concurrent GC work, I'll need to introduce a second
+        version-based flip. This one will be for newlyAllocated bits. This will allow me to
+        cheaply preserve per-object live state during marking. MarkedBlock::aboutToMarkSlow() will
+        do this instead of clearMarks():
+        
+            - Walk the mark bits, simultaneously counting the number of set bits and clearing
+              them.
+            - If the count is zero, then we're done.
+            - If the count is equal to the max number of cells in the block, then set the
+              allocated bit for the block.
+            - If the count is something else, create a newlyAllocated vector.
+        
+        The hope is that the last mode is going to be rare, since most blocks are not fragmented
+        at end of GC. Usually, we will fill them in with objects by allocating! But if we do
+        create newlyAllocated bits then we need to have some way of blowing them away later.
+        
+        This is where a second version comes in. We can have a version for newlyAllocated bits,
+        which we increment at the end of marking, at around the same time that we clear all
+        allocated bits.
+        
+        This means that the MarkedBlock will have two different version-based flips, so terms like
+        "flip" and "version" aren't enough.
+        
+        This patch gets rid of the term "flip" entirely. It's a term of art in GCs that refers to
+        the state change at the beginning or end of GC. It refers to the logical state change, not
+        the physical one. It doesn't actually make sense to speak of a block being flipped
+        independently of other blocks. It's true that our implementation of the flip makes some
+        state updates happen lazily, but the block updating itself in some way (like clearing mark
+        bits) isn't the flip - the flip already happened when the version was incremented.
+        
+        We no longer refer to a version without qualifying what kind of version it is. The type is
+        HeapVersion. All of the version members were renamed to markingVersion, to reflect the
+        fact that this version is just used for doing things to marking state. Instead of asking
+        if the block needsFlip(), we ask if areMarksStale().
+        
+        This will let us introduce a second version for newlyAllocated, and will let us speak of
+        the two versions unambiguously.
+
+        * heap/CellContainer.h:
+        * heap/CellContainerInlines.h:
+        (JSC::CellContainer::isMarked):
+        (JSC::CellContainer::isMarkedOrNewlyAllocated):
+        (JSC::CellContainer::aboutToMark):
+        (JSC::CellContainer::areMarksStale):
+        (JSC::CellContainer::needsFlip): Deleted.
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::genericAddSpan):
+        * heap/HeapInlines.h:
+        (JSC::Heap::isMarked):
+        (JSC::Heap::isMarkedConcurrently):
+        (JSC::Heap::testAndSetMarked):
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::isPagedOut):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::sweepHelperSelectSweepMode):
+        (JSC::MarkedBlock::Handle::sweepHelperSelectMarksMode):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::clearMarks):
+        (JSC::MarkedBlock::assertMarksNotStale):
+        (JSC::MarkedBlock::areMarksStale):
+        (JSC::MarkedBlock::Handle::areMarksStale):
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::Handle::isMarkedOrNewlyAllocated):
+        (JSC::MarkedBlock::isMarkedOrNewlyAllocated):
+        (JSC::MarkedBlock::markCount):
+        (JSC::MarkedBlock::Handle::isLive):
+        (JSC::MarkedBlock::Handle::isLiveCell):
+        (JSC::MarkedBlock::Handle::sweepHelperSelectFlipMode): Deleted.
+        (JSC::MarkedBlock::assertFlipped): Deleted.
+        (JSC::MarkedBlock::needsFlip): Deleted.
+        (JSC::MarkedBlock::Handle::needsFlip): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::areMarksStale):
+        (JSC::MarkedBlock::aboutToMark):
+        (JSC::MarkedBlock::assertMarksNotStale):
+        (JSC::MarkedBlock::Handle::assertMarksNotStale):
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::isMarkedConcurrently):
+        (JSC::MarkedBlock::testAndSetMarked):
+        (JSC::MarkedBlock::Handle::isMarkedOrNewlyAllocated):
+        (JSC::MarkedBlock::isMarkedOrNewlyAllocated):
+        (JSC::MarkedBlock::needsFlip): Deleted.
+        (JSC::MarkedBlock::assertFlipped): Deleted.
+        (JSC::MarkedBlock::Handle::assertFlipped): Deleted.
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::isLive):
+        (JSC::MarkedBlock::Handle::isLiveCell):
+        (JSC::MarkedBlock::resetMarkingVersion):
+        (JSC::MarkedBlock::resetVersion): Deleted.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::beginMarking):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::markingVersion):
+        (JSC::MarkedSpace::version): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::SlotVisitor::markAuxiliary):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::markingVersion):
+        (JSC::SlotVisitor::version): Deleted.
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+        (JSC::WeakBlock::reap):
+
 2016-09-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline builtins generator tests after r206155.

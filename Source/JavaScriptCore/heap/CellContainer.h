@@ -78,13 +78,13 @@ public:
         return *bitwise_cast<LargeAllocation*>(m_encodedPointer - isLargeAllocationBit);
     }
     
-    void aboutToMark(HeapVersion);
-    bool needsFlip() const;
+    void aboutToMark(HeapVersion markingVersion);
+    bool areMarksStale() const;
     
     bool isMarked(HeapCell*) const;
-    bool isMarked(HeapVersion, HeapCell*) const;
+    bool isMarked(HeapVersion markingVersion, HeapCell*) const;
     bool isMarkedOrNewlyAllocated(HeapCell*) const;
-    bool isMarkedOrNewlyAllocated(HeapVersion, HeapCell*) const;
+    bool isMarkedOrNewlyAllocated(HeapVersion markingVersion, HeapCell*) const;
     
     void noteMarked();
     

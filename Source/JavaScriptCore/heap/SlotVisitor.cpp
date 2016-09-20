@@ -78,7 +78,7 @@ SlotVisitor::SlotVisitor(Heap& heap)
     , m_bytesCopied(0)
     , m_visitCount(0)
     , m_isInParallelMode(false)
-    , m_version(MarkedSpace::initialVersion)
+    , m_markingVersion(MarkedSpace::initialVersion)
     , m_heap(heap)
 #if !ASSERT_DISABLED
     , m_isCheckingForDefaultMarkViolation(false)
@@ -102,7 +102,7 @@ void SlotVisitor::didStartMarking()
     if (HeapProfiler* heapProfiler = vm().heapProfiler())
         m_heapSnapshotBuilder = heapProfiler->activeSnapshotBuilder();
     
-    m_version = heap()->objectSpace().version();
+    m_markingVersion = heap()->objectSpace().markingVersion();
 }
 
 void SlotVisitor::reset()
@@ -134,7 +134,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     
     ASSERT(!m_isCheckingForDefaultMarkViolation);
     
-    if (Heap::testAndSetMarked(m_version, heapCell))
+    if (Heap::testAndSetMarked(m_markingVersion, heapCell))
         return;
     
     switch (heapCell->cellKind()) {
@@ -200,7 +200,7 @@ void SlotVisitor::setMarkedAndAppendToMarkStack(JSCell* cell)
 template<typename ContainerType>
 ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& container, JSCell* cell)
 {
-    container.aboutToMark(m_version);
+    container.aboutToMark(m_markingVersion);
     
     if (container.testAndSetMarked(cell))
         return;
@@ -248,7 +248,7 @@ void SlotVisitor::markAuxiliary(const void* base)
     
     ASSERT(cell->heap() == heap());
     
-    if (Heap::testAndSetMarked(m_version, cell))
+    if (Heap::testAndSetMarked(m_markingVersion, cell))
         return;
     
     noteLiveAuxiliaryCell(cell);

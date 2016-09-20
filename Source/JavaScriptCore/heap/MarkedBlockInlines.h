@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-inline bool MarkedBlock::Handle::isLive(HeapVersion version, const HeapCell* cell)
+inline bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, const HeapCell* cell)
 {
     ASSERT(!isFreeListed());
     
@@ -44,17 +44,17 @@ inline bool MarkedBlock::Handle::isLive(HeapVersion version, const HeapCell* cel
     if (allocator()->isAllocated(this))
         return true;
     
-    if (block.needsFlip(version))
+    if (block.areMarksStale(markingVersion))
         return false;
 
     return block.isMarked(cell);
 }
 
-inline bool MarkedBlock::Handle::isLiveCell(HeapVersion version, const void* p)
+inline bool MarkedBlock::Handle::isLiveCell(HeapVersion markingVersion, const void* p)
 {
     if (!m_block->isAtom(p))
         return false;
-    return isLive(version, static_cast<const HeapCell*>(p));
+    return isLive(markingVersion, static_cast<const HeapCell*>(p));
 }
 
 template <typename Functor>
@@ -87,9 +87,9 @@ inline IterationStatus MarkedBlock::Handle::forEachDeadCell(const Functor& funct
     return IterationStatus::Continue;
 }
 
-inline void MarkedBlock::resetVersion()
+inline void MarkedBlock::resetMarkingVersion()
 {
-    m_version = MarkedSpace::nullVersion;
+    m_markingVersion = MarkedSpace::nullVersion;
 }
 
 } // namespace JSC

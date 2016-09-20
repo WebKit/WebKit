@@ -101,7 +101,7 @@ void WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& heap
 {
     SlotVisitor& visitor = heapRootVisitor.visitor();
     
-    HeapVersion version = visitor.version();
+    HeapVersion markingVersion = visitor.markingVersion();
 
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
@@ -113,7 +113,7 @@ void WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& heap
             continue;
 
         const JSValue& jsValue = weakImpl->jsValue();
-        if (container.isMarkedConcurrently(version, jsValue.asCell()))
+        if (container.isMarkedConcurrently(markingVersion, jsValue.asCell()))
             continue;
         
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor))
@@ -147,14 +147,14 @@ void WeakBlock::reap()
     // If this WeakBlock doesn't belong to a CellContainer, we won't even be here.
     ASSERT(m_container);
     
-    HeapVersion version = m_container.heap()->objectSpace().version();
+    HeapVersion markingVersion = m_container.heap()->objectSpace().markingVersion();
 
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
         if (weakImpl->state() > WeakImpl::Dead)
             continue;
 
-        if (m_container.isMarked(version, weakImpl->jsValue().asCell())) {
+        if (m_container.isMarked(markingVersion, weakImpl->jsValue().asCell())) {
             ASSERT(weakImpl->state() == WeakImpl::Live);
             continue;
         }

@@ -458,13 +458,13 @@ void MarkedSpace::beginMarking()
                 return IterationStatus::Continue;
             });
 
-        m_version = nextVersion(m_version);
+        m_markingVersion = nextVersion(m_markingVersion);
         
-        if (UNLIKELY(m_version == initialVersion)) {
+        if (UNLIKELY(m_markingVersion == initialVersion)) {
             // Oh no! Version wrap-around! We handle this by setting all block versions to null.
             forEachBlock(
                 [&] (MarkedBlock::Handle* handle) {
-                    handle->block().resetVersion();
+                    handle->block().resetMarkingVersion();
                 });
         }
         
@@ -475,7 +475,7 @@ void MarkedSpace::beginMarking()
     if (!ASSERT_DISABLED) {
         forEachBlock(
             [&] (MarkedBlock::Handle* block) {
-                if (block->needsFlip())
+                if (block->areMarksStale())
                     return;
                 ASSERT(!block->isFreeListed());
             });

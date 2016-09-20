@@ -166,7 +166,7 @@ public:
 
     bool isPagedOut(double deadline);
     
-    HeapVersion version() const { return m_version; }
+    HeapVersion markingVersion() const { return m_markingVersion; }
 
     const Vector<LargeAllocation*>& largeAllocations() const { return m_largeAllocations; }
     unsigned largeAllocationsNurseryOffset() const { return m_largeAllocationsNurseryOffset; }
@@ -212,7 +212,7 @@ private:
     Subspace m_auxiliarySpace;
 
     Heap* m_heap;
-    HeapVersion m_version { initialVersion };
+    HeapVersion m_markingVersion { initialVersion };
     size_t m_capacity;
     bool m_isIterating;
     bool m_isMarking { false };

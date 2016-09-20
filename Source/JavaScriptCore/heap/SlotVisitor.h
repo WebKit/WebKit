@@ -124,7 +124,7 @@ public:
 
     bool isBuildingHeapSnapshot() const { return !!m_heapSnapshotBuilder; }
     
-    HeapVersion version() const { return m_version; }
+    HeapVersion markingVersion() const { return m_markingVersion; }
 
 private:
     friend class ParallelModeEnabler;
@@ -161,7 +161,7 @@ private:
     size_t m_visitCount;
     bool m_isInParallelMode;
     
-    HeapVersion m_version;
+    HeapVersion m_markingVersion;
     
     Heap& m_heap;
 
