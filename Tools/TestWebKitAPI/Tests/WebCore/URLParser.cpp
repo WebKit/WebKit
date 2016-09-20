@@ -544,6 +544,9 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("/C|/foo/bar", "file:///tmp/mock/path",
         {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},
         {"file", "", "", "", 0, "/C|/foo/bar", "", "", "file:///C|/foo/bar"});
+    checkRelativeURLDifferences("https://@test@test@example:800/", "http://doesnotmatter/",
+        {"https", "@test@test", "", "example", 800, "/", "", "", "https://%40test%40test@example:800/"},
+        {"", "", "", "", 0, "", "", "", "https://@test@test@example:800/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)

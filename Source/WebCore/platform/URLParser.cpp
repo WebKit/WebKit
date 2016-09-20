@@ -1143,7 +1143,15 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             LOG_STATE("AuthorityOrHost");
             {
                 if (*c == '@') {
-                    parseAuthority<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c));
+                    auto lastAt = c;
+                    auto findLastAt = c;
+                    while (!findLastAt.atEnd()) {
+                        if (*findLastAt == '@')
+                            lastAt = findLastAt;
+                        ++findLastAt;
+                    }
+                    parseAuthority<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, lastAt));
+                    c = lastAt;
                     incrementIteratorSkippingTabAndNewLine<serialized>(c);
                     authorityOrHostBegin = c;
                     state = State::Host;
