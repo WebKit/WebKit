@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IncrementalSweeper_h
-#define IncrementalSweeper_h
+#include "config.h"
+#include "FastBitVector.h"
 
-#include "HeapTimer.h"
-#include <wtf/Vector.h>
+namespace WTF {
 
-namespace JSC {
+void FastBitVectorWordOwner::setEqualsSlow(const FastBitVectorWordOwner& other)
+{
+    uint32_t* newArray = static_cast<uint32_t*>(
+        fastCalloc(other.arrayLength(), sizeof(uint32_t)));
+    memcpy(newArray, other.m_words, other.arrayLength() * sizeof(uint32_t));
+    if (m_words)
+        fastFree(m_words);
+    m_words = newArray;
+    m_numBits = other.m_numBits;
+}
 
-class Heap;
-class MarkedAllocator;
-
-class IncrementalSweeper : public HeapTimer {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-#if USE(CF)
-    JS_EXPORT_PRIVATE IncrementalSweeper(Heap*, CFRunLoopRef);
-#else
-    explicit IncrementalSweeper(Heap*);
-#endif
-
-    void startSweeping();
-
-    JS_EXPORT_PRIVATE void doWork() override;
-    bool sweepNextBlock();
-    void willFinishSweeping();
-
-#if USE(CF) || PLATFORM(EFL) || USE(GLIB)
-private:
-    void doSweep(double startTime);
-    void scheduleTimer();
-    void cancelTimer();
+void FastBitVectorWordOwner::resizeSlow(size_t numBits)
+{
+    size_t newLength = fastBitVectorArrayLength(numBits);
     
-    MarkedAllocator* m_currentAllocator;
-#endif
-};
+    // Use fastCalloc instead of fastRealloc because we expect the common
+    // use case for this method to be initializing the size of the bitvector.
+    
+    uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(newLength, sizeof(uint32_t)));
+    memcpy(newArray, m_words, arrayLength() * sizeof(uint32_t));
+    if (m_words)
+        fastFree(m_words);
+    m_words = newArray;
+}
 
-} // namespace JSC
+} // namespace WTF
 
-#endif

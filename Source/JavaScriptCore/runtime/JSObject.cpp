@@ -43,6 +43,7 @@
 #include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
+#include "PrototypeMapInlines.h"
 #include "ProxyObject.h"
 #include "Reject.h"
 #include "SlotVisitorInlines.h"

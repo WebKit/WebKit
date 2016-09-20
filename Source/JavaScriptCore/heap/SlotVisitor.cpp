@@ -189,6 +189,8 @@ void SlotVisitor::setMarkedAndAppendToMarkStack(JSCell* cell)
     validate(cell);
 #endif
     
+    //dataLog("    Marking ", RawPointer(cell), "\n");
+    
     if (cell->isLargeAllocation())
         setMarkedAndAppendToMarkStack(cell->largeAllocation(), cell);
     else
@@ -198,7 +200,7 @@ void SlotVisitor::setMarkedAndAppendToMarkStack(JSCell* cell)
 template<typename ContainerType>
 ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& container, JSCell* cell)
 {
-    container.flipIfNecessaryDuringMarking(m_version);
+    container.aboutToMark(m_version);
     
     if (container.testAndSetMarked(cell))
         return;
@@ -246,10 +248,8 @@ void SlotVisitor::markAuxiliary(const void* base)
     
     ASSERT(cell->heap() == heap());
     
-    if (Heap::testAndSetMarked(m_version, cell)) {
-        RELEASE_ASSERT(Heap::isMarkedConcurrently(cell));
+    if (Heap::testAndSetMarked(m_version, cell))
         return;
-    }
     
     noteLiveAuxiliaryCell(cell);
 }

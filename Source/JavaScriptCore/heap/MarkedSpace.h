@@ -65,7 +65,16 @@ public:
 
     static const size_t numSizeClasses = largeCutoff / sizeStep;
     
-    static const HeapVersion initialVersion = 42;  // This can be any value, including random garbage, so long as it's consistent for the lifetime of the process.
+    static const HeapVersion nullVersion = 0; // The version of freshly allocated blocks.
+    static const HeapVersion initialVersion = 1; // The version that the heap starts out with.
+    
+    HeapVersion nextVersion(HeapVersion version)
+    {
+        version++;
+        if (version == nullVersion)
+            version++;
+        return version;
+    }
     
     static size_t sizeClassToIndex(size_t size)
     {
@@ -114,7 +123,7 @@ public:
     Subspace& subspaceForObjectsWithoutDestructor() { return m_normalSpace; }
     Subspace& subspaceForAuxiliaryData() { return m_auxiliarySpace; }
     
-    void resetAllocators();
+    void prepareForAllocation();
 
     void visitWeakSets(HeapRootVisitor&);
     void reapWeakSets();
@@ -144,11 +153,13 @@ public:
     void didConsumeFreeList(MarkedBlock::Handle*);
     void didAllocateInBlock(MarkedBlock::Handle*);
 
-    void flip();
+    void beginMarking();
+    void endMarking();
+    void snapshotUnswept();
     void clearNewlyAllocated();
     void sweep();
     void sweepLargeAllocations();
-    void zombifySweep();
+    void assertNoUnswept();
     size_t objectCount();
     size_t size();
     size_t capacity();
@@ -157,8 +168,6 @@ public:
     
     HeapVersion version() const { return m_version; }
 
-    const Vector<MarkedBlock::Handle*>& blocksWithNewObjects() const { return m_blocksWithNewObjects; }
-    
     const Vector<LargeAllocation*>& largeAllocations() const { return m_largeAllocations; }
     unsigned largeAllocationsNurseryOffset() const { return m_largeAllocationsNurseryOffset; }
     unsigned largeAllocationsOffsetForThisCollection() const { return m_largeAllocationsOffsetForThisCollection; }
@@ -169,13 +178,16 @@ public:
     LargeAllocation** largeAllocationsForThisCollectionEnd() const { return m_largeAllocationsForThisCollectionEnd; }
     unsigned largeAllocationsForThisCollectionSize() const { return m_largeAllocationsForThisCollectionSize; }
     
+    MarkedAllocator* firstAllocator() const { return m_firstAllocator; }
+    MarkedAllocator* allocatorForEmptyAllocation() const { return m_allocatorForEmptyAllocation; }
+    
+    MarkedBlock::Handle* findEmptyBlockToSteal();
+    
     // When this is true it means that we have flipped but the mark bits haven't converged yet.
     bool isMarking() const { return m_isMarking; }
     
-    // FIXME: After https://bugs.webkit.org/show_bug.cgi?id=161581, MarkedSpace will control this
-    // flag directly.
-    void setIsMarking(bool value) { m_isMarking = value; }
-
+    void dumpBits(PrintStream& = WTF::dataFile());
+    
 private:
     friend class LLIntOffsetsExtractor;
     friend class JIT;
@@ -190,8 +202,8 @@ private:
     
     void initializeSubspace(Subspace&);
 
-    template<typename Functor> void forEachAllocator(const Functor&);
-    template<typename Functor> void forEachSubspace(const Functor&);
+    template<typename Functor> inline void forEachAllocator(const Functor&);
+    template<typename Functor> inline void forEachSubspace(const Functor&);
     
     void addActiveWeakSet(WeakSet*);
 
@@ -205,7 +217,6 @@ private:
     bool m_isIterating;
     bool m_isMarking { false };
     MarkedBlockSet m_blocks;
-    Vector<MarkedBlock::Handle*> m_blocksWithNewObjects;
     Vector<LargeAllocation*> m_largeAllocations;
     unsigned m_largeAllocationsNurseryOffset { 0 };
     unsigned m_largeAllocationsOffsetForThisCollection { 0 };
@@ -215,39 +226,10 @@ private:
     unsigned m_largeAllocationsForThisCollectionSize { 0 };
     SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>> m_activeWeakSets;
     SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>> m_newActiveWeakSets;
+    
+    MarkedAllocator* m_firstAllocator { nullptr };
+    MarkedAllocator* m_allocatorForEmptyAllocation { nullptr };
 };
-
-template<typename Functor> inline void MarkedSpace::forEachLiveCell(HeapIterationScope&, const Functor& functor)
-{
-    ASSERT(isIterating());
-    BlockIterator end = m_blocks.set().end();
-    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
-        if ((*it)->handle().forEachLiveCell(functor) == IterationStatus::Done)
-            return;
-    }
-    for (LargeAllocation* allocation : m_largeAllocations) {
-        if (allocation->isLive()) {
-            if (functor(allocation->cell(), allocation->attributes().cellKind) == IterationStatus::Done)
-                return;
-        }
-    }
-}
-
-template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIterationScope&, const Functor& functor)
-{
-    ASSERT(isIterating());
-    BlockIterator end = m_blocks.set().end();
-    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
-        if ((*it)->handle().forEachDeadCell(functor) == IterationStatus::Done)
-            return;
-    }
-    for (LargeAllocation* allocation : m_largeAllocations) {
-        if (!allocation->isLive()) {
-            if (functor(allocation->cell(), allocation->attributes().cellKind) == IterationStatus::Done)
-                return;
-        }
-    }
-}
 
 inline MarkedAllocator* MarkedSpace::allocatorFor(Subspace& space, size_t bytes)
 {
@@ -304,15 +286,10 @@ template <typename Functor> inline void MarkedSpace::forEachBlock(const Functor&
 template <typename Functor>
 void MarkedSpace::forEachAllocator(const Functor& functor)
 {
-    forEachSubspace(
-        [&] (Subspace& subspace, AllocatorAttributes) -> IterationStatus {
-            for (MarkedAllocator* allocator : subspace.bagOfAllocators) {
-                if (functor(*allocator) == IterationStatus::Done)
-                    return IterationStatus::Done;
-            }
-            
-            return IterationStatus::Continue;
-        });
+    for (MarkedAllocator* allocator = m_firstAllocator; allocator; allocator = allocator->nextAllocator()) {
+        if (functor(*allocator) == IterationStatus::Done)
+            return;
+    }
 }
 
 template<typename Functor>

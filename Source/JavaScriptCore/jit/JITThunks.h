@@ -34,10 +34,10 @@
 #include "ThunkGenerator.h"
 #include "Weak.h"
 #include "WeakHandleOwner.h"
-#include "WeakInlines.h"
 #include <tuple>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/text/StringHash.h>
 
 namespace JSC {
 

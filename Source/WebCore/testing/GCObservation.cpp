@@ -27,6 +27,7 @@
 #include "GCObservation.h"
 
 #include <heap/HeapInlines.h>
+#include <heap/WeakInlines.h>
 
 namespace WebCore {
 

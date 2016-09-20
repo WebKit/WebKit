@@ -31,6 +31,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
+#include "MarkedSpaceInlines.h"
 #include "Parser.h"
 #include "Protect.h"
 #include "VMEntryScope.h"

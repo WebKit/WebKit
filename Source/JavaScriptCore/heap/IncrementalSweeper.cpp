@@ -50,7 +50,7 @@ static const double sweepTimeMultiplier = 1.0 / sweepTimeTotal;
 #if USE(CF)
 IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
     : HeapTimer(heap->vm(), runLoop)
-    , m_blocksToSweep(heap->m_blockSnapshot)
+    , m_currentAllocator(nullptr)
 {
 }
 
@@ -66,7 +66,7 @@ void IncrementalSweeper::cancelTimer()
 #elif PLATFORM(EFL)
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : HeapTimer(heap->vm())
-    , m_blocksToSweep(heap->m_blockSnapshot)
+    , m_currentAllocator(nullptr)
 {
 }
 
@@ -86,7 +86,7 @@ void IncrementalSweeper::cancelTimer()
 #elif USE(GLIB)
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : HeapTimer(heap->vm())
-    , m_blocksToSweep(heap->m_blockSnapshot)
+    , m_currentAllocator(nullptr)
 {
 }
 
@@ -121,19 +121,20 @@ void IncrementalSweeper::doSweep(double sweepBeginTime)
         return;
     }
 
-    m_blocksToSweep.clear();
     cancelTimer();
 }
 
 bool IncrementalSweeper::sweepNextBlock()
 {
-    while (!m_blocksToSweep.isEmpty()) {
-        MarkedBlock::Handle* block = m_blocksToSweep.takeLast();
-        block->setIsOnBlocksToSweep(false);
-
-        if (!block->needsSweeping())
-            continue;
-
+    MarkedBlock::Handle* block = nullptr;
+    
+    for (; m_currentAllocator; m_currentAllocator = m_currentAllocator->nextAllocator()) {
+        block = m_currentAllocator->findBlockToSweep();
+        if (block)
+            break;
+    }
+    
+    if (block) {
         DeferGCForAWhile deferGC(m_vm->heap);
         block->sweep();
         m_vm->heap.objectSpace().freeOrShrinkBlock(block);
@@ -146,11 +147,12 @@ bool IncrementalSweeper::sweepNextBlock()
 void IncrementalSweeper::startSweeping()
 {
     scheduleTimer();
+    m_currentAllocator = m_vm->heap.objectSpace().firstAllocator();
 }
 
 void IncrementalSweeper::willFinishSweeping()
 {
-    m_blocksToSweep.clear();
+    m_currentAllocator = nullptr;
     if (m_vm)
         cancelTimer();
 }

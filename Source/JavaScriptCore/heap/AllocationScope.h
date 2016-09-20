@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PrototypeMap_h
-#define PrototypeMap_h
+#pragma once
 
-#include "IndexingType.h"
-#include "JSTypeInfo.h"
-#include "WeakGCMap.h"
-#include <wtf/TriState.h>
+#include "Heap.h"
 
 namespace JSC {
 
-class JSObject;
-class Structure;
-class VM;
-
-// Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
-class PrototypeMap {
+class AllocationScope {
 public:
-    explicit PrototypeMap(VM& vm)
-        : m_prototypes(vm)
-        , m_structures(vm)
+    AllocationScope(Heap& heap)
+        : m_heap(heap)
+        , m_lastOperation(m_heap.m_operationInProgress)
     {
+        ASSERT(m_lastOperation == NoOperation || m_lastOperation == Allocation);
+        m_heap.m_operationInProgress = Allocation;
     }
-
-    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
-    JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSObject*, Structure*);
-    void clearEmptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
-    JS_EXPORT_PRIVATE void addPrototype(JSObject*);
-    inline TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
-
+    
+    ~AllocationScope()
+    {
+        ASSERT(m_heap.m_operationInProgress == Allocation);
+        m_heap.m_operationInProgress = m_lastOperation;
+    }
 private:
-    Structure* createEmptyStructure(JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity);
-
-    WeakGCMap<JSObject*, JSObject> m_prototypes;
-    typedef WeakGCMap<std::pair<JSObject*, std::pair<unsigned, const ClassInfo*>>, Structure> StructureMap;
-    StructureMap m_structures;
+    Heap& m_heap;
+    HeapOperation m_lastOperation;
 };
 
 } // namespace JSC
 
-#endif // PrototypeMap_h

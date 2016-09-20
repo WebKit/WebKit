@@ -42,6 +42,7 @@
 #include "LLIntPCRanges.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
+#include "MarkedSpaceInlines.h"
 #include "PCToCodeOriginMap.h"
 #include "SlotVisitor.h"
 #include "SlotVisitorInlines.h"

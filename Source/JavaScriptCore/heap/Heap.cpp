@@ -45,6 +45,7 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSVirtualMachineInternal.h"
+#include "MarkedSpaceInlines.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
 #include "SuperSampler.h"
@@ -527,11 +528,9 @@ void Heap::beginMarking()
     }
     
     {
-        TimingScope clearMarksTimingScope(*this, "m_objectSpace.clearMarks");
-        m_objectSpace.flip();
+        TimingScope clearMarksTimingScope(*this, "m_objectSpace.beginMarking");
+        m_objectSpace.beginMarking();
     }
-    
-    m_objectSpace.setIsMarking(true);
 }
 
 void Heap::visitExternalRememberedSet()
@@ -780,7 +779,7 @@ void Heap::endMarking()
     ASSERT(m_sharedMarkStack.isEmpty());
     m_weakReferenceHarvesters.removeAll();
     
-    m_objectSpace.setIsMarking(false);
+    m_objectSpace.endMarking();
 }
 
 size_t Heap::objectCount()
@@ -937,10 +936,19 @@ void Heap::collectAllGarbage()
     if (UNLIKELY(Options::useImmortalObjects()))
         sweeper()->willFinishSweeping();
     else {
+        double before = 0;
+        if (Options::logGC()) {
+            dataLog("[Full sweep: ", capacity() / 1024, " kb ");
+            before = currentTimeMS();
+        }
         m_objectSpace.sweep();
         m_objectSpace.shrink();
+        if (Options::logGC()) {
+            double after = currentTimeMS();
+            dataLog("=> ", capacity() / 1024, " kb, ", after - before, " ms]\n");
+        }
     }
-    ASSERT(m_blockSnapshot.isEmpty());
+    m_objectSpace.assertNoUnswept();
 
     sweepAllLogicallyEmptyWeakBlocks();
 }
@@ -1043,7 +1051,7 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     reapWeakHandles();
     pruneStaleEntriesFromWeakGCMaps();
     sweepArrayBuffers();
-    snapshotMarkedSpace();
+    snapshotUnswept();
     finalizeUnconditionalFinalizers();
     removeDeadCompilerWorklistEntries();
     deleteUnmarkedCompiledCode();
@@ -1052,7 +1060,7 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     notifyIncrementalSweeper();
     writeBarrierCurrentlyExecutingCodeBlocks();
 
-    resetAllocators();
+    prepareForAllocation();
     updateAllocationLimits();
     didFinishCollection(gcStartTime);
     resumeCompilerThreads();
@@ -1066,6 +1074,11 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     if (Options::logGC()) {
         double after = currentTimeMS();
         dataLog(after - before, " ms]\n");
+    }
+    
+    if (false) {
+        dataLog("Heap state after GC:\n");
+        m_objectSpace.dumpBits();
     }
 }
 
@@ -1166,44 +1179,10 @@ void Heap::sweepArrayBuffers()
     m_arrayBuffers.sweep();
 }
 
-struct MarkedBlockSnapshotFunctor : public MarkedBlock::VoidFunctor {
-    MarkedBlockSnapshotFunctor(Vector<MarkedBlock::Handle*>& blocks) 
-        : m_index(0) 
-        , m_blocks(blocks)
-    {
-    }
-
-    void operator()(MarkedBlock::Handle* block) const
-    {
-        block->setIsOnBlocksToSweep(true);
-        m_blocks[m_index++] = block;
-    }
-
-    // FIXME: This is a mutable field becaue this isn't a C++ lambda.
-    // https://bugs.webkit.org/show_bug.cgi?id=159644
-    mutable size_t m_index;
-    Vector<MarkedBlock::Handle*>& m_blocks;
-};
-
-void Heap::snapshotMarkedSpace()
+void Heap::snapshotUnswept()
 {
-    TimingScope timingScope(*this, "Heap::snapshotMarkedSpace");
-    // FIXME: This should probably be renamed. It's not actually snapshotting all of MarkedSpace.
-    // This is used by IncrementalSweeper, so it only needs to snapshot blocks. However, if we ever
-    // wanted to add other snapshotting login, we'd probably put it here.
-    
-    if (m_operationInProgress == EdenCollection) {
-        for (MarkedBlock::Handle* handle : m_objectSpace.blocksWithNewObjects()) {
-            if (handle->isOnBlocksToSweep())
-                continue;
-            m_blockSnapshot.append(handle);
-            handle->setIsOnBlocksToSweep(true);
-        }
-    } else {
-        m_blockSnapshot.resizeToFit(m_objectSpace.blocks().set().size());
-        MarkedBlockSnapshotFunctor functor(m_blockSnapshot);
-        m_objectSpace.forEachBlock(functor);
-    }
+    TimingScope timingScope(*this, "Heap::snapshotUnswept");
+    m_objectSpace.snapshotUnswept();
 }
 
 void Heap::deleteSourceProviderCaches()
@@ -1226,9 +1205,9 @@ void Heap::writeBarrierCurrentlyExecutingCodeBlocks()
     m_codeBlocks->writeBarrierCurrentlyExecutingCodeBlocks(this);
 }
 
-void Heap::resetAllocators()
+void Heap::prepareForAllocation()
 {
-    m_objectSpace.resetAllocators();
+    m_objectSpace.prepareForAllocation();
 }
 
 void Heap::updateAllocationLimits()
@@ -1477,7 +1456,7 @@ public:
 void Heap::zombifyDeadObjects()
 {
     // Sweep now because destructors will crash once we're zombified.
-    m_objectSpace.zombifySweep();
+    m_objectSpace.sweep();
     HeapIterationScope iterationScope(*this);
     m_objectSpace.forEachDeadCell(iterationScope, Zombify());
 }

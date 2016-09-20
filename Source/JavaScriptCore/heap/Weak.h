@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,9 @@
 
 #include "JSExportMacros.h"
 #include <cstddef>
+#include <wtf/HashTraits.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/VectorTraits.h>
 
 namespace JSC {
 
@@ -51,33 +53,33 @@ public:
     {
     }
 
-    Weak(T*, WeakHandleOwner* = 0, void* context = 0);
+    inline Weak(T*, WeakHandleOwner* = 0, void* context = 0);
 
     enum HashTableDeletedValueTag { HashTableDeletedValue };
-    bool isHashTableDeletedValue() const;
-    Weak(HashTableDeletedValueTag);
+    inline bool isHashTableDeletedValue() const;
+    inline Weak(HashTableDeletedValueTag);
 
-    Weak(Weak&&);
+    inline Weak(Weak&&);
 
     ~Weak()
     {
         clear();
     }
 
-    void swap(Weak&);
+    inline void swap(Weak&);
 
-    Weak& operator=(Weak&&);
+    inline Weak& operator=(Weak&&);
 
-    bool operator!() const;
-    T* operator->() const;
-    T& operator*() const;
-    T* get() const;
+    inline bool operator!() const;
+    inline T* operator->() const;
+    inline T& operator*() const;
+    inline T* get() const;
 
-    bool was(T*) const;
+    inline bool was(T*) const;
 
-    explicit operator bool() const;
+    inline explicit operator bool() const;
 
-    WeakImpl* leakImpl() WARN_UNUSED_RETURN;
+    inline WeakImpl* leakImpl() WARN_UNUSED_RETURN;
     void clear()
     {
         if (!m_impl)
@@ -86,11 +88,30 @@ public:
     }
     
 private:
-    static WeakImpl* hashTableDeletedValue();
+    static inline WeakImpl* hashTableDeletedValue();
 
     WeakImpl* m_impl;
 };
 
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct VectorTraits<JSC::Weak<T>> : SimpleClassVectorTraits {
+    static const bool canCompareWithMemcmp = false;
+};
+
+template<typename T> struct HashTraits<JSC::Weak<T>> : SimpleClassHashTraits<JSC::Weak<T>> {
+    typedef JSC::Weak<T> StorageType;
+
+    typedef std::nullptr_t EmptyValueType;
+    static EmptyValueType emptyValue() { return nullptr; }
+
+    typedef T* PeekType;
+    static PeekType peek(const StorageType& value) { return value.get(); }
+    static PeekType peek(EmptyValueType) { return PeekType(); }
+};
+
+} // namespace WTF
 
 #endif // Weak_h

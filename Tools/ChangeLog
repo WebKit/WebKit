@@ -1,3 +1,14 @@
+2016-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Make MarkedBlock state tracking support overlapped allocation and marking state
+        https://bugs.webkit.org/show_bug.cgi?id=161581
+
+        Reviewed by Geoffrey Garen.
+        
+        Remove the always-trigger-copy-phase configuration.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-09-20  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WinCairo] Use find_package cairo in build

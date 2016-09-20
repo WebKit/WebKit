@@ -1,3 +1,14 @@
+2016-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Make MarkedBlock state tracking support overlapped allocation and marking state
+        https://bugs.webkit.org/show_bug.cgi?id=161581
+
+        Reviewed by Geoffrey Garen.
+        
+        Add a microbenchmark for why we want to reclaim empty blocks from other allocators.
+
+        * microbenchmarks/switching-size-classes.js: Added.
+
 2016-09-20  Saam Barati  <sbarati@apple.com>
 
         Unreviewed, added test for x86 32-bit failure for HasOwnProperty node in DFG.

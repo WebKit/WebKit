@@ -31,6 +31,7 @@
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
+#include "MarkedSpaceInlines.h"
 #include "StackVisitor.h"
 #include <wtf/DataLog.h>
 #include <wtf/StringPrintStream.h>

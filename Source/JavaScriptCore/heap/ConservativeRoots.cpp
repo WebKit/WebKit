@@ -34,6 +34,7 @@
 #include "JSCell.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
+#include "MarkedBlockInlines.h"
 #include "Structure.h"
 #include <wtf/OSAllocator.h>
 

@@ -113,7 +113,7 @@ void WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& heap
             continue;
 
         const JSValue& jsValue = weakImpl->jsValue();
-        if (container.isMarkedDuringWeakVisiting(version, jsValue.asCell()))
+        if (container.isMarkedConcurrently(version, jsValue.asCell()))
             continue;
         
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor))
@@ -147,17 +147,14 @@ void WeakBlock::reap()
     // If this WeakBlock doesn't belong to a CellContainer, we won't even be here.
     ASSERT(m_container);
     
-    m_container.flipIfNecessary();
-
-    // We only reap after marking.
-    ASSERT(m_container.isMarked());
+    HeapVersion version = m_container.heap()->objectSpace().version();
 
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
         if (weakImpl->state() > WeakImpl::Dead)
             continue;
 
-        if (m_container.isMarked(weakImpl->jsValue().asCell())) {
+        if (m_container.isMarked(version, weakImpl->jsValue().asCell())) {
             ASSERT(weakImpl->state() == WeakImpl::Live);
             continue;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PrototypeMap_h
-#define PrototypeMap_h
+#pragma once
 
-#include "IndexingType.h"
-#include "JSTypeInfo.h"
-#include "WeakGCMap.h"
-#include <wtf/TriState.h>
+#include "PrototypeMap.h"
+#include "WeakGCMapInlines.h"
 
 namespace JSC {
 
-class JSObject;
-class Structure;
-class VM;
+inline TriState PrototypeMap::isPrototype(JSObject* object) const
+{
+    if (!m_prototypes.contains(object))
+        return FalseTriState;
 
-// Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
-class PrototypeMap {
-public:
-    explicit PrototypeMap(VM& vm)
-        : m_prototypes(vm)
-        , m_structures(vm)
-    {
-    }
-
-    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
-    JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSObject*, Structure*);
-    void clearEmptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
-    JS_EXPORT_PRIVATE void addPrototype(JSObject*);
-    inline TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
-
-private:
-    Structure* createEmptyStructure(JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity);
-
-    WeakGCMap<JSObject*, JSObject> m_prototypes;
-    typedef WeakGCMap<std::pair<JSObject*, std::pair<unsigned, const ClassInfo*>>, Structure> StructureMap;
-    StructureMap m_structures;
-};
+    // We know that 'object' was used as a prototype at one time, so be
+    // conservative and say that it might still be so. (It would be expensive
+    // to find out for sure, and we don't know of any cases where being precise
+    // would improve performance.)
+    return MixedTriState;
+}
 
 } // namespace JSC
 
-#endif // PrototypeMap_h

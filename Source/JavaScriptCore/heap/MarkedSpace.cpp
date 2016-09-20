@@ -24,6 +24,7 @@
 #include "IncrementalSweeper.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
+#include "MarkedBlockInlines.h"
 #include "SuperSampler.h"
 #include <wtf/ListDump.h>
 
@@ -195,6 +196,19 @@ MarkedSpace::MarkedSpace(Heap* heap)
             
             return IterationStatus::Continue;
         });
+    
+    MarkedAllocator* previous = nullptr;
+    forEachSubspace(
+        [&] (Subspace& subspace, AllocatorAttributes) -> IterationStatus {
+            for (MarkedAllocator* allocator : subspace.bagOfAllocators) {
+                allocator->setNextAllocator(previous);
+                previous = allocator;
+            }
+            
+            return IterationStatus::Continue;
+        });
+    m_firstAllocator = previous;
+    m_allocatorForEmptyAllocation = previous;
 }
 
 MarkedSpace::~MarkedSpace()
@@ -222,15 +236,19 @@ void MarkedSpace::lastChanceToFinalize()
 
 void* MarkedSpace::allocate(Subspace& subspace, size_t bytes)
 {
-    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes))
-        return allocator->allocate();
+    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
+        void* result = allocator->allocate();
+        return result;
+    }
     return allocateLarge(subspace, bytes);
 }
 
 void* MarkedSpace::tryAllocate(Subspace& subspace, size_t bytes)
 {
-    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes))
-        return allocator->tryAllocate();
+    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
+        void* result = allocator->tryAllocate();
+        return result;
+    }
     return tryAllocateLarge(subspace, bytes);
 }
 
@@ -259,9 +277,10 @@ void* MarkedSpace::tryAllocateLarge(Subspace& subspace, size_t size)
 void MarkedSpace::sweep()
 {
     m_heap->sweeper()->willFinishSweeping();
-    forEachBlock(
-        [&] (MarkedBlock::Handle* block) {
-            block->sweep();
+    forEachAllocator(
+        [&] (MarkedAllocator& allocator) -> IterationStatus {
+            allocator.sweep();
+            return IterationStatus::Continue;
         });
 }
 
@@ -284,33 +303,23 @@ void MarkedSpace::sweepLargeAllocations()
     m_largeAllocationsNurseryOffset = m_largeAllocations.size();
 }
 
-void MarkedSpace::zombifySweep()
-{
-    if (Options::logGC())
-        dataLog("Zombifying sweep...");
-    m_heap->sweeper()->willFinishSweeping();
-    forEachBlock(
-        [&] (MarkedBlock::Handle* block) {
-            if (block->needsSweeping())
-                block->sweep();
-        });
-}
-
-void MarkedSpace::resetAllocators()
+void MarkedSpace::prepareForAllocation()
 {
     forEachAllocator(
         [&] (MarkedAllocator& allocator) -> IterationStatus {
-            allocator.reset();
+            allocator.prepareForAllocation();
             return IterationStatus::Continue;
         });
 
-    m_blocksWithNewObjects.clear();
     m_activeWeakSets.takeFrom(m_newActiveWeakSets);
+    
     if (m_heap->operationInProgress() == EdenCollection)
         m_largeAllocationsNurseryOffsetForSweep = m_largeAllocationsNurseryOffset;
     else
         m_largeAllocationsNurseryOffsetForSweep = 0;
     m_largeAllocationsNurseryOffset = m_largeAllocations.size();
+    
+    m_allocatorForEmptyAllocation = m_firstAllocator;
 }
 
 void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
@@ -410,11 +419,11 @@ void MarkedSpace::freeOrShrinkBlock(MarkedBlock::Handle* block)
 
 void MarkedSpace::shrink()
 {
-    forEachBlock(
-        [&] (MarkedBlock::Handle* block) {
-            freeOrShrinkBlock(block);
+    forEachAllocator(
+        [&] (MarkedAllocator& allocator) -> IterationStatus {
+            allocator.shrink();
+            return IterationStatus::Continue;
         });
-    // For LargeAllocations, we do the moral equivalent in sweepLargeAllocations().
 }
 
 void MarkedSpace::clearNewlyAllocated()
@@ -429,57 +438,61 @@ void MarkedSpace::clearNewlyAllocated()
     for (unsigned i = m_largeAllocationsOffsetForThisCollection; i < m_largeAllocations.size(); ++i)
         m_largeAllocations[i]->clearNewlyAllocated();
 
-#if !ASSERT_DISABLED
-    forEachBlock(
-        [&] (MarkedBlock::Handle* block) {
-            ASSERT(!block->clearNewlyAllocated());
-        });
-
-    for (LargeAllocation* allocation : m_largeAllocations)
-        ASSERT(!allocation->isNewlyAllocated());
-#endif // !ASSERT_DISABLED
+    if (!ASSERT_DISABLED) {
+        forEachBlock(
+            [&] (MarkedBlock::Handle* block) {
+                ASSERT_UNUSED(block, !block->clearNewlyAllocated());
+            });
+        
+        for (LargeAllocation* allocation : m_largeAllocations)
+            ASSERT_UNUSED(allocation, !allocation->isNewlyAllocated());
+    }
 }
 
-#ifndef NDEBUG 
-struct VerifyMarked : MarkedBlock::VoidFunctor { 
-    void operator()(MarkedBlock::Handle* block) const
-    {
-        if (block->needsFlip())
-            return;
-        switch (block->m_state) {
-        case MarkedBlock::Marked:
-            return;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-}; 
-#endif 
-
-void MarkedSpace::flip()
+void MarkedSpace::beginMarking()
 {
-    if (m_heap->operationInProgress() == EdenCollection) {
-        for (unsigned i = 0; i < m_blocksWithNewObjects.size(); ++i)
-            m_blocksWithNewObjects[i]->flipForEdenCollection();
-    } else {
-        HeapVersion nextVersion = m_version + 1;
-        if (UNLIKELY(nextVersion == initialVersion)) {
-            // Oh no! Version wrap-around! We handle this by flipping all blocks. This happens
-            // super rarely, probably never for most users.
+    if (m_heap->operationInProgress() == FullCollection) {
+        forEachAllocator(
+            [&] (MarkedAllocator& allocator) -> IterationStatus {
+                allocator.beginMarkingForFullCollection();
+                return IterationStatus::Continue;
+            });
+
+        m_version = nextVersion(m_version);
+        
+        if (UNLIKELY(m_version == initialVersion)) {
+            // Oh no! Version wrap-around! We handle this by setting all block versions to null.
             forEachBlock(
                 [&] (MarkedBlock::Handle* handle) {
-                    handle->flipIfNecessary();
+                    handle->block().resetVersion();
                 });
         }
-        m_version = nextVersion; // Henceforth, flipIfNecessary() will trigger on all blocks.
+        
         for (LargeAllocation* allocation : m_largeAllocations)
             allocation->flip();
     }
 
-#ifndef NDEBUG
-    VerifyMarked verifyFunctor;
-    forEachBlock(verifyFunctor);
-#endif
+    if (!ASSERT_DISABLED) {
+        forEachBlock(
+            [&] (MarkedBlock::Handle* block) {
+                if (block->needsFlip())
+                    return;
+                ASSERT(!block->isFreeListed());
+            });
+    }
+    
+    m_isMarking = true;
+}
+
+void MarkedSpace::endMarking()
+{
+    forEachAllocator(
+        [&] (MarkedAllocator& allocator) -> IterationStatus {
+            allocator.endMarking();
+            return IterationStatus::Continue;
+        });
+    
+    m_isMarking = false;
 }
 
 void MarkedSpace::willStartIterating()
@@ -540,19 +553,66 @@ void MarkedSpace::addActiveWeakSet(WeakSet* weakSet)
 
 void MarkedSpace::didAddBlock(MarkedBlock::Handle* block)
 {
+    // WARNING: This function is called before block is fully initialized. The block will not know
+    // its cellSize() or attributes(). The latter implies that you can't ask things like
+    // needsDestruction().
     m_capacity += MarkedBlock::blockSize;
     m_blocks.add(&block->block());
 }
 
 void MarkedSpace::didAllocateInBlock(MarkedBlock::Handle* block)
 {
-    block->assertFlipped();
-    m_blocksWithNewObjects.append(block);
-    
     if (block->weakSet().isOnList()) {
         block->weakSet().remove();
         m_newActiveWeakSets.append(&block->weakSet());
     }
+}
+
+MarkedBlock::Handle* MarkedSpace::findEmptyBlockToSteal()
+{
+    for (; m_allocatorForEmptyAllocation; m_allocatorForEmptyAllocation = m_allocatorForEmptyAllocation->nextAllocator()) {
+        if (MarkedBlock::Handle* block = m_allocatorForEmptyAllocation->findEmptyBlockToSteal())
+            return block;
+    }
+    return nullptr;
+}
+
+void MarkedSpace::snapshotUnswept()
+{
+    if (m_heap->operationInProgress() == EdenCollection) {
+        forEachAllocator(
+            [&] (MarkedAllocator& allocator) -> IterationStatus {
+                allocator.snapshotUnsweptForEdenCollection();
+                return IterationStatus::Continue;
+            });
+    } else {
+        forEachAllocator(
+            [&] (MarkedAllocator& allocator) -> IterationStatus {
+                allocator.snapshotUnsweptForFullCollection();
+                return IterationStatus::Continue;
+            });
+    }
+}
+
+void MarkedSpace::assertNoUnswept()
+{
+    if (ASSERT_DISABLED)
+        return;
+    forEachAllocator(
+        [&] (MarkedAllocator& allocator) -> IterationStatus {
+            allocator.assertNoUnswept();
+            return IterationStatus::Continue;
+        });
+}
+
+void MarkedSpace::dumpBits(PrintStream& out)
+{
+    forEachAllocator(
+        [&] (MarkedAllocator& allocator) -> IterationStatus {
+            out.print("Bits for ", allocator, ":\n");
+            allocator.dumpBits(out);
+            return IterationStatus::Continue;
+        });
 }
 
 } // namespace JSC

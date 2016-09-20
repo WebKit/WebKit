@@ -84,9 +84,8 @@ public:
             if (!filter.ruleOut(bitwise_cast<Bits>(previousCandidate))
                 && set.contains(previousCandidate)
                 && previousCandidate->handle().cellKind() == HeapCell::Auxiliary) {
-                previousCandidate->flipIfNecessary(heapVersion);
                 previousPointer = static_cast<char*>(previousCandidate->handle().cellAlign(previousPointer));
-                if (previousCandidate->handle().isLiveCell(previousPointer))
+                if (previousCandidate->handle().isLiveCell(heapVersion, previousPointer))
                     func(previousPointer);
             }
         }
@@ -99,10 +98,8 @@ public:
         if (!set.contains(candidate))
             return;
         
-        candidate->flipIfNecessary(heapVersion);
-
         auto tryPointer = [&] (void* pointer) {
-            if (candidate->handle().isLiveCell(pointer))
+            if (candidate->handle().isLiveCell(heapVersion, pointer))
                 func(pointer);
         };
     
@@ -170,7 +167,6 @@ public:
         if (candidate->handle().cellKind() != HeapCell::JSCell)
             return false;
         
-        candidate->flipIfNecessary();
         if (!candidate->handle().isLiveCell(pointer))
             return false;
         

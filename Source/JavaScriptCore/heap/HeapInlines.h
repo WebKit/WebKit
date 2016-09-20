@@ -81,9 +81,8 @@ ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isMarked();
     MarkedBlock& block = cell->markedBlock();
-    if (block.needsFlip(block.vm()->heap.objectSpace().version()))
-        return false;
-    return block.isMarked(cell);
+    return block.isMarked(
+        block.vm()->heap.objectSpace().version(), cell);
 }
 
 ALWAYS_INLINE bool Heap::isMarkedConcurrently(const void* rawCell)
@@ -92,10 +91,8 @@ ALWAYS_INLINE bool Heap::isMarkedConcurrently(const void* rawCell)
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isMarked();
     MarkedBlock& block = cell->markedBlock();
-    if (block.needsFlip(block.vm()->heap.objectSpace().version()))
-        return false;
-    WTF::loadLoadFence();
-    return block.isMarked(cell);
+    return block.isMarkedConcurrently(
+        block.vm()->heap.objectSpace().version(), cell);
 }
 
 ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion version, const void* rawCell)
@@ -104,7 +101,7 @@ ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion version, const void* rawCe
     if (cell->isLargeAllocation())
         return cell->largeAllocation().testAndSetMarked();
     MarkedBlock& block = cell->markedBlock();
-    block.flipIfNecessaryDuringMarking(version);
+    block.aboutToMark(version);
     return block.testAndSetMarked(cell);
 }
 

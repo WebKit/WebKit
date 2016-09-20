@@ -29,14 +29,20 @@
 #include "JSCell.h"
 #include "LargeAllocation.h"
 #include "MarkedBlock.h"
+#include "VM.h"
 
 namespace JSC {
 
-inline bool CellContainer::isMarked() const
+inline VM* CellContainer::vm() const
 {
     if (isLargeAllocation())
-        return true;
-    return markedBlock().handle().isMarked();
+        return largeAllocation().vm();
+    return markedBlock().vm();
+}
+
+inline Heap* CellContainer::heap() const
+{
+    return &vm()->heap;
 }
 
 inline bool CellContainer::isMarked(HeapCell* cell) const
@@ -46,11 +52,25 @@ inline bool CellContainer::isMarked(HeapCell* cell) const
     return markedBlock().isMarked(cell);
 }
 
+inline bool CellContainer::isMarked(HeapVersion version, HeapCell* cell) const
+{
+    if (isLargeAllocation())
+        return largeAllocation().isMarked();
+    return markedBlock().isMarked(version, cell);
+}
+
 inline bool CellContainer::isMarkedOrNewlyAllocated(HeapCell* cell) const
 {
     if (isLargeAllocation())
         return largeAllocation().isMarkedOrNewlyAllocated();
     return markedBlock().isMarkedOrNewlyAllocated(cell);
+}
+
+inline bool CellContainer::isMarkedOrNewlyAllocated(HeapVersion version, HeapCell* cell) const
+{
+    if (isLargeAllocation())
+        return largeAllocation().isMarkedOrNewlyAllocated();
+    return markedBlock().isMarkedOrNewlyAllocated(version, cell);
 }
 
 inline void CellContainer::noteMarked()
@@ -73,16 +93,10 @@ inline WeakSet& CellContainer::weakSet() const
     return markedBlock().weakSet();
 }
 
-inline void CellContainer::flipIfNecessary(HeapVersion heapVersion)
+inline void CellContainer::aboutToMark(HeapVersion heapVersion)
 {
     if (!isLargeAllocation())
-        markedBlock().flipIfNecessary(heapVersion);
-}
-
-inline void CellContainer::flipIfNecessary()
-{
-    if (!isLargeAllocation())
-        markedBlock().flipIfNecessary();
+        markedBlock().aboutToMark(heapVersion);
 }
 
 inline bool CellContainer::needsFlip() const

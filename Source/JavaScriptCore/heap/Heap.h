@@ -49,6 +49,7 @@
 
 namespace JSC {
 
+class AllocationScope;
 class CodeBlock;
 class CodeBlockSet;
 class EdenGCActivityCallback;
@@ -255,6 +256,7 @@ public:
     void didFreeBlock(size_t capacity);
 
 private:
+    friend class AllocationScope;
     friend class CodeBlock;
     friend class DeferGC;
     friend class DeferGCForAWhile;
@@ -327,11 +329,11 @@ private:
     void reapWeakHandles();
     void pruneStaleEntriesFromWeakGCMaps();
     void sweepArrayBuffers();
-    void snapshotMarkedSpace();
+    void snapshotUnswept();
     void deleteSourceProviderCaches();
     void notifyIncrementalSweeper();
     void writeBarrierCurrentlyExecutingCodeBlocks();
-    void resetAllocators();
+    void prepareForAllocation();
     void harvestWeakReferences();
     void finalizeUnconditionalFinalizers();
     void clearUnmarkedExecutables();
@@ -422,7 +424,6 @@ private:
     RefPtr<FullGCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
     std::unique_ptr<IncrementalSweeper> m_sweeper;
-    Vector<MarkedBlock::Handle*> m_blockSnapshot;
 
     Vector<HeapObserver*> m_observers;
 

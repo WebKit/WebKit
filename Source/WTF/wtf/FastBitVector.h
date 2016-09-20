@@ -26,6 +26,7 @@
 #pragma once
 
 #include <string.h>
+#include <wtf/Atomics.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
@@ -91,17 +92,12 @@ public:
     
     FastBitVectorWordOwner& operator=(const FastBitVectorWordOwner& other)
     {
-        size_t length = other.arrayLength();
-        if (length == arrayLength()) {
-            memcpy(m_words, other.m_words, length * sizeof(uint32_t));
-            return *this;
+        if (arrayLength() != other.arrayLength())
+            setEqualsSlow(other);
+        else {
+            memcpy(m_words, other.m_words, arrayLength() * sizeof(uint32_t));
+            m_numBits = other.m_numBits;
         }
-        uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(length, sizeof(uint32_t)));
-        memcpy(newArray, other.m_words, length * sizeof(uint32_t));
-        if (m_words)
-            fastFree(m_words);
-        m_words = newArray;
-        m_numBits = other.m_numBits;
         return *this;
     }
     
@@ -140,18 +136,8 @@ public:
     
     void resize(size_t numBits)
     {
-        if (numBits == m_numBits)
-            return;
-        
-        // Use fastCalloc instead of fastRealloc because we expect the common
-        // use case for this method to be initializing the size of the bitvector.
-        
-        size_t newLength = fastBitVectorArrayLength(numBits);
-        uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(newLength, sizeof(uint32_t)));
-        memcpy(newArray, m_words, arrayLength() * sizeof(uint32_t));
-        if (m_words)
-            fastFree(m_words);
-        m_words = newArray;
+        if (arrayLength() != fastBitVectorArrayLength(numBits))
+            resizeSlow(numBits);
         m_numBits = numBits;
     }
     
@@ -171,6 +157,9 @@ public:
     uint32_t* words() { return m_words; }
 
 private:
+    WTF_EXPORT_PRIVATE void setEqualsSlow(const FastBitVectorWordOwner& other);
+    WTF_EXPORT_PRIVATE void resizeSlow(size_t numBits);
+    
     uint32_t* m_words { nullptr };
     size_t m_numBits { 0 };
 };
@@ -320,6 +309,15 @@ public:
         return result;
     }
     
+    bool isEmpty() const
+    {
+        for (size_t index = arrayLength(); index--;) {
+            if (m_words.word(index))
+                return false;
+        }
+        return true;
+    }
+    
     template<typename OtherWords>
     FastBitVectorImpl<FastBitVectorAndWords<typename Words::ViewType, typename OtherWords::ViewType>> operator&(const FastBitVectorImpl<OtherWords>& other) const
     {
@@ -380,7 +378,7 @@ public:
         // written this way so that it performs well regardless of whether value is a constant.
         uint32_t skipValue = -(static_cast<uint32_t>(value) ^ 1);
         
-        size_t numWords = m_words.arrayLength();
+        size_t numWords = fastBitVectorArrayLength(m_words.numBits());
         
         size_t wordIndex = startIndex / 32;
         size_t startIndexInWord = startIndex - wordIndex * 32;
@@ -471,6 +469,7 @@ public:
         m_words.clearAll();
     }
 
+    // Returns true if the contents of this bitvector changed.
     template<typename OtherWords>
     bool setAndCheck(const FastBitVectorImpl<OtherWords>& other)
     {
@@ -549,6 +548,28 @@ public:
     BitReference operator[](size_t index)
     {
         return at(index);
+    }
+    
+    // Returns true if the contents changed.
+    ALWAYS_INLINE bool atomicSetAndCheck(size_t index, bool value)
+    {
+        uint32_t* pointer = &m_words.word(index >> 5);
+        uint32_t mask = 1 << (index & 31);
+        for (;;) {
+            uint32_t oldValue = *pointer;
+            uint32_t newValue;
+            if (value) {
+                if (oldValue & mask)
+                    return false;
+                newValue = oldValue | mask;
+            } else {
+                if (!(oldValue & mask))
+                    return false;
+                newValue = oldValue & ~mask;
+            }
+            if (weakCompareAndSwap(pointer, oldValue, newValue))
+                return true;
+        }
     }
 };
 

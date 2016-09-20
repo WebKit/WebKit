@@ -187,6 +187,7 @@ typedef const char* optionString;
     v(unsigned, largeAllocationCutoff, 100000, Normal, nullptr) \
     v(bool, dumpSizeClasses, false, Normal, nullptr) \
     v(bool, useBumpAllocator, true, Normal, nullptr) \
+    v(bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \
     v(bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
     \
     v(bool, useOSREntryToDFG, true, Normal, nullptr) \
@@ -302,7 +303,6 @@ typedef const char* optionString;
     v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(7), Normal, nullptr) \
     v(unsigned, opaqueRootMergeThreshold, 1000, Normal, nullptr) \
     v(double, minHeapUtilization, 0.8, Normal, nullptr) \
-    v(double, minCopiedBlockUtilization, 0.9, Normal, nullptr) \
     v(double, minMarkedBlockUtilization, 0.9, Normal, nullptr) \
     v(unsigned, slowPathAllocsBetweenGCs, 0, Normal, "force a GC on every Nth slow path alloc, where N is specified by this option") \
     v(bool, deferGCShouldCollectWithProbability, false, Normal, "If true, we perform a collection based on flipping a coin according the probability in the 'deferGCProbability' option when DeferGC is destructed.") \

@@ -26,10 +26,12 @@
 #include "config.h"
 #include "MarkedAllocator.h"
 
+#include "AllocationScope.h"
 #include "GCActivityCallback.h"
 #include "Heap.h"
 #include "IncrementalSweeper.h"
 #include "JSCInlines.h"
+#include "MarkedBlockInlines.h"
 #include "SuperSampler.h"
 #include "VM.h"
 #include <wtf/CurrentTime.h>
@@ -39,7 +41,6 @@ namespace JSC {
 MarkedAllocator::MarkedAllocator(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, const AllocatorAttributes& attributes)
     : m_currentBlock(0)
     , m_lastActiveBlock(0)
-    , m_nextBlockToSweep(nullptr)
     , m_cellSize(static_cast<unsigned>(cellSize))
     , m_attributes(attributes)
     , m_heap(heap)
@@ -50,11 +51,13 @@ MarkedAllocator::MarkedAllocator(Heap* heap, MarkedSpace* markedSpace, size_t ce
 bool MarkedAllocator::isPagedOut(double deadline)
 {
     unsigned itersSinceLastTimeCheck = 0;
-    MarkedBlock::Handle* block = m_blockList.begin();
-    while (block) {
-        block = filterNextBlock(block->next());
-        if (block)
-            block->flipIfNecessary(); // Forces us to touch the memory of the block, but has no semantic effect.
+    for (size_t index = 0; index < m_blocks.size(); ++index) {
+        MarkedBlock::Handle* block = m_blocks[index];
+        if (block) {
+            // Forces us to touch the memory of the block, but has no semantic effect.
+            if (block->needsFlip())
+                block->block().resetVersion();
+        }
         ++itersSinceLastTimeCheck;
         if (itersSinceLastTimeCheck >= Heap::s_timeCheckResolution) {
             double currentTime = WTF::monotonicallyIncreasingTime();
@@ -66,84 +69,96 @@ bool MarkedAllocator::isPagedOut(double deadline)
     return false;
 }
 
-void MarkedAllocator::retire(MarkedBlock::Handle* block)
+bool MarkedAllocator::shouldStealEmptyBlocksFromOtherAllocators() const
 {
-    LockHolder locker(m_lock); // This will be called in parallel during GC.
-    if (block == m_currentBlock) {
-        // This happens when the mutator is running. We finished a full GC and marked too few things
-        // to retire. Then we started allocating in this block. Then a barrier ran, which marked an
-        // object in this block, which put it over the retirement threshold. It's OK to simply do
-        // nothing in that case.
-        return;
-    }
-    if (block == m_lastActiveBlock) {
-        // This can easily happen during marking. It would be easy to handle this case, but it's
-        // just as easy to ignore it.
-        return;
-    }
-    RELEASE_ASSERT(block->isOnList());
-    if (block == m_nextBlockToSweep)
-        m_nextBlockToSweep = filterNextBlock(block->next());
-    block->remove();
-    m_retiredBlocks.push(block);
+    return !needsDestruction();
 }
 
-MarkedBlock::Handle* MarkedAllocator::filterNextBlock(MarkedBlock::Handle* block)
+MarkedBlock::Handle* MarkedAllocator::findEmptyBlockToSteal()
 {
-    if (block == m_blockList.end())
+    // Don't allow others to steal from us, if we wouldn't steal from others.
+    if (!shouldStealEmptyBlocksFromOtherAllocators())
         return nullptr;
-    return block;
+    
+    m_emptyCursor = m_empty.findBit(m_emptyCursor, true);
+    if (m_emptyCursor >= m_blocks.size())
+        return nullptr;
+    return m_blocks[m_emptyCursor];
 }
 
-void MarkedAllocator::setNextBlockToSweep(MarkedBlock::Handle* block)
+void MarkedAllocator::didConsumeFreeList()
 {
-    m_nextBlockToSweep = filterNextBlock(block);
+    if (m_currentBlock)
+        m_currentBlock->didConsumeFreeList();
+    
+    setFreeList(FreeList());
+    m_currentBlock = nullptr;
 }
 
-void* MarkedAllocator::tryAllocateWithoutCollectingImpl()
+void* MarkedAllocator::tryAllocateWithoutCollecting()
 {
     SuperSamplerScope superSamplerScope(false);
     
-    if (m_currentBlock) {
-        ASSERT(m_currentBlock == m_nextBlockToSweep);
-        m_currentBlock->didConsumeFreeList();
-        setNextBlockToSweep(m_currentBlock->next());
+    ASSERT(!m_currentBlock);
+    ASSERT(!m_freeList);
+    
+    for (;;) {
+        m_allocationCursor = (m_canAllocateButNotEmpty | m_empty).findBit(m_allocationCursor, true);
+        if (m_allocationCursor >= m_blocks.size())
+            break;
+        
+        setIsCanAllocateButNotEmpty(m_allocationCursor, false);
+
+        if (void* result = tryAllocateIn(m_blocks[m_allocationCursor]))
+            return result;
     }
     
-    setFreeList(FreeList());
-
-    RELEASE_ASSERT(m_nextBlockToSweep != m_blockList.end());
-
-    MarkedBlock::Handle* next;
-    for (MarkedBlock::Handle*& block = m_nextBlockToSweep; block; block = next) {
-        next = filterNextBlock(block->next());
-
-        // It would be super weird if the blocks we are sweeping have anything allocated during this
-        // cycle.
-        ASSERT(!block->hasAnyNewlyAllocated());
-        
-        FreeList freeList = block->sweep(MarkedBlock::Handle::SweepToFreeList);
-        
-        // It's possible to stumble on a complete-full block. Marking tries to retire these, but
-        // that algorithm is racy and may forget to do it sometimes.
-        if (freeList.allocationWillFail()) {
-            ASSERT(block->isFreeListed());
-            block->unsweepWithNoNewlyAllocated();
-            ASSERT(block->isMarked());
-            retire(block);
-            continue;
+    if (Options::stealEmptyBlocksFromOtherAllocators()
+        && shouldStealEmptyBlocksFromOtherAllocators()) {
+        if (MarkedBlock::Handle* block = m_markedSpace->findEmptyBlockToSteal()) {
+            block->sweep();
+            
+            // It's good that this clears canAllocateButNotEmpty as well as all other bits,
+            // because there is a remote chance that a block may have both canAllocateButNotEmpty
+            // and empty set at the same time.
+            block->removeFromAllocator();
+            addBlock(block);
+            return allocateIn(block);
         }
-
-        m_currentBlock = block;
-        setFreeList(freeList);
-        break;
     }
     
-    if (!m_freeList) {
-        m_currentBlock = 0;
-        return 0;
-    }
+    return nullptr;
+}
 
+void* MarkedAllocator::allocateIn(MarkedBlock::Handle* block)
+{
+    void* result = tryAllocateIn(block);
+    RELEASE_ASSERT(result);
+    return result;
+}
+
+void* MarkedAllocator::tryAllocateIn(MarkedBlock::Handle* block)
+{
+    ASSERT(block);
+    ASSERT(!block->hasAnyNewlyAllocated());
+    ASSERT(!block->isFreeListed());
+    
+    FreeList freeList = block->sweep(MarkedBlock::Handle::SweepToFreeList);
+    
+    // It's possible to stumble on a completely full block. Marking tries to retire these, but
+    // that algorithm is racy and may forget to do it sometimes.
+    if (freeList.allocationWillFail()) {
+        ASSERT(block->isFreeListed());
+        block->unsweepWithNoNewlyAllocated();
+        ASSERT(!block->isFreeListed());
+        ASSERT(!isEmpty(block));
+        ASSERT(!isCanAllocateButNotEmpty(block));
+        return nullptr;
+    }
+    
+    m_currentBlock = block;
+    setFreeList(freeList);
+    
     void* result;
     if (m_freeList.remaining) {
         unsigned cellSize = m_cellSize;
@@ -155,18 +170,8 @@ void* MarkedAllocator::tryAllocateWithoutCollectingImpl()
         result = head;
     }
     RELEASE_ASSERT(result);
+    setIsEden(m_currentBlock, true);
     m_markedSpace->didAllocateInBlock(m_currentBlock);
-    return result;
-}
-
-inline void* MarkedAllocator::tryAllocateWithoutCollecting()
-{
-    ASSERT(!m_heap->isBusy());
-    m_heap->m_operationInProgress = Allocation;
-    void* result = tryAllocateWithoutCollectingImpl();
-
-    m_heap->m_operationInProgress = NoOperation;
-    ASSERT(result || !m_currentBlock);
     return result;
 }
 
@@ -206,18 +211,16 @@ void* MarkedAllocator::allocateSlowCaseImpl(bool crashOnFailure)
     ASSERT(!m_markedSpace->isIterating());
     m_heap->didAllocate(m_freeList.originalSize);
     
+    didConsumeFreeList();
+    
+    m_heap->collectIfNecessaryOrDefer();
+    
+    AllocationScope allocationScope(*m_heap);
+
     void* result = tryAllocateWithoutCollecting();
     
     if (LIKELY(result != 0))
         return result;
-    
-    if (m_heap->collectIfNecessaryOrDefer()) {
-        result = tryAllocateWithoutCollecting();
-        if (result)
-            return result;
-    }
-
-    ASSERT(!m_heap->shouldCollect());
     
     MarkedBlock::Handle* block = tryAllocateBlock();
     if (!block) {
@@ -227,8 +230,7 @@ void* MarkedAllocator::allocateSlowCaseImpl(bool crashOnFailure)
             return nullptr;
     }
     addBlock(block);
-        
-    result = tryAllocateWithoutCollecting();
+    result = allocateIn(block);
     ASSERT(result);
     return result;
 }
@@ -249,37 +251,75 @@ size_t MarkedAllocator::blockSizeForBytes(size_t bytes)
 MarkedBlock::Handle* MarkedAllocator::tryAllocateBlock()
 {
     SuperSamplerScope superSamplerScope(false);
-    return MarkedBlock::tryCreate(*m_heap, this, m_cellSize, m_attributes);
+    
+    MarkedBlock::Handle* handle = MarkedBlock::tryCreate(*m_heap);
+    if (!handle)
+        return nullptr;
+    
+    m_markedSpace->didAddBlock(handle);
+    
+    return handle;
 }
 
 void MarkedAllocator::addBlock(MarkedBlock::Handle* block)
 {
-    ASSERT(!m_currentBlock);
-    ASSERT(!m_freeList);
+    size_t index;
+    if (m_freeBlockIndices.isEmpty()) {
+        index = m_blocks.size();
+
+        size_t oldCapacity = m_blocks.capacity();
+        m_blocks.append(block);
+        if (m_blocks.capacity() != oldCapacity) {
+            forEachBitVector(
+                [&] (FastBitVector& vector) {
+                    ASSERT_UNUSED(vector, vector.numBits() == oldCapacity);
+                });
+            
+            ASSERT(m_blocks.capacity() > oldCapacity);
+            
+            forEachBitVector(
+                [&] (FastBitVector& vector) {
+                    vector.resize(m_blocks.capacity());
+                });
+        }
+    } else {
+        index = m_freeBlockIndices.takeLast();
+        ASSERT(!m_blocks[index]);
+        m_blocks[index] = block;
+    }
     
-    m_blockList.append(block);
-    setNextBlockToSweep(block);
-    m_markedSpace->didAddBlock(block);
+    forEachBitVector(
+        [&] (FastBitVector& vector) {
+            ASSERT_UNUSED(vector, !vector[index]);
+        });
+
+    // This is the point at which the block learns of its cellSize() and attributes().
+    block->didAddToAllocator(this, index);
+    
+    setIsLive(index, true);
+    setIsEmpty(index, true);
 }
 
 void MarkedAllocator::removeBlock(MarkedBlock::Handle* block)
 {
-    if (m_currentBlock == block) {
-        m_currentBlock = filterNextBlock(m_currentBlock->next());
-        setFreeList(FreeList());
-    }
-    if (m_nextBlockToSweep == block)
-        setNextBlockToSweep(m_nextBlockToSweep->next());
+    ASSERT(block->allocator() == this);
+    ASSERT(m_blocks[block->index()] == block);
 
-    block->willRemoveBlock();
-    m_blockList.remove(block);
+    m_blocks[block->index()] = nullptr;
+    m_freeBlockIndices.append(block->index());
+    
+    forEachBitVector(
+        [&] (FastBitVector& vector) {
+            vector[block->index()] = false;
+        });
+    
+    block->didRemoveFromAllocator();
 }
 
 void MarkedAllocator::stopAllocating()
 {
-    if (m_heap->operationInProgress() == FullCollection)
-        m_blockList.takeFrom(m_retiredBlocks);
-
+    if (false)
+        dataLog(RawPointer(this), ": MarkedAllocator::stopAllocating!\n");
     ASSERT(!m_lastActiveBlock);
     if (!m_currentBlock) {
         ASSERT(!m_freeList);
@@ -292,29 +332,27 @@ void MarkedAllocator::stopAllocating()
     m_freeList = FreeList();
 }
 
-void MarkedAllocator::reset()
+void MarkedAllocator::prepareForAllocation()
 {
-    m_lastActiveBlock = 0;
-    m_currentBlock = 0;
+    m_lastActiveBlock = nullptr;
+    m_currentBlock = nullptr;
     setFreeList(FreeList());
 
-    setNextBlockToSweep(m_blockList.begin());
+    m_allocationCursor = 0;
+    m_emptyCursor = 0;
+    m_unsweptCursor = 0;
+    
+    m_eden.clearAll();
 
     if (UNLIKELY(Options::useImmortalObjects())) {
-        MarkedBlock::Handle* next;
-        for (MarkedBlock::Handle*& block = m_nextBlockToSweep; block; block = next) {
-            next = filterNextBlock(block->next());
-
-            FreeList freeList = block->sweep(MarkedBlock::Handle::SweepToFreeList);
-            block->zap(freeList);
-            retire(block);
-        }
+        // FIXME: Make this work again.
+        // https://bugs.webkit.org/show_bug.cgi?id=162296
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
 void MarkedAllocator::lastChanceToFinalize()
 {
-    m_blockList.takeFrom(m_retiredBlocks);
     forEachBlock(
         [&] (MarkedBlock::Handle* block) {
             block->lastChanceToFinalize();
@@ -326,4 +364,121 @@ void MarkedAllocator::setFreeList(const FreeList& freeList)
     m_freeList = freeList;
 }
 
+void MarkedAllocator::resumeAllocating()
+{
+    if (!m_lastActiveBlock)
+        return;
+
+    m_freeList = m_lastActiveBlock->resumeAllocating();
+    m_currentBlock = m_lastActiveBlock;
+    m_lastActiveBlock = nullptr;
+}
+
+void MarkedAllocator::beginMarkingForFullCollection()
+{
+    // Mark bits are sticky and so is our summary of mark bits. We only clear these during full
+    // collections, so if you survived the last collection you will survive the next one so long
+    // as the next one is eden.
+    m_markingNotEmpty.clearAll();
+    m_markingRetired.clearAll();
+}
+
+void MarkedAllocator::endMarking()
+{
+    m_allocated.clearAll();
+    
+    // It's surprising and frustrating to comprehend, but the end-of-marking flip does not need to
+    // know what kind of collection it is. That knowledge is already encoded in the m_markingXYZ
+    // vectors.
+    
+    if (needsDestruction()) {
+        // If blocks need destruction then nothing is empty! This is a correct assertion but may
+        // become wrong once we go full concurrent: when we create a new block, it will flicker
+        // into the empty set for a tiny moment. On the other hand, this code is likely to be run
+        // in stopTheWorld.
+        ASSERT(m_empty.isEmpty());
+        m_canAllocateButNotEmpty = m_live & ~m_markingRetired;
+        return;
+    }
+    
+    m_empty = m_live & ~m_markingNotEmpty;
+    m_canAllocateButNotEmpty = m_live & m_markingNotEmpty & ~m_markingRetired;
+    
+    if (false) {
+        dataLog("Bits for ", m_cellSize, ", ", m_attributes, " after endMarking:\n");
+        dumpBits(WTF::dataFile());
+    }
+}
+
+void MarkedAllocator::snapshotUnsweptForEdenCollection()
+{
+    m_unswept |= m_eden;
+}
+
+void MarkedAllocator::snapshotUnsweptForFullCollection()
+{
+    m_unswept = m_live;
+}
+
+MarkedBlock::Handle* MarkedAllocator::findBlockToSweep()
+{
+    m_unsweptCursor = m_unswept.findBit(m_unsweptCursor, true);
+    if (m_unsweptCursor >= m_blocks.size())
+        return nullptr;
+    return m_blocks[m_unsweptCursor];
+}
+
+void MarkedAllocator::sweep()
+{
+    m_unswept.forEachSetBit(
+        [&] (size_t index) {
+            m_blocks[index]->sweep();
+        });
+}
+
+void MarkedAllocator::shrink()
+{
+    m_empty.forEachSetBit(
+        [&] (size_t index) {
+            m_markedSpace->freeBlock(m_blocks[index]);
+        });
+}
+
+void MarkedAllocator::assertNoUnswept()
+{
+    if (ASSERT_DISABLED)
+        return;
+    
+    if (m_unswept.isEmpty())
+        return;
+    
+    dataLog("Assertion failed: unswept not empty in ", *this, ".\n");
+    dumpBits();
+    ASSERT_NOT_REACHED();
+}
+
+void MarkedAllocator::dump(PrintStream& out) const
+{
+    out.print(RawPointer(this), ":", m_cellSize, "/", m_attributes);
+}
+
+void MarkedAllocator::dumpBits(PrintStream& out)
+{
+    unsigned maxNameLength = 0;
+    forEachBitVectorWithName(
+        [&] (FastBitVector&, const char* name) {
+            unsigned length = strlen(name);
+            maxNameLength = std::max(maxNameLength, length);
+        });
+    
+    forEachBitVectorWithName(
+        [&] (FastBitVector& vector, const char* name) {
+            out.print("    ", name, ": ");
+            for (unsigned i = maxNameLength - strlen(name); i--;)
+                out.print(" ");
+            out.print(vector, "\n");
+        });
+}
+
 } // namespace JSC
+

@@ -1,3 +1,26 @@
+2016-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Make MarkedBlock state tracking support overlapped allocation and marking state
+        https://bugs.webkit.org/show_bug.cgi?id=161581
+
+        Reviewed by Geoffrey Garen.
+        
+        The main change here is to bring back FastBitVector.cpp, so that I could outline some
+        large slow path functions. This also adds some utilities, like atomicSetAndCheck() and
+        isEmpty(). The GC uses these.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FastBitVector.cpp: Added.
+        (WTF::FastBitVectorWordOwner::setEqualsSlow):
+        (WTF::FastBitVectorWordOwner::resizeSlow):
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVectorWordOwner::operator=):
+        (WTF::FastBitVectorWordOwner::resize):
+        (WTF::FastBitVectorImpl::isEmpty):
+        (WTF::FastBitVector::atomicSetAndCheck):
+        (WTF::FastBitVector::operator[]): Deleted.
+
 2016-09-20  Jonathan Bedard  <jbedard@apple.com>
 
         Undefined behavior: Left shift negative number

@@ -869,10 +869,6 @@ def runFTLEagerNoCJITOSRValidation
     run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
-def runAlwaysTriggerCopyPhase
-    run("always-trigger-copy-phase", "--minHeapUtilization=2.0", "--minCopiedBlockUtilization=2.0")
-end
-
 def runNoCJITNoASO
     run("no-cjit-no-aso", "--useArchitectureSpecificOptimizations=false", *NO_CJIT_OPTIONS)
 end
@@ -910,7 +906,6 @@ def defaultRun
         defaultQuickRun
     else
         runDefault
-        runAlwaysTriggerCopyPhase
         if $jitTests
             runNoLLInt
             runNoCJITValidatePhases
@@ -936,7 +931,6 @@ def defaultNoNoLLIntRun
         defaultQuickRun
     else
         runDefault
-        runAlwaysTriggerCopyPhase
         if $jitTests
             runNoCJITValidatePhases
             runDFGEager
@@ -988,7 +982,6 @@ end
 # by counting recompilations.
 def defaultNoEagerRun
     runDefault
-    runAlwaysTriggerCopyPhase
     if $jitTests
         runNoLLInt
         runNoCJITValidatePhases
@@ -1003,7 +996,6 @@ end
 
 def defaultNoSamplingProfilerRun
     runDefault
-    runAlwaysTriggerCopyPhase
     if $jitTests
         runNoLLInt
         runNoCJITValidatePhases
@@ -1141,7 +1133,6 @@ end
 
 def runModules
     run("default-modules", "-m")
-    run("always-trigger-copy-phase-modules", "-m", "--minHeapUtilization=2.0", "--minCopiedBlockUtilization=2.0")
 
     if !$jitTests
         return

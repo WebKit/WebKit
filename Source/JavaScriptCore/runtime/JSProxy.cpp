@@ -28,6 +28,7 @@
 
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
+#include "PrototypeMapInlines.h"
 
 namespace JSC {
 

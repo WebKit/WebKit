@@ -116,6 +116,7 @@
 #include "MapConstructor.h"
 #include "MapIteratorPrototype.h"
 #include "MapPrototype.h"
+#include "MarkedSpaceInlines.h"
 #include "MathObject.h"
 #include "Microtask.h"
 #include "ModuleLoaderPrototype.h"
