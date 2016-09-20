@@ -1,3 +1,16 @@
+2016-09-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Use a hardcoded patch for sRGB color profile
+        https://bugs.webkit.org/show_bug.cgi?id=162320
+        rdar://problem/28387318
+
+        Reviewed by Simon Fraser.
+
+        This is a workaround for rdar://problem/28392768
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (installLayoutTestColorProfile):
+
 2016-09-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r206178.

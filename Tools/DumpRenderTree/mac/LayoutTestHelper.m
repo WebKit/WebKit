@@ -172,16 +172,11 @@ static void installLayoutTestColorProfile()
     NSArray *displays = displayUUIDStrings();
     saveDisplayColorProfiles(displays);
 
-    ColorSyncProfileRef sRGBProfile = ColorSyncProfileCreateWithName(kColorSyncSRGBProfile);
-    CFErrorRef error;
-    CFURLRef profileURL = ColorSyncProfileGetURL(sRGBProfile, &error);
-    if (!profileURL) {
-        NSLog(@"Failed to get URL of Generic RGB color profile! Many pixel tests may fail as a result. Error: %@", error);
-        return;
-    }
+    // Profile path needs to be hardcoded because of <rdar://problem/28392768>.
+    NSURL *sRGBProfileURL = [NSURL fileURLWithPath:@"/System/Library/ColorSync/Profiles/sRGB Profile.icc"];
     
     for (NSString *displayUUIDString in displays)
-        setDisplayColorProfile(displayUUIDString, (NSURL *)profileURL);
+        setDisplayColorProfile(displayUUIDString, sRGBProfileURL);
 }
 
 static void restoreUserColorProfile(void)
