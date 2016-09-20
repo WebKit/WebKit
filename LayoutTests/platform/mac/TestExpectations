@@ -1062,6 +1062,7 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-multiple-attach.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-sourcebufferlist.html [ Pass ]

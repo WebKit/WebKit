@@ -146,7 +146,8 @@ void WebCoreAVFResourceLoader::notifyFinished(CachedResource* resource)
         if ([m_avRequest.get() contentInformationRequest] && ![[m_avRequest.get() contentInformationRequest] contentType])
             [[m_avRequest.get() contentInformationRequest] setContentType:@""];
 
-        [m_avRequest.get() finishLoadingWithError:0];
+        NSError* error = resource->errorOccurred() ? resource->resourceError().nsError() : nil;
+        [m_avRequest.get() finishLoadingWithError:error];
     } else {
         fulfillRequestWithResource(resource);
         [m_avRequest.get() finishLoading];
