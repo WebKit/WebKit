@@ -188,6 +188,7 @@ private:
 #include "AnotherGuardedInternalBuiltinBuiltins.h"
 #include "GuardedInternalBuiltinBuiltins.h"
 #include "xmlCasingTestBuiltins.h"
+#include <heap/WeakInlines.h>
 #include <runtime/VM.h>
 
 namespace WebCore {
