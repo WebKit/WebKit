@@ -1971,8 +1971,16 @@ inline static Optional<String> domainToASCII(const String& domain)
     
     UChar hostnameBuffer[hostnameBufferLength];
     UErrorCode error = U_ZERO_ERROR;
-    
+
+#if COMPILER(GCC) || COMPILER(CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    // FIXME: This should use uidna_openUTS46 / uidna_close instead
     int32_t numCharactersConverted = uidna_IDNToASCII(StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, nullptr, &error);
+#if COMPILER(GCC) || COMPILER(CLANG)
+#pragma GCC diagnostic pop
+#endif
 
     if (error == U_ZERO_ERROR) {
         LChar buffer[hostnameBufferLength];
