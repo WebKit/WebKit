@@ -1,4 +1,19 @@
 ==================
+WebKitGTK+  2.14.0
+==================
+
+What's new in WebKitGTK+ 2.14.0?
+
+  - Use gdk_cairo_draw_from_gl() when possible in Wayland to render directly using the GPU in the UI process.
+  - Ensure we don't send an empty referrer header after session restore.
+  - Fix a web process crash in pages using filter animations.
+  - Fix main frame scrolling jumps when scrolling acclerated subframes.
+  - Fix the size of the cairo surface created in the UI process on Wayland.
+  - Fix memory leak in JavaScriptCore.
+  - Fix the build when '.' is not in @INC by default in perl.
+  - Translation updates: Ukrainian.
+
+==================
 WebKitGTK+ 2.13.92
 ==================
 

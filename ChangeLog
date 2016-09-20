@@ -1,3 +1,9 @@
+2016-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.14.0 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Make ENABLE_THREADED_COMPOSITOR a public option
