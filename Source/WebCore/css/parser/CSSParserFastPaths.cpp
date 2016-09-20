@@ -756,8 +756,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
 #if ENABLE(APPLE_PAY)
     case CSSPropertyApplePayButtonStyle: // white | white-outline | black
         return valueID == CSSValueWhite || valueID == CSSValueWhiteOutline || valueID == CSSValueBlack;
-    case CSSPropertyApplePayButtonType: // plain | buy | set-up | in-store
-        return valueID == CSSValuePlain || valueID == CSSValueBuy || valueID == CSSValueSetUp || valueID == CSSValueInStore;
+    case CSSPropertyApplePayButtonType: // plain | buy | set-up
+        return valueID == CSSValuePlain || valueID == CSSValueBuy || valueID == CSSValueSetUp;
 #endif
     default:
         ASSERT_NOT_REACHED();
