@@ -38,7 +38,9 @@ class URLParser {
 public:
     WEBCORE_EXPORT URL parse(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
     WEBCORE_EXPORT URL parseSerializedURL(const String&);
+
     WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
+    WEBCORE_EXPORT static bool internalValuesConsistent(const URL&);
 
     WEBCORE_EXPORT static bool enabled();
     WEBCORE_EXPORT static void setEnabled(bool);
@@ -56,7 +58,7 @@ private:
 
     template<bool serialized, typename CharacterType> URL parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
     template<bool serialized, typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
-    template<bool serialized, typename CharacterType> bool parseHost(CodePointIterator<CharacterType>);
+    template<bool serialized, typename CharacterType> bool parseHostAndPort(CodePointIterator<CharacterType>);
     template<bool serialized, typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
     template<typename CharacterType> URL failure(const CharacterType*, unsigned length);
 

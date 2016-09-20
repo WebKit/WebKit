@@ -82,6 +82,8 @@ static void checkURL(const String& urlString, const ExpectedParts& parts)
     EXPECT_TRUE(eq(parts.string, oldURL.string()));
     
     EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
 }
 
 template<size_t length>
@@ -201,15 +203,17 @@ TEST_F(URLParserTest, Basic)
     checkURL("sc:/pa/pa", {"sc", "", "", "", 0, "/pa/pa", "", "", "sc:/pa/pa"});
     checkURL("sc:/pa", {"sc", "", "", "", 0, "/pa", "", "", "sc:/pa"});
     checkURL("sc:/pa/", {"sc", "", "", "", 0, "/pa/", "", "", "sc:/pa/"});
+    checkURL("notspecial:/notuser:notpassword@nothost", {"notspecial", "", "", "", 0, "/notuser:notpassword@nothost", "", "", "notspecial:/notuser:notpassword@nothost"});
     checkURL("sc://pa/", {"sc", "", "", "pa", 0, "/", "", "", "sc://pa/"});
     checkURL("http://host   \a   ", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
-    checkURL("notspecial:/", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
     checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
     checkURL("notspecial:", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
     checkURL("http:/a", {"http", "", "", "a", 0, "/", "", "", "http://a/"});
     checkURL("http://256/", {"http", "", "", "256", 0, "/", "", "", "http://256/"});
     checkURL("http://256./", {"http", "", "", "256.", 0, "/", "", "", "http://256./"});
     checkURL("http://123.256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
+    checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
+    checkURL("notspecial:", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
     // FIXME: Fix and add a test with an invalid surrogate pair at the end with a space as the second code unit.
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
@@ -246,6 +250,8 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
     EXPECT_TRUE(eq(parts.string, oldURL.string()));
 
     EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
 }
 
 TEST_F(URLParserTest, ParseRelative)
@@ -287,9 +293,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("  foo.com  ", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/foo.com", "", "", "http://example.org/foo/foo.com"});
     checkRelativeURL(" \a baz", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/baz", "", "", "http://example.org/foo/baz"});
     checkRelativeURL("~", "http://example.org", {"http", "", "", "example.org", 0, "/~", "", "", "http://example.org/~"});
-    checkRelativeURL("notspecial:/", "about:blank", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
     checkRelativeURL("notspecial:", "about:blank", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
-    checkRelativeURL("notspecial:/", "http://host", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
     checkRelativeURL("notspecial:", "http://host", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
     checkRelativeURL("http:", "http://host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     
@@ -324,6 +328,8 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
     
     EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
 }
 
 static void checkRelativeURLDifferences(const String& urlString, const String& baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
@@ -355,6 +361,8 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
     
     EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
 }
 
 // These are differences between the new URLParser and the old URL::parse which make URLParser more standards compliant.
@@ -547,6 +555,20 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("https://@test@test@example:800/", "http://doesnotmatter/",
         {"https", "@test@test", "", "example", 800, "/", "", "", "https://%40test%40test@example:800/"},
         {"", "", "", "", 0, "", "", "", "https://@test@test@example:800/"});
+    checkRelativeURLDifferences("foo://", "http://example.org/foo/bar",
+        {"foo", "", "", "", 0, "/", "", "", "foo:///"},
+        {"foo", "", "", "", 0, "//", "", "", "foo://"});
+
+    // This matches the spec and web platform tests, but not Chrome, Firefox, or URL::parse.
+    checkRelativeURLDifferences("notspecial:/", "about:blank",
+        {"notspecial", "", "", "", 0, "", "", "", "notspecial:/"},
+        {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
+    checkRelativeURLDifferences("notspecial:/", "http://host",
+        {"notspecial", "", "", "", 0, "", "", "", "notspecial:/"},
+        {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
+    checkURLDifferences("notspecial:/",
+        {"notspecial", "", "", "", 0, "", "", "", "notspecial:/"},
+        {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)

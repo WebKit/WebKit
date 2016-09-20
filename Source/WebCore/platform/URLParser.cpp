@@ -999,20 +999,20 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                     else
                         state = State::SpecialAuthoritySlashes;
                 } else {
-                    m_url.m_userStart = m_asciiBuffer.size();
-                    m_url.m_userEnd = m_url.m_userStart;
-                    m_url.m_passwordEnd = m_url.m_userStart;
-                    m_url.m_hostEnd = m_url.m_userStart;
-                    m_url.m_portEnd = m_url.m_userStart;
                     auto maybeSlash = c;
                     incrementIteratorSkippingTabAndNewLine<serialized>(maybeSlash);
                     if (!maybeSlash.atEnd() && *maybeSlash == '/') {
                         m_asciiBuffer.append('/');
-                        m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                        m_url.m_userStart = m_asciiBuffer.size();
                         state = State::PathOrAuthority;
                         c = maybeSlash;
                         ASSERT(*c == '/');
                     } else {
+                        m_url.m_userStart = m_asciiBuffer.size();
+                        m_url.m_userEnd = m_url.m_userStart;
+                        m_url.m_passwordEnd = m_url.m_userStart;
+                        m_url.m_hostEnd = m_url.m_userStart;
+                        m_url.m_portEnd = m_url.m_userStart;
                         m_url.m_pathAfterLastSlash = m_url.m_userStart;
                         m_url.m_cannotBeABaseURL = true;
                         state = State::CannotBeABaseURLPath;
@@ -1076,8 +1076,16 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 state = State::AuthorityOrHost;
                 ++c;
                 authorityOrHostBegin = c;
-            } else
+            } else {
+                ASSERT(m_asciiBuffer.last() == '/');
+                m_url.m_userStart = m_asciiBuffer.size() - 1;
+                m_url.m_userEnd = m_url.m_userStart;
+                m_url.m_passwordEnd = m_url.m_userStart;
+                m_url.m_hostEnd = m_url.m_userStart;
+                m_url.m_portEnd = m_url.m_userStart;
+                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
                 state = State::Path;
+            }
             break;
         case State::Relative:
             LOG_STATE("Relative");
@@ -1162,7 +1170,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 if (isSlash || *c == '?' || *c == '#') {
                     m_url.m_userEnd = m_asciiBuffer.size();
                     m_url.m_passwordEnd = m_url.m_userEnd;
-                    if (!parseHost<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
+                    if (!parseHostAndPort<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
                         return failure(input, length);
                     if (!isSlash) {
                         m_asciiBuffer.append('/');
@@ -1179,7 +1187,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         case State::Host:
             LOG_STATE("Host");
             if (*c == '/' || *c == '?' || *c == '#') {
-                if (!parseHost<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
+                if (!parseHostAndPort<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
                     return failure(input, length);
                 state = State::Path;
                 break;
@@ -1309,7 +1317,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                     state = State::Path;
                     break;
                 }
-                if (!parseHost<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
+                if (!parseHostAndPort<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
                     return failure(input, length);
                 
                 if (StringView(m_asciiBuffer.data() + m_url.m_passwordEnd, m_asciiBuffer.size() - m_url.m_passwordEnd) == "localhost")  {
@@ -1433,6 +1441,11 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     case State::PathOrAuthority:
         LOG_FINAL_STATE("PathOrAuthority");
+        m_url.m_userEnd = m_asciiBuffer.size();
+        m_url.m_passwordEnd = m_url.m_userEnd;
+        m_url.m_hostEnd = m_url.m_userEnd;
+        m_url.m_portEnd = m_url.m_userEnd;
+        m_url.m_pathAfterLastSlash = m_url.m_userEnd;
         m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
         m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
         m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
@@ -1470,11 +1483,20 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         LOG_FINAL_STATE("AuthorityOrHost");
         m_url.m_userEnd = m_asciiBuffer.size();
         m_url.m_passwordEnd = m_url.m_userEnd;
-        FALLTHROUGH;
+        if (authorityOrHostBegin.atEnd()) {
+            m_url.m_hostEnd = m_url.m_userEnd;
+            m_url.m_portEnd = m_url.m_userEnd;
+        } else if (!parseHostAndPort<serialized>(authorityOrHostBegin))
+            return failure(input, length);
+        m_asciiBuffer.append('/');
+        m_url.m_pathEnd = m_url.m_portEnd + 1;
+        m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
+        m_url.m_queryEnd = m_url.m_pathEnd;
+        m_url.m_fragmentEnd = m_url.m_pathEnd;
+        break;
     case State::Host:
-        if (state == State::Host)
-            LOG_FINAL_STATE("Host");
-        if (!parseHost<serialized>(authorityOrHostBegin))
+        LOG_FINAL_STATE("Host");
+        if (!parseHostAndPort<serialized>(authorityOrHostBegin))
             return failure(input, length);
         m_asciiBuffer.append('/');
         m_url.m_pathEnd = m_url.m_portEnd + 1;
@@ -1528,7 +1550,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             break;
         }
 
-        if (!parseHost<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
+        if (!parseHostAndPort<serialized>(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
             return failure(input, length);
 
         if (StringView(m_asciiBuffer.data() + m_url.m_passwordEnd, m_asciiBuffer.size() - m_url.m_passwordEnd) == "localhost")  {
@@ -1583,6 +1605,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
     }
     m_url.m_isValid = true;
     LOG(URLParser, "Parsed URL <%s>", m_url.m_string.utf8().data());
+    ASSERT(internalValuesConsistent(m_url));
     return m_url;
 }
 
@@ -2006,7 +2029,7 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
 }
 
 template<bool serialized, typename CharacterType>
-bool URLParser::parseHost(CodePointIterator<CharacterType> iterator)
+bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
 {
     if (iterator.atEnd())
         return false;
@@ -2222,6 +2245,22 @@ bool URLParser::allValuesEqual(const URL& a, const URL& b)
         && a.m_pathEnd == b.m_pathEnd
         && a.m_queryEnd == b.m_queryEnd
         && a.m_fragmentEnd == b.m_fragmentEnd;
+}
+
+bool URLParser::internalValuesConsistent(const URL& url)
+{    
+    return url.m_schemeEnd <= url.m_userStart
+        && url.m_userStart <= url.m_userEnd
+        && url.m_userEnd <= url.m_passwordEnd
+        && url.m_passwordEnd <= url.m_hostEnd
+        && url.m_hostEnd <= url.m_hostEnd
+        && url.m_portEnd <= url.m_pathAfterLastSlash
+        && url.m_pathAfterLastSlash <= url.m_pathEnd
+        && url.m_pathEnd <= url.m_queryEnd
+        && url.m_queryEnd <= url.m_fragmentEnd
+        && (url.m_isValid ? url.m_fragmentEnd == url.m_string.length() : !url.m_fragmentEnd);
+    // FIXME: Why do we even store m_fragmentEnd?
+    // It should be able to be deduced from m_isValid and m_string.length() to save memory.
 }
 
 static bool urlParserEnabled = false;
