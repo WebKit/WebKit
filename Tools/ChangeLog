@@ -1,3 +1,20 @@
+2016-09-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        VideoControlsManager.VideoControlsManagerSingleLargeVideo fails intermittently on the Mac WK2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=162255
+
+        Reviewed by Jer Noble.
+
+        This is reproducible by running the test repeatedly in a for loop (locally, I observed that running the test
+        back-to-back would result in the second one failing). This suggests that even on the runloop after the video
+        starts playing, the state of the playback controls manager may not be up to date in the UI process. Instead, we
+        can just spin the runloop until the playback controls are shown, which makes back-to-back tests to succeed and
+        will probably address flakiness on the bots for this test.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-with-audio.html:
+
 2016-09-20  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Run layout tests in parallel.

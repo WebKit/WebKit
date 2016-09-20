@@ -131,7 +131,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
     // A large video with audio should have a controls manager even if it is played via script like this video.
     // So the expectation is YES.
     [webView loadTestPageNamed:@"large-video-with-audio"];
-    [webView expectControlsManager:YES afterReceivingMessage:@"playing"];
+    [webView waitForMediaControlsToShow];
 }
 
 TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
