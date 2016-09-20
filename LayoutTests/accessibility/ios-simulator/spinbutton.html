@@ -11,6 +11,7 @@ if (window.testRunner)
 <body>
 
 <div id="fakeButton" tabindex=0 role="spinbutton" aria-label="spinner">button</div>
+<input id="spinner" name="spinner" value="5" aria-valuenow="5" autocomplete="off" role="spinbutton">
 
 <p id="description"></p>
 <div id="console"></div>
@@ -24,6 +25,10 @@ if (window.testRunner)
         var button = accessibilityController.accessibleElementById("fakeButton");
         shouldBe("button.description", "'AXLabel: spinner'");
         shouldBeFalse("button.isIgnored");
+        
+        // Test the aria-valuenow attribute on the spinbutton.
+        var button2 = accessibilityController.accessibleElementById("spinner");
+        shouldBe("button2.stringValue", "'AXValue: 5.00'");
     }
 
     successfullyParsed = true;

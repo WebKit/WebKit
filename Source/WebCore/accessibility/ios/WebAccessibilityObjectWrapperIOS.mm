@@ -1297,7 +1297,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self stringValueShouldBeUsedInLabel])
         return m_object->stringValue();
     
-    if (m_object->isProgressIndicator() || m_object->isSlider()) {
+    if (m_object->isRangeControl()) {
         // Prefer a valueDescription if provided by the author (through aria-valuetext).
         String valueDescription = m_object->valueDescription();
         if (!valueDescription.isEmpty())
