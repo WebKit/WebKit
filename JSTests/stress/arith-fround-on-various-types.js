@@ -1,3 +1,4 @@
+//@ defaultNoEagerRun
 "use strict";
 
 let froundOfPi = Math.fround(Math.PI);

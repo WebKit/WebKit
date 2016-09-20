@@ -1,3 +1,4 @@
+//@ defaultNoEagerRun
 "use strict";
 
 function opaqueKitString() {
@@ -96,9 +97,9 @@ function testAllTypesCall() {
             }
         }
     }
-    if (numberOfDFGCompiles(opaqueStrictEqualAllTypes) > 2)
+    if (numberOfDFGCompiles(opaqueStrictEqualAllTypes) > 5)
         throw "opaqueStrictEqualAllTypes() should have been quickly compiled as fully polymorphic.";
-    if (opaqueStrictNotEqualAllTypes(opaqueStrictEqualAllTypes) > 2)
+    if (opaqueStrictNotEqualAllTypes(opaqueStrictEqualAllTypes) > 5)
         throw "opaqueStrictEqualAllTypes() should have been quickly compiled as fully polymorphic.";
 }
 testAllTypesCall();

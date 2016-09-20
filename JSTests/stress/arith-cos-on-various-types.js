@@ -1,3 +1,4 @@
+//@ defaultNoEagerRun
 "use strict";
 
 let cosOfFour = Math.cos(4);

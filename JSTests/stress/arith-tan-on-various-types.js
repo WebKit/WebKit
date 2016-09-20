@@ -1,3 +1,4 @@
+//@ defaultNoEagerRun
 "use strict";
 
 let tanOfFour = Math.tan(4);

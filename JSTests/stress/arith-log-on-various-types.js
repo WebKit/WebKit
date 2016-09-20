@@ -1,3 +1,4 @@
+//@ defaultNoEagerRun
 "use strict";
 
 let logOfFour = Math.log(4);
