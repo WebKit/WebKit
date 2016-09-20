@@ -2561,6 +2561,26 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case HasOwnPropertyIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        // This can be racy, that's fine. We know that once we observe that this is created,
+        // that it will never be destroyed until the VM is destroyed. It's unlikely that
+        // we'd ever get to the point where we inline this as an intrinsic without the
+        // cache being created, however, it's possible if we always throw exceptions inside
+        // hasOwnProperty.
+        if (!m_vm->hasOwnPropertyCache())
+            return false;
+
+        insertChecks();
+        Node* object = get(virtualRegisterForArgument(0, registerOffset));
+        Node* key = get(virtualRegisterForArgument(1, registerOffset));
+        Node* result = addToGraph(HasOwnProperty, object, key);
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
     default:
         return false;
     }

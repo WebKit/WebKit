@@ -23,6 +23,7 @@
 
 #include "Error.h"
 #include "GetterSetter.h"
+#include "HasOwnPropertyCache.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSCInlines.h"
@@ -60,7 +61,7 @@ void ObjectPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, objectProtoFuncToString, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, objectProtoFuncToLocaleString, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->valueOf, objectProtoFuncValueOf, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->hasOwnProperty, objectProtoFuncHasOwnProperty, DontEnum, 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->hasOwnProperty, objectProtoFuncHasOwnProperty, DontEnum, 1, HasOwnPropertyIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isPrototypeOf, objectProtoFuncIsPrototypeOf, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->__defineGetter__, objectProtoFuncDefineGetter, DontEnum, 2);
@@ -97,9 +98,24 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
     if (UNLIKELY(scope.exception()))
         return JSValue::encode(jsUndefined());
     JSObject* thisObject = thisValue.toObject(exec);
-    if (!thisObject)
+    if (UNLIKELY(!thisObject))
         return JSValue::encode(JSValue());
-    return JSValue::encode(jsBoolean(thisObject->hasOwnProperty(exec, propertyName)));
+
+    Structure* structure = thisObject->structure(vm);
+    HasOwnPropertyCache* hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
+    if (Optional<bool> result = hasOwnPropertyCache->get(structure, propertyName)) {
+        ASSERT(*result == thisObject->hasOwnProperty(exec, propertyName));
+        ASSERT(!scope.exception());
+        return JSValue::encode(jsBoolean(*result));
+    }
+
+    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
+    bool result = thisObject->hasOwnProperty(exec, propertyName, slot);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(jsUndefined());
+
+    hasOwnPropertyCache->tryAdd(vm, slot, thisObject, propertyName, result);
+    return JSValue::encode(jsBoolean(result));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)

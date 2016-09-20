@@ -1,3 +1,90 @@
+2016-09-19  Saam Barati  <sbarati@apple.com>
+
+        Make HasOwnProperty faster
+        https://bugs.webkit.org/show_bug.cgi?id=161708
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds a cache for HasOwnProperty. The cache holds tuples
+        of {StructureID, UniquedStringImpl*, boolean} where the boolean indicates
+        the result of performing hasOwnProperty on an object with StructureID and
+        UniquedStringImpl*. If the cache contains an item, we can be guaranteed
+        that it contains the same result as performing hasOwnProperty on an
+        object O with a given structure and key. To guarantee this, we only add
+        items into the cache when the Structure of the given item is cacheable.
+
+        The caching strategy is simple: when adding new items into the cache,
+        we will evict any item that was in the location that the new item
+        is hashed into. We also clear the cache on every GC. This strategy
+        proves to be successful on speedometer, which sees a cache hit rate
+        over 90%. This caching strategy is now inlined into the DFG/FTL JITs
+        by now recognizing hasOwnProperty as an intrinsic with the corresponding
+        HasOwnProperty node. The goal of the node is to emit inlined code for
+        the cache lookup to prevent the overhead of the call for the common
+        case where we get a cache hit.
+
+        I'm seeing around a 1% to 1.5% percent improvement on Speedometer on
+        my machine. Hopefully the perf bots agree with my machine.
+
+        This patch also speeds up the microbenchmark I added by 2.5x.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasOwnProperty):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectImpl):
+        * jit/JITOperations.h:
+        * runtime/HasOwnPropertyCache.h: Added.
+        (JSC::HasOwnPropertyCache::Entry::offsetOfStructureID):
+        (JSC::HasOwnPropertyCache::Entry::offsetOfImpl):
+        (JSC::HasOwnPropertyCache::Entry::offsetOfResult):
+        (JSC::HasOwnPropertyCache::operator delete):
+        (JSC::HasOwnPropertyCache::create):
+        (JSC::HasOwnPropertyCache::hash):
+        (JSC::HasOwnPropertyCache::get):
+        (JSC::HasOwnPropertyCache::tryAdd):
+        (JSC::HasOwnPropertyCache::clear):
+        (JSC::VM::ensureHasOwnPropertyCache):
+        * runtime/Intrinsic.h:
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::hasOwnProperty):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        (JSC::objectProtoFuncHasOwnProperty):
+        * runtime/Symbol.h:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+        (JSC::VM::hasOwnPropertyCache):
+
 2016-09-19  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make the rounding-related nodes support any type

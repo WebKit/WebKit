@@ -199,12 +199,18 @@ ALWAYS_INLINE bool JSObject::putInline(JSCell* cell, ExecState* exec, PropertyNa
 
 // HasOwnProperty(O, P) from section 7.3.11 in the spec.
 // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasownproperty
-ALWAYS_INLINE bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName) const
+ALWAYS_INLINE bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
 {
-    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    ASSERT(slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty);
     if (LIKELY(const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlot == JSObject::getOwnPropertySlot))
         return JSObject::getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
     return const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
+}
+
+ALWAYS_INLINE bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName) const
+{
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    return hasOwnProperty(exec, propertyName, slot);
 }
 
 ALWAYS_INLINE bool JSObject::hasOwnProperty(ExecState* exec, unsigned propertyName) const

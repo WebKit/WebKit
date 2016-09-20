@@ -29,6 +29,7 @@
 #include "GCActivityCallback.h"
 #include "GCIncomingRefCountedSetInlines.h"
 #include "GCTypeMap.h"
+#include "HasOwnPropertyCache.h"
 #include "HeapHelperPool.h"
 #include "HeapIterationScope.h"
 #include "HeapProfiler.h"
@@ -1022,6 +1023,9 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
         stopAllocation();
         prepareForMarking();
         flushWriteBarrierBuffer();
+
+        if (HasOwnPropertyCache* cache = vm()->hasOwnPropertyCache())
+            cache->clear();
     }
 
     markRoots(gcStartTime, stackOrigin, stackTop, calleeSavedRegisters);

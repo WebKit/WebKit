@@ -632,6 +632,9 @@ private:
         case In:
             compileIn();
             break;
+        case HasOwnProperty:
+            compileHasOwnProperty();
+            break;
         case PutById:
         case PutByIdDirect:
         case PutByIdFlush:
@@ -6770,6 +6773,108 @@ private:
         } 
 
         setJSValue(vmCall(Int64, m_out.operation(operationGenericIn), m_callFrame, cell, lowJSValue(m_node->child1())));
+    }
+
+    void compileHasOwnProperty()
+    {
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock lastNext = nullptr;
+
+        LValue object = lowObject(m_node->child1());
+        LValue uniquedStringImpl;
+        LValue keyAsValue = nullptr;
+        switch (m_node->child2().useKind()) {
+        case StringUse: {
+            LBasicBlock isNonEmptyString = m_out.newBlock();
+            LBasicBlock isAtomicString = m_out.newBlock();
+
+            keyAsValue = lowString(m_node->child2());
+            uniquedStringImpl = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
+            m_out.branch(m_out.notNull(uniquedStringImpl), usually(isNonEmptyString), rarely(slowCase));
+
+            lastNext = m_out.appendTo(isNonEmptyString, isAtomicString);
+            LValue isNotAtomic = m_out.testIsZero32(m_out.load32(uniquedStringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtomic()));
+            m_out.branch(isNotAtomic, rarely(slowCase), usually(isAtomicString));
+
+            m_out.appendTo(isAtomicString, slowCase);
+            break;
+        }
+        case SymbolUse: {
+            keyAsValue = lowSymbol(m_node->child2());
+            uniquedStringImpl = m_out.loadPtr(keyAsValue, m_heaps.Symbol_symbolImpl);
+            lastNext = m_out.insertNewBlocksBefore(slowCase);
+            break;
+        }
+        case UntypedUse: {
+            LBasicBlock isCellCase = m_out.newBlock();
+            LBasicBlock isStringCase = m_out.newBlock();
+            LBasicBlock notStringCase = m_out.newBlock();
+            LBasicBlock isNonEmptyString = m_out.newBlock();
+            LBasicBlock isSymbolCase = m_out.newBlock();
+            LBasicBlock hasUniquedStringImpl = m_out.newBlock();
+
+            keyAsValue = lowJSValue(m_node->child2());
+            m_out.branch(isCell(keyAsValue), usually(isCellCase), rarely(slowCase));
+
+            lastNext = m_out.appendTo(isCellCase, isStringCase);
+            m_out.branch(isString(keyAsValue), unsure(isStringCase), unsure(notStringCase));
+
+            m_out.appendTo(isStringCase, isNonEmptyString);
+            LValue implFromString = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
+            ValueFromBlock stringResult = m_out.anchor(implFromString);
+            m_out.branch(m_out.notNull(implFromString), usually(isNonEmptyString), rarely(slowCase));
+
+            m_out.appendTo(isNonEmptyString, notStringCase);
+            LValue isNotAtomic = m_out.testIsZero32(m_out.load32(implFromString, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtomic()));
+            m_out.branch(isNotAtomic, rarely(slowCase), usually(hasUniquedStringImpl));
+
+            m_out.appendTo(notStringCase, isSymbolCase);
+            m_out.branch(isSymbol(keyAsValue), unsure(isSymbolCase), unsure(slowCase));
+
+            m_out.appendTo(isSymbolCase, hasUniquedStringImpl);
+            ValueFromBlock symbolResult = m_out.anchor(m_out.loadPtr(keyAsValue, m_heaps.Symbol_symbolImpl));
+            m_out.jump(hasUniquedStringImpl);
+
+            m_out.appendTo(hasUniquedStringImpl, slowCase);
+            uniquedStringImpl = m_out.phi(pointerType(), stringResult, symbolResult);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        ASSERT(keyAsValue);
+
+        // Note that we don't test if the hash is zero here. AtomicStringImpl's can't have a zero
+        // hash, however, a SymbolImpl may. But, because this is a cache, we don't care. We only
+        // ever load the result from the cache if the cache entry matches what we are querying for.
+        // So we either get super lucky and use zero for the hash and somehow collide with the entity
+        // we're looking for, or we realize we're comparing against another entity, and go to the
+        // slow path anyways.
+        LValue hash = m_out.lShr(m_out.load32(uniquedStringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
+
+        LValue structureID = m_out.load32(object, m_heaps.JSCell_structureID);
+        LValue index = m_out.add(hash, structureID);
+        index = m_out.zeroExtPtr(m_out.bitAnd(index, m_out.constInt32(HasOwnPropertyCache::mask)));
+        ASSERT(vm().hasOwnPropertyCache());
+        LValue cache = m_out.constIntPtr(vm().hasOwnPropertyCache());
+
+        IndexedAbstractHeap& heap = m_heaps.HasOwnPropertyCache;
+        LValue sameStructureID = m_out.equal(structureID, m_out.load32(m_out.baseIndex(heap, cache, index, JSValue(), HasOwnPropertyCache::Entry::offsetOfStructureID())));
+        LValue sameImpl = m_out.equal(uniquedStringImpl, m_out.loadPtr(m_out.baseIndex(heap, cache, index, JSValue(), HasOwnPropertyCache::Entry::offsetOfImpl())));
+        ValueFromBlock fastResult = m_out.anchor(m_out.load8ZeroExt32(m_out.baseIndex(heap, cache, index, JSValue(), HasOwnPropertyCache::Entry::offsetOfResult())));
+        LValue cacheHit = m_out.bitAnd(sameStructureID, sameImpl);
+
+        m_out.branch(m_out.notZero32(cacheHit), usually(continuation), rarely(slowCase));
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult;
+        slowResult = m_out.anchor(vmCall(Int32, m_out.operation(operationHasOwnProperty), m_callFrame, object, keyAsValue));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, fastResult, slowResult));
     }
 
     void compileOverridesHasInstance()

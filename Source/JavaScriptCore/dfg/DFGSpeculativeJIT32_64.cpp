@@ -37,6 +37,7 @@
 #include "DFGSlowPathGenerator.h"
 #include "DirectArguments.h"
 #include "GetterSetter.h"
+#include "HasOwnPropertyCache.h"
 #include "HashMapImpl.h"
 #include "JSEnvironmentRecord.h"
 #include "JSLexicalEnvironment.h"
@@ -4887,6 +4888,122 @@ void SpeculativeJIT::compile(Node* node)
     case In:
         compileIn(node);
         break;
+
+    case HasOwnProperty: {
+#if CPU(X86)
+        ASSERT(node->child2().useKind() == UntypedUse);
+        SpeculateCellOperand object(this, node->child1());
+        JSValueOperand key(this, node->child2());
+        GPRTemporary result(this, Reuse, object);
+
+        JSValueRegs keyRegs = key.jsValueRegs();
+        GPRReg objectGPR = object.gpr();
+        GPRReg resultGPR = result.gpr();
+        flushRegisters();
+        callOperation(operationHasOwnProperty, resultGPR, objectGPR, keyRegs);
+        booleanResult(resultGPR, node);
+#else
+        SpeculateCellOperand object(this, node->child1());
+        GPRTemporary uniquedStringImpl(this);
+        GPRTemporary temp(this);
+        GPRTemporary hash(this);
+        GPRTemporary structureID(this);
+        GPRTemporary result(this);
+
+        Optional<SpeculateCellOperand> keyAsCell;
+        Optional<JSValueOperand> keyAsValue;
+        JSValueRegs keyRegs;
+        if (node->child2().useKind() == UntypedUse) {
+            keyAsValue = JSValueOperand(this, node->child2());
+            keyRegs = keyAsValue->jsValueRegs();
+        } else {
+            ASSERT(node->child2().useKind() == StringUse || node->child2().useKind() == SymbolUse);
+            keyAsCell = SpeculateCellOperand(this, node->child2());
+            keyRegs = JSValueRegs::payloadOnly(keyAsCell->gpr());
+        }
+
+        GPRReg objectGPR = object.gpr();
+        GPRReg implGPR = uniquedStringImpl.gpr();
+        GPRReg tempGPR = temp.gpr();
+        GPRReg hashGPR = hash.gpr();
+        GPRReg structureIDGPR = structureID.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        speculateObject(node->child1());
+
+        MacroAssembler::JumpList slowPath;
+        switch (node->child2().useKind()) {
+        case SymbolUse: {
+            speculateSymbol(node->child2(), keyRegs.payloadGPR());
+            m_jit.loadPtr(MacroAssembler::Address(keyRegs.payloadGPR(), Symbol::offsetOfSymbolImpl()), implGPR);
+            break;
+        }
+        case StringUse: {
+            speculateString(node->child2(), keyRegs.payloadGPR());
+            m_jit.loadPtr(MacroAssembler::Address(keyRegs.payloadGPR(), JSString::offsetOfValue()), implGPR);
+            slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, implGPR));
+            slowPath.append(m_jit.branchTest32(
+                MacroAssembler::Zero, MacroAssembler::Address(implGPR, StringImpl::flagsOffset()),
+                MacroAssembler::TrustedImm32(StringImpl::flagIsAtomic())));
+            break;
+        }
+        case UntypedUse: {
+            slowPath.append(m_jit.branchIfNotCell(keyRegs));
+            auto isNotString = m_jit.branchIfNotString(keyRegs.payloadGPR());
+            m_jit.loadPtr(MacroAssembler::Address(keyRegs.payloadGPR(), JSString::offsetOfValue()), implGPR);
+            slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, implGPR));
+            slowPath.append(m_jit.branchTest32(
+                MacroAssembler::Zero, MacroAssembler::Address(implGPR, StringImpl::flagsOffset()),
+                MacroAssembler::TrustedImm32(StringImpl::flagIsAtomic())));
+            auto hasUniquedImpl = m_jit.jump();
+
+            isNotString.link(&m_jit);
+            slowPath.append(m_jit.branchIfNotSymbol(keyRegs.payloadGPR()));
+            m_jit.loadPtr(MacroAssembler::Address(keyRegs.payloadGPR(), Symbol::offsetOfSymbolImpl()), implGPR);
+
+            hasUniquedImpl.link(&m_jit);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        // Note that we don't test if the hash is zero here. AtomicStringImpl's can't have a zero
+        // hash, however, a SymbolImpl may. But, because this is a cache, we don't care. We only
+        // ever load the result from the cache if the cache entry matches what we are querying for.
+        // So we either get super lucky and use zero for the hash and somehow collide with the entity
+        // we're looking for, or we realize we're comparing against another entity, and go to the
+        // slow path anyways.
+        m_jit.load32(MacroAssembler::Address(implGPR, UniquedStringImpl::flagsOffset()), hashGPR);
+        m_jit.urshift32(MacroAssembler::TrustedImm32(StringImpl::s_flagCount), hashGPR);
+        m_jit.load32(MacroAssembler::Address(objectGPR, JSCell::structureIDOffset()), structureIDGPR);
+        m_jit.add32(structureIDGPR, hashGPR);
+        m_jit.and32(TrustedImm32(HasOwnPropertyCache::mask), hashGPR);
+        m_jit.mul32(TrustedImm32(sizeof(HasOwnPropertyCache::Entry)), hashGPR, hashGPR);
+        ASSERT(m_jit.vm()->hasOwnPropertyCache());
+        m_jit.move(TrustedImmPtr(m_jit.vm()->hasOwnPropertyCache()), tempGPR);
+        slowPath.append(m_jit.branchPtr(MacroAssembler::NotEqual, 
+            MacroAssembler::BaseIndex(tempGPR, hashGPR, MacroAssembler::TimesOne, HasOwnPropertyCache::Entry::offsetOfImpl()), implGPR));
+        m_jit.load8(MacroAssembler::BaseIndex(tempGPR, hashGPR, MacroAssembler::TimesOne, HasOwnPropertyCache::Entry::offsetOfResult()), resultGPR);
+        m_jit.load32(MacroAssembler::BaseIndex(tempGPR, hashGPR, MacroAssembler::TimesOne, HasOwnPropertyCache::Entry::offsetOfStructureID()), tempGPR);
+        slowPath.append(m_jit.branch32(MacroAssembler::NotEqual, tempGPR, structureIDGPR));
+        auto done = m_jit.jump();
+
+        slowPath.link(&m_jit);
+        silentSpillAllRegisters(resultGPR);
+        if (node->child2().useKind() != UntypedUse) {
+            m_jit.move(MacroAssembler::TrustedImm32(JSValue::CellTag), tempGPR);
+            keyRegs = JSValueRegs(tempGPR, keyRegs.payloadGPR());
+        }
+        callOperation(operationHasOwnProperty, resultGPR, objectGPR, keyRegs);
+        silentFillAllRegisters(resultGPR);
+        m_jit.exceptionCheck();
+
+        done.link(&m_jit);
+        booleanResult(resultGPR, node);
+#endif // CPU(X86)
+        break;
+    }
 
     case StoreBarrier: {
         compileStoreBarrier(node);

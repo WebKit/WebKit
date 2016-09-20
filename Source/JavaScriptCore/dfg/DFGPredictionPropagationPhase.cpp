@@ -910,6 +910,10 @@ private:
             setPrediction(SpecBoolean);
             break;
 
+        case HasOwnProperty:
+            setPrediction(SpecBoolean);
+            break;
+
         case GetEnumerableLength: {
             setPrediction(SpecInt32Only);
             break;

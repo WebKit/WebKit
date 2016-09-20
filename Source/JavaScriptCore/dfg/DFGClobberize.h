@@ -501,6 +501,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ConstructForwardVarargs:
     case ToPrimitive:
     case In:
+    case HasOwnProperty:
     case ValueAdd:
     case SetFunctionName:
     case GetDynamicVar:

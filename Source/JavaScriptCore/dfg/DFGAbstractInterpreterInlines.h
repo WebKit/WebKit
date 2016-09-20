@@ -2665,6 +2665,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecBoolean);
         break;
     }
+
+    case HasOwnProperty: {
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).setType(SpecBoolean);
+        break;
+    }
             
     case GetEnumerableLength: {
         forNode(node).setType(SpecInt32Only);

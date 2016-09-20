@@ -181,6 +181,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ThrowReferenceError:
     case Unreachable:
     case In:
+    case HasOwnProperty:
     case IsCellWithType:
     case MapHash:
     case GetMapBucket:

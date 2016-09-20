@@ -47,6 +47,7 @@
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
 #include "GetterSetter.h"
+#include "HasOwnPropertyCache.h"
 #include "Heap.h"
 #include "HeapIterationScope.h"
 #include "HeapProfiler.h"

@@ -89,6 +89,7 @@ class ExceptionScope;
 class HandleStack;
 class TypeProfiler;
 class TypeProfilerLog;
+class HasOwnPropertyCache;
 class HeapProfiler;
 class Identifier;
 class Interpreter;
@@ -553,6 +554,10 @@ public:
     RegExpCache* m_regExpCache;
     BumpPointerAllocator m_regExpAllocator;
     ConcurrentJITLock m_regExpAllocatorLock;
+
+    std::unique_ptr<HasOwnPropertyCache> m_hasOwnPropertyCache;
+    ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.get(); }
+    HasOwnPropertyCache* ensureHasOwnPropertyCache();
 
 #if ENABLE(REGEXP_TRACING)
     typedef ListHashSet<RegExp*> RTTraceList;

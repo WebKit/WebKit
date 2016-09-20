@@ -284,6 +284,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case NewStringObject:
     case MakeRope:
     case In:
+    case HasOwnProperty:
     case CreateActivation:
     case CreateDirectArguments:
     case CreateScopedArguments:

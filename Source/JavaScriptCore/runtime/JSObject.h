@@ -523,6 +523,7 @@ public:
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, unsigned propertyName) const;
     bool hasPropertyGeneric(ExecState*, PropertyName, PropertySlot::InternalMethodType) const;
     bool hasPropertyGeneric(ExecState*, unsigned propertyName, PropertySlot::InternalMethodType) const;
+    bool hasOwnProperty(ExecState*, PropertyName, PropertySlot&) const;
     bool hasOwnProperty(ExecState*, PropertyName) const;
     bool hasOwnProperty(ExecState*, unsigned) const;
 

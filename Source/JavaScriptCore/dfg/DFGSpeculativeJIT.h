@@ -982,6 +982,11 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(index), arg1);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(Z_JITOperation_EOI operation, GPRReg result, GPRReg obj, GPRReg impl)
+    {
+        m_jit.setupArgumentsWithExecState(obj, impl);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_JITOperation_ESt operation, GPRReg result, Structure* structure)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
@@ -1309,19 +1314,21 @@ public:
 
 
 #if USE(JSVALUE64)
-
+    JITCompiler::Call callOperation(Z_JITOperation_EOJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(C_JITOperation_ECJZ operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallSetResult(operation, result);
     }
-
     JITCompiler::Call callOperation(J_JITOperation_EJJMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, TrustedImmPtr mathIC)
     {
         m_jit.setupArgumentsWithExecState(arg1.gpr(), arg2.gpr(), mathIC);
         return appendCallSetResult(operation, result.gpr());
     }
-
     JITCompiler::Call callOperation(J_JITOperation_EJJI operation, GPRReg result, GPRReg arg1, GPRReg arg2, UniquedStringImpl* uid)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(uid));
@@ -1749,7 +1756,11 @@ public:
         return appendCallSetResult(operation, result);
     }
 #else // USE(JSVALUE32_64)
-
+    JITCompiler::Call callOperation(Z_JITOperation_EOJ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR());
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(C_JITOperation_ECJZ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, GPRReg arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3);
@@ -3522,6 +3533,8 @@ private:
 };
 
 class SpeculateCellOperand {
+    WTF_MAKE_NONCOPYABLE(SpeculateCellOperand);
+
 public:
     explicit SpeculateCellOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
@@ -3534,6 +3547,16 @@ public:
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isCell(edge.useKind()));
         if (jit->isFilled(node()))
             gpr();
+    }
+
+    explicit SpeculateCellOperand(SpeculateCellOperand&& other)
+    {
+        m_jit = other.m_jit;
+        m_edge = other.m_edge;
+        m_gprOrInvalid = other.m_gprOrInvalid;
+
+        other.m_gprOrInvalid = InvalidGPRReg;
+        other.m_edge = Edge();
     }
 
     ~SpeculateCellOperand()

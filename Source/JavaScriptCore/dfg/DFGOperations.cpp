@@ -42,6 +42,7 @@
 #include "FTLForOSREntryJITCode.h"
 #include "FTLOSREntry.h"
 #include "GetterSetter.h"
+#include "HasOwnPropertyCache.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
 #include "JIT.h"
@@ -1671,6 +1672,28 @@ int32_t JIT_OPERATION operationSizeOfVarargs(ExecState* exec, EncodedJSValue enc
     JSValue arguments = JSValue::decode(encodedArguments);
     
     return sizeOfVarargs(exec, arguments, firstVarArgOffset);
+}
+
+int32_t JIT_OPERATION operationHasOwnProperty(ExecState* exec, JSObject* thisObject, EncodedJSValue encodedKey)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue key = JSValue::decode(encodedKey);
+    Identifier propertyName = key.toPropertyKey(exec);
+    if (UNLIKELY(scope.exception()))
+        return false;
+
+    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
+    bool result = thisObject->hasOwnProperty(exec, propertyName.impl(), slot);
+    if (UNLIKELY(scope.exception()))
+        return false;
+
+    HasOwnPropertyCache* hasOwnPropertyCache = vm.hasOwnPropertyCache();
+    ASSERT(hasOwnPropertyCache);
+    hasOwnPropertyCache->tryAdd(vm, slot, thisObject, propertyName.impl(), result);
+    return result;
 }
 
 void JIT_OPERATION operationLoadVarargs(ExecState* exec, int32_t firstElementDest, EncodedJSValue encodedArguments, int32_t offset, int32_t length, int32_t mandatoryMinimum)

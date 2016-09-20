@@ -1311,6 +1311,22 @@ private:
             break;
         }
 
+        case HasOwnProperty: {
+            fixEdge<ObjectUse>(node->child1());
+#if CPU(X86) && USE(JSVALUE32_64)
+            // We don't have enough registers to do anything interesting on x86.
+            fixEdge<UntypedUse>(node->child2());
+#else
+            if (node->child2()->shouldSpeculateString())
+                fixEdge<StringUse>(node->child2());
+            else if (node->child2()->shouldSpeculateSymbol())
+                fixEdge<SymbolUse>(node->child2());
+            else
+                fixEdge<UntypedUse>(node->child2());
+#endif
+            break;
+        }
+
         case Check: {
             m_graph.doToChildren(
                 node,

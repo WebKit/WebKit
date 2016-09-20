@@ -31,9 +31,11 @@
 #include "B3Value.h"
 #include "DFGArrayMode.h"
 #include "FTLAbstractHeap.h"
+#include "HasOwnPropertyCache.h"
 #include "IndexingType.h"
 #include "JSMap.h"
 #include "JSSet.h"
+#include "Symbol.h"
 
 namespace JSC { namespace FTL {
 
@@ -110,6 +112,7 @@ namespace JSC { namespace FTL {
     macro(HashMapImpl_buffer,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()) \
     macro(HashMapBucket_value, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfValue()) \
     macro(HashMapBucket_key, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey()) \
+    macro(Symbol_symbolImpl, Symbol::offsetOfSymbolImpl()) \
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(DirectArguments_storage, DirectArguments::storageOffset(), sizeof(EncodedJSValue)) \
@@ -128,7 +131,8 @@ namespace JSC { namespace FTL {
     macro(scopedArgumentsTableArguments, 0, sizeof(int32_t)) \
     macro(singleCharacterStrings, 0, sizeof(JSString*)) \
     macro(structureTable, 0, sizeof(Structure*)) \
-    macro(variables, 0, sizeof(Register))
+    macro(variables, 0, sizeof(Register)) \
+    macro(HasOwnPropertyCache, 0, sizeof(HasOwnPropertyCache::Entry)) \
     
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \
     macro(properties)
