@@ -1,8 +1,8 @@
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1 -DWEBKIT_EXPORTS=1)
     list(APPEND WebKit_INCLUDE_DIRECTORIES
+        ${CAIRO_INCLUDE_DIRS}
         "${WEBKIT_LIBRARIES_DIR}/include"
-        "${WEBKIT_LIBRARIES_DIR}/include/cairo"
         "${WEBKIT_LIBRARIES_DIR}/include/sqlite"
         "${WEBCORE_DIR}/platform/graphics/cairo"
     )

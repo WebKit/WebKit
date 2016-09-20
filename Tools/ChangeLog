@@ -1,3 +1,13 @@
+2016-09-20  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [WinCairo] Use find_package cairo in build
+        https://bugs.webkit.org/show_bug.cgi?id=162239
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/PlatformWin.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+
 2016-09-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed build fix on 10.10 bots.

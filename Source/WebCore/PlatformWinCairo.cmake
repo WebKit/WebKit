@@ -2,10 +2,10 @@ include(platform/ImageDecoders.cmake)
 include(platform/TextureMapper.cmake)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
+    ${CAIRO_INCLUDE_DIRS}
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
     "${DirectX_INCLUDE_DIRS}"
     "${WEBKIT_LIBRARIES_DIR}/include"
-    "${WEBKIT_LIBRARIES_DIR}/include/cairo"
     "${WEBKIT_LIBRARIES_DIR}/include/SQLite"
     "${WEBKIT_LIBRARIES_DIR}/include/zlib"
     "${JAVASCRIPTCORE_DIR}/wtf/text"
@@ -74,10 +74,10 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_LIBRARIES
+    ${CAIRO_LIBRARIES}
     ${DirectX_LIBRARIES}
     CFLite
     SQLite3
-    cairo
     comctl32
     crypt32
     iphlpapi
@@ -96,8 +96,8 @@ list(APPEND WebCore_LIBRARIES
 )
 
 list(APPEND WebCoreTestSupport_LIBRARIES
+    ${CAIRO_LIBRARIES}
     CFLite
-    cairo
     shlwapi
 )
 

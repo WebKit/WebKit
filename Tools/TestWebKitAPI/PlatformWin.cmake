@@ -64,7 +64,7 @@ set(TestWebCoreLib_SOURCES
 
 if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND test_webcore_LIBRARIES
-        cairo
+        ${CAIRO_LIBRARIES}
         libANGLE
         libeay32
         mfuuid
@@ -126,6 +126,12 @@ add_dependencies(TestWebCore ${ForwardingHeadersForTestWebKitAPI_NAME})
 
 add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebCore)
 set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
+
+if (${WTF_PLATFORM_WIN_CAIRO})
+    include_directories(
+        ${CAIRO_INCLUDE_DIRS}
+    )
+endif ()
 
 add_library(TestWebKitLib SHARED
     ${test_main_SOURCES}
