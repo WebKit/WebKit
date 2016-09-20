@@ -393,13 +393,21 @@ template<typename CharacterType> inline static bool isInvalidDomainCharacter(Cha
 template<typename CharacterType> inline static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
 template<typename CharacterType> inline static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
 static bool shouldPercentEncodeQueryByte(uint8_t byte) { return characterClassTable[byte] & QueryPercent; }
-    
-template<typename CharacterType>
+
+template<bool serialized, typename CharacterType>
+void incrementIteratorSkippingTabAndNewLine(CodePointIterator<CharacterType>& iterator)
+{
+    ++iterator;
+    while (!serialized && !iterator.atEnd() && isTabOrNewline(*iterator))
+        ++iterator;
+}
+
+template<bool serialized, typename CharacterType>
 inline static bool isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
 {
     if (iterator.atEnd() || !isASCIIAlpha(*iterator))
         return false;
-    ++iterator;
+    incrementIteratorSkippingTabAndNewLine<serialized>(iterator);
     if (iterator.atEnd())
         return false;
     return *iterator == ':' || *iterator == '|';
@@ -412,17 +420,31 @@ inline static bool isWindowsDriveLetter(const Vector<LChar>& buffer, size_t inde
     return isASCIIAlpha(buffer[index]) && (buffer[index + 1] == ':' || buffer[index + 1] == '|');
 }
 
-template<typename CharacterType>
+template<bool serialized, typename CharacterType>
+inline static void checkWindowsDriveLetter(CodePointIterator<CharacterType>& iterator, Vector<LChar>& asciiBuffer)
+{
+    if (isWindowsDriveLetter<serialized>(iterator)) {
+        asciiBuffer.reserveCapacity(asciiBuffer.size() + 2);
+        asciiBuffer.uncheckedAppend(*iterator);
+        incrementIteratorSkippingTabAndNewLine<serialized>(iterator);
+        ASSERT(!iterator.atEnd());
+        ASSERT(*iterator == ':' || *iterator == '|');
+        asciiBuffer.uncheckedAppend(':');
+        incrementIteratorSkippingTabAndNewLine<serialized>(iterator);
+    }
+}
+
+template<bool serialized, typename CharacterType>
 inline static bool shouldCopyFileURL(CodePointIterator<CharacterType> iterator)
 {
-    if (isWindowsDriveLetter(iterator))
+    if (!isWindowsDriveLetter<serialized>(iterator))
         return true;
     if (iterator.atEnd())
         return false;
-    ++iterator;
+    incrementIteratorSkippingTabAndNewLine<serialized>(iterator);
     if (iterator.atEnd())
         return true;
-    ++iterator;
+    incrementIteratorSkippingTabAndNewLine<serialized>(iterator);
     if (iterator.atEnd())
         return true;
     return !isSlashQuestionOrHash(*iterator);
@@ -890,14 +912,6 @@ URL URLParser::parseSerializedURL(const String& input)
         return parse<serialized>(input.characters8(), input.length(), { }, UTF8Encoding());
     return parse<serialized>(input.characters16(), input.length(), { }, UTF8Encoding());
 }
-
-template<bool serialized, typename CharacterType>
-void incrementIteratorSkippingTabAndNewLine(CodePointIterator<CharacterType>& iterator)
-{
-    ++iterator;
-    while (!serialized && !iterator.atEnd() && isTabOrNewline(*iterator))
-        ++iterator;
-}
     
 template<bool serialized, typename CharacterType>
 URL URLParser::parse(const CharacterType* input, const unsigned length, const URL& base, const TextEncoding& encoding)
@@ -1204,7 +1218,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 ++c;
                 break;
             default:
-                if (!base.isNull() && base.protocolIs("file") && shouldCopyFileURL(c))
+                if (!base.isNull() && base.protocolIs("file") && shouldCopyFileURL<serialized>(c))
                     copyURLPartsUntil(base, URLPart::PathAfterLastSlash);
                 else {
                     m_asciiBuffer.append("///", 3);
@@ -1214,6 +1228,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                     m_url.m_hostEnd = m_url.m_userStart;
                     m_url.m_portEnd = m_url.m_userStart;
                     m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                    checkWindowsDriveLetter<serialized>(c, m_asciiBuffer);
                 }
                 state = State::Path;
                 break;
@@ -1238,15 +1253,13 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 String basePath = base.path();
                 if (basePath.length() >= 2) {
                     bool windowsQuirk = basePath.is8Bit()
-                        ? isWindowsDriveLetter(CodePointIterator<LChar>(basePath.characters8(), basePath.characters8() + basePath.length()))
-                        : isWindowsDriveLetter(CodePointIterator<UChar>(basePath.characters16(), basePath.characters16() + basePath.length()));
+                        ? isWindowsDriveLetter<serialized>(CodePointIterator<LChar>(basePath.characters8(), basePath.characters8() + basePath.length()))
+                        : isWindowsDriveLetter<serialized>(CodePointIterator<UChar>(basePath.characters16(), basePath.characters16() + basePath.length()));
                     if (windowsQuirk) {
                         m_asciiBuffer.append(basePath[0]);
                         m_asciiBuffer.append(basePath[1]);
                     }
                 }
-                state = State::Path;
-                break;
             }
             m_asciiBuffer.append("//", 2);
             m_url.m_userStart = m_asciiBuffer.size() - 1;
@@ -1255,6 +1268,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             m_url.m_hostEnd = m_url.m_userStart;
             m_url.m_portEnd = m_url.m_userStart;
             m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+            checkWindowsDriveLetter<serialized>(c, m_asciiBuffer);
             state = State::Path;
             break;
         case State::FileHost:

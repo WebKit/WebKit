@@ -526,6 +526,21 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://123.234.12",
         {"http", "", "", "123.234.0.12", 0, "/", "", "", "http://123.234.0.12/"},
         {"http", "", "", "123.234.12", 0, "/", "", "", "http://123.234.12/"});
+    checkRelativeURLDifferences("file:c:\\foo\\bar.html", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/c:/foo/bar.html", "", "", "file:///c:/foo/bar.html"},
+        {"file", "", "", "", 0, "/tmp/mock/c:/foo/bar.html", "", "", "file:///tmp/mock/c:/foo/bar.html"});
+    checkRelativeURLDifferences("  File:c|////foo\\bar.html", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/c:////foo/bar.html", "", "", "file:///c:////foo/bar.html"},
+        {"file", "", "", "", 0, "/tmp/mock/c|////foo/bar.html", "", "", "file:///tmp/mock/c|////foo/bar.html"});
+    checkRelativeURLDifferences("  Fil\t\n\te\n\t\n:\t\n\tc\t\n\t|\n\t\n/\t\n\t/\n\t\n//foo\\bar.html", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/c:////foo/bar.html", "", "", "file:///c:////foo/bar.html"},
+        {"file", "", "", "", 0, "/tmp/mock/c|////foo/bar.html", "", "", "file:///tmp/mock/c|////foo/bar.html"});
+    checkRelativeURLDifferences("C|/foo/bar", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},
+        {"file", "", "", "", 0, "/tmp/mock/C|/foo/bar", "", "", "file:///tmp/mock/C|/foo/bar"});
+    checkRelativeURLDifferences("/C|/foo/bar", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},
+        {"file", "", "", "", 0, "/C|/foo/bar", "", "", "file:///C|/foo/bar"});
 }
 
 TEST_F(URLParserTest, DefaultPort)
