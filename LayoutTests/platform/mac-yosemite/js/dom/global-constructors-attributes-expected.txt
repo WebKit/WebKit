@@ -1998,6 +1998,16 @@ PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').hasOwnProperty('get')
 PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBuffer').value is SourceBuffer
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBuffer').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBuffer').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBuffer').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBuffer').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBufferList').value is SourceBufferList
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBufferList').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBufferList').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBufferList').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'SourceBufferList').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').value is SpeechSynthesisEvent
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').hasOwnProperty('set') is false

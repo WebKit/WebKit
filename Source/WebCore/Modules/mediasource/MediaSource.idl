@@ -56,4 +56,11 @@ enum EndOfStreamError {
     [RaisesException] void endOfStream(optional EndOfStreamError error);
 
     static boolean isTypeSupported (DOMString type);
+
+    [RaisesException] void setLiveSeekableRange(double start, double end);
+    [RaisesException] void clearLiveSeekableRange();
+
+    attribute EventHandler onsourceopen;
+    attribute EventHandler onsourceended;
+    attribute EventHandler onsourceclose;
 };

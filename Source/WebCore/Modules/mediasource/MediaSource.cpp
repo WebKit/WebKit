@@ -261,6 +261,81 @@ void MediaSource::completeSeek()
     monitorSourceBuffers();
 }
 
+Ref<TimeRanges> MediaSource::seekable()
+{
+    // 6. HTMLMediaElement Extensions, seekable
+    // W3C Editor's Draft 16 September 2016
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#htmlmediaelement-extensions
+
+    // ↳ If duration equals NaN:
+    // Return an empty TimeRanges object.
+    if (m_duration.isInvalid())
+        return TimeRanges::create();
+
+    // ↳ If duration equals positive Infinity:
+    if (m_duration.isPositiveInfinite()) {
+        auto buffered = this->buffered();
+        // If live seekable range is not empty:
+        if (m_liveSeekable && m_liveSeekable->length()) {
+            // Let union ranges be the union of live seekable range and the HTMLMediaElement.buffered attribute.
+            buffered->unionWith(*m_liveSeekable);
+            // Return a single range with a start time equal to the earliest start time in union ranges
+            // and an end time equal to the highest end time in union ranges and abort these steps.
+            buffered->add(buffered->start(0), buffered->maximumBufferedTime());
+            return TimeRanges::create(*buffered);
+        }
+
+        // If the HTMLMediaElement.buffered attribute returns an empty TimeRanges object, then return
+        // an empty TimeRanges object and abort these steps.
+        if (!buffered->length())
+            return TimeRanges::create();
+
+        // Return a single range with a start time of 0 and an end time equal to the highest end time
+        // reported by the HTMLMediaElement.buffered attribute.
+        return TimeRanges::create({MediaTime::zeroTime(), buffered->maximumBufferedTime()});
+    }
+
+
+    // ↳ Otherwise:
+    // Return a single range with a start time of 0 and an end time equal to duration.
+    return TimeRanges::create({MediaTime::zeroTime(), m_duration});
+}
+
+void MediaSource::setLiveSeekableRange(double start, double end, ExceptionCode& ec)
+{
+    // W3C Editor's Draft 16 September 2016
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-mediasource-setliveseekablerange
+
+    // If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
+    if (!isOpen()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    // If start is negative or greater than end, then throw a TypeError exception and abort these steps.
+    if (start < 0 || start > end) {
+        ec = TypeError;
+        return;
+    }
+
+    // Set live seekable range to be a new normalized TimeRanges object containing a single range
+    // whose start position is start and end position is end.
+    m_liveSeekable = std::make_unique<PlatformTimeRanges>(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end));
+}
+
+void MediaSource::clearLiveSeekableRange(ExceptionCode& ec)
+{
+    // W3C Editor's Draft 16 September 2016
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-mediasource-clearliveseekablerange
+
+    // If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
+    if (!isOpen()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    m_liveSeekable = nullptr;
+}
+
 const MediaTime& MediaSource::currentTimeFudgeFactor()
 {
     // Allow hasCurrentTime() to be off by as much as the length of two 24fps video frames

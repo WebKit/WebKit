@@ -37,7 +37,6 @@
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
     ExportMacro=WEBCORE_EXPORT,
-    NoInterfaceObject,
 ] interface SourceBuffer : EventTarget {
 
     [SetterRaisesException] attribute AppendMode mode;
@@ -65,5 +64,11 @@
     // Abort the current segment append sequence.
     [RaisesException] void abort();
     [RaisesException] void remove(unrestricted double start, unrestricted double end);
+
+    attribute EventHandler onupdatestart;
+    attribute EventHandler onupdate;
+    attribute EventHandler onupdateend;
+    attribute EventHandler onerror;
+    attribute EventHandler onabort;
 };
 

@@ -82,6 +82,10 @@ public:
     void monitorSourceBuffers();
     bool isSeeking() const { return m_pendingSeekTime.isValid(); }
     void completeSeek();
+    Ref<TimeRanges> seekable();
+    void setLiveSeekableRange(double start, double end, ExceptionCode&);
+    void clearLiveSeekableRange(ExceptionCode&);
+
 
     void setDuration(double, ExceptionCode&);
     Optional<ExceptionCode> setDurationInternal(const MediaTime&);
@@ -143,6 +147,7 @@ protected:
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
     mutable std::unique_ptr<PlatformTimeRanges> m_buffered;
+    std::unique_ptr<PlatformTimeRanges> m_liveSeekable;
     HTMLMediaElement* m_mediaElement;
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
