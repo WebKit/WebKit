@@ -54,7 +54,7 @@
     [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;
     [Conditional=VIDEO_TRACK] readonly attribute TextTrackList textTracks;
 
-    [SetterRaisesException] attribute unrestricted double appendWindowStart;
+    [SetterRaisesException] attribute double appendWindowStart;
     [SetterRaisesException] attribute unrestricted double appendWindowEnd;
 
     // Append segment data.

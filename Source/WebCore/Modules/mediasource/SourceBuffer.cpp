@@ -192,19 +192,20 @@ double SourceBuffer::appendWindowStart() const
 void SourceBuffer::setAppendWindowStart(double newValue, ExceptionCode& ec)
 {
     // Section 3.1 appendWindowStart attribute setter steps.
-    // http://www.w3.org/TR/media-source/#widl-SourceBuffer-appendWindowStart
+    // W3C Editor's Draft 16 September 2016
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-appendwindowstart
     // 1. If this object has been removed from the sourceBuffers attribute of the parent media source,
-    //    then throw an INVALID_STATE_ERR exception and abort these steps.
-    // 2. If the updating attribute equals true, then throw an INVALID_STATE_ERR exception and abort these steps.
+    //    then throw an InvalidStateError  exception and abort these steps.
+    // 2. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
     // 3. If the new value is less than 0 or greater than or equal to appendWindowEnd then
-    //    throw an INVALID_ACCESS_ERR exception and abort these steps.
+    //    throw an TypeError exception and abort these steps.
     if (newValue < 0 || newValue >= m_appendWindowEnd.toDouble()) {
-        ec = INVALID_ACCESS_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -220,20 +221,21 @@ double SourceBuffer::appendWindowEnd() const
 void SourceBuffer::setAppendWindowEnd(double newValue, ExceptionCode& ec)
 {
     // Section 3.1 appendWindowEnd attribute setter steps.
-    // http://www.w3.org/TR/media-source/#widl-SourceBuffer-appendWindowEnd
+    // W3C Editor's Draft 16 September 2016
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-appendwindowend
     // 1. If this object has been removed from the sourceBuffers attribute of the parent media source,
-    //    then throw an INVALID_STATE_ERR exception and abort these steps.
-    // 2. If the updating attribute equals true, then throw an INVALID_STATE_ERR exception and abort these steps.
+    //    then throw an InvalidStateError exception and abort these steps.
+    // 2. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    // 3. If the new value equals NaN, then throw an INVALID_ACCESS_ERR and abort these steps.
-    // 4. If the new value is less than or equal to appendWindowStart then throw an INVALID_ACCESS_ERR exception
+    // 3. If the new value equals NaN, then throw an TypeError and abort these steps.
+    // 4. If the new value is less than or equal to appendWindowStart then throw an TypeError exception
     //    and abort these steps.
     if (std::isnan(newValue) || newValue <= m_appendWindowStart.toDouble()) {
-        ec = INVALID_ACCESS_ERR;
+        ec = TypeError;
         return;
     }
 
