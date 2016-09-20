@@ -215,18 +215,7 @@ AuthorStyleSheets::StyleResolverUpdateType AuthorStyleSheets::analyzeStyleSheetC
 {
     requiresFullStyleRecalc = true;
     
-    // Stylesheets of <style> elements that @import stylesheets are active but loading. We need to trigger a full recalc when such loads are done.
-    bool hasActiveLoadingStylesheet = false;
     unsigned newStylesheetCount = newStylesheets.size();
-    for (auto& sheet : newStylesheets) {
-        if (sheet->isLoading())
-            hasActiveLoadingStylesheet = true;
-    }
-    if (m_hadActiveLoadingStylesheet && !hasActiveLoadingStylesheet) {
-        m_hadActiveLoadingStylesheet = false;
-        return Reconstruct;
-    }
-    m_hadActiveLoadingStylesheet = hasActiveLoadingStylesheet;
 
     if (updateFlag != OptimizedUpdate)
         return Reconstruct;
@@ -281,6 +270,8 @@ static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& r
         if (!is<CSSStyleSheet>(*sheet))
             continue;
         CSSStyleSheet& styleSheet = downcast<CSSStyleSheet>(*sheet);
+        if (styleSheet.isLoading())
+            continue;
         if (styleSheet.disabled())
             continue;
         if (!styleSheet.length())

@@ -124,7 +124,6 @@ private:
     // elements and when it is safe to execute scripts.
     int m_pendingStyleSheetCount { 0 };
 
-    bool m_hadActiveLoadingStylesheet { false };
     UpdateFlag m_pendingUpdateType { NoUpdate };
 
     ListHashSet<Node*> m_styleSheetCandidateNodes;
