@@ -122,9 +122,6 @@ class WinPort(ApplePort):
     def operating_system(self):
         return 'win'
 
-    def default_child_processes(self):
-        return 1
-
     def _port_flag_for_scripts(self):
         if self.get_option('architecture') == 'x86_64':
             return '--64-bit'
