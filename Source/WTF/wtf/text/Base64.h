@@ -48,13 +48,62 @@ enum Base64DecodeOptions {
 
 class SignedOrUnsignedCharVectorAdapter {
 public:
-    SignedOrUnsignedCharVectorAdapter(Vector<char>& vector) { m_vector.c = &vector; }
-    SignedOrUnsignedCharVectorAdapter(Vector<uint8_t>& vector) { m_vector.u = &vector; }
+    SignedOrUnsignedCharVectorAdapter(Vector<char>& vector)
+        : m_isSigned(true)
+    {
+        m_vector.c = &vector;
+    }
+    SignedOrUnsignedCharVectorAdapter(Vector<uint8_t>& vector)
+        : m_isSigned(false)
+    {
+        m_vector.u = &vector;
+    }
 
-    operator Vector<char>&() { return *m_vector.c; }
-    void clear() { m_vector.c->clear(); }
+    uint8_t* data()
+    {
+        if (m_isSigned)
+            return reinterpret_cast<uint8_t*>(m_vector.c->data());
+        return m_vector.u->data();
+    }
+    
+    size_t size() const
+    {
+        if (m_isSigned)
+            return m_vector.c->size();
+        return m_vector.u->size();
+    }
+    
+    void clear()
+    {
+        if (m_isSigned) {
+            m_vector.c->clear();
+            return;
+        }
+        m_vector.u->clear();
+    }
+    
+    void grow(size_t size)
+    {
+        if (m_isSigned) {
+            m_vector.c->grow(size);
+            return;
+        }
+        m_vector.u->grow(size);
+    }
+    
+    void shrink(size_t size)
+    {
+        if (m_isSigned) {
+            m_vector.c->shrink(size);
+            return;
+        }
+        m_vector.u->shrink(size);
+    }
+    
+    uint8_t& operator[](size_t position) { return data()[position]; }
 
 private:
+    bool m_isSigned;
     union {
         Vector<char>* c;
         Vector<uint8_t>* u;
@@ -63,14 +112,32 @@ private:
 
 class ConstSignedOrUnsignedCharVectorAdapter {
 public:
-    ConstSignedOrUnsignedCharVectorAdapter(const Vector<char>& vector) { m_vector.c = &vector; }
-    ConstSignedOrUnsignedCharVectorAdapter(const Vector<uint8_t>& vector) { m_vector.u = &vector; }
+    ConstSignedOrUnsignedCharVectorAdapter(const Vector<char>& vector)
+        : m_isSigned(false)
+    {
+        m_vector.c = &vector;
+    }
+    ConstSignedOrUnsignedCharVectorAdapter(const Vector<uint8_t>& vector)
+        : m_isSigned(true)
+    {
+        m_vector.u = &vector;
+    }
 
-    operator const Vector<char>&() { return *m_vector.c; }
-    const char* data() const { return m_vector.c->data(); }
-    size_t size() const { return m_vector.c->size(); }
+    const uint8_t* data() const
+    {
+        if (m_isSigned)
+            return reinterpret_cast<const uint8_t*>(m_vector.c->data());
+        return m_vector.u->data();
+    }
+    size_t size() const
+    {
+        if (m_isSigned)
+            return m_vector.c->size();
+        return m_vector.u->size();
+    }
 
 private:
+    bool m_isSigned;
     union {
         const Vector<char>* c;
         const Vector<uint8_t>* u;
