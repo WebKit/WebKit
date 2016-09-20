@@ -1,5 +1,25 @@
 2016-09-20  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::StoreBarrierInsertionPhase should assume that any epoch increment may make objects older
+        https://bugs.webkit.org/show_bug.cgi?id=162319
+
+        Reviewed by Saam Barati.
+        
+        The store barrier phase needs to be aware of the fact that an object that is not in the
+        OldBlack state may be concurrently brought into that state. That means that:
+        
+        - We cannot reason about the relative ages of objects. An object is either new, in which
+          case we can store to it without barriers, or it's not in which case it needs a barrier.
+        
+        - After we insert a barrier on an object, the object is no longer new, because now the GC
+          knows about it and the GC may do things to it, like make it OldBlack.
+        
+        This is a perf-neutral change. These optimizations were never particularly profitable.
+
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+
+2016-09-20  Filip Pizlo  <fpizlo@apple.com>
+
         Rename MarkedSpace::version/MarkedBlock::version to MarkedSpace::markingVersion/MarkedBlock::markingVersion
         https://bugs.webkit.org/show_bug.cgi?id=162310
 
