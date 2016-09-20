@@ -41,6 +41,20 @@
                     { "name": "bot418", "platform": "mac-elcapitan" },
                     { "name": "bot419", "platform": "mac-elcapitan" },
 
+                    { "name": "bot118", "platform": "mac-sierra" },
+                    { "name": "bot122", "platform": "mac-sierra" },
+                    { "name": "bot137", "platform": "mac-sierra" },
+                    { "name": "bot140", "platform": "mac-sierra" },
+                    { "name": "bot141", "platform": "mac-sierra" },
+                    { "name": "bot160", "platform": "mac-sierra" },
+                    { "name": "bot164", "platform": "mac-sierra" },
+                    { "name": "bot199", "platform": "mac-sierra" },
+                    { "name": "bot439", "platform": "mac-sierra" },
+                    { "name": "bot443", "platform": "mac-sierra" },
+                    { "name": "bot600", "platform": "mac-sierra" },
+                    { "name": "bot698", "platform": "mac-sierra" },
+                    { "name": "bot699", "platform": "mac-sierra" },
+
                     { "name": "bot407", "platform": "ios-10" },
                     { "name": "bot197", "platform": "ios-simulator-10" },
                     { "name": "bot329", "platform": "ios-simulator-10" },
@@ -81,7 +95,41 @@
 
                   ],
 
-    "builders":   [ { "name": "Apple El Capitan Debug (Build)", "type": "Build", "builddir": "elcapitan-debug",
+    "builders":   [ { "name": "Apple Sierra Debug (Build)", "type": "Build", "builddir": "sierra-debug",
+                      "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["sierra-debug-tests-wk1", "sierra-debug-tests-wk2"],
+                      "slavenames": ["bot439", "bot698"]
+                    },
+                    { "name": "Apple Sierra Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "sierra-debug-tests-wk1",
+                      "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot118", "bot122"]
+                    },
+                    { "name": "Apple Sierra Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "sierra-debug-tests-wk2",
+                      "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot137", "bot140"]
+                    },
+                    { "name": "Apple Sierra Release (Build)", "type": "Build", "builddir": "sierra-release",
+                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["sierra-release-tests-wk1", "sierra-release-tests-wk2"],
+                      "slavenames": ["bot443", "bot699"]
+                    },
+                    { "name": "Apple Sierra Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "sierra-release-tests-wk1",
+                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot141", "bot160"]
+                    },
+                    { "name": "Apple Sierra Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "sierra-release-tests-wk2",
+                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot164", "bot199"]
+                    },
+                    { "name": "Apple Sierra Release (32-bit Build)", "type": "Build", "builddir": "sierra-32bit-release",
+                      "platform": "mac-sierra", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["bot600"]
+                    },
+                    { "name": "Apple El Capitan Debug (Build)", "type": "Build", "builddir": "elcapitan-debug",
                       "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["elcapitan-debug-tests-jsc", "elcapitan-debug-tests-wk1", "elcapitan-debug-tests-wk2"],
                       "slavenames": ["bot415", "bot416"]
@@ -348,6 +396,9 @@
                     { "type": "PlatformSpecificScheduler", "platform": "mac-elcapitan", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple El Capitan Release (Build)", "Apple El Capitan Debug (Build)", "Apple El Capitan LLINT CLoop (BuildAndTest)", "Apple El Capitan 32-bit JSC (BuildAndTest)", "Apple El Capitan Release (32-bit Build)", "Apple El Capitan CMake Debug (Build)"]
                     },
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-sierra", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple Sierra Release (Build)", "Apple Sierra Debug (Build)", "Apple Sierra Release (32-bit Build)"]
+                    },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-10", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple iOS 10 Release (Build)"]
                     },
@@ -356,6 +407,18 @@
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
+                    },
+                    { "type": "Triggerable", "name": "sierra-release-tests-wk1",
+                      "builderNames": ["Apple Sierra Release WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "sierra-release-tests-wk2",
+                      "builderNames": ["Apple Sierra Release WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "sierra-debug-tests-wk1",
+                      "builderNames": ["Apple Sierra Debug WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "sierra-debug-tests-wk2",
+                      "builderNames": ["Apple Sierra Debug WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "elcapitan-leaks",
                       "builderNames": ["Apple El Capitan (Leaks)"]
