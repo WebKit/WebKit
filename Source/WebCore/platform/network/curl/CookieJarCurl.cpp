@@ -223,12 +223,18 @@ static String getNetscapeCookieFormat(const URL& url, const String& value)
     
     StringBuilder cookieStr;
     cookieStr.reserveCapacity(finalStringLength);
-    cookieStr.append(domain + "\t");
-    cookieStr.append(allowSubdomains + "\t");
-    cookieStr.append(path + "\t");
-    cookieStr.append(secure + "\t");
-    cookieStr.append(expiresStr + "\t");
-    cookieStr.append(cookieName + "\t");
+    cookieStr.append(domain);
+    cookieStr.append("\t");
+    cookieStr.append(allowSubdomains);
+    cookieStr.append("\t");
+    cookieStr.append(path);
+    cookieStr.append("\t");
+    cookieStr.append(secure);
+    cookieStr.append("\t");
+    cookieStr.append(expiresStr);
+    cookieStr.append("\t");
+    cookieStr.append(cookieName);
+    cookieStr.append("\t");
     cookieStr.append(cookieValue);
 
     return cookieStr.toString();
