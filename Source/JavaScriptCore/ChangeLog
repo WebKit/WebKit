@@ -1,3 +1,13 @@
+2016-09-20  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed fix for 32-bit DFG x86 implementation of HasOwnProperty.
+
+        Fixup phase is always setting ObjectUse on child1() of HasOwnProperty.
+        However, on x86 32-bit, I omitted a call to speculateObject() on child1().
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2016-09-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add `typeof value === "symbol"` handling to bytecode compiler

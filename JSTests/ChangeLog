@@ -1,3 +1,12 @@
+2016-09-20  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed, added test for x86 32-bit failure for HasOwnProperty node in DFG.
+
+        * stress/has-own-property-called-on-non-object.js: Added.
+        (let.objs):
+        (new.String):
+        (foo):
+
 2016-09-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add `typeof value === "symbol"` handling to bytecode compiler

@@ -4899,6 +4899,9 @@ void SpeculativeJIT::compile(Node* node)
         JSValueRegs keyRegs = key.jsValueRegs();
         GPRReg objectGPR = object.gpr();
         GPRReg resultGPR = result.gpr();
+
+        speculateObject(node->child1());
+
         flushRegisters();
         callOperation(operationHasOwnProperty, resultGPR, objectGPR, keyRegs);
         booleanResult(resultGPR, node);
