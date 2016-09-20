@@ -1,8 +1,8 @@
 
 PASS URL.searchParams getter 
-FAIL URL.searchParams updating, clearing assert_equals: expected "" but got "a=b"
+PASS URL.searchParams updating, clearing 
 PASS URL.searchParams setter, invalid values 
-FAIL URL.searchParams and URL.search setters, update propagation assert_equals: expected "e=f&g=h" but got "a=b&c=d"
+PASS URL.searchParams and URL.search setters, update propagation 
 PASS Loading data… 
 PASS Parsing: <http://example	.
 org> against <http://example.org/foo/bar> 
@@ -350,7 +350,7 @@ ry#f	r
 a
 g> against <about:blank> 
 PASS Parsing: <?a=b&c=d> against <http://example.org/foo/bar> 
-FAIL Parsing: <??a=b&c=d> against <http://example.org/foo/bar> assert_equals: searchParams expected "%3Fa=b&c=d" but got "a=b&c=d"
+PASS Parsing: <??a=b&c=d> against <http://example.org/foo/bar> 
 PASS Parsing: <http:> against <http://example.org/foo/bar> 
 FAIL Parsing: <http:> against <https://example.org/foo/bar> assert_throws: function "function () {
           bURL(expected.input, expected.bas..." did not throw

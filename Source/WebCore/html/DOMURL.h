@@ -45,19 +45,19 @@ public:
     static Ref<DOMURL> create(const String& url, const String& base, ExceptionCode&);
     static Ref<DOMURL> create(const String& url, const DOMURL& base, ExceptionCode&);
     static Ref<DOMURL> create(const String& url, ExceptionCode&);
+    ~DOMURL();
 
     URL href() const { return m_url; }
     void setHref(const String& url);
     void setHref(const String&, ExceptionCode&);
     void setQuery(const String&);
 
-    Ref<URLSearchParams> searchParams();
+    URLSearchParams& searchParams();
 
     static String createObjectURL(ScriptExecutionContext&, Blob*);
     static void revokeObjectURL(ScriptExecutionContext&, const String&);
 
     static String createPublicURL(ScriptExecutionContext&, URLRegistrable*);
-
 private:
     DOMURL(const String& url, const String& base, ExceptionCode&);
     DOMURL(const String& url, const DOMURL& base, ExceptionCode&);
@@ -65,6 +65,7 @@ private:
 
     URL m_baseURL;
     URL m_url;
+    RefPtr<URLSearchParams> m_searchParams;
 };
 
 } // namespace WebCore

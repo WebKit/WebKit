@@ -1,5 +1,14 @@
 2016-09-20  Alex Christensen  <achristensen@webkit.org>
 
+        Make URLSearchParams spec-compliant
+        https://bugs.webkit.org/show_bug.cgi?id=162247
+
+        Reviewed by Chris Dumez and Sam Weinig.
+
+        * web-platform-tests/url/url-constructor-expected.txt:
+
+2016-09-20  Alex Christensen  <achristensen@webkit.org>
+
         Non-special URLs should have an opaque origin
         https://bugs.webkit.org/show_bug.cgi?id=162254
 

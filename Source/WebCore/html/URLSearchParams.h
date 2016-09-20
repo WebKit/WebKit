@@ -35,6 +35,7 @@ public:
     static Ref<URLSearchParams> create(const String& string, DOMURL* associatedURL = nullptr) { return adoptRef(*new URLSearchParams(string, associatedURL)); }
     static Ref<URLSearchParams> create(const Vector<std::pair<String, String>>& pairs) { return adoptRef(*new URLSearchParams(pairs)); }
 
+    void associatedURLDestroyed() { m_associatedURL = nullptr; }
     void append(const String& name, const String& value);
     void remove(const String& name);
     String get(const String& name) const;
@@ -43,13 +44,14 @@ public:
     void set(const String& name, const String& value);
     String toString();
     operator const Vector<std::pair<String, String>>&() { return m_pairs; }
+    void updateFromAssociatedURL();
 
 private:
     URLSearchParams(const String&, DOMURL*);
     explicit URLSearchParams(const Vector<std::pair<String, String>>&);
     void updateURL();
 
-    RefPtr<DOMURL> m_associatedURL;
+    DOMURL* m_associatedURL;
     Vector<std::pair<String, String>> m_pairs;
 };
 

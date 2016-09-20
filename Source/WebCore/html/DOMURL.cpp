@@ -78,9 +78,17 @@ inline DOMURL::DOMURL(const String& url, ExceptionCode& ec)
         ec = TypeError;
 }
 
+DOMURL::~DOMURL()
+{
+    if (m_searchParams)
+        m_searchParams->associatedURLDestroyed();
+}
+
 void DOMURL::setHref(const String& url)
 {
     m_url = URL(m_baseURL, url);
+    if (m_searchParams)
+        m_searchParams->updateFromAssociatedURL();
 }
 
 void DOMURL::setQuery(const String& query)
@@ -113,9 +121,11 @@ String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, U
     return publicURL.string();
 }
 
-Ref<URLSearchParams> DOMURL::searchParams()
+URLSearchParams& DOMURL::searchParams()
 {
-    return URLSearchParams::create(m_url.query(), this);
+    if (!m_searchParams)
+        m_searchParams = URLSearchParams::create(search(), this);
+    return *m_searchParams;
 }
     
 void DOMURL::revokeObjectURL(ScriptExecutionContext& scriptExecutionContext, const String& urlString)
