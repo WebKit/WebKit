@@ -3,158 +3,187 @@
 <head>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
-#gridWithDense {
-    grid: dense;
+#gridWithNone {
+    grid: none;
 }
-#gridWithTemplate {
+.gridWithTemplate {
     grid: 10px / 15px;
 }
-#gridWithTemplate1 {
-    grid: 10px / none;
+.gridWithInherit {
+    grid: inherit;
 }
-#gridWithTemplateNone {
-    grid: 10px / none;
+#gridColumnsAndAutoFlow {
+    grid: auto-flow / 10px;
 }
-#gridWithAutoFlowDenseAndRowsAndColumns {
-    grid: dense 10px / 20px;
-}
-#gridWithAutoFlowAndRows {
-    grid: column 10px;
-}
-#gridWithAutoFlowDense {
-    grid: dense 10px;
+#gridWithAutoFlowAndAutoRows {
+    grid: auto-flow 10px / none;
 }
 #gridWithAutoFlowColumnDense {
-    grid: column dense 10px;
+    grid: none / auto-flow dense;
 }
 #gridWithAutoFlowDenseRow {
-    grid: dense row 10px;
+    grid: auto-flow dense / none;
 }
-#gridWithAutoFlowAndRowsAndColumns {
-    grid: column 10px / 20px;
+#gridWithAutoFlowAndAutoRowsAndColumns {
+    grid: auto-flow 10px / 20px;
 }
 #gridWithAutoFlowAndMultipleAutoTracks {
-    grid: row 20px 10px / 100px 10%;
+    grid: auto-flow 20px 10px / 100px 50px;
+}
+#gridWithRowsAndAutoFlow {
+    grid: 10px / auto-flow;
+}
+#gridWithRowsNoneAndAutoFlowAndAutoColumn {
+    grid: none / auto-flow 10px;
+}
+#gridWithRowsAndAutoFlowDenseColumn {
+    grid: 10px / auto-flow dense;
+}
+#gridWithColumnsAndDenseAutoFlow {
+    grid: dense auto-flow / 10px;
+}
+#gridWithRowsAndAutoFlowAndAutoColumns {
+    grid: 20px / auto-flow 10px;
+}
+#gridWithRowsAndAutoFlowAndMultipleAutoTracks {
+    grid: 100px 50px / auto-flow 20px 10px;
 }
 
 /* Bad values. */
 
-#gridWithNone {
-    grid: none;
-}
-#gridWithAutoFlowNoneAndRowsAndColumns {
-    grid: none 10px / 20px;
-}
-#gridWithAutoFlowNone {
-    grid: none 10px;
-}
-#gridWithExplicitAndImplicit {
-    grid: 10px / 20px column;
+#gridWithMisplacedAutoColumn {
+    grid: 10px / 20px auto-flow;
 }
 #gridWithMisplacedNone1 {
-    grid: column 10px / none 20px;
+    grid: auto-flow 10px / none 20px;
 }
 #gridWithMisplacedNone2 {
     grid: 10px / 20px none;
 }
-#gridWithWrongSlash1 {
-    grid: column / 10px;
-}
-#gridWithWrongSlash2 {
-    grid: 5x / 10px / 20px;
-}
-#gridWithAutoFlowRowAndColumn {
-    grid: row column 10px;
-}
-#gridWithAutoFlowString1 {
-    grid: row 10px "a";
-}
-#gridWithAutoFlowString2 {
-    grid: row "a" 10px;
-}
-#gridWithAutoFlowString3 {
-    grid: row "a";
-}
-#gridWithTemplateAndAutoFlow {
-    grid: 10px / 10px row;
-}
-#gridWithTemplateAndMisplacedString1 {
-    grid: 10px / 10px "a";
-}
 #gridWithMisplacedDense {
-    grid: dense column dense;
+    grid: dense 10px / auto-flow 20px;
+}
+#gridWithDuplicatedDense {
+    grid: dense auto-flow dense / 10px;
+}
+#gridWithOnlyDense {
+    grid: dense / 10px;
+}
+#gridWithoutColumnInfo {
+    grid: auto-flow dense 10px;
+}
+#gridWithTwoAutoFlow {
+    grid: auto-flow / auto-flow 20px;
+}
+#gridWithImplicitAndNoExplicit {
+    grid: column 20px / 10px;
+}
+#gridWithExtraIdBeforeAutoFlowColumn {
+    grid: 10px / a auto-flow 20px;
+}
+#gridWithExtraIdBeforeAutoFlowRow {
+    grid: a auto-flow 10px / 20px;
+}
+#gridWithExtraIdBeforeAutoColumn {
+    grid: 10px / auto-flow a 20px;
+}
+#gridWithExtraIdAfterAutoColumn {
+    grid: 10px / auto-flow 20px a;
+}
+#gridWithExtraIdBeforeAutoRow {
+   grid: auto-flow a 20px / 10px;
+}
+#gridWithExtraIdAfterAutoRow {
+   grid: auto-flow 20px a / 10px;
 }
 </style>
 <script src="../../resources/js-test.js"></script>
 </head>
 <body>
-<div class="grid" id="gridWithDense"></div>
-<div class="grid" id="gridWithTemplate"></div>
-<div class="grid" id="gridWithTemplate1"></div>
-<div class="grid" id="gridWithAutoFlowDenseAndRowsAndColumns"></div>
-<div class="grid" id="gridWithAutoFlowAndRows"></div>
-<div class="grid" id="gridWithAutoFlowDense"></div>
+<div class="grid" id="gridWithNone"></div>
+<div class="grid gridWithTemplate" id="gridWithTemplate"></div>
+<div class="grid gridWithTemplate">
+    <div class="grid gridWithInherit" id="gridInherit"></div>
+</div>
+<div class="grid" class="gridWithTemplate">
+    <div><div class="grid gridWithInherit" id="gridNoInherit"></div></div>
+</div-->
+<div class="grid" id="gridColumnsAndAutoFlow"></div>
+<div class="grid" id="gridWithAutoFlowAndAutoRows"></div>
 <div class="grid" id="gridWithAutoFlowColumnDense"></div>
 <div class="grid" id="gridWithAutoFlowDenseRow"></div>
-<div class="grid" id="gridWithAutoFlowAndRowsAndColumns"></div>
-<div class="grid" id="gridWithNone"></div>
-<div class="grid" id="gridWithTemplateNone"></div>
-<div class="grid" id="gridWithAutoFlowNoneAndRowsAndColumns"></div>
-<div class="grid" id="gridWithAutoFlowNone"></div>
-<div class="grid" id="gridWithExplicitAndImplicit"></div>
+<div class="grid" id="gridWithAutoFlowAndAutoRowsAndColumns"></div>
+<div class="grid" id="gridWithAutoFlowAndMultipleAutoTracks"></div>
+<div class="grid" id="gridWithRowsAndAutoFlow"></div>
+<div class="grid" id="gridWithRowsNoneAndAutoFlowAndAutoColumn"></div>
+<div class="grid" id="gridWithRowsAndAutoFlowDenseColumn"></div>
+<div class="grid" id="gridWithColumnsAndDenseAutoFlow"></div>
+<div class="grid" id="gridWithRowsAndAutoFlowAndAutoColumns"></div>
+<div class="grid" id="gridWithRowsAndAutoFlowAndMultipleAutoTracks"></div>
+<div class="grid" id="gridWithMisplacedAutoColumn"></div>
 <div class="grid" id="gridWithMisplacedNone1"></div>
 <div class="grid" id="gridWithMisplacedNone2"></div>
-<div class="grid" id="gridWithWrongSlash1"></div>
-<div class="grid" id="gridWithWrongSlash2"></div>
-<div class="grid" id="gridWithAutoFlowRowAndColumn"></div>
-<div class="grid" id="gridWithAutoFlowString1"></div>
-<div class="grid" id="gridWithAutoFlowString2"></div>
-<div class="grid" id="gridWithAutoFlowString3"></div>
-<div class="grid" id="gridWithTemplateAndAutoFlow"></div>
-<div class="grid" id="gridWithTemplateAndMisplacedString1"></div>
 <div class="grid" id="gridWithMisplacedDense"></div>
-<div class="grid" id="gridWithAutoFlowAndMultipleAutoTracks"></div>
+<div class="grid" id="gridWithDuplicatedDense"></div>
+<div class="grid" id="gridWithOnlyDense"></div>
+<div class="grid" id="gridWithoutColumnInfo"></div>
+<div class="grid" id="gridWithTwoAutoFlow"></div>
+<div class="grid" id="gridWithImplicitAndNoExplicit"></div>
+<div class="grid" id="gridWithExtraIdBeforeAutoFlowColumn"></div>
+<div class="grid" id="gridWithExtraIdBeforeAutoFlowRow"></div>
+<div class="grid" id="gridWithExtraIdBeforeAutoColumn"></div>
+<div class="grid" id="gridWithExtraIdAfterAutoColumn"></div>
+<div class="grid" id="gridWithExtraIdBeforeAutoRow"></div>
+<div class="grid" id="gridWithExtraIdAfterAutoRow"></div>
 <script src="resources/grid-shorthand-parsing-utils.js"></script>
 <script>
     description("This test checks that the 'grid' shorthand is properly parsed and the longhand properties correctly assigned.");
 
     debug("Test getting the longhand values when shorthand is set through CSS.");
-    testGridDefinitionsValues(document.getElementById("gridWithDense"), "none", "none", "none", "row dense", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithNone"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithTemplate"), "15px", "10px", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithTemplate1"), "none", "10px", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithTemplateNone"), "none", "10px", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowDenseAndRowsAndColumns"), "none", "none", "none", "row dense", "20px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndRows"), "none", "none", "none", "column", "10px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowDense"), "none", "none", "none", "row dense", "10px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowColumnDense"), "none", "none", "none", "column dense", "10px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowDenseRow"), "none", "none", "none", "row dense", "10px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndRowsAndColumns"), "none", "none", "none", "column", "20px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndMultipleAutoTracks"), "none", "none", "none", "row", "100px 10%", "20px 10px");
+    testGridDefinitionsValues(document.getElementById("gridInherit"), "15px", "10px", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridNoInherit"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridColumnsAndAutoFlow"), "10px", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndAutoRows"), "none", "none", "none", "row", "auto", "10px");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowColumnDense"), "none", "none", "none", "column dense", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowDenseRow"), "none", "none", "none", "row dense", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndAutoRowsAndColumns"), "20px", "none", "none", "row", "auto", "10px");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndMultipleAutoTracks"), "100px 50px", "none", "none", "row", "auto", "20px 10px");
+
+    testGridDefinitionsValues(document.getElementById("gridWithRowsAndAutoFlow"), "none", "10px", "none", "column", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithRowsNoneAndAutoFlowAndAutoColumn"), "none", "none", "none", "column", "10px", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithRowsAndAutoFlowDenseColumn"), "none", "10px", "none", "column dense", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithColumnsAndDenseAutoFlow"), "10px", "none", "none", "row dense", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithRowsAndAutoFlowAndAutoColumns"), "none", "20px", "none", "column", "10px", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithRowsAndAutoFlowAndMultipleAutoTracks"), "none", "100px 50px", "none", "column", "20px 10px", "auto");
 
     debug("");
-    debug("Test setting wrong values for 'grid' shorthand through CSS (they should resolve to the default: 'row')");
-    testGridDefinitionsValues(document.getElementById("gridWithNone"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowNoneAndRowsAndColumns"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowNone"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithExplicitAndImplicit"), "none", "none", "none", "row", "auto", "auto");
+    debug("Test getting wrong values for 'grid' shorthand through CSS (they should resolve to the default: 'none')");
+    testGridDefinitionsValues(document.getElementById("gridWithMisplacedAutoColumn"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithMisplacedNone1"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithMisplacedNone2"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithMisplacedDense"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithWrongSlash1"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithWrongSlash2"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowRowAndColumn"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString1"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString2"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowString3"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithTemplateAndAutoFlow"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithTemplateAndMisplacedString1"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithDuplicatedDense"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithOnlyDense"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithoutColumnInfo"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithTwoAutoFlow"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithImplicitAndNoExplicit"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithExtraIdBeforeAutoFlowColumn"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithExtraIdBeforeAutoFlowRow"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithExtraIdBeforeAutoColumn"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithExtraIdAfterAutoColumn"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithExtraIdBeforeAutoRow"), "none", "none", "none", "row", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithExtraIdAfterAutoRow"), "none", "none", "none", "row", "auto", "auto");
 
     debug("");
     debug("Test getting and setting 'grid' shorthand through JS");
     testGridDefinitionsSetJSValues("20px / 10px", "10px", "20px", "none", "row", "auto", "auto", "10px", "20px", "none", "initial", "initial", "initial");
     testGridDefinitionsSetJSValues("[line] 'a' 20px / 10px", "10px", "[line] 20px", "\"a\"", "row", "auto", "auto", "10px", "[line] 20px", "\"a\"", "initial", "initial", "initial");
-    testGridDefinitionsSetJSValues("row dense 20px", "none", "none", "none", "row dense", "20px", "20px", "initial", "initial", "initial", "row dense", "20px", "20px");
-    testGridDefinitionsSetJSValues("column 20px / 10px", "none", "none", "none", "column", "10px", "20px", "initial", "initial", "initial", "column", "10px", "20px");
+    testGridDefinitionsSetJSValues("auto-flow dense 20px / none", "none", "none", "none", "row dense", "auto", "20px", "none", "initial", "initial", "row dense", "initial", "20px");
+    testGridDefinitionsSetJSValues("20px / auto-flow 10px", "none", "20px", "none", "column", "10px", "auto", "initial", "20px", "initial", "column", "10px", "initial");
+    testGridDefinitionsSetJSValues("none / auto-flow dense 20px", "none", "none", "none", "column dense", "20px", "auto", "initial", "none", "initial", "column dense", "20px", "initial");
+    testGridDefinitionsSetJSValues("10px / auto-flow 20px", "none", "10px", "none", "column", "20px", "auto", "initial", "10px", "initial", "column", "20px", "initial");
 
     debug("");
     debug("Test the initial value");
@@ -170,7 +199,9 @@
 
     debug("");
     debug("Test setting grid-template-columns and grid-template-rows back to 'none' through JS");
-    testGridDefinitionsSetJSValues("column 10px / 20px", "none", "none", "none", "column", "20px", "10px", "initial", "initial", "initial", "column", "20px", "10px");
+    testGridDefinitionsSetJSValues("10px / auto-flow 20px", "none", "10px", "none", "column", "20px", "auto", "initial", "10px", "initial", "column", "20px", "initial");
+    testGridDefinitionsSetJSValues("none", "none", "none", "none", "row", "auto", "auto", "none", "none", "none", "initial", "initial", "initial");
+    testGridDefinitionsSetJSValues("20px / auto-flow 10px", "none", "20px", "none", "column", "10px", "auto", "initial", "20px", "initial", "column", "10px", "initial");
     testGridDefinitionsSetJSValues("none", "none", "none", "none", "row", "auto", "auto", "none", "none", "none", "initial", "initial", "initial");
 
     debug("");
