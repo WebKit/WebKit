@@ -1,3 +1,33 @@
+2016-09-20  Keith Rollin  <krollin@apple.com>
+
+        Adjust current networking logging
+        https://bugs.webkit.org/show_bug.cgi?id=162235
+
+        Reviewed by Antti Koivisto.
+
+        Update the "always on" network logging in order to better track the
+        loading of a particular resource and to better bind together the
+        resources downloaded for a particular page and frame. Do this by
+        consistently logging pageID, frameID, and resourceID.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::startLocalLoad):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::create):
+        (WebKit::WebResourceLoader::WebResourceLoader):
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        (WebKit::WebResourceLoader::didReceiveResource):
+        * WebProcess/Network/WebResourceLoader.h:
+
 2016-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a unit test covering <https://trac.webkit.org/changeset/205983>

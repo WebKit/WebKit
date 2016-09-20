@@ -46,13 +46,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebResourceLoader> WebResourceLoader::create(Ref<ResourceLoader>&& coreLoader)
+Ref<WebResourceLoader> WebResourceLoader::create(Ref<ResourceLoader>&& coreLoader, const TrackingParameters& trackingParameters)
 {
-    return adoptRef(*new WebResourceLoader(WTFMove(coreLoader)));
+    return adoptRef(*new WebResourceLoader(WTFMove(coreLoader), trackingParameters));
 }
 
-WebResourceLoader::WebResourceLoader(Ref<WebCore::ResourceLoader>&& coreLoader)
+WebResourceLoader::WebResourceLoader(Ref<WebCore::ResourceLoader>&& coreLoader, const TrackingParameters& trackingParameters)
     : m_coreLoader(WTFMove(coreLoader))
+    , m_trackingParameters(trackingParameters)
 {
 }
 
@@ -78,7 +79,7 @@ void WebResourceLoader::detachFromCoreLoader()
 void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, ResourceResponse&& redirectResponse)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("willSendRequest");
+    RELEASE_LOG_IF_ALLOWED("willSendRequest: (pageID = %llu, frameID = %llu, resourceID = %llu)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
 
     RefPtr<WebResourceLoader> protectedThis(this);
 
@@ -101,7 +102,7 @@ void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeS
 void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponse for '%s'. Status %d.", m_coreLoader->url().string().latin1().data(), response.httpStatusCode());
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (status = %d)", response.httpStatusCode());
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (pageID = %llu, frameID = %llu, resourceID = %llu, status = %d)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID, response.httpStatusCode());
 
     Ref<WebResourceLoader> protect(*this);
 
@@ -135,7 +136,7 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
 
     if (!m_hasReceivedData) {
-        RELEASE_LOG_IF_ALLOWED("didReceiveData: (size = %lu)", data.size());
+        RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (pageID = %llu, frameID = %llu, resourceID = %llu)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
         m_hasReceivedData = true;
     }
 
@@ -151,7 +152,7 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
 void WebResourceLoader::didFinishResourceLoad(double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("didFinishResourceLoad");
+    RELEASE_LOG_IF_ALLOWED("didFinishResourceLoad: (pageID = %llu, frameID = %llu, resourceID = %llu)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
 
 #if USE(QUICK_LOOK)
     if (QuickLookHandle* quickLookHandle = m_coreLoader->documentLoader()->quickLookHandle()) {
@@ -165,7 +166,7 @@ void WebResourceLoader::didFinishResourceLoad(double finishTime)
 void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFailResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("didFailResourceLoad");
+    RELEASE_LOG_IF_ALLOWED("didFailResourceLoad: (pageID = %llu, frameID = %llu, resourceID = %llu)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
 
 #if USE(QUICK_LOOK)
     if (QuickLookHandle* quickLookHandle = m_coreLoader->documentLoader()->quickLookHandle())
@@ -180,7 +181,7 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle, double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("didReceiveResource");
+    RELEASE_LOG_IF_ALLOWED("didReceiveResource: (pageID = %llu, frameID = %llu, resourceID = %llu)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
 
     RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
 
