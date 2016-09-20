@@ -29,6 +29,7 @@
 #ifndef VM_h
 #define VM_h
 
+#include "CallData.h"
 #include "ConcurrentJITLock.h"
 #include "ControlFlowProfiler.h"
 #include "DateInstanceCache.h"
