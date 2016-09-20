@@ -1,3 +1,19 @@
+2016-09-20  Anders Carlsson  <andersca@apple.com>
+
+        Can't present a payment sheet if a sheet is already active in another window
+        https://bugs.webkit.org/show_bug.cgi?id=162314
+        rdar://problem/27643511
+
+        Reviewed by Tim Horton.
+
+        Instead of keeping track of whether a sheet is active or not, keep track of its underlying payment coordinator proxy,
+        so we can hide it and send a cancel event to WebCore if another sheet is being presented.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy):
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        (WebKit::WebPaymentCoordinatorProxy::didReachFinalState):
+
 2016-09-20  Keith Rollin  <krollin@apple.com>
 
         Adjust current networking logging

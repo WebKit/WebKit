@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-static bool isShowingPaymentUI;
+static WebPaymentCoordinatorProxy* activePaymentCoordinatorProxy;
 
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
@@ -49,6 +49,9 @@ WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPageProxy& webPageProx
 
 WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
 {
+    if (activePaymentCoordinatorProxy == this)
+        activePaymentCoordinatorProxy = nullptr;
+
     if (m_state != State::Idle)
         hidePaymentUI();
 
@@ -77,11 +80,12 @@ void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLStrin
     // FIXME: Make this a message check.
     ASSERT(canBegin());
 
-    if (isShowingPaymentUI) {
-        result = false;
-        return;
+    if (activePaymentCoordinatorProxy) {
+        activePaymentCoordinatorProxy->hidePaymentUI();
+        activePaymentCoordinatorProxy->didCancelPayment();
     }
-    isShowingPaymentUI = true;
+
+    activePaymentCoordinatorProxy = this;
 
     m_state = State::Activating;
 
@@ -331,8 +335,8 @@ void WebPaymentCoordinatorProxy::didReachFinalState()
     m_state = State::Idle;
     m_merchantValidationState = MerchantValidationState::Idle;
 
-    ASSERT(isShowingPaymentUI);
-    isShowingPaymentUI = false;
+    ASSERT(activePaymentCoordinatorProxy == this);
+    activePaymentCoordinatorProxy = nullptr;
 }
 
 }
