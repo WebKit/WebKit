@@ -359,7 +359,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithFloor:
     case ArithCeil:
     case ArithTrunc:
-        def(PureValue(node, static_cast<uintptr_t>(node->arithRoundingMode())));
+        if (node->child1().useKind() == DoubleRepUse)
+            def(PureValue(node, static_cast<uintptr_t>(node->arithRoundingMode())));
+        else {
+            read(World);
+            write(Heap);
+        }
         return;
 
     case CheckCell:

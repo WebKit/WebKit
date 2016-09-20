@@ -52,6 +52,7 @@
 #include "JSTypedArrays.h"
 #include "JSWASMModule.h"
 #include "LLIntData.h"
+#include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
 #include "SamplingProfiler.h"
@@ -68,6 +69,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <thread>
+#include <type_traits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringPrintStream.h>
@@ -612,6 +614,7 @@ static EncodedJSValue JSC_HOST_CALL functionNoFTL(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNoOSRExitFuzzing(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionOptimizeNextInvocation(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionJSCOptions(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFailNextNewCodeBlock(ExecState*);
@@ -817,6 +820,7 @@ protected:
         addFunction(vm, "noFTL", functionNoFTL, 1);
         addFunction(vm, "noOSRExitFuzzing", functionNoOSRExitFuzzing, 1);
         addFunction(vm, "numberOfDFGCompiles", functionNumberOfDFGCompiles, 1);
+        addFunction(vm, "jscOptions", functionJSCOptions, 0);
         addFunction(vm, "optimizeNextInvocation", functionOptimizeNextInvocation, 1);
         addFunction(vm, "reoptimizationRetryCount", functionReoptimizationRetryCount, 1);
         addFunction(vm, "transferArrayBuffer", functionTransferArrayBuffer, 1);
@@ -1713,6 +1717,25 @@ EncodedJSValue JSC_HOST_CALL functionOptimizeNextInvocation(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState* exec)
 {
     return JSValue::encode(numberOfDFGCompiles(exec));
+}
+
+template<typename ValueType>
+typename std::enable_if<!std::is_fundamental<ValueType>::value>::type addOption(VM&, JSObject*, Identifier, ValueType) { }
+
+template<typename ValueType>
+typename std::enable_if<std::is_fundamental<ValueType>::value>::type addOption(VM& vm, JSObject* optionsObject, Identifier identifier, ValueType value)
+{
+    optionsObject->putDirect(vm, identifier, JSValue(value));
+}
+
+EncodedJSValue JSC_HOST_CALL functionJSCOptions(ExecState* exec)
+{
+    JSObject* optionsObject = constructEmptyObject(exec);
+#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+    addOption(exec->vm(), optionsObject, Identifier::fromString(exec, #name_), Options::name_());
+    JSC_OPTIONS(FOR_EACH_OPTION)
+#undef FOR_EACH_OPTION
+    return JSValue::encode(optionsObject);
 }
 
 EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState* exec)

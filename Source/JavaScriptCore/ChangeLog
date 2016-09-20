@@ -1,3 +1,44 @@
+2016-09-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make the rounding-related nodes support any type
+        https://bugs.webkit.org/show_bug.cgi?id=161895
+
+        Reviewed by Geoffrey Garen.
+
+        This patch changes ArithRound, ArithFloor, ArithCeil and ArithTrunc
+        to support polymorphic input without exiting on entry.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        The 4 functions ignore any input past the first argument. It is okay
+        to use the nodes with the first argument and let the Phantoms keep
+        the remaining arguments live.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        Our fixup had the issue we have seen on previous nodes: unaryArithShouldSpeculateInt32()
+        prevents us from picking a good type if we do not see any double.
+
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        Prediction propagation of those nodes are fully determined
+        from their flags and results's prediction. They are moved
+        to the invariant processing.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithRound):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithFloor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithCeil):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithTrunc):
+
 2016-09-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for Win64
