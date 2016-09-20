@@ -70,7 +70,11 @@ static int gEventNumber = 1;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
 NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     return NSEventMaskPressure | NSEventMaskLeftMouseDown | NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged;
+#else
+    return NSEventMaskPressure | (1 << NSLeftMouseDown) | (1 << NSLeftMouseUp) | (1 << NSLeftMouseDragged);
+#endif
 }
 #endif
 

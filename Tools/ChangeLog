@@ -1,5 +1,14 @@
 2016-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed build fix after r206135
+
+        NSEventMaskLeftMouseDown and friends are only available on 10.12.
+
+        * TestWebKitAPI/mac/TestWKWebViewMac.mm:
+        (__simulated_forceClickAssociatedEventsMask):
+
+2016-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Add a unit test covering <https://trac.webkit.org/changeset/205983>
         https://bugs.webkit.org/show_bug.cgi?id=162112
 
