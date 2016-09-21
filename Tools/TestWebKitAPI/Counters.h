@@ -65,35 +65,22 @@ struct ConstructorDestructorCounter {
     ~ConstructorDestructorCounter() { destructionCount++; }
 };
 
-#if COMPILER(CLANG)
-#if __has_warning("-Wundefined-var-template")
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundefined-var-template"
-#endif
-#endif
 template<typename T>
 struct DeleterCounter {
-    static unsigned m_deleterCount;
-
-    static unsigned deleterCount() { return m_deleterCount; }
+    static unsigned deleterCount;
 
     struct TestingScope {
         TestingScope()
         {
-            m_deleterCount = 0;
+            deleterCount = 0;
         }
     };
 
     void operator()(T* p) const
     {
-        m_deleterCount++;
+        deleterCount++;
         delete p;
     }
 };
-#if COMPILER(CLANG)
-#if __has_warning("-Wundefined-var-template")
-#pragma clang diagnostic pop
-#endif
-#endif
 
 #endif // Counters_h

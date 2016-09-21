@@ -33,10 +33,10 @@ namespace WebCore {
 class ParsedContentRange {
 public:
     WEBCORE_EXPORT explicit ParsedContentRange(const String&);
-    ParsedContentRange() { }
+    WEBCORE_EXPORT ParsedContentRange() { }
     WEBCORE_EXPORT ParsedContentRange(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength);
 
-    bool isValid() const { return m_isValid; }
+    WEBCORE_EXPORT bool isValid() const { return m_isValid; }
     int64_t firstBytePosition() const { return m_firstBytePosition; }
     int64_t lastBytePosition() const { return m_lastBytePosition; }
     int64_t instanceLength() const { return m_instanceLength; }

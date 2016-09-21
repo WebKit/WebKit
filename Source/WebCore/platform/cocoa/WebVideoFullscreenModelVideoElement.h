@@ -54,7 +54,7 @@ public:
     }
     WEBCORE_EXPORT virtual ~WebVideoFullscreenModelVideoElement();
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
-    HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
+    WEBCORE_EXPORT HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler = [] { });
     WEBCORE_EXPORT void waitForPreparedForInlineThen(std::function<void()> completionHandler = [] { });
     

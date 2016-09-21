@@ -34,7 +34,7 @@ class Exception {
 public:
     explicit Exception(ExceptionCode);
 
-    ExceptionCode code() const;
+    WEBCORE_EXPORT ExceptionCode code() const;
 
 private:
     ExceptionCode m_code;

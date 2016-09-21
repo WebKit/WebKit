@@ -948,8 +948,8 @@ WTF_EXPORT_STRING_API bool equalIgnoringNullity(const UChar*, size_t length, Str
 
 bool equalIgnoringASCIICase(const StringImpl&, const StringImpl&);
 WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl*, const StringImpl*);
-bool equalIgnoringASCIICase(const StringImpl&, const char*);
-bool equalIgnoringASCIICase(const StringImpl*, const char*);
+WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl&, const char*);
+WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl*, const char*);
 
 WTF_EXPORT_STRING_API bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
 
