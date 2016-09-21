@@ -1,3 +1,15 @@
+2016-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() does not work correctly cross origin
+        https://bugs.webkit.org/show_bug.cgi?id=162311
+
+        Reviewed by Gavin Barraclough.
+
+        Add layout test coverage.
+
+        * http/tests/security/cross-origin-descriptors-expected.txt: Added.
+        * http/tests/security/cross-origin-descriptors.html: Added.
+
 2016-09-21  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r201090): Setting style.webkitTextSizeAdjust does not change text change on iPad

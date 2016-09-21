@@ -1,3 +1,14 @@
+2016-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() does not work correctly cross origin
+        https://bugs.webkit.org/show_bug.cgi?id=162311
+
+        Reviewed by Gavin Barraclough.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+
 2016-09-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; add some whitespace to expected results.

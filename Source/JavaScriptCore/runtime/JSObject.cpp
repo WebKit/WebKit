@@ -2842,14 +2842,19 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
         if (auto* proxy = jsDynamicCast<JSProxy*>(this))
             thisObject = proxy->target();
 
-        JSValue maybeGetterSetter = thisObject->getDirect(exec->vm(), propertyName);
-        if (!maybeGetterSetter) {
-            thisObject->reifyAllStaticProperties(exec);
-            maybeGetterSetter = thisObject->getDirect(exec->vm(), propertyName);
-        }
+        CustomGetterSetter* getterSetter;
+        if (slot.isCustomAccessor())
+            getterSetter = slot.customGetterSetter();
+        else {
+            JSValue maybeGetterSetter = thisObject->getDirect(exec->vm(), propertyName);
+            if (!maybeGetterSetter) {
+                thisObject->reifyAllStaticProperties(exec);
+                maybeGetterSetter = thisObject->getDirect(exec->vm(), propertyName);
+            }
 
-        ASSERT(maybeGetterSetter);
-        auto* getterSetter = jsCast<CustomGetterSetter*>(maybeGetterSetter);
+            ASSERT(maybeGetterSetter);
+            getterSetter = jsCast<CustomGetterSetter*>(maybeGetterSetter);
+        }
         if (getterSetter->getter())
             descriptor.setGetter(getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, getterSetter, JSCustomGetterSetterFunction::Type::Getter));
         if (getterSetter->setter())

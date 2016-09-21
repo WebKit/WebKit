@@ -41,6 +41,13 @@ JSValue PropertySlot::customGetter(ExecState* exec, PropertyName propertyName) c
     return JSValue::decode(m_data.custom.getValue(exec, JSValue::encode(thisValue), propertyName));
 }
 
+JSValue PropertySlot::customAccessorGetter(ExecState* exec, PropertyName propertyName) const
+{
+    if (!m_data.customAccessor.getterSetter->getter())
+        return jsUndefined();
+    return JSValue::decode(m_data.customAccessor.getterSetter->getter()(exec, JSValue::encode(m_thisValue), propertyName));
+}
+
 JSValue PropertySlot::getPureResult() const
 {
     JSValue result;

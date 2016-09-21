@@ -1,3 +1,30 @@
+2016-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() does not work correctly cross origin
+        https://bugs.webkit.org/show_bug.cgi?id=162311
+
+        Reviewed by Gavin Barraclough.
+
+        Add a CustomGetterSetter field to PropertySlot that gets populated
+        by getOwnPropertySlot() and use it in getOwnPropertyDescriptor()
+        to properly populate the descriptor. We used to rely on reifying
+        the properties and then call getDirect() in order to get the
+        CustomGetterSetter. However, this hack was insufficient to support
+        the cross-origin case because we need to control more precisely
+        the visibility of the getter and the setter. For example, Location's
+        href property has both a getter and a setter in the same origin
+        case but only has a setter in the cross-origin case.
+
+        In the future, we can extend the use of PropertySlot's
+        customGetterSetter field to the same origin case and get rid of the
+        reification + getDirect() hack in getOwnPropertyDescriptor().
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customAccessorGetter):
+        * runtime/PropertySlot.h:
+
 2016-09-21  Michael Saboff  <msaboff@apple.com>
 
         FTL needs to reserve callee stack space in bytes
