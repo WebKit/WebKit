@@ -59,8 +59,13 @@ static bool eq(const String& s1, const String& s2)
 
 static void checkURL(const String& urlString, const ExpectedParts& parts)
 {
-    URLParser parser;
-    auto url = parser.parse(urlString);
+    bool wasEnabled = URLParser::enabled();
+    URLParser::setEnabled(true);
+    auto url = URL(URL(), urlString);
+    URLParser::setEnabled(false);
+    auto oldURL = URL(URL(), urlString);
+    URLParser::setEnabled(wasEnabled);
+    
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
@@ -71,7 +76,6 @@ static void checkURL(const String& urlString, const ExpectedParts& parts)
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, url.string()));
     
-    auto oldURL = URL(URL(), urlString);
     EXPECT_TRUE(eq(parts.protocol, oldURL.protocol()));
     EXPECT_TRUE(eq(parts.user, oldURL.user()));
     EXPECT_TRUE(eq(parts.password, oldURL.pass()));
@@ -224,11 +228,13 @@ TEST_F(URLParserTest, Basic)
 
 static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts)
 {
-    URLParser baseParser;
-    auto base = baseParser.parse(baseURLString);
+    bool wasEnabled = URLParser::enabled();
+    URLParser::setEnabled(true);
+    auto url = URL(URL(URL(), baseURLString), urlString);
+    URLParser::setEnabled(false);
+    auto oldURL = URL(URL(URL(), baseURLString), urlString);
+    URLParser::setEnabled(wasEnabled);
 
-    URLParser parser;
-    auto url = parser.parse(urlString, base);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
@@ -239,7 +245,6 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, url.string()));
 
-    auto oldURL = URL(URL(URL(), baseURLString), urlString);
     EXPECT_TRUE(eq(parts.protocol, oldURL.protocol()));
     EXPECT_TRUE(eq(parts.user, oldURL.user()));
     EXPECT_TRUE(eq(parts.password, oldURL.pass()));
@@ -314,8 +319,13 @@ TEST_F(URLParserTest, ParseRelative)
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
 {
-    URLParser parser;
-    auto url = parser.parse(urlString);
+    bool wasEnabled = URLParser::enabled();
+    URLParser::setEnabled(true);
+    auto url = URL(URL(), urlString);
+    URLParser::setEnabled(false);
+    auto oldURL = URL(URL(), urlString);
+    URLParser::setEnabled(wasEnabled);
+
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
     EXPECT_TRUE(eq(partsNew.password, url.pass()));
@@ -326,7 +336,6 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(partsNew.string, url.string()));
     
-    auto oldURL = URL(URL(), urlString);
     EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol()));
     EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
     EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
@@ -344,11 +353,13 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
 
 static void checkRelativeURLDifferences(const String& urlString, const String& baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
 {
-    URLParser baseParser;
-    auto base = baseParser.parse(baseURLString);
-    
-    URLParser parser;
-    auto url = parser.parse(urlString, base);
+    bool wasEnabled = URLParser::enabled();
+    URLParser::setEnabled(true);
+    auto url = URL(URL(URL(), baseURLString), urlString);
+    URLParser::setEnabled(false);
+    auto oldURL = URL(URL(URL(), baseURLString), urlString);
+    URLParser::setEnabled(wasEnabled);
+
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
     EXPECT_TRUE(eq(partsNew.password, url.pass()));
@@ -359,7 +370,6 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(partsNew.string, url.string()));
     
-    auto oldURL = URL(URL(URL(), baseURLString), urlString);
     EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol()));
     EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
     EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
@@ -661,18 +671,14 @@ TEST_F(URLParserTest, DefaultPort)
     
 static void shouldFail(const String& urlString)
 {
-    URLParser parser;
-    auto invalidURL = parser.parse(urlString);
     checkURL(urlString, {"", "", "", "", 0, "", "", "", urlString});
 }
 
 static void shouldFail(const String& urlString, const String& baseString)
 {
-    URLParser parser;
-    auto invalidURL = parser.parse(urlString);
     checkRelativeURL(urlString, baseString, {"", "", "", "", 0, "", "", "", urlString});
 }
-    
+
 TEST_F(URLParserTest, ParserFailures)
 {
     shouldFail("    ");

@@ -1,5 +1,19 @@
 2016-09-21  Alex Christensen  <achristensen@webkit.org>
 
+        Prepare API tests for enabling URLParser by default
+        https://bugs.webkit.org/show_bug.cgi?id=162341
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::checkRelativeURLDifferences):
+        (TestWebKitAPI::shouldFail):
+
+2016-09-21  Alex Christensen  <achristensen@webkit.org>
+
         URLParser: Correctly parse URLs that are just nonspecialscheme:/
         https://bugs.webkit.org/show_bug.cgi?id=162340
 
