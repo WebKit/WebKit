@@ -998,7 +998,12 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             LOG_STATE("SchemeStart");
             if (isASCIIAlpha(*c)) {
                 m_asciiBuffer.uncheckedAppend(toASCIILower(*c));
-                ++c;
+                incrementIteratorSkippingTabAndNewLine<serialized>(c);
+                if (c.atEnd()) {
+                    m_asciiBuffer.clear();
+                    state = State::NoScheme;
+                    c = beginAfterControlAndSpace;
+                }
                 state = State::Scheme;
             } else
                 state = State::NoScheme;

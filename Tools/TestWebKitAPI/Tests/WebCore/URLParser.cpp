@@ -296,6 +296,12 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("notspecial:", "about:blank", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
     checkRelativeURL("notspecial:", "http://host", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
     checkRelativeURL("http:", "http://host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
+    checkRelativeURL("i", "sc:/pa/po", {"sc", "", "", "", 0, "/pa/i", "", "", "sc:/pa/i"});
+    checkRelativeURL("i    ", "sc:/pa/po", {"sc", "", "", "", 0, "/pa/i", "", "", "sc:/pa/i"});
+    checkRelativeURL("i\t\n  ", "sc:/pa/po", {"sc", "", "", "", 0, "/pa/i", "", "", "sc:/pa/i"});
+    checkRelativeURL("i", "sc://ho/pa", {"sc", "", "", "ho", 0, "/i", "", "", "sc://ho/i"});
+    checkRelativeURL("!", "sc://ho/pa", {"sc", "", "", "ho", 0, "/!", "", "", "sc://ho/!"});
+    checkRelativeURL("!", "sc:/ho/pa", {"sc", "", "", "", 0, "/ho/!", "", "", "sc:/ho/!"});
     
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
