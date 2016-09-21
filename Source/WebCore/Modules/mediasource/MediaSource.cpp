@@ -891,7 +891,6 @@ bool MediaSource::isEnded() const
 void MediaSource::detachFromElement(HTMLMediaElement& element)
 {
     ASSERT_UNUSED(element, m_mediaElement == &element);
-    ASSERT(!isClosed());
 
     // 2.4.2 Detaching from a media element
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-detach
