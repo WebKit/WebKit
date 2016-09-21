@@ -274,8 +274,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// #define INSTRUMENT_LAYOUT_SCHEDULING 1
-
 static const unsigned cMaxWriteRecursionDepth = 21;
 
 // DOM Level 2 says (letters added):
@@ -2751,10 +2749,6 @@ void Document::implicitClose()
 
     if (f)
         f->loader().dispatchOnloadEvents();
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!ownerElement())
-        printf("onload fired at %lld\n", elapsedTime().count());
-#endif
 
     // An event handler may have removed the frame
     if (!frame()) {
@@ -2824,11 +2818,6 @@ void Document::setParsing(bool b)
 
     if (!m_bParsing && view() && !view()->needsLayout())
         view()->fireLayoutRelatedMilestonesIfNeeded();
-
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!ownerElement() && !m_bParsing)
-        printf("Parsing finished at %lld\n", elapsedTime().count());
-#endif
 }
 
 bool Document::shouldScheduleLayout()
@@ -2877,11 +2866,6 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
     if (m_writeRecursionIsTooDeep)
        return;
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!ownerElement())
-        printf("Beginning a document.write at %lld\n", elapsedTime().count());
-#endif
-
     bool hasInsertionPoint = m_parser && m_parser->hasInsertionPoint();
     if (!hasInsertionPoint && (m_ignoreOpensDuringUnloadCount || m_ignoreDestructiveWriteCount))
         return;
@@ -2891,11 +2875,6 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
 
     ASSERT(m_parser);
     m_parser->insert(text);
-
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!ownerElement())
-        printf("Ending a document.write at %lld\n", elapsedTime().count());
-#endif    
 }
 
 void Document::write(const String& text, Document* ownerDocument)
@@ -3658,11 +3637,6 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
     }
     m_didCalculateStyleResolver = true;
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!ownerElement())
-        printf("Beginning update of style selector at time %lld.\n", elapsedTime().count());
-#endif
-
     auto styleSheetUpdate = (updateFlag == RecalcStyleIfNeeded || updateFlag == DeferRecalcStyleIfNeeded)
         ? AuthorStyleSheets::OptimizedUpdate
         : AuthorStyleSheets::FullUpdate;
@@ -3679,28 +3653,8 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
         return;
     }
 
-    if (!stylesheetChangeRequiresStyleRecalc)
-        return;
-
-    // This recalcStyle initiates a new recalc cycle. We need to bracket it to
-    // make sure animations get the correct update time
-    {
-        AnimationUpdateBlock animationUpdateBlock(m_frame ? &m_frame->animation() : nullptr);
+    if (stylesheetChangeRequiresStyleRecalc)
         recalcStyle(Style::Force);
-    }
-
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!ownerElement())
-        printf("Finished update of style selector at time %lld\n", elapsedTime().count());
-#endif
-
-    if (renderView()) {
-        renderView()->setNeedsLayoutAndPrefWidthsRecalc();
-        if (view())
-            view()->scheduleRelayout();
-    }
-
-    evaluateMediaQueryList();
 }
 
 static bool isNodeInSubtree(Node* node, Node* container, bool amongChildrenOnly)
