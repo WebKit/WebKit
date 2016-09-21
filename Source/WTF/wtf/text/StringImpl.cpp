@@ -831,7 +831,7 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharacters(const CharType* chara
 
     data.shrink(outc);
 
-    return adopt(data);
+    return adopt(WTFMove(data));
 }
 
 Ref<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr findMatch)
@@ -875,7 +875,7 @@ inline Ref<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UCharPredica
     
     data.shrink(outc);
     
-    return adopt(data);
+    return adopt(WTFMove(data));
 }
 
 Ref<StringImpl> StringImpl::simplifyWhiteSpace()
@@ -2002,7 +2002,7 @@ UCharDirection StringImpl::defaultWritingDirection(bool* hasStrongDirectionality
     return U_LEFT_TO_RIGHT;
 }
 
-Ref<StringImpl> StringImpl::adopt(StringBuffer<LChar>& buffer)
+Ref<StringImpl> StringImpl::adopt(StringBuffer<LChar>&& buffer)
 {
     unsigned length = buffer.length();
     if (!length)
@@ -2010,7 +2010,7 @@ Ref<StringImpl> StringImpl::adopt(StringBuffer<LChar>& buffer)
     return adoptRef(*new StringImpl(buffer.release(), length));
 }
 
-Ref<StringImpl> StringImpl::adopt(StringBuffer<UChar>& buffer)
+Ref<StringImpl> StringImpl::adopt(StringBuffer<UChar>&& buffer)
 {
     unsigned length = buffer.length();
     if (!length)

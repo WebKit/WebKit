@@ -1,3 +1,19 @@
+2016-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        Require WTFMove for String::adopt
+        https://bugs.webkit.org/show_bug.cgi?id=162313
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::removeCharacters):
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace):
+        (WTF::StringImpl::adopt):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::adopt):
+        * wtf/text/WTFString.h:
+        (WTF::String::adopt):
+
 2016-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         Make MarkedBlock state tracking support overlapped allocation and marking state

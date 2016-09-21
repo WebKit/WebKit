@@ -1599,10 +1599,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     }
 
-    if (m_unicodeFragmentBuffer.isEmpty()) {
-        // FIXME: String::adopt should require a WTFMove.
-        m_url.m_string = String::adopt(m_asciiBuffer);
-    } else {
+    if (m_unicodeFragmentBuffer.isEmpty())
+        m_url.m_string = String::adopt(WTFMove(m_asciiBuffer));
+    else {
+        // FIXME: This should use a Vector<UChar> and adopt it.
         StringBuilder builder;
         builder.reserveCapacity(m_asciiBuffer.size() + m_unicodeFragmentBuffer.size());
         builder.append(m_asciiBuffer.data(), m_asciiBuffer.size());
@@ -2212,7 +2212,7 @@ String URLParser::serialize(const URLEncodedForm& tuples)
         output.append('=');
         serializeURLEncodedForm(tuple.second, output);
     }
-    return String::adopt(output);
+    return String::adopt(WTFMove(output));
 }
 
 bool URLParser::allValuesEqual(const URL& a, const URL& b)

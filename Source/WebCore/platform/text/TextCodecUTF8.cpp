@@ -343,7 +343,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
 
     buffer.shrink(destination - buffer.characters());
 
-    return String::adopt(buffer);
+    return String::adopt(WTFMove(buffer));
 
 upConvertTo16Bit:
     StringBuffer<UChar> buffer16(m_partialSequenceSize + length);
@@ -419,7 +419,7 @@ upConvertTo16Bit:
     
     buffer16.shrink(destination16 - buffer16.characters());
     
-    return String::adopt(buffer16);
+    return String::adopt(WTFMove(buffer16));
 }
 
 CString TextCodecUTF8::encode(const UChar* characters, size_t length, UnencodableHandling)

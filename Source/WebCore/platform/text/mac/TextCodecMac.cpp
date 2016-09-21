@@ -264,7 +264,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush, bool s
         result.append(buffer, bytesWritten / sizeof(UChar));
     }
 
-    String resultString = String::adopt(result);
+    String resultString = String::adopt(WTFMove(result));
 
     // <rdar://problem/3225472>
     // Simplified Chinese pages use the code A3A0 to mean "full-width space".

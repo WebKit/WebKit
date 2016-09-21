@@ -13644,7 +13644,7 @@ static inline String quoteCSSStringInternal(const CharacterType* characters, uns
     buffer[index++] = '\'';
 
     ASSERT(quotedStringSize == index);
-    return String::adopt(buffer);
+    return String::adopt(WTFMove(buffer));
 }
 
 // We use single quotes for now because markup.cpp uses double quotes.

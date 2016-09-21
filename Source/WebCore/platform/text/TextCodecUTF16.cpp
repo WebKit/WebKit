@@ -111,7 +111,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool
 
     buffer.shrink(q - buffer.characters());
 
-    return String::adopt(buffer);
+    return String::adopt(WTFMove(buffer));
 }
 
 CString TextCodecUTF16::encode(const UChar* characters, size_t length, UnencodableHandling)

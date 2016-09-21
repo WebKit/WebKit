@@ -1574,7 +1574,7 @@ static inline StringWithDirection canonicalizedTitle(Document* document, const S
     // Replace the backslashes with currency symbols if the encoding requires it.
     document->displayBufferModifiedByEncoding(buffer.characters(), buffer.length());
     
-    return StringWithDirection(String::adopt(buffer), titleWithDirection.direction());
+    return StringWithDirection(String::adopt(WTFMove(buffer)), titleWithDirection.direction());
 }
 
 void Document::updateTitle(const StringWithDirection& title)

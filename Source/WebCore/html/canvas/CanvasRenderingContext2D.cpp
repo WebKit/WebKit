@@ -2357,7 +2357,7 @@ static void normalizeSpaces(String& text)
         if (isSpaceThatNeedsReplacing(charVector[i]))
             charVector[i] = ' ';
     }
-    text = String::adopt(charVector);
+    text = String::adopt(WTFMove(charVector));
 }
 
 Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)

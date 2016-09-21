@@ -1707,7 +1707,7 @@ private:
             readLittleEndian(ptr, end, ch);
             buffer.append(ch);
         }
-        str = String::adopt(buffer);
+        str = String::adopt(WTFMove(buffer));
 #endif
         return true;
     }

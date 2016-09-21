@@ -426,7 +426,7 @@ public:
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
-    static Ref<StringImpl> adopt(Vector<CharType, inlineCapacity, OverflowHandler>& vector)
+    static Ref<StringImpl> adopt(Vector<CharType, inlineCapacity, OverflowHandler>&& vector)
     {
         if (size_t size = vector.size()) {
             ASSERT(vector.data());
@@ -437,8 +437,8 @@ public:
         return *empty();
     }
 
-    WTF_EXPORT_STRING_API static Ref<StringImpl> adopt(StringBuffer<UChar>&);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> adopt(StringBuffer<LChar>&);
+    WTF_EXPORT_STRING_API static Ref<StringImpl> adopt(StringBuffer<UChar>&&);
+    WTF_EXPORT_STRING_API static Ref<StringImpl> adopt(StringBuffer<LChar>&&);
 
     unsigned length() const { return m_length; }
     static ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }

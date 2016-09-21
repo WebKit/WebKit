@@ -219,7 +219,7 @@ public:
         if (whitespace.isEmpty())
             return String();
 
-        return String::adopt(whitespace);
+        return String::adopt(WTFMove(whitespace));
     }
 
 private:

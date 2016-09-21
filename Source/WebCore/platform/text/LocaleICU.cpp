@@ -78,7 +78,7 @@ String LocaleICU::decimalSymbol(UNumberFormatSymbol symbol)
     unum_getSymbol(m_numberFormat, symbol, buffer.data(), bufferLength, &status);
     if (U_FAILURE(status))
         return String();
-    return String::adopt(buffer);
+    return String::adopt(WTFMove(buffer));
 }
 
 String LocaleICU::decimalTextAttribute(UNumberFormatTextAttribute tag)
@@ -94,7 +94,7 @@ String LocaleICU::decimalTextAttribute(UNumberFormatTextAttribute tag)
     ASSERT(U_SUCCESS(status));
     if (U_FAILURE(status))
         return String();
-    return String::adopt(buffer);
+    return String::adopt(WTFMove(buffer));
 }
 #endif
 
@@ -158,7 +158,7 @@ static String getDateFormatPattern(const UDateFormat* dateFormat)
     udat_toPattern(dateFormat, TRUE, buffer.data(), length, &status);
     if (U_FAILURE(status))
         return emptyString();
-    return String::adopt(buffer);
+    return String::adopt(WTFMove(buffer));
 }
 
 std::unique_ptr<Vector<String>> LocaleICU::createLabelVector(const UDateFormat* dateFormat, UDateFormatSymbolType type, int32_t startIndex, int32_t size)
@@ -180,7 +180,7 @@ std::unique_ptr<Vector<String>> LocaleICU::createLabelVector(const UDateFormat* 
         udat_getSymbols(dateFormat, type, startIndex + i, buffer.data(), length, &status);
         if (U_FAILURE(status))
             return std::make_unique<Vector<String>>();
-        labels->append(String::adopt(buffer));
+        labels->append(String::adopt(WTFMove(buffer)));
     }
     return WTFMove(labels);
 }
@@ -270,7 +270,7 @@ static String getFormatForSkeleton(const char* locale, const UChar* skeleton, in
         status = U_ZERO_ERROR;
         udatpg_getBestPattern(patternGenerator, skeleton, skeletonLength, buffer.data(), length, &status);
         if (U_SUCCESS(status))
-            format = String::adopt(buffer);
+            format = String::adopt(WTFMove(buffer));
     }
     udatpg_close(patternGenerator);
     return format;

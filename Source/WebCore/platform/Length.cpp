@@ -99,7 +99,7 @@ std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
         else
             spacified[i] = cc;
     }
-    RefPtr<StringImpl> str = StringImpl::adopt(spacified);
+    RefPtr<StringImpl> str = StringImpl::adopt(WTFMove(spacified));
 
     str = str->simplifyWhiteSpace();
 
