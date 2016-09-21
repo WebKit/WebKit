@@ -252,7 +252,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
     if (m_glContext)
         return true;
 
-    const auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
     if (!m_glDisplay) {
 #if PLATFORM(X11)
         m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
