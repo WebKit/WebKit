@@ -45,12 +45,12 @@ PublicURLManager::PublicURLManager(ScriptExecutionContext* context)
 {
 }
 
-void PublicURLManager::registerURL(SecurityOrigin* origin, const URL& url, URLRegistrable* registrable)
+void PublicURLManager::registerURL(SecurityOrigin* origin, const URL& url, URLRegistrable& registrable)
 {
     if (m_isStopped)
         return;
 
-    RegistryURLMap::iterator found = m_registryToURL.add(&registrable->registry(), URLSet()).iterator;
+    RegistryURLMap::iterator found = m_registryToURL.add(&registrable.registry(), URLSet()).iterator;
     found->key->registerURL(origin, url, registrable);
     found->value.add(url.string());
 }

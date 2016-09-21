@@ -1095,7 +1095,7 @@ void HTMLMediaElement::setSrcObject(ScriptExecutionContext& context, MediaStream
 
     m_mediaStreamSrcObject = mediaStream;
     if (mediaStream)
-        setSrc(DOMURL::createPublicURL(context, mediaStream));
+        setSrc(DOMURL::createPublicURL(context, *mediaStream));
 }
 #endif
 

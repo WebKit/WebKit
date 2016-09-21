@@ -54,10 +54,10 @@ public:
 
     URLSearchParams& searchParams();
 
-    static String createObjectURL(ScriptExecutionContext&, Blob*);
+    static String createObjectURL(ScriptExecutionContext&, Blob&);
     static void revokeObjectURL(ScriptExecutionContext&, const String&);
 
-    static String createPublicURL(ScriptExecutionContext&, URLRegistrable*);
+    static String createPublicURL(ScriptExecutionContext&, URLRegistrable&);
 private:
     DOMURL(const String& url, const String& base, ExceptionCode&);
     DOMURL(const String& url, const DOMURL& base, ExceptionCode&);

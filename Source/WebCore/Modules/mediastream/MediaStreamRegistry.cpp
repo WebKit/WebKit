@@ -43,11 +43,11 @@ MediaStreamRegistry& MediaStreamRegistry::shared()
     return instance;
 }
 
-void MediaStreamRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegistrable* stream)
+void MediaStreamRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegistrable& stream)
 {
-    ASSERT(&stream->registry() == this);
+    ASSERT(&stream.registry() == this);
     ASSERT(isMainThread());
-    m_mediaStreams.set(url.string(), static_cast<MediaStream*>(stream));
+    m_mediaStreams.set(url.string(), static_cast<MediaStream*>(&stream));
 }
 
 void MediaStreamRegistry::unregisterURL(const URL& url)

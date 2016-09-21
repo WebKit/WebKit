@@ -103,14 +103,12 @@ void DOMURL::setHref(const String& url, ExceptionCode& ec)
         ec = TypeError;
 }
 
-String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, Blob* blob)
+String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
-    if (!blob)
-        return String();
     return createPublicURL(scriptExecutionContext, blob);
 }
 
-String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, URLRegistrable* registrable)
+String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, URLRegistrable& registrable)
 {
     URL publicURL = BlobURL::createPublicURL(scriptExecutionContext.securityOrigin());
     if (publicURL.isEmpty())

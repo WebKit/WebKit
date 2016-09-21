@@ -46,14 +46,14 @@ MediaSourceRegistry& MediaSourceRegistry::registry()
     return instance;
 }
 
-void MediaSourceRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegistrable* registrable)
+void MediaSourceRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegistrable& registrable)
 {
-    ASSERT(&registrable->registry() == this);
+    ASSERT(&registrable.registry() == this);
     ASSERT(isMainThread());
 
-    MediaSource* source = static_cast<MediaSource*>(registrable);
-    source->addedToRegistry();
-    m_mediaSources.set(url.string(), source);
+    MediaSource& source = static_cast<MediaSource&>(registrable);
+    source.addedToRegistry();
+    m_mediaSources.set(url.string(), &source);
 }
 
 void MediaSourceRegistry::unregisterURL(const URL& url)

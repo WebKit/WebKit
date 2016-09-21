@@ -47,7 +47,7 @@ public:
 
     static std::unique_ptr<PublicURLManager> create(ScriptExecutionContext*);
 
-    void registerURL(SecurityOrigin*, const URL&, URLRegistrable*);
+    void registerURL(SecurityOrigin*, const URL&, URLRegistrable&);
     void revoke(const URL&);
 
 private:

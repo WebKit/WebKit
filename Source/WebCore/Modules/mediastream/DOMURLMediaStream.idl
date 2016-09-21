@@ -31,5 +31,5 @@
     Conditional=MEDIA_STREAM
 ]
 partial interface DOMURL {
-    [CallWith=ScriptExecutionContext] static DOMString? createObjectURL(MediaStream? stream);
+    [CallWith=ScriptExecutionContext] static DOMString createObjectURL(MediaStream stream);
 };

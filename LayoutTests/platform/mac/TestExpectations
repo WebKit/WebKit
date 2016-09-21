@@ -1043,6 +1043,7 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/URL-createObjectURL.html [ Pass ]
+[ Yosemite+ ] imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Pass ]
 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/mediasource-appendwindow.html [ Pass ]

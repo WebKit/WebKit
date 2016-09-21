@@ -42,17 +42,17 @@ namespace WebCore {
 
 class BlobURLRegistry final : public URLRegistry {
 public:
-    void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) override;
+    void registerURL(SecurityOrigin*, const URL&, URLRegistrable&) override;
     void unregisterURL(const URL&) override;
 
     static URLRegistry& registry();
 };
 
 
-void BlobURLRegistry::registerURL(SecurityOrigin* origin, const URL& publicURL, URLRegistrable* blob)
+void BlobURLRegistry::registerURL(SecurityOrigin* origin, const URL& publicURL, URLRegistrable& blob)
 {
-    ASSERT(&blob->registry() == this);
-    ThreadableBlobRegistry::registerBlobURL(origin, publicURL, static_cast<Blob*>(blob)->url());
+    ASSERT(&blob.registry() == this);
+    ThreadableBlobRegistry::registerBlobURL(origin, publicURL, static_cast<Blob&>(blob).url());
 }
 
 void BlobURLRegistry::unregisterURL(const URL& url)

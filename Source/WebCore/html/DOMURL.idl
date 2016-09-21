@@ -36,7 +36,7 @@
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
 ] interface DOMURL {
-    [CallWith=ScriptExecutionContext] static DOMString? createObjectURL(Blob? blob); // FIXME: The return value and the parameter should not be nullable.
+    [CallWith=ScriptExecutionContext] static DOMString createObjectURL(Blob blob);
     [CallWith=ScriptExecutionContext] static void revokeObjectURL(DOMString url);
 };
 

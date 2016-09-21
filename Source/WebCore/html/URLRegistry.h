@@ -49,7 +49,7 @@ class URLRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~URLRegistry() { }
-    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) = 0;
+    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable&) = 0;
     virtual void unregisterURL(const URL&) = 0;
 
     // This is an optional API
