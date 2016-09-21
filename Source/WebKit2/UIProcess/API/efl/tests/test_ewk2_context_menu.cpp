@@ -49,8 +49,8 @@ public:
         EXPECT_EQ(type, ewk_context_menu_item_type_get(item));
         EXPECT_EQ(action, ewk_context_menu_item_action_get(item));
         EXPECT_STREQ(title, ewk_context_menu_item_title_get(item));
-    EXPECT_EQ(checked, ewk_context_menu_item_checked_get(item));
-    EXPECT_EQ(enabled, ewk_context_menu_item_enabled_get(item));
+        EXPECT_EQ(checked, ewk_context_menu_item_checked_get(item));
+        EXPECT_EQ(enabled, ewk_context_menu_item_enabled_get(item));
     }
 
     static Eina_Bool customItemSelected(Ewk_View_Smart_Data*, Ewk_Context_Menu_Item* item)
@@ -93,6 +93,8 @@ public:
         item = static_cast<Ewk_Context_Menu_Item*>(eina_list_nth(list, 0));
 
         EXPECT_TRUE(ewk_context_menu_item_select(contextMenu, item));
+
+        ewk_context_menu_hide(contextMenu);
 
         return true;
     }
@@ -195,11 +197,13 @@ TEST_F(EWK2ContextMenuTest, ewk_context_menu_item_select)
         "</html>";
 
     ewkViewClass()->context_menu_show = testContextMenu;
+    ewkViewClass()->context_menu_hide = finishTest;
 
     ewk_view_html_string_load(webView(), itemSelectHTML, "file:///", 0);
     ASSERT_TRUE(waitUntilLoadFinished());
     showContextMenu();
-    ASSERT_TRUE(waitUntilLoadFinished());
+    testFinished = false;
+    ASSERT_TRUE(waitUntilTrue(testFinished));
 }
 
 TEST_F(EWK2ContextMenuTest, ewk_context_menu_custom_items)
