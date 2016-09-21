@@ -1,3 +1,16 @@
+2016-09-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r205692): Minified builds have broken inspector
+        https://bugs.webkit.org/show_bug.cgi?id=162327
+        <rdar://problem/28370137>
+
+        Reviewed by Matt Baker.
+
+        * Scripts/cssmin.py:
+        (cssminify):
+        Converge on the newer cssmin that we mistakenly dropped in r205692.
+        This knows how to handle more cases.
+
 2016-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::StoreBarrierInsertionPhase should assume that any epoch increment may make objects older
