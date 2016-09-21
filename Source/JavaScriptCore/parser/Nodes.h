@@ -1475,7 +1475,6 @@ namespace JSC {
     private:
         RegisterID* tryGetBoundLocal(BytecodeGenerator&);
         void emitLoopHeader(BytecodeGenerator&, RegisterID* propertyName);
-        void emitMultiLoopBytecode(BytecodeGenerator&, RegisterID* dst);
 
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };

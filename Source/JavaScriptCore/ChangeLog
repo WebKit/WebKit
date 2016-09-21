@@ -1,3 +1,16 @@
+2016-09-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Inline function only used in one place
+        https://bugs.webkit.org/show_bug.cgi?id=162363
+
+        Reviewed by Saam Barati.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        * parser/Nodes.h:
+        No need for the extra function, it adds no clarification.
+
 2016-09-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206222 and r206227.
