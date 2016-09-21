@@ -153,6 +153,7 @@ private:
     bool m_didConvertToDownload { false };
     bool m_didConsumeSandboxExtensions { false };
     bool m_defersLoading { false };
+    bool m_hasReceivedData { false };
 
     WebCore::Timer m_bufferingTimer;
 #if ENABLE(NETWORK_CACHE)

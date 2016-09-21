@@ -286,6 +286,8 @@ namespace WebCore {
         ContentFilter* contentFilter() const;
 #endif
 
+        bool isAlwaysOnLoggingAllowed() const;
+
     protected:
         WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 

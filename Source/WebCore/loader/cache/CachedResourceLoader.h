@@ -145,6 +145,8 @@ public:
     ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
 #endif
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 

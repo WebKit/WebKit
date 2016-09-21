@@ -62,6 +62,8 @@
 
 using namespace WTF;
 
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(cachedResourceLoader.isAlwaysOnLoggingAllowed(), Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
+
 namespace WebCore {
 
 ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
@@ -263,6 +265,7 @@ void CachedResource::computeOrigin(CachedResourceLoader& loader)
 void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 {
     if (!cachedResourceLoader.frame()) {
+        RELEASE_LOG_IF_ALLOWED("load: No associated frame");
         failBeforeStarting();
         return;
     }
@@ -274,6 +277,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // cache.
     if (auto* topDocument = frame.mainFrame().document()) {
         if (topDocument->pageCacheState() != Document::NotInPageCache) {
+            RELEASE_LOG_IF_ALLOWED("load: Already in page cache or being added to it (frame = %p)", &frame);
             failBeforeStarting();
             return;
         }
@@ -281,6 +285,12 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 
     FrameLoader& frameLoader = frame.loader();
     if (m_options.securityCheck == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
+        if (frameLoader.state() == FrameStateProvisional)
+            RELEASE_LOG_IF_ALLOWED("load: Failed security check -- state is provisional (frame = %p)", &frame);
+        else if (!frameLoader.activeDocumentLoader())
+            RELEASE_LOG_IF_ALLOWED("load: Failed security check -- not active document (frame = %p)", &frame);
+        else if (frameLoader.activeDocumentLoader()->isStopping())
+            RELEASE_LOG_IF_ALLOWED("load: Failed security check -- active loader is stopping (frame = %p)", &frame);
         failBeforeStarting();
         return;
     }
@@ -337,6 +347,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 
     m_loader = platformStrategies()->loaderStrategy()->loadResource(frame, *this, request, m_options);
     if (!m_loader) {
+        RELEASE_LOG_IF_ALLOWED("load: Unable to create SubresourceLoader (frame = %p)", &frame);
         failBeforeStarting();
         return;
     }

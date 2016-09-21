@@ -80,6 +80,8 @@
 
 #define PRELOAD_DEBUG 0
 
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - CachedResourceLoader::" fmt, this, ##__VA_ARGS__)
+
 namespace WebCore {
 
 static CachedResource* createResource(CachedResource::Type type, CachedResourceRequest&& request, SessionID sessionID)
@@ -607,11 +609,15 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     // If only the fragment identifiers differ, it is the same resource.
     url = MemoryCache::removeFragmentIdentifierIfNeeded(url);
 
-    if (!url.isValid())
+    if (!url.isValid()) {
+        RELEASE_LOG_IF_ALLOWED("requestResource: URL is invalid (frame = %p)", frame());
         return nullptr;
+    }
 
-    if (!canRequest(type, url, request.options(), request.forPreload()))
+    if (!canRequest(type, url, request.options(), request.forPreload())) {
+        RELEASE_LOG_IF_ALLOWED("requestResource: Not allowed to request resource (frame = %p)", frame());
         return nullptr;
+    }
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (frame() && frame()->mainFrame().page() && m_documentLoader) {
@@ -619,6 +625,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         auto blockedStatus = frame()->mainFrame().page()->userContentProvider().processContentExtensionRulesForLoad(resourceRequest.url(), toResourceType(type), *m_documentLoader);
         applyBlockedStatusToRequest(blockedStatus, resourceRequest);
         if (blockedStatus.blockedLoad) {
+            RELEASE_LOG_IF_ALLOWED("requestResource: Resource blocked by content blocker (frame = %p)", frame());
             if (type == CachedResource::Type::MainResource) {
                 auto resource = createResource(type, WTFMove(request), sessionID());
                 ASSERT(resource);
@@ -1288,6 +1295,11 @@ const ResourceLoaderOptions& CachedResourceLoader::defaultCachedResourceOptions(
 {
     static ResourceLoaderOptions options(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching);
     return options;
+}
+
+bool CachedResourceLoader::isAlwaysOnLoggingAllowed() const
+{
+    return m_documentLoader ? m_documentLoader->isAlwaysOnLoggingAllowed() : true;
 }
 
 }

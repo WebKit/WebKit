@@ -264,7 +264,7 @@ namespace WebCore {
         bool activeDOMObjectsAndAnimationsSuspended() const { return m_activeDOMObjectsAndAnimationsSuspendedCount > 0; }
 
         bool isURLAllowed(const URL&) const;
-        bool isAlwaysOnLoggingAllowed() const;
+        WEBCORE_EXPORT bool isAlwaysOnLoggingAllowed() const;
 
     // ========
 

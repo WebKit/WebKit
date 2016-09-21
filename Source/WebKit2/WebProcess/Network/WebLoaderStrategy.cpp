@@ -57,8 +57,8 @@
 
 using namespace WebCore;
 
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(loadParameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - WebLoaderStrategy::" fmt, this, ##__VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(loadParameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - WebLoaderStrategy::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(permissionChecker, fmt, ...) RELEASE_LOG_IF(permissionChecker.isAlwaysOnLoggingAllowed(), Network, "%p - WebLoaderStrategy::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(permissionChecker, fmt, ...) RELEASE_LOG_ERROR_IF(permissionChecker.isAlwaysOnLoggingAllowed(), Network, "%p - WebLoaderStrategy::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -76,6 +76,8 @@ RefPtr<SubresourceLoader> WebLoaderStrategy::loadResource(Frame& frame, CachedRe
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
         scheduleLoad(*loader, &resource, frame.document()->referrerPolicy() == ReferrerPolicy::Default);
+    else
+        RELEASE_LOG_ERROR_IF_ALLOWED(frame, "loadResource: Unable to create SubresourceLoader (frame = %p", &frame);
     return loader;
 }
 
@@ -149,6 +151,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     // then we should remember the ResourceLoader in our records but not schedule it in the NetworkProcess.
     if (resourceLoader.documentLoader()->scheduleArchiveLoad(resourceLoader, resourceLoader.request())) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as an archive resource.", resourceLoader.url().string().utf8().data());
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as an archive resource (frame = %p, resourceID = %llu)", resourceLoader.frame(), identifier);
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader, trackingParameters));
         return;
     }
@@ -156,12 +159,14 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 
     if (resourceLoader.documentLoader()->applicationCacheHost()->maybeLoadResource(resourceLoader, resourceLoader.request(), resourceLoader.request().url())) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded from application cache.", resourceLoader.url().string().utf8().data());
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be loaded from application cache (frame = %p, resourceID = %llu)", resourceLoader.frame(), identifier);
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader, trackingParameters));
         return;
     }
 
     if (resourceLoader.request().url().protocolIsData()) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded as data.", resourceLoader.url().string().utf8().data());
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be loaded as data (frame = %p, resourceID = %llu)", resourceLoader.frame(), identifier);
         startLocalLoad(resourceLoader);
         return;
     }
@@ -169,6 +174,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 #if USE(QUICK_LOOK)
     if (resourceLoader.request().url().protocolIs(QLPreviewProtocol())) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader.url().string().utf8().data());
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as a QuickLook resource (frame = %p, resourceID = %llu)", resourceLoader.frame(), identifier);
         startLocalLoad(resourceLoader);
         return;
     }
@@ -179,6 +185,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     // https://blogs.gnome.org/alexl/2012/01/26/resources-in-glib/
     if (resourceLoader.request().url().protocolIs("resource")) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a GResource.", resourceLoader.url().string().utf8().data());
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as a GResource (frame = %p, resourceID = %llu)", resourceLoader.frame(), identifier);
         startLocalLoad(resourceLoader);
         return;
     }
@@ -207,7 +214,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials);
 
     if (!WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
-        RELEASE_LOG_ERROR_IF_ALLOWED("scheduleLoad: Unable to schedule resource with the NetworkProcess (frame = %p, priority = %d, pageID = %llu, frameID = %llu, resourceID = %llu)", resourceLoader.frame(), static_cast<int>(resourceLoader.request().priority()), loadParameters.webPageID, loadParameters.identifier, loadParameters.webFrameID);
+        RELEASE_LOG_ERROR_IF_ALLOWED(resourceLoader, "scheduleLoad: Unable to schedule resource with the NetworkProcess (frame = %p, priority = %d, pageID = %llu, frameID = %llu, resourceID = %llu)", resourceLoader.frame(), static_cast<int>(resourceLoader.request().priority()), loadParameters.webPageID, loadParameters.identifier, loadParameters.webFrameID);
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
         scheduleInternallyFailedLoad(resourceLoader);
@@ -215,7 +222,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 
     auto webResourceLoader = WebResourceLoader::create(resourceLoader, trackingParameters);
-    RELEASE_LOG_IF_ALLOWED("scheduleLoad: Resource has been queued for scheduling with the NetworkProcess (frame = %p, priority = %d, pageID = %llu, frameID = %llu, resourceID = %llu, WebResourceLoader = %p)", resourceLoader.frame(), static_cast<int>(resourceLoader.request().priority()), loadParameters.webPageID, loadParameters.webFrameID, loadParameters.identifier, webResourceLoader.ptr());
+    RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: Resource has been queued for scheduling with the NetworkProcess (frame = %p, priority = %d, pageID = %llu, frameID = %llu, resourceID = %llu, WebResourceLoader = %p)", resourceLoader.frame(), static_cast<int>(resourceLoader.request().priority()), loadParameters.webPageID, loadParameters.webFrameID, loadParameters.identifier, webResourceLoader.ptr());
     m_webResourceLoaders.set(identifier, WTFMove(webResourceLoader));
 }
 

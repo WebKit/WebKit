@@ -1,3 +1,26 @@
+2016-09-20  Keith Rollin  <krollin@apple.com>
+
+        Add new logging for network resource loading
+        https://bugs.webkit.org/show_bug.cgi?id=162237
+
+        Reviewed by Antti Koivisto.
+
+        Add new logging along the non-main path for resource loading. This
+        logging should allow us to differentiate between lack-of-logging due
+        execution along a path that doesn't have logging statements and
+        lack-of-logging due to a hung process.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::setDefersLoading):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2016-09-20  Anders Carlsson  <andersca@apple.com>
 
         Can't present a payment sheet if a sheet is already active in another window
