@@ -41,9 +41,13 @@ PASS: Primary key should be ordered by email: 4
 PASS: Key should be ordered by email: 'beaver@webkit.org'
 PASS: Value should be a remote object for: 'Monstrous Beaver'
 FAIL: Primary key should be ordered by email: 2
+    Expected: truthy
+    Actual: false
 PASS: Key should be ordered by email: 'hampster@webkit.org'
 PASS: Value should be a remote object for: 'Thirsty Hampster'
 FAIL: Primary key should be ordered by email: 1
+    Expected: truthy
+    Actual: false
 PASS: Key should be ordered by email: 'peacock@webkit.org'
 PASS: Value should be a remote object for: 'Jamming Peacock'
 

@@ -12,6 +12,8 @@ PASS: constrain of a value above max becomes max
 PASS: constrain of a value above max becomes max
 PASS: constrain of a value above max becomes max
 FAIL: constrain of NaN becomes min
+    Expected: truthy
+    Actual: false
 
 -- Running test case: Number.secondsToString
 PASS: normal resolution of 0ms should be ms with no decimals

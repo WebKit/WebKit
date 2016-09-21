@@ -1,3 +1,27 @@
+2016-09-21  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve output of TestHarness.expect* failures
+        https://bugs.webkit.org/show_bug.cgi?id=162177
+        <rdar://problem/28367186>
+
+        Reviewed by Joseph Pecoraro.
+
+        Extend coverage to more TestHarness messages by omitting the optional
+        `message` parameter when calling expect* functions.
+
+        Other improvements:
+        - expectEqual/expectNotEqual should test WebInspector object instances,
+          to cover more TestHarness message formatting cases.
+        - expectEqual/expectNotEqual should test shallow equal arrays, since the
+          test is for strict equality.
+
+        * inspector/indexeddb/requestData-expected.txt:
+        * inspector/unit-tests/number-utilities-expected.txt:
+        Updated expectations for new TestHarness output.
+
+        * inspector/unit-tests/test-harness-expect-functions-expected.txt:
+        * inspector/unit-tests/test-harness-expect-functions.html:
+
 2016-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/css/manager-preferredInspectorStyleSheetForFrame.html as flaky on mac.

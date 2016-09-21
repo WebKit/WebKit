@@ -1,3 +1,51 @@
+2016-09-21  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve output of TestHarness.expect* failures
+        https://bugs.webkit.org/show_bug.cgi?id=162177
+        <rdar://problem/28367186>
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch adds specific expectation functions to TestHarness, to better
+        express intent when writing tests, and to allow more details to be logged
+        in the event of a failure.
+
+        For functions taking both `actual` and `expected` parameters, the `actual`
+        parameter comes first. This convention simplifies the implementation of
+        TestHarness, improves the readability of tests involving inequalities,
+        and is consistent with XCTest assertions.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness):
+        (TestHarness.prototype.expectThat):
+        (TestHarness.prototype.expectFalse):
+        (TestHarness.prototype.expectNull):
+        (TestHarness.prototype.expectNotNull):
+        (TestHarness.prototype.expectEqual):
+        (TestHarness.prototype.expectNotEqual):
+        (TestHarness.prototype.expectShallowEqual):
+        (TestHarness.prototype.expectNotShallowEqual):
+        (TestHarness.prototype.expectEqualWithAccuracy):
+        (TestHarness.prototype.expectLessThan):
+        (TestHarness.prototype.expectLessThanOrEqual):
+        (TestHarness.prototype.expectGreaterThan):
+        (TestHarness.prototype.expectGreaterThanOrEqual):
+        New expectation functions, all of which call _expect under the hood.
+
+        (TestHarness.prototype._expect):
+        Helper method which calls pass or fail. Creates a message when no user
+        message is provided, and logs expected and actual values in the event
+        of a failure.
+
+        (TestHarness.prototype._expectationValueAsString):
+        (TestHarness.prototype._expectationMessageFormat):
+        Get a message format string for the expectation type. Used to create
+        pass/fail message when no user message is provided.
+
+        (TestHarness.prototype._expectedValueFormat):
+        Get a format string for displaying the expected value. Used to create
+        the "Expected: " failure message line.
+
 2016-09-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reload unexpectedly switches to Storage Tab

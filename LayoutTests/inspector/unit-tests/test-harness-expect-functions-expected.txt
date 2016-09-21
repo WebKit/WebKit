@@ -11,11 +11,23 @@ PASS: expectThat({})
 PASS: expectThat([])
 Expected to FAIL
 FAIL: expectThat(false)
+    Expected: truthy
+    Actual: false
 FAIL: expectThat(0)
+    Expected: truthy
+    Actual: 0
 FAIL: expectThat("")
+    Expected: truthy
+    Actual: ""
 FAIL: expectThat(null)
+    Expected: truthy
+    Actual: null
 FAIL: expectThat(undefined)
+    Expected: truthy
+    Actual: undefined
 FAIL: expectThat(NaN)
+    Expected: truthy
+    Actual: NaN
 
 -- Running test case: InspectorTest.expectFalse
 Expected to PASS
@@ -27,22 +39,46 @@ PASS: expectFalse(undefined)
 PASS: expectFalse(NaN)
 Expected to FAIL
 FAIL: expectFalse(true)
+    Expected: falsey
+    Actual: true
 FAIL: expectFalse(1)
+    Expected: falsey
+    Actual: 1
 FAIL: expectFalse("abc")
+    Expected: falsey
+    Actual: "abc"
 FAIL: expectFalse({})
+    Expected: falsey
+    Actual: {}
 FAIL: expectFalse([])
+    Expected: falsey
+    Actual: []
 
 -- Running test case: InspectorTest.expectNull
 Expected to PASS
 PASS: expectNull(null)
 Expected to FAIL
 FAIL: expectNull(true)
+    Expected: null
+    Actual: true
 FAIL: expectNull(false)
+    Expected: null
+    Actual: false
 FAIL: expectNull(1)
+    Expected: null
+    Actual: 1
 FAIL: expectNull("")
+    Expected: null
+    Actual: ""
 FAIL: expectNull(undefined)
+    Expected: null
+    Actual: undefined
 FAIL: expectNull({})
+    Expected: null
+    Actual: {}
 FAIL: expectNull([])
+    Expected: null
+    Actual: []
 
 -- Running test case: InspectorTest.expectNotNull
 Expected to PASS
@@ -55,29 +91,52 @@ PASS: expectNotNull({})
 PASS: expectNotNull([])
 Expected to FAIL
 FAIL: expectNotNull(null)
+    Expected: not null
+    Actual: null
 
 -- Running test case: InspectorTest.expectEqual
 Expected to PASS
 PASS: expectEqual(true, true)
 PASS: expectEqual({"a":1,"b":2}, {"a":1,"b":2})
+PASS: expectEqual(CSSStyleDeclaration instance #1, CSSStyleDeclaration instance #1)
 PASS: expectEqual(1.23, 1.23)
 PASS: expectEqual("abc", "abc")
 PASS: expectEqual(null, null)
 PASS: expectEqual(undefined, undefined)
 Expected to FAIL
 FAIL: expectEqual(true, false)
-FAIL: expectEqual({"a":1,"b":2}, {"c":3,"d":4})
+    Expected: false
+    Actual: true
+FAIL: expectEqual({"a":1,"b":2}, {"a":1,"b":2})
+    Expected: {"a":1,"b":2}
+    Actual: {"a":1,"b":2}
+FAIL: expectEqual(CSSStyleDeclaration instance #1, CSSRule instance #2)
+    Expected: CSSRule instance #2
+    Actual: CSSStyleDeclaration instance #1
 FAIL: expectEqual(1.23, 4.56)
+    Expected: 4.56
+    Actual: 1.23
 FAIL: expectEqual("abc", "def")
+    Expected: "def"
+    Actual: "abc"
 FAIL: expectEqual(null, undefined)
+    Expected: undefined
+    Actual: null
 FAIL: expectEqual(NaN, NaN)
+    Expected: NaN
+    Actual: NaN
 FAIL: expectEqual({}, {})
+    Expected: {}
+    Actual: {}
 FAIL: expectEqual([], [])
+    Expected: []
+    Actual: []
 
 -- Running test case: InspectorTest.expectNotEqual
 Expected to PASS
 PASS: expectNotEqual(true, false)
-PASS: expectNotEqual({"a":1,"b":2}, {"c":3,"d":4})
+PASS: expectNotEqual({"a":1,"b":2}, {"a":1,"b":2})
+PASS: expectNotEqual(CSSStyleDeclaration instance #1, CSSRule instance #2)
 PASS: expectNotEqual(1.23, 4.56)
 PASS: expectNotEqual("abc", "def")
 PASS: expectNotEqual(null, undefined)
@@ -86,11 +145,26 @@ PASS: expectNotEqual({}, {})
 PASS: expectNotEqual([], [])
 Expected to FAIL
 FAIL: expectNotEqual(true, true)
+    Expected: not true
+    Actual: true
 FAIL: expectNotEqual({"a":1,"b":2}, {"a":1,"b":2})
+    Expected: not {"a":1,"b":2}
+    Actual: {"a":1,"b":2}
+FAIL: expectNotEqual(CSSStyleDeclaration instance #1, CSSStyleDeclaration instance #1)
+    Expected: not CSSStyleDeclaration instance #1
+    Actual: CSSStyleDeclaration instance #1
 FAIL: expectNotEqual(1.23, 1.23)
+    Expected: not 1.23
+    Actual: 1.23
 FAIL: expectNotEqual("abc", "abc")
+    Expected: not "abc"
+    Actual: "abc"
 FAIL: expectNotEqual(null, null)
+    Expected: not null
+    Actual: null
 FAIL: expectNotEqual(undefined, undefined)
+    Expected: not undefined
+    Actual: undefined
 
 -- Running test case: InspectorTest.expectShallowEqual
 Expected to PASS
@@ -99,7 +173,11 @@ PASS: expectShallowEqual({}, {})
 PASS: expectShallowEqual([], [])
 Expected to FAIL
 FAIL: expectShallowEqual({"a":1,"b":2}, {"a":3,"b":4})
+    Expected: {"a":3,"b":4}
+    Actual: {"a":1,"b":2}
 FAIL: expectShallowEqual({}, [])
+    Expected: []
+    Actual: {}
 
 -- Running test case: InspectorTest.expectNotShallowEqual
 Expected to PASS
@@ -107,8 +185,14 @@ PASS: expectNotShallowEqual({"a":1,"b":2}, {"a":3,"b":4})
 PASS: expectNotShallowEqual({}, [])
 Expected to FAIL
 FAIL: expectNotShallowEqual({"a":1,"b":2}, {"a":1,"b":2})
+    Expected: not {"a":1,"b":2}
+    Actual: {"a":1,"b":2}
 FAIL: expectNotShallowEqual({}, {})
+    Expected: not {}
+    Actual: {}
 FAIL: expectNotShallowEqual([], [])
+    Expected: not []
+    Actual: []
 
 -- Running test case: InspectorTest.expectEqualWithAccuracy
 Expected to PASS
@@ -118,7 +202,11 @@ PASS: expectEqualWithAccuracy(0, 1, 1)
 PASS: expectEqualWithAccuracy(1, 0, 1)
 Expected to FAIL
 FAIL: expectEqualWithAccuracy(0, 2, 1)
+    Expected: 2 +/- 1
+    Actual: 0
 FAIL: expectEqualWithAccuracy(2, 0, 1)
+    Expected: 0 +/- 1
+    Actual: 2
 
 -- Running test case: InspectorTest.expectLessThan
 Expected to PASS
@@ -126,9 +214,17 @@ PASS: expectLessThan(0, 1)
 PASS: expectLessThan("abc", "def")
 Expected to FAIL
 FAIL: expectLessThan(0, 0)
+    Expected: less than 0
+    Actual: 0
 FAIL: expectLessThan(1, 0)
+    Expected: less than 0
+    Actual: 1
 FAIL: expectLessThan("abc", "abc")
+    Expected: less than "abc"
+    Actual: "abc"
 FAIL: expectLessThan("def", "abc")
+    Expected: less than "abc"
+    Actual: "def"
 
 -- Running test case: InspectorTest.expectLessThanOrEqual
 Expected to PASS
@@ -138,7 +234,11 @@ PASS: expectLessThanOrEqual("abc", "def")
 PASS: expectLessThanOrEqual("abc", "abc")
 Expected to FAIL
 FAIL: expectLessThanOrEqual(1, 0)
+    Expected: less than or equal to 0
+    Actual: 1
 FAIL: expectLessThanOrEqual("def", "abc")
+    Expected: less than or equal to "abc"
+    Actual: "def"
 
 -- Running test case: InspectorTest.expectGreaterThan
 Expected to PASS
@@ -146,9 +246,17 @@ PASS: expectGreaterThan(1, 0)
 PASS: expectGreaterThan("def", "abc")
 Expected to FAIL
 FAIL: expectGreaterThan(0, 0)
+    Expected: greater than 0
+    Actual: 0
 FAIL: expectGreaterThan(0, 1)
+    Expected: greater than 1
+    Actual: 0
 FAIL: expectGreaterThan("abc", "abc")
+    Expected: greater than "abc"
+    Actual: "abc"
 FAIL: expectGreaterThan("abc", "def")
+    Expected: greater than "def"
+    Actual: "abc"
 
 -- Running test case: InspectorTest.expectGreaterThanOrEqual
 Expected to PASS
@@ -158,5 +266,9 @@ PASS: expectGreaterThanOrEqual("def", "abc")
 PASS: expectGreaterThanOrEqual("abc", "abc")
 Expected to FAIL
 FAIL: expectGreaterThanOrEqual(0, 1)
+    Expected: greater than or equal to 1
+    Actual: 0
 FAIL: expectGreaterThanOrEqual("abc", "def")
+    Expected: greater than or equal to "def"
+    Actual: "abc"
 

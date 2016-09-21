@@ -5,21 +5,10 @@
 <script>
 function test()
 {
-    console.assert(false, "FAIL ASSERTION!!!!!!!");
-
     let suite = InspectorTest.createSyncSuite("InspectorTestExpectFunctions");
 
     function toArray(a) {
         return a instanceof Array && a.length ? a : [a];
-    }
-
-    function stringifyArguments(args) {
-        return args.map((a) => {
-            if (typeof a === "number")
-                return a;
-            // Append empty string so `undefined` is displayed correctly.
-            return JSON.stringify(a) + "";
-        }).join(", ");
     }
 
     function addTestCase({functionName, passingInputs, failingInputs}) {
@@ -36,10 +25,8 @@ function test()
                     }
 
                     InspectorTest.log("Expected to " + (shouldPass ? "PASS" : "FAIL"));
-                    for (let input of inputs.map(toArray)) {
-                        let argumentsString = stringifyArguments(input);
-                        functionUnderTest.call(InspectorTest, ...input, `${functionName}(${argumentsString})`);
-                    }
+                    for (let input of inputs.map(toArray))
+                        functionUnderTest.call(InspectorTest, ...input);
                 }
 
                 exerciseFunction(passingInputs, true);
@@ -70,12 +57,15 @@ function test()
     addInverseTestCase("expectNotNull", expectNullTestCase);
 
     let object1 = {a: 1, b: 2};
-    let object2 = {c: 3, d: 4};
+    let object2 = {a: 1, b: 2};
+    let customObject1 = new WebInspector.CSSStyleDeclaration;
+    let customObject2 = new WebInspector.CSSRule;
     let expectEqualTestCase = {
         functionName: "expectEqual",
         passingInputs: [
             [true, true],
             [object1, object1],
+            [customObject1, customObject1],
             [1.23, 1.23],
             ["abc", "abc"],
             [null, null],
@@ -84,6 +74,7 @@ function test()
         failingInputs: [
             [true, false],
             [object1, object2],
+            [customObject1, customObject2],
             [1.23, 4.56],
             ["abc", "def"],
             [null, undefined],
