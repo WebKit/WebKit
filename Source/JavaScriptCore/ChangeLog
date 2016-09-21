@@ -1,3 +1,38 @@
+2016-09-21  Michael Saboff  <msaboff@apple.com>
+
+        FTL needs to reserve callee stack space in bytes
+        https://bugs.webkit.org/show_bug.cgi?id=162324
+
+        Reviewed by Geoffrey Garen.
+
+        Changed two instances where we call B3::Procedure::requestCallArgAreaSize() with the
+        number of JSValue sized objects of stack space instead of bytes.  The correct units
+        to use is bytes.
+
+        Renamed both the Air and B3 related callArgAreaSize() to callArgAreaSizeInBytes().
+
+        No new tests as this doesn't surface as an issue when arguments are passed on the stack.
+
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::callArgAreaSizeInBytes):
+        (JSC::B3::Procedure::requestCallArgAreaSizeInBytes):
+        (JSC::B3::Procedure::callArgAreaSize): Deleted.
+        (JSC::B3::Procedure::requestCallArgAreaSize): Deleted.
+        * b3/B3Procedure.h:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirCCallingConvention.cpp:
+        (JSC::B3::Air::computeCCallingConvention):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::callArgAreaSizeInBytes):
+        (JSC::B3::Air::Code::requestCallArgAreaSizeInBytes):
+        (JSC::B3::Air::Code::callArgAreaSize): Deleted.
+        (JSC::B3::Air::Code::requestCallArgAreaSize): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+
 2016-09-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Unreviewed buildfix after r206136.

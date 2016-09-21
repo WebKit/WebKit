@@ -5293,8 +5293,8 @@ private:
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
 
-        unsigned frameSize = CallFrame::headerSizeInRegisters + numArgs;
-        unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
+        unsigned frameSize = (CallFrame::headerSizeInRegisters + numArgs) * sizeof(EncodedJSValue);
+        unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize);
 
         // JS->JS calling convention requires that the caller allows this much space on top of stack to
         // get trashed by the callee, even if not all of that space is used to pass arguments. We tell
@@ -5304,7 +5304,7 @@ private:
         // - The trashed stack guarantee is logically separate from the act of passing arguments, so we
         //   shouldn't rely on Air to infer the trashed stack property based on the arguments it ends
         //   up seeing.
-        m_proc.requestCallArgAreaSize(alignedFrameSize);
+        m_proc.requestCallArgAreaSizeInBytes(alignedFrameSize);
 
         // Collect the arguments, since this can generate code and we want to generate it before we emit
         // the call.
@@ -5554,7 +5554,7 @@ private:
             sizeof(CallerFrameAndPC) +
             WTF::roundUpToMultipleOf(stackAlignmentBytes(), 5 * sizeof(EncodedJSValue));
 
-        m_proc.requestCallArgAreaSize(minimumJSCallAreaSize);
+        m_proc.requestCallArgAreaSizeInBytes(minimumJSCallAreaSize);
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
@@ -5780,10 +5780,10 @@ private:
         
         LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
         
-        unsigned frameSize = CallFrame::headerSizeInRegisters + numArgs;
-        unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
+        unsigned frameSize = (CallFrame::headerSizeInRegisters + numArgs) * sizeof(EncodedJSValue);
+        unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize);
         
-        m_proc.requestCallArgAreaSize(alignedFrameSize);
+        m_proc.requestCallArgAreaSizeInBytes(alignedFrameSize);
         
         Vector<ConstrainedValue> arguments;
         arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(GPRInfo::regT0)));

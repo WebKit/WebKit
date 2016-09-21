@@ -240,13 +240,13 @@ void allocateStack(Code& code)
                     // such an awesome assumption.
                     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150454
                     ASSERT(arg.offset() >= 0);
-                    code.requestCallArgAreaSize(arg.offset() + 8);
+                    code.requestCallArgAreaSizeInBytes(arg.offset() + 8);
                 }
             }
         }
     }
 
-    code.setFrameSize(frameSizeForStackSlots + code.callArgAreaSize());
+    code.setFrameSize(frameSizeForStackSlots + code.callArgAreaSizeInBytes());
 
     // Finally, transform the code to use Addr's instead of StackSlot's. This is a lossless
     // transformation since we can search the StackSlots array to figure out which StackSlot any

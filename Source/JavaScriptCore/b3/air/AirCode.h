@@ -101,10 +101,10 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    unsigned callArgAreaSize() const { return m_callArgAreaSize; }
+    unsigned callArgAreaSizeInBytes() const { return m_callArgAreaSize; }
 
     // You can call this before code generation to force a minimum call arg area size.
-    void requestCallArgAreaSize(unsigned size)
+    void requestCallArgAreaSizeInBytes(unsigned size)
     {
         m_callArgAreaSize = std::max(
             m_callArgAreaSize,

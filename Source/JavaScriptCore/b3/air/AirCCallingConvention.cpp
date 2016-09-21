@@ -85,7 +85,7 @@ Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
         result.append(
             marshallCCallArgument(gpArgumentCount, fpArgumentCount, stackOffset, value->child(i)));
     }
-    code.requestCallArgAreaSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset));
+    code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset));
     return result;
 }
 

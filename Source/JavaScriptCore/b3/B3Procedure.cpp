@@ -295,14 +295,14 @@ void* Procedure::addDataSection(size_t size)
     return result;
 }
 
-unsigned Procedure::callArgAreaSize() const
+unsigned Procedure::callArgAreaSizeInBytes() const
 {
-    return code().callArgAreaSize();
+    return code().callArgAreaSizeInBytes();
 }
 
-void Procedure::requestCallArgAreaSize(unsigned size)
+void Procedure::requestCallArgAreaSizeInBytes(unsigned size)
 {
-    code().requestCallArgAreaSize(size);
+    code().requestCallArgAreaSizeInBytes(size);
 }
 
 unsigned Procedure::frameSize() const

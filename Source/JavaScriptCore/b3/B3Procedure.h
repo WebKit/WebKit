@@ -210,8 +210,8 @@ public:
     const Air::Code& code() const { return *m_code; }
     Air::Code& code() { return *m_code; }
 
-    unsigned callArgAreaSize() const;
-    void requestCallArgAreaSize(unsigned size);
+    unsigned callArgAreaSizeInBytes() const;
+    void requestCallArgAreaSizeInBytes(unsigned size);
 
     JS_EXPORT_PRIVATE unsigned frameSize() const;
     const RegisterAtOffsetList& calleeSaveRegisters() const;
