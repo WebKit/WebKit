@@ -1,3 +1,13 @@
+2016-09-20  Nan Wang  <n_wang@apple.com>
+
+        AX: AppleVisUser: VO can't navigate web dialogs iOS10
+        https://bugs.webkit.org/show_bug.cgi?id=162322
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/dialog-did-become-focused-expected.txt: Added.
+        * accessibility/ios-simulator/dialog-did-become-focused.html: Added.
+
 2016-09-20  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r204552): Athlete search on Strava gives bad rendering.
