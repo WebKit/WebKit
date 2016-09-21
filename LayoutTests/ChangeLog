@@ -1,3 +1,12 @@
+2016-09-19  Jer Noble  <jer.noble@apple.com>
+
+        [media-source] Fix imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html
+        https://bugs.webkit.org/show_bug.cgi?id=162257
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+
 2016-09-20  Jer Noble  <jer.noble@apple.com>
 
         [media-source] Fix imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html

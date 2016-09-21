@@ -1695,20 +1695,23 @@ void SourceBuffer::videoTrackSelectedChanged(VideoTrack* track)
     // If the selected video track changes, then run the following steps:
     // 1. If the SourceBuffer associated with the previously selected video track is not associated with
     // any other enabled tracks, run the following steps:
-    if (track->selected()
+    if (!track->selected()
         && (!m_videoTracks || !m_videoTracks->isAnyTrackEnabled())
         && (!m_audioTracks || !m_audioTracks->isAnyTrackEnabled())
         && (!m_textTracks || !m_textTracks->isAnyTrackEnabled())) {
         // 1.1 Remove the SourceBuffer from activeSourceBuffers.
         // 1.2 Queue a task to fire a simple event named removesourcebuffer at activeSourceBuffers
         setActive(false);
-    } else if (!track->selected()) {
+    } else if (track->selected()) {
         // 2. If the SourceBuffer associated with the newly selected video track is not already in activeSourceBuffers,
         // run the following steps:
         // 2.1 Add the SourceBuffer to activeSourceBuffers.
         // 2.2 Queue a task to fire a simple event named addsourcebuffer at activeSourceBuffers
         setActive(true);
     }
+
+    if (m_videoTracks && m_videoTracks->contains(*track))
+        m_videoTracks->scheduleChangeEvent();
 
     if (!isRemoved())
         m_source->mediaElement()->videoTrackSelectedChanged(track);
@@ -1719,20 +1722,23 @@ void SourceBuffer::audioTrackEnabledChanged(AudioTrack* track)
     // 2.4.5 Changes to selected/enabled track state
     // If an audio track becomes disabled and the SourceBuffer associated with this track is not
     // associated with any other enabled or selected track, then run the following steps:
-    if (track->enabled()
+    if (!track->enabled()
         && (!m_videoTracks || !m_videoTracks->isAnyTrackEnabled())
         && (!m_audioTracks || !m_audioTracks->isAnyTrackEnabled())
         && (!m_textTracks || !m_textTracks->isAnyTrackEnabled())) {
         // 1. Remove the SourceBuffer associated with the audio track from activeSourceBuffers
         // 2. Queue a task to fire a simple event named removesourcebuffer at activeSourceBuffers
         setActive(false);
-    } else if (!track->enabled()) {
+    } else if (track->enabled()) {
         // If an audio track becomes enabled and the SourceBuffer associated with this track is
         // not already in activeSourceBuffers, then run the following steps:
         // 1. Add the SourceBuffer associated with the audio track to activeSourceBuffers
         // 2. Queue a task to fire a simple event named addsourcebuffer at activeSourceBuffers
         setActive(true);
     }
+
+    if (m_audioTracks && m_audioTracks->contains(*track))
+        m_audioTracks->scheduleChangeEvent();
 
     if (!isRemoved())
         m_source->mediaElement()->audioTrackEnabledChanged(track);
@@ -1757,6 +1763,9 @@ void SourceBuffer::textTrackModeChanged(TextTrack* track)
         // 2. Queue a task to fire a simple event named addsourcebuffer at activeSourceBuffers
         setActive(true);
     }
+
+    if (m_textTracks && m_textTracks->contains(*track))
+        m_textTracks->scheduleChangeEvent();
 
     if (!isRemoved())
         m_source->mediaElement()->textTrackModeChanged(track);
