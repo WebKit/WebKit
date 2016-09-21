@@ -311,6 +311,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("notspecial:/", "about:blank", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
     checkRelativeURL("notspecial:/", "http://host", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
     checkRelativeURL("foo:/", "http://example.org/foo/bar", {"foo", "", "", "", 0, "/", "", "", "foo:/"});
+    checkRelativeURL("://:0/", "http://webkit.org/", {"http", "", "", "webkit.org", 0, "/://:0/", "", "", "http://webkit.org/://:0/"});
 
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
@@ -710,6 +711,9 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("~");
     shouldFail("~", "about:blank");
     shouldFail("~~~");
+    shouldFail("://:0/");
+    shouldFail("://:0/", "");
+    shouldFail("://:0/", "about:blank");
 }
 
 // These are in the spec but not in the web platform tests.

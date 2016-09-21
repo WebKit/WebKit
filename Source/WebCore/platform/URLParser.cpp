@@ -705,6 +705,11 @@ size_t URLParser::urlLengthUntilPart(const URL& url, URLPart part)
 
 inline static void copyASCIIStringUntil(Vector<LChar>& destination, const String& string, size_t lengthIf8Bit, size_t lengthIf16Bit)
 {
+    if (string.isNull()) {
+        ASSERT(!lengthIf8Bit);
+        ASSERT(!lengthIf16Bit);
+        return;
+    }
     ASSERT(destination.isEmpty());
     if (string.is8Bit()) {
         RELEASE_ASSERT(lengthIf8Bit <= string.length());
@@ -1069,7 +1074,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             break;
         case State::NoScheme:
             LOG_STATE("NoScheme");
-            if (base.isNull() || (base.m_cannotBeABaseURL && *c != '#'))
+            if (!base.isValid() || (base.m_cannotBeABaseURL && *c != '#'))
                 return failure(input, length);
             if (base.m_cannotBeABaseURL && *c == '#') {
                 copyURLPartsUntil(base, URLPart::QueryEnd);
@@ -1240,7 +1245,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 ++c;
                 break;
             case '?':
-                if (!base.isNull() && base.protocolIs("file"))
+                if (base.isValid() && base.protocolIs("file"))
                     copyURLPartsUntil(base, URLPart::PathEnd);
                 m_asciiBuffer.append("///?", 4);
                 m_url.m_userStart = m_asciiBuffer.size() - 2;
@@ -1254,7 +1259,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 ++c;
                 break;
             case '#':
-                if (!base.isNull() && base.protocolIs("file"))
+                if (base.isValid() && base.protocolIs("file"))
                     copyURLPartsUntil(base, URLPart::QueryEnd);
                 m_asciiBuffer.append("///#", 4);
                 m_url.m_userStart = m_asciiBuffer.size() - 2;
@@ -1269,7 +1274,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 ++c;
                 break;
             default:
-                if (!base.isNull() && base.protocolIs("file") && shouldCopyFileURL<serialized>(c))
+                if (base.isValid() && base.protocolIs("file") && shouldCopyFileURL<serialized>(c))
                     copyURLPartsUntil(base, URLPart::PathAfterLastSlash);
                 else {
                     m_asciiBuffer.append("///", 3);
@@ -1299,7 +1304,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 state = State::FileHost;
                 break;
             }
-            if (!base.isNull() && base.protocolIs("file")) {
+            if (base.isValid() && base.protocolIs("file")) {
                 // FIXME: This String copy is unnecessary.
                 String basePath = base.path();
                 if (basePath.length() >= 2) {
@@ -1459,7 +1464,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
     switch (state) {
     case State::SchemeStart:
         LOG_FINAL_STATE("SchemeStart");
-        if (!m_asciiBuffer.size() && !base.isNull())
+        if (!m_asciiBuffer.size() && base.isValid())
             return base;
         return failure(input, length);
     case State::Scheme:
@@ -1544,7 +1549,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     case State::File:
         LOG_FINAL_STATE("File");
-        if (!base.isNull() && base.protocolIs("file")) {
+        if (base.isValid() && base.protocolIs("file")) {
             copyURLPartsUntil(base, URLPart::QueryEnd);
             m_asciiBuffer.append(':');
         }
@@ -2103,7 +2108,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         }
     }
     
-    ASSERT(!serialized || m_hostHasPercentOrNonASCII);
+    ASSERT(!serialized || !m_hostHasPercentOrNonASCII);
     if (!m_hostHasPercentOrNonASCII) {
         auto hostIterator = iterator;
         for (; !iterator.atEnd(); ++iterator) {
