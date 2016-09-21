@@ -339,7 +339,8 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError)) {
-        addCrossOriginWindowPropertyNames(*exec, propertyNames);
+        if (mode.includeDontEnumProperties())
+            addCrossOriginWindowPropertyNames(*exec, propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

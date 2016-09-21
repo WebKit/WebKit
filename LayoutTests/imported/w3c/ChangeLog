@@ -1,5 +1,16 @@
 2016-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Fix enumeration of properties cross origin
+        https://bugs.webkit.org/show_bug.cgi?id=162328
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C test now that one more check is passing.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+
+2016-09-21  Chris Dumez  <cdumez@apple.com>
+
         Object.getOwnPropertyDescriptor() does not work correctly cross origin
         https://bugs.webkit.org/show_bug.cgi?id=162311
 

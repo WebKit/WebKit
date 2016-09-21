@@ -11,7 +11,7 @@ PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported 
 PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly 
 PASS [[Delete]] Should throw on cross-origin objects 
 PASS [[DefineOwnProperty]] Should throw for cross-origin objects 
-FAIL [[Enumerate]] should return an empty iterator assert_unreached: Shouldn't have been able to enumerate href on cross-origin Location Reached unreachable code
+PASS [[Enumerate]] should return an empty iterator 
 PASS [[OwnPropertyKeys]] should return all properties from cross-origin objects 
 PASS A and B jointly observe the same identity for cross-origin Window and Location 
 PASS Cross-origin functions get local Function.prototype 

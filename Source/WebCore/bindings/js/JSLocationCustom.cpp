@@ -128,7 +128,8 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError)) {
-        addCrossOriginLocationPropertyNames(*exec, propertyNames);
+        if (mode.includeDontEnumProperties())
+            addCrossOriginLocationPropertyNames(*exec, propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
