@@ -40,9 +40,6 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, Sessio
     : CachedResource(WTFMove(request), XSLStyleSheet, sessionID)
     , m_decoder(TextResourceDecoder::create("text/xsl"))
 {
-    // It's XML we want.
-    // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.
-    setAccept("text/xml, application/xml, application/xhtml+xml, text/xsl, application/rss+xml, application/atom+xml");
 }
 
 CachedXSLStyleSheet::~CachedXSLStyleSheet()

@@ -97,6 +97,8 @@ public:
     WEBCORE_EXPORT void setHTTPContentType(const String&);
     void clearHTTPContentType();
 
+    bool hasHTTPHeader(HTTPHeaderName) const;
+
     WEBCORE_EXPORT String httpReferrer() const;
     bool hasHTTPReferrer() const;
     WEBCORE_EXPORT void setHTTPReferrer(const String&);

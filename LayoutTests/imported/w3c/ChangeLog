@@ -1,3 +1,17 @@
+2016-09-21  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch] Align Accept header default values with fetch spec
+        https://bugs.webkit.org/show_bug.cgi?id=162260
+
+        Reviewed by Sam Weinig.
+
+        Ensuring Accept and Accept-Language user-specific values are going up to the server.
+
+        * web-platform-tests/fetch/api/basic/accept-header-expected.txt:
+        * web-platform-tests/fetch/api/basic/accept-header-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/accept-header.js:
+        (promise_test):
+
 2016-09-21  Chris Dumez  <cdumez@apple.com>
 
         Import html/syntax web platform tests

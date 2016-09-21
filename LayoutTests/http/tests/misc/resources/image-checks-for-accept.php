@@ -1,5 +1,5 @@
 <?php
-    if($_SERVER["HTTP_ACCEPT"] == "*/*" || $_SERVER["HTTP_ACCEPT"] == "image/*" || $_SERVER["HTTP_ACCEPT"] == "image/jpg")
+    if($_SERVER["HTTP_ACCEPT"] == "image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
     {
         header("Content-Type: image/jpg");
         header("Cache-Control: no-store");

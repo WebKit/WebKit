@@ -220,11 +220,6 @@ public:
 
     bool isExpired() const;
 
-    // List of acceptable MIME types separated by ",".
-    // A MIME type may contain a wildcard, e.g. "text/*".
-    String accept() const { return m_accept; }
-    void setAccept(const String& accept) { m_accept = accept; }
-
     void cancelLoad();
     bool wasCanceled() const { return m_error.isCancellation(); }
     bool errorOccurred() const { return m_status == LoadError || m_status == DecodeError; }
@@ -319,7 +314,6 @@ private:
 
     HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
     SessionID m_sessionID;
-    String m_accept;
     ResourceLoadPriority m_loadPriority;
     std::chrono::system_clock::time_point m_responseTimestamp;
 

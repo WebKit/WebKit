@@ -44,10 +44,6 @@ CachedScript::CachedScript(CachedResourceRequest&& request, SessionID sessionID)
     : CachedResource(WTFMove(request), Script, sessionID)
     , m_decoder(TextResourceDecoder::create(ASCIILiteral("application/javascript"), request.charset()))
 {
-    // It's javascript we want.
-    // But some websites think their scripts are <some wrong mimetype here>
-    // and refuse to serve them if we only accept application/x-javascript.
-    setAccept("*/*");
 }
 
 CachedScript::~CachedScript()

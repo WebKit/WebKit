@@ -31,7 +31,6 @@ CachedSVGDocument::CachedSVGDocument(CachedResourceRequest&& request, SessionID 
     : CachedResource(WTFMove(request), SVGDocumentResource, sessionID)
     , m_decoder(TextResourceDecoder::create("application/xml"))
 {
-    setAccept("image/svg+xml");
 }
 
 CachedSVGDocument::~CachedSVGDocument()

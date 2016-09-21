@@ -307,9 +307,6 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     }
 #endif
 
-    if (!accept().isEmpty())
-        m_resourceRequest.setHTTPAccept(accept());
-
     if (isCacheValidator()) {
         CachedResource* resourceToRevalidate = m_resourceToRevalidate;
         ASSERT(resourceToRevalidate->canUseCacheValidator());

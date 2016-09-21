@@ -333,6 +333,11 @@ void ResourceRequestBase::clearHTTPOrigin()
         m_platformRequestUpdated = false;
 }
 
+bool ResourceRequestBase::hasHTTPHeader(HTTPHeaderName name) const
+{
+    return m_httpHeaderFields.contains(name);
+}
+
 String ResourceRequestBase::httpUserAgent() const
 {
     return httpHeaderField(HTTPHeaderName::UserAgent);

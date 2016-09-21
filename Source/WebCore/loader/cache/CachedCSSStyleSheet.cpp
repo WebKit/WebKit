@@ -45,9 +45,6 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, Sessio
     : CachedResource(WTFMove(request), CSSStyleSheet, sessionID)
     , m_decoder(TextResourceDecoder::create("text/css", request.charset()))
 {
-    // Prefer text/css but accept any type (dell.com serves a stylesheet
-    // as text/html; see <http://bugs.webkit.org/show_bug.cgi?id=11451>).
-    setAccept("text/css,*/*;q=0.1");
 }
 
 CachedCSSStyleSheet::~CachedCSSStyleSheet()

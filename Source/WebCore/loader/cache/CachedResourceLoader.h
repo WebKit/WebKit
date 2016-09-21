@@ -151,6 +151,7 @@ private:
     explicit CachedResourceLoader(DocumentLoader*);
 
     CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&&);
+    void prepareFetch(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResourceRequest&&, CachedResource&);
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&&);
     CachedResourceHandle<CachedResource> requestPreload(CachedResource::Type, CachedResourceRequest&&);
