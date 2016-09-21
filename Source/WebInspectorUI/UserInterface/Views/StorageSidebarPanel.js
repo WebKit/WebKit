@@ -41,12 +41,14 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
         scopeBarItems.push(new WebInspector.ScopeBarItem(scopeItemPrefix + "type-all", WebInspector.UIString("All Storage"), true));
 
-        var storageTypes = [{identifier: "application-cache", title: WebInspector.UIString("Application Cache"), classes: [WebInspector.ApplicationCacheFrameTreeElement, WebInspector.ApplicationCacheManifestTreeElement]},
+        var storageTypes = [
+            {identifier: "application-cache", title: WebInspector.UIString("Application Cache"), classes: [WebInspector.ApplicationCacheFrameTreeElement, WebInspector.ApplicationCacheManifestTreeElement]},
             {identifier: "cookies", title: WebInspector.UIString("Cookies"), classes: [WebInspector.CookieStorageTreeElement]},
             {identifier: "database", title: WebInspector.UIString("Databases"), classes: [WebInspector.DatabaseHostTreeElement, WebInspector.DatabaseTableTreeElement, WebInspector.DatabaseTreeElement]},
             {identifier: "indexed-database", title: WebInspector.UIString("Indexed Databases"), classes: [WebInspector.IndexedDatabaseHostTreeElement, WebInspector.IndexedDatabaseObjectStoreTreeElement, WebInspector.IndexedDatabaseTreeElement]},
             {identifier: "local-storage", title: WebInspector.UIString("Local Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: true},
-            {identifier: "session-storage", title: WebInspector.UIString("Session Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: false}];
+            {identifier: "session-storage", title: WebInspector.UIString("Session Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: false}
+        ];
 
         storageTypes.sort(function(a, b) { return a.title.localeCompare(b.title); });
 
@@ -168,6 +170,9 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
     _treeSelectionDidChange(event)
     {
+        if (!this.visible)
+            return;
+
         let treeElement = event.data.selectedElement;
         if (!treeElement)
             return;
@@ -338,12 +343,7 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
     _storageCleared(event)
     {
-        // Close all DOM and cookie storage content views since the main frame has navigated and all storages are cleared.
-        this.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.CookieStorageContentView);
-        this.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.DOMStorageContentView);
-        this.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.DatabaseTableContentView);
-        this.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.DatabaseContentView);
-        this.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.ApplicationCacheFrameContentView);
+        this.contentBrowser.contentViewContainer.closeAllContentViews();
 
         if (this._localStorageRootTreeElement && this._localStorageRootTreeElement.parent)
             this._localStorageRootTreeElement.parent.removeChild(this._localStorageRootTreeElement);

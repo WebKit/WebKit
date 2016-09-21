@@ -211,7 +211,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         // Do not steal a content view if we are not the active tab/sidebar.
         if (!this.selected) {
             let contentView = this.contentBrowser.contentViewForRepresentedObject(treeElement.representedObject);
-            if (contentView && contentView.parentContainer !== this.contentBrowser.contentViewContainer)
+            if (contentView && contentView.parentContainer && contentView.parentContainer !== this.contentBrowser.contentViewContainer)
                 return false;
         }
 

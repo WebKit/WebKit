@@ -1,3 +1,27 @@
+2016-09-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Reload unexpectedly switches to Storage Tab
+        https://bugs.webkit.org/show_bug.cgi?id=162323
+        <rdar://problem/28393954>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.showDefaultContentViewForTreeElement):
+        We aren't stealing if the ContentView doesn't yet have a parent!
+        This fixes restoration when switching to the Storage tab at a
+        later time after a reload.
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel._treeSelectionDidChange):
+        Don't showRepresentedObject if we aren't visible. That would force this
+        tab to the foreground and we don't want that. This only happens when
+        tree elements are removed (main frame navigation) and TreeOutline
+        selects the next available tree element.
+
+        (WebInspector.StorageSidebarPanel.prototype._storageCleared):
+        Simplify and close all content views. We were missing IndexedDB content views.
+
 2016-09-19  Matt Baker  <mattbaker@apple.com>
 
         Unreviewed, reverting changeset https://trac.webkit.org/changeset/206101.
