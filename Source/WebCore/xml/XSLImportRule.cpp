@@ -100,7 +100,10 @@ void XSLImportRule::loadSheet()
 
     if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
-    m_cachedSheet = cachedResourceLoader->requestXSLStyleSheet(CachedResourceRequest(ResourceRequest(cachedResourceLoader->document()->completeURL(absHref))));
+
+    auto options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.mode = FetchOptions::Mode::SameOrigin;
+    m_cachedSheet = cachedResourceLoader->requestXSLStyleSheet({ResourceRequest(cachedResourceLoader->document()->completeURL(absHref)), options});
 
     if (m_cachedSheet) {
         m_cachedSheet->addClient(this);

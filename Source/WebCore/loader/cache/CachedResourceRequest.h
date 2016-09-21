@@ -42,9 +42,7 @@ public:
     enum DeferOption { NoDefer, DeferredByClient };
 
     explicit CachedResourceRequest(const ResourceRequest&, const String& charset = String(), Optional<ResourceLoadPriority> = Nullopt);
-    CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&);
-    CachedResourceRequest(const ResourceRequest&, Optional<ResourceLoadPriority>);
-    ~CachedResourceRequest();
+    CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, Optional<ResourceLoadPriority> = Nullopt);
 
     ResourceRequest& mutableResourceRequest() { return m_resourceRequest; }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }

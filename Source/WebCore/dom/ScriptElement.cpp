@@ -281,19 +281,25 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
 
 CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCache(const URL& sourceURL, const String& nonceAttribute)
 {
-    bool hasKnownNonce = m_element.document().contentSecurityPolicy()->allowScriptWithNonce(nonceAttribute, m_element.isInUserAgentShadowTree());
+    Document& document = m_element.document();
+    auto* settings = document.settings();
+    if (settings && !settings->isScriptEnabled())
+        return nullptr;
+
+    ASSERT(document.contentSecurityPolicy());
+    bool hasKnownNonce = document.contentSecurityPolicy()->allowScriptWithNonce(nonceAttribute, m_element.isInUserAgentShadowTree());
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     CachedResourceRequest request(ResourceRequest(sourceURL), options);
-    request.setAsPotentiallyCrossOrigin(m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), m_element.document());
+    request.setAsPotentiallyCrossOrigin(m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), document);
 
-    m_element.document().contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request.mutableResourceRequest(), ContentSecurityPolicy::InsecureRequestType::Load);
+    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request.mutableResourceRequest(), ContentSecurityPolicy::InsecureRequestType::Load);
 
     request.setCharset(scriptCharset());
     request.setInitiator(&element());
 
-    return m_element.document().cachedResourceLoader().requestScript(WTFMove(request));
+    return document.cachedResourceLoader().requestScript(WTFMove(request));
 }
 
 void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)

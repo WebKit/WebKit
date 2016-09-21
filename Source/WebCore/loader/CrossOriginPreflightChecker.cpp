@@ -103,6 +103,7 @@ void CrossOriginPreflightChecker::startPreflight()
     ResourceLoaderOptions options;
     options.referrerPolicy = m_loader.options().referrerPolicy;
     options.redirect = FetchOptions::Redirect::Manual;
+    options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
 
     CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin()), options);
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())

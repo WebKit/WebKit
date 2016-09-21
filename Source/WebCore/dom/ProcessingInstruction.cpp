@@ -137,13 +137,15 @@ void ProcessingInstruction::checkStyleSheet()
             m_loading = true;
             document().authorStyleSheets().addPendingSheet();
 
-            CachedResourceRequest request(ResourceRequest(document().completeURL(href)));
 #if ENABLE(XSLT)
-            if (m_isXSL)
-                m_cachedSheet = document().cachedResourceLoader().requestXSLStyleSheet(WTFMove(request));
-            else
+            if (m_isXSL) {
+                auto options = CachedResourceLoader::defaultCachedResourceOptions();
+                options.mode = FetchOptions::Mode::SameOrigin;
+                m_cachedSheet = document().cachedResourceLoader().requestXSLStyleSheet({ResourceRequest(document().completeURL(href)), options});
+            } else
 #endif
             {
+                CachedResourceRequest request(ResourceRequest(document().completeURL(href)));
                 String charset = attrs.get("charset");
                 if (charset.isEmpty())
                     charset = document().charset();

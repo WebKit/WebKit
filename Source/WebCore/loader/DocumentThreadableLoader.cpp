@@ -363,8 +363,9 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         request.setHTTPReferrer(m_referrer);
 
     if (m_async) {
-        ThreadableLoaderOptions options = m_options;
+        ResourceLoaderOptions options = m_options;
         options.clientCredentialPolicy = m_sameOriginRequest ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
+        options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
 
         CachedResourceRequest newRequest(WTFMove(request), options);
         if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())

@@ -384,6 +384,55 @@ static inline bool isSameOriginDataURL(const URL& url, const ResourceLoaderOptio
     return !didReceiveRedirectResponse && url.protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set;
 }
 
+bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, bool didReceiveRedirectResponse)
+{
+    if (options.contentSecurityPolicyImposition == ContentSecurityPolicyImposition::SkipPolicyCheck)
+        return true;
+
+    ASSERT(m_document);
+    ASSERT(m_document->contentSecurityPolicy());
+
+    auto redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
+
+    switch (type) {
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
+    case CachedResource::Script:
+        if (!m_document->contentSecurityPolicy()->allowScriptFromSource(url, false, redirectResponseReceived))
+            return false;
+        break;
+    case CachedResource::CSSStyleSheet:
+        if (!m_document->contentSecurityPolicy()->allowStyleFromSource(url, false, redirectResponseReceived))
+            return false;
+        break;
+    case CachedResource::SVGDocumentResource:
+    case CachedResource::ImageResource:
+        if (!m_document->contentSecurityPolicy()->allowImageFromSource(url, false, redirectResponseReceived))
+            return false;
+        break;
+#if ENABLE(SVG_FONTS)
+    case CachedResource::SVGFontResource:
+#endif
+    case CachedResource::FontResource:
+        if (!m_document->contentSecurityPolicy()->allowFontFromSource(url, false, redirectResponseReceived))
+            return false;
+        break;
+    case CachedResource::MediaResource:
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::TextTrackResource:
+#endif
+        if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url, false, redirectResponseReceived))
+            return false;
+        break;
+    case CachedResource::RawResource:
+        return true;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return true;
+}
+
 bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, bool forPreload, bool didReceiveRedirectResponse)
 {
     if (document() && !document()->securityOrigin()->canDisplay(url)) {
@@ -393,90 +442,14 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
         return false;
     }
 
-    bool skipContentSecurityPolicyCheck = options.contentSecurityPolicyImposition == ContentSecurityPolicyImposition::SkipPolicyCheck;
-    ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
-
-    // Some types of resources can be loaded only from the same origin. Other types of resources, like Images, Scripts, and CSS, can be loaded from any URL.
-    // FIXME: We should remove that check and handle it by setting the correct ResourceLoaderOptions::mode.
-    switch (type) {
-    case CachedResource::MainResource:
-    case CachedResource::ImageResource:
-    case CachedResource::CSSStyleSheet:
-    case CachedResource::Script:
-#if ENABLE(SVG_FONTS)
-    case CachedResource::SVGFontResource:
-#endif
-    case CachedResource::MediaResource:
-    case CachedResource::FontResource:
-    case CachedResource::RawResource:
-#if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
-    case CachedResource::LinkSubresource:
-#endif
-#if ENABLE(VIDEO_TRACK)
-    case CachedResource::TextTrackResource:
-#endif
-        if (options.mode == FetchOptions::Mode::SameOrigin && !isSameOriginDataURL(url, options, didReceiveRedirectResponse) &&!m_document->securityOrigin()->canRequest(url)) {
-            printAccessDeniedMessage(url);
-            return false;
-        }
-        break;
-    case CachedResource::SVGDocumentResource:
-#if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
-        if (!m_document->securityOrigin()->canRequest(url)) {
-            printAccessDeniedMessage(url);
-            return false;
-        }
-#endif
-        break;
+    // FIXME: Remove same-origin data URL flag since it was removed from fetch spec (see https://github.com/whatwg/fetch/issues/381).
+    if (options.mode == FetchOptions::Mode::SameOrigin && !isSameOriginDataURL(url, options, didReceiveRedirectResponse) && !m_document->securityOrigin()->canRequest(url)) {
+        printAccessDeniedMessage(url);
+        return false;
     }
 
-    switch (type) {
-#if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
-        if (!m_document->contentSecurityPolicy()->allowScriptFromSource(url, skipContentSecurityPolicyCheck, redirectResponseReceived))
-            return false;
-        break;
-#endif
-    case CachedResource::Script:
-        if (!m_document->contentSecurityPolicy()->allowScriptFromSource(url, skipContentSecurityPolicyCheck, redirectResponseReceived))
-            return false;
-        if (frame() && !frame()->settings().isScriptEnabled())
-            return false;
-        break;
-    case CachedResource::CSSStyleSheet:
-        if (!m_document->contentSecurityPolicy()->allowStyleFromSource(url, skipContentSecurityPolicyCheck, redirectResponseReceived))
-            return false;
-        break;
-    case CachedResource::SVGDocumentResource:
-    case CachedResource::ImageResource:
-        if (!m_document->contentSecurityPolicy()->allowImageFromSource(url, skipContentSecurityPolicyCheck, redirectResponseReceived))
-            return false;
-        break;
-#if ENABLE(SVG_FONTS)
-    case CachedResource::SVGFontResource:
-#endif
-    case CachedResource::FontResource: {
-        if (!m_document->contentSecurityPolicy()->allowFontFromSource(url, skipContentSecurityPolicyCheck, redirectResponseReceived))
-            return false;
-        break;
-    }
-    case CachedResource::MainResource:
-    case CachedResource::RawResource:
-#if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
-    case CachedResource::LinkSubresource:
-#endif
-        break;
-    case CachedResource::MediaResource:
-#if ENABLE(VIDEO_TRACK)
-    case CachedResource::TextTrackResource:
-#endif
-        if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url, skipContentSecurityPolicyCheck, redirectResponseReceived))
-            return false;
-        break;
-    }
+    if (!allowedByContentSecurityPolicy(type, url, options, didReceiveRedirectResponse))
+        return false;
 
     // SVG Images have unique security rules that prevent all subresource requests except for data urls.
     if (type != CachedResource::MainResource && frame() && frame()->page()) {

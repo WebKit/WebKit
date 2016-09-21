@@ -44,24 +44,12 @@ CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequ
 {
 }
 
-CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options)
+CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options, Optional<ResourceLoadPriority> priority)
     : m_resourceRequest(WTFMove(resourceRequest))
     , m_options(options)
-    , m_forPreload(false)
-    , m_defer(NoDefer)
-{
-}
-
-CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, Optional<ResourceLoadPriority> priority)
-    : m_resourceRequest(resourceRequest)
-    , m_options(CachedResourceLoader::defaultCachedResourceOptions())
     , m_priority(priority)
     , m_forPreload(false)
     , m_defer(NoDefer)
-{
-}
-
-CachedResourceRequest::~CachedResourceRequest()
 {
 }
 
