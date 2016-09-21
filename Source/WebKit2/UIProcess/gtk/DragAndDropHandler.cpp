@@ -44,9 +44,6 @@ namespace WebKit {
 
 DragAndDropHandler::DragAndDropHandler(WebPageProxy& page)
     : m_page(page)
-#if GTK_CHECK_VERSION(3, 16, 0)
-    , m_dragContext(nullptr)
-#endif
 {
 }
 
@@ -111,18 +108,18 @@ static inline DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction
     return static_cast<DragOperation>(action);
 }
 
-void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
+void DragAndDropHandler::startDrag(Ref<DataObjectGtk>&& selection, DragOperation dragOperation, RefPtr<ShareableBitmap>&& dragImage)
 {
 #if GTK_CHECK_VERSION(3, 16, 0)
-    m_draggingDataObject = adoptRef(dragData.platformData());
+    m_draggingDataObject = WTFMove(selection);
     GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForDataObject(*m_draggingDataObject);
 #else
-    RefPtr<DataObjectGtk> dataObject = adoptRef(dragData.platformData());
+    RefPtr<DataObjectGtk> dataObject = WTFMove(selection);
     GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForDataObject(*dataObject);
 #endif
 
     GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
-    GdkDragContext* context = gtk_drag_begin(m_page.viewWidget(), targetList.get(), dragOperationToGdkDragActions(dragData.draggingSourceOperationMask()),
+    GdkDragContext* context = gtk_drag_begin(m_page.viewWidget(), targetList.get(), dragOperationToGdkDragActions(dragOperation),
         GDK_BUTTON_PRIMARY, currentEvent.get());
 
 #if GTK_CHECK_VERSION(3, 16, 0)
@@ -135,7 +132,7 @@ void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<Shareabl
 #else
     // We don't have gtk_drag_cancel() in GTK+ < 3.16, so we use the old code.
     // See https://bugs.webkit.org/show_bug.cgi?id=138468
-    m_draggingDataObjects.set(context, dataObject.get());
+    m_draggingDataObjects.set(context, WTFMove(dataObject));
 #endif
 
     if (dragImage) {

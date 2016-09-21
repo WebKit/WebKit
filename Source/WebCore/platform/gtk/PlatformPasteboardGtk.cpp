@@ -34,15 +34,15 @@ PlatformPasteboard::PlatformPasteboard(const String& pasteboardName)
     ASSERT(m_clipboard);
 }
 
-void PlatformPasteboard::writeToClipboard(const RefPtr<DataObjectGtk>& dataObject, std::function<void()>&& primarySelectionCleared)
+void PlatformPasteboard::writeToClipboard(const DataObjectGtk& dataObject, std::function<void()>&& primarySelectionCleared)
 {
-    PasteboardHelper::singleton().writeClipboardContents(m_clipboard, *dataObject, gtk_clipboard_get(GDK_SELECTION_PRIMARY) == m_clipboard ? WTFMove(primarySelectionCleared) : nullptr);
+    PasteboardHelper::singleton().writeClipboardContents(m_clipboard, dataObject, gtk_clipboard_get(GDK_SELECTION_PRIMARY) == m_clipboard ? WTFMove(primarySelectionCleared) : nullptr);
 }
 
-RefPtr<DataObjectGtk> PlatformPasteboard::readFromClipboard()
+Ref<DataObjectGtk> PlatformPasteboard::readFromClipboard()
 {
-    RefPtr<DataObjectGtk> dataObject = DataObjectGtk::create();
-    PasteboardHelper::singleton().getClipboardContents(m_clipboard, *dataObject);
+    Ref<DataObjectGtk> dataObject(DataObjectGtk::create());
+    PasteboardHelper::singleton().getClipboardContents(m_clipboard, dataObject.get());
     return dataObject;
 }
 

@@ -27,20 +27,29 @@
 
 namespace WebKit {
 
-PasteboardContent::PasteboardContent(const RefPtr<WebCore::DataObjectGtk>& data)
-    : dataObject(data)
+PasteboardContent::PasteboardContent()
+    : dataObject(WebCore::DataObjectGtk::create())
 {
-    ASSERT(dataObject);
+}
+
+PasteboardContent::PasteboardContent(const WebCore::DataObjectGtk& data)
+    : dataObject(const_cast<WebCore::DataObjectGtk&>(data))
+{
+}
+
+PasteboardContent::PasteboardContent(Ref<WebCore::DataObjectGtk>&& data)
+    : dataObject(WTFMove(data))
+{
 }
 
 void PasteboardContent::encode(IPC::Encoder& encoder) const
 {
-    IPC::encode(encoder, dataObject.get());
+    encoder << dataObject.get();
 }
 
 bool PasteboardContent::decode(IPC::Decoder& decoder, PasteboardContent& pasteboardContent)
 {
-    return IPC::decode(decoder, pasteboardContent.dataObject);
+    return decoder.decode(pasteboardContent.dataObject.get());
 }
 
 } // namespace WebKit

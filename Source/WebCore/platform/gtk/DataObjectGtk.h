@@ -18,11 +18,10 @@
 
 #pragma once
 
-#include "FileList.h"
+#include "Image.h"
 #include "URL.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
-#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -37,8 +36,8 @@ public:
     const URL& url() const { return m_url; }
     const String& uriList() const { return m_uriList; }
     const Vector<String>& filenames() const { return m_filenames; }
-    GdkPixbuf* image() const { return m_image.get(); }
-    void setImage(GdkPixbuf* newImage) { m_image = newImage; }
+    Image* image() const { return m_image.get(); }
+    void setImage(Image* newImage) { m_image = newImage; }
     void setURL(const URL&, const String&);
     bool hasUnknownTypeData() const { return !m_unknownTypeData.isEmpty(); }
     bool hasText() const { return !m_text.isEmpty(); }
@@ -74,7 +73,7 @@ private:
     URL m_url;
     String m_uriList;
     Vector<String> m_filenames;
-    GRefPtr<GdkPixbuf> m_image;
+    RefPtr<Image> m_image;
     HashMap<String, String> m_unknownTypeData;
     bool m_canSmartReplace { false };
 };

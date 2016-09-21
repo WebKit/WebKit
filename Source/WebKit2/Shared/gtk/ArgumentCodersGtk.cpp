@@ -30,10 +30,9 @@
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/DataObjectGtk.h>
-#include <WebCore/DragData.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/GtkVersioning.h>
-#include <WebCore/PlatformContextCairo.h>
+#include <WebCore/Image.h>
+#include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
 using namespace WebCore;
@@ -41,15 +40,10 @@ using namespace WebKit;
 
 namespace IPC {
 
-static void encodeImage(Encoder& encoder, const GdkPixbuf* pixbuf)
+static void encodeImage(Encoder& encoder, Image& image)
 {
-    IntSize imageSize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
-    auto graphicsContext = bitmap->createGraphicsContext();
-
-    cairo_t* cr = graphicsContext->platformContext()->cr();
-    gdk_cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
-    cairo_paint(cr);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image.size()), ShareableBitmap::SupportsAlpha);
+    bitmap->createGraphicsContext()->drawImage(image, IntPoint());
 
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);
@@ -57,7 +51,7 @@ static void encodeImage(Encoder& encoder, const GdkPixbuf* pixbuf)
     encoder << handle;
 }
 
-static bool decodeImage(Decoder& decoder, GRefPtr<GdkPixbuf>& pixbuf)
+static bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
 {
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
@@ -66,61 +60,51 @@ static bool decodeImage(Decoder& decoder, GRefPtr<GdkPixbuf>& pixbuf)
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
     if (!bitmap)
         return false;
-
-    RefPtr<Image> image = bitmap->createImage();
+    image = bitmap->createImage();
     if (!image)
         return false;
-
-    RefPtr<cairo_surface_t> surface = image->nativeImageForCurrentFrame();
-    if (!surface)
-        return false;
-
-    pixbuf = adoptGRef(gdk_pixbuf_get_from_surface(surface.get(), 0, 0, cairo_image_surface_get_width(surface.get()), cairo_image_surface_get_height(surface.get())));
-    if (!pixbuf)
-        return false;
-
     return true;
 }
 
-void encode(Encoder& encoder, const DataObjectGtk* dataObject)
+void ArgumentCoder<DataObjectGtk>::encode(Encoder& encoder, const DataObjectGtk& dataObject)
 {
-    bool hasText = dataObject->hasText();
+    bool hasText = dataObject.hasText();
     encoder << hasText;
     if (hasText)
-        encoder << dataObject->text();
+        encoder << dataObject.text();
 
-    bool hasMarkup = dataObject->hasMarkup();
+    bool hasMarkup = dataObject.hasMarkup();
     encoder << hasMarkup;
     if (hasMarkup)
-        encoder << dataObject->markup();
+        encoder << dataObject.markup();
 
-    bool hasURL = dataObject->hasURL();
+    bool hasURL = dataObject.hasURL();
     encoder << hasURL;
     if (hasURL)
-        encoder << dataObject->url().string();
+        encoder << dataObject.url().string();
 
-    bool hasURIList = dataObject->hasURIList();
+    bool hasURIList = dataObject.hasURIList();
     encoder << hasURIList;
     if (hasURIList)
-        encoder << dataObject->uriList();
+        encoder << dataObject.uriList();
 
-    bool hasImage = dataObject->hasImage();
+    bool hasImage = dataObject.hasImage();
     encoder << hasImage;
     if (hasImage)
-        encodeImage(encoder, dataObject->image());
+        encodeImage(encoder, *dataObject.image());
 
-    bool hasUnknownTypeData = dataObject->hasUnknownTypeData();
+    bool hasUnknownTypeData = dataObject.hasUnknownTypeData();
     encoder << hasUnknownTypeData;
     if (hasUnknownTypeData)
-        encoder << dataObject->unknownTypes();
+        encoder << dataObject.unknownTypes();
 
-    bool canSmartReplace = dataObject->canSmartReplace();
+    bool canSmartReplace = dataObject.canSmartReplace();
     encoder << canSmartReplace;
 }
 
-bool decode(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
+bool ArgumentCoder<DataObjectGtk>::decode(Decoder& decoder, DataObjectGtk& dataObject)
 {
-    RefPtr<DataObjectGtk> data = DataObjectGtk::create();
+    dataObject.clearAll();
 
     bool hasText;
     if (!decoder.decode(hasText))
@@ -129,7 +113,7 @@ bool decode(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
         String text;
         if (!decoder.decode(text))
             return false;
-        data->setText(text);
+        dataObject.setText(text);
     }
 
     bool hasMarkup;
@@ -139,7 +123,7 @@ bool decode(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
         String markup;
         if (!decoder.decode(markup))
             return false;
-        data->setMarkup(markup);
+        dataObject.setMarkup(markup);
     }
 
     bool hasURL;
@@ -149,7 +133,7 @@ bool decode(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
         String url;
         if (!decoder.decode(url))
             return false;
-        data->setURL(URL(URL(), url), String());
+        dataObject.setURL(URL(URL(), url), String());
     }
 
     bool hasURIList;
@@ -159,17 +143,17 @@ bool decode(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
         String uriList;
         if (!decoder.decode(uriList))
             return false;
-        data->setURIList(uriList);
+        dataObject.setURIList(uriList);
     }
 
     bool hasImage;
     if (!decoder.decode(hasImage))
         return false;
     if (hasImage) {
-        GRefPtr<GdkPixbuf> image;
+        RefPtr<Image> image;
         if (!decodeImage(decoder, image))
             return false;
-        data->setImage(image.get());
+        dataObject.setImage(image.get());
     }
 
     bool hasUnknownTypeData;
@@ -182,67 +166,16 @@ bool decode(Decoder& decoder, RefPtr<DataObjectGtk>& dataObject)
 
         auto end = unknownTypes.end();
         for (auto it = unknownTypes.begin(); it != end; ++it)
-            data->setUnknownTypeData(it->key, it->value);
+            dataObject.setUnknownTypeData(it->key, it->value);
     }
 
     bool canSmartReplace;
     if (!decoder.decode(canSmartReplace))
         return false;
-    data->setCanSmartReplace(canSmartReplace);
-
-    dataObject = data;
+    dataObject.setCanSmartReplace(canSmartReplace);
 
     return true;
 }
-
-#if ENABLE(DRAG_SUPPORT)
-void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
-{
-    encoder << dragData.clientPosition();
-    encoder << dragData.globalPosition();
-    encoder << static_cast<uint64_t>(dragData.draggingSourceOperationMask());
-    encoder << static_cast<uint64_t>(dragData.flags());
-
-    DataObjectGtk* platformData = dragData.platformData();
-    encoder << static_cast<bool>(platformData);
-    if (platformData)
-        IPC::encode(encoder, platformData);
-}
-
-bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
-{
-    IntPoint clientPosition;
-    if (!decoder.decode(clientPosition))
-        return false;
-
-    IntPoint globalPosition;
-    if (!decoder.decode(globalPosition))
-        return false;
-
-    uint64_t sourceOperationMask;
-    if (!decoder.decode(sourceOperationMask))
-        return false;
-
-    uint64_t flags;
-    if (!decoder.decode(flags))
-        return false;
-
-    bool hasPlatformData;
-    if (!decoder.decode(hasPlatformData))
-        return false;
-
-    RefPtr<DataObjectGtk> platformData;
-    if (hasPlatformData) {
-        if (!IPC::decode(decoder, platformData))
-            return false;
-    }
-
-    dragData = DragData(platformData.leakRef(), clientPosition, globalPosition, static_cast<DragOperation>(sourceOperationMask),
-                        static_cast<DragApplicationFlags>(flags));
-
-    return true;
-}
-#endif // ENABLE(DRAG_SUPPORT)
 
 static void encodeGKeyFile(Encoder& encoder, GKeyFile* keyFile)
 {

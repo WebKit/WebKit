@@ -346,17 +346,17 @@ long WebPlatformStrategies::changeCount()
 #if PLATFORM(GTK)
 // PasteboardStrategy
 
-void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, const RefPtr<WebCore::DataObjectGtk>& dataObject)
+void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, const DataObjectGtk& dataObject)
 {
-    PasteboardContent pasteboardContent = PasteboardContent(dataObject.get());
+    PasteboardContent pasteboardContent(dataObject);
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::WriteToClipboard(pasteboardName, pasteboardContent), 0);
 }
 
-RefPtr<WebCore::DataObjectGtk> WebPlatformStrategies::readFromClipboard(const String& pasteboardName)
+Ref<DataObjectGtk> WebPlatformStrategies::readFromClipboard(const String& pasteboardName)
 {
     PasteboardContent pasteboardContent;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadFromClipboard(pasteboardName), Messages::WebPasteboardProxy::ReadFromClipboard::Reply(pasteboardContent), 0);
-    return pasteboardContent.dataObject;
+    return WTFMove(pasteboardContent.dataObject);
 }
 
 #endif // PLATFORM(GTK)
