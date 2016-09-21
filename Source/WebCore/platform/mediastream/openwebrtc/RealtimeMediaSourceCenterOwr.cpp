@@ -146,7 +146,7 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(MediaStreamCreationClient* 
         if (sourceIterator != m_sourceMap.end()) {
             RefPtr<RealtimeMediaSource> source = sourceIterator->value;
             if (source->type() == RealtimeMediaSource::Video)
-                audioSources.append(source.release());
+                videoSources.append(source.release());
         }
     }
 

@@ -115,7 +115,7 @@ float MediaPlayerPrivateGStreamerOwr::currentTime() const
     if (static_cast<GstClockTime>(position) != GST_CLOCK_TIME_NONE)
         result = static_cast<double>(position) / GST_SECOND;
 
-    GST_DEBUG("Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
+    GST_LOG("Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
     gst_query_unref(query);
 
     return result;
@@ -148,7 +148,7 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
     if (streamPrivate.hasAudio() && !m_audioSink)
         createGSTAudioSinkBin();
 
-    GST_DEBUG("Loading MediaStreamPrivate %p", &streamPrivate);
+    GST_DEBUG("Loading MediaStreamPrivate %p video: %s, audio: %s", &streamPrivate, streamPrivate.hasVideo() ? "yes":"no", streamPrivate.hasAudio() ? "yes":"no");
 
     m_streamPrivate = &streamPrivate;
     if (!m_streamPrivate->active()) {
@@ -188,6 +188,7 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
 void MediaPlayerPrivateGStreamerOwr::loadingFailed(MediaPlayer::NetworkState error)
 {
     if (m_networkState != error) {
+        GST_WARNING("Loading failed, error: %d", error);
         m_networkState = error;
         m_player->networkStateChanged();
     }
@@ -259,11 +260,19 @@ void MediaPlayerPrivateGStreamerOwr::createGSTAudioSinkBin()
     GST_DEBUG("Creating audio sink");
     // FIXME: volume/mute support: https://webkit.org/b/153828.
 
-    GRefPtr<GstElement> sink = gst_element_factory_make("autoaudiosink", 0);
+    // Pre-roll an autoaudiosink so that the platform audio sink is created and
+    // can be retrieved from the autoaudiosink bin.
+    GRefPtr<GstElement> sink = gst_element_factory_make("autoaudiosink", nullptr);
     GstChildProxy* childProxy = GST_CHILD_PROXY(sink.get());
-    m_audioSink = adoptGRef(GST_ELEMENT(gst_child_proxy_get_child_by_index(childProxy, 0)));
+    gst_element_set_state(sink.get(), GST_STATE_READY);
+    GRefPtr<GstElement> platformSink = adoptGRef(GST_ELEMENT(gst_child_proxy_get_child_by_index(childProxy, 0)));
+    GstElementFactory* factory = gst_element_get_factory(platformSink.get());
+
+    // Dispose now un-needed autoaudiosink.
     gst_element_set_state(sink.get(), GST_STATE_NULL);
 
+    // Create a fresh new audio sink compatible with the platform.
+    m_audioSink = gst_element_factory_create(factory, nullptr);
     m_audioRenderer = adoptGRef(owr_gst_audio_renderer_new(m_audioSink.get()));
 }
 
@@ -294,6 +303,7 @@ void MediaPlayerPrivateGStreamerOwr::maybeHandleChangeMutedState(MediaStreamTrac
     auto realTimeMediaSource = reinterpret_cast<RealtimeMediaSourceOwr*>(&track.source());
     auto mediaSource = OWR_MEDIA_SOURCE(realTimeMediaSource->mediaSource());
 
+    GST_DEBUG("%s track now %s", track.type() == RealtimeMediaSource::Audio ? "audio":"video", realTimeMediaSource->muted() ? "muted":"un-muted");
     switch (track.type()) {
     case RealtimeMediaSource::Audio:
         if (!realTimeMediaSource->muted()) {
@@ -356,7 +366,8 @@ void MediaPlayerPrivateGStreamerOwr::setSize(const IntSize& size)
         return;
 
     MediaPlayerPrivateGStreamerBase::setSize(size);
-    g_object_set(m_videoRenderer.get(), "width", size.width(), "height", size.height(), nullptr);
+    if (m_videoRenderer)
+        g_object_set(m_videoRenderer.get(), "width", size.width(), "height", size.height(), nullptr);
 }
 
 } // namespace WebCore
