@@ -63,6 +63,9 @@ public:
     JS_EXPORT_PRIVATE ~Compilation();
 
     MacroAssemblerCodePtr code() const { return m_codeRef.code(); }
+    MacroAssemblerCodeRef codeRef() const { return m_codeRef; }
+    
+    CString disassembly() const { return m_codeRef.disassembly(); }
 
 private:
     MacroAssemblerCodeRef m_codeRef;

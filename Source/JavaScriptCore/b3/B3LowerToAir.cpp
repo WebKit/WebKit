@@ -40,6 +40,7 @@
 #include "B3CheckSpecial.h"
 #include "B3Commutativity.h"
 #include "B3Dominators.h"
+#include "B3FenceValue.h"
 #include "B3MemoryValue.h"
 #include "B3PatchpointSpecial.h"
 #include "B3PatchpointValue.h"
@@ -2043,6 +2044,16 @@ private:
                 }
             }
             m_insts.last().append(createStore(Air::Store16, valueToStore, addr(m_value)));
+            return;
+        }
+            
+        case Fence: {
+            FenceValue* fence = m_value->as<FenceValue>();
+            if (isX86() && !fence->write)
+                return;
+            // FIXME: Optimize this on ARM.
+            // https://bugs.webkit.org/show_bug.cgi?id=162342
+            append(MemoryFence);
             return;
         }
 

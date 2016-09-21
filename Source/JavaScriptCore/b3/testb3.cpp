@@ -37,6 +37,7 @@
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
 #include "B3Effects.h"
+#include "B3FenceValue.h"
 #include "B3Generate.h"
 #include "B3LowerToAir.h"
 #include "B3MathExtras.h"
@@ -149,6 +150,30 @@ void lowerToAirForTesting(Procedure& proc)
         dataLog("Air after lowering:\n", proc.code());
     
     Air::validate(proc.code());
+}
+
+void checkUsesInstruction(Compilation& compilation, const char* text)
+{
+    CString disassembly = compilation.disassembly();
+    if (strstr(disassembly.data(), text))
+        return;
+
+    crashLock.lock();
+    dataLog("Bad lowering!  Expected to find ", text, " but didn't:\n");
+    dataLog(disassembly);
+    CRASH();
+}
+
+void checkDoesNotUseInstruction(Compilation& compilation, const char* text)
+{
+    CString disassembly = compilation.disassembly();
+    if (!strstr(disassembly.data(), text))
+        return;
+
+    crashLock.lock();
+    dataLog("Bad lowering!  Did not expected to find ", text, " but it's there:\n");
+    dataLog(disassembly);
+    CRASH();
 }
 
 template<typename Type>
@@ -13027,6 +13052,32 @@ void testPatchpointTerminalReturnValue(bool successIsRare)
     CHECK_EQ(invoke<int>(*code, -1), 666);
 }
 
+void testX86MFence()
+{
+    Procedure proc;
+    
+    BasicBlock* root = proc.addBlock();
+    
+    root->appendNew<FenceValue>(proc, Origin());
+    root->appendNew<Value>(proc, Return, Origin());
+    
+    auto code = compile(proc);
+    checkUsesInstruction(*code, "mfence");
+}
+
+void testX86CompilerFence()
+{
+    Procedure proc;
+    
+    BasicBlock* root = proc.addBlock();
+    
+    root->appendNew<FenceValue>(proc, Origin(), HeapRange::top(), HeapRange());
+    root->appendNew<Value>(proc, Return, Origin());
+    
+    auto code = compile(proc);
+    checkDoesNotUseInstruction(*code, "mfence");
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -14456,6 +14507,9 @@ void run(const char* filter)
         RUN(testBranchBitAndImmFusion(Load8Z, Int32, 1, Air::BranchTest8, Air::Arg::Addr));
         RUN(testBranchBitAndImmFusion(Load, Int32, 1, Air::BranchTest32, Air::Arg::Addr));
         RUN(testBranchBitAndImmFusion(Load, Int64, 1, Air::BranchTest32, Air::Arg::Addr));
+        
+        RUN(testX86MFence());
+        RUN(testX86CompilerFence());
     }
 
     if (isARM64()) {

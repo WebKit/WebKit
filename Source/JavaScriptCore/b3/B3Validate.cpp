@@ -130,6 +130,7 @@ public:
                 VALIDATE(child->type() != Void, ("At ", *value, "->", *child));
             switch (value->opcode()) {
             case Nop:
+            case Fence:
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
                 break;

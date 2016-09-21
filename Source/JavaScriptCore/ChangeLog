@@ -1,3 +1,62 @@
+2016-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Add a Fence opcode to B3
+        https://bugs.webkit.org/show_bug.cgi?id=162343
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds the most basic fence support to B3. Currently, this is optimal on x86 and correct
+        on ARM. It also happens to be sufficient and optimal for what we'll do in the concurrent GC.
+        
+        The idea of Fence is that it can represent any standalone fence instruction by having two
+        additional params: a read range and a write range. If the write range is empty, this is
+        taken to be a store-store fence, which turns into zero code on x86 and a cheaper fence on
+        ARM.
+        
+        It turns out that this is powerful enough to express store-load and store-store fences. For
+        load-store and load-load fences, you wouldn't have wanted to use any code on x86 and you
+        wouldn't have wanted a standalone barrier on ARM. For those cases, you'd want either a
+        fenced load (load acquire) or a dependency. See bug 162349 and bug 162350, respectively.
+        
+        This isn't yet optimized for store-store fences on ARM because we don't have the
+        MacroAssembler support. Also, the support for "dmb ish" is not really what we want (it seems
+        to use a heavier fence). I don't think that this is urgent because of how the concurrent GC
+        will use this facility. I've left that to bug 162342.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerCodeRef.cpp:
+        (JSC::MacroAssemblerCodeRef::tryToDisassemble):
+        (JSC::MacroAssemblerCodeRef::disassembly):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::size): Deleted.
+        (JSC::MacroAssemblerCodeRef::tryToDisassemble): Deleted.
+        * b3/B3Compilation.h:
+        (JSC::B3::Compilation::codeRef):
+        (JSC::B3::Compilation::disassembly):
+        (JSC::B3::Compilation::code): Deleted.
+        * b3/B3Effects.h:
+        * b3/B3FenceValue.cpp: Added.
+        (JSC::B3::FenceValue::~FenceValue):
+        (JSC::B3::FenceValue::cloneImpl):
+        (JSC::B3::FenceValue::FenceValue):
+        * b3/B3FenceValue.h: Added.
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::checkUsesInstruction):
+        (JSC::B3::checkDoesNotUseInstruction):
+        (JSC::B3::testX86MFence):
+        (JSC::B3::testX86CompilerFence):
+        (JSC::B3::run):
+
 2016-09-21  Keith Miller  <keith_miller@apple.com>
 
         Fix build for future versions of Clang.

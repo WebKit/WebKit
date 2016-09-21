@@ -53,9 +53,9 @@ struct Effects {
     bool controlDependent { false };
 
     // True if this writes to the local state. Operations that write local state don't write to anything
-    // in "memory" but they have a side-effect anyway. This is for modeling Upsilons and Sets. You can ignore
-    // this if you have your own way of modeling Upsilons and Sets or if you intend to just rebuild them
-    // anyway.
+    // in "memory" but they have a side-effect anyway. This is for modeling Upsilons, Sets, and Fences.
+    // This is a way of saying: even though this operation is not a terminal, does not exit sideways,
+    // and does not write to the heap, you still cannot kill this operation.
     bool writesLocalState { false };
 
     // True if this reads from the local state. This is only used for Phi and Get.

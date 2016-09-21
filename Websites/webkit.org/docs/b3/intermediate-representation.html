@@ -421,6 +421,18 @@
       <dd>Stores the value in the first child into the address computed by adding the
         compile-time 32-bit signed integer offset to the second child.  Misaligned stores are
         not penalized.  Must use the MemoryValue class.</dd>
+      
+      <dt>Void Fence()</dt>
+      <dd>Abstracts standalone data fences on x86 and ARM. Must use the FenceValue class, which has
+        two additional members that configure the precise meaning of the fence:
+        <code>HeapRange FenceValue::read</code> and <code>HeapRange FenceValue::write</code>. If the
+        <code>write</code> range is empty, this is taken to be a store-store fence, which leads to
+        no code generation on x86 and the weaker <code>dmb ishst</code> fence on ARM. If the write
+        range is non-empty, this produces <code>mfence</code> on x86 and <code>dmb ish</code> on
+        ARM. Within B3 IR, the Fence also reports the read/write in its effects. This allows you to
+        scope the fence for the purpose of B3's load elimination. For example, you may use a Fence
+        to protect a store from being sunk below a specific load. In that case, you can claim to
+        read just that store's range and write that load's range.</dd>
 
       <dt>T1 CCall(IntPtr, [T2, [T3, ...]])</dt>
       <dd>Performs a C function call to the function pointed to by the first child.  The types

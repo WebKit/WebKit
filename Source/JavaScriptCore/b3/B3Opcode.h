@@ -157,6 +157,12 @@ enum Opcode : int16_t {
     Store16,
     // This is a polymorphic store for Int32, Int64, Float, and Double.
     Store,
+    
+    // This is used to represent standalone fences - i.e. fences that are not part of other
+    // instructions. It's expressive enough to expose mfence on x86 and dmb ish/ishst on ARM. On
+    // x86, it also acts as a compiler store-store fence in those cases where it would have been a
+    // dmb ishst on ARM.
+    Fence,
 
     // This is a regular ordinary C function call, using the system C calling convention. Make sure
     // that the arguments are passed using the right types. The first argument is the callee.

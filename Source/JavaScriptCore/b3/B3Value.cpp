@@ -32,6 +32,7 @@
 #include "B3BasicBlockInlines.h"
 #include "B3BottomProvider.h"
 #include "B3CCallValue.h"
+#include "B3FenceValue.h"
 #include "B3MemoryValue.h"
 #include "B3OriginDump.h"
 #include "B3ProcedureInlines.h"
@@ -585,6 +586,24 @@ Effects Value::effects() const
         result.writes = as<MemoryValue>()->range();
         result.controlDependent = true;
         break;
+    case Fence: {
+        const FenceValue* fence = as<FenceValue>();
+        result.reads = fence->read;
+        result.writes = fence->write;
+        
+        // Prevent killing of fences that claim not to write anything. It's a bit weird that we use
+        // local state as the way to do this, but it happens to work: we must assume that we cannot
+        // kill writesLocalState unless we understands exactly what the instruction is doing (like
+        // the way that fixSSA understands Set/Get and the way that reduceStrength and others
+        // understand Upsilon). This would only become a problem if we had some analysis that was
+        // looking to use the writesLocalState bit to invalidate a CSE over local state operations.
+        // Then a Fence would look block, say, the elimination of a redundant Get. But it like
+        // that's not at all how our optimizations for Set/Get/Upsilon/Phi work - they grok their
+        // operations deeply enough that they have no need to check this bit - so this cheat is
+        // fine.
+        result.writesLocalState = true;
+        break;
+    }
     case CCall:
         result = as<CCallValue>()->effects;
         break;

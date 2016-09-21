@@ -257,6 +257,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Store:
         out.print("Store");
         return;
+    case Fence:
+        out.print("Fence");
+        return;
     case CCall:
         out.print("CCall");
         return;

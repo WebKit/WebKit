@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,12 @@
 #ifndef MacroAssemblerCodeRef_h
 #define MacroAssemblerCodeRef_h
 
-#include "Disassembler.h"
 #include "ExecutableAllocator.h"
 #include <wtf/DataLog.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/CString.h>
 
 // ASSERT_VALID_CODE_POINTER checks that ptr is a non-null pointer, and that it is a valid
 // instruction address on the platform (for example, check any alignment requirements).
@@ -391,11 +391,12 @@ public:
             return 0;
         return m_executableMemory->sizeInBytes();
     }
+
+    bool tryToDisassemble(PrintStream& out, const char* prefix = "") const;
     
-    bool tryToDisassemble(const char* prefix) const
-    {
-        return JSC::tryToDisassemble(m_codePtr, size(), prefix, WTF::dataFile());
-    }
+    bool tryToDisassemble(const char* prefix = "") const;
+    
+    JS_EXPORT_PRIVATE CString disassembly() const;
     
     explicit operator bool() const { return !!m_codePtr; }
     

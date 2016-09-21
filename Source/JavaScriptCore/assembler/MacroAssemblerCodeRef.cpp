@@ -59,6 +59,24 @@ MacroAssemblerCodeRef MacroAssemblerCodeRef::createLLIntCodeRef(OpcodeID codeId)
     return createSelfManagedCodeRef(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(codeId)));
 }
 
+bool MacroAssemblerCodeRef::tryToDisassemble(PrintStream& out, const char* prefix) const
+{
+    return JSC::tryToDisassemble(m_codePtr, size(), prefix, out);
+}
+
+bool MacroAssemblerCodeRef::tryToDisassemble(const char* prefix) const
+{
+    return tryToDisassemble(WTF::dataFile(), prefix);
+}
+
+CString MacroAssemblerCodeRef::disassembly() const
+{
+    StringPrintStream out;
+    if (!tryToDisassemble(out, ""))
+        return CString();
+    return out.toCString();
+}
+
 void MacroAssemblerCodeRef::dump(PrintStream& out) const
 {
     m_codePtr.dumpWithName("CodeRef", out);
