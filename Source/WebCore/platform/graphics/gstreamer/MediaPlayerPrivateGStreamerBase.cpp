@@ -103,6 +103,26 @@ static int greatestCommonDivisor(int a, int b)
     return ABS(a);
 }
 
+#if USE(TEXTURE_MAPPER_GL)
+static inline TextureMapperGL::Flags texMapFlagFromOrientation(const ImageOrientation& orientation)
+{
+    switch (orientation) {
+    case DefaultImageOrientation:
+        return 0;
+    case OriginRightTop:
+        return TextureMapperGL::ShouldRotateTexture90;
+    case OriginBottomRight:
+        return TextureMapperGL::ShouldRotateTexture180;
+    case OriginLeftBottom:
+        return TextureMapperGL::ShouldRotateTexture270;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return 0;
+}
+#endif
+
 #if USE(COORDINATED_GRAPHICS_THREADED) && USE(GSTREAMER_GL)
 class GstVideoFrameHolder : public TextureMapperPlatformLayerBuffer::UnmanagedBufferDataHolder {
 public:
@@ -154,9 +174,6 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint)
 #endif
     , m_usingFallbackVideoSink(false)
-#if USE(TEXTURE_MAPPER_GL)
-    , m_textureMapperRotationFlag(0)
-#endif
 {
     g_mutex_init(&m_sampleMutex);
 #if USE(COORDINATED_GRAPHICS_THREADED)
@@ -486,7 +503,7 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
         return;
 
 #if USE(GSTREAMER_GL)
-    std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), m_textureMapperRotationFlag);
+    std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), texMapFlagFromOrientation(m_videoSourceOrientation));
     if (UNLIKELY(!frameHolder->isValid()))
         return;
 
@@ -509,7 +526,7 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
         buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
     }
     updateTexture(buffer->textureGL(), videoInfo);
-    buffer->setExtraFlags(m_textureMapperRotationFlag | (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? TextureMapperGL::ShouldBlend : 0));
+    buffer->setExtraFlags(texMapFlagFromOrientation(m_videoSourceOrientation) | (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? TextureMapperGL::ShouldBlend : 0));
     m_platformLayerProxy->pushNextBuffer(WTFMove(buffer));
 #endif
 }
@@ -646,7 +663,7 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
                 return;
 
             size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
-            flags = m_textureMapperRotationFlag | (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? TextureMapperGL::ShouldBlend : 0);
+            flags = texMapFlagFromOrientation(m_videoSourceOrientation) | (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? TextureMapperGL::ShouldBlend : 0);
             texture = textureMapper.acquireTextureFromPool(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
             updateTexture(static_cast<BitmapTextureGL&>(*texture), videoInfo);
         }
@@ -669,7 +686,7 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
         return;
 
     unsigned textureID = *reinterpret_cast<unsigned*>(videoFrame.data[0]);
-    TextureMapperGL::Flags flags = m_textureMapperRotationFlag | (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? TextureMapperGL::ShouldBlend : 0);
+    TextureMapperGL::Flags flags = texMapFlagFromOrientation(m_videoSourceOrientation) | (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? TextureMapperGL::ShouldBlend : 0);
 
     IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
     TextureMapperGL& textureMapperGL = reinterpret_cast<TextureMapperGL&>(textureMapper);
@@ -753,26 +770,6 @@ void MediaPlayerPrivateGStreamerBase::setVideoSourceOrientation(const ImageOrien
         return;
 
     m_videoSourceOrientation = orientation;
-
-#if USE(TEXTURE_MAPPER_GL)
-    switch (m_videoSourceOrientation) {
-    case DefaultImageOrientation:
-        m_textureMapperRotationFlag = 0;
-        break;
-    case OriginRightTop:
-        m_textureMapperRotationFlag = TextureMapperGL::ShouldRotateTexture90;
-        break;
-    case OriginBottomRight:
-        m_textureMapperRotationFlag = TextureMapperGL::ShouldRotateTexture180;
-        break;
-    case OriginLeftBottom:
-        m_textureMapperRotationFlag = TextureMapperGL::ShouldRotateTexture270;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-#endif
 }
 
 bool MediaPlayerPrivateGStreamerBase::supportsFullscreen() const

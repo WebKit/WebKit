@@ -37,9 +37,6 @@
 #if USE(TEXTURE_MAPPER)
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperPlatformLayerProxy.h"
-#if USE(TEXTURE_MAPPER_GL)
-#include "TextureMapperGL.h"
-#endif
 #endif
 
 typedef struct _GstStreamVolume GstStreamVolume;
@@ -204,9 +201,6 @@ protected:
 #endif
 
     ImageOrientation m_videoSourceOrientation;
-#if USE(TEXTURE_MAPPER_GL)
-    TextureMapperGL::Flags m_textureMapperRotationFlag;
-#endif
 };
 }
 
