@@ -1,3 +1,12 @@
+2016-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Import html/syntax web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=162331
+
+        Reviewed by Youenn Fablet.
+
+        * tests-options.json:
+
 2016-09-20  Nan Wang  <n_wang@apple.com>
 
         AX: AppleVisUser: VO can't navigate web dialogs iOS10

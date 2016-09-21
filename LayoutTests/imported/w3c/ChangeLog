@@ -1,3 +1,14 @@
+2016-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Import html/syntax web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=162331
+
+        Reviewed by Youenn Fablet.
+
+        Import html/syntax web platform tests to improve test coverage.
+
+        * web-platform-tests/html/syntax/*: Added.
+
 2016-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Make URLSearchParams spec-compliant

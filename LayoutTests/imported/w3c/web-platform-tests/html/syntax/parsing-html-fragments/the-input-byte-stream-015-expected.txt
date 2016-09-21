@@ -1,0 +1,4 @@
+ 
+
+FAIL A page with no encoding information in HTTP, BOM, XML declaration or meta element will be treated as UTF-8. assert_equals: expected 100 but got 50
+
