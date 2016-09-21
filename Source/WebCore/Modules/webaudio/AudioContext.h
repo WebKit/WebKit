@@ -317,6 +317,7 @@ private:
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override { }
     bool supportsSeeking() const override { return false; }
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
+    String sourceApplicationIdentifier() const override;
 
     // EventTarget
     void refEventTarget() override { ref(); }

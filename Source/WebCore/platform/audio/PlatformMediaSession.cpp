@@ -289,6 +289,11 @@ void PlatformMediaSession::updateClientDataBuffering()
     m_client.setShouldBufferData(PlatformMediaSessionManager::sharedManager().sessionCanLoadMedia(*this));
 }
 
+String PlatformMediaSession::sourceApplicationIdentifier() const
+{
+    return m_client.sourceApplicationIdentifier();
+}
+
 bool PlatformMediaSession::isHidden() const
 {
     return m_client.elementIsHidden();

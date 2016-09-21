@@ -112,17 +112,13 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
-    if (!MRMediaRemoteSetCanBeNowPlayingApplication(true)) {
-        LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - MRMediaRemoteSetCanBeNowPlayingApplication(true) failed");
-        return;
-    }
-
     const PlatformMediaSession* currentSession = this->nowPlayingEligibleSession();
 
     LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - currentSession = %p", currentSession);
 
     if (!currentSession) {
         if (m_nowPlayingActive) {
+            MRMediaRemoteSetCanBeNowPlayingApplication(false);
             LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - clearing now playing info");
             MRMediaRemoteSetNowPlayingInfo(nullptr);
             m_nowPlayingActive = false;
@@ -135,6 +131,11 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
             });
         }
 
+        return;
+    }
+
+    if (!MRMediaRemoteSetCanBeNowPlayingApplication(true)) {
+        LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - MRMediaRemoteSetCanBeNowPlayingApplication(true) failed");
         return;
     }
 
@@ -171,6 +172,10 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
 
     LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - title = \"%s\", rate = %f, duration = %f, now = %f",
         title.utf8().data(), rate, duration, currentTime);
+
+    String parentApplication = currentSession->sourceApplicationIdentifier();
+    if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication() && !parentApplication.isEmpty())
+        MRMediaRemoteSetParentApplication(MRMediaRemoteGetLocalOrigin(), parentApplication.createCFString().get());
 
     m_nowPlayingActive = true;
     MRPlaybackState playbackState = (currentSession->state() == PlatformMediaSession::Playing) ? kMRPlaybackStatePlaying : kMRPlaybackStatePaused;
