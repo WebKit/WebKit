@@ -83,12 +83,8 @@ double HTMLMeterElement::min() const
     return parseToDoubleForNumberType(attributeWithoutSynchronization(minAttr), 0);
 }
 
-void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
+void HTMLMeterElement::setMin(double min)
 {
-    if (!std::isfinite(min)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     setAttributeWithoutSynchronization(minAttr, AtomicString::number(min));
 }
 
@@ -97,12 +93,8 @@ double HTMLMeterElement::max() const
     return std::max(parseToDoubleForNumberType(attributeWithoutSynchronization(maxAttr), std::max(1.0, min())), min());
 }
 
-void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
+void HTMLMeterElement::setMax(double max)
 {
-    if (!std::isfinite(max)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     setAttributeWithoutSynchronization(maxAttr, AtomicString::number(max));
 }
 
@@ -112,12 +104,8 @@ double HTMLMeterElement::value() const
     return std::min(std::max(value, min()), max());
 }
 
-void HTMLMeterElement::setValue(double value, ExceptionCode& ec)
+void HTMLMeterElement::setValue(double value)
 {
-    if (!std::isfinite(value)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     setAttributeWithoutSynchronization(valueAttr, AtomicString::number(value));
 }
 
@@ -127,12 +115,8 @@ double HTMLMeterElement::low() const
     return std::min(std::max(low, min()), max());
 }
 
-void HTMLMeterElement::setLow(double low, ExceptionCode& ec)
+void HTMLMeterElement::setLow(double low)
 {
-    if (!std::isfinite(low)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     setAttributeWithoutSynchronization(lowAttr, AtomicString::number(low));
 }
 
@@ -142,12 +126,8 @@ double HTMLMeterElement::high() const
     return std::min(std::max(high, low()), max());
 }
 
-void HTMLMeterElement::setHigh(double high, ExceptionCode& ec)
+void HTMLMeterElement::setHigh(double high)
 {
-    if (!std::isfinite(high)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     setAttributeWithoutSynchronization(highAttr, AtomicString::number(high));
 }
 
@@ -157,12 +137,8 @@ double HTMLMeterElement::optimum() const
     return std::min(std::max(optimum, min()), max());
 }
 
-void HTMLMeterElement::setOptimum(double optimum, ExceptionCode& ec)
+void HTMLMeterElement::setOptimum(double optimum)
 {
-    if (!std::isfinite(optimum)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     setAttributeWithoutSynchronization(optimumAttr, AtomicString::number(optimum));
 }
 

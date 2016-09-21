@@ -1,5 +1,17 @@
 2016-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Setting HTMLMeterElement's attributes to non-finite values throws wrong exception type
+        https://bugs.webkit.org/show_bug.cgi?id=162364
+
+        Reviewed by Darin Adler.
+
+        Merge meter test changes from https://github.com/w3c/web-platform-tests/pull/3791.
+
+        * web-platform-tests/html/semantics/forms/the-meter-element/meter-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-meter-element/meter.html:
+
+2016-09-21  Chris Dumez  <cdumez@apple.com>
+
         Fix serialization of HTML Element attributes
         https://bugs.webkit.org/show_bug.cgi?id=162356
 

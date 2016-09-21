@@ -40,22 +40,22 @@ public:
     };
 
     double min() const;
-    void setMin(double, ExceptionCode&);
+    void setMin(double);
 
     double max() const;
-    void setMax(double, ExceptionCode&);
+    void setMax(double);
 
     double value() const;
-    void setValue(double, ExceptionCode&);
+    void setValue(double);
 
     double low() const;
-    void setLow(double, ExceptionCode&);
+    void setLow(double);
 
     double high() const;
-    void setHigh(double, ExceptionCode&);
+    void setHigh(double);
 
     double optimum() const;
-    void setOptimum(double, ExceptionCode&);
+    void setOptimum(double);
 
     double valueRatio() const;
     GaugeRegion gaugeRegion() const;

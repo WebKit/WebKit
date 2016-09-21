@@ -3,7 +3,6 @@ Meter Element
 
 PASS Default values 
 PASS Setting values to min, max, low, high and optimum 
-FAIL Invalid floating-point number values The operation is not supported.
 PASS max < min 
 PASS value < min 
 PASS value > max 
@@ -13,6 +12,7 @@ PASS high < low
 PASS high > max 
 PASS optimum < min 
 PASS optimum > max 
+PASS Invalid floating-point number values 
 PASS value must be 0 when a string is given 
 PASS default value of min is 0 
 PASS If min is not specified and value is smaller than the default value of min (i.e. 0), the actual value must be 0 
