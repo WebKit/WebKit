@@ -211,6 +211,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))sessionBlock;
 @end
 
+@interface PKPassLibrary : NSObject
+@end
+
 NS_ASSUME_NONNULL_END
 
 #endif
