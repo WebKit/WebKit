@@ -1474,7 +1474,7 @@ void DocumentLoader::startLoadingMainResource()
     m_loadingMainResource = true;
 
     if (maybeLoadEmpty()) {
-        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Returning empty document (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Returning empty document (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
         return;
     }
 
@@ -1496,7 +1496,7 @@ void DocumentLoader::startLoadingMainResource()
 
     // willSendRequest() may lead to our Frame being detached or cancelling the load via nulling the ResourceRequest.
     if (!m_frame || m_request.isNull()) {
-        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Load canceled after willSendRequest (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Load canceled after willSendRequest (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
         return;
     }
 
