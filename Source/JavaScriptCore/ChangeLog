@@ -1,3 +1,11 @@
+2016-09-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed buildfix after r206136.
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchPtr): Added.
+
 2016-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Require WTFMove for String::adopt
