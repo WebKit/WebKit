@@ -1,3 +1,10 @@
+2016-09-21  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; added test expectations for new tests.
+
+        * web-platform-tests/media-source/mediasource-attach-stops-delaying-load-event-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps-expected.txt: Added.
+
 2016-09-21  Youenn Fablet  <youenn@apple.com>
 
         [Fetch] Align Accept header default values with fetch spec

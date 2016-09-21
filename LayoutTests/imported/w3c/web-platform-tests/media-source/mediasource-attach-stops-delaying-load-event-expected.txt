@@ -1,0 +1,3 @@
+
+PASS MediaSource attachment should immediately stop delaying the load event 
+
