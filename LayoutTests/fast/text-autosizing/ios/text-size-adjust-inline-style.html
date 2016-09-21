@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- We intentionally do not call window.internal.settings.setTextAutosizingEnabled(true) to test the default port behavior. -->
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../../resources/Ahem.ttf");
+}
+p {
+    font-family: Ahem;
+    font-size: 20px;
+}
+</style>
+</head>
+<body>
+<p style="-webkit-text-size-adjust: auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+<p style="-webkit-text-size-adjust: none">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+<p style="-webkit-text-size-adjust: 50%">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+<p style="-webkit-text-size-adjust: 100%">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+<p style="-webkit-text-size-adjust: 150%">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+<p style="-webkit-text-size-adjust: 200%">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+</body>
+</html>
