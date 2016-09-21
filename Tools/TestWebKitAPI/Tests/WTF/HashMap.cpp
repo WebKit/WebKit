@@ -206,14 +206,14 @@ TEST(WTF_HashMap, UniquePtrKey_CustomDeleter)
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
 
-    EXPECT_EQ(0u, DeleterCounter<ConstructorDestructorCounter>::deleterCount);
+    EXPECT_EQ(0u, DeleterCounter<ConstructorDestructorCounter>::deleterCount());
 
     map.clear();
     
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 
-    EXPECT_EQ(1u, DeleterCounter<ConstructorDestructorCounter>::deleterCount);
+    EXPECT_EQ(1u, DeleterCounter<ConstructorDestructorCounter>::deleterCount());
 }
 
 TEST(WTF_HashMap, UniquePtrKey_FindUsingRawPointer)

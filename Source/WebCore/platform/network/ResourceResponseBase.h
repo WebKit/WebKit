@@ -115,7 +115,7 @@ public:
     WEBCORE_EXPORT String suggestedFilename() const;
 
     WEBCORE_EXPORT void includeCertificateInfo() const;
-    WEBCORE_EXPORT const Optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
+    const Optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     
     // These functions return parsed values of the corresponding response headers.
     // NaN means that the header was not present or had invalid value.

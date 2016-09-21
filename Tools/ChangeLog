@@ -1,3 +1,20 @@
+2016-09-21  Keith Miller  <keith_miller@apple.com>
+
+        Fix build for future versions of Clang.
+        https://bugs.webkit.org/show_bug.cgi?id=162346
+
+        Reviewed by Filip Pizlo.
+
+        * TestWebKitAPI/Counters.cpp:
+        * TestWebKitAPI/Counters.h:
+        (DeleterCounter::deleterCount):
+        (DeleterCounter::TestingScope::TestingScope):
+        (DeleterCounter::operator()):
+        * TestWebKitAPI/Tests/WTF/HashCountedSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Prepare API tests for enabling URLParser by default

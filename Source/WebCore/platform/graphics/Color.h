@@ -66,7 +66,7 @@ RGBA32 makePremultipliedRGBA(int r, int g, int b, int a);
 RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a);
 
 WEBCORE_EXPORT RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha);
-WEBCORE_EXPORT RGBA32 colorWithOverrideAlpha(RGBA32 color, Optional<float> overrideAlpha);
+RGBA32 colorWithOverrideAlpha(RGBA32 color, Optional<float> overrideAlpha);
 
 WEBCORE_EXPORT RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
 RGBA32 makeRGBAFromHSLA(double h, double s, double l, double a);

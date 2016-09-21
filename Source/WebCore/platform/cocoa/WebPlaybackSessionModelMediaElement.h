@@ -48,7 +48,7 @@ public:
     }
     WEBCORE_EXPORT virtual ~WebPlaybackSessionModelMediaElement();
     WEBCORE_EXPORT void setMediaElement(HTMLMediaElement*);
-    WEBCORE_EXPORT HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
+    HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
 
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) final;
     void updateForEventName(const WTF::AtomicString&);

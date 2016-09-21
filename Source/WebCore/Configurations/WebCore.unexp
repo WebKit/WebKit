@@ -47,8 +47,11 @@ _VTPixelTransferSessionTransferImage
 _DDDFAScannerCreateFromCache
 _DDDFAScannerFirstResultInUnicharArray
 # Source/WebCore/page/mac/ServicesOverlayController.mm
+_DDHighlightGetLayerWithContext
+_DDHighlightGetBoundingRect
 _DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection
 _DDHighlightPointIsOnHighlight
+
 
 # Subclasses of an exported C++ class in JavaScriptCore.
 
