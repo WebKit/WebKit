@@ -43,6 +43,7 @@
     [CallWith=ScriptExecutionContext, RaisesException] static boolean supportsVersion(unsigned long version);
     [CallWith=ScriptExecutionContext, RaisesException] static boolean canMakePayments();
     [CallWith=ScriptExecutionContext, RaisesException] static Promise canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
+    [CallWith=ScriptExecutionContext, RaisesException] static Promise openPaymentSetup(DOMString merchantIdentifier);
 
     [RaisesException] void begin();
     [RaisesException] void abort();

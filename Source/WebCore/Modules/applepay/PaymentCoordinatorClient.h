@@ -42,6 +42,7 @@ public:
     virtual bool supportsVersion(unsigned version) = 0;
     virtual bool canMakePayments() = 0;
     virtual void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler) = 0;
+    virtual void openPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler) = 0;
 
     virtual bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest&) = 0;
     virtual void completeMerchantValidation(const PaymentMerchantSession&) = 0;

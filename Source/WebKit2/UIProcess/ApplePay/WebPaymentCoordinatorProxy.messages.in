@@ -28,6 +28,7 @@ messages -> WebPaymentCoordinatorProxy {
 
     CanMakePayments() -> (bool result)
     CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName, uint64_t requestID)
+    OpenPaymentSetup(String merchantIdentifier, String domainName, uint64_t requestID)
 
     ShowPaymentUI(String originatingURLString, Vector<String> linkIconURLStrings, WebCore::PaymentRequest paymentRequest) -> (bool result)
     CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession);

@@ -42,6 +42,7 @@ SOFT_LINK_PRIVATE_FRAMEWORK(PassKit)
 SOFT_LINK_FRAMEWORK(PassKit)
 #endif
 
+SOFT_LINK_CLASS(PassKit, PKPassLibrary);
 SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationViewController);
 SOFT_LINK_CLASS(PassKit, PKPaymentMerchantSession);
 SOFT_LINK_CLASS(PassKit, PKPaymentRequest);
@@ -220,6 +221,23 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
             completionHandler(canMakePayments);
         });
     });
+}
+
+void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
+{
+    auto passLibrary = adoptNS([allocPKPassLibraryInstance() init]);
+    if (![passLibrary respondsToSelector:@selector(openPaymentSetupForMerchantIdentifier:domain:completion:)]) {
+        RunLoop::main().dispatch([completionHandler] {
+            completionHandler(false);
+        });
+        return;
+    }
+
+    [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier domain:domainName completion:[completionHandler](BOOL result) {
+        RunLoop::main().dispatch([completionHandler, result] {
+            completionHandler(result);
+        });
+    }];
 }
 
 static PKAddressField toPKAddressField(const WebCore::PaymentRequest::ContactFields& contactFields)
