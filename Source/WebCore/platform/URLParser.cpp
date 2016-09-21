@@ -1430,6 +1430,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 m_url.m_pathEnd = m_asciiBuffer.size();
                 m_url.m_queryEnd = m_url.m_pathEnd;
                 state = State::Fragment;
+            } else if (*c == '/') {
+                m_asciiBuffer.append('/');
+                m_url.m_pathAfterLastSlash = m_asciiBuffer.size();
+                ++c;
             } else {
                 utf8PercentEncode<serialized>(*c, m_asciiBuffer, isInSimpleEncodeSet);
                 ++c;
