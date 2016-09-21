@@ -358,11 +358,6 @@ struct VariadicHelper : public VariadicHelperBase<JSClass, DOMClass> {
     using Container = Vector<Item>;
 
     struct Result {
-        Result(size_t argumentIndex, Optional<Container>&& arguments)
-            : argumentIndex(argumentIndex)
-            , arguments(WTFMove(arguments))
-        {
-        }
         size_t argumentIndex;
         Optional<Container> arguments;
     };
