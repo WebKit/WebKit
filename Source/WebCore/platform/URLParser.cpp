@@ -129,6 +129,7 @@ enum URLCharacterClass {
     InvalidDomain = 0x4,
     QueryPercent = 0x8,
     SlashQuestionOrHash = 0x10,
+    Scheme = 0x20,
 };
 
 static const uint8_t characterClassTable[256] = {
@@ -175,21 +176,21 @@ static const uint8_t characterClassTable[256] = {
     0, // '('
     0, // ')'
     0, // '*'
-    0, // '+'
+    Scheme, // '+'
     0, // ','
-    0, // '-'
-    0, // '.'
+    Scheme, // '-'
+    Scheme, // '.'
     UserInfo | InvalidDomain | SlashQuestionOrHash, // '/'
-    0, // '0'
-    0, // '1'
-    0, // '2'
-    0, // '3'
-    0, // '4'
-    0, // '5'
-    0, // '6'
-    0, // '7'
-    0, // '8'
-    0, // '9'
+    Scheme, // '0'
+    Scheme, // '1'
+    Scheme, // '2'
+    Scheme, // '3'
+    Scheme, // '4'
+    Scheme, // '5'
+    Scheme, // '6'
+    Scheme, // '7'
+    Scheme, // '8'
+    Scheme, // '9'
     UserInfo | InvalidDomain, // ':'
     UserInfo, // ';'
     UserInfo | Default | QueryPercent, // '<'
@@ -197,64 +198,64 @@ static const uint8_t characterClassTable[256] = {
     UserInfo | Default | QueryPercent, // '>'
     UserInfo | Default | InvalidDomain | SlashQuestionOrHash, // '?'
     UserInfo | InvalidDomain, // '@'
-    0, // 'A'
-    0, // 'B'
-    0, // 'C'
-    0, // 'D'
-    0, // 'E'
-    0, // 'F'
-    0, // 'G'
-    0, // 'H'
-    0, // 'I'
-    0, // 'J'
-    0, // 'K'
-    0, // 'L'
-    0, // 'M'
-    0, // 'N'
-    0, // 'O'
-    0, // 'P'
-    0, // 'Q'
-    0, // 'R'
-    0, // 'S'
-    0, // 'T'
-    0, // 'U'
-    0, // 'V'
-    0, // 'W'
-    0, // 'X'
-    0, // 'Y'
-    0, // 'Z'
+    Scheme, // 'A'
+    Scheme, // 'B'
+    Scheme, // 'C'
+    Scheme, // 'D'
+    Scheme, // 'E'
+    Scheme, // 'F'
+    Scheme, // 'G'
+    Scheme, // 'H'
+    Scheme, // 'I'
+    Scheme, // 'J'
+    Scheme, // 'K'
+    Scheme, // 'L'
+    Scheme, // 'M'
+    Scheme, // 'N'
+    Scheme, // 'O'
+    Scheme, // 'P'
+    Scheme, // 'Q'
+    Scheme, // 'R'
+    Scheme, // 'S'
+    Scheme, // 'T'
+    Scheme, // 'U'
+    Scheme, // 'V'
+    Scheme, // 'W'
+    Scheme, // 'X'
+    Scheme, // 'Y'
+    Scheme, // 'Z'
     UserInfo | InvalidDomain, // '['
     UserInfo | InvalidDomain | SlashQuestionOrHash, // '\\'
     UserInfo | InvalidDomain, // ']'
     UserInfo, // '^'
     0, // '_'
     UserInfo | Default, // '`'
-    0, // 'a'
-    0, // 'b'
-    0, // 'c'
-    0, // 'd'
-    0, // 'e'
-    0, // 'f'
-    0, // 'g'
-    0, // 'h'
-    0, // 'i'
-    0, // 'j'
-    0, // 'k'
-    0, // 'l'
-    0, // 'm'
-    0, // 'n'
-    0, // 'o'
-    0, // 'p'
-    0, // 'q'
-    0, // 'r'
-    0, // 's'
-    0, // 't'
-    0, // 'u'
-    0, // 'v'
-    0, // 'w'
-    0, // 'x'
-    0, // 'y'
-    0, // 'z'
+    Scheme, // 'a'
+    Scheme, // 'b'
+    Scheme, // 'c'
+    Scheme, // 'd'
+    Scheme, // 'e'
+    Scheme, // 'f'
+    Scheme, // 'g'
+    Scheme, // 'h'
+    Scheme, // 'i'
+    Scheme, // 'j'
+    Scheme, // 'k'
+    Scheme, // 'l'
+    Scheme, // 'm'
+    Scheme, // 'n'
+    Scheme, // 'o'
+    Scheme, // 'p'
+    Scheme, // 'q'
+    Scheme, // 'r'
+    Scheme, // 's'
+    Scheme, // 't'
+    Scheme, // 'u'
+    Scheme, // 'v'
+    Scheme, // 'w'
+    Scheme, // 'x'
+    Scheme, // 'y'
+    Scheme, // 'z'
     UserInfo | Default, // '{'
     UserInfo, // '|'
     UserInfo | Default, // '}'
@@ -399,6 +400,7 @@ template<typename CharacterType> inline static bool isInUserInfoEncodeSet(Charac
 template<typename CharacterType> inline static bool isInvalidDomainCharacter(CharacterType character) { return character <= ']' && characterClassTable[character] & InvalidDomain; }
 template<typename CharacterType> inline static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
 template<typename CharacterType> inline static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
+template<typename CharacterType> inline static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & Scheme; }
 static bool shouldPercentEncodeQueryByte(uint8_t byte) { return characterClassTable[byte] & QueryPercent; }
 
 template<bool serialized, typename CharacterType>
@@ -945,9 +947,9 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
 {
     LOG(URLParser, "Parsing URL <%s> base <%s>", String(input, length).utf8().data(), base.string().utf8().data());
     m_url = { };
-    m_asciiBuffer.clear();
-    m_unicodeFragmentBuffer.clear();
-    m_asciiBuffer.reserveCapacity(length);
+    ASSERT(m_asciiBuffer.isEmpty());
+    ASSERT(m_unicodeFragmentBuffer.isEmpty());
+    m_asciiBuffer.reserveInitialCapacity(length);
     
     bool isUTF8Encoding = encoding == UTF8Encoding();
     Vector<UChar> queryBuffer;
@@ -1010,7 +1012,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             break;
         case State::Scheme:
             LOG_STATE("Scheme");
-            if (isASCIIAlphanumeric(*c) || *c == '+' || *c == '-' || *c == '.')
+            if (isValidSchemeCharacter(*c))
                 m_asciiBuffer.append(toASCIILower(*c));
             else if (*c == ':') {
                 m_url.m_schemeEnd = m_asciiBuffer.size();
@@ -1631,13 +1633,11 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
     if (m_unicodeFragmentBuffer.isEmpty())
         m_url.m_string = String::adopt(WTFMove(m_asciiBuffer));
     else {
-        // FIXME: This should use a Vector<UChar> and adopt it.
-        StringBuilder builder;
-        builder.reserveCapacity(m_asciiBuffer.size() + m_unicodeFragmentBuffer.size());
-        builder.append(m_asciiBuffer.data(), m_asciiBuffer.size());
-        for (size_t i = 0; i < m_unicodeFragmentBuffer.size(); ++i)
-            builder.append(m_unicodeFragmentBuffer[i]);
-        m_url.m_string = builder.toString();
+        Vector<UChar> buffer;
+        buffer.reserveInitialCapacity(m_asciiBuffer.size() + m_unicodeFragmentBuffer.size());
+        buffer.appendVector(m_asciiBuffer);
+        buffer.appendVector(m_unicodeFragmentBuffer);
+        m_url.m_string = String::adopt(WTFMove(buffer));
     }
     m_url.m_isValid = true;
     LOG(URLParser, "Parsed URL <%s>", m_url.m_string.utf8().data());
@@ -2103,6 +2103,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         }
     }
     
+    ASSERT(!serialized || m_hostHasPercentOrNonASCII);
     if (!m_hostHasPercentOrNonASCII) {
         auto hostIterator = iterator;
         for (; !iterator.atEnd(); ++iterator) {
@@ -2124,7 +2125,10 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             return parsePort<serialized>(iterator);
         }
         for (; hostIterator != iterator; ++hostIterator) {
-            if (serialized || !isTabOrNewline(*hostIterator))
+            if (serialized) {
+                ASSERT(!isASCIIUpper(*hostIterator));
+                m_asciiBuffer.append(*hostIterator);
+            } else if (!isTabOrNewline(*hostIterator))
                 m_asciiBuffer.append(toASCIILower(*hostIterator));
         }
         m_url.m_hostEnd = m_asciiBuffer.size();
