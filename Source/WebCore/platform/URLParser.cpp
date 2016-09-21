@@ -457,12 +457,15 @@ inline static bool shouldCopyFileURL(CodePointIterator<CharacterType> iterator)
     return !isSlashQuestionOrHash(*iterator);
 }
 
-inline static void percentEncode(uint8_t byte, Vector<LChar>& buffer)
+inline static void percentEncodeByte(uint8_t byte, Vector<LChar>& buffer)
 {
     buffer.append('%');
     buffer.append(upperNibbleToASCIIHexDigit(byte));
     buffer.append(lowerNibbleToASCIIHexDigit(byte));
 }
+
+const char* replacementCharacterUTF8PercentEncoded = "%EF%BF%BD";
+const size_t replacementCharacterUTF8PercentEncodedLength = 9;
 
 template<bool serialized>
 inline static void utf8PercentEncode(UChar32 codePoint, Vector<LChar>& destination, bool(*isInCodeSet)(UChar32))
@@ -472,39 +475,56 @@ inline static void utf8PercentEncode(UChar32 codePoint, Vector<LChar>& destinati
         ASSERT_WITH_SECURITY_IMPLICATION(!isInCodeSet(codePoint));
         destination.append(codePoint);
     } else {
-        if (isInCodeSet(codePoint)) {
-            uint8_t buffer[U8_MAX_LENGTH];
-            int32_t offset = 0;
-            UBool error = false;
-            U8_APPEND(buffer, offset, U8_MAX_LENGTH, codePoint, error);
-            // FIXME: Check error.
-            for (int32_t i = 0; i < offset; ++i)
-                percentEncode(buffer[i], destination);
-        } else {
-            ASSERT_WITH_MESSAGE(isASCII(codePoint), "isInCodeSet should always return true for non-ASCII characters");
-            destination.append(codePoint);
+        if (isASCII(codePoint)) {
+            if (isInCodeSet(codePoint))
+                percentEncodeByte(codePoint, destination);
+            else
+                destination.append(codePoint);
+            return;
         }
+        ASSERT_WITH_MESSAGE(isInCodeSet(codePoint), "isInCodeSet should always return true for non-ASCII characters");
+        
+        if (!U_IS_UNICODE_CHAR(codePoint)) {
+            destination.append(replacementCharacterUTF8PercentEncoded, replacementCharacterUTF8PercentEncodedLength);
+            return;
+        }
+        
+        uint8_t buffer[U8_MAX_LENGTH];
+        int32_t offset = 0;
+        U8_APPEND_UNSAFE(buffer, offset, codePoint);
+        for (int32_t i = 0; i < offset; ++i)
+            percentEncodeByte(buffer[i], destination);
     }
 }
 
 template<bool serialized>
-inline static void utf8PercentEncodeQuery(UChar32 codePoint, Vector<LChar>& destination)
+inline static void utf8QueryEncode(UChar32 codePoint, Vector<LChar>& destination)
 {
     if (serialized) {
         ASSERT_WITH_SECURITY_IMPLICATION(isASCII(codePoint));
         ASSERT_WITH_SECURITY_IMPLICATION(!shouldPercentEncodeQueryByte(codePoint));
         destination.append(codePoint);
     } else {
+        if (isASCII(codePoint)) {
+            if (shouldPercentEncodeQueryByte(codePoint))
+                percentEncodeByte(codePoint, destination);
+            else
+                destination.append(codePoint);
+            return;
+        }
+        
+        if (!U_IS_UNICODE_CHAR(codePoint)) {
+            destination.append(replacementCharacterUTF8PercentEncoded, replacementCharacterUTF8PercentEncodedLength);
+            return;
+        }
+
         uint8_t buffer[U8_MAX_LENGTH];
         int32_t offset = 0;
-        UBool error = false;
-        U8_APPEND(buffer, offset, U8_MAX_LENGTH, codePoint, error);
-        ASSERT_WITH_SECURITY_IMPLICATION(offset <= static_cast<int32_t>(sizeof(buffer)));
-        // FIXME: Check error.
+        U8_APPEND_UNSAFE(buffer, offset, codePoint);
         for (int32_t i = 0; i < offset; ++i) {
             auto byte = buffer[i];
             if (shouldPercentEncodeQueryByte(byte))
-                percentEncode(byte, destination);
+                percentEncodeByte(byte, destination);
             else
                 destination.append(byte);
         }
@@ -520,7 +540,7 @@ inline static void encodeQuery(const Vector<UChar>& source, Vector<LChar>& desti
     for (size_t i = 0; i < length; ++i) {
         uint8_t byte = data[i];
         if (shouldPercentEncodeQueryByte(byte))
-            percentEncode(byte, destination);
+            percentEncodeByte(byte, destination);
         else
             destination.append(byte);
     }
@@ -1413,7 +1433,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 break;
             }
             if (isUTF8Encoding)
-                utf8PercentEncodeQuery<serialized>(*c, m_asciiBuffer);
+                utf8QueryEncode<serialized>(*c, m_asciiBuffer);
             else
                 appendCodePoint(queryBuffer, *c);
             ++c;
@@ -2198,7 +2218,7 @@ inline static void serializeURLEncodedForm(const String& input, Vector<LChar>& o
             || (byte >= 0x61 && byte <= 0x7A))
             output.append(byte);
         else
-            percentEncode(byte, output);
+            percentEncodeByte(byte, output);
     }
 }
     

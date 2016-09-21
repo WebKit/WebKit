@@ -215,7 +215,6 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://123.256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
     checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
     checkURL("notspecial:", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
-    // FIXME: Fix and add a test with an invalid surrogate pair at the end with a space as the second code unit.
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -656,7 +655,9 @@ TEST_F(URLParserTest, DefaultPort)
     checkURLDifferences("http://%48OsT",
         {"http", "", "", "host", 0, "/", "", "", "http://host/"},
         {"http", "", "", "%48ost", 0, "/", "", "", "http://%48ost/"});
-
+    checkURLDifferences("http://host/`",
+        {"http", "", "", "host", 0, "/%60", "", "", "http://host/%60"},
+        {"http", "", "", "host", 0, "/`", "", "", "http://host/`"});
 }
     
 static void shouldFail(const String& urlString)
@@ -719,6 +720,29 @@ TEST_F(URLParserTest, AdditionalTests)
         {"ws", "", "", "", 0, "", "", "", "ws:"},
         {"ws", "", "", "", 0, "s:", "", "", "ws:s:"});
     checkRelativeURL("notspecial:", "http://example.org/foo/bar", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
+    
+    const wchar_t surrogateBegin = 0xD800;
+    const wchar_t validSurrogateEnd = 0xDD55;
+    const wchar_t invalidSurrogateEnd = 'A';
+    checkURL(wideString<12>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', surrogateBegin, validSurrogateEnd, '\0'}),
+        {"http", "", "", "w", 0, "/%F0%90%85%95", "", "", "http://w/%F0%90%85%95"});
+    
+    // URLParser matches Chrome and Firefox but not URL::parse.
+    checkURLDifferences(wideString<12>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', surrogateBegin, invalidSurrogateEnd}),
+        {"http", "", "", "w", 0, "/%EF%BF%BDA", "", "", "http://w/%EF%BF%BDA"},
+        {"http", "", "", "w", 0, "/%ED%A0%80A", "", "", "http://w/%ED%A0%80A"});
+    checkURLDifferences(wideString<13>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', '?', surrogateBegin, invalidSurrogateEnd, '\0'}),
+        {"http", "", "", "w", 0, "/", "%EF%BF%BDA", "", "http://w/?%EF%BF%BDA"},
+        {"http", "", "", "w", 0, "/", "%ED%A0%80A", "", "http://w/?%ED%A0%80A"});
+    checkURLDifferences(wideString<11>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', surrogateBegin, '\0'}),
+        {"http", "", "", "w", 0, "/%EF%BF%BD", "", "", "http://w/%EF%BF%BD"},
+        {"http", "", "", "w", 0, "/%ED%A0%80", "", "", "http://w/%ED%A0%80"});
+    checkURLDifferences(wideString<12>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', '?', surrogateBegin, '\0'}),
+        {"http", "", "", "w", 0, "/", "%EF%BF%BD", "", "http://w/?%EF%BF%BD"},
+        {"http", "", "", "w", 0, "/", "%ED%A0%80", "", "http://w/?%ED%A0%80"});
+    checkURLDifferences(wideString<13>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', '?', surrogateBegin, ' ', '\0'}),
+        {"http", "", "", "w", 0, "/", "%EF%BF%BD", "", "http://w/?%EF%BF%BD"},
+        {"http", "", "", "w", 0, "/", "%ED%A0%80", "", "http://w/?%ED%A0%80"});
 }
 
 static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts)
