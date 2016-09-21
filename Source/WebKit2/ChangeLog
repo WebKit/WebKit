@@ -1,3 +1,11 @@
+2016-09-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed, build fix.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::paint): fix usage of deviceScaleFactor variable which was
+        removed.
+
 2016-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.14.0 release.
