@@ -1473,11 +1473,15 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     case State::PathOrAuthority:
         LOG_FINAL_STATE("PathOrAuthority");
-        m_url.m_userEnd = m_asciiBuffer.size();
-        m_url.m_passwordEnd = m_url.m_userEnd;
-        m_url.m_hostEnd = m_url.m_userEnd;
-        m_url.m_portEnd = m_url.m_userEnd;
-        m_url.m_pathAfterLastSlash = m_url.m_userEnd;
+        ASSERT(m_url.m_userStart);
+        ASSERT(m_url.m_userStart == m_asciiBuffer.size());
+        ASSERT(m_asciiBuffer.last() == '/');
+        m_url.m_userStart--;
+        m_url.m_userEnd = m_url.m_userStart;
+        m_url.m_passwordEnd = m_url.m_userStart;
+        m_url.m_hostEnd = m_url.m_userStart;
+        m_url.m_portEnd = m_url.m_userStart;
+        m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
         m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
         m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
         m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;

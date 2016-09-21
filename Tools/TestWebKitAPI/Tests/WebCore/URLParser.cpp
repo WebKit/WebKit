@@ -215,6 +215,7 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://123.256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
     checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
     checkURL("notspecial:", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
+    checkURL("notspecial:/", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -302,7 +303,10 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("i", "sc://ho/pa", {"sc", "", "", "ho", 0, "/i", "", "", "sc://ho/i"});
     checkRelativeURL("!", "sc://ho/pa", {"sc", "", "", "ho", 0, "/!", "", "", "sc://ho/!"});
     checkRelativeURL("!", "sc:/ho/pa", {"sc", "", "", "", 0, "/ho/!", "", "", "sc:/ho/!"});
-    
+    checkRelativeURL("notspecial:/", "about:blank", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
+    checkRelativeURL("notspecial:/", "http://host", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
+    checkRelativeURL("foo:/", "http://example.org/foo/bar", {"foo", "", "", "", 0, "/", "", "", "foo:/"});
+
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
     checkRelativeURL("http:\\\\host\\foo", "about:blank", {"http", "", "", "host", 0, "/foo", "", "", "http://host/foo"});
@@ -567,17 +571,6 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences(wideString(L"http://host?ß😍#ß😍"),
         {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", wideString(L"ß😍"), wideString(L"http://host/?%C3%9F%F0%9F%98%8D#ß😍")},
         {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", "http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D"});
-
-    // This matches the spec and web platform tests, but not Chrome, Firefox, or URL::parse.
-    checkRelativeURLDifferences("notspecial:/", "about:blank",
-        {"notspecial", "", "", "", 0, "", "", "", "notspecial:/"},
-        {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
-    checkRelativeURLDifferences("notspecial:/", "http://host",
-        {"notspecial", "", "", "", 0, "", "", "", "notspecial:/"},
-        {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
-    checkURLDifferences("notspecial:/",
-        {"notspecial", "", "", "", 0, "", "", "", "notspecial:/"},
-        {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)
