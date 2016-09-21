@@ -1,5 +1,11 @@
 2016-09-21  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed gardening; add some whitespace to expected results.
+
+        * web-platform-tests/media-source/URL-createObjectURL-null-expected.txt:
+
+2016-09-21  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed gardening; added test expectations for new tests.
 
         * web-platform-tests/media-source/mediasource-attach-stops-delaying-load-event-expected.txt: Added.
