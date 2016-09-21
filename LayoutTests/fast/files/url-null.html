@@ -9,7 +9,7 @@
 <script>
 description("Test URL methods with null arguments.");
 
-shouldBe("URL.createObjectURL(null)", "null");
+shouldThrowErrorName("URL.createObjectURL(null)", "TypeError");
 evalAndLog("URL.revokeObjectURL(null)");
 var successfullyParsed = true;
 

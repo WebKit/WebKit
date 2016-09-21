@@ -1,5 +1,12 @@
 2016-09-21  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed gardening; after r206208, update url-null.html test to reflect current (specced) behavior.
+
+        * fast/files/url-null-expected.txt:
+        * fast/files/url-null.html:
+
+2016-09-21  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed gardening; mark imported/w3c/web-platform-tests/media-source/ tests as passing by default
         and mark specific tests to skip or fail (rather than vice versa).
 
