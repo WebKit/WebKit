@@ -6,8 +6,8 @@ PASS innerHTML 3 <a b="c"></a>
 PASS innerHTML 4 <a b="&amp;"></a> 
 PASS innerHTML 5 <a b="&nbsp;"></a> 
 PASS innerHTML 6 <a b="&quot;"></a> 
-FAIL innerHTML 7 <a b="<"></a> assert_equals: expected "<a b=\"<\"></a>" but got "<a b=\"&lt;\"></a>"
-FAIL innerHTML 8 <a b=">"></a> assert_equals: expected "<a b=\">\"></a>" but got "<a b=\"&gt;\"></a>"
+PASS innerHTML 7 <a b="<"></a> 
+PASS innerHTML 8 <a b=">"></a> 
 PASS innerHTML 9 <svg xlink:href="a"></svg> 
 PASS innerHTML 10 <svg xmlns:svg="test"></svg> 
 PASS innerHTML 11 a 
@@ -33,8 +33,8 @@ PASS outerHTML 3 <span><a b="c"></a></span>
 PASS outerHTML 4 <span><a b="&amp;"></a></span> 
 PASS outerHTML 5 <span><a b="&nbsp;"></a></span> 
 PASS outerHTML 6 <span><a b="&quot;"></a></span> 
-FAIL outerHTML 7 <span><a b="<"></a></span> assert_equals: expected "<span><a b=\"<\"></a></span>" but got "<span><a b=\"&lt;\"></a></span>"
-FAIL outerHTML 8 <span><a b=">"></a></span> assert_equals: expected "<span><a b=\">\"></a></span>" but got "<span><a b=\"&gt;\"></a></span>"
+PASS outerHTML 7 <span><a b="<"></a></span> 
+PASS outerHTML 8 <span><a b=">"></a></span> 
 PASS outerHTML 9 <span><svg xlink:href="a"></svg></span> 
 PASS outerHTML 10 <span><svg xmlns:svg="test"></svg></span> 
 PASS outerHTML 11 <span>a</span> 

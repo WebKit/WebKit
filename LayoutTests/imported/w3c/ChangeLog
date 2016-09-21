@@ -1,5 +1,17 @@
 2016-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Fix serialization of HTML Element attributes
+        https://bugs.webkit.org/show_bug.cgi?id=162356
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/basic-expected.txt:
+        * web-platform-tests/html/syntax/serializing-html-fragments/serializing-expected.txt:
+
+2016-09-21  Chris Dumez  <cdumez@apple.com>
+
         Fix enumeration of properties cross origin
         https://bugs.webkit.org/show_bug.cgi?id=162328
 
