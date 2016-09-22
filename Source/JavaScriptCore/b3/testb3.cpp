@@ -13062,7 +13062,8 @@ void testX86MFence()
     root->appendNew<Value>(proc, Return, Origin());
     
     auto code = compile(proc);
-    checkUsesInstruction(*code, "mfence");
+    checkUsesInstruction(*code, "lock or $0x0, (%rsp)");
+    checkDoesNotUseInstruction(*code, "mfence");
 }
 
 void testX86CompilerFence()
@@ -13075,6 +13076,7 @@ void testX86CompilerFence()
     root->appendNew<Value>(proc, Return, Origin());
     
     auto code = compile(proc);
+    checkDoesNotUseInstruction(*code, "lock");
     checkDoesNotUseInstruction(*code, "mfence");
 }
 

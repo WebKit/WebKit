@@ -1,3 +1,35 @@
+2016-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Fences on x86 should be a lot cheaper
+        https://bugs.webkit.org/show_bug.cgi?id=162417
+
+        Reviewed by Mark Lam and Geoffrey Garen.
+
+        It turns out that:
+        
+            lock; orl $0, (%rsp)
+        
+        does everything that we wanted from:
+        
+            mfence
+        
+        And it's a lot faster. When I tried mfence for making object visiting concurrent-GC-TSO-
+        friendly, it was a 9% regression on Octane/splay. But when I tried ortop, it was neutral.
+        So, we should use ortop from now on.
+        
+        This part of the change is for the JITs. MacroAssembler::memoryFence() appears to always
+        mean something like an acqrel fence, so it's safe to make this use ortop. Since B3's Fence
+        compiles to Air MemoryFence, which is just MacroAssembler::memoryFence(), this also changes
+        B3 codegen.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::memoryFence):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::lock):
+        * b3/testb3.cpp:
+        (JSC::B3::testX86MFence):
+        (JSC::B3::testX86CompilerFence):
+
 2016-09-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Function length should be number of parameters before parameters with default values

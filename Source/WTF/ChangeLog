@@ -1,3 +1,29 @@
+2016-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Fences on x86 should be a lot cheaper
+        https://bugs.webkit.org/show_bug.cgi?id=162417
+
+        Reviewed by Mark Lam and Geoffrey Garen.
+        
+        It turns out that:
+        
+            lock; orl $0, (%rsp)
+        
+        does everything that we wanted from:
+        
+            mfence
+        
+        And it's a lot faster. When I tried mfence for making object visiting concurrent-GC-TSO-
+        friendly, it was a 9% regression on Octane/splay. But when I tried ortop, it was neutral.
+        So, we should use ortop from now on.
+        
+        This part of the change just affects our Atomics. I also changed this in the JITs.
+
+        * wtf/Atomics.h:
+        (WTF::x86_ortop):
+        (WTF::storeLoadFence):
+        (WTF::x86_mfence): Deleted.
+
 2016-09-21  Alexey Proskuryakov  <ap@apple.com>
 
         Rolling out r206244, as it caused flaky crashes on tests.

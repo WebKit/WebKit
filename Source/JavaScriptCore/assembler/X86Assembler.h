@@ -249,6 +249,7 @@ private:
         OP_ESCAPE_DD                    = 0xDD,
         OP_CALL_rel32                   = 0xE8,
         OP_JMP_rel32                    = 0xE9,
+        PRE_LOCK                        = 0xF0,
         PRE_SSE_F2                      = 0xF2,
         PRE_SSE_F3                      = 0xF3,
         OP_HLT                          = 0xF4,
@@ -2682,6 +2683,11 @@ public:
     void predictNotTaken()
     {
         m_formatter.prefix(PRE_PREDICT_BRANCH_NOT_TAKEN);
+    }
+    
+    void lock()
+    {
+        m_formatter.prefix(PRE_LOCK);
     }
     
     void mfence()

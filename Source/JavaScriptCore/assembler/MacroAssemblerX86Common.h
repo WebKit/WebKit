@@ -2629,9 +2629,12 @@ public:
         m_assembler.nop();
     }
     
+    // We take memoryFence to mean acqrel. This has acqrel semantics on x86.
     void memoryFence()
     {
-        m_assembler.mfence();
+        // lock; orl $0, (%rsp)
+        m_assembler.lock();
+        m_assembler.orl_im(0, 0, X86Registers::esp);
     }
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
