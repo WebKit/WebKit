@@ -556,7 +556,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::updateCachedResourceW
     }
 
     auto resourceHandle = createResource(resource.type(), WTFMove(request), sessionID());
-    resourceHandle->loadFrom(resource, *this);
+    resourceHandle->loadFrom(resource);
     return resourceHandle;
 }
 
@@ -594,6 +594,9 @@ static inline String acceptHeaderValueFromType(CachedResource::Type type)
 void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourceRequest& request)
 {
     // Implementing step 1 to 7 of https://fetch.spec.whatwg.org/#fetching
+
+    if (!request.origin() && document())
+        request.setOrigin(document()->securityOrigin());
 
     if (!request.resourceRequest().hasHTTPHeader(HTTPHeaderName::Accept))
         request.mutableResourceRequest().setHTTPHeaderField(HTTPHeaderName::Accept, acceptHeaderValueFromType(type));

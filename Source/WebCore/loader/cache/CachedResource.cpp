@@ -121,6 +121,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
     , m_sessionID(sessionID)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(std::chrono::system_clock::now())
+    , m_origin(request.releaseOrigin())
     , m_lastDecodedAccessTime(0)
     , m_loadFinishTime(0)
     , m_encodedSize(0)
@@ -148,6 +149,13 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
 #ifndef NDEBUG
     cachedResourceLeakCounter.increment();
 #endif
+    // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
+    ASSERT(m_origin || m_type == CachedResource::MainResource);
+
+    if (m_options.mode != FetchOptions::Mode::SameOrigin && m_origin
+        && !(m_resourceRequest.url().protocolIsData() && m_options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set)
+        && !m_origin->canRequest(m_resourceRequest.url()))
+        setCrossOrigin();
 
     if (!m_resourceRequest.url().hasFragmentIdentifier())
         return;
@@ -244,24 +252,6 @@ void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& loader)
     addAdditionalRequestHeadersToRequest(m_resourceRequest, loader, *this);
 }
 
-void CachedResource::computeOrigin(CachedResourceLoader& loader)
-{
-    if (type() == MainResource)
-        return;
-
-    ASSERT(loader.document());
-    if (m_resourceRequest.hasHTTPOrigin())
-        m_origin = SecurityOrigin::createFromString(m_resourceRequest.httpOrigin());
-    else
-        m_origin = loader.document()->securityOrigin();
-    ASSERT(m_origin);
-
-    if (!(m_resourceRequest.url().protocolIsData() && m_options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set) && !m_origin->canRequest(m_resourceRequest.url()))
-        setCrossOrigin();
-
-    addAdditionalRequestHeaders(loader);
-}
-
 void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 {
     if (!cachedResourceLoader.frame()) {
@@ -330,7 +320,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 #endif
     m_resourceRequest.setPriority(loadPriority());
 
-    computeOrigin(cachedResourceLoader);
+    addAdditionalRequestHeaders(cachedResourceLoader);
 
     // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
     // We should look into removing the expectation of that knowledge from the platform network stacks.
@@ -352,13 +342,11 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     m_status = Pending;
 }
 
-void CachedResource::loadFrom(const CachedResource& resource, CachedResourceLoader& cachedResourceLoader)
+void CachedResource::loadFrom(const CachedResource& resource)
 {
     ASSERT(url() == resource.url());
     ASSERT(type() == resource.type());
     ASSERT(resource.status() == Status::Cached);
-
-    computeOrigin(cachedResourceLoader);
 
     if (isCrossOrigin() && m_options.mode == FetchOptions::Mode::Cors) {
         ASSERT(m_origin);

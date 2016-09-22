@@ -370,6 +370,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
             newRequest.setInitiator(m_options.initiator);
         newRequest.mutableResourceRequest().setAllowCookies(m_options.allowCredentials == AllowStoredCredentials);
+        newRequest.setOrigin(&securityOrigin());
 
         ASSERT(!m_resource);
         // We create an URL here as the request will be moved in requestRawResource

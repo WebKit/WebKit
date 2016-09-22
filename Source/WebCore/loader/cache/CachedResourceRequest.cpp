@@ -79,13 +79,16 @@ const AtomicString& CachedResourceRequest::initiatorName() const
 void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Document& document)
 {
     ASSERT(m_options.mode == FetchOptions::Mode::NoCors);
+    ASSERT(document.securityOrigin());
+
+    m_origin = document.securityOrigin();
+
     if (mode.isNull())
         return;
     m_options.mode = FetchOptions::Mode::Cors;
     m_options.credentials = equalLettersIgnoringASCIICase(mode, "use-credentials") ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     m_options.allowCredentials = equalLettersIgnoringASCIICase(mode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
-    ASSERT(document.securityOrigin());
     updateRequestForAccessControl(m_resourceRequest, *document.securityOrigin(), m_options.allowCredentials);
 }
 

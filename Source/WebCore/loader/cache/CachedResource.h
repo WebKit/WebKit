@@ -211,7 +211,7 @@ public:
     bool isClean() const;
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
 
-    void loadFrom(const CachedResource&, CachedResourceLoader&);
+    void loadFrom(const CachedResource&);
 
     SecurityOrigin* origin() const { return m_origin.get(); }
 
@@ -309,7 +309,6 @@ private:
     std::chrono::microseconds freshnessLifetime(const ResourceResponse&) const;
 
     void addAdditionalRequestHeaders(CachedResourceLoader&);
-    void computeOrigin(CachedResourceLoader&);
     void failBeforeStarting();
 
     HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
