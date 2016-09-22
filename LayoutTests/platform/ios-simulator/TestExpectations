@@ -2382,10 +2382,7 @@ webkit.org/b/153656 displaylists/extent-includes-shadow.html [ Pass Failure ]
 webkit.org/b/153656 displaylists/layer-dispay-list.html [ Pass Failure ]
 webkit.org/b/153656 displaylists/replay-skip-clipped-rect.html [ Pass Failure ]
 
-webkit.org/b/153370 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml.xhtml [ Failure ]
 webkit.org/b/153370 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.html [ Failure ]
-
-webkit.org/b/152438 fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/153311 fast/replaced/preferred-widths.html [ Pass Failure ]
 

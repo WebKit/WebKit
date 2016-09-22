@@ -1,3 +1,10 @@
+2016-09-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update ios-simulator-wk1 test expectations
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-09-21  Chris Dumez  <cdumez@apple.com>
 
         Setting HTMLMeterElement's attributes to non-finite values throws wrong exception type
