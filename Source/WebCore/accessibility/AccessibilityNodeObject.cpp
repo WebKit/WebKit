@@ -677,13 +677,9 @@ bool AccessibilityNodeObject::isPressed() const
     if (!node)
         return false;
 
-    // If this is an ARIA button, check the aria-pressed attribute rather than node()->active()
-    AccessibilityRole ariaRole = ariaRoleAttribute();
-    if (ariaRole == ButtonRole || ariaRole == ToggleButtonRole) {
-        if (equalLettersIgnoringASCIICase(getAttribute(aria_pressedAttr), "true"))
-            return true;
-        return false;
-    }
+    // If this is an toggle button, check the aria-pressed attribute rather than node()->active()
+    if (isToggleButton())
+        return equalLettersIgnoringASCIICase(getAttribute(aria_pressedAttr), "true");
 
     if (!is<Element>(*node))
         return false;
