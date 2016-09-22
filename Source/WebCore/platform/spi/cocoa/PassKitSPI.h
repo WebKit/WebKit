@@ -187,6 +187,9 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod completion:(void (^)(NSArray<PKPaymentSummaryItem *> *summaryItems))completion;
 @end
 
+@interface PKPassLibrary : NSObject
+@end
+
 NS_ASSUME_NONNULL_END
 
 #endif
@@ -209,9 +212,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))sessionBlock;
-@end
-
-@interface PKPassLibrary : NSObject
 @end
 
 NS_ASSUME_NONNULL_END
