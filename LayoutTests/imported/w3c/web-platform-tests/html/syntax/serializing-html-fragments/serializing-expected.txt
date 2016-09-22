@@ -108,137 +108,137 @@ PASS innerHTML Void context node param
 PASS innerHTML Void context node source 
 PASS innerHTML Void context node track 
 PASS innerHTML Void context node wbr 
-FAIL innerHTML void as first child with following siblings area assert_equals: expected "<area><a>test</a><b></b>" but got "<area></area><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings base assert_equals: expected "<base><a>test</a><b></b>" but got "<base></base><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings basefont assert_equals: expected "<basefont><a>test</a><b></b>" but got "<basefont></basefont><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings bgsound assert_equals: expected "<bgsound><a>test</a><b></b>" but got "<bgsound></bgsound><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings br assert_equals: expected "<br><a>test</a><b></b>" but got "<br></br><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings col assert_equals: expected "<col><a>test</a><b></b>" but got "<col></col><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings embed assert_equals: expected "<embed><a>test</a><b></b>" but got "<embed></embed><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings frame assert_equals: expected "<frame><a>test</a><b></b>" but got "<frame></frame><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings hr assert_equals: expected "<hr><a>test</a><b></b>" but got "<hr></hr><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings img assert_equals: expected "<img><a>test</a><b></b>" but got "<img></img><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings input assert_equals: expected "<input><a>test</a><b></b>" but got "<input></input><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings keygen assert_equals: expected "<keygen><a>test</a><b></b>" but got "<keygen></keygen><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings link assert_equals: expected "<link><a>test</a><b></b>" but got "<link></link><a>test</a><b></b>"
+PASS innerHTML void as first child with following siblings area 
+PASS innerHTML void as first child with following siblings base 
+PASS innerHTML void as first child with following siblings basefont 
+PASS innerHTML void as first child with following siblings bgsound 
+PASS innerHTML void as first child with following siblings br 
+PASS innerHTML void as first child with following siblings col 
+PASS innerHTML void as first child with following siblings embed 
+PASS innerHTML void as first child with following siblings frame 
+PASS innerHTML void as first child with following siblings hr 
+PASS innerHTML void as first child with following siblings img 
+PASS innerHTML void as first child with following siblings input 
+PASS innerHTML void as first child with following siblings keygen 
+PASS innerHTML void as first child with following siblings link 
 FAIL innerHTML void as first child with following siblings menuitem assert_equals: expected "<menuitem><a>test</a><b></b>" but got "<menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings meta assert_equals: expected "<meta><a>test</a><b></b>" but got "<meta></meta><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings param assert_equals: expected "<param><a>test</a><b></b>" but got "<param></param><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings source assert_equals: expected "<source><a>test</a><b></b>" but got "<source></source><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings track assert_equals: expected "<track><a>test</a><b></b>" but got "<track></track><a>test</a><b></b>"
-FAIL innerHTML void as first child with following siblings wbr assert_equals: expected "<wbr><a>test</a><b></b>" but got "<wbr></wbr><a>test</a><b></b>"
-FAIL innerHTML void as second child with following siblings area assert_equals: expected "<a>test</a><area><b></b>" but got "<a>test</a><area></area><b></b>"
-FAIL innerHTML void as second child with following siblings base assert_equals: expected "<a>test</a><base><b></b>" but got "<a>test</a><base></base><b></b>"
-FAIL innerHTML void as second child with following siblings basefont assert_equals: expected "<a>test</a><basefont><b></b>" but got "<a>test</a><basefont></basefont><b></b>"
-FAIL innerHTML void as second child with following siblings bgsound assert_equals: expected "<a>test</a><bgsound><b></b>" but got "<a>test</a><bgsound></bgsound><b></b>"
-FAIL innerHTML void as second child with following siblings br assert_equals: expected "<a>test</a><br><b></b>" but got "<a>test</a><br></br><b></b>"
-FAIL innerHTML void as second child with following siblings col assert_equals: expected "<a>test</a><col><b></b>" but got "<a>test</a><col></col><b></b>"
-FAIL innerHTML void as second child with following siblings embed assert_equals: expected "<a>test</a><embed><b></b>" but got "<a>test</a><embed></embed><b></b>"
-FAIL innerHTML void as second child with following siblings frame assert_equals: expected "<a>test</a><frame><b></b>" but got "<a>test</a><frame></frame><b></b>"
-FAIL innerHTML void as second child with following siblings hr assert_equals: expected "<a>test</a><hr><b></b>" but got "<a>test</a><hr></hr><b></b>"
-FAIL innerHTML void as second child with following siblings img assert_equals: expected "<a>test</a><img><b></b>" but got "<a>test</a><img></img><b></b>"
-FAIL innerHTML void as second child with following siblings input assert_equals: expected "<a>test</a><input><b></b>" but got "<a>test</a><input></input><b></b>"
-FAIL innerHTML void as second child with following siblings keygen assert_equals: expected "<a>test</a><keygen><b></b>" but got "<a>test</a><keygen></keygen><b></b>"
-FAIL innerHTML void as second child with following siblings link assert_equals: expected "<a>test</a><link><b></b>" but got "<a>test</a><link></link><b></b>"
+PASS innerHTML void as first child with following siblings meta 
+PASS innerHTML void as first child with following siblings param 
+PASS innerHTML void as first child with following siblings source 
+PASS innerHTML void as first child with following siblings track 
+PASS innerHTML void as first child with following siblings wbr 
+PASS innerHTML void as second child with following siblings area 
+PASS innerHTML void as second child with following siblings base 
+PASS innerHTML void as second child with following siblings basefont 
+PASS innerHTML void as second child with following siblings bgsound 
+PASS innerHTML void as second child with following siblings br 
+PASS innerHTML void as second child with following siblings col 
+PASS innerHTML void as second child with following siblings embed 
+PASS innerHTML void as second child with following siblings frame 
+PASS innerHTML void as second child with following siblings hr 
+PASS innerHTML void as second child with following siblings img 
+PASS innerHTML void as second child with following siblings input 
+PASS innerHTML void as second child with following siblings keygen 
+PASS innerHTML void as second child with following siblings link 
 FAIL innerHTML void as second child with following siblings menuitem assert_equals: expected "<a>test</a><menuitem><b></b>" but got "<a>test</a><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem><b></b>"
-FAIL innerHTML void as second child with following siblings meta assert_equals: expected "<a>test</a><meta><b></b>" but got "<a>test</a><meta></meta><b></b>"
-FAIL innerHTML void as second child with following siblings param assert_equals: expected "<a>test</a><param><b></b>" but got "<a>test</a><param></param><b></b>"
-FAIL innerHTML void as second child with following siblings source assert_equals: expected "<a>test</a><source><b></b>" but got "<a>test</a><source></source><b></b>"
-FAIL innerHTML void as second child with following siblings track assert_equals: expected "<a>test</a><track><b></b>" but got "<a>test</a><track></track><b></b>"
-FAIL innerHTML void as second child with following siblings wbr assert_equals: expected "<a>test</a><wbr><b></b>" but got "<a>test</a><wbr></wbr><b></b>"
-FAIL innerHTML void as last child with preceding siblings area assert_equals: expected "<a>test</a><b></b><area>" but got "<a>test</a><b></b><area></area>"
-FAIL innerHTML void as last child with preceding siblings base assert_equals: expected "<a>test</a><b></b><base>" but got "<a>test</a><b></b><base></base>"
-FAIL innerHTML void as last child with preceding siblings basefont assert_equals: expected "<a>test</a><b></b><basefont>" but got "<a>test</a><b></b><basefont></basefont>"
-FAIL innerHTML void as last child with preceding siblings bgsound assert_equals: expected "<a>test</a><b></b><bgsound>" but got "<a>test</a><b></b><bgsound></bgsound>"
-FAIL innerHTML void as last child with preceding siblings br assert_equals: expected "<a>test</a><b></b><br>" but got "<a>test</a><b></b><br></br>"
-FAIL innerHTML void as last child with preceding siblings col assert_equals: expected "<a>test</a><b></b><col>" but got "<a>test</a><b></b><col></col>"
-FAIL innerHTML void as last child with preceding siblings embed assert_equals: expected "<a>test</a><b></b><embed>" but got "<a>test</a><b></b><embed></embed>"
-FAIL innerHTML void as last child with preceding siblings frame assert_equals: expected "<a>test</a><b></b><frame>" but got "<a>test</a><b></b><frame></frame>"
-FAIL innerHTML void as last child with preceding siblings hr assert_equals: expected "<a>test</a><b></b><hr>" but got "<a>test</a><b></b><hr></hr>"
-FAIL innerHTML void as last child with preceding siblings img assert_equals: expected "<a>test</a><b></b><img>" but got "<a>test</a><b></b><img></img>"
-FAIL innerHTML void as last child with preceding siblings input assert_equals: expected "<a>test</a><b></b><input>" but got "<a>test</a><b></b><input></input>"
-FAIL innerHTML void as last child with preceding siblings keygen assert_equals: expected "<a>test</a><b></b><keygen>" but got "<a>test</a><b></b><keygen></keygen>"
-FAIL innerHTML void as last child with preceding siblings link assert_equals: expected "<a>test</a><b></b><link>" but got "<a>test</a><b></b><link></link>"
+PASS innerHTML void as second child with following siblings meta 
+PASS innerHTML void as second child with following siblings param 
+PASS innerHTML void as second child with following siblings source 
+PASS innerHTML void as second child with following siblings track 
+PASS innerHTML void as second child with following siblings wbr 
+PASS innerHTML void as last child with preceding siblings area 
+PASS innerHTML void as last child with preceding siblings base 
+PASS innerHTML void as last child with preceding siblings basefont 
+PASS innerHTML void as last child with preceding siblings bgsound 
+PASS innerHTML void as last child with preceding siblings br 
+PASS innerHTML void as last child with preceding siblings col 
+PASS innerHTML void as last child with preceding siblings embed 
+PASS innerHTML void as last child with preceding siblings frame 
+PASS innerHTML void as last child with preceding siblings hr 
+PASS innerHTML void as last child with preceding siblings img 
+PASS innerHTML void as last child with preceding siblings input 
+PASS innerHTML void as last child with preceding siblings keygen 
+PASS innerHTML void as last child with preceding siblings link 
 FAIL innerHTML void as last child with preceding siblings menuitem assert_equals: expected "<a>test</a><b></b><menuitem>" but got "<a>test</a><b></b><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem>"
-FAIL innerHTML void as last child with preceding siblings meta assert_equals: expected "<a>test</a><b></b><meta>" but got "<a>test</a><b></b><meta></meta>"
-FAIL innerHTML void as last child with preceding siblings param assert_equals: expected "<a>test</a><b></b><param>" but got "<a>test</a><b></b><param></param>"
-FAIL innerHTML void as last child with preceding siblings source assert_equals: expected "<a>test</a><b></b><source>" but got "<a>test</a><b></b><source></source>"
-FAIL innerHTML void as last child with preceding siblings track assert_equals: expected "<a>test</a><b></b><track>" but got "<a>test</a><b></b><track></track>"
-FAIL innerHTML void as last child with preceding siblings wbr assert_equals: expected "<a>test</a><b></b><wbr>" but got "<a>test</a><b></b><wbr></wbr>"
-FAIL outerHTML Void context node area assert_equals: expected "<area>" but got "<area></area>"
-FAIL outerHTML Void context node base assert_equals: expected "<base>" but got "<base></base>"
-FAIL outerHTML Void context node basefont assert_equals: expected "<basefont>" but got "<basefont></basefont>"
-FAIL outerHTML Void context node bgsound assert_equals: expected "<bgsound>" but got "<bgsound></bgsound>"
-FAIL outerHTML Void context node br assert_equals: expected "<br>" but got "<br></br>"
-FAIL outerHTML Void context node col assert_equals: expected "<col>" but got "<col></col>"
-FAIL outerHTML Void context node embed assert_equals: expected "<embed>" but got "<embed></embed>"
-FAIL outerHTML Void context node frame assert_equals: expected "<frame>" but got "<frame></frame>"
-FAIL outerHTML Void context node hr assert_equals: expected "<hr>" but got "<hr></hr>"
-FAIL outerHTML Void context node img assert_equals: expected "<img>" but got "<img></img>"
-FAIL outerHTML Void context node input assert_equals: expected "<input>" but got "<input></input>"
-FAIL outerHTML Void context node keygen assert_equals: expected "<keygen>" but got "<keygen></keygen>"
-FAIL outerHTML Void context node link assert_equals: expected "<link>" but got "<link></link>"
+PASS innerHTML void as last child with preceding siblings meta 
+PASS innerHTML void as last child with preceding siblings param 
+PASS innerHTML void as last child with preceding siblings source 
+PASS innerHTML void as last child with preceding siblings track 
+PASS innerHTML void as last child with preceding siblings wbr 
+PASS outerHTML Void context node area 
+PASS outerHTML Void context node base 
+PASS outerHTML Void context node basefont 
+PASS outerHTML Void context node bgsound 
+PASS outerHTML Void context node br 
+PASS outerHTML Void context node col 
+PASS outerHTML Void context node embed 
+PASS outerHTML Void context node frame 
+PASS outerHTML Void context node hr 
+PASS outerHTML Void context node img 
+PASS outerHTML Void context node input 
+PASS outerHTML Void context node keygen 
+PASS outerHTML Void context node link 
 FAIL outerHTML Void context node menuitem assert_equals: expected "<menuitem>" but got "<menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem>"
-FAIL outerHTML Void context node meta assert_equals: expected "<meta>" but got "<meta></meta>"
-FAIL outerHTML Void context node param assert_equals: expected "<param>" but got "<param></param>"
-FAIL outerHTML Void context node source assert_equals: expected "<source>" but got "<source></source>"
-FAIL outerHTML Void context node track assert_equals: expected "<track>" but got "<track></track>"
-FAIL outerHTML Void context node wbr assert_equals: expected "<wbr>" but got "<wbr></wbr>"
-FAIL outerHTML void as first child with following siblings area assert_equals: expected "<span><area><a>test</a><b></b></span>" but got "<span><area></area><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings base assert_equals: expected "<span><base><a>test</a><b></b></span>" but got "<span><base></base><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings basefont assert_equals: expected "<span><basefont><a>test</a><b></b></span>" but got "<span><basefont></basefont><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings bgsound assert_equals: expected "<span><bgsound><a>test</a><b></b></span>" but got "<span><bgsound></bgsound><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings br assert_equals: expected "<span><br><a>test</a><b></b></span>" but got "<span><br></br><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings col assert_equals: expected "<span><col><a>test</a><b></b></span>" but got "<span><col></col><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings embed assert_equals: expected "<span><embed><a>test</a><b></b></span>" but got "<span><embed></embed><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings frame assert_equals: expected "<span><frame><a>test</a><b></b></span>" but got "<span><frame></frame><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings hr assert_equals: expected "<span><hr><a>test</a><b></b></span>" but got "<span><hr></hr><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings img assert_equals: expected "<span><img><a>test</a><b></b></span>" but got "<span><img></img><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings input assert_equals: expected "<span><input><a>test</a><b></b></span>" but got "<span><input></input><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings keygen assert_equals: expected "<span><keygen><a>test</a><b></b></span>" but got "<span><keygen></keygen><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings link assert_equals: expected "<span><link><a>test</a><b></b></span>" but got "<span><link></link><a>test</a><b></b></span>"
+PASS outerHTML Void context node meta 
+PASS outerHTML Void context node param 
+PASS outerHTML Void context node source 
+PASS outerHTML Void context node track 
+PASS outerHTML Void context node wbr 
+PASS outerHTML void as first child with following siblings area 
+PASS outerHTML void as first child with following siblings base 
+PASS outerHTML void as first child with following siblings basefont 
+PASS outerHTML void as first child with following siblings bgsound 
+PASS outerHTML void as first child with following siblings br 
+PASS outerHTML void as first child with following siblings col 
+PASS outerHTML void as first child with following siblings embed 
+PASS outerHTML void as first child with following siblings frame 
+PASS outerHTML void as first child with following siblings hr 
+PASS outerHTML void as first child with following siblings img 
+PASS outerHTML void as first child with following siblings input 
+PASS outerHTML void as first child with following siblings keygen 
+PASS outerHTML void as first child with following siblings link 
 FAIL outerHTML void as first child with following siblings menuitem assert_equals: expected "<span><menuitem><a>test</a><b></b></span>" but got "<span><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings meta assert_equals: expected "<span><meta><a>test</a><b></b></span>" but got "<span><meta></meta><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings param assert_equals: expected "<span><param><a>test</a><b></b></span>" but got "<span><param></param><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings source assert_equals: expected "<span><source><a>test</a><b></b></span>" but got "<span><source></source><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings track assert_equals: expected "<span><track><a>test</a><b></b></span>" but got "<span><track></track><a>test</a><b></b></span>"
-FAIL outerHTML void as first child with following siblings wbr assert_equals: expected "<span><wbr><a>test</a><b></b></span>" but got "<span><wbr></wbr><a>test</a><b></b></span>"
-FAIL outerHTML void as second child with following siblings area assert_equals: expected "<span><a>test</a><area><b></b></span>" but got "<span><a>test</a><area></area><b></b></span>"
-FAIL outerHTML void as second child with following siblings base assert_equals: expected "<span><a>test</a><base><b></b></span>" but got "<span><a>test</a><base></base><b></b></span>"
-FAIL outerHTML void as second child with following siblings basefont assert_equals: expected "<span><a>test</a><basefont><b></b></span>" but got "<span><a>test</a><basefont></basefont><b></b></span>"
-FAIL outerHTML void as second child with following siblings bgsound assert_equals: expected "<span><a>test</a><bgsound><b></b></span>" but got "<span><a>test</a><bgsound></bgsound><b></b></span>"
-FAIL outerHTML void as second child with following siblings br assert_equals: expected "<span><a>test</a><br><b></b></span>" but got "<span><a>test</a><br></br><b></b></span>"
-FAIL outerHTML void as second child with following siblings col assert_equals: expected "<span><a>test</a><col><b></b></span>" but got "<span><a>test</a><col></col><b></b></span>"
-FAIL outerHTML void as second child with following siblings embed assert_equals: expected "<span><a>test</a><embed><b></b></span>" but got "<span><a>test</a><embed></embed><b></b></span>"
-FAIL outerHTML void as second child with following siblings frame assert_equals: expected "<span><a>test</a><frame><b></b></span>" but got "<span><a>test</a><frame></frame><b></b></span>"
-FAIL outerHTML void as second child with following siblings hr assert_equals: expected "<span><a>test</a><hr><b></b></span>" but got "<span><a>test</a><hr></hr><b></b></span>"
-FAIL outerHTML void as second child with following siblings img assert_equals: expected "<span><a>test</a><img><b></b></span>" but got "<span><a>test</a><img></img><b></b></span>"
-FAIL outerHTML void as second child with following siblings input assert_equals: expected "<span><a>test</a><input><b></b></span>" but got "<span><a>test</a><input></input><b></b></span>"
-FAIL outerHTML void as second child with following siblings keygen assert_equals: expected "<span><a>test</a><keygen><b></b></span>" but got "<span><a>test</a><keygen></keygen><b></b></span>"
-FAIL outerHTML void as second child with following siblings link assert_equals: expected "<span><a>test</a><link><b></b></span>" but got "<span><a>test</a><link></link><b></b></span>"
+PASS outerHTML void as first child with following siblings meta 
+PASS outerHTML void as first child with following siblings param 
+PASS outerHTML void as first child with following siblings source 
+PASS outerHTML void as first child with following siblings track 
+PASS outerHTML void as first child with following siblings wbr 
+PASS outerHTML void as second child with following siblings area 
+PASS outerHTML void as second child with following siblings base 
+PASS outerHTML void as second child with following siblings basefont 
+PASS outerHTML void as second child with following siblings bgsound 
+PASS outerHTML void as second child with following siblings br 
+PASS outerHTML void as second child with following siblings col 
+PASS outerHTML void as second child with following siblings embed 
+PASS outerHTML void as second child with following siblings frame 
+PASS outerHTML void as second child with following siblings hr 
+PASS outerHTML void as second child with following siblings img 
+PASS outerHTML void as second child with following siblings input 
+PASS outerHTML void as second child with following siblings keygen 
+PASS outerHTML void as second child with following siblings link 
 FAIL outerHTML void as second child with following siblings menuitem assert_equals: expected "<span><a>test</a><menuitem><b></b></span>" but got "<span><a>test</a><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem><b></b></span>"
-FAIL outerHTML void as second child with following siblings meta assert_equals: expected "<span><a>test</a><meta><b></b></span>" but got "<span><a>test</a><meta></meta><b></b></span>"
-FAIL outerHTML void as second child with following siblings param assert_equals: expected "<span><a>test</a><param><b></b></span>" but got "<span><a>test</a><param></param><b></b></span>"
-FAIL outerHTML void as second child with following siblings source assert_equals: expected "<span><a>test</a><source><b></b></span>" but got "<span><a>test</a><source></source><b></b></span>"
-FAIL outerHTML void as second child with following siblings track assert_equals: expected "<span><a>test</a><track><b></b></span>" but got "<span><a>test</a><track></track><b></b></span>"
-FAIL outerHTML void as second child with following siblings wbr assert_equals: expected "<span><a>test</a><wbr><b></b></span>" but got "<span><a>test</a><wbr></wbr><b></b></span>"
-FAIL outerHTML void as last child with preceding siblings area assert_equals: expected "<span><a>test</a><b></b><area></span>" but got "<span><a>test</a><b></b><area></area></span>"
-FAIL outerHTML void as last child with preceding siblings base assert_equals: expected "<span><a>test</a><b></b><base></span>" but got "<span><a>test</a><b></b><base></base></span>"
-FAIL outerHTML void as last child with preceding siblings basefont assert_equals: expected "<span><a>test</a><b></b><basefont></span>" but got "<span><a>test</a><b></b><basefont></basefont></span>"
-FAIL outerHTML void as last child with preceding siblings bgsound assert_equals: expected "<span><a>test</a><b></b><bgsound></span>" but got "<span><a>test</a><b></b><bgsound></bgsound></span>"
-FAIL outerHTML void as last child with preceding siblings br assert_equals: expected "<span><a>test</a><b></b><br></span>" but got "<span><a>test</a><b></b><br></br></span>"
-FAIL outerHTML void as last child with preceding siblings col assert_equals: expected "<span><a>test</a><b></b><col></span>" but got "<span><a>test</a><b></b><col></col></span>"
-FAIL outerHTML void as last child with preceding siblings embed assert_equals: expected "<span><a>test</a><b></b><embed></span>" but got "<span><a>test</a><b></b><embed></embed></span>"
-FAIL outerHTML void as last child with preceding siblings frame assert_equals: expected "<span><a>test</a><b></b><frame></span>" but got "<span><a>test</a><b></b><frame></frame></span>"
-FAIL outerHTML void as last child with preceding siblings hr assert_equals: expected "<span><a>test</a><b></b><hr></span>" but got "<span><a>test</a><b></b><hr></hr></span>"
-FAIL outerHTML void as last child with preceding siblings img assert_equals: expected "<span><a>test</a><b></b><img></span>" but got "<span><a>test</a><b></b><img></img></span>"
-FAIL outerHTML void as last child with preceding siblings input assert_equals: expected "<span><a>test</a><b></b><input></span>" but got "<span><a>test</a><b></b><input></input></span>"
-FAIL outerHTML void as last child with preceding siblings keygen assert_equals: expected "<span><a>test</a><b></b><keygen></span>" but got "<span><a>test</a><b></b><keygen></keygen></span>"
-FAIL outerHTML void as last child with preceding siblings link assert_equals: expected "<span><a>test</a><b></b><link></span>" but got "<span><a>test</a><b></b><link></link></span>"
+PASS outerHTML void as second child with following siblings meta 
+PASS outerHTML void as second child with following siblings param 
+PASS outerHTML void as second child with following siblings source 
+PASS outerHTML void as second child with following siblings track 
+PASS outerHTML void as second child with following siblings wbr 
+PASS outerHTML void as last child with preceding siblings area 
+PASS outerHTML void as last child with preceding siblings base 
+PASS outerHTML void as last child with preceding siblings basefont 
+PASS outerHTML void as last child with preceding siblings bgsound 
+PASS outerHTML void as last child with preceding siblings br 
+PASS outerHTML void as last child with preceding siblings col 
+PASS outerHTML void as last child with preceding siblings embed 
+PASS outerHTML void as last child with preceding siblings frame 
+PASS outerHTML void as last child with preceding siblings hr 
+PASS outerHTML void as last child with preceding siblings img 
+PASS outerHTML void as last child with preceding siblings input 
+PASS outerHTML void as last child with preceding siblings keygen 
+PASS outerHTML void as last child with preceding siblings link 
 FAIL outerHTML void as last child with preceding siblings menuitem assert_equals: expected "<span><a>test</a><b></b><menuitem></span>" but got "<span><a>test</a><b></b><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem></span>"
-FAIL outerHTML void as last child with preceding siblings meta assert_equals: expected "<span><a>test</a><b></b><meta></span>" but got "<span><a>test</a><b></b><meta></meta></span>"
-FAIL outerHTML void as last child with preceding siblings param assert_equals: expected "<span><a>test</a><b></b><param></span>" but got "<span><a>test</a><b></b><param></param></span>"
-FAIL outerHTML void as last child with preceding siblings source assert_equals: expected "<span><a>test</a><b></b><source></span>" but got "<span><a>test</a><b></b><source></source></span>"
-FAIL outerHTML void as last child with preceding siblings track assert_equals: expected "<span><a>test</a><b></b><track></span>" but got "<span><a>test</a><b></b><track></track></span>"
-FAIL outerHTML void as last child with preceding siblings wbr assert_equals: expected "<span><a>test</a><b></b><wbr></span>" but got "<span><a>test</a><b></b><wbr></wbr></span>"
+PASS outerHTML void as last child with preceding siblings meta 
+PASS outerHTML void as last child with preceding siblings param 
+PASS outerHTML void as last child with preceding siblings source 
+PASS outerHTML void as last child with preceding siblings track 
+PASS outerHTML void as last child with preceding siblings wbr 
 
