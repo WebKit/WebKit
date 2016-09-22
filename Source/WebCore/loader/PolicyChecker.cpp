@@ -55,10 +55,16 @@ static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* owne
 {
     if (!ownerElement)
         return true;
+    // Elements in user agent show tree should load whatever the embedding document policy is.
+    if (ownerElement->isInUserAgentShadowTree())
+        return true;
+
     auto redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
+
+    ASSERT(ownerElement->document().contentSecurityPolicy());
     if (is<HTMLPlugInElement>(ownerElement))
-        return ownerElement->document().contentSecurityPolicy()->allowObjectFromSource(url, ownerElement->isInUserAgentShadowTree(), redirectResponseReceived);
-    return ownerElement->document().contentSecurityPolicy()->allowChildFrameFromSource(url, ownerElement->isInUserAgentShadowTree(), redirectResponseReceived);
+        return ownerElement->document().contentSecurityPolicy()->allowObjectFromSource(url, redirectResponseReceived);
+    return ownerElement->document().contentSecurityPolicy()->allowChildFrameFromSource(url, redirectResponseReceived);
 }
 
 PolicyChecker::PolicyChecker(Frame& frame)

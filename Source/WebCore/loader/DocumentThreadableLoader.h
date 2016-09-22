@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "ContentSecurityPolicy.h"
 #include "CrossOriginPreflightChecker.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
@@ -94,7 +95,7 @@ namespace WebCore {
 
         void loadRequest(ResourceRequest&&, SecurityCheckPolicy);
         bool isAllowedRedirect(const URL&);
-        bool isAllowedByContentSecurityPolicy(const URL&, bool didRedirect = false);
+        bool isAllowedByContentSecurityPolicy(const URL&, ContentSecurityPolicy::RedirectResponseReceived);
 
         bool isXMLHttpRequest() const final;
 

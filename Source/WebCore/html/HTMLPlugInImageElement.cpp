@@ -775,6 +775,10 @@ void HTMLPlugInImageElement::defaultEventHandler(Event& event)
 
 bool HTMLPlugInImageElement::allowedToLoadPluginContent(const String& url, const String& mimeType) const
 {
+    // Elements in user agent show tree should load whatever the embedding document policy is.
+    if (isInUserAgentShadowTree())
+        return true;
+
     URL completedURL;
     if (!url.isEmpty())
         completedURL = document().completeURL(url);
@@ -784,10 +788,12 @@ bool HTMLPlugInImageElement::allowedToLoadPluginContent(const String& url, const
 
     contentSecurityPolicy.upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    String declaredMimeType = document().isPluginDocument() && document().ownerElement() ?
+    if (!contentSecurityPolicy.allowObjectFromSource(completedURL))
+        return false;
+
+    auto& declaredMimeType = document().isPluginDocument() && document().ownerElement() ?
         document().ownerElement()->attributeWithoutSynchronization(HTMLNames::typeAttr) : attributeWithoutSynchronization(HTMLNames::typeAttr);
-    bool isInUserAgentShadowTree = this->isInUserAgentShadowTree();
-    return contentSecurityPolicy.allowObjectFromSource(completedURL, isInUserAgentShadowTree) && contentSecurityPolicy.allowPluginType(mimeType, declaredMimeType, completedURL, isInUserAgentShadowTree);
+    return contentSecurityPolicy.allowPluginType(mimeType, declaredMimeType, completedURL);
 }
 
 bool HTMLPlugInImageElement::requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)

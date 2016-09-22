@@ -248,9 +248,11 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
         }
 
         const char javaAppletMimeType[] = "application/x-java-applet";
-        bool isInUserAgentShadowTree = element.isInUserAgentShadowTree();
-        if (!element.document().contentSecurityPolicy()->allowObjectFromSource(codeBaseURL, isInUserAgentShadowTree)
-            || !element.document().contentSecurityPolicy()->allowPluginType(javaAppletMimeType, javaAppletMimeType, codeBaseURL, isInUserAgentShadowTree))
+        ASSERT(element.document().contentSecurityPolicy());
+        auto& contentSecurityPolicy = *element.document().contentSecurityPolicy();
+        // Elements in user agent show tree should load whatever the embedding document policy is.
+        if (!element.isInUserAgentShadowTree()
+            && (!contentSecurityPolicy.allowObjectFromSource(codeBaseURL) || !contentSecurityPolicy.allowPluginType(javaAppletMimeType, javaAppletMimeType, codeBaseURL)))
             return nullptr;
     }
 

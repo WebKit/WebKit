@@ -63,7 +63,7 @@ URL AbstractWorker::resolveURL(const String& url, bool shouldBypassMainWorldCont
     }
 
     ASSERT(scriptExecutionContext()->contentSecurityPolicy());
-    if (!scriptExecutionContext()->contentSecurityPolicy()->allowChildContextFromSource(scriptURL, shouldBypassMainWorldContentSecurityPolicy)) {
+    if (!shouldBypassMainWorldContentSecurityPolicy && !scriptExecutionContext()->contentSecurityPolicy()->allowChildContextFromSource(scriptURL)) {
         ec = SECURITY_ERR;
         return URL();
     }

@@ -494,6 +494,8 @@ bool XMLHttpRequest::initSend(ExceptionCode& ec)
     if (!scriptExecutionContext())
         return false;
 
+    auto& context = *scriptExecutionContext();
+
     if (m_state != OPENED || m_sendFlag) {
         ec = INVALID_STATE_ERR;
         return false;
@@ -501,7 +503,7 @@ bool XMLHttpRequest::initSend(ExceptionCode& ec)
     ASSERT(!m_loader);
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(m_url, scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy())) {
+    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.contentSecurityPolicy()->allowConnectToSource(m_url)) {
         if (m_async) {
             setPendingActivity(this);
             m_timeoutTimer.stop();

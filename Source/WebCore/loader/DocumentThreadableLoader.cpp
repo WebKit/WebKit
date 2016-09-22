@@ -35,7 +35,6 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
-#include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightChecker.h"
 #include "CrossOriginPreflightResultCache.h"
@@ -98,7 +97,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     // Referrer and Origin headers should be set after the preflight if any.
     ASSERT(!request.hasHTTPReferrer() && !request.hasHTTPOrigin());
 
-    ASSERT_WITH_SECURITY_IMPLICATION(isAllowedByContentSecurityPolicy(request.url()));
+    ASSERT_WITH_SECURITY_IMPLICATION(isAllowedByContentSecurityPolicy(request.url(), ContentSecurityPolicy::RedirectResponseReceived::No));
 
     m_options.allowCredentials = (m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_sameOriginRequest)) ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
@@ -223,7 +222,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     ASSERT_UNUSED(resource, resource == m_resource);
 
     Ref<DocumentThreadableLoader> protectedThis(*this);
-    if (!isAllowedByContentSecurityPolicy(request.url(), !redirectResponse.isNull())) {
+    if (!isAllowedByContentSecurityPolicy(request.url(), redirectResponse.isNull() ? ContentSecurityPolicy::RedirectResponseReceived::No : ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
         reportContentSecurityPolicyError(*m_client, redirectResponse.url());
         clearResource();
         return;
@@ -417,7 +416,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     // requested. Also comparing the request and response URLs as strings will fail if the requestURL still has its credentials.
     bool didRedirect = requestURL != response.url();
     if (didRedirect) {
-        if (!isAllowedByContentSecurityPolicy(response.url(), didRedirect)) {
+        if (!isAllowedByContentSecurityPolicy(response.url(), ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
             reportContentSecurityPolicyError(*m_client, requestURL);
             return;
         }
@@ -448,20 +447,17 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     didFinishLoading(identifier, 0.0);
 }
 
-bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, bool didRedirect)
+bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived)
 {
-    bool overrideContentSecurityPolicy = false;
-    ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived = didRedirect ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
-
     switch (m_options.contentSecurityPolicyEnforcement) {
     case ContentSecurityPolicyEnforcement::DoNotEnforce:
         return true;
     case ContentSecurityPolicyEnforcement::EnforceChildSrcDirective:
-        return contentSecurityPolicy().allowChildContextFromSource(url, overrideContentSecurityPolicy, redirectResponseReceived);
+        return contentSecurityPolicy().allowChildContextFromSource(url, redirectResponseReceived);
     case ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective:
-        return contentSecurityPolicy().allowConnectToSource(url, overrideContentSecurityPolicy, redirectResponseReceived);
+        return contentSecurityPolicy().allowConnectToSource(url, redirectResponseReceived);
     case ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective:
-        return contentSecurityPolicy().allowScriptFromSource(url, overrideContentSecurityPolicy, redirectResponseReceived);
+        return contentSecurityPolicy().allowScriptFromSource(url, redirectResponseReceived);
     }
     ASSERT_NOT_REACHED();
     return false;
