@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,10 +38,12 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "Length.h"
+#include "Logging.h"
 #include "SharedBuffer.h"
 #include "TextStream.h"
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGPDFDocument.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RAMSize.h>
 #include <wtf/RetainPtr.h>
@@ -181,13 +183,19 @@ void PDFDocumentImage::decodedSizeChanged(size_t newCachedBytes)
     if (!m_cachedBytes && !newCachedBytes)
         return;
 
+    long long deltaBytes = m_cachedBytes - newCachedBytes;
+
+    Checked<int> checkedDeltaBytes = deltaBytes;
     if (imageObserver())
-        imageObserver()->decodedSizeChanged(this, -safeCast<int>(m_cachedBytes) + newCachedBytes);
+        imageObserver()->decodedSizeChanged(this, -checkedDeltaBytes.unsafeGet());
 
     ASSERT(s_allDecodedDataSize >= m_cachedBytes);
     // Update with the difference in two steps to avoid unsigned underflow subtraction.
-    s_allDecodedDataSize -= m_cachedBytes;
-    s_allDecodedDataSize += newCachedBytes;
+    if (!WTF::safeSub(s_allDecodedDataSize, m_cachedBytes, s_allDecodedDataSize))
+        CRASH_WITH_SECURITY_IMPLICATION();
+
+    if (!WTF::safeAdd(s_allDecodedDataSize, newCachedBytes, s_allDecodedDataSize))
+        CRASH_WITH_SECURITY_IMPLICATION();
 
     m_cachedBytes = newCachedBytes;
 }
@@ -235,7 +243,17 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     // Cache the PDF image only if the size of the new image won't exceed the cache threshold.
     if (m_pdfImageCachingPolicy == PDFImageCachingBelowMemoryLimit) {
         IntSize scaledSize = ImageBuffer::compatibleBufferSize(cachedImageSize, context);
-        if (s_allDecodedDataSize + safeCast<size_t>(scaledSize.width()) * scaledSize.height() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
+        Checked<size_t, RecordOverflow> scaledBytes = scaledSize.area() * 4;
+
+        if (scaledBytes.hasOverflowed()) {
+            LOG(Images, "PDFDocumentImage %p updateCachedImageIfNeeded scaledBytes overflowed size_t.", this);
+            destroyDecodedData();
+            return;
+        }
+
+        Checked<size_t, RecordOverflow> potentialDecodedDataSize = s_allDecodedDataSize + scaledBytes - m_cachedBytes;
+        if (potentialDecodedDataSize.hasOverflowed() || potentialDecodedDataSize.unsafeGet() > s_maxDecodedDataSize) {
+            LOG(Images, "PDFDocumentImage %p updateCachedImageIfNeeded potentialDecodedDataSize overflowed size_t.", this);
             destroyDecodedData();
             return;
         }
@@ -259,7 +277,14 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     m_cachedSourceRect = srcRect;
 
     IntSize internalSize = m_cachedImageBuffer->internalSize();
-    decodedSizeChanged(safeCast<size_t>(internalSize.width()) * internalSize.height() * 4);
+    Checked<size_t, RecordOverflow> scaledBytes = internalSize.area() * 4;
+    if (scaledBytes.hasOverflowed()) {
+        LOG(Images, "PDFDocumentImage %p updateCachedImageIfNeeded scaledBytes overflowed size_t.", this);
+        destroyDecodedData();
+        return;
+    }
+
+    decodedSizeChanged(scaledBytes.unsafeGet());
 }
 
 void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, ImageOrientationDescription)
