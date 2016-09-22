@@ -47,7 +47,6 @@ namespace JSC {
 
 class BytecodeRewriter;
 class Debugger;
-class FunctionMetadataNode;
 class FunctionExecutable;
 class ParserError;
 class ScriptExecutable;

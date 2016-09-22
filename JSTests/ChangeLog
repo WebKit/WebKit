@@ -1,3 +1,16 @@
+2016-09-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Function length should be number of parameters before parameters with default values
+        https://bugs.webkit.org/show_bug.cgi?id=162377
+
+        Reviewed by Saam Barati.
+
+        * stress/es6-default-parameters.js:
+        Add our own tests for function lengths with default parameters.
+
+        * test262.yaml:
+        We now pass all dflt-length tests.
+
 2016-09-20  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Do not use EagerRun on tests counting recompilation

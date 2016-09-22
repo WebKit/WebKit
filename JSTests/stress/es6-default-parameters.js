@@ -221,6 +221,115 @@ augmentsArguments5(20);
     }
 })();
 
+// Length
+
+function named1(a){};
+function named2(a=1){};
+function named3(a,b){};
+function named4(a,b=1){};
+function named5(a=1,b=1){};
+function named6(a,b,c){};
+function named7(a=1,b,c){};
+function named8(a,b=1,c){};
+function named9(a,b,c=1){};
+function named10(a,...b){};
+function named11(a=1,...b){};
+function named12(a=10,b,c=20,...r){};
+
+assert( named1.length === 1 );
+assert( named2.length === 0 );
+assert( named3.length === 2 );
+assert( named4.length === 1 );
+assert( named5.length === 0 );
+assert( named6.length === 3 );
+assert( named7.length === 0 );
+assert( named8.length === 1 );
+assert( named9.length === 2 );
+assert( named10.length === 1 );
+assert( named11.length === 0 );
+assert( named12.length === 0 );
+
+assert( (function(a){}).length === 1 );
+assert( (function(a=1){}).length === 0 );
+assert( (function(a,b){}).length === 2 );
+assert( (function(a,b=1){}).length === 1 );
+assert( (function(a=1,b=1){}).length === 0 );
+assert( (function(a,b,c){}).length === 3 );
+assert( (function(a=1,b,c){}).length === 0 );
+assert( (function(a,b=1,c){}).length === 1 );
+assert( (function(a,b,c=1){}).length === 2 );
+assert( (function(a,...b){}).length === 1 );
+assert( (function(a=1,...b){}).length === 0 );
+assert( (function(a=10,b,c=20,...r){}).length === 0 );
+
+assert( (function*(a){}).length === 1 );
+assert( (function*(a=1){}).length === 0 );
+assert( (function*(a,b){}).length === 2 );
+assert( (function*(a,b=1){}).length === 1 );
+assert( (function*(a=1,b=1){}).length === 0 );
+assert( (function*(a,b,c){}).length === 3 );
+assert( (function*(a=1,b,c){}).length === 0 );
+assert( (function*(a,b=1,c){}).length === 1 );
+assert( (function*(a,b,c=1){}).length === 2 );
+assert( (function*(a,...b){}).length === 1 );
+assert( (function*(a=1,...b){}).length === 0 );
+assert( (function*(a=10,b,c=20,...r){}).length === 0 );
+
+assert( ((a)=>{}).length === 1 );
+assert( ((a=1)=>{}).length === 0 );
+assert( ((a,b)=>{}).length === 2 );
+assert( ((a,b=1)=>{}).length === 1 );
+assert( ((a=1,b=1)=>{}).length === 0 );
+assert( ((a,b,c)=>{}).length === 3 );
+assert( ((a=1,b,c)=>{}).length === 0 );
+assert( ((a,b=1,c)=>{}).length === 1 );
+assert( ((a,b,c=1)=>{}).length === 2 );
+assert( ((a,...b)=>{}).length === 1 );
+assert( ((a=1,...b)=>{}).length === 0 );
+assert( ((a=10,b,c=20,...r)=>{}).length === 0 );
+
+assert( Object.getOwnPropertyDescriptor({set setter(a){}}, "setter").set.length === 1 );
+assert( Object.getOwnPropertyDescriptor({set setter(a=1){}}, "setter").set.length === 0 );
+
+assert( ({method(a){}}).method.length === 1 );
+assert( ({method(a=1){}}).method.length === 0 );
+assert( ({method(a,b){}}).method.length === 2 );
+assert( ({method(a,b=1){}}).method.length === 1 );
+assert( ({method(a=1,b=1){}}).method.length === 0 );
+assert( ({method(a,b,c){}}).method.length === 3 );
+assert( ({method(a=1,b,c){}}).method.length === 0 );
+assert( ({method(a,b=1,c){}}).method.length === 1 );
+assert( ({method(a,b,c=1){}}).method.length === 2 );
+assert( ({method(a,...b){}}).method.length === 1 );
+assert( ({method(a=1,...b){}}).method.length === 0 );
+assert( ({method(a=10,b,c=20,...r){}}).method.length === 0 );
+
+assert( ({*method(a){}}).method.length === 1 );
+assert( ({*method(a=1){}}).method.length === 0 );
+assert( ({*method(a,b){}}).method.length === 2 );
+assert( ({*method(a,b=1){}}).method.length === 1 );
+assert( ({*method(a=1,b=1){}}).method.length === 0 );
+assert( ({*method(a,b,c){}}).method.length === 3 );
+assert( ({*method(a=1,b,c){}}).method.length === 0 );
+assert( ({*method(a,b=1,c){}}).method.length === 1 );
+assert( ({*method(a,b,c=1){}}).method.length === 2 );
+assert( ({*method(a,...b){}}).method.length === 1 );
+assert( ({*method(a=1,...b){}}).method.length === 0 );
+assert( ({*method(a=10,b,c=20,...r){}}).method.length === 0 );
+
+assert( (class {static method(a){}}).method.length === 1 );
+assert( (class {static method(a=1){}}).method.length === 0 );
+assert( (class {static method(a,b){}}).method.length === 2 );
+assert( (class {static method(a,b=1){}}).method.length === 1 );
+assert( (class {static method(a=1,b=1){}}).method.length === 0 );
+assert( (class {static method(a,b,c){}}).method.length === 3 );
+assert( (class {static method(a=1,b,c){}}).method.length === 0 );
+assert( (class {static method(a,b=1,c){}}).method.length === 1 );
+assert( (class {static method(a,b,c=1){}}).method.length === 2 );
+assert( (class {static method(a,...b){}}).method.length === 1 );
+assert( (class {static method(a=1,...b){}}).method.length === 0 );
+assert( (class {static method(a=10,b,c=20,...r){}}).method.length === 0 );
+
 // TDZ errors.
 ;(function() {
     function basicError(x = y, y) { }

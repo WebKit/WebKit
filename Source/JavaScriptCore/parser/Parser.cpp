@@ -378,7 +378,8 @@ bool Parser<LexerType>::isArrowFunctionParameters()
             fakeScope->setSourceParseMode(SourceParseMode::ArrowFunctionMode);
 
             unsigned parametersCount = 0;
-            isArrowFunction = parseFormalParameters(syntaxChecker, syntaxChecker.createFormalParameterList(), parametersCount) && consume(CLOSEPAREN) && match(ARROWFUNCTION);
+            unsigned functionLength = 0;
+            isArrowFunction = parseFormalParameters(syntaxChecker, syntaxChecker.createFormalParameterList(), parametersCount, functionLength) && consume(CLOSEPAREN) && match(ARROWFUNCTION);
                 
             popScope(fakeScope, syntaxChecker.NeedsFreeVariableInfo);
         }
@@ -525,7 +526,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGenerato
         failIfFalse(parseSourceElements(generatorFunctionContext, mode), "Cannot parse the body of a generator");
         popScope(generatorBodyScope, TreeBuilder::NeedsFreeVariableInfo);
     }
-    info.body = context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, tokenColumn(), functionKeywordStart, functionNameStart, parametersStart, strictMode(), ConstructorKind::None, m_superBinding, info.parameterCount, SourceParseMode::GeneratorBodyMode, false);
+    info.body = context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, tokenColumn(), functionKeywordStart, functionNameStart, parametersStart, strictMode(), ConstructorKind::None, m_superBinding, info.parameterCount, info.functionLength, SourceParseMode::GeneratorBodyMode, false);
 
     info.endLine = tokenLine();
     info.endOffset = m_token.m_data.offset;
@@ -1743,7 +1744,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
 }
 
 template <typename LexerType>
-template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeBuilder& context, TreeFormalParameterList list, unsigned& parameterCount)
+template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeBuilder& context, TreeFormalParameterList list, unsigned& parameterCount, unsigned& functionLength)
 {
 #define failIfDuplicateIfViolation() \
     if (duplicateParameter) {\
@@ -1783,8 +1784,11 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
         if (isRestParameter || defaultValue || hasDestructuringPattern)
             currentScope()->setHasNonSimpleParameterList();
         context.appendParameter(list, parameter, defaultValue);
-        if (!isRestParameter)
+        if (!isRestParameter) {
             parameterCount++;
+            if (!hasDefaultParameterValues)
+                functionLength++;
+        }
     } while (!isRestParameter && consume(COMMA));
 
     return true;
@@ -1793,15 +1797,15 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
 
 template <typename LexerType>
 template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBody(
-    TreeBuilder& context, SyntaxChecker& syntaxChecker, const JSTokenLocation& startLocation, int startColumn, int functionKeywordStart, int functionNameStart, int parametersStart, 
-    ConstructorKind constructorKind, SuperBinding superBinding, FunctionBodyType bodyType, unsigned parameterCount, SourceParseMode parseMode)
+    TreeBuilder& context, SyntaxChecker& syntaxChecker, const JSTokenLocation& startLocation, int startColumn, int functionKeywordStart, int functionNameStart, int parametersStart,
+    ConstructorKind constructorKind, SuperBinding superBinding, FunctionBodyType bodyType, unsigned parameterCount, unsigned functionLength, SourceParseMode parseMode)
 {
     bool isArrowFunctionBodyExpression = bodyType == ArrowFunctionBodyExpression;
     if (!isArrowFunctionBodyExpression) {
         next();
         if (match(CLOSEBRACE)) {
             unsigned endColumn = tokenColumn();
-            return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, superBinding, parameterCount, parseMode, isArrowFunctionBodyExpression);
+            return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, superBinding, parameterCount, functionLength, parseMode, isArrowFunctionBodyExpression);
         }
     }
 
@@ -1812,7 +1816,7 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     else
         failIfFalse(parseSourceElements(syntaxChecker, CheckForStrictMode), bodyType == StandardFunctionBodyBlock ? "Cannot parse body of this function" : "Cannot parse body of this arrow function");
     unsigned endColumn = tokenColumn();
-    return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, superBinding, parameterCount, parseMode, isArrowFunctionBodyExpression);
+    return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, superBinding, parameterCount, functionLength, parseMode, isArrowFunctionBodyExpression);
 }
 
 static const char* stringForFunctionMode(SourceParseMode mode)
@@ -1856,14 +1860,16 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
             if (match(OPENPAREN)) {
                 next();
                 
-                if (match(CLOSEPAREN))
+                if (match(CLOSEPAREN)) {
                     functionInfo.parameterCount = 0;
-                else
-                    failIfFalse(parseFormalParameters(context, parameterList, functionInfo.parameterCount), "Cannot parse parameters for this ", stringForFunctionMode(mode));
+                    functionInfo.functionLength = 0;
+                } else
+                    failIfFalse(parseFormalParameters(context, parameterList, functionInfo.parameterCount, functionInfo.functionLength), "Cannot parse parameters for this ", stringForFunctionMode(mode));
                 
                 consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
             } else {
                 functionInfo.parameterCount = 1;
+                functionInfo.functionLength = 1;
                 auto parameter = parseDestructuringPattern(context, DestructuringKind::DestructureToParameters, ExportType::NotExported);
                 failIfFalse(parameter, "Cannot parse parameter pattern");
                 context.appendParameter(parameterList, parameter, 0);
@@ -1881,6 +1887,7 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
     if (mode == SourceParseMode::GetterMode) {
         consumeOrFail(CLOSEPAREN, "getter functions must have no parameters");
         functionInfo.parameterCount = 0;
+        functionInfo.functionLength = 0;
     } else if (mode == SourceParseMode::SetterMode) {
         failIfTrue(match(CLOSEPAREN), "setter functions must have one parameter");
         const Identifier* duplicateParameter = nullptr;
@@ -1891,13 +1898,15 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
         semanticFailIfTrue(duplicateParameter && defaultValue, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with default parameter values");
         context.appendParameter(parameterList, parameter, defaultValue);
         functionInfo.parameterCount = 1;
+        functionInfo.functionLength = defaultValue ? 0 : 1;
         failIfTrue(match(COMMA), "setter functions must have one parameter");
         consumeOrFail(CLOSEPAREN, "Expected a ')' after a parameter declaration");
     } else {
-        if (match(CLOSEPAREN))
+        if (match(CLOSEPAREN)) {
             functionInfo.parameterCount = 0;
-        else
-            failIfFalse(parseFormalParameters(context, parameterList, functionInfo.parameterCount), "Cannot parse parameters for this ", stringForFunctionMode(mode));
+            functionInfo.functionLength = 0;
+        } else
+            failIfFalse(parseFormalParameters(context, parameterList, functionInfo.parameterCount, functionInfo.functionLength), "Cannot parse parameters for this ", stringForFunctionMode(mode));
         consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
     }
 
@@ -1990,9 +1999,12 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
             functionInfo.body = context.createFunctionMetadata(
                 startLocation, endLocation, startColumn, bodyEndColumn, 
                 functionKeywordStart, functionNameStart, parametersStart, 
-                cachedInfo->strictMode, constructorKind, expectedSuperBinding, cachedInfo->parameterCount, mode, functionBodyType == ArrowFunctionBodyExpression);
+                cachedInfo->strictMode, constructorKind, expectedSuperBinding,
+                cachedInfo->parameterCount, cachedInfo->functionLength,
+                mode, functionBodyType == ArrowFunctionBodyExpression);
             functionInfo.endOffset = cachedInfo->endFunctionOffset;
             functionInfo.parameterCount = cachedInfo->parameterCount;
+            functionInfo.functionLength = cachedInfo->functionLength;
 
             functionScope->restoreFromSourceProviderCache(cachedInfo);
             popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo);
@@ -2149,7 +2161,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     });
 
     auto performParsingFunctionBody = [&] {
-        return parseFunctionBody(context, syntaxChecker, startLocation, startColumn, functionKeywordStart, functionNameStart, parametersStart, constructorKind, expectedSuperBinding, functionBodyType, functionInfo.parameterCount, mode);
+        return parseFunctionBody(context, syntaxChecker, startLocation, startColumn, functionKeywordStart, functionNameStart, parametersStart, constructorKind, expectedSuperBinding, functionBodyType, functionInfo.parameterCount, functionInfo.functionLength, mode);
     };
 
     if (mode == SourceParseMode::GeneratorWrapperFunctionMode) {
@@ -2202,6 +2214,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         parameters.lastTokenEndOffset = location.endOffset;
         parameters.lastTokenLineStartOffset = location.lineStartOffset;
         parameters.parameterCount = functionInfo.parameterCount;
+        parameters.functionLength = functionInfo.functionLength;
         parameters.constructorKind = constructorKind;
         parameters.expectedSuperBinding = expectedSuperBinding;
         if (functionBodyType == ArrowFunctionBodyExpression) {

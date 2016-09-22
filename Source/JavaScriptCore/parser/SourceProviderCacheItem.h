@@ -41,6 +41,7 @@ struct SourceProviderCacheItemCreationParameters {
     unsigned lastTokenLineStartOffset;
     unsigned endFunctionOffset;
     unsigned parameterCount;
+    unsigned functionLength;
     bool needsFullActivation;
     bool usesEval;
     bool strictMode;
@@ -88,6 +89,7 @@ public:
     unsigned constructorKind : 2; // ConstructorKind
     unsigned parameterCount : 31;
     unsigned expectedSuperBinding : 1; // SuperBinding
+    unsigned functionLength;
     unsigned lastTokenLineStartOffset;
     unsigned usedVariablesCount;
     InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures;
@@ -128,6 +130,7 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , constructorKind(static_cast<unsigned>(parameters.constructorKind))
     , parameterCount(parameters.parameterCount)
     , expectedSuperBinding(static_cast<unsigned>(parameters.expectedSuperBinding))
+    , functionLength(parameters.functionLength)
     , lastTokenLineStartOffset(parameters.lastTokenLineStartOffset)
     , usedVariablesCount(parameters.usedVariables.size())
     , innerArrowFunctionFeatures(parameters.innerArrowFunctionFeatures)

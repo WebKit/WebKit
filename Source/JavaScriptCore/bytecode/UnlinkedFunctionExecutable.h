@@ -77,6 +77,7 @@ public:
     void setEcmaName(const Identifier& name) { m_ecmaName = name; }
     const Identifier& inferredName() const { return m_inferredName; }
     unsigned parameterCount() const { return m_parameterCount; };
+    unsigned functionLength() const { return m_functionLength; }
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
 
     const SourceCode& classSource() const { return m_classSource; };
@@ -154,6 +155,7 @@ private:
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount;
+    unsigned m_functionLength;
     CodeFeatures m_features;
     unsigned m_isInStrictContext : 1;
     unsigned m_hasCapturedVariables : 1;

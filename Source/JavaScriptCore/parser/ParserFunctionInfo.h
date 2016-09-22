@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ParserFunctionInfo_h
-#define ParserFunctionInfo_h
+#pragma once
 
 namespace JSC {
 
@@ -33,6 +32,7 @@ struct ParserFunctionInfo {
     const Identifier* name = 0;
     typename TreeBuilder::FunctionBody body = 0;
     unsigned parameterCount = 0;
+    unsigned functionLength = 0;
     unsigned startOffset = 0;
     unsigned endOffset = 0;
     int startLine = 0;
@@ -50,5 +50,3 @@ struct ParserClassInfo {
 };
 
 }
-
-#endif
