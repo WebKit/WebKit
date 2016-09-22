@@ -947,7 +947,7 @@ FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect&, const Rende
 
 static void showRenderTreeLegend()
 {
-    fprintf(stderr, "\n(B)lock/(I)nline/I(N)line-block, (R)elative/A(B)solute/Fi(X)ed/Stick(Y) positioned, (O)verflow clipping, (A)nonymous, (G)enerated, (F)loating, has(L)ayer, (C)omposited, (D)irty layout, Dirty (S)tyle\n");
+    fprintf(stderr, "\n(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, (C)omposited, (+)Dirty style, (+)Dirty layout\n");
 }
 
 void RenderObject::showNodeTreeForThis() const
@@ -1026,14 +1026,19 @@ void RenderObject::showRenderObject(bool mark, int depth) const
         if (isRelPositioned())
             fputc('R', stderr);
         else if (isStickyPositioned())
-            fputc('Y', stderr);
+            fputc('K', stderr);
         else if (isOutOfFlowPositioned()) {
             if (style().position() == AbsolutePosition)
-                fputc('B', stderr);
+                fputc('A', stderr);
             else
                 fputc('X', stderr);
         }
     } else
+        fputc('-', stderr);
+
+    if (isFloating())
+        fputc('F', stderr);
+    else
         fputc('-', stderr);
 
     if (hasOverflowClip())
@@ -1042,17 +1047,12 @@ void RenderObject::showRenderObject(bool mark, int depth) const
         fputc('-', stderr);
 
     if (isAnonymous())
-        fputc('A', stderr);
+        fputc('Y', stderr);
     else
         fputc('-', stderr);
 
     if (isPseudoElement() || isAnonymous())
         fputc('G', stderr);
-    else
-        fputc('-', stderr);
-
-    if (isFloating())
-        fputc('F', stderr);
     else
         fputc('-', stderr);
 
@@ -1068,13 +1068,13 @@ void RenderObject::showRenderObject(bool mark, int depth) const
 
     fputc(' ', stderr);
 
-    if (needsLayout())
-        fputc('D', stderr);
+    if (node() && node()->needsStyleRecalc())
+        fputc('+', stderr);
     else
         fputc('-', stderr);
 
-    if (node() && node()->needsStyleRecalc())
-        fputc('S', stderr);
+    if (needsLayout())
+        fputc('+', stderr);
     else
         fputc('-', stderr);
 
