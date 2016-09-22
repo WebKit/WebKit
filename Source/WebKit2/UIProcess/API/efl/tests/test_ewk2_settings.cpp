@@ -282,16 +282,6 @@ TEST_F(EWK2UnitTestBase, ewk_settings_text_autosizing_enabled)
 {
     Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
-#if ENABLE(TEXT_AUTOSIZING)
-    // Text autosizing should be disabled by default.
-    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
-
-    ASSERT_TRUE(ewk_settings_text_autosizing_enabled_set(settings, false));
-    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
-
-    ASSERT_TRUE(ewk_settings_text_autosizing_enabled_set(settings, true));
-    ASSERT_TRUE(ewk_settings_text_autosizing_enabled_get(settings));
-#else
     ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
 
     ASSERT_FALSE(ewk_settings_text_autosizing_enabled_set(settings, false));
@@ -299,7 +289,6 @@ TEST_F(EWK2UnitTestBase, ewk_settings_text_autosizing_enabled)
 
     ASSERT_FALSE(ewk_settings_text_autosizing_enabled_set(settings, true));
     ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
-#endif
 }
 
 TEST_F(EWK2UnitTestBase, ewk_settings_web_security_enabled)

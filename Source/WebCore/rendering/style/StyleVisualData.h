@@ -43,9 +43,6 @@ public:
         return clip == o.clip
             && hasClip == o.hasClip
             && textDecoration == o.textDecoration
-#if ENABLE(TEXT_AUTOSIZING)
-            && m_textAutosizingMultiplier == o.m_textAutosizingMultiplier
-#endif
             && m_zoom == o.m_zoom;
     }
     bool operator!=(const StyleVisualData& o) const { return !(*this == o); }

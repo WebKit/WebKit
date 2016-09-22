@@ -302,29 +302,15 @@ Eina_Bool ewk_settings_private_browsing_enabled_get(const Ewk_Settings* settings
 
 Eina_Bool ewk_settings_text_autosizing_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
-#if ENABLE(TEXT_AUTOSIZING)
-    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
-
-    WKPreferencesSetTextAutosizingEnabled(settings->preferences(), enable);
-
-    return true;
-#else
     UNUSED_PARAM(settings);
     UNUSED_PARAM(enable);
     return false;
-#endif
 }
 
 Eina_Bool ewk_settings_text_autosizing_enabled_get(const Ewk_Settings* settings)
 {
-#if ENABLE(TEXT_AUTOSIZING)
-    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
-
-    return WKPreferencesGetTextAutosizingEnabled(settings->preferences());
-#else
     UNUSED_PARAM(settings);
     return false;
-#endif
 }
 
 Eina_Bool ewk_settings_web_security_enabled_set(Ewk_Settings* settings, Eina_Bool enable)

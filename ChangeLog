@@ -1,3 +1,13 @@
+2016-09-22  Daniel Bates  <dabates@apple.com>
+
+        Remove more ENABLE(TEXT_AUTOSIZING) code
+        https://bugs.webkit.org/show_bug.cgi?id=162456
+
+        Reviewed by Simon Fraser.
+
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2016-09-20  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WinCairo] Use find_package cairo in build

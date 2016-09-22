@@ -1,3 +1,16 @@
+2016-09-22  Daniel Bates  <dabates@apple.com>
+
+        Remove more ENABLE(TEXT_AUTOSIZING) code
+        https://bugs.webkit.org/show_bug.cgi?id=162456
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_text_autosizing_enabled_set):
+        (ewk_settings_text_autosizing_enabled_get):
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2016-09-22  Jonathan Bedard  <jbedard@apple.com>
 
         Automatic Text Replacement Testing in WebKit2
