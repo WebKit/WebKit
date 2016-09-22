@@ -187,6 +187,17 @@ void UIScriptController::dragFromPointToPoint(long startX, long startY, long end
         m_context->asyncTaskComplete(callbackID);
     }];
 }
+    
+void UIScriptController::longPressAtPoint(long x, long y, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    
+    [[HIDEventGenerator sharedHIDEventGenerator] longPress:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
 
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
 {

@@ -31,14 +31,16 @@
 #import <WebCore/SoftLinking.h>
 #import <mach/mach_time.h>
 #import <wtf/Assertions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSHIDEventSetDigitizerInfo, void, (IOHIDEventRef digitizerEvent, uint32_t contextID, uint8_t systemGestureisPossible, uint8_t isSystemGestureStateChangeEvent, CFStringRef displayUUID, CFTimeInterval initialTouchTimestamp, float maxForce), (digitizerEvent, contextID, systemGestureisPossible, isSystemGestureStateChangeEvent, displayUUID, initialTouchTimestamp, maxForce));
 
-static const NSTimeInterval fingerLiftDelay = 5e7;
-static const NSTimeInterval multiTapInterval = 15e7;
+static const NSTimeInterval fingerLiftDelay = 0.05;
+static const NSTimeInterval multiTapInterval = 0.15;
 static const NSTimeInterval fingerMoveInterval = 0.016;
+static const NSTimeInterval longPressHoldDelay = 2.0;
 static const IOHIDFloat defaultMajorRadius = 5;
 static const IOHIDFloat defaultPathPressure = 0;
 static const NSUInteger maxTouchCount = 5;
@@ -53,8 +55,6 @@ typedef enum {
     HandEventChordChanged,
     HandEventLifted,
     HandEventCanceled,
-    HandEventInRange,
-    HandEventInRangeLift,
     StylusEventTouched,
     StylusEventMoved,
     StylusEventLifted,
@@ -158,9 +158,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     } else if (eventType == HandEventChordChanged) {
         eventMask |= kIOHIDDigitizerEventPosition;
         eventMask |= kIOHIDDigitizerEventAttribute;
-    } else if (eventType == HandEventTouched  || eventType == HandEventCanceled) {
-        eventMask |= kIOHIDDigitizerEventIdentity;
-    } else if (eventType == HandEventLifted)
+    } else if (eventType == HandEventTouched || eventType == HandEventCanceled || eventType == HandEventLifted)
         eventMask |= kIOHIDDigitizerEventIdentity;
 
     uint64_t machTime = mach_absolute_time();
@@ -494,7 +492,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 - (void)stylusTapAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock
 {
-    struct timespec pressDelay = { 0, static_cast<long>(fingerLiftDelay) };
+    struct timespec pressDelay = { 0, static_cast<long>(fingerLiftDelay * nanosecondsPerSecond) };
 
     [self stylusDownAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure];
     nanosleep(&pressDelay, 0);
@@ -505,8 +503,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 - (void)sendTaps:(int)tapCount location:(CGPoint)location withNumberOfTouches:(int)touchCount completionBlock:(void (^)(void))completionBlock
 {
-    struct timespec doubleDelay = { 0, static_cast<long>(multiTapInterval) };
-    struct timespec pressDelay = { 0, static_cast<long>(fingerLiftDelay) };
+    struct timespec doubleDelay = { 0, static_cast<long>(multiTapInterval * nanosecondsPerSecond) };
+    struct timespec pressDelay = { 0, static_cast<long>(fingerLiftDelay * nanosecondsPerSecond) };
 
     for (int i = 0; i < tapCount; i++) {
         [self touchDown:location touchCount:touchCount];
@@ -532,6 +530,17 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 - (void)twoFingerTap:(CGPoint)location completionBlock:(void (^)(void))completionBlock
 {
     [self sendTaps:1 location:location withNumberOfTouches:2 completionBlock:completionBlock];
+}
+
+- (void)longPress:(CGPoint)location completionBlock:(void (^)(void))completionBlock
+{
+    [self touchDown:location touchCount:1];
+    auto completionBlockCopy = makeBlockPtr(completionBlock);
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, longPressHoldDelay * nanosecondsPerSecond), dispatch_get_main_queue(), ^ {
+        [self liftUp:location];
+        [self _sendMarkerHIDEventWithCompletionBlock:completionBlockCopy.get()];
+    });
 }
 
 - (void)dragWithStartPoint:(CGPoint)startLocation endPoint:(CGPoint)endLocation duration:(double)seconds completionBlock:(void (^)(void))completionBlock

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.longPressAtPoint(30, 20, function() {
+                    uiController.uiScriptComplete("Done");
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var output = '';
+            var target = document.getElementById('target');
+            target.addEventListener('touchend', function(event) {
+                output += 'PASS: successfully selected the word ';
+            });
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    var selectionText = document.getSelection().toString();
+                    if (selectionText !== "")
+                        output += selectionText;
+                    else
+                        output += 'FAIL: failed to select a word as a result of a long press';
+                    output += '<br>';
+                    output += result;
+                    document.getElementById('target').innerHTML = output;
+                    testRunner.notifyDone();
+                });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<div id="target">
+	<p>PressMe</p>
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>

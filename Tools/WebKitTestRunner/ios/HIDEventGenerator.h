@@ -46,6 +46,9 @@
 - (void)doubleTap:(CGPoint)location completionBlock:(void (^)(void))completionBlock;
 - (void)twoFingerTap:(CGPoint)location completionBlock:(void (^)(void))completionBlock;
 
+// Long Press
+- (void)longPress:(CGPoint)location completionBlock:(void (^)(void))completionBlock;
+
 // Drags
 - (void)dragWithStartPoint:(CGPoint)startLocation endPoint:(CGPoint)endLocation duration:(double)seconds completionBlock:(void (^)(void))completionBlock;
 

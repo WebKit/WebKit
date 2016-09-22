@@ -1,3 +1,51 @@
+2016-09-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Add long press selection test
+        https://bugs.webkit.org/show_bug.cgi?id=162367
+
+        Reviewed by Simon Fraser.
+
+        Add support to UIScriptController to synthesize long press events on iOS.
+        This required adding long-press functionality to HIDEventGenerator.
+
+        HIDEventGenerator sends the touchDown, but must then send the touchUp with
+        a dispatch_after (rather than sleeping, as we do for other events) in order
+        for the gesture recognizers to correctly detect a long press.
+
+        Use the long press synthesis in a test that detects whether a long press
+        gesture triggers text selection.
+
+        Fixed incorrect constants. NSTimeInterval is in seconds, original numbers
+        were nanoseconds and typedefed to long without regard to the type
+        differences. Redid constants to be the right value, and converted upon use.
+
+        Cleaned up unused enum types.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::longPressAtPoint):
+        (WTR::UIScriptController::forcePressAtPoint):
+        (WTR::UIScriptController::dragFromPointToPoint): Deleted.
+        * Scripts/webkitpy/common/config/contributors.json:
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::longPressAtPoint):
+        (WTR::UIScriptController::forcePressAtPoint):
+        (WTR::UIScriptController::dragFromPointToPoint): Deleted.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator _createIOHIDEventType:]):
+        (-[HIDEventGenerator sendTaps:location:withNumberOfTouches:completionBlock:]):
+        (-[HIDEventGenerator clearTap:]):
+        (-[HIDEventGenerator longPressTimerCall:]):
+        (-[HIDEventGenerator longPressFinish:completionBlock:]):
+        (-[HIDEventGenerator longPress:completionBlock:]):
+        (-[HIDEventGenerator forcePress:completionBlock:]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::longPressAtPoint):
+        (WTR::UIScriptController::forcePressAtPoint):
+        (WTR::UIScriptController::dragFromPointToPoint): Deleted.
+
 2016-09-22  Jonathan Bedard  <jbedard@apple.com>
 
         Automatic Text Replacement Testing in WebKit2

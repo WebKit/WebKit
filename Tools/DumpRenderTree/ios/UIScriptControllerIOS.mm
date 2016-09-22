@@ -87,6 +87,10 @@ void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
 void UIScriptController::dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback)
 {
 }
+    
+void UIScriptController::longPressAtPoint(long x, long y, JSValueRef)
+{
+}
 
 void UIScriptController::stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
 {
