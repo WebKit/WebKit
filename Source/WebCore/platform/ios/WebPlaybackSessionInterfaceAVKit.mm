@@ -54,6 +54,17 @@ WebPlaybackSessionInterfaceAVKit::WebPlaybackSessionInterfaceAVKit(WebPlaybackSe
     model.addClient(*this);
     [m_playerController setPlaybackSessionInterface:this];
     [m_playerController setDelegate:&model];
+
+    durationChanged(model.duration());
+    currentTimeChanged(model.currentTime(), [[NSProcessInfo processInfo] systemUptime]);
+    bufferedTimeChanged(model.bufferedTime());
+    rateChanged(model.isPlaying(), model.playbackRate());
+    seekableRangesChanged(model.seekableRanges());
+    canPlayFastReverseChanged(model.canPlayFastReverse());
+    audioMediaSelectionOptionsChanged(model.audioMediaSelectionOptions(), model.audioMediaSelectedIndex());
+    legibleMediaSelectionOptionsChanged(model.legibleMediaSelectionOptions(), model.legibleMediaSelectedIndex());
+    externalPlaybackChanged(model.externalPlaybackEnabled(), model.externalPlaybackTargetType(), model.externalPlaybackLocalizedDeviceName());
+    wirelessVideoPlaybackDisabledChanged(model.wirelessVideoPlaybackDisabled());
 }
 
 WebPlaybackSessionInterfaceAVKit::~WebPlaybackSessionInterfaceAVKit()
