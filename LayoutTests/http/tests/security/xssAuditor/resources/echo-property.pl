@@ -14,5 +14,6 @@ if ($cgi->param('clutter')) {
     print $cgi->param('clutter');
 }
 print "\">\n";
+print "<script>var y = 123;</script>";
 print "</body>\n";
 print "</html>\n";
