@@ -25,50 +25,36 @@ function test()
     suite.addTestCase({
         name: "XHR.JSONContent",
         description: "Ensure an XMLHttpRequest with JSON content still gives us text.",
-        test(resolve, reject) {
-            let resource = null;
-
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
-            .then((event) => {
-                resource = event.data.resource;
-                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
-                return resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish);
-            })
-            .then((event) => {
-                InspectorTest.pass("Resource should complete loading.");
-                return resource.requestContent();
-            })
-            .then((resource) => {
-                InspectorTest.expectThat(resource.content === jsonContent, "Resource has expected content.");
-            })
-            .then(resolve, reject);
-
+        test: (resolve, reject) => {
             InspectorTest.evaluateInPage("createJSONXHR()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFinish, (event) => {
+                    InspectorTest.pass("Resource should complete loading.");
+                    resource.requestContent().then(() => {
+                        InspectorTest.expectThat(resource.content === jsonContent, "Resource has expected content.");
+                    }).then(resolve, reject);
+                });
+            });
         }
     });
 
     suite.addTestCase({
         name: "XHR.JSONContent.Blob",
         description: "Ensure an XMLHttpRequest with JSON content and a responseType of blob still gives us text.",
-        test(resolve, reject) {
-            let resource = null;
-
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
-            .then((event) => {
-                resource = event.data.resource;
-                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
-                return resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish);
-            })
-            .then((event) => {
-                InspectorTest.pass("Resource should complete loading.");
-                return resource.requestContent();
-            })
-            .then((resource) => {
-                InspectorTest.expectThat(resource.content === jsonContent, "Resource has expected content.");
-            })
-            .then(resolve, reject);
-
+        test: (resolve, reject) => {
             InspectorTest.evaluateInPage("createJSONBlobXHR()");
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFinish, (event) => {
+                    InspectorTest.pass("Resource should complete loading.");
+                    resource.requestContent().then(() => {
+                        InspectorTest.expectThat(resource.content === jsonContent, "Resource has expected content.");
+                    }).then(resolve, reject);
+                });
+            });
         }
     });
 
