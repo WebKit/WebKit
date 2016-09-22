@@ -37,7 +37,7 @@ bool jsIsObjectTypeOrNull(CallFrame*, JSValue);
 bool jsIsFunctionType(JSValue);
 size_t normalizePrototypeChain(CallFrame*, Structure*);
 
-ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
+ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -48,13 +48,43 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
     int32_t length2 = s2->length();
     if (!length2)
         return s1;
-    if (sumOverflows<int32_t>(length1, length2))
-        return throwOutOfMemoryError(exec, scope);
+    if (sumOverflows<int32_t>(length1, length2)) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
 
     return JSRopeString::create(vm, s1, s2);
 }
 
-ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& u2, const String& u3)
+ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2, JSString* s3)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    int32_t length1 = s1->length();
+    if (!length1) {
+        scope.release();
+        return jsString(exec, s2, s3);
+    }
+    int32_t length2 = s2->length();
+    if (!length2) {
+        scope.release();
+        return jsString(exec, s1, s3);
+    }
+    int32_t length3 = s3->length();
+    if (!length3) {
+        scope.release();
+        return jsString(exec, s1, s2);
+    }
+
+    if (sumOverflows<int32_t>(length1, length2, length3)) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
+    return JSRopeString::create(vm, s1, s2, s3);
+}
+
+ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String& u2, const String& u3)
 {
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
@@ -63,20 +93,30 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& 
     int32_t length2 = u2.length();
     int32_t length3 = u3.length();
     
-    if (length1 < 0 || length2 < 0 || length3 < 0)
-        return throwOutOfMemoryError(exec, scope);
+    if (length1 < 0 || length2 < 0 || length3 < 0) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
     
-    if (!length1)
+    if (!length1) {
+        scope.release();
         return jsString(exec, jsString(vm, u2), jsString(vm, u3));
-    if (!length2)
+    }
+    if (!length2) {
+        scope.release();
         return jsString(exec, jsString(vm, u1), jsString(vm, u3));
-    if (!length3)
+    }
+    if (!length3) {
+        scope.release();
         return jsString(exec, jsString(vm, u1), jsString(vm, u2));
+    }
 
-    if (sumOverflows<int32_t>(length1, length2, length3))
-        return throwOutOfMemoryError(exec, scope);
+    if (sumOverflows<int32_t>(length1, length2, length3)) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
 
-    return JSRopeString::create(exec->vm(), jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
+    return JSRopeString::create(*vm, jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
 }
 
 ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strings, unsigned count)

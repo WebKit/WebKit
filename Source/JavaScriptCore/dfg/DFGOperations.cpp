@@ -52,6 +52,7 @@
 #include "JSMap.h"
 #include "JSSet.h"
 #include "ObjectConstructor.h"
+#include "Operations.h"
 #include "RegExpObject.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"
@@ -1500,28 +1501,16 @@ JSCell* JIT_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSStri
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (sumOverflows<int32_t>(left->length(), right->length())) {
-        throwOutOfMemoryError(exec, scope);
-        return nullptr;
-    }
-
-    return JSRopeString::create(vm, left, right);
+    return jsString(exec, left, right);
 }
 
 JSCell* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString* b, JSString* c)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (sumOverflows<int32_t>(a->length(), b->length(), c->length())) {
-        throwOutOfMemoryError(exec, scope);
-        return nullptr;
-    }
-
-    return JSRopeString::create(vm, a, b, c);
+    return jsString(exec, a, b, c);
 }
 
 JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, EncodedJSValue b)
@@ -1535,12 +1524,8 @@ JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, Encode
     JSString* str2 = JSValue::decode(b).toString(exec);
     ASSERT(!scope.exception());
 
-    if (sumOverflows<int32_t>(str1->length(), str2->length())) {
-        throwOutOfMemoryError(exec, scope);
-        return nullptr;
-    }
-
-    return JSRopeString::create(vm, str1, str2);
+    scope.release();
+    return jsString(exec, str1, str2);
 }
     
 JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, EncodedJSValue b, EncodedJSValue c)
@@ -1556,12 +1541,8 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, Encode
     JSString* str3 = JSValue::decode(c).toString(exec);
     ASSERT(!scope.exception());
 
-    if (sumOverflows<int32_t>(str1->length(), str2->length(), str3->length())) {
-        throwOutOfMemoryError(exec, scope);
-        return nullptr;
-    }
-
-    return JSRopeString::create(vm, str1, str2, str3);
+    scope.release();
+    return jsString(exec, str1, str2, str3);
 }
 
 char* JIT_OPERATION operationFindSwitchImmTargetForDouble(

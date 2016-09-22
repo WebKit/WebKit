@@ -1,3 +1,14 @@
+2016-09-22  Mark Lam  <mark.lam@apple.com>
+
+        Array.prototype.join should do overflow checks on string joins.
+        https://bugs.webkit.org/show_bug.cgi?id=162459
+
+        Reviewed by Saam Barati.
+
+        * stress/array-join-on-strings-need-overflow-checks.js: Added.
+        (assert):
+        (catch):
+
 2016-09-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Function length should be number of parameters before parameters with default values
