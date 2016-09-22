@@ -462,7 +462,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     setLogicalHeight(0);
     updateLogicalWidth();
-    bool logicalHeightWasIndefinite = !computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt);
 
     placeItemsOnGrid(TrackSizing);
 
@@ -475,7 +474,10 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit availableSpaceForColumns = availableLogicalWidth();
     computeTrackSizesForDirection(ForColumns, sizingData, availableSpaceForColumns);
 
-    if (logicalHeightWasIndefinite)
+    // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() but it does not work for positioned stuff.
+    // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
+    bool hasDefiniteLogicalHeight = hasOverrideLogicalContentHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt);
+    if (!hasDefiniteLogicalHeight)
         computeIntrinsicLogicalHeight(sizingData);
     else
         computeTrackSizesForDirection(ForRows, sizingData, availableLogicalHeight(ExcludeMarginBorderPadding));
@@ -484,16 +486,10 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
     updateLogicalHeight();
 
-    // The above call might have changed the grid's logical height depending on min|max height restrictions.
-    // Update the sizes of the rows whose size depends on the logical height (also on definite|indefinite sizes).
-    LayoutUnit availableSpaceForRows = contentLogicalHeight();
-    if (logicalHeightWasIndefinite)
-        computeTrackSizesForDirection(ForRows, sizingData, availableSpaceForRows);
-
     // 3- If the min-content contribution of any grid items have changed based on the row
     // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content
     // contribution (once only).
-    repeatTracksSizingIfNeeded(sizingData, availableSpaceForColumns, availableSpaceForRows);
+    repeatTracksSizingIfNeeded(sizingData, availableSpaceForColumns, contentLogicalHeight());
 
     // Grid container should have the minimum height of a line if it's editable. That does not affect track sizing though.
     if (hasLineIfEmpty()) {
@@ -633,6 +629,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 
 void RenderGrid::computeIntrinsicLogicalHeight(GridSizingData& sizingData)
 {
+    ASSERT(sizingData.isValidTransition(ForRows));
     ASSERT(tracksAreWiderThanMinTrackBreadth(ForColumns, sizingData));
     sizingData.setAvailableSpace(Nullopt);
     sizingData.setFreeSpace(ForRows, Nullopt);
@@ -654,6 +651,8 @@ void RenderGrid::computeIntrinsicLogicalHeight(GridSizingData& sizingData)
     m_maxContentHeight = maxHeight;
 
     ASSERT(tracksAreWiderThanMinTrackBreadth(ForRows, sizingData));
+    sizingData.advanceNextState();
+    sizingData.sizingOperation = TrackSizing;
 }
 
 Optional<LayoutUnit> RenderGrid::computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, Optional<LayoutUnit> intrinsicLogicalHeight, LayoutUnit borderAndPadding) const
@@ -1888,6 +1887,7 @@ void RenderGrid::applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection 
 
 void RenderGrid::layoutGridItems(GridSizingData& sizingData)
 {
+    ASSERT(sizingData.sizingOperation == TrackSizing);
     populateGridPositionsForDirection(sizingData, ForColumns);
     populateGridPositionsForDirection(sizingData, ForRows);
 

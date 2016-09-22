@@ -1,3 +1,15 @@
+2016-09-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Remove the x2 computation of row sizes with indefinite heights
+        https://bugs.webkit.org/show_bug.cgi?id=162150
+
+        Reviewed by Darin Adler.
+
+        Added a new test case which checks the layout performance of grids inside other grids, i.e,
+        grids acting both as grid container and grid item.
+
+        * Layout/nested-grid.html: Added.
+
 2016-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         Perf test Animation/css-accelerated-animation.html failing
