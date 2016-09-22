@@ -159,7 +159,7 @@ inline ToType bitwise_cast(FromType from)
 template<typename ToType, typename FromType>
 inline ToType safeCast(FromType value)
 {
-    RELEASE_ASSERT(isInBounds<ToType>(value));
+    ASSERT(isInBounds<ToType>(value));
     return static_cast<ToType>(value);
 }
 

@@ -1,3 +1,11 @@
+2016-09-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Rolling out r206244, as it caused flaky crashes on tests.
+        Was: Correct uses of 'safeCast'
+
+        * wtf/StdLibExtras.h:
+        (WTF::safeCast):
+
 2016-09-21  Keith Miller  <keith_miller@apple.com>
 
         Fix build for future versions of Clang.

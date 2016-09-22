@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004-2006, 2008, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@
 #include "MIMETypeRegistry.h"
 #include "TextStream.h"
 #include "Timer.h"
-#include <wtf/CheckedArithmetic.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -143,20 +142,17 @@ void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared, ClearedSo
     m_solidColor = Nullopt;
     invalidatePlatformData();
 
-    if (!WTF::safeSub(m_decodedSize, frameBytesCleared, m_decodedSize))
-        CRASH_WITH_SECURITY_IMPLICATION();
+    ASSERT(m_decodedSize >= frameBytesCleared);
+    m_decodedSize -= frameBytesCleared;
 
     // Clearing the ImageSource destroys the extra decoded data used for determining image properties.
-    long long adjustedFrameBytesCleared = frameBytesCleared;
     if (clearedSource == ClearedSource::Yes) {
-        adjustedFrameBytesCleared += m_decodedPropertiesSize;
+        frameBytesCleared += m_decodedPropertiesSize;
         m_decodedPropertiesSize = 0;
     }
 
-    if (adjustedFrameBytesCleared && imageObserver()) {
-        Checked<int> checkedDelta = adjustedFrameBytesCleared;
-        imageObserver()->decodedSizeChanged(this, -checkedDelta.unsafeGet());
-    }
+    if (frameBytesCleared && imageObserver())
+        imageObserver()->decodedSizeChanged(this, -safeCast<int>(frameBytesCleared));
 }
 
 void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::Caching caching)
@@ -176,26 +172,14 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
     LOG(Images, "BitmapImage %p cacheFrame %lu (%s%u bytes, complete %d)", this, index, caching == ImageFrame::Caching::Metadata ? "metadata only, " : "", m_frames[index].frameBytes(), m_frames[index].isComplete());
 
     if (m_frames[index].hasNativeImage()) {
-        if (!WTF::safeAdd(m_decodedSize, m_frames[index].frameBytes(), m_decodedSize)) {
-            LOG(Images, "BitmapImage %p cacheFrame m_decodedSize overflowed unsigned.", this);
-            destroyDecodedData(false);
-            return;
-        }
-
+        int deltaBytes = safeCast<int>(m_frames[index].frameBytes());
+        m_decodedSize += deltaBytes;
         // The fully-decoded frame will subsume the partially decoded data used
         // to determine image properties.
-        long long deltaBytes = m_frames[index].frameBytes() - m_decodedPropertiesSize;
+        deltaBytes -= m_decodedPropertiesSize;
         m_decodedPropertiesSize = 0;
-
-        Checked<int, RecordOverflow> checkedDeltaBytes = deltaBytes;
-        if (checkedDeltaBytes.hasOverflowed()) {
-            LOG(Images, "BitmapImage %p cacheFrame deltaBytes=%lld overflowed integer.", this, deltaBytes);
-            destroyDecodedData(false);
-            return;
-        }
-
         if (imageObserver())
-            imageObserver()->decodedSizeChanged(this, checkedDeltaBytes.unsafeGet());
+            imageObserver()->decodedSizeChanged(this, deltaBytes);
     }
 }
 
@@ -208,17 +192,15 @@ void BitmapImage::didDecodeProperties() const
     if (m_decodedPropertiesSize == updatedSize)
         return;
 
-    long long deltaBytes = updatedSize - m_decodedPropertiesSize;
+    int deltaBytes = updatedSize - m_decodedPropertiesSize;
 #if !ASSERT_DISABLED
     bool overflow = updatedSize > m_decodedPropertiesSize && deltaBytes < 0;
     bool underflow = updatedSize < m_decodedPropertiesSize && deltaBytes > 0;
     ASSERT(!overflow && !underflow);
 #endif
     m_decodedPropertiesSize = updatedSize;
-    if (imageObserver()) {
-        Checked<int> checkedDeltaBytes = deltaBytes;
-        imageObserver()->decodedSizeChanged(this, checkedDeltaBytes.unsafeGet());
-    }
+    if (imageObserver())
+        imageObserver()->decodedSizeChanged(this, deltaBytes);
 }
 
 void BitmapImage::updateSize() const
@@ -274,7 +256,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     // start of the frame data), and any or none of them might be the particular
     // frame affected by appending new data here. Thus we have to clear all the
     // incomplete frames to be safe.
-    Checked<unsigned> frameBytesCleared = 0;
+    unsigned frameBytesCleared = 0;
     for (auto& frame : m_frames) {
         // NOTE: Don't call frameIsCompleteAtIndex() here, that will try to
         // decode any uncached (i.e. never-decoded or
@@ -282,10 +264,10 @@ bool BitmapImage::dataChanged(bool allDataReceived)
         if (frame.hasMetadata() && !frame.isComplete())
             frameBytesCleared += frame.clear();
     }
-    destroyMetadataAndNotify(frameBytesCleared.unsafeGet(), ClearedSource::No);
+    destroyMetadataAndNotify(frameBytesCleared, ClearedSource::No);
 #else
     // FIXME: why is this different for iOS?
-    Checked<int> deltaBytes = 0;
+    int deltaBytes = 0;
     if (!m_frames.isEmpty()) {
         if (int bytes = m_frames[m_frames.size() - 1].clear()) {
             deltaBytes += bytes;
@@ -293,7 +275,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
             m_decodedPropertiesSize = 0;
         }
     }
-    destroyMetadataAndNotify(deltaBytes.unsafeGet(), ClearedSource::No);
+    destroyMetadataAndNotify(deltaBytes, ClearedSource::No);
 #endif
     
     // Feed all the data we've seen so far to the image decoder.
@@ -374,24 +356,11 @@ NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, float presentationSc
         LOG(Images, "  subsamplingLevel was %d, resampling", m_frames[index].subsamplingLevel());
 
         // If the image is already cached, but at too small a size, re-decode a larger version.
-        unsigned sizeChange = m_frames[index].clear();
+        int sizeChange = -m_frames[index].clear();
         invalidatePlatformData();
-
-        if (WTF::safeSub(m_decodedSize, sizeChange, m_decodedSize)) {
-            LOG(Images, "BitmapImage %p frameImageAtIndex m_decodedSize overflowed unsigned.", this);
-            destroyDecodedData(false);
-            return nullptr;
-        }
-
-        Checked<int, RecordOverflow> checkedSizeChange = -sizeChange;
-        if (checkedSizeChange.hasOverflowed()) {
-            LOG(Images, "BitmapImage %p frameImageAtIndex sizeChange=%u overflowed integer.", this, -sizeChange);
-            destroyDecodedData(false);
-            return nullptr;
-        }
-
+        m_decodedSize += sizeChange;
         if (imageObserver())
-            imageObserver()->decodedSizeChanged(this, checkedSizeChange.unsafeGet());
+            imageObserver()->decodedSizeChanged(this, sizeChange);
     }
 
     // If we haven't fetched a frame yet, do so.

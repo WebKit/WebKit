@@ -644,10 +644,10 @@ void MemoryCache::removeFromLiveResourcesSize(CachedResource& resource)
 void MemoryCache::adjustSize(bool live, int delta)
 {
     if (live) {
-        RELEASE_ASSERT(delta >= 0 || ((int)m_liveSize + delta >= 0));
+        ASSERT(delta >= 0 || ((int)m_liveSize + delta >= 0));
         m_liveSize += delta;
     } else {
-        RELEASE_ASSERT(delta >= 0 || ((int)m_deadSize + delta >= 0));
+        ASSERT(delta >= 0 || ((int)m_deadSize + delta >= 0));
         m_deadSize += delta;
     }
 }
