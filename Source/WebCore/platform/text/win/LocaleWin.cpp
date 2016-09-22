@@ -101,7 +101,7 @@ String LocaleWin::getLocaleInfoString(LCTYPE type)
     Vector<UChar> buffer(bufferSizeWithNUL);
     ::GetLocaleInfo(m_lcid, type, buffer.data(), bufferSizeWithNUL);
     buffer.shrink(bufferSizeWithNUL - 1);
-    return String::adopt(buffer);
+    return String::adopt(WTFMove(buffer));
 }
 
 void LocaleWin::getLocaleInfo(LCTYPE type, DWORD& result)
