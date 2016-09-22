@@ -84,6 +84,19 @@ void TextChecker::setAutomaticTextReplacementEnabled(bool)
 {
     notImplemented();
 }
+    
+static bool testingModeEnabled = false;
+    
+void TextChecker::setTestingMode(bool enabled)
+{
+    testingModeEnabled = enabled;
+}
+    
+bool TextChecker::isTestingMode()
+{
+    return testingModeEnabled;
+}
+
 
 static bool smartInsertDeleteEnabled;
 

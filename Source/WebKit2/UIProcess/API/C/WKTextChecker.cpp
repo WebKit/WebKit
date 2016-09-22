@@ -25,12 +25,22 @@
 
 #include "config.h"
 #include "WKTextChecker.h"
+#include "TextChecker.h"
 
+#if !defined(__APPLE__)
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
 #include "WebTextChecker.h"
+#endif
 
 using namespace WebKit;
+
+void WKTextCheckerSetTestingMode(bool enabled)
+{
+    TextChecker::setTestingMode(enabled);
+}
+
+#if !defined(__APPLE__)
 
 void WKTextCheckerSetClient(const WKTextCheckerClientBase* wkClient)
 {
@@ -58,3 +68,5 @@ void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word)
 {
     WebTextChecker::singleton()->changeSpellingToWord(toImpl(page), toWTFString(word));
 }
+
+#endif

@@ -1,3 +1,52 @@
+2016-09-22  Jonathan Bedard  <jbedard@apple.com>
+
+        Automatic Text Replacement Testing in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=161919
+
+        Reviewed by Ryosuke Niwa.
+
+        Implemented test hooks for text replacement for WebKit2.
+        Note that spell checking has not been implemented, so most tests which use text replacement still fail.
+
+        * UIProcess/API/C/WKTextChecker.cpp: Added #ifdefs to include file for iOS and Mac.
+        (WKTextCheckerSetTestingMode): Added.
+        * UIProcess/API/C/WKTextChecker.h: Added #ifdefs to include file for iOS and Mac.
+        * UIProcess/TextChecker.h: Added hooks to bypass writing to NSUserDefaults.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::toggleSmartInsertDelete):  New message to toggle TextChecker flag.
+        (WebKit::WebPageProxy::toggleAutomaticQuoteSubstitution): Ditto.
+        (WebKit::WebPageProxy::toggleAutomaticLinkDetection): Ditto.
+        (WebKit::WebPageProxy::toggleAutomaticDashSubstitution): Ditto.
+        (WebKit::WebPageProxy::toggleAutomaticTextReplacement): Ditto.
+        * UIProcess/WebPageProxy.h: Added messages to toggle TextChecker flags.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * UIProcess/efl/TextCheckerEfl.cpp: Implemented new TextChecker hooks for non-Cocoa platforms.
+        * UIProcess/gtk/TextCheckerGtk.cpp: Ditto.
+        (WebKit::TextChecker::mutableState): Ditto.
+        * UIProcess/ios/TextCheckerIOS.mm: Implemented new TextChecker hooks.
+        (WebKit::TextChecker::mutableState): Allow modification of text checker without writing to NSUserDefaults.
+        (WebKit::TextChecker::state): Call mutableState.
+        (WebKit::TextChecker::accessSmartInsertDeleteEnabled): Dummy function.
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::refresh): Reload TextChecker configuration from NSUserDefaults.
+        (WebKit::TextChecker::mutableState): Allow modification of text checker without writing to NSUserDefaults.
+        (WebKit::TextChecker::state): Call mutableState().
+        (WebKit::TextChecker::accessSmartInsertDeleteEnabled): Allow toggling of smartInsertDeleteEnabled without writing to NSUserDefaults.
+        (WebKit::initializeState): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetAutomaticLinkDetectionEnabled): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Removed WKBundleSetAutomaticLinkDetectionEnabled.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAutomaticLinkDetectionEnabled): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj: Added WKTextChecker to Mac and iOS.
+        * WebProcess/InjectedBundle/InjectedBundle.h: Remove setAutomaticLinkDetectionEnabled.
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::toggleSmartInsertDelete): Send message to UI process to toggle TextChecker.
+        (WebKit::WebEditorClient::toggleAutomaticQuoteSubstitution): Ditto.
+        (WebKit::WebEditorClient::toggleAutomaticLinkDetection): Ditto.
+        (WebKit::WebEditorClient::toggleAutomaticDashSubstitution): Ditto.
+        (WebKit::WebEditorClient::toggleAutomaticTextReplacement): Ditto.
+
 2016-09-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename DataObjectGtk as SelectionData

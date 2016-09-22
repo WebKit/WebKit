@@ -749,6 +749,8 @@
 		31BA924E148831260062EDB5 /* WebNotificationManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */; };
 		31D5929E166E060000E6BF02 /* WebPlugInClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31D5929C166E05FF00E6BF02 /* WebPlugInClient.cpp */; };
 		31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D5929D166E060000E6BF02 /* WebPlugInClient.h */; };
+		31D755C11D91B81500843BD1 /* WKTextChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 314888FF1D91B11D00377042 /* WKTextChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		31D755C21D91B81B00843BD1 /* WKTextChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 314888FE1D91B11D00377042 /* WKTextChecker.cpp */; };
 		31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */; };
 		330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */; };
 		330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934441315B9220097A7BC /* WebCookieManagerMessages.h */; };
@@ -2769,6 +2771,8 @@
 		3131261B148FF82B00BA2A39 /* WebNotificationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationManager.cpp; sourceTree = "<group>"; };
 		3131261C148FF82B00BA2A39 /* WebNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationManager.h; sourceTree = "<group>"; };
 		3131261D148FF82C00BA2A39 /* WebNotificationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebNotificationManager.messages.in; sourceTree = "<group>"; };
+		314888FE1D91B11D00377042 /* WKTextChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKTextChecker.cpp; sourceTree = "<group>"; };
+		314888FF1D91B11D00377042 /* WKTextChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTextChecker.h; sourceTree = "<group>"; };
 		31607F3819627002009B87DA /* LegacySessionStateCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacySessionStateCoding.h; sourceTree = "<group>"; };
 		317FE7C11C487A6600A0CA89 /* APIExperimentalFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIExperimentalFeature.cpp; sourceTree = "<group>"; };
 		317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIExperimentalFeature.h; sourceTree = "<group>"; };
@@ -6276,6 +6280,8 @@
 		BC0C376610F807660076D7CB /* C */ = {
 			isa = PBXGroup;
 			children = (
+				314888FE1D91B11D00377042 /* WKTextChecker.cpp */,
+				314888FF1D91B11D00377042 /* WKTextChecker.h */,
 				5123CF18133D25E60056F800 /* cg */,
 				6EE849C41368D9040038D481 /* mac */,
 				BCB63477116BF10600603215 /* WebKit2_C.h */,
@@ -7565,6 +7571,7 @@
 				1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */,
 				1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */,
 				E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */,
+				31D755C11D91B81500843BD1 /* WKTextChecker.h in Headers */,
 				CE1A0BD21A48E6C60054EF74 /* AssertionServicesSPI.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* AssistedNodeInformation.h in Headers */,
 				515E7728183DD6F60007203F /* AsyncRequest.h in Headers */,
@@ -9338,6 +9345,7 @@
 				1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */,
 				2DA944AD1884E9BA00ED86DB /* TextCheckerIOS.mm in Sources */,
 				1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */,
+				31D755C21D91B81B00843BD1 /* WKTextChecker.cpp in Sources */,
 				1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */,
 				1AF05D8614688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm in Sources */,
 				1AFE436518B6C081009C7A48 /* UIDelegate.mm in Sources */,

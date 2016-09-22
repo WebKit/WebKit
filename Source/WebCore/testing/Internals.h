@@ -211,12 +211,12 @@ public:
     bool hasSpellingMarker(int from, int length, ExceptionCode&);
     bool hasGrammarMarker(int from, int length, ExceptionCode&);
     bool hasAutocorrectedMarker(int from, int length, ExceptionCode&);
-    void setContinuousSpellCheckingEnabled(bool enabled, ExceptionCode&);
-    void setAutomaticQuoteSubstitutionEnabled(bool enabled, ExceptionCode&);
-    void setAutomaticLinkDetectionEnabled(bool enabled, ExceptionCode&);
-    void setAutomaticDashSubstitutionEnabled(bool enabled, ExceptionCode&);
-    void setAutomaticTextReplacementEnabled(bool enabled, ExceptionCode&);
-    void setAutomaticSpellingCorrectionEnabled(bool enabled, ExceptionCode&);
+    void setContinuousSpellCheckingEnabled(bool);
+    void setAutomaticQuoteSubstitutionEnabled(bool);
+    void setAutomaticLinkDetectionEnabled(bool);
+    void setAutomaticDashSubstitutionEnabled(bool);
+    void setAutomaticTextReplacementEnabled(bool);
+    void setAutomaticSpellingCorrectionEnabled(bool);
 
     void handleAcceptedCandidate(const String& candidate, unsigned location, unsigned length, ExceptionCode&);
 

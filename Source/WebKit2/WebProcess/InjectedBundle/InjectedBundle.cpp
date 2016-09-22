@@ -31,7 +31,6 @@
 #include "InjectedBundleScriptWorld.h"
 #include "NotificationPermissionRequestManager.h"
 #include "SessionTracker.h"
-#include "TextChecker.h"
 #include "UserData.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
@@ -302,16 +301,6 @@ void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGrou
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->settings().setJavaScriptCanAccessClipboard(enabled);
-}
-
-void InjectedBundle::setAutomaticLinkDetectionEnabled(WebPageGroupProxy* pageGroup, bool enabled)
-{
-#if USE(APPKIT)
-    if (enabled == TextChecker::state().isAutomaticLinkDetectionEnabled)
-        return;
-    TextChecker::setAutomaticLinkDetectionEnabled(enabled);
-    WebProcess::singleton().setTextCheckerState(TextChecker::state());
-#endif
 }
 
 void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, bool enabled)

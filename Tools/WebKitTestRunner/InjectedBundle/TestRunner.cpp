@@ -411,12 +411,6 @@ void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
     WKBundleSetJavaScriptCanAccessClipboard(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
-void TestRunner::setAutomaticLinkDetectionEnabled(bool enabled)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetAutomaticLinkDetectionEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
-}
-
 void TestRunner::setPrivateBrowsingEnabled(bool enabled)
 {
     auto& injectedBundle = InjectedBundle::singleton();

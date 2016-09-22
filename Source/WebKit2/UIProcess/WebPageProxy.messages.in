@@ -341,6 +341,13 @@ messages -> WebPageProxy {
 #if USE(APPKIT)
     SubstitutionsPanelIsShowing() -> (bool isShowing)
 #endif
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    toggleSmartInsertDelete()
+    toggleAutomaticQuoteSubstitution()
+    toggleAutomaticLinkDetection()
+    toggleAutomaticDashSubstitution()
+    toggleAutomaticTextReplacement()
+#endif
 #if PLATFORM(MAC)
     # Autocorrection messages
     ShowCorrectionPanel(int32_t panelType, WebCore::FloatRect boundingBoxOfReplacedString, String replacedString, String replacementString, Vector<String> alternativeReplacementStrings)

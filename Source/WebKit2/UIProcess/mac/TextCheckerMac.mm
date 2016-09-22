@@ -115,6 +115,28 @@ const TextCheckerState& TextChecker::state()
     initializeState();
     return textCheckerState;
 }
+    
+static bool testingModeEnabled = false;
+
+void TextChecker::setTestingMode(bool enabled)
+{
+    if (enabled && !testingModeEnabled) {
+        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isContinuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isGrammarCheckingEnabled forKey:WebGrammarCheckingEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticQuoteSubstitutionEnabled forKey:WebAutomaticQuoteSubstitutionEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticDashSubstitutionEnabled forKey:WebAutomaticDashSubstitutionEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticLinkDetectionEnabled forKey:WebAutomaticLinkDetectionEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:isSmartInsertDeleteEnabled() forKey:WebSmartInsertDeleteEnabled];
+    }
+    testingModeEnabled = enabled;
+}
+
+bool TextChecker::isTestingMode()
+{
+    return testingModeEnabled;
+}
 
 bool TextChecker::isContinuousSpellCheckingAllowed()
 {
@@ -137,7 +159,8 @@ void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellChecki
         return;
                                                                                       
     textCheckerState.isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:isContinuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:isContinuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
 
     // FIXME: preflight the spell checker.
 }
@@ -148,7 +171,8 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
         return;
 
     textCheckerState.isGrammarCheckingEnabled = isGrammarCheckingEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:isGrammarCheckingEnabled forKey:WebGrammarCheckingEnabled];    
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:isGrammarCheckingEnabled forKey:WebGrammarCheckingEnabled];
     [[NSSpellChecker sharedSpellChecker] updatePanels];
     
     // We call preflightSpellChecker() when turning continuous spell checking on, but we don't need to do that here
@@ -161,7 +185,8 @@ void TextChecker::setAutomaticSpellingCorrectionEnabled(bool isAutomaticSpelling
         return;
 
     textCheckerState.isAutomaticSpellingCorrectionEnabled = isAutomaticSpellingCorrectionEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];    
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];
 
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
@@ -172,7 +197,8 @@ void TextChecker::setAutomaticQuoteSubstitutionEnabled(bool isAutomaticQuoteSubs
         return;
 
     textCheckerState.isAutomaticQuoteSubstitutionEnabled = isAutomaticQuoteSubstitutionEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticQuoteSubstitutionEnabled forKey:WebAutomaticQuoteSubstitutionEnabled];    
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:isAutomaticQuoteSubstitutionEnabled forKey:WebAutomaticQuoteSubstitutionEnabled];
     
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
@@ -183,7 +209,8 @@ void TextChecker::setAutomaticDashSubstitutionEnabled(bool isAutomaticDashSubsti
         return;
 
     textCheckerState.isAutomaticDashSubstitutionEnabled = isAutomaticDashSubstitutionEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticDashSubstitutionEnabled forKey:WebAutomaticDashSubstitutionEnabled];
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:isAutomaticDashSubstitutionEnabled forKey:WebAutomaticDashSubstitutionEnabled];
 
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
@@ -194,7 +221,8 @@ void TextChecker::setAutomaticLinkDetectionEnabled(bool isAutomaticLinkDetection
         return;
     
     textCheckerState.isAutomaticLinkDetectionEnabled = isAutomaticLinkDetectionEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticLinkDetectionEnabled forKey:WebAutomaticLinkDetectionEnabled];
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:isAutomaticLinkDetectionEnabled forKey:WebAutomaticLinkDetectionEnabled];
     
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
@@ -205,7 +233,8 @@ void TextChecker::setAutomaticTextReplacementEnabled(bool isAutomaticTextReplace
         return;
     
     textCheckerState.isAutomaticTextReplacementEnabled = isAutomaticTextReplacementEnabled;
-    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:isAutomaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];
 
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
@@ -232,7 +261,8 @@ void TextChecker::setSmartInsertDeleteEnabled(bool flag)
 
     smartInsertDeleteEnabled = flag;
 
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebSmartInsertDeleteEnabled];
+    if (!testingModeEnabled)
+        [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebSmartInsertDeleteEnabled];
 }
 
 void TextChecker::didChangeAutomaticTextReplacementEnabled()

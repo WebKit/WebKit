@@ -106,7 +106,6 @@ public:
     void setFrameFlatteningEnabled(WebPageGroupProxy*, bool);
     void setPluginsEnabled(WebPageGroupProxy*, bool);
     void setJavaScriptCanAccessClipboard(WebPageGroupProxy*, bool);
-    void setAutomaticLinkDetectionEnabled(WebPageGroupProxy*, bool enabled);
     void setPrivateBrowsingEnabled(WebPageGroupProxy*, bool);
     void setUseDashboardCompatibilityMode(WebPageGroupProxy*, bool);
     void setPopupBlockingEnabled(WebPageGroupProxy*, bool);

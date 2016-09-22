@@ -207,12 +207,12 @@ enum UserInterfaceLayoutDirection {
     [RaisesException] boolean hasSpellingMarker(long from, long length);
     [RaisesException] boolean hasGrammarMarker(long from, long length);
     [RaisesException] boolean hasAutocorrectedMarker(long from, long length);
-    [RaisesException] void setContinuousSpellCheckingEnabled(boolean enabled);
-    [RaisesException] void setAutomaticQuoteSubstitutionEnabled(boolean enabled);
-    [RaisesException] void setAutomaticLinkDetectionEnabled(boolean enabled);
-    [RaisesException] void setAutomaticDashSubstitutionEnabled(boolean enabled);
-    [RaisesException] void setAutomaticTextReplacementEnabled(boolean enabled);
-    [RaisesException] void setAutomaticSpellingCorrectionEnabled(boolean enabled);
+    void setContinuousSpellCheckingEnabled(boolean enabled);
+    void setAutomaticQuoteSubstitutionEnabled(boolean enabled);
+    void setAutomaticLinkDetectionEnabled(boolean enabled);
+    void setAutomaticDashSubstitutionEnabled(boolean enabled);
+    void setAutomaticTextReplacementEnabled(boolean enabled);
+    void setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
     [RaisesException] void handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
 

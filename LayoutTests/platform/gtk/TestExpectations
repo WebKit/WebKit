@@ -389,6 +389,11 @@ webkit.org/b/133320 crypto/subtle/hmac-import-jwk.html [ Pass ]
 webkit.org/b/133320 crypto/subtle/hmac-sign-verify-empty-key.html [ Pass ]
 webkit.org/b/133320 crypto/subtle/hmac-sign-verify.html [ Pass ]
 
+# GTK does not implement setAutomaticLinkDetectionEnabled
+editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
+editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
+editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
+
 # QuickTime plug-in not relevant to this port
 Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
 
@@ -2595,8 +2600,6 @@ webkit.org/b/161584 accessibility/children-changed-sends-notification.html [ Fai
 webkit.org/b/161587 css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/161588 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 webkit.org/b/161589 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
-
-webkit.org/b/161590 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

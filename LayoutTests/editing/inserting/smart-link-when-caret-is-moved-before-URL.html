@@ -6,10 +6,10 @@
 <script src="../../resources/js-test-pre.js"></script>
 <script>
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.dumpAsText();
-    testRunner.setAutomaticLinkDetectionEnabled(true);
-}
+if (window.internals)
+    internals.setAutomaticLinkDetectionEnabled(true);
 
 description('This test demonstrates that smart link doesn\'t erroneously trigger when the user moves the caret immediately before an URL.');
 

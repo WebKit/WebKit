@@ -57,6 +57,7 @@
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSecurityOriginRef.h>
+#include <WebKit/WKTextChecker.h>
 #include <WebKit/WKUserMediaPermissionCheck.h>
 #include <algorithm>
 #include <cstdio>
@@ -78,10 +79,6 @@
 #if PLATFORM(COCOA)
 #include <WebKit/WKContextPrivateMac.h>
 #include <WebKit/WKPagePrivateMac.h>
-#endif
-
-#if !PLATFORM(COCOA)
-#include <WebKit/WKTextChecker.h>
 #endif
 
 namespace WTR {
@@ -1083,6 +1080,7 @@ TestCommand parseInputLine(const std::string& inputLine)
 
 bool TestController::runTest(const char* inputLine)
 {
+    WKTextCheckerSetTestingMode(true);
     TestCommand command = parseInputLine(std::string(inputLine));
 
     m_state = RunningTest;

@@ -308,6 +308,11 @@ fast/css/pseudo-active-with-programmatic-focus.html [ Skip ]
 http/tests/security/history-username-password.html [ Skip ]
 fast/selectors/hover-invalidation-descendant-dynamic.html [ Skip ]
 
+# IOS does not implement setAutomaticLinkDetectionEnabled
+editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
+editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
+editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
+
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
 
 # No tab navigation support on iOS

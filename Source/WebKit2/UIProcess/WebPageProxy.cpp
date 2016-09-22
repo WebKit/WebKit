@@ -5976,6 +5976,40 @@ void WebPageProxy::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
     m_process->send(Messages::WebPage::SetAutoSizingShouldExpandToViewHeight(shouldExpand), m_pageID);
 }
 
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+
+void WebPageProxy::toggleSmartInsertDelete()
+{
+    if (TextChecker::isTestingMode())
+        TextChecker::setSmartInsertDeleteEnabled(!TextChecker::isSmartInsertDeleteEnabled());
+}
+
+void WebPageProxy::toggleAutomaticQuoteSubstitution()
+{
+    if (TextChecker::isTestingMode())
+        TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
+}
+
+void WebPageProxy::toggleAutomaticLinkDetection()
+{
+    if (TextChecker::isTestingMode())
+        TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
+}
+
+void WebPageProxy::toggleAutomaticDashSubstitution()
+{
+    if (TextChecker::isTestingMode())
+        TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
+}
+
+void WebPageProxy::toggleAutomaticTextReplacement()
+{
+    if (TextChecker::isTestingMode())
+        TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
+}
+
+#endif
+
 #if PLATFORM(MAC)
 
 void WebPageProxy::substitutionsPanelIsShowing(bool& isShowing)

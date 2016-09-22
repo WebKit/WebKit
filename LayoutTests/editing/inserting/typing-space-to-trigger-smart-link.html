@@ -4,10 +4,10 @@
 <script>
 function runTest()
 {
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.dumpAsText();
-        testRunner.setAutomaticLinkDetectionEnabled(true);
-    }
+    if (window.internals)
+        internals.setAutomaticLinkDetectionEnabled(true);
 
     var testTypeSpaceDiv = document.getElementById('testTypeSpace');
     var targetText = testTypeSpaceDiv.firstChild;
@@ -40,8 +40,8 @@ function runTest()
     else
         document.getElementById('log').textContent += "Failed: the expected content was '" + expectedContents + "', but the actual result was '" + testTypeLinkDiv.innerHTML + "'."
 
-    if (window.testRunner)
-        testRunner.setAutomaticLinkDetectionEnabled(false);
+    if (window.internals)
+        internals.setAutomaticLinkDetectionEnabled(false);
 }
 
 function pressKey(key)

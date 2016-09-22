@@ -42,6 +42,9 @@ public:
 
     static void setContinuousSpellCheckingEnabled(bool);
     static void setGrammarCheckingEnabled(bool);
+    
+    static void setTestingMode(bool);
+    static bool isTestingMode();
 
 #if PLATFORM(COCOA)
     static void setAutomaticSpellingCorrectionEnabled(bool);

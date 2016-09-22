@@ -1423,6 +1423,14 @@ private:
 
     bool maybeInitializeSandboxExtensionHandle(const WebCore::URL&, SandboxExtension::Handle&);
 
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    void toggleSmartInsertDelete();
+    void toggleAutomaticQuoteSubstitution();
+    void toggleAutomaticLinkDetection();
+    void toggleAutomaticDashSubstitution();
+    void toggleAutomaticTextReplacement();
+#endif
+
 #if PLATFORM(MAC)
     void substitutionsPanelIsShowing(bool&);
     void showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);

@@ -1,3 +1,24 @@
+2016-09-22  Jonathan Bedard  <jbedard@apple.com>
+
+        Automatic Text Replacement Testing in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=161919
+
+        Reviewed by Ryosuke Niwa.
+
+        Implemented test hooks for text replacement for WebKit2.
+        Note that spell checking has not been implemented, so most tests which use text replacement still fail.
+
+        * editing/inserting/smart-link-when-caret-is-moved-before-URL.html: Use internals instead of TestRunner.
+        * editing/inserting/typing-space-to-trigger-smart-link.html: Ditto.
+        * platform/efl/TestExpectations: Added port specific tests.
+        * platform/gtk/TestExpectations: Added port specific tests.
+        * platform/ios-simulator/TestExpectations: Added port specific tests.
+        * platform/ios-simulator-wk1/TestExpectations: Moved skipped tests to ios-simulator.
+        * platform/ios-simulator-wk2/TestExpectations: Moved skipped tests to ios-simulator.
+        * platform/mac-wk2/TestExpectations: Removed passing test.
+        * platform/win/TestExpectations: Added port specific tests.
+        * platform/wk2/TestExpectations: Added better explanation for failing test.
+
 2016-09-22  Youenn Fablet  <youenn@apple.com>
 
         Sync web-platform-tests up to revision 3801ab5
