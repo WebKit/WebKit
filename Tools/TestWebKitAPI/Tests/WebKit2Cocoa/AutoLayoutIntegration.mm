@@ -36,12 +36,11 @@ static bool didInvalidateIntrinsicContentSize;
 static bool didEvaluateJavaScript;
 
 @interface AutoLayoutWKWebView : WKWebView
+@property (nonatomic) BOOL expectingIntrinsicContentSizeChange;
+@property (nonatomic) NSSize expectedIntrinsicContentSize;
 @end
 
-@implementation AutoLayoutWKWebView {
-    BOOL _expectingIntrinsicContentSizeChange;
-    NSSize _expectedIntrinsicContentSize;
-}
+@implementation AutoLayoutWKWebView
 
 - (instancetype)initWithFrame:(NSRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
@@ -156,6 +155,33 @@ TEST(WebKit2, AutoLayoutIntegration)
     }];
     TestWebKitAPI::Util::run(&didEvaluateJavaScript);
     didEvaluateJavaScript = false;
+    [webView _setShouldExpandContentToViewHeightForAutoLayout:NO];
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+
+    __block bool didFinishNavigation = false;
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+    __block bool didFirstLayout = false;
+    [navigationDelegate setRenderingProgressDidChange:^(WKWebView *, _WKRenderingProgressEvents progressEvents) {
+        if (progressEvents & _WKRenderingProgressEventFirstLayout) {
+            didFirstLayout = true;
+            EXPECT_TRUE(didInvalidateIntrinsicContentSize);
+        }
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView _setMinimumLayoutWidth:100];
+    didInvalidateIntrinsicContentSize = false;
+    [webView setExpectingIntrinsicContentSizeChange:YES];
+    [webView setExpectedIntrinsicContentSize:NSMakeSize(100, 400)];
+    [webView loadHTMLString:@"<body style='margin: 0; height: 400px;'></body>" baseURL:nil];
+    TestWebKitAPI::Util::run(&didInvalidateIntrinsicContentSize);
+    EXPECT_FALSE(didFirstLayout);
+    TestWebKitAPI::Util::run(&didFirstLayout);
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+    [webView setNavigationDelegate:nil];
 }
 
 #endif

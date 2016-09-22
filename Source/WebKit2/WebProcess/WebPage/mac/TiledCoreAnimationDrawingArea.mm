@@ -439,6 +439,10 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         if (m_transientZoomScale != 1)
             applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
 
+        if (m_pendingNewlyReachedLayoutMilestones)
+            m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(m_pendingNewlyReachedLayoutMilestones));
+        m_pendingNewlyReachedLayoutMilestones = 0;
+
         return returnValue;
     }
 }
@@ -862,6 +866,12 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
 void TiledCoreAnimationDrawingArea::addFence(const MachSendRight& fencePort)
 {
     m_layerHostingContext->setFencePort(fencePort.sendRight());
+}
+
+bool TiledCoreAnimationDrawingArea::dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones layoutMilestones)
+{
+    m_pendingNewlyReachedLayoutMilestones |= layoutMilestones;
+    return true;
 }
 
 } // namespace WebKit

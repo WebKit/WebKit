@@ -1,3 +1,14 @@
+2016-09-21  Dan Bernstein  <mitz@apple.com>
+
+        [macOS] Upon layout, _webView:renderingProgressDidChange: fires before the intrinsic content size is updated
+        https://bugs.webkit.org/show_bug.cgi?id=162359
+        <rdar://problem/27776454>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AutoLayoutIntegration.mm:
+        (TEST):
+
 2016-09-21  Keith Miller  <keith_miller@apple.com>
 
         Fix build for future versions of Clang.
