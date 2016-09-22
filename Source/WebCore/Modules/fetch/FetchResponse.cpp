@@ -206,7 +206,7 @@ void FetchResponse::BodyLoader::stop()
         m_loader->stop();
 }
 
-void FetchResponse::consume(unsigned type, Ref<DeferredWrapper>&& wrapper)
+void FetchResponse::consume(unsigned type, Ref<DeferredPromise>&& wrapper)
 {
     ASSERT(type <= static_cast<unsigned>(FetchBodyConsumer::Type::Text));
 
@@ -241,7 +241,7 @@ void FetchResponse::consumeChunk(Ref<JSC::Uint8Array>&& chunk)
     m_consumer.append(chunk->data(), chunk->byteLength());
 }
 
-void FetchResponse::finishConsumingStream(Ref<DeferredWrapper>&& promise)
+void FetchResponse::finishConsumingStream(Ref<DeferredPromise>&& promise)
 {
     m_consumer.resolve(WTFMove(promise));
 }

@@ -59,7 +59,7 @@ static String textFromUTF8(const unsigned char* data, unsigned length)
     return decoder->decodeAndFlush(reinterpret_cast<const char*>(data), length);
 }
 
-void FetchBodyConsumer::resolveWithData(Ref<DeferredWrapper>&& promise, const unsigned char* data, unsigned length)
+void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, const unsigned char* data, unsigned length)
 {
     switch (m_type) {
     case Type::ArrayBuffer:
@@ -80,7 +80,7 @@ void FetchBodyConsumer::resolveWithData(Ref<DeferredWrapper>&& promise, const un
     }
 }
 
-void FetchBodyConsumer::resolve(Ref<DeferredWrapper>&& promise)
+void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise)
 {
     ASSERT(m_type != Type::None);
     switch (m_type) {

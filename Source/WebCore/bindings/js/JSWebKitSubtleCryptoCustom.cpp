@@ -173,9 +173,8 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
     if (!success)
         return jsUndefined();
 
-    
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
@@ -190,7 +189,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
         return jsUndefined();
     }
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
@@ -227,8 +226,8 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
     if (!success)
         return jsUndefined();
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
@@ -243,7 +242,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
         return jsUndefined();
     }
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
@@ -280,8 +279,8 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
     if (!success)
         return jsUndefined();
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
@@ -296,7 +295,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
         return jsUndefined();
     }
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
@@ -339,8 +338,8 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
     if (!success)
         return jsUndefined();
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     auto successCallback = [wrapper](bool result) mutable {
         wrapper->resolve(result);
     };
@@ -355,7 +354,7 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
         return jsUndefined();
     }
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
@@ -382,8 +381,8 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
     if (!success)
         return jsUndefined();
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
@@ -398,7 +397,7 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
         return jsUndefined();
     }
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
@@ -434,8 +433,8 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
             return jsUndefined();
     }
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     auto successCallback = [wrapper](CryptoKey* key, CryptoKeyPair* keyPair) mutable {
         ASSERT(key || keyPair);
         ASSERT(!key || !keyPair);
@@ -455,7 +454,7 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
         return jsUndefined();
     }
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperationData data, RefPtr<CryptoAlgorithm> algorithm, RefPtr<CryptoAlgorithmParameters> parameters, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
@@ -570,8 +569,8 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
             return jsUndefined();
     }
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     auto successCallback = [wrapper](CryptoKey& result) mutable {
         wrapper->resolve(result);
     };
@@ -583,7 +582,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
     if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 static void exportKey(ExecState& state, CryptoKeyFormat keyFormat, const CryptoKey& key, CryptoAlgorithm::VectorCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
@@ -639,8 +638,8 @@ JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
     if (!key)
         return throwTypeError(&state, scope);
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     auto successCallback = [wrapper](const Vector<uint8_t>& result) mutable {
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
@@ -652,7 +651,7 @@ JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
     if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
@@ -693,8 +692,8 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
     if (!parameters)
         return jsUndefined();
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
 
     auto exportSuccessCallback = [keyFormat, algorithm, parameters, wrappingKey, wrapper](const Vector<uint8_t>& exportedKeyData) mutable {
         auto encryptSuccessCallback = [wrapper](const Vector<uint8_t>& encryptedData) mutable {
@@ -722,7 +721,7 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
         return jsUndefined();
     }
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
@@ -793,8 +792,8 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
             return jsUndefined();
     }
 
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    RefPtr<DeferredWrapper> wrapper = DeferredWrapper::create(&state, globalObject(), promiseDeferred);
+    RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
+    auto promise = wrapper->promise();
     Strong<JSDOMGlobalObject> domGlobalObject(state.vm(), globalObject());
 
     auto decryptSuccessCallback = [domGlobalObject, keyFormat, unwrappedKeyAlgorithm, unwrappedKeyAlgorithmParameters, extractable, keyUsages, wrapper](const Vector<uint8_t>& result) mutable {
@@ -828,7 +827,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
         return jsUndefined();
     }
 
-    return promiseDeferred->promise();
+    return promise;
 }
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class JSDOMWindow;
 class ScriptExecutionContext;
 
 static const uint8_t JSNodeType = JSC::LastJSCObjectType + 1;
@@ -41,8 +42,10 @@ public:
     JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject()); }
     ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
 
+    JSDOMWindow& domWindow() const;
+
 protected:
-    JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject) 
+    JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
         : Base(globalObject.vm(), structure)
     {
         ASSERT(scriptExecutionContext());

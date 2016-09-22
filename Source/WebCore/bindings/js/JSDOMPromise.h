@@ -96,15 +96,14 @@ struct PromiseResultInspector<DOMClass, typename std::enable_if<TypeInspector<DO
     static constexpr bool passByConstRef = false;
 };
 
-class DeferredWrapper : public RefCounted<DeferredWrapper>, public ActiveDOMCallback {
+class DeferredPromise : public RefCounted<DeferredPromise>, public ActiveDOMCallback {
 public:
-    // FIXME: We should pass references here, not pointers, see bug 161787
-    static Ref<DeferredWrapper> create(JSC::ExecState* state, JSDOMGlobalObject* globalObject, JSC::JSPromiseDeferred* deferred)
+    static Ref<DeferredPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred)
     {
-        return adoptRef(*new DeferredWrapper(state, globalObject, deferred));
+        return adoptRef(*new DeferredPromise(globalObject, deferred));
     }
 
-    ~DeferredWrapper();
+    ~DeferredPromise();
 
     template<class ResolveResultType> typename std::enable_if<PromiseResultInspector<ResolveResultType>::passByValue, void>::type
     resolve(ResolveResultType result) { resolveWithValue(result); }
@@ -136,7 +135,7 @@ public:
     void visitAggregate(JSC::SlotVisitor& visitor) { visitor.appendUnbarrieredWeak(&m_deferred); }
 
 private:
-    DeferredWrapper(JSC::ExecState*, JSDOMGlobalObject*, JSC::JSPromiseDeferred*);
+    DeferredPromise(JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
 
     void clear();
     void contextDestroyed() override;
@@ -152,13 +151,15 @@ private:
     JSC::Weak<JSDOMGlobalObject> m_globalObject;
 };
 
-void fulfillPromiseWithJSON(Ref<DeferredWrapper>&&, const String&);
-void fulfillPromiseWithArrayBuffer(Ref<DeferredWrapper>&&, ArrayBuffer*);
-void fulfillPromiseWithArrayBuffer(Ref<DeferredWrapper>&&, const void*, size_t);
+Ref<DeferredPromise> createDeferredPromise(JSC::ExecState&, JSDOMWindow&);
+
+void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
+void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
+void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
 void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState&, const String&);
 
-using PromiseFunction = void(JSC::ExecState&, Ref<DeferredWrapper>&&);
+using PromiseFunction = void(JSC::ExecState&, Ref<DeferredPromise>&&);
 
 enum class PromiseExecutionScope { WindowOnly, WindowOrWorker };
 
@@ -175,16 +176,16 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
     if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
         return JSC::jsUndefined();
 
-    promiseFunction(state, DeferredWrapper::create(&state, &globalObject, promiseDeferred));
+    promiseFunction(state, DeferredPromise::create(globalObject, *promiseDeferred));
 
     rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
     ASSERT_UNUSED(scope, !scope.exception());
     return promiseDeferred->promise();
 }
 
-using BindingPromiseFunction = JSC::EncodedJSValue(JSC::ExecState*, Ref<DeferredWrapper>&&);
+using BindingPromiseFunction = JSC::EncodedJSValue(JSC::ExecState*, Ref<DeferredPromise>&&);
 template<BindingPromiseFunction bindingFunction>
-inline void bindingPromiseFunctionAdapter(JSC::ExecState& state, Ref<DeferredWrapper>&& promise)
+inline void bindingPromiseFunctionAdapter(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
 {
     bindingFunction(&state, WTFMove(promise));
 }
@@ -199,28 +200,25 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
 template <typename Value>
 class DOMPromise {
 public:
-    DOMPromise(Ref<DeferredWrapper>&& wrapper)
-        : m_wrapper(WTFMove(wrapper))
-    {
-    }
+    DOMPromise(Ref<DeferredPromise>&& genericPromise) : m_promiseDeferred(WTFMove(genericPromise)) { }
 
-    DOMPromise(DOMPromise&& promise) : m_wrapper(WTFMove(promise.m_wrapper)) { }
+    DOMPromise(DOMPromise&& promise) : m_promiseDeferred(WTFMove(promise.m_promiseDeferred)) { }
 
     DOMPromise(const DOMPromise&) = default;
     DOMPromise& operator=(DOMPromise const&) = default;
 
-    void resolve(typename PromiseResultInspector<Value>::Type value) { m_wrapper->resolve(value); }
+    void resolve(typename PromiseResultInspector<Value>::Type value) { m_promiseDeferred->resolve(value); }
 
-    template<typename... ErrorType> void reject(ErrorType&&... error) { m_wrapper->reject(std::forward<ErrorType>(error)...); }
+    template<typename... ErrorType> void reject(ErrorType&&... error) { m_promiseDeferred->reject(std::forward<ErrorType>(error)...); }
 
-    DeferredWrapper& deferredWrapper() { return m_wrapper; }
+    JSC::JSValue promise() const { return m_promiseDeferred->promise(); };
 
 private:
-    Ref<DeferredWrapper> m_wrapper;
+    Ref<DeferredPromise> m_promiseDeferred;
 };
 
 template<class ResolveResultType>
-inline void DeferredWrapper::resolveWithValue(ResolveResultType&& result)
+inline void DeferredPromise::resolveWithValue(ResolveResultType&& result)
 {
     if (isSuspended())
         return;
@@ -231,7 +229,7 @@ inline void DeferredWrapper::resolveWithValue(ResolveResultType&& result)
 }
 
 template<class ResolveResultType>
-inline void DeferredWrapper::resolveWithNewlyCreated(Ref<ResolveResultType>&& result)
+inline void DeferredPromise::resolveWithNewlyCreated(Ref<ResolveResultType>&& result)
 {
     if (isSuspended())
         return;
@@ -243,7 +241,7 @@ inline void DeferredWrapper::resolveWithNewlyCreated(Ref<ResolveResultType>&& re
 }
 
 template<class RejectResultType>
-inline void DeferredWrapper::rejectWithValue(RejectResultType&& result)
+inline void DeferredPromise::rejectWithValue(RejectResultType&& result)
 {
     if (isSuspended())
         return;
@@ -255,7 +253,7 @@ inline void DeferredWrapper::rejectWithValue(RejectResultType&& result)
 }
 
 template<>
-inline void DeferredWrapper::resolve(bool result)
+inline void DeferredPromise::resolve(bool result)
 {
     if (isSuspended())
         return;
@@ -267,7 +265,7 @@ inline void DeferredWrapper::resolve(bool result)
 }
 
 template<>
-inline void DeferredWrapper::resolve(JSC::JSValue value)
+inline void DeferredPromise::resolve(JSC::JSValue value)
 {
     if (isSuspended())
         return;
@@ -279,7 +277,7 @@ inline void DeferredWrapper::resolve(JSC::JSValue value)
 }
 
 template<>
-inline void DeferredWrapper::reject(JSC::JSValue value)
+inline void DeferredPromise::reject(JSC::JSValue value)
 {
     if (isSuspended())
         return;
@@ -291,7 +289,7 @@ inline void DeferredWrapper::reject(JSC::JSValue value)
 }
 
 template<>
-inline void DeferredWrapper::resolve(std::nullptr_t)
+inline void DeferredPromise::resolve(std::nullptr_t)
 {
     if (isSuspended())
         return;
@@ -303,7 +301,7 @@ inline void DeferredWrapper::resolve(std::nullptr_t)
 }
 
 template<>
-inline void DeferredWrapper::reject(std::nullptr_t)
+inline void DeferredPromise::reject(std::nullptr_t)
 {
     if (isSuspended())
         return;
@@ -315,7 +313,7 @@ inline void DeferredWrapper::reject(std::nullptr_t)
 }
 
 template<>
-inline void DeferredWrapper::resolve(const String& result)
+inline void DeferredPromise::resolve(const String& result)
 {
     if (isSuspended())
         return;
@@ -327,7 +325,7 @@ inline void DeferredWrapper::resolve(const String& result)
 }
 
 template<>
-inline void DeferredWrapper::reject(const String& result)
+inline void DeferredPromise::reject(const String& result)
 {
     if (isSuspended())
         return;

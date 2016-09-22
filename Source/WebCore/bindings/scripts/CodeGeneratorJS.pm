@@ -3425,7 +3425,7 @@ sub GenerateImplementation
 
                 my $scope = $interface->extendedAttributes->{"Exposed"} ? "WindowOrWorker" : "WindowOnly";
                 push(@implContent, <<END);
-static EncodedJSValue ${functionName}Promise(ExecState*, Ref<DeferredWrapper>&&);
+static EncodedJSValue ${functionName}Promise(ExecState*, Ref<DeferredPromise>&&);
 
 ${functionReturn} ${functionName}(ExecState* state)
 {
@@ -3433,7 +3433,7 @@ ${functionReturn} ${functionName}(ExecState* state)
     return JSValue::encode(callPromiseFunction<${functionName}Promise, PromiseExecutionScope::${scope}>(*state));
 }
 
-static inline EncodedJSValue ${functionName}Promise(ExecState* state, Ref<DeferredWrapper>&& deferredWrapper)
+static inline EncodedJSValue ${functionName}Promise(ExecState* state, Ref<DeferredPromise>&& promise)
 END
             }
             else {
@@ -4146,7 +4146,7 @@ sub GenerateReturnParameters
     my @arguments;
 
     if (IsReturningPromise($function)) {
-        push(@arguments, "WTFMove(deferredWrapper)");
+        push(@arguments, "WTFMove(promise)");
     }
     push(@arguments, "ec") if $function->signature->extendedAttributes->{"RaisesException"} || $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
     return @arguments;

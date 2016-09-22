@@ -162,7 +162,7 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
 }
 
 // https://html.spec.whatwg.org/#dom-customelementregistry-whendefined
-static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry)
+static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry, JSPromiseDeferred& promiseDeferred)
 {
     auto scope = DECLARE_THROW_SCOPE(state.vm());
 
@@ -173,17 +173,18 @@ static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObj
     if (UNLIKELY(scope.exception()))
         return jsUndefined();
 
-    if (!validateCustomElementNameAndThrowIfNeeded(state, localName))
+    if (!validateCustomElementNameAndThrowIfNeeded(state, localName)) {
+        ASSERT(scope.exception());
         return jsUndefined();
+    }
 
     if (registry.findInterface(localName)) {
-        auto& jsPromise = *JSPromiseDeferred::create(&state, &globalObject);
-        DeferredWrapper::create(&state, &globalObject, &jsPromise)->resolve(nullptr);
-        return jsPromise.promise();
+        DeferredPromise::create(globalObject, promiseDeferred)->resolve(nullptr);
+        return promiseDeferred.promise();
     }
 
     auto result = registry.promiseMap().ensure(localName, [&] {
-        return DeferredWrapper::create(&state, &globalObject, JSPromiseDeferred::create(&state, &globalObject));
+        return DeferredPromise::create(globalObject, promiseDeferred);
     });
 
     return result.iterator->value->promise();
@@ -193,14 +194,15 @@ JSValue JSCustomElementRegistry::whenDefined(ExecState& state)
 {
     auto scope = DECLARE_CATCH_SCOPE(state.vm());
 
-    JSDOMGlobalObject& globalObject = *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
-    auto& promiseDeferred = *JSPromiseDeferred::create(&state, &globalObject);
-    JSValue promise = whenDefinedPromise(state, globalObject, wrapped());
+    ASSERT(globalObject());
+    auto promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
+    ASSERT(promiseDeferred);
+    JSValue promise = whenDefinedPromise(state, *globalObject(), wrapped(), *promiseDeferred);
 
     if (UNLIKELY(scope.exception())) {
-        rejectPromiseWithExceptionIfAny(state, globalObject, promiseDeferred);
+        rejectPromiseWithExceptionIfAny(state, *globalObject(), *promiseDeferred);
         ASSERT(!scope.exception());
-        return promiseDeferred.promise();
+        return promiseDeferred->promise();
     }
 
     return promise;

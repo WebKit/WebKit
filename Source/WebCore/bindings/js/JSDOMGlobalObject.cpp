@@ -178,8 +178,8 @@ void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     for (auto& constructor : thisObject->constructors().values())
         visitor.append(&constructor);
 
-    for (auto& deferredWrapper : thisObject->deferredWrappers())
-        deferredWrapper->visitAggregate(visitor);
+    for (auto& deferredPromise : thisObject->deferredPromises())
+        deferredPromise->visitAggregate(visitor);
 
     thisObject->m_builtinInternalFunctions.visit(visitor);
 }

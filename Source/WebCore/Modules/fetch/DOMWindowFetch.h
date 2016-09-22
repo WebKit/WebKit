@@ -36,14 +36,12 @@
 namespace WebCore {
 
 class DOMWindow;
-class DeferredWrapper;
 class Dictionary;
 class FetchRequest;
-class FetchResponse;
 
 class DOMWindowFetch {
 public:
-    static void fetch(DOMWindow&, FetchRequest&, DOMPromise<FetchResponse>&&);
+    static void fetch(DOMWindow&, FetchRequest&, Ref<DeferredPromise>&&);
 };
 
 } // namespace WebCore

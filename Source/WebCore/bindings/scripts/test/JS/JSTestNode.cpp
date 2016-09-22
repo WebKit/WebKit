@@ -231,7 +231,7 @@ JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
     return getDOMConstructor<JSTestNodeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState*, Ref<DeferredWrapper>&&);
+static EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState*, Ref<DeferredPromise>&&);
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecState* state)
 {
@@ -239,7 +239,7 @@ EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecSt
     return JSValue::encode(callPromiseFunction<jsTestNodePrototypeFunctionTestWorkerPromisePromise, PromiseExecutionScope::WindowOrWorker>(*state));
 }
 
-static inline EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState* state, Ref<DeferredWrapper>&& deferredWrapper)
+static inline EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState* state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -250,7 +250,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise
         return throwThisTypeError(*state, throwScope, "TestNode", "testWorkerPromise");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestNode::info());
     auto& impl = castedThis->wrapped();
-    impl.testWorkerPromise(WTFMove(deferredWrapper));
+    impl.testWorkerPromise(WTFMove(promise));
     return JSValue::encode(jsUndefined());
 }
 

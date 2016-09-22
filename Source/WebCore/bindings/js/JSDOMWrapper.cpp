@@ -27,6 +27,7 @@
 #include "JSDOMWrapper.h"
 
 #include "DOMWrapperWorld.h"
+#include "JSDOMWindow.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
@@ -34,5 +35,12 @@ using namespace JSC;
 namespace WebCore {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMObject);
+
+JSDOMWindow& JSDOMObject::domWindow() const
+{
+    auto* domWindow = JSC::jsCast<JSDOMWindow*>(JSC::JSNonFinalObject::globalObject());
+    ASSERT(domWindow);
+    return *domWindow;
+}
 
 } // namespace WebCore

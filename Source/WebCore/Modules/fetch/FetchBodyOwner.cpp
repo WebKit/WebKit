@@ -71,7 +71,7 @@ bool FetchBodyOwner::isDisturbedOrLocked() const
     return false;
 }
 
-void FetchBodyOwner::arrayBuffer(Ref<DeferredWrapper>&& promise)
+void FetchBodyOwner::arrayBuffer(Ref<DeferredPromise>&& promise)
 {
     if (m_body.isEmpty()) {
         fulfillPromiseWithArrayBuffer(WTFMove(promise), nullptr, 0);
@@ -85,7 +85,7 @@ void FetchBodyOwner::arrayBuffer(Ref<DeferredWrapper>&& promise)
     m_body.arrayBuffer(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::blob(Ref<DeferredWrapper>&& promise)
+void FetchBodyOwner::blob(Ref<DeferredPromise>&& promise)
 {
     if (m_body.isEmpty()) {
         promise->resolve(Blob::create(Vector<uint8_t>(), Blob::normalizedContentType(extractMIMETypeFromMediaType(m_body.contentType()))));
@@ -99,7 +99,7 @@ void FetchBodyOwner::blob(Ref<DeferredWrapper>&& promise)
     m_body.blob(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::formData(Ref<DeferredWrapper>&& promise)
+void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
 {
     if (m_body.isEmpty()) {
         promise->reject(0);
@@ -113,7 +113,7 @@ void FetchBodyOwner::formData(Ref<DeferredWrapper>&& promise)
     m_body.formData(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::json(Ref<DeferredWrapper>&& promise)
+void FetchBodyOwner::json(Ref<DeferredPromise>&& promise)
 {
     if (m_body.isEmpty()) {
         promise->reject(SYNTAX_ERR);
@@ -127,7 +127,7 @@ void FetchBodyOwner::json(Ref<DeferredWrapper>&& promise)
     m_body.json(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::text(Ref<DeferredWrapper>&& promise)
+void FetchBodyOwner::text(Ref<DeferredPromise>&& promise)
 {
     if (m_body.isEmpty()) {
         promise->resolve(String());

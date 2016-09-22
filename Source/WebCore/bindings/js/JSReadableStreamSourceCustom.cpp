@@ -43,8 +43,11 @@ JSValue JSReadableStreamSource::start(ExecState& state)
     JSReadableStreamSource* jsSource = const_cast<JSReadableStreamSource*>(this);
     m_controller.set(state.vm(), jsSource, state.argument(0));
 
+    ASSERT(globalObject());
     JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
-    wrapped().start(ReadableStreamDefaultController(controller), DeferredWrapper::create(&state, globalObject(), promiseDeferred));
+    if (!promiseDeferred)
+        return jsUndefined();
+    wrapped().start(ReadableStreamDefaultController(controller), DeferredPromise::create(*globalObject(), *promiseDeferred));
     return promiseDeferred->promise();
 }
 

@@ -733,7 +733,7 @@ bool ApplePaySession::canMakePayments(ScriptExecutionContext& scriptExecutionCon
     return paymentCoordinator.canMakePayments();
 }
 
-void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scriptExecutionContext, const String& merchantIdentifier, Ref<DeferredWrapper>&& passedPromise, ExceptionCode& ec)
+void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scriptExecutionContext, const String& merchantIdentifier, Ref<DeferredPromise>&& passedPromise, ExceptionCode& ec)
 {
     auto& document = downcast<Document>(scriptExecutionContext);
     DOMWindow& window = *document.domWindow();
@@ -745,7 +745,7 @@ void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scri
         return;
     }
 
-    RefPtr<DeferredWrapper> promise(WTFMove(passedPromise));
+    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
     if (!shouldDiscloseApplePayCapability(document)) {
         auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
         bool canMakePayments = paymentCoordinator.canMakePayments();
@@ -763,7 +763,7 @@ void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scri
     });
 }
 
-void ApplePaySession::openPaymentSetup(ScriptExecutionContext& scriptExecutionContext, const String& merchantIdentifier, Ref<DeferredWrapper>&& passedPromise, ExceptionCode& ec)
+void ApplePaySession::openPaymentSetup(ScriptExecutionContext& scriptExecutionContext, const String& merchantIdentifier, Ref<DeferredPromise>&& passedPromise, ExceptionCode& ec)
 {
     auto& document = downcast<Document>(scriptExecutionContext);
     DOMWindow& window = *document.domWindow();
@@ -781,7 +781,7 @@ void ApplePaySession::openPaymentSetup(ScriptExecutionContext& scriptExecutionCo
         return;
     }
 
-    RefPtr<DeferredWrapper> promise(WTFMove(passedPromise));
+    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
 
     paymentCoordinator.openPaymentSetup(merchantIdentifier, document.domain(), [promise](bool result) mutable {

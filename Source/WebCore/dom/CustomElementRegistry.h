@@ -27,6 +27,7 @@
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
+#include "JSDOMPromise.h"
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
 #include <wtf/TemporaryChange.h>
@@ -44,7 +45,6 @@ namespace WebCore {
 
 class CustomElementRegistry;
 class DOMWindow;
-class DeferredWrapper;
 class Element;
 class JSCustomElementInterface;
 class QualifiedName;
@@ -66,7 +66,7 @@ public:
 
     JSC::JSValue get(const AtomicString&);
 
-    HashMap<AtomicString, Ref<DeferredWrapper>>& promiseMap() { return m_promiseMap; }
+    HashMap<AtomicString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
 
 private:
     CustomElementRegistry(DOMWindow&);
@@ -74,7 +74,7 @@ private:
     DOMWindow& m_window;
     HashMap<AtomicString, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap;
-    HashMap<AtomicString, Ref<DeferredWrapper>> m_promiseMap;
+    HashMap<AtomicString, Ref<DeferredPromise>> m_promiseMap;
 
     bool m_elementDefinitionIsRunning { false };
 

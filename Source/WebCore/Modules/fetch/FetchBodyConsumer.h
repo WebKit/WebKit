@@ -30,12 +30,12 @@
 
 #if ENABLE(FETCH_API)
 
+#include "JSDOMPromise.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
 
 class Blob;
-class DeferredWrapper;
 
 class FetchBodyConsumer {
 public:
@@ -57,8 +57,8 @@ public:
 
     void clean() { m_buffer = nullptr; }
 
-    void resolve(Ref<DeferredWrapper>&&);
-    void resolveWithData(Ref<DeferredWrapper>&&, const unsigned char*, unsigned);
+    void resolve(Ref<DeferredPromise>&&);
+    void resolveWithData(Ref<DeferredPromise>&&, const unsigned char*, unsigned);
 
     bool hasData() const { return !!m_buffer; }
 

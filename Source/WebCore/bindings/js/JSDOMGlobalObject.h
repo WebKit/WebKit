@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-    class DeferredWrapper;
+    class DeferredPromise;
     class Document;
     class Event;
     class DOMWrapperWorld;
@@ -42,7 +42,7 @@ namespace WebCore {
 
     typedef HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure>> JSDOMStructureMap;
     typedef HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::JSObject>> JSDOMConstructorMap;
-    typedef HashSet<DeferredWrapper*> DeferredWrapperSet;
+    typedef HashSet<DeferredPromise*> DeferredPromiseSet;
 
     class WEBCORE_EXPORT JSDOMGlobalObject : public JSC::JSGlobalObject {
         typedef JSC::JSGlobalObject Base;
@@ -58,7 +58,7 @@ namespace WebCore {
         JSDOMStructureMap& structures() { return m_structures; }
         JSDOMConstructorMap& constructors() { return m_constructors; }
 
-        DeferredWrapperSet& deferredWrappers() { return m_deferredWrappers; }
+        DeferredPromiseSet& deferredPromises() { return m_deferredPromises; }
 
         ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -91,7 +91,7 @@ namespace WebCore {
     protected:
         JSDOMStructureMap m_structures;
         JSDOMConstructorMap m_constructors;
-        DeferredWrapperSet m_deferredWrappers;
+        DeferredPromiseSet m_deferredPromises;
 
         Event* m_currentEvent;
         Ref<DOMWrapperWorld> m_world;

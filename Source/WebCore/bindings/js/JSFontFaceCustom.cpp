@@ -39,11 +39,11 @@ JSC::JSValue JSFontFace::loaded(JSC::ExecState& state) const
 {
     if (!m_loaded) {
         if (!wrapped().promise()) {
-            Ref<DeferredWrapper> promise = DeferredWrapper::create(&state, globalObject(), JSC::JSPromiseDeferred::create(&state, globalObject()));
+            auto promise = createDeferredPromise(state, domWindow());
             m_loaded.set(state.vm(), this, promise->promise());
             wrapped().registerLoaded(WTFMove(promise));
         } else
-            m_loaded.set(state.vm(), this, wrapped().promise().value().deferredWrapper().promise());
+            m_loaded.set(state.vm(), this, wrapped().promise().value().promise());
     }
     return m_loaded.get();
 }

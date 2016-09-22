@@ -34,7 +34,7 @@ namespace WebCore {
 JSC::JSValue JSFontFaceSet::ready(JSC::ExecState& state) const
 {
     if (!m_ready) {
-        Ref<DeferredWrapper> promise = DeferredWrapper::create(&state, globalObject(), JSC::JSPromiseDeferred::create(&state, globalObject()));
+        auto promise = createDeferredPromise(state, domWindow());
         m_ready.set(state.vm(), this, promise->promise());
         wrapped().registerReady(WTFMove(promise));
     }

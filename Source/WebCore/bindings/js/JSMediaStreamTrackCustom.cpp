@@ -184,11 +184,13 @@ JSValue JSMediaStreamTrack::applyConstraints(ExecState& state)
         valid = !advancedConstraints.isEmpty() || !mandatoryConstraints.isEmpty();
     }
 
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
-    auto constraints = MediaConstraintsImpl::create(WTFMove(mandatoryConstraints), WTFMove(advancedConstraints), valid);
-    wrapped().applyConstraints(WTFMove(constraints), DeferredWrapper::create(&state, globalObject(), promiseDeferred));
+    auto deferredPromise = createDeferredPromise(state, domWindow());
+    auto promise = deferredPromise->promise();
 
-    return promiseDeferred->promise();
+    auto constraints = MediaConstraintsImpl::create(WTFMove(mandatoryConstraints), WTFMove(advancedConstraints), valid);
+    wrapped().applyConstraints(WTFMove(constraints), WTFMove(deferredPromise));
+
+    return promise;
 }
 
 JSValue JSMediaStreamTrack::getConstraints(ExecState& state)

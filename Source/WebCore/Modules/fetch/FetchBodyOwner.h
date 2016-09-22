@@ -46,11 +46,11 @@ public:
     // Exposed Body API
     bool isDisturbed() const { return m_isDisturbed; };
 
-    void arrayBuffer(Ref<DeferredWrapper>&&);
-    void blob(Ref<DeferredWrapper>&&);
-    void formData(Ref<DeferredWrapper>&&);
-    void json(Ref<DeferredWrapper>&&);
-    void text(Ref<DeferredWrapper>&&);
+    void arrayBuffer(Ref<DeferredPromise>&&);
+    void blob(Ref<DeferredPromise>&&);
+    void formData(Ref<DeferredPromise>&&);
+    void json(Ref<DeferredPromise>&&);
+    void text(Ref<DeferredPromise>&&);
 
     bool isDisturbedOrLocked() const;
 

@@ -340,7 +340,7 @@ void parseMediaConstraintsDictionary(const Dictionary& mediaTrackConstraints, Me
     }
 }
 
-static void JSMediaDevicesGetUserMediaPromiseFunction(ExecState& state, Ref<DeferredWrapper>&& promise)
+static void JSMediaDevicesGetUserMediaPromiseFunction(ExecState& state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class ArrayValue;
-class DeferredWrapper;
+class DeferredPromise;
 class Dictionary;
 class Document;
 class Payment;
@@ -63,8 +63,8 @@ public:
 
     static bool supportsVersion(ScriptExecutionContext&, unsigned version, ExceptionCode&);
     static bool canMakePayments(ScriptExecutionContext&, ExceptionCode&);
-    static void canMakePaymentsWithActiveCard(ScriptExecutionContext&, const String& merchantIdentifier, Ref<DeferredWrapper>&&, ExceptionCode&);
-    static void openPaymentSetup(ScriptExecutionContext&, const String& merchantIdentifier, Ref<DeferredWrapper>&&, ExceptionCode&);
+    static void canMakePaymentsWithActiveCard(ScriptExecutionContext&, const String& merchantIdentifier, Ref<DeferredPromise>&&, ExceptionCode&);
+    static void openPaymentSetup(ScriptExecutionContext&, const String& merchantIdentifier, Ref<DeferredPromise>&&, ExceptionCode&);
 
     void begin(ExceptionCode&);
     void abort(ExceptionCode&);

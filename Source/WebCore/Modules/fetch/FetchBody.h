@@ -52,11 +52,11 @@ class ScriptExecutionContext;
 
 class FetchBody {
 public:
-    void arrayBuffer(FetchBodyOwner&, Ref<DeferredWrapper>&&);
-    void blob(FetchBodyOwner&, Ref<DeferredWrapper>&&);
-    void json(FetchBodyOwner&, Ref<DeferredWrapper>&&);
-    void text(FetchBodyOwner&, Ref<DeferredWrapper>&&);
-    void formData(FetchBodyOwner&, Ref<DeferredWrapper>&& promise) { promise.get().reject(0); }
+    void arrayBuffer(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void blob(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void json(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void text(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void formData(FetchBodyOwner&, Ref<DeferredPromise>&& promise) { promise.get().reject(0); }
 
 #if ENABLE(READABLE_STREAM_API)
     void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);
@@ -93,13 +93,13 @@ private:
     FetchBody(String&&);
     FetchBody(Type type) : m_type(type) { }
 
-    void consume(FetchBodyOwner&, Ref<DeferredWrapper>&&);
+    void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
     Vector<uint8_t> extractFromText() const;
-    void consumeArrayBuffer(Ref<DeferredWrapper>&&);
-    void consumeArrayBufferView(Ref<DeferredWrapper>&&);
-    void consumeText(Ref<DeferredWrapper>&&);
-    void consumeBlob(FetchBodyOwner&, Ref<DeferredWrapper>&&);
+    void consumeArrayBuffer(Ref<DeferredPromise>&&);
+    void consumeArrayBufferView(Ref<DeferredPromise>&&);
+    void consumeText(Ref<DeferredPromise>&&);
+    void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
     Type m_type { Type::None };
     String m_contentType;
@@ -112,7 +112,7 @@ private:
     String m_text;
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
-    RefPtr<DeferredWrapper> m_consumePromise;
+    RefPtr<DeferredPromise> m_consumePromise;
 };
 
 } // namespace WebCore
