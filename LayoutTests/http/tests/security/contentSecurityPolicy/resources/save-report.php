@@ -11,7 +11,7 @@ $reportFile = fopen($reportFilePath . ".tmp", 'w');
 $httpHeaders = $_SERVER;
 ksort($httpHeaders, SORT_STRING);
 foreach ($httpHeaders as $name => $value) {
-    if ($name === "CONTENT_TYPE" || $name === "HTTP_REFERER" || $name === "REQUEST_METHOD" || $name === "HTTP_COOKIE") {
+    if ($name === "CONTENT_TYPE" || $name === "HTTP_REFERER" || $name === "REQUEST_METHOD" || $name === "HTTP_COOKIE" || $name === "HTTP_HOST") {
         $value = undoMagicQuotes($value);
         fwrite($reportFile, "$name: $value\n");
     }
