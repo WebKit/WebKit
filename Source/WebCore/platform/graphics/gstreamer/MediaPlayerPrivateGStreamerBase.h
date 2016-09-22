@@ -47,6 +47,7 @@ typedef struct _GstGLDisplay GstGLDisplay;
 namespace WebCore {
 
 class BitmapTextureGL;
+class GLContext;
 class GraphicsContext;
 class GraphicsContext3D;
 class IntSize;
@@ -116,6 +117,7 @@ public:
 #endif
 
 #if USE(GSTREAMER_GL)
+    bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject, GC3Denum, GC3Dint, GC3Denum, GC3Denum, GC3Denum, bool, bool) override;
     NativeImagePtr nativeImageForCurrentTime() override;
 #endif
 
@@ -130,6 +132,8 @@ protected:
     static GstFlowReturn newPrerollCallback(GstElement*, MediaPlayerPrivateGStreamerBase*);
     GstElement* createGLAppSink();
     GstElement* createVideoSinkGL();
+    GLContext* prepareContextForCairoPaint(GstVideoInfo&, IntSize&, IntSize&);
+    bool paintToCairoSurface(cairo_surface_t*, cairo_device_t*, GstVideoInfo&, const IntSize&, const IntSize&);
 #endif
 
     void setStreamVolumeElement(GstStreamVolume*);

@@ -697,37 +697,35 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
 #endif
 
 #if USE(GSTREAMER_GL)
-NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
+// This should be called with the sample mutex locked.
+GLContext* MediaPlayerPrivateGStreamerBase::prepareContextForCairoPaint(GstVideoInfo& videoInfo, IntSize& size, IntSize& rotatedSize)
 {
-#if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
-    if (m_usingFallbackVideoSink)
-        return nullptr;
-
-    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
-
-    GstVideoInfo videoInfo;
     if (!getSampleVideoInfo(m_sample.get(), videoInfo))
-        return nullptr;
-
-    GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
-    GstVideoFrame videoFrame;
-    if (!gst_video_frame_map(&videoFrame, &videoInfo, buffer, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL)))
         return nullptr;
 
     GLContext* context = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext();
     context->makeContextCurrent();
-    cairo_device_t* device = context->cairoDevice();
 
     // Thread-awareness is a huge performance hit on non-Intel drivers.
-    cairo_gl_device_set_thread_aware(device, FALSE);
+    cairo_gl_device_set_thread_aware(context->cairoDevice(), FALSE);
+
+    size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
+    rotatedSize = m_videoSourceOrientation.usesWidthAsHeight() ? size.transposedSize() : size;
+
+    return context;
+}
+
+// This should be called with the sample mutex locked.
+bool MediaPlayerPrivateGStreamerBase::paintToCairoSurface(cairo_surface_t* outputSurface, cairo_device_t* device, GstVideoInfo& videoInfo, const IntSize& size, const IntSize& rotatedSize)
+{
+    GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
+    GstVideoFrame videoFrame;
+    if (!gst_video_frame_map(&videoFrame, &videoInfo, buffer, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL)))
+        return false;
 
     unsigned textureID = *reinterpret_cast<unsigned*>(videoFrame.data[0]);
-    IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, textureID, size.width(), size.height()));
-
-    IntSize rotatedSize = m_videoSourceOrientation.usesWidthAsHeight() ? size.transposedSize() : size;
-    RefPtr<cairo_surface_t> rotatedSurface = adoptRef(cairo_gl_surface_create(device, CAIRO_CONTENT_COLOR_ALPHA, rotatedSize.width(), rotatedSize.height()));
-    RefPtr<cairo_t> cr = adoptRef(cairo_create(rotatedSurface.get()));
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(outputSurface));
 
     switch (m_videoSourceOrientation) {
     case DefaultImageOrientation:
@@ -756,6 +754,65 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
     cairo_paint(cr.get());
 
     gst_video_frame_unmap(&videoFrame);
+
+    return true;
+}
+
+bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
+{
+#if !USE(CAIRO)
+    return false;
+#endif
+
+    if (m_usingFallbackVideoSink)
+        return false;
+
+    if (flipY || premultiplyAlpha)
+        return false;
+
+    GstVideoInfo videoInfo;
+    IntSize size, rotatedSize;
+    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    GLContext* glContext = prepareContextForCairoPaint(videoInfo, size, rotatedSize);
+    if (!glContext)
+        return false;
+
+    // Allocate uninitialized memory for the output texture.
+    context->bindTexture(outputTarget, outputTexture);
+    context->texImage2DDirect(outputTarget, level, internalFormat, rotatedSize.width(), rotatedSize.height(), 0, format, type, nullptr);
+
+    // cairo_gl_surface_create_for_texture sets these parameters to GL_NEAREST, so we need to backup them.
+    GC3Dint minFilter, magFilter;
+    context->getTexParameteriv(outputTarget, GL_TEXTURE_MIN_FILTER, &minFilter);
+    context->getTexParameteriv(outputTarget, GL_TEXTURE_MAG_FILTER, &magFilter);
+
+    RefPtr<cairo_surface_t> outputSurface = adoptRef(cairo_gl_surface_create_for_texture(glContext->cairoDevice(), CAIRO_CONTENT_COLOR_ALPHA, outputTexture, rotatedSize.width(), rotatedSize.height()));
+    if (!paintToCairoSurface(outputSurface.get(), glContext->cairoDevice(), videoInfo, size, rotatedSize))
+        return false;
+
+    context->bindTexture(outputTarget, outputTexture);
+    context->texParameteri(outputTarget, GraphicsContext3D::TEXTURE_MIN_FILTER, minFilter);
+    context->texParameteri(outputTarget, GraphicsContext3D::TEXTURE_MAG_FILTER, magFilter);
+
+    return true;
+}
+
+NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
+{
+#if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
+    if (m_usingFallbackVideoSink)
+        return nullptr;
+
+    GstVideoInfo videoInfo;
+    IntSize size, rotatedSize;
+    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    GLContext* context = prepareContextForCairoPaint(videoInfo, size, rotatedSize);
+    if (!context)
+        return nullptr;
+
+    RefPtr<cairo_surface_t> rotatedSurface = adoptRef(cairo_gl_surface_create(context->cairoDevice(), CAIRO_CONTENT_COLOR_ALPHA, rotatedSize.width(), rotatedSize.height()));
+    if (!paintToCairoSurface(rotatedSurface.get(), context->cairoDevice(), videoInfo, size, rotatedSize))
+        return nullptr;
 
     return rotatedSurface;
 #else
