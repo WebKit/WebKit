@@ -1,5 +1,16 @@
 2016-09-22  Daniel Bates  <dabates@apple.com>
 
+        [XSS Auditor] HTML5 entities can bypass XSS Auditor
+        https://bugs.webkit.org/show_bug.cgi?id=161939
+        <rdar://problem/25819815>
+
+        Reviewed by David Kilzer.
+
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url5-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url5.html: Added.
+
+2016-09-22  Daniel Bates  <dabates@apple.com>
+
         [XSS Auditor] Truncate data URLs at quotes
         https://bugs.webkit.org/show_bug.cgi?id=161937
 
