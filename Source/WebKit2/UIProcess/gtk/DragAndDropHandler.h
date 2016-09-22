@@ -27,9 +27,9 @@
 
 #if ENABLE(DRAG_SUPPORT)
 
-#include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/SelectionData.h>
 #include <gtk/gtk.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -40,6 +40,7 @@ typedef struct _GtkSelectionData GtkSelectionData;
 
 namespace WebCore {
 class DragData;
+class SelectionData;
 }
 
 namespace WebKit {
@@ -52,7 +53,7 @@ class DragAndDropHandler {
 public:
     DragAndDropHandler(WebPageProxy&);
 
-    void startDrag(Ref<WebCore::DataObjectGtk>&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&& dragImage);
+    void startDrag(Ref<WebCore::SelectionData>&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&& dragImage);
     void fillDragData(GdkDragContext*, GtkSelectionData*, unsigned info);
     void finishDrag(GdkDragContext*);
 
@@ -65,26 +66,26 @@ private:
     struct DroppingContext {
         DroppingContext(GdkDragContext*, const WebCore::IntPoint& position);
 
-        GdkDragContext* gdkContext;
-        RefPtr<WebCore::DataObjectGtk> dataObject;
+        GdkDragContext* gdkContext { nullptr };
         WebCore::IntPoint lastMotionPosition;
-        unsigned pendingDataRequests;
-        bool dropHappened;
+        Ref<WebCore::SelectionData> selectionData;
+        unsigned pendingDataRequests { 0 };
+        bool dropHappened { false };
     };
 
-    WebCore::DataObjectGtk* dataObjectForDropData(GdkDragContext*, GtkSelectionData*, unsigned info, WebCore::IntPoint& position);
-    WebCore::DataObjectGtk* requestDragData(GdkDragContext*, const WebCore::IntPoint& position, unsigned time);
+    WebCore::SelectionData* dropDataSelection(GdkDragContext*, GtkSelectionData*, unsigned info, WebCore::IntPoint& position);
+    WebCore::SelectionData* dragDataSelection(GdkDragContext*, const WebCore::IntPoint& position, unsigned time);
 
     WebPageProxy& m_page;
     HashMap<GdkDragContext*, std::unique_ptr<DroppingContext>> m_droppingContexts;
 
 #if GTK_CHECK_VERSION(3, 16, 0)
     GRefPtr<GdkDragContext> m_dragContext;
-    RefPtr<WebCore::DataObjectGtk> m_draggingDataObject;
+    RefPtr<WebCore::SelectionData> m_draggingSelectionData;
 #else
     // We don't have gtk_drag_cancel() in GTK+ < 3.16, so we use the old code.
     // See https://bugs.webkit.org/show_bug.cgi?id=138468
-    HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk>> m_draggingDataObjects;
+    HashMap<GdkDragContext*, RefPtr<WebCore::SelectionData>> m_draggingSelectionDataMap;
 #endif
 };
 

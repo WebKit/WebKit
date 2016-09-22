@@ -29,9 +29,9 @@
 #include "DataReference.h"
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/DataObjectGtk.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Image.h>
+#include <WebCore/SelectionData.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -66,45 +66,45 @@ static bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
     return true;
 }
 
-void ArgumentCoder<DataObjectGtk>::encode(Encoder& encoder, const DataObjectGtk& dataObject)
+void ArgumentCoder<SelectionData>::encode(Encoder& encoder, const SelectionData& selection)
 {
-    bool hasText = dataObject.hasText();
+    bool hasText = selection.hasText();
     encoder << hasText;
     if (hasText)
-        encoder << dataObject.text();
+        encoder << selection.text();
 
-    bool hasMarkup = dataObject.hasMarkup();
+    bool hasMarkup = selection.hasMarkup();
     encoder << hasMarkup;
     if (hasMarkup)
-        encoder << dataObject.markup();
+        encoder << selection.markup();
 
-    bool hasURL = dataObject.hasURL();
+    bool hasURL = selection.hasURL();
     encoder << hasURL;
     if (hasURL)
-        encoder << dataObject.url().string();
+        encoder << selection.url().string();
 
-    bool hasURIList = dataObject.hasURIList();
+    bool hasURIList = selection.hasURIList();
     encoder << hasURIList;
     if (hasURIList)
-        encoder << dataObject.uriList();
+        encoder << selection.uriList();
 
-    bool hasImage = dataObject.hasImage();
+    bool hasImage = selection.hasImage();
     encoder << hasImage;
     if (hasImage)
-        encodeImage(encoder, *dataObject.image());
+        encodeImage(encoder, *selection.image());
 
-    bool hasUnknownTypeData = dataObject.hasUnknownTypeData();
+    bool hasUnknownTypeData = selection.hasUnknownTypeData();
     encoder << hasUnknownTypeData;
     if (hasUnknownTypeData)
-        encoder << dataObject.unknownTypes();
+        encoder << selection.unknownTypes();
 
-    bool canSmartReplace = dataObject.canSmartReplace();
+    bool canSmartReplace = selection.canSmartReplace();
     encoder << canSmartReplace;
 }
 
-bool ArgumentCoder<DataObjectGtk>::decode(Decoder& decoder, DataObjectGtk& dataObject)
+bool ArgumentCoder<SelectionData>::decode(Decoder& decoder, SelectionData& selection)
 {
-    dataObject.clearAll();
+    selection.clearAll();
 
     bool hasText;
     if (!decoder.decode(hasText))
@@ -113,7 +113,7 @@ bool ArgumentCoder<DataObjectGtk>::decode(Decoder& decoder, DataObjectGtk& dataO
         String text;
         if (!decoder.decode(text))
             return false;
-        dataObject.setText(text);
+        selection.setText(text);
     }
 
     bool hasMarkup;
@@ -123,7 +123,7 @@ bool ArgumentCoder<DataObjectGtk>::decode(Decoder& decoder, DataObjectGtk& dataO
         String markup;
         if (!decoder.decode(markup))
             return false;
-        dataObject.setMarkup(markup);
+        selection.setMarkup(markup);
     }
 
     bool hasURL;
@@ -133,7 +133,7 @@ bool ArgumentCoder<DataObjectGtk>::decode(Decoder& decoder, DataObjectGtk& dataO
         String url;
         if (!decoder.decode(url))
             return false;
-        dataObject.setURL(URL(URL(), url), String());
+        selection.setURL(URL(URL(), url), String());
     }
 
     bool hasURIList;
@@ -143,7 +143,7 @@ bool ArgumentCoder<DataObjectGtk>::decode(Decoder& decoder, DataObjectGtk& dataO
         String uriList;
         if (!decoder.decode(uriList))
             return false;
-        dataObject.setURIList(uriList);
+        selection.setURIList(uriList);
     }
 
     bool hasImage;
@@ -153,7 +153,7 @@ bool ArgumentCoder<DataObjectGtk>::decode(Decoder& decoder, DataObjectGtk& dataO
         RefPtr<Image> image;
         if (!decodeImage(decoder, image))
             return false;
-        dataObject.setImage(image.get());
+        selection.setImage(image.get());
     }
 
     bool hasUnknownTypeData;
@@ -166,13 +166,13 @@ bool ArgumentCoder<DataObjectGtk>::decode(Decoder& decoder, DataObjectGtk& dataO
 
         auto end = unknownTypes.end();
         for (auto it = unknownTypes.begin(); it != end; ++it)
-            dataObject.setUnknownTypeData(it->key, it->value);
+            selection.setUnknownTypeData(it->key, it->value);
     }
 
     bool canSmartReplace;
     if (!decoder.decode(canSmartReplace))
         return false;
-    dataObject.setCanSmartReplace(canSmartReplace);
+    selection.setCanSmartReplace(canSmartReplace);
 
     return true;
 }

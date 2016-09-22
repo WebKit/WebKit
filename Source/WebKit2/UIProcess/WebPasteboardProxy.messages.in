@@ -50,7 +50,7 @@ messages -> WebPasteboardProxy {
 #endif
 
 #if PLATFORM(GTK)
-    WriteToClipboard(String pasteboardName, struct WebKit::PasteboardContent pasteboardContent)
-    ReadFromClipboard(String pasteboardName) -> (struct WebKit::PasteboardContent pasteboardContent)
+    WriteToClipboard(String pasteboardName, struct WebKit::WebSelectionData pasteboardContent)
+    ReadFromClipboard(String pasteboardName) -> (struct WebKit::WebSelectionData pasteboardContent)
 #endif
 }

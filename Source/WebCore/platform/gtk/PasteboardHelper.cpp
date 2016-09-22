@@ -23,8 +23,8 @@
 #include "config.h"
 #include "PasteboardHelper.h"
 
-#include "DataObjectGtk.h"
 #include "GtkVersioning.h"
+#include "SelectionData.h"
 #include <gtk/gtk.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -89,66 +89,90 @@ static String selectionDataToUTF8String(GtkSelectionData* data)
     return String::fromUTF8(markupString.get());
 }
 
-void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard, DataObjectGtk& dataObject)
+void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard, SelectionData& selection)
 {
     if (gtk_clipboard_wait_is_text_available(clipboard)) {
         GUniquePtr<gchar> textData(gtk_clipboard_wait_for_text(clipboard));
         if (textData)
-            dataObject.setText(String::fromUTF8(textData.get()));
+            selection.setText(String::fromUTF8(textData.get()));
     }
 
     if (gtk_clipboard_wait_is_target_available(clipboard, markupAtom)) {
         if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, markupAtom)) {
             String markup(selectionDataToUTF8String(data));
             removeMarkupPrefix(markup);
-            dataObject.setMarkup(markup);
+            selection.setMarkup(markup);
             gtk_selection_data_free(data);
         }
     }
 
     if (gtk_clipboard_wait_is_target_available(clipboard, uriListAtom)) {
         if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, uriListAtom)) {
-            dataObject.setURIList(selectionDataToUTF8String(data));
+            selection.setURIList(selectionDataToUTF8String(data));
             gtk_selection_data_free(data);
         }
     }
 
-    dataObject.setCanSmartReplace(gtk_clipboard_wait_is_target_available(clipboard, smartPasteAtom));
+    selection.setCanSmartReplace(gtk_clipboard_wait_is_target_available(clipboard, smartPasteAtom));
 }
 
-void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint info, const DataObjectGtk& dataObject)
+GRefPtr<GtkTargetList> PasteboardHelper::targetListForSelectionData(const SelectionData& selection)
+{
+    GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
+
+    if (selection.hasText())
+        gtk_target_list_add_text_targets(list.get(), TargetTypeText);
+
+    if (selection.hasMarkup())
+        gtk_target_list_add(list.get(), markupAtom, 0, TargetTypeMarkup);
+
+    if (selection.hasURIList()) {
+        gtk_target_list_add_uri_targets(list.get(), TargetTypeURIList);
+        gtk_target_list_add(list.get(), netscapeURLAtom, 0, TargetTypeNetscapeURL);
+    }
+
+    if (selection.hasImage())
+        gtk_target_list_add_image_targets(list.get(), TargetTypeImage, TRUE);
+
+    if (selection.hasUnknownTypeData())
+        gtk_target_list_add(list.get(), unknownAtom, 0, TargetTypeUnknown);
+
+    if (selection.canSmartReplace())
+        gtk_target_list_add(list.get(), smartPasteAtom, 0, TargetTypeSmartPaste);
+
+    return list;
+}
+
+void PasteboardHelper::fillSelectionData(const SelectionData& selection, unsigned info, GtkSelectionData* selectionData)
 {
     if (info == TargetTypeText)
-        gtk_selection_data_set_text(selectionData, dataObject.text().utf8().data(), -1);
+        gtk_selection_data_set_text(selectionData, selection.text().utf8().data(), -1);
 
     else if (info == TargetTypeMarkup) {
         // Some Linux applications refuse to accept pasted markup unless it is
         // prefixed by a content-type meta tag.
-        CString markup = String(gMarkupPrefix + dataObject.markup()).utf8();
-        gtk_selection_data_set(selectionData, markupAtom, 8,
-            reinterpret_cast<const guchar*>(markup.data()), markup.length());
+        CString markup = String(gMarkupPrefix + selection.markup()).utf8();
+        gtk_selection_data_set(selectionData, markupAtom, 8, reinterpret_cast<const guchar*>(markup.data()), markup.length());
 
     } else if (info == TargetTypeURIList) {
-        CString uriList = dataObject.uriList().utf8();
-        gtk_selection_data_set(selectionData, uriListAtom, 8,
-            reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
+        CString uriList = selection.uriList().utf8();
+        gtk_selection_data_set(selectionData, uriListAtom, 8, reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
 
-    } else if (info == TargetTypeNetscapeURL && dataObject.hasURL()) {
-        String url(dataObject.url());
+    } else if (info == TargetTypeNetscapeURL && selection.hasURL()) {
+        String url(selection.url());
         String result(url);
         result.append("\n");
 
-        if (dataObject.hasText())
-            result.append(dataObject.text());
+        if (selection.hasText())
+            result.append(selection.text());
         else
             result.append(url);
 
         GUniquePtr<gchar> resultData(g_strdup(result.utf8().data()));
-        gtk_selection_data_set(selectionData, netscapeURLAtom, 8,
-            reinterpret_cast<const guchar*>(resultData.get()), strlen(resultData.get()));
+        gtk_selection_data_set(selectionData, netscapeURLAtom, 8, reinterpret_cast<const guchar*>(resultData.get()), strlen(resultData.get()));
 
-    } else if (info == TargetTypeImage && dataObject.hasImage()) {
-        GRefPtr<GdkPixbuf> pixbuf = adoptGRef(dataObject.image()->getGdkPixbuf());
+    } else if (info == TargetTypeImage && selection.hasImage()) {
+        GRefPtr<GdkPixbuf> pixbuf = adoptGRef(selection.image()->getGdkPixbuf());
         gtk_selection_data_set_pixbuf(selectionData, pixbuf.get());
 
     } else if (info == TargetTypeSmartPaste)
@@ -158,7 +182,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
         GVariantBuilder builder;
         g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
 
-        for (auto& it : dataObject.unknownTypes()) {
+        for (auto& it : selection.unknownTypes()) {
             GUniquePtr<gchar> dictItem(g_strdup_printf("{'%s', '%s'}", it.key.utf8().data(), it.value.utf8().data()));
             g_variant_builder_add_parsed(&builder, dictItem.get());
         }
@@ -169,47 +193,20 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
     }
 }
 
-GRefPtr<GtkTargetList> PasteboardHelper::targetListForDataObject(const DataObjectGtk& dataObject)
-{
-    GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
-
-    if (dataObject.hasText())
-        gtk_target_list_add_text_targets(list.get(), TargetTypeText);
-
-    if (dataObject.hasMarkup())
-        gtk_target_list_add(list.get(), markupAtom, 0, TargetTypeMarkup);
-
-    if (dataObject.hasURIList()) {
-        gtk_target_list_add_uri_targets(list.get(), TargetTypeURIList);
-        gtk_target_list_add(list.get(), netscapeURLAtom, 0, TargetTypeNetscapeURL);
-    }
-
-    if (dataObject.hasImage())
-        gtk_target_list_add_image_targets(list.get(), TargetTypeImage, TRUE);
-
-    if (dataObject.hasUnknownTypeData())
-        gtk_target_list_add(list.get(), unknownAtom, 0, TargetTypeUnknown);
-
-    if (dataObject.canSmartReplace())
-        gtk_target_list_add(list.get(), smartPasteAtom, 0, TargetTypeSmartPaste);
-
-    return list;
-}
-
-void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint /* info */, DataObjectGtk& dataObject)
+void PasteboardHelper::fillSelectionData(GtkSelectionData* data, unsigned /* info */, SelectionData& selection)
 {
     if (!gtk_selection_data_get_data(data))
         return;
 
     GdkAtom target = gtk_selection_data_get_target(data);
     if (target == textPlainAtom)
-        dataObject.setText(selectionDataToUTF8String(data));
+        selection.setText(selectionDataToUTF8String(data));
     else if (target == markupAtom) {
         String markup(selectionDataToUTF8String(data));
         removeMarkupPrefix(markup);
-        dataObject.setMarkup(markup);
+        selection.setMarkup(markup);
     } else if (target == uriListAtom) {
-        dataObject.setURIList(selectionDataToUTF8String(data));
+        selection.setURIList(selectionDataToUTF8String(data));
     } else if (target == netscapeURLAtom) {
         String urlWithLabel(selectionDataToUTF8String(data));
         Vector<String> pieces;
@@ -217,10 +214,10 @@ void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint 
 
         // Give preference to text/uri-list here, as it can hold more
         // than one URI but still take  the label if there is one.
-        if (!dataObject.hasURIList())
-            dataObject.setURIList(pieces[0]);
+        if (!selection.hasURIList())
+            selection.setURIList(pieces[0]);
         if (pieces.size() > 1)
-            dataObject.setText(pieces[1]);
+            selection.setText(pieces[1]);
     } else if (target == unknownAtom) {
         GRefPtr<GVariant> variant = g_variant_new_parsed(reinterpret_cast<const char*>(gtk_selection_data_get_data(data)));
 
@@ -230,7 +227,7 @@ void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint 
 
         g_variant_iter_init(&iter, variant.get());
         while (g_variant_iter_next(&iter, "{ss}", &key.outPtr(), &value.outPtr()))
-            dataObject.setUnknownTypeData(key.get(), value.get());
+            selection.setUnknownTypeData(key.get(), value.get());
     }
 }
 
@@ -254,11 +251,11 @@ Vector<GdkAtom> PasteboardHelper::dropAtomsForContext(GtkWidget* widget, GdkDrag
     return dropAtoms;
 }
 
-static DataObjectGtk* settingClipboardDataObject = 0;
+static SelectionData* settingClipboardSelection;
 
 struct ClipboardSetData {
-    ClipboardSetData(DataObjectGtk& dataObject, std::function<void()>&& selectionClearedCallback)
-        : dataObject(dataObject)
+    ClipboardSetData(SelectionData& selection, std::function<void()>&& selectionClearedCallback)
+        : selectionData(selection)
         , selectionClearedCallback(WTFMove(selectionClearedCallback))
     {
     }
@@ -267,14 +264,14 @@ struct ClipboardSetData {
     {
     }
 
-    Ref<DataObjectGtk> dataObject;
+    Ref<SelectionData> selectionData;
     std::function<void()> selectionClearedCallback;
 };
 
 static void getClipboardContentsCallback(GtkClipboard*, GtkSelectionData *selectionData, guint info, gpointer userData)
 {
     auto* data = static_cast<ClipboardSetData*>(userData);
-    PasteboardHelper::singleton().fillSelectionData(selectionData, info, data->dataObject);
+    PasteboardHelper::singleton().fillSelectionData(data->selectionData, info, selectionData);
 }
 
 static void clearClipboardContentsCallback(GtkClipboard*, gpointer userData)
@@ -284,16 +281,16 @@ static void clearClipboardContentsCallback(GtkClipboard*, gpointer userData)
         data->selectionClearedCallback();
 }
 
-void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const DataObjectGtk& dataObject, std::function<void()>&& primarySelectionCleared)
+void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const SelectionData& selection, std::function<void()>&& primarySelectionCleared)
 {
-    GRefPtr<GtkTargetList> list = targetListForDataObject(dataObject);
+    GRefPtr<GtkTargetList> list = targetListForSelectionData(selection);
 
     int numberOfTargets;
     GtkTargetEntry* table = gtk_target_table_new_from_list(list.get(), &numberOfTargets);
 
     if (numberOfTargets > 0 && table) {
-        TemporaryChange<DataObjectGtk*> change(settingClipboardDataObject, const_cast<DataObjectGtk*>(&dataObject));
-        auto data = std::make_unique<ClipboardSetData>(*settingClipboardDataObject, WTFMove(primarySelectionCleared));
+        TemporaryChange<SelectionData*> change(settingClipboardSelection, const_cast<SelectionData*>(&selection));
+        auto data = std::make_unique<ClipboardSetData>(*settingClipboardSelection, WTFMove(primarySelectionCleared));
         if (gtk_clipboard_set_with_data(clipboard, table, numberOfTargets, getClipboardContentsCallback, clearClipboardContentsCallback, data.get())) {
             gtk_clipboard_set_can_store(clipboard, nullptr, 0);
             // When gtk_clipboard_set_with_data() succeeds clearClipboardContentsCallback takes the ownership of data, so we leak it here.

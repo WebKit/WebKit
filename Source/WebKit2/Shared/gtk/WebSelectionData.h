@@ -16,40 +16,27 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
-#include "PasteboardContent.h"
+#pragma once
 
-#include "ArgumentCodersGtk.h"
-#include "DataObjectGtk.h"
-#include "Decoder.h"
-#include "Encoder.h"
-#include <wtf/RetainPtr.h>
+#include <WebCore/SelectionData.h>
+
+namespace IPC {
+class Decoder;
+class Encoder;
+}
 
 namespace WebKit {
 
-PasteboardContent::PasteboardContent()
-    : dataObject(WebCore::DataObjectGtk::create())
-{
-}
+struct WebSelectionData {
+    WebSelectionData();
+    explicit WebSelectionData(const WebCore::SelectionData&);
+    explicit WebSelectionData(Ref<WebCore::SelectionData>&&);
 
-PasteboardContent::PasteboardContent(const WebCore::DataObjectGtk& data)
-    : dataObject(const_cast<WebCore::DataObjectGtk&>(data))
-{
-}
+    Ref<WebCore::SelectionData> selectionData;
 
-PasteboardContent::PasteboardContent(Ref<WebCore::DataObjectGtk>&& data)
-    : dataObject(WTFMove(data))
-{
-}
-
-void PasteboardContent::encode(IPC::Encoder& encoder) const
-{
-    encoder << dataObject.get();
-}
-
-bool PasteboardContent::decode(IPC::Decoder& decoder, PasteboardContent& pasteboardContent)
-{
-    return decoder.decode(pasteboardContent.dataObject.get());
-}
+    void encode(IPC::Encoder&) const;
+    static bool decode(IPC::Decoder&, WebSelectionData&);
+};
 
 } // namespace WebKit
+

@@ -20,8 +20,8 @@
 #include "PlatformPasteboard.h"
 
 #include "Color.h"
-#include "DataObjectGtk.h"
 #include "PasteboardHelper.h"
+#include "SelectionData.h"
 #include "SharedBuffer.h"
 #include "URL.h"
 #include <gtk/gtk.h>
@@ -34,16 +34,16 @@ PlatformPasteboard::PlatformPasteboard(const String& pasteboardName)
     ASSERT(m_clipboard);
 }
 
-void PlatformPasteboard::writeToClipboard(const DataObjectGtk& dataObject, std::function<void()>&& primarySelectionCleared)
+void PlatformPasteboard::writeToClipboard(const SelectionData& selection, std::function<void()>&& primarySelectionCleared)
 {
-    PasteboardHelper::singleton().writeClipboardContents(m_clipboard, dataObject, gtk_clipboard_get(GDK_SELECTION_PRIMARY) == m_clipboard ? WTFMove(primarySelectionCleared) : nullptr);
+    PasteboardHelper::singleton().writeClipboardContents(m_clipboard, selection, gtk_clipboard_get(GDK_SELECTION_PRIMARY) == m_clipboard ? WTFMove(primarySelectionCleared) : nullptr);
 }
 
-Ref<DataObjectGtk> PlatformPasteboard::readFromClipboard()
+Ref<SelectionData> PlatformPasteboard::readFromClipboard()
 {
-    Ref<DataObjectGtk> dataObject(DataObjectGtk::create());
-    PasteboardHelper::singleton().getClipboardContents(m_clipboard, dataObject.get());
-    return dataObject;
+    Ref<SelectionData> selection(SelectionData::create());
+    PasteboardHelper::singleton().getClipboardContents(m_clipboard, selection.get());
+    return selection;
 }
 
 }

@@ -29,11 +29,10 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #include "ArgumentCodersGtk.h"
-#include "PasteboardContent.h"
 #include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
-#include <WebCore/DataObjectGtk.h>
+#include "WebSelectionData.h"
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DragData.h>
 #include <WebCore/GraphicsContext.h>
@@ -68,7 +67,7 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosi
 
     m_page->willStartDrag();
 
-    PasteboardContent selection(dataTransfer.pasteboard().dataObject());
+    WebSelectionData selection(dataTransfer.pasteboard().selectionData());
     m_page->send(Messages::WebPageProxy::StartDrag(selection, dataTransfer.sourceOperation(), handle));
 }
 

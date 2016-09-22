@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class DataObjectGtk;
+class SelectionData;
 
 class PasteboardHelper {
     WTF_MAKE_NONCOPYABLE(PasteboardHelper);
@@ -43,12 +43,12 @@ public:
     enum SmartPasteInclusion { IncludeSmartPaste, DoNotIncludeSmartPaste };
 
     GtkTargetList* targetList() const;
-    GRefPtr<GtkTargetList> targetListForDataObject(const DataObjectGtk&);
-    void fillSelectionData(GtkSelectionData*, guint, const DataObjectGtk&);
-    void fillDataObjectFromDropData(GtkSelectionData*, guint, DataObjectGtk&);
+    GRefPtr<GtkTargetList> targetListForSelectionData(const SelectionData&);
+    void fillSelectionData(const SelectionData&, unsigned, GtkSelectionData*);
+    void fillSelectionData(GtkSelectionData*, unsigned, SelectionData&);
     Vector<GdkAtom> dropAtomsForContext(GtkWidget*, GdkDragContext*);
-    void writeClipboardContents(GtkClipboard*, const DataObjectGtk&, std::function<void()>&& primarySelectionCleared = nullptr);
-    void getClipboardContents(GtkClipboard*, DataObjectGtk&);
+    void writeClipboardContents(GtkClipboard*, const SelectionData&, std::function<void()>&& primarySelectionCleared = nullptr);
+    void getClipboardContents(GtkClipboard*, SelectionData&);
 
     enum PasteboardTargetType { TargetTypeMarkup, TargetTypeText, TargetTypeImage, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeSmartPaste, TargetTypeUnknown };
 

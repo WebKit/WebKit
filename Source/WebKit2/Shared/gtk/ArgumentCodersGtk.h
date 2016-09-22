@@ -33,7 +33,7 @@ typedef struct _GtkPrintSettings GtkPrintSettings;
 typedef struct _GtkPageSetup GtkPageSetup;
 
 namespace WebCore {
-class DataObjectGtk;
+class SelectionData;
 }
 
 namespace IPC {
@@ -44,9 +44,9 @@ bool decode(Decoder&, GRefPtr<GtkPrintSettings>&);
 void encode(Encoder&, GtkPageSetup*);
 bool decode(Decoder&, GRefPtr<GtkPageSetup>&);
 
-template<> struct ArgumentCoder<WebCore::DataObjectGtk> {
-    static void encode(Encoder&, const WebCore::DataObjectGtk&);
-    static bool decode(Decoder&, WebCore::DataObjectGtk&);
+template<> struct ArgumentCoder<WebCore::SelectionData> {
+    static void encode(Encoder&, const WebCore::SelectionData&);
+    static bool decode(Decoder&, WebCore::SelectionData&);
 };
 
 } // namespace IPC
