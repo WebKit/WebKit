@@ -78,7 +78,7 @@ public:
     WEBCORE_EXPORT void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT void cleanupFullscreen();
     WEBCORE_EXPORT void invalidate();
-    WEBCORE_EXPORT void requestHideAndExitFullscreen() { }
+    void requestHideAndExitFullscreen() { }
     WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect, NSWindow *parentWindow);
     WEBCORE_EXPORT void ensureControlsManager();
 
@@ -90,7 +90,7 @@ public:
 
     bool isPlayingVideoInEnhancedFullscreen() const;
 
-    WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const { return false; }
+    bool mayAutomaticallyShowVideoPictureInPicture() const { return false; }
     void applicationDidBecomeActive() { }
 
     WEBCORE_EXPORT WebVideoFullscreenInterfaceMacObjC *videoFullscreenInterfaceObjC();

@@ -1,3 +1,16 @@
+2016-09-21  Keith Miller  <keith_miller@apple.com>
+
+        Fix build for future versions of Clang.
+        https://bugs.webkit.org/show_bug.cgi?id=162346
+
+        Reviewed by Filip Pizlo.
+
+        This fixes issues with the WebCore build where inline
+        template-class function definitions are marked as exported. This
+        genereates a weak external symobl that our build does not like.
+
+        * wtf/text/StringImpl.h:
+
 2016-09-20  Brent Fulgham  <bfulgham@apple.com>
 
         Correct uses of 'safeCast'

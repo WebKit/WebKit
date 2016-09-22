@@ -135,7 +135,7 @@ namespace WebCore {
         void disconnectOwnerElement();
 
         MainFrame& mainFrame() const;
-        WEBCORE_EXPORT bool isMainFrame() const;
+        bool isMainFrame() const { return this == static_cast<void*>(&m_mainFrame); }
 
         Page* page() const;
         HTMLFrameOwnerElement* ownerElement() const;

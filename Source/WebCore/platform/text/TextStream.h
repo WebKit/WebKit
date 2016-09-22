@@ -77,8 +77,8 @@ public:
     WEBCORE_EXPORT void endGroup();
     WEBCORE_EXPORT void nextLine(); // Output newline and indent.
 
-    WEBCORE_EXPORT void increaseIndent() { ++m_indent; }
-    WEBCORE_EXPORT void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
+    void increaseIndent() { ++m_indent; }
+    void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
 
     WEBCORE_EXPORT void writeIndent();
 

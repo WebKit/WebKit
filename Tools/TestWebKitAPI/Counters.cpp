@@ -33,4 +33,4 @@ unsigned CopyMoveCounter::moveCount = 0;
 unsigned ConstructorDestructorCounter::constructionCount = 0;
 unsigned ConstructorDestructorCounter::destructionCount = 0;
 
-template<> unsigned DeleterCounter<ConstructorDestructorCounter>::deleterCount = 0;
+template<> unsigned DeleterCounter<ConstructorDestructorCounter>::m_deleterCount = 0;
