@@ -103,11 +103,11 @@ PASS Node for embed
 PASS Node for hr 
 PASS Node for img 
 PASS Node for input 
-FAIL Node for keygen assert_equals: keygen node created. expected "<keygen xmlns=\"http://www.w3.org/1999/xhtml\" />" but got "<keygen xmlns=\"http://www.w3.org/1999/xhtml\"></keygen>"
+PASS Node for keygen 
 PASS Node for link 
 PASS Node for meta 
 PASS Node for param 
 PASS Node for source 
-FAIL Node for track assert_equals: track node created. expected "<track xmlns=\"http://www.w3.org/1999/xhtml\" />" but got "<track xmlns=\"http://www.w3.org/1999/xhtml\"></track>"
+PASS Node for track 
 PASS Node for wbr 
 

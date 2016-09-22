@@ -590,11 +590,18 @@ bool MarkupAccumulator::elementCannotHaveEndTag(const Node& node)
     if (!is<HTMLElement>(node))
         return false;
 
-    // FIXME: ieForbidsInsertHTML may not be the right function to call here
-    // ieForbidsInsertHTML is used to disallow setting innerHTML/outerHTML
-    // or createContextualFragment.  It does not necessarily align with
-    // which elements should be serialized w/o end tags.
-    return downcast<HTMLElement>(node).ieForbidsInsertHTML();
+    // From https://html.spec.whatwg.org/#serialising-html-fragments:
+    // If current node is an area, base, basefont, bgsound, br, col, embed, frame, hr, img,
+    // input, keygen, link, meta, param, source, track or wbr element, then continue on to
+    // the next child node at this point.
+    static const HTMLQualifiedName* tags[] = { &areaTag, &baseTag, &basefontTag, &bgsoundTag, &brTag, &colTag, &embedTag,
+        &frameTag, &hrTag, &imgTag, &inputTag, &keygenTag, &linkTag, &metaTag, &paramTag, &sourceTag, &trackTag, &wbrTag };
+    auto& element = downcast<HTMLElement>(node);
+    for (auto* tag : tags) {
+        if (element.hasTagName(*tag))
+            return true;
+    }
+    return false;
 }
 
 void MarkupAccumulator::appendEndMarkup(StringBuilder& result, const Element& element)
