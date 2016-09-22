@@ -229,6 +229,8 @@ PASS WHEELEVENT should be an alias for WheelEvent.
 PASS createEvent('WHEELEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "WheelEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for unrecognized arguments 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "AnimationPlaybackEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "AnimationPlaybackEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "AnimationPlayerEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "AnimationPlayerEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ApplicationCacheErrorEvent" 

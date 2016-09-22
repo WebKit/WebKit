@@ -51,7 +51,7 @@ FAIL [INPUT in EMAIL status] suffering from a type mismatch assert_true: The rep
 FAIL [INPUT in EMAIL status] suffering from a type mismatch (in a form) assert_true: The reportValidity method doesn't exist. expected true got false
 FAIL [INPUT in EMAIL status] suffering from being missing assert_true: The reportValidity method doesn't exist. expected true got false
 FAIL [INPUT in EMAIL status] suffering from being missing (in a form) assert_true: The reportValidity method doesn't exist. expected true got false
-FAIL [INPUT in DATETIME status] The datetime type must be supported. assert_equals: The datetime type should be supported. expected "datetime" but got "text"
+FAIL [INPUT in DATETIME-LOCAL status] The datetime-local type must be supported. assert_equals: The datetime-local type should be supported. expected "datetime-local" but got "text"
 FAIL [INPUT in DATE status] The date type must be supported. assert_equals: The date type should be supported. expected "date" but got "text"
 FAIL [INPUT in MONTH status] The month type must be supported. assert_equals: The month type should be supported. expected "month" but got "text"
 FAIL [INPUT in WEEK status] The week type must be supported. assert_equals: The week type should be supported. expected "week" but got "text"

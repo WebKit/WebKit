@@ -42,4 +42,9 @@ PASS video.audio should not be supported
 PASS audio.startDate should not be supported 
 PASS video.startDate should not be supported 
 PASS TextTrackCue constructor should not be supported 
+FAIL audio.mediaGroup should not be supported assert_false: expected false got true
+FAIL video.mediaGroup should not be supported assert_false: expected false got true
+FAIL audio.controller should not be supported assert_false: expected false got true
+FAIL video.controller should not be supported assert_false: expected false got true
+FAIL MediaController constructor should not be supported assert_false: expected false got true
 

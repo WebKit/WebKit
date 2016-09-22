@@ -5662,10 +5662,10 @@ PASS HTMLAppletElement interface: document.createElement("applet") must inherit 
 PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "code" with the proper type (3) 
 PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "codeBase" with the proper type (4) 
 PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "height" with the proper type (5) 
-FAIL HTMLAppletElement interface: document.createElement("applet") must inherit property "hspace" with the proper type (6) assert_equals: expected "number" but got "string"
+PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "hspace" with the proper type (6) 
 PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "name" with the proper type (7) 
 PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "object" with the proper type (8) 
-FAIL HTMLAppletElement interface: document.createElement("applet") must inherit property "vspace" with the proper type (9) assert_equals: expected "number" but got "string"
+PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "vspace" with the proper type (9) 
 PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "width" with the proper type (10) 
 PASS HTMLMarqueeElement interface: existence and properties of interface object 
 PASS HTMLMarqueeElement interface object length 

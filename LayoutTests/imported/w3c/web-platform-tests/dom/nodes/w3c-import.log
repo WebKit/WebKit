@@ -139,6 +139,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-removeChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-replaceChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-textContent.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-Iterable.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-append.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-prepend.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.html
@@ -195,4 +196,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/prepend-on-Document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/productions.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-unscopable.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/rootNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/selectors.js

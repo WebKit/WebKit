@@ -28,8 +28,8 @@
         "path": [
             "tools"
         ], 
-        "url": "https://github.com/w3c/wpt-tools/archive/de4d6ebd746bbba215da537b3f35e00b6b674824.tar.gz", 
-        "url_subpath": "wpt-tools-de4d6ebd746bbba215da537b3f35e00b6b674824"
+        "url": "https://github.com/w3c/wpt-tools/archive/5402e7a450e6b78e0792c30ec264692ecc2a9f7f.tar.gz", 
+        "url_subpath": "wpt-tools-5402e7a450e6b78e0792c30ec264692ecc2a9f7f"
     }, 
     {
         "path": [
@@ -87,7 +87,7 @@
             "tools", 
             "wptserve"
         ], 
-        "url": "https://github.com/w3c/wptserve/archive/0d7fa61011154d2f16c3e06ef33279cbed1622ad.tar.gz", 
-        "url_subpath": "wptserve-0d7fa61011154d2f16c3e06ef33279cbed1622ad"
+        "url": "https://github.com/w3c/wptserve/archive/4432c5f0fd6ec732d898897148ff668a1ac1596f.tar.gz", 
+        "url_subpath": "wptserve-4432c5f0fd6ec732d898897148ff668a1ac1596f"
     }
 ]

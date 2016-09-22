@@ -1,4 +1,11 @@
 
 PASS Canvas support for supportsContext 
 PASS Canvas support for probablySupportsContext 
+PASS CanvasRenderingContext2D support for width 
+PASS CanvasRenderingContext2D support for height 
+PASS Canvas support for setContext 
+PASS Canvas support for transferControlToProxy 
+PASS Window support for CanvasProxy 
+PASS Canvas support for commit 
+PASS CanvasRenderingContext2D constructors 
 

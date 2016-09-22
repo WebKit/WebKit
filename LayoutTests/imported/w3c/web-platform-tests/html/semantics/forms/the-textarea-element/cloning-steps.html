@@ -13,19 +13,19 @@
 <script>
 "use strict";
 
-test(() => {
-  const textarea = document.createElement("textarea");
+test(function() {
+  var textarea = document.createElement("textarea");
   textarea.value = "foo bar";
 
-  const copy = textarea.cloneNode();
+  var copy = textarea.cloneNode();
   assert_equals(copy.value, "foo bar");
 }, "textarea element's value should be cloned");
 
-test(() => {
-  const textarea = document.createElement("textarea");
+test(function() {
+  var textarea = document.createElement("textarea");
   textarea.value = "foo bar";
 
-  const copy = textarea.cloneNode();
+  var copy = textarea.cloneNode();
   copy.setAttribute("value", "something else");
 
   assert_equals(copy.value, "foo bar");

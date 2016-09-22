@@ -192,6 +192,7 @@ PASS Node interface: attribute nodeName
 PASS Node interface: attribute baseURI 
 PASS Node interface: attribute isConnected 
 PASS Node interface: attribute ownerDocument 
+FAIL Node interface: operation getRootNode(GetRootNodeOptions) assert_own_property: interface prototype object missing non-static operation expected property "getRootNode" missing
 PASS Node interface: attribute parentNode 
 PASS Node interface: attribute parentElement 
 PASS Node interface: operation hasChildNodes() 
@@ -348,46 +349,48 @@ PASS Node interface: new Document() must inherit property "nodeName" with the pr
 PASS Node interface: new Document() must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: new Document() must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: new Document() must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: new Document() must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: new Document() must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: new Document() must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: new Document() must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: new Document() must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: new Document() must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: new Document() must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: new Document() must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: new Document() must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: new Document() must inherit property "textContent" with the proper type (26) 
-PASS Node interface: new Document() must inherit property "normalize" with the proper type (27) 
-PASS Node interface: new Document() must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: new Document() must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on new Document() with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: new Document() must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: new Document() must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: new Document() must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: new Document() must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: new Document() must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: new Document() must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: new Document() must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: new Document() must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: new Document() must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: new Document() must inherit property "textContent" with the proper type (27) 
+PASS Node interface: new Document() must inherit property "normalize" with the proper type (28) 
+PASS Node interface: new Document() must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: new Document() must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: new Document() must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: new Document() must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: new Document() must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "contains" with the proper type (38) 
+PASS Node interface: new Document() must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: new Document() must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: new Document() must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: new Document() must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: new Document() must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: new Document() must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: new Document() must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on new Document() with too few arguments must throw TypeError 
-PASS Node interface: new Document() must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: new Document() must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on new Document() with too few arguments must throw TypeError 
 PASS EventTarget interface: new Document() must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
@@ -478,46 +481,48 @@ PASS Node interface: xmlDoc must inherit property "nodeName" with the proper typ
 PASS Node interface: xmlDoc must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: xmlDoc must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: xmlDoc must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: xmlDoc must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: xmlDoc must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: xmlDoc must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: xmlDoc must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: xmlDoc must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: xmlDoc must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: xmlDoc must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: xmlDoc must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: xmlDoc must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: xmlDoc must inherit property "textContent" with the proper type (26) 
-PASS Node interface: xmlDoc must inherit property "normalize" with the proper type (27) 
-PASS Node interface: xmlDoc must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: xmlDoc must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on xmlDoc with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: xmlDoc must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: xmlDoc must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: xmlDoc must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: xmlDoc must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: xmlDoc must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: xmlDoc must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: xmlDoc must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: xmlDoc must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: xmlDoc must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: xmlDoc must inherit property "textContent" with the proper type (27) 
+PASS Node interface: xmlDoc must inherit property "normalize" with the proper type (28) 
+PASS Node interface: xmlDoc must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: xmlDoc must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: xmlDoc must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: xmlDoc must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: xmlDoc must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "contains" with the proper type (38) 
+PASS Node interface: xmlDoc must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: xmlDoc must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: xmlDoc must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: xmlDoc must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: xmlDoc must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: xmlDoc must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: xmlDoc must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on xmlDoc with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: xmlDoc must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
@@ -584,46 +589,48 @@ PASS Node interface: document.doctype must inherit property "nodeName" with the 
 PASS Node interface: document.doctype must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.doctype must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.doctype must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: document.doctype must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: document.doctype must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: document.doctype must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: document.doctype must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: document.doctype must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: document.doctype must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: document.doctype must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: document.doctype must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: document.doctype must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: document.doctype must inherit property "textContent" with the proper type (26) 
-PASS Node interface: document.doctype must inherit property "normalize" with the proper type (27) 
-PASS Node interface: document.doctype must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: document.doctype must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.doctype with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.doctype must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: document.doctype must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: document.doctype must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: document.doctype must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: document.doctype must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: document.doctype must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: document.doctype must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: document.doctype must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: document.doctype must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: document.doctype must inherit property "textContent" with the proper type (27) 
+PASS Node interface: document.doctype must inherit property "normalize" with the proper type (28) 
+PASS Node interface: document.doctype must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: document.doctype must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: document.doctype must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: document.doctype must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: document.doctype must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "contains" with the proper type (38) 
+PASS Node interface: document.doctype must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: document.doctype must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: document.doctype must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: document.doctype must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: document.doctype must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: document.doctype must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: document.doctype must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on document.doctype with too few arguments must throw TypeError 
-PASS Node interface: document.doctype must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: document.doctype must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on document.doctype with too few arguments must throw TypeError 
 PASS EventTarget interface: document.doctype must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.doctype with too few arguments must throw TypeError 
@@ -678,46 +685,48 @@ PASS Node interface: document.createDocumentFragment() must inherit property "no
 PASS Node interface: document.createDocumentFragment() must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.createDocumentFragment() must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createDocumentFragment() must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: document.createDocumentFragment() must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: document.createDocumentFragment() must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: document.createDocumentFragment() must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: document.createDocumentFragment() must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: document.createDocumentFragment() must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: document.createDocumentFragment() must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: document.createDocumentFragment() must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: document.createDocumentFragment() must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: document.createDocumentFragment() must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: document.createDocumentFragment() must inherit property "textContent" with the proper type (26) 
-PASS Node interface: document.createDocumentFragment() must inherit property "normalize" with the proper type (27) 
-PASS Node interface: document.createDocumentFragment() must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: document.createDocumentFragment() must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.createDocumentFragment() with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.createDocumentFragment() must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: document.createDocumentFragment() must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: document.createDocumentFragment() must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: document.createDocumentFragment() must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: document.createDocumentFragment() must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: document.createDocumentFragment() must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: document.createDocumentFragment() must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: document.createDocumentFragment() must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: document.createDocumentFragment() must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: document.createDocumentFragment() must inherit property "textContent" with the proper type (27) 
+PASS Node interface: document.createDocumentFragment() must inherit property "normalize" with the proper type (28) 
+PASS Node interface: document.createDocumentFragment() must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: document.createDocumentFragment() must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: document.createDocumentFragment() must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: document.createDocumentFragment() must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: document.createDocumentFragment() must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "contains" with the proper type (38) 
+PASS Node interface: document.createDocumentFragment() must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: document.createDocumentFragment() must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: document.createDocumentFragment() must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: document.createDocumentFragment() must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: document.createDocumentFragment() must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: document.createDocumentFragment() must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: document.createDocumentFragment() must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
-PASS Node interface: document.createDocumentFragment() must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: document.createDocumentFragment() must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createDocumentFragment() must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createDocumentFragment() with too few arguments must throw TypeError 
@@ -883,46 +892,48 @@ PASS Node interface: element must inherit property "nodeName" with the proper ty
 PASS Node interface: element must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: element must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: element must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: element must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: element must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: element must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: element must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: element must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: element must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: element must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: element must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: element must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: element must inherit property "textContent" with the proper type (26) 
-PASS Node interface: element must inherit property "normalize" with the proper type (27) 
-PASS Node interface: element must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: element must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on element with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: element must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: element must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: element must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: element must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: element must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: element must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: element must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: element must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: element must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: element must inherit property "textContent" with the proper type (27) 
+PASS Node interface: element must inherit property "normalize" with the proper type (28) 
+PASS Node interface: element must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: element must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: element must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: element must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: element must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: element must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: element must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: element must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: element must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: element must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "contains" with the proper type (38) 
+PASS Node interface: element must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: element must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: element must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: element must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: element must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: element must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: element must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on element with too few arguments must throw TypeError 
-PASS Node interface: element must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: element must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on element with too few arguments must throw TypeError 
 PASS EventTarget interface: element must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on element with too few arguments must throw TypeError 
@@ -981,46 +992,48 @@ PASS Node interface: document.querySelector("[id]").attributes[0] must inherit p
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "textContent" with the proper type (26) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "normalize" with the proper type (27) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: document.querySelector("[id]").attributes[0] must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "textContent" with the proper type (27) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "normalize" with the proper type (28) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "contains" with the proper type (38) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
-PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
 PASS EventTarget interface: document.querySelector("[id]").attributes[0] must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
@@ -1098,46 +1111,48 @@ PASS Node interface: document.createTextNode("abc") must inherit property "nodeN
 PASS Node interface: document.createTextNode("abc") must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.createTextNode("abc") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createTextNode("abc") must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: document.createTextNode("abc") must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: document.createTextNode("abc") must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: document.createTextNode("abc") must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: document.createTextNode("abc") must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: document.createTextNode("abc") must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: document.createTextNode("abc") must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: document.createTextNode("abc") must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: document.createTextNode("abc") must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: document.createTextNode("abc") must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: document.createTextNode("abc") must inherit property "textContent" with the proper type (26) 
-PASS Node interface: document.createTextNode("abc") must inherit property "normalize" with the proper type (27) 
-PASS Node interface: document.createTextNode("abc") must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: document.createTextNode("abc") must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.createTextNode("abc") with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.createTextNode("abc") must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: document.createTextNode("abc") must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: document.createTextNode("abc") must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: document.createTextNode("abc") must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: document.createTextNode("abc") must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: document.createTextNode("abc") must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: document.createTextNode("abc") must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: document.createTextNode("abc") must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: document.createTextNode("abc") must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: document.createTextNode("abc") must inherit property "textContent" with the proper type (27) 
+PASS Node interface: document.createTextNode("abc") must inherit property "normalize" with the proper type (28) 
+PASS Node interface: document.createTextNode("abc") must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: document.createTextNode("abc") must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: document.createTextNode("abc") must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: document.createTextNode("abc") must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: document.createTextNode("abc") must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "contains" with the proper type (38) 
+PASS Node interface: document.createTextNode("abc") must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: document.createTextNode("abc") must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: document.createTextNode("abc") must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: document.createTextNode("abc") must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: document.createTextNode("abc") must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: document.createTextNode("abc") must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: document.createTextNode("abc") must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createTextNode("abc") must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: document.createTextNode("abc") must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createTextNode("abc") must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError 
@@ -1197,46 +1212,48 @@ PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inher
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "textContent" with the proper type (26) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "normalize" with the proper type (27) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "textContent" with the proper type (27) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "normalize" with the proper type (28) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "contains" with the proper type (38) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
-PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
@@ -1289,46 +1306,48 @@ PASS Node interface: document.createComment("abc") must inherit property "nodeNa
 PASS Node interface: document.createComment("abc") must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.createComment("abc") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createComment("abc") must inherit property "ownerDocument" with the proper type (16) 
-PASS Node interface: document.createComment("abc") must inherit property "parentNode" with the proper type (17) 
-PASS Node interface: document.createComment("abc") must inherit property "parentElement" with the proper type (18) 
-PASS Node interface: document.createComment("abc") must inherit property "hasChildNodes" with the proper type (19) 
-PASS Node interface: document.createComment("abc") must inherit property "childNodes" with the proper type (20) 
-PASS Node interface: document.createComment("abc") must inherit property "firstChild" with the proper type (21) 
-PASS Node interface: document.createComment("abc") must inherit property "lastChild" with the proper type (22) 
-PASS Node interface: document.createComment("abc") must inherit property "previousSibling" with the proper type (23) 
-PASS Node interface: document.createComment("abc") must inherit property "nextSibling" with the proper type (24) 
-PASS Node interface: document.createComment("abc") must inherit property "nodeValue" with the proper type (25) 
-PASS Node interface: document.createComment("abc") must inherit property "textContent" with the proper type (26) 
-PASS Node interface: document.createComment("abc") must inherit property "normalize" with the proper type (27) 
-PASS Node interface: document.createComment("abc") must inherit property "cloneNode" with the proper type (28) 
+FAIL Node interface: document.createComment("abc") must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
+FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.createComment("abc") with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.createComment("abc") must inherit property "parentNode" with the proper type (18) 
+PASS Node interface: document.createComment("abc") must inherit property "parentElement" with the proper type (19) 
+PASS Node interface: document.createComment("abc") must inherit property "hasChildNodes" with the proper type (20) 
+PASS Node interface: document.createComment("abc") must inherit property "childNodes" with the proper type (21) 
+PASS Node interface: document.createComment("abc") must inherit property "firstChild" with the proper type (22) 
+PASS Node interface: document.createComment("abc") must inherit property "lastChild" with the proper type (23) 
+PASS Node interface: document.createComment("abc") must inherit property "previousSibling" with the proper type (24) 
+PASS Node interface: document.createComment("abc") must inherit property "nextSibling" with the proper type (25) 
+PASS Node interface: document.createComment("abc") must inherit property "nodeValue" with the proper type (26) 
+PASS Node interface: document.createComment("abc") must inherit property "textContent" with the proper type (27) 
+PASS Node interface: document.createComment("abc") must inherit property "normalize" with the proper type (28) 
+PASS Node interface: document.createComment("abc") must inherit property "cloneNode" with the proper type (29) 
 PASS Node interface: calling cloneNode(boolean) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "isEqualNode" with the proper type (29) 
+PASS Node interface: document.createComment("abc") must inherit property "isEqualNode" with the proper type (30) 
 PASS Node interface: calling isEqualNode(Node) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "isSameNode" with the proper type (30) 
+PASS Node interface: document.createComment("abc") must inherit property "isSameNode" with the proper type (31) 
 PASS Node interface: calling isSameNode(Node) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (31) 
-PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (32) 
-PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (33) 
-PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (34) 
-PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (35) 
-PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (36) 
-PASS Node interface: document.createComment("abc") must inherit property "compareDocumentPosition" with the proper type (37) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (32) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (33) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (34) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (35) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (36) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (37) 
+PASS Node interface: document.createComment("abc") must inherit property "compareDocumentPosition" with the proper type (38) 
 PASS Node interface: calling compareDocumentPosition(Node) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "contains" with the proper type (38) 
+PASS Node interface: document.createComment("abc") must inherit property "contains" with the proper type (39) 
 PASS Node interface: calling contains(Node) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "lookupPrefix" with the proper type (39) 
+PASS Node interface: document.createComment("abc") must inherit property "lookupPrefix" with the proper type (40) 
 PASS Node interface: calling lookupPrefix(DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "lookupNamespaceURI" with the proper type (40) 
+PASS Node interface: document.createComment("abc") must inherit property "lookupNamespaceURI" with the proper type (41) 
 PASS Node interface: calling lookupNamespaceURI(DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "isDefaultNamespace" with the proper type (41) 
+PASS Node interface: document.createComment("abc") must inherit property "isDefaultNamespace" with the proper type (42) 
 PASS Node interface: calling isDefaultNamespace(DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "insertBefore" with the proper type (42) 
+PASS Node interface: document.createComment("abc") must inherit property "insertBefore" with the proper type (43) 
 PASS Node interface: calling insertBefore(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "appendChild" with the proper type (43) 
+PASS Node interface: document.createComment("abc") must inherit property "appendChild" with the proper type (44) 
 PASS Node interface: calling appendChild(Node) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "replaceChild" with the proper type (44) 
+PASS Node interface: document.createComment("abc") must inherit property "replaceChild" with the proper type (45) 
 PASS Node interface: calling replaceChild(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError 
-PASS Node interface: document.createComment("abc") must inherit property "removeChild" with the proper type (45) 
+PASS Node interface: document.createComment("abc") must inherit property "removeChild" with the proper type (46) 
 PASS Node interface: calling removeChild(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createComment("abc") must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on document.createComment("abc") with too few arguments must throw TypeError 

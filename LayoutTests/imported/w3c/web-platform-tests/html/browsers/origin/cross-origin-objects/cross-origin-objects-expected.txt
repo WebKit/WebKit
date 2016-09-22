@@ -17,6 +17,6 @@ PASS A and B jointly observe the same identity for cross-origin Window and Locat
 PASS Cross-origin functions get local Function.prototype 
 PASS Cross-origin Window accessors get local Function.prototype 
 PASS Same-origin observers get different functions for cross-origin objects 
-PASS Same-origin obsevers get different accessors for cross-origin Window 
+PASS Same-origin observers get different accessors for cross-origin Window 
 PASS Same-origin observers get different accessors for cross-origin Location 
  

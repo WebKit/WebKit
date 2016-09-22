@@ -5,7 +5,7 @@ FAIL text field selection for the input hidden assert_throws: function "function
 FAIL text field selection for the input email assert_throws: function "function (){
         el.selectionStart;
       }" did not throw
-FAIL text field selection for the input datetime assert_throws: function "function (){
+FAIL text field selection for the input datetime-local assert_throws: function "function (){
         el.selectionStart;
       }" did not throw
 FAIL text field selection for the input date assert_throws: function "function (){

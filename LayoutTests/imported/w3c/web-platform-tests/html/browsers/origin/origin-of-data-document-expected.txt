@@ -1,0 +1,4 @@
+
+
+PASS The origin of a 'data:' document in a frame is opaque. 
+

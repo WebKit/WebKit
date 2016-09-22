@@ -1,9 +1,9 @@
 
 PASS XML document, windows-1252 
-PASS HTML document, shift-jis 
 PASS HTML document, invalid UTF-8 
-PASS img tag 
+PASS HTML document, shift-jis 
 PASS plain text file 
 PASS empty div 
+PASS img tag 
 PASS image file 
          

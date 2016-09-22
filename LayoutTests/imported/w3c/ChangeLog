@@ -1,3 +1,146 @@
+2016-09-22  Youenn Fablet  <youenn@apple.com>
+
+        Sync web-platform-tests up to revision 3801ab5
+        https://bugs.webkit.org/show_bug.cgi?id=162375
+
+        Reviewed by Chris Dumez.
+
+        * resources/ImportExpectations:
+        * resources/TestRepositories:
+        * resources/resource-files.json:
+        * resources/web-platform-tests-modules.json:
+        * web-platform-tests/IndexedDB/idbindex-multientry-big-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.html:
+        * web-platform-tests/dom/nodes/NodeList-Iterable.html: Added.
+        * web-platform-tests/dom/nodes/rootNode.html: Added.
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.js:
+        (corsPreflightReferrer):
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl.js:
+        (redirectDataURL):
+        * web-platform-tests/fetch/api/response/response-static-redirect.html:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/origin/origin-of-data-document.html: Added.
+        * web-platform-tests/html/browsers/origin/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/w3c-import.log.
+        * web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub-expected.txt:
+        * web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.forms-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.forms.html:
+        * web-platform-tests/html/dom/elements-embedded.js:
+        * web-platform-tests/html/dom/elements-metadata.js:
+        * web-platform-tests/html/dom/elements-tabular.js:
+        * web-platform-tests/html/dom/elements-text.js:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt:
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt:
+        * web-platform-tests/html/dom/reflection-text-expected.txt:
+        * web-platform-tests/html/dom/reflection.js:
+        (ReflectionTests.resolveUrl):
+        (ReflectionTests.parseNonneg): Deleted.
+        (ReflectionTests.parseInt): Deleted.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-style-element/historical.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-style-element/style_scoped-expected.txt: Removed.
+        * web-platform-tests/html/semantics/document-metadata/the-style-element/style_scoped.html: Removed.
+        * web-platform-tests/html/semantics/document-metadata/the-style-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/historical-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/historical.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/src-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/src.html:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/historical-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/historical.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/historical.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/nonexistent-image.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-reportValidity-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-reportValidity.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/cloning-steps.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-2-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-2.html: Removed.
+        * web-platform-tests/html/semantics/forms/the-input-element/files-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/files.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/month-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/month.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/valueMode.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-option-element/option-form.html: Added.
+        * web-platform-tests/html/semantics/forms/the-option-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-textarea-element/cloning-steps.html:
+        * web-platform-tests/html/semantics/forms/the-textarea-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a-expected.html: Added.
+        * web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a.html: Added.
+        * web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1b-expected.html: Added.
+        * web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1b.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/historical.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-before-after-events-expected.txt: Removed.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-before-after-events.html: Removed.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/historical.html: Added.
+        * web-platform-tests/html/semantics/tabular-data/w3c-import.log:
+        * web-platform-tests/html/semantics/text-level-semantics/historical.html: Added.
+        * web-platform-tests/html/semantics/text-level-semantics/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/w3c-import.log.
+        * web-platform-tests/html/syntax/parsing/foreign_content_001.html: Added.
+        * web-platform-tests/html/syntax/parsing/foreign_content_003.html: Added.
+        * web-platform-tests/html/syntax/parsing/foreign_content_004.html: Added.
+        * web-platform-tests/html/syntax/parsing/foreign_content_005.html: Added.
+        * web-platform-tests/html/syntax/parsing/foreign_content_006.html: Added.
+        * web-platform-tests/html/syntax/parsing/foreign_content_008.html: Added.
+        * web-platform-tests/html/syntax/parsing/foreign_content_009.html: Added.
+        * web-platform-tests/html/syntax/parsing/foreign_content_010.html: Added.
+        * web-platform-tests/html/syntax/parsing/foreign_content_013.html: Added.
+        * web-platform-tests/media-source/import_tests.sh:
+        * web-platform-tests/media-source/mediasource-append-buffer-expected.txt:
+        * web-platform-tests/media-source/mediasource-is-type-supported-expected.txt:
+        * web-platform-tests/media-source/mediasource-sourcebuffer-mode-expected.txt:
+        * web-platform-tests/media-source/mp4/w3c-import.log: Added.
+        * web-platform-tests/media-source/w3c-import.log: Added.
+        * web-platform-tests/media-source/webm/w3c-import.log: Added.
+        * web-platform-tests/resource-timing/idlharness-expected.txt: Added.
+        * web-platform-tests/resource-timing/idlharness.html: Added.
+        * web-platform-tests/resource-timing/resource-timing-expected.txt:
+        * web-platform-tests/resource-timing/resource-timing.js:
+        (window.onload):
+        * web-platform-tests/resource-timing/w3c-import.log:
+
 2016-09-21  Chris Dumez  <cdumez@apple.com>
 
         Fix serialization of bgsound, keygen and track elements

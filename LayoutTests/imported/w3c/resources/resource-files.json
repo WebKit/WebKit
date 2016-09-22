@@ -12,18 +12,6 @@
         "web-platform-tests/tools"
     ],
     "files": [
-        "syntax/parsing-html-fragments/the-input-byte-stream-003.html",
-        "syntax/parsing-html-fragments/the-input-byte-stream-004.html",
-        "syntax/parsing/foreign_content_001.html",
-        "syntax/parsing/foreign_content_003.html",
-        "syntax/parsing/foreign_content_004.html",
-        "syntax/parsing/foreign_content_005.html",
-        "syntax/parsing/foreign_content_006.html",
-        "syntax/parsing/foreign_content_008.html",
-        "syntax/parsing/foreign_content_009.html",
-        "syntax/parsing/foreign_content_010.html",
-        "syntax/parsing/foreign_content_011.html",
-        "syntax/parsing/foreign_content_013.html",
         "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html",
         "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-1.sub.html",
@@ -228,6 +216,16 @@
         "web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html",
         "web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown-child.html",
         "web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_001.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_003.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_004.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_005.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_006.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_008.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_009.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_010.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_011.html",
+        "web-platform-tests/html/syntax/parsing/foreign_content_013.html",
         "web-platform-tests/resource-timing/iframe-setdomain.sub.html"
     ]
 }

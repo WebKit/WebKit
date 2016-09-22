@@ -29,8 +29,9 @@ function corsPreflightReferrer(desc, corsUrl, referrerPolicy, referrer, expected
         assert_equals(resp.headers.get("x-control-request-headers"), "", "Access-Control-Allow-Headers value");
       });
     });
-  }, desc + (referrer ? " (default referrer)" : " ('myreferrer' referrer)"));
+  }, desc + " and referrer: " + (referrer ? "'" + referrer + "'" : "default"));
 }
+
 var corsUrl = get_host_info().HTTP_REMOTE_ORIGIN  + dirname(location.pathname) + RESOURCES_DIR + "preflight.py";
 var origin = get_host_info().HTTP_ORIGIN + "/";
 

@@ -1,0 +1,56 @@
+Resource Timing IDL tests
+
+
+PASS Performance interface: operation clearResourceTimings() 
+PASS Performance interface: operation setResourceTimingBufferSize(unsigned long) 
+PASS Performance interface: attribute onresourcetimingbufferfull 
+PASS Performance must be primary interface of window.performance 
+PASS Stringification of window.performance 
+PASS Performance interface: window.performance must inherit property "getEntries" with the proper type (0) 
+PASS Performance interface: window.performance must inherit property "getEntriesByType" with the proper type (1) 
+PASS Performance interface: calling getEntriesByType(DOMString) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "getEntriesByName" with the proper type (2) 
+PASS Performance interface: calling getEntriesByName(DOMString,DOMString) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "clearResourceTimings" with the proper type (3) 
+PASS Performance interface: window.performance must inherit property "setResourceTimingBufferSize" with the proper type (4) 
+PASS Performance interface: calling setResourceTimingBufferSize(unsigned long) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "onresourcetimingbufferfull" with the proper type (5) 
+FAIL PerformanceResourceTiming interface: existence and properties of interface object assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface object length assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface object name assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute initiatorType assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute redirectStart assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute redirectEnd assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute fetchStart assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute domainLookupStart assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute domainLookupEnd assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute connectStart assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute connectEnd assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute secureConnectionStart assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute requestStart assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute responseStart assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+FAIL PerformanceResourceTiming interface: attribute responseEnd assert_own_property: self does not have own property "PerformanceResourceTiming" expected property "PerformanceResourceTiming" missing
+[Exposed=(Window)]
+interface PerformanceResourceTiming : PerformanceEntry {
+    readonly attribute DOMString           initiatorType;
+    readonly attribute DOMHighResTimeStamp redirectStart;
+    readonly attribute DOMHighResTimeStamp redirectEnd;
+    readonly attribute DOMHighResTimeStamp fetchStart;
+    readonly attribute DOMHighResTimeStamp domainLookupStart;
+    readonly attribute DOMHighResTimeStamp domainLookupEnd;
+    readonly attribute DOMHighResTimeStamp connectStart;
+    readonly attribute DOMHighResTimeStamp connectEnd;
+    readonly attribute DOMHighResTimeStamp secureConnectionStart;
+    readonly attribute DOMHighResTimeStamp requestStart;
+    readonly attribute DOMHighResTimeStamp responseStart;
+    readonly attribute DOMHighResTimeStamp responseEnd;
+    serializer = {inherit, attribute};
+};
+partial interface Performance {
+    void clearResourceTimings();
+    void setResourceTimingBufferSize(unsigned long maxSize);
+    attribute EventHandler onresourcetimingbufferfull;
+};
+

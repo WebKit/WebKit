@@ -5,7 +5,7 @@ PASS change state from hidden to tel
 PASS change state from hidden to url 
 PASS change state from hidden to email 
 PASS change state from hidden to password 
-FAIL change state from hidden to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from hidden to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from hidden to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from hidden to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from hidden to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -26,7 +26,7 @@ PASS change state from text to tel
 PASS change state from text to url 
 PASS change state from text to email 
 PASS change state from text to password 
-FAIL change state from text to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from text to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from text to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from text to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from text to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -47,7 +47,7 @@ PASS change state from search to tel
 PASS change state from search to url 
 PASS change state from search to email 
 PASS change state from search to password 
-FAIL change state from search to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from search to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from search to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from search to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from search to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -68,7 +68,7 @@ PASS change state from tel to search
 PASS change state from tel to url 
 PASS change state from tel to email 
 PASS change state from tel to password 
-FAIL change state from tel to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from tel to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from tel to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from tel to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from tel to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -89,7 +89,7 @@ FAIL change state from url to search assert_equals: input.value should be   foob
 FAIL change state from url to tel assert_equals: input.value should be   foobar   after change of state expected "  foobar  " but got "foobar"
 PASS change state from url to email 
 FAIL change state from url to password assert_equals: input.value should be   foobar   after change of state expected "  foobar  " but got "foobar"
-FAIL change state from url to datetime assert_equals: input.value should be  after change of state expected "" but got "foobar"
+FAIL change state from url to datetime-local assert_equals: input.value should be  after change of state expected "" but got "foobar"
 FAIL change state from url to date assert_equals: input.value should be  after change of state expected "" but got "foobar"
 FAIL change state from url to month assert_equals: input.value should be  after change of state expected "" but got "foobar"
 FAIL change state from url to week assert_equals: input.value should be  after change of state expected "" but got "foobar"
@@ -110,7 +110,7 @@ FAIL change state from email to search assert_equals: input.value should be   fo
 FAIL change state from email to tel assert_equals: input.value should be   foobar   after change of state expected "  foobar  " but got "foobar"
 PASS change state from email to url 
 FAIL change state from email to password assert_equals: input.value should be   foobar   after change of state expected "  foobar  " but got "foobar"
-FAIL change state from email to datetime assert_equals: input.value should be  after change of state expected "" but got "foobar"
+FAIL change state from email to datetime-local assert_equals: input.value should be  after change of state expected "" but got "foobar"
 FAIL change state from email to date assert_equals: input.value should be  after change of state expected "" but got "foobar"
 FAIL change state from email to month assert_equals: input.value should be  after change of state expected "" but got "foobar"
 FAIL change state from email to week assert_equals: input.value should be  after change of state expected "" but got "foobar"
@@ -131,7 +131,7 @@ PASS change state from password to search
 PASS change state from password to tel 
 PASS change state from password to url 
 PASS change state from password to email 
-FAIL change state from password to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from password to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from password to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from password to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from password to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -146,27 +146,27 @@ FAIL change state from password to submit assert_equals: input.value should be '
 FAIL change state from password to image assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
 FAIL change state from password to reset assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
 FAIL change state from password to button assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
-FAIL change state from datetime to hidden assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
-PASS change state from datetime to text 
-PASS change state from datetime to search 
-PASS change state from datetime to tel 
-PASS change state from datetime to url 
-PASS change state from datetime to email 
-PASS change state from datetime to password 
-FAIL change state from datetime to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
-FAIL change state from datetime to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
-FAIL change state from datetime to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
-FAIL change state from datetime to time assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
-PASS change state from datetime to number 
-PASS change state from datetime to range 
-PASS change state from datetime to color 
-FAIL change state from datetime to checkbox assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
-FAIL change state from datetime to radio assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
-PASS change state from datetime to file 
-FAIL change state from datetime to submit assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
-FAIL change state from datetime to image assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
-FAIL change state from datetime to reset assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
-FAIL change state from datetime to button assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
+FAIL change state from datetime-local to hidden assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
+PASS change state from datetime-local to text 
+PASS change state from datetime-local to search 
+PASS change state from datetime-local to tel 
+PASS change state from datetime-local to url 
+PASS change state from datetime-local to email 
+PASS change state from datetime-local to password 
+FAIL change state from datetime-local to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from datetime-local to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from datetime-local to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from datetime-local to time assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+PASS change state from datetime-local to number 
+PASS change state from datetime-local to range 
+PASS change state from datetime-local to color 
+FAIL change state from datetime-local to checkbox assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
+FAIL change state from datetime-local to radio assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
+PASS change state from datetime-local to file 
+FAIL change state from datetime-local to submit assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
+FAIL change state from datetime-local to image assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
+FAIL change state from datetime-local to reset assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
+FAIL change state from datetime-local to button assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
 FAIL change state from date to hidden assert_equals: input.value should be '  foo\rbar  ' after change of state expected "  foo\rbar  " but got "  foobar  "
 PASS change state from date to text 
 PASS change state from date to search 
@@ -174,7 +174,7 @@ PASS change state from date to tel
 PASS change state from date to url 
 PASS change state from date to email 
 PASS change state from date to password 
-FAIL change state from date to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from date to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from date to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from date to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from date to time assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -195,7 +195,7 @@ PASS change state from month to tel
 PASS change state from month to url 
 PASS change state from month to email 
 PASS change state from month to password 
-FAIL change state from month to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from month to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from month to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from month to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from month to time assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -216,7 +216,7 @@ PASS change state from week to tel
 PASS change state from week to url 
 PASS change state from week to email 
 PASS change state from week to password 
-FAIL change state from week to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from week to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from week to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from week to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from week to time assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -237,7 +237,7 @@ PASS change state from time to tel
 PASS change state from time to url 
 PASS change state from time to email 
 PASS change state from time to password 
-FAIL change state from time to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from time to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from time to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from time to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from time to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -258,7 +258,7 @@ FAIL change state from number to tel assert_equals: input.value should be   foob
 FAIL change state from number to url assert_equals: input.value should be foobar after change of state expected "foobar" but got ""
 FAIL change state from number to email assert_equals: input.value should be foobar after change of state expected "foobar" but got ""
 FAIL change state from number to password assert_equals: input.value should be   foobar   after change of state expected "  foobar  " but got ""
-PASS change state from number to datetime 
+PASS change state from number to datetime-local 
 PASS change state from number to date 
 PASS change state from number to month 
 PASS change state from number to week 
@@ -279,7 +279,7 @@ FAIL change state from range to tel assert_equals: input.value should be   fooba
 FAIL change state from range to url assert_equals: input.value should be foobar after change of state expected "foobar" but got "50"
 FAIL change state from range to email assert_equals: input.value should be foobar after change of state expected "foobar" but got "50"
 FAIL change state from range to password assert_equals: input.value should be   foobar   after change of state expected "  foobar  " but got "50"
-FAIL change state from range to datetime assert_equals: input.value should be  after change of state expected "" but got "50"
+FAIL change state from range to datetime-local assert_equals: input.value should be  after change of state expected "" but got "50"
 FAIL change state from range to date assert_equals: input.value should be  after change of state expected "" but got "50"
 FAIL change state from range to month assert_equals: input.value should be  after change of state expected "" but got "50"
 FAIL change state from range to week assert_equals: input.value should be  after change of state expected "" but got "50"
@@ -300,7 +300,7 @@ FAIL change state from color to tel assert_equals: input.value should be   fooba
 FAIL change state from color to url assert_equals: input.value should be foobar after change of state expected "foobar" but got "#000000"
 FAIL change state from color to email assert_equals: input.value should be foobar after change of state expected "foobar" but got "#000000"
 FAIL change state from color to password assert_equals: input.value should be   foobar   after change of state expected "  foobar  " but got "#000000"
-FAIL change state from color to datetime assert_equals: input.value should be  after change of state expected "" but got "#000000"
+FAIL change state from color to datetime-local assert_equals: input.value should be  after change of state expected "" but got "#000000"
 FAIL change state from color to date assert_equals: input.value should be  after change of state expected "" but got "#000000"
 FAIL change state from color to month assert_equals: input.value should be  after change of state expected "" but got "#000000"
 FAIL change state from color to week assert_equals: input.value should be  after change of state expected "" but got "#000000"
@@ -321,7 +321,7 @@ PASS change state from checkbox to tel
 PASS change state from checkbox to url 
 PASS change state from checkbox to email 
 PASS change state from checkbox to password 
-FAIL change state from checkbox to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from checkbox to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from checkbox to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from checkbox to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from checkbox to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -342,7 +342,7 @@ PASS change state from radio to tel
 PASS change state from radio to url 
 PASS change state from radio to email 
 PASS change state from radio to password 
-FAIL change state from radio to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from radio to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from radio to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from radio to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from radio to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -363,7 +363,7 @@ PASS change state from file to tel
 PASS change state from file to url 
 PASS change state from file to email 
 PASS change state from file to password 
-PASS change state from file to datetime 
+PASS change state from file to datetime-local 
 PASS change state from file to date 
 PASS change state from file to month 
 PASS change state from file to week 
@@ -384,7 +384,7 @@ PASS change state from submit to tel
 PASS change state from submit to url 
 PASS change state from submit to email 
 PASS change state from submit to password 
-FAIL change state from submit to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from submit to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from submit to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from submit to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from submit to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -405,7 +405,7 @@ PASS change state from image to tel
 PASS change state from image to url 
 PASS change state from image to email 
 PASS change state from image to password 
-FAIL change state from image to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from image to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from image to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from image to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from image to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -426,7 +426,7 @@ PASS change state from reset to tel
 PASS change state from reset to url 
 PASS change state from reset to email 
 PASS change state from reset to password 
-FAIL change state from reset to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from reset to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from reset to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from reset to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from reset to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
@@ -447,7 +447,7 @@ PASS change state from button to tel
 PASS change state from button to url 
 PASS change state from button to email 
 PASS change state from button to password 
-FAIL change state from button to datetime assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
+FAIL change state from button to datetime-local assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from button to date assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from button to month assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
 FAIL change state from button to week assert_equals: input.value should be  after change of state expected "" but got "  foobar  "
