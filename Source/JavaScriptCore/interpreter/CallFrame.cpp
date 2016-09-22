@@ -29,7 +29,6 @@
 #include "CodeBlock.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
-#include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "VMEntryScope.h"
 #include <wtf/StringPrintStream.h>

@@ -33,7 +33,6 @@
 namespace JSC {
 
 class CallLinkInfo;
-class CCallHelpers;
 
 MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM*);
 

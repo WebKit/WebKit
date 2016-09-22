@@ -27,7 +27,6 @@
 #include "JSJavaScriptCallFramePrototype.h"
 
 #include "Error.h"
-#include "GetterSetter.h"
 #include "Identifier.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"

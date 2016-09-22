@@ -49,7 +49,6 @@ class BytecodeRewriter;
 class Debugger;
 class FunctionMetadataNode;
 class FunctionExecutable;
-class JSScope;
 class ParserError;
 class ScriptExecutable;
 class SourceCode;
@@ -107,8 +106,6 @@ struct UnlinkedInstruction {
         unsigned index;
     } u;
 };
-
-class BytecodeGeneratorification;
 
 class UnlinkedCodeBlock : public JSCell {
 public:

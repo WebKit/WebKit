@@ -28,7 +28,6 @@
 
 #include "JSCInlines.h"
 #include <wtf/Lock.h>
-#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 

@@ -32,7 +32,7 @@
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
-#include <wtf/DataLog.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

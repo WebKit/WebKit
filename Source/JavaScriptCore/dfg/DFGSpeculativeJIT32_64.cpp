@@ -40,7 +40,6 @@
 #include "HasOwnPropertyCache.h"
 #include "HashMapImpl.h"
 #include "JSEnvironmentRecord.h"
-#include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"

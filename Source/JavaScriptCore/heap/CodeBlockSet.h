@@ -39,7 +39,6 @@ namespace JSC {
 class CodeBlock;
 class Heap;
 class JSCell;
-class SlotVisitor;
 
 // CodeBlockSet tracks all CodeBlocks. Every CodeBlock starts out with one
 // reference coming in from GC. The GC is responsible for freeing CodeBlocks

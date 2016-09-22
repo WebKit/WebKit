@@ -47,13 +47,12 @@ namespace JSC {
     class FunctionMetadataNode;
     class FunctionParameters;
     class Label;
+    class ModuleAnalyzer;
+    class ModuleScopeData;
     class PropertyListNode;
     class ReadModifyResolveNode;
     class RegisterID;
-    class JSScope;
     class ScopeNode;
-    class ModuleAnalyzer;
-    class ModuleScopeData;
 
     typedef SmallPtrSet<UniquedStringImpl*> UniquedStringImplPtrSet;
 

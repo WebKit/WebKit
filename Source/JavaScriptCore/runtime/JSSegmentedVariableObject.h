@@ -32,14 +32,12 @@
 #include "ConcurrentJITLock.h"
 #include "JSObject.h"
 #include "JSSymbolTableObject.h"
-#include "Register.h"
 #include "SymbolTable.h"
 #include <wtf/SegmentedVector.h>
 
 namespace JSC {
 
 class LLIntOffsetsExtractor;
-class Register;
 
 // This is a mostly drop-in replacement for JSEnvironmentRecord, except that it preserves
 // the invariant that after a variable is created, its address in memory will not change

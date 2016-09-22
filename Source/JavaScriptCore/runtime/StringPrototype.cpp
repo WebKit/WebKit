@@ -29,11 +29,11 @@
 #include "Error.h"
 #include "Executable.h"
 #include "IntlObject.h"
+#include "JSArray.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
-#include "JSGlobalObjectFunctions.h"
-#include "JSArray.h"
 #include "JSFunction.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSStringBuilder.h"
 #include "JSStringIterator.h"
 #include "Lookup.h"
@@ -41,7 +41,6 @@
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
-#include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include "SuperSampler.h"
 #include <algorithm>
@@ -50,6 +49,7 @@
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/Collator.h>
 

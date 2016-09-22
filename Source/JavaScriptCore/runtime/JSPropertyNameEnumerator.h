@@ -33,8 +33,6 @@
 
 namespace JSC {
 
-class Identifier;
-
 class JSPropertyNameEnumerator final : public JSCell {
 public:
     typedef JSCell Base;

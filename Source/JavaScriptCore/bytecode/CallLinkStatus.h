@@ -38,7 +38,6 @@
 namespace JSC {
 
 class CodeBlock;
-class ExecutableBase;
 class InternalFunction;
 class JSFunction;
 class Structure;

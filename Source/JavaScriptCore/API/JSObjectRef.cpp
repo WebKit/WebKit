@@ -30,8 +30,6 @@
 
 #include "APICast.h"
 #include "APIUtils.h"
-#include "ButterflyInlines.h"
-#include "CodeBlock.h"
 #include "DateConstructor.h"
 #include "ErrorConstructor.h"
 #include "Exception.h"
@@ -40,6 +38,7 @@
 #include "InitializeThreading.h"
 #include "JSAPIWrapperObject.h"
 #include "JSArray.h"
+#include "JSCInlines.h"
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
@@ -52,7 +51,6 @@
 #include "JSValueRef.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
 

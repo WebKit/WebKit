@@ -32,7 +32,6 @@
 #include "JavaScriptCore.h"
 #include "Options.h"
 #include <string>
-#include <wtf/text/StringBuilder.h>
 
 using JSC::Options;
 

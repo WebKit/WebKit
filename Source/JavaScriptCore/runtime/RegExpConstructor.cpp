@@ -25,7 +25,6 @@
 #include "Error.h"
 #include "GetterSetter.h"
 #include "JSCInlines.h"
-#include "RegExpMatchesArray.h"
 #include "RegExpPrototype.h"
 #include "StructureInlines.h"
 

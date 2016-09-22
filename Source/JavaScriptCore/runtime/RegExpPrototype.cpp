@@ -26,6 +26,7 @@
 #include "Error.h"
 #include "JSArray.h"
 #include "JSCBuiltins.h"
+#include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSObject.h"
@@ -33,14 +34,13 @@
 #include "JSStringBuilder.h"
 #include "Lexer.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
-#include "RegExpObject.h"
 #include "RegExp.h"
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
-#include "RegExpMatchesArray.h"
+#include "RegExpObject.h"
 #include "StringObject.h"
 #include "StringRecursionChecker.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

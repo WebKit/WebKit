@@ -28,7 +28,6 @@
 
 #include "CodeBlock.h"
 #include "JSCInlines.h"
-#include "SlotVisitor.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {

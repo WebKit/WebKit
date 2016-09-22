@@ -56,6 +56,7 @@
 #include "ObjectConstructor.h"
 #include "PolymorphicAccess.h"
 #include "PropertyName.h"
+#include "RegExpObject.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"

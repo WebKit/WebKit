@@ -28,7 +28,6 @@
 
 #include <limits.h>
 #include <wtf/Atomics.h>
-#include <wtf/DataLog.h>
 
 namespace JSC {
 

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ArrayBufferView.h"
 
-#include "ArrayBuffer.h"
-
 namespace JSC {
 
 ArrayBufferView::ArrayBufferView(

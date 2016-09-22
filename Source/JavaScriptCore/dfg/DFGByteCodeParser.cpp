@@ -44,7 +44,6 @@
 #include "GetByIdStatus.h"
 #include "Heap.h"
 #include "JSCInlines.h"
-#include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"

@@ -51,6 +51,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 

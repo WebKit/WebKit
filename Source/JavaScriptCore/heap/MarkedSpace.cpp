@@ -25,7 +25,6 @@
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
-#include "SuperSampler.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {

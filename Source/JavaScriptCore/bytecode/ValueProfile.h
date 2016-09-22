@@ -41,8 +41,6 @@
 
 namespace JSC {
 
-class CCallHelpers;
-
 template<unsigned numberOfBucketsArgument>
 struct ValueProfileBase {
     static const unsigned numberOfBuckets = numberOfBucketsArgument;

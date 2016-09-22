@@ -29,7 +29,6 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
-#include "GetterSetter.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "JSSet.h"

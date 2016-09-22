@@ -35,7 +35,6 @@
 #include "DirectArguments.h"
 #include "FTLState.h"
 #include "GetterSetter.h"
-#include "JSEnvironmentRecord.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScope.h"
 #include "JSCInlines.h"

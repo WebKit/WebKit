@@ -25,7 +25,6 @@
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"
-#include "Reject.h"
 
 namespace JSC {
 

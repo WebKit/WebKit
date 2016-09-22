@@ -51,7 +51,6 @@
 #include "Instruction.h"
 #include "JITCode.h"
 #include "JITMathICForwards.h"
-#include "JITWriteBarrier.h"
 #include "JSCell.h"
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
@@ -62,7 +61,6 @@
 #include "Options.h"
 #include "ProfilerJettisonReason.h"
 #include "PutPropertySlot.h"
-#include "RegExpObject.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
@@ -85,7 +83,6 @@ class LLIntOffsetsExtractor;
 class PCToCodeOriginMap;
 class RegisterAtOffsetList;
 class StructureStubInfo;
-class TypeLocation;
 
 enum class AccessType : int8_t;
 

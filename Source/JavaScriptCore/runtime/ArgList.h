@@ -23,12 +23,9 @@
 #define ArgList_h
 
 #include "CallFrame.h"
-#include "Register.h"
 #include <wtf/HashSet.h>
 
 namespace JSC {
-
-class SlotVisitor;
 
 class MarkedArgumentBuffer {
     WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);

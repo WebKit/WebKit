@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RegExpObject.h"
 
-#include "ButterflyInlines.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"
@@ -30,9 +29,7 @@
 #include "Lookup.h"
 #include "JSCInlines.h"
 #include "RegExpConstructor.h"
-#include "RegExpMatchesArray.h"
 #include "RegExpObjectInlines.h"
-#include "RegExpPrototype.h"
 
 namespace JSC {
 

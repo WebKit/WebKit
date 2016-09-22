@@ -64,7 +64,6 @@
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSInternalPromiseDeferred.h"
-#include "JSLexicalEnvironment.h"
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSPromiseDeferred.h"

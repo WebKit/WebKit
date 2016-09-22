@@ -64,8 +64,6 @@ class ErrorConstructor;
 class ErrorPrototype;
 class EvalCodeBlock;
 class EvalExecutable;
-class FunctionCodeBlock;
-class FunctionExecutable;
 class FunctionPrototype;
 class GeneratorPrototype;
 class GeneratorFunctionPrototype;

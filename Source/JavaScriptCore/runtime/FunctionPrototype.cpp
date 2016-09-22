@@ -23,11 +23,9 @@
 
 #include "BuiltinExecutables.h"
 #include "BuiltinNames.h"
-#include "ClonedArguments.h"
 #include "Error.h"
 #include "GetterSetter.h"
 #include "JSArray.h"
-#include "JSBoundFunction.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSString.h"

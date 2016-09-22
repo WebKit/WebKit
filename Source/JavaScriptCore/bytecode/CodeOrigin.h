@@ -37,10 +37,9 @@
 
 namespace JSC {
 
+class CodeBlock;
+struct DumpContext;
 struct InlineCallFrame;
-class ExecState;
-class ScriptExecutable;
-class JSFunction;
 
 struct CodeOrigin {
     static const unsigned invalidBytecodeIndex = UINT_MAX;

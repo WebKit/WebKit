@@ -40,7 +40,6 @@ class CodeBlock;
 class ExecState;
 class JSFunction;
 class JSObject;
-class JSScope;
 class ClonedArguments;
 class Register;
 

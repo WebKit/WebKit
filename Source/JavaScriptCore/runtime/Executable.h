@@ -49,13 +49,9 @@ class FunctionCodeBlock;
 class JSScope;
 class JSWASMModule;
 class LLIntOffsetsExtractor;
+class ModuleProgramCodeBlock;
 class ProgramCodeBlock;
-class ModuleProgramCodeBlock;
-class JSScope;
 class WebAssemblyCodeBlock;
-class ModuleProgramCodeBlock;
-class JSModuleRecord;
-class JSScope;
 
 enum CompilationKind { FirstCompilation, OptimizingCompilation };
 

@@ -32,21 +32,17 @@
 #include "BytecodeGenerator.h"
 #include "CallFrame.h"
 #include "JIT.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObject.h"
 #include "LabelScope.h"
 #include "Lexer.h"
-#include "JSCInlines.h"
-#include "JSTemplateRegistryKey.h"
 #include "Parser.h"
-#include "PropertyNameArray.h"
-#include "RegExpCache.h"
-#include "RegExpObject.h"
 #include "StackAlignment.h"
-#include "TemplateRegistryKey.h"
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
 

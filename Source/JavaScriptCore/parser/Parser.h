@@ -42,12 +42,10 @@
 
 namespace JSC {
 
-class ExecState;
 class FunctionMetadataNode;
 class FunctionParameters;
 class Identifier;
 class VM;
-class ProgramNode;
 class SourceCode;
 class SyntaxChecker;
 

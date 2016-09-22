@@ -27,7 +27,6 @@
 #include "GlobalContextWithFinalizerTest.h"
 
 #include "JavaScriptCore.h"
-#include <wtf/DataLog.h>
 
 static bool failed = true;
 

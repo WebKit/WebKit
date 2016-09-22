@@ -36,12 +36,9 @@
 #include "JSCell.h"
 #include "JSObject.h"
 #include "Opcode.h"
-#include "SourceProvider.h"
 #include "StackAlignment.h"
 #include "StackFrame.h"
-#include "ThrowScope.h"
 #include <wtf/HashMap.h>
-#include <wtf/text/StringBuilder.h>
 
 #if !ENABLE(JIT)
 #include "CLoopStack.h"
@@ -52,7 +49,6 @@ namespace JSC {
 
     class CodeBlock;
     class EvalExecutable;
-    class ExecutableBase;
     class FunctionExecutable;
     class VM;
     class JSFunction;

@@ -26,7 +26,6 @@
 #include "ASTBuilder.h"
 #include "JSCInlines.h"
 #include "SetForScope.h"
-#include "SourceProvider.h"
 #include "VM.h"
 #include <utility>
 #include <wtf/StringPrintStream.h>
