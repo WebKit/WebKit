@@ -64,18 +64,15 @@ public:
     }
 
     ConsoleMessageTest()
-        : WebViewTest(webkit_user_content_manager_new())
     {
-        WebKitUserContentManager* manager = webkit_web_view_get_user_content_manager(m_webView);
-        webkit_user_content_manager_register_script_message_handler(manager, "console");
-        g_signal_connect(manager, "script-message-received::console", G_CALLBACK(consoleMessageReceivedCallback), this);
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "console");
+        g_signal_connect(m_userContentManager.get(), "script-message-received::console", G_CALLBACK(consoleMessageReceivedCallback), this);
     }
 
     ~ConsoleMessageTest()
     {
-        WebKitUserContentManager* manager = webkit_web_view_get_user_content_manager(m_webView);
-        g_signal_handlers_disconnect_matched(manager, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-        webkit_user_content_manager_unregister_script_message_handler(manager, "console");
+        g_signal_handlers_disconnect_matched(m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "console");
     }
 
     void waitUntilConsoleMessageReceived()
