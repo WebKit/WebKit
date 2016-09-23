@@ -3987,10 +3987,11 @@ sub GenerateParametersCheck
                 }
                 push(@$outputArray, "    }\n");
             } else {
+                die "CallbackInterface does not support Variadic parameter" if $parameter->isVariadic;
                 if ($codeGenerator->IsFunctionOnlyCallbackInterface($type)) {
-                    push(@$outputArray, "    if (UNLIKELY(!state->argument($argumentIndex).isFunction()))\n");
+                    push(@$outputArray, "    if (UNLIKELY(!state->uncheckedArgument($argumentIndex).isFunction()))\n");
                 } else {
-                    push(@$outputArray, "    if (UNLIKELY(!state->argument($argumentIndex).isObject()))\n");
+                    push(@$outputArray, "    if (UNLIKELY(!state->uncheckedArgument($argumentIndex).isObject()))\n");
                 }
                 push(@$outputArray, "        return throwArgumentMustBeFunctionError(*state, throwScope, $argumentIndex, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName);\n");
                 if ($function->isStatic) {
@@ -4026,13 +4027,16 @@ sub GenerateParametersCheck
             my $defineOptionalValue = "auto optionalValue";
             my $indent = "";
 
+            die "Variadic parameter is already handled here" if $parameter->isVariadic;
+            my $argumentLookupMethod = $parameter->isOptional ? "argument" : "uncheckedArgument";
+
             if ($parameter->isOptional && !defined($parameter->default)) {
                 $nativeType = "Optional<$className>";
                 $optionalValue = $name;
                 $defineOptionalValue = $name;
             }
 
-            push(@$outputArray, "    auto ${name}Value = state->argument($argumentIndex);\n");
+            push(@$outputArray, "    auto ${name}Value = state->$argumentLookupMethod($argumentIndex);\n");
             push(@$outputArray, "    $nativeType $name;\n");
 
             if ($parameter->isOptional) {
@@ -4061,9 +4065,12 @@ sub GenerateParametersCheck
             my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($type) && $interfaceName !~ /List$/;
             my $shouldPassByReference = $isTearOff || ShouldPassWrapperByReference($parameter, $interface);
 
+            die "Variadic parameter is already handled here" if $parameter->isVariadic;
+            my $argumentLookupMethod = $parameter->isOptional ? "argument" : "uncheckedArgument";
+
             if (!$shouldPassByReference && $codeGenerator->IsWrapperType($type)) {
                 $implIncludes{"<runtime/Error.h>"} = 1;
-                my $checkedArgument = "state->argument($argumentIndex)";
+                my $checkedArgument = "state->$argumentLookupMethod($argumentIndex)";
                 my $uncheckedArgument = "state->uncheckedArgument($argumentIndex)";
                 my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $parameter, $uncheckedArgument, $function->signature->extendedAttributes->{"Conditional"});
                 push(@$outputArray, "    $nativeType $name = nullptr;\n");
@@ -4098,15 +4105,15 @@ sub GenerateParametersCheck
                         $defaultValue = "JSValue::JSUndefined" if $defaultValue eq "undefined";
                     }
 
-                    $outer = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
+                    $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? $defaultValue : ";
                     $inner = "state->uncheckedArgument($argumentIndex)";
                 } elsif ($parameter->isOptional && !defined($parameter->default)) {
                     # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have a default value in the IDL.
-                    $outer = "state->argument($argumentIndex).isUndefined() ? Optional<$nativeType>() : ";
+                    $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? Optional<$nativeType>() : ";
                     $inner = "state->uncheckedArgument($argumentIndex)";
                 } else {
                     $outer = "";
-                    $inner = "state->argument($argumentIndex)";
+                    $inner = "state->$argumentLookupMethod($argumentIndex)";
                 }
 
                 my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $parameter, $inner, $function->signature->extendedAttributes->{"Conditional"});

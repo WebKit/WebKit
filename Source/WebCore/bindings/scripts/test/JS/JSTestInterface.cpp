@@ -230,7 +230,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    auto str1 = state->argument(0).toWTFString(state);
+    auto str1 = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : state->uncheckedArgument(1).toWTFString(state);
@@ -859,10 +859,10 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return JSValue::encode(jsUndefined());
-    auto strArg = state->argument(0).toWTFString(state);
+    auto strArg = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
-    auto objArg = JSTestObj::toWrapped(state->argument(1));
+    auto objArg = JSTestObj::toWrapped(state->uncheckedArgument(1));
     if (UNLIKELY(!objArg))
         return throwArgumentTypeError(*state, throwScope, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj");
     JSValue result = toJS(state, castedThis->globalObject(), impl.implementsMethod2(*context, WTFMove(strArg), *objArg, ec));
@@ -937,10 +937,10 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return JSValue::encode(jsUndefined());
-    auto strArg = state->argument(0).toWTFString(state);
+    auto strArg = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
-    auto objArg = JSTestObj::toWrapped(state->argument(1));
+    auto objArg = JSTestObj::toWrapped(state->uncheckedArgument(1));
     if (UNLIKELY(!objArg))
         return throwArgumentTypeError(*state, throwScope, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj");
     JSValue result = toJS(state, castedThis->globalObject(), WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg, ec));

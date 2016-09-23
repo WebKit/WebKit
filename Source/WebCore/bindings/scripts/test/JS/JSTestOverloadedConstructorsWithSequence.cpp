@@ -87,7 +87,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto string = state->argument(0).toWTFString(state);
+    auto string = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(string));

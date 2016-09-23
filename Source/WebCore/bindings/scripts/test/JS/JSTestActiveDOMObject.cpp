@@ -203,7 +203,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto nextChild = JSNode::toWrapped(state->argument(0));
+    auto nextChild = JSNode::toWrapped(state->uncheckedArgument(0));
     if (UNLIKELY(!nextChild))
         return throwArgumentTypeError(*state, throwScope, 0, "nextChild", "TestActiveDOMObject", "excitingFunction", "Node");
     impl.excitingFunction(*nextChild);
@@ -223,7 +223,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(E
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto message = state->argument(0).toWTFString(state);
+    auto message = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     impl.postMessage(WTFMove(message));

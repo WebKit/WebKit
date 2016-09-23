@@ -74,7 +74,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arrayBuffer = toArrayBuffer(state->argument(0));
+    auto arrayBuffer = toArrayBuffer(state->uncheckedArgument(0));
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!arrayBuffer))
@@ -92,7 +92,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arrayBufferView = toArrayBufferView(state->argument(0));
+    auto arrayBufferView = toArrayBufferView(state->uncheckedArgument(0));
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!arrayBufferView))
@@ -110,7 +110,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto blob = JSBlob::toWrapped(state->argument(0));
+    auto blob = JSBlob::toWrapped(state->uncheckedArgument(0));
     if (UNLIKELY(!blob))
         return throwArgumentTypeError(*state, throwScope, 0, "blob", "TestOverloadedConstructors", nullptr, "Blob");
     auto object = TestOverloadedConstructors::create(*blob);
@@ -126,7 +126,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto string = state->argument(0).toWTFString(state);
+    auto string = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto object = TestOverloadedConstructors::create(WTFMove(string));

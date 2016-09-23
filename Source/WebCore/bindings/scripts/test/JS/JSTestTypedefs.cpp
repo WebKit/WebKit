@@ -131,10 +131,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(Exe
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto hello = state->argument(0).toWTFString(state);
+    auto hello = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
-    if (UNLIKELY(!state->argument(1).isObject()))
+    if (UNLIKELY(!state->uncheckedArgument(1).isObject()))
         return throwArgumentMustBeFunctionError(*state, throwScope, 1, "testCallback", "TestTypedefs", nullptr);
     auto testCallback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     auto object = TestTypedefs::create(WTFMove(hello), *testCallback);
@@ -516,13 +516,13 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto width = convert<float>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
+    auto width = convert<float>(*state, state->uncheckedArgument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
-    auto height = convert<float>(*state, state->argument(1), ShouldAllowNonFinite::Yes);
+    auto height = convert<float>(*state, state->uncheckedArgument(1), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
-    auto blur = convert<float>(*state, state->argument(2), ShouldAllowNonFinite::Yes);
+    auto blur = convert<float>(*state, state->uncheckedArgument(2), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto color = state->argument(3).isUndefined() ? String() : state->uncheckedArgument(3).toWTFString(state);
@@ -548,7 +548,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto sequenceArg = toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(*state, state->argument(0));
+    auto sequenceArg = toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsNumber(impl.methodWithSequenceArg(WTFMove(sequenceArg)));
@@ -568,7 +568,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceArg(
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto sequenceArg = toNativeArray<String>(*state, state->argument(0));
+    auto sequenceArg = toNativeArray<String>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     impl.nullableSequenceArg(WTFMove(sequenceArg));
@@ -588,7 +588,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arg1 = convert<uint64_t>(*state, state->argument(0), Clamp);
+    auto arg1 = convert<uint64_t>(*state, state->uncheckedArgument(0), Clamp);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     auto arg2 = state->argument(1).isUndefined() ? Optional<uint64_t>() : convert<uint64_t>(*state, state->uncheckedArgument(1), Clamp);
@@ -627,7 +627,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFuncti
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    auto values = toNativeArray<String>(*state, state->argument(0));
+    auto values = toNativeArray<String>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsArray(state, castedThis->globalObject(), impl.stringSequenceFunction(WTFMove(values), ec));
@@ -650,7 +650,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFuncti
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    auto values = toNativeArray<String>(*state, state->argument(0));
+    auto values = toNativeArray<String>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsArray(state, castedThis->globalObject(), impl.stringSequenceFunction2(WTFMove(values), ec));
@@ -672,7 +672,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto sequenceArg = toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(*state, state->argument(0));
+    auto sequenceArg = toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(*state, state->uncheckedArgument(0));
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsBoolean(impl.callWithSequenceThatRequiresInclude(WTFMove(sequenceArg)));

@@ -165,7 +165,7 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    if (UNLIKELY(!state->argument(0).isFunction()))
+    if (UNLIKELY(!state->uncheckedArgument(0).isFunction()))
         return throwArgumentMustBeFunctionError(*state, throwScope, 0, "listener", "TestMediaQueryListListener", "method");
     auto listener = JSMediaQueryListListener::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.method(WTFMove(listener));

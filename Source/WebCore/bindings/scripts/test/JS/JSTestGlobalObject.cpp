@@ -375,7 +375,7 @@ EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto testParam = state->argument(0).toWTFString(state);
+    auto testParam = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     impl.regularOperation(WTFMove(testParam));
@@ -396,7 +396,7 @@ static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto testParam = state->argument(0).toWTFString(state);
+    auto testParam = state->uncheckedArgument(0).toWTFString(state);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     impl.enabledAtRuntimeOperation(WTFMove(testParam));
@@ -419,7 +419,7 @@ static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto testParam = convert<int32_t>(*state, state->argument(0), NormalConversion);
+    auto testParam = convert<int32_t>(*state, state->uncheckedArgument(0), NormalConversion);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     impl.enabledAtRuntimeOperation(WTFMove(testParam));
