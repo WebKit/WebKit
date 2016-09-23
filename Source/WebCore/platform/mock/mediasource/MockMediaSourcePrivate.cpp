@@ -167,8 +167,7 @@ bool MockMediaSourcePrivate::hasVideo() const
 
 void MockMediaSourcePrivate::seekToTime(const MediaTime& time)
 {
-    for (auto it = m_activeSourceBuffers.begin(), end = m_activeSourceBuffers.end(); it != end; ++it)
-        (*it)->seekToTime(time);
+    m_client->seekToTime(time);
 }
 
 MediaTime MockMediaSourcePrivate::seekToTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)

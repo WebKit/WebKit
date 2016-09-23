@@ -225,8 +225,14 @@ void MockSourceBufferPrivate::setActive(bool isActive)
         m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
 }
 
-void MockSourceBufferPrivate::enqueueSample(PassRefPtr<MediaSample> sample, AtomicString)
+Vector<String> MockSourceBufferPrivate::enqueuedSamplesForTrackID(AtomicString)
 {
+    return m_enqueuedSamples;
+}
+
+void MockSourceBufferPrivate::enqueueSample(PassRefPtr<MediaSample> prpSample, AtomicString)
+{
+    RefPtr<MediaSample> sample = prpSample;
     if (!m_mediaSource || !sample)
         return;
 
@@ -245,6 +251,8 @@ void MockSourceBufferPrivate::enqueueSample(PassRefPtr<MediaSample> sample, Atom
         m_mediaSource->incrementDroppedFrames();
     if (box->isDelayed())
         m_mediaSource->incrementTotalFrameDelayBy(MediaTime(1, 1));
+
+    m_enqueuedSamples.append(toString(sample));
 }
 
 bool MockSourceBufferPrivate::hasVideo() const

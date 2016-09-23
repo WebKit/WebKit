@@ -1,0 +1,17 @@
+
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+Append a sample from 10 -> 11
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+RUN(video.currentTime = 0.5)
+EVENT(seeking)
+Append a sample from 0 -> 1
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(seeked)
+EXPECTED (enqueuedSamples.length == '1') OK
+{PTS({0/1000, 0.000000}), DTS({0/1000, 0.000000}), duration({1000/1000, 1.000000}), flags(1), generation(0)}
+END OF TEST
+

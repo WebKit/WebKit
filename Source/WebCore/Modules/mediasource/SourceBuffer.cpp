@@ -1856,9 +1856,13 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
 void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString trackID, const MediaTime& time)
 {
     // Find the sample which contains the current presentation time.
-    auto currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleOnOrAfterPresentationTime(time);
+    auto currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleContainingPresentationTime(time);
 
-    if (currentSamplePTSIterator == trackBuffer.samples.presentationOrder().end()) {
+    if (currentSamplePTSIterator == trackBuffer.samples.presentationOrder().end())
+        currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleOnOrAfterPresentationTime(time);
+
+    if (currentSamplePTSIterator == trackBuffer.samples.presentationOrder().end()
+        || (currentSamplePTSIterator->first - time) > MediaSource::currentTimeFudgeFactor()) {
         trackBuffer.decodeQueue.clear();
         m_private->flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>(), trackID);
         return;
@@ -2026,6 +2030,11 @@ Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomicString& track
         sampleDescriptions.append(toString(*pair.second));
 
     return sampleDescriptions;
+}
+
+Vector<String> SourceBuffer::enqueuedSamplesForTrackID(const AtomicString& trackID)
+{
+    return m_private->enqueuedSamplesForTrackID(trackID);
 }
 
 Document& SourceBuffer::document() const

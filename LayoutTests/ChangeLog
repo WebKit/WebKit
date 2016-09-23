@@ -1,3 +1,14 @@
+2016-09-23  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (206001): Scrubbed video on Youtube stops playing
+        https://bugs.webkit.org/show_bug.cgi?id=162481
+        <rdar://problem/28436707>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-seek-back-expected.txt: Added.
+        * media/media-source/media-source-seek-back.html: Added.
+
 2016-09-23  Per Arne Vollan  <pvollan@apple.com>
 
         Skip failing html/syntax web platform test on Windows.

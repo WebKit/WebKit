@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest()
+    {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        var videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+    }
+
+    function sourceOpen()
+    {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples()
+    {
+        samples = concatenateSamples([
+            makeASample(10, 10, 1, 1, SAMPLE_FLAG.SYNC),
+        ]);
+        consoleWrite('Append a sample from 10 -> 11')
+        waitForEventOn(sourceBuffer, 'updateend', seek, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function seek()
+    {
+        waitForEvent('seeking', seeking);
+        run('video.currentTime = 0.5');
+    }
+
+    function seeking()
+    {
+        samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC),
+        ]);
+        consoleWrite('Append a sample from 0 -> 1')
+        waitForEvent('seeked', seeked);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function seeked()
+    {
+        enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+        testExpected("enqueuedSamples.length", 1);
+        enqueuedSamples.forEach(consoleWrite);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>
