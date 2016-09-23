@@ -442,7 +442,7 @@ URL::URL(ParsedURLStringTag, const String& url)
 {
     if (URLParser::enabled()) {
         URLParser parser;
-        *this = parser.parseSerializedURL(url);
+        *this = parser.parse(url);
     } else
         parse(url);
 #if OS(WINDOWS)
