@@ -1,3 +1,18 @@
+2016-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Align Element.insertAdjacentHTML() with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=162479
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage for calling insertAdjacentHTML on an element
+        whose parent is a DocumentFragment. I have verified that this test is
+        passing in Firefox.
+
+        * fast/dom/insertAdjacentHTML-DocumentFragment-crash-expected.txt:
+        * fast/dom/insertAdjacentHTML-DocumentFragment-parent-expected.txt: Added.
+        * fast/dom/insertAdjacentHTML-DocumentFragment-parent.html: Added.
+
 2016-09-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206165.

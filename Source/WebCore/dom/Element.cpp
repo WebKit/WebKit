@@ -53,6 +53,7 @@
 #include "FocusEvent.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
+#include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
@@ -3669,11 +3670,11 @@ Element* Element::insertAdjacentElement(const String& where, Element& newChild, 
 }
 
 // Step 1 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
-static Element* contextElementForInsertion(const String& where, Element* element, ExceptionCode& ec)
+static ContainerNode* contextNodeForInsertion(const String& where, Element* element, ExceptionCode& ec)
 {
     if (equalLettersIgnoringASCIICase(where, "beforebegin") || equalLettersIgnoringASCIICase(where, "afterend")) {
-        auto* parent = element->parentElement();
-        if (!parent) {
+        auto* parent = element->parentNode();
+        if (!parent || is<Document>(*parent)) {
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return nullptr;
         }
@@ -3685,14 +3686,25 @@ static Element* contextElementForInsertion(const String& where, Element* element
     return nullptr;
 }
 
+// https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml
 void Element::insertAdjacentHTML(const String& where, const String& markup, ExceptionCode& ec)
 {
-    Element* contextElement = contextElementForInsertion(where, this, ec);
-    if (!contextElement)
+    // Step 1.
+    auto* contextNode = contextNodeForInsertion(where, this, ec);
+    if (!contextNode)
         return;
+    RefPtr<Element> contextElement;
+    // Step 2.
+    if (!is<Element>(*contextNode)
+        || (contextNode->document().isHTMLDocument() && is<HTMLHtmlElement>(*contextNode))) {
+        contextElement = HTMLBodyElement::create(contextNode->document());
+    } else
+        contextElement = downcast<Element>(contextNode);
+    // Step 3.
     RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(*contextElement, markup, AllowScriptingContent, ec);
     if (!fragment)
         return;
+    // Step 4.
     insertAdjacent(where, fragment.releaseNonNull(), ec);
 }
 

@@ -28,5 +28,5 @@ PASS beforeBegin content2 test again, now that there's a next sibling
 PASS Afterbegin content2 test again, now that there's a next sibling 
 PASS BeforeEnd content2 test again, now that there's a next sibling 
 PASS afterend content2 test again, now that there's a next sibling 
-FAIL Inserting kids of the <html> element should not do weird things with implied <body>/<head> tags assert_equals: Should still have one head expected 1 but got 3
+PASS Inserting kids of the <html> element should not do weird things with implied <body>/<head> tags 
 
