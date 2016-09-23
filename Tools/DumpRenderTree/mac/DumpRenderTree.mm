@@ -989,6 +989,8 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setDownloadAttributeEnabled:YES];
 
+    [preferences setModernMediaControlsEnabled:NO];
+
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
 

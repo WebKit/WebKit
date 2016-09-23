@@ -70,6 +70,7 @@
     macro(Map)\
     macro(MapIterator)\
     macro(Math) \
+    macro(ModernMediaControls) \
     macro(NaN) \
     macro(Number) \
     macro(NumberFormat) \

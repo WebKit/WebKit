@@ -5082,6 +5082,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(!!enabled);
 #endif
 
+    hr = prefsPrivate->modernMediaControlsEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    RuntimeEnabledFeatures::sharedFeatures().setModernMediaControlsEnabled(!!enabled);
+
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;

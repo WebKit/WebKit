@@ -223,6 +223,9 @@ public:
     bool isCSSGridLayoutEnabled() const { return m_cssGridLayoutEnabled; }
 #endif
 
+    void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
+    bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
     WEBCORE_EXPORT void reset();
@@ -231,6 +234,7 @@ private:
     // Never instantiate.
     RuntimeEnabledFeatures();
 
+    bool m_areModernMediaControlsEnabled;
     bool m_isLocalStorageEnabled;
     bool m_isSessionStorageEnabled;
     bool m_isWebkitNotificationsEnabled;

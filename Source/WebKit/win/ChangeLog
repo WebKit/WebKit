@@ -1,3 +1,21 @@
+2016-09-23  Antoine Quint  <graouts@apple.com>
+
+        Add a new runtime flag for work on modern media controls (off by default)
+        https://bugs.webkit.org/show_bug.cgi?id=162420
+        <rdar://problem/27989489>
+
+        Reviewed by Eric Carlson.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::setModernMediaControlsEnabled):
+        (WebPreferences::modernMediaControlsEnabled):
+        (WebPreferences::setCustomElementsEnabled): Deleted.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2016-09-15  Brady Eidson  <beidson@apple.com>
 
         WKWebView.hasOnlySecureContent always returns "YES" after going back to a CachedPage (even if it has http resources).

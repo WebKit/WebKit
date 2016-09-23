@@ -2786,6 +2786,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitWebAnimationsEnabledPreferenceKey];
 }
 
+- (BOOL)modernMediaControlsEnabled
+{
+    return [self _boolValueForKey:WebKitModernMediaControlsEnabledPreferenceKey];
+}
+
+- (void)setModernMediaControlsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitModernMediaControlsEnabledPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

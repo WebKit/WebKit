@@ -496,6 +496,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setWebAnimationsEnabled:(BOOL)flag;
 - (BOOL)webAnimationsEnabled;
 
+- (void)setModernMediaControlsEnabled:(BOOL)flag;
+- (BOOL)modernMediaControlsEnabled;
+
 @property (nonatomic) BOOL visualViewportEnabled;
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;

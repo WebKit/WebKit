@@ -175,3 +175,5 @@
 #define WebKitShadowDOMEnabledPreferenceKey "WebKitShadowDOMEnabled"
 
 #define WebKitCustomElementsEnabledPreferenceKey "WebKitCustomElementsEnabled"
+
+#define WebKitModernMediaControlsEnabledPreferenceKey "WebKitModernMediaControlsEnabled"

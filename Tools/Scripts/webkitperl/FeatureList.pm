@@ -113,6 +113,7 @@ my (
     $mediaStreamSupport,
     $meterElementSupport,
     $mhtmlSupport,
+    $modernMediaControls,
     $modulesSupport,
     $mouseCursorScaleSupport,
     $netscapePluginAPISupport,

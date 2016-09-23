@@ -103,6 +103,7 @@ public:
     void setShadowDOMEnabled(bool);
     void setCustomElementsEnabled(bool);
     void setDOMIteratorEnabled(bool);
+    void setModernMediaControlsEnabled(bool);
     void setWebGL2Enabled(bool);
     void setFetchAPIEnabled(bool);
     void setAllowUniversalAccessFromFileURLs(bool);
