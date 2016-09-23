@@ -87,8 +87,12 @@ BEGIN {
         &scmMoveOrRenameFile
         &scmToggleExecutableBit
         &setChangeLogDateAndReviewer
+        &svnIdentifierForPath
+        &svnInfoForPath
+        &svnRepositoryRootForPath
         &svnRevisionForDirectory
         &svnStatus
+        &svnURLForPath
         &toWindowsLineEndings
         &gitCommitForSVNRevision
         &listOfChangedFilesBetweenRevisions
@@ -444,31 +448,62 @@ sub svnRevisionForDirectory($)
     return $revision;
 }
 
-sub pathRelativeToSVNRepositoryRootForPath($)
+sub svnInfoForPath($)
 {
     my ($file) = @_;
     my $relativePath = File::Spec->abs2rel($file);
 
     my $svnInfo;
-    if (isSVN()) {
+    if (isSVNDirectory($file)) {
         my $escapedRelativePath = escapeSubversionPath($relativePath);
         my $command = "svn info $escapedRelativePath";
         $command = "LC_ALL=C $command" if !isWindows();
         $svnInfo = `$command`;
-    } elsif (isGit()) {
-        my $command = "git svn info $relativePath";
+    } elsif (isGitDirectory($file)) {
+        my $command = "git svn info";
         $command = "LC_ALL=C $command" if !isWindows();
-        $svnInfo = `$command`;
+        $svnInfo = `cd $relativePath && $command`;
     }
 
+    return $svnInfo;
+}
+
+sub svnURLForPath($)
+{
+    my ($file) = @_;
+    my $svnInfo = svnInfoForPath($file);
+
     $svnInfo =~ /.*^URL: (.*?)$/m;
-    my $svnURL = $1;
+    return $1;
+}
+
+sub svnRepositoryRootForPath($)
+{
+    my ($file) = @_;
+    my $svnInfo = svnInfoForPath($file);
 
     $svnInfo =~ /.*^Repository Root: (.*?)$/m;
-    my $repositoryRoot = $1;
+    return $1;
+}
 
-    $svnURL =~ s/$repositoryRoot\///;
+sub pathRelativeToSVNRepositoryRootForPath($)
+{
+    my ($file) = @_;
+
+    my $svnURL = svnURLForPath($file);
+    my $svnRepositoryRoot = svnRepositoryRootForPath($file);
+
+    $svnURL =~ s/$svnRepositoryRoot\///;
     return $svnURL;
+}
+
+sub svnIdentifierForPath($)
+{
+    my ($file) = @_;
+    my $path = pathRelativeToSVNRepositoryRootForPath($file);
+
+    $path =~ /^(trunk)|tags\/([\w\.\-]*)|branches\/([\w\.\-]*).*$/m;
+    return $1 || $2 || $3;
 }
 
 sub makeFilePathRelative($)
