@@ -57,12 +57,14 @@ using namespace HTMLNames;
 
 AuthorStyleSheets::AuthorStyleSheets(Document& document)
     : m_document(document)
+    , m_optimizedUpdateTimer(*this, &AuthorStyleSheets::optimizedUpdateTimerFired)
 {
 }
 
 AuthorStyleSheets::AuthorStyleSheets(ShadowRoot& shadowRoot)
     : m_document(shadowRoot.documentScope())
     , m_shadowRoot(&shadowRoot)
+    , m_optimizedUpdateTimer(*this, &AuthorStyleSheets::optimizedUpdateTimerFired)
 {
 }
 
@@ -382,6 +384,66 @@ bool AuthorStyleSheets::activeStyleSheetsContains(const CSSStyleSheet* sheet) co
             m_weakCopyOfActiveStyleSheetListForFastLookup->add(activeStyleSheet.get());
     }
     return m_weakCopyOfActiveStyleSheetListForFastLookup->contains(sheet);
+}
+
+void AuthorStyleSheets::flushPendingUpdates()
+{
+    if (m_pendingUpdateType == NoUpdate)
+        return;
+    updateActiveStyleSheets(m_pendingUpdateType);
+}
+
+void AuthorStyleSheets::scheduleOptimizedUpdate()
+{
+    if (m_optimizedUpdateTimer.isActive())
+        return;
+    if (m_pendingUpdateType == NoUpdate)
+        m_pendingUpdateType = OptimizedUpdate;
+    m_optimizedUpdateTimer.startOneShot(0);
+}
+
+void AuthorStyleSheets::didChange(StyleResolverUpdateFlag updateFlag)
+{
+    m_optimizedUpdateTimer.stop();
+
+    // Don't bother updating, since we haven't loaded all our style info yet
+    // and haven't calculated the style resolver for the first time.
+    if (!m_document.hasLivingRenderTree() || (!m_shadowRoot && !m_didCalculateStyleResolver && m_pendingStyleSheetCount)) {
+        m_document.clearStyleResolver();
+        return;
+    }
+    m_didCalculateStyleResolver = true;
+
+    auto styleSheetUpdate = (updateFlag == RecalcStyleIfNeeded || updateFlag == DeferRecalcStyleIfNeeded)
+        ? AuthorStyleSheets::OptimizedUpdate
+        : AuthorStyleSheets::FullUpdate;
+    bool stylesheetChangeRequiresStyleRecalc = updateActiveStyleSheets(styleSheetUpdate);
+
+    auto scheduleStyleRecalc = [&] {
+        if (m_shadowRoot)
+            m_shadowRoot->setNeedsStyleRecalc();
+        else
+            m_document.scheduleForcedStyleRecalc();
+    };
+
+    if (updateFlag == DeferRecalcStyle) {
+        scheduleStyleRecalc();
+        return;
+    }
+
+    if (updateFlag == DeferRecalcStyleIfNeeded) {
+        if (stylesheetChangeRequiresStyleRecalc)
+            scheduleStyleRecalc();
+        return;
+    }
+
+    if (stylesheetChangeRequiresStyleRecalc)
+        m_document.recalcStyle(Style::Force);
+}
+
+void AuthorStyleSheets::optimizedUpdateTimerFired()
+{
+    didChange(RecalcStyleIfNeeded);
 }
 
 }

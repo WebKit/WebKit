@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLStyleElement.h"
 
+#include "AuthorStyleSheets.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -77,7 +78,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
         if (sheet()) {
             sheet()->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
             if (inDocument() && document().hasLivingRenderTree())
-                document().styleResolverChanged(RecalcStyleImmediately);
+                document().authorStyleSheets().didChange(RecalcStyleImmediately);
         }
     } else if (name == typeAttr)
         m_styleSheetOwner.setContentType(value);
