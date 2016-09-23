@@ -1,3 +1,13 @@
+2016-09-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] ASSERT when sizing tracks with percentages inside calc
+        https://bugs.webkit.org/show_bug.cgi?id=162383
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/tracks-wider-min-track-breadth-crash-expected.txt: Added.
+        * fast/css-grid-layout/tracks-wider-min-track-breadth-crash.html: Added.
+
 2016-09-23  Chris Dumez  <cdumez@apple.com>
 
         document.title getter does not strip / collapse the right whitespace characters

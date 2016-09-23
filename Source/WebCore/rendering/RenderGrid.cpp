@@ -630,7 +630,6 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 void RenderGrid::computeIntrinsicLogicalHeight(GridSizingData& sizingData)
 {
     ASSERT(sizingData.isValidTransition(ForRows));
-    ASSERT(tracksAreWiderThanMinTrackBreadth(ForColumns, sizingData));
     sizingData.setAvailableSpace(Nullopt);
     sizingData.setFreeSpace(ForRows, Nullopt);
     sizingData.sizingOperation = IntrinsicSizeComputation;
@@ -1439,7 +1438,7 @@ void RenderGrid::distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<Grid
 bool RenderGrid::tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection direction, GridSizingData& sizingData)
 {
     const Vector<GridTrack>& tracks = (direction == ForColumns) ? sizingData.columnTracks : sizingData.rowTracks;
-    const LayoutUnit maxSize = sizingData.freeSpace(direction).valueOr(0);
+    const LayoutUnit maxSize = sizingData.availableSpace().valueOr(0);
     for (unsigned i = 0; i < tracks.size(); ++i) {
         const GridTrackSize& trackSize = gridTrackSize(direction, i, sizingData.sizingOperation);
         if (computeUsedBreadthOfMinLength(trackSize, maxSize) > tracks[i].baseSize())
