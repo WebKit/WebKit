@@ -257,6 +257,10 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
 
     // 19. Set collator.[[locale]] to the value of r.[[locale]].
     m_locale = result.get(ASCIILiteral("locale"));
+    if (m_locale.isEmpty()) {
+        throwTypeError(&state, scope, ASCIILiteral("failed to initialize Collator due to invalid locale"));
+        return;
+    }
 
     // 20. Let k be 0.
     // 21. Let lenValue be Get(relevantExtensionKeys, "length").
