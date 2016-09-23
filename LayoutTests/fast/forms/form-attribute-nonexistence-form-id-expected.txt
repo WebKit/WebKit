@@ -6,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 label1 label2
 PASS inputShouldHaveForm.form is form
 PASS inputShouldNotHaveForm.form is null
-PASS labelShouldHaveForm.form is form
-PASS labelShouldNotHaveForm.form is null
+PASS labelWithoutForm.form is null
+PASS labelWithInvalidForm.form is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

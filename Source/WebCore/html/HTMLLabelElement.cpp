@@ -30,6 +30,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "FormAssociatedElement.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -79,9 +80,13 @@ LabelableElement* HTMLLabelElement::control()
     return inDocument() ? firstElementWithIdIfLabelable(treeScope(), controlId) : nullptr;
 }
 
-HTMLFormElement* HTMLLabelElement::form() const
+HTMLFormElement* HTMLLabelElement::form()
 {
-    return FormAssociatedElement::findAssociatedForm(this, 0);
+    auto* labeledControl = control();
+    if (!labeledControl)
+        return nullptr;
+
+    return is<HTMLFormControlElement>(*labeledControl) ? downcast<HTMLFormControlElement>(*labeledControl).form() : nullptr;
 }
 
 void HTMLLabelElement::setActive(bool down, bool pause)

@@ -32,7 +32,7 @@ public:
     static Ref<HTMLLabelElement> create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT LabelableElement* control();
-    WEBCORE_EXPORT HTMLFormElement* form() const;
+    WEBCORE_EXPORT HTMLFormElement* form();
 
     bool willRespondToMouseClickEvents() final;
 

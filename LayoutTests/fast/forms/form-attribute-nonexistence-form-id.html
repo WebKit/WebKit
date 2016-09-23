@@ -18,12 +18,12 @@ description('This page ensures that &lt;input from="X"&gt; and &lt;label from="X
 var form = document.getElementById('form');
 var inputShouldHaveForm = document.getElementById('input1');
 var inputShouldNotHaveForm = document.getElementById('input2');
-var labelShouldHaveForm = document.getElementById('label1');
-var labelShouldNotHaveForm = document.getElementById('label2');
+var labelWithoutForm = document.getElementById('label1');
+var labelWithInvalidForm = document.getElementById('label2');
 shouldBe('inputShouldHaveForm.form', 'form');
 shouldBeNull('inputShouldNotHaveForm.form');
-shouldBe('labelShouldHaveForm.form', 'form');
-shouldBeNull('labelShouldNotHaveForm.form');
+shouldBeNull('labelWithoutForm.form');
+shouldBeNull('labelWithInvalidForm.form');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

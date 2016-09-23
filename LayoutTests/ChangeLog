@@ -1,3 +1,19 @@
+2016-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Align HTMLLabelElement.prototype.form with the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=162369
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing tests to reflect behavior change. I have verified
+        that Firefox and Chrome were failing those tests.
+
+        * fast/dom/HTMLLabelElement/form/test1.html:
+        * fast/forms/form-attribute-expected.txt:
+        * fast/forms/form-attribute-nonexistence-form-id-expected.txt:
+        * fast/forms/form-attribute-nonexistence-form-id.html:
+        * fast/forms/form-attribute.html:
+
 2016-09-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Temporarily skipping media/media-source/media-source-duplicate-seeked.html on mac.

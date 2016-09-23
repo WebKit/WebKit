@@ -8,7 +8,7 @@ PASS document.getElementsByTagName("button")[0].form is owner
 PASS document.getElementsByTagName("fieldset")[0].form is owner
 PASS document.getElementsByTagName("input")[0].form is owner
 PASS document.getElementsByTagName("keygen")[0].form is owner
-PASS document.getElementsByTagName("label")[0].form is owner
+PASS document.getElementsByTagName("label")[0].form is null
 PASS document.getElementsByTagName("object")[0].form is owner
 PASS document.getElementsByTagName("output")[0].form is owner
 PASS document.getElementsByTagName("select")[0].form is owner
@@ -22,24 +22,22 @@ PASS labelElement.form is owner
 PASS inputElement1.form is owner
 PASS inputElement2.form is owner
 PASS inputElement3.form is owner
-PASS labelElement1.form is owner
-PASS labelElement2.form is owner
-PASS labelElement3.form is owner
+PASS labelElement1.form is null
+PASS labelElement2.form is null
+PASS labelElement3.form is null
 
 - Ensures that the form attribute points the form owner even if the form element is nested another form element.
 NOTE: It seems that nesting form elements is not allowed so we ensure each form-associated elements associate with the outmost form element.
 PASS inputElement1.form is owner
 PASS inputElement2.form is owner
 PASS inputElement3.form is owner
-PASS labelElement1.form is owner
-PASS labelElement2.form is owner
-PASS labelElement3.form is owner
+PASS labelElement1.form is null
+PASS labelElement2.form is null
+PASS labelElement3.form is null
 
 - Ensures whether the form owner is set correctly when the value of form attribute of a form-associated element changed.
 PASS inputElement.form is form1
 PASS inputElement.form is form2
-PASS labelElement.form is form1
-PASS labelElement.form is form2
 PASS objectElement.form is form1
 PASS objectElement.form is form2
 
@@ -47,9 +45,6 @@ PASS objectElement.form is form2
 PASS inputElement.form is null
 PASS inputElement.form is owner
 PASS inputElement.form is null
-PASS labelElement.form is null
-PASS labelElement.form is owner
-PASS labelElement.form is null
 PASS objectElement.form is null
 PASS objectElement.form is owner
 PASS objectElement.form is null
@@ -58,11 +53,8 @@ PASS objectElement.form is null
 PASS owner.name is "firstOwner"
 PASS owner.name is "secondOwner"
 PASS inputElement.form is owner
-PASS labelElement.form is owner
 PASS inputElement.form is null
-PASS labelElement.form is null
 PASS inputElement.form is owner
-PASS labelElement.form is owner
 PASS successfullyParsed is true
 
 TEST COMPLETE
