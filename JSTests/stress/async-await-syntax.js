@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 // This test requires ENABLE_ES2017_ASYNCFUNCTION_SYNTAX to be enabled at build time.
-
+//@ skip
 
 function testSyntax(script) {
     try {
