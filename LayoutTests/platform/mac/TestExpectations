@@ -1452,3 +1452,5 @@ webkit.org/b/161156 js/dom/prototype-chain-caching-with-impure-get-own-property-
 webkit.org/b/161883 imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-escapes-1.xhtml [ Pass Failure ]
 
 webkit.org/b/162308 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure ]
+
+webkit.org/b/162497 media/media-source/media-source-duplicate-seeked.html [ Skip ]
