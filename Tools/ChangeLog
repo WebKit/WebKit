@@ -1,3 +1,12 @@
+2016-09-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Use correct hardware for Sierra Debug WK2 testers.
+        https://bugs.webkit.org/show_bug.cgi?id=162474
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make all WebView tests have a WebKitUserContentManager

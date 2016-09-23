@@ -43,12 +43,12 @@
 
                     { "name": "bot118", "platform": "mac-sierra" },
                     { "name": "bot122", "platform": "mac-sierra" },
-                    { "name": "bot137", "platform": "mac-sierra" },
-                    { "name": "bot140", "platform": "mac-sierra" },
                     { "name": "bot141", "platform": "mac-sierra" },
+                    { "name": "bot143", "platform": "mac-sierra" },
                     { "name": "bot160", "platform": "mac-sierra" },
                     { "name": "bot164", "platform": "mac-sierra" },
                     { "name": "bot199", "platform": "mac-sierra" },
+                    { "name": "bot219", "platform": "mac-sierra" },
                     { "name": "bot439", "platform": "mac-sierra" },
                     { "name": "bot443", "platform": "mac-sierra" },
                     { "name": "bot600", "platform": "mac-sierra" },
@@ -108,7 +108,7 @@
                     { "name": "Apple Sierra Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "sierra-debug-tests-wk2",
                       "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot137", "bot140"]
+                      "slavenames": ["bot143", "bot219"]
                     },
                     { "name": "Apple Sierra Release (Build)", "type": "Build", "builddir": "sierra-release",
                       "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
