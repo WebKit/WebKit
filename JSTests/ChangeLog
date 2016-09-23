@@ -1,5 +1,14 @@
 2016-09-23  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Skip mozilla-tests.yaml/js1_5/Array/regress-157652 on memory limited devices
+        https://bugs.webkit.org/show_bug.cgi?id=162381
+
+        Reviewed by Mark Lam.
+
+        * mozilla/mozilla-tests.yaml:
+
+2016-09-23  Csaba Osztrogonác  <ossy@webkit.org>
+
         Skip stress/string-joining-long-strings-should-not-crash.js on memory limited devices
         https://bugs.webkit.org/show_bug.cgi?id=162386
 
