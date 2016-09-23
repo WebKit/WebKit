@@ -1,3 +1,18 @@
+2016-09-23  Alexey Proskuryakov  <ap@apple.com>
+
+        iOS playback user action tests fail on some machines
+        https://bugs.webkit.org/show_bug.cgi?id=162504
+        rdar://problem/28013994
+
+        Reviewed by Jer Noble.
+
+        Avoid the need to have a timeout.
+
+        * TestWebKitAPI/Tests/WebKit/ios/audio-only.html:
+        * TestWebKitAPI/Tests/WebKit/ios/video-with-audio.html:
+        * TestWebKitAPI/Tests/WebKit/ios/video-without-audio.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-without-audio.html:
+
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r204163): [GTK] API test /webkit2/WebKitSecurityManager/file-xhr is failing

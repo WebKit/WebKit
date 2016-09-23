@@ -6,13 +6,10 @@
 
     function go() {
         var video = document.getElementsByTagName('video')[0];
-        timeout = window.setTimeout(notPlaying, 250);
-        video.addEventListener('playing', playing);
-        video.play();
+        video.play().then(playing).catch(notPlaying);
     }
 
     function playing() {
-        window.clearTimeout(timeout);
         try {
             window.webkit.messageHandlers.testHandler.postMessage('playing');
         } catch(e) {

@@ -4,13 +4,10 @@
     <script>
     function go() {
         var audio = document.getElementsByTagName('audio')[0];
-        timeout = window.setTimeout(notPlaying, 250);
-        audio.addEventListener('playing', playing);
-        audio.play();
+        audio.play().then(playing).catch(notPlaying);
     }
 
     function playing() {
-        window.clearTimeout(timeout);
         try {
             window.webkit.messageHandlers.testHandler.postMessage('playing');
         } catch(e) {
