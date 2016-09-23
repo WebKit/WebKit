@@ -1,3 +1,14 @@
+2016-09-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix Mac CMake build after r206261
+        https://bugs.webkit.org/show_bug.cgi?id=162493
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt: Exclude WebTextChecker from Mac CMake builds.
+        * PlatformEfl.cmake: Ditto.
+        * PlatformGTK.cmake: Ditto.
+
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] BadDamage X error in /webkit2/WebKitWebView/preferred-size

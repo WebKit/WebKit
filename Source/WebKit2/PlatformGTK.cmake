@@ -90,6 +90,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/DrawingAreaProxyImpl.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
+    UIProcess/WebTextChecker.cpp
+    UIProcess/WebTextCheckerClient.cpp
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 
