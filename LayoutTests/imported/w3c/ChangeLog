@@ -1,3 +1,17 @@
+2016-09-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r206165.
+        https://bugs.webkit.org/show_bug.cgi?id=162492
+
+        needs corresponding API change in bug 162475 (Requested by
+        alexchristensen on #webkit).
+
+        Reverted changeset:
+
+        "Non-special URLs should have an opaque origin"
+        https://bugs.webkit.org/show_bug.cgi?id=162254
+        http://trac.webkit.org/changeset/206165
+
 2016-09-22  Chris Dumez  <cdumez@apple.com>
 
         [ShadowDOM] Add support for Node.getRootNode(options)
