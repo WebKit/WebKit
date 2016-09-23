@@ -1,3 +1,13 @@
+2016-09-23  Alex Christensen  <achristensen@webkit.org>
+
+        Refactor URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=162516
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-09-23  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Implement parsing of Async Functions

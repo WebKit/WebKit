@@ -67,7 +67,15 @@ private:
     template<typename CharacterType> void syntaxError(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> bool isWindowsDriveLetter(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool shouldCopyFileURL(CodePointIterator<CharacterType>);
-    template<typename CharacterType> void checkWindowsDriveLetter(CodePointIterator<CharacterType>&, Vector<LChar>& asciiBuffer);
+    template<typename CharacterType> void checkWindowsDriveLetter(CodePointIterator<CharacterType>&);
+    template<bool(*isInCodeSet)(UChar32)> void utf8PercentEncode(UChar32);
+    void utf8QueryEncode(UChar32);
+    void percentEncodeByte(uint8_t);
+    void appendToASCIIBuffer(UChar32);
+    void appendToASCIIBuffer(const char*, size_t);
+    void appendToASCIIBuffer(const LChar* characters, size_t size) { appendToASCIIBuffer(reinterpret_cast<const char*>(characters), size); }
+    void encodeQuery(const Vector<UChar>& source, const TextEncoding&);
+    void copyASCIIStringUntil(const String&, size_t lengthIf8Bit, size_t lengthIf16Bit);
 
     enum class URLPart;
     void copyURLPartsUntil(const URL& base, URLPart);
