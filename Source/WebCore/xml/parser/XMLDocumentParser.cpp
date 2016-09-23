@@ -26,7 +26,6 @@
 #include "config.h"
 #include "XMLDocumentParser.h"
 
-#include "AuthorStyleSheets.h"
 #include "CDATASection.h"
 #include "CachedScript.h"
 #include "Comment.h"
@@ -200,7 +199,7 @@ void XMLDocumentParser::end()
         insertErrorMessageBlock();
     else {
         updateLeafTextNode();
-        document()->authorStyleSheets().didChange(RecalcStyleImmediately);
+        document()->styleResolverChanged(RecalcStyleImmediately);
     }
 
     if (isParsing())

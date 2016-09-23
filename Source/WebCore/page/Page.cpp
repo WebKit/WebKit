@@ -23,7 +23,6 @@
 #include "AlternativeTextClient.h"
 #include "AnimationController.h"
 #include "ApplicationCacheStorage.h"
-#include "AuthorStyleSheets.h"
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
 #include "Chrome.h"
@@ -423,7 +422,7 @@ void Page::setViewMode(ViewMode viewMode)
         m_mainFrame->view()->forceLayout();
 
     if (m_mainFrame->document())
-        m_mainFrame->document()->authorStyleSheets().didChange(RecalcStyleImmediately);
+        m_mainFrame->document()->styleResolverChanged(RecalcStyleImmediately);
 }
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
@@ -501,7 +500,7 @@ void Page::setNeedsRecalcStyleInAllFrames()
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document* document = frame->document())
-            document->authorStyleSheets().didChange(DeferRecalcStyle);
+            document->styleResolverChanged(DeferRecalcStyle);
     }
 }
 
@@ -1162,7 +1161,7 @@ void Page::invalidateInjectedStyleSheetCacheInAllFrames()
         if (!document)
             continue;
         document->extensionStyleSheets().invalidateInjectedStyleSheetCache();
-        document->authorStyleSheets().didChange(DeferRecalcStyle);
+        document->styleResolverChanged(DeferRecalcStyle);
     }
 }
 

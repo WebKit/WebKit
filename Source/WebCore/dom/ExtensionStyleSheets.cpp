@@ -28,7 +28,6 @@
 #include "config.h"
 #include "ExtensionStyleSheets.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSStyleSheet.h"
 #include "Element.h"
 #include "HTMLIFrameElement.h"
@@ -83,7 +82,7 @@ void ExtensionStyleSheets::clearPageUserSheet()
 {
     if (m_pageUserSheet) {
         m_pageUserSheet = nullptr;
-        m_document.authorStyleSheets().didChange(DeferRecalcStyle);
+        m_document.styleResolverChanged(DeferRecalcStyle);
     }
 }
 
@@ -91,7 +90,7 @@ void ExtensionStyleSheets::updatePageUserSheet()
 {
     clearPageUserSheet();
     if (pageUserSheet())
-        m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+        m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 const Vector<RefPtr<CSSStyleSheet>>& ExtensionStyleSheets::injectedUserStyleSheets() const
@@ -155,21 +154,21 @@ void ExtensionStyleSheets::invalidateInjectedStyleSheetCache()
     m_injectedStyleSheetCacheValid = false;
     if (m_injectedUserStyleSheets.isEmpty() && m_injectedAuthorStyleSheets.isEmpty())
         return;
-    m_document.authorStyleSheets().didChange(DeferRecalcStyle);
+    m_document.styleResolverChanged(DeferRecalcStyle);
 }
 
 void ExtensionStyleSheets::addUserStyleSheet(Ref<StyleSheetContents>&& userSheet)
 {
     ASSERT(userSheet.get().isUserStyleSheet());
     m_userStyleSheets.append(CSSStyleSheet::create(WTFMove(userSheet), m_document));
-    m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+    m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 void ExtensionStyleSheets::addAuthorStyleSheetForTesting(Ref<StyleSheetContents>&& authorSheet)
 {
     ASSERT(!authorSheet.get().isUserStyleSheet());
     m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTFMove(authorSheet), m_document));
-    m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+    m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -201,7 +200,7 @@ void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifie
 
 void ExtensionStyleSheets::styleResolverChangedTimerFired()
 {
-    m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+    m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 void ExtensionStyleSheets::detachFromDocument()

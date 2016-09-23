@@ -32,7 +32,6 @@
 #include "config.h"
 #include "InspectorPageAgent.h"
 
-#include "AuthorStyleSheets.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedFont.h"
 #include "CachedImage.h"
@@ -1002,7 +1001,7 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
     m_emulatedMedia = media;
     Document* document = m_page.mainFrame().document();
     if (document) {
-        document->authorStyleSheets().didChange(RecalcStyleImmediately);
+        document->styleResolverChanged(RecalcStyleImmediately);
         document->updateLayout();
     }
 }

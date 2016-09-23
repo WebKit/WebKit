@@ -24,7 +24,6 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontFaceElement.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
@@ -267,7 +266,7 @@ void SVGFontFaceElement::rebuildFontFace()
         }
     }
 
-    document().authorStyleSheets().didChange(DeferRecalcStyle);
+    document().styleResolverChanged(DeferRecalcStyle);
 }
 
 Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(ContainerNode& rootParent)
@@ -292,7 +291,7 @@ void SVGFontFaceElement::removedFrom(ContainerNode& rootParent)
         document().accessSVGExtensions().unregisterSVGFontFaceElement(this);
         m_fontFaceRule->mutableProperties().clear();
 
-        document().authorStyleSheets().didChange(DeferRecalcStyle);
+        document().styleResolverChanged(DeferRecalcStyle);
     } else
         ASSERT(!m_fontElement);
 }

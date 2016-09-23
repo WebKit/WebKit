@@ -268,17 +268,11 @@ void ProcessingInstruction::removedFrom(ContainerNode& insertionPoint)
         ASSERT(m_sheet->ownerNode() == this);
         m_sheet->clearOwnerNode();
         m_sheet = nullptr;
-
-    }
-
-    if (m_loading) {
-        m_loading = false;
-        document().authorStyleSheets().removePendingSheet();
     }
 
     // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
     if (document().hasLivingRenderTree())
-        document().authorStyleSheets().didChange(DeferRecalcStyle);
+        document().styleResolverChanged(DeferRecalcStyle);
 }
 
 void ProcessingInstruction::finishParsingChildren()

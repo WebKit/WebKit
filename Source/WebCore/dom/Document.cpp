@@ -435,6 +435,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_touchEventsChangedTimer(*this, &Document::touchEventsChangedTimerFired)
 #endif
     , m_referencingNodeCount(0)
+    , m_didCalculateStyleResolver(false)
     , m_hasNodesWithPlaceholderStyle(false)
     , m_needsNotifyRemoveAllPendingStylesheet(false)
     , m_ignorePendingStylesheets(false)
@@ -457,6 +458,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_visuallyOrdered(false)
     , m_readyState(Complete)
     , m_bParsing(false)
+    , m_optimizedStyleSheetUpdateTimer(*this, &Document::optimizedStyleSheetUpdateTimerFired)
     , m_styleRecalcTimer(*this, &Document::updateStyleIfNeeded)
     , m_pendingStyleRecalcShouldForce(false)
     , m_inStyleRecalc(false)
@@ -1355,7 +1357,7 @@ void Document::setContentLanguage(const String& language)
     m_contentLanguage = language;
 
     // Recalculate style so language is used when selecting the initial font.
-    m_authorStyleSheets->didChange(DeferRecalcStyle);
+    styleResolverChanged(DeferRecalcStyle);
 }
 
 void Document::setXMLVersion(const String& version, ExceptionCode& ec)
@@ -1943,14 +1945,6 @@ void Document::recalcStyle(Style::Change change)
         frameView.frame().mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon();
 }
 
-bool Document::needsStyleRecalc() const
-{
-    if (pageCacheState() != NotInPageCache)
-        return false;
-
-    return m_pendingStyleRecalcShouldForce || childNeedsStyleRecalc() || authorStyleSheets().hasPendingUpdate();
-}
-
 void Document::updateStyleIfNeeded()
 {
     ASSERT(isMainThread());
@@ -1959,8 +1953,8 @@ void Document::updateStyleIfNeeded()
     if (!view() || view()->isInRenderTreeLayout())
         return;
 
-    if (authorStyleSheets().hasPendingUpdate())
-        authorStyleSheets().didChange(RecalcStyleIfNeeded);
+    if (m_optimizedStyleSheetUpdateTimer.isActive())
+        styleResolverChanged(RecalcStyleIfNeeded);
 
     if (!needsStyleRecalc())
         return;
@@ -2014,7 +2008,7 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
         HTMLElement* bodyElement = bodyOrFrameset();
         if (bodyElement && !bodyElement->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
-            authorStyleSheets().didChange(RecalcStyleImmediately);
+            styleResolverChanged(RecalcStyleImmediately);
         } else if (m_hasNodesWithPlaceholderStyle)
             // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
             // may not have had their real style calculated yet. Normally this gets cleaned when style sheets arrive 
@@ -3151,7 +3145,7 @@ void Document::didRemoveAllPendingStylesheet()
 {
     m_needsNotifyRemoveAllPendingStylesheet = false;
 
-    authorStyleSheets().didChange(DeferRecalcStyleIfNeeded);
+    styleResolverChanged(DeferRecalcStyleIfNeeded);
 
     if (m_pendingSheetLayout == DidLayoutWithPendingSheets) {
         m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
@@ -3226,7 +3220,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
         // -dwh
         authorStyleSheets().setSelectedStylesheetSetName(content);
         authorStyleSheets().setPreferredStylesheetSetName(content);
-        authorStyleSheets().didChange(DeferRecalcStyle);
+        styleResolverChanged(DeferRecalcStyle);
         break;
 
     case HTTPHeaderName::Refresh: {
@@ -3530,7 +3524,7 @@ String Document::selectedStylesheetSet() const
 void Document::setSelectedStylesheetSet(const String& aString)
 {
     authorStyleSheets().setSelectedStylesheetSetName(aString);
-    authorStyleSheets().didChange(DeferRecalcStyle);
+    styleResolverChanged(DeferRecalcStyle);
 }
 
 void Document::evaluateMediaQueryList()
@@ -3551,6 +3545,19 @@ void Document::checkViewportDependentPictures()
     }
     for (auto* picture : changedPictures)
         picture->sourcesChanged();
+}
+
+void Document::optimizedStyleSheetUpdateTimerFired()
+{
+    styleResolverChanged(RecalcStyleIfNeeded);
+}
+
+void Document::scheduleOptimizedStyleSheetUpdate()
+{
+    if (m_optimizedStyleSheetUpdateTimer.isActive())
+        return;
+    authorStyleSheets().setPendingUpdateType(AuthorStyleSheets::OptimizedUpdate);
+    m_optimizedStyleSheetUpdateTimer.startOneShot(0);
 }
 
 void Document::updateViewportUnitsOnResize()
@@ -3615,6 +3622,39 @@ void Document::pageMutedStateDidChange()
 {
     for (auto* audioProducer : m_audioProducers)
         audioProducer->pageMutedStateDidChange();
+}
+
+void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
+{
+    if (m_optimizedStyleSheetUpdateTimer.isActive())
+        m_optimizedStyleSheetUpdateTimer.stop();
+
+    // Don't bother updating, since we haven't loaded all our style info yet
+    // and haven't calculated the style selector for the first time.
+    if (!hasLivingRenderTree() || (!m_didCalculateStyleResolver && !haveStylesheetsLoaded())) {
+        m_styleResolver = nullptr;
+        return;
+    }
+    m_didCalculateStyleResolver = true;
+
+    auto styleSheetUpdate = (updateFlag == RecalcStyleIfNeeded || updateFlag == DeferRecalcStyleIfNeeded)
+        ? AuthorStyleSheets::OptimizedUpdate
+        : AuthorStyleSheets::FullUpdate;
+    bool stylesheetChangeRequiresStyleRecalc = authorStyleSheets().updateActiveStyleSheets(styleSheetUpdate);
+
+    if (updateFlag == DeferRecalcStyle) {
+        scheduleForcedStyleRecalc();
+        return;
+    }
+
+    if (updateFlag == DeferRecalcStyleIfNeeded) {
+        if (stylesheetChangeRequiresStyleRecalc)
+            scheduleForcedStyleRecalc();
+        return;
+    }
+
+    if (stylesheetChangeRequiresStyleRecalc)
+        recalcStyle(Style::Force);
 }
 
 static bool isNodeInSubtree(Node* node, Node* container, bool amongChildrenOnly)
@@ -6605,7 +6645,7 @@ static RenderElement* nearestCommonHoverAncestor(RenderElement* obj1, RenderElem
     return nullptr;
 }
 
-void Document::updateHoverActiveState(const HitTestRequest& request, Element* innerElement)
+void Document::updateHoverActiveState(const HitTestRequest& request, Element* innerElement, StyleResolverUpdateFlag updateFlag)
 {
     ASSERT(!request.readOnly());
 
@@ -6722,7 +6762,9 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         }
     }
 
-    updateStyleIfNeeded();
+    ASSERT(updateFlag == RecalcStyleIfNeeded || updateFlag == DeferRecalcStyleIfNeeded);
+    if (updateFlag == RecalcStyleIfNeeded)
+        updateStyleIfNeeded();
 }
 
 bool Document::haveStylesheetsLoaded() const
