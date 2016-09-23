@@ -220,6 +220,8 @@ void AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
         return;
     if (m_webPageProxy.process().state() == WebProcessProxy::State::Launching)
         return;
+    if (!m_webPageProxy.isViewVisible())
+        return;
 
 #if PLATFORM(WAYLAND)
     // Never block the UI process in Wayland when waiting for DidUpdateBackingStoreState after a resize,
