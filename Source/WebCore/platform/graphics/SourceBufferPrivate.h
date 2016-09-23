@@ -63,6 +63,8 @@ public:
     virtual void setActive(bool) { }
     virtual void stopAskingForMoreSamples(AtomicString) { }
     virtual void notifyClientWhenReadyForMoreSamples(AtomicString) { }
+
+    virtual Vector<String> enqueuedSamplesForTrackID(AtomicString) { return {}; }
 };
 
 }
