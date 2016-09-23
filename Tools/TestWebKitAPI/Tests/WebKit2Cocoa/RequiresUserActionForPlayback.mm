@@ -72,7 +72,7 @@ public:
     {
         handler = adoptNS([[RequiresUserActionForPlaybackMessageHandler alloc] init]);
         configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"playingHandler"];
+        [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
         configuration.get()._mediaDataLoadsAutomatically = YES;
 #if TARGET_OS_IPHONE
         configuration.get().allowsInlineMediaPlayback = YES;
