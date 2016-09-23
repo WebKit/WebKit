@@ -56,6 +56,10 @@ private:
     bool m_urlIsSpecial { false };
     bool m_hostHasPercentOrNonASCII { false };
     String m_inputString;
+    const void* m_inputBegin { nullptr };
+
+    // FIXME: This should start out as false and only change to true when we see a syntax error once syntax error handling is implemented.
+    bool m_seenSyntaxError { true };
 
     template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
     template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
@@ -68,6 +72,8 @@ private:
     template<typename CharacterType> bool isWindowsDriveLetter(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool shouldCopyFileURL(CodePointIterator<CharacterType>);
     template<typename CharacterType> void checkWindowsDriveLetter(CodePointIterator<CharacterType>&);
+    template<typename CharacterType> size_t currentPosition(const CodePointIterator<CharacterType>&);
+    template<typename UnsignedIntegerType> void appendNumberToASCIIBuffer(UnsignedIntegerType);
     template<bool(*isInCodeSet)(UChar32)> void utf8PercentEncode(UChar32);
     void utf8QueryEncode(UChar32);
     void percentEncodeByte(uint8_t);
@@ -76,6 +82,14 @@ private:
     void appendToASCIIBuffer(const LChar* characters, size_t size) { appendToASCIIBuffer(reinterpret_cast<const char*>(characters), size); }
     void encodeQuery(const Vector<UChar>& source, const TextEncoding&);
     void copyASCIIStringUntil(const String&, size_t lengthIf8Bit, size_t lengthIf16Bit);
+
+    using IPv4Address = uint32_t;
+    void serializeIPv4(IPv4Address);
+    template<typename CharacterType> Optional<IPv4Address> parseIPv4Host(CodePointIterator<CharacterType>);
+    using IPv6Address = std::array<uint16_t, 8>;
+    template<typename CharacterType> Optional<IPv6Address> parseIPv6Host(CodePointIterator<CharacterType>);
+    void serializeIPv6Piece(uint16_t piece);
+    void serializeIPv6(URLParser::IPv6Address);
 
     enum class URLPart;
     void copyURLPartsUntil(const URL& base, URLPart);
