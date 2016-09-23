@@ -1535,7 +1535,7 @@ static inline StringWithDirection canonicalizedTitle(Document* document, const S
     // Skip leading spaces and leading characters that would convert to spaces
     for (i = 0; i < length; ++i) {
         CharacterType c = characters[i];
-        if (!(c <= 0x20 || c == 0x7F))
+        if (isNotHTMLSpace(c))
             break;
     }
 
@@ -1546,7 +1546,7 @@ static inline StringWithDirection canonicalizedTitle(Document* document, const S
     bool previousCharWasWS = false;
     for (; i < length; ++i) {
         CharacterType c = characters[i];
-        if (c <= 0x20 || c == 0x7F || (U_GET_GC_MASK(c) & (U_GC_ZL_MASK | U_GC_ZP_MASK))) {
+        if (isHTMLSpace(c)) {
             if (previousCharWasWS)
                 continue;
             buffer[builderIndex++] = ' ';

@@ -1,5 +1,16 @@
 2016-09-23  Chris Dumez  <cdumez@apple.com>
 
+        document.title getter does not strip / collapse the right whitespace characters
+        https://bugs.webkit.org/show_bug.cgi?id=162468
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing test to reflect behavior change.
+
+        * fast/dom/Document/script-tests/document-title-get.js:
+
+2016-09-23  Chris Dumez  <cdumez@apple.com>
+
         Align Element.insertAdjacentHTML() with the specification
         https://bugs.webkit.org/show_bug.cgi?id=162479
 
