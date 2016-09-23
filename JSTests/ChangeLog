@@ -1,3 +1,16 @@
+2016-09-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r206317.
+
+        This change caused timeouts on El Capitan Release JSC tests
+
+        Reverted changeset:
+
+        "Skip stress/string-joining-long-strings-should-not-crash.js
+        on memory limited devices"
+        https://bugs.webkit.org/show_bug.cgi?id=162386
+        http://trac.webkit.org/changeset/206317
+
 2016-09-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Skip mozilla-tests.yaml/js1_5/Array/regress-157652 on memory limited devices
