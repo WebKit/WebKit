@@ -1,3 +1,13 @@
+2016-09-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        ARM EABI buildfix after r206289
+        https://bugs.webkit.org/show_bug.cgi?id=162486
+
+        Unreviewed buildfix.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
 2016-09-23  Antoine Quint  <graouts@apple.com>
 
         Add a new runtime flag for work on modern media controls (off by default)
