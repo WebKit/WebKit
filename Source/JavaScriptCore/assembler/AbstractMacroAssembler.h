@@ -27,6 +27,8 @@
 #define AbstractMacroAssembler_h
 
 #include "AbortReason.h"
+#include "AssemblerBuffer.h"
+#include "AssemblerCommon.h"
 #include "CodeLocation.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Options.h"

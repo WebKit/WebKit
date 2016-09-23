@@ -1,5 +1,11 @@
 2016-09-23  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix all other builds.
+
+        * assembler/AbstractMacroAssembler.h:
+
+2016-09-23  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix cloop.
 
         * assembler/AbstractMacroAssembler.h:
