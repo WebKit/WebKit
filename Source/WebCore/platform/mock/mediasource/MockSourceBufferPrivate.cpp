@@ -39,6 +39,7 @@
 #include <map>
 #include <runtime/ArrayBuffer.h>
 #include <wtf/PrintStream.h>
+#include <wtf/StringPrintStream.h>
 
 namespace WebCore {
 
