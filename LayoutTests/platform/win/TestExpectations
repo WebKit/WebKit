@@ -3610,3 +3610,6 @@ fast/events/ghostly-mousemoves-in-subframe.html [ Missing ]
 fast/events/overflow-viewport-renderer-deleted.html [ Missing ]
 fast/repaint/selection-gap-flipped-fixed-child.html [ Missing ]
 mathml/presentation/bug159513.html [ Missing ]
+
+# html/syntax web platform tests are failing on Windows.
+webkit.org/b/162415 imported/w3c/web-platform-tests/html/syntax [ Skip ]

@@ -1,3 +1,12 @@
+2016-09-23  Per Arne Vollan  <pvollan@apple.com>
+
+        Skip failing html/syntax web platform test on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=162415
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale
