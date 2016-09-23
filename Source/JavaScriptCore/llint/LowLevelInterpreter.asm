@@ -253,7 +253,9 @@ const IsInvalidated = 2
 const ShadowChickenTailMarker = 0x7a11
 
 # ArithProfile data
+const ArithProfileInt = 0x100000
 const ArithProfileIntInt = 0x120000
+const ArithProfileNumber = 0x200000
 const ArithProfileNumberInt = 0x220000
 const ArithProfileNumberNumber = 0x240000
 const ArithProfileIntNumber = 0x140000

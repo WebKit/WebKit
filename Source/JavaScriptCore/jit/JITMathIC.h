@@ -32,6 +32,7 @@
 #include "JITAddGenerator.h"
 #include "JITMathICInlineResult.h"
 #include "JITMulGenerator.h"
+#include "JITNegGenerator.h"
 #include "JITSubGenerator.h"
 #include "LinkBuffer.h"
 #include "Repatch.h"
@@ -52,7 +53,7 @@ struct MathICGenerationState {
 
 #define ENABLE_MATH_IC_STATS 0
 
-template <typename GeneratorType>
+template <typename GeneratorType, bool(*isProfileEmpty)(ArithProfile*)>
 class JITMathIC {
 public:
     CodeLocationLabel doneLocation() { return m_inlineStart.labelAtOffset(m_inlineSize); }
@@ -72,17 +73,17 @@ public:
         size_t startSize = jit.m_assembler.buffer().codeSize();
 
         if (ArithProfile* arithProfile = m_generator.arithProfile()) {
-            if (arithProfile->lhsObservedType().isEmpty() || arithProfile->rhsObservedType().isEmpty()) {
+            if (!isProfileEmpty(arithProfile)) {
                 // It looks like the MathIC has yet to execute. We don't want to emit code in this
                 // case for a couple reasons. First, the operation may never execute, so if we don't emit
                 // code, it's a win. Second, if the operation does execute, we can emit better code
-                // once we have an idea about the types of lhs and rhs.
+                // once we have an idea about the types.
                 state.slowPathJumps.append(jit.patchableJump());
                 size_t inlineSize = jit.m_assembler.buffer().codeSize() - startSize;
                 ASSERT_UNUSED(inlineSize, static_cast<ptrdiff_t>(inlineSize) <= MacroAssembler::patchableJumpSize());
                 state.shouldSlowPathRepatch = true;
                 state.fastPathEnd = jit.label();
-                ASSERT(!m_generateFastPathOnRepatch); // We should have gathered some observed type info for lhs and rhs before trying to regenerate again.
+                ASSERT(!m_generateFastPathOnRepatch); // We should have gathered some observed type info about the types before trying to regenerate again.
                 m_generateFastPathOnRepatch = true;
                 return true;
             }
@@ -243,9 +244,26 @@ public:
     GeneratorType m_generator;
 };
 
-typedef JITMathIC<JITAddGenerator> JITAddIC;
-typedef JITMathIC<JITMulGenerator> JITMulIC;
-typedef JITMathIC<JITSubGenerator> JITSubIC;
+inline bool canGenerateWithBinaryProfile(ArithProfile* arithProfile)
+{
+    return !arithProfile->lhsObservedType().isEmpty() && !arithProfile->rhsObservedType().isEmpty();
+}
+template <typename GeneratorType>
+class JITBinaryMathIC : public JITMathIC<GeneratorType, canGenerateWithBinaryProfile> { };
+
+typedef JITBinaryMathIC<JITAddGenerator> JITAddIC;
+typedef JITBinaryMathIC<JITMulGenerator> JITMulIC;
+typedef JITBinaryMathIC<JITSubGenerator> JITSubIC;
+
+
+inline bool canGenerateWithUnaryProfile(ArithProfile* arithProfile)
+{
+    return !arithProfile->lhsObservedType().isEmpty();
+}
+template <typename GeneratorType>
+class JITUnaryMathIC : public JITMathIC<GeneratorType, canGenerateWithUnaryProfile> { };
+
+typedef JITUnaryMathIC<JITNegGenerator> JITNegIC;
 
 } // namespace JSC
 

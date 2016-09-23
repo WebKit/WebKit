@@ -3432,7 +3432,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
 }
 
 template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
-void SpeculativeJIT::compileMathIC(Node* node, JITMathIC<Generator>* mathIC, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction repatchingFunction, NonRepatchingFunction nonRepatchingFunction)
+void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathIC, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction repatchingFunction, NonRepatchingFunction nonRepatchingFunction)
 {
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();

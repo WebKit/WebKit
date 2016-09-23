@@ -948,22 +948,27 @@ _llint_op_negate:
     loadi 8[PC], t0
     loadi 4[PC], t3
     loadConstantOrVariable(t0, t1, t2)
+    loadisFromInstruction(3, t0)
     bineq t1, Int32Tag, .opNegateSrcNotInt
     btiz t2, 0x7fffffff, .opNegateSlow
     negi t2
+    ori ArithProfileInt, t0
     storei Int32Tag, TagOffset[cfr, t3, 8]
+    storeisToInstruction(t0, 3)
     storei t2, PayloadOffset[cfr, t3, 8]
-    dispatch(3)
+    dispatch(4)
 .opNegateSrcNotInt:
     bia t1, LowestTag, .opNegateSlow
     xori 0x80000000, t1
-    storei t1, TagOffset[cfr, t3, 8]
+    ori ArithProfileNumber, t0
     storei t2, PayloadOffset[cfr, t3, 8]
-    dispatch(3)
+    storeisToInstruction(t0, 3)
+    storei t1, TagOffset[cfr, t3, 8]
+    dispatch(4)
 
 .opNegateSlow:
     callOpcodeSlowPath(_slow_path_negate)
-    dispatch(3)
+    dispatch(4)
 
 
 macro binaryOpCustomStore(integerOperationAndStore, doubleOperation, slowPath)

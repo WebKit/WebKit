@@ -3015,6 +3015,11 @@ JITSubIC* CodeBlock::addJITSubIC()
     return m_subICs.add();
 }
 
+JITNegIC* CodeBlock::addJITNegIC()
+{
+    return m_negICs.add();
+}
+
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
 {
     for (StructureStubInfo* stubInfo : m_stubInfos) {
@@ -4354,8 +4359,15 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(int bytecodeOffset)
 
 ArithProfile* CodeBlock::arithProfileForBytecodeOffset(int bytecodeOffset)
 {
-    auto opcodeID = vm()->interpreter->getOpcodeID(instructions()[bytecodeOffset].u.opcode);
+    return arithProfileForPC(instructions().begin() + bytecodeOffset);
+}
+
+ArithProfile* CodeBlock::arithProfileForPC(Instruction* pc)
+{
+    auto opcodeID = vm()->interpreter->getOpcodeID(pc[0].u.opcode);
     switch (opcodeID) {
+    case op_negate:
+        return bitwise_cast<ArithProfile*>(&pc[3].u.operand);
     case op_bitor:
     case op_bitand:
     case op_bitxor:
@@ -4363,34 +4375,12 @@ ArithProfile* CodeBlock::arithProfileForBytecodeOffset(int bytecodeOffset)
     case op_mul:
     case op_sub:
     case op_div:
-        break;
+        return bitwise_cast<ArithProfile*>(&pc[4].u.operand);
     default:
-        return nullptr;
+        break;
     }
 
-    return &arithProfileForPC(instructions().begin() + bytecodeOffset);
-}
-
-ArithProfile& CodeBlock::arithProfileForPC(Instruction* pc)
-{
-    if (!ASSERT_DISABLED) {
-        ASSERT(pc >= instructions().begin() && pc < instructions().end());
-        auto opcodeID = vm()->interpreter->getOpcodeID(pc[0].u.opcode);
-        switch (opcodeID) {
-        case op_bitor:
-        case op_bitand:
-        case op_bitxor:
-        case op_add:
-        case op_mul:
-        case op_sub:
-        case op_div:
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-    }
-
-    return *bitwise_cast<ArithProfile*>(&pc[4].u.operand);
+    return nullptr;
 }
 
 bool CodeBlock::couldTakeSpecialFastCase(int bytecodeOffset)
@@ -4562,6 +4552,8 @@ void CodeBlock::dumpMathICStats()
     double totalAddSize = 0.0;
     double numMuls = 0.0;
     double totalMulSize = 0.0;
+    double numNegs = 0.0;
+    double totalNegSize = 0.0;
     double numSubs = 0.0;
     double totalSubSize = 0.0;
 
@@ -4574,6 +4566,11 @@ void CodeBlock::dumpMathICStats()
         for (JITMulIC* mulIC : codeBlock->m_mulICs) {
             numMuls++;
             totalMulSize += mulIC->codeSize();
+        }
+
+        for (JITNegIC* negIC : codeBlock->m_negICs) {
+            numNegs++;
+            totalNegSize += negIC->codeSize();
         }
 
         for (JITSubIC* subIC : codeBlock->m_subICs) {
@@ -4592,6 +4589,10 @@ void CodeBlock::dumpMathICStats()
     dataLog("Num Muls: ", numMuls, "\n");
     dataLog("Total Mul size in bytes: ", totalMulSize, "\n");
     dataLog("Average Mul size: ", totalMulSize / numMuls, "\n");
+    dataLog("\n");
+    dataLog("Num Negs: ", numNegs, "\n");
+    dataLog("Total Neg size in bytes: ", totalNegSize, "\n");
+    dataLog("Average Neg size: ", totalNegSize / numNegs, "\n");
     dataLog("\n");
     dataLog("Num Subs: ", numSubs, "\n");
     dataLog("Total Sub size in bytes: ", totalSubSize, "\n");

@@ -1560,7 +1560,7 @@ private:
     }
 
     template <typename Generator>
-    void compileMathIC(JITMathIC<Generator>* mathIC, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
+    void compileMathIC(JITBinaryMathIC<Generator>* mathIC, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
     {
         Node* node = m_node;
         

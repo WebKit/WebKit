@@ -469,37 +469,17 @@ void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
 
 void JIT::emit_op_negate(Instruction* currentInstruction)
 {
-    int result = currentInstruction[1].u.operand;
-    int src = currentInstruction[2].u.operand;
-
-#if USE(JSVALUE64)
-    JSValueRegs srcRegs = JSValueRegs(regT0);
-    JSValueRegs resultRegs = srcRegs;
-    GPRReg scratchGPR = regT2;
-#else
-    JSValueRegs srcRegs = JSValueRegs(regT1, regT0);
-    JSValueRegs resultRegs = srcRegs;
-    GPRReg scratchGPR = regT4;
-#endif
-
-    emitGetVirtualRegister(src, srcRegs);
-
-    JITNegGenerator gen(resultRegs, srcRegs, scratchGPR);
-    gen.generateFastPath(*this);
-
-    ASSERT(gen.didEmitFastPath());
-    gen.endJumpList().link(this);
-    emitPutVirtualRegister(result, resultRegs);
-
-    addSlowCase(gen.slowPathJumpList());
+    JITNegIC* negateIC = m_codeBlock->addJITNegIC();
+    m_instructionToMathIC.add(currentInstruction, negateIC);
+    emitMathICFast(negateIC, currentInstruction, operationArithNegateProfiled, operationArithNegate);
 }
 
 void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_negate);
-    slowPathCall.call();
+    JITNegIC* negIC = bitwise_cast<JITNegIC*>(m_instructionToMathIC.get(currentInstruction));
+    emitMathICSlow(negIC, currentInstruction, operationArithNegateProfiledOptimize, operationArithNegateProfiled, operationArithNegateOptimize);
 }
 
 template<typename SnippetGenerator>
@@ -698,7 +678,56 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
 }
 
 template <typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
-void JIT::emitMathICFast(JITMathIC<Generator>* mathIC, Instruction* currentInstruction, ProfiledFunction profiledFunction, NonProfiledFunction nonProfiledFunction)
+void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, Instruction* currentInstruction, ProfiledFunction profiledFunction, NonProfiledFunction nonProfiledFunction)
+{
+    int result = currentInstruction[1].u.operand;
+    int operand = currentInstruction[2].u.operand;
+
+#if USE(JSVALUE64)
+    // ArithNegate benefits from using the same register as src and dst.
+    // Since regT1==argumentGPR1, using regT1 avoid shuffling register to call the slow path.
+    JSValueRegs srcRegs = JSValueRegs(regT1);
+    JSValueRegs resultRegs = JSValueRegs(regT1);
+    GPRReg scratchGPR = regT2;
+#else
+    JSValueRegs srcRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs resultRegs = JSValueRegs(regT3, regT2);
+    GPRReg scratchGPR = regT4;
+#endif
+
+#if ENABLE(MATH_IC_STATS)
+    auto inlineStart = label();
+#endif
+
+    ArithProfile& arithProfile = *bitwise_cast<ArithProfile*>(&currentInstruction[3].u.operand);
+    mathIC->m_generator = Generator(resultRegs, srcRegs, scratchGPR, arithProfile);
+
+    emitGetVirtualRegister(operand, srcRegs);
+
+    MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.add(currentInstruction, MathICGenerationState()).iterator->value;
+
+    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState);
+    if (!generatedInlineCode) {
+        if (shouldEmitProfiling())
+            callOperation(profiledFunction, resultRegs, srcRegs, &arithProfile);
+        else
+            callOperation(nonProfiledFunction, resultRegs, srcRegs);
+    } else
+        addSlowCase(mathICGenerationState.slowPathJumps);
+
+#if ENABLE(MATH_IC_STATS)
+    auto inlineEnd = label();
+    addLinkTask([=] (LinkBuffer& linkBuffer) {
+        size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+        mathIC->m_generatedCodeSize += size;
+    });
+#endif
+
+    emitPutVirtualRegister(result, resultRegs);
+}
+
+template <typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
+void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, Instruction* currentInstruction, ProfiledFunction profiledFunction, NonProfiledFunction nonProfiledFunction)
 {
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
@@ -722,7 +751,7 @@ void JIT::emitMathICFast(JITMathIC<Generator>* mathIC, Instruction* currentInstr
 
     ArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
-        arithProfile = &m_codeBlock->arithProfileForPC(currentInstruction);
+        arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -774,7 +803,52 @@ void JIT::emitMathICFast(JITMathIC<Generator>* mathIC, Instruction* currentInstr
 }
 
 template <typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
-void JIT::emitMathICSlow(JITMathIC<Generator>* mathIC, Instruction* currentInstruction, ProfiledRepatchFunction profiledRepatchFunction, ProfiledFunction profiledFunction, RepatchFunction repatchFunction)
+void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, Instruction* currentInstruction, ProfiledRepatchFunction profiledRepatchFunction, ProfiledFunction profiledFunction, RepatchFunction repatchFunction)
+{
+    MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.find(currentInstruction)->value;
+    mathICGenerationState.slowPathStart = label();
+
+    int result = currentInstruction[1].u.operand;
+
+#if USE(JSVALUE64)
+    JSValueRegs srcRegs = JSValueRegs(regT1);
+    JSValueRegs resultRegs = JSValueRegs(regT0);
+#else
+    JSValueRegs srcRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs resultRegs = JSValueRegs(regT3, regT2);
+#endif
+
+#if ENABLE(MATH_IC_STATS)
+    auto slowPathStart = label();
+#endif
+
+    if (shouldEmitProfiling()) {
+        ArithProfile* arithProfile = bitwise_cast<ArithProfile*>(&currentInstruction[3].u.operand);
+        if (mathICGenerationState.shouldSlowPathRepatch)
+            mathICGenerationState.slowPathCall = callOperation(reinterpret_cast<J_JITOperation_EJMic>(profiledRepatchFunction), resultRegs, srcRegs, TrustedImmPtr(mathIC));
+        else
+            mathICGenerationState.slowPathCall = callOperation(profiledFunction, resultRegs, srcRegs, arithProfile);
+    } else
+        mathICGenerationState.slowPathCall = callOperation(reinterpret_cast<J_JITOperation_EJMic>(repatchFunction), resultRegs, srcRegs, TrustedImmPtr(mathIC));
+
+#if ENABLE(MATH_IC_STATS)
+    auto slowPathEnd = label();
+    addLinkTask([=] (LinkBuffer& linkBuffer) {
+        size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+        mathIC->m_generatedCodeSize += size;
+    });
+#endif
+
+    emitPutVirtualRegister(result, resultRegs);
+
+    addLinkTask([=] (LinkBuffer& linkBuffer) {
+        MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.find(currentInstruction)->value;
+        mathIC->finalizeInlineCode(mathICGenerationState, linkBuffer);
+    });
+}
+
+template <typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
+void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, Instruction* currentInstruction, ProfiledRepatchFunction profiledRepatchFunction, ProfiledFunction profiledFunction, RepatchFunction repatchFunction)
 {
     MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.find(currentInstruction)->value;
     mathICGenerationState.slowPathStart = label();
@@ -815,7 +889,7 @@ void JIT::emitMathICSlow(JITMathIC<Generator>* mathIC, Instruction* currentInstr
 #endif
 
     if (shouldEmitProfiling()) {
-        ArithProfile& arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
+        ArithProfile& arithProfile = *m_codeBlock->arithProfileForPC(currentInstruction);
         if (mathICGenerationState.shouldSlowPathRepatch)
             mathICGenerationState.slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJJArpMic>(profiledRepatchFunction), resultRegs, leftRegs, rightRegs, &arithProfile, TrustedImmPtr(mathIC));
         else
@@ -862,7 +936,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
 
     ArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
-        arithProfile = &m_codeBlock->arithProfileForPC(currentInstruction);
+        arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());

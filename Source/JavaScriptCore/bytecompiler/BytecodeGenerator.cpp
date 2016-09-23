@@ -1579,10 +1579,24 @@ RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
 
 RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src)
 {
-    ASSERT_WITH_MESSAGE(op_to_number != opcodeID, "op_to_number is profiled.");
+    ASSERT_WITH_MESSAGE(op_to_number != opcodeID, "op_to_number has a Value Profile.");
+    ASSERT_WITH_MESSAGE(op_negate != opcodeID, "op_negate has an Arith Profile.");
     emitOpcode(opcodeID);
     instructions().append(dst->index());
     instructions().append(src->index());
+
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src, OperandTypes types)
+{
+    ASSERT_WITH_MESSAGE(op_to_number != opcodeID, "op_to_number has a Value Profile.");
+    emitOpcode(opcodeID);
+    instructions().append(dst->index());
+    instructions().append(src->index());
+
+    if (opcodeID == op_negate)
+        instructions().append(ArithProfile(types.first()).bits());
     return dst;
 }
 

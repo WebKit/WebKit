@@ -697,10 +697,14 @@ namespace JSC {
         bool isOperandConstantChar(int src);
 
         template <typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
-        void emitMathICFast(JITMathIC<Generator>*, Instruction*, ProfiledFunction, NonProfiledFunction);
+        void emitMathICFast(JITUnaryMathIC<Generator>*, Instruction*, ProfiledFunction, NonProfiledFunction);
+        template <typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
+        void emitMathICFast(JITBinaryMathIC<Generator>*, Instruction*, ProfiledFunction, NonProfiledFunction);
 
         template <typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
-        void emitMathICSlow(JITMathIC<Generator>*, Instruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
+        void emitMathICSlow(JITBinaryMathIC<Generator>*, Instruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
+        template <typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
+        void emitMathICSlow(JITUnaryMathIC<Generator>*, Instruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {
@@ -745,6 +749,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(J_JITOperation_EC, int, JSCell*);
         MacroAssembler::Call callOperation(V_JITOperation_EC, JSCell*);
         MacroAssembler::Call callOperation(J_JITOperation_EJ, int, GPRReg);
+        MacroAssembler::Call callOperation(J_JITOperation_EJ, JSValueRegs, JSValueRegs);
 #if USE(JSVALUE64)
         MacroAssembler::Call callOperation(J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, UniquedStringImpl*);
         MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, UniquedStringImpl*);
@@ -754,9 +759,11 @@ namespace JSC {
 #endif
         MacroAssembler::Call callOperation(J_JITOperation_EJI, int, GPRReg, UniquedStringImpl*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJ, int, GPRReg, GPRReg);
+        MacroAssembler::Call callOperation(J_JITOperation_EJArp, JSValueRegs, JSValueRegs, ArithProfile*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJArp, JSValueRegs, JSValueRegs, JSValueRegs, ArithProfile*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJ, JSValueRegs, JSValueRegs, JSValueRegs);
         MacroAssembler::Call callOperation(J_JITOperation_EJJArpMic, JSValueRegs, JSValueRegs, JSValueRegs, ArithProfile*, TrustedImmPtr);
+        MacroAssembler::Call callOperation(J_JITOperation_EJMic, JSValueRegs, JSValueRegs, TrustedImmPtr);
         MacroAssembler::Call callOperation(J_JITOperation_EJJMic, JSValueRegs, JSValueRegs, JSValueRegs, TrustedImmPtr);
         MacroAssembler::Call callOperation(J_JITOperation_EJJAp, int, GPRReg, GPRReg, ArrayProfile*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJBy, int, GPRReg, GPRReg, ByValInfo*);

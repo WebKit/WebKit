@@ -827,22 +827,27 @@ _llint_op_negate:
     traceExecution()
     loadisFromInstruction(2, t0)
     loadisFromInstruction(1, t1)
-    loadConstantOrVariable(t0, t2)
-    bqb t2, tagTypeNumber, .opNegateNotInt
-    btiz t2, 0x7fffffff, .opNegateSlow
-    negi t2
-    orq tagTypeNumber, t2
-    storeq t2, [cfr, t1, 8]
-    dispatch(3)
+    loadConstantOrVariable(t0, t3)
+    loadisFromInstruction(3, t2)
+    bqb t3, tagTypeNumber, .opNegateNotInt
+    btiz t3, 0x7fffffff, .opNegateSlow
+    negi t3
+    ori ArithProfileInt, t2
+    orq tagTypeNumber, t3
+    storeisToInstruction(t2, 3)
+    storeq t3, [cfr, t1, 8]
+    dispatch(4)
 .opNegateNotInt:
-    btqz t2, tagTypeNumber, .opNegateSlow
-    xorq 0x8000000000000000, t2
-    storeq t2, [cfr, t1, 8]
-    dispatch(3)
+    btqz t3, tagTypeNumber, .opNegateSlow
+    xorq 0x8000000000000000, t3
+    ori ArithProfileNumber, t2
+    storeq t3, [cfr, t1, 8]
+    storeisToInstruction(t2, 3)
+    dispatch(4)
 
 .opNegateSlow:
     callOpcodeSlowPath(_slow_path_negate)
-    dispatch(3)
+    dispatch(4)
 
 
 macro binaryOpCustomStore(integerOperationAndStore, doubleOperation, slowPath)

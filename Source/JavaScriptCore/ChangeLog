@@ -1,3 +1,72 @@
+2016-09-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Use an inline cache to generate op_negate
+        https://bugs.webkit.org/show_bug.cgi?id=162371
+
+        Reviewed by Saam Barati.
+
+        Use an inline cache to reduce the amount of code
+        required to implement op_negate.
+
+        For pure integer negate, the generated asm shrinks
+        from 147 bytes to 125 bytes (14%).
+        For double negate, the generated asm shrinks
+        to 130 bytes (11%).
+        The average size on Sunspider is 100bytes, this is due
+        to the op_negates that are never executed and do not
+        generate much.
+
+        * bytecode/ArithProfile.h:
+        (JSC::ArithProfile::ArithProfile):
+        (JSC::ArithProfile::observeLHS):
+        (JSC::ArithProfile::observeLHSAndRHS):
+        * bytecode/BytecodeList.json:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addJITNegIC):
+        * bytecode/CodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::UnaryOpNode::emitBytecode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMathIC):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateInline):
+        (JSC::canGenerateWithBinaryProfile):
+        (JSC::canGenerateWithUnaryProfile):
+        * jit/JITMathICForwards.h:
+        * jit/JITNegGenerator.cpp:
+        (JSC::JITNegGenerator::generateInline):
+        (JSC::JITNegGenerator::generateFastPath):
+        * jit/JITNegGenerator.h:
+        (JSC::JITNegGenerator::JITNegGenerator):
+        (JSC::JITNegGenerator::arithProfile):
+        (JSC::JITNegGenerator::didEmitFastPath): Deleted.
+        (JSC::JITNegGenerator::endJumpList): Deleted.
+        (JSC::JITNegGenerator::slowPathJumpList): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateArithProfileForUnaryArithOp):
+        (JSC::SLOW_PATH_DECL):
+
 2016-09-22  Mark Lam  <mark.lam@apple.com>
 
         Removed unused hasErrorInfo().

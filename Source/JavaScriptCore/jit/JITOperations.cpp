@@ -2469,6 +2469,90 @@ EncodedJSValue JIT_OPERATION operationValueMulProfiledNoOptimize(ExecState* exec
     return profiledMul(*vm, exec, encodedOp1, encodedOp2, arithProfile);
 }
 
+ALWAYS_INLINE static EncodedJSValue unprofiledNegate(ExecState* exec, EncodedJSValue encodedOperand)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    NativeCallFrameTracer tracer(&vm, exec);
+    
+    JSValue operand = JSValue::decode(encodedOperand);
+    double number = operand.toNumber(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsNumber(-number));
+}
+
+ALWAYS_INLINE static EncodedJSValue profiledNegate(ExecState* exec, EncodedJSValue encodedOperand, ArithProfile* arithProfile)
+{
+    ASSERT(arithProfile);
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue operand = JSValue::decode(encodedOperand);
+    arithProfile->observeLHS(operand);
+    double number = operand.toNumber(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsNumber(-number));
+}
+
+EncodedJSValue JIT_OPERATION operationArithNegate(ExecState* exec, EncodedJSValue operand)
+{
+    return unprofiledNegate(exec, operand);
+}
+
+EncodedJSValue JIT_OPERATION operationArithNegateProfiled(ExecState* exec, EncodedJSValue operand, ArithProfile* arithProfile)
+{
+    return profiledNegate(exec, operand, arithProfile);
+}
+
+EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(ExecState* exec, EncodedJSValue encodedOperand, JITNegIC* negIC)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    NativeCallFrameTracer tracer(&vm, exec);
+    
+    JSValue operand = JSValue::decode(encodedOperand);
+
+    ArithProfile* arithProfile = negIC->m_generator.arithProfile();
+    ASSERT(arithProfile);
+    arithProfile->observeLHS(operand);
+    negIC->generateOutOfLine(vm, exec->codeBlock(), operationArithNegateProfiled);
+
+#if ENABLE(MATH_IC_STATS)
+    exec->codeBlock()->dumpMathICStats();
+#endif
+    
+    double number = operand.toNumber(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsNumber(-number));
+}
+
+EncodedJSValue JIT_OPERATION operationArithNegateOptimize(ExecState* exec, EncodedJSValue encodedOperand, JITNegIC* negIC)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue operand = JSValue::decode(encodedOperand);
+
+    ArithProfile* arithProfile = negIC->m_generator.arithProfile();
+    ASSERT(arithProfile);
+    arithProfile->observeLHS(operand);
+    negIC->generateOutOfLine(vm, exec->codeBlock(), operationArithNegate);
+
+#if ENABLE(MATH_IC_STATS)
+    exec->codeBlock()->dumpMathICStats();
+#endif
+
+    double number = operand.toNumber(exec);
+    if (UNLIKELY(scope.exception()))
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsNumber(-number));
+}
+
 ALWAYS_INLINE static EncodedJSValue unprofiledSub(VM& vm, ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);

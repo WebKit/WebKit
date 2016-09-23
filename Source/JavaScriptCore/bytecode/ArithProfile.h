@@ -87,6 +87,14 @@ public:
     static_assert(specialFastPathBit & clearLhsObservedTypeBitMask, "These bits should intersect.");
     static_assert(specialFastPathBit > ~clearLhsObservedTypeBitMask, "These bits should not intersect and specialFastPathBit should be a higher bit.");
 
+    ArithProfile(ResultType arg)
+    {
+        m_bits = (arg.bits() << lhsResultTypeShift);
+        ASSERT(lhsResultType().bits() == arg.bits());
+        ASSERT(lhsObservedType().isEmpty());
+        ASSERT(rhsObservedType().isEmpty());
+    }
+
     ArithProfile(ResultType lhs, ResultType rhs)
     {
         m_bits = (lhs.bits() << lhsResultTypeShift) | (rhs.bits() << rhsResultTypeShift);
@@ -94,7 +102,7 @@ public:
         ASSERT(lhsObservedType().isEmpty());
         ASSERT(rhsObservedType().isEmpty());
     }
-    ArithProfile() { }
+    ArithProfile() = default;
 
     static ArithProfile fromInt(uint32_t bits)
     {
@@ -170,7 +178,7 @@ public:
     void rhsSawNumber() { setRhsObservedType(rhsObservedType().withNumber()); }
     void rhsSawNonNumber() { setRhsObservedType(rhsObservedType().withNonNumber()); }
 
-    void observeLHSAndRHS(JSValue lhs, JSValue rhs)
+    void observeLHS(JSValue lhs)
     {
         ArithProfile newProfile = *this;
         if (lhs.isNumber()) {
@@ -181,6 +189,14 @@ public:
         } else
             newProfile.lhsSawNonNumber();
 
+        m_bits = newProfile.bits();
+    }
+
+    void observeLHSAndRHS(JSValue lhs, JSValue rhs)
+    {
+        observeLHS(lhs);
+
+        ArithProfile newProfile = *this;
         if (rhs.isNumber()) {
             if (rhs.isInt32())
                 newProfile.rhsSawInt32();

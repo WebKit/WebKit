@@ -2515,7 +2515,7 @@ public:
     void compileShiftOp(Node*);
 
     template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
-    void compileMathIC(Node*, JITMathIC<Generator>*, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction, NonRepatchingFunction);
+    void compileMathIC(Node*, JITBinaryMathIC<Generator>*, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction, NonRepatchingFunction);
 
     void compileArithDoubleUnaryOp(Node*, double (*doubleFunction)(double), double (*operation)(ExecState*, EncodedJSValue));
     void compileValueAdd(Node*);

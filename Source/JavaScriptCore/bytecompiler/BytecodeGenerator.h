@@ -511,6 +511,7 @@ namespace JSC {
         RegisterID* emitLoadGlobalObject(RegisterID* dst);
 
         RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src);
+        RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src, OperandTypes);
         RegisterID* emitUnaryOpProfiled(OpcodeID, RegisterID* dst, RegisterID* src);
         RegisterID* emitBinaryOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes);
         RegisterID* emitEqualityOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2);

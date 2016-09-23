@@ -29,14 +29,17 @@
 
 namespace JSC {
 
-template <typename Generator> class JITMathIC;
+template <typename Generator> class JITBinaryMathIC;
+template <typename Generator> class JITUnaryMathIC;
 class JITAddGenerator;
 class JITMulGenerator;
+class JITNegGenerator;
 class JITSubGenerator;
 
-typedef JITMathIC<JITAddGenerator> JITAddIC;
-typedef JITMathIC<JITMulGenerator> JITMulIC;
-typedef JITMathIC<JITSubGenerator> JITSubIC;
+typedef JITBinaryMathIC<JITAddGenerator> JITAddIC;
+typedef JITBinaryMathIC<JITMulGenerator> JITMulIC;
+typedef JITUnaryMathIC<JITNegGenerator> JITNegIC;
+typedef JITBinaryMathIC<JITSubGenerator> JITSubIC;
 
 } // namespace JSC
 

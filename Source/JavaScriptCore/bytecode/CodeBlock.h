@@ -245,6 +245,7 @@ public:
     StructureStubInfo* addStubInfo(AccessType);
     JITAddIC* addJITAddIC();
     JITMulIC* addJITMulIC();
+    JITNegIC* addJITNegIC();
     JITSubIC* addJITSubIC();
     Bag<StructureStubInfo>::iterator stubInfoBegin() { return m_stubInfos.begin(); }
     Bag<StructureStubInfo>::iterator stubInfoEnd() { return m_stubInfos.end(); }
@@ -447,7 +448,7 @@ public:
     }
 
     ArithProfile* arithProfileForBytecodeOffset(int bytecodeOffset);
-    ArithProfile& arithProfileForPC(Instruction*);
+    ArithProfile* arithProfileForPC(Instruction*);
 
     bool couldTakeSpecialFastCase(int bytecodeOffset);
 
@@ -997,6 +998,7 @@ private:
     Bag<StructureStubInfo> m_stubInfos;
     Bag<JITAddIC> m_addICs;
     Bag<JITMulIC> m_mulICs;
+    Bag<JITNegIC> m_negICs;
     Bag<JITSubIC> m_subICs;
     Bag<ByValInfo> m_byValInfos;
     Bag<CallLinkInfo> m_callLinkInfos;
