@@ -1,3 +1,22 @@
+2016-09-22  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] alert box is not displayed 
+        https://bugs.webkit.org/show_bug.cgi?id=156395
+
+        Reviewed by Gyuyoung Kim.
+
+        Some popup objects(alert, confirm, prompt, file entry dialog) used the ecore_main_loop_begin() to make
+        the modal popup but ecore_main_loop_begin() was not executed inside an exisiting main loop. So we have
+        to use the ecore_main_loop_iterate() instead of the ecore_main_loop_begin().
+
+        * MiniBrowser/efl/main.c:
+        (_ok_clicked_cb):
+        (_file_entry_dialog_show):
+        (_javascript_alert_cb):
+        (_javascript_confirm_cb):
+        (_javascript_prompt_cb):
+        (quit_event_loop): Deleted.
+
 2016-09-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Add an API for getting the branch identifier from a Git or SVN checkout.

@@ -1356,18 +1356,10 @@ _back_button_longpress_cb(void *user_data, Evas_Object *back_button, void *event
 }
 
 static void
-quit_event_loop(void *user_data, Evas_Object *obj, void *event_info)
-{
-    ecore_main_loop_quit();
-}
-
-static void
 _ok_clicked_cb(void *user_data, Evas_Object *obj, void *event_info)
 {
     Eina_Bool *confirmed = (Eina_Bool *)user_data;
     *confirmed = EINA_TRUE;
-
-    ecore_main_loop_quit();
 }
 
 static Eina_Stringshare *
@@ -1413,13 +1405,15 @@ _file_entry_dialog_show(Browser_Window *window, const char *label_tag, const cha
     elm_box_pack_end(hbox, ok_button);
     evas_object_show(ok_button);
 
+    Eina_Bool cancel = EINA_FALSE;
     Evas_Object *cancel_button = elm_button_add(file_popup);
     elm_object_text_set(cancel_button, "Cancel");
-    evas_object_smart_callback_add(cancel_button, "clicked", quit_event_loop, NULL);
+    evas_object_smart_callback_add(cancel_button, "clicked", _ok_clicked_cb, &cancel);
     elm_box_pack_end(hbox, cancel_button);
     evas_object_show(cancel_button);
 
-    ecore_main_loop_begin();
+    while (ok != EINA_TRUE && cancel != EINA_TRUE)
+       ecore_main_loop_iterate();
 
     Eina_Stringshare *file_path = ok ? eina_stringshare_add(elm_fileselector_path_get(fs_entry)) : NULL;
     evas_object_del(file_popup);
@@ -1437,15 +1431,16 @@ _javascript_alert_cb(Ewk_View_Smart_Data *smartData, const char *message)
    elm_object_part_text_set(alert_popup, "title,text", "Alert");
 
    /* Popup buttons */
+   Eina_Bool ok = EINA_FALSE;
    Evas_Object *button = elm_button_add(alert_popup);
    elm_object_text_set(button, "OK");
    elm_object_part_content_set(alert_popup, "button1", button);
-   evas_object_smart_callback_add(button, "clicked", quit_event_loop, NULL);
+   evas_object_smart_callback_add(button, "clicked", _ok_clicked_cb, &ok);
    elm_object_focus_set(button, EINA_TRUE);
    evas_object_show(alert_popup);
 
-   /* Make modal */
-   ecore_main_loop_begin();
+   while (ok != EINA_TRUE)
+      ecore_main_loop_iterate();
 
    evas_object_del(alert_popup);
 }
@@ -1455,27 +1450,27 @@ _javascript_confirm_cb(Ewk_View_Smart_Data *smartData, const char *message)
 {
    Browser_Window *window = window_find_with_ewk_view(smartData->self);
 
-   Eina_Bool ok = EINA_FALSE;
-
    Evas_Object *confirm_popup = elm_popup_add(window->elm_window);
    evas_object_size_hint_weight_set(confirm_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(confirm_popup, message);
    elm_object_part_text_set(confirm_popup, "title,text", "Confirmation");
 
    /* Popup buttons */
+   Eina_Bool cancel = EINA_FALSE;
    Evas_Object *cancel_button = elm_button_add(confirm_popup);
    elm_object_text_set(cancel_button, "Cancel");
    elm_object_part_content_set(confirm_popup, "button1", cancel_button);
-   evas_object_smart_callback_add(cancel_button, "clicked", quit_event_loop, NULL);
+   evas_object_smart_callback_add(cancel_button, "clicked", _ok_clicked_cb, &cancel);
    Evas_Object *ok_button = elm_button_add(confirm_popup);
+   Eina_Bool ok = EINA_FALSE;
    elm_object_text_set(ok_button, "OK");
    elm_object_part_content_set(confirm_popup, "button2", ok_button);
    evas_object_smart_callback_add(ok_button, "clicked", _ok_clicked_cb, &ok);
    elm_object_focus_set(ok_button, EINA_TRUE);
    evas_object_show(confirm_popup);
 
-   /* Make modal */
-   ecore_main_loop_begin();
+   while (cancel != EINA_TRUE && ok != EINA_TRUE)
+      ecore_main_loop_iterate();
 
    evas_object_del(confirm_popup);
 
@@ -1486,8 +1481,6 @@ static const char *
 _javascript_prompt_cb(Ewk_View_Smart_Data *smartData, const char *message, const char *default_value)
 {
    Browser_Window *window = window_find_with_ewk_view(smartData->self);
-
-   Eina_Bool ok = EINA_FALSE;
 
    Evas_Object *prompt_popup = elm_popup_add(window->elm_window);
    evas_object_size_hint_weight_set(prompt_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1522,18 +1515,20 @@ _javascript_prompt_cb(Ewk_View_Smart_Data *smartData, const char *message, const
    elm_object_content_set(prompt_popup, box);
 
    /* Popup buttons */
+   Eina_Bool cancel = EINA_FALSE;
    Evas_Object *cancel_button = elm_button_add(prompt_popup);
    elm_object_text_set(cancel_button, "Cancel");
    elm_object_part_content_set(prompt_popup, "button1", cancel_button);
-   evas_object_smart_callback_add(cancel_button, "clicked", quit_event_loop, NULL);
+   evas_object_smart_callback_add(cancel_button, "clicked", _ok_clicked_cb, &cancel);
+   Eina_Bool ok = EINA_FALSE;
    Evas_Object *ok_button = elm_button_add(prompt_popup);
    elm_object_text_set(ok_button, "OK");
    elm_object_part_content_set(prompt_popup, "button2", ok_button);
    evas_object_smart_callback_add(ok_button, "clicked", _ok_clicked_cb, &ok);
    evas_object_show(prompt_popup);
 
-   /* Make modal */
-   ecore_main_loop_begin();
+   while (cancel != EINA_TRUE && ok != EINA_TRUE)
+      ecore_main_loop_iterate();
 
    /* The return string need to be stringshared */
    const char *prompt_text = ok ? eina_stringshare_add(elm_entry_entry_get(entry)) : NULL;
