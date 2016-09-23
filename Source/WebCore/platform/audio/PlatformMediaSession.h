@@ -160,6 +160,7 @@ public:
 
     void scheduleClientDataBufferingCheck();
     virtual void resetPlaybackSessionState() { }
+    String sourceApplicationIdentifier() const;
 
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }
@@ -217,6 +218,7 @@ public:
     virtual void setShouldPlayToPlaybackTarget(bool) { }
 
     virtual const Document* hostingDocument() const = 0;
+    virtual String sourceApplicationIdentifier() const = 0;
 
 protected:
     virtual ~PlatformMediaSessionClient() { }
