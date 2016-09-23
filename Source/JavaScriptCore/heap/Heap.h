@@ -175,11 +175,11 @@ public:
     // call both of these functions: Calling only one may trigger catastropic
     // memory growth.
     void reportExtraMemoryAllocated(size_t);
-    void reportExtraMemoryVisited(CellState cellStateBeforeVisiting, size_t);
+    void reportExtraMemoryVisited(JSCell*, size_t);
 
 #if ENABLE(RESOURCE_USAGE)
     // Use this API to report the subset of extra memory that lives outside this process.
-    void reportExternalMemoryVisited(CellState cellStateBeforeVisiting, size_t);
+    void reportExternalMemoryVisited(JSCell*, size_t);
     size_t externalMemorySize() { return m_externalMemorySize; }
 #endif
 

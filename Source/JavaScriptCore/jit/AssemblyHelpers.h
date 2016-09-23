@@ -1308,13 +1308,13 @@ public:
 
     Jump jumpIfIsRememberedOrInEden(GPRReg cell)
     {
-        return branchTest8(MacroAssembler::NonZero, MacroAssembler::Address(cell, JSCell::cellStateOffset()));
+        return branch8(Above, Address(cell, JSCell::cellStateOffset()), TrustedImm32(blackThreshold));
     }
 
     Jump jumpIfIsRememberedOrInEden(JSCell* cell)
     {
         uint8_t* address = reinterpret_cast<uint8_t*>(cell) + JSCell::cellStateOffset();
-        return branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(address));
+        return branch8(Above, AbsoluteAddress(address), TrustedImm32(blackThreshold));
     }
     
     // Emits the branch structure for typeof. The code emitted by this doesn't fall through. The

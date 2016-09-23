@@ -175,10 +175,12 @@ inline void x86_ortop()
     // know that it is equivalent for our purposes, but it would be good to
     // investigate if that is actually better.
     MemoryBarrier();
-#else
+#elif CPU(X86_64)
     // This has acqrel semantics and is much cheaper than mfence. For exampe, in the JSC GC, using
     // mfence as a store-load fence was a 9% slow-down on Octane/splay while using this was neutral.
     asm volatile("lock; orl $0, (%%rsp)" ::: "memory");
+#else
+    asm volatile("lock; orl $0, (%%esp)" ::: "memory");
 #endif
 }
 

@@ -1,3 +1,69 @@
+2016-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Need a store-load fence between setting cell state and visiting the object in SlotVisitor
+        https://bugs.webkit.org/show_bug.cgi?id=162354
+
+        Reviewed by Mark Lam.
+        
+        This was meant to be a small change, but then it became bigger as I found small
+        opportunities for improving this code. This adds a store-load fence and is performance-
+        neutral. That's probably partly due to other optimizations that I did to visitChildren().
+        
+        Initially, I found that adding an mfence as a store-load fence was terribly expensive. So,
+        I thought that I needed to buffer up a bunch of objects, set their states, do one mfence,
+        and then visit all of them. This seemed like a win, so I went with it. Unfortunately, this
+        made no sense for two reasons:
+        
+        - I shouldn't use mfence. I should use ortop (lock orl $0, (%rsp)) instead. Ortop is
+          basically free, and it's what WTF now uses for storeLoadFence().
+        
+        - My data saying that buffering up objects was not a slow-down was wrong. That was actually
+          almost as expensive as the mfence.
+        
+        But in order to implement that, I made some other improvements that I think we should stick
+        with:
+        
+        - SlotVisitor::visitChildren() now uses a switch on type. This replaces what used to be
+          some nasty ClassInfo look-ups.
+        
+        - We no longer save the object's old CellState. We would do that so that we would know what
+          state the object had been before we blackened it. But I believe that the more logical
+          solution is to have two kinds of black - one for black-for-the-first-time objects and one
+          for repeat offenders. This is a lot easier to reason about, since you can now just figure
+          this out by looking at the cell directly.
+        
+        The latter change meant rewiring a bunch of barriers. It didn't make them any more
+        expensive.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::emitStoreBarrier):
+        * heap/CellState.h:
+        (JSC::blacken):
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::writeBarrier):
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::reportExternalMemoryVisited):
+        * heap/MarkStack.cpp:
+        * heap/MarkStack.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::visitChildren):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryVisited):
+        (JSC::SlotVisitor::reportExternalMemoryVisited):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::jumpIfIsRememberedOrInEden):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSObject.h:
+        (JSC::isJSFinalObject):
+
 2016-09-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         ARM EABI buildfix after r206289

@@ -26,7 +26,7 @@
 #ifndef MarkStack_h
 #define MarkStack_h
 
-#include "GCSegmentedArrayInlines.h"
+#include "GCSegmentedArray.h"
 
 namespace JSC {
 

@@ -11435,7 +11435,8 @@ private:
         LBasicBlock continuation = m_out.newBlock();
 
         m_out.branch(
-            m_out.notZero32(loadCellState(base)), usually(continuation), rarely(slowPath));
+            m_out.above(loadCellState(base), m_out.constInt32(blackThreshold)),
+            usually(continuation), rarely(slowPath));
 
         LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
 

@@ -14,6 +14,18 @@
 
 2016-09-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Need a store-load fence between setting cell state and visiting the object in SlotVisitor
+        https://bugs.webkit.org/show_bug.cgi?id=162354
+
+        Reviewed by Mark Lam.
+        
+        Fix this on x86-32.
+
+        * wtf/Atomics.h:
+        (WTF::x86_ortop):
+
+2016-09-22  Filip Pizlo  <fpizlo@apple.com>
+
         Fences on x86 should be a lot cheaper
         https://bugs.webkit.org/show_bug.cgi?id=162417
 
