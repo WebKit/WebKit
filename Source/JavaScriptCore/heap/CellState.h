@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,46 +26,33 @@
 #ifndef CellState_h
 #define CellState_h
 
-#include <wtf/Assertions.h>
-
 namespace JSC {
 
 enum class CellState : uint8_t {
-    // The object is black for the first time during this GC.
-    NewBlack = 0,
-    
-    // The object is black for the Nth time during this full GC cycle (N > 1). An object may get to
-    // this state if it transitions from black back to grey during a concurrent GC, or because it
-    // wound up in the remembered set because of a generational barrier.
-    OldBlack = 1,
+    // The object is black as far as this GC is concerned. When not in GC, this just means that it's an
+    // old gen object. Note that we deliberately arrange OldBlack to be zero, so that the store barrier on
+    // a target object "from" is just:
+    //
+    // if (!from->cellState())
+    //     slowPath(from);
+    //
+    // There is a bunch of code in the LLInt and JITs that rely on this being the case. You'd have to
+    // change a lot of code if you ever wanted the store barrier to be anything but a non-zero check on
+    // cellState.
+    OldBlack = 0,
     
     // The object is in eden. During GC, this means that the object has not been marked yet.
-    NewWhite = 2,
-
-    // The object is grey - i.e. it will be scanned - and this is the first time in this GC that we are
-    // going to scan it. If this is an eden GC, this also means that the object is in eden.
-    NewGrey = 3,
+    NewWhite = 1,
 
     // The object is grey - i.e. it will be scanned - but it either belongs to old gen (if this is eden
     // GC) or it is grey a second time in this current GC (because a concurrent store barrier requested
     // re-greying).
-    OldGrey = 4
+    OldGrey = 2,
+
+    // The object is grey - i.e. it will be scanned - and this is the first time in this GC that we are
+    // going to scan it. If this is an eden GC, this also means that the object is in eden.
+    NewGrey = 3
 };
-
-static const unsigned blackThreshold = 1; // x <= blackThreshold means x is black.
-
-inline bool isBlack(CellState cellState)
-{
-    return static_cast<unsigned>(cellState) <= blackThreshold;
-}
-
-inline CellState blacken(CellState cellState)
-{
-    if (cellState == CellState::NewGrey)
-        return CellState::NewBlack;
-    ASSERT(cellState == CellState::NewBlack || cellState == CellState::OldBlack || cellState == CellState::OldGrey);
-    return CellState::OldBlack;
-}
 
 } // namespace JSC
 

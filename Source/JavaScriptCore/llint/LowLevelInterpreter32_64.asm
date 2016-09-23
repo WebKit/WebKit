@@ -500,9 +500,9 @@ end
 macro writeBarrierOnOperand(cellOperand)
     loadisFromInstruction(cellOperand, t1)
     loadConstantOrVariablePayload(t1, CellTag, t2, .writeBarrierDone)
-    skipIfIsRememberedOrInEden(
-        t2, 
-        macro()
+    skipIfIsRememberedOrInEden(t2, t1, t3, 
+        macro(cellState)
+            btbnz cellState, .writeBarrierDone
             push cfr, PC
             # We make two extra slots because cCall2 will poke.
             subp 8, sp
@@ -511,7 +511,8 @@ macro writeBarrierOnOperand(cellOperand)
             cCall2Void(_llint_write_barrier_slow)
             addp 8, sp
             pop PC, cfr
-        end)
+        end
+    )
 .writeBarrierDone:
 end
 
@@ -531,9 +532,9 @@ macro writeBarrierOnGlobal(valueOperand, loadHelper)
 
     loadHelper(t3)
 
-    skipIfIsRememberedOrInEden(
-        t3,
-        macro()
+    skipIfIsRememberedOrInEden(t3, t1, t2,
+        macro(gcData)
+            btbnz gcData, .writeBarrierDone
             push cfr, PC
             # We make two extra slots because cCall2 will poke.
             subp 8, sp
@@ -542,7 +543,8 @@ macro writeBarrierOnGlobal(valueOperand, loadHelper)
             cCall2Void(_llint_write_barrier_slow)
             addp 8, sp
             pop PC, cfr
-        end)
+        end
+    )
 .writeBarrierDone:
 end
 

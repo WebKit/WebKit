@@ -409,8 +409,6 @@ const NotInitialization = 2
 const MarkedBlockSize = 16 * 1024
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
 
-const BlackThreshold = 1
-
 # Allocation constants
 if JSVALUE64
     const JSFinalObjectSizeClassIndex = 1
@@ -890,10 +888,9 @@ macro arrayProfile(cellAndIndexingType, profile, scratch)
     loadb JSCell::m_indexingType[cell], indexingType
 end
 
-macro skipIfIsRememberedOrInEden(cell, slowPath)
-    bba JSCell::m_cellState[cell], BlackThreshold, .done
-    slowPath()
-.done:
+macro skipIfIsRememberedOrInEden(cell, scratch1, scratch2, continuation)
+    loadb JSCell::m_cellState[cell], scratch1
+    continuation(scratch1)
 end
 
 macro notifyWrite(set, slow)

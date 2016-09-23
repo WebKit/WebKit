@@ -25,10 +25,9 @@
 
 #include "config.h"
 #include "SlotVisitor.h"
+#include "SlotVisitorInlines.h"
 
-#include "AbstractMacroAssembler.h"
 #include "ConservativeRoots.h"
-#include "GCSegmentedArrayInlines.h"
 #include "HeapCellInlines.h"
 #include "HeapProfiler.h"
 #include "HeapSnapshotBuilder.h"
@@ -37,7 +36,6 @@
 #include "JSObject.h"
 #include "JSString.h"
 #include "JSCInlines.h"
-#include "SlotVisitorInlines.h"
 #include "SuperSampler.h"
 #include "VM.h"
 #include <wtf/Lock.h>
@@ -298,32 +296,25 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     
     SetCurrentCellScope currentCellScope(*this, cell);
     
-    cell->setCellState(blacken(cell->cellState()));
+    m_currentObjectCellStateBeforeVisiting = cell->cellState();
+    cell->setCellState(CellState::OldBlack);
     
-    // FIXME: Make this work on ARM also.
-    // https://bugs.webkit.org/show_bug.cgi?id=162461
-    if (isX86())
-        WTF::storeLoadFence();
-    
-    switch (cell->type()) {
-    case StringType:
+    if (isJSString(cell)) {
         JSString::visitChildren(const_cast<JSCell*>(cell), *this);
-        break;
-        
-    case FinalObjectType:
-        JSFinalObject::visitChildren(const_cast<JSCell*>(cell), *this);
-        break;
-
-    case ArrayType:
-        JSArray::visitChildren(const_cast<JSCell*>(cell), *this);
-        break;
-        
-    default:
-        // FIXME: This could be so much better.
-        // https://bugs.webkit.org/show_bug.cgi?id=162462
-        cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
-        break;
+        return;
     }
+
+    if (isJSFinalObject(cell)) {
+        JSFinalObject::visitChildren(const_cast<JSCell*>(cell), *this);
+        return;
+    }
+
+    if (isJSArray(cell)) {
+        JSArray::visitChildren(const_cast<JSCell*>(cell), *this);
+        return;
+    }
+
+    cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
 }
 
 void SlotVisitor::donateKnownParallel()

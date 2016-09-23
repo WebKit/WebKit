@@ -168,6 +168,8 @@ private:
     HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
     JSCell* m_currentCell { nullptr };
 
+    CellState m_currentObjectCellStateBeforeVisiting { CellState::NewWhite };
+
 public:
 #if !ASSERT_DISABLED
     bool m_isCheckingForDefaultMarkViolation;

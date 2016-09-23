@@ -1093,7 +1093,7 @@ inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure)
 
 inline bool isJSFinalObject(JSCell* cell)
 {
-    return cell->type() == FinalObjectType;
+    return cell->classInfo() == JSFinalObject::info();
 }
 
 inline bool isJSFinalObject(JSValue value)

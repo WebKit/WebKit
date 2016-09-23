@@ -27,8 +27,6 @@
 #define AbstractMacroAssembler_h
 
 #include "AbortReason.h"
-#include "AssemblerBuffer.h"
-#include "AssemblerCommon.h"
 #include "CodeLocation.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Options.h"
@@ -36,6 +34,8 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/SharedTask.h>
 #include <wtf/WeakRandom.h>
+
+#if ENABLE(ASSEMBLER)
 
 namespace JSC {
 
@@ -94,8 +94,6 @@ inline bool optimizeForX86_64()
 {
     return isX86_64() && Options::useArchitectureSpecificOptimizations();
 }
-
-#if ENABLE(ASSEMBLER)
 
 class AllowMacroScratchRegisterUsage;
 class DisallowMacroScratchRegisterUsage;
@@ -1167,8 +1165,8 @@ AbstractMacroAssembler<AssemblerType, MacroAssemblerType>::Address::indexedBy(
     return BaseIndex(base, index, scale, offset);
 }
 
-#endif // ENABLE(ASSEMBLER)
-
 } // namespace JSC
+
+#endif // ENABLE(ASSEMBLER)
 
 #endif // AbstractMacroAssembler_h

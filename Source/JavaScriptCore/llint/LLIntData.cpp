@@ -214,7 +214,6 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(GetPutInfo::initializationBits == 0xffc00);
 
     STATIC_ASSERT(MarkedBlock::blockSize == 16 * 1024);
-    STATIC_ASSERT(blackThreshold == 1);
 
     ASSERT(bitwise_cast<uintptr_t>(ShadowChicken::Packet::tailMarker()) == static_cast<uintptr_t>(0x7a11));
 
