@@ -67,6 +67,7 @@
 #include "PageGroup.h"
 #include "PageOverlayController.h"
 #include "PageThrottler.h"
+#include "PlatformMediaSessionManager.h"
 #include "PlugInClient.h"
 #include "PluginData.h"
 #include "PluginViewBase.h"
@@ -1449,7 +1450,9 @@ void Page::setViewState(ViewState::Flags viewState)
 
     ViewState::Flags oldViewState = m_viewState;
 
+    bool wasVisibleAndActive = isVisibleAndActive();
     m_viewState = viewState;
+
     m_focusController->setViewState(viewState);
 
     if (changed & ViewState::IsVisible)
@@ -1464,6 +1467,14 @@ void Page::setViewState(ViewState::Flags viewState)
 
     for (auto* observer : m_viewStateChangeObservers)
         observer->viewStateDidChange(oldViewState, m_viewState);
+
+    if (wasVisibleAndActive != isVisibleAndActive())
+        PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
+}
+
+bool Page::isVisibleAndActive() const
+{
+    return (m_viewState & ViewState::IsVisible) && (m_viewState & ViewState::WindowIsActive);
 }
 
 void Page::setPageActivityState(PageActivityState::Flags activityState)

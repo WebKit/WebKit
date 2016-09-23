@@ -358,13 +358,13 @@ struct MediaElementSessionInfo {
     bool isPlayingAudio : 1;
 };
 
-static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElementSession& session)
+static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElementSession& session, MediaElementSession::PlaybackControlsPurpose purpose)
 {
     const HTMLMediaElement& element = session.element();
     return {
         &session,
         session.mostRecentUserInteractionTime(),
-        session.canShowControlsManager(),
+        session.canShowControlsManager(purpose),
         element.isFullscreen() || element.isVisibleInViewport(),
         session.isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls),
         element.isPlaying() && element.hasAudio() && !element.muted()
@@ -381,8 +381,11 @@ static bool preferMediaControlsForCandidateSessionOverOtherCandidateSession(cons
     return session.timeOfLastUserInteraction > otherSession.timeOfLastUserInteraction;
 }
 
-static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionInfo& session)
+static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionInfo& session, MediaElementSession::PlaybackControlsPurpose purpose)
 {
+    if (purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying)
+        return session.isPlayingAudio;
+
     if (!session.isVisibleInViewportOrFullscreen)
         return false;
 
@@ -392,33 +395,6 @@ static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionIn
     // Even if this video is not a candidate, if it is visible to the user and large enough
     // to be main content, it poses a risk for being confused with main content.
     return true;
-}
-
-static const MediaElementSession* bestMediaSessionForShowingPlaybackControlsManager()
-{
-    auto allSessions = PlatformMediaSessionManager::sharedManager().currentSessionsMatching([] (const PlatformMediaSession& session) {
-        return is<MediaElementSession>(session);
-    });
-
-    Vector<MediaElementSessionInfo> candidateSessions;
-    bool atLeastOneNonCandidateMayBeConfusedForMainContent = false;
-    for (auto& session : allSessions) {
-        auto mediaElementSessionInfo = mediaElementSessionInfoForSession(downcast<MediaElementSession>(*session));
-        if (mediaElementSessionInfo.canShowControlsManager)
-            candidateSessions.append(mediaElementSessionInfo);
-        else if (mediaSessionMayBeConfusedWithMainContent(mediaElementSessionInfo))
-            atLeastOneNonCandidateMayBeConfusedForMainContent = true;
-    }
-
-    if (!candidateSessions.size())
-        return nullptr;
-
-    std::sort(candidateSessions.begin(), candidateSessions.end(), preferMediaControlsForCandidateSessionOverOtherCandidateSession);
-    auto strongestSessionCandidate = candidateSessions.first();
-    if (!strongestSessionCandidate.isVisibleInViewportOrFullscreen && !strongestSessionCandidate.isPlayingAudio && atLeastOneNonCandidateMayBeConfusedForMainContent)
-        return nullptr;
-
-    return strongestSessionCandidate.session;
 }
 
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
@@ -641,6 +617,33 @@ HTMLMediaElement::~HTMLMediaElement()
 
     m_player = nullptr;
     updatePlaybackControlsManager();
+}
+
+HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
+{
+    auto allSessions = PlatformMediaSessionManager::sharedManager().currentSessionsMatching([] (const PlatformMediaSession& session) {
+        return is<MediaElementSession>(session);
+    });
+
+    Vector<MediaElementSessionInfo> candidateSessions;
+    bool atLeastOneNonCandidateMayBeConfusedForMainContent = false;
+    for (auto& session : allSessions) {
+        auto mediaElementSessionInfo = mediaElementSessionInfoForSession(downcast<MediaElementSession>(*session), purpose);
+        if (mediaElementSessionInfo.canShowControlsManager)
+            candidateSessions.append(mediaElementSessionInfo);
+        else if (mediaSessionMayBeConfusedWithMainContent(mediaElementSessionInfo, purpose))
+            atLeastOneNonCandidateMayBeConfusedForMainContent = true;
+    }
+
+    if (!candidateSessions.size())
+        return nullptr;
+
+    std::sort(candidateSessions.begin(), candidateSessions.end(), preferMediaControlsForCandidateSessionOverOtherCandidateSession);
+    auto strongestSessionCandidate = candidateSessions.first();
+    if (!strongestSessionCandidate.isVisibleInViewportOrFullscreen && !strongestSessionCandidate.isPlayingAudio && atLeastOneNonCandidateMayBeConfusedForMainContent)
+        return nullptr;
+
+    return &strongestSessionCandidate.session->element();
 }
 
 void HTMLMediaElement::registerWithDocument(Document& document)
@@ -7287,8 +7290,8 @@ void HTMLMediaElement::updatePlaybackControlsManager()
         return;
 
     // FIXME: Ensure that the renderer here should be up to date.
-    if (auto bestMediaSession = bestMediaSessionForShowingPlaybackControlsManager())
-        page->chrome().client().setUpPlaybackControlsManager(bestMediaSession->element());
+    if (auto bestMediaElement = bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager))
+        page->chrome().client().setUpPlaybackControlsManager(*bestMediaElement);
     else
         page->chrome().client().clearPlaybackControlsManager();
 }

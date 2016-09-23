@@ -337,6 +337,7 @@ public:
 
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setViewState(ViewState::Flags);
+    bool isVisibleAndActive() const;
     void setPageActivityState(PageActivityState::Flags);
     WEBCORE_EXPORT void setIsVisible(bool);
     WEBCORE_EXPORT void setIsPrerender();
