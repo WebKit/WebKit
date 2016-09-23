@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "HTMLMediaElement.h"
 #import "Logging.h"
 #import "MediaPlayer.h"
 #import "PlatformMediaSession.h"
@@ -50,6 +51,12 @@ PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
 PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists()
 {
     return platformMediaSessionManager;
+}
+
+void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
+{
+    if (auto existingManager = (MediaSessionManagerMac *)PlatformMediaSessionManager::sharedManagerIfExists())
+        existingManager->updateNowPlayingInfo();
 }
 
 MediaSessionManagerMac::MediaSessionManagerMac()
@@ -94,14 +101,8 @@ void MediaSessionManagerMac::clientCharacteristicsChanged(PlatformMediaSession&)
 
 PlatformMediaSession* MediaSessionManagerMac::nowPlayingEligibleSession()
 {
-    for (auto session : sessions()) {
-        PlatformMediaSession::MediaType type = session->mediaType();
-        if (type != PlatformMediaSession::Video && type != PlatformMediaSession::Audio)
-            continue;
-
-        if (session->characteristics() & PlatformMediaSession::HasAudio)
-            return session;
-    }
+    if (auto element = HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::NowPlaying))
+        return &element->mediaSession();
 
     return nullptr;
 }
@@ -122,6 +123,9 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
             LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - clearing now playing info");
             MRMediaRemoteSetNowPlayingInfo(nullptr);
             m_nowPlayingActive = false;
+            m_reportedTitle = "";
+            m_reportedRate = 0;
+            m_reportedDuration = 0;
             MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), kMRPlaybackStateStopped, dispatch_get_main_queue(), ^(MRMediaRemoteError error) {
 #if LOG_DISABLED
                 UNUSED_PARAM(error);
@@ -143,6 +147,7 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
     double duration = currentSession->duration();
     double rate = currentSession->state() == PlatformMediaSession::Playing ? 1 : 0;
     if (m_reportedTitle == title && m_reportedRate == rate && m_reportedDuration == duration) {
+        m_nowPlayingActive = true;
         LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - nothing new to show");
         return;
     }

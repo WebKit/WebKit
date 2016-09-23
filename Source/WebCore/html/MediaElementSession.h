@@ -118,7 +118,9 @@ public:
 
     bool wantsToObserveViewportVisibilityForMediaControls() const;
     bool wantsToObserveViewportVisibilityForAutoplay() const;
-    bool canShowControlsManager() const;
+
+    enum class PlaybackControlsPurpose { ControlsManager, NowPlaying };
+    bool canShowControlsManager(PlaybackControlsPurpose) const;
     bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
     double mostRecentUserInteractionTime() const;
 
@@ -137,6 +139,8 @@ private:
 #endif
     bool updateIsMainContent() const;
     void mainContentCheckTimerFired();
+
+    bool pageAllowsNowPlayingControls() const;
 
     HTMLMediaElement& m_element;
     BehaviorRestrictions m_restrictions;

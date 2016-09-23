@@ -115,6 +115,8 @@ public:
 
     static HashSet<HTMLMediaElement*>& allMediaElements();
 
+    static HTMLMediaElement* bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose);
+
     void rewind(double timeDelta);
     WEBCORE_EXPORT void returnToRealtime() override;
 

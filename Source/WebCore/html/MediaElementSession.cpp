@@ -216,8 +216,13 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement
     return true;
 }
 
-bool MediaElementSession::canShowControlsManager() const
+bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose) const
 {
+    if (purpose == PlaybackControlsPurpose::NowPlaying && !pageAllowsNowPlayingControls()) {
+        LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: Now playing not allowed in foreground tab");
+        return false;
+    }
+
     if (m_element.isFullscreen()) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Is fullscreen");
         return true;
@@ -228,7 +233,8 @@ bool MediaElementSession::canShowControlsManager() const
         return false;
     }
 
-    if (!m_element.hasAudio() && !m_element.hasEverHadAudio()) {
+    bool meetsAudioTrackRequirements = m_element.hasAudio() || (purpose == PlaybackControlsPurpose::ControlsManager && m_element.hasEverHadAudio());
+    if (!meetsAudioTrackRequirements) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: No audio");
         return false;
     }
@@ -274,7 +280,7 @@ bool MediaElementSession::canShowControlsManager() const
             return false;
         }
 
-        if (!m_element.hasVideo() && !m_element.hasEverHadVideo()) {
+        if (purpose == PlaybackControlsPurpose::ControlsManager && !m_element.hasVideo() && !m_element.hasEverHadVideo()) {
             LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: No video");
             return false;
         }
@@ -720,6 +726,12 @@ bool MediaElementSession::updateIsMainContent() const
         m_element.updateShouldPlay();
 
     return m_isMainContent;
+}
+
+bool MediaElementSession::pageAllowsNowPlayingControls() const
+{
+    auto page = m_element.document().page();
+    return page && !page->isVisibleAndActive();
 }
 
 }

@@ -36,7 +36,13 @@
 
 namespace WebCore {
 
-#if !PLATFORM(IOS) && !PLATFORM(MAC)
+#if !PLATFORM(MAC)
+
+void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
+{
+}
+
+#if !PLATFORM(IOS)
 static PlatformMediaSessionManager* platformMediaSessionManager = nullptr;
 
 PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
@@ -50,7 +56,9 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 {
     return platformMediaSessionManager;
 }
-#endif
+#endif // !PLATFORM(IOS)
+
+#endif // !PLATFORM(MAC)
 
 PlatformMediaSessionManager::PlatformMediaSessionManager()
     : m_systemSleepListener(SystemSleepListener::create(*this))

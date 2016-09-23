@@ -46,6 +46,9 @@ class PlatformMediaSessionManager : private RemoteCommandListenerClient, private
 public:
     WEBCORE_EXPORT static PlatformMediaSessionManager* sharedManagerIfExists();
     WEBCORE_EXPORT static PlatformMediaSessionManager& sharedManager();
+
+    static void updateNowPlayingInfoIfNecessary();
+
     virtual ~PlatformMediaSessionManager() { }
 
     bool has(PlatformMediaSession::MediaType) const;
