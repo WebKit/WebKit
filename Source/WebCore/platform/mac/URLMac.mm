@@ -44,8 +44,8 @@ URL::URL(NSURL *url)
     CString urlBytes;
     getURLBytes(reinterpret_cast<CFURLRef>(url), urlBytes);
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(urlBytes.data());
+        URLParser parser(urlBytes.data());
+        *this = parser.result();
     } else
         parse(urlBytes.data());
 }

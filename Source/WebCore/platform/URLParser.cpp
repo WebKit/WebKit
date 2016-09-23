@@ -404,7 +404,7 @@ template<typename CharacterType> inline static bool isValidSchemeCharacter(Chara
 static bool shouldPercentEncodeQueryByte(uint8_t byte) { return characterClassTable[byte] & QueryPercent; }
 
 template<typename CharacterType>
-void incrementIteratorSkippingTabAndNewLine(CodePointIterator<CharacterType>& iterator)
+void URLParser::incrementIteratorSkippingTabAndNewLine(CodePointIterator<CharacterType>& iterator)
 {
     ++iterator;
     while (!iterator.atEnd() && isTabOrNewline(*iterator))
@@ -412,7 +412,7 @@ void incrementIteratorSkippingTabAndNewLine(CodePointIterator<CharacterType>& it
 }
 
 template<typename CharacterType>
-inline static bool isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
+bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
 {
     if (iterator.atEnd() || !isASCIIAlpha(*iterator))
         return false;
@@ -430,7 +430,7 @@ inline static bool isWindowsDriveLetter(const Vector<LChar>& buffer, size_t inde
 }
 
 template<typename CharacterType>
-inline static void checkWindowsDriveLetter(CodePointIterator<CharacterType>& iterator, Vector<LChar>& asciiBuffer)
+void URLParser::checkWindowsDriveLetter(CodePointIterator<CharacterType>& iterator, Vector<LChar>& asciiBuffer)
 {
     if (isWindowsDriveLetter(iterator)) {
         asciiBuffer.reserveCapacity(asciiBuffer.size() + 2);
@@ -444,7 +444,7 @@ inline static void checkWindowsDriveLetter(CodePointIterator<CharacterType>& ite
 }
 
 template<typename CharacterType>
-inline static bool shouldCopyFileURL(CodePointIterator<CharacterType> iterator)
+bool URLParser::shouldCopyFileURL(CodePointIterator<CharacterType> iterator)
 {
     if (!isWindowsDriveLetter(iterator))
         return true;
@@ -896,36 +896,25 @@ void URLParser::popPath()
     m_asciiBuffer.resize(m_url.m_pathAfterLastSlash);
 }
 
-template<typename CharacterType>
-URL URLParser::failure(const CharacterType* input, unsigned length)
+void URLParser::failure()
 {
-    URL url;
-    url.m_isValid = false;
-    url.m_protocolIsInHTTPFamily = false;
-    url.m_cannotBeABaseURL = false;
-    url.m_schemeEnd = 0;
-    url.m_userStart = 0;
-    url.m_userEnd = 0;
-    url.m_passwordEnd = 0;
-    url.m_hostEnd = 0;
-    url.m_portEnd = 0;
-    url.m_pathAfterLastSlash = 0;
-    url.m_pathEnd = 0;
-    url.m_queryEnd = 0;
-    url.m_fragmentEnd = 0;
-    url.m_string = String(input, length);
-    return url;
+    m_url.invalidate();
+    m_url.m_string = m_inputString;
 }
 
-URL URLParser::parse(const String& input, const URL& base, const TextEncoding& encoding)
+URLParser::URLParser(const String& input, const URL& base, const TextEncoding& encoding)
+    : m_inputString(input)
 {
+    if (input.isNull())
+        return;
     if (input.is8Bit())
-        return parse(input.characters8(), input.length(), base, encoding);
-    return parse(input.characters16(), input.length(), base, encoding);
+        parse(input.characters8(), input.length(), base, encoding);
+    else
+        parse(input.characters16(), input.length(), base, encoding);
 }
 
 template<typename CharacterType>
-URL URLParser::parse(const CharacterType* input, const unsigned length, const URL& base, const TextEncoding& encoding)
+void URLParser::parse(const CharacterType* input, const unsigned length, const URL& base, const TextEncoding& encoding)
 {
     LOG(URLParser, "Parsing URL <%s> base <%s>", String(input, length).utf8().data(), base.string().utf8().data());
     m_url = { };
@@ -1051,8 +1040,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             break;
         case State::NoScheme:
             LOG_STATE("NoScheme");
-            if (!base.isValid() || (base.m_cannotBeABaseURL && *c != '#'))
-                return failure(input, length);
+            if (!base.isValid() || (base.m_cannotBeABaseURL && *c != '#')) {
+                failure();
+                return;
+            }
             if (base.m_cannotBeABaseURL && *c == '#') {
                 copyURLPartsUntil(base, URLPart::QueryEnd);
                 state = State::Fragment;
@@ -1073,8 +1064,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             if (*c == '/') {
                 m_asciiBuffer.append('/');
                 incrementIteratorSkippingTabAndNewLine(c);
-                if (c.atEnd())
-                    return failure(input, length);
+                if (c.atEnd()) {
+                    failure();
+                    return;
+                }
                 if (*c == '/') {
                     m_asciiBuffer.append('/');
                     state = State::SpecialAuthorityIgnoreSlashes;
@@ -1186,8 +1179,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                 if (isSlash || *c == '?' || *c == '#') {
                     m_url.m_userEnd = m_asciiBuffer.size();
                     m_url.m_passwordEnd = m_url.m_userEnd;
-                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
-                        return failure(input, length);
+                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+                        failure();
+                        return;
+                    }
                     if (!isSlash) {
                         m_asciiBuffer.append('/');
                         m_url.m_pathAfterLastSlash = m_asciiBuffer.size();
@@ -1203,8 +1198,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         case State::Host:
             LOG_STATE("Host");
             if (*c == '/' || *c == '?' || *c == '#') {
-                if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
-                    return failure(input, length);
+                if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+                    failure();
+                    return;
+                }
                 state = State::Path;
                 break;
             }
@@ -1307,7 +1304,7 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         case State::FileHost:
             LOG_STATE("FileHost");
             if (isSlashQuestionOrHash(*c)) {
-                if (isWindowsDriveLetter(m_asciiBuffer, m_url.m_portEnd + 1)) {
+                if (WebCore::isWindowsDriveLetter(m_asciiBuffer, m_url.m_portEnd + 1)) {
                     state = State::Path;
                     break;
                 }
@@ -1333,8 +1330,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
                     state = State::Path;
                     break;
                 }
-                if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
-                    return failure(input, length);
+                if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+                    failure();
+                    return;
+                }
                 
                 if (StringView(m_asciiBuffer.data() + m_url.m_passwordEnd, m_asciiBuffer.size() - m_url.m_passwordEnd) == "localhost")  {
                     m_asciiBuffer.shrink(m_url.m_passwordEnd);
@@ -1445,12 +1444,16 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
     switch (state) {
     case State::SchemeStart:
         LOG_FINAL_STATE("SchemeStart");
-        if (!m_asciiBuffer.size() && base.isValid())
-            return base;
-        return failure(input, length);
+        if (!m_asciiBuffer.size() && base.isValid()) {
+            m_url = base;
+            return;
+        }
+        failure();
+        return;
     case State::Scheme:
         LOG_FINAL_STATE("Scheme");
-        return failure(input, length);
+        failure();
+        return;
     case State::NoScheme:
         LOG_FINAL_STATE("NoScheme");
         RELEASE_ASSERT_NOT_REACHED();
@@ -1501,7 +1504,8 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     case State::SpecialAuthorityIgnoreSlashes:
         LOG_FINAL_STATE("SpecialAuthorityIgnoreSlashes");
-        return failure(input, length);
+        failure();
+        return;
         break;
     case State::AuthorityOrHost:
         LOG_FINAL_STATE("AuthorityOrHost");
@@ -1510,8 +1514,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         if (authorityOrHostBegin.atEnd()) {
             m_url.m_hostEnd = m_url.m_userEnd;
             m_url.m_portEnd = m_url.m_userEnd;
-        } else if (!parseHostAndPort(authorityOrHostBegin))
-            return failure(input, length);
+        } else if (!parseHostAndPort(authorityOrHostBegin)) {
+            failure();
+            return;
+        }
         m_asciiBuffer.append('/');
         m_url.m_pathEnd = m_url.m_portEnd + 1;
         m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
@@ -1520,8 +1526,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
         break;
     case State::Host:
         LOG_FINAL_STATE("Host");
-        if (!parseHostAndPort(authorityOrHostBegin))
-            return failure(input, length);
+        if (!parseHostAndPort(authorityOrHostBegin)) {
+            failure();
+            return;
+        }
         m_asciiBuffer.append('/');
         m_url.m_pathEnd = m_url.m_portEnd + 1;
         m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
@@ -1574,8 +1582,10 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
             break;
         }
 
-        if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)))
-            return failure(input, length);
+        if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+            failure();
+            return;
+        }
 
         if (StringView(m_asciiBuffer.data() + m_url.m_passwordEnd, m_asciiBuffer.size() - m_url.m_passwordEnd) == "localhost")  {
             m_asciiBuffer.shrink(m_url.m_passwordEnd);
@@ -1628,7 +1638,6 @@ URL URLParser::parse(const CharacterType* input, const unsigned length, const UR
     m_url.m_isValid = true;
     LOG(URLParser, "Parsed URL <%s>", m_url.m_string.utf8().data());
     ASSERT(internalValuesConsistent(m_url));
-    return m_url;
 }
 
 template<typename CharacterType>

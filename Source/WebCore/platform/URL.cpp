@@ -441,8 +441,8 @@ void URL::invalidate()
 URL::URL(ParsedURLStringTag, const String& url)
 {
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(url);
+        URLParser parser(url);
+        *this = parser.result();
     } else
         parse(url);
 #if OS(WINDOWS)
@@ -456,8 +456,8 @@ URL::URL(ParsedURLStringTag, const String& url)
 URL::URL(const URL& base, const String& relative)
 {
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(relative, base);
+        URLParser parser(relative, base);
+        *this = parser.result();
     } else
         init(base, relative, UTF8Encoding());
 }
@@ -465,8 +465,8 @@ URL::URL(const URL& base, const String& relative)
 URL::URL(const URL& base, const String& relative, const TextEncoding& encoding)
 {
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(relative, base, encoding);
+        URLParser parser(relative, base, encoding);
+        *this = parser.result();
     } else {
         // For UTF-{7,16,32}, we want to use UTF-8 for the query part as
         // we do when submitting a form. A form with GET method
@@ -865,16 +865,16 @@ bool URL::setProtocol(const String& s)
 
     if (!m_isValid) {
         if (URLParser::enabled()) {
-            URLParser parser;
-            *this = parser.parse(makeString(newProtocol, ":", m_string));
+            URLParser parser(makeString(newProtocol, ":", m_string));
+            *this = parser.result();
         } else
             parse(newProtocol + ':' + m_string);
         return true;
     }
 
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(makeString(newProtocol, m_string.substring(m_schemeEnd)));
+        URLParser parser(makeString(newProtocol, m_string.substring(m_schemeEnd)));
+        *this = parser.result();
     } else
         parse(newProtocol + m_string.substring(m_schemeEnd));
 
@@ -945,8 +945,8 @@ void URL::setHost(const String& s)
     builder.append(m_string.substring(m_hostEnd));
     
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(builder.toString());
+        URLParser parser(builder.toString());
+        *this = parser.result();
     } else
         parse(builder.toString());
 }
@@ -956,8 +956,8 @@ void URL::removePort()
     if (m_hostEnd == m_portEnd)
         return;
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(m_string.left(m_hostEnd) + m_string.substring(m_portEnd));
+        URLParser parser(m_string.left(m_hostEnd) + m_string.substring(m_portEnd));
+        *this = parser.result();
     } else
         parse(m_string.left(m_hostEnd) + m_string.substring(m_portEnd));
 }
@@ -971,8 +971,8 @@ void URL::setPort(unsigned short i)
     unsigned portStart = (colonNeeded ? m_hostEnd : m_hostEnd + 1);
 
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(makeString(m_string.left(portStart), (colonNeeded ? ":" : ""), String::number(i), m_string.substring(m_portEnd)));
+        URLParser parser(makeString(m_string.left(portStart), (colonNeeded ? ":" : ""), String::number(i), m_string.substring(m_portEnd)));
+        *this = parser.result();
     } else
         parse(m_string.left(portStart) + (colonNeeded ? ":" : "") + String::number(i) + m_string.substring(m_portEnd));
 }
@@ -1016,8 +1016,8 @@ void URL::setHostAndPort(const String& hostAndPort)
     builder.append(m_string.substring(m_portEnd));
 
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(builder.toString());
+        URLParser parser(builder.toString());
+        *this = parser.result();
     } else
         parse(builder.toString());
 }
@@ -1039,8 +1039,8 @@ void URL::setUser(const String& user)
         if (end == m_hostEnd || (end == m_passwordEnd && m_string[end] != '@'))
             u.append('@');
         if (URLParser::enabled()) {
-            URLParser parser;
-            *this = parser.parse(makeString(m_string.left(m_userStart), u, m_string.substring(end)));
+            URLParser parser(makeString(m_string.left(m_userStart), u, m_string.substring(end)));
+            *this = parser.result();
         } else
             parse(m_string.left(m_userStart) + u + m_string.substring(end));
     } else {
@@ -1050,8 +1050,8 @@ void URL::setUser(const String& user)
         // We don't want to parse in the extremely common case where we are not going to make a change.
         if (m_userStart != end) {
             if (URLParser::enabled()) {
-                URLParser parser;
-                *this = parser.parse(makeString(m_string.left(m_userStart), m_string.substring(end)));
+                URLParser parser(makeString(m_string.left(m_userStart), m_string.substring(end)));
+                *this = parser.result();
             } else
                 parse(m_string.left(m_userStart) + m_string.substring(end));
         }
@@ -1072,8 +1072,8 @@ void URL::setPass(const String& password)
         if (end != m_hostEnd && m_string[end] == '@')
             end += 1;
         if (URLParser::enabled()) {
-            URLParser parser;
-            *this = parser.parse(makeString(m_string.left(m_userEnd), p, m_string.substring(end)));
+            URLParser parser(makeString(m_string.left(m_userEnd), p, m_string.substring(end)));
+            *this = parser.result();
         } else
             parse(m_string.left(m_userEnd) + p + m_string.substring(end));
     } else {
@@ -1083,8 +1083,8 @@ void URL::setPass(const String& password)
         // We don't want to parse in the extremely common case where we are not going to make a change.
         if (m_userEnd != end) {
             if (URLParser::enabled()) {
-                URLParser parser;
-                *this = parser.parse(makeString(m_string.left(m_userEnd), m_string.substring(end)));
+                URLParser parser(makeString(m_string.left(m_userEnd), m_string.substring(end)));
+                *this = parser.result();
             } else
                 parse(m_string.left(m_userEnd) + m_string.substring(end));
         }
@@ -1098,8 +1098,8 @@ void URL::setFragmentIdentifier(const String& s)
 
     // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations.
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(makeString(m_string.left(m_queryEnd), "#", s));
+        URLParser parser(makeString(m_string.left(m_queryEnd), "#", s));
+        *this = parser.result();
     } else
         parse(m_string.left(m_queryEnd) + "#" + s);
 }
@@ -1110,8 +1110,8 @@ void URL::removeFragmentIdentifier()
         return;
     if (URLParser::enabled()) {
         // FIXME: We shouldn't need to parse here.
-        URLParser parser;
-        *this = parser.parse(m_string.left(m_queryEnd));
+        URLParser parser(m_string.left(m_queryEnd));
+        *this = parser.result();
     } else
         parse(m_string.left(m_queryEnd));
 }
@@ -1127,14 +1127,14 @@ void URL::setQuery(const String& query)
     // https://webkit.org/b/161176
     if ((query.isEmpty() || query[0] != '?') && !query.isNull()) {
         if (URLParser::enabled()) {
-            URLParser parser;
-            *this = parser.parse(makeString(m_string.left(m_pathEnd), "?", query, m_string.substring(m_queryEnd)));
+            URLParser parser(makeString(m_string.left(m_pathEnd), "?", query, m_string.substring(m_queryEnd)));
+            *this = parser.result();
         } else
             parse(m_string.left(m_pathEnd) + "?" + query + m_string.substring(m_queryEnd));
     } else {
         if (URLParser::enabled()) {
-            URLParser parser;
-            *this = parser.parse(makeString(m_string.left(m_pathEnd), query, m_string.substring(m_queryEnd)));
+            URLParser parser(makeString(m_string.left(m_pathEnd), query, m_string.substring(m_queryEnd)));
+            *this = parser.result();
         } else
             parse(m_string.left(m_pathEnd) + query + m_string.substring(m_queryEnd));
     }
@@ -1153,8 +1153,8 @@ void URL::setPath(const String& s)
         path = "/" + path;
 
     if (URLParser::enabled()) {
-        URLParser parser;
-        *this = parser.parse(makeString(m_string.left(m_portEnd), encodeWithURLEscapeSequences(path), m_string.substring(m_pathEnd)));
+        URLParser parser(makeString(m_string.left(m_portEnd), encodeWithURLEscapeSequences(path), m_string.substring(m_pathEnd)));
+        *this = parser.result();
     } else
         parse(m_string.left(m_portEnd) + encodeWithURLEscapeSequences(path) + m_string.substring(m_pathEnd));
 }

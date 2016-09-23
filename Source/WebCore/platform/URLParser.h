@@ -36,7 +36,8 @@ template<typename CharacterType> class CodePointIterator;
 
 class URLParser {
 public:
-    WEBCORE_EXPORT URL parse(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
+    WEBCORE_EXPORT URLParser(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
+    URL result() { return m_url; }
 
     WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
     WEBCORE_EXPORT static bool internalValuesConsistent(const URL&);
@@ -54,12 +55,19 @@ private:
     Vector<UChar> m_unicodeFragmentBuffer;
     bool m_urlIsSpecial { false };
     bool m_hostHasPercentOrNonASCII { false };
+    String m_inputString;
 
-    template<typename CharacterType> URL parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
+    template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
     template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool parseHostAndPort(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
-    template<typename CharacterType> URL failure(const CharacterType*, unsigned length);
+
+    void failure();
+    template<typename CharacterType> void incrementIteratorSkippingTabAndNewLine(CodePointIterator<CharacterType>&);
+    template<typename CharacterType> void syntaxError(const CodePointIterator<CharacterType>&);
+    template<typename CharacterType> bool isWindowsDriveLetter(CodePointIterator<CharacterType>);
+    template<typename CharacterType> bool shouldCopyFileURL(CodePointIterator<CharacterType>);
+    template<typename CharacterType> void checkWindowsDriveLetter(CodePointIterator<CharacterType>&, Vector<LChar>& asciiBuffer);
 
     enum class URLPart;
     void copyURLPartsUntil(const URL& base, URLPart);

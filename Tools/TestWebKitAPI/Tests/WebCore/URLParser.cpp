@@ -670,6 +670,9 @@ TEST_F(URLParserTest, DefaultPort)
     checkURLDifferences("http://host/`",
         {"http", "", "", "host", 0, "/%60", "", "", "http://host/%60"},
         {"http", "", "", "host", 0, "/`", "", "", "http://host/`"});
+    checkURLDifferences(wideString(L"http://host/path#💩\t💩"),
+        {"http", "", "", "host", 0, "/path", "", wideString(L"💩💩"), wideString(L"http://host/path#💩💩")},
+        {"http", "", "", "host", 0, "/path", "", "%F0%9F%92%A9%F0%9F%92%A9", "http://host/path#%F0%9F%92%A9%F0%9F%92%A9"});
 }
     
 static void shouldFail(const String& urlString)
@@ -687,6 +690,7 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("    ");
     shouldFail("  \a  ");
     shouldFail("");
+    shouldFail(String());
     shouldFail("http://127.0.0.1:abc");
     shouldFail("http://host:abc");
     shouldFail("http://a:@", "about:blank");
@@ -758,8 +762,8 @@ TEST_F(URLParserTest, AdditionalTests)
 
 static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts)
 {
-    URLParser parser;
-    auto url = parser.parse(urlString, { }, encoding);
+    URLParser parser(urlString, { }, encoding);
+    auto url = parser.result();
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
