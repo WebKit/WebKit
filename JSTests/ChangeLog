@@ -1,3 +1,21 @@
+2016-09-23  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Implement parsing of Async Functions
+        https://bugs.webkit.org/show_bug.cgi?id=161409
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/async-await-syntax.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testTopLevelAsyncAwaitSyntaxSloppyMode.testSyntax):
+        (testTopLevelAsyncAwaitSyntaxSloppyMode):
+        (testTopLevelAsyncAwaitSyntaxStrictMode):
+        (testTopLevelAsyncAwaitSyntaxStrictMode.testSyntax):
+        (testNestedAsyncAwaitSyntax.async):
+        (testNestedAsyncAwaitSyntax.foo):
+        (testTopLevelAsyncAwaitSyntaxSloppyMode.testSyntaxError):
+
 2016-09-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r206317.

@@ -1,3 +1,15 @@
+2016-09-23  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Implement parsing of Async Functions
+        https://bugs.webkit.org/show_bug.cgi?id=161409
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/build-jsc:
+        (cMakeArgsFromFeatures):
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2016-09-23  Alex Christensen  <achristensen@webkit.org>
 
         Refactor URLParser

@@ -33,13 +33,16 @@ use FindBin;
 use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
+use webkitperl::FeatureList qw(getFeatureOptionList);
 use POSIX;
 
+sub cMakeArgsFromFeatures();
 sub writeCongrats();
 
 prohibitUnknownPort();
 
 my $shouldRunStaticAnalyzer = 0;
+my $minimal = 0;
 my $coverageSupport = 0;
 my $showHelp = 0;
 my $ftlJIT = int(isAppleMacWebKit() && !willUseIOSSimulatorSDK() || isX86_64() && (isGtk() || isEfl() || isJSCOnly()));
@@ -49,6 +52,20 @@ my $makeArgs = "";
 my @cmakeArgs;
 my $copyLibraries = 1;
 my $startTime = time();
+
+my @features = getFeatureOptionList();
+
+# Initialize values from defaults
+foreach (@ARGV) {
+    if ($_ eq '--minimal') {
+        $minimal = 1;
+    }
+}
+
+# Initialize values from defaults
+foreach (@features) {
+    ${$_->{value}} = ($minimal ? 0 : $_->{default});
+}
 
 # Additional environment parameters
 push @ARGV, split(/ /, $ENV{'BUILD_JSC_ARGS'}) if ($ENV{'BUILD_JSC_ARGS'});
@@ -67,7 +84,7 @@ Usage: $programName [options] [options to pass to build system]
   --cmakeargs=<arguments>       One or more optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
 EOF
 
-GetOptions(
+my %options = (
     'analyze!' => \$shouldRunStaticAnalyzer,
     'coverage!' => \$coverageSupport,
     'help' => \$showHelp,
@@ -78,6 +95,16 @@ GetOptions(
     'makeargs=s' => \$makeArgs,
     'cmakeargs=s' => \@cmakeArgs
 );
+
+foreach (@features) {
+    if ($_->{javascript}) {
+        my $opt = sprintf("%-35s", "  --[no-]$_->{option}");
+        $usage .= "$opt $_->{desc} (default: $_->{default})\n";
+        $options{"$_->{option}!"} = $_->{value};
+    }
+}
+
+GetOptions(%options);
 
 if ($showHelp) {
    print STDERR $usage;
@@ -104,6 +131,8 @@ if (isCMakeBuild()) {
     push @cmakeArgs, $forceCLoop ? " -DENABLE_JIT=OFF" : " -DENABLE_JIT=ON";
     push @cmakeArgs, $ftlJIT ? " -DENABLE_FTL_JIT=ON" : " -DENABLE_FTL_JIT=OFF";
 
+    my @featureArgs = cMakeArgsFromFeatures();
+
     my $buildTarget = "";
     unless (isAnyWindows()) {
         # By default we build using all of the available CPUs
@@ -114,7 +143,7 @@ if (isCMakeBuild()) {
     }
 
     # This call only returns if nothing wrong happened
-    buildCMakeProjectOrExit(0, undef, $buildTarget, (cmakeBasedPortArguments(), @cmakeArgs));
+    buildCMakeProjectOrExit(0, undef, $buildTarget, (cmakeBasedPortArguments(), @featureArgs, @cmakeArgs));
     writeCongrats();
     exit exitStatus(0);
 }
@@ -122,6 +151,20 @@ if (isCMakeBuild()) {
 if (isAppleMacWebKit()) {
     push @options, ($forceCLoop ? "ENABLE_JIT=ENABLE_JIT=0" : "ENABLE_JIT=ENABLE_JIT");
     push @options, ($ftlJIT ? "ENABLE_FTL_JIT=ENABLE_FTL_JIT" : "ENABLE_FTL_JIT=ENABLE_FTL_JIT=0");
+
+    sub option($$$)
+    {
+        my ($feature, $isEnabled, $defaultValue) = @_;
+        return "" if $defaultValue == $isEnabled;
+        return $feature . "=" . ($isEnabled ? $feature : "");
+    }
+
+    foreach (@features) {
+        if ($_->{javascript}) {
+            my $option = option($_->{define}, ${$_->{value}}, $_->{default});
+            push @options, $option unless $option eq "";
+        }
+    }
 
     if ($copyLibraries) {
         my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory");
@@ -151,6 +194,22 @@ sub buildMyProject
     }
     exit exitStatus($result) if exitStatus($result);
     chdirWebKit();
+}
+
+sub cMakeArgsFromFeatures()
+{
+    my @args;
+    foreach (@features) {
+        my $featureName = $_->{define};
+        if ($featureName) {
+            my $isEnabled = ${$_->{value}};
+            if ($isEnabled != $_->{default}) {
+                my $featureEnabled = $isEnabled ? "ON" : "OFF";
+                push @args, "-D$featureName=$featureEnabled";
+            }
+        }
+    }
+    return @args;
 }
 
 sub writeCongrats()

@@ -3498,6 +3498,18 @@ RegisterID* YieldExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     return generator.emitMove(generator.finalDestination(dst), value.get());
 }
 
+// ------------------------------ AwaitExprNode --------------------------------
+
+RegisterID* AwaitExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> arg = generator.newTemporary();
+    generator.emitNode(arg.get(), argument());
+    RefPtr<RegisterID> value = generator.emitYield(arg.get());
+    if (dst == generator.ignoredResult())
+        return nullptr;
+    return generator.emitMove(generator.finalDestination(dst), value.get());
+}
+
 // ------------------------------ ClassDeclNode ---------------------------------
 
 void ClassDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

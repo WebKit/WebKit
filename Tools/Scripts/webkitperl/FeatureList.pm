@@ -51,6 +51,7 @@ BEGIN {
 my (
     $accelerated2DCanvasSupport,
     $allInOneBuild,
+    $asyncfunctionSyntax,
     $attachmentElementSupport,
     $batteryStatusSupport,
     $canvasPathSupport,
@@ -174,6 +175,10 @@ my @features = (
     { option => "allinone-build", desc => "Toggle all-in-one build",
       define => "ENABLE_ALLINONE_BUILD", default => isWindows(), value => \$allInOneBuild },
 
+    { option => "asyncfunction-syntax", desc => "Toggle ES2017 async functions support",
+      define => "ENABLE_ES2017_ASYNCFUNCTION_SYNTAX", default => 0, value => \$asyncfunctionSyntax,
+      javascript => 1 },
+
     { option => "attachment-element", desc => "Toggle Attachment Element support",
       define => "ENABLE_ATTACHMENT_ELEMENT", default => 0, value => \$attachmentElementSupport },
 
@@ -265,7 +270,8 @@ my @features = (
       define => "ENABLE_GAMEPAD", default => 0, value => \$gamepadSupport },
 
     { option => "generators", desc => "Toggle ES6 generators support",
-      define => "ENABLE_ES6_GENERATORS", default => 1, value => \$generatorsSupport },
+      define => "ENABLE_ES6_GENERATORS", default => 1, value => \$generatorsSupport,
+      javascript => 1 },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isIOSWebKit() || isGtk() || isEfl()), value => \$geolocationSupport },
@@ -343,7 +349,8 @@ my @features = (
       define => "ENABLE_MHTML", default => (isGtk() || isEfl()), value => \$mhtmlSupport },
 
     { option => "modules", desc => "Toggle ES6 modules support",
-      define => "ENABLE_ES6_MODULES", default => 0, value => \$modulesSupport },
+      define => "ENABLE_ES6_MODULES", default => 0, value => \$modulesSupport,
+      javascript => 1 },
 
     { option => "mouse-cursor-scale", desc => "Toggle Scaled mouse cursor support",
       define => "ENABLE_MOUSE_CURSOR_SCALE", default => isEfl(), value => \$mouseCursorScaleSupport },

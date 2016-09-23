@@ -64,10 +64,10 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserCommentMode commentMode, VariableEnvironment& parentScopeTDZVariables, DerivedContextType derivedContextType, RefPtr<SourceProvider>&& sourceOverride = nullptr)
+    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, VariableEnvironment& parentScopeTDZVariables, DerivedContextType derivedContextType, RefPtr<SourceProvider>&& sourceOverride = nullptr)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap))
-            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTFMove(sourceOverride), node, unlinkedFunctionKind, constructAbility, commentMode, parentScopeTDZVariables, derivedContextType);
+            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTFMove(sourceOverride), node, unlinkedFunctionKind, constructAbility, scriptMode, parentScopeTDZVariables, derivedContextType);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -128,7 +128,7 @@ public:
 
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
     ConstructAbility constructAbility() const { return static_cast<ConstructAbility>(m_constructAbility); }
-    JSParserCommentMode commentMode() const { return static_cast<JSParserCommentMode>(m_commentMode); }
+    JSParserScriptMode scriptMode() const { return static_cast<JSParserScriptMode>(m_scriptMode); }
     bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }
     const VariableEnvironment* parentScopeTDZVariables() const { return &m_parentScopeTDZVariables; }
     
@@ -142,7 +142,7 @@ public:
     void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
 
 private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserCommentMode, VariableEnvironment&,  JSC::DerivedContextType);
+    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserScriptMode, VariableEnvironment&,  JSC::DerivedContextType);
 
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
@@ -157,16 +157,16 @@ private:
     unsigned m_parameterCount;
     unsigned m_functionLength;
     CodeFeatures m_features;
+    SourceParseMode m_sourceParseMode;
     unsigned m_isInStrictContext : 1;
     unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructAbility: 1;
     unsigned m_constructorKind : 2;
     unsigned m_functionMode : 2; // FunctionMode
-    unsigned m_commentMode: 1; // JSParserCommentMode
+    unsigned m_scriptMode: 1; // JSParserScriptMode
     unsigned m_superBinding : 1;
     unsigned m_derivedContextType: 2;
-    unsigned m_sourceParseMode : 4; // SourceParseMode
 
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;

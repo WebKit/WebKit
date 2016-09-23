@@ -39,9 +39,9 @@ class SourceCodeFlags {
 public:
     SourceCodeFlags() = default;
 
-    SourceCodeFlags(SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserCommentMode commentMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
+    SourceCodeFlags(SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
         : m_flags(
-            (static_cast<unsigned>(commentMode) << 8) |
+            (static_cast<unsigned>(scriptMode) << 8) |
             (static_cast<unsigned>(isArrowFunctionContext) << 7) |
             (static_cast<unsigned>(evalContextType) << 6) |
             (static_cast<unsigned>(derivedContextType) << 4) |
@@ -67,10 +67,10 @@ public:
     {
     }
 
-    SourceCodeKey(const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserCommentMode commentMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
+    SourceCodeKey(const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext)
         : m_sourceCode(sourceCode)
         , m_name(name)
-        , m_flags(codeType, builtinMode, strictMode, commentMode, derivedContextType, evalContextType, isArrowFunctionContext)
+        , m_flags(codeType, builtinMode, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext)
         , m_hash(sourceCode.hash())
     {
     }

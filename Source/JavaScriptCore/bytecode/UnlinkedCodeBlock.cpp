@@ -65,7 +65,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_hasCapturedVariables(false)
     , m_isBuiltinFunction(info.isBuiltinFunction())
     , m_superBinding(static_cast<unsigned>(info.superBinding()))
-    , m_commentMode(static_cast<unsigned>(info.commentMode()))
+    , m_scriptMode(static_cast<unsigned>(info.scriptMode()))
     , m_isArrowFunctionContext(info.isArrowFunctionContext())
     , m_isClassContext(info.isClassContext())
     , m_wasCompiledWithDebuggingOpcodes(debuggerMode == DebuggerMode::DebuggerOn || Options::forceDebuggerBytecodeGeneration())

@@ -214,7 +214,7 @@ public:
 
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
-    JSParserCommentMode commentMode() const { return static_cast<JSParserCommentMode>(m_commentMode); }
+    JSParserScriptMode scriptMode() const { return static_cast<JSParserScriptMode>(m_scriptMode); }
 
     void shrinkToFit()
     {
@@ -419,7 +419,7 @@ private:
     unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_superBinding : 1;
-    unsigned m_commentMode: 1;
+    unsigned m_scriptMode: 1;
     unsigned m_isArrowFunctionContext : 1;
     unsigned m_isClassContext : 1;
     unsigned m_wasCompiledWithDebuggingOpcodes : 1;

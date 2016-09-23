@@ -83,7 +83,7 @@ public:
         ClauseListResult, CommaExpr, DestructuringAssignment,
         TemplateStringResult, TemplateStringListResult,
         TemplateExpressionListResult, TemplateExpr,
-        TaggedTemplateExpr, YieldExpr,
+        TaggedTemplateExpr, YieldExpr, AwaitExpr,
         ModuleNameResult,
         ImportSpecifierResult, ImportSpecifierListResult,
         ExportSpecifierResult, ExportSpecifierListResult
@@ -182,8 +182,10 @@ public:
     ExpressionType createEmptyLetExpression(const JSTokenLocation&, const Identifier&) { return AssignmentExpr; }
     ExpressionType createYield(const JSTokenLocation&) { return YieldExpr; }
     ExpressionType createYield(const JSTokenLocation&, ExpressionType, bool, int, int, int) { return YieldExpr; }
+    ExpressionType createAwait(const JSTokenLocation&, ExpressionType, int, int, int) { return AwaitExpr; }
     ClassExpression createClassExpr(const JSTokenLocation&, const ParserClassInfo<SyntaxChecker>&, VariableEnvironment&, ExpressionType, ExpressionType, PropertyList, PropertyList) { return ClassExpr; }
     ExpressionType createFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
+    ExpressionType createAsyncFunctionBody(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     int createFunctionMetadata(const JSTokenLocation&, const JSTokenLocation&, int, int, bool, int, int, int, ConstructorKind, SuperBinding, unsigned, int, SourceParseMode, bool, InnerArrowFunctionCodeFeatures = NoInnerArrowFunctionFeatures) { return FunctionBodyResult; }
     ExpressionType createArrowFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     ExpressionType createMethodDefinition(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }

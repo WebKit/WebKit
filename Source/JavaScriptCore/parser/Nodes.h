@@ -2008,6 +2008,18 @@ namespace JSC {
         bool m_delegate;
     };
 
+    class AwaitExprNode final : public ExpressionNode, public ThrowableExpressionData {
+    public:
+        AwaitExprNode(const JSTokenLocation&, ExpressionNode* argument);
+
+        ExpressionNode* argument() const { return m_argument; }
+
+    private:
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ExpressionNode* m_argument;
+    };
+
     class ClassExprNode final : public ExpressionNode, public VariableEnvironmentNode {
     public:
         using ParserArenaDeletable::operator new;

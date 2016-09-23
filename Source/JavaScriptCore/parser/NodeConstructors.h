@@ -938,6 +938,12 @@ namespace JSC {
     {
     }
 
+    inline AwaitExprNode::AwaitExprNode(const JSTokenLocation& location, ExpressionNode* argument)
+        : ExpressionNode(location)
+        , m_argument(argument)
+    {
+    }
+
     inline ClassDeclNode::ClassDeclNode(const JSTokenLocation& location, ExpressionNode* classDeclaration)
         : StatementNode(location)
         , m_classDeclaration(classDeclaration)

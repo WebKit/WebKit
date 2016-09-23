@@ -367,6 +367,14 @@ public:
         return node;
     }
 
+    AwaitExprNode* createAwait(const JSTokenLocation& location, ExpressionNode* argument, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
+    {
+        ASSERT(argument);
+        AwaitExprNode* node = new (m_parserArena) AwaitExprNode(location, argument);
+        setExceptionLocation(node, start, divot, end);
+        return node;
+    }
+
     ClassExprNode* createClassExpr(const JSTokenLocation& location, const ParserClassInfo<ASTBuilder>& classInfo, VariableEnvironment& classEnvironment, ExpressionNode* constructor,
         ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
     {
@@ -380,6 +388,17 @@ public:
             m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn));
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         return result;
+    }
+
+    ExpressionNode* createAsyncFunctionBody(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo, SourceParseMode parseMode)
+    {
+        if (parseMode == SourceParseMode::AsyncArrowFunctionBodyMode) {
+            SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.body->isArrowFunctionBodyExpression() ? functionInfo.endOffset - 1 : functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
+            FuncExprNode* result = new (m_parserArena) FuncExprNode(location, *functionInfo.name, functionInfo.body, source);
+            functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
+            return result;
+        }
+        return createFunctionExpr(location, functionInfo);
     }
 
     ExpressionNode* createMethodDefinition(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
