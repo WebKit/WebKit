@@ -193,13 +193,6 @@ JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const So
     return error;
 }
 
-
-bool hasErrorInfo(ExecState* exec, JSObject* error)
-{
-    return error->hasProperty(exec, Identifier::fromString(exec, linePropertyName))
-        || error->hasProperty(exec, Identifier::fromString(exec, sourceURLPropertyName));
-}
-
 JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState* exec, ThrowScope& scope, const char* constructorName)
 {
     return throwTypeError(exec, scope, makeString("calling ", constructorName, " constructor without new is invalid"));

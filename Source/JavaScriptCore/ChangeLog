@@ -1,5 +1,17 @@
 2016-09-22  Mark Lam  <mark.lam@apple.com>
 
+        Removed unused hasErrorInfo().
+        https://bugs.webkit.org/show_bug.cgi?id=162473
+
+        Reviewed by Saam Barati.
+
+        * JavaScriptCore.order:
+        * runtime/Error.cpp:
+        (JSC::hasErrorInfo): Deleted.
+        * runtime/Error.h:
+
+2016-09-22  Mark Lam  <mark.lam@apple.com>
+
         Array.prototype.join should do overflow checks on string joins.
         https://bugs.webkit.org/show_bug.cgi?id=162459
 
