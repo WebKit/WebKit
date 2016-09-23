@@ -89,7 +89,7 @@ Value LocationPath::evaluate() const
     // logical treatment of where you would expect the "root" to be.
     Node* context = evaluationContext.node.get();
     if (m_isAbsolute && !context->isDocumentNode())
-        context = context->rootNode();
+        context = &context->rootNode();
 
     NodeSet nodes;
     nodes.append(context);

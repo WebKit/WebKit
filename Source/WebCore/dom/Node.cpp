@@ -1163,16 +1163,31 @@ Element* Node::parentOrShadowHostElement() const
     return downcast<Element>(parent);
 }
 
-Node* Node::rootNode() const
+Node& Node::rootNode() const
 {
     if (isInTreeScope())
-        return &treeScope().rootNode();
+        return treeScope().rootNode();
 
     Node* node = const_cast<Node*>(this);
     Node* highest = node;
     for (; node; node = node->parentNode())
         highest = node;
-    return highest;
+    return *highest;
+}
+
+// https://dom.spec.whatwg.org/#concept-shadow-including-root
+Node& Node::shadowIncludingRoot() const
+{
+    auto& root = rootNode();
+    if (!is<ShadowRoot>(root))
+        return root;
+    auto* host = downcast<ShadowRoot>(root).host();
+    return host ? host->shadowIncludingRoot() : root;
+}
+
+Node& Node::getRootNode(const GetRootNodeOptions& options) const
+{
+    return options.composed ? shadowIncludingRoot() : rootNode();
 }
 
 Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPoint)

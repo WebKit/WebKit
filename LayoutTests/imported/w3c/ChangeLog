@@ -1,5 +1,17 @@
 2016-09-22  Chris Dumez  <cdumez@apple.com>
 
+        [ShadowDOM] Add support for Node.getRootNode(options)
+        https://bugs.webkit.org/show_bug.cgi?id=162457
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing W3C DOM tests now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/nodes/rootNode-expected.txt:
+
+2016-09-22  Chris Dumez  <cdumez@apple.com>
+
         Fix serialization of HTML void elements when they have children
         https://bugs.webkit.org/show_bug.cgi?id=162418
 

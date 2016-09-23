@@ -290,7 +290,7 @@ RelatedNodeRetargeter::RelatedNodeRetargeter(Node& relatedNode, Node& target)
     if (lowestCommonAncestorIsDocumentScope && !relatedNode.inDocument() && !target.inDocument()) {
         Node& targetAncestorInDocumentScope = i ? *downcast<ShadowRoot>(m_ancestorTreeScopes[i - 1]->rootNode()).shadowHost() : target;
         Node& relatedNodeAncestorInDocumentScope = j ? *downcast<ShadowRoot>(targetTreeScopeAncestors[j - 1]->rootNode()).shadowHost() : relatedNode;
-        if (targetAncestorInDocumentScope.rootNode() != relatedNodeAncestorInDocumentScope.rootNode()) {
+        if (&targetAncestorInDocumentScope.rootNode() != &relatedNodeAncestorInDocumentScope.rootNode()) {
             m_hasDifferentTreeRoot = true;
             m_retargetedRelatedNode = moveOutOfAllShadowRoots(relatedNode);
             return;
@@ -365,7 +365,7 @@ void RelatedNodeRetargeter::checkConsistency(Node& currentTarget)
     // http://w3c.github.io/webcomponents/spec/shadow/#dfn-retargeting-algorithm
     Node& base = currentTarget;
     for (Node* targetAncestor = &m_relatedNode; targetAncestor; targetAncestor = targetAncestor->parentOrShadowHostNode()) {
-        if (targetAncestor->rootNode()->containsIncludingShadowDOM(&base)) {
+        if (targetAncestor->rootNode().containsIncludingShadowDOM(&base)) {
             ASSERT(m_retargetedRelatedNode == targetAncestor);
             return;
         }

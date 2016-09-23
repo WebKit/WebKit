@@ -192,7 +192,7 @@ PASS Node interface: attribute nodeName
 PASS Node interface: attribute baseURI 
 PASS Node interface: attribute isConnected 
 PASS Node interface: attribute ownerDocument 
-FAIL Node interface: operation getRootNode(GetRootNodeOptions) assert_own_property: interface prototype object missing non-static operation expected property "getRootNode" missing
+PASS Node interface: operation getRootNode(GetRootNodeOptions) 
 PASS Node interface: attribute parentNode 
 PASS Node interface: attribute parentElement 
 PASS Node interface: operation hasChildNodes() 
@@ -349,8 +349,8 @@ PASS Node interface: new Document() must inherit property "nodeName" with the pr
 PASS Node interface: new Document() must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: new Document() must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: new Document() must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: new Document() must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on new Document() with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: new Document() must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on new Document() with too few arguments must throw TypeError 
 PASS Node interface: new Document() must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: new Document() must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: new Document() must inherit property "hasChildNodes" with the proper type (20) 
@@ -481,8 +481,8 @@ PASS Node interface: xmlDoc must inherit property "nodeName" with the proper typ
 PASS Node interface: xmlDoc must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: xmlDoc must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: xmlDoc must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: xmlDoc must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on xmlDoc with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: xmlDoc must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: xmlDoc must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: xmlDoc must inherit property "hasChildNodes" with the proper type (20) 
@@ -589,8 +589,8 @@ PASS Node interface: document.doctype must inherit property "nodeName" with the 
 PASS Node interface: document.doctype must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.doctype must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.doctype must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: document.doctype must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.doctype with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.doctype must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: document.doctype must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: document.doctype must inherit property "hasChildNodes" with the proper type (20) 
@@ -685,8 +685,8 @@ PASS Node interface: document.createDocumentFragment() must inherit property "no
 PASS Node interface: document.createDocumentFragment() must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.createDocumentFragment() must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createDocumentFragment() must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: document.createDocumentFragment() must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.createDocumentFragment() with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.createDocumentFragment() must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: document.createDocumentFragment() must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: document.createDocumentFragment() must inherit property "hasChildNodes" with the proper type (20) 
@@ -892,8 +892,8 @@ PASS Node interface: element must inherit property "nodeName" with the proper ty
 PASS Node interface: element must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: element must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: element must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: element must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on element with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: element must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: element must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: element must inherit property "hasChildNodes" with the proper type (20) 
@@ -992,8 +992,8 @@ PASS Node interface: document.querySelector("[id]").attributes[0] must inherit p
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: document.querySelector("[id]").attributes[0] must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on document.querySelector("[id]").attributes[0] with too few arguments must throw TypeError 
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: document.querySelector("[id]").attributes[0] must inherit property "hasChildNodes" with the proper type (20) 
@@ -1111,8 +1111,8 @@ PASS Node interface: document.createTextNode("abc") must inherit property "nodeN
 PASS Node interface: document.createTextNode("abc") must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.createTextNode("abc") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createTextNode("abc") must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: document.createTextNode("abc") must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.createTextNode("abc") with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.createTextNode("abc") must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: document.createTextNode("abc") must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: document.createTextNode("abc") must inherit property "hasChildNodes" with the proper type (20) 
@@ -1212,8 +1212,8 @@ PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inher
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasChildNodes" with the proper type (20) 
@@ -1306,8 +1306,8 @@ PASS Node interface: document.createComment("abc") must inherit property "nodeNa
 PASS Node interface: document.createComment("abc") must inherit property "baseURI" with the proper type (14) 
 PASS Node interface: document.createComment("abc") must inherit property "isConnected" with the proper type (15) 
 PASS Node interface: document.createComment("abc") must inherit property "ownerDocument" with the proper type (16) 
-FAIL Node interface: document.createComment("abc") must inherit property "getRootNode" with the proper type (17) assert_inherits: property "getRootNode" not found in prototype chain
-FAIL Node interface: calling getRootNode(GetRootNodeOptions) on document.createComment("abc") with too few arguments must throw TypeError assert_inherits: property "getRootNode" not found in prototype chain
+PASS Node interface: document.createComment("abc") must inherit property "getRootNode" with the proper type (17) 
+PASS Node interface: calling getRootNode(GetRootNodeOptions) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "parentNode" with the proper type (18) 
 PASS Node interface: document.createComment("abc") must inherit property "parentElement" with the proper type (19) 
 PASS Node interface: document.createComment("abc") must inherit property "hasChildNodes" with the proper type (20) 

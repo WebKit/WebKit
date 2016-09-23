@@ -273,7 +273,13 @@ public:
     ContainerNode* parentInComposedTree() const;
     Element* parentOrShadowHostElement() const;
     void setParentNode(ContainerNode*);
-    Node* rootNode() const;
+    Node& rootNode() const;
+    Node& shadowIncludingRoot() const;
+
+    struct GetRootNodeOptions {
+        bool composed;
+    };
+    Node& getRootNode(const GetRootNodeOptions&) const;
 
     // Use when it's guaranteed to that shadowHost is null.
     ContainerNode* parentNodeGuaranteedHostFree() const;

@@ -1,6 +1,6 @@
 
-FAIL getRootNode() must return the context object when it does not have any parent element.getRootNode is not a function. (In 'element.getRootNode()', 'element.getRootNode' is undefined)
-FAIL getRootNode() must return the parent node of the context object when the context object has a single ancestor not in a document element.getRootNode is not a function. (In 'element.getRootNode()', 'element.getRootNode' is undefined)
-FAIL getRootNode() must return the document when a node is in document element.getRootNode is not a function. (In 'element.getRootNode()', 'element.getRootNode' is undefined)
-FAIL getRootNode() must return a document fragment when a node is in the fragment element.getRootNode is not a function. (In 'element.getRootNode()', 'element.getRootNode' is undefined)
+PASS getRootNode() must return the context object when it does not have any parent 
+PASS getRootNode() must return the parent node of the context object when the context object has a single ancestor not in a document 
+PASS getRootNode() must return the document when a node is in document 
+PASS getRootNode() must return a document fragment when a node is in the fragment 
 
