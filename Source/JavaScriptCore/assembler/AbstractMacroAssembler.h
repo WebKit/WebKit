@@ -35,8 +35,6 @@
 #include <wtf/SharedTask.h>
 #include <wtf/WeakRandom.h>
 
-#if ENABLE(ASSEMBLER)
-
 namespace JSC {
 
 inline bool isARMv7IDIVSupported()
@@ -94,6 +92,8 @@ inline bool optimizeForX86_64()
 {
     return isX86_64() && Options::useArchitectureSpecificOptimizations();
 }
+
+#if ENABLE(ASSEMBLER)
 
 class AllowMacroScratchRegisterUsage;
 class DisallowMacroScratchRegisterUsage;
@@ -1165,8 +1165,8 @@ AbstractMacroAssembler<AssemblerType, MacroAssemblerType>::Address::indexedBy(
     return BaseIndex(base, index, scale, offset);
 }
 
-} // namespace JSC
-
 #endif // ENABLE(ASSEMBLER)
+
+} // namespace JSC
 
 #endif // AbstractMacroAssembler_h

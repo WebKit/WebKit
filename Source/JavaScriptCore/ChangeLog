@@ -1,3 +1,10 @@
+2016-09-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix cloop.
+
+        * assembler/AbstractMacroAssembler.h:
+        * heap/SlotVisitor.cpp:
+
 2016-09-22  Filip Pizlo  <fpizlo@apple.com>
 
         Need a store-load fence between setting cell state and visiting the object in SlotVisitor
