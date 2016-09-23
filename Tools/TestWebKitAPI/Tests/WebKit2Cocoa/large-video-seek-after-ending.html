@@ -6,7 +6,7 @@
             document.querySelector("#test-video").currentTime = 0;
             // The media controls should be updated on the next runloop.
             setTimeout(function() {
-                window.webkit.messageHandlers.playingHandler.postMessage("ended");
+                window.webkit.messageHandlers.testHandler.postMessage("ended");
             }, 0);
         }
 

@@ -6100,12 +6100,12 @@ void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
 
 #if PLATFORM(COCOA)
 
-void WebPageProxy::insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
+void WebPageProxy::insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup, EditingRangeIsRelativeTo editingRangeIsRelativeTo, bool suppressSelectionUpdate)
 {
     if (!isValid())
         return;
 
-    process().send(Messages::WebPage::InsertTextAsync(text, replacementRange, registerUndoGroup, static_cast<uint32_t>(editingRangeIsRelativeTo)), m_pageID);
+    process().send(Messages::WebPage::InsertTextAsync(text, replacementRange, registerUndoGroup, static_cast<uint32_t>(editingRangeIsRelativeTo), suppressSelectionUpdate), m_pageID);
 }
 
 void WebPageProxy::getMarkedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)> callbackFunction)

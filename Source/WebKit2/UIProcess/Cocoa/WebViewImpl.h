@@ -84,6 +84,8 @@ OBJC_CLASS _WKThumbnailView;
 @optional
 - (void)_web_didAddMediaControlsManager:(id)controlsManager;
 - (void)_web_didRemoveMediaControlsManager;
+- (void)_didHandleAcceptedCandidate;
+- (void)_didUpdateCandidateListVisibility:(BOOL)visible;
 
 @end
 
@@ -478,6 +480,7 @@ public:
     void rightMouseUp(NSEvent *);
 
     void updateWebViewImplAdditions();
+    void forceRequestCandidatesForTesting();
     bool shouldRequestCandidates() const;
     void showCandidates(NSArray *candidates, NSString *, NSRect rectOfTypedString, NSRange selectedRange, NSView *, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate));
     void webViewImplAdditionsWillDestroyView();
@@ -649,6 +652,7 @@ private:
     bool m_isHandlingAcceptedCandidate { false };
     bool m_requiresUserActionForEditingControlsManager { false };
     bool m_editableElementIsFocused { false };
+    bool m_isTextInsertionReplacingSoftSpace { false };
 };
     
 } // namespace WebKit

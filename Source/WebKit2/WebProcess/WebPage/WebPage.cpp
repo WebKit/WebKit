@@ -4577,14 +4577,16 @@ bool WebPage::shouldUseCustomContentProviderForResponse(const ResourceResponse& 
 
 #if PLATFORM(COCOA)
 
-void WebPage::insertTextAsync(const String& text, const EditingRange& replacementEditingRange, bool registerUndoGroup, uint32_t editingRangeIsRelativeTo)
+void WebPage::insertTextAsync(const String& text, const EditingRange& replacementEditingRange, bool registerUndoGroup, uint32_t editingRangeIsRelativeTo, bool suppressSelectionUpdate)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (replacementEditingRange.location != notFound) {
         RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange, static_cast<EditingRangeIsRelativeTo>(editingRangeIsRelativeTo));
-        if (replacementRange)
+        if (replacementRange) {
+            TemporaryChange<bool> isSelectingTextWhileInsertingAsynchronously(m_isSelectingTextWhileInsertingAsynchronously, suppressSelectionUpdate);
             frame.selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
+        }
     }
     
     if (registerUndoGroup)
@@ -4807,6 +4809,11 @@ void WebPage::didChangeSelection()
     // Specifically, if there is a caret selection, it will change to a range selection of the word around the caret. And
     // then it will change back.
     if (m_isGettingDictionaryPopupInfo)
+        return;
+
+    // Similarly, we don't want to propagate changes to the web process when inserting text asynchronously, since we will
+    // end up with a range selection very briefly right before inserting the text.
+    if (m_isSelectingTextWhileInsertingAsynchronously)
         return;
 
     Frame& frame = m_page->focusController().focusedOrMainFrame();

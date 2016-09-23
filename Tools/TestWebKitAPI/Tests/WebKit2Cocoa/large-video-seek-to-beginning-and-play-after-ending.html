@@ -8,7 +8,7 @@
             video.play();
             // The media controls should be updated on the next runloop.
             setTimeout(function() {
-                window.webkit.messageHandlers.playingHandler.postMessage("replaying");
+                window.webkit.messageHandlers.testHandler.postMessage("replaying");
             }, 0);
         }
 

@@ -270,6 +270,10 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_requestControlledElementID WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_handleControlledElementIDResponse:(NSString *)identifier WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_handleAcceptedCandidate:(NSTextCheckingResult *)candidate WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_didHandleAcceptedCandidate WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_forceRequestCandidates WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_didUpdateCandidateListVisibility:(BOOL)visible WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

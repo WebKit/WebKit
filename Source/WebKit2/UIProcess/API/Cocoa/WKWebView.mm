@@ -4552,6 +4552,28 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     // Overridden by subclasses.
 }
+
+- (void)_handleAcceptedCandidate:(NSTextCheckingResult *)candidate
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    _impl->handleAcceptedCandidate(candidate);
+#endif
+}
+
+- (void)_didHandleAcceptedCandidate
+{
+    // Overridden by subclasses.
+}
+
+- (void)_didUpdateCandidateListVisibility:(BOOL)visible
+{
+    // Overridden by subclasses.
+}
+
+- (void)_forceRequestCandidates
+{
+    _impl->forceRequestCandidatesForTesting();
+}
 #endif // PLATFORM(MAC)
 
 // Execute the supplied block after the next transaction from the WebProcess.

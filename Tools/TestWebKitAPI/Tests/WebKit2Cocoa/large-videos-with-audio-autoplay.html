@@ -4,7 +4,7 @@
     function beganAutoplaying() {
         setTimeout(function() {
             try {
-                window.webkit.messageHandlers.playingHandler.postMessage("autoplayed");
+                window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
             } catch(e) {
             }
         }, 0)

@@ -14,7 +14,7 @@
             video.play();
             setTimeout(function() {
                 try {
-                    window.webkit.messageHandlers.playingHandler.postMessage("changed");
+                    window.webkit.messageHandlers.testHandler.postMessage("changed");
                 } catch(e) {
                 }
             });

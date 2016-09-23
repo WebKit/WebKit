@@ -1,0 +1,192 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#if WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+
+#import "PlatformUtilities.h"
+#import "TestWKWebViewMac.h"
+
+#import <WebKit/WebKitPrivate.h>
+
+static NSString *GetInputValueJSExpression = @"document.querySelector('input').value";
+static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
+
+@interface TestCandidate : NSTextCheckingResult
+@end
+
+@implementation TestCandidate {
+    NSString *_string;
+    NSRange _range;
+}
+
+- (instancetype)initWithReplacementString:(NSString *)string inRange:(NSRange)range
+{
+    if (self = [super init]) {
+        _string = string;
+        _range = range;
+    }
+    return self;
+}
+
+- (NSString *)replacementString
+{
+    return _string;
+}
+
+- (NSTextCheckingType)resultType
+{
+    return NSTextCheckingTypeReplacement;
+}
+
+- (NSRange)range
+{
+    return _range;
+}
+
+@end
+
+@interface CandidateTestWebView : TestWKWebView
+@property (nonatomic, readonly, getter=isCandidateListVisible) BOOL candidateListVisible;
+@end
+
+@implementation CandidateTestWebView {
+    bool _isDoneWaitingForCandidate;
+    bool _isListeningForCandidateListVisibilityChanges;
+    NSUInteger _candidateListVisibilityChangeCount;
+}
+
+- (void)insertCandidatesAndWaitForResponse:(NSString *)replacementString range:(NSRange)range
+{
+    _isDoneWaitingForCandidate = false;
+    [self _handleAcceptedCandidate:[[TestCandidate alloc] initWithReplacementString:replacementString inRange:range]];
+    TestWebKitAPI::Util::run(&_isDoneWaitingForCandidate);
+}
+
+- (void)_didHandleAcceptedCandidate
+{
+    _isDoneWaitingForCandidate = true;
+}
+
+- (void)expectCandidateListVisibilityUpdates:(NSUInteger)expectedUpdateCount whenPerformingActions:(dispatch_block_t)actions
+{
+    _candidateListVisibilityChangeCount = 0;
+    _isListeningForCandidateListVisibilityChanges = YES;
+
+    actions();
+
+    _isListeningForCandidateListVisibilityChanges = NO;
+    EXPECT_EQ(expectedUpdateCount, _candidateListVisibilityChangeCount);
+}
+
+- (void)_didUpdateCandidateListVisibility:(BOOL)visible
+{
+    if (_candidateListVisible == visible)
+        return;
+
+    _candidateListVisible = visible;
+    if (_isListeningForCandidateListVisibilityChanges)
+        _candidateListVisibilityChangeCount++;
+}
+
+@end
+
+TEST(WKWebViewCandidateTests, SoftSpaceReplacementAfterCandidateInsertionWithoutReplacement)
+{
+    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+
+    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"input-field-in-scrollable-document" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [wkWebView loadRequest:[NSURLRequest requestWithURL:contentURL]];
+
+    [wkWebView waitForMessage:@"focused"];
+    [wkWebView _forceRequestCandidates];
+    [wkWebView insertCandidatesAndWaitForResponse:@"apple " range:NSMakeRange(0, 0)];
+
+    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"apple "]);
+
+    [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
+    {
+        [wkWebView typeCharacter:' '];
+        [wkWebView waitForMessage:@"input"];
+    }];
+
+    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"apple "]);
+    EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
+}
+
+TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpace)
+{
+    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+
+    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"input-field-in-scrollable-document" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [wkWebView loadRequest:[NSURLRequest requestWithURL:contentURL]];
+
+    [wkWebView waitForMessage:@"focused"];
+    [wkWebView _forceRequestCandidates];
+    [wkWebView insertCandidatesAndWaitForResponse:@"foo " range:NSMakeRange(0, 0)];
+
+    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"foo "]);
+
+    [wkWebView typeCharacter:'a'];
+    [wkWebView waitForMessage:@"input"];
+
+    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"foo a"]);
+}
+
+TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
+{
+    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+
+    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"input-field-in-scrollable-document" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [wkWebView loadRequest:[NSURLRequest requestWithURL:contentURL]];
+
+    [wkWebView waitForMessage:@"focused"];
+    [wkWebView _forceRequestCandidates];
+
+    NSString *initialValue = @"hel";
+    for (uint64_t i = 0; i < initialValue.length; ++i) {
+        [wkWebView typeCharacter:[initialValue characterAtIndex:i]];
+        [wkWebView waitForMessage:@"input"];
+    }
+
+    [wkWebView insertCandidatesAndWaitForResponse:@"hello " range:NSMakeRange(0, 3)];
+    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello "]);
+
+    [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
+    {
+        [wkWebView typeCharacter:' '];
+        [wkWebView waitForMessage:@"input"];
+        EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello "]);
+        EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
+
+        [wkWebView typeCharacter:' '];
+        [wkWebView waitForMessage:@"input"];
+        EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello  "]);
+        EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
+    }];
+}
+
+#endif /* WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 */

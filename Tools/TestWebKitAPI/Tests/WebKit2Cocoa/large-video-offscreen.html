@@ -16,7 +16,7 @@
             document.querySelector("video").classList.add("offscreen");
             setTimeout(function() {
                 try {
-                    window.webkit.messageHandlers.playingHandler.postMessage("moved");
+                    window.webkit.messageHandlers.testHandler.postMessage("moved");
                 } catch(e) {
                 }
             }, 0);

@@ -12,7 +12,7 @@
             video.play();
             setTimeout(function() {
                 try {
-                    window.webkit.messageHandlers.playingHandler.postMessage("changed");
+                    window.webkit.messageHandlers.testHandler.postMessage("changed");
                 } catch(e) {
                 }
             });
@@ -21,7 +21,7 @@
         function handlePlaying() {
             setTimeout(function() {
                 try {
-                    window.webkit.messageHandlers.playingHandler.postMessage("autoplayed");
+                    window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
                 } catch(e) {
                 }
             }, 0);

@@ -14,7 +14,7 @@
     function playing() {
         window.clearTimeout(timeout);
         try {
-            window.webkit.messageHandlers.playingHandler.postMessage('playing');
+            window.webkit.messageHandlers.testHandler.postMessage('playing');
         } catch(e) {
             window.location = 'callback:playing';
         }
@@ -22,7 +22,7 @@
 
     function notPlaying() {
         try {
-            window.webkit.messageHandlers.playingHandler.postMessage('not playing');
+            window.webkit.messageHandlers.testHandler.postMessage('not playing');
         } catch(e) { }
     }
    </script>

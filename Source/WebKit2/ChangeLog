@@ -1,3 +1,72 @@
+2016-09-22  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r206033. rdar://problem/28086237
+
+    2016-09-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Inserting a space after inserting an accepted candidate scrolls the document and causes a flicker
+            https://bugs.webkit.org/show_bug.cgi?id=162009
+            <rdar://problem/28086237>
+
+            Reviewed by Tim Horton.
+
+            After inserting a text candidate, if the candidate ended with a soft space, the next space we insert should just
+            replace the soft space. This currently works because we leave the text insertion out of the list of
+            KeypressCommands sent to the web process and instead replace the soft space via WebPage::InsertTextAsync.
+            However, this means when the web process handles this keydown event, the current editor will not handle it,
+            since the list of key commands is empty despite the text and unmodified text being non-empty.
+
+            To fix this, when sending keydown or keyup events where we replace a soft space, we set the key event's text to
+            an empty string instead of a space. This allows us to return early in EventHandler::keyEvent and avoid the
+            codepath that tries to insert text into the current editor and (in the case of inserting a ' ') scrolls the
+            document if necessary. Since we've already handled text insertion via WebPage::InsertTextAsync, there is no need
+            to also dispatch the keypress to the editor.
+
+            Additionally, this patch addresses flickering in the candidates UI due to the fact that we're asynchronously
+            replacing the last soft space. During this operation, we select the range of the soft space and then insert the
+            new text. This causes a momentary range selection which the web process notifies the UI process about, prompting
+            us to hide the candidates list. To address this, we suppress the EditorStateChanged message fired from the web
+            process to the UI process while we're selecting the original range to replace.
+
+            This patch adds 3 new WebKit API tests.
+
+            * Shared/NativeWebKeyboardEvent.h:
+            * Shared/mac/NativeWebKeyboardEventMac.mm:
+            (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+            * Shared/mac/WebEventFactory.h:
+            * Shared/mac/WebEventFactory.mm:
+            (WebKit::textFromEvent):
+            (WebKit::unmodifiedTextFromEvent):
+            (WebKit::WebEventFactory::createWebKeyboardEvent):
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _handleAcceptedCandidate:]):
+            (-[WKWebView _didHandleAcceptedCandidate]):
+            (-[WKWebView _didUpdateCandidateListVisibility:]):
+            (-[WKWebView _forceRequestCandidates]):
+            (-[WKWebView _handleControlledElementIDResponse:]): Deleted.
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _didHandleAcceptedCandidate]):
+            (-[WKView _didUpdateCandidateListVisibility:]):
+            * UIProcess/Cocoa/WebViewImpl.h:
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::forceRequestCandidatesForTesting):
+            (WebKit::WebViewImpl::becomeFirstResponder):
+            (WebKit::WebViewImpl::didHandleAcceptedCandidate):
+            (WebKit::WebViewImpl::insertText):
+            (WebKit::WebViewImpl::performKeyEquivalent):
+            (WebKit::WebViewImpl::keyUp):
+            (WebKit::WebViewImpl::keyDown):
+            (WebKit::WebViewImpl::flagsChanged):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::insertTextAsync):
+            * UIProcess/WebPageProxy.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::insertTextAsync):
+            (WebKit::WebPage::didChangeSelection):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+
 2016-09-16  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r206006. rdar://problem/27991573

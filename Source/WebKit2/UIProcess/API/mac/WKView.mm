@@ -969,6 +969,14 @@ Some other editing-related methods still unimplemented:
     [self _gestureEventWasNotHandledByWebCore:event];
 }
 
+- (void)_didHandleAcceptedCandidate
+{
+}
+
+- (void)_didUpdateCandidateListVisibility:(BOOL)visible
+{
+}
+
 @end
 
 @implementation WKView (Private)

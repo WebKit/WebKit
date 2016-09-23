@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "NativeWebKeyboardEvent.h"
+#ifndef TestWKWebViewMac_h
+#define TestWKWebViewMac_h
 
-#if USE(APPKIT)
+#import <WebKit/WebKit.h>
 
-#import "WebEventFactory.h"
-#import <WebCore/KeyboardEvent.h>
+#if WK_API_ENABLED && PLATFORM(MAC)
 
-using namespace WebCore;
+@interface TestMessageHandler : NSObject <WKScriptMessageHandler>
+- (instancetype)initWithMessage:(NSString *)message handler:(dispatch_block_t)handler;
+@end
 
-namespace WebKit {
+@interface TestWKWebView : WKWebView
+- (void)mouseDownAtPoint:(NSPoint)point;
+- (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
+- (void)loadTestPageNamed:(NSString *)pageName;
+- (void)typeCharacter:(char)character;
+- (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
+- (void)waitForMessage:(NSString *)message;
+- (void)performAfterLoading:(dispatch_block_t)actions;
+@end
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<KeypressCommand>& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, handledByInputMethod, replacesSoftSpace, commands))
-    , m_nativeEvent(event)
-{
-}
+#endif /* WK_API_ENABLED && PLATFORM(MAC) */
 
-} // namespace WebKit
-
-#endif // USE(APPKIT)
+#endif /* TestWKWebViewMac_h */

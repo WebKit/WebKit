@@ -1,3 +1,77 @@
+2016-09-22  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r206033. rdar://problem/28086237
+
+    2016-09-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Inserting a space after inserting an accepted candidate scrolls the document and causes a flicker
+            https://bugs.webkit.org/show_bug.cgi?id=162009
+            <rdar://problem/28086237>
+
+            Reviewed by Tim Horton.
+
+            Adds 3 new text editing API tests covering candidate insertion, as well as support for testing candidates in
+            WKWebViews. Refactors common WKWebView helpers across both VideoControlsManager tests and the new
+            WKWebViewCandidateTests into a new utility class, TestWKWebView in TestWKWebView.mm, which is capable of
+            simulating mouse and keyboard events as well as waiting for JavaScript messages sent from the web process and
+            performing actions in response.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit/ios/audio-only.html:
+            * TestWebKitAPI/Tests/WebKit/ios/video-with-audio.html:
+            * TestWebKitAPI/Tests/WebKit/ios/video-without-audio.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+            (TestWebKitAPI::TEST):
+            (-[MessageHandler initWithMessage:handler:]): Deleted.
+            (-[MessageHandler userContentController:didReceiveScriptMessage:]): Deleted.
+            (-[VideoControlsManagerTestWebView mouseDownAtPoint:]): Deleted.
+            (-[VideoControlsManagerTestWebView performAfterLoading:]): Deleted.
+            (-[VideoControlsManagerTestWebView callJavascriptFunction:]): Deleted.
+            (-[VideoControlsManagerTestWebView loadTestPageNamed:]): Deleted.
+            (-[VideoControlsManagerTestWebView performAfterReceivingMessage:action:]): Deleted.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewCandidateTests.mm: Added.
+            (-[TestCandidate initWithReplacementString:inRange:]):
+            (-[TestCandidate replacementString]):
+            (-[TestCandidate resultType]):
+            (-[TestCandidate range]):
+            (-[CandidateTestWebView insertCandidatesAndWaitForResponse:range:]):
+            (-[CandidateTestWebView _didHandleAcceptedCandidate]):
+            (-[CandidateTestWebView expectCandidateListVisibilityUpdates:whenPerformingActions:]):
+            (-[CandidateTestWebView _didUpdateCandidateListVisibility:]):
+            (TEST):
+            * TestWebKitAPI/Tests/WebKit2Cocoa/autoplaying-video-with-audio.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/change-video-source-on-click.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/change-video-source-on-end.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/full-size-autoplaying-video-with-audio.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/input-field-in-scrollable-document.html: Added.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-hides-controls-after-seek-to-end.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-mutes-onplaying.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-offscreen.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-playing-scroll-away.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-seek-after-ending.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-seek-to-beginning-and-play-after-ending.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-with-audio.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-without-audio.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-autoplaying-click-to-pause.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-autoplaying-scroll-to-video.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-paused-video-hides-controls.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-playing-muted-video-hides-controls.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-playing-video-keeps-controls.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-videos-with-audio-autoplay.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/skinny-autoplaying-video-with-audio.html:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/wide-autoplaying-video-with-audio.html:
+            * TestWebKitAPI/mac/TestWKWebViewMac.h: Added.
+            * TestWebKitAPI/mac/TestWKWebViewMac.mm: Added.
+            (-[TestMessageHandler initWithMessage:handler:]):
+            (-[TestMessageHandler userContentController:didReceiveScriptMessage:]):
+            (-[TestWKWebView mouseDownAtPoint:]):
+            (-[TestWKWebView performAfterReceivingMessage:action:]):
+            (-[TestWKWebView loadTestPageNamed:]):
+            (-[TestWKWebView typeCharacter:]):
+            (-[TestWKWebView stringByEvaluatingJavaScript:]):
+            (-[TestWKWebView waitForMessage:]):
+            (-[TestWKWebView performAfterLoading:]):
+
 2016-09-16  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204916. rdar://problem/27991573

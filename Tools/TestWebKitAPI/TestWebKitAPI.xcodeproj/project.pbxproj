@@ -75,6 +75,9 @@
 		2EFF06C31D88621E0004BB30 /* large-video-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C21D8862120004BB30 /* large-video-offscreen.html */; };
 		2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */; };
 		2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */; };
+		2EFF06CD1D8A429A0004BB30 /* input-field-in-scrollable-document.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06CC1D8A42910004BB30 /* input-field-in-scrollable-document.html */; };
+		2EFF06D41D8AEDBB0004BB30 /* TestWKWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D31D8AEDBB0004BB30 /* TestWKWebViewMac.mm */; };
+		2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
@@ -575,6 +578,7 @@
 				7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */,
 				7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */,
 				7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */,
+				2EFF06CD1D8A429A0004BB30 /* input-field-in-scrollable-document.html in Copy Resources */,
 				2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */,
 				2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */,
 				2EFF06C31D88621E0004BB30 /* large-video-offscreen.html in Copy Resources */,
@@ -761,6 +765,10 @@
 		2EFF06C21D8862120004BB30 /* large-video-offscreen.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-offscreen.html"; sourceTree = "<group>"; };
 		2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "change-video-source-on-click.html"; sourceTree = "<group>"; };
 		2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "change-video-source-on-end.html"; sourceTree = "<group>"; };
+		2EFF06CC1D8A42910004BB30 /* input-field-in-scrollable-document.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "input-field-in-scrollable-document.html"; sourceTree = "<group>"; };
+		2EFF06D21D8AEDBB0004BB30 /* TestWKWebViewMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWKWebViewMac.h; sourceTree = "<group>"; };
+		2EFF06D31D8AEDBB0004BB30 /* TestWKWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestWKWebViewMac.mm; sourceTree = "<group>"; };
+		2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCandidateTests.mm; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
@@ -1320,6 +1328,7 @@
 				93E943F11CD3E87E00AC08C2 /* VideoControlsManager.mm */,
 				2D00065D1C1F58940088E6A7 /* WKPDFViewResizeCrash.mm */,
 				5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */,
+				2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */,
 				7C417F311D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm */,
 				0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */,
 				9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */,
@@ -1404,6 +1413,7 @@
 				2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */,
 				2E1B7B011D41B1B3007558B4 /* large-video-hides-controls-after-seek-to-end.html */,
 				2E1DFDEE1D42A6EB00714A00 /* large-videos-with-audio-autoplay.html */,
+				2EFF06CC1D8A42910004BB30 /* input-field-in-scrollable-document.html */,
 				2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */,
 				2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */,
 				2EFF06C21D8862120004BB30 /* large-video-offscreen.html */,
@@ -1748,6 +1758,8 @@
 				C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */,
 				29AB8AA3164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.h */,
 				29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */,
+				2EFF06D21D8AEDBB0004BB30 /* TestWKWebViewMac.h */,
+				2EFF06D31D8AEDBB0004BB30 /* TestWKWebViewMac.mm */,
 				C08587BE13FE956C001EF4E5 /* WebKitAgnosticTest.h */,
 				C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */,
 			);
@@ -2258,6 +2270,7 @@
 				7CCE7EFB1A411AE600447C4C /* InjectedBundleBasic.cpp in Sources */,
 				7CCE7EFC1A411AE600447C4C /* InjectedBundleFrameHitTest.cpp in Sources */,
 				7CCE7EFD1A411AE600447C4C /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */,
+				2EFF06D41D8AEDBB0004BB30 /* TestWKWebViewMac.mm in Sources */,
 				7CCE7EC31A411A7E00447C4C /* InspectorBar.mm in Sources */,
 				7CCE7EDA1A411A8700447C4C /* InstanceMethodSwizzler.mm in Sources */,
 				7C54A4BE1AA11CCA00380F78 /* WKBundleFileHandle.cpp in Sources */,
@@ -2383,6 +2396,7 @@
 				7CCE7ED81A411A7E00447C4C /* WillSendSubmitEvent.mm in Sources */,
 				7CCE7ED91A411A7E00447C4C /* WindowlessWebViewWithMedia.mm in Sources */,
 				7C83E0B71D0A64B800FEBCF3 /* MenuTypesForMouseEvents.cpp in Sources */,
+				2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */,
 				7CCE7F2E1A411B1000447C4C /* WKBrowsingContextGroupTest.mm in Sources */,
 				7CCE7F2F1A411B1000447C4C /* WKBrowsingContextLoadDelegateTest.mm in Sources */,
 				7CCE7F1D1A411AE600447C4C /* WKImageCreateCGImageCrash.cpp in Sources */,
