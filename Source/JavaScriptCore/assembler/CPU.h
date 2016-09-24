@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MarkStack_h
-#define MarkStack_h
+#pragma once
 
-#include "GCSegmentedArray.h"
+#include "Options.h"
 
 namespace JSC {
 
-class JSCell;
+inline bool isARMv7IDIVSupported()
+{
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
+    return true;
+#else
+    return false;
+#endif
+}
 
-class MarkStackArray : public GCSegmentedArray<const JSCell*> {
-public:
-    MarkStackArray();
+inline bool isARM64()
+{
+#if CPU(ARM64)
+    return true;
+#else
+    return false;
+#endif
+}
 
-    void donateSomeCellsTo(MarkStackArray& other);
-    void stealSomeCellsFrom(MarkStackArray& other, size_t idleThreadCount);
-};
+inline bool isX86()
+{
+#if CPU(X86_64) || CPU(X86)
+    return true;
+#else
+    return false;
+#endif
+}
+
+inline bool isX86_64()
+{
+#if CPU(X86_64)
+    return true;
+#else
+    return false;
+#endif
+}
+
+inline bool optimizeForARMv7IDIVSupported()
+{
+    return isARMv7IDIVSupported() && Options::useArchitectureSpecificOptimizations();
+}
+
+inline bool optimizeForARM64()
+{
+    return isARM64() && Options::useArchitectureSpecificOptimizations();
+}
+
+inline bool optimizeForX86()
+{
+    return isX86() && Options::useArchitectureSpecificOptimizations();
+}
+
+inline bool optimizeForX86_64()
+{
+    return isX86_64() && Options::useArchitectureSpecificOptimizations();
+}
 
 } // namespace JSC
 
-#endif

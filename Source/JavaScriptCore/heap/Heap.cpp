@@ -28,6 +28,7 @@
 #include "FullGCActivityCallback.h"
 #include "GCActivityCallback.h"
 #include "GCIncomingRefCountedSetInlines.h"
+#include "GCSegmentedArrayInlines.h"
 #include "GCTypeMap.h"
 #include "HasOwnPropertyCache.h"
 #include "HeapHelperPool.h"
@@ -914,7 +915,7 @@ void Heap::addToRememberedSet(const JSCell* cell)
 {
     ASSERT(cell);
     ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
-    ASSERT(cell->cellState() == CellState::OldBlack);
+    ASSERT(isBlack(cell->cellState()));
     // Indicate that this object is grey and that it's one of the following:
     // - A re-greyed object during a concurrent collection.
     // - An old remembered object.

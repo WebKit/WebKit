@@ -404,16 +404,15 @@ end
 macro writeBarrierOnOperand(cellOperand)
     loadisFromInstruction(cellOperand, t1)
     loadConstantOrVariableCell(t1, t2, .writeBarrierDone)
-    skipIfIsRememberedOrInEden(t2, t1, t3, 
-        macro(cellState)
-            btbnz cellState, .writeBarrierDone
+    skipIfIsRememberedOrInEden(
+        t2,
+        macro()
             push PB, PC
             move t2, a1 # t2 can be a0 (not on 64 bits, but better safe than sorry)
             move cfr, a0
             cCall2Void(_llint_write_barrier_slow)
             pop PC, PB
-        end
-    )
+        end)
 .writeBarrierDone:
 end
 
@@ -432,9 +431,9 @@ macro writeBarrierOnGlobal(valueOperand, loadHelper)
     btpz t0, .writeBarrierDone
 
     loadHelper(t3)
-    skipIfIsRememberedOrInEden(t3, t1, t2,
-        macro(gcData)
-            btbnz gcData, .writeBarrierDone
+    skipIfIsRememberedOrInEden(
+        t3,
+        macro()
             push PB, PC
             move cfr, a0
             move t3, a1
