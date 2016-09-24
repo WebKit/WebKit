@@ -1,3 +1,14 @@
+2016-09-24  Antti Koivisto  <antti@apple.com>
+
+        Move stylesheet change logic from Document to AuthorStyleSheets
+        https://bugs.webkit.org/show_bug.cgi?id=162488
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView reapplyStyles]):
+        (-[WebHTMLView _setPrinting:minimumPageLogicalWidth:logicalHeight:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustViewSize:paginateScreenContent:]):
+
 2016-09-23  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Implement parsing of Async Functions
