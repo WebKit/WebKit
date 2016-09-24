@@ -54,6 +54,7 @@ void RemoteCommandListenerMac::updateSupportedCommands()
         MRMediaRemoteCommandEndFastForward,
         MRMediaRemoteCommandBeginRewind,
         MRMediaRemoteCommandEndRewind,
+        MRMediaRemoteCommandSeekToPlaybackPosition,
     };
 
     auto commandInfoArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, sizeof(supportedCommands) / sizeof(MRMediaRemoteCommand), &kCFTypeArrayCallBacks));
