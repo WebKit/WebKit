@@ -6197,7 +6197,7 @@
 		E461802D1C8DD2900026C02C /* StyleRelations.h in Headers */ = {isa = PBXBuildFile; fileRef = E461802C1C8DD2900026C02C /* StyleRelations.h */; };
 		E461802F1C8DD4D20026C02C /* StyleRelations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E461802E1C8DD4D20026C02C /* StyleRelations.cpp */; };
 		E461D65D1BB0C7F000CB5645 /* AuthorStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E461D65C1BB0C7F000CB5645 /* AuthorStyleSheets.cpp */; };
-		E461D65F1BB0C80D00CB5645 /* AuthorStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E461D65E1BB0C80D00CB5645 /* AuthorStyleSheets.h */; };
+		E461D65F1BB0C80D00CB5645 /* AuthorStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E461D65E1BB0C80D00CB5645 /* AuthorStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E462A4A0113E71BE004A4220 /* IntPointHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E46A2B1C17CA65B9000DBCD8 /* TypedElementDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E46A2B1B17CA65B9000DBCD8 /* TypedElementDescendantIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E46A2B1E17CA76B1000DBCD8 /* ElementChildIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E46A2B1D17CA76B1000DBCD8 /* ElementChildIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };

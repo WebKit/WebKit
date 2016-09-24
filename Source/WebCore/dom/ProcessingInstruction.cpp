@@ -270,9 +270,14 @@ void ProcessingInstruction::removedFrom(ContainerNode& insertionPoint)
         m_sheet = nullptr;
     }
 
+    if (m_loading) {
+        m_loading = false;
+        document().authorStyleSheets().removePendingSheet();
+    }
+
     // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
     if (document().hasLivingRenderTree())
-        document().styleResolverChanged(DeferRecalcStyle);
+        document().authorStyleSheets().didChange(DeferRecalcStyle);
 }
 
 void ProcessingInstruction::finishParsingChildren()

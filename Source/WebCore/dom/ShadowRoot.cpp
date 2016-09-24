@@ -108,15 +108,10 @@ AuthorStyleSheets& ShadowRoot::authorStyleSheets()
 
 void ShadowRoot::updateStyle()
 {
-    bool shouldRecalcStyle = false;
-
-    if (m_authorStyleSheets) {
-        // FIXME: Make optimized updated work.
-        shouldRecalcStyle = m_authorStyleSheets->updateActiveStyleSheets(AuthorStyleSheets::FullUpdate);
-    }
-
-    if (shouldRecalcStyle)
-        setNeedsStyleRecalc();
+    if (!m_authorStyleSheets)
+        return;
+    // FIXME: Make optimized updated work.
+    m_authorStyleSheets->didChange(DeferRecalcStyle);
 }
 
 String ShadowRoot::innerHTML() const
