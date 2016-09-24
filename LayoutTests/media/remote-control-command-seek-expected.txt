@@ -1,0 +1,14 @@
+Test that the "seekToPlaybackPosition" remote control command works.
+
+
+* set video.src
+EVENT(loadedmetadata)
+
+* Send a seek command.
+RUN(internals.postRemoteControlCommand('seekToPlaybackPosition', 1.6))
+
+EVENT(timeupdate)
+EXPECTED (video.currentTime.toFixed(1) == '1.6') OK
+
+END OF TEST
+
