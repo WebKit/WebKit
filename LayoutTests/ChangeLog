@@ -1,5 +1,13 @@
 2016-09-23  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update TestExpectations to mark media/controls/inline-elements-dropoff-order.html as failing on Sierra.
+        https://bugs.webkit.org/show_bug.cgi?id=162494
+
+        Unreviewed test gardening.
+        * platform/mac/TestExpectations:
+
+2016-09-23  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking imported/w3c/web-platform-tests/media-source/mediasource-preload.html as flaky on Sierra.
         https://bugs.webkit.org/show_bug.cgi?id=162523
 
