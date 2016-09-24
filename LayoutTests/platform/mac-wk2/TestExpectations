@@ -550,4 +550,4 @@ webkit.org/b/161549 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Pass 
 webkit.org/b/162081 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
 webkit.org/b/162081 editing/inserting/smart-quote-with-all-configurations.html [ Failure ]
 
-webkit.org/b/160017 [ Debug ] js/regress-139548.html [ Pass Timeout ]
+webkit.org/b/160017 js/regress-139548.html [ Pass Timeout ]
