@@ -858,7 +858,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         {
             swatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._inlineSwatchValueChanged, this);
             swatch.addEventListener(WebInspector.InlineSwatch.Event.Activated, this._inlineSwatchActivated, this);
-            swatch.addEventListener(WebInspector.InlineSwatch.Event.Dismissed, this._inlineSwatchDeactivated, this);
+            swatch.addEventListener(WebInspector.InlineSwatch.Event.Deactivated, this._inlineSwatchDeactivated, this);
 
             let codeMirrorTextMarker = marker.codeMirrorTextMarker;
             let codeMirrorTextMarkerRange = codeMirrorTextMarker.find();
