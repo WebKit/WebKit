@@ -1028,6 +1028,7 @@ void HTMLMediaElement::scheduleNotifyAboutPlaying()
 
 void HTMLMediaElement::notifyAboutPlaying()
 {
+    m_playbackStartedTime = currentMediaTime().toDouble();
     dispatchEvent(Event::create(eventNames().playingEvent, false, true));
     resolvePendingPlayPromises();
 
@@ -2421,6 +2422,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         if (canTransitionFromAutoplayToPlay()) {
             m_paused = false;
             invalidateCachedTime();
+            m_playbackStartedTime = currentMediaTime().toDouble();
             scheduleEvent(eventNames().playEvent);
             scheduleNotifyAboutPlaying();
         }
@@ -3210,6 +3212,7 @@ bool HTMLMediaElement::playInternal()
     if (m_paused) {
         m_paused = false;
         invalidateCachedTime();
+        m_playbackStartedTime = currentMediaTime().toDouble();
         scheduleEvent(eventNames().playEvent);
 
         if (m_readyState <= HAVE_CURRENT_DATA)

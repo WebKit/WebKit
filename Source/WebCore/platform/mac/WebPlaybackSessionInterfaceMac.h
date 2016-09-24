@@ -63,12 +63,16 @@ public:
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void ensureControlsManager();
     WEBCORE_EXPORT void setPlayBackControlsManager(WebPlaybackControlsManager *);
+    WEBCORE_EXPORT void beginScrubbing();
+    WEBCORE_EXPORT void endScrubbing();
     WEBCORE_EXPORT WebPlaybackControlsManager *playBackControlsManager();
 
 private:
     WebPlaybackSessionInterfaceMac(WebPlaybackSessionModel&);
     WebPlaybackSessionModel* m_playbackSessionModel { nullptr };
     WebPlaybackControlsManager *m_playbackControlsManager  { nullptr };
+
+    void updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying);
 };
 
 }

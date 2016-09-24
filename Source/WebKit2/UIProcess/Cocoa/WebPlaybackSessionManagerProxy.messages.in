@@ -32,6 +32,7 @@ messages -> WebPlaybackSessionManagerProxy {
     SetExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
     SetWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
     SetDuration(uint64_t contextId, double duration)
+    SetPlaybackStartedTime(uint64_t contextId, double playbackStartedTime)
     SetRate(uint64_t contextId, bool isPlaying, double rate)
     SetUpPlaybackControlsManagerWithID(uint64_t contextId)
     ClearPlaybackControlsManager()
