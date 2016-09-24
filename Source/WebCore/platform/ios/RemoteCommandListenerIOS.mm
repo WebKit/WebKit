@@ -127,7 +127,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis, argument] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::TogglePlayPauseCommand, &argument);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::SeekToPlaybackPositionCommand, &argument);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
