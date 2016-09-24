@@ -2250,12 +2250,14 @@ TrackedRendererListHashSet* RenderBlock::positionedObjects() const
 void RenderBlock::insertPositionedObject(RenderBox& positioned)
 {
     ASSERT(!isAnonymousBlock());
-
     if (positioned.isRenderFlowThread())
         return;
-    // We should turn this bit on only while in layout.
-    ASSERT(posChildNeedsLayout() || view().frameView().isInLayout());
-    setPosChildNeedsLayoutBit(true);
+    // FIXME: Find out if we can do this as part of positioned.setChildNeedsLayout(MarkOnlyThis)
+    if (positioned.needsLayout()) {
+        // We should turn this bit on only while in layout.
+        ASSERT(posChildNeedsLayout() || view().frameView().isInLayout());
+        setPosChildNeedsLayoutBit(true);
+    }
     positionedDescendantsMap().addDescendant(*this, positioned, isRenderView() ? PositionedDescendantsMap::MoveDescendantToEnd::Yes
         : PositionedDescendantsMap::MoveDescendantToEnd::No);
 }
