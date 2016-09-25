@@ -1,5 +1,18 @@
 2016-09-24  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r206221): [USER] com.apple.WebKit.WebContent.Development at com.apple.JavaScriptCore: vmEntryToJavaScript + 299
+        https://bugs.webkit.org/show_bug.cgi?id=162536
+        <rdar://problem/28415971>
+
+        Reviewed by Gavin Barraclough.
+
+        Add layout test coverage.
+
+        * http/tests/security/cross-origin-window-property-caching-crash-expected.txt: Added.
+        * http/tests/security/cross-origin-window-property-caching-crash.html: Added.
+
+2016-09-24  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (r205524): Crash under WTF::numGraphemeClusters()
         https://bugs.webkit.org/show_bug.cgi?id=162534
         <rdar://problem/28463828>

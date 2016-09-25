@@ -133,7 +133,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
             || propertyName == exec->propertyNames().top) {
             bool shouldExposeSetter = propertyName == exec->propertyNames().location;
             CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, entry->propertyGetter(), shouldExposeSetter ? entry->propertyPutter() : nullptr);
-            slot.setCacheableCustomGetterSetter(thisObject, DontEnum | CustomAccessor, customGetterSetter);
+            slot.setCustomGetterSetter(thisObject, DontEnum | CustomAccessor, customGetterSetter);
             return true;
         }
 

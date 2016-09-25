@@ -62,7 +62,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
     if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == exec->propertyNames().href) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
         CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, nullptr, entry->propertyPutter());
-        slot.setCacheableCustomGetterSetter(this, DontEnum | CustomAccessor, customGetterSetter);
+        slot.setCustomGetterSetter(this, DontEnum | CustomAccessor, customGetterSetter);
         return true;
     }
 

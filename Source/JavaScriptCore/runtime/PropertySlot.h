@@ -112,7 +112,6 @@ public:
     bool isCacheableValue() const { return isCacheable() && isValue(); }
     bool isCacheableGetter() const { return isCacheable() && isAccessor(); }
     bool isCacheableCustom() const { return isCacheable() && isCustom(); }
-    bool isCacheableCustomAccessor() const { return isCacheable() && isCustomAccessor(); }
     void setIsTaintedByOpaqueObject() { m_isTaintedByOpaqueObject = true; }
     bool isTaintedByOpaqueObject() const { return m_isTaintedByOpaqueObject; }
 
@@ -239,20 +238,6 @@ public:
         m_slotBase = slotBase;
         m_propertyType = TypeCustomAccessor;
         m_offset = invalidOffset;
-    }
-
-    void setCacheableCustomGetterSetter(JSObject* slotBase, unsigned attributes, CustomGetterSetter* getterSetter)
-    {
-        ASSERT(attributes == attributesForStructure(attributes));
-
-        ASSERT(getterSetter);
-        m_data.customAccessor.getterSetter = getterSetter;
-        m_attributes = attributes;
-
-        ASSERT(slotBase);
-        m_slotBase = slotBase;
-        m_propertyType = TypeCustomAccessor;
-        m_offset = !invalidOffset;
     }
 
     void setGetterSlot(JSObject* slotBase, unsigned attributes, GetterSetter* getterSetter)

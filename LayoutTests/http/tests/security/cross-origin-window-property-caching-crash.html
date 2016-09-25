@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test that we do not crash when repeatedly accessing properties of a cross-origin Window.</p>
+<p>This test passes if it does not crash</p>
+<iframe src="http://localhost:8000/security/resources/empty.html"></iframe><br>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = function() {
+    var i = 0;
+    var iterations = 100000;
+    var crossOriginWindow = frames[0];
+    for (var i = 0; i < iterations; i++) {
+        i += crossOriginWindow.closed;
+    }
+    if (i == iterations)
+        document.body.appendChild(document.createTextNode("PASS"));
+    else
+        document.body.appendChild(document.createTextNode("FAIL"));
+}
+</script>
+</body>
+</html>
