@@ -1,5 +1,20 @@
 2016-09-24  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] Enable support for 'download' attribute on anchor elements
+        https://bugs.webkit.org/show_bug.cgi?id=162535
+
+        Reviewed by Darin Adler.
+
+        Enable support for 'download' attribute on anchor elements for WebKit2
+        now that:
+        - It works with our NETWORK_SESSION code path (Bug 162531)
+        - Supports Blob / Data URLs (Bug 156099)
+        - Requires user interaction / ignores synthetic clicks (Bug 156099)
+
+        * Shared/WebPreferencesDefinitions.h:
+
+2016-09-24  Chris Dumez  <cdumez@apple.com>
+
         <a download> does not support Blob URLs
         https://bugs.webkit.org/show_bug.cgi?id=156099
         <rdar://problem/25535520>
