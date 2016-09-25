@@ -27,6 +27,7 @@
 #include "Download.h"
 
 #include "AuthenticationManager.h"
+#include "BlobDownloadClient.h"
 #include "Connection.h"
 #include "DataReference.h"
 #include "DownloadManager.h"
@@ -44,18 +45,21 @@ namespace WebKit {
 
 #if USE(NETWORK_SESSION) && PLATFORM(COCOA)
 Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const WebCore::SessionID& sessionID, const String& suggestedName)
-#else
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
-#endif
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
-#if !USE(NETWORK_SESSION)
-    , m_request(request)
-#endif
-#if USE(NETWORK_SESSION) && PLATFORM(COCOA)
     , m_download(download)
-    , m_sessionID(sessionID)
+    , m_suggestedName(suggestedName)
+{
+    ASSERT(m_downloadID.downloadID());
+
+    m_downloadManager.didCreateDownload();
+}
 #endif
+
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
+    : m_downloadManager(downloadManager)
+    , m_downloadID(downloadID)
+    , m_request(request)
     , m_suggestedName(suggestedName)
 {
     ASSERT(m_downloadID.downloadID());
@@ -70,18 +74,33 @@ Download::~Download()
     m_downloadManager.didDestroyDownload();
 }
 
-#if !USE(NETWORK_SESSION)
+void Download::start()
+{
+    if (m_request.url().protocolIsBlob()) {
+        m_downloadClient = std::make_unique<BlobDownloadClient>(*this);
+        m_resourceHandle = ResourceHandle::create(nullptr, m_request, m_downloadClient.get(), false, false);
+        didStart();
+        return;
+    }
+
+#if USE(NETWORK_SESSION)
+    ASSERT_NOT_REACHED();
+#else
+    startNetworkLoad();
+#endif
+}
+
 void Download::didStart()
 {
     send(Messages::DownloadProxy::DidStart(m_request, m_suggestedName));
 }
-#endif
 
 #if !USE(NETWORK_SESSION)
 void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& authenticationChallenge)
 {
     m_downloadManager.downloadsAuthenticationManager().didReceiveAuthenticationChallenge(*this, authenticationChallenge);
 }
+#endif
 
 void Download::didReceiveResponse(const ResourceResponse& response)
 {
@@ -89,7 +108,6 @@ void Download::didReceiveResponse(const ResourceResponse& response)
 
     send(Messages::DownloadProxy::DidReceiveResponse(response));
 }
-#endif
 
 void Download::didReceiveData(uint64_t length)
 {
@@ -110,7 +128,6 @@ bool Download::shouldDecodeSourceDataOfMIMEType(const String& mimeType)
     return result;
 }
 
-#if !USE(NETWORK_SESSION)
 String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
 {
     String destination;
@@ -124,7 +141,6 @@ String Download::decideDestinationWithSuggestedFilename(const String& filename, 
 
     return destination;
 }
-#endif
 
 void Download::didCreateDestination(const String& path)
 {

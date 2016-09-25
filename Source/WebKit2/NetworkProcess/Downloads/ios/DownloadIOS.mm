@@ -122,7 +122,7 @@ static void setUpDownloadClient(CFURLDownloadClient& client, Download& download)
     };
 }
 
-void Download::start()
+void Download::startNetworkLoad()
 {
     notImplemented();
 }

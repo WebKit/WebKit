@@ -1,4 +1,4 @@
+Downloading URL with suggested filename ""
 Download started.
-Download failed.
-Failed: NSURLErrorDomain, code=-1002, description=unsupported URL
+Download completed.
 Blob URL

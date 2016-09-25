@@ -1312,7 +1312,8 @@ imported/blink/storage/indexeddb/empty-blob-file.html [ Failure ]
 
 webkit.org/b/155495 compositing/visible-rect/animated-from-none.html [ Failure Pass ]
 
-# <a download> is not support in WK1 yet.
+# <a download> is not supported in WK1 yet.
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-blob.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-data.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]

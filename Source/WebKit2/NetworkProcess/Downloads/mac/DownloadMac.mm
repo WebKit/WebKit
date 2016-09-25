@@ -49,7 +49,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void Download::start()
+void Download::startNetworkLoad()
 {
     ASSERT(!m_nsURLDownload);
     ASSERT(!m_delegate);

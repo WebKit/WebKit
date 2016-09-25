@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript'>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Test that synthetic clicks on an anchor with a download attribute are ignored.</p>
+<p> This test passes if you do not see any 'Download started' message above.</p>
+<a id="blob-url" download>Blob URL</a>
+<script>
+function runTest()
+{
+    var string = "test";
+    var blob = new Blob([string], {type: "text/html"});
+    var link = document.getElementById("blob-url");
+    link.href = window.URL.createObjectURL(blob);
+    link.click();
+    setTimeout(function() {
+        testRunner.notifyDone();
+    }, 100);
+}
+runTest();
+</script>
+</body>
+</html>

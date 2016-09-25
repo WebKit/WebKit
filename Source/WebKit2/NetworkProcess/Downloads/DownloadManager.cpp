@@ -47,21 +47,23 @@ DownloadManager::DownloadManager(Client& client)
 void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
 {
 #if USE(NETWORK_SESSION)
-    auto* networkSession = SessionTracker::networkSession(sessionID);
-    if (!networkSession)
+    if (!request.url().protocolIsBlob()) {
+        auto* networkSession = SessionTracker::networkSession(sessionID);
+        if (!networkSession)
+            return;
+        NetworkLoadParameters parameters;
+        parameters.sessionID = sessionID;
+        parameters.request = request;
+        parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
+        m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(parameters), downloadID, *networkSession, suggestedName));
         return;
-    NetworkLoadParameters parameters;
-    parameters.sessionID = sessionID;
-    parameters.request = request;
-    parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
-    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(parameters), downloadID, *networkSession, suggestedName));
-#else
+    }
+#endif
     auto download = std::make_unique<Download>(*this, downloadID, request, suggestedName);
     download->start();
 
     ASSERT(!m_downloads.contains(downloadID));
     m_downloads.add(downloadID, WTFMove(download));
-#endif
 }
 
 #if USE(NETWORK_SESSION)

@@ -1,5 +1,54 @@
 2016-09-24  Chris Dumez  <cdumez@apple.com>
 
+        <a download> does not support Blob URLs
+        https://bugs.webkit.org/show_bug.cgi?id=156099
+        <rdar://problem/25535520>
+
+        Reviewed by Darin Adler.
+
+        Add support for downloading Blob URLs to WebKit2. This should work for
+        all WebKit2 port. This also works in combination with the download
+        attribute on anchor elements. Note that the download attribute is only
+        enabled at runtime in the context of the layout tests for now. I'll
+        enable the download attribute on WK2 once I have fixed Bug 162531.
+
+        * CMakeLists.txt:
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp: Added.
+        (WebKit::BlobDownloadClient::BlobDownloadClient):
+        (WebKit::BlobDownloadClient::didReceiveResponse):
+        (WebKit::BlobDownloadClient::didReceiveBuffer):
+        (WebKit::BlobDownloadClient::didFinishLoading):
+        (WebKit::BlobDownloadClient::didFail):
+        * NetworkProcess/Downloads/BlobDownloadClient.h: Added.
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download):
+        (WebKit::Download::start):
+        (WebKit::Download::didStart):
+        (WebKit::Download::didReceiveResponse):
+        (WebKit::Download::decideDestinationWithSuggestedFilename):
+        (WebKit::Download::~Download): Deleted.
+        (WebKit::Download::didReceiveData): Deleted.
+        (WebKit::Download::shouldDecodeSourceDataOfMIMEType): Deleted.
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::Download):
+        (WebKit::Download::suggestedName):
+        (WebKit::Download::request):
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::startNetworkLoad):
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::startNetworkLoad):
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::startNetworkLoad):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2016-09-24  Chris Dumez  <cdumez@apple.com>
+
         [WK2] anchor.download attribute value is ignored by NETWORK_SESSION code path
         https://bugs.webkit.org/show_bug.cgi?id=162531
 

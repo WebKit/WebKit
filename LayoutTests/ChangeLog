@@ -1,5 +1,25 @@
 2016-09-24  Chris Dumez  <cdumez@apple.com>
 
+        <a download> does not support Blob URLs
+        https://bugs.webkit.org/show_bug.cgi?id=156099
+        <rdar://problem/25535520>
+
+        Reviewed by Darin Adler.
+
+        Unskip / rebaseline existing tests now that <a download> supports Blob URLs.
+
+        * TestExpectations:
+        * fast/dom/HTMLAnchorElement/anchor-download-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-download-synthetic-click-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html: Added.
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set-expected.txt:
+        * http/tests/security/anchor-download-allow-blob-expected.txt:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2016-09-24  Chris Dumez  <cdumez@apple.com>
+
         [WK2] anchor.download attribute value is ignored by NETWORK_SESSION code path
         https://bugs.webkit.org/show_bug.cgi?id=162531
 

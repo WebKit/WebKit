@@ -1,0 +1,5 @@
+Test that synthetic clicks on an anchor with a download attribute are ignored.
+
+This test passes if you do not see any 'Download started' message above.
+
+Blob URL

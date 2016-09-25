@@ -1213,6 +1213,8 @@
 		839902021BE9A02B000F3653 /* NetworkLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839901FF1BE9A01B000F3653 /* NetworkLoad.cpp */; };
 		839902031BE9A02B000F3653 /* NetworkLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 839901FE1BE9A01B000F3653 /* NetworkLoad.h */; };
 		83BDCCB91AC5FDB6003F6441 /* NetworkCacheStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */; };
+		83BFAC421D96137C00433490 /* BlobDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BFAC401D96136000433490 /* BlobDownloadClient.h */; };
+		83BFAC431D96137C00433490 /* BlobDownloadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BFAC411D96136000433490 /* BlobDownloadClient.cpp */; };
 		83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */; };
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
 		868160D0187645570021E79D /* WindowServerConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 868160CF187645370021E79D /* WindowServerConnection.mm */; };
@@ -3308,6 +3310,8 @@
 		839901FE1BE9A01B000F3653 /* NetworkLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLoad.h; path = NetworkProcess/NetworkLoad.h; sourceTree = "<group>"; };
 		839901FF1BE9A01B000F3653 /* NetworkLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkLoad.cpp; path = NetworkProcess/NetworkLoad.cpp; sourceTree = "<group>"; };
 		83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheStatistics.cpp; sourceTree = "<group>"; };
+		83BFAC401D96136000433490 /* BlobDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobDownloadClient.h; path = NetworkProcess/Downloads/BlobDownloadClient.h; sourceTree = "<group>"; };
+		83BFAC411D96136000433490 /* BlobDownloadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobDownloadClient.cpp; path = NetworkProcess/Downloads/BlobDownloadClient.cpp; sourceTree = "<group>"; };
 		83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLoadClient.h; path = NetworkProcess/NetworkLoadClient.h; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		868160CD18763D4B0021E79D /* WindowServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowServerConnection.h; sourceTree = "<group>"; };
@@ -5738,6 +5742,8 @@
 				5C1427081C23F85200D41183 /* cocoa */,
 				5C14270C1C23F87700D41183 /* ios */,
 				5C14270B1C23F87100D41183 /* mac */,
+				83BFAC401D96136000433490 /* BlobDownloadClient.h */,
+				83BFAC411D96136000433490 /* BlobDownloadClient.cpp */,
 				5C1426F31C23F84300D41183 /* Download.cpp */,
 				5C1426F41C23F84300D41183 /* Download.h */,
 				5C1426F71C23F84300D41183 /* DownloadID.h */,
@@ -7612,6 +7618,7 @@
 				2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */,
 				515E772C184008B90007203F /* DatabaseProcessCreationParameters.h in Headers */,
 				512A9761180E031D0039A149 /* DatabaseProcessMessages.h in Headers */,
+				83BFAC421D96137C00433490 /* BlobDownloadClient.h in Headers */,
 				517DD5BF180DA7D30081660B /* DatabaseProcessProxy.h in Headers */,
 				512A976A180E09B80039A149 /* DatabaseProcessProxyMessages.h in Headers */,
 				51032F1E180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h in Headers */,
@@ -9149,6 +9156,7 @@
 				0F0C365E18C110A500F607D7 /* LayerRepresentation.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContext.cpp in Sources */,
 				1AFDE64519510B5500C48FFA /* LegacyBundleForClass.mm in Sources */,
+				83BFAC431D96137C00433490 /* BlobDownloadClient.cpp in Sources */,
 				1AFDE65D1954E8D500C48FFA /* LegacySessionStateCoding.cpp in Sources */,
 				2D1087601D2C573E00B85F82 /* LoadParameters.cpp in Sources */,
 				2D1087631D2C641B00B85F82 /* LoadParametersCocoa.mm in Sources */,

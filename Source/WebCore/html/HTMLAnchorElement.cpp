@@ -367,8 +367,14 @@ void HTMLAnchorElement::handleClick(Event& event)
 
     auto downloadAttribute = nullAtom;
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
-    if (RuntimeEnabledFeatures::sharedFeatures().downloadAttributeEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().downloadAttributeEnabled()) {
         downloadAttribute = attributeWithoutSynchronization(downloadAttr);
+        // If the a element has a download attribute and the algorithm is not triggered by user activation
+        // then abort these steps.
+        // https://html.spec.whatwg.org/#the-a-element:triggered-by-user-activation
+        if (!downloadAttribute.isNull() && !event.isTrusted())
+            return;
+    }
 #endif
 
     frame->loader().urlSelected(kurl, target(), &event, LockHistory::No, LockBackForwardList::No, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), downloadAttribute);

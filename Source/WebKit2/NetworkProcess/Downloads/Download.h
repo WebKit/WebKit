@@ -29,8 +29,11 @@
 #include "DownloadID.h"
 #include "MessageSender.h"
 #include "SandboxExtension.h"
+#include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
+#include <memory>
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(COCOA)
@@ -42,12 +45,6 @@ OBJC_CLASS NSURLSessionDownloadTask;
 OBJC_CLASS NSURLDownload;
 OBJC_CLASS WKDownloadAsDelegate;
 #endif
-#endif
-
-#if PLATFORM(GTK) || PLATFORM(EFL)
-#include <WebCore/ResourceHandle.h>
-#include <WebCore/ResourceHandleClient.h>
-#include <memory>
 #endif
 
 #if USE(CFNETWORK)
@@ -77,32 +74,33 @@ class Download : public IPC::MessageSender {
 public:
 #if USE(NETWORK_SESSION) && PLATFORM(COCOA)
     Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, const WebCore::SessionID& sessionID, const String& suggestedFilename = { });
-#else
-    Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
 #endif
+    Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
+
     ~Download();
 
-#if !USE(NETWORK_SESSION)
     void start();
+
+#if !USE(NETWORK_SESSION)
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
 #endif
     void resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
     void cancel();
 
     DownloadID downloadID() const { return m_downloadID; }
+    const String& suggestedName() const { return m_suggestedName; }
+    const WebCore::ResourceRequest& request() const { return m_request; }
 
 #if USE(NETWORK_SESSION)
     void setSandboxExtension(RefPtr<SandboxExtension>&& sandboxExtension) { m_sandboxExtension = WTFMove(sandboxExtension); }
 #else
-    void didStart();
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
-    void didReceiveResponse(const WebCore::ResourceResponse&);
 #endif
+    void didStart();
+    void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
     bool shouldDecodeSourceDataOfMIMEType(const String& mimeType);
-#if !USE(NETWORK_SESSION)
     String decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);
-#endif
     void didCreateDestination(const String& path);
     void didFinish();
     void platformDidFinish();
@@ -114,15 +112,17 @@ private:
     IPC::Connection* messageSenderConnection() override;
     uint64_t messageSenderDestinationID() override;
 
+#if !USE(NETWORK_SESSION)
+    void startNetworkLoad();
+#endif
+
     void platformInvalidate();
 
     bool isAlwaysOnLoggingAllowed() const;
 
     DownloadManager& m_downloadManager;
     DownloadID m_downloadID;
-#if !USE(NETWORK_SESSION)
     WebCore::ResourceRequest m_request;
-#endif
 
     RefPtr<SandboxExtension> m_sandboxExtension;
 
@@ -138,10 +138,8 @@ private:
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
 #endif
-#if PLATFORM(GTK) || PLATFORM(EFL)
     std::unique_ptr<WebCore::ResourceHandleClient> m_downloadClient;
     RefPtr<WebCore::ResourceHandle> m_resourceHandle;
-#endif
     String m_suggestedName;
     bool m_hasReceivedData { false };
 };

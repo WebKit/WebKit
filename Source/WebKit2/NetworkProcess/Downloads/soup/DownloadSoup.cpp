@@ -207,7 +207,7 @@ public:
     bool m_allowOverwrite;
 };
 
-void Download::start()
+void Download::startNetworkLoad()
 {
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);
