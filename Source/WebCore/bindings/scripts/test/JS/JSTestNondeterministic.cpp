@@ -275,7 +275,7 @@ EncodedJSValue jsTestNondeterministicNondeterministicGetterExceptionAttr(ExecSta
         String memoizedResult = castedThis->wrapped().nondeterministicGetterExceptionAttr(ec);
         cursor.appendInput<MemoizedDOMResult<String>>(bindingName.get().string(), memoizedResult, ec);
         JSValue result = jsStringWithCache(state, memoizedResult);
-        setDOMException(state, ec);
+        setDOMException(state, throwScope, ec);
         return JSValue::encode(result);
     }
 
@@ -284,14 +284,14 @@ EncodedJSValue jsTestNondeterministicNondeterministicGetterExceptionAttr(ExecSta
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
             JSValue result = jsStringWithCache(state, memoizedResult);
-            setDOMException(state, input->exceptionCode());
+            setDOMException(state, throwScope, input->exceptionCode());
             return JSValue::encode(result);
         }
     }
 #endif
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.nondeterministicGetterExceptionAttr(ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -434,7 +434,7 @@ bool setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* sta
     if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setNondeterministicSetterExceptionAttr(WTFMove(nativeValue), ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return true;
 }
 

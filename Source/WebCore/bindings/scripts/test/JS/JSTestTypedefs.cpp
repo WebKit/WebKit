@@ -274,7 +274,7 @@ EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* state, EncodedJS
     ExceptionCode ec = 0;
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.attrWithGetterException(ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -310,7 +310,7 @@ EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* state, Enc
     ExceptionCode ec = 0;
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.stringAttrWithGetterException(ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -433,7 +433,7 @@ bool setJSTestTypedefsAttrWithSetterException(ExecState* state, EncodedJSValue t
     if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setAttrWithSetterException(WTFMove(nativeValue), ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return true;
 }
 
@@ -475,7 +475,7 @@ bool setJSTestTypedefsStringAttrWithSetterException(ExecState* state, EncodedJSV
     if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setStringAttrWithSetterException(WTFMove(nativeValue), ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return true;
 }
 
@@ -632,7 +632,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFuncti
         return JSValue::encode(jsUndefined());
     JSValue result = jsArray(state, castedThis->globalObject(), impl.stringSequenceFunction(WTFMove(values), ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -655,7 +655,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFuncti
         return JSValue::encode(jsUndefined());
     JSValue result = jsArray(state, castedThis->globalObject(), impl.stringSequenceFunction2(WTFMove(values), ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -692,7 +692,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     impl.methodWithException(ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(jsUndefined());
 }
 

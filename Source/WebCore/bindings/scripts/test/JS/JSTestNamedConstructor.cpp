@@ -101,7 +101,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
         return JSValue::encode(jsUndefined());
     auto object = TestNamedConstructor::createForJSConstructor(*castedThis->document(), WTFMove(str1), WTFMove(str2), WTFMove(str3), ec);
     if (UNLIKELY(ec)) {
-        setDOMException(state, ec);
+        setDOMException(state, throwScope, ec);
         return JSValue::encode(JSValue());
     }
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));

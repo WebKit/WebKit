@@ -2227,7 +2227,7 @@ EncodedJSValue jsTestObjAttrWithGetterException(ExecState* state, EncodedJSValue
     ExceptionCode ec = 0;
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.attrWithGetterException(ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -2246,7 +2246,7 @@ EncodedJSValue jsTestObjAttrWithGetterExceptionWithMessage(ExecState* state, Enc
     ExceptionCodeWithMessage ec;
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.attrWithGetterExceptionWithMessage(ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -2299,7 +2299,7 @@ EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* state, EncodedJ
     ExceptionCode ec = 0;
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.stringAttrWithGetterException(ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -2436,7 +2436,7 @@ EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* state, Encoded
     ExceptionCode ec = 0;
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), impl.withScriptStateAttributeRaises(*state, ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -2458,7 +2458,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* sta
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), impl.withScriptExecutionContextAttributeRaises(*context, ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -2500,7 +2500,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), impl.withScriptExecutionContextAndScriptStateAttributeRaises(*state, *context, ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -2975,7 +2975,7 @@ EncodedJSValue jsTestObjNullableStringValue(ExecState* state, EncodedJSValue thi
     ExceptionCode ec = 0;
     auto& impl = castedThis->wrapped();
     JSValue result = toNullableJSNumber(impl.nullableStringValue(ec));
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -3857,7 +3857,7 @@ bool setJSTestObjAttrWithSetterException(ExecState* state, EncodedJSValue thisVa
     if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setAttrWithSetterException(WTFMove(nativeValue), ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return true;
 }
 
@@ -3879,7 +3879,7 @@ bool setJSTestObjAttrWithSetterExceptionWithMessage(ExecState* state, EncodedJSV
     if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setAttrWithSetterExceptionWithMessage(WTFMove(nativeValue), ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return true;
 }
 
@@ -3921,7 +3921,7 @@ bool setJSTestObjStringAttrWithSetterException(ExecState* state, EncodedJSValue 
     if (UNLIKELY(throwScope.exception()))
         return false;
     impl.setStringAttrWithSetterException(WTFMove(nativeValue), ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return true;
 }
 
@@ -5078,7 +5078,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
         return throwArgumentTypeError(*state, throwScope, 1, "objArg", "TestObject", "methodThatRequiresAllArgsAndThrows", "TestObj");
     JSValue result = toJS(state, castedThis->globalObject(), impl.methodThatRequiresAllArgsAndThrows(WTFMove(strArg), *objArg, ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -5194,7 +5194,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecS
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     impl.methodWithException(ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(jsUndefined());
 }
 
@@ -5211,7 +5211,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionWithMe
     auto& impl = castedThis->wrapped();
     ExceptionCodeWithMessage ec;
     impl.methodWithExceptionWithMessage(ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(jsUndefined());
 }
 
@@ -5378,7 +5378,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidExcept
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     impl.withScriptStateVoidException(*state, ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(jsUndefined());
 }
 
@@ -5396,7 +5396,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
     ExceptionCode ec = 0;
     JSValue result = toJS(state, castedThis->globalObject(), impl.withScriptStateObjException(*state, ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(result);
@@ -5455,7 +5455,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
         return JSValue::encode(jsUndefined());
     JSValue result = toJS(state, castedThis->globalObject(), impl.withScriptExecutionContextAndScriptStateObjException(*state, *context, ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     if (UNLIKELY(throwScope.exception()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(result);
@@ -6850,7 +6850,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
         return JSValue::encode(jsUndefined());
     JSValue result = jsArray(state, castedThis->globalObject(), impl.stringArrayFunction(WTFMove(values), ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -6873,7 +6873,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
         return throwArgumentTypeError(*state, throwScope, 0, "values", "TestObject", "domStringListFunction", "DOMStringList");
     JSValue result = toJS(state, castedThis->globalObject(), impl.domStringListFunction(*values, ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -6936,7 +6936,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState*
         return JSValue::encode(jsNull());
     JSValue result = toJS(state, castedThis->globalObject(), impl.getSVGDocument(ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -7232,7 +7232,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithEx
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     impl.testPromiseFunctionWithException(WTFMove(promise), ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(jsUndefined());
 }
 
@@ -7367,7 +7367,7 @@ static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFuncti
     UNUSED_PARAM(throwScope);
     ExceptionCode ec = 0;
     TestObj::testStaticPromiseFunctionWithException(WTFMove(promise), ec);
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(jsUndefined());
 }
 

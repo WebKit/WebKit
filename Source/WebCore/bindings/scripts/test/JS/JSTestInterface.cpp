@@ -241,7 +241,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
         return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, "TestInterface");
     auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2), ec);
     if (UNLIKELY(ec)) {
-        setDOMException(state, ec);
+        setDOMException(state, throwScope, ec);
         return JSValue::encode(JSValue());
     }
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
@@ -867,7 +867,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
         return throwArgumentTypeError(*state, throwScope, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj");
     JSValue result = toJS(state, castedThis->globalObject(), impl.implementsMethod2(*context, WTFMove(strArg), *objArg, ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
@@ -945,7 +945,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
         return throwArgumentTypeError(*state, throwScope, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj");
     JSValue result = toJS(state, castedThis->globalObject(), WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg, ec));
 
-    setDOMException(state, ec);
+    setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
 }
 
