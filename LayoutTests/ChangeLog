@@ -1,5 +1,18 @@
 2016-09-24  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r205524): Crash under WTF::numGraphemeClusters()
+        https://bugs.webkit.org/show_bug.cgi?id=162534
+        <rdar://problem/28463828>
+
+        Reviewed by David Kilzer.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLInputElement/handleBeforeTextInsertedEvent-crash-expected.txt: Added.
+        * fast/dom/HTMLInputElement/handleBeforeTextInsertedEvent-crash.html: Added.
+
+2016-09-24  Chris Dumez  <cdumez@apple.com>
+
         <a download> does not support Blob URLs
         https://bugs.webkit.org/show_bug.cgi?id=156099
         <rdar://problem/25535520>

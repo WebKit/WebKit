@@ -456,7 +456,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
     // We use RenderTextControlSingleLine::text() instead of InputElement::value()
     // because they can be mismatched by sanitizeValue() in
     // HTMLInputElement::subtreeHasChanged() in some cases.
-    StringView innerText = element().innerTextValue();
+    String innerText = element().innerTextValue();
     unsigned oldLength = numGraphemeClusters(innerText);
 
     // selectionLength represents the selection length of this text field to be
@@ -470,7 +470,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
         int selectionStart = element().selectionStart();
         ASSERT(selectionStart <= element().selectionEnd());
         int selectionCodeUnitCount = element().selectionEnd() - selectionStart;
-        selectionLength = selectionCodeUnitCount ? numGraphemeClusters(innerText.substring(selectionStart, selectionCodeUnitCount)) : 0;
+        selectionLength = selectionCodeUnitCount ? numGraphemeClusters(StringView(innerText).substring(selectionStart, selectionCodeUnitCount)) : 0;
     }
     ASSERT(oldLength >= selectionLength);
 
