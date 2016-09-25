@@ -48,13 +48,6 @@ class StyleSheetList;
 class ShadowRoot;
 class TreeScope;
 
-enum StyleResolverUpdateFlag {
-    RecalcStyleImmediately,
-    DeferRecalcStyle,
-    RecalcStyleIfNeeded,
-    DeferRecalcStyleIfNeeded
-};
-
 class AuthorStyleSheets {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -68,8 +61,6 @@ public:
 
     void addStyleSheetCandidateNode(Node&, bool createdByParser);
     void removeStyleSheetCandidateNode(Node&);
-
-    WEBCORE_EXPORT void didChange(StyleResolverUpdateFlag);
 
     String preferredStylesheetSetName() const { return m_preferredStylesheetSetName; }
     String selectedStylesheetSetName() const { return m_selectedStylesheetSetName; }
@@ -91,13 +82,16 @@ public:
 
     bool activeStyleSheetsContains(const CSSStyleSheet*) const;
 
-    void scheduleOptimizedUpdate();
-    bool hasPendingUpdate() const { return m_optimizedUpdateTimer.isActive(); }
-    void flushPendingUpdates();
+    void didChangeCandidatesForActiveSet();
+    void scheduleActiveSetUpdate();
+    WEBCORE_EXPORT void didChangeContentsOrInterpretation();
+
+    bool hasPendingUpdate() const { return !!m_pendingUpdateType; }
+    void flushPendingUpdate();
 
 private:
-    enum UpdateFlag { NoUpdate = 0, OptimizedUpdate, FullUpdate };
-    bool updateActiveStyleSheets(UpdateFlag);
+    enum class UpdateType { ActiveSet, ContentsOrInterpretation };
+    void updateActiveStyleSheets(UpdateType);
 
     void collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>&);
 
@@ -106,10 +100,11 @@ private:
         Reset,
         Additive
     };
-    StyleResolverUpdateType analyzeStyleSheetChange(UpdateFlag, const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc);
+    StyleResolverUpdateType analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc);
     void updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>&, StyleResolverUpdateType);
 
-    void optimizedUpdateTimerFired();
+    void pendingUpdateTimerFired();
+    void clearPendingUpdate();
 
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
@@ -117,7 +112,7 @@ private:
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
 
-    Timer m_optimizedUpdateTimer;
+    Timer m_pendingUpdateTimer;
 
     // This is a mirror of m_activeAuthorStyleSheets that gets populated on demand for activeStyleSheetsContains().
     mutable std::unique_ptr<HashSet<const CSSStyleSheet*>> m_weakCopyOfActiveStyleSheetListForFastLookup;
@@ -127,9 +122,9 @@ private:
     // We use this count of pending sheets to detect when we can begin attaching
     // elements and when it is safe to execute scripts.
     int m_pendingStyleSheetCount { 0 };
-    bool m_didCalculateStyleResolver { false };
+    bool m_didUpdateActiveStyleSheets { false };
 
-    UpdateFlag m_pendingUpdateType { NoUpdate };
+    Optional<UpdateType> m_pendingUpdateType;
 
     ListHashSet<Node*> m_styleSheetCandidateNodes;
 

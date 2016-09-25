@@ -64,7 +64,7 @@ void XMLTreeViewer::transformDocumentToTreeView()
     String cssString = StringImpl::createWithoutCopying(XMLViewer_css, sizeof(XMLViewer_css));
     auto text = m_document.createTextNode(cssString);
     m_document.getElementById(String(ASCIILiteral("xml-viewer-style")))->appendChild(text, IGNORE_EXCEPTION);
-    m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+    m_document.authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 } // namespace WebCore

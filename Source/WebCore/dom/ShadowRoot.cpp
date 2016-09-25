@@ -111,7 +111,7 @@ void ShadowRoot::updateStyle()
     if (!m_authorStyleSheets)
         return;
     // FIXME: Make optimized updated work.
-    m_authorStyleSheets->didChange(DeferRecalcStyle);
+    m_authorStyleSheets->didChangeContentsOrInterpretation();
 }
 
 String ShadowRoot::innerHTML() const

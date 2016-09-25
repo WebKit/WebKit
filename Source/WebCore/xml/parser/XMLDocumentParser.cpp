@@ -200,7 +200,7 @@ void XMLDocumentParser::end()
         insertErrorMessageBlock();
     else {
         updateLeafTextNode();
-        document()->authorStyleSheets().didChange(RecalcStyleImmediately);
+        document()->authorStyleSheets().didChangeContentsOrInterpretation();
     }
 
     if (isParsing())

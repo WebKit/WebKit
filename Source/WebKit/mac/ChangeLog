@@ -1,3 +1,14 @@
+2016-09-25  Antti Koivisto  <antti@apple.com>
+
+        AuthorStyleSheets shouldn't trigger synchronous style resolutions
+        https://bugs.webkit.org/show_bug.cgi?id=162532
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView reapplyStyles]):
+        (-[WebHTMLView _setPrinting:minimumPageLogicalWidth:logicalHeight:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustViewSize:paginateScreenContent:]):
+
 2016-09-24  Antti Koivisto  <antti@apple.com>
 
         Move stylesheet change logic from Document to AuthorStyleSheets

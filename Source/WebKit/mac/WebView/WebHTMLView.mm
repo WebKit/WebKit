@@ -3611,10 +3611,12 @@ WEBCORE_COMMAND(toggleUnderline)
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->document()->authorStyleSheets().didChange(RecalcStyleImmediately);
-    
-#ifdef LOG_TIMES        
+    if (Frame* coreFrame = core([self _frame])) {
+        coreFrame->document()->authorStyleSheets().didChangeContentsOrInterpretation();
+        coreFrame->document()->updateStyleIfNeeded();
+    }
+
+#ifdef LOG_TIMES
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s apply style seconds = %f", [self URL], thisTime);
 #endif
@@ -5005,7 +5007,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
             document->setPaginatedForScreen(_private->paginateScreenContent);
             document->setPrinting(_private->printing);
-            document->authorStyleSheets().didChange(RecalcStyleImmediately);
+            document->authorStyleSheets().didChangeContentsOrInterpretation();
         }
     }
 

@@ -83,7 +83,7 @@ void ExtensionStyleSheets::clearPageUserSheet()
 {
     if (m_pageUserSheet) {
         m_pageUserSheet = nullptr;
-        m_document.authorStyleSheets().didChange(DeferRecalcStyle);
+        m_document.authorStyleSheets().didChangeContentsOrInterpretation();
     }
 }
 
@@ -91,7 +91,7 @@ void ExtensionStyleSheets::updatePageUserSheet()
 {
     clearPageUserSheet();
     if (pageUserSheet())
-        m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+        m_document.authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 const Vector<RefPtr<CSSStyleSheet>>& ExtensionStyleSheets::injectedUserStyleSheets() const
@@ -155,21 +155,21 @@ void ExtensionStyleSheets::invalidateInjectedStyleSheetCache()
     m_injectedStyleSheetCacheValid = false;
     if (m_injectedUserStyleSheets.isEmpty() && m_injectedAuthorStyleSheets.isEmpty())
         return;
-    m_document.authorStyleSheets().didChange(DeferRecalcStyle);
+    m_document.authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 void ExtensionStyleSheets::addUserStyleSheet(Ref<StyleSheetContents>&& userSheet)
 {
     ASSERT(userSheet.get().isUserStyleSheet());
     m_userStyleSheets.append(CSSStyleSheet::create(WTFMove(userSheet), m_document));
-    m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+    m_document.authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 void ExtensionStyleSheets::addAuthorStyleSheetForTesting(Ref<StyleSheetContents>&& authorSheet)
 {
     ASSERT(!authorSheet.get().isUserStyleSheet());
     m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTFMove(authorSheet), m_document));
-    m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+    m_document.authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -201,7 +201,7 @@ void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifie
 
 void ExtensionStyleSheets::styleResolverChangedTimerFired()
 {
-    m_document.authorStyleSheets().didChange(RecalcStyleImmediately);
+    m_document.authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 void ExtensionStyleSheets::detachFromDocument()

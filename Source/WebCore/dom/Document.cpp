@@ -1355,7 +1355,7 @@ void Document::setContentLanguage(const String& language)
     m_contentLanguage = language;
 
     // Recalculate style so language is used when selecting the initial font.
-    m_authorStyleSheets->didChange(DeferRecalcStyle);
+    m_authorStyleSheets->didChangeContentsOrInterpretation();
 }
 
 void Document::setXMLVersion(const String& version, ExceptionCode& ec)
@@ -1859,7 +1859,7 @@ void Document::recalcStyle(Style::Change change)
     // re-attaching our containing iframe, which when asked HTMLFrameElementBase::isURLAllowed
     // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
 
-    authorStyleSheets().flushPendingUpdates();
+    authorStyleSheets().flushPendingUpdate();
 
     frameView.willRecalcStyle();
 
@@ -1959,13 +1959,12 @@ void Document::updateStyleIfNeeded()
     if (!view() || view()->isInRenderTreeLayout())
         return;
 
-    if (authorStyleSheets().hasPendingUpdate())
-        authorStyleSheets().didChange(RecalcStyleIfNeeded);
+    authorStyleSheets().flushPendingUpdate();
 
     if (!needsStyleRecalc())
         return;
 
-    recalcStyle(Style::NoChange);
+    recalcStyle();
 }
 
 void Document::updateLayout()
@@ -2014,7 +2013,8 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
         HTMLElement* bodyElement = bodyOrFrameset();
         if (bodyElement && !bodyElement->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
-            authorStyleSheets().didChange(RecalcStyleImmediately);
+            authorStyleSheets().didChangeContentsOrInterpretation();
+            recalcStyle(Style::Force);
         } else if (m_hasNodesWithPlaceholderStyle)
             // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
             // may not have had their real style calculated yet. Normally this gets cleaned when style sheets arrive 
@@ -3151,7 +3151,7 @@ void Document::didRemoveAllPendingStylesheet()
 {
     m_needsNotifyRemoveAllPendingStylesheet = false;
 
-    authorStyleSheets().didChange(DeferRecalcStyleIfNeeded);
+    authorStyleSheets().didChangeCandidatesForActiveSet();
 
     if (m_pendingSheetLayout == DidLayoutWithPendingSheets) {
         m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
@@ -3182,7 +3182,7 @@ bool Document::usesStyleBasedEditability() const
     ASSERT(!m_inStyleRecalc);
 
     auto& authorSheets = const_cast<AuthorStyleSheets&>(authorStyleSheets());
-    authorSheets.flushPendingUpdates();
+    authorSheets.flushPendingUpdate();
     return authorSheets.usesStyleBasedEditability();
 }
 
@@ -3226,7 +3226,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
         // -dwh
         authorStyleSheets().setSelectedStylesheetSetName(content);
         authorStyleSheets().setPreferredStylesheetSetName(content);
-        authorStyleSheets().didChange(DeferRecalcStyle);
+        authorStyleSheets().didChangeContentsOrInterpretation();
         break;
 
     case HTTPHeaderName::Refresh: {
@@ -3530,7 +3530,7 @@ String Document::selectedStylesheetSet() const
 void Document::setSelectedStylesheetSet(const String& aString)
 {
     authorStyleSheets().setSelectedStylesheetSetName(aString);
-    authorStyleSheets().didChange(DeferRecalcStyle);
+    authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 void Document::evaluateMediaQueryList()

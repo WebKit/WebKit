@@ -179,11 +179,11 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
                 resolver->addKeyframeStyle(*insertedKeyframesRule);
             return;
         }
-        owner->authorStyleSheets().scheduleOptimizedUpdate();
+        owner->authorStyleSheets().scheduleActiveSetUpdate();
         return;
     }
 
-    owner->authorStyleSheets().didChange(DeferRecalcStyle);
+    owner->authorStyleSheets().didChangeContentsOrInterpretation();
 
     m_mutatedRules = true;
 }
@@ -193,7 +193,7 @@ void CSSStyleSheet::didMutate()
     Document* owner = ownerDocument();
     if (!owner)
         return;
-    owner->authorStyleSheets().didChange(DeferRecalcStyle);
+    owner->authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 void CSSStyleSheet::clearOwnerNode()
@@ -202,7 +202,7 @@ void CSSStyleSheet::clearOwnerNode()
     m_ownerNode = 0;
     if (!owner)
         return;
-    owner->authorStyleSheets().didChange(DeferRecalcStyleIfNeeded);
+    owner->authorStyleSheets().didChangeCandidatesForActiveSet();
 }
 
 void CSSStyleSheet::reattachChildRuleCSSOMWrappers()

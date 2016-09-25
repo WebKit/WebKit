@@ -73,7 +73,7 @@ void InlineStyleSheetOwner::removedFromDocument(Document& document, Element& ele
 
     // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
     if (document.hasLivingRenderTree())
-        document.authorStyleSheets().didChange(DeferRecalcStyle);
+        document.authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
 void InlineStyleSheetOwner::clearDocumentData(Document&, Element& element)
