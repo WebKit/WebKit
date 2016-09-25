@@ -53,7 +53,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
     _refresh()
     {
         if (this._ignoreNextRefresh) {
-            delete this._ignoreNextRefresh;
+            this._ignoreNextRefresh = false;
             return;
         }
 
@@ -86,7 +86,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             this._highlightMode = mode;
             WebInspector.domTreeManager.highlightDOMNode(nodeId, mode);
         } else {
-            delete this._highlightMode;
+            this._highlightMode = null;
             WebInspector.domTreeManager.hideDOMNodeHighlight();
         }
 
@@ -361,10 +361,8 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
     _editingEnded(element, context)
     {
-        delete this.originalPropertyData;
-        delete this.previousPropertyDataCandidate;
         element.removeEventListener("keydown", context.keyDownHandler, false);
-        delete this._isEditingMetrics;
+        this._isEditingMetrics = false;
     }
 
     _editingCancelled(element, context)
@@ -420,7 +418,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
             function toggleInlineStyleProperty(property, value)
             {
-                this.style.setProperty(property, value, "!important");
+                this.style.setProperty(property, value, "important");
             }
 
             function didToggle()

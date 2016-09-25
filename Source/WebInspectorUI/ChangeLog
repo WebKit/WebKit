@@ -1,3 +1,19 @@
+2016-09-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r203437): DOM not updated when editing Box Model values (border, margin, etc)
+        https://bugs.webkit.org/show_bug.cgi?id=162522
+        <rdar://problem/28458203>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow.prototype._refresh):
+        (WebInspector.BoxModelDetailsSectionRow.prototype._highlightDOMNode):
+        (WebInspector.BoxModelDetailsSectionRow.prototype._editingEnded):
+        Drive-by style fix for `delete`. Also removed unused properties.
+        (WebInspector.BoxModelDetailsSectionRow.prototype._applyUserInput.resolvedNode.toggleInlineStyleProperty):
+        Use priority "important" instead of "!important".
+
 2016-09-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix typo in event name
