@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/\n"
-"POT-Creation-Date: 2016-07-10 02:29+0000\n"
-"PO-Revision-Date: 2016-08-05 19:29+0200\n"
-"Last-Translator: Bernd Homuth <dev@hmt.im>\n"
+"POT-Creation-Date: 2016-09-22 02:30+0000\n"
+"PO-Revision-Date: 2016-09-23 01:21+0200\n"
+"Last-Translator: Benedikt M. Thoma <gnome@thomba.net>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -570,59 +570,63 @@ msgid "pattern mismatch"
 msgstr "Muster passt nicht"
 
 #: ../LocalizedStringsGtk.cpp:758
+msgid "too short"
+msgstr "Zu kurz"
+
+#: ../LocalizedStringsGtk.cpp:763
 msgid "too long"
 msgstr "Zu lang"
 
-#: ../LocalizedStringsGtk.cpp:763
+#: ../LocalizedStringsGtk.cpp:768
 msgid "range underflow"
 msgstr "Bereich unterschritten"
 
-#: ../LocalizedStringsGtk.cpp:768
+#: ../LocalizedStringsGtk.cpp:773
 msgid "range overflow"
 msgstr "Bereich überschritten"
 
-#: ../LocalizedStringsGtk.cpp:773
+#: ../LocalizedStringsGtk.cpp:778
 msgid "step mismatch"
 msgstr "Schritt passt nicht"
 
-#: ../LocalizedStringsGtk.cpp:778
+#: ../LocalizedStringsGtk.cpp:783
 msgid "Unacceptable TLS certificate"
 msgstr "Inakzeptables TLS-Zertifikat"
 
-#: ../LocalizedStringsGtk.cpp:795
+#: ../LocalizedStringsGtk.cpp:800
 msgctxt "Menu section heading for subtitles"
 msgid "Subtitles"
 msgstr "Untertitel"
 
-#: ../LocalizedStringsGtk.cpp:800
+#: ../LocalizedStringsGtk.cpp:805
 msgctxt ""
 "Menu item label for the track that represents disabling closed captions"
 msgid "Off"
 msgstr "Aus"
 
-#: ../LocalizedStringsGtk.cpp:805
+#: ../LocalizedStringsGtk.cpp:810
 msgctxt "Menu item label for the automatically chosen track"
 msgid "Auto"
 msgstr "Automatisch"
 
-#: ../LocalizedStringsGtk.cpp:810
+#: ../LocalizedStringsGtk.cpp:815
 msgctxt "Menu item label for a closed captions track that has no other name"
 msgid "No label"
 msgstr "Keine Beschriftung"
 
-#: ../LocalizedStringsGtk.cpp:815
+#: ../LocalizedStringsGtk.cpp:820
 msgctxt "Menu item label for an audio track that has no other name"
 msgid "No label"
 msgstr "Keine Beschriftung"
 
 # Snapshot == Speicherauszug?
-#: ../LocalizedStringsGtk.cpp:821
+#: ../LocalizedStringsGtk.cpp:826
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "Beschriftung für den Speicherauszug einer Erweiterung"
 
 # Snapshot == Speicherauszug?
-#: ../LocalizedStringsGtk.cpp:826
+#: ../LocalizedStringsGtk.cpp:831
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "Untertitel der Beschriftung für den Speicherauszug einer Erweiterung"
@@ -709,18 +713,18 @@ msgid "Whether the destination may be overwritten"
 msgstr "Gibt an, ob das Ziel überschrieben werden darf"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:322
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:328
 #, c-format
 msgid "Unknown favicon for page %s"
 msgstr "Unbekanntes Favoritensymbol für Seite %s"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:148
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:278
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:284
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "Die Seite %s hat kein Favoritensymbol"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:272
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:278
 msgid "Favicons database not initialized yet"
 msgstr "Die Datenbank für Favoritensymbole ist noch nicht initialisiert"
 
@@ -1461,7 +1465,7 @@ msgstr "Die aktuelle aktive Adresse der Ressource"
 msgid "The response of the resource"
 msgstr "Die Antwort der Ressource"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1340
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1238
 msgid "Website running in fullscreen mode"
 msgstr "Internetseite läuft im Vollbildmodus"
 
