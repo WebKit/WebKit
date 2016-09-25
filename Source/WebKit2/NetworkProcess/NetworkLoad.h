@@ -66,6 +66,7 @@ public:
 #if USE(NETWORK_SESSION)
     void convertTaskToDownload(DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void setPendingDownloadID(DownloadID);
+    void setSuggestedFilename(const String&);
     void setPendingDownload(PendingDownload&);
     DownloadID pendingDownloadID() { return m_task->pendingDownloadID(); }
     

@@ -1673,14 +1673,25 @@ void TestController::downloadDidStart(WKContextRef context, WKDownloadRef downlo
 
 WKStringRef TestController::decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef, WKStringRef filename, bool*& allowOverwrite)
 {
+    String suggestedFilename = toWTFString(filename);
+
     StringBuilder builder;
     builder.append("Downloading URL with suggested filename \"");
-    builder.append(toWTFString(filename));
+    builder.append(suggestedFilename);
     builder.append("\"\n");
 
     m_currentInvocation->outputText(builder.toString());
 
-    return nullptr;
+    const char* dumpRenderTreeTemp = libraryPathForTesting();
+    if (!dumpRenderTreeTemp)
+        return nullptr;
+
+    *allowOverwrite = true;
+    String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+    if (suggestedFilename.isEmpty())
+        suggestedFilename = "Unknown";
+
+    return toWK(temporaryFolder + "/" + suggestedFilename).leakRef();
 }
 
 void TestController::downloadDidFinish(WKContextRef, WKDownloadRef)

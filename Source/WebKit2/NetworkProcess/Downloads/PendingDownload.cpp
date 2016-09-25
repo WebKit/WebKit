@@ -38,11 +38,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PendingDownload::PendingDownload(NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession)
+PendingDownload::PendingDownload(NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName)
     : m_networkLoad(std::make_unique<NetworkLoad>(*this, WTFMove(parameters), networkSession))
 {
     m_networkLoad->setPendingDownloadID(downloadID);
     m_networkLoad->setPendingDownload(*this);
+    m_networkLoad->setSuggestedFilename(suggestedName);
 }
 
 void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse)

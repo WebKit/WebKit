@@ -1,3 +1,28 @@
+2016-09-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] anchor.download attribute value is ignored by NETWORK_SESSION code path
+        https://bugs.webkit.org/show_bug.cgi?id=162531
+
+        Reviewed by Darin Adler.
+
+        Pipe the suggested filename through in the NETWORK_SESSION code path so
+        that it is used when deciding the destination path.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::setSuggestedFilename):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::suggestedFilename):
+        (WebKit::NetworkDataTask::setSuggestedFilename):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+
 2016-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Media controls playhead does not animate smoothly while playing

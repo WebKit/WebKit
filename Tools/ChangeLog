@@ -1,3 +1,21 @@
+2016-09-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] anchor.download attribute value is ignored by NETWORK_SESSION code path
+        https://bugs.webkit.org/show_bug.cgi?id=162531
+
+        Reviewed by Darin Adler.
+
+        Update decideDestinationWithSuggestedFilename() to return a actual file path
+        instead of nullptr. The NETWORK_SESSION code path cancels the download when
+        decideDestinationWithSuggestedFilename() returns an empty file path, unlike
+        the !NETWORK_SESSION code path that just continue downloading without
+        explicitely setting a destination path. This lead to different test results
+        for NETWORK_SESSION and !NETWORK_SESSION code paths. Returns a valid
+        destination path makes more sense and leads to consistent results.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::decideDestinationWithSuggestedFilename):
+
 2016-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [mac-sierra] 2 WKWebViewCandidateTests API test failures

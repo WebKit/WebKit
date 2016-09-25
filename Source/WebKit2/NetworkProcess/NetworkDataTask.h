@@ -127,6 +127,7 @@ public:
     const WebCore::ResourceRequest& firstRequest() const { return m_firstRequest; }
     WebCore::ResourceRequest currentRequest();
     String suggestedFilename();
+    void setSuggestedFilename(const String&);
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
     void transferSandboxExtensionToDownload(Download&);
     bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);
@@ -164,6 +165,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDataTask> m_task;
 #endif
+    String m_suggestedFilename;
 };
 
 #if PLATFORM(COCOA)

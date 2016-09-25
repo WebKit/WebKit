@@ -371,7 +371,14 @@ bool NetworkDataTask::allowsSpecificHTTPSCertificateForHost(const WebCore::Authe
 
 String NetworkDataTask::suggestedFilename()
 {
+    if (!m_suggestedFilename.isEmpty())
+        return m_suggestedFilename;
     return m_task.get().response.suggestedFilename;
+}
+
+void NetworkDataTask::setSuggestedFilename(const String& suggestedName)
+{
+    m_suggestedFilename = suggestedName;
 }
 
 WebCore::ResourceRequest NetworkDataTask::currentRequest()

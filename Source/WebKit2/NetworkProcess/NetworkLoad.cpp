@@ -201,6 +201,14 @@ void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
     m_task->setPendingDownloadID(downloadID);
 }
 
+void NetworkLoad::setSuggestedFilename(const String& suggestedName)
+{
+    if (!m_task)
+        return;
+
+    m_task->setSuggestedFilename(suggestedName);
+}
+
 void NetworkLoad::setPendingDownload(PendingDownload& pendingDownload)
 {
     if (!m_task)

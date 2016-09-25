@@ -1,3 +1,14 @@
+2016-09-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] anchor.download attribute value is ignored by NETWORK_SESSION code path
+        https://bugs.webkit.org/show_bug.cgi?id=162531
+
+        Reviewed by Darin Adler.
+
+        Unskip tests that are now passing.
+
+        * platform/mac/TestExpectations:
+
 2016-09-23  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !newRelayoutRoot.container() || is<RenderView>(newRelayoutRoot.container()) || !newRelayoutRoot.container()->needsLayout() while loading sohu.com

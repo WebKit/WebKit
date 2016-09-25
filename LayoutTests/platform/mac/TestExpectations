@@ -1383,8 +1383,6 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 # <rdar://problem/25536266> [Mac][iOS][NETWORK_SESSION] Unable to download BLOB URLs (156180)
 [ Sierra+ ] fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
 [ Sierra+ ] fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
-[ Sierra+ ] http/tests/security/anchor-download-allow-data.html [ Skip ]
-[ Sierra+ ] http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
 [ Sierra+ ] http/tests/security/anchor-download-allow-blob.html [ Skip ]
 
 # <rdar://problem/25780035> CSP does not ignore paths for media redirects
