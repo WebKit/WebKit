@@ -2922,7 +2922,7 @@ sub GenerateImplementation
                 push(@implContent, "        $memoizedType memoizedResult = castedThis->wrapped().$implGetterFunctionName(" . join(", ", @arguments) . ");\n");
                 push(@implContent, "        cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName.get().string(), memoizedResult, $exceptionCode);\n");
                 push(@implContent, "        JSValue result = " . NativeToJSValue($attribute->signature, 0, $interface, "memoizedResult", "castedThis") . ";\n");
-                push(@implContent, "        setDOMException(state, ec);\n") if $getterExceptions;
+                push(@implContent, "        setDOMException(state, throwScope, ec);\n") if $getterExceptions;
                 push(@implContent, "        return JSValue::encode(result);\n");
                 push(@implContent, "    }\n");
                 push(@implContent, "\n");
@@ -2932,7 +2932,7 @@ sub GenerateImplementation
                 push(@implContent, "        if (input && input->convertTo<$memoizedType>(memoizedResult)) {\n");
                 # FIXME: the generated code should report an error if an input cannot be fetched or converted.
                 push(@implContent, "            JSValue result = " . NativeToJSValue($attribute->signature, 0, $interface, "memoizedResult", "castedThis") . ";\n");
-                push(@implContent, "            setDOMException(state, input->exceptionCode());\n") if $getterExceptions;
+                push(@implContent, "            setDOMException(state, throwScope, input->exceptionCode());\n") if $getterExceptions;
                 push(@implContent, "            return JSValue::encode(result);\n");
                 push(@implContent, "        }\n");
                 push(@implContent, "    }\n");
@@ -3025,7 +3025,7 @@ sub GenerateImplementation
                     push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interface, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                 }
 
-                push(@implContent, "    setDOMException(state, ec);\n");
+                push(@implContent, "    setDOMException(state, throwScope, ec);\n");
 
                 push(@implContent, "    return JSValue::encode(result);\n");
             }
@@ -3279,7 +3279,7 @@ sub GenerateImplementation
                 if ($svgPropertyOrListPropertyType) {
                     if ($svgPropertyType) {
                         push(@implContent, "    if (impl.isReadOnly()) {\n");
-                        push(@implContent, "        setDOMException(state, NO_MODIFICATION_ALLOWED_ERR);\n");
+                        push(@implContent, "        setDOMException(state, throwScope, NO_MODIFICATION_ALLOWED_ERR);\n");
                         push(@implContent, "        return false;\n");
                         push(@implContent, "    }\n");
                         $implIncludes{"ExceptionCode.h"} = 1;
@@ -3291,7 +3291,7 @@ sub GenerateImplementation
                         push(@implContent, "    podImpl.set$implSetterFunctionName(nativeValue");
                         push(@implContent, ", ec") if $setterRaisesException;
                         push(@implContent, ");\n");
-                        push(@implContent, "    setDOMException(state, ec);\n") if $setterRaisesException;
+                        push(@implContent, "    setDOMException(state, throwScope, ec);\n") if $setterRaisesException;
                     }
                     if ($svgPropertyType) {
                         if ($setterRaisesExceptionWithMessage) {
@@ -3330,7 +3330,7 @@ sub GenerateImplementation
 
                     push(@arguments, "ec") if $setterRaisesException;
                     push(@implContent, "    ${functionName}(" . join(", ", @arguments) . ");\n");
-                    push(@implContent, "    setDOMException(state, ec);\n") if $setterRaisesException;
+                    push(@implContent, "    setDOMException(state, throwScope, ec);\n") if $setterRaisesException;
                     push(@implContent, "    return true;\n");
                 }
             }
@@ -3490,7 +3490,7 @@ END
                     push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                     if ($svgPropertyType) {
                         push(@implContent, "    if (impl.isReadOnly()) {\n");
-                        push(@implContent, "        setDOMException(state, NO_MODIFICATION_ALLOWED_ERR);\n");
+                        push(@implContent, "        setDOMException(state, throwScope, NO_MODIFICATION_ALLOWED_ERR);\n");
                         push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                         push(@implContent, "    }\n");
                         push(@implContent, "    $svgPropertyType& podImpl = impl.propertyReference();\n");
@@ -4433,15 +4433,15 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, $indent . "InputCursor& cursor = state->lexicalGlobalObject()->inputCursor();\n");
             push(@implContent, $indent . "if (!cursor.isReplaying()) {\n");
             push(@implContent, $indent . "    $functionString;\n");
-            push(@implContent, $indent . "    setDOMException(state, ec);\n") if $raisesException;
+            push(@implContent, $indent . "    setDOMException(state, throwScope, ec);\n") if $raisesException;
             push(@implContent, $indent . "}\n");
             push(@implContent, "#else\n");
             push(@implContent, $indent . "$functionString;\n");
-            push(@implContent, $indent . "setDOMException(state, ec);\n") if $raisesException;
+            push(@implContent, $indent . "setDOMException(state, throwScope, ec);\n") if $raisesException;
             push(@implContent, "#endif\n");
         } else {
             push(@implContent, $indent . "$functionString;\n");
-            push(@implContent, $indent . "setDOMException(state, ec);\n") if $raisesException;
+            push(@implContent, $indent . "setDOMException(state, throwScope, ec);\n") if $raisesException;
         }
 
         if ($svgPropertyType and !$function->isStatic) {
@@ -4494,7 +4494,7 @@ sub GenerateImplementationFunctionCall()
         } else {
             push(@implContent, $indent . "JSValue result = " . NativeToJSValue($function->signature, 1, $interface, $functionString, $thisObject) . ";\n");
         }
-        push(@implContent, "\n" . $indent . "setDOMException(state, ec);\n") if $raisesException;
+        push(@implContent, "\n" . $indent . "setDOMException(state, throwScope, ec);\n") if $raisesException;
 
         if ($codeGenerator->ExtendedAttributeContains($function->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
             push(@implContent, $indent . "if (UNLIKELY(throwScope.exception()))\n");
@@ -5465,7 +5465,7 @@ END
 
             if ($interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 push(@$outputArray, "    if (UNLIKELY(ec)) {\n");
-                push(@$outputArray, "        setDOMException(state, ec);\n");
+                push(@$outputArray, "        setDOMException(state, throwScope, ec);\n");
                 push(@$outputArray, "        return JSValue::encode(JSValue());\n");
                 push(@$outputArray, "    }\n");
             }
