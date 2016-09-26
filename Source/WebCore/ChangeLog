@@ -1,3 +1,48 @@
+2016-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Seeking video doesn't update seek position
+        https://bugs.webkit.org/show_bug.cgi?id=162575
+        <rdar://problem/28457219>
+
+        Reviewed by Jer Noble.
+
+        On ToT, seeking in a video causes the playhead to stutter, and does not actually update media remote's seek
+        position. This is partly due to how we do not update media remote with new information when beginning to respond
+        to remote seek commands, so media remote continues to think that a playing video is still playing despite the
+        user attempting to seek through it.
+
+        To fix this, we introduce timer-based guards around remote seek commands, such that a seek "gesture" begins when
+        we receive the first seek command and ends when no seek command has been received in a set amount of time (this
+        is 0.5 seconds, which is approximately what other clients around the platform use).
+
+        Also, when responding to a remote seek, perform the seek with no tolerance. This prevents the playhead from
+        stuttering at the end of a seek from the final requested destination of the seek to the last actually seeked
+        time in the video.
+
+        When beginning to seek, we must pause the media. Through existing mechanisms, this causes the media session
+        manager to update its Now Playing information, which informs media remote that we are no longer playing and
+        prevents us from stuttering. However, when ending a seek, we must also trigger an additional update to again
+        refresh media remote's view of the current time. This prevents a flicker when playing media after seeking.
+
+        Unit tests to be added in a follow-up due to time constraints.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::handleSeekToPlaybackPosition):
+        (WebCore::HTMLMediaElement::seekToPlaybackPositionEndedTimerFired):
+        (WebCore::HTMLMediaElement::didReceiveRemoteControlCommand):
+        * html/HTMLMediaElement.h:
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::scheduleUpdateNowPlayingInfo):
+        (WebCore::PlatformMediaSessionManager::sessionDidEndRemoteScrubbing):
+        (WebCore::PlatformMediaSessionManager::sessions): Deleted.
+        * platform/audio/mac/MediaSessionManagerMac.h:
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary):
+        (WebCore::MediaSessionManagerMac::scheduleUpdateNowPlayingInfo):
+        (WebCore::MediaSessionManagerMac::sessionDidEndRemoteScrubbing):
+        (WebCore::MediaSessionManagerMac::updateNowPlayingInfo):
+
 2016-09-26  Chris Dumez  <cdumez@apple.com>
 
         [WK2] BlobDownloadClient should use asynchronous IPC to decide destination path
