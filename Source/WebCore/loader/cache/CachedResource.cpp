@@ -122,33 +122,11 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(std::chrono::system_clock::now())
     , m_origin(request.releaseOrigin())
-    , m_lastDecodedAccessTime(0)
-    , m_loadFinishTime(0)
-    , m_encodedSize(0)
-    , m_decodedSize(0)
-    , m_accessCount(0)
-    , m_handleCount(0)
-    , m_preloadCount(0)
-    , m_preloadResult(PreloadNotReferenced)
-    , m_requestedFromNetworkingLayer(false)
-    , m_inCache(false)
-    , m_loading(false)
-    , m_switchingClientsToRevalidatedResource(false)
     , m_type(type)
-    , m_status(Pending)
-#ifndef NDEBUG
-    , m_deleted(false)
-    , m_lruIndex(0)
-#endif
-    , m_owningCachedResourceLoader(nullptr)
-    , m_resourceToRevalidate(nullptr)
-    , m_proxyResource(nullptr)
 {
-    ASSERT(m_type == unsigned(type)); // m_type is a bitfield, so this tests careless updates of the enum.
     ASSERT(sessionID.isValid());
-#ifndef NDEBUG
-    cachedResourceLeakCounter.increment();
-#endif
+    finishRequestInitialization();
+
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
     ASSERT(m_origin || m_type == CachedResource::MainResource);
 
@@ -156,6 +134,25 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
         && !(m_resourceRequest.url().protocolIsData() && m_options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set)
         && !m_origin->canRequest(m_resourceRequest.url()))
         setCrossOrigin();
+}
+
+CachedResource::CachedResource(const URL& url, Type type, SessionID sessionID)
+    : m_resourceRequest(url)
+    , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
+    , m_sessionID(sessionID)
+    , m_responseTimestamp(std::chrono::system_clock::now())
+    , m_type(type)
+    , m_status(Cached)
+{
+    ASSERT(sessionID.isValid());
+    finishRequestInitialization();
+}
+
+void CachedResource::finishRequestInitialization()
+{
+#ifndef NDEBUG
+    cachedResourceLeakCounter.increment();
+#endif
 
     if (!m_resourceRequest.url().hasFragmentIdentifier())
         return;

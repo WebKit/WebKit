@@ -66,23 +66,19 @@ CachedImage::CachedImage(CachedResourceRequest&& request, SessionID sessionID)
 }
 
 CachedImage::CachedImage(Image* image, SessionID sessionID)
-    : CachedResource(CachedResourceRequest(ResourceRequest()), ImageResource, sessionID)
+    : CachedResource(URL(), ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
 {
-    setStatus(Cached);
-    setLoading(false);
 }
 
 CachedImage::CachedImage(const URL& url, Image* image, SessionID sessionID)
-    : CachedResource(CachedResourceRequest(ResourceRequest(url)), ImageResource, sessionID)
+    : CachedResource(url, ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
 {
-    setStatus(Cached);
-    setLoading(false);
 }
 
 CachedImage::CachedImage(const URL& url, Image* image, CachedImage::CacheBehaviorType type, SessionID sessionID)
