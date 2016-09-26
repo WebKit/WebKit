@@ -1,3 +1,15 @@
+2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix -Wformat warnings in WebLoaderStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=162553
+
+        Unreviewed
+
+        Two of the format arguments are swapped. Fix them.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2016-09-25  Chris Dumez  <cdumez@apple.com>
 
         Regression(r206356): Caused crashes for !NETWORK_SESSION code path
