@@ -1,5 +1,18 @@
 2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Add CairoUniquePtr and use it in FontPlatformDataFreetype.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=162557
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/cairo/CairoUniquePtr.h: Added.
+        (WebCore::CairoPtrDeleter<cairo_font_options_t>::operator()):
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::getDefaultCairoFontOptions): Return a smart pointer.
+        (WebCore::FontPlatformData::buildScaledFont): Use smart pointer.
+
+2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Silence unused parameter warnings from Geoclue2Interface.c
         https://bugs.webkit.org/show_bug.cgi?id=162545
 

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "CairoUniquePtr.h"
 #include "CairoUtilities.h"
 #include "FontCache.h"
 #include "FontDescription.h"
@@ -105,16 +106,16 @@ static void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* optio
         cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
 }
 
-static cairo_font_options_t* getDefaultCairoFontOptions()
+static CairoUniquePtr<cairo_font_options_t> getDefaultCairoFontOptions()
 {
 #if PLATFORM(GTK)
     if (GdkScreen* screen = gdk_screen_get_default()) {
         const cairo_font_options_t* screenOptions = gdk_screen_get_font_options(screen);
         if (screenOptions)
-            return cairo_font_options_copy(screenOptions);
+            return CairoUniquePtr<cairo_font_options_t>(cairo_font_options_copy(screenOptions));
     }
 #endif
-    return cairo_font_options_create();
+    return CairoUniquePtr<cairo_font_options_t>(cairo_font_options_create());
 }
 
 static FcPattern* getDefaultFontconfigOptions()
@@ -299,9 +300,9 @@ String FontPlatformData::description() const
 
 void FontPlatformData::buildScaledFont(cairo_font_face_t* fontFace)
 {
-    cairo_font_options_t* options = getDefaultCairoFontOptions();
+    CairoUniquePtr<cairo_font_options_t> options = getDefaultCairoFontOptions();
     FcPattern* optionsPattern = m_pattern ? m_pattern.get() : getDefaultFontconfigOptions();
-    setCairoFontOptionsFromFontConfigPattern(options, optionsPattern);
+    setCairoFontOptionsFromFontConfigPattern(options.get(), optionsPattern);
 
     cairo_matrix_t ctm;
     cairo_matrix_init_identity(&ctm);
@@ -340,8 +341,7 @@ void FontPlatformData::buildScaledFont(cairo_font_face_t* fontFace)
         cairo_matrix_translate(&fontMatrix, 0.0, 1.0);
     }
 
-    m_scaledFont = adoptRef(cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options));
-    cairo_font_options_destroy(options);
+    m_scaledFont = adoptRef(cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options.get()));
 }
 
 bool FontPlatformData::hasCompatibleCharmap() const
