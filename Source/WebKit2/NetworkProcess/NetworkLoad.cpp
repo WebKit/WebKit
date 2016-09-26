@@ -149,7 +149,6 @@ void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
 void NetworkLoad::continueDidReceiveResponse()
 {
 #if USE(NETWORK_SESSION)
-    ASSERT(m_responseCompletionHandler);
     if (m_responseCompletionHandler) {
         m_responseCompletionHandler(PolicyUse);
         m_responseCompletionHandler = nullptr;

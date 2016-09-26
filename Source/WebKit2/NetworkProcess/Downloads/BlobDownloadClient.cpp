@@ -41,27 +41,29 @@ BlobDownloadClient::BlobDownloadClient(Download& download)
 {
 }
 
-void BlobDownloadClient::didReceiveResponse(ResourceHandle*, ResourceResponse&& response)
+void BlobDownloadClient::didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response)
 {
     m_download.didReceiveResponse(WTFMove(response));
+    m_download.decideDestinationWithSuggestedFilenameAsync(m_download.suggestedName());
+}
 
-    bool allowOverwrite = false;
-    m_destinationPath = m_download.decideDestinationWithSuggestedFilename(m_download.suggestedName(), allowOverwrite);
-    if (m_destinationPath.isEmpty()) {
-        didFail(nullptr, cancelledError(m_download.request()));
-        return;
-    }
-    if (fileExists(m_destinationPath)) {
+void BlobDownloadClient::didDecideDownloadDestination(const String& destinationPath, bool allowOverwrite)
+{
+    ASSERT(!destinationPath.isEmpty());
+
+    if (fileExists(destinationPath)) {
         if (!allowOverwrite) {
-            m_destinationPath = emptyString();
             didFail(nullptr, cancelledError(m_download.request()));
             return;
         }
-        deleteFile(m_destinationPath);
+        deleteFile(destinationPath);
     }
 
+    m_destinationPath = destinationPath;
     m_destinationFile = openFile(m_destinationPath, OpenForWrite);
     m_download.didCreateDestination(m_destinationPath);
+
+    m_download.continueDidReceiveResponse();
 }
 
 void BlobDownloadClient::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int)

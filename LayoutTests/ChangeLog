@@ -1,3 +1,19 @@
+2016-09-26  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] BlobDownloadClient should use asynchronous IPC to decide destination path
+        https://bugs.webkit.org/show_bug.cgi?id=162568
+
+        Reviewed by Alex Christensen.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set-expected.txt:
+        * http/tests/security/anchor-download-allow-blob-expected.txt:
+        Rebaseline several Blob download tests now that the "Download started"
+        message always comes first (as it should).
+
+        * platform/mac-wk2/TestExpectations:
+        Unskip test that is no longer flaky.
+
 2016-09-26  Nan Wang  <n_wang@apple.com>
 
         AX: Progress: [Mac] Content in label element should be used as AXTitle or AXDescription

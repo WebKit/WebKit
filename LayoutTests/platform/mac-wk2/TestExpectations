@@ -210,9 +210,6 @@ webkit.org/b/117962 media/video-played-collapse.html [ Pass Failure ]
 
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFailure ]
 
-# Flaky on WebKit2.
-webkit.org/b/162543 fast/dom/HTMLAnchorElement/anchor-download.html [ Pass Failure ]
-
 # Reference expectation doesn't end up in compositing code path, leading to antialiasing differences.
 webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 

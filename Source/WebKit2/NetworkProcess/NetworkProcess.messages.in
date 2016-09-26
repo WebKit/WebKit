@@ -51,8 +51,8 @@ messages -> NetworkProcess LegacyReceiver {
 #if USE(NETWORK_SESSION)
     ContinueCanAuthenticateAgainstProtectionSpaceDownload(WebKit::DownloadID downloadID, bool canAuthenticate)
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
-    ContinueDecidePendingDownloadDestination(WebKit::DownloadID downloadID, String destination, WebKit::SandboxExtension::Handle sandboxExtensionHandle, bool allowOverwrite)
 #endif
+    ContinueDecidePendingDownloadDestination(WebKit::DownloadID downloadID, String destination, WebKit::SandboxExtension::Handle sandboxExtensionHandle, bool allowOverwrite)
 
     SetProcessSuppressionEnabled(bool flag)
 #if PLATFORM(COCOA)

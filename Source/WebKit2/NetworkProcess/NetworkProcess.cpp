@@ -525,7 +525,8 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
     downloadManager().willDecidePendingDownloadDestination(networkDataTask, WTFMove(completionHandler));
     downloadProxyConnection()->send(Messages::DownloadProxy::DecideDestinationWithSuggestedFilenameAsync(networkDataTask.pendingDownloadID(), networkDataTask.suggestedFilename()), destinationID);
 }
-    
+#endif
+
 void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
 {
     if (destination.isEmpty())
@@ -533,7 +534,6 @@ void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloa
     else
         downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite);
 }
-#endif
 
 void NetworkProcess::setCacheModel(uint32_t cm)
 {

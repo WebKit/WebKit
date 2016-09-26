@@ -1,3 +1,47 @@
+2016-09-26  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] BlobDownloadClient should use asynchronous IPC to decide destination path
+        https://bugs.webkit.org/show_bug.cgi?id=162568
+
+        Reviewed by Alex Christensen.
+
+        Use DecideDestinationWithSuggestedFilenameAsync IPC to decide the destination
+        path in the case of Blob downloads, instead of the synchronous alternative.
+        To achieve this, BlobResourceHandle was updated in WebCore to properly support
+        asynchronous callback and BlobDownloadClient was updated to use asynchronous
+        callbacks. When BlobDownloadClient::didReceiveResponseAsync() is called, we
+        now ask the WebContent process asynchronously to decide what the destination
+        path should be. Then, when we later get the destination path back from the
+        WebContent process, we create the file on disk and call
+        continueDidReceiveResponse() on the BlobResourceHandle so we start getting the
+        blob data to write.
+
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
+        (WebKit::BlobDownloadClient::didReceiveResponseAsync):
+        (WebKit::BlobDownloadClient::didDecideDownloadDestination):
+        * NetworkProcess/Downloads/BlobDownloadClient.h:
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::decideDestinationWithSuggestedFilenameAsync):
+        (WebKit::Download::didDecideDownloadDestination):
+        (WebKit::Download::continueDidReceiveResponse):
+        (WebKit::Download::decideDestinationWithSuggestedFilename): Deleted.
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::willDecidePendingDownloadDestination):
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
+        (WebKit::DownloadManager::convertHandleToDownload): Deleted.
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueDidReceiveResponse):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::continueDecidePendingDownloadDestination):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync): Deleted.
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+
 2016-09-26  Daniel Bates  <dabates@apple.com>
 
         Mark Ping{Handle, Load} as final

@@ -179,8 +179,9 @@ private:
 #if USE(NETWORK_SESSION)
     void continueCanAuthenticateAgainstProtectionSpaceDownload(DownloadID, bool canAuthenticate);
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
-    void continueDecidePendingDownloadDestination(DownloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite);
 #endif
+    void continueDecidePendingDownloadDestination(DownloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite);
+
     void setCacheModel(uint32_t);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void setCanHandleHTTPSServerTrustEvaluation(bool);

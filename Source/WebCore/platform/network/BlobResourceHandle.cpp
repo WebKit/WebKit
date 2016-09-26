@@ -158,7 +158,11 @@ void BlobResourceHandle::cancel()
 
 void BlobResourceHandle::continueDidReceiveResponse()
 {
-    // BlobResourceHandle doesn't wait for didReceiveResponse, and it currently cannot be used for downloading.
+    ASSERT(m_async);
+    ASSERT(usesAsyncCallbacks());
+
+    m_buffer.resize(bufferSize);
+    readAsync();
 }
 
 void BlobResourceHandle::start()
@@ -223,8 +227,10 @@ void BlobResourceHandle::getSizeForNext()
         if (m_async) {
             Ref<BlobResourceHandle> protectedThis(*this);
             notifyResponse();
-            m_buffer.resize(bufferSize);
-            readAsync();
+            if (!usesAsyncCallbacks()) {
+                m_buffer.resize(bufferSize);
+                readAsync();
+            }
         }
         return;
     }
@@ -568,9 +574,6 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     // as if the response had a Content-Disposition header with the filename parameter set to the File's name attribute.
     // Notably, this will affect a name suggested in "File Save As".
 
-    // BlobResourceHandle cannot be used with downloading, and doesn't even wait for continueDidReceiveResponse.
-    // It's currently client's responsibility to know that didReceiveResponseAsync cannot be used to convert a
-    // load into a download or blobs.
     if (usesAsyncCallbacks())
         client()->didReceiveResponseAsync(this, WTFMove(response));
     else
@@ -597,8 +600,6 @@ void BlobResourceHandle::notifyResponseOnError()
         break;
     }
 
-    // Note that we don't wait for continueDidReceiveResponse when using didReceiveResponseAsync.
-    // This is not formally correct, but the client has to be a no-op anyway, because blobs can't be downloaded.
     if (usesAsyncCallbacks())
         client()->didReceiveResponseAsync(this, WTFMove(response));
     else

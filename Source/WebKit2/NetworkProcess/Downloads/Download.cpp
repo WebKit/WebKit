@@ -146,6 +146,8 @@ bool Download::shouldDecodeSourceDataOfMIMEType(const String& mimeType)
     return result;
 }
 
+#if !USE(NETWORK_SESSION)
+
 String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
 {
     String destination;
@@ -158,6 +160,34 @@ String Download::decideDestinationWithSuggestedFilename(const String& filename, 
         m_sandboxExtension->consume();
 
     return destination;
+}
+
+#endif
+
+void Download::decideDestinationWithSuggestedFilenameAsync(const String& suggestedFilename)
+{
+    send(Messages::DownloadProxy::DecideDestinationWithSuggestedFilenameAsync(downloadID(), suggestedFilename));
+}
+
+void Download::didDecideDownloadDestination(const String& destinationPath, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
+{
+    ASSERT(!m_sandboxExtension);
+    m_sandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
+    if (m_sandboxExtension)
+        m_sandboxExtension->consume();
+
+    if (m_request.url().protocolIsBlob()) {
+        static_cast<BlobDownloadClient*>(m_downloadClient.get())->didDecideDownloadDestination(destinationPath, allowOverwrite);
+        return;
+    }
+
+    // For now, only Blob URL downloads go through this code path.
+    ASSERT_NOT_REACHED();
+}
+
+void Download::continueDidReceiveResponse()
+{
+    m_resourceHandle->continueDidReceiveResponse();
 }
 
 void Download::didCreateDestination(const String& path)

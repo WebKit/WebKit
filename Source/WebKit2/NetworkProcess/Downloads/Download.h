@@ -100,7 +100,12 @@ public:
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
     bool shouldDecodeSourceDataOfMIMEType(const String& mimeType);
+#if !USE(NETWORK_SESSION)
     String decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);
+#endif
+    void decideDestinationWithSuggestedFilenameAsync(const String&);
+    void didDecideDownloadDestination(const String& destinationPath, const SandboxExtension::Handle&, bool allowOverwrite);
+    void continueDidReceiveResponse();
     void didCreateDestination(const String& path);
     void didFinish();
     void platformDidFinish();
