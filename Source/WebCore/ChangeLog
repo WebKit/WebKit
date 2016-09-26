@@ -1,3 +1,33 @@
+2016-09-26  Antti Koivisto  <antti@apple.com>
+
+        Input elements don't work inside shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=160427
+
+        Reviewed by Darin Adler.
+
+        There is a bug in ComposedTreeIterator. If the iterator is initialized with an initial state where the root
+        is inside a shadow tree it won't iterate into slots.
+
+        If an input element is in a shadow tree it generates narrowly scoped style updates. When RenderTreeUpdater
+        applies such an update the update root will be inside the shadow tree and the bug will prevent the render tree
+        for slotted content from updating.
+
+        Added tests for both the iterator behavior and the specific symptom with input elements.
+
+        Tests: fast/shadow-dom/composed-tree-shadow-child-subtree.html
+               fast/shadow-dom/input-element-in-shadow.html
+
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::ComposedTreeIterator):
+
+            Check and cache if the root is inside shadow tree.
+
+        (WebCore::ComposedTreeIterator::traverseNextInShadowTree):
+        * dom/ComposedTreeIterator.h:
+        (WebCore::ComposedTreeIterator::traverseNext):
+
+            If it is, always use the shadow traversal code path.
+
 2016-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Seeking video doesn't update seek position

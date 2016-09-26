@@ -53,6 +53,7 @@ ComposedTreeIterator::Context::Context(ContainerNode& root, Node& node, SlottedT
 }
 
 ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, FirstChildTag)
+    : m_rootIsInShadowTree(root.isInShadowTree())
 {
     ASSERT(!is<ShadowRoot>(root));
 
@@ -73,6 +74,7 @@ ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, FirstChildTag)
 }
 
 ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, Node& current)
+    : m_rootIsInShadowTree(root.isInShadowTree())
 {
     ASSERT(!is<ShadowRoot>(root));
     ASSERT(!is<ShadowRoot>(current));
@@ -155,7 +157,7 @@ void ComposedTreeIterator::traverseShadowRoot(ShadowRoot& shadowRoot)
 
 void ComposedTreeIterator::traverseNextInShadowTree()
 {
-    ASSERT(m_contextStack.size() > 1);
+    ASSERT(m_contextStack.size() > 1 || m_rootIsInShadowTree);
 
     if (is<HTMLSlotElement>(current())) {
         auto& slot = downcast<HTMLSlotElement>(current());
@@ -175,8 +177,6 @@ void ComposedTreeIterator::traverseNextInShadowTree()
 
 void ComposedTreeIterator::traverseNextLeavingContext()
 {
-    ASSERT(m_contextStack.size() > 1);
-
     while (context().iterator == context().end && m_contextStack.size() > 1) {
         m_contextStack.removeLast();
         if (context().iterator == context().end)

@@ -80,6 +80,7 @@ private:
     const Context& context() const { return m_contextStack.last(); }
     Node& current() { return *context().iterator; }
 
+    bool m_rootIsInShadowTree { false };
     bool m_didDropAssertions { false };
     Vector<Context, 8> m_contextStack;
 };
@@ -96,7 +97,7 @@ inline ComposedTreeIterator& ComposedTreeIterator::traverseNext()
         return *this;
     }
 
-    if (m_contextStack.size() > 1) {
+    if (m_contextStack.size() > 1 || m_rootIsInShadowTree) {
         traverseNextInShadowTree();
         return *this;
     }
@@ -109,7 +110,7 @@ inline ComposedTreeIterator& ComposedTreeIterator::traverseNextSkippingChildren(
 {
     context().iterator.traverseNextSkippingChildren();
 
-    if (context().iterator == context().end && m_contextStack.size() > 1)
+    if (context().iterator == context().end)
         traverseNextLeavingContext();
     
     return *this;
