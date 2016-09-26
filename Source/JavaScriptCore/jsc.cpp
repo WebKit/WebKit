@@ -2539,12 +2539,15 @@ void CommandLine::parseArguments(int argc, char** argv)
 static int NEVER_INLINE runJSC(VM* vm, CommandLine options)
 {
     JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(*vm);
 
     int result;
     if (options.m_profile && !vm->m_perBytecodeProfiler)
         vm->m_perBytecodeProfiler = std::make_unique<Profiler::Database>(*vm);
 
     GlobalObject* globalObject = GlobalObject::create(*vm, GlobalObject::createStructure(*vm, jsNull()), options.m_arguments);
+    RETURN_IF_EXCEPTION(scope, 3);
+
     bool success = runWithScripts(globalObject, options.m_scripts, options.m_uncaughtExceptionName, options.m_alwaysDumpUncaughtException, options.m_dump, options.m_module);
     if (options.m_interactive && success)
         runInteractive(globalObject);

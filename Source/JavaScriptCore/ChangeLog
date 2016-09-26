@@ -1,5 +1,50 @@
 2016-09-26  Mark Lam  <mark.lam@apple.com>
 
+        Add some needed CatchScopes in code that should not throw.
+        https://bugs.webkit.org/show_bug.cgi?id=162584
+
+        Reviewed by Keith Miller.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty):
+        - This function already handles exceptions in its own way.  We're honoring this
+          contract and catching exceptions and passing it to the handler.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::notifyDebuggerOfUnwinding):
+        - The debugger should not be throwing any exceptions.
+
+        * jsc.cpp:
+        (runJSC):
+        - the buck stops here.  There's no reason an exception should propagate past here.
+
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::save):
+        - If an exception was thrown while saving the database, there's nothing we can
+          really do about it anyway.  Just fail nicely and return false.  This is in line
+          with existing error checking code in Database::save() that returns false if
+          it's not able to open the file to save to.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+        - If we're not able to stringify the error value, then we'll just use the
+          provided message as the error string.  It doesn't make sense to have the
+          Error factory throw an exception that shadows the intended exception that the
+          client probably wants to throw (assuming that that's why the client is creating
+          this Error object).
+
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::finishCreation):
+        - The existing code already RELEASE_ASSERT that no exception was thrown.
+          Hence, it's appropriate to use a CatchScope here.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        - The sampling profiler is doing a VMInquiry get here.  It should never throw an
+          exception.  Hence, we'll just use a CatchScope and assert accordingly.
+
+2016-09-26  Mark Lam  <mark.lam@apple.com>
+
         Exception unwinding code should use a CatchScope instead of a ThrowScope.
         https://bugs.webkit.org/show_bug.cgi?id=162583
 

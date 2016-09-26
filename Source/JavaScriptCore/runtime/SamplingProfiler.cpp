@@ -591,11 +591,14 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
     if (!callee)
         return String();
 
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     ExecState* exec = callee->globalObject()->globalExec();
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry);
         PropertyName propertyName(ident);
-        if (callee->getPropertySlot(exec, propertyName, slot)) {
+        bool hasProperty = callee->getPropertySlot(exec, propertyName, slot);
+        ASSERT_UNUSED(scope, !scope.exception());
+        if (hasProperty) {
             if (slot.isValue()) {
                 JSValue nameValue = slot.getValue(exec, propertyName);
                 if (isJSString(nameValue))
