@@ -231,7 +231,7 @@ void Download::resume(const IPC::DataReference&, const String&, const SandboxExt
     notImplemented();
 }
 
-void Download::cancel()
+void Download::cancelNetworkLoad()
 {
     if (!m_resourceHandle)
         return;
@@ -245,13 +245,6 @@ void Download::cancel()
 
 void Download::platformInvalidate()
 {
-    if (m_resourceHandle) {
-        m_resourceHandle->clearClient();
-        m_resourceHandle->cancel();
-        m_resourceHandle = nullptr;
-    }
-
-    m_downloadClient = nullptr;
 }
 
 void Download::platformDidFinish()

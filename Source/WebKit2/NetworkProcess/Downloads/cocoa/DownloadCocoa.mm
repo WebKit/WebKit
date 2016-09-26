@@ -38,7 +38,7 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     notImplemented();
 }
     
-void Download::cancel()
+void Download::cancelNetworkLoad()
 {
     ASSERT(m_download);
     [m_download cancelByProducingResumeData: ^(NSData * _Nullable resumeData)

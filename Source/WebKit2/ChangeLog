@@ -1,3 +1,57 @@
+2016-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r206356): Caused crashes for !NETWORK_SESSION code path
+        https://bugs.webkit.org/show_bug.cgi?id=162541
+
+        Reviewed by Alexey Proskuryakov.
+
+        After r206356, if Download is downloading a Blob instead of doing a
+        network load, then m_resourceHandle / m_downloadClient are used to do
+        the download. This broke some assumptions on Mac because the
+        NETWORK_SESSION code path assumed it was relying on m_download and the
+        !NETWORK_SESSION code path assumed it was using m_nsURLDownload /
+        m_delegate.
+
+        This patch refactors the code so that:
+        - The Download destructor now takes care of invalidating
+          m_resourceHandle and m_downloadClient before calling
+          platformInvalidate(). For the SOUP code path,
+          platformInvalidate() no longer needs to do anything
+          because SOUP uses m_resourceHandle / m_downloadClient
+          only. For the Mac !NETWORK_SESSION code path, we keep
+          invalidating m_nsURLDownload / m_delegate but we no
+          longer assume that those are initialized (given that
+          they are not when downloading a blob). Other
+          platforms do nothing in platformInvalidate() at the
+          moment.
+        - Download::cancel() now takes care of cancelling the
+          download if we're downloading a blob. Otherwise, we
+          call the platform specific cancelNetworkLoad(). This
+          is the same pattern that is used for start() /
+          startNetworkLoad().
+
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
+        (WebKit::BlobDownloadClient::didCancel):
+        * NetworkProcess/Downloads/BlobDownloadClient.h:
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::~Download):
+        (WebKit::Download::cancel):
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::cancelNetworkLoad):
+        (WebKit::Download::cancel): Deleted.
+        * NetworkProcess/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::cancelNetworkLoad):
+        (WebKit::Download::cancel): Deleted.
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::cancelNetworkLoad):
+        (WebKit::Download::platformInvalidate):
+        (WebKit::Download::cancel): Deleted.
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::cancelNetworkLoad):
+        (WebKit::Download::platformInvalidate):
+        (WebKit::Download::cancel): Deleted.
+
 2016-09-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Enable support for 'download' attribute on anchor elements

@@ -69,6 +69,13 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, cons
 
 Download::~Download()
 {
+    if (m_resourceHandle) {
+        m_resourceHandle->clearClient();
+        m_resourceHandle->cancel();
+        m_resourceHandle = nullptr;
+    }
+    m_downloadClient = nullptr;
+
     platformInvalidate();
 
     m_downloadManager.didDestroyDownload();
@@ -88,6 +95,17 @@ void Download::start()
 #else
     startNetworkLoad();
 #endif
+}
+
+void Download::cancel()
+{
+    if (m_request.url().protocolIsBlob()) {
+        auto resourceHandle = WTFMove(m_resourceHandle);
+        resourceHandle->cancel();
+        static_cast<BlobDownloadClient*>(m_downloadClient.get())->didCancel();
+        return;
+    }
+    cancelNetworkLoad();
 }
 
 void Download::didStart()

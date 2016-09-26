@@ -76,6 +76,15 @@ void BlobDownloadClient::didFinishLoading(ResourceHandle*, double)
     m_download.didFinish();
 }
 
+void BlobDownloadClient::didCancel()
+{
+    closeFile(m_destinationFile);
+    if (!m_destinationPath.isEmpty())
+        deleteFile(m_destinationPath);
+
+    m_download.didCancel(IPC::DataReference());
+}
+
 void BlobDownloadClient::didFail(ResourceHandle*, const ResourceError& error)
 {
     closeFile(m_destinationFile);

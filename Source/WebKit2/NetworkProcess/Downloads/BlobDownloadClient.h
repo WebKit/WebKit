@@ -38,6 +38,8 @@ class BlobDownloadClient final : public WebCore::ResourceHandleClient {
 public:
     explicit BlobDownloadClient(Download&);
 
+    void didCancel();
+
 private:
     // ResourceHandleClient
     void didReceiveResponse(WebCore::ResourceHandle*, WebCore::ResourceResponse&&) final;
