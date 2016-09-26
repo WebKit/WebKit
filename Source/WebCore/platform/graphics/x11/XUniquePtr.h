@@ -41,8 +41,7 @@ template<typename T>
 struct XPtrDeleter {
     void operator()(T* ptr) const
     {
-        if (ptr)
-            XFree(ptr);
+        XFree(ptr);
     }
 };
 
@@ -52,16 +51,14 @@ using XUniquePtr = std::unique_ptr<T, XPtrDeleter<T>>;
 template<> struct XPtrDeleter<XImage> {
     void operator() (XImage* ptr) const
     {
-        if (ptr)
-            XDestroyImage(ptr);
+        XDestroyImage(ptr);
     }
 };
 
 template<> struct XPtrDeleter<_XGC> {
     void operator() (_XGC* ptr) const
     {
-        if (ptr)
-            XFreeGC(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), ptr);
+        XFreeGC(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), ptr);
     }
 };
 // Give a name to this to avoid having to use the internal struct name.
@@ -71,8 +68,7 @@ using XUniqueGC = XUniquePtr<_XGC>;
 template<> struct XPtrDeleter<__GLXcontextRec> {
     void operator() (__GLXcontextRec* ptr)
     {
-        if (ptr)
-            glXDestroyContext(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), ptr);
+        glXDestroyContext(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), ptr);
     }
 };
 // Give a name to this to avoid having to use the internal struct name.

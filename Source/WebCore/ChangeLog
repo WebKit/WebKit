@@ -1,3 +1,18 @@
+2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        std::unique_ptr deleter functions should not check if pointer is null
+        https://bugs.webkit.org/show_bug.cgi?id=162558
+
+        Reviewed by Alex Christensen.
+
+        std::unique_ptr already does this before calling the deleter.
+
+        * platform/graphics/x11/XUniquePtr.h:
+        (WebCore::XPtrDeleter::operator()):
+        (WebCore::XPtrDeleter<XImage>::operator()):
+        (WebCore::XPtrDeleter<_XGC>::operator()):
+        (WebCore::XPtrDeleter<__GLXcontextRec>::operator()):
+
 2016-09-26  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][Debug] Compile fix.

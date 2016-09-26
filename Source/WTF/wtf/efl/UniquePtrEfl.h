@@ -54,8 +54,7 @@ using EflUniquePtr = std::unique_ptr<T, EflPtrDeleter<T>>;
     { \
         void operator() (typeName* ptr) const \
         { \
-            if (ptr) \
-                deleterFunc(ptr); \
+            deleterFunc(ptr); \
         } \
     };
 

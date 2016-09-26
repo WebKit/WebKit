@@ -52,8 +52,7 @@ using GUniquePtr = std::unique_ptr<T, GPtrDeleter<T>>;
     { \
         void operator() (typeName* ptr) const \
         { \
-            if (ptr) \
-                deleterFunc(ptr); \
+            deleterFunc(ptr); \
         } \
     };
 

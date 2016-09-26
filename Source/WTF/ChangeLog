@@ -1,1 +1,13 @@
+2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        std::unique_ptr deleter functions should not check if pointer is null
+        https://bugs.webkit.org/show_bug.cgi?id=162558
+
+        Reviewed by Alex Christensen.
+
+        std::unique_ptr already does this before calling the deleter.
+
+        * wtf/efl/UniquePtrEfl.h:
+        * wtf/glib/GUniquePtr.h:
+
 == Rolled over to ChangeLog-2016-09-26 ==
