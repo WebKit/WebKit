@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-class PingLoad : public NetworkDataTaskClient {
+class PingLoad final : public NetworkDataTaskClient {
 public:
     PingLoad(const NetworkResourceLoadParameters& parameters)
         : m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
@@ -48,27 +48,27 @@ public:
     }
     
 private:
-    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&& completionHandler) override
+    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&& completionHandler) final
     {
         completionHandler({ });
         delete this;
     }
-    void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&& completionHandler) override
+    void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&& completionHandler) final
     {
         completionHandler(AuthenticationChallengeDisposition::Cancel, { });
         delete this;
     }
-    void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&& completionHandler) override
+    void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&& completionHandler) final
     {
         completionHandler(WebCore::PolicyAction::PolicyIgnore);
         delete this;
     }
-    void didReceiveData(Ref<WebCore::SharedBuffer>&&)  override { ASSERT_NOT_REACHED(); }
-    void didCompleteWithError(const WebCore::ResourceError&) override { delete this; }
-    void didBecomeDownload() override { ASSERT_NOT_REACHED(); }
-    void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) override { }
-    void wasBlocked() override { delete this; }
-    void cannotShowURL() override { delete this; }
+    void didReceiveData(Ref<WebCore::SharedBuffer>&&) final { ASSERT_NOT_REACHED(); }
+    void didCompleteWithError(const WebCore::ResourceError&) final { delete this; }
+    void didBecomeDownload() final { ASSERT_NOT_REACHED(); }
+    void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final { }
+    void wasBlocked() final { delete this; }
+    void cannotShowURL() final { delete this; }
 
     void timeoutTimerFired() { delete this; }
     

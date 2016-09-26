@@ -1,5 +1,18 @@
 2016-09-26  Daniel Bates  <dabates@apple.com>
 
+        Mark Ping{Handle, Load} as final
+        https://bugs.webkit.org/show_bug.cgi?id=162576
+
+        Reviewed by Alex Christensen.
+
+        We should not support subclassing of a ping handle or overriding its NetworkDataTaskClient
+        callbacks because there are security/privacy implications with a ping request. We should
+        not encourage subclassing without careful consideration.
+
+        * NetworkProcess/PingLoad.h:
+
+2016-09-26  Daniel Bates  <dabates@apple.com>
+
         Rename IOS_TEXT_AUTOSIZING to TEXT_AUTOSIZING
         https://bugs.webkit.org/show_bug.cgi?id=162365
 

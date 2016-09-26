@@ -35,7 +35,7 @@ namespace WebCore {
 // The object just needs to live long enough to ensure the message was actually sent.
 // As soon as any callback is received from the ResourceHandle, this class will cancel the load and delete itself.
 
-class PingHandle : private ResourceHandleClient {
+class PingHandle final : private ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(PingHandle); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class UsesAsyncCallbacks {
@@ -56,12 +56,12 @@ public:
     }
 
 private:
-    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override { delete this; }
-    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) override { delete this; };
-    void didFinishLoading(ResourceHandle*, double) override { delete this; }
-    void didFail(ResourceHandle*, const ResourceError&) override { delete this; }
-    bool shouldUseCredentialStorage(ResourceHandle*)  override { return m_shouldUseCredentialStorage; }
-    bool usesAsyncCallbacks() override { return m_usesAsyncCallbacks == UsesAsyncCallbacks::Yes; }
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) final { delete this; }
+    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) final { delete this; };
+    void didFinishLoading(ResourceHandle*, double) final { delete this; }
+    void didFail(ResourceHandle*, const ResourceError&) final { delete this; }
+    bool shouldUseCredentialStorage(ResourceHandle*) final { return m_shouldUseCredentialStorage; }
+    bool usesAsyncCallbacks() final { return m_usesAsyncCallbacks == UsesAsyncCallbacks::Yes; }
     void timeoutTimerFired() { delete this; }
 
     virtual ~PingHandle()
