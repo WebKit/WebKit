@@ -1,3 +1,9 @@
+2016-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark fast/dom/HTMLAnchorElement/anchor-download.html as flaky on WK2.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-09-24  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r206221): [USER] com.apple.WebKit.WebContent.Development at com.apple.JavaScriptCore: vmEntryToJavaScript + 299
