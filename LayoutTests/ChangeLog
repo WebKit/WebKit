@@ -1,1 +1,10 @@
+2016-09-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/media-controls-drag-timeline-set-controls-property.html as flaky on Yosemite Debug WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=161659
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 == Rolled over to ChangeLog-2016-09-26 ==
