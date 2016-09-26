@@ -388,6 +388,7 @@ typedef const char* optionString;
     v(optionString, llintStatsFile, nullptr, Configurable, "File to collect LLInt statistics in") \
     \
     v(bool, useSourceProviderCache, true, Normal, "If false, the parser will not use the source provider cache. It's good to verify everything works when this is false. Because the cache is so successful, it can mask bugs.") \
+    v(bool, useCodeCache, true, Normal, "If false, the parser will not use the code cache.") \
 
 enum OptionEquivalence {
     SameOption,

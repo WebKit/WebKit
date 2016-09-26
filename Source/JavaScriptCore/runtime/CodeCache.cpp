@@ -90,7 +90,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     // FIXME: We should do something smart for TDZ instead of just disabling caching.
     // https://bugs.webkit.org/show_bug.cgi?id=154010
     bool canCache = debuggerMode == DebuggerOff && !vm.typeProfiler() && !vm.controlFlowProfiler() && !variablesUnderTDZ->size();
-    if (cache && canCache) {
+    if (cache && canCache && Options::useCodeCache()) {
         UnlinkedCodeBlockType* unlinkedCodeBlock = jsCast<UnlinkedCodeBlockType*>(cache->cell.get());
         unsigned firstLine = source.firstLine() + unlinkedCodeBlock->firstLine();
         unsigned lineCount = unlinkedCodeBlock->lineCount();
@@ -163,7 +163,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
         EvalContextType::None,
         isArrowFunctionContext);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
-    if (cache) {
+    if (cache && Options::useCodeCache()) {
         UnlinkedFunctionExecutable* executable = jsCast<UnlinkedFunctionExecutable*>(cache->cell.get());
         source.provider()->setSourceURLDirective(executable->sourceURLDirective());
         source.provider()->setSourceMappingURLDirective(executable->sourceMappingURLDirective());

@@ -1,3 +1,18 @@
+2016-09-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add an Option to disable the CodeCache
+        https://bugs.webkit.org/show_bug.cgi?id=162579
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        Do not use the cache if the Option is disabled.
+
+        * runtime/Options.h:
+        New option to not use the code cache.
+
 2016-09-26  Daniel Bates  <dabates@apple.com>
 
         Rename IOS_TEXT_AUTOSIZING to TEXT_AUTOSIZING
