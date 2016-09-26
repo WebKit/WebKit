@@ -1,5 +1,16 @@
 2016-09-26  Antti Koivisto  <antti@apple.com>
 
+        Setter on style element's textContent or cssText doesn't trigger style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=160331
+        <rdar://problem/27609715>
+
+        Reviewed by Ryosuke Niwa and Daniel Bates.
+
+        * fast/shadow-dom/shadow-style-text-mutation-expected.html: Added.
+        * fast/shadow-dom/shadow-style-text-mutation.html: Added.
+
+2016-09-26  Antti Koivisto  <antti@apple.com>
+
         Input elements don't work inside shadow tree
         https://bugs.webkit.org/show_bug.cgi?id=160427
 

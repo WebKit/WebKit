@@ -30,6 +30,7 @@
 
 #include "CSSStyleSheet.h"
 #include "Element.h"
+#include "ElementChildIterator.h"
 #include "ExtensionStyleSheets.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
@@ -336,9 +337,10 @@ void AuthorStyleSheets::updateActiveStyleSheets(UpdateType updateType)
     }
 
     if (requiresFullStyleRecalc) {
-        if (m_shadowRoot)
-            m_shadowRoot->setNeedsStyleRecalc();
-        else
+        if (m_shadowRoot) {
+            for (auto& shadowChild : childrenOfType<Element>(*m_shadowRoot))
+                shadowChild.setNeedsStyleRecalc();
+        } else
             m_document.scheduleForcedStyleRecalc();
     }
 }

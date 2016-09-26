@@ -1,5 +1,33 @@
 2016-09-26  Antti Koivisto  <antti@apple.com>
 
+        Setter on style element's textContent or cssText doesn't trigger style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=160331
+        <rdar://problem/27609715>
+
+        Reviewed by Ryosuke Niwa and Daniel Bates.
+
+        We would not notify the parent when text node content changed in a shadow tree.
+
+        Test: fast/shadow-dom/shadow-style-text-mutation.html
+
+        * dom/AuthorStyleSheets.cpp:
+        (WebCore::AuthorStyleSheets::updateActiveStyleSheets):
+
+            Invalidate shadow root children instead of the root itself when doing full invalidation.
+            The invalidity bits have no meaning for non-element, non-texts.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::setDataAndUpdate):
+        (WebCore::CharacterData::notifyParentAfterChange):
+
+            Add a helper and call it also in shadow trees.
+
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/CharacterData.h:
+
+2016-09-26  Antti Koivisto  <antti@apple.com>
+
         Input elements don't work inside shadow tree
         https://bugs.webkit.org/show_bug.cgi?id=160427
 

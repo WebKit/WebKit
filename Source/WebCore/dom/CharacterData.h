@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "Node.h"
+#include "ContainerNode.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -69,6 +69,7 @@ private:
     bool offsetInCharacters() const final;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     void checkCharDataOperation(unsigned offset, ExceptionCode&);
+    void notifyParentAfterChange(ContainerNode::ChildChangeSource);
 
     String m_data;
 };

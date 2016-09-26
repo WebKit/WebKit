@@ -103,18 +103,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     if (is<Text>(*this) && parentNode())
         downcast<Text>(*this).updateRendererAfterContentChange(oldLength, 0);
 
-    document().incDOMTreeVersion();
-    // We don't call dispatchModifiedEvent here because we don't want the
-    // parser to dispatch DOM mutation events.
-    if (parentNode()) {
-        ContainerNode::ChildChange change = {
-            ContainerNode::TextChanged,
-            ElementTraversal::previousSibling(*this),
-            ElementTraversal::nextSibling(*this),
-            ContainerNode::ChildChangeSourceParser
-        };
-        parentNode()->childrenChanged(change);
-    }
+    notifyParentAfterChange(ContainerNode::ChildChangeSourceParser);
 
     return characterLengthLimit;
 }
@@ -208,8 +197,25 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     if (document().frame())
         document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
 
-    document().incDOMTreeVersion();
+    notifyParentAfterChange(ContainerNode::ChildChangeSourceAPI);
+
     dispatchModifiedEvent(oldData);
+}
+
+void CharacterData::notifyParentAfterChange(ContainerNode::ChildChangeSource source)
+{
+    document().incDOMTreeVersion();
+
+    if (!parentNode())
+        return;
+
+    ContainerNode::ChildChange change = {
+        ContainerNode::TextChanged,
+        ElementTraversal::previousSibling(*this),
+        ElementTraversal::nextSibling(*this),
+        source
+    };
+    parentNode()->childrenChanged(change);
 }
 
 void CharacterData::dispatchModifiedEvent(const String& oldData)
@@ -218,15 +224,6 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
         mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, oldData));
 
     if (!isInShadowTree()) {
-        if (parentNode()) {
-            ContainerNode::ChildChange change = {
-                ContainerNode::TextChanged,
-                ElementTraversal::previousSibling(*this),
-                ElementTraversal::nextSibling(*this),
-                ContainerNode::ChildChangeSourceAPI
-            };
-            parentNode()->childrenChanged(change);
-        }
         if (document().hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
             dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, nullptr, oldData, m_data));
         dispatchSubtreeModifiedEvent();
