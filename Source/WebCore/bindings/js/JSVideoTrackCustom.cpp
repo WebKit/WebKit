@@ -47,8 +47,7 @@ void JSVideoTrack::setKind(ExecState& state, JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto& string = value.toString(&state)->value(&state);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     wrapped().setKind(string);
 #else
     UNUSED_PARAM(state);
@@ -63,8 +62,7 @@ void JSVideoTrack::setLanguage(ExecState& state, JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto& string = value.toString(&state)->value(&state);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     wrapped().setLanguage(string);
 #else
     UNUSED_PARAM(state);

@@ -225,8 +225,7 @@ static JSObject* toDateTimeOptionsAnyDate(ExecState& exec, JSValue originalOptio
         options = constructEmptyObject(&exec, exec.lexicalGlobalObject()->nullPrototypeObjectStructure());
     else {
         JSObject* originalToObject = originalOptions.toObject(&exec);
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
+        RETURN_IF_EXCEPTION(scope, nullptr);
         options = constructEmptyObject(&exec, originalToObject);
     }
 
@@ -242,26 +241,22 @@ static JSObject* toDateTimeOptionsAnyDate(ExecState& exec, JSValue originalOptio
     // iii. ReturnIfAbrupt(value).
     // iv. If value is not undefined, then let needDefaults be false.
     JSValue weekday = options->get(&exec, vm.propertyNames->weekday);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (!weekday.isUndefined())
         needDefaults = false;
 
     JSValue year = options->get(&exec, vm.propertyNames->year);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (!year.isUndefined())
         needDefaults = false;
 
     JSValue month = options->get(&exec, vm.propertyNames->month);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (!month.isUndefined())
         needDefaults = false;
 
     JSValue day = options->get(&exec, vm.propertyNames->day);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (!day.isUndefined())
         needDefaults = false;
 
@@ -274,20 +269,17 @@ static JSObject* toDateTimeOptionsAnyDate(ExecState& exec, JSValue originalOptio
     // iii. ReturnIfAbrupt(value).
     // iv. If value is not undefined, then let needDefaults be false.
     JSValue hour = options->get(&exec, vm.propertyNames->hour);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (!hour.isUndefined())
         needDefaults = false;
 
     JSValue minute = options->get(&exec, vm.propertyNames->minute);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (!minute.isUndefined())
         needDefaults = false;
 
     JSValue second = options->get(&exec, vm.propertyNames->second);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (!second.isUndefined())
         needDefaults = false;
 
@@ -300,16 +292,13 @@ static JSObject* toDateTimeOptionsAnyDate(ExecState& exec, JSValue originalOptio
         JSString* numeric = jsNontrivialString(&exec, ASCIILiteral("numeric"));
 
         options->putDirect(vm, vm.propertyNames->year, numeric);
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
+        RETURN_IF_EXCEPTION(scope, nullptr);
 
         options->putDirect(vm, vm.propertyNames->month, numeric);
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
+        RETURN_IF_EXCEPTION(scope, nullptr);
 
         options->putDirect(vm, vm.propertyNames->day, numeric);
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
+        RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
     // 8. If needDefaults is true and defaults is either "time" or "all", then
@@ -429,14 +418,12 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     // 3. Let requestedLocales be CanonicalizeLocaleList(locales).
     Vector<String> requestedLocales = canonicalizeLocaleList(exec, locales);
     // 4. ReturnIfAbrupt(requestedLocales),
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // 5. Let options be ToDateTimeOptions(options, "any", "date").
     JSObject* options = toDateTimeOptionsAnyDate(exec, originalOptions);
     // 6. ReturnIfAbrupt(options).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // 7. Let opt be a new Record.
     HashMap<String, String> localeOpt;
@@ -444,8 +431,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     // 8. Let matcher be GetOption(options, "localeMatcher", "string", «"lookup", "best fit"», "best fit").
     String localeMatcher = intlStringOption(exec, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     // 9. ReturnIfAbrupt(matcher).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 10. Set opt.[[localeMatcher]] to matcher.
     localeOpt.add(vm.propertyNames->localeMatcher.string(), localeMatcher);
 
@@ -477,8 +463,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     // 17. Let tz be Get(options, "timeZone").
     JSValue tzValue = options->get(&exec, vm.propertyNames->timeZone);
     // 18. ReturnIfAbrupt(tz).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // 19. If tz is not undefined, then
     String tz;
@@ -486,8 +471,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
         // a. Let tz be ToString(tz).
         String originalTz = tzValue.toWTFString(&exec);
         // b. ReturnIfAbrupt(tz).
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         // c. If the result of IsValidTimeZoneName(tz) is false, then i. Throw a RangeError exception.
         // d. Let tz be CanonicalizeTimeZoneName(tz).
         tz = canonicalizeTimeZoneName(originalTz);
@@ -519,8 +503,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     auto shortLong = { "short", "long" };
 
     String weekday = intlStringOption(exec, options, vm.propertyNames->weekday, narrowShortLong, "weekday must be \"narrow\", \"short\", or \"long\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (!weekday.isNull()) {
         if (weekday == "narrow")
             skeletonBuilder.appendLiteral("EEEEE");
@@ -531,8 +514,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
 
     String era = intlStringOption(exec, options, vm.propertyNames->era, narrowShortLong, "era must be \"narrow\", \"short\", or \"long\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (!era.isNull()) {
         if (era == "narrow")
             skeletonBuilder.appendLiteral("GGGGG");
@@ -543,8 +525,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
 
     String year = intlStringOption(exec, options, vm.propertyNames->year, twoDigitNumeric, "year must be \"2-digit\" or \"numeric\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (!year.isNull()) {
         if (year == "2-digit")
             skeletonBuilder.appendLiteral("yy");
@@ -553,8 +534,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
 
     String month = intlStringOption(exec, options, vm.propertyNames->month, twoDigitNumericNarrowShortLong, "month must be \"2-digit\", \"numeric\", \"narrow\", \"short\", or \"long\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (!month.isNull()) {
         if (month == "2-digit")
             skeletonBuilder.appendLiteral("MM");
@@ -569,8 +549,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
 
     String day = intlStringOption(exec, options, vm.propertyNames->day, twoDigitNumeric, "day must be \"2-digit\" or \"numeric\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (!day.isNull()) {
         if (day == "2-digit")
             skeletonBuilder.appendLiteral("dd");
@@ -579,16 +558,14 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
 
     String hour = intlStringOption(exec, options, vm.propertyNames->hour, twoDigitNumeric, "hour must be \"2-digit\" or \"numeric\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // We need hour12 to make the hour skeleton pattern decision, so do this early.
     // 32. Let hr12 be GetOption(options, "hour12", "boolean", undefined, undefined).
     bool isHour12Undefined;
     bool hr12 = intlBooleanOption(exec, options, vm.propertyNames->hour12, isHour12Undefined);
     // 33. ReturnIfAbrupt(hr12).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     if (!hour.isNull()) {
         if (isHour12Undefined) {
@@ -610,8 +587,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
 
     String minute = intlStringOption(exec, options, vm.propertyNames->minute, twoDigitNumeric, "minute must be \"2-digit\" or \"numeric\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (!minute.isNull()) {
         if (minute == "2-digit")
             skeletonBuilder.appendLiteral("mm");
@@ -620,8 +596,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
 
     String second = intlStringOption(exec, options, vm.propertyNames->second, twoDigitNumeric, "second must be \"2-digit\" or \"numeric\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (!second.isNull()) {
         if (second == "2-digit")
             skeletonBuilder.appendLiteral("ss");
@@ -630,8 +605,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     }
 
     String timeZoneName = intlStringOption(exec, options, vm.propertyNames->timeZoneName, shortLong, "timeZoneName must be \"short\" or \"long\"", nullptr);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (!timeZoneName.isNull()) {
         if (timeZoneName == "short")
             skeletonBuilder.append('z');
@@ -644,8 +618,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     // 26. Let matcher be GetOption(options, "formatMatcher", "string", «"basic", "best fit"», "best fit").
     intlStringOption(exec, options, vm.propertyNames->formatMatcher, { "basic", "best fit" }, "formatMatcher must be either \"basic\" or \"best fit\"", "best fit");
     // 27. ReturnIfAbrupt(matcher).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // Always use ICU date format generator, rather than our own pattern list and matcher.
     // Covers steps 28-36.

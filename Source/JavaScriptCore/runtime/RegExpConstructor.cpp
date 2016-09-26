@@ -221,8 +221,7 @@ inline RegExpFlags toFlags(ExecState* exec, JSValue flags)
     }
 
     RegExpFlags result = regExpFlags(flagsString->value(exec));
-    if (UNLIKELY(scope.exception()))
-        return InvalidFlags;
+    RETURN_IF_EXCEPTION(scope, InvalidFlags);
     if (result == InvalidFlags)
         throwSyntaxError(exec, scope, ASCIILiteral("Invalid flags supplied to RegExp constructor."));
     return result;
@@ -234,8 +233,7 @@ static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSV
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String pattern = patternArg.isUndefined() ? emptyString() : patternArg.toString(exec)->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     RegExpFlags flags = toFlags(exec, flagsArg);
     if (flags == InvalidFlags)
@@ -246,8 +244,7 @@ static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSV
         return throwException(exec, scope, createSyntaxError(exec, regExp->errorMessage()));
 
     Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     return RegExpObject::create(vm, structure, regExp);
 }
 
@@ -263,8 +260,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
 
     if (newTarget.isUndefined() && constructAsRegexp && flagsArg.isUndefined()) {
         JSValue constructor = patternArg.get(exec, vm.propertyNames->constructor);
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
+        RETURN_IF_EXCEPTION(scope, nullptr);
         if (callee == constructor) {
             // We know that patternArg is a object otherwise constructAsRegexp would be false.
             return patternArg.getObject();
@@ -274,8 +270,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
     if (isPatternRegExp) {
         RegExp* regExp = jsCast<RegExpObject*>(patternArg)->regExp();
         Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
+        RETURN_IF_EXCEPTION(scope, nullptr);
 
         if (!flagsArg.isUndefined()) {
             RegExpFlags flags = toFlags(exec, flagsArg);

@@ -199,11 +199,9 @@ static JSValue getObjectParameter(JSWebGLRenderingContextBase* obj, ExecState& s
     ExceptionCode ec = 0;
     WebGLRenderingContextBase& context = obj->wrapped();
     unsigned target = state.uncheckedArgument(0).toInt32(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     unsigned pname = state.uncheckedArgument(1).toInt32(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     WebGLGetInfo info;
     switch (objectType) {
     case kBuffer:
@@ -335,8 +333,7 @@ JSValue JSWebGLRenderingContextBase::getExtension(ExecState& state)
     
     WebGLRenderingContextBase& context = wrapped();
     const String name = state.uncheckedArgument(0).toString(&state)->value(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     WebGLExtension* extension = context.getExtension(name);
     return toJS(&state, globalObject(), extension);
 }
@@ -357,14 +354,11 @@ JSValue JSWebGLRenderingContextBase::getFramebufferAttachmentParameter(ExecState
     ExceptionCode ec = 0;
     WebGLRenderingContextBase& context = wrapped();
     unsigned target = state.uncheckedArgument(0).toInt32(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     unsigned attachment = state.uncheckedArgument(1).toInt32(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     unsigned pname = state.uncheckedArgument(2).toInt32(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     WebGLGetInfo info = context.getFramebufferAttachmentParameter(target, attachment, pname, ec);
     if (ec) {
         setDOMException(&state, ec);
@@ -384,8 +378,7 @@ JSValue JSWebGLRenderingContextBase::getParameter(ExecState& state)
     ExceptionCode ec = 0;
     WebGLRenderingContextBase& context = wrapped();
     unsigned pname = state.uncheckedArgument(0).toInt32(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     WebGLGetInfo info = context.getParameter(pname, ec);
     if (ec) {
         setDOMException(&state, ec);
@@ -408,8 +401,7 @@ JSValue JSWebGLRenderingContextBase::getProgramParameter(ExecState& state)
     if (!program && !state.uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(&state, scope);
     unsigned pname = state.uncheckedArgument(1).toInt32(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     WebGLGetInfo info = context.getProgramParameter(program, pname, ec);
     if (ec) {
         setDOMException(&state, ec);
@@ -437,8 +429,7 @@ JSValue JSWebGLRenderingContextBase::getShaderParameter(ExecState& state)
         return throwTypeError(&state, scope);
     WebGLShader* shader = JSWebGLShader::toWrapped(state.uncheckedArgument(0));
     unsigned pname = state.uncheckedArgument(1).toInt32(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     WebGLGetInfo info = context.getShaderParameter(shader, pname, ec);
     if (ec) {
         setDOMException(&state, ec);
@@ -511,8 +502,7 @@ bool toVector(JSC::ExecState& state, JSC::JSValue value, Vector<T, inlineCapacit
     
     for (int32_t i = 0; i < length; ++i) {
         JSC::JSValue v = object->get(&state, i);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         vector[i] = static_cast<T>(v.toNumber(&state));
     }
     
@@ -559,12 +549,10 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState& state, W
     } else
         index = state.uncheckedArgument(0).toInt32(&state);
     
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     
     RefPtr<Float32Array> webGLArray = toFloat32Array(state.uncheckedArgument(1));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     
     ExceptionCode ec = 0;
     if (webGLArray) {
@@ -710,8 +698,7 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         return throwTypeError(&state, scope);
     
     bool transpose = state.uncheckedArgument(1).toBoolean(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     
     RefPtr<Float32Array> webGLArray = toFloat32Array(state.uncheckedArgument(2));
     

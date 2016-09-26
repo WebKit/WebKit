@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -206,13 +206,11 @@ static inline bool isUnscopable(ExecState* exec, JSScope* scope, JSObject* objec
         return false;
 
     JSValue unscopables = object->get(exec, exec->propertyNames().unscopablesSymbol);
-    if (UNLIKELY(throwScope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(throwScope, false);
     if (!unscopables.isObject())
         return false;
     JSValue blocked = jsCast<JSObject*>(unscopables)->get(exec, ident);
-    if (UNLIKELY(throwScope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(throwScope, false);
 
     return blocked.toBoolean(exec);
 }

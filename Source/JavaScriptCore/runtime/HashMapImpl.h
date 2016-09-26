@@ -245,8 +245,7 @@ ALWAYS_INLINE uint32_t jsMapHash(ExecState* exec, VM& vm, JSValue value)
     if (value.isString()) {
         JSString* string = asString(value);
         const String& wtfString = string->value(exec);
-        if (UNLIKELY(scope.exception()))
-            return UINT_MAX;
+        RETURN_IF_EXCEPTION(scope, UINT_MAX);
         return wtfString.impl()->hash();
     }
 
@@ -337,8 +336,7 @@ public:
         Base::finishCreation(vm);
 
         makeAndSetNewBuffer(exec, vm);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
 
         m_head.set(vm, this, HashMapBucketType::create(vm));
         m_tail.set(vm, this, HashMapBucketType::create(vm));
@@ -376,8 +374,7 @@ public:
         auto scope = DECLARE_THROW_SCOPE(vm);
         key = normalizeMapKey(key);
         uint32_t hash = jsMapHash(exec, vm, key);
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
+        RETURN_IF_EXCEPTION(scope, nullptr);
         return findBucket(exec, key, hash);
     }
 
@@ -408,8 +405,7 @@ public:
 
         const uint32_t mask = m_capacity - 1;
         uint32_t index = jsMapHash(exec, vm, key) & mask;
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         HashMapBucketType** buffer = this->buffer();
         HashMapBucketType* bucket = buffer[index];
         while (!isEmpty(bucket)) {
@@ -570,8 +566,7 @@ private:
 
         if (m_capacity != oldCapacity) {
             makeAndSetNewBuffer(exec, vm);
-            if (UNLIKELY(scope.exception()))
-                return;
+            RETURN_IF_EXCEPTION(scope, void());
         } else {
             m_buffer.get()->reset(m_capacity);
             assertBufferIsEmpty();

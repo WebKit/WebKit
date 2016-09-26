@@ -64,15 +64,12 @@ static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
     JSValue target = args.at(0);
     JSValue handler = args.at(1);
     ProxyObject* proxy = ProxyObject::create(exec, exec->lexicalGlobalObject(), target, handler);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ProxyRevoke* revoke = ProxyRevoke::create(vm, exec->lexicalGlobalObject()->proxyRevokeStructure(), proxy);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSObject* result = constructEmptyObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     result->putDirect(vm, makeIdentifier(vm, "proxy"), proxy, None);
     result->putDirect(vm, makeIdentifier(vm, "revoke"), revoke, None);
 

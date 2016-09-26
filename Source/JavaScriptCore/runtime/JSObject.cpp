@@ -360,14 +360,12 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
 
         // 9.1.9.1-2 Let ownDesc be ? O.[[GetOwnProperty]](P).
         bool ownDescriptorFound = current->getOwnPropertyDescriptor(exec, propertyName, ownDescriptor);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
 
         if (!ownDescriptorFound) {
             // 9.1.9.1-3-a Let parent be ? O.[[GetPrototypeOf]]().
             JSValue prototype = current->getPrototype(vm, exec);
-            if (UNLIKELY(scope.exception()))
-                return false;
+            RETURN_IF_EXCEPTION(scope, false);
 
             // 9.1.9.1-3-b If parent is not null, then
             if (!prototype.isNull()) {
@@ -398,8 +396,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
         JSObject* receiverObject = asObject(receiver);
         PropertyDescriptor existingDescriptor;
         bool existingDescriptorFound = receiverObject->getOwnPropertyDescriptor(exec, propertyName, existingDescriptor);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
 
         // 9.1.9.1-4-d If existingDescriptor is not undefined, then
         if (existingDescriptorFound) {
@@ -1290,8 +1287,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
         return true;
 
     bool isExtensible = this->isExtensible(exec);
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     if (!isExtensible) {
         if (shouldThrowIfCantSet)
@@ -1533,8 +1529,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue function = object->get(exec, propertyName);
-    if (UNLIKELY(scope.exception()))
-        return scope.exception();
+    RETURN_IF_EXCEPTION(scope, scope.exception());
     if (function.isUndefined() && mode == TypeHintMode::TakesHint)
         return JSValue();
     CallData callData;
@@ -1560,9 +1555,8 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
     }
 
     JSValue result = call(exec, function, callType, callData, const_cast<JSObject*>(object), callArgs);
+    RETURN_IF_EXCEPTION(scope, scope.exception());
     ASSERT(!result.isGetterSetter());
-    if (UNLIKELY(scope.exception()))
-        return scope.exception();
     if (result.isObject())
         return mode == TypeHintMode::DoesNotTakeHint ? JSValue() : throwTypeError(exec, scope, ASCIILiteral("Symbol.toPrimitive returned an object"));
     return result;
@@ -1699,8 +1693,7 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
     JSObject* object = asObject(value);
     while (true) {
         JSValue objectValue = object->getPrototype(vm, exec);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         if (!objectValue.isObject())
             return false;
         object = asObject(objectValue);
@@ -1723,12 +1716,10 @@ void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameA
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, propertyNames, mode);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     JSValue nextProto = object->getPrototype(vm, exec);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (nextProto.isNull())
         return;
 
@@ -1739,11 +1730,9 @@ void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameA
             break;
         }
         prototype->methodTable(vm)->getOwnPropertyNames(prototype, exec, propertyNames, mode);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         nextProto = prototype->getPrototype(vm, exec);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         if (nextProto.isNull())
             break;
         prototype = asObject(nextProto);
@@ -1843,8 +1832,7 @@ double JSObject::toNumber(ExecState* exec) const
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue primitive = toPrimitive(exec, PreferNumber);
-    if (UNLIKELY(scope.exception())) // should be picked up soon in Nodes.cpp
-        return 0.0;
+    RETURN_IF_EXCEPTION(scope, 0.0); // should be picked up soon in Nodes.cpp
     return primitive.toNumber(exec);
 }
 
@@ -1853,8 +1841,7 @@ JSString* JSObject::toString(ExecState* exec) const
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue primitive = toPrimitive(exec, PreferString);
-    if (UNLIKELY(scope.exception()))
-        return jsEmptyString(exec);
+    RETURN_IF_EXCEPTION(scope, jsEmptyString(exec));
     return primitive.toString(exec);
 }
 
@@ -3078,8 +3065,7 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     PropertyDescriptor current;
     bool isCurrentDefined = getOwnPropertyDescriptor(exec, propertyName, current);
     bool isExtensible = this->isExtensible(exec);
-    if (UNLIKELY(throwScope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(throwScope, false);
     return validateAndApplyPropertyDescriptor(exec, this, propertyName, isExtensible, descriptor, isCurrentDefined, current, throwException);
 }
 
@@ -3180,12 +3166,10 @@ void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Proper
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, propertyNames, EnumerationMode(mode, JSObjectPropertiesMode::Exclude));
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     JSValue nextProto = object->getPrototype(vm, exec);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     if (nextProto.isNull())
         return;
 
@@ -3196,11 +3180,9 @@ void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Proper
             break;
         }
         prototype->methodTable(vm)->getOwnPropertyNames(prototype, exec, propertyNames, mode);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         nextProto = prototype->getPrototype(vm, exec);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         if (nextProto.isNull())
             break;
         prototype = asObject(nextProto);
@@ -3215,8 +3197,7 @@ JSValue JSObject::getMethod(ExecState* exec, CallData& callData, CallType& callT
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue method = get(exec, ident);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (!method.isCell()) {
         if (method.isUndefinedOrNull())

@@ -117,28 +117,24 @@ JSValue Compilation::toJS(ExecState* exec) const
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* result = constructEmptyObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     result->putDirect(vm, exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
     result->putDirect(vm, exec->propertyNames().compilationKind, jsString(exec, String::fromUTF8(toCString(m_kind))));
     
     JSArray* profiledBytecodes = constructEmptyArray(exec, 0);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     for (unsigned i = 0; i < m_profiledBytecodes.size(); ++i)
         profiledBytecodes->putDirectIndex(exec, i, m_profiledBytecodes[i].toJS(exec));
     result->putDirect(vm, exec->propertyNames().profiledBytecodes, profiledBytecodes);
     
     JSArray* descriptions = constructEmptyArray(exec, 0);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     for (unsigned i = 0; i < m_descriptions.size(); ++i)
         descriptions->putDirectIndex(exec, i, m_descriptions[i].toJS(exec));
     result->putDirect(vm, exec->propertyNames().descriptions, descriptions);
     
     JSArray* counters = constructEmptyArray(exec, 0);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     for (auto it = m_counters.begin(), end = m_counters.end(); it != end; ++it) {
         JSObject* counterEntry = constructEmptyObject(exec);
         counterEntry->putDirect(vm, exec->propertyNames().origin, it->key.toJS(exec));
@@ -148,15 +144,13 @@ JSValue Compilation::toJS(ExecState* exec) const
     result->putDirect(vm, exec->propertyNames().counters, counters);
     
     JSArray* exitSites = constructEmptyArray(exec, 0);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     for (unsigned i = 0; i < m_osrExitSites.size(); ++i)
         exitSites->putDirectIndex(exec, i, m_osrExitSites[i].toJS(exec));
     result->putDirect(vm, exec->propertyNames().osrExitSites, exitSites);
     
     JSArray* exits = constructEmptyArray(exec, 0);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     for (unsigned i = 0; i < m_osrExits.size(); ++i)
         exits->putDirectIndex(exec, i, m_osrExits[i].toJS(exec));
     result->putDirect(vm, exec->propertyNames().osrExits, exits);

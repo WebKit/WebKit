@@ -86,13 +86,11 @@ void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     ExceptionCode ec = 0;
     unsigned length = thisObject->wrapped().length(ec);
     setDOMException(exec, ec);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     for (unsigned i = 0; i < length; ++i) {
         propertyNames.add(Identifier::fromString(exec, thisObject->wrapped().key(i, ec)));
         setDOMException(exec, ec);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
     }
         
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

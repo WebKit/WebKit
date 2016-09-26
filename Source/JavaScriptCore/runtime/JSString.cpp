@@ -78,8 +78,7 @@ bool JSString::equalSlowCase(ExecState* exec, JSString* other) const
     auto scope = DECLARE_THROW_SCOPE(vm);
     String str1 = value(exec);
     String str2 = other->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
     return WTF::equal(*str1.impl(), *str2.impl());
 }
 

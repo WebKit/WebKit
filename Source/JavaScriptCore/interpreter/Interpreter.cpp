@@ -103,8 +103,7 @@ JSValue eval(CallFrame* callFrame)
         return jsUndefined();
     }
     String programSource = asString(program)->value(callFrame);
-    if (UNLIKELY(scope.exception()))
-        return JSValue();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     
     CallFrame* callerFrame = callFrame->callerFrame();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
@@ -186,8 +185,7 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
     default:
         RELEASE_ASSERT(arguments.isObject());
         length = getLength(callFrame, jsCast<JSObject*>(cell));
-        if (UNLIKELY(scope.exception()))
-            return 0;
+        RETURN_IF_EXCEPTION(scope, 0);
         break;
     }
 
@@ -804,8 +802,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
                     if (i == 0) {
                         PropertySlot slot(globalObject, PropertySlot::InternalMethodType::Get);
                         if (!globalObject->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot)) {
-                            if (throwScope.exception())
-                                return jsUndefined();
+                            RETURN_IF_EXCEPTION(throwScope, JSValue());
                             if (entry)
                                 return throwException(callFrame, throwScope, createUndefinedVariableError(callFrame, JSONPPath[i].m_pathEntryName));
                             goto failedJSONP;
@@ -813,14 +810,12 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
                         baseObject = slot.getValue(callFrame, JSONPPath[i].m_pathEntryName);
                     } else
                         baseObject = baseObject.get(callFrame, JSONPPath[i].m_pathEntryName);
-                    if (throwScope.exception())
-                        return jsUndefined();
+                    RETURN_IF_EXCEPTION(throwScope, JSValue());
                     continue;
                 }
                 case JSONPPathEntryTypeLookup: {
                     baseObject = baseObject.get(callFrame, static_cast<unsigned>(JSONPPath[i].m_pathIndex));
-                    if (throwScope.exception())
-                        return jsUndefined();
+                    RETURN_IF_EXCEPTION(throwScope, JSValue());
                     continue;
                 }
                 default:
@@ -832,8 +827,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
             switch (JSONPPath.last().m_type) {
             case JSONPPathEntryTypeCall: {
                 JSValue function = baseObject.get(callFrame, JSONPPath.last().m_pathEntryName);
-                if (throwScope.exception())
-                    return jsUndefined();
+                RETURN_IF_EXCEPTION(throwScope, JSValue());
                 CallData callData;
                 CallType callType = getCallData(function, callData);
                 if (callType == CallType::None)
@@ -842,20 +836,17 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
                 jsonArg.append(JSONPValue);
                 JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined(): baseObject;
                 JSONPValue = JSC::call(callFrame, function, callType, callData, thisValue, jsonArg);
-                if (throwScope.exception())
-                    return jsUndefined();
+                RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }
             case JSONPPathEntryTypeDot: {
                 baseObject.put(callFrame, JSONPPath.last().m_pathEntryName, JSONPValue, slot);
-                if (throwScope.exception())
-                    return jsUndefined();
+                RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }
             case JSONPPathEntryTypeLookup: {
                 baseObject.putByIndex(callFrame, JSONPPath.last().m_pathIndex, JSONPValue, slot.isStrictMode());
-                if (throwScope.exception())
-                    return jsUndefined();
+                RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }
             default:
@@ -958,8 +949,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
             throwScope.release();
         } else {
             result = JSValue::decode(vmEntryToNative(reinterpret_cast<void*>(callData.native.function), &vm, &protoCallFrame));
-            if (throwScope.exception())
-                result = jsNull();
+            RETURN_IF_EXCEPTION(throwScope, JSValue());
         }
     }
 
@@ -1027,8 +1017,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         }
     }
 
-    if (UNLIKELY(throwScope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(throwScope, 0);
     ASSERT(result.isObject());
     return checkedReturn(asObject(result));
 }

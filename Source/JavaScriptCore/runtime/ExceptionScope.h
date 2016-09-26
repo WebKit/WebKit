@@ -70,7 +70,12 @@ protected:
 };
     
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)
-    
+
+#define RETURN_IF_EXCEPTION(scope__, value__) do { \
+        if (UNLIKELY((scope__).exception())) \
+            return value__; \
+    } while (false)
+
 } // namespace JSC
 
 #endif // ExceptionScope_h

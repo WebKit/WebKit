@@ -49,8 +49,7 @@ uint16_t JSNodeFilter::acceptNode(Node* node)
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(toJS(state, m_data->globalObject(), node));
-    if (UNLIKELY(scope.exception()))
-        return NodeFilter::FILTER_REJECT;
+    RETURN_IF_EXCEPTION(scope, NodeFilter::FILTER_REJECT);
 
     NakedPtr<Exception> returnedException;
     JSValue value = m_data->invokeCallback(args, JSCallbackData::CallbackType::FunctionOrObject, Identifier::fromString(state, "acceptNode"), returnedException);
@@ -63,8 +62,7 @@ uint16_t JSNodeFilter::acceptNode(Node* node)
     }
 
     uint16_t result = convert<uint16_t>(*state, value, NormalConversion);
-    if (UNLIKELY(scope.exception()))
-        return NodeFilter::FILTER_REJECT;
+    RETURN_IF_EXCEPTION(scope, NodeFilter::FILTER_REJECT);
 
     return result;
 }

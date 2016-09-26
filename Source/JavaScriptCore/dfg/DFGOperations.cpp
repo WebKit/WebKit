@@ -123,8 +123,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
 
     // Don't put to an object if toString throws an exception.
     auto propertyName = property.toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     PutPropertySlot slot(baseValue, strict);
     if (direct) {
@@ -192,8 +191,7 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
         return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure());
 
     JSValue proto = constructor->get(exec, exec->propertyNames().prototype);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (proto.isObject())
         return constructEmptyObject(exec, asObject(proto));
     return constructEmptyObject(exec);
@@ -222,8 +220,7 @@ EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValu
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a & b));
 }
@@ -238,8 +235,7 @@ EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState* exec, EncodedJSValue
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a | b));
 }
@@ -254,8 +250,7 @@ EncodedJSValue JIT_OPERATION operationValueBitXor(ExecState* exec, EncodedJSValu
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     int32_t b = op2.toInt32(exec);
     return JSValue::encode(jsNumber(a ^ b));
 }
@@ -270,8 +265,7 @@ EncodedJSValue JIT_OPERATION operationValueBitLShift(ExecState* exec, EncodedJSV
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(a << (b & 0x1f)));
 }
@@ -286,8 +280,7 @@ EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState* exec, EncodedJSV
     JSValue op2 = JSValue::decode(encodedOp2);
 
     int32_t a = op1.toInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(a >> (b & 0x1f)));
 }
@@ -302,8 +295,7 @@ EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState* exec, EncodedJS
     JSValue op2 = JSValue::decode(encodedOp2);
 
     uint32_t a = op1.toUInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     uint32_t b = op2.toUInt32(exec);
     return JSValue::encode(jsNumber(static_cast<int32_t>(a >> (b & 0x1f))));
 }
@@ -334,8 +326,7 @@ EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue e
     JSValue op2 = JSValue::decode(encodedOp2);
 
     double a = op1.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double b = op2.toNumber(exec);
     return JSValue::encode(jsNumber(a / b));
 }
@@ -348,8 +339,7 @@ double JIT_OPERATION operationArithAbs(ExecState* exec, EncodedJSValue encodedOp
 
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return PNaN;
+    RETURN_IF_EXCEPTION(scope, PNaN);
     return fabs(a);
 }
 
@@ -361,8 +351,7 @@ int32_t JIT_OPERATION operationArithClz32(ExecState* exec, EncodedJSValue encode
 
     JSValue op1 = JSValue::decode(encodedOp1);
     uint32_t value = op1.toUInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
     return clz32(value);
 }
 
@@ -374,8 +363,7 @@ double JIT_OPERATION operationArithCos(ExecState* exec, EncodedJSValue encodedOp
 
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return cos(a);
 }
 
@@ -387,8 +375,7 @@ double JIT_OPERATION operationArithFRound(ExecState* exec, EncodedJSValue encode
 
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return PNaN;
+    RETURN_IF_EXCEPTION(scope, PNaN);
     return static_cast<float>(a);
 }
 
@@ -400,8 +387,7 @@ double JIT_OPERATION operationArithLog(ExecState* exec, EncodedJSValue encodedOp
 
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return PNaN;
+    RETURN_IF_EXCEPTION(scope, PNaN);
     return log(a);
 }
 
@@ -413,8 +399,7 @@ double JIT_OPERATION operationArithSin(ExecState* exec, EncodedJSValue encodedOp
 
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return PNaN;
+    RETURN_IF_EXCEPTION(scope, PNaN);
     return sin(a);
 }
 
@@ -426,8 +411,7 @@ double JIT_OPERATION operationArithSqrt(ExecState* exec, EncodedJSValue encodedO
 
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return PNaN;
+    RETURN_IF_EXCEPTION(scope, PNaN);
     return sqrt(a);
 }
 
@@ -439,8 +423,7 @@ double JIT_OPERATION operationArithTan(ExecState* exec, EncodedJSValue encodedOp
 
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return tan(a);
 }
 
@@ -452,8 +435,7 @@ EncodedJSValue JIT_OPERATION operationArithRound(ExecState* exec, EncodedJSValue
 
     JSValue argument = JSValue::decode(encodedArgument);
     double valueOfArgument = argument.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(jsRound(valueOfArgument)));
 }
 
@@ -465,8 +447,7 @@ EncodedJSValue JIT_OPERATION operationArithFloor(ExecState* exec, EncodedJSValue
 
     JSValue argument = JSValue::decode(encodedArgument);
     double valueOfArgument = argument.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(floor(valueOfArgument)));
 }
 
@@ -478,8 +459,7 @@ EncodedJSValue JIT_OPERATION operationArithCeil(ExecState* exec, EncodedJSValue 
 
     JSValue argument = JSValue::decode(encodedArgument);
     double valueOfArgument = argument.toNumber(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(ceil(valueOfArgument)));
 }
 
@@ -491,8 +471,7 @@ EncodedJSValue JIT_OPERATION operationArithTrunc(ExecState* exec, EncodedJSValue
 
     JSValue argument = JSValue::decode(encodedArgument);
     double truncatedValueOfArgument = argument.toIntegerPreserveNaN(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(truncatedValueOfArgument));
 }
 
@@ -544,11 +523,9 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
     }
 
     baseValue.requireObjectCoercible(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto propertyName = property.toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(baseValue.get(exec, propertyName));
 }
 
@@ -578,8 +555,7 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
     }
 
     auto propertyName = property.toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(JSValue(base).get(exec, propertyName));
 }
 
@@ -973,12 +949,10 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJ
     }
 
     baseValue.requireObjectCoercible(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     auto property = subscript.toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(baseValue.get(exec, property, slot));
 }
 
@@ -1005,8 +979,7 @@ void JIT_OPERATION operationPutByValWithThisStrict(ExecState* exec, EncodedJSVal
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     putWithThis<true>(exec, encodedBase, encodedThis, encodedValue, property);
 }
 
@@ -1017,8 +990,7 @@ void JIT_OPERATION operationPutByValWithThis(ExecState* exec, EncodedJSValue enc
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     putWithThis<false>(exec, encodedBase, encodedThis, encodedValue, property);
 }
 
@@ -1663,13 +1635,11 @@ int32_t JIT_OPERATION operationHasOwnProperty(ExecState* exec, JSObject* thisObj
 
     JSValue key = JSValue::decode(encodedKey);
     Identifier propertyName = key.toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
     bool result = thisObject->hasOwnProperty(exec, propertyName.impl(), slot);
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     HasOwnPropertyCache* hasOwnPropertyCache = vm.hasOwnPropertyCache();
     ASSERT(hasOwnPropertyCache);

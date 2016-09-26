@@ -50,8 +50,7 @@ Vector<std::experimental::variant<Ref<Node>, String>> toNodeOrStringVector(ExecS
             result.uncheckedAppend(node->wrapped());
         else {
             String string = value.toWTFString(&state);
-            if (UNLIKELY(scope.exception()))
-                return { };
+            RETURN_IF_EXCEPTION(scope, { });
             result.uncheckedAppend(string);
         }
     }

@@ -203,8 +203,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncAssert(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     bool condition = exec->argument(0).toBoolean(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (condition)
         return JSValue::encode(jsUndefined());
@@ -240,8 +239,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfile(ExecState* exec)
     }
 
     const String& title(valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0)));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     client->profile(exec, title);
     return JSValue::encode(jsUndefined());
@@ -262,8 +260,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfileEnd(ExecState* exec)
     }
 
     const String& title(valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0)));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     client->profileEnd(exec, title);
     return JSValue::encode(jsUndefined());
@@ -284,8 +281,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTakeHeapSnapshot(ExecState* 
     }
 
     const String& title(valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0)));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     client->takeHeapSnapshot(exec, title);
     return JSValue::encode(jsUndefined());
@@ -311,8 +307,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTime(ExecState* exec)
         title = ASCIILiteral("default");
     else {
         title = valueOrDefaultLabelString(exec, exec->argument(0));
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     client->time(exec, title);
@@ -332,8 +327,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeEnd(ExecState* exec)
         title =  ASCIILiteral("default");
     else {
         title = valueOrDefaultLabelString(exec, exec->argument(0));
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     client->timeEnd(exec, title);

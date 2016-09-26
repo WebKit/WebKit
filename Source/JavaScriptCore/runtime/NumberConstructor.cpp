@@ -89,8 +89,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* ex
     auto scope = DECLARE_THROW_SCOPE(vm);
     double n = exec->argumentCount() ? exec->uncheckedArgument(0).toNumber(exec) : 0;
     Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->numberObjectStructure());
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     NumberObject* object = NumberObject::create(exec->vm(), structure);
     object->setInternalValue(exec->vm(), jsNumber(n));

@@ -80,8 +80,7 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValu
         }
     }
 
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     if (!algorithmName.containsOnlyASCII()) {
         throwSyntaxError(exec, scope);
@@ -113,8 +112,7 @@ static bool getHashAlgorithm(JSDictionary& dictionary, CryptoAlgorithmIdentifier
     Identifier identifier = Identifier::fromString(exec, "hash");
 
     JSValue hash = getProperty(exec, object, "hash");
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     if (hash.isUndefinedOrNull()) {
         if (isRequired == HashRequirement::Required)
@@ -136,8 +134,7 @@ static RefPtr<CryptoAlgorithmParameters> createAesCbcParams(ExecState* exec, JSV
     }
 
     JSValue iv = getProperty(exec, value.getObject(), "iv");
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto result = adoptRef(*new CryptoAlgorithmAesCbcParams);
 
@@ -170,8 +167,7 @@ static RefPtr<CryptoAlgorithmParameters> createAesKeyGenParams(ExecState& state,
     auto result = adoptRef(*new CryptoAlgorithmAesKeyGenParams);
 
     JSValue lengthValue = getProperty(&state, value.getObject(), "length");
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     result->length = convert<uint16_t>(state, lengthValue, EnforceRange);
 
@@ -218,8 +214,7 @@ static RefPtr<CryptoAlgorithmParameters> createHmacKeyParams(ExecState& state, J
         return nullptr;
 
     result->hasLength = jsDictionary.get("length", result->length);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     return WTFMove(result);
 }
@@ -238,17 +233,14 @@ static RefPtr<CryptoAlgorithmParameters> createRsaKeyGenParams(ExecState& state,
     auto result = adoptRef(*new CryptoAlgorithmRsaKeyGenParams);
 
     JSValue modulusLengthValue = getProperty(&state, value.getObject(), "modulusLength");
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     // FIXME: Why no EnforceRange? Filed as <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23779>.
     result->modulusLength = convert<uint32_t>(state, modulusLengthValue, NormalConversion);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSValue publicExponentValue = getProperty(&state, value.getObject(), "publicExponent");
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     RefPtr<Uint8Array> publicExponentArray = toUint8Array(publicExponentValue);
     if (!publicExponentArray) {
@@ -287,8 +279,7 @@ static RefPtr<CryptoAlgorithmParameters> createRsaOaepParams(ExecState* exec, JS
         return nullptr;
 
     JSValue labelValue = getProperty(exec, value.getObject(), "label");
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     result->hasLabel = !labelValue.isUndefinedOrNull();
     if (!result->hasLabel)

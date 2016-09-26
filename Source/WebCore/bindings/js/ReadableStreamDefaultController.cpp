@@ -53,8 +53,7 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC:
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto function = object.get(&state, JSC::Identifier::fromString(&state, propertyName));
-    if (UNLIKELY(scope.exception()))
-        return JSC::jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
     if (!function.isFunction()) {
         if (!function.isUndefined())

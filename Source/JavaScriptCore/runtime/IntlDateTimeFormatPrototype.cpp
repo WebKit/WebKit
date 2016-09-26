@@ -101,8 +101,7 @@ static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecSta
         // a. Let x be ToNumber(date).
         value = date.toNumber(state);
         // b. ReturnIfAbrupt(x).
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     // 5. Return FormatDateTime(dtf, x).
@@ -140,8 +139,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
 
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, dtf, boundArgs, 1, ASCIILiteral("format"));
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(JSValue());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set dtf.[[boundFormat]] to bf.
         dtf->setBoundFormat(vm, boundFormat);
     }

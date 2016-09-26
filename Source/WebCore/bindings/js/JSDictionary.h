@@ -215,8 +215,7 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetPropertyAndResult(const char
         Result result;
         convertValue(m_exec, value, result);
 
-        if (UNLIKELY(scope.exception()))
-            return ExceptionThrown;
+        RETURN_IF_EXCEPTION(scope, ExceptionThrown);
 
         setter(context, result);
         break;

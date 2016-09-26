@@ -100,11 +100,9 @@ EncodedJSValue JSC_HOST_CALL symbolConstructorFor(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSString* stringKey = exec->argument(0).toString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String string = stringKey->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(Symbol::create(exec->vm(), exec->vm().symbolRegistry().symbolForKey(string)));
 }

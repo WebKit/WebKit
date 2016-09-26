@@ -134,15 +134,13 @@ bool intlBooleanOption(ExecState& state, JSValue options, PropertyName property,
     JSObject* opts = options.toObject(&state);
 
     // 2. ReturnIfAbrupt(opts).
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     // 3. Let value be Get(opts, property).
     JSValue value = opts->get(&state, property);
 
     // 4. ReturnIfAbrupt(value).
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     // 5. If value is not undefined, then
     if (!value.isUndefined()) {
@@ -176,15 +174,13 @@ String intlStringOption(ExecState& state, JSValue options, PropertyName property
     JSObject* opts = options.toObject(&state);
 
     // 2. ReturnIfAbrupt(opts).
-    if (UNLIKELY(scope.exception()))
-        return { };
+    RETURN_IF_EXCEPTION(scope, String());
 
     // 3. Let value be Get(opts, property).
     JSValue value = opts->get(&state, property);
 
     // 4. ReturnIfAbrupt(value).
-    if (UNLIKELY(scope.exception()))
-        return { };
+    RETURN_IF_EXCEPTION(scope, String());
 
     // 5. If value is not undefined, then
     if (!value.isUndefined()) {
@@ -196,8 +192,7 @@ String intlStringOption(ExecState& state, JSValue options, PropertyName property
         String stringValue = value.toWTFString(&state);
 
         // ii. ReturnIfAbrupt(value).
-        if (UNLIKELY(scope.exception()))
-            return { };
+        RETURN_IF_EXCEPTION(scope, String());
 
         // d. If values is not undefined, then
         // i. If values does not contain an element equal to value, throw a RangeError exception.
@@ -224,23 +219,20 @@ unsigned intlNumberOption(ExecState& state, JSValue options, PropertyName proper
     JSObject* opts = options.toObject(&state);
 
     // 2. ReturnIfAbrupt(opts).
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
 
     // 3. Let value be Get(opts, property).
     JSValue value = opts->get(&state, property);
 
     // 4. ReturnIfAbrupt(value).
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
 
     // 5. If value is not undefined, then
     if (!value.isUndefined()) {
         // a. Let value be ToNumber(value).
         double doubleValue = value.toNumber(&state);
         // b. ReturnIfAbrupt(value).
-        if (UNLIKELY(scope.exception()))
-            return 0;
+        RETURN_IF_EXCEPTION(scope, 0);
         // 1. If value is NaN or less than minimum or greater than maximum, throw a RangeError exception.
         if (!(doubleValue >= minimum && doubleValue <= maximum)) {
             throwException(&state, scope, createRangeError(&state, *property.publicName() + " is out of range"));
@@ -560,17 +552,14 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
     }
 
     // 5. ReturnIfAbrupt(O).
-    if (UNLIKELY(scope.exception()))
-        return Vector<String>();
+    RETURN_IF_EXCEPTION(scope, Vector<String>());
 
     // 6. Let len be ToLength(Get(O, "length")).
     JSValue lengthProperty = localesObject->get(&state, vm.propertyNames->length);
-    if (UNLIKELY(scope.exception()))
-        return Vector<String>();
+    RETURN_IF_EXCEPTION(scope, Vector<String>());
 
     double length = lengthProperty.toLength(&state);
-    if (UNLIKELY(scope.exception()))
-        return Vector<String>();
+    RETURN_IF_EXCEPTION(scope, Vector<String>());
 
     // Keep track of locales that have been added to the list.
     HashSet<String> seenSet;
@@ -585,8 +574,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
         bool kPresent = localesObject->hasProperty(&state, k);
 
         // c. ReturnIfAbrupt(kPresent).
-        if (UNLIKELY(scope.exception()))
-            return Vector<String>();
+        RETURN_IF_EXCEPTION(scope, Vector<String>());
 
         // d. If kPresent is true, then
         if (kPresent) {
@@ -594,8 +582,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
             JSValue kValue = localesObject->get(&state, k);
 
             // ii. ReturnIfAbrupt(kValue).
-            if (UNLIKELY(scope.exception()))
-                return Vector<String>();
+            RETURN_IF_EXCEPTION(scope, Vector<String>());
 
             // iii. If Type(kValue) is not String or Object, throw a TypeError exception.
             if (!kValue.isString() && !kValue.isObject()) {
@@ -607,8 +594,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
             JSString* tag = kValue.toString(&state);
 
             // v. ReturnIfAbrupt(tag).
-            if (UNLIKELY(scope.exception()))
-                return Vector<String>();
+            RETURN_IF_EXCEPTION(scope, Vector<String>());
 
             // vi. If IsStructurallyValidLanguageTag(tag) is false, throw a RangeError exception.
             // vii. Let canonicalizedTag be CanonicalizeLanguageTag(tag).
@@ -945,8 +931,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
         // a. Let matcher be GetOption(options, "localeMatcher", "string", « "lookup", "best fit" », "best fit").
         matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
         // b. ReturnIfAbrupt(matcher).
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     } else {
         // 2. Else, let matcher be "best fit".
         matcher = ASCIILiteral("best fit");
@@ -965,8 +950,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
         supportedLocales = lookupSupportedLocales(state, availableLocales, requestedLocales);
     }
 
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     // 6. Let subset be CreateArrayFromList(supportedLocales).
     // Already an array.
@@ -974,8 +958,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
     // 7. Let keys be subset.[[OwnPropertyKeys]]().
     PropertyNameArray keys(&state, PropertyNameMode::Strings);
     supportedLocales->getOwnPropertyNames(supportedLocales, &state, keys, EnumerationMode());
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     PropertyDescriptor desc;
     desc.setConfigurable(false);
@@ -991,8 +974,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
         supportedLocales->defineOwnProperty(supportedLocales, &state, keys[i], desc, true);
 
         // c. Assert: status is not abrupt completion.
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
     // 9. Return subset.

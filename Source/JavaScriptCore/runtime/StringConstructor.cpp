@@ -100,8 +100,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState* exec)
 
     for (unsigned i = 0; i < length; ++i) {
         double codePointAsDouble = exec->uncheckedArgument(i).toNumber(exec);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         uint32_t codePoint = static_cast<uint32_t>(codePointAsDouble);
 
@@ -126,8 +125,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->stringObjectStructure());
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (!exec->argumentCount())
         return JSValue::encode(StringObject::create(vm, structure));

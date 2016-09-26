@@ -159,14 +159,12 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
         regExp = asRegExpObject(arg0)->regExp();
     } else {
         String pattern = !exec->argumentCount() ? emptyString() : arg0.toString(exec)->value(exec);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         RegExpFlags flags = NoFlags;
         if (!arg1.isUndefined()) {
             flags = regExpFlags(arg1.toString(exec)->value(exec));
-            if (UNLIKELY(scope.exception()))
-                return JSValue::encode(jsUndefined());
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (flags == InvalidFlags)
                 return throwVMError(exec, scope, createSyntaxError(exec, ASCIILiteral("Invalid flags supplied to RegExp constructor.")));
         }
@@ -192,20 +190,15 @@ static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue globalValue = regexp->get(exec, exec->propertyNames().global);
-    if (UNLIKELY(scope.exception()))
-        return string;
+    RETURN_IF_EXCEPTION(scope, string);
     JSValue ignoreCaseValue = regexp->get(exec, exec->propertyNames().ignoreCase);
-    if (UNLIKELY(scope.exception()))
-        return string;
+    RETURN_IF_EXCEPTION(scope, string);
     JSValue multilineValue = regexp->get(exec, exec->propertyNames().multiline);
-    if (UNLIKELY(scope.exception()))
-        return string;
+    RETURN_IF_EXCEPTION(scope, string);
     JSValue unicodeValue = regexp->get(exec, exec->propertyNames().unicode);
-    if (UNLIKELY(scope.exception()))
-        return string;
+    RETURN_IF_EXCEPTION(scope, string);
     JSValue stickyValue = regexp->get(exec, exec->propertyNames().sticky);
-    if (UNLIKELY(scope.exception()))
-        return string;
+    RETURN_IF_EXCEPTION(scope, string);
 
     unsigned index = 0;
     if (globalValue.toBoolean(exec))
@@ -239,18 +232,14 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
         return JSValue::encode(earlyReturnValue);
 
     JSValue sourceValue = thisObject->get(exec, vm.propertyNames->source);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String source = sourceValue.toString(exec)->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue flagsValue = thisObject->get(exec, vm.propertyNames->flags);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String flags = flagsValue.toString(exec)->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsMakeNontrivialString(exec, '/', source, '/', flags));
 }
@@ -340,8 +329,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState* exec)
         return throwVMTypeError(exec, scope, ASCIILiteral("The RegExp.prototype.flags getter can only be called on an object"));
 
     auto flags = flagsString(exec, asObject(thisValue));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsString(exec, flags.data()));
 }
@@ -479,8 +467,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearchFast(ExecState* exec)
 
     JSString* string = exec->uncheckedArgument(0).toString(exec);
     String s = string->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     MatchResult result = regExpConstructor->performMatch(vm, regExp, string, s, 0);
@@ -588,8 +575,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     // 3. [handled by JS builtin] Let S be ? ToString(string).
     JSString* inputString = exec->argument(0).toString(exec);
     String input = inputString->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ASSERT(!input.isNull());
 
     // 4. [handled by JS builtin] Let C be ? SpeciesConstructor(rx, %RegExp%).
@@ -603,8 +589,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     // 11. Let A be ArrayCreate(0).
     // 12. Let lengthA be 0.
     JSArray* result = constructEmptyArray(exec, 0);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned resultLength = 0;
 
     // 13. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).

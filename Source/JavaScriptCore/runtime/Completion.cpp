@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2013 Apple Inc.
+ *  Copyright (C) 2003, 2007, 2013, 2016 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -193,8 +193,7 @@ JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const SourceCode& sour
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     globalObject->moduleLoader()->provide(exec, key, JSModuleLoader::Status::Fetch, source.view().toString());
-    if (UNLIKELY(scope.exception()))
-        return rejectPromise(exec, globalObject);
+    RETURN_IF_EXCEPTION(scope, rejectPromise(exec, globalObject));
 
     return loadAndEvaluateModule(lock, exec, globalObject, key, jsUndefined(), initiator);
 }
@@ -233,8 +232,7 @@ JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source, JSValue
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     // FIXME: Introduce JSSourceCode object to wrap around this source.
     globalObject->moduleLoader()->provide(exec, key, JSModuleLoader::Status::Fetch, source.view().toString());
-    if (UNLIKELY(scope.exception()))
-        return rejectPromise(exec, globalObject);
+    RETURN_IF_EXCEPTION(scope, rejectPromise(exec, globalObject));
 
     return loadModule(lock, exec, globalObject, key, jsUndefined(), initiator);
 }

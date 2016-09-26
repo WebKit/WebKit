@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008, 2013, 2015 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2007-2008, 2013, 2015-2016 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -165,8 +165,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncClz32(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     uint32_t value = exec->argument(0).toUInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(JSValue(clz32(value)));
 }
 
@@ -195,8 +194,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncHypot(ExecState* exec)
     args.reserveInitialCapacity(argsCount);
     for (unsigned i = 0; i < argsCount; ++i) {
         args.uncheckedAppend(exec->uncheckedArgument(i).toNumber(exec));
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsNull());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (std::isinf(args[i]))
             return JSValue::encode(jsDoubleNumber(+std::numeric_limits<double>::infinity()));
         max = std::max(fabs(args[i]), max);
@@ -299,8 +297,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     int32_t left = exec->argument(0).toInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     int32_t right = exec->argument(1).toInt32(exec);
     return JSValue::encode(jsNumber(left * right));
 }

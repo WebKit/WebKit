@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,16 +52,14 @@ void forEachInIterable(ExecState* state, JSValue iterable, const CallBackType& c
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue iterator = iteratorForIterable(state, iterable);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     while (true) {
         JSValue next = iteratorStep(state, iterator);
         if (next.isFalse() || UNLIKELY(scope.exception()))
             return;
 
         JSValue nextValue = iteratorValue(state, next);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
 
         callback(vm, state, nextValue);
         if (UNLIKELY(scope.exception())) {

@@ -46,11 +46,9 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue p1 = v1.toPrimitive(callFrame);
-    if (UNLIKELY(scope.exception()))
-        return JSValue();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     JSValue p2 = v2.toPrimitive(callFrame);
-    if (UNLIKELY(scope.exception()))
-        return JSValue();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (p1.isString())
         return jsString(callFrame, asString(p1), p2.toString(callFrame));

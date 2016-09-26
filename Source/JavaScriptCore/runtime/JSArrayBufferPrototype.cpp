@@ -50,14 +50,12 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
         return throwVMTypeError(exec, scope, ASCIILiteral("Slice requires at least one argument."));
     
     int32_t begin = exec->argument(0).toInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     int32_t end;
     if (exec->argumentCount() >= 2) {
         end = exec->uncheckedArgument(1).toInt32(exec);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else
         end = thisObject->impl()->byteLength();
     

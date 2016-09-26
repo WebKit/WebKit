@@ -311,8 +311,7 @@ public:
         if (thisObject->m_delegate) {
             if (thisObject->m_delegate->getPropertySlot(exec, name, slot))
                 return true;
-            if (UNLIKELY(scope.exception()))
-                return false;
+            RETURN_IF_EXCEPTION(scope, false);
         }
 
         return Base::getOwnPropertySlot(object, exec, name, slot);
@@ -1460,8 +1459,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String fileName = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1494,8 +1492,7 @@ EncodedJSValue JSC_HOST_CALL functionRunString(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String source = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     GlobalObject* globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
 
@@ -1522,8 +1519,7 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String fileName = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1543,8 +1539,7 @@ EncodedJSValue JSC_HOST_CALL functionLoadString(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String sourceCode = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
     NakedPtr<Exception> evaluationException;
@@ -1560,14 +1555,12 @@ EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String fileName = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     bool isBinary = false;
     if (exec->argumentCount() > 1) {
         String type = exec->argument(1).toWTFString(exec);
-        if (UNLIKELY(scope.exception()))
-            return EncodedJSValue();
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (type != "binary")
             return throwVMError(exec, scope, "Expected 'binary' as second argument.");
         isBinary = true;
@@ -1583,8 +1576,7 @@ EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
     Structure* structure = exec->lexicalGlobalObject()->typedArrayStructure(TypeUint8);
     auto length = content.size();
     JSObject* result = createUint8TypedArray(exec, structure, ArrayBuffer::createFromBytes(content.releaseBuffer().leakPtr(), length, [] (void* p) { fastFree(p); }), 0, length);
-    if (UNLIKELY(scope.exception()))
-        return EncodedJSValue();
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(result);
 }
@@ -1595,8 +1587,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String fileName = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1659,8 +1650,7 @@ EncodedJSValue JSC_HOST_CALL functionSetRandomSeed(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned seed = exec->argument(0).toUInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     exec->lexicalGlobalObject()->weakRandom().setSeed(seed);
     return JSValue::encode(jsUndefined());
 }
@@ -1931,15 +1921,13 @@ EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String fileName = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSInternalPromise* promise = loadAndEvaluateModule(exec, fileName);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue error;
     JSFunction* errorHandler = JSNativeStdFunction::create(vm, exec->lexicalGlobalObject(), 1, String(), [&](ExecState* exec) {
@@ -1963,8 +1951,7 @@ EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     String functionText = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const SourceCode& source = makeSource(functionText);
     JSFunction* func = JSFunction::createBuiltinFunction(vm, createBuiltinExecutable(vm, source, Identifier::fromString(&vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, source), exec->lexicalGlobalObject());
@@ -1984,8 +1971,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String source = exec->argument(0).toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     StopWatch stopWatch;
     stopWatch.start();

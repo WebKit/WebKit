@@ -91,8 +91,7 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* 
     // 4. Let x be ToNumber(value).
     double number = state->argument(0).toNumber(state);
     // 5. ReturnIfAbrupt(x).
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 6. Return FormatNumber(nf, x).
     return JSValue::encode(numberFormat->formatNumber(*state, number));
@@ -128,8 +127,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
 
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, nf, boundArgs, 1, ASCIILiteral("format"));
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(JSValue());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set nf.[[boundFormat]] to bf.
         nf->setBoundFormat(vm, boundFormat);
     }

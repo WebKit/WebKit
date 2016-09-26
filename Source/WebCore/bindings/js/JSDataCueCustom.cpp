@@ -58,12 +58,10 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState& exec)
         return throwVMError(&exec, scope, createNotEnoughArgumentsError(&exec));
 
     double startTime(exec.uncheckedArgument(0).toNumber(&exec));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     double endTime(exec.uncheckedArgument(1).toNumber(&exec));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (!context)
@@ -87,8 +85,7 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState& exec)
     if (valueArgument.isCell() && valueArgument.asCell()->inherits(std::remove_pointer<JSArrayBuffer*>::type::info())) {
 
         ArrayBuffer* data = toArrayBuffer(valueArgument);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (UNLIKELY(!data)) {
             setDOMException(&exec, TypeError);

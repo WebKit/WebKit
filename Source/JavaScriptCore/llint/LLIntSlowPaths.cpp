@@ -811,11 +811,9 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, JSValue baseValue
     }
 
     baseValue.requireObjectCoercible(exec);
-    if (scope.exception())
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     auto property = subscript.toPropertyKey(exec);
-    if (scope.exception())
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     return baseValue.get(exec, property);
 }
 
@@ -883,7 +881,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
 
     // Don't put to an object if toString threw an exception.
     auto property = subscript.toPropertyKey(exec);
-    if (throwScope.exception())
+    if (UNLIKELY(throwScope.exception()))
         LLINT_END();
 
     if (Optional<uint32_t> index = parseIndex(property))

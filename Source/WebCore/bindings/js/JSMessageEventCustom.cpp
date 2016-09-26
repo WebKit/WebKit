@@ -119,12 +119,10 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         messagePorts = std::make_unique<MessagePortArray>();
         arrayBuffers = std::make_unique<ArrayBufferArray>();
         fillMessagePortArray(state, state.argument(7), *messagePorts, *arrayBuffers);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     }
     Deprecated::ScriptValue dataArg(vm, state.argument(3));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     MessageEvent& event = jsEvent->wrapped();
     event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, WTFMove(messagePorts));

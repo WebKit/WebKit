@@ -121,8 +121,7 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
         bool isCurrentDefined = thisObject->getOwnPropertyDescriptor(exec, propertyName, current);
         ASSERT(isCurrentDefined);
         bool isExtensible = thisObject->isExtensible(exec);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         return validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, isExtensible, descriptor, isCurrentDefined, current, throwException);
     }
 

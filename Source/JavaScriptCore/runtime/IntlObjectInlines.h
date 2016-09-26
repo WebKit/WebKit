@@ -46,12 +46,10 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(ExecState& s
         JSValue prototype = callee->getDirect(vm, vm.propertyNames->prototype);
         if (JSObject::defaultHasInstance(&state, thisValue, prototype)) {
             JSObject* thisObject = thisValue.toObject(&state);
-            if (UNLIKELY(scope.exception()))
-                return jsUndefined();
+            RETURN_IF_EXCEPTION(scope, JSValue());
 
             IntlInstance* instance = factory(vm);
-            if (UNLIKELY(scope.exception()))
-                return jsUndefined();
+            RETURN_IF_EXCEPTION(scope, JSValue());
 
             thisObject->putDirect(vm, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName(), instance);
             return thisObject;

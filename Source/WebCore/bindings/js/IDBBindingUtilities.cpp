@@ -97,8 +97,7 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
         auto& inArray = key->array();
         unsigned size = inArray.size();
         auto outArray = constructEmptyArray(&state, 0, &globalObject, size);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
         for (size_t i = 0; i < size; ++i)
             outArray->putDirectIndex(&state, i, toJS(state, globalObject, inArray.at(i).get()));
         return outArray;

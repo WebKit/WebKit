@@ -84,8 +84,7 @@ static bool cryptoKeyFormatFromJSValue(ExecState& state, JSValue value, CryptoKe
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String keyFormatString = value.toString(&state)->value(&state);
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
     if (keyFormatString == "raw")
         result = CryptoKeyFormat::Raw;
     else if (keyFormatString == "pkcs8")
@@ -117,8 +116,7 @@ static bool cryptoKeyUsagesFromJSValue(ExecState& state, JSValue value, CryptoKe
     for (size_t i = 0; i < array->length(); ++i) {
         JSValue element = array->getIndex(&state, i);
         String usageString = element.toString(&state)->value(&state);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         if (usageString == "encrypt")
             result |= CryptoKeyUsageEncrypt;
         else if (usageString == "decrypt")
@@ -421,8 +419,7 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
     bool extractable = false;
     if (state.argumentCount() >= 2) {
         extractable = state.uncheckedArgument(1).toBoolean(&state);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
     CryptoKeyUsage keyUsages = 0;
@@ -474,8 +471,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
             return;
         }
         keySerialization = std::make_unique<JSCryptoKeySerializationJWK>(&state, jwkString);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         break;
     }
     default:
@@ -491,8 +487,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
             throwTypeError(&state, scope, ASCIILiteral("Algorithm specified in key is not compatible with one passed to importKey as argument"));
         return;
     }
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     algorithm = reconciledResult->algorithm;
     parameters = reconciledResult->parameters;
@@ -503,16 +498,13 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
     ASSERT(parameters);
 
     keySerialization->reconcileExtractable(extractable);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     keySerialization->reconcileUsages(keyUsages);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     auto keyData = keySerialization->keyData();
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     ExceptionCode ec = 0;
     algorithm->importKey(*parameters, *keyData, extractable, keyUsages, WTFMove(callback), WTFMove(failureCallback), ec);
@@ -557,8 +549,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
     bool extractable = false;
     if (state.argumentCount() >= 4) {
         extractable = state.uncheckedArgument(3).toBoolean(&state);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
     CryptoKeyUsage keyUsages = 0;
@@ -579,8 +570,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
     };
 
     WebCore::importKey(state, keyFormat, data, WTFMove(algorithm), WTFMove(parameters), extractable, keyUsages, WTFMove(successCallback), WTFMove(failureCallback));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     return promise;
 }
@@ -606,8 +596,7 @@ static void exportKey(ExecState& state, CryptoKeyFormat keyFormat, const CryptoK
     }
     case CryptoKeyFormat::JWK: {
         String result = JSCryptoKeySerializationJWK::serialize(&state, key);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         CString utf8String = result.utf8(StrictConversion);
         Vector<uint8_t> resultBuffer;
         resultBuffer.append(utf8String.data(), utf8String.length());
@@ -648,8 +637,7 @@ JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
     };
 
     WebCore::exportKey(state, keyFormat, *key, WTFMove(successCallback), WTFMove(failureCallback));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     return promise;
 }
@@ -780,8 +768,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
     bool extractable = false;
     if (state.argumentCount() >= 6) {
         extractable = state.uncheckedArgument(5).toBoolean(&state);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
     CryptoKeyUsage keyUsages = 0;

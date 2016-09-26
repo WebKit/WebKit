@@ -185,8 +185,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
         nameString = ASCIILiteral("Error");
     else {
         nameString = nameValue.toString(exec)->value(exec);
-        if (UNLIKELY(scope.exception()))
-            return String();
+        RETURN_IF_EXCEPTION(scope, String());
     }
 
     JSValue messageValue;
@@ -201,8 +200,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
         messageString = String();
     else {
         messageString = messageValue.toString(exec)->value(exec);
-        if (UNLIKELY(scope.exception()))
-            return String();
+        RETURN_IF_EXCEPTION(scope, String());
     }
 
     if (!nameString.length())

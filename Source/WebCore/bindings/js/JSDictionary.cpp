@@ -88,8 +88,7 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propert
         finalResult = slot.getValue(m_exec, identifier);
         return true;
     });
-    if (UNLIKELY(scope.exception()))
-        return ExceptionThrown;
+    RETURN_IF_EXCEPTION(scope, ExceptionThrown);
     return propertyFound ? PropertyFound : NoPropertyFound;
 }
 
@@ -161,13 +160,11 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& 
 
     unsigned length = 0;
     JSObject* object = toJSSequence(*exec, value, length);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     for (unsigned i = 0 ; i < length; ++i) {
         JSValue itemValue = object->get(exec, i);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         result.append(itemValue.toString(exec)->value(exec));
     }
 }
@@ -236,13 +233,11 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicSt
 
     unsigned length = 0;
     JSObject* object = toJSSequence(*exec, value, length);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     for (unsigned i = 0 ; i < length; ++i) {
         JSValue itemValue = object->get(exec, i);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         result.add(itemValue.toString(exec)->value(exec));
     }
 }
@@ -313,13 +308,11 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<RefPtr<Me
 
     unsigned length = 0;
     JSObject* object = toJSSequence(*exec, value, length);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     for (unsigned i = 0 ; i < length; ++i) {
         JSValue itemValue = object->get(exec, i);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
 
         auto stream = JSMediaStream::toWrapped(itemValue);
         if (!stream) {

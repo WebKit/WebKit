@@ -70,8 +70,7 @@ JSValue JSWorkerGlobalScope::importScripts(ExecState& state)
     Vector<String> urls;
     for (unsigned i = 0; i < state.argumentCount(); ++i) {
         urls.append(valueToUSVString(&state, state.uncheckedArgument(i)));
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     }
     ExceptionCode ec = 0;
 
@@ -89,8 +88,7 @@ JSValue JSWorkerGlobalScope::setTimeout(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), wrapped().contentSecurityPolicy());
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     if (!action)
         return jsNumber(0);
     int delay = state.argument(1).toInt32(&state);
@@ -106,8 +104,7 @@ JSValue JSWorkerGlobalScope::setInterval(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), wrapped().contentSecurityPolicy());
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     if (!action)
         return jsNumber(0);
     int delay = state.argument(1).toInt32(&state);

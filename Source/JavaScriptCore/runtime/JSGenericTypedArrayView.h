@@ -174,8 +174,7 @@ public:
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
 
         if (isNeutered()) {
             throwTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);

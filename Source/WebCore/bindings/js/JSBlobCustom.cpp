@@ -80,8 +80,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
     unsigned blobPartsLength = 0;
     JSObject* blobParts = toJSSequence(exec, exec.uncheckedArgument(0), blobPartsLength);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ASSERT(blobParts);
 
     String type;
@@ -101,8 +100,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
         // Attempt to get the endings property and validate it.
         bool containsEndings = dictionary.get("endings", endings);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
@@ -111,8 +109,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
         // Attempt to get the type property.
         dictionary.get("type", type);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     ASSERT(endings == "transparent" || endings == "native");
@@ -121,8 +118,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
 
     for (unsigned i = 0; i < blobPartsLength; ++i) {
         JSValue item = blobParts->get(&exec, i);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (ArrayBuffer* arrayBuffer = toArrayBuffer(item))
             blobBuilder.append(arrayBuffer);
@@ -132,8 +128,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState& exec)
             blobBuilder.append(blob);
         else {
             String string = item.toWTFString(&exec);
-            if (UNLIKELY(scope.exception()))
-                return JSValue::encode(jsUndefined());
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
             blobBuilder.append(string, endings);
         }
     }

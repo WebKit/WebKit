@@ -82,8 +82,7 @@ bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSV
         return false;
 
     String stringValue = value.toString(exec)->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     ExceptionCode ec = 0;
     wrapped().setItem(propertyNameToString(propertyName), stringValue, ec);

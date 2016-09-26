@@ -615,8 +615,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(ExecState* exec)
 
     JSValue hintValue = exec->uncheckedArgument(0);
     PreferredPrimitiveType type = toPreferredPrimitiveType(exec, hintValue);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (type == NoPreference)
         type = PreferString;
@@ -1128,18 +1127,15 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = exec->thisValue();
     JSObject* object = jsCast<JSObject*>(thisValue.toThis(exec, NotStrictMode));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue timeValue = object->toPrimitive(exec, PreferNumber);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (timeValue.isNumber() && !(timeValue.isInt32() || std::isfinite(timeValue.asDouble())))
         return JSValue::encode(jsNull());
 
     JSValue toISOValue = object->get(exec, vm.propertyNames->toISOString);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData callData;
     CallType callType = getCallData(toISOValue, callData);
@@ -1147,8 +1143,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
         return throwVMTypeError(exec, scope, ASCIILiteral("toISOString is not a function"));
 
     JSValue result = call(exec, asObject(toISOValue), callType, callData, object, exec->emptyList());
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (result.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("toISOString did not return a primitive value"));
     return JSValue::encode(result);

@@ -112,12 +112,10 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     const Identifier moduleKey = exec->argument(0).toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     String source = exec->argument(1).toString(exec)->value(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     SourceCode sourceCode = makeSource(source, moduleKey.impl());
 
@@ -149,8 +147,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeRequestedModules(ExecState* ex
         return JSValue::encode(constructEmptyArray(exec, nullptr));
 
     JSArray* result = constructEmptyArray(exec, nullptr, moduleRecord->requestedModules().size());
-    if (UNLIKELY(scope.exception()))
-        JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     size_t i = 0;
     for (auto& key : moduleRecord->requestedModules())
         result->putDirectIndex(exec, i++, jsString(exec, key.get()));
@@ -170,8 +167,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation
         dataLog("Loader [link] ", moduleRecord->moduleKey(), "\n");
 
     moduleRecord->link(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsUndefined());
 }

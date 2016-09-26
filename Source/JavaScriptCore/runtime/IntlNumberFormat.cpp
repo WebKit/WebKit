@@ -164,8 +164,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 3. Let requestedLocales be CanonicalizeLocaleList(locales).
     auto requestedLocales = canonicalizeLocaleList(state, locales);
     // 4. ReturnIfAbrupt(requestedLocales).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // 5. If options is undefined, then
     JSObject* options;
@@ -176,8 +175,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
         // a. Let options be ToObject(options).
         options = optionsValue.toObject(&state);
         // b. ReturnIfAbrupt(options).
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
     }
 
     // 7. Let opt be a new Record.
@@ -186,8 +184,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 8. Let matcher be GetOption(options, "localeMatcher", "string", «"lookup", "best fit"», "best fit").
     String matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     // 9. ReturnIfAbrupt(matcher).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 10. Set opt.[[localeMatcher]] to matcher.
     opt.add(ASCIILiteral("localeMatcher"), matcher);
 
@@ -211,8 +208,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 16. Let s be GetOption(options, "style", "string", « "decimal", "percent", "currency"», "decimal").
     String styleString = intlStringOption(state, options, Identifier::fromString(&vm, "style"), { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
     // 17. ReturnIfAbrupt(s).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 18. Set numberFormat.[[style]] to s.
     if (styleString == "decimal")
         m_style = Style::Decimal;
@@ -226,8 +222,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 19. Let c be GetOption(options, "currency", "string", undefined, undefined).
     String currency = intlStringOption(state, options, Identifier::fromString(&vm, "currency"), { }, nullptr, nullptr);
     // 20. ReturnIfAbrupt(c).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 21. If c is not undefined, then
     if (!currency.isNull()) {
         // a. If the result of IsWellFormedCurrencyCode(c), is false, then throw a RangeError exception.
@@ -257,8 +252,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 24. Let cd be GetOption(options, "currencyDisplay", "string", «"code", "symbol", "name"», "symbol").
     String currencyDisplayString = intlStringOption(state, options, Identifier::fromString(&vm, "currencyDisplay"), { "code", "symbol", "name" }, "currencyDisplay must be either \"code\", \"symbol\", or \"name\"", "symbol");
     // 25. ReturnIfAbrupt(cd).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 26. If s is "currency", set numberFormat.[[currencyDisplay]] to cd.
     if (m_style == Style::Currency) {
         if (currencyDisplayString == "code")
@@ -275,8 +269,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 28. ReturnIfAbrupt(mnid).
     // 29. Set numberFormat.[[minimumIntegerDigits]] to mnid.
     unsigned minimumIntegerDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "minimumIntegerDigits"), 1, 21, 1);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     m_minimumIntegerDigits = minimumIntegerDigits;
 
     // 30. If s is "currency", let mnfdDefault be cDigits; else let mnfdDefault be 0.
@@ -286,8 +279,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 32. ReturnIfAbrupt(mnfd).
     // 33. Set numberFormat.[[minimumFractionDigits]] to mnfd.
     unsigned minimumFractionDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     m_minimumFractionDigits = minimumFractionDigits;
 
     // 34. If s is "currency", let mxfdDefault be max(mnfd, cDigits);
@@ -303,34 +295,29 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 36. ReturnIfAbrupt(mxfd).
     // 37. Set numberFormat.[[maximumFractionDigits]] to mxfd.
     unsigned maximumFractionDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     m_maximumFractionDigits = maximumFractionDigits;
 
     // 38. Let mnsd be Get(options, "minimumSignificantDigits").
     JSValue minimumSignificantDigitsValue = options->get(&state, Identifier::fromString(&vm, "minimumSignificantDigits"));
     // 39. ReturnIfAbrupt(mnsd).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // 40. Let mxsd be Get(options, "maximumSignificantDigits").
     JSValue maximumSignificantDigitsValue = options->get(&state, Identifier::fromString(&vm, "maximumSignificantDigits"));
     // 41. ReturnIfAbrupt(mxsd).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // 42. If mnsd is not undefined or mxsd is not undefined, then
     if (!minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined()) {
         // a. Let mnsd be GetNumberOption(options, "minimumSignificantDigits", 1, 21, 1).
         unsigned minimumSignificantDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "minimumSignificantDigits"), 1, 21, 1);
         // b. ReturnIfAbrupt(mnsd).
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         // c. Let mxsd be GetNumberOption(options, "maximumSignificantDigits", mnsd, 21, 21).
         unsigned maximumSignificantDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
         // d. ReturnIfAbrupt(mxsd).
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         // e. Set numberFormat.[[minimumSignificantDigits]] to mnsd.
         m_minimumSignificantDigits = minimumSignificantDigits;
         // f. Set numberFormat.[[maximumSignificantDigits]] to mxsd.
@@ -343,8 +330,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     if (usesFallback)
         useGrouping = true;
     // 44. ReturnIfAbrupt(g).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 45. Set numberFormat.[[useGrouping]] to g.
     m_useGrouping = useGrouping;
 

@@ -108,17 +108,14 @@ JSValue JSGeolocation::getCurrentPosition(ExecState& state)
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
     auto positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     ASSERT(positionCallback);
 
     auto positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     auto positionOptions = createPositionOptions(&state, state.argument(2));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     ASSERT(positionOptions);
 
     wrapped().getCurrentPosition(WTFMove(positionCallback), WTFMove(positionErrorCallback), WTFMove(positionOptions));
@@ -133,17 +130,14 @@ JSValue JSGeolocation::watchPosition(ExecState& state)
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
     auto positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     ASSERT(positionCallback);
 
     auto positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     auto positionOptions = createPositionOptions(&state, state.argument(2));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     ASSERT(positionOptions);
 
     int watchID = wrapped().watchPosition(WTFMove(positionCallback), WTFMove(positionErrorCallback), WTFMove(positionOptions));

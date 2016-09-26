@@ -1026,8 +1026,7 @@ sub GenerateDictionaryImplementationContent
         my $needExceptionCheck = 0;
         foreach my $member (@{$dictionary->members}) {
             if ($needExceptionCheck) {
-                $result .= "    if (UNLIKELY(throwScope.exception()))\n";
-                $result .= "        return Nullopt;\n";
+                $result .= "    RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
             }
             # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
             my $type = $member->type;
@@ -3248,8 +3247,7 @@ sub GenerateImplementation
                     push(@implContent, "    if (!value.isUndefinedOrNull()) {\n");
                     push(@implContent, "        nativeValue = $nativeValue;\n");
                     if ($mayThrowException) {
-                        push(@implContent, "        if (UNLIKELY(throwScope.exception()))\n");
-                        push(@implContent, "            return false;\n");
+                        push(@implContent, "        RETURN_IF_EXCEPTION(throwScope, false);\n");
                     }
                     push(@implContent, "        if (UNLIKELY(!nativeValue)) {\n");
                     push(@implContent, "            throwAttributeTypeError(*state, throwScope, \"$visibleInterfaceName\", \"$name\", \"$type\");\n");
@@ -3259,8 +3257,7 @@ sub GenerateImplementation
                 } else {
                     push(@implContent, "    auto nativeValue = $nativeValue;\n");
                     if ($mayThrowException) {
-                        push(@implContent, "    if (UNLIKELY(throwScope.exception()))\n");
-                        push(@implContent, "        return false;\n");
+                        push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
                     }
                 }
 
@@ -4008,8 +4005,7 @@ sub GenerateParametersCheck
             push(@$outputArray, "    auto $name = toArguments<VariadicHelper<$wrapperType, $wrappedType>>(*state, $argumentIndex);\n");
 
             if (IsNativeType($type)) {
-                push(@$outputArray, "    if (UNLIKELY(throwScope.exception()))\n");
-                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
             }
             else {
                 push(@$outputArray, "    if (!$name.arguments)\n");
@@ -4051,8 +4047,7 @@ sub GenerateParametersCheck
             }
 
             push(@$outputArray, "$indent    $defineOptionalValue = parse<$className>(*state, ${name}Value);\n");
-            push(@$outputArray, "$indent    if (UNLIKELY(throwScope.exception()))\n");
-            push(@$outputArray, "$indent        return JSValue::encode(jsUndefined());\n");
+            push(@$outputArray, "$indent    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
             push(@$outputArray, "$indent    if (UNLIKELY(!$optionalValue))\n");
             push(@$outputArray, "$indent        return throwArgumentMustBeEnumError(*state, throwScope, $argumentIndex, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, expectedEnumerationValues<$className>());\n");
             push(@$outputArray, "$indent    $name = optionalValue.value();\n") if $optionalValue ne $name;
@@ -4077,8 +4072,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    if (!$checkedArgument.isUndefinedOrNull()) {\n");
                 push(@$outputArray, "        $name = $nativeValue;\n");
                 if ($mayThrowException) {
-                    push(@$outputArray, "        if (UNLIKELY(throwScope.exception()))\n");
-                    push(@$outputArray, "            return JSValue::encode(jsUndefined());\n");
+                    push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
                 }
                 push(@$outputArray, "        if (UNLIKELY(!$name))\n");
                 push(@$outputArray, "            return throwArgumentTypeError(*state, throwScope, $argumentIndex, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, \"$type\");\n");
@@ -4120,8 +4114,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    auto $name = ${outer}${nativeValue};\n");
                 $value = "WTFMove($name)";
                 if ($mayThrowException) {
-                    push(@$outputArray, "    if (UNLIKELY(throwScope.exception()))\n");
-                    push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                    push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
                 }
             }
 
@@ -4497,8 +4490,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, "\n" . $indent . "setDOMException(state, throwScope, ec);\n") if $raisesException;
 
         if ($codeGenerator->ExtendedAttributeContains($function->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
-            push(@implContent, $indent . "if (UNLIKELY(throwScope.exception()))\n");
-            push(@implContent, $indent . "    return JSValue::encode(jsUndefined());\n");
+            push(@implContent, $indent . "RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
         }
 
         push(@implContent, $indent . "return JSValue::encode(result);\n");
@@ -5319,8 +5311,7 @@ template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecS
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
 
     AtomicString eventType = state->uncheckedArgument(0).toString(state)->toAtomicString(state);
-    if (UNLIKELY(throwScope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     ${interfaceName}Init eventInit;
 
@@ -5471,8 +5462,7 @@ END
             }
 
             if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{"ConstructorCallWith"}, "ScriptState")) {
-                 push(@$outputArray, "    if (UNLIKELY(throwScope.exception()))\n");
-                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                 push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
             }
 
             push(@$outputArray, "    return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));\n");

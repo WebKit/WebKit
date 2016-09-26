@@ -73,13 +73,11 @@ void fillMessagePortArray(JSC::ExecState& state, JSC::JSValue value, MessagePort
     // Validation of sequence types, per WebIDL spec 4.1.13.
     unsigned length = 0;
     JSObject* object = toJSSequence(state, value, length);
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     for (unsigned i = 0 ; i < length; ++i) {
         JSValue value = object->get(&state, i);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         // Validation of non-null objects, per HTML5 spec 10.3.3.
         if (value.isUndefinedOrNull()) {
             setDOMException(&state, INVALID_STATE_ERR);

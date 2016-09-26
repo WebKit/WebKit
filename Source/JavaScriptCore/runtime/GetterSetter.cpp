@@ -77,8 +77,7 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
     auto scope = DECLARE_THROW_SCOPE(vm);
     // FIXME: Some callers may invoke get() without checking for an exception first.
     // We work around that by checking here.
-    if (UNLIKELY(scope.exception()))
-        return scope.exception()->value();
+    RETURN_IF_EXCEPTION(scope, scope.exception()->value());
 
     JSObject* getter = jsCast<GetterSetter*>(getterSetter)->getter();
 

@@ -41,8 +41,7 @@ JSValue iteratorNext(ExecState* exec, JSValue iterator, JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue nextFunction = iterator.get(exec, vm.propertyNames->next);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     CallData nextFunctionCallData;
     CallType nextFunctionCallType = getCallData(nextFunction, nextFunctionCallData);
@@ -53,8 +52,7 @@ JSValue iteratorNext(ExecState* exec, JSValue iterator, JSValue value)
     if (!value.isEmpty())
         nextFunctionArguments.append(value);
     JSValue result = call(exec, nextFunction, nextFunctionCallType, nextFunctionCallData, iterator, nextFunctionArguments);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (!result.isObject())
         return throwTypeError(exec, scope, ASCIILiteral("Iterator result interface is not an object."));
@@ -84,11 +82,9 @@ JSValue iteratorStep(ExecState* exec, JSValue iterator)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue result = iteratorNext(exec, iterator);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     bool done = iteratorComplete(exec, result);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     if (done)
         return jsBoolean(false);
     return result;
@@ -106,8 +102,7 @@ void iteratorClose(ExecState* exec, JSValue iterator)
         catchScope.clearException();
     }
     JSValue returnFunction = iterator.get(exec, vm.propertyNames->returnKeyword);
-    if (UNLIKELY(throwScope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(throwScope, void());
 
     if (returnFunction.isUndefined()) {
         if (exception)
@@ -133,8 +128,7 @@ void iteratorClose(ExecState* exec, JSValue iterator)
         return;
     }
 
-    if (UNLIKELY(throwScope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(throwScope, void());
 
     if (!innerResult.isObject()) {
         throwTypeError(exec, throwScope, ASCIILiteral("Iterator result interface is not an object."));
@@ -171,8 +165,7 @@ JSValue iteratorForIterable(ExecState* state, JSValue iterable)
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSValue iteratorFunction = iterable.get(state, state->propertyNames().iteratorSymbol);
-    if (UNLIKELY(scope.exception()))
-        return JSValue();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     
     CallData iteratorFunctionCallData;
     CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
@@ -183,8 +176,7 @@ JSValue iteratorForIterable(ExecState* state, JSValue iterable)
 
     ArgList iteratorFunctionArguments;
     JSValue iterator = call(state, iteratorFunction, iteratorFunctionCallType, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
-    if (UNLIKELY(scope.exception()))
-        return JSValue();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (!iterator.isObject()) {
         throwTypeError(state, scope);

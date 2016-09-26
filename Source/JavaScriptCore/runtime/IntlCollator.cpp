@@ -172,8 +172,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     // 3. Let requestedLocales be CanonicalizeLocaleList(locales).
     auto requestedLocales = canonicalizeLocaleList(state, locales);
     // 4. ReturnIfAbrupt(requestedLocales).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     // 5. If options is undefined, then
     JSObject* options;
@@ -184,15 +183,13 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
         // a. Let options be ToObject(options).
         options = optionsValue.toObject(&state);
         // b. ReturnIfAbrupt(options).
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
     }
 
     // 7. Let u be GetOption(options, "usage", "string", «"sort", "search"», "sort").
     String usageString = intlStringOption(state, options, vm.propertyNames->usage, { "sort", "search" }, "usage must be either \"sort\" or \"search\"", "sort");
     // 8. ReturnIfAbrupt(u).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 9. Set collator.[[usage]] to u.
     if (usageString == "sort")
         m_usage = Usage::Sort;
@@ -217,8 +214,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     // 13. Let matcher be GetOption(options, "localeMatcher", "string", «"lookup", "best fit"», "best fit").
     String matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     // 14. ReturnIfAbrupt(matcher).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 15. Set opt.[[localeMatcher]] to matcher.
     opt.add(ASCIILiteral("localeMatcher"), matcher);
 
@@ -237,16 +233,14 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
         String numericString;
         bool usesFallback;
         bool numeric = intlBooleanOption(state, options, vm.propertyNames->numeric, usesFallback);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         if (!usesFallback)
             numericString = ASCIILiteral(numeric ? "true" : "false");
         opt.add(ASCIILiteral("kn"), numericString);
     }
     {
         String caseFirst = intlStringOption(state, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         opt.add(ASCIILiteral("kf"), caseFirst);
     }
 
@@ -286,8 +280,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     // 24. Let s be GetOption(options, "sensitivity", "string", «"base", "accent", "case", "variant"», undefined).
     String sensitivityString = intlStringOption(state, options, vm.propertyNames->sensitivity, { "base", "accent", "case", "variant" }, "sensitivity must be either \"base\", \"accent\", \"case\", or \"variant\"", nullptr);
     // 25. ReturnIfAbrupt(s).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 26. If s is undefined, then
     // a. If u is "sort", then let s be "variant".
     // b. Else
@@ -311,8 +304,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     if (usesFallback)
         ignorePunctuation = false;
     // 29. ReturnIfAbrupt(ip).
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
     // 30. Set collator.[[ignorePunctuation]] to ip.
     m_ignorePunctuation = ignorePunctuation;
 

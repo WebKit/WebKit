@@ -75,8 +75,7 @@ public:
         Base::finishCreation(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
         HashMapImplType* impl = HashMapImplType::create(exec, vm);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         m_map.set(vm, this, impl);
     }
 

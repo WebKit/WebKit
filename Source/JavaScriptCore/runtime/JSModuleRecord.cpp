@@ -778,8 +778,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
         JSModuleRecord* importedModule = hostResolveImportedModule(exec, importEntry.moduleRequest);
         if (importEntry.isNamespace(vm)) {
             JSModuleNamespaceObject* namespaceObject = importedModule->getModuleNamespace(exec);
-            if (UNLIKELY(scope.exception()))
-                return;
+            RETURN_IF_EXCEPTION(scope, void());
             bool putResult = false;
             symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, importEntry.localName, namespaceObject, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
         } else {

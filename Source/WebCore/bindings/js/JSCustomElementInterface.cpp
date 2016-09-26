@@ -111,8 +111,7 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(&document, constructType, constructData);
     JSValue newElement = construct(&state, constructor, constructType, constructData, args);
     InspectorInstrumentation::didCallFunction(cookie, &document);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     ASSERT(!newElement.isEmpty());
     HTMLElement* wrappedElement = JSHTMLElement::toWrapped(newElement);
@@ -167,8 +166,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     ASSERT(context->isDocument());
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, *m_isolatedWorld);
     ExecState* state = globalObject->globalExec();
-    if (UNLIKELY(scope.exception()))
-        return;
+    RETURN_IF_EXCEPTION(scope, void());
 
     ConstructData constructData;
     ConstructType constructType = m_constructor->methodTable()->getConstructData(m_constructor.get(), constructData);

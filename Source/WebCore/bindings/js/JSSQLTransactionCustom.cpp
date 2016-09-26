@@ -53,8 +53,7 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
     }
 
     String sqlStatement = state.argument(0).toString(&state)->value(&state);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     // Now assemble the list of SQL arguments
     Vector<SQLValue> sqlValues;
@@ -66,16 +65,13 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
         }
 
         JSValue lengthValue = object->get(&state, state.propertyNames().length);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
         unsigned length = lengthValue.toUInt32(&state);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
 
         for (unsigned i = 0 ; i < length; ++i) {
             JSValue value = object->get(&state, i);
-            if (UNLIKELY(scope.exception()))
-                return jsUndefined();
+            RETURN_IF_EXCEPTION(scope, JSValue());
 
             if (value.isUndefinedOrNull())
                 sqlValues.append(SQLValue());
@@ -84,8 +80,7 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
             else {
                 // Convert the argument to a string and append it
                 sqlValues.append(value.toString(&state)->value(&state));
-                if (UNLIKELY(scope.exception()))
-                    return jsUndefined();
+                RETURN_IF_EXCEPTION(scope, JSValue());
             }
         }
     }

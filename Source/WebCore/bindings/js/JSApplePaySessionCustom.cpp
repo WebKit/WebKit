@@ -55,16 +55,13 @@ JSValue JSApplePaySession::completeShippingMethodSelection(ExecState& state)
 
     ExceptionCode ec = 0;
     uint16_t status = convert<uint16_t>(state, state.argument(0), NormalConversion);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     Dictionary newTotal = { &state, state.argument(1) };
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     ArrayValue newLineItems { &state, state.argument(2) };
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     impl.completeShippingMethodSelection(status, newTotal, newLineItems, ec);
     setDOMException(&state, ec);
 
@@ -88,20 +85,16 @@ JSValue JSApplePaySession::completeShippingContactSelection(ExecState& state)
 
     ExceptionCode ec = 0;
     uint16_t status = convert<uint16_t>(state, state.argument(0), NormalConversion);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     ArrayValue newShippingMethods { &state, state.argument(1) };
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     Dictionary newTotal = { &state, state.argument(2) };
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     ArrayValue newLineItems { &state, state.argument(3) };
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     impl.completeShippingContactSelection(status, newShippingMethods, newTotal, newLineItems, ec);
     setDOMException(&state, ec);
 
@@ -125,12 +118,10 @@ JSValue JSApplePaySession::completePaymentMethodSelection(ExecState& state)
 
     ExceptionCode ec = 0;
     Dictionary newTotal = { &state, state.argument(0) };
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     ArrayValue newLineItems { &state, state.argument(1) };
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     impl.completePaymentMethodSelection(newTotal, newLineItems, ec);
     setDOMException(&state, ec);
 

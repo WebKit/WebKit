@@ -253,8 +253,7 @@ Local<Unknown> Stringifier::stringify(Handle<Unknown> value)
     VM& vm = m_exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = constructEmptyObject(m_exec);
-    if (UNLIKELY(scope.exception()))
-        return Local<Unknown>(vm, jsNull());
+    RETURN_IF_EXCEPTION(scope, Local<Unknown>(vm, jsNull()));
 
     PropertyNameForFunctionCall emptyPropertyName(vm.propertyNames->emptyIdentifier);
     object->putDirect(vm, vm.propertyNames->emptyIdentifier, value.get());
@@ -262,8 +261,7 @@ Local<Unknown> Stringifier::stringify(Handle<Unknown> value)
     StringBuilder result;
     if (appendStringifiedValue(result, value.get(), object, emptyPropertyName) != StringifySucceeded)
         return Local<Unknown>(vm, jsUndefined());
-    if (UNLIKELY(scope.exception()))
-        return Local<Unknown>(vm, jsNull());
+    RETURN_IF_EXCEPTION(scope, Local<Unknown>(vm, jsNull()));
 
     return Local<Unknown>(vm, jsString(m_exec, result.toString()));
 }
@@ -282,8 +280,7 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFu
         return value;
 
     JSValue toJSONFunction = slot.getValue(m_exec, vm.propertyNames->toJSON);
-    if (UNLIKELY(scope.exception()))
-        return jsNull();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     return toJSONImpl(value, toJSONFunction, propertyName);
 }
 
@@ -306,8 +303,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     // Call the toJSON function.
     value = toJSON(value, propertyName);
-    if (UNLIKELY(scope.exception()))
-        return StringifyFailed;
+    RETURN_IF_EXCEPTION(scope, StringifyFailed);
 
     // Call the replacer function.
     if (m_replacerCallType != CallType::None) {
@@ -315,8 +311,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         args.append(propertyName.value(m_exec));
         args.append(value);
         value = call(m_exec, m_replacer.get(), m_replacerCallType, m_replacerCallData, holder, args);
-        if (UNLIKELY(scope.exception()))
-            return StringifyFailed;
+        RETURN_IF_EXCEPTION(scope, StringifyFailed);
     }
 
     if ((value.isUndefined() || value.isSymbol()) && !holder->inherits(JSArray::info()))
@@ -329,8 +324,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     value = unwrapBoxedPrimitive(m_exec, value);
 
-    if (UNLIKELY(scope.exception()))
-        return StringifyFailed;
+    RETURN_IF_EXCEPTION(scope, StringifyFailed);
 
     if (value.isBoolean()) {
         if (value.isTrue())
@@ -382,16 +376,13 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     bool holderStackWasEmpty = m_holderStack.isEmpty();
     m_holderStack.append(Holder(vm, m_exec, object));
-    if (UNLIKELY(scope.exception()))
-        return StringifyFailed;
+    RETURN_IF_EXCEPTION(scope, StringifyFailed);
     if (!holderStackWasEmpty)
         return StringifySucceeded;
 
     do {
-        while (m_holderStack.last().appendNextProperty(*this, builder)) {
-            if (UNLIKELY(scope.exception()))
-                return StringifyFailed;
-        }
+        while (m_holderStack.last().appendNextProperty(*this, builder))
+            RETURN_IF_EXCEPTION(scope, StringifyFailed);
         m_holderStack.removeLast();
     } while (!m_holderStack.isEmpty());
     return StringifySucceeded;
@@ -459,8 +450,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             else {
                 PropertyNameArray objectPropertyNames(exec, PropertyNameMode::Strings);
                 m_object->methodTable()->getOwnPropertyNames(m_object.get(), exec, objectPropertyNames, EnumerationMode());
-                if (UNLIKELY(scope.exception()))
-                    return false;
+                RETURN_IF_EXCEPTION(scope, false);
                 m_propertyNames = objectPropertyNames.releaseData();
             }
             m_size = m_propertyNames->propertyNameVector().size();
@@ -493,8 +483,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 value = slot.getValue(exec, index);
             else
                 value = jsUndefined();
-            if (UNLIKELY(scope.exception()))
-                return false;
+            RETURN_IF_EXCEPTION(scope, false);
         }
 
         // Append the separator string.
@@ -511,8 +500,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         if (!m_object->methodTable()->getOwnPropertySlot(m_object.get(), exec, propertyName, slot))
             return true;
         JSValue value = slot.getValue(exec, propertyName);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
 
         rollBackPoint = builder.length();
 
@@ -647,8 +635,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                         inValue = slot.getValue(m_exec, index);
                     else
                         inValue = jsUndefined();
-                    if (UNLIKELY(scope.exception()))
-                        return jsNull();
+                    RETURN_IF_EXCEPTION(scope, JSValue());
                 }
                     
                 if (inValue.isObject()) {
@@ -665,8 +652,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     array->methodTable()->deletePropertyByIndex(array, m_exec, indexStack.last());
                 else
                     array->putDirectIndex(m_exec, indexStack.last(), filteredValue);
-                if (UNLIKELY(scope.exception()))
-                    return jsNull();
+                RETURN_IF_EXCEPTION(scope, JSValue());
                 indexStack.last()++;
                 goto arrayStartVisitMember;
             }
@@ -682,8 +668,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec, PropertyNameMode::Strings));
                 object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
-                if (UNLIKELY(scope.exception()))
-                    return jsNull();
+                RETURN_IF_EXCEPTION(scope, JSValue());
             }
             objectStartVisitMember:
             FALLTHROUGH;
@@ -705,8 +690,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     inValue = jsUndefined();
 
                 // The holder may be modified by the reviver function so any lookup may throw
-                if (UNLIKELY(scope.exception()))
-                    return jsNull();
+                RETURN_IF_EXCEPTION(scope, JSValue());
 
                 if (inValue.isObject()) {
                     stateStack.append(ObjectEndVisitMember);
@@ -724,8 +708,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     object->methodTable()->deleteProperty(object, m_exec, prop);
                 else
                     object->methodTable()->put(object, m_exec, prop, filteredValue, slot);
-                if (UNLIKELY(scope.exception()))
-                    return jsNull();
+                RETURN_IF_EXCEPTION(scope, JSValue());
                 indexStack.last()++;
                 goto objectStartVisitMember;
             }
@@ -761,8 +744,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     if (!exec->argumentCount())
         return throwVMError(exec, scope, createError(exec, ASCIILiteral("JSON.parse requires at least one parameter")));
     JSString::SafeView source = exec->uncheckedArgument(0).toString(exec)->view(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue unfiltered;
     LocalScope localScope(vm);

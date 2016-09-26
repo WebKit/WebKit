@@ -61,8 +61,7 @@ namespace WebCore {
         ArrayBufferArray arrayBufferArray;
         fillMessagePortArray(state, state.argument(1), portArray, arrayBufferArray);
         auto message = SerializedScriptValue::create(&state, state.uncheckedArgument(0), &portArray, &arrayBufferArray);
-        if (UNLIKELY(scope.exception()))
-            return JSC::jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
         ExceptionCode ec = 0;
         impl->postMessage(WTFMove(message), &portArray, ec);

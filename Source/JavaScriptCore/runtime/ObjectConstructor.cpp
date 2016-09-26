@@ -130,8 +130,7 @@ static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, JSValue newTarge
     if (newTarget && newTarget != objectConstructor) {
         // a. Return ? OrdinaryCreateFromConstructor(NewTarget, "%ObjectPrototype%").
         Structure* objectStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->objectStructureForObjectConstructor());
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
+        RETURN_IF_EXCEPTION(scope, nullptr);
         return constructEmptyObject(exec, objectStructure);
     }
 
@@ -172,8 +171,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = exec->argument(0).toObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(object->getPrototype(exec->vm(), exec));
 }
 
@@ -191,8 +189,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
         return throwVMTypeError(exec, scope);
 
     JSObject* object = objectValue.toObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(objectValue);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     bool shouldThrowIfCantSet = true;
     bool didSetPrototype = object->setPrototype(vm, exec, protoValue, shouldThrowIfCantSet);
@@ -207,8 +204,7 @@ JSValue objectConstructorGetOwnPropertyDescriptor(ExecState* exec, JSObject* obj
     PropertyDescriptor descriptor;
     if (!object->getOwnPropertyDescriptor(exec, propertyName, descriptor))
         return jsUndefined();
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     JSObject* result = constructObjectFromPropertyDescriptor(exec, descriptor);
     if (!result)
@@ -222,18 +218,15 @@ JSValue objectConstructorGetOwnPropertyDescriptors(ExecState* exec, JSObject* ob
     auto scope = DECLARE_THROW_SCOPE(vm);
     PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     JSObject* descriptors = constructEmptyObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return jsUndefined();
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     for (auto& propertyName : properties) {
         PropertyDescriptor descriptor;
         bool didGetDescriptor = object->getOwnPropertyDescriptor(exec, propertyName, descriptor);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
 
         if (!didGetDescriptor)
             continue;
@@ -255,11 +248,9 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = exec->argument(0).toObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto propertyName = exec->argument(1).toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(objectConstructorGetOwnPropertyDescriptor(exec, object, propertyName));
 }
 
@@ -268,8 +259,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptors(ExecStat
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = exec->argument(0).toObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(objectConstructorGetOwnPropertyDescriptors(exec, object));
 }
 
@@ -279,8 +269,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exe
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = exec->argument(0).toObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include));
 }
 
@@ -290,8 +279,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(ExecState* e
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = exec->argument(0).toObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::Symbols, DontEnumPropertiesMode::Include));
 }
 
@@ -301,8 +289,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = exec->argument(0).toObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude));
 }
 
@@ -311,8 +298,7 @@ EncodedJSValue JSC_HOST_CALL ownEnumerablePropertyKeys(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = exec->argument(0).toObject(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Exclude));
 }
 
@@ -331,41 +317,36 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
 
     if (description->hasProperty(exec, exec->propertyNames().enumerable)) {
         JSValue value = description->get(exec, exec->propertyNames().enumerable);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         desc.setEnumerable(value.toBoolean(exec));
-    } else if (UNLIKELY(scope.exception()))
-        return false;
+    } else
+        RETURN_IF_EXCEPTION(scope, false);
 
     if (description->hasProperty(exec, exec->propertyNames().configurable)) {
         JSValue value = description->get(exec, exec->propertyNames().configurable);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         desc.setConfigurable(value.toBoolean(exec));
-    } else if (UNLIKELY(scope.exception()))
-        return false;
+    } else
+        RETURN_IF_EXCEPTION(scope, false);
 
     JSValue value;
     if (description->hasProperty(exec, exec->propertyNames().value)) {
         JSValue value = description->get(exec, exec->propertyNames().value);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         desc.setValue(value);
-    } else if (UNLIKELY(scope.exception()))
-        return false;
+    } else
+        RETURN_IF_EXCEPTION(scope, false);
 
     if (description->hasProperty(exec, exec->propertyNames().writable)) {
         JSValue value = description->get(exec, exec->propertyNames().writable);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         desc.setWritable(value.toBoolean(exec));
-    } else if (UNLIKELY(scope.exception()))
-        return false;
+    } else
+        RETURN_IF_EXCEPTION(scope, false);
 
     if (description->hasProperty(exec, exec->propertyNames().get)) {
         JSValue get = description->get(exec, exec->propertyNames().get);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         if (!get.isUndefined()) {
             CallData callData;
             if (getCallData(get, callData) == CallType::None) {
@@ -374,13 +355,12 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
             }
         }
         desc.setGetter(get);
-    } else if (UNLIKELY(scope.exception()))
-        return false;
+    } else
+        RETURN_IF_EXCEPTION(scope, false);
 
     if (description->hasProperty(exec, exec->propertyNames().set)) {
         JSValue set = description->get(exec, exec->propertyNames().set);
-        if (UNLIKELY(scope.exception()))
-            return false;
+        RETURN_IF_EXCEPTION(scope, false);
         if (!set.isUndefined()) {
             CallData callData;
             if (getCallData(set, callData) == CallType::None) {
@@ -389,8 +369,8 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
             }
         }
         desc.setSetter(set);
-    } else if (UNLIKELY(scope.exception()))
-        return false;
+    } else
+        RETURN_IF_EXCEPTION(scope, false);
 
     if (!desc.isAccessorDescriptor())
         return true;
@@ -416,8 +396,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
         return throwVMTypeError(exec, scope, ASCIILiteral("Properties can only be defined on Objects."));
     JSObject* obj = asObject(exec->argument(0));
     auto propertyName = exec->argument(1).toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsNull());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     PropertyDescriptor descriptor;
     auto success = toPropertyDescriptor(exec, exec->argument(2), descriptor);
     ASSERT(!scope.exception() == success);
@@ -437,15 +416,13 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
 
     PropertyNameArray propertyNames(exec, PropertyNameMode::StringsAndSymbols);
     asObject(properties)->methodTable(vm)->getOwnPropertyNames(asObject(properties), exec, propertyNames, EnumerationMode(DontEnumPropertiesMode::Exclude));
-    if (UNLIKELY(scope.exception()))
-        return jsNull();
+    RETURN_IF_EXCEPTION(scope, JSValue());
     size_t numProperties = propertyNames.size();
     Vector<PropertyDescriptor> descriptors;
     MarkedArgumentBuffer markBuffer;
     for (size_t i = 0; i < numProperties; i++) {
         JSValue prop = properties->get(exec, propertyNames[i]);
-        if (UNLIKELY(scope.exception()))
-            return jsNull();
+        RETURN_IF_EXCEPTION(scope, JSValue());
         PropertyDescriptor descriptor;
         if (!toPropertyDescriptor(exec, prop, descriptor))
             return jsNull();
@@ -465,8 +442,7 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
         if (exec->propertyNames().isPrivateName(propertyName))
             continue;
         object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, descriptors[i], true);
-        if (UNLIKELY(scope.exception()))
-            return jsNull();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     }
     return object;
 }
@@ -522,8 +498,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
     // 2. For each named own property name P of O,
     PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(obj);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         Identifier propertyName = *iter;
@@ -537,14 +512,12 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
         desc.setConfigurable(false);
         // c. Call the [[DefineOwnProperty]] internal method of O with P, desc, and true as arguments.
         object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, desc, true);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(obj);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     // 3. Set the [[Extensible]] internal property of O to false.
     object->methodTable(vm)->preventExtensions(object, exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 4. Return O.
     return JSValue::encode(obj);
@@ -563,8 +536,7 @@ JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
     // 2. For each named own property name P of O,
     PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
-    if (UNLIKELY(scope.exception()))
-        return object;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         Identifier propertyName = *iter;
@@ -582,14 +554,12 @@ JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
         desc.setConfigurable(false);
         // d. Call the [[DefineOwnProperty]] internal method of O with P, desc, and true as arguments.
         object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, desc, true);
-        if (UNLIKELY(scope.exception()))
-            return object;
+        RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
     // 3. Set the [[Extensible]] internal property of O to false.
     object->methodTable(vm)->preventExtensions(object, exec);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     // 4. Return O.
     return object;
@@ -604,8 +574,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
     if (!obj.isObject())
         return JSValue::encode(obj);
     JSObject* result = objectConstructorFreeze(exec, asObject(obj));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(result);
 }
 
@@ -636,8 +605,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
     // 2. For each named own property name P of O,
     PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         Identifier propertyName = *iter;
@@ -655,8 +623,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
     // 3. If the [[Extensible]] internal property of O is false, then return true.
     // 4. Otherwise, return false.
     bool isExtensible = object->isExtensible(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsBoolean(!isExtensible));
 }
 
@@ -677,8 +644,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
     // 2. For each named own property name P of O,
     PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         Identifier propertyName = *iter;
@@ -697,8 +663,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
     // 3. If the [[Extensible]] internal property of O is false, then return true.
     // 4. Otherwise, return false.
     bool isExtensible = object->isExtensible(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsBoolean(!isExtensible));
 }
 
@@ -711,8 +676,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState* exec)
         return JSValue::encode(jsBoolean(false));
     JSObject* object = asObject(obj);
     bool isExtensible = object->isExtensible(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(JSValue());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsBoolean(isExtensible));
 }
 
@@ -728,12 +692,10 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
     auto scope = DECLARE_THROW_SCOPE(vm);
     PropertyNameArray properties(exec, propertyNameMode);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(dontEnumPropertiesMode));
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSArray* keys = constructEmptyArray(exec, 0);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     switch (propertyNameMode) {
     case PropertyNameMode::Strings: {

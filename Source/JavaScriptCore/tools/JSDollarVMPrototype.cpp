@@ -312,8 +312,7 @@ static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         String argStr = exec->uncheckedArgument(i).toString(exec)->value(exec);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         dataLog(argStr);
     }
     return JSValue::encode(jsUndefined());

@@ -86,8 +86,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::is3dType(contextId)) {
         get3DContextAttributes(state, attrs);
-        if (UNLIKELY(scope.exception()))
-            return jsUndefined();
+        RETURN_IF_EXCEPTION(scope, JSValue());
     }
 #endif
     

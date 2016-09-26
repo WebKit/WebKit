@@ -133,15 +133,13 @@ EncodedJSValue getData(ExecState* exec)
         return throwVMTypeError(exec, scope, ASCIILiteral("Need at least one argument (the byteOffset)"));
     
     unsigned byteOffset = exec->uncheckedArgument(0).toUInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     bool littleEndian = false;
     unsigned elementSize = sizeof(typename Adaptor::Type);
     if (elementSize > 1 && exec->argumentCount() >= 2) {
         littleEndian = exec->uncheckedArgument(1).toBoolean(exec);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
     unsigned byteLength = dataView->length();
@@ -181,8 +179,7 @@ EncodedJSValue setData(ExecState* exec)
         return throwVMTypeError(exec, scope, ASCIILiteral("Need at least two argument (the byteOffset and value)"));
     
     unsigned byteOffset = exec->uncheckedArgument(0).toUInt32(exec);
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);
     union {
@@ -191,15 +188,13 @@ EncodedJSValue setData(ExecState* exec)
     } u;
 
     u.value = toNativeFromValue<Adaptor>(exec, exec->uncheckedArgument(1));
-    if (UNLIKELY(scope.exception()))
-        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     bool littleEndian = false;
     unsigned elementSize = sizeof(typename Adaptor::Type);
     if (elementSize > 1 && exec->argumentCount() >= 3) {
         littleEndian = exec->uncheckedArgument(2).toBoolean(exec);
-        if (UNLIKELY(scope.exception()))
-            return JSValue::encode(jsUndefined());
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
     unsigned byteLength = dataView->length();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Mathias Bynens (mathias@qiwi.be)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -584,8 +584,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             startParseArray:
             case StartParseArray: {
                 JSArray* array = constructEmptyArray(m_exec, 0);
-                if (UNLIKELY(scope.exception()))
-                    return JSValue();
+                RETURN_IF_EXCEPTION(scope, JSValue());
                 objectStack.append(array);
             }
             doParseArrayStartExpression:

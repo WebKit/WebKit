@@ -612,11 +612,9 @@ void JSFunction::setFunctionName(ExecState* exec, JSValue value)
             name = makeString('[', String(&uid), ']');
     } else {
         JSString* jsStr = value.toString(exec);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
         name = jsStr->value(exec);
-        if (UNLIKELY(scope.exception()))
-            return;
+        RETURN_IF_EXCEPTION(scope, void());
     }
     reifyName(vm, exec, name);
 }

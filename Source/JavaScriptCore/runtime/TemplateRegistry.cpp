@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +49,9 @@ JSArray* TemplateRegistry::getTemplateObject(ExecState* exec, const TemplateRegi
     auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned count = templateKey.cookedStrings().size();
     JSArray* templateObject = constructEmptyArray(exec, nullptr, count);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
     JSArray* rawObject = constructEmptyArray(exec, nullptr, count);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     for (unsigned index = 0; index < count; ++index) {
         templateObject->putDirectIndex(exec, index, jsString(exec, templateKey.cookedStrings()[index]), ReadOnly | DontDelete, PutDirectIndexLikePutDirect);

@@ -438,8 +438,7 @@ JSArray* ShadowChicken::functionsOnStack(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* result = constructEmptyArray(exec, 0);
-    if (UNLIKELY(scope.exception()))
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     iterate(
         vm, exec,

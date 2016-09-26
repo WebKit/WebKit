@@ -123,8 +123,7 @@ String valueToUSVString(ExecState* exec, JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String string = value.toWTFString(exec);
-    if (UNLIKELY(scope.exception()))
-        return { };
+    RETURN_IF_EXCEPTION(scope, { });
     StringView view { string };
 
     // Fast path for 8-bit strings, since they can't have any surrogates.
@@ -402,8 +401,7 @@ bool hasIteratorMethod(JSC::ExecState& state, JSC::JSValue value)
     CallData callData;
     CallType callType;
     JSValue applyMethod = object->getMethod(&state, callData, callType, vm.propertyNames->iteratorSymbol, ASCIILiteral("Symbol.iterator property should be callable"));
-    if (UNLIKELY(scope.exception()))
-        return false;
+    RETURN_IF_EXCEPTION(scope, false);
 
     return !applyMethod.isUndefined();
 }
@@ -541,8 +539,7 @@ static inline T toSmallerInt(ExecState& state, JSValue value, IntegerConversionC
     }
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
 
     switch (configuration) {
     case NormalConversion:
@@ -588,8 +585,7 @@ static inline T toSmallerUInt(ExecState& state, JSValue value, IntegerConversion
     }
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
 
     switch (configuration) {
     case NormalConversion:
@@ -681,8 +677,7 @@ int32_t toInt32EnforceRange(ExecState& state, JSValue value)
         return value.asInt32();
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
     return enforceRange(state, x, kMinInt32, kMaxInt32);
 }
 
@@ -714,8 +709,7 @@ uint32_t toUInt32EnforceRange(ExecState& state, JSValue value)
         return value.asUInt32();
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
     return enforceRange(state, x, 0, kMaxUInt32);
 }
 
@@ -725,8 +719,7 @@ int64_t toInt64EnforceRange(ExecState& state, JSC::JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
     return enforceRange(state, x, -kJSMaxInteger, kJSMaxInteger);
 }
 
@@ -736,8 +729,7 @@ uint64_t toUInt64EnforceRange(ExecState& state, JSC::JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x = value.toNumber(&state);
-    if (UNLIKELY(scope.exception()))
-        return 0;
+    RETURN_IF_EXCEPTION(scope, 0);
     return enforceRange(state, x, 0, kJSMaxInteger);
 }
 
