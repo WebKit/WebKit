@@ -1,3 +1,47 @@
+2016-09-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Shrink the Math inline caches some more
+        https://bugs.webkit.org/show_bug.cgi?id=162485
+
+        Reviewed by Saam Barati.
+
+        This patch applies some lessons learnt from op_negate
+        to shrink the generated asm of the previous 3 inline
+        caches.
+
+        In order of importance:
+        -We do not need to pass the pointer to ArithProfile
+         on the slow path. We can just get the profile out
+         of the Math IC.
+         This saves us from materializing a 64bits value
+         in a register before the call on the slow path.
+        -We can remove a bunch of mov by setting up the registers
+         in the way the slow path needs them.
+         The slow path makes a function calls with the input
+         as second and third arguments, and return the result in
+         the "return register". By using those as target when
+         loading/storing from the stack, we remove 3 mov per slow path.
+        -When performing integer add, we can set the result directly in
+         the output register if that does not trashes one of the input
+         register. This removes one mov per integer add.
+
+        The inline cache average sizes on Sunspider change as follow:
+        -Adds: 147.573099->131.555556 (~10%)
+        -Muls: 186.882353->170.991597 (~8%)
+        -Subs: 139.127907->121.523256 (~12%)
+
+        * jit/JIT.h:
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateInline):
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2016-09-26  Mark Lam  <mark.lam@apple.com>
 
         Added RETURN_IF_EXCEPTION() macro and use it for exception checks.

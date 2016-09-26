@@ -33,14 +33,14 @@
 
 namespace JSC {
 
-JITMathICInlineResult JITSubGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state)
+JITMathICInlineResult JITSubGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state, const ArithProfile* arithProfile)
 {
     // We default to speculating int32.
     ObservedType lhs = ObservedType().withInt32();
     ObservedType rhs = ObservedType().withInt32();
-    if (m_arithProfile) {
-        lhs = m_arithProfile->lhsObservedType();
-        rhs = m_arithProfile->rhsObservedType();
+    if (arithProfile) {
+        lhs = arithProfile->lhsObservedType();
+        rhs = arithProfile->rhsObservedType();
     }
 
     if (lhs.isOnlyNonNumber() && rhs.isOnlyNonNumber())
@@ -78,7 +78,7 @@ JITMathICInlineResult JITSubGenerator::generateInline(CCallHelpers& jit, MathICG
     return JITMathICInlineResult::GenerateFullSnippet;
 }
 
-bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, bool shouldEmitProfiling)
+bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const ArithProfile* arithProfile, bool shouldEmitProfiling)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_left.payloadGPR());
@@ -129,8 +129,8 @@ bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     rightWasInteger.link(&jit);
 
     jit.subDouble(m_rightFPR, m_leftFPR);
-    if (m_arithProfile && shouldEmitProfiling)
-        m_arithProfile->emitSetDouble(jit);
+    if (arithProfile && shouldEmitProfiling)
+        arithProfile->emitSetDouble(jit);
 
     jit.boxDouble(m_leftFPR, m_result);
 

@@ -37,8 +37,8 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         template<typename... Args>
-        Node(Args... args)
-            : m_item(args...)
+        Node(Args&&... args)
+            : m_item(std::forward<Args>(args)...)
         {
         }
         
@@ -81,9 +81,9 @@ public:
     }
     
     template<typename... Args>
-    T* add(Args... args)
+    T* add(Args&&... args)
     {
-        Node* newNode = new Node(args...);
+        Node* newNode = new Node(std::forward<Args>(args)...);
         newNode->m_next = m_head;
         m_head = newNode;
         return &newNode->m_item;

@@ -3000,24 +3000,24 @@ StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType)
     return m_stubInfos.add(accessType);
 }
 
-JITAddIC* CodeBlock::addJITAddIC()
+JITAddIC* CodeBlock::addJITAddIC(ArithProfile* arithProfile)
 {
-    return m_addICs.add();
+    return m_addICs.add(arithProfile);
 }
 
-JITMulIC* CodeBlock::addJITMulIC()
+JITMulIC* CodeBlock::addJITMulIC(ArithProfile* arithProfile)
 {
-    return m_mulICs.add();
+    return m_mulICs.add(arithProfile);
 }
 
-JITSubIC* CodeBlock::addJITSubIC()
+JITSubIC* CodeBlock::addJITSubIC(ArithProfile* arithProfile)
 {
-    return m_subICs.add();
+    return m_subICs.add(arithProfile);
 }
 
-JITNegIC* CodeBlock::addJITNegIC()
+JITNegIC* CodeBlock::addJITNegIC(ArithProfile* arithProfile)
 {
-    return m_negICs.add();
+    return m_negICs.add(arithProfile);
 }
 
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)

@@ -38,20 +38,16 @@ class JITNegGenerator {
 public:
     JITNegGenerator() = default;
 
-    JITNegGenerator(JSValueRegs result, JSValueRegs src, GPRReg scratchGPR, ArithProfile& arithProfile)
-        : m_arithProfile(&arithProfile)
-        , m_result(result)
+    JITNegGenerator(JSValueRegs result, JSValueRegs src, GPRReg scratchGPR)
+        : m_result(result)
         , m_src(src)
         , m_scratchGPR(scratchGPR)
     { }
 
-    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&);
-    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, bool shouldEmitProfiling);
-
-    ArithProfile* arithProfile() const { return m_arithProfile; }
+    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&, const ArithProfile*);
+    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const ArithProfile*, bool shouldEmitProfiling);
 
 private:
-    ArithProfile* m_arithProfile { nullptr };
     JSValueRegs m_result;
     JSValueRegs m_src;
     GPRReg m_scratchGPR;

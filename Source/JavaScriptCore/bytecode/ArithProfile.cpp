@@ -53,7 +53,7 @@ bool ArithProfile::shouldEmitSetDouble() const
     return (m_bits & mask) != mask;
 }
 
-void ArithProfile::emitSetDouble(CCallHelpers& jit)
+void ArithProfile::emitSetDouble(CCallHelpers& jit) const
 {
     if (shouldEmitSetDouble())
         jit.or32(CCallHelpers::TrustedImm32(ArithProfile::Int32Overflow | ArithProfile::Int52Overflow | ArithProfile::NegZeroDouble | ArithProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(addressOfBits()));
@@ -65,7 +65,7 @@ bool ArithProfile::shouldEmitSetNonNumber() const
     return (m_bits & mask) != mask;
 }
 
-void ArithProfile::emitSetNonNumber(CCallHelpers& jit)
+void ArithProfile::emitSetNonNumber(CCallHelpers& jit) const
 {
     if (shouldEmitSetNonNumber())
         jit.or32(CCallHelpers::TrustedImm32(ArithProfile::NonNumber), CCallHelpers::AbsoluteAddress(addressOfBits()));

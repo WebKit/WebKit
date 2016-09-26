@@ -448,14 +448,6 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJArp oper
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJArpMic operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, ArithProfile* arithProfile, TrustedImmPtr mathIC)
-{
-    setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(arithProfile), mathIC);
-    Call call = appendCallWithExceptionCheck(operation);
-    setupResults(result);
-    return call;
-}
-
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJMic operation, JSValueRegs result, JSValueRegs arg, TrustedImmPtr mathIC)
 {
     setupArgumentsWithExecState(arg, mathIC);

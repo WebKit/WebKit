@@ -158,7 +158,7 @@ public:
     void setObservedInt32Overflow() { setBit(Int32Overflow); }
     void setObservedInt52Overflow() { setBit(Int52Overflow); }
 
-    void* addressOfBits() { return &m_bits; }
+    const void* addressOfBits() const { return &m_bits; }
 
     void observeResult(JSValue value)
     {
@@ -215,10 +215,10 @@ public:
     
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).
     bool shouldEmitSetDouble() const;
-    void emitSetDouble(CCallHelpers&);
+    void emitSetDouble(CCallHelpers&) const;
     
     // Sets NonNumber.
-    void emitSetNonNumber(CCallHelpers&);
+    void emitSetNonNumber(CCallHelpers&) const;
     bool shouldEmitSetNonNumber() const;
 #endif // ENABLE(JIT)
 

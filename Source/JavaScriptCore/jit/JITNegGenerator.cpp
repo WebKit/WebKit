@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state)
+JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state, const ArithProfile* arithProfile)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_src.payloadGPR());
@@ -42,7 +42,10 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
     ASSERT(m_scratchGPR != m_result.tagGPR());
 #endif
 
-    ObservedType observedTypes = m_arithProfile->lhsObservedType();
+    // We default to speculating int32.
+    ObservedType observedTypes = ObservedType().withInt32();
+    if (arithProfile)
+        observedTypes = arithProfile->lhsObservedType();
     ASSERT_WITH_MESSAGE(!observedTypes.isEmpty(), "We should not attempt to generate anything if we do not have a profile.");
 
     if (observedTypes.isOnlyNonNumber())
@@ -79,7 +82,7 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
     return JITMathICInlineResult::GenerateFullSnippet;
 }
 
-bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, bool)
+bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const ArithProfile*, bool)
 {
     ASSERT(m_scratchGPR != m_src.payloadGPR());
     ASSERT(m_scratchGPR != m_result.payloadGPR());

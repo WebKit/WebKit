@@ -43,8 +43,7 @@ public:
 
     JITMulGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,
-        FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR,
-        ArithProfile* arithProfile = nullptr)
+        FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
         , m_result(result)
@@ -54,19 +53,16 @@ public:
         , m_rightFPR(rightFPR)
         , m_scratchGPR(scratchGPR)
         , m_scratchFPR(scratchFPR)
-        , m_arithProfile(arithProfile)
     {
         ASSERT(!m_leftOperand.isPositiveConstInt32() || !m_rightOperand.isPositiveConstInt32());
     }
 
-    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&);
-    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowJumpList, bool shouldEmitProfiling);
+    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&, const ArithProfile*);
+    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowJumpList, const ArithProfile*, bool shouldEmitProfiling);
 
     static bool isLeftOperandValidConstant(SnippetOperand leftOperand) { return leftOperand.isPositiveConstInt32(); }
     static bool isRightOperandValidConstant(SnippetOperand rightOperand) { return rightOperand.isPositiveConstInt32(); }
     
-    ArithProfile* arithProfile() const { return m_arithProfile; }
-
 private:
     SnippetOperand m_leftOperand;
     SnippetOperand m_rightOperand;
@@ -77,7 +73,6 @@ private:
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;
     FPRReg m_scratchFPR;
-    ArithProfile* m_arithProfile;
 };
 
 } // namespace JSC
