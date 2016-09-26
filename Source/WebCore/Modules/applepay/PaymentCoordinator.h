@@ -49,6 +49,7 @@ public:
     bool supportsVersion(unsigned version);
     bool canMakePayments();
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler);
+    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler);
 
     bool hasActiveSession() const { return m_activeSession; }
 

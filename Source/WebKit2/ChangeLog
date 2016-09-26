@@ -1,5 +1,47 @@
 2016-09-26  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r206238. rdar://problem/28450514
+
+    2016-09-21  Anders Carlsson  <andersca@apple.com>
+
+            support openPaymentSetup API on ApplePaySession object
+            https://bugs.webkit.org/show_bug.cgi?id=162357
+            rdar://problem/26776939
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+            (WebKit::WebPaymentCoordinatorProxy::openPaymentSetup):
+            Call through to platformOpenPaymentSetup, and in the completion handler, send back a OpenPaymentSetupReply message.
+
+            * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+            Add new members.
+
+            * UIProcess/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+            Add OpenPaymentSetup message.
+
+            * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+            (WebKit::WebPaymentCoordinatorProxy::platformOpenPaymentSetup):
+            Allocate a PKPassLibrary and call openPaymentSetupForMerchantIdentifier:domain:completion: on it.
+
+            * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+            (WebKit::generateOpenPaymentSetupReplyID):
+            New helper function to generate a reply ID.
+
+            (WebKit::WebPaymentCoordinator::openPaymentSetup):
+            Add the completion handler to m_pendingOpenPaymentSetupCallbacks and send a OpenPaymentSetup message to the UI process.
+
+            (WebKit::WebPaymentCoordinator::openPaymentSetupReply):
+            Grab the callback given its ID and invoke it.
+
+            * WebProcess/ApplePay/WebPaymentCoordinator.h:
+            Add new members.
+
+            * WebProcess/ApplePay/WebPaymentCoordinator.messages.in:
+            Add OpenPaymentSetupReply message.
+
+2016-09-26  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r206350. rdar://problem/28115680
 
     2016-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>

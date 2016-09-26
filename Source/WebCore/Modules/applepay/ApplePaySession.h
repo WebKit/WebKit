@@ -64,6 +64,7 @@ public:
     static bool supportsVersion(ScriptExecutionContext&, unsigned version, ExceptionCode&);
     static bool canMakePayments(ScriptExecutionContext&, ExceptionCode&);
     static void canMakePaymentsWithActiveCard(ScriptExecutionContext&, const String& merchantIdentifier, DeferredWrapper&&, ExceptionCode&);
+    static void openPaymentSetup(ScriptExecutionContext&, const String& merchantIdentifier, DeferredWrapper&&, ExceptionCode&);
 
     void begin(ExceptionCode&);
     void abort(ExceptionCode&);

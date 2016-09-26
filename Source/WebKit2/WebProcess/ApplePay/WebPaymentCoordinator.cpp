@@ -84,6 +84,21 @@ void WebPaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchant
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CanMakePaymentsWithActiveCard(merchantIdentifier, domainName, replyID));
 }
 
+static uint64_t generateOpenPaymentSetupReplyID()
+{
+    static uint64_t openPaymentSetupReplyID;
+
+    return ++openPaymentSetupReplyID;
+}
+
+void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
+{
+    auto replyID = generateOpenPaymentSetupReplyID();
+
+    m_pendingOpenPaymentSetupCallbacks.add(replyID, WTFMove(completionHandler));
+    m_webPage.send(Messages::WebPaymentCoordinatorProxy::OpenPaymentSetup(merchantIdentifier, domainName, replyID));
+}
+
 bool WebPaymentCoordinator::showPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::PaymentRequest& paymentRequest)
 {
     Vector<String> linkIconURLStrings;
@@ -166,6 +181,12 @@ void WebPaymentCoordinator::canMakePaymentsWithActiveCardReply(uint64_t requestI
 {
     auto callback = m_pendingCanMakePaymentsWithActiveCardCallbacks.take(requestID);
     callback(canMakePayments);
+}
+
+void WebPaymentCoordinator::openPaymentSetupReply(uint64_t requestID, bool result)
+{
+    auto callback = m_pendingOpenPaymentSetupCallbacks.take(requestID);
+    callback(result);
 }
 
 WebCore::PaymentCoordinator& WebPaymentCoordinator::paymentCoordinator()

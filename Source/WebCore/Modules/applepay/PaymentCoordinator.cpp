@@ -60,6 +60,11 @@ void PaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIde
     m_client.canMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
+void PaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
+{
+    m_client.openPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
+}
+
 bool PaymentCoordinator::beginPaymentSession(ApplePaySession& paymentSession, const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest& paymentRequest)
 {
     ASSERT(!m_activeSession);

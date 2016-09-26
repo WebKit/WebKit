@@ -214,3 +214,11 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface PKPassLibrary ()
+- (void)openPaymentSetupForMerchantIdentifier:(NSString *)identifier domain:(NSString *)domain completion:(void(^)(BOOL success))completion;
+@end
+
+NS_ASSUME_NONNULL_END

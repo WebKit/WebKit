@@ -1,3 +1,21 @@
+2016-09-26  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r206238. rdar://problem/28450514
+
+    2016-09-21  Anders Carlsson  <andersca@apple.com>
+
+            Support openPaymentSetup API on ApplePaySession object
+            https://bugs.webkit.org/show_bug.cgi?id=162357
+            rdar://problem/26776939
+
+            Reviewed by Tim Horton.
+
+            Add openPaymentSetup stub.
+
+            * WebCoreSupport/WebPaymentCoordinatorClient.h:
+            * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+            (WebPaymentCoordinatorClient::openPaymentSetup):
+
 2016-09-16  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r206006. rdar://problem/27991573

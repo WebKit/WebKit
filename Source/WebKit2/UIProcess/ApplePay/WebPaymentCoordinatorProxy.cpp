@@ -72,6 +72,18 @@ void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& mer
     });
 }
 
+void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, uint64_t requestID)
+{
+    auto weakThis = m_weakPtrFactory.createWeakPtr();
+    platformOpenPaymentSetup(merchantIdentifier, domainName, [weakThis, requestID](bool result) {
+        auto paymentCoordinatorProxy = weakThis.get();
+        if (!paymentCoordinatorProxy)
+            return;
+
+        paymentCoordinatorProxy->m_webPageProxy.send(Messages::WebPaymentCoordinator::OpenPaymentSetupReply(requestID, result));
+    });
+}
+
 void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::PaymentRequest& paymentRequest, bool& result)
 {
     // FIXME: Make this a message check.

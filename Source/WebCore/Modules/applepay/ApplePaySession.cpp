@@ -762,6 +762,31 @@ void ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecutionContext& scri
     });
 }
 
+void ApplePaySession::openPaymentSetup(ScriptExecutionContext& scriptExecutionContext, const String& merchantIdentifier, DeferredWrapper&& promise, ExceptionCode& ec)
+{
+    auto& document = downcast<Document>(scriptExecutionContext);
+    DOMWindow& window = *document.domWindow();
+
+    String errorMessage;
+    if (!canCallApplePaySessionAPIs(document, errorMessage)) {
+        window.printErrorMessage(errorMessage);
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!ScriptController::processingUserGesture()) {
+        window.printErrorMessage("Must call ApplePaySession.openPaymemntSetup from a user gesture handler.");
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
+
+    paymentCoordinator.openPaymentSetup(merchantIdentifier, document.domain(), [promise](bool result) mutable {
+        promise.resolve(result);
+    });
+}
+
 void ApplePaySession::begin(ExceptionCode& ec)
 {
     auto& document = *downcast<Document>(scriptExecutionContext());
