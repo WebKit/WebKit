@@ -1,4 +1,5 @@
-//@ runDefault
+//@ largeHeap
+//@ runDefault if !$memoryLimited
 // This test should not crash.
 
 var error;

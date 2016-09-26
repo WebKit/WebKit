@@ -1,3 +1,12 @@
+2016-09-26  Csaba Osztrogonác  <oszi@inf.u-szeged.hu>
+
+        Skip stress/string-joining-long-strings-should-not-crash.js on memory limited devices
+        https://bugs.webkit.org/show_bug.cgi?id=162386
+
+        Unreviewed, relanding r206317 after typo fix.
+
+        * stress/string-joining-long-strings-should-not-crash.js:
+
 2016-09-24  Caitlin Potter  <caitp@igalia.com>
 
         [JSTests] fix test262 expectations following r206333
