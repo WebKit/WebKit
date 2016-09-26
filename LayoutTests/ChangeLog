@@ -1,5 +1,14 @@
 2016-09-25  Chris Dumez  <cdumez@apple.com>
 
+        Unviewed, skip slow web-platform test in Debug builds
+
+        The following test is slow and frequently times out for Debug builds:
+        imported/w3c/web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/xhtml-mathml-dtd-entity-support.htm
+
+        * TestExpectations:
+
+2016-09-25  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, mark fast/dom/HTMLAnchorElement/anchor-download.html as flaky on WK2.
 
         * platform/mac-wk2/TestExpectations:
