@@ -775,7 +775,7 @@ void ApplePaySession::openPaymentSetup(ScriptExecutionContext& scriptExecutionCo
     }
 
     if (!ScriptController::processingUserGesture()) {
-        window.printErrorMessage("Must call ApplePaySession.openPaymemntSetup from a user gesture handler.");
+        window.printErrorMessage("Must call ApplePaySession.openPaymentSetup from a user gesture handler.");
         ec = INVALID_ACCESS_ERR;
         return;
     }
