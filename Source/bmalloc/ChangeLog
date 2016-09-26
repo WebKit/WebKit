@@ -1,3 +1,18 @@
+2016-09-26  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        Avoid implicit conversion from iterator to pointer
+        https://bugs.webkit.org/show_bug.cgi?id=162482
+
+        Reviewed by Geoffrey Garen.
+
+        Not every STL supporting such conversion, we should get a pointer explicitly.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::Chunk::lines):
+        (bmalloc::Chunk::pages):
+        * bmalloc/FixedVector.h:
+        (bmalloc::FixedVector::begin):
+
 2016-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Butterflies should be allocated in Auxiliary MarkedSpace instead of CopiedSpace and we should rewrite as much of the GC as needed to make this not a regression
