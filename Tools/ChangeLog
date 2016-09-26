@@ -1,3 +1,29 @@
+2016-09-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Using char16_t instead of wchar_t in TestWebKitAPI URLParser tests
+        https://bugs.webkit.org/show_bug.cgi?id=162537
+
+        Reviewed by Alex Christensen.
+
+        Some build bot (Linux ARM GTK port) fails since we cannot select
+        the specific StringBuilder::append method for wchar_t.
+
+        wchar_t implementation highly depends on platforms. sizeof(wchar_t) == 2
+        in Windows, while sizeof(wchar_t) == 4 in Linux and OS X. So, ICU
+        uses wchar_t for UChar (UTF-16) in Windows while it doesn't in other
+        platforms.
+
+        StringBuilder::append is overloaded for UChar. In Windows, we can pass
+        wchar_t since UChar is wchar_t. However, we cannot do that in other platforms.
+
+        Instead of using wchar_t, we use more platform portable UTF-16 literal for
+        testing. Use char16_t and C++11 UTF-16 literal.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::utf16String):
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::wideString): Deleted.
+
 2016-09-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Adjust EFL indentation to EFL MiniBrowser
