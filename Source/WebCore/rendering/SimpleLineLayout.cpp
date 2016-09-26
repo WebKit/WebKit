@@ -567,6 +567,7 @@ public:
     }
 
     bool operator!=(const FragmentForwardIterator& other) const { return m_fragmentIndex != other.m_fragmentIndex; }
+    bool operator==(const FragmentForwardIterator& other) const { return m_fragmentIndex == other.m_fragmentIndex; }
     unsigned operator*() const { return m_fragmentIndex; }
 
 private:

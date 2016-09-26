@@ -1,3 +1,15 @@
+2016-09-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][Debug] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=162550
+
+        Reviewed by Alex Christensen.
+
+        Windows headers need the FragmentForwardIterator '==' operator in debug mode.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::FragmentForwardIterator::operator==):
+
 2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unnecessary extern functions in FontPlatformDataFreeType.cpp
