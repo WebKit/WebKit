@@ -82,7 +82,7 @@ CachedImage::CachedImage(const URL& url, Image* image, SessionID sessionID)
 }
 
 CachedImage::CachedImage(const URL& url, Image* image, CachedImage::CacheBehaviorType type, SessionID sessionID)
-    : CachedResource(CachedResourceRequest(ResourceRequest(url)), ImageResource, sessionID)
+    : CachedResource(url, ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(type == CachedImage::ManuallyCached)
     , m_shouldPaintBrokenImage(true)

@@ -1,5 +1,20 @@
 2016-09-26  Youenn Fablet  <youenn@apple.com>
 
+        ASSERTION FAILED: m_origin || m_type == CachedResource::MainResource
+        https://bugs.webkit.org/show_bug.cgi?id=162472
+        <rdar://problem/28431522>
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage): Fixing the last CachedImage constructor.
+        Using CachedResource protected constructor.
+        * loader/cache/CachedResource.h: Small clean-up.
+
+2016-09-26  Youenn Fablet  <youenn@apple.com>
+
         [GTK][EFL] imported/w3c/web-platform-tests/fetch/api/basic/accept-header.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=162547
 

@@ -335,7 +335,7 @@ private:
     unsigned m_handleCount { 0 };
     unsigned m_preloadCount { 0 };
 
-    unsigned m_preloadResult { PreloadNotReferenced };
+    PreloadResult m_preloadResult { PreloadNotReferenced };
 
     bool m_requestedFromNetworkingLayer { false };
 
