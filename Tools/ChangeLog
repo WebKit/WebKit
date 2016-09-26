@@ -1,3 +1,63 @@
+2016-09-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Adjust EFL indentation to EFL MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=162542
+
+        Unreviewed, EFL simple coding style fix.
+
+        Some functions wasn't applied EFL coding style in prefix fix.
+
+        * MiniBrowser/efl/main.c:
+        (_key_down_cb):
+        (view_focus_set):
+        (_mouse_down_cb):
+        (title_set):
+        (_title_changed_cb):
+        (_url_changed_cb):
+        (_back_forward_list_changed_cb):
+        (_progress_cb):
+        (_error_cb):
+        (_download_request_cb):
+        (close_file_picker):
+        (_filepicker_parent_deletion_cb):
+        (_filepicker_deletion_cb):
+        (_fileselector_done_cb):
+        (_file_chooser_request_cb):
+        (_download_finished_cb):
+        (_download_failed_cb):
+        (_color_changed_cb):
+        (_color_item_selected_cb):
+        (_color_picker_ok_clicked_cb):
+        (_color_picker_cancel_clicked_cb):
+        (_color_picker_dismiss_cb):
+        (_color_picker_request_cb):
+        (quit):
+        (has_scheme):
+        (url_from_user_input):
+        (url_load_from_user_input):
+        (_url_bar_activated_cb):
+        (_url_bar_clicked_cb):
+        (_search_field_aborted_cb):
+        (_search_field_activated_cb):
+        (_search_field_clicked_cb):
+        (_back_button_clicked_cb):
+        (_forward_button_clicked_cb):
+        (_search_backward_button_clicked_cb):
+        (_search_forward_button_clicked_cb):
+        (_search_case_option_changed):
+        (_search_word_start_option_changed_cb):
+        (_search_close_button_clicked_cb):
+        (_refresh_button_clicked_cb):
+        (_stop_button_clicked_cb):
+        (list_item_label_get):
+        (_list_item_select_cb):
+        (navigation_button_longpress_process):
+        (_forward_button_longpress_cb):
+        (_back_button_longpress_cb):
+        (quit_event_loop):
+        (_ok_clicked_cb):
+        (_file_entry_dialog_show):
+
 2016-09-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] anchor.download attribute value is ignored by NETWORK_SESSION code path

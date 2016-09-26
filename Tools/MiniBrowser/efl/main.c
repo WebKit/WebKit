@@ -596,9 +596,9 @@ _key_down_cb(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
      Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(ewk_view);
      mode = (mode + 1) % (EWK_PAGINATION_MODE_BOTTOM_TO_TOP + 1);
      if (ewk_view_pagination_mode_set(ewk_view, mode))
-         INFO("Change Pagination Mode (F7) was pressed, changed to: %d", mode);
+       INFO("Change Pagination Mode (F7) was pressed, changed to: %d", mode);
      else
-         INFO("Change Pagination Mode (F7) was pressed, but NOT changed!");
+       INFO("Change Pagination Mode (F7) was pressed, but NOT changed!");
    } else if (!strcmp(ev->key, "F11")) {
      INFO("Fullscreen (F11) was pressed, toggling window/fullscreen.");
      toggle_window_fullscreen(window, !elm_win_fullscreen_get(window->elm_window));
@@ -664,760 +664,763 @@ _key_down_cb(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
 static void
 view_focus_set(Browser_Window *window, Eina_Bool focus)
 {
-    /* We steal focus away from elm's focus model and start to do things
-     * manually here, so elm now has no clue what's up. Tell elm that its
-     * toplevel widget is to be unfocused so elm gives up the focus */
-    elm_object_focus_set(elm_object_top_widget_get(window->elm_window), EINA_FALSE);
-    evas_object_focus_set(window->ewk_view, focus);
+   /* We steal focus away from elm's focus model and start to do things
+    * manually here, so elm now has no clue what's up. Tell elm that its
+    * toplevel widget is to be unfocused so elm gives up the focus */
+   elm_object_focus_set(elm_object_top_widget_get(window->elm_window), EINA_FALSE);
+   evas_object_focus_set(window->ewk_view, focus);
 }
 
 static void
 _mouse_down_cb(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
-    Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down *)event_info;
+   Browser_Window *window = (Browser_Window *)user_data;
+   Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down *)event_info;
 
-    /* Clear selection from the URL bar */
-    elm_entry_select_none(window->url_bar);
+   /* Clear selection from the URL bar */
+   elm_entry_select_none(window->url_bar);
 
-    if (longpress_enabled)
-        history_list_hide(window);
-    if (ev->button == 1)
-        view_focus_set(window, EINA_TRUE);
-    else if (ev->button == 2)
-        view_focus_set(window, !evas_object_focus_get(ewk_view));
+   if (longpress_enabled)
+     history_list_hide(window);
+   if (ev->button == 1)
+     view_focus_set(window, EINA_TRUE);
+   else if (ev->button == 2)
+     view_focus_set(window, !evas_object_focus_get(ewk_view));
 }
 
 static void
 title_set(Evas_Object *elm_window, const char *title, int progress)
 {
-    Eina_Strbuf *buffer;
+   Eina_Strbuf *buffer;
 
-    if (!title || !*title) {
-        elm_win_title_set(elm_window, APP_NAME);
-        return;
-    }
+   if (!title || !*title) {
+     elm_win_title_set(elm_window, APP_NAME);
+     return;
+   }
 
-    buffer = eina_strbuf_new();
-    if (progress < 100)
-        eina_strbuf_append_printf(buffer, "%s (%d%%) - %s", title, progress, APP_NAME);
-    else
-        eina_strbuf_append_printf(buffer, "%s - %s", title, APP_NAME);
+   buffer = eina_strbuf_new();
+   if (progress < 100)
+     eina_strbuf_append_printf(buffer, "%s (%d%%) - %s", title, progress, APP_NAME);
+   else
+     eina_strbuf_append_printf(buffer, "%s - %s", title, APP_NAME);
 
-    elm_win_title_set(elm_window, eina_strbuf_string_get(buffer));
-    eina_strbuf_free(buffer);
+   elm_win_title_set(elm_window, eina_strbuf_string_get(buffer));
+   eina_strbuf_free(buffer);
 }
 
 static void
 _title_changed_cb(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
-    const char *title = (const char *)event_info;
+   Browser_Window *window = (Browser_Window *)user_data;
+   const char *title = (const char *)event_info;
 
-    title_set(window->elm_window, title, 100);
+   title_set(window->elm_window, title, 100);
 }
 
 static void
 _url_changed_cb(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
-    const char *url = ewk_view_url_get(window->ewk_view);
-    char *converted_url = elm_entry_utf8_to_markup(url);
-    elm_entry_entry_set(window->url_bar, converted_url);
+   Browser_Window *window = (Browser_Window *)user_data;
+   const char *url = ewk_view_url_get(window->ewk_view);
+   char *converted_url = elm_entry_utf8_to_markup(url);
+   elm_entry_entry_set(window->url_bar, converted_url);
 
-    _icon_changed_cb(ewk_context_favicon_database_get(ewk_view_context_get(ewk_view)), url, user_data);
+   _icon_changed_cb(ewk_context_favicon_database_get(ewk_view_context_get(ewk_view)), url, user_data);
 
-    free(converted_url);
+   free(converted_url);
 
-    search_box_hide(window);
+   search_box_hide(window);
 }
 
 static void
 _back_forward_list_changed_cb(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    /* Update navigation buttons state */
-    elm_object_disabled_set(window->back_button, !ewk_view_back_possible(ewk_view));
-    elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(ewk_view));
+   /* Update navigation buttons state */
+   elm_object_disabled_set(window->back_button, !ewk_view_back_possible(ewk_view));
+   elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(ewk_view));
 }
 
 static void
 _progress_cb(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
-    double progress = *(double *)event_info;
+   Browser_Window *window = (Browser_Window *)user_data;
+   double progress = *(double *)event_info;
 
-    title_set(window->elm_window, ewk_view_title_get(window->ewk_view), progress * 100);
+   title_set(window->elm_window, ewk_view_title_get(window->ewk_view), progress * 100);
 }
 
 static void
 _error_cb(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
-    Eina_Strbuf *buffer;
-    const Ewk_Error *error = (const Ewk_Error *)event_info;
+   Eina_Strbuf *buffer;
+   const Ewk_Error *error = (const Ewk_Error *)event_info;
 
-    /* This is a cancellation, do not display the error page */
-    if (ewk_error_cancellation_get(error))
-        return;
+   /* This is a cancellation, do not display the error page */
+   if (ewk_error_cancellation_get(error))
+     return;
 
-    buffer = eina_strbuf_new();
-    eina_strbuf_append_printf(buffer,
-        "<html><body><div style=\"color:#ff0000\">ERROR!</div><br><div>Code: %d<br>Description: %s<br>URL: %s</div></body</html>",
-        ewk_error_code_get(error), ewk_error_description_get(error), ewk_error_url_get(error));
+   buffer = eina_strbuf_new();
+   eina_strbuf_append_printf(buffer,
+     "<html><body><div style=\"color:#ff0000\">ERROR!</div><br><div>Code: %d<br>Description: %s<br>URL: %s</div></body</html>",
+     ewk_error_code_get(error), ewk_error_description_get(error), ewk_error_url_get(error));
 
-    ewk_view_html_string_load(ewk_view, eina_strbuf_string_get(buffer), 0, ewk_error_url_get(error));
-    eina_strbuf_free(buffer);
+   ewk_view_html_string_load(ewk_view, eina_strbuf_string_get(buffer), 0, ewk_error_url_get(error));
+   eina_strbuf_free(buffer);
 }
 
 static void
 _download_request_cb(Ewk_Download_Job *download, void *user_data)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    Eina_Strbuf *destination_path = eina_strbuf_new();
+   Eina_Strbuf *destination_path = eina_strbuf_new();
 
-    const char *home_path = getenv("HOME");
-    Eina_Stringshare *save_file_path = _file_entry_dialog_show(window, "DOWNLOAD", home_path ? home_path : "/tmp");
+   const char *home_path = getenv("HOME");
+   Eina_Stringshare *save_file_path = _file_entry_dialog_show(window, "DOWNLOAD", home_path ? home_path : "/tmp");
 
-    if (save_file_path)
-        eina_strbuf_append_printf(destination_path, "%s", save_file_path);
-    else
-        eina_strbuf_append(destination_path, "/tmp");
+   if (save_file_path)
+     eina_strbuf_append_printf(destination_path, "%s", save_file_path);
+   else
+     eina_strbuf_append(destination_path, "/tmp");
 
-    const char *suggested_name = ewk_download_job_suggested_filename_get(download);
-    if (suggested_name && *suggested_name)
-        eina_strbuf_append_printf(destination_path, "/%s", suggested_name);
-    else {
-        // Generate a unique file name since no name was suggested.
-        eina_strbuf_append(destination_path, "/downloaded-file.XXXXXX");
-        char *url = NULL;
-        url = eina_strbuf_string_steal(destination_path);
-        if (mkstemp(url) == -1) {
-            ERROR("Could not generate a unique file name.");
-            return;
-        }
-        eina_strbuf_append(destination_path, url);
-    }
+   const char *suggested_name = ewk_download_job_suggested_filename_get(download);
+   if (suggested_name && *suggested_name)
+     eina_strbuf_append_printf(destination_path, "/%s", suggested_name);
+   else {
+     // Generate a unique file name since no name was suggested.
+     eina_strbuf_append(destination_path, "/downloaded-file.XXXXXX");
+     char *url = NULL;
+     url = eina_strbuf_string_steal(destination_path);
+     if (mkstemp(url) == -1) {
+       ERROR("Could not generate a unique file name.");
+       return;
+     }
+     eina_strbuf_append(destination_path, url);
+   }
 
-    ewk_download_job_destination_set(download, eina_strbuf_string_get(destination_path));
-    INFO("Downloading: %s", eina_strbuf_string_get(destination_path));
-    eina_strbuf_free(destination_path);
-    eina_stringshare_del(save_file_path);
+   ewk_download_job_destination_set(download, eina_strbuf_string_get(destination_path));
+   INFO("Downloading: %s", eina_strbuf_string_get(destination_path));
+   eina_strbuf_free(destination_path);
+   eina_stringshare_del(save_file_path);
 }
 
 static void _filepicker_parent_deletion_cb(void *user_data, Evas *evas, Evas_Object *elm_window, void *event);
 
 static void close_file_picker(File_Selector_Data *fs_data)
 {
-    evas_object_event_callback_del(fs_data->parent->elm_window, EVAS_CALLBACK_DEL, _filepicker_parent_deletion_cb);
-    evas_object_del(fs_data->elm_window);
-    ewk_object_unref(fs_data->request);
-    free(fs_data);
+   evas_object_event_callback_del(fs_data->parent->elm_window, EVAS_CALLBACK_DEL, _filepicker_parent_deletion_cb);
+   evas_object_del(fs_data->elm_window);
+   ewk_object_unref(fs_data->request);
+   free(fs_data);
 }
 
 static void
 _filepicker_parent_deletion_cb(void *user_data, Evas *evas, Evas_Object *elm_window, void *event)
 {
-    close_file_picker((File_Selector_Data *)user_data);
+   close_file_picker((File_Selector_Data *)user_data);
 }
 
 static void
 _filepicker_deletion_cb(void *user_data, Evas_Object *elm_window, void *event_info)
 {
-    close_file_picker((File_Selector_Data *)user_data);
+   close_file_picker((File_Selector_Data *)user_data);
 }
 
 static void
 _fileselector_done_cb(void *user_data, Evas_Object *file_selector, void *event_info)
 {
-    File_Selector_Data *fs_data = (File_Selector_Data *)user_data;
+   File_Selector_Data *fs_data = (File_Selector_Data *)user_data;
 
-    const char *selected = (const char *)event_info;
-    if (selected && *selected)
-        ewk_file_chooser_request_file_choose(fs_data->request, selected);
+   const char *selected = (const char *)event_info;
+   if (selected && *selected)
+     ewk_file_chooser_request_file_choose(fs_data->request, selected);
 
-    close_file_picker(fs_data);
+   close_file_picker(fs_data);
 }
 
 static void
 _file_chooser_request_cb(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
-    Evas_Object *bg;
-    Browser_Window *window = (Browser_Window *)user_data;
-    Ewk_File_Chooser_Request *request = (Ewk_File_Chooser_Request *)event_info;
+   Evas_Object *bg;
+   Browser_Window *window = (Browser_Window *)user_data;
+   Ewk_File_Chooser_Request *request = (Ewk_File_Chooser_Request *)event_info;
 
-    // Show basic file picker which does not currently support multiple files
-    // or MIME type filtering.
-    Evas_Object *elm_window = elm_win_add(window->elm_window, "file-picker-window", ELM_WIN_DIALOG_BASIC);
-    elm_win_title_set(elm_window, "File picker");
-    elm_win_modal_set(elm_window, EINA_TRUE);
+   // Show basic file picker which does not currently support multiple files
+   // or MIME type filtering.
+   Evas_Object *elm_window = elm_win_add(window->elm_window, "file-picker-window", ELM_WIN_DIALOG_BASIC);
+   elm_win_title_set(elm_window, "File picker");
+   elm_win_modal_set(elm_window, EINA_TRUE);
 
-    bg = elm_bg_add(elm_window);
-    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(elm_window, bg);
-    evas_object_show(bg);
+   bg = elm_bg_add(elm_window);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(elm_window, bg);
+   evas_object_show(bg);
 
-    File_Selector_Data *fs_data = (File_Selector_Data *)malloc(sizeof(File_Selector_Data));
-    fs_data->parent = window;
-    fs_data->elm_window = elm_window;
-    fs_data->request = ewk_object_ref(request);
-    evas_object_smart_callback_add(elm_window, "delete,request", _filepicker_deletion_cb, fs_data);
-    evas_object_event_callback_add(window->elm_window, EVAS_CALLBACK_DEL, _filepicker_parent_deletion_cb, fs_data);
+   File_Selector_Data *fs_data = (File_Selector_Data *)malloc(sizeof(File_Selector_Data));
+   fs_data->parent = window;
+   fs_data->elm_window = elm_window;
+   fs_data->request = ewk_object_ref(request);
+   evas_object_smart_callback_add(elm_window, "delete,request", _filepicker_deletion_cb, fs_data);
+   evas_object_event_callback_add(window->elm_window, EVAS_CALLBACK_DEL, _filepicker_parent_deletion_cb, fs_data);
 
-    Evas_Object *file_selector = elm_fileselector_add(elm_window);
-    const char *home_path = getenv("HOME");
-    elm_fileselector_path_set(file_selector, home_path ? home_path : "/home");
-    evas_object_size_hint_weight_set(file_selector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(elm_window, file_selector);
-    evas_object_show(file_selector);
+   Evas_Object *file_selector = elm_fileselector_add(elm_window);
+   const char *home_path = getenv("HOME");
+   elm_fileselector_path_set(file_selector, home_path ? home_path : "/home");
+   evas_object_size_hint_weight_set(file_selector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(elm_window, file_selector);
+   evas_object_show(file_selector);
 
-    evas_object_smart_callback_add(file_selector, "done", _fileselector_done_cb, fs_data);
+   evas_object_smart_callback_add(file_selector, "done", _fileselector_done_cb, fs_data);
 
-    evas_object_resize(elm_window, 400, 400);
-    elm_win_center(elm_window, EINA_TRUE, EINA_TRUE);
-    evas_object_show(elm_window);
+   evas_object_resize(elm_window, 400, 400);
+   elm_win_center(elm_window, EINA_TRUE, EINA_TRUE);
+   evas_object_show(elm_window);
 }
 
 static void
 _download_finished_cb(Ewk_Download_Job *download, void *user_data)
 {
-    INFO("Download finished: %s",  ewk_download_job_destination_get(download));
+   INFO("Download finished: %s",  ewk_download_job_destination_get(download));
 }
 
 static void
 _download_failed_cb(Ewk_Download_Job_Error *download_error, void *user_data)
 {
-    Ewk_Error *error = download_error->error;
+   Ewk_Error *error = download_error->error;
 
-    INFO("Download failed! Error code: %d, Error description: %s, Error URL: %s", ewk_error_code_get(error), ewk_error_description_get(error), ewk_error_url_get(error));
+   INFO("Download failed! Error code: %d, Error description: %s, Error URL: %s", ewk_error_code_get(error), ewk_error_description_get(error), ewk_error_url_get(error));
 }
 
 static void
 _color_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    int r, g, b, a;
+   int r, g, b, a;
 
-    elm_colorselector_color_get(obj, &r, &g, &b, &a);
-    evas_object_color_set(data, r, g, b, a);
+   elm_colorselector_color_get(obj, &r, &g, &b, &a);
+   evas_object_color_set(data, r, g, b, a);
 }
 
 static void
 _color_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    int r, g, b, a;
-    Elm_Object_Item *color_item = (Elm_Object_Item *)event_info;
+   int r, g, b, a;
+   Elm_Object_Item *color_item = (Elm_Object_Item *)event_info;
 
-    elm_colorselector_palette_item_color_get(color_item, &r, &g, &b, &a);
-    evas_object_color_set(data, r, g, b, a);
+   elm_colorselector_palette_item_color_get(color_item, &r, &g, &b, &a);
+   evas_object_color_set(data, r, g, b, a);
 }
 
 static void
 _color_picker_ok_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    int r, g, b, a;
-    Color_Selector *color_selector = (Color_Selector *)data;
+   int r, g, b, a;
+   Color_Selector *color_selector = (Color_Selector *)data;
 
-    elm_colorselector_color_get(color_selector->elm_selector, &r, &g, &b, &a);
-    ewk_color_picker_color_set(color_selector->ewk_picker, r, g, b, a);
+   elm_colorselector_color_get(color_selector->elm_selector, &r, &g, &b, &a);
+   ewk_color_picker_color_set(color_selector->ewk_picker, r, g, b, a);
 }
 
 static void
 _color_picker_cancel_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    int r, g, b, a;
+   int r, g, b, a;
 
-    ewk_color_picker_color_get(data, &r, &g, &b, &a);
-    ewk_color_picker_color_set(data, r, g, b, a);
+   ewk_color_picker_color_get(data, &r, &g, &b, &a);
+   ewk_color_picker_color_set(data, r, g, b, a);
 }
 
 static Eina_Bool
 _color_picker_dismiss_cb(Ewk_View_Smart_Data *sd)
 {
-    Browser_Window *window = window_find_with_ewk_view(sd->self);
+   Browser_Window *window = window_find_with_ewk_view(sd->self);
 
-    evas_object_del(window->color_selector.elm_selector_window);
-    window->color_selector.elm_selector_window = NULL;
+   evas_object_del(window->color_selector.elm_selector_window);
+   window->color_selector.elm_selector_window = NULL;
 
-    return EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
 _color_picker_request_cb(Ewk_View_Smart_Data *sd, Ewk_Color_Picker *color_picker)
 {
-    int r, g, b, a;
-    Evas_Object *background, *rect, *box, *button_box, *rect_frame, *cs_frame, *ok_button, *cancel_button;
+   int r, g, b, a;
+   Evas_Object *background, *rect, *box, *button_box, *rect_frame, *cs_frame, *ok_button, *cancel_button;
 
-    Browser_Window *window = window_find_with_ewk_view(sd->self);
-    window->color_selector.elm_selector_window = elm_win_add(window->elm_window, "color selector", ELM_WIN_BASIC);
-    window->color_selector.ewk_picker = color_picker;
+   Browser_Window *window = window_find_with_ewk_view(sd->self);
+   window->color_selector.elm_selector_window = elm_win_add(window->elm_window, "color selector", ELM_WIN_BASIC);
+   window->color_selector.ewk_picker = color_picker;
 
-    elm_win_title_set(window->color_selector.elm_selector_window, "Color selector");
+   elm_win_title_set(window->color_selector.elm_selector_window, "Color selector");
 
-    /* Show color view */
-    background = elm_bg_add(window->color_selector.elm_selector_window);
-    evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(window->color_selector.elm_selector_window, background);
-    evas_object_show(background);
+   /* Show color view */
+   background = elm_bg_add(window->color_selector.elm_selector_window);
+   evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(window->color_selector.elm_selector_window, background);
+   evas_object_show(background);
 
-    box = elm_box_add(window->color_selector.elm_selector_window);
-    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(window->color_selector.elm_selector_window, box);
-    evas_object_show(box);
+   box = elm_box_add(window->color_selector.elm_selector_window);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(window->color_selector.elm_selector_window, box);
+   evas_object_show(box);
 
-    rect_frame = elm_frame_add(window->color_selector.elm_selector_window);
-    evas_object_size_hint_weight_set(rect_frame, EVAS_HINT_EXPAND, 0.3);
-    evas_object_size_hint_align_set(rect_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_object_text_set(rect_frame, "Color View");
-    elm_box_pack_end(box, rect_frame);
-    evas_object_show(rect_frame);
+   rect_frame = elm_frame_add(window->color_selector.elm_selector_window);
+   evas_object_size_hint_weight_set(rect_frame, EVAS_HINT_EXPAND, 0.3);
+   evas_object_size_hint_align_set(rect_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(rect_frame, "Color View");
+   elm_box_pack_end(box, rect_frame);
+   evas_object_show(rect_frame);
 
-    rect = evas_object_rectangle_add(evas_object_evas_get(window->color_selector.elm_selector_window));
-    elm_object_content_set(rect_frame, rect);
-    ewk_color_picker_color_get(window->color_selector.ewk_picker, &r, &g, &b, &a);
-    evas_object_color_set(rect, r, g, b, a);
-    evas_object_show(rect);
+   rect = evas_object_rectangle_add(evas_object_evas_get(window->color_selector.elm_selector_window));
+   elm_object_content_set(rect_frame, rect);
+   ewk_color_picker_color_get(window->color_selector.ewk_picker, &r, &g, &b, &a);
+   evas_object_color_set(rect, r, g, b, a);
+   evas_object_show(rect);
 
-    /* Show color selector */
-    cs_frame = elm_frame_add(window->color_selector.elm_selector_window);
-    evas_object_size_hint_weight_set(cs_frame, EVAS_HINT_EXPAND, 0.7);
-    evas_object_size_hint_align_set(cs_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_object_text_set(cs_frame, "Color Selector");
-    elm_box_pack_end(box, cs_frame);
-    evas_object_show(cs_frame);
+   /* Show color selector */
+   cs_frame = elm_frame_add(window->color_selector.elm_selector_window);
+   evas_object_size_hint_weight_set(cs_frame, EVAS_HINT_EXPAND, 0.7);
+   evas_object_size_hint_align_set(cs_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(cs_frame, "Color Selector");
+   elm_box_pack_end(box, cs_frame);
+   evas_object_show(cs_frame);
 
-    window->color_selector.elm_selector = elm_colorselector_add(window->color_selector.elm_selector_window);
-    elm_object_content_set(cs_frame, window->color_selector.elm_selector);
-    evas_object_show(window->color_selector.elm_selector);
+   window->color_selector.elm_selector = elm_colorselector_add(window->color_selector.elm_selector_window);
+   elm_object_content_set(cs_frame, window->color_selector.elm_selector);
+   evas_object_show(window->color_selector.elm_selector);
 
-    /* OK, Cancel Buttons */
-    button_box = elm_box_add(window->color_selector.elm_selector_window);
-    elm_box_horizontal_set(button_box, EINA_TRUE);
-    evas_object_size_hint_min_set(button_box, 200, 50);
-    elm_box_pack_end(box, button_box);
-    evas_object_show(button_box);
+   /* OK, Cancel Buttons */
+   button_box = elm_box_add(window->color_selector.elm_selector_window);
+   elm_box_horizontal_set(button_box, EINA_TRUE);
+   evas_object_size_hint_min_set(button_box, 200, 50);
+   elm_box_pack_end(box, button_box);
+   evas_object_show(button_box);
 
-    ok_button = elm_button_add(window->color_selector.elm_selector_window);
-    elm_object_text_set(ok_button, "OK");
-    elm_box_pack_end(button_box, ok_button);
-    evas_object_show(ok_button);
+   ok_button = elm_button_add(window->color_selector.elm_selector_window);
+   elm_object_text_set(ok_button, "OK");
+   elm_box_pack_end(button_box, ok_button);
+   evas_object_show(ok_button);
 
-    cancel_button = elm_button_add(window->color_selector.elm_selector_window);
-    elm_object_text_set(cancel_button, "Cancel");
-    elm_box_pack_end(button_box, cancel_button);
-    evas_object_show(cancel_button);
+   cancel_button = elm_button_add(window->color_selector.elm_selector_window);
+   elm_object_text_set(cancel_button, "Cancel");
+   elm_box_pack_end(button_box, cancel_button);
+   evas_object_show(cancel_button);
 
-    evas_object_smart_callback_add(ok_button, "clicked", _color_picker_ok_clicked_cb, &(window->color_selector));
-    evas_object_smart_callback_add(cancel_button, "clicked", _color_picker_cancel_clicked_cb,
-        window->color_selector.ewk_picker);
-    evas_object_smart_callback_add(window->color_selector.elm_selector_window, "delete,request",
-        _color_picker_cancel_clicked_cb, window->color_selector.ewk_picker);
-    evas_object_smart_callback_add(window->color_selector.elm_selector, "changed", _color_changed_cb, rect);
-    evas_object_smart_callback_add(window->color_selector.elm_selector, "color,item,selected", _color_item_selected_cb,
-        rect);
+   evas_object_smart_callback_add(ok_button, "clicked", _color_picker_ok_clicked_cb, &(window->color_selector));
+   evas_object_smart_callback_add(cancel_button, "clicked", _color_picker_cancel_clicked_cb,
+     window->color_selector.ewk_picker);
+   evas_object_smart_callback_add(window->color_selector.elm_selector_window, "delete,request",
+     _color_picker_cancel_clicked_cb, window->color_selector.ewk_picker);
+   evas_object_smart_callback_add(window->color_selector.elm_selector, "changed", _color_changed_cb, rect);
+   evas_object_smart_callback_add(window->color_selector.elm_selector, "color,item,selected", _color_item_selected_cb,
+     rect);
 
-    elm_win_center(window->color_selector.elm_selector_window, EINA_TRUE, EINA_TRUE);
-    evas_object_resize(window->color_selector.elm_selector_window, 350, 500);
-    evas_object_show(window->color_selector.elm_selector_window);
+   int x, y, width, height;
+   evas_object_geometry_get(window->elm_window, &x, &y, &width, &height);
 
-    return EINA_TRUE;
+   elm_win_center(window->color_selector.elm_selector_window, EINA_TRUE, EINA_TRUE);
+   evas_object_resize(window->color_selector.elm_selector_window, 350, 500);
+   evas_object_show(window->color_selector.elm_selector_window);
+
+   return EINA_TRUE;
 }
 
 static int
 quit(Eina_Bool success, const char *msg)
 {
-    if (msg)
-        success ? INFO("%s", msg) : ERROR("%s", msg);
+   if (msg)
+     success ? INFO("%s", msg) : ERROR("%s", msg);
 
-    eina_log_domain_unregister(_log_domain_id);
-    ewk_object_unref(configuration());
-    ewk_shutdown();
-    elm_shutdown();
+   eina_log_domain_unregister(_log_domain_id);
+   ewk_object_unref(configuration());
+   ewk_shutdown();
+   elm_shutdown();
 
-    if (!success)
-        return EXIT_FAILURE;
+   if (!success)
+     return EXIT_FAILURE;
 
-    return EXIT_SUCCESS;
+   return EXIT_SUCCESS;
 }
 
 static Eina_Bool
 has_scheme(const char *url)
 {
-    return !!strstr(url, "://");
+   return !!strstr(url, "://");
 }
 
 static char *
 url_from_user_input(const char *arg)
 {
-    /* If it is already a URL, return the argument as is. */
-    if (has_scheme(arg) || eina_str_has_prefix(arg, JAVASCRIPT_SCHEME) || !strcasecmp(arg, "about:blank"))
-        return strdup(arg);
+   /* If it is already a URL, return the argument as is. */
+   if (has_scheme(arg) || eina_str_has_prefix(arg, JAVASCRIPT_SCHEME) || !strcasecmp(arg, "about:blank"))
+     return strdup(arg);
 
-    Eina_Strbuf *buf = eina_strbuf_manage_new(eina_file_path_sanitize(arg));
+   Eina_Strbuf *buf = eina_strbuf_manage_new(eina_file_path_sanitize(arg));
 
-    /* Check if the path exists. */
-    if (ecore_file_exists(eina_strbuf_string_get(buf))) {
-        /* File exists, convert local path to a URL. */
-        eina_strbuf_prepend(buf, FILE_SCHEME);
-    } else {
-        /* The path does not exist, convert it to a URL by
-           prepending http:// scheme:
-           www.google.com -> http://www.google.com */
-        eina_strbuf_string_free(buf);
-        eina_strbuf_append_printf(buf, "%s%s", HTTP_SCHEME, arg);
-    }
-    char *url = eina_strbuf_string_steal(buf);
-    eina_strbuf_free(buf);
+   /* Check if the path exists. */
+   if (ecore_file_exists(eina_strbuf_string_get(buf))) {
+     /* File exists, convert local path to a URL. */
+     eina_strbuf_prepend(buf, FILE_SCHEME);
+   } else {
+     /* The path does not exist, convert it to a URL by
+        prepending http:// scheme:
+        www.google.com -> http://www.google.com */
+     eina_strbuf_string_free(buf);
+     eina_strbuf_append_printf(buf, "%s%s", HTTP_SCHEME, arg);
+   }
+   char *url = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
 
-    return url;
+   return url;
 }
 
 static Eina_Bool
 url_load_from_user_input(Evas_Object *ewk_view, const char *url)
 {
-    if (!ewk_view || !url)
-        return EINA_FALSE;
+   if (!ewk_view || !url)
+     return EINA_FALSE;
 
-    if (eina_str_has_prefix(url, JAVASCRIPT_SCHEME))
-        return ewk_view_script_execute(ewk_view, strstr(url, JAVASCRIPT_SCHEME), 0, 0);
+   if (eina_str_has_prefix(url, JAVASCRIPT_SCHEME))
+     return ewk_view_script_execute(ewk_view, strstr(url, JAVASCRIPT_SCHEME), 0, 0);
 
-    return ewk_view_url_set(ewk_view, url);
+   return ewk_view_url_set(ewk_view, url);
 }
 
 static void
 _url_bar_activated_cb(void *user_data, Evas_Object *url_bar, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    const char *markup_url = elm_entry_entry_get(url_bar);
-    char *user_url = elm_entry_markup_to_utf8(markup_url);
-    char *url = url_from_user_input(user_url);
-    url_load_from_user_input(window->ewk_view, url);
+   const char *markup_url = elm_entry_entry_get(url_bar);
+   char *user_url = elm_entry_markup_to_utf8(markup_url);
+   char *url = url_from_user_input(user_url);
+   url_load_from_user_input(window->ewk_view, url);
 
-    free(user_url);
-    free(url);
+   free(user_url);
+   free(url);
 
-    /* Give focus back to the view */
-    view_focus_set(window, EINA_TRUE);
+   /* Give focus back to the view */
+   view_focus_set(window, EINA_TRUE);
 }
 
 static void
 _url_bar_clicked_cb(void *user_data, Evas_Object *url_bar, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    /* Grab focus from the view */
-    evas_object_focus_set(window->ewk_view, EINA_FALSE);
-    elm_object_focus_set(url_bar, EINA_TRUE);
+   /* Grab focus from the view */
+   evas_object_focus_set(window->ewk_view, EINA_FALSE);
+   elm_object_focus_set(url_bar, EINA_TRUE);
 }
 
 static void
 _search_field_aborted_cb(void *user_data, Evas_Object *search_field, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
-    search_box_hide(window);
+   Browser_Window *window = (Browser_Window *)user_data;
+   search_box_hide(window);
 
-    /* Give focus back to the view */
-    view_focus_set(window, EINA_TRUE);
+   /* Give focus back to the view */
+   view_focus_set(window, EINA_TRUE);
 }
 
 static void
 _search_field_activated_cb(void *user_data, Evas_Object *search_field, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    const char *markup_text = elm_entry_entry_get(search_field);
-    char *text = elm_entry_markup_to_utf8(markup_text);
-    ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
-    free(text);
+   const char *markup_text = elm_entry_entry_get(search_field);
+   char *text = elm_entry_markup_to_utf8(markup_text);
+   ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
+   free(text);
 
-    /* Grab focus from the view */
-    evas_object_focus_set(window->ewk_view, EINA_FALSE);
-    elm_object_focus_set(search_field, EINA_TRUE);
+   /* Grab focus from the view */
+   evas_object_focus_set(window->ewk_view, EINA_FALSE);
+   elm_object_focus_set(search_field, EINA_TRUE);
 }
 
 static void
 _search_field_clicked_cb(void *user_data, Evas_Object *search_field, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    /* Grab focus from the view */
-    evas_object_focus_set(window->ewk_view, EINA_FALSE);
-    elm_object_focus_set(search_field, EINA_TRUE);
+   /* Grab focus from the view */
+   evas_object_focus_set(window->ewk_view, EINA_FALSE);
+   elm_object_focus_set(search_field, EINA_TRUE);
 }
 
 static void
 _back_button_clicked_cb(void *user_data, Evas_Object *back_button, void *event_info)
 {
-    if (longpress_enabled)
-        return;
+   if (longpress_enabled)
+     return;
 
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    ewk_view_back(window->ewk_view);
-    /* Update back button state */
-    elm_object_disabled_set(back_button, !ewk_view_back_possible(window->ewk_view));
+   ewk_view_back(window->ewk_view);
+   /* Update back button state */
+   elm_object_disabled_set(back_button, !ewk_view_back_possible(window->ewk_view));
 }
 
 static void
 _forward_button_clicked_cb(void *user_data, Evas_Object *forward_button, void *event_info)
 {
-    if (longpress_enabled)
-        return;
+   if (longpress_enabled)
+     return;
 
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    ewk_view_forward(window->ewk_view);
-    /* Update forward button state */
-    elm_object_disabled_set(forward_button, !ewk_view_forward_possible(window->ewk_view));
+   ewk_view_forward(window->ewk_view);
+   /* Update forward button state */
+   elm_object_disabled_set(forward_button, !ewk_view_forward_possible(window->ewk_view));
 }
 
 static void
 _search_backward_button_clicked_cb(void *user_data, Evas_Object *search_backward_button, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
-    ewk_view_text_find(window->ewk_view, text, search_flags | EWK_FIND_OPTIONS_BACKWARDS, MAX_SEARCH_COUNT);
-    free(text);
+   char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
+   ewk_view_text_find(window->ewk_view, text, search_flags | EWK_FIND_OPTIONS_BACKWARDS, MAX_SEARCH_COUNT);
+   free(text);
 }
 
 static void
 _search_forward_button_clicked_cb(void *user_data, Evas_Object *search_forward_button, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
-    ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
-    free(text);
+   char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
+   ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
+   free(text);
 }
 
 static void
 _search_case_option_changed(void *user_data, Evas_Object *search_case_check_box, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
-    char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
+   Browser_Window *window = (Browser_Window *)user_data;
+   char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
 
-    /* Bit toggle the case sensitive flag */
-    search_flags = search_flags ^ EWK_FIND_OPTIONS_CASE_INSENSITIVE;
+   /* Bit toggle the case sensitive flag */
+   search_flags = search_flags ^ EWK_FIND_OPTIONS_CASE_INSENSITIVE;
 
-    ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
-    free(text);
+   ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
+   free(text);
 }
 
 static void
 _search_word_start_option_changed_cb(void *user_data, Evas_Object *search_word_start_check_box, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
-    char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
+   Browser_Window *window = (Browser_Window *)user_data;
+   char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
 
-    /* Bit toggle the word start flag */
-    search_flags = search_flags ^ EWK_FIND_OPTIONS_AT_WORD_STARTS;
+   /* Bit toggle the word start flag */
+   search_flags = search_flags ^ EWK_FIND_OPTIONS_AT_WORD_STARTS;
 
-    ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
-    free(text);
+   ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
+   free(text);
 }
 
 static void
 _search_close_button_clicked_cb(void *user_data, Evas_Object *search_close_button, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    search_box_hide(window);
+   search_box_hide(window);
 }
 
 static void
 _refresh_button_clicked_cb(void *user_data, Evas_Object *refresh_button, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    Evas *evas = evas_object_evas_get(refresh_button);
-    Eina_Bool ctrlPressed = evas_key_modifier_is_set(evas_key_modifier_get(evas), "Control");
-    if (ctrlPressed) {
-        INFO("Reloading and bypassing cache...");
-        ewk_view_reload_bypass_cache(window->ewk_view);
-    } else {
-        INFO("Reloading...");
-        ewk_view_reload(window->ewk_view);
-    }
+   Evas *evas = evas_object_evas_get(refresh_button);
+   Eina_Bool ctrlPressed = evas_key_modifier_is_set(evas_key_modifier_get(evas), "Control");
+   if (ctrlPressed) {
+     INFO("Reloading and bypassing cache...");
+     ewk_view_reload_bypass_cache(window->ewk_view);
+   } else {
+     INFO("Reloading...");
+     ewk_view_reload(window->ewk_view);
+   }
 }
 
 static void
 _stop_button_clicked_cb(void *user_data, Evas_Object *stop_button, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    INFO("Stop was Pressed. Aborting load...");
-    ewk_view_stop(window->ewk_view);
+   INFO("Stop was Pressed. Aborting load...");
+   ewk_view_stop(window->ewk_view);
 }
 
 static char *
 list_item_label_get(void *data, Evas_Object *obj, const char *part)
 {
-    int len = strlen((char *)data);
-    char *buf = (char *)malloc(sizeof(char) * (len + 1));
-    snprintf(buf, len + 1, "%s", (char *)data);
-    return buf;
+   int len = strlen((char *)data);
+   char *buf = (char *)malloc(sizeof(char) * (len + 1));
+   snprintf(buf, len + 1, "%s", (char *)data);
+   return buf;
 }
 
 static void
 _list_item_select_cb(void *user_data, Evas_Object *obj, void *event_info)
 {
-    Browser_Window *window = evas_object_data_get(obj, "Browser_Window");
-    ewk_view_navigate_to(window->ewk_view, user_data);
-    history_list_hide(window);
-    evas_object_data_del(obj, "Browser_Window");
+   Browser_Window *window = evas_object_data_get(obj, "Browser_Window");
+   ewk_view_navigate_to(window->ewk_view, user_data);
+   history_list_hide(window);
+   evas_object_data_del(obj, "Browser_Window");
 }
 
 static void
 navigation_button_longpress_process(void *user_data, Eina_Bool forward_navigation_enabled)
 {
-    if (longpress_enabled)
-        return;
+   if (longpress_enabled)
+     return;
 
-    longpress_enabled = EINA_TRUE;
-    Browser_Window *window = (Browser_Window *)user_data;
+   longpress_enabled = EINA_TRUE;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    Ewk_Back_Forward_List *list = ewk_view_back_forward_list_get(window->ewk_view);
-    const Eina_List *l;
-    void *data;
-    static Elm_Genlist_Item_Class *list_item = NULL;
-    const char *title = NULL;
-    int item_count;
-    int x;
-    int y;
-    int width;
-    int height;
-    size_t index;
+   Ewk_Back_Forward_List *list = ewk_view_back_forward_list_get(window->ewk_view);
+   const Eina_List *l;
+   void *data;
+   static Elm_Genlist_Item_Class *list_item = NULL;
+   const char *title = NULL;
+   int item_count;
+   int x;
+   int y;
+   int width;
+   int height;
+   size_t index;
 
-    evas_object_data_set(window->history.history_list, "Browser_Window", window);
+   evas_object_data_set(window->history.history_list, "Browser_Window", window);
 
-    if (forward_navigation_enabled)
-        window->history.history_list_items = ewk_back_forward_list_forward_items_copy(list);
-    else
-        window->history.history_list_items = ewk_back_forward_list_back_items_copy(list);
+   if (forward_navigation_enabled)
+     window->history.history_list_items = ewk_back_forward_list_forward_items_copy(list);
+   else
+     window->history.history_list_items = ewk_back_forward_list_back_items_copy(list);
 
-    if (!list_item) {
-        list_item = elm_genlist_item_class_new();
-        list_item->item_style = "default";
-        list_item->func.text_get = list_item_label_get;
-        list_item->func.content_get = NULL;
-        list_item->func.state_get = NULL;
-        list_item->func.del = NULL;
-    }
+   if (!list_item) {
+     list_item = elm_genlist_item_class_new();
+     list_item->item_style = "default";
+     list_item->func.text_get = list_item_label_get;
+     list_item->func.content_get = NULL;
+     list_item->func.state_get = NULL;
+     list_item->func.del = NULL;
+   }
 
-    item_count = eina_list_count(window->history.history_list_items);
-    INFO("navigation_button_longpress_process : Item count = %d forward_navigation_enabled = %d", item_count, forward_navigation_enabled);
+   item_count = eina_list_count(window->history.history_list_items);
+   INFO("navigation_button_longpress_process : Item count = %d forward_navigation_enabled = %d", item_count, forward_navigation_enabled);
 
-    EINA_LIST_FOREACH(window->history.history_list_items, l, data) {
-        title = ewk_back_forward_list_item_title_get(data);
-        INFO(" title = %s", title);
-        elm_genlist_item_append(window->history.history_list, list_item, (void *)(title), NULL, ELM_GENLIST_ITEM_NONE, _list_item_select_cb, data);
-    }
+   EINA_LIST_FOREACH(window->history.history_list_items, l, data) {
+     title = ewk_back_forward_list_item_title_get(data);
+     INFO(" title = %s", title);
+     elm_genlist_item_append(window->history.history_list, list_item, (void *)(title), NULL, ELM_GENLIST_ITEM_NONE, _list_item_select_cb, data);
+   }
 
-    if (item_count > 0) {
-        evas_object_geometry_get(window->elm_window, &x, &y, &width, &height);
-        elm_list_go(window->history.history_list);
-        evas_object_resize(window->history.history_box , width / 3 , LIST_ITEM_HEIGHT * item_count);
+   if (item_count > 0) {
+     evas_object_geometry_get(window->elm_window, &x, &y, &width, &height);
+     elm_list_go(window->history.history_list);
+     evas_object_resize(window->history.history_box , width / 3 , LIST_ITEM_HEIGHT * item_count);
 
-        if (forward_navigation_enabled) {
-            evas_object_move(window->history.history_box , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);
-            evas_object_move(window->history.history_list , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);
-        } else {
-            evas_object_move(window->history.history_box , x, y + TOOL_BAR_BUTTON_SIZE);
-            evas_object_move(window->history.history_list , x, y + TOOL_BAR_BUTTON_SIZE);
-        }
+     if (forward_navigation_enabled) {
+       evas_object_move(window->history.history_box , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);
+       evas_object_move(window->history.history_list , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);
+     } else {
+       evas_object_move(window->history.history_box , x, y + TOOL_BAR_BUTTON_SIZE);
+       evas_object_move(window->history.history_list , x, y + TOOL_BAR_BUTTON_SIZE);
+     }
 
-        elm_genlist_mode_set(window->history.history_list, ELM_LIST_COMPRESS);
-        evas_object_show(window->history.history_box);
-        evas_object_show(window->history.history_list);
-        evas_object_focus_set(window->ewk_view, EINA_FALSE);
-        elm_object_focus_set(window->history.history_list, EINA_TRUE);
-    } else
-        longpress_enabled = EINA_FALSE;
+     elm_genlist_mode_set(window->history.history_list, ELM_LIST_COMPRESS);
+     evas_object_show(window->history.history_box);
+     evas_object_show(window->history.history_list);
+     evas_object_focus_set(window->ewk_view, EINA_FALSE);
+     elm_object_focus_set(window->history.history_list, EINA_TRUE);
+   } else
+     longpress_enabled = EINA_FALSE;
 }
 
 static void
 _forward_button_longpress_cb(void *user_data, Evas_Object *forward_button, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    navigation_button_longpress_process(user_data, EINA_TRUE);
-    elm_object_disabled_set(forward_button, !ewk_view_back_possible(window->ewk_view));
+   navigation_button_longpress_process(user_data, EINA_TRUE);
+   elm_object_disabled_set(forward_button, !ewk_view_back_possible(window->ewk_view));
 }
 
 static void
 _back_button_longpress_cb(void *user_data, Evas_Object *back_button, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
+   Browser_Window *window = (Browser_Window *)user_data;
 
-    navigation_button_longpress_process(user_data, EINA_FALSE);
-    elm_object_disabled_set(back_button, !ewk_view_back_possible(window->ewk_view));
+   navigation_button_longpress_process(user_data, EINA_FALSE);
+   elm_object_disabled_set(back_button, !ewk_view_back_possible(window->ewk_view));
 }
 
 static void
 _ok_clicked_cb(void *user_data, Evas_Object *obj, void *event_info)
 {
-    Eina_Bool *confirmed = (Eina_Bool *)user_data;
-    *confirmed = EINA_TRUE;
+   Eina_Bool *confirmed = (Eina_Bool *)user_data;
+   *confirmed = EINA_TRUE;
 }
 
 static Eina_Stringshare *
 _file_entry_dialog_show(Browser_Window *window, const char *label_tag, const char *default_text)
 {
-    Evas_Object *file_popup = elm_popup_add(window->elm_window);
-    evas_object_size_hint_weight_set(file_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_show(file_popup);
+   Evas_Object *file_popup = elm_popup_add(window->elm_window);
+   evas_object_size_hint_weight_set(file_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(file_popup);
 
-    Evas_Object *vbox = elm_box_add(file_popup);
-    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(vbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_object_content_set(file_popup, vbox);
-    evas_object_show(vbox);
+   Evas_Object *vbox = elm_box_add(file_popup);
+   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(vbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(file_popup, vbox);
+   evas_object_show(vbox);
 
-    Evas_Object *label = elm_label_add(window->elm_window);
-    elm_object_text_set(label, label_tag);
-    evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND, 0.0);
-    evas_object_size_hint_align_set(label, EVAS_HINT_FILL, 0.5);
-    evas_object_color_set(label, 23, 45, 67, 142);
-    elm_box_pack_end(vbox, label);
-    evas_object_show(label);
+   Evas_Object *label = elm_label_add(window->elm_window);
+   elm_object_text_set(label, label_tag);
+   evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(label, EVAS_HINT_FILL, 0.5);
+   evas_object_color_set(label, 23, 45, 67, 142);
+   elm_box_pack_end(vbox, label);
+   evas_object_show(label);
 
-    Evas_Object *fs_entry = elm_fileselector_entry_add(file_popup);
-    elm_fileselector_is_save_set(fs_entry, EINA_TRUE);
-    evas_object_size_hint_align_set(fs_entry, EVAS_HINT_FILL, 0);
-    elm_fileselector_path_set(fs_entry, default_text);
-    elm_object_text_set(fs_entry, "FileChooser");
-    elm_box_pack_end(vbox, fs_entry);
-    evas_object_show(fs_entry);
+   Evas_Object *fs_entry = elm_fileselector_entry_add(file_popup);
+   elm_fileselector_is_save_set(fs_entry, EINA_TRUE);
+   evas_object_size_hint_align_set(fs_entry, EVAS_HINT_FILL, 0);
+   elm_fileselector_path_set(fs_entry, default_text);
+   elm_object_text_set(fs_entry, "FileChooser");
+   elm_box_pack_end(vbox, fs_entry);
+   evas_object_show(fs_entry);
 
-    Evas_Object *hbox = elm_box_add(file_popup);
-    evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_box_horizontal_set(hbox, EINA_TRUE);
-    evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_box_pack_end(vbox, hbox);
-    evas_object_show(hbox);
+   Evas_Object *hbox = elm_box_add(file_popup);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(vbox, hbox);
+   evas_object_show(hbox);
 
-    Eina_Bool ok = EINA_FALSE;
-    Evas_Object *ok_button = elm_button_add(file_popup);
-    elm_object_text_set(ok_button, "OK");
-    evas_object_smart_callback_add(ok_button, "clicked", _ok_clicked_cb, &ok);
-    elm_box_pack_end(hbox, ok_button);
-    evas_object_show(ok_button);
+   Eina_Bool ok = EINA_FALSE;
+   Evas_Object *ok_button = elm_button_add(file_popup);
+   elm_object_text_set(ok_button, "OK");
+   evas_object_smart_callback_add(ok_button, "clicked", _ok_clicked_cb, &ok);
+   elm_box_pack_end(hbox, ok_button);
+   evas_object_show(ok_button);
 
-    Eina_Bool cancel = EINA_FALSE;
-    Evas_Object *cancel_button = elm_button_add(file_popup);
-    elm_object_text_set(cancel_button, "Cancel");
-    evas_object_smart_callback_add(cancel_button, "clicked", _ok_clicked_cb, &cancel);
-    elm_box_pack_end(hbox, cancel_button);
-    evas_object_show(cancel_button);
+   Eina_Bool cancel = EINA_FALSE;
+   Evas_Object *cancel_button = elm_button_add(file_popup);
+   elm_object_text_set(cancel_button, "Cancel");
+   evas_object_smart_callback_add(cancel_button, "clicked", _ok_clicked_cb, &cancel);
+   elm_box_pack_end(hbox, cancel_button);
+   evas_object_show(cancel_button);
 
-    while (ok != EINA_TRUE && cancel != EINA_TRUE)
-       ecore_main_loop_iterate();
+   while (ok != EINA_TRUE && cancel != EINA_TRUE)
+    ecore_main_loop_iterate();
 
-    Eina_Stringshare *file_path = ok ? eina_stringshare_add(elm_fileselector_path_get(fs_entry)) : NULL;
-    evas_object_del(file_popup);
-    return file_path;
+   Eina_Stringshare *file_path = ok ? eina_stringshare_add(elm_fileselector_path_get(fs_entry)) : NULL;
+   evas_object_del(file_popup);
+   return file_path;
 }
 
 static void
