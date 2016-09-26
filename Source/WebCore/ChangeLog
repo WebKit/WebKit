@@ -1,3 +1,18 @@
+2016-09-26  Nan Wang  <n_wang@apple.com>
+
+        AX: Progress: [Mac] Content in label element should be used as AXTitle or AXDescription
+        https://bugs.webkit.org/show_bug.cgi?id=162573
+
+        Reviewed by Chris Fleizach.
+
+        Exposed the label element's text as the AXTitle of the progress indicator.
+
+        Test: accessibility/mac/progress-with-label-element.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::titleElementText):
+        (WebCore::AccessibilityNodeObject::title):
+
 2016-09-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline bindings tests after r206386.

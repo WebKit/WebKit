@@ -1,3 +1,13 @@
+2016-09-26  Nan Wang  <n_wang@apple.com>
+
+        AX: Progress: [Mac] Content in label element should be used as AXTitle or AXDescription
+        https://bugs.webkit.org/show_bug.cgi?id=162573
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/progress-with-label-element-expected.txt: Added.
+        * accessibility/mac/progress-with-label-element.html: Added.
+
 2016-09-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/media-controls-drag-timeline-set-controls-property.html as flaky on Yosemite Debug WK2.
