@@ -1,3 +1,18 @@
+2016-09-26  Mark Lam  <mark.lam@apple.com>
+
+        Exception unwinding code should use a CatchScope instead of a ThrowScope.
+        https://bugs.webkit.org/show_bug.cgi?id=162583
+
+        Reviewed by Geoffrey Garen.
+
+        This is because the exception unwinding code does not throw an exception.
+        It only inspects the thrown exception and passes it to the appropriate handler.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+
 2016-09-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add an Option to disable the CodeCache

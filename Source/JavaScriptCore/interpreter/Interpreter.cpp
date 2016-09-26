@@ -678,7 +678,7 @@ private:
 
 NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exception* exception, UnwindStart unwindStart)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (unwindStart == UnwindFromCallerFrame) {
         if (callFrame->callerFrameOrVMEntryFrame() == vm.topVMEntryFrame)

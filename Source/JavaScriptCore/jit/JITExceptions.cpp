@@ -42,7 +42,7 @@ namespace JSC {
 
 void genericUnwind(VM* vm, ExecState* callFrame, UnwindStart unwindStart)
 {
-    auto scope = DECLARE_THROW_SCOPE(*vm);
+    auto scope = DECLARE_CATCH_SCOPE(*vm);
     if (Options::breakOnThrow()) {
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (codeBlock)
