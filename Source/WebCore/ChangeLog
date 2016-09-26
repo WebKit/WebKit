@@ -1,5 +1,17 @@
 2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        -Wtautological-compare triggered in URLParser::internalValuesConsistent
+        https://bugs.webkit.org/show_bug.cgi?id=162551
+
+        Reviewed by Alex Christensen.
+
+        Fix logic error.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::internalValuesConsistent):
+
+2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Add CairoUniquePtr and use it in FontPlatformDataFreetype.cpp
         https://bugs.webkit.org/show_bug.cgi?id=162557
 

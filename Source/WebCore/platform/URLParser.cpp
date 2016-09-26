@@ -2354,7 +2354,7 @@ bool URLParser::internalValuesConsistent(const URL& url)
         && url.m_userStart <= url.m_userEnd
         && url.m_userEnd <= url.m_passwordEnd
         && url.m_passwordEnd <= url.m_hostEnd
-        && url.m_hostEnd <= url.m_hostEnd
+        && url.m_hostEnd <= url.m_portEnd
         && url.m_portEnd <= url.m_pathAfterLastSlash
         && url.m_pathAfterLastSlash <= url.m_pathEnd
         && url.m_pathEnd <= url.m_queryEnd
