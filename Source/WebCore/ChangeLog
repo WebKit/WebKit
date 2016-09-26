@@ -1,1 +1,15 @@
+2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unnecessary extern functions in FontPlatformDataFreeType.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=162555
+
+        Reviewed by Carlos Garcia Campos.
+
+        These functions should be file-static.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::convertFontConfigSubpixelOrder):
+        (WebCore::convertFontConfigHintStyle):
+        (WebCore::setCairoFontOptionsFromFontConfigPattern):
+
 == Rolled over to ChangeLog-2016-09-26 ==
