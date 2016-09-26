@@ -133,7 +133,7 @@ protected:
     GstElement* createGLAppSink();
     GstElement* createVideoSinkGL();
     GLContext* prepareContextForCairoPaint(GstVideoInfo&, IntSize&, IntSize&);
-    bool paintToCairoSurface(cairo_surface_t*, cairo_device_t*, GstVideoInfo&, const IntSize&, const IntSize&);
+    bool paintToCairoSurface(cairo_surface_t*, cairo_device_t*, GstVideoInfo&, const IntSize&, const IntSize&, bool);
 #endif
 
     void setStreamVolumeElement(GstStreamVolume*);
