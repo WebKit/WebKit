@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 
 #include "RenderStyle.h"
 #include <wtf/HashSet.h>
@@ -109,4 +109,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(IOS_TEXT_AUTOSIZING)
+#endif // ENABLE(TEXT_AUTOSIZING)

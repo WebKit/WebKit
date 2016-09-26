@@ -1081,7 +1081,7 @@ void StyleResolver::updateFont()
         return;
 
     RenderStyle* style = m_state.style();
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     checkForTextSizeAdjust(style);
 #endif
     checkForGenericFamilyChange(style, m_state.parentStyle());
@@ -1699,7 +1699,7 @@ RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
     return nullptr;
 }
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 void StyleResolver::checkForTextSizeAdjust(RenderStyle* style)
 {
     if (style->textSizeAdjust().isAuto())

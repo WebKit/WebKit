@@ -98,7 +98,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit
 
 RenderBlockFlow::RenderBlockFlow(Element& element, RenderStyle&& style)
     : RenderBlock(element, WTFMove(style), RenderBlockFlowFlag)
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
 #endif
@@ -108,7 +108,7 @@ RenderBlockFlow::RenderBlockFlow(Element& element, RenderStyle&& style)
 
 RenderBlockFlow::RenderBlockFlow(Document& document, RenderStyle&& style)
     : RenderBlock(document, WTFMove(style), RenderBlockFlowFlag)
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
 #endif
@@ -3715,7 +3715,7 @@ void RenderBlockFlow::materializeRareBlockFlowData()
     m_rareBlockFlowData = std::make_unique<RenderBlockFlow::RenderBlockFlowRareData>(*this);
 }
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 static inline bool isVisibleRenderText(const RenderObject& renderer)
 {
     if (!is<RenderText>(renderer))
@@ -3832,7 +3832,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
         descendant = RenderObjectTraversal::nextSkippingChildren(text, this);
     }
 }
-#endif // ENABLE(IOS_TEXT_AUTOSIZING)
+#endif // ENABLE(TEXT_AUTOSIZING)
 
 RenderObject* RenderBlockFlow::layoutSpecialExcludedChild(bool relayoutChildren)
 {

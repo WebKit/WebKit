@@ -52,7 +52,7 @@ public:
     // could be packed in a short but doesn't
     // make a difference currently because of padding
     Length line_height;
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     Length specifiedLineHeight;
 #endif
 

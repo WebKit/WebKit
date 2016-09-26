@@ -67,7 +67,7 @@ namespace WebCore {
 
 struct SameSizeAsRenderText : public RenderObject {
     uint32_t bitfields : 16;
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     float candidateTextSize;
 #endif
     float widths[4];
@@ -181,7 +181,7 @@ inline RenderText::RenderText(Node& node, const String& text)
     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
     , m_useBackslashAsYenSymbol(false)
     , m_originalTextDiffersFromRendered(false)
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , m_candidateComputedTextSize(0)
 #endif
     , m_minWidth(-1)

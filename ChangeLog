@@ -1,3 +1,15 @@
+2016-09-26  Daniel Bates  <dabates@apple.com>
+
+        Rename IOS_TEXT_AUTOSIZING to TEXT_AUTOSIZING
+        https://bugs.webkit.org/show_bug.cgi?id=162365
+
+        Reviewed by Simon Fraser.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake: Substitute ENABLE_TEXT_AUTOSIZING for ENABLE_IOS_TEXT_AUTOSIZING,
+        update the description of this feature to better describe what it does and re-order the define in the
+        list of defines such that it is in sorted order.
+
 2016-09-26  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Added an option to disable thin archives when they are undesirable.

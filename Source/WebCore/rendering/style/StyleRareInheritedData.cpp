@@ -52,7 +52,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
 #if PLATFORM(IOS)
     Color compositionColor;
 #endif
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust;
 #endif
 
@@ -130,7 +130,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hyphenationLimitLines(-1)
     , m_lineGrid(RenderStyle::initialLineGrid())
     , m_tabSize(RenderStyle::initialTabSize())
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
@@ -214,7 +214,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
     , m_lineGrid(o.m_lineGrid)
     , m_tabSize(o.m_tabSize)
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , textSizeAdjust(o.textSizeAdjust)
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
@@ -264,7 +264,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
         && useTouchOverflowScrolling == o.useTouchOverflowScrolling
 #endif
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
         && textSizeAdjust == o.textSizeAdjust
 #endif
         && userSelect == o.userSelect

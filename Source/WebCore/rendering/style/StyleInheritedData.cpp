@@ -30,7 +30,7 @@ StyleInheritedData::StyleInheritedData()
     : horizontal_border_spacing(RenderStyle::initialHorizontalBorderSpacing())
     , vertical_border_spacing(RenderStyle::initialVerticalBorderSpacing())
     , line_height(RenderStyle::initialLineHeight())
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , specifiedLineHeight(RenderStyle::initialLineHeight())
 #endif
     , color(RenderStyle::initialColor())
@@ -47,7 +47,7 @@ inline StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
     , horizontal_border_spacing(o.horizontal_border_spacing)
     , vertical_border_spacing(o.vertical_border_spacing)
     , line_height(o.line_height)
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , specifiedLineHeight(o.specifiedLineHeight)
 #endif
     , fontCascade(o.fontCascade)
@@ -64,7 +64,7 @@ Ref<StyleInheritedData> StyleInheritedData::copy() const
 bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 {
     return line_height == o.line_height
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
         && specifiedLineHeight == o.specifiedLineHeight
 #endif
         && fontCascade == o.fontCascade

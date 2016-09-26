@@ -392,7 +392,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitTextFillColor,
     CSSPropertyWebkitTextOrientation,
     CSSPropertyWebkitTextSecurity,
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     CSSPropertyWebkitTextSizeAdjust,
 #endif
     CSSPropertyWebkitTextStrokeColor,
@@ -3208,7 +3208,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return cssValuePool.createIdentifierValue(CSSValueClip);
         case CSSPropertyWebkitTextSecurity:
             return cssValuePool.createValue(style->textSecurity());
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
         case CSSPropertyWebkitTextSizeAdjust:
             if (style->textSizeAdjust().isAuto())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);

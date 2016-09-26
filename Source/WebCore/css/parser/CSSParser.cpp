@@ -266,7 +266,7 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
         needsSiteSpecificQuirks = settings->needsSiteSpecificQuirks();
         enforcesCSSMIMETypeInNoQuirksMode = settings->enforceCSSMIMETypeInNoQuirksMode();
         useLegacyBackgroundSizeShorthandBehavior = settings->useLegacyBackgroundSizeShorthandBehavior();
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
         textAutosizingEnabled = settings->textAutosizingEnabled();
 #endif
         springTimingFunctionEnabled = settings->springTimingFunctionEnabled();
@@ -2777,7 +2777,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         // When specifying either type of unit, require non-negative integers
         validPrimitive = (!id && (valueWithCalculation.value().unit == CSSPrimitiveValue::CSS_PERCENTAGE || valueWithCalculation.value().fValue) && validateUnit(valueWithCalculation, FInteger | FPercent | FNonNeg, HTMLQuirksMode));
         break;
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     case CSSPropertyWebkitTextSizeAdjust:
         // FIXME: Support toggling the validation of this property via a runtime setting that is independent of
         // whether isTextAutosizingEnabled() is true. We want to enable this property on iOS, when simulating
@@ -10084,7 +10084,7 @@ static bool validFlowName(const String& flowName)
 }
 #endif
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 bool CSSParser::isTextAutosizingEnabled() const
 {
     return m_context.textAutosizingEnabled;

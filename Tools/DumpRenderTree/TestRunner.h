@@ -137,7 +137,7 @@ public:
     size_t webHistoryItemCount();
     int windowCount();
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     void setTextAutosizingEnabled(bool);
 #endif
 

@@ -33,7 +33,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/AtomicString.h>
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 #include "TextSizeAdjustment.h"
 #endif
 
@@ -149,7 +149,7 @@ public:
     AtomicString m_lineGrid;
     unsigned m_tabSize;
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust;
 #endif
 

@@ -76,7 +76,7 @@ static const CSSPropertyID editingProperties[] = {
 #endif
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextFillColor,
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     CSSPropertyWebkitTextSizeAdjust,
 #endif
     CSSPropertyWebkitTextStrokeColor,

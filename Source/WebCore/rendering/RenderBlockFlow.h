@@ -47,7 +47,7 @@ struct WordMeasurement;
 template <class Run> class BidiRunList;
 typedef Vector<WordMeasurement, 64> WordMeasurements;
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 enum LineCount {
     NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
 };
@@ -598,7 +598,7 @@ private:
 
     void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     int m_widthForTextAutosizing;
     unsigned m_lineCountForTextAutosizing : 2;
 #endif
@@ -620,7 +620,7 @@ public:
     RenderBlockFlowRareData& ensureRareBlockFlowData();
     void materializeRareBlockFlowData();
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     int lineCountForTextAutosizing();
     void adjustComputedFontSizes(float size, float visibleWidth);
     void resetComputedFontSize()

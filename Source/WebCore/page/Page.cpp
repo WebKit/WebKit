@@ -197,7 +197,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_pageScaleFactor(1)
     , m_zoomedOutPageScaleFactor(0)
     , m_topContentInset(0)
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingWidth(0)
 #endif
     , m_suppressScrollbarAnimations(false)

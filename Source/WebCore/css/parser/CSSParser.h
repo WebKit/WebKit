@@ -221,7 +221,7 @@ public:
     RefPtr<CSSPrimitiveValue> parseColumnCount();
     bool parseColumnsShorthand(bool important);
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     bool isTextAutosizingEnabled() const;
 #endif
 

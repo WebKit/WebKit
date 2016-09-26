@@ -1,3 +1,71 @@
+2016-09-26  Daniel Bates  <dabates@apple.com>
+
+        Rename IOS_TEXT_AUTOSIZING to TEXT_AUTOSIZING
+        https://bugs.webkit.org/show_bug.cgi?id=162365
+
+        Reviewed by Simon Fraser.
+
+        Repurpose the feature name TEXT_AUTOSIZING for the ENABLE(IOS_TEXT_AUTOSIZING)-guarded code
+        as this code represents WebKit's automatic text size adjustment machinery and is compiled
+        on both macOS and iOS.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderCustom.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::updateFont):
+        * css/StyleResolver.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::CSSParser::parseValue):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserMode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+        * dom/Document.h:
+        * editing/EditingStyle.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        * page/Settings.in:
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/FontDescription.cpp:
+        * platform/graphics/FontDescription.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderElement.cpp:
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        * rendering/RenderText.h:
+        * rendering/TextAutoSizing.cpp:
+        * rendering/TextAutoSizing.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        (WebCore::StyleInheritedData::operator==):
+        * rendering/style/StyleInheritedData.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/TextSizeAdjustment.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setTextAutosizingEnabled):
+        (WebCore::InternalSettings::setTextAutosizingWindowSizeOverride):
+        * testing/InternalSettings.h:
+
 2016-09-26  Nan Wang  <n_wang@apple.com>
 
         AX: Progress: [Mac] Content in label element should be used as AXTitle or AXDescription

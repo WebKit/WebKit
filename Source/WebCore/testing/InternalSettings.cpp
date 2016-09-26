@@ -67,7 +67,7 @@ namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
     : m_originalEditingBehavior(settings.editingBehaviorType())
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
     , m_originalTextAutosizingWindowSizeOverride(settings.textAutosizingWindowSizeOverride())
 #endif
@@ -146,7 +146,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
         settings.setPictographFontFamily(pictographFont.value, static_cast<UScriptCode>(pictographFont.key));
     m_pictographFontFamilies.clear();
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     settings.setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
     settings.setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
 #endif
@@ -335,7 +335,7 @@ void InternalSettings::setPictographFontFamily(const String& family, const Strin
 
 void InternalSettings::setTextAutosizingEnabled(bool enabled, ExceptionCode& ec)
 {
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     InternalSettingsGuardForSettings();
     settings()->setTextAutosizingEnabled(enabled);
 #else
@@ -346,7 +346,7 @@ void InternalSettings::setTextAutosizingEnabled(bool enabled, ExceptionCode& ec)
 
 void InternalSettings::setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode& ec)
 {
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     InternalSettingsGuardForSettings();
     settings()->setTextAutosizingWindowSizeOverride(IntSize(width, height));
 #else

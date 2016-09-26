@@ -52,7 +52,7 @@
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 #include <wtf/text/StringHash.h>
 #endif
 
@@ -384,7 +384,7 @@ bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
            || rareInheritedData != other->rareInheritedData;
 }
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 
 static inline unsigned computeFontHash(const FontCascade& font)
 {
@@ -439,7 +439,7 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
         && rareNonInheritedData->textOverflow == other.rareNonInheritedData->textOverflow;
 }
 
-#endif // ENABLE(IOS_TEXT_AUTOSIZING)
+#endif // ENABLE(TEXT_AUTOSIZING)
 
 bool RenderStyle::inheritedDataShared(const RenderStyle* other) const
 {
@@ -603,7 +603,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
 #endif
             || rareInheritedData->m_effectiveZoom != other.rareInheritedData->m_effectiveZoom
             || rareInheritedData->m_textZoom != other.rareInheritedData->m_textZoom
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
             || rareInheritedData->textSizeAdjust != other.rareInheritedData->textSizeAdjust
 #endif
             || rareInheritedData->wordBreak != other.rareInheritedData->wordBreak
@@ -645,7 +645,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
     }
 
     if (inherited->line_height != other.inherited->line_height
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
         || inherited->specifiedLineHeight != other.inherited->specifiedLineHeight
 #endif
         || inherited->fontCascade != other.inherited->fontCascade
@@ -1461,7 +1461,7 @@ bool RenderStyle::setFontDescription(const FontCascadeDescription& v)
     return false;
 }
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 const Length& RenderStyle::specifiedLineHeight() const { return inherited->specifiedLineHeight; }
 void RenderStyle::setSpecifiedLineHeight(Length v) { SET_VAR(inherited, specifiedLineHeight, v); }
 #else

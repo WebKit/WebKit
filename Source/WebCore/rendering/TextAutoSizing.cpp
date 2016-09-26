@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TextAutoSizing.h"
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 
 #include "CSSFontSelector.h"
 #include "Document.h"
@@ -202,4 +202,4 @@ void TextAutoSizingValue::reset()
 
 } // namespace WebCore
 
-#endif // ENABLE(IOS_TEXT_AUTOSIZING)
+#endif // ENABLE(TEXT_AUTOSIZING)

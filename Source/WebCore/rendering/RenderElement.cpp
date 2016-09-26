@@ -2288,7 +2288,7 @@ void RenderElement::invalidateFlowThreadContainingBlockIncludingDescendants(Rend
         child.invalidateFlowThreadContainingBlockIncludingDescendants(flowThread);
 }
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
 {
     const RenderStyle& style = renderer.style();
@@ -2361,6 +2361,6 @@ void RenderElement::resetTextAutosizing()
         newFixedDepth = 0;
     }
 }
-#endif // ENABLE(IOS_TEXT_AUTOSIZING)
+#endif // ENABLE(TEXT_AUTOSIZING)
 
 }

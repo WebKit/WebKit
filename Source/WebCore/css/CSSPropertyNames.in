@@ -117,7 +117,7 @@ font-variant-east-asian [Inherited, FontProperty, NameForMethods=VariantEastAsia
 -webkit-locale [Inherited, FontProperty, Custom=Value]
 -webkit-text-orientation [Inherited, Custom=Value]
 -epub-text-orientation = -webkit-text-orientation
-#if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
+#if defined(ENABLE_TEXT_AUTOSIZING) && ENABLE_TEXT_AUTOSIZING
 -webkit-text-size-adjust [Inherited, Custom=Value]
 #endif
 -webkit-writing-mode [Inherited, Custom=Value]
@@ -249,7 +249,7 @@ kerning [Inherited, SVG, Converter=SVGLength]
 left [Initial=initialOffset, Converter=LengthOrAuto]
 letter-spacing [Inherited, Converter=Spacing]
 lighting-color [SVG, Converter=SVGColor]
-#if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
+#if defined(ENABLE_TEXT_AUTOSIZING) && ENABLE_TEXT_AUTOSIZING
 line-height [Inherited, Custom=All]
 #else
 line-height [Inherited, Getter=specifiedLineHeight, ConditionalConverter=LineHeight]

@@ -64,7 +64,7 @@ public:
         ScriptFontFamilyMap m_fantasyFontFamilies;
         ScriptFontFamilyMap m_pictographFontFamilies;
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
         bool m_originalTextAutosizingEnabled;
         IntSize m_originalTextAutosizingWindowSizeOverride;
 #endif

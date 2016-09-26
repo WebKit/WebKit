@@ -96,7 +96,7 @@ public:
 #if ENABLE(CSS_GRID_LAYOUT)
     bool cssGridLayoutEnabled { false };
 #endif
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     bool textAutosizingEnabled { false };
 #endif
     bool needsSiteSpecificQuirks { false };

@@ -580,7 +580,7 @@ public:
         [NSNumber numberWithBool:NO],     WebKitNetworkDataUsageTrackingEnabledPreferenceKey,
         @"",                              WebKitNetworkInterfaceNamePreferenceKey,
 #endif
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
         [NSNumber numberWithFloat:Settings::defaultMinimumZoomFontSize()], WebKitMinimumZoomFontSizePreferenceKey,
         [NSNumber numberWithBool:Settings::defaultTextAutosizingEnabled()], WebKitTextAutosizingEnabledPreferenceKey,
 #endif
@@ -1471,7 +1471,7 @@ public:
 }
 #endif
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 - (void)_setMinimumZoomFontSize:(float)size
 {
     [self _setFloatValue:size forKey:WebKitMinimumZoomFontSizePreferenceKey];

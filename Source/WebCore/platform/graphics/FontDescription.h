@@ -238,7 +238,7 @@ public:
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = smoothing; }
     void setIsSpecifiedFont(bool isSpecifiedFont) { m_isSpecifiedFont = isSpecifiedFont; }
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     bool familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
 
     bool equalForTextAutoSizing(const FontCascadeDescription& other) const

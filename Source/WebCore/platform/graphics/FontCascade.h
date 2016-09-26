@@ -245,7 +245,7 @@ private:
     friend struct WidthIterator;
 
 public:
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
     bool equalForTextAutoSizing(const FontCascade& other) const
     {
         return m_fontDescription.equalForTextAutoSizing(other.m_fontDescription)

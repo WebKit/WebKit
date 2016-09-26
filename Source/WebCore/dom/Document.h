@@ -208,7 +208,7 @@ class DeviceOrientationClient;
 class DeviceOrientationController;
 #endif
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 struct TextAutoSizingHash;
 class TextAutoSizingKey;
 class TextAutoSizingValue;
@@ -1682,7 +1682,7 @@ private:
     Timer m_pendingTasksTimer;
     Vector<Task> m_pendingTasks;
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING)
 public:
     void addAutoSizedNode(Text&, float size);
     void updateAutoSizedNodes();
