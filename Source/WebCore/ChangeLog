@@ -1,3 +1,15 @@
+2016-09-26  Youenn Fablet  <youenn@apple.com>
+
+        [GTK][EFL] imported/w3c/web-platform-tests/fetch/api/basic/accept-header.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=162547
+
+        Reviewed by Carlos Garcia Campos.
+
+        Covered by LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header.html now passing.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::createTestingSession): Setting a default Accept-Language value.
+
 2016-09-26  Mark Lam  <mark.lam@apple.com>
 
         Added RETURN_IF_EXCEPTION() macro and use it for exception checks.
