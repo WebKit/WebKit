@@ -59,10 +59,12 @@ public:
 
     enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
 
+    virtual double playbackStartedTime() const = 0;
     virtual double duration() const = 0;
     virtual double currentTime() const = 0;
     virtual double bufferedTime() const = 0;
     virtual bool isPlaying() const = 0;
+    virtual bool isScrubbing() const = 0;
     virtual float playbackRate() const = 0;
     virtual Ref<TimeRanges> seekableRanges() const = 0;
     virtual bool canPlayFastReverse() const = 0;
@@ -82,6 +84,7 @@ public:
     virtual void durationChanged(double) { }
     virtual void currentTimeChanged(double /* currentTime */, double /* anchorTime */) { }
     virtual void bufferedTimeChanged(double) { }
+    virtual void playbackStartedTimeChanged(double /* playbackStartedTime */) { }
     virtual void rateChanged(bool /* isPlaying */, float /* playbackRate */) { }
     virtual void seekableRangesChanged(const TimeRanges&) { }
     virtual void canPlayFastReverseChanged(bool) { }

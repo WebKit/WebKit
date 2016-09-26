@@ -72,6 +72,7 @@ public:
     void setDuration(double);
     void setCurrentTime(double);
     void setBufferedTime(double);
+    void setPlaybackStartedTime(double);
     void setRate(bool isPlaying, float playbackRate);
     void setSeekableRanges(WebCore::TimeRanges&);
     void setCanPlayFastReverse(bool);
@@ -103,10 +104,12 @@ private:
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
 
+    double playbackStartedTime() const final { return m_playbackStartedTime; }
     double duration() const final { return m_duration; }
     double currentTime() const final { return m_currentTime; }
     double bufferedTime() const final { return m_bufferedTime; }
     bool isPlaying() const final { return m_isPlaying; }
+    bool isScrubbing() const final { return m_isScrubbing; }
     float playbackRate() const final { return m_playbackRate; }
     Ref<WebCore::TimeRanges> seekableRanges() const final { return m_seekableRanges.copyRef(); }
     bool canPlayFastReverse() const final { return m_canPlayFastReverse; }
@@ -122,10 +125,13 @@ private:
     WebPlaybackSessionManagerProxy* m_manager;
     uint64_t m_contextId;
     HashSet<WebCore::WebPlaybackSessionModelClient*> m_clients;
+    double m_playbackStartedTime { 0 };
+    bool m_playbackStartedTimeNeedsUpdate { false };
     double m_duration { 0 };
     double m_currentTime { 0 };
     double m_bufferedTime { 0 };
     bool m_isPlaying { false };
+    bool m_isScrubbing { false };
     float m_playbackRate { 0 };
     Ref<WebCore::TimeRanges> m_seekableRanges { WebCore::TimeRanges::create() };
     bool m_canPlayFastReverse { false };
@@ -177,6 +183,7 @@ private:
     void setExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName);
     void setWirelessVideoPlaybackDisabled(uint64_t contextId, bool);
     void setDuration(uint64_t contextId, double duration);
+    void setPlaybackStartedTime(uint64_t contextId, double playbackStartedTime);
     void setRate(uint64_t contextId, bool isPlaying, double rate);
     void handleControlledElementIDResponse(uint64_t, String) const;
 

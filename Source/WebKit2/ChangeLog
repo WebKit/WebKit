@@ -1,3 +1,38 @@
+2016-09-26  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r206350. rdar://problem/28115680
+
+    2016-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Media controls playhead does not animate smoothly while playing
+            https://bugs.webkit.org/show_bug.cgi?id=162399
+            <rdar://problem/28115680>
+
+            Reviewed by Beth Dakin.
+
+            See WebCore ChangeLog for more details.
+
+            In the UI process, we update the WebPlaybackSessionManager's timing value when the rate or current time changes.
+            Each AVValueTiming is generated from the current time, system anchor time, and playback rate. The behavior of
+            the first two properties is unaffected. However, the rate used to update the timing value is the effective
+            playback rate, which is equal to the playback rate unless we are (1) not playing, (2) interacting with the media
+            controls in such a way that the media is essentially not playing, or (3) the current time precedes the playback
+            start time, accounting for playback direction. In these cases, our effective playback rate is 0, which means
+            that we do not animate the playhead.
+
+            * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+            * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in:
+            * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+            (WebKit::WebPlaybackSessionModelContext::beginScrubbing):
+            (WebKit::WebPlaybackSessionModelContext::endScrubbing):
+            (WebKit::WebPlaybackSessionModelContext::setPlaybackStartedTime):
+            (WebKit::WebPlaybackSessionModelContext::setCurrentTime):
+            (WebKit::WebPlaybackSessionManagerProxy::setPlaybackStartedTime):
+            * WebProcess/cocoa/WebPlaybackSessionManager.h:
+            * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+            (WebKit::WebPlaybackSessionInterfaceContext::playbackStartedTimeChanged):
+            (WebKit::WebPlaybackSessionManager::playbackStartedTimeChanged):
+
 2016-09-22  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r206033. rdar://problem/28086237

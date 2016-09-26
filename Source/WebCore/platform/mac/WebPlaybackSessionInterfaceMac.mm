@@ -76,12 +76,7 @@ void WebPlaybackSessionInterfaceMac::durationChanged(double duration)
 void WebPlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, double anchorTime)
 {
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-
-    NSTimeInterval anchorTimeStamp = ![controlsManager rate] ? NAN : anchorTime;
-    AVValueTiming *timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime
-        anchorTimeStamp:anchorTimeStamp rate:0];
-
-    [controlsManager setTiming:timing];
+    updatePlaybackControlsManagerTiming(currentTime, anchorTime, controlsManager.rate, controlsManager.playing);
 }
 
 void WebPlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
@@ -89,6 +84,18 @@ void WebPlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackR
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
     [controlsManager setRate:isPlaying ? playbackRate : 0.];
     [controlsManager setPlaying:isPlaying];
+    updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], playbackRate, isPlaying);
+}
+
+void WebPlaybackSessionInterfaceMac::beginScrubbing()
+{
+    updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], 0, false);
+    webPlaybackSessionModel()->beginScrubbing();
+}
+
+void WebPlaybackSessionInterfaceMac::endScrubbing()
+{
+    webPlaybackSessionModel()->endScrubbing();
 }
 
 static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
@@ -161,6 +168,27 @@ void WebPlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackContr
     manager.playing = m_playbackSessionModel->isPlaying();
     [manager setAudioMediaSelectionOptions:m_playbackSessionModel->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->audioMediaSelectedIndex())];
     [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
+}
+
+void WebPlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying)
+{
+    WebPlaybackControlsManager *manager = playBackControlsManager();
+    if (!manager)
+        return;
+
+    WebPlaybackSessionModel *model = webPlaybackSessionModel();
+    if (!model)
+        return;
+
+    double effectiveAnchorTime = playbackRate ? anchorTime : NAN;
+    double effectivePlaybackRate = playbackRate;
+    if (!isPlaying
+        || model->isScrubbing()
+        || (manager.rate > 0 && model->playbackStartedTime() >= currentTime)
+        || (manager.rate < 0 && model->playbackStartedTime() <= currentTime))
+        effectivePlaybackRate = 0;
+
+    manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:effectivePlaybackRate];
 }
 
 }

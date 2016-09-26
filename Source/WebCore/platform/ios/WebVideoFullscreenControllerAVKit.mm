@@ -147,9 +147,11 @@ private:
     void selectAudioMediaOption(uint64_t) override;
     void selectLegibleMediaOption(uint64_t) override;
     double duration() const override;
+    double playbackStartedTime() const override { return 0; }
     double currentTime() const override;
     double bufferedTime() const override;
     bool isPlaying() const override;
+    bool isScrubbing() const override { return false; }
     float playbackRate() const override;
     Ref<TimeRanges> seekableRanges() const override;
     bool canPlayFastReverse() const override;

@@ -74,6 +74,7 @@ public:
     double currentTime() const final;
     double bufferedTime() const final;
     bool isPlaying() const final;
+    bool isScrubbing() const final { return false; }
     float playbackRate() const final;
     Ref<TimeRanges> seekableRanges() const final;
     bool canPlayFastReverse() const final;
@@ -99,6 +100,7 @@ private:
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
     
+    double playbackStartedTime() const;
     void updateLegibleOptions();
 };
     

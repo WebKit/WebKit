@@ -477,6 +477,8 @@ public:
     bool hasEverHadAudio() const { return m_hasEverHadAudio; }
     bool hasEverHadVideo() const { return m_hasEverHadVideo; }
 
+    double playbackStartedTime() const { return m_playbackStartedTime; }
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -858,6 +860,7 @@ private:
     MediaTime m_lastSeekTime;
     
     double m_previousProgressTime;
+    double m_playbackStartedTime { 0 };
 
     // The last time a timeupdate event was sent (based on monotonic clock).
     double m_clockTimeAtLastUpdateEvent;

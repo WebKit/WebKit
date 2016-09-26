@@ -109,6 +109,13 @@ void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicSt
     }
 
     if (all
+        || eventName == eventNames().playEvent
+        || eventName == eventNames().playingEvent) {
+        for (auto client : m_clients)
+            client->playbackStartedTimeChanged(playbackStartedTime());
+    }
+
+    if (all
         || eventName == eventNames().pauseEvent
         || eventName == eventNames().playEvent
         || eventName == eventNames().ratechangeEvent) {
@@ -288,6 +295,14 @@ void WebPlaybackSessionModelMediaElement::updateLegibleOptions()
         client->audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
         client->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
     }
+}
+
+double WebPlaybackSessionModelMediaElement::playbackStartedTime() const
+{
+    if (!m_mediaElement)
+        return 0;
+
+    return m_mediaElement->playbackStartedTime();
 }
 
 const Vector<AtomicString>& WebPlaybackSessionModelMediaElement::observedEventNames()

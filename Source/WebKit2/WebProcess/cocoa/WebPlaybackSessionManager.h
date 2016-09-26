@@ -77,6 +77,7 @@ private:
     void durationChanged(double) final;
     void currentTimeChanged(double currentTime, double anchorTime) final;
     void bufferedTimeChanged(double) final;
+    void playbackStartedTimeChanged(double playbackStartedTime) final;
     void rateChanged(bool isPlaying, float playbackRate) final;
     void seekableRangesChanged(const WebCore::TimeRanges&) final;
     void canPlayFastReverseChanged(bool value) final;
@@ -122,6 +123,7 @@ protected:
     void durationChanged(uint64_t contextId, double);
     void currentTimeChanged(uint64_t contextId, double currentTime, double anchorTime);
     void bufferedTimeChanged(uint64_t contextId, double bufferedTime);
+    void playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime);
     void rateChanged(uint64_t contextId, bool isPlaying, float playbackRate);
     void seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges&);
     void canPlayFastReverseChanged(uint64_t contextId, bool value);

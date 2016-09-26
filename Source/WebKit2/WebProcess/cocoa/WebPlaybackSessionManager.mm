@@ -96,6 +96,12 @@ void WebPlaybackSessionInterfaceContext::rateChanged(bool isPlaying, float playb
         m_manager->rateChanged(m_contextId, isPlaying, playbackRate);
 }
 
+void WebPlaybackSessionInterfaceContext::playbackStartedTimeChanged(double playbackStartedTime)
+{
+    if (m_manager)
+        m_manager->playbackStartedTimeChanged(m_contextId, playbackStartedTime);
+}
+
 void WebPlaybackSessionInterfaceContext::seekableRangesChanged(const WebCore::TimeRanges& ranges)
 {
     if (m_manager)
@@ -295,6 +301,11 @@ void WebPlaybackSessionManager::currentTimeChanged(uint64_t contextId, double cu
 void WebPlaybackSessionManager::bufferedTimeChanged(uint64_t contextId, double bufferedTime)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetBufferedTime(contextId, bufferedTime), m_page->pageID());
+}
+
+void WebPlaybackSessionManager::playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime)
+{
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetPlaybackStartedTime(contextId, playbackStartedTime), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::rateChanged(uint64_t contextId, bool isPlaying, float playbackRate)

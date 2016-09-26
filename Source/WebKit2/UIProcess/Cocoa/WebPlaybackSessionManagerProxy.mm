@@ -74,12 +74,17 @@ void WebPlaybackSessionModelContext::beginScrubbing()
 {
     if (m_manager)
         m_manager->beginScrubbing(m_contextId);
+
+    m_isScrubbing = true;
 }
 
 void WebPlaybackSessionModelContext::endScrubbing()
 {
     if (m_manager)
         m_manager->endScrubbing(m_contextId);
+
+    m_isScrubbing = false;
+    m_playbackStartedTimeNeedsUpdate = isPlaying();
 }
 
 void WebPlaybackSessionModelContext::seekToTime(double time)
@@ -124,6 +129,12 @@ void WebPlaybackSessionModelContext::selectLegibleMediaOption(uint64_t optionId)
         m_manager->selectLegibleMediaOption(m_contextId, optionId);
 }
 
+void WebPlaybackSessionModelContext::setPlaybackStartedTime(double playbackStartedTime)
+{
+    m_playbackStartedTime = playbackStartedTime;
+    m_playbackStartedTimeNeedsUpdate = false;
+}
+
 void WebPlaybackSessionModelContext::setDuration(double duration)
 {
     m_duration = duration;
@@ -135,6 +146,8 @@ void WebPlaybackSessionModelContext::setCurrentTime(double currentTime)
 {
     m_currentTime = currentTime;
     auto anchorTime = [[NSProcessInfo processInfo] systemUptime];
+    if (m_playbackStartedTimeNeedsUpdate)
+        setPlaybackStartedTime(currentTime);
 
     for (auto* client : m_clients)
         client->currentTimeChanged(currentTime, anchorTime);
@@ -387,6 +400,11 @@ void WebPlaybackSessionManagerProxy::setWirelessVideoPlaybackDisabled(uint64_t c
 void WebPlaybackSessionManagerProxy::setDuration(uint64_t contextId, double duration)
 {
     ensureModel(contextId).setDuration(duration);
+}
+
+void WebPlaybackSessionManagerProxy::setPlaybackStartedTime(uint64_t contextId, double playbackStartedTime)
+{
+    ensureModel(contextId).setPlaybackStartedTime(playbackStartedTime);
 }
 
 void WebPlaybackSessionManagerProxy::setRate(uint64_t contextId, bool isPlaying, double rate)
