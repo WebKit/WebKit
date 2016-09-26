@@ -241,6 +241,7 @@ if (USE_GEOCLUE2)
          OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.h
          COMMAND gdbus-codegen --interface-prefix org.freedesktop.GeoClue2. --c-namespace Geoclue --generate-c-code ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface ${GEOCLUE_DBUS_INTERFACE}
     )
+    set_source_files_properties(${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
 endif ()
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS

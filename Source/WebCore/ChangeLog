@@ -1,5 +1,14 @@
 2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Silence unused parameter warnings from Geoclue2Interface.c
+        https://bugs.webkit.org/show_bug.cgi?id=162545
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake:
+
+2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         std::unique_ptr deleter functions should not check if pointer is null
         https://bugs.webkit.org/show_bug.cgi?id=162558
 
