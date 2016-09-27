@@ -1,3 +1,12 @@
+2016-09-27  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Use override specifiers in PluginView
+        https://bugs.webkit.org/show_bug.cgi?id=162628
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/PluginView.h:
+
 2016-09-23  Antoine Quint  <graouts@apple.com>
 
         Add a new runtime flag for work on modern media controls (off by default)
