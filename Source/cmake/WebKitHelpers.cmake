@@ -16,7 +16,7 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
         endif ()
 
         # Suppress -Wparentheses-equality warning of Clang
-        if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        if (COMPILER_IS_CLANG)
             set(OLD_COMPILE_FLAGS "-Wno-parentheses-equality ${OLD_COMPILE_FLAGS}")
         endif ()
 

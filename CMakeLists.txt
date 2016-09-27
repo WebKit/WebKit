@@ -41,7 +41,11 @@ string(TOLOWER ${PORT} WEBKIT_PORT_DIR)
 # -----------------------------------------------------------------------------
 # Determine the compiler
 # -----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang")
+    set(COMPILER_IS_CLANG ON)
+endif ()
+
+if (CMAKE_COMPILER_IS_GNUCXX OR COMPILER_IS_CLANG)
     set(COMPILER_IS_GCC_OR_CLANG ON)
 endif ()
 
