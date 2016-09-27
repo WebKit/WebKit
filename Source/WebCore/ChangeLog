@@ -1,3 +1,18 @@
+2016-09-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] Handle Wayland & X11 correctly for GST_GL
+        https://bugs.webkit.org/show_bug.cgi?id=162619
+
+        Reviewed by Carlos Garcia Campos.
+
+        The checks for GST_GL consider X11 and Wayland are exclusive alternatives, but it
+        turns out we can enable both! We need to check them independently and also include
+        a runtime check.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext): fix checks for X11 and
+        Wayland to handle the case where both are enabled. Includes a runtime check.
+
 2016-09-27  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Restructure MediaConstraints classes
