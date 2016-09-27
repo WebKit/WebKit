@@ -1,3 +1,31 @@
+2016-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Related videos on YouTube (and YouTube playlists) cause media controls to disappear
+        https://bugs.webkit.org/show_bug.cgi?id=162621
+        <rdar://problem/28484193>
+
+        Reviewed by Jer Noble.
+
+        Tweaks the main content media heuristic for better Now Playing behavior on YouTube by making the following
+        changes:
+        - Remove the strict requirement for audio to be actively playing for the session to be able to show
+          controls for the purpose of Now Playing, making it the same as our policy for the controls manager.
+        - Make playback requirement restrictions apply only for the controls manager. Videos that do not
+          autoplay will still have the correct behavior with respect to Now Playing, since we will bail in the
+          hasEverNotifiedAboutPlaying() check.
+        - Only consider the main content heuristic as preventing media controls from showing up for the purposes
+          of the controls manager. Now Playing should instead account for this by preferring elements large
+          enough for main content after collecting all of the candidate sessions.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::mediaElementSessionInfoForSession):
+        (WebCore::preferMediaControlsForCandidateSessionOverOtherCandidateSession):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canShowControlsManager):
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::MediaSessionManagerMac::sessionWillBeginPlayback):
+
 2016-09-27  Chris Dumez  <cdumez@apple.com>
 
         Second parameter to MutationObserver.observe() should be optional
