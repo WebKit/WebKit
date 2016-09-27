@@ -1,3 +1,16 @@
+2016-09-27  Mario Sanchez Prada  <mario@endlessm.com>
+
+        Build fails for X11+EGL due to missing gst_gl_display_x11_new_with_display()
+        https://bugs.webkit.org/show_bug.cgi?id=162606
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use the right check to retrieve the right instance of GstGLDisplay
+        depending on whether we're using GLX or EGL, not X11 or Wayland.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext):
+
 2016-09-27  Youenn Fablet  <youenn@apple.com>
 
         [GTK][EFL] imported/w3c/web-platform-tests/fetch/api/basic/accept-header.html is failing
