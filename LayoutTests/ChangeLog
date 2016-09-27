@@ -1,3 +1,16 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Navigating to a Blob URL does not trigger a download
+        https://bugs.webkit.org/show_bug.cgi?id=162574
+
+        Reviewed by Darin Adler.
+
+        Rebaseline now that the suggested download name is "unknown" by default
+        for blob downloads as well.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set-expected.txt:
+
 2016-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r205883): Letterpressed text is invisible

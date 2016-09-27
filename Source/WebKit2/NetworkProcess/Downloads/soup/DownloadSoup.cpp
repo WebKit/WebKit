@@ -216,7 +216,7 @@ void Download::startNetworkLoad()
     didStart();
 }
 
-void Download::startWithHandle(ResourceHandle* resourceHandle, const ResourceResponse& response)
+void Download::startNetworkLoadWithHandle(ResourceHandle* resourceHandle, const ResourceResponse& response)
 {
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);

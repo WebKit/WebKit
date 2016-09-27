@@ -97,6 +97,24 @@ void Download::start()
 #endif
 }
 
+void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
+{
+    if (m_request.url().protocolIsBlob()) {
+        m_downloadClient = std::make_unique<BlobDownloadClient>(*this);
+        m_resourceHandle = ResourceHandle::create(nullptr, m_request, m_downloadClient.get(), false, false);
+        didStart();
+        return;
+    }
+
+#if USE(NETWORK_SESSION)
+    UNUSED_PARAM(handle);
+    UNUSED_PARAM(response);
+    ASSERT_NOT_REACHED();
+#else
+    startNetworkLoadWithHandle(handle, response);
+#endif
+}
+
 void Download::cancel()
 {
     if (m_request.url().protocolIsBlob()) {

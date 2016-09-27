@@ -1,3 +1,24 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Navigating to a Blob URL does not trigger a download
+        https://bugs.webkit.org/show_bug.cgi?id=162574
+
+        Reviewed by Darin Adler.
+
+        Add API that tests navigating to a Blob URL and checks that that the load
+        properly gets converted into a download.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[BlobDownloadDelegate _downloadDidStart:]):
+        (-[BlobDownloadDelegate _download:didReceiveResponse:]):
+        (-[BlobDownloadDelegate _download:didReceiveData:]):
+        (-[BlobDownloadDelegate _download:decideDestinationWithSuggestedFilename:allowOverwrite:]):
+        (-[BlobDownloadDelegate _downloadDidFinish:]):
+        (-[DownloadBlobURLNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DownloadRequestBlobURL.html: Added.
+
 2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Install binaries to pkglibexecdir rather than bindir

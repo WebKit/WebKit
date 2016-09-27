@@ -1,3 +1,35 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Navigating to a Blob URL does not trigger a download
+        https://bugs.webkit.org/show_bug.cgi?id=162574
+
+        Reviewed by Darin Adler.
+
+        Add support for converting Blob URL loads into downloads.
+
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
+        (WebKit::BlobDownloadClient::didReceiveResponseAsync):
+        Make sure we return a valid suggested filename because the client side (Safari)
+        does not deal with empty suggested filenames. Use "unknown" by default to
+        match the default suggested filename of non-Blob downloads.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::startWithHandle):
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::convertHandleToDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::startNetworkLoadWithHandle):
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::startNetworkLoadWithHandle):
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::startNetworkLoadWithHandle):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkLoad.h:
+        (WebKit::NetworkLoad::handle):
+
 2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed typo fix

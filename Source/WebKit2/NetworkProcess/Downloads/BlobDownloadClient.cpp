@@ -44,7 +44,7 @@ BlobDownloadClient::BlobDownloadClient(Download& download)
 void BlobDownloadClient::didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response)
 {
     m_download.didReceiveResponse(WTFMove(response));
-    m_download.decideDestinationWithSuggestedFilenameAsync(m_download.suggestedName());
+    m_download.decideDestinationWithSuggestedFilenameAsync(m_download.suggestedName().isEmpty() ? "unknown" : m_download.suggestedName());
 }
 
 void BlobDownloadClient::didDecideDownloadDestination(const String& destinationPath, bool allowOverwrite)

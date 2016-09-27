@@ -116,9 +116,7 @@ public:
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
 
-#if !USE(NETWORK_SESSION)
     WebCore::ResourceHandle* handle() const { return m_handle.get(); }
-#endif
 
 private:
     NetworkLoadClient::ShouldContinueDidReceiveResponse sharedDidReceiveResponse(WebCore::ResourceResponse&&);
