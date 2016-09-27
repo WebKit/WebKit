@@ -220,7 +220,7 @@ bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const 
     if (!bitmapImage)
         return false;
 
-    std::unique_ptr<CachedImage> cachedImage = std::make_unique<CachedImage>(url, bitmapImage.get(), CachedImage::ManuallyCached, sessionID);
+    auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.get(), sessionID);
 
     cachedImage->addClient(&dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());

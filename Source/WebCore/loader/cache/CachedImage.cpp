@@ -58,9 +58,6 @@ namespace WebCore {
 
 CachedImage::CachedImage(CachedResourceRequest&& request, SessionID sessionID)
     : CachedResource(WTFMove(request), ImageResource, sessionID)
-    , m_image(nullptr)
-    , m_isManuallyCached(false)
-    , m_shouldPaintBrokenImage(true)
 {
     setStatus(Unknown);
 }
@@ -68,33 +65,17 @@ CachedImage::CachedImage(CachedResourceRequest&& request, SessionID sessionID)
 CachedImage::CachedImage(Image* image, SessionID sessionID)
     : CachedResource(URL(), ImageResource, sessionID)
     , m_image(image)
-    , m_isManuallyCached(false)
-    , m_shouldPaintBrokenImage(true)
 {
 }
 
 CachedImage::CachedImage(const URL& url, Image* image, SessionID sessionID)
     : CachedResource(url, ImageResource, sessionID)
     , m_image(image)
-    , m_isManuallyCached(false)
-    , m_shouldPaintBrokenImage(true)
+    , m_isManuallyCached(true)
 {
-}
-
-CachedImage::CachedImage(const URL& url, Image* image, CachedImage::CacheBehaviorType type, SessionID sessionID)
-    : CachedResource(url, ImageResource, sessionID)
-    , m_image(image)
-    , m_isManuallyCached(type == CachedImage::ManuallyCached)
-    , m_shouldPaintBrokenImage(true)
-{
-    setStatus(Cached);
-    setLoading(false);
-    if (UNLIKELY(isManuallyCached())) {
-        // Use the incoming URL in the response field. This ensures that code
-        // using the response directly, such as origin checks for security,
-        // actually see something.
-        m_response.setURL(url);
-    }
+    // Use the incoming URL in the response field. This ensures that code using the response directly,
+    // such as origin checks for security, actually see something.
+    m_response.setURL(url);
 }
 
 CachedImage::~CachedImage()
