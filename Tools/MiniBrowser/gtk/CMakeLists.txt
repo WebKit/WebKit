@@ -62,4 +62,4 @@ include_directories(SYSTEM ${MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES})
 add_executable(MiniBrowser ${MiniBrowser_SOURCES})
 target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
 
-install(TARGETS MiniBrowser DESTINATION "${EXEC_INSTALL_DIR}")
+install(TARGETS MiniBrowser DESTINATION "${LIBEXEC_INSTALL_DIR}")
