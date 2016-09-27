@@ -46,13 +46,6 @@ Ref<MediaConstraintsImpl> MediaConstraintsImpl::create()
     return adoptRef(*new MediaConstraintsImpl());
 }
 
-// FIXME: Remove after https://bugs.webkit.org/show_bug.cgi?id=160579
-void MediaConstraintsImpl::initialize(const Dictionary& constraints)
-{
-    if (constraints.isUndefinedOrNull())
-        return;
-}
-
 Ref<MediaConstraintsImpl> MediaConstraintsImpl::create(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid)
 {
     return adoptRef(*new MediaConstraintsImpl(WTFMove(mandatoryConstraints), WTFMove(advancedConstraints), isValid));

@@ -43,15 +43,15 @@ static bool isIntMediaConstraintSatisfiable(const MediaConstraint& constraint)
     int floor = 0;
 
     int min = floor;
-    if (constraint.getMin(min) && min > ceiling)
+    if (downcast<const IntConstraint>(constraint).getMin(min) && min > ceiling)
         return false;
 
     int max = ceiling;
-    if (constraint.getMax(max) && max < min)
+    if (downcast<const IntConstraint>(constraint).getMax(max) && max < min)
         return false;
 
     int exact;
-    if (constraint.getExact(exact) && (exact < min || exact > max))
+    if (downcast<const IntConstraint>(constraint).getExact(exact) && (exact < min || exact > max))
         return false;
 
     return true;
@@ -63,15 +63,15 @@ static bool isDoubleMediaConstraintSatisfiable(const MediaConstraint& constraint
     double floor = 0;
 
     double min = floor;
-    if (constraint.getMin(min) && min > ceiling)
+    if (downcast<const DoubleConstraint>(constraint).getMin(min) && min > ceiling)
         return false;
 
     double max = ceiling;
-    if (constraint.getMax(max) && max < min)
+    if (downcast<const DoubleConstraint>(constraint).getMax(max) && max < min)
         return false;
 
     double exact;
-    if (constraint.getExact(exact) && (exact < min || exact > max))
+    if (downcast<const DoubleConstraint>(constraint).getExact(exact) && (exact < min || exact > max))
         return false;
 
     return true;
@@ -80,7 +80,7 @@ static bool isDoubleMediaConstraintSatisfiable(const MediaConstraint& constraint
 static bool isBooleanMediaConstraintSatisfiable(const MediaConstraint& constraint)
 {
     bool exact;
-    if (constraint.getExact(exact))
+    if (downcast<const BooleanConstraint>(constraint).getExact(exact))
         return exact;
 
     return true;
@@ -89,7 +89,7 @@ static bool isBooleanMediaConstraintSatisfiable(const MediaConstraint& constrain
 static bool isStringMediaConstraintSatisfiable(const MediaConstraint& constraint)
 {
     Vector<String> exact;
-    if (constraint.getExact(exact)) {
+    if (downcast<const StringConstraint>(constraint).getExact(exact)) {
         for (auto& constraintValue : exact) {
             if (constraintValue.find("invalid") != notFound)
                 return false;
@@ -101,7 +101,7 @@ static bool isStringMediaConstraintSatisfiable(const MediaConstraint& constraint
 
 static bool isSatisfiable(RealtimeMediaSource::Type type, const MediaConstraint& constraint)
 {
-    MediaConstraintType constraintType = constraint.type();
+    MediaConstraintType constraintType = constraint.constraintType();
 
     if (type == RealtimeMediaSource::Audio) {
         if (constraintType == MediaConstraintType::SampleRate || constraintType == MediaConstraintType::SampleSize)
@@ -124,15 +124,20 @@ static bool isSatisfiable(RealtimeMediaSource::Type type, const MediaConstraint&
     return false;
 }
 
-const String& MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Type type, const MediaConstraints& constraints)
+const String MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Type type, const MediaConstraints& constraints)
 {
-    auto& mandatoryConstraints = constraints.mandatoryConstraints();
-    for (auto& nameConstraintPair : mandatoryConstraints) {
-        if (!isSatisfiable(type, *nameConstraintPair.value))
-            return nameConstraintPair.key;
-    }
+    String invalidConstraint = emptyString();
+    constraints.mandatoryConstraints().filter([&](const MediaConstraint& constraint) {
+        if (!isSatisfiable(type, constraint)) {
+            invalidConstraint = constraint.name();
+            return true;
+        }
 
-    return emptyString();
+        return false;
+    });
+
+    return invalidConstraint;
+
 }
 
 } // namespace WebCore

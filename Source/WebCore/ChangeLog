@@ -1,3 +1,114 @@
+2016-09-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Restructure MediaConstraints classes
+        https://bugs.webkit.org/show_bug.cgi?id=162571
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional changes.
+
+        * Modules/mediastream/MediaConstraintsImpl.cpp:
+        (WebCore::MediaConstraintsImpl::initialize): Deleted, no longer used.
+        * Modules/mediastream/MediaConstraintsImpl.h:
+
+        * bindings/js/JSMediaDevicesCustom.cpp:
+        (WebCore::createStringConstraint): Return Optional<> instead of RefPtr<>.
+        (WebCore::createBooleanConstraint): Ditto.
+        (WebCore::createDoubleConstraint): Ditto.
+        (WebCore::createIntConstraint): Ditto.
+        (WebCore::parseMediaTrackConstraintSetForKey): Deal with above change.
+
+        * platform/mediastream/CaptureDeviceManager.cpp:
+        (CaptureDeviceManager::verifyConstraintsForMediaType): Use constraints.mandatoryConstraints.filter
+          instead of direct enumeration.
+        (CaptureDeviceManager::sessionSupportsConstraint): Use downcast<>.
+        (CaptureDeviceManager::isSupportedFrameRate): Ditto.
+
+        * platform/mediastream/MediaConstraints.cpp:
+        (WebCore::StringConstraint::find): Lose the ConstraintType parameter.
+        (WebCore::StringConstraint::merge): Use downcast<>.
+        (WebCore::FlattenedConstraint::set): Use ConstraintHolder.
+        (WebCore::FlattenedConstraint::merge): Ditto.
+        (WebCore::MediaTrackConstraintSetMap::forEach): New.
+        (WebCore::MediaTrackConstraintSetMap::filter): Ditto.
+        (WebCore::MediaTrackConstraintSetMap::isEmpty): Ditto.
+        (WebCore::MediaTrackConstraintSetMap::set): Ditto.
+        (WebCore::MediaConstraint::copy): Deleted.
+        (WebCore::IntConstraint::copy): Deleted.
+        (WebCore::DoubleConstraint::copy): Deleted.
+        (WebCore::BooleanConstraint::copy): Deleted.
+        (WebCore::StringConstraint::copy): Deleted.
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::MediaConstraint::MediaConstraint):
+        (WebCore::MediaConstraint::isEmpty):
+        (WebCore::MediaConstraint::isMandatory):
+        (WebCore::MediaConstraint::merge):
+        (WebCore::MediaConstraint::isInt):
+        (WebCore::MediaConstraint::isDouble):
+        (WebCore::MediaConstraint::isBoolean):
+        (WebCore::MediaConstraint::isString):
+        (WebCore::MediaConstraint::dataType):
+        (WebCore::MediaConstraint::constraintType):
+        (WebCore::NumericConstraint::getMin):
+        (WebCore::NumericConstraint::getMax):
+        (WebCore::NumericConstraint::getExact):
+        (WebCore::NumericConstraint::getIdeal):
+        (WebCore::NumericConstraint::fitnessDistance):
+        (WebCore::NumericConstraint::validForRange):
+        (WebCore::NumericConstraint::find):
+        (WebCore::NumericConstraint::NumericConstraint):
+        (WebCore::NumericConstraint::innerMerge):
+        (WebCore::FlattenedConstraint::isEmpty):
+        (WebCore::FlattenedConstraint::iterator::iterator):
+        (WebCore::FlattenedConstraint::iterator::operator*):
+        (WebCore::FlattenedConstraint::iterator::operator++):
+        (WebCore::FlattenedConstraint::iterator::operator==):
+        (WebCore::FlattenedConstraint::iterator::operator!=):
+        (WebCore::FlattenedConstraint::begin):
+        (WebCore::FlattenedConstraint::end):
+        (WebCore::FlattenedConstraint::ConstraintHolder::create):
+        (WebCore::FlattenedConstraint::ConstraintHolder::~ConstraintHolder):
+        (WebCore::FlattenedConstraint::ConstraintHolder::constraint):
+        (WebCore::FlattenedConstraint::ConstraintHolder::dataType):
+        (WebCore::FlattenedConstraint::ConstraintHolder::constraintType):
+        (WebCore::FlattenedConstraint::ConstraintHolder::ConstraintHolder):
+        (WebCore::MediaConstraint::getMin): Deleted.
+        (WebCore::MediaConstraint::getMax): Deleted.
+        (WebCore::MediaConstraint::getExact): Deleted.
+        (WebCore::MediaConstraint::getIdeal): Deleted.
+        (WebCore::MediaConstraint::validForRange): Deleted.
+        (WebCore::MediaConstraint::find): Deleted.
+        (WebCore::MediaConstraint::fitnessDistance): Deleted.
+        (WebCore::MediaConstraint::type): Deleted.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::fitnessDistance): Use downcast<>.
+        (WebCore::applyNumericConstraint):
+        (WebCore::RealtimeMediaSource::applyConstraint): Ditto.
+        (WebCore::RealtimeMediaSource::selectSettings): Ditto. Use constraints.mandatoryConstraints.filter
+          instead of direct enumeration.
+        (WebCore::RealtimeMediaSource::applyConstraints):
+        (WebCore::RealtimeMediaSource::setSampleRate): Sample rate is an int, not a double.
+        (WebCore::RealtimeMediaSource::setSampleSize): Sample size is also an int.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::sessionSupportsConstraint): Use downcast<>.
+
+        * platform/mock/MediaConstraintsMock.cpp:
+        (WebCore::isIntMediaConstraintSatisfiable): Use downcast<>.
+        (WebCore::isDoubleMediaConstraintSatisfiable): Ditto.
+        (WebCore::isBooleanMediaConstraintSatisfiable): Ditto.
+        (WebCore::isStringMediaConstraintSatisfiable):
+        (WebCore::isSatisfiable):
+        (WebCore::MediaConstraintsMock::verifyConstraints): Use constraints.mandatoryConstraints.filter
+          instead of direct enumeration.
+        * platform/mock/MediaConstraintsMock.h:
+
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::createMediaStream):
+
 2016-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Some Now Playing behavior is broken after r206315

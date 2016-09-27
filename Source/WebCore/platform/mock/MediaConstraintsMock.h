@@ -39,7 +39,7 @@ class MediaConstraints;
 
 class MediaConstraintsMock {
 public:
-    static const String& verifyConstraints(RealtimeMediaSource::Type, const MediaConstraints&);
+    static const String verifyConstraints(RealtimeMediaSource::Type, const MediaConstraints&);
 };
 
 } // namespace WebCore

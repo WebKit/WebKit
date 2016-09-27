@@ -150,75 +150,84 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
     stop(callingObserver);
 }
 
+#if 1
 double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 {
     RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
 
-    switch (constraint.type()) {
+    switch (constraint.constraintType()) {
     case MediaConstraintType::Width: {
+        ASSERT(constraint.isInt());
         if (!capabilities.supportsWidth())
             return 0;
 
         auto range = capabilities.width();
-        return constraint.fitnessDistance(range.rangeMin().asInt, range.rangeMax().asInt);
+        return downcast<IntConstraint>(constraint).fitnessDistance(range.rangeMin().asInt, range.rangeMax().asInt);
         break;
     }
 
     case MediaConstraintType::Height: {
+        ASSERT(constraint.isInt());
         if (!capabilities.supportsHeight())
             return 0;
 
         auto range = capabilities.height();
-        return constraint.fitnessDistance(range.rangeMin().asInt, range.rangeMax().asInt);
+        return downcast<IntConstraint>(constraint).fitnessDistance(range.rangeMin().asInt, range.rangeMax().asInt);
         break;
     }
 
     case MediaConstraintType::FrameRate: {
+        ASSERT(constraint.isDouble());
         if (!capabilities.supportsFrameRate())
             return 0;
 
         auto range = capabilities.frameRate();
-        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
+        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
         break;
     }
 
     case MediaConstraintType::AspectRatio: {
+        ASSERT(constraint.isDouble());
         if (!capabilities.supportsAspectRatio())
             return 0;
 
         auto range = capabilities.aspectRatio();
-        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
+        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
         break;
     }
 
     case MediaConstraintType::Volume: {
+        ASSERT(constraint.isDouble());
         if (!capabilities.supportsVolume())
             return 0;
 
         auto range = capabilities.volume();
-        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
+        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
         break;
     }
 
     case MediaConstraintType::SampleRate: {
+        ASSERT(constraint.isInt());
         if (!capabilities.supportsSampleRate())
             return 0;
 
         auto range = capabilities.sampleRate();
-        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
+        return downcast<IntConstraint>(constraint).fitnessDistance(range.rangeMin().asInt, range.rangeMax().asInt);
         break;
     }
 
     case MediaConstraintType::SampleSize: {
+        ASSERT(constraint.isInt());
         if (!capabilities.supportsSampleSize())
             return 0;
 
         auto range = capabilities.sampleSize();
-        return constraint.fitnessDistance(range.rangeMin().asDouble, range.rangeMax().asDouble);
+        return downcast<IntConstraint>(constraint).fitnessDistance(range.rangeMin().asInt, range.rangeMax().asInt);
         break;
     }
 
     case MediaConstraintType::FacingMode: {
+        ASSERT(constraint.isString());
         if (!capabilities.supportsFacingMode())
             return 0;
 
@@ -227,32 +236,35 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
         supportedModes.reserveInitialCapacity(modes.size());
         for (auto& mode : modes)
             supportedModes.append(RealtimeMediaSourceSettings::facingMode(mode));
-        return constraint.fitnessDistance(supportedModes);
+        return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
         break;
     }
 
     case MediaConstraintType::EchoCancellation: {
+        ASSERT(constraint.isBoolean());
         if (!capabilities.supportsEchoCancellation())
             return 0;
 
         bool echoCancellationReadWrite = capabilities.echoCancellation() == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite;
-        return constraint.fitnessDistance(echoCancellationReadWrite);
+        return downcast<BooleanConstraint>(constraint).fitnessDistance(echoCancellationReadWrite);
         break;
     }
 
     case MediaConstraintType::DeviceId: {
+        ASSERT(constraint.isString());
         if (!capabilities.supportsDeviceId())
             return 0;
 
-        return constraint.fitnessDistance(m_id);
+        return downcast<StringConstraint>(constraint).fitnessDistance(m_id);
         break;
     }
 
     case MediaConstraintType::GroupId: {
+        ASSERT(constraint.isString());
         if (!capabilities.supportsDeviceId())
             return 0;
 
-        return constraint.fitnessDistance(settings().groupId());
+        return downcast<StringConstraint>(constraint).fitnessDistance(settings().groupId());
         break;
     }
 
@@ -263,9 +275,10 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 
     return 0;
 }
+#endif
 
 template <typename ValueType>
-static void applyNumericConstraint(const MediaConstraint& constraint, ValueType current, ValueType capabilityMin, ValueType capabilityMax, RealtimeMediaSource* source, void (RealtimeMediaSource::*function)(ValueType))
+static void applyNumericConstraint(const NumericConstraint<ValueType>& constraint, ValueType current, ValueType capabilityMin, ValueType capabilityMax, RealtimeMediaSource* source, void (RealtimeMediaSource::*applier)(ValueType))
 {
     ValueType value;
     ValueType min = capabilityMin;
@@ -273,7 +286,7 @@ static void applyNumericConstraint(const MediaConstraint& constraint, ValueType 
 
     if (constraint.getExact(value)) {
         ASSERT(constraint.validForRange(capabilityMin, capabilityMax));
-        (source->*function)(value);
+        (source->*applier)(value);
         return;
     }
 
@@ -302,91 +315,102 @@ static void applyNumericConstraint(const MediaConstraint& constraint, ValueType 
     }
 
     if (value != current)
-        (source->*function)(value);
+        (source->*applier)(value);
 }
 
 void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
 {
     RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
-    switch (constraint.type()) {
+    switch (constraint.constraintType()) {
     case MediaConstraintType::Width: {
+        ASSERT(constraint.isInt());
         if (!capabilities.supportsWidth())
             return;
 
         auto range = capabilities.width();
-        applyNumericConstraint(constraint, size().width(), range.rangeMin().asInt, range.rangeMax().asInt, this, &RealtimeMediaSource::setWidth);
+        applyNumericConstraint(downcast<IntConstraint>(constraint), size().width(), range.rangeMin().asInt, range.rangeMax().asInt, this, &RealtimeMediaSource::setWidth);
         break;
     }
 
     case MediaConstraintType::Height: {
+        ASSERT(constraint.isInt());
         if (!capabilities.supportsHeight())
             return;
 
         auto range = capabilities.height();
-        applyNumericConstraint(constraint, size().height(), range.rangeMin().asInt, range.rangeMax().asInt, this, &RealtimeMediaSource::setHeight);
+        applyNumericConstraint(downcast<IntConstraint>(constraint), size().height(), range.rangeMin().asInt, range.rangeMax().asInt, this, &RealtimeMediaSource::setHeight);
         break;
     }
 
     case MediaConstraintType::FrameRate: {
+        ASSERT(constraint.isDouble());
         if (!capabilities.supportsFrameRate())
             return;
 
         auto range = capabilities.frameRate();
-        applyNumericConstraint(constraint, frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setFrameRate);
+        applyNumericConstraint(downcast<DoubleConstraint>(constraint), frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setFrameRate);
         break;
     }
 
     case MediaConstraintType::AspectRatio: {
+        ASSERT(constraint.isDouble());
         if (!capabilities.supportsAspectRatio())
             return;
 
         auto range = capabilities.aspectRatio();
-        applyNumericConstraint(constraint, aspectRatio(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setAspectRatio);
+        applyNumericConstraint(downcast<DoubleConstraint>(constraint), aspectRatio(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setAspectRatio);
         break;
     }
 
     case MediaConstraintType::Volume: {
+        ASSERT(constraint.isDouble());
         if (!capabilities.supportsVolume())
             return;
 
         auto range = capabilities.volume();
-        applyNumericConstraint(constraint, volume(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setVolume);
+        applyNumericConstraint(downcast<DoubleConstraint>(constraint), volume(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setVolume);
         break;
     }
 
     case MediaConstraintType::SampleRate: {
+        ASSERT(constraint.isInt());
         if (!capabilities.supportsSampleRate())
             return;
 
         auto range = capabilities.sampleRate();
-        applyNumericConstraint(constraint, sampleRate(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setSampleRate);
+        applyNumericConstraint(downcast<IntConstraint>(constraint), sampleRate(), range.rangeMin().asInt, range.rangeMax().asInt, this, &RealtimeMediaSource::setSampleRate);
         break;
     }
 
     case MediaConstraintType::SampleSize: {
+        ASSERT(constraint.isInt());
         if (!capabilities.supportsSampleSize())
             return;
 
         auto range = capabilities.sampleSize();
-        applyNumericConstraint(constraint, sampleSize(), range.rangeMin().asDouble, range.rangeMax().asDouble, this, &RealtimeMediaSource::setSampleSize);
+        applyNumericConstraint(downcast<IntConstraint>(constraint), sampleSize(), range.rangeMin().asInt, range.rangeMax().asInt, this, &RealtimeMediaSource::setSampleSize);
         break;
     }
 
-    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::EchoCancellation: {
+        ASSERT(constraint.isBoolean());
         if (!capabilities.supportsEchoCancellation())
             return;
 
         bool setting;
-        if (constraint.getExact(setting) || constraint.getIdeal(setting))
+        const BooleanConstraint& boolConstraint = downcast<BooleanConstraint>(constraint);
+        if (boolConstraint.getExact(setting) || boolConstraint.getIdeal(setting))
             setEchoCancellation(setting);
         break;
+    }
 
     case MediaConstraintType::FacingMode: {
+        ASSERT(constraint.isString());
         if (!capabilities.supportsFacingMode())
             return;
 
         auto& supportedModes = capabilities.facingMode();
-        std::function<bool(MediaConstraint::ConstraintType, const String&)> filter = [supportedModes](MediaConstraint::ConstraintType, const String& modeString) {
+        auto filter = [supportedModes](const String& modeString) {
             auto mode = RealtimeMediaSourceSettings::videoFacingModeEnum(modeString);
             for (auto& supportedMode : supportedModes) {
                 if (mode == supportedMode)
@@ -395,7 +419,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return false;
         };
 
-        auto modeString = constraint.find(filter);
+        auto modeString = downcast<StringConstraint>(constraint).find(filter);
         if (!modeString.isEmpty())
             setFacingMode(RealtimeMediaSourceSettings::videoFacingModeEnum(modeString));
         break;
@@ -403,6 +427,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
 
     case MediaConstraintType::DeviceId:
     case MediaConstraintType::GroupId:
+        ASSERT(constraint.isString());
         // There is nothing to do here, neither can be changed.
         break;
 
@@ -431,16 +456,20 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     // 3. For every possible settings dictionary of copy compute its fitness distance, treating bare values of
     //    properties as ideal values. Let candidates be the set of settings dictionaries for which the fitness
     //    distance is finite.
-    auto& mandatoryConstraints = constraints.mandatoryConstraints();
-    for (auto& nameConstraintPair : mandatoryConstraints) {
-        const auto& constraint = nameConstraintPair.value;
-        if (fitnessDistance(*constraint) == std::numeric_limits<double>::infinity()) {
-            failedConstraint = constraint->name();
-            return false;
+
+    failedConstraint = emptyString();
+    constraints.mandatoryConstraints().filter([&](const MediaConstraint& constraint) {
+        if (fitnessDistance(constraint) == std::numeric_limits<double>::infinity()) {
+            failedConstraint = constraint.name();
+            return true;
         }
 
-        candidates.set(*constraint);
-    }
+        candidates.set(constraint);
+        return false;
+    });
+
+    if (!failedConstraint.isEmpty())
+        return false;
 
     // 4. If candidates is empty, return undefined as the result of the SelectSettings() algorithm.
     if (candidates.isEmpty())
@@ -453,15 +482,17 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     //     values of properties as exact.
     Vector<std::pair<double, MediaTrackConstraintSetMap>> supportedConstraints;
     double minimumDistance = std::numeric_limits<double>::infinity();
+
     for (const auto& advancedConstraint : constraints.advancedConstraints()) {
         double constraintDistance = 0;
         bool supported = false;
-        for (auto& nameConstraintPair : advancedConstraint) {
-            double distance = fitnessDistance(*nameConstraintPair.value);
+
+        advancedConstraint.forEach([&](const MediaConstraint& constraint) {
+            double distance = fitnessDistance(constraint);
             constraintDistance += distance;
             if (distance != std::numeric_limits<double>::infinity())
                 supported = true;
-        }
+        });
 
         if (constraintDistance < minimumDistance)
             minimumDistance = constraintDistance;
@@ -476,35 +507,34 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     // 6. Select one settings dictionary from candidates, and return it as the result of the SelectSettings() algorithm.
     //    The UA should use the one with the smallest fitness distance, as calculated in step 3.
     if (minimumDistance != std::numeric_limits<double>::infinity()) {
-        supportedConstraints.removeAllMatching( [&] (std::pair<double, MediaTrackConstraintSetMap> pair) -> bool {
+        supportedConstraints.removeAllMatching([&](std::pair<double, MediaTrackConstraintSetMap> pair) -> bool {
             return pair.first > minimumDistance;
         });
 
         if (!supportedConstraints.isEmpty()) {
             auto& advancedConstraint = supportedConstraints[0].second;
-            for (auto& nameConstraintPair : advancedConstraint)
-                candidates.merge(*nameConstraintPair.value);
+            advancedConstraint.forEach([&](const MediaConstraint& constraint) {
+                candidates.merge(constraint);
+            });
         }
     }
 
     return true;
 }
 
-
 void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler successHandler, FailureHandler failureHandler)
 {
     ASSERT(constraints.isValid());
 
     FlattenedConstraint candidates;
-
     String failedConstraint;
     if (!selectSettings(constraints, candidates, failedConstraint)) {
         failureHandler(failedConstraint, "Constraint not supported");
         return;
     }
 
-    for (auto constraint : candidates)
-        applyConstraint(*constraint);
+    for (auto& variant : candidates)
+        applyConstraint(variant);
 
     successHandler();
 }
@@ -578,7 +608,7 @@ void RealtimeMediaSource::setVolume(double volume)
     settingsDidChange();
 }
 
-void RealtimeMediaSource::setSampleRate(double rate)
+void RealtimeMediaSource::setSampleRate(int rate)
 {
     if (m_sampleRate == rate || !applySampleRate(rate))
         return;
@@ -587,7 +617,7 @@ void RealtimeMediaSource::setSampleRate(double rate)
     settingsDidChange();
 }
 
-void RealtimeMediaSource::setSampleSize(double size)
+void RealtimeMediaSource::setSampleSize(int size)
 {
     if (m_sampleSize == size || !applySampleSize(size))
         return;

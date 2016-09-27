@@ -109,7 +109,7 @@ void MockRealtimeMediaSourceCenter::createMediaStream(PassRefPtr<MediaStreamCrea
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
     if (audioConstraints.isValid()) {
-        const String& invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Audio, audioConstraints);
+        const String invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Audio, audioConstraints);
         if (!invalidQuery.isEmpty()) {
             client->failedToCreateStreamWithConstraintsError(invalidQuery);
             return;
@@ -120,7 +120,7 @@ void MockRealtimeMediaSourceCenter::createMediaStream(PassRefPtr<MediaStreamCrea
     }
 
     if (videoConstraints.isValid()) {
-        const String& invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Video, videoConstraints);
+        const String invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Video, videoConstraints);
         if (!invalidQuery.isEmpty()) {
             client->failedToCreateStreamWithConstraintsError(invalidQuery);
             return;

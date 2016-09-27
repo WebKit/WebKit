@@ -53,8 +53,8 @@ protected:
 private:
 
     bool applyVolume(double) override { return true; }
-    bool applySampleRate(double) override { return true; }
-    bool applySampleSize(double) override { return true; }
+    bool applySampleRate(int) override { return true; }
+    bool applySampleSize(int) override { return true; }
     bool applyEchoCancellation(bool) override { return true; }
 
     void updateSettings(RealtimeMediaSourceSettings&) override;

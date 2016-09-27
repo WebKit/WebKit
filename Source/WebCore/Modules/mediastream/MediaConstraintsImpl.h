@@ -48,7 +48,6 @@ public:
     static Ref<MediaConstraintsImpl> create(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid);
 
     virtual ~MediaConstraintsImpl();
-    void initialize(const Dictionary&);
 
     const MediaTrackConstraintSetMap& mandatoryConstraints() const final { return m_mandatoryConstraints; }
     const Vector<MediaTrackConstraintSetMap>& advancedConstraints() const final { return m_advancedConstraints; }

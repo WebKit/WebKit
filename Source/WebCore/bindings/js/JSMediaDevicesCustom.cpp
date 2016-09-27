@@ -58,9 +58,9 @@ static void initializeStringConstraintWithList(StringConstraint& constraint, voi
     }
 }
 
-static RefPtr<StringConstraint> createStringConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
+static Optional<StringConstraint> createStringConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
-    auto constraint = StringConstraint::create(name, type);
+    auto constraint = StringConstraint(name, type);
 
     // Dictionary constraint value.
     Dictionary dictionaryValue;
@@ -71,7 +71,7 @@ static RefPtr<StringConstraint> createStringConstraint(const Dictionary& mediaTr
         else {
             String exactStringValue;
             if (dictionaryValue.get("exact", exactStringValue))
-                constraint->setExact(exactStringValue);
+                constraint.setExact(exactStringValue);
         }
 
         ArrayValue idealArrayValue;
@@ -80,12 +80,12 @@ static RefPtr<StringConstraint> createStringConstraint(const Dictionary& mediaTr
         else {
             String idealStringValue;
             if (!dictionaryValue.get("ideal", idealStringValue))
-                constraint->setIdeal(idealStringValue);
+                constraint.setIdeal(idealStringValue);
         }
 
-        if (constraint->isEmpty()) {
+        if (constraint.isEmpty()) {
             LOG(Media, "createStringConstraint() - ignoring string constraint '%s' with dictionary value since it has no valid or supported key/value pairs.", name.utf8().data());
-            return nullptr;
+            return Nullopt;
         }
         
         return WTFMove(constraint);
@@ -96,9 +96,9 @@ static RefPtr<StringConstraint> createStringConstraint(const Dictionary& mediaTr
     if (mediaTrackConstraintSet.get(name, arrayValue) && !arrayValue.isUndefinedOrNull()) {
         initializeStringConstraintWithList(constraint, &StringConstraint::appendIdeal, arrayValue);
 
-        if (constraint->isEmpty()) {
+        if (constraint.isEmpty()) {
             LOG(Media, "createStringConstraint() - ignoring string constraint '%s' with array value since it is empty.", name.utf8().data());
-            return nullptr;
+            return Nullopt;
         }
 
         return WTFMove(constraint);
@@ -108,36 +108,36 @@ static RefPtr<StringConstraint> createStringConstraint(const Dictionary& mediaTr
     String value;
     if (mediaTrackConstraintSet.get(name, value)) {
         if (constraintSetType == ConstraintSetType::Mandatory)
-            constraint->setIdeal(value);
+            constraint.setIdeal(value);
         else
-            constraint->setExact(value);
+            constraint.setExact(value);
         
         return WTFMove(constraint);
     }
 
     // Invalid constraint value.
     LOG(Media, "createStringConstraint() - ignoring string constraint '%s' since it has neither a dictionary nor sequence nor scalar value.", name.utf8().data());
-    return nullptr;
+    return Nullopt;
 }
 
-static RefPtr<BooleanConstraint> createBooleanConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
+static Optional<BooleanConstraint> createBooleanConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
-    auto constraint = BooleanConstraint::create(name, type);
+    auto constraint = BooleanConstraint(name, type);
 
     // Dictionary constraint value.
     Dictionary dictionaryValue;
     if (mediaTrackConstraintSet.get(name, dictionaryValue) && !dictionaryValue.isUndefinedOrNull()) {
         bool exactValue;
         if (dictionaryValue.get("exact", exactValue))
-            constraint->setExact(exactValue);
+            constraint.setExact(exactValue);
 
         bool idealValue;
         if (dictionaryValue.get("ideal", idealValue))
-            constraint->setIdeal(idealValue);
+            constraint.setIdeal(idealValue);
 
-        if (constraint->isEmpty()) {
+        if (constraint.isEmpty()) {
             LOG(Media, "createBooleanConstraint() - ignoring boolean constraint '%s' with dictionary value since it has no valid or supported key/value pairs.", name.utf8().data());
-            return nullptr;
+            return Nullopt;
         }
 
         return WTFMove(constraint);
@@ -147,44 +147,44 @@ static RefPtr<BooleanConstraint> createBooleanConstraint(const Dictionary& media
     bool value;
     if (mediaTrackConstraintSet.get(name, value)) {
         if (constraintSetType == ConstraintSetType::Mandatory)
-            constraint->setIdeal(value);
+            constraint.setIdeal(value);
         else
-            constraint->setExact(value);
+            constraint.setExact(value);
         
         return WTFMove(constraint);
     }
 
     // Invalid constraint value.
     LOG(Media, "createBooleanConstraint() - ignoring boolean constraint '%s' since it has neither a dictionary nor scalar value.", name.utf8().data());
-    return nullptr;
+    return Nullopt;
 }
 
-static RefPtr<DoubleConstraint> createDoubleConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
+static Optional<DoubleConstraint> createDoubleConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
-    auto constraint = DoubleConstraint::create(name, type);
+    auto constraint = DoubleConstraint(name, type);
 
     // Dictionary constraint value.
     Dictionary dictionaryValue;
     if (mediaTrackConstraintSet.get(name, dictionaryValue) && !dictionaryValue.isUndefinedOrNull()) {
         double minValue;
         if (dictionaryValue.get("min", minValue))
-            constraint->setMin(minValue);
+            constraint.setMin(minValue);
 
         double maxValue;
         if (dictionaryValue.get("max", maxValue))
-            constraint->setMax(maxValue);
+            constraint.setMax(maxValue);
 
         double exactValue;
         if (dictionaryValue.get("exact", exactValue))
-            constraint->setExact(exactValue);
+            constraint.setExact(exactValue);
 
         double idealValue;
         if (dictionaryValue.get("ideal", idealValue))
-            constraint->setIdeal(idealValue);
+            constraint.setIdeal(idealValue);
 
-        if (constraint->isEmpty()) {
+        if (constraint.isEmpty()) {
             LOG(Media, "createDoubleConstraint() - ignoring double constraint '%s' with dictionary value since it has no valid or supported key/value pairs.", name.utf8().data());
-            return nullptr;
+            return Nullopt;
         }
 
         return WTFMove(constraint);
@@ -194,44 +194,44 @@ static RefPtr<DoubleConstraint> createDoubleConstraint(const Dictionary& mediaTr
     double value;
     if (mediaTrackConstraintSet.get(name, value)) {
         if (constraintSetType == ConstraintSetType::Mandatory)
-            constraint->setIdeal(value);
+            constraint.setIdeal(value);
         else
-            constraint->setExact(value);
+            constraint.setExact(value);
         
         return WTFMove(constraint);
     }
 
     // Invalid constraint value.
     LOG(Media, "createDoubleConstraint() - ignoring double constraint '%s' since it has neither a dictionary nor scalar value.", name.utf8().data());
-    return nullptr;
+    return Nullopt;
 }
 
-static RefPtr<IntConstraint> createIntConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
+static Optional<IntConstraint> createIntConstraint(const Dictionary& mediaTrackConstraintSet, const String& name, MediaConstraintType type, ConstraintSetType constraintSetType)
 {
-    auto constraint = IntConstraint::create(name, type);
+    auto constraint = IntConstraint(name, type);
 
     // Dictionary constraint value.
     Dictionary dictionaryValue;
     if (mediaTrackConstraintSet.get(name, dictionaryValue) && !dictionaryValue.isUndefinedOrNull()) {
         int minValue;
         if (dictionaryValue.get("min", minValue))
-            constraint->setMin(minValue);
+            constraint.setMin(minValue);
 
         int maxValue;
         if (dictionaryValue.get("max", maxValue))
-            constraint->setMax(maxValue);
+            constraint.setMax(maxValue);
 
         int exactValue;
         if (dictionaryValue.get("exact", exactValue))
-            constraint->setExact(exactValue);
+            constraint.setExact(exactValue);
 
         int idealValue;
         if (dictionaryValue.get("ideal", idealValue))
-            constraint->setIdeal(idealValue);
+            constraint.setIdeal(idealValue);
 
-        if (constraint->isEmpty()) {
+        if (constraint.isEmpty()) {
             LOG(Media, "createIntConstraint() - ignoring long constraint '%s' with dictionary value since it has no valid or supported key/value pairs.", name.utf8().data());
-            return nullptr;
+            return Nullopt;
         }
 
         return WTFMove(constraint);
@@ -241,54 +241,63 @@ static RefPtr<IntConstraint> createIntConstraint(const Dictionary& mediaTrackCon
     int value;
     if (mediaTrackConstraintSet.get(name, value)) {
         if (constraintSetType == ConstraintSetType::Mandatory)
-            constraint->setIdeal(value);
+            constraint.setIdeal(value);
         else
-            constraint->setExact(value);
+            constraint.setExact(value);
         
         return WTFMove(constraint);
     }
 
     // Invalid constraint value.
     LOG(Media, "createIntConstraint() - ignoring long constraint '%s' since it has neither a dictionary nor scalar value.", name.utf8().data());
-    return nullptr;
+    return Nullopt;
 }
 
 static void parseMediaTrackConstraintSetForKey(const Dictionary& mediaTrackConstraintSet, const String& name, MediaTrackConstraintSetMap& map, ConstraintSetType constraintSetType)
 {
     MediaConstraintType constraintType = RealtimeMediaSourceSupportedConstraints::constraintFromName(name);
-
-    RefPtr<MediaConstraint> mediaConstraint;
     switch (constraintType) {
     case MediaConstraintType::Width:
+        map.set(constraintType, createIntConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
+        break;
     case MediaConstraintType::Height:
+        map.set(constraintType, createIntConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
+        break;
     case MediaConstraintType::SampleRate:
+        map.set(constraintType, createIntConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
+        break;
     case MediaConstraintType::SampleSize:
-        mediaConstraint = createIntConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
+        map.set(constraintType, createIntConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
         break;
 
     case MediaConstraintType::AspectRatio:
+        map.set(constraintType, createDoubleConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
+        break;
     case MediaConstraintType::FrameRate:
+        map.set(constraintType, createDoubleConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
+        break;
     case MediaConstraintType::Volume:
-        mediaConstraint = createDoubleConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
+        map.set(constraintType, createDoubleConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
         break;
 
     case MediaConstraintType::EchoCancellation:
-        mediaConstraint = createBooleanConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
+        map.set(constraintType, createBooleanConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
         break;
 
     case MediaConstraintType::FacingMode:
+        map.set(constraintType, createStringConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
+        break;
     case MediaConstraintType::DeviceId:
+        map.set(constraintType, createStringConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
+        break;
     case MediaConstraintType::GroupId:
-        mediaConstraint = createStringConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType);
+        map.set(constraintType, createStringConstraint(mediaTrackConstraintSet, name, constraintType, constraintSetType));
         break;
 
     case MediaConstraintType::Unknown:
-        LOG(Media, "parseMediaTrackConstraintSetForKey() - found unsupported constraint '%s'.", name.utf8().data());
-        mediaConstraint = UnknownConstraint::create(name, constraintType);
-        break;
+        LOG(Media, "parseMediaTrackConstraintSetForKey() - ignoring unsupported constraint '%s'.", name.utf8().data());
+        return;
     }
-    
-    map.add(name, WTFMove(mediaConstraint));
 }
 
 static void parseAdvancedConstraints(const Dictionary& mediaTrackConstraints, Vector<MediaTrackConstraintSetMap>& advancedConstraints)

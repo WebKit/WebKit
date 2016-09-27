@@ -148,13 +148,13 @@ public:
     void setVolume(double);
     virtual bool applyVolume(double) { return false; }
 
-    double sampleRate() const { return m_sampleRate; }
-    void setSampleRate(double);
-    virtual bool applySampleRate(double) { return false; }
+    int sampleRate() const { return m_sampleRate; }
+    void setSampleRate(int);
+    virtual bool applySampleRate(int) { return false; }
 
-    double sampleSize() const { return m_sampleSize; }
-    void setSampleSize(double);
-    virtual bool applySampleSize(double) { return false; }
+    int sampleSize() const { return m_sampleSize; }
+    void setSampleSize(int);
+    virtual bool applySampleSize(int) { return false; }
 
     bool echoCancellation() const { return m_echoCancellation; }
     void setEchoCancellation(bool);
@@ -170,7 +170,6 @@ protected:
 private:
     WeakPtr<RealtimeMediaSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
-    bool supportsConstraints(const MediaTrackConstraintSetMap&);
     bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
     double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);

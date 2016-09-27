@@ -72,16 +72,18 @@ bool CaptureDeviceManager::captureDeviceFromDeviceID(const String& captureDevice
 
 bool CaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::Type type, const MediaConstraints& constraints, const CaptureSessionInfo* session, String& invalidConstraint)
 {
-    auto& mandatoryConstraints = constraints.mandatoryConstraints();
-    for (auto& nameConstraintPair : mandatoryConstraints) {
-        if (sessionSupportsConstraint(session, type, *nameConstraintPair.value))
-            continue;
+    invalidConstraint = emptyString();
+    constraints.mandatoryConstraints().filter([&](const MediaConstraint& constraint) {
+        if (!sessionSupportsConstraint(session, type, constraint)) {
+            invalidConstraint = constraint.name();
+            return true;
+        }
 
-        invalidConstraint = nameConstraintPair.key;
         return false;
-    }
+    });
 
-    return true;
+    return invalidConstraint.isEmpty();
+
 }
 
 Vector<RefPtr<RealtimeMediaSource>> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type type, MediaConstraints& constraints)
@@ -153,7 +155,7 @@ static inline RealtimeMediaSourceSettings::VideoFacingMode facingModeFromString(
 bool CaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type type, const MediaConstraint& constraint)
 {
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    MediaConstraintType constraintType = constraint.type();
+    MediaConstraintType constraintType = constraint.constraintType();
     if (!supportedConstraints.supportsConstraint(constraintType))
         return false;
 
@@ -176,7 +178,7 @@ bool CaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*, 
 
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160793. Handle sequence of facingMode constraints.
         Vector<String> exactFacingMode;
-        if (!constraint.getExact(exactFacingMode))
+        if (!downcast<const StringConstraint>(constraint).getExact(exactFacingMode))
             return false;
 
         return bestDeviceForFacingMode(facingModeFromString(exactFacingMode[0]));
@@ -192,15 +194,15 @@ bool CaptureDeviceManager::isSupportedFrameRate(const MediaConstraint& constrain
     bool isSupported = true;
 
     int min = 0;
-    if (constraint.getMin(min))
+    if (downcast<const IntConstraint>(constraint).getMin(min))
         isSupported &= min > 60;
 
     int max = 60;
-    if (constraint.getMax(max))
+    if (downcast<const IntConstraint>(constraint).getMax(max))
         isSupported &= max < min;
 
     int exact;
-    if (constraint.getExact(exact))
+    if (downcast<const IntConstraint>(constraint).getExact(exact))
         isSupported &= (exact < min || exact > max);
 
     return isSupported;

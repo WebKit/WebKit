@@ -267,7 +267,7 @@ CaptureSessionInfo AVCaptureDeviceManager::defaultCaptureSession() const
 bool AVCaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo* session, RealtimeMediaSource::Type type, const MediaConstraint& constraint)
 {
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    MediaConstraintType constraintType = constraint.type();
+    MediaConstraintType constraintType = constraint.constraintType();
     if (!supportedConstraints.supportsConstraint(constraintType))
         return false;
 
@@ -279,7 +279,7 @@ bool AVCaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*
         if (constraintType == MediaConstraintType::Width) {
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160578. Support min, max constraints.
             int exact;
-            if (!constraint.getExact(exact))
+            if (!downcast<const IntConstraint>(constraint).getExact(exact))
                 return false;
 
             return !session->bestSessionPresetForVideoDimensions(exact, 0).isEmpty();
@@ -288,7 +288,7 @@ bool AVCaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*
         if (constraintType == MediaConstraintType::Height) {
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160578. Support min, max constraints.
             int exact;
-            if (!constraint.getExact(exact))
+            if (!downcast<const IntConstraint>(constraint).getExact(exact))
                 return false;
 
             return !session->bestSessionPresetForVideoDimensions(0, exact).isEmpty();

@@ -34,81 +34,9 @@
 #if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
-
-Ref<MediaConstraint> MediaConstraint::create(const String& name)
-{
-    MediaConstraintType constraintType = RealtimeMediaSourceSupportedConstraints::constraintFromName(name);
-
-    switch (constraintType) {
-    case MediaConstraintType::Width:
-    case MediaConstraintType::Height:
-    case MediaConstraintType::SampleRate:
-    case MediaConstraintType::SampleSize:
-        return IntConstraint::create(name, constraintType);
-    case MediaConstraintType::AspectRatio:
-    case MediaConstraintType::FrameRate:
-    case MediaConstraintType::Volume:
-        return DoubleConstraint::create(name, constraintType);
-    case MediaConstraintType::EchoCancellation:
-        return BooleanConstraint::create(name, constraintType);
-    case MediaConstraintType::FacingMode:
-    case MediaConstraintType::DeviceId:
-    case MediaConstraintType::GroupId:
-        return StringConstraint::create(name, constraintType);
-    case MediaConstraintType::Unknown:
-        return UnknownConstraint::create(name, constraintType);
-    }
-
-    ASSERT_NOT_REACHED();
-    return MediaConstraint::create(String());
-}
-
-Ref<MediaConstraint> MediaConstraint::copy() const
-{
-    return MediaConstraint::create(name());
-}
-
-Ref<MediaConstraint> IntConstraint::copy() const
-{
-    auto copy = IntConstraint::create(name(), type());
-    copy->m_min = m_min;
-    copy->m_max = m_max;
-    copy->m_exact = m_exact;
-    copy->m_ideal = m_ideal;
-
-    return copy.leakRef();
-}
-
-Ref<MediaConstraint> DoubleConstraint::copy() const
-{
-    auto copy = DoubleConstraint::create(name(), type());
-    copy->m_min = m_min;
-    copy->m_max = m_max;
-    copy->m_exact = m_exact;
-    copy->m_ideal = m_ideal;
-    
-    return copy.leakRef();
-}
-
-Ref<MediaConstraint> BooleanConstraint::copy() const
-{
-    auto copy = BooleanConstraint::create(name(), type());
-    copy->m_exact = m_exact;
-    copy->m_ideal = m_ideal;
-
-    return copy.leakRef();
-}
-
-Ref<MediaConstraint> StringConstraint::copy() const
-{
-    auto copy = StringConstraint::create(name(), type());
-    copy->m_exact = m_exact;
-    copy->m_ideal = m_ideal;
-
-    return copy.leakRef();
-}
 
 bool BooleanConstraint::getExact(bool& exact) const
 {
@@ -169,15 +97,15 @@ bool StringConstraint::getIdeal(Vector<String>& ideal) const
     return true;
 }
 
-const String& StringConstraint::find(std::function<bool(ConstraintType, const String&)> filter) const
+const String& StringConstraint::find(std::function<bool(const String&)> filter) const
 {
     for (auto& constraint : m_exact) {
-        if (filter(ConstraintType::ExactConstraint, constraint))
+        if (filter(constraint))
             return constraint;
     }
 
     for (auto& constraint : m_ideal) {
-        if (filter(ConstraintType::IdealConstraint, constraint))
+        if (filter(constraint))
             return constraint;
     }
     
@@ -222,11 +150,14 @@ double StringConstraint::fitnessDistance(const Vector<String>& values) const
 
 void StringConstraint::merge(const MediaConstraint& other)
 {
+    ASSERT(other.isString());
+    const StringConstraint& typedOther = downcast<StringConstraint>(other);
+
     if (other.isEmpty())
         return;
 
     Vector<String> values;
-    if (other.getExact(values)) {
+    if (typedOther.getExact(values)) {
         if (m_exact.isEmpty())
             m_exact = values;
         else {
@@ -237,7 +168,7 @@ void StringConstraint::merge(const MediaConstraint& other)
         }
     }
 
-    if (other.getIdeal(values)) {
+    if (typedOther.getIdeal(values)) {
         if (m_ideal.isEmpty())
             m_ideal = values;
         else {
@@ -251,26 +182,233 @@ void StringConstraint::merge(const MediaConstraint& other)
 
 void FlattenedConstraint::set(const MediaConstraint& constraint)
 {
-    for (auto existingConstraint : m_constraints) {
-        if (existingConstraint->type() == constraint.type()) {
-            existingConstraint = constraint.copy();
+    for (auto& variant : m_variants) {
+        if (variant.constraintType() == constraint.constraintType())
             return;
-        }
     }
 
-    m_constraints.append(constraint.copy());
+    append(constraint);
 }
 
 void FlattenedConstraint::merge(const MediaConstraint& constraint)
 {
-    for (auto existingConstraint : m_constraints) {
-        if (existingConstraint->type() == constraint.type()) {
-            existingConstraint->merge(constraint);
+    for (auto& variant : *this) {
+        if (variant.constraintType() != constraint.constraintType())
+            continue;
+
+        switch (variant.dataType()) {
+        case MediaConstraint::DataType::Integer:
+            ASSERT(constraint.isInt());
+            downcast<const IntConstraint>(variant).merge(downcast<const IntConstraint>(constraint));
+            return;
+        case MediaConstraint::DataType::Double:
+            ASSERT(constraint.isDouble());
+            downcast<const DoubleConstraint>(variant).merge(downcast<const DoubleConstraint>(constraint));
+            return;
+        case MediaConstraint::DataType::Boolean:
+            ASSERT(constraint.isBoolean());
+            downcast<const BooleanConstraint>(variant).merge(downcast<const BooleanConstraint>(constraint));
+            return;
+        case MediaConstraint::DataType::String:
+            ASSERT(constraint.isString());
+            downcast<const StringConstraint>(variant).merge(downcast<const StringConstraint>(constraint));
+            return;
+        case MediaConstraint::DataType::None:
+            ASSERT_NOT_REACHED();
             return;
         }
     }
 
-    m_constraints.append(constraint.copy());
+    append(constraint);
+}
+
+void FlattenedConstraint::append(const MediaConstraint& constraint)
+{
+#ifndef NDEBUG
+    ++m_generation;
+#endif
+
+    m_variants.append(ConstraintHolder::create(constraint));
+
+}
+
+void MediaTrackConstraintSetMap::forEach(std::function<void(const MediaConstraint&)> callback) const
+{
+    if (m_width && !m_width->isEmpty())
+        callback(*m_width);
+    if (m_height && !m_height->isEmpty())
+        callback(*m_height);
+    if (m_sampleRate && !m_sampleRate->isEmpty())
+        callback(*m_sampleRate);
+    if (m_sampleSize && !m_sampleSize->isEmpty())
+        callback(*m_sampleSize);
+
+    if (m_aspectRatio && !m_aspectRatio->isEmpty())
+        callback(*m_aspectRatio);
+    if (m_frameRate && !m_frameRate->isEmpty())
+        callback(*m_frameRate);
+    if (m_volume && !m_volume->isEmpty())
+        callback(*m_volume);
+
+    if (m_echoCancellation && !m_echoCancellation->isEmpty())
+        callback(*m_echoCancellation);
+
+    if (m_facingMode && !m_facingMode->isEmpty())
+        callback(*m_facingMode);
+    if (m_deviceId && !m_deviceId->isEmpty())
+        callback(*m_deviceId);
+    if (m_groupId && !m_groupId->isEmpty())
+        callback(*m_groupId);
+}
+
+void MediaTrackConstraintSetMap::filter(std::function<bool(const MediaConstraint&)> callback) const
+{
+    if (m_width && !m_width->isEmpty() && callback(*m_width))
+        return;
+    if (m_height && !m_height->isEmpty() && callback(*m_height))
+        return;
+    if (m_sampleRate && !m_sampleRate->isEmpty() && callback(*m_sampleRate))
+        return;
+    if (m_sampleSize && !m_sampleSize->isEmpty() && callback(*m_sampleSize))
+        return;
+
+    if (m_aspectRatio && !m_aspectRatio->isEmpty() && callback(*m_aspectRatio))
+        return;
+    if (m_frameRate && !m_frameRate->isEmpty() && callback(*m_frameRate))
+        return;
+    if (m_volume && !m_volume->isEmpty() && callback(*m_volume))
+        return;
+
+    if (m_echoCancellation && !m_echoCancellation->isEmpty() && callback(*m_echoCancellation))
+        return;
+
+    if (m_facingMode && !m_facingMode->isEmpty() && callback(*m_facingMode))
+        return;
+    if (m_deviceId && !m_deviceId->isEmpty() && callback(*m_deviceId))
+        return;
+    if (m_groupId && !m_groupId->isEmpty() && callback(*m_groupId))
+        return;
+}
+
+bool MediaTrackConstraintSetMap::isEmpty() const
+{
+    return (!m_width || m_width->isEmpty())
+        && (!m_height || m_height->isEmpty())
+        && (!m_sampleRate || m_sampleRate->isEmpty())
+        && (!m_sampleSize || m_sampleSize->isEmpty())
+        && (!m_aspectRatio || m_aspectRatio->isEmpty())
+        && (!m_frameRate || m_frameRate->isEmpty())
+        && (!m_volume || m_volume->isEmpty())
+        && (!m_echoCancellation || m_echoCancellation->isEmpty())
+        && (!m_facingMode || m_facingMode->isEmpty())
+        && (!m_deviceId || m_deviceId->isEmpty())
+        && (!m_groupId || m_groupId->isEmpty());
+}
+
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<IntConstraint>&& constraint)
+{
+    switch (constraintType) {
+    case MediaConstraintType::Width:
+        m_width = WTFMove(constraint);
+        break;
+    case MediaConstraintType::Height:
+        m_height = WTFMove(constraint);
+        break;
+    case MediaConstraintType::SampleRate:
+        m_sampleRate = WTFMove(constraint);
+        break;
+    case MediaConstraintType::SampleSize:
+        m_sampleSize = WTFMove(constraint);
+        break;
+
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<DoubleConstraint>&& constraint)
+{
+    switch (constraintType) {
+    case MediaConstraintType::AspectRatio:
+        m_aspectRatio = WTFMove(constraint);
+        break;
+    case MediaConstraintType::FrameRate:
+        m_frameRate = WTFMove(constraint);
+        break;
+    case MediaConstraintType::Volume:
+        m_volume = WTFMove(constraint);
+        break;
+
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<BooleanConstraint>&& constraint)
+{
+    switch (constraintType) {
+    case MediaConstraintType::EchoCancellation:
+        m_echoCancellation = WTFMove(constraint);
+        break;
+
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<StringConstraint>&& constraint)
+{
+    switch (constraintType) {
+    case MediaConstraintType::FacingMode:
+        m_facingMode = WTFMove(constraint);
+        break;
+    case MediaConstraintType::DeviceId:
+        m_deviceId = WTFMove(constraint);
+        break;
+    case MediaConstraintType::GroupId:
+        m_groupId = WTFMove(constraint);
+        break;
+
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 }
