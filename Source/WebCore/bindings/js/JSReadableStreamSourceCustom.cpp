@@ -35,20 +35,40 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSReadableStreamSource::start(ExecState& state)
+static void startReadableStream(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    JSReadableStreamDefaultController* controller = jsDynamicCast<JSReadableStreamDefaultController*>(state.argument(0));
+    JSReadableStreamSource* source = jsDynamicCast<JSReadableStreamSource*>(state.thisValue());
+    ASSERT(source);
+
+    ASSERT(state.argumentCount());
+    JSReadableStreamDefaultController* controller = jsDynamicCast<JSReadableStreamDefaultController*>(state.uncheckedArgument(0));
     ASSERT(controller);
 
-    JSReadableStreamSource* jsSource = const_cast<JSReadableStreamSource*>(this);
-    m_controller.set(state.vm(), jsSource, state.argument(0));
+    source->wrapped().start(ReadableStreamDefaultController(controller), WTFMove(promise));
+}
 
-    ASSERT(globalObject());
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
-    if (!promiseDeferred)
-        return jsUndefined();
-    wrapped().start(ReadableStreamDefaultController(controller), DeferredPromise::create(*globalObject(), *promiseDeferred));
-    return promiseDeferred->promise();
+JSValue JSReadableStreamSource::start(ExecState& state)
+{
+    ASSERT(state.argumentCount());
+    JSReadableStreamDefaultController* controller = jsDynamicCast<JSReadableStreamDefaultController*>(state.uncheckedArgument(0));
+    ASSERT(controller);
+
+    m_controller.set(state.vm(), this, controller);
+
+    return callPromiseFunction<startReadableStream, PromiseExecutionScope::WindowOrWorker>(state);
+}
+
+static void pullReadableStream(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    JSReadableStreamSource* source = jsDynamicCast<JSReadableStreamSource*>(state.thisValue());
+    ASSERT(source);
+
+    source->wrapped().pull(WTFMove(promise));
+}
+
+JSValue JSReadableStreamSource::pull(ExecState& state)
+{
+    return callPromiseFunction<pullReadableStream, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 JSValue JSReadableStreamSource::controller(ExecState&) const

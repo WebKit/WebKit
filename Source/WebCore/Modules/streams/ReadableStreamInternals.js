@@ -426,10 +426,6 @@ function readFromReadableStreamDefaultReader(reader)
     const stream = reader.@ownerReadableStream;
     @assert(!!stream);
 
-    // Native sources may want to start enqueueing at the time of the first read request.
-    if (!stream.@disturbed && stream.@state === @streamReadable && stream.@readableStreamController.@underlyingSource.@firstReadCallback)
-        stream.@readableStreamController.@underlyingSource.@firstReadCallback();
-
     stream.@disturbed = true;
     if (stream.@state === @streamClosed)
         return @Promise.@resolve({value: @undefined, done: true});

@@ -52,8 +52,8 @@ public:
     bool isReadableStreamLocked() const;
 
 private:
-    void firstReadCallback() final;
     void doStart() final;
+    void doPull() final;
     void doCancel() final;
     void setActive() final;
     void setInactive() final;

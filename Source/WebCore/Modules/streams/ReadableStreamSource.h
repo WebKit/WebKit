@@ -44,44 +44,65 @@ public:
 
     typedef DOMPromise<std::nullptr_t> Promise;
 
-    virtual void firstReadCallback() { }
     void start(ReadableStreamDefaultController&&, Promise&&);
+    void pull(Promise&&);
     void cancel(JSC::JSValue);
 
-    bool isStarting() const { return !!m_startPromise; }
+    bool isStarting() const { return !!m_promise; }
 
 protected:
     ReadableStreamDefaultController& controller() { return m_controller.value(); }
     const ReadableStreamDefaultController& controller() const { return m_controller.value(); }
 
     void startFinished();
+    void pullFinished();
     void cancelFinished();
     void clean();
 
     virtual void setActive() = 0;
     virtual void setInactive() = 0;
 
-    virtual void doStart() { startFinished(); }
-    virtual void doCancel() { }
+    virtual void doStart() = 0;
+    virtual void doPull() = 0;
+    virtual void doCancel() = 0;
 
 private:
-    Optional<Promise> m_startPromise;
+    Optional<Promise> m_promise;
     Optional<ReadableStreamDefaultController> m_controller;
 };
 
 inline void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, Promise&& promise)
 {
-    m_startPromise = WTFMove(promise);
+    ASSERT(!m_promise);
+    m_promise = WTFMove(promise);
     m_controller = WTFMove(controller);
 
     setActive();
     doStart();
 }
 
+inline void ReadableStreamSource::pull(Promise&& promise)
+{
+    ASSERT(!m_promise);
+    ASSERT(m_controller);
+
+    m_promise = WTFMove(promise);
+
+    setActive();
+    doPull();
+}
+
 inline void ReadableStreamSource::startFinished()
 {
-    ASSERT(m_startPromise);
-    std::exchange(m_startPromise, Nullopt).value().resolve(nullptr);
+    ASSERT(m_promise);
+    std::exchange(m_promise, Nullopt).value().resolve(nullptr);
+    setInactive();
+}
+
+inline void ReadableStreamSource::pullFinished()
+{
+    ASSERT(m_promise);
+    std::exchange(m_promise, Nullopt).value().resolve(nullptr);
     setInactive();
 }
 
@@ -93,8 +114,8 @@ inline void ReadableStreamSource::cancel(JSC::JSValue)
 
 inline void ReadableStreamSource::clean()
 {
-    if (m_startPromise) {
-        m_startPromise = Nullopt;
+    if (m_promise) {
+        m_promise = Nullopt;
         setInactive();
     }
 }

@@ -1,3 +1,35 @@
+2016-09-27  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Remove ReadableStreamSource firstReadCallback
+        https://bugs.webkit.org/show_bug.cgi?id=162339
+
+        Reviewed by Sam Weinig.
+
+        No observable change of behavior.
+        Removing ReadableStreamSource firstReadCallback.
+        This makes the enqueuing of data to happen when the stream is created.
+        In the future, we may want to implement doPull() to enqueue data when stream actually needs it.
+
+        * Modules/fetch/FetchResponseSource.cpp:
+        (WebCore::FetchResponseSource::doPull): Introduced as we introduce pull() in ReadableStreamSource.
+        * Modules/fetch/FetchResponseSource.h:
+        * Modules/streams/ReadableStreamInternals.js:
+        (readFromReadableStreamDefaultReader): Removing firstReadCallback use.
+        * Modules/streams/ReadableStreamSource.h: Renaming m_startPromise in m_promise since m_promise may store start and pull promises.
+        (WebCore::ReadableStreamSource::isStarting):
+        (WebCore::ReadableStreamSource::start):
+        (WebCore::ReadableStreamSource::pull): Introduced to support ReadableStreamSource pulling.
+        (WebCore::ReadableStreamSource::startFinished):
+        (WebCore::ReadableStreamSource::pullFinished): Ditto.
+        (WebCore::ReadableStreamSource::clean):
+        * Modules/streams/ReadableStreamSource.idl: Ditto.
+        * bindings/js/JSReadableStreamSourceCustom.cpp: Refactoring to use callPromiseFunction
+        (WebCore::startReadableStream):
+        (WebCore::JSReadableStreamSource::start):
+        (WebCore::pullReadableStream): Introduced to support ReadableStreamSource pulling.
+        (WebCore::JSReadableStreamSource::pull): Ditto.
+        * bindings/js/WebCoreBuiltinNames.h: Removing firstReadCallback
+
 2016-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r205883): Letterpressed text is invisible
