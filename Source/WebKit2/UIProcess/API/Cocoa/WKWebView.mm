@@ -4529,6 +4529,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     // For subclasses to override.
 }
 
+- (NSArray<UIView *> *)_uiTextSelectionRectViews
+{
+    return [_contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.m_rectViews"];
+}
+
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)

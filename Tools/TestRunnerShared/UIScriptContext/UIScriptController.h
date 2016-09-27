@@ -103,6 +103,8 @@ public:
 
     JSObjectRef contentVisibleRect() const;
     
+    JSObjectRef selectionRangeViewRects() const;
+
     void uiScriptComplete(JSStringRef result);
 
 private:

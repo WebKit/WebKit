@@ -1127,7 +1127,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 - (CGRect)_selectionClipRect
 {
     if (_assistedNodeInformation.elementType == InputType::None)
-        return CGRectZero;
+        return CGRectNull;
     return _page->editorState().postLayoutData().selectionClipRect;
 }
 

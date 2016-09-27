@@ -189,6 +189,11 @@ void UIScriptController::platformClearAllCallbacks()
 {
 }
 
+JSObjectRef UIScriptController::selectionRangeViewRects() const
+{
+    return nullptr;
+}
+
 }
 
 #endif // PLATFORM(IOS)

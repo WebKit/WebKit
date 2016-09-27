@@ -82,6 +82,8 @@ public:
 
     JSObjectRef objectFromRect(const WebCore::FloatRect&) const;
 
+    JSGlobalContextRef jsContext() const { return m_context.get(); }
+
 private:
     JSRetainPtr<JSGlobalContextRef> m_context;
     

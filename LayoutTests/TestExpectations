@@ -63,6 +63,9 @@ fast/attachment/attachment-subtitle-resize.html
 # This test only makes sense on iOS
 fast/attachment/attachment-wrapping-action.html
 
+# Only iOS has selection UI drawn by UIKit
+editing/selection/character-granularity-rect.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
