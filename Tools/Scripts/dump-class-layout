@@ -42,10 +42,16 @@ def developer_dir():
     return subprocess.check_output(["xcode-select", "--print-path"])
 
 def import_lldb():
-    xcode_contents_path = os.path.split(developer_dir())[0];
-    lldb_framework_path = os.path.join(xcode_contents_path, "SharedFrameworks", "LLDB.framework", "Resources", "Python");
+    xcode_contents_path = os.path.split(developer_dir())[0]
+    lldb_framework_path = os.path.join(xcode_contents_path, "SharedFrameworks", "LLDB.framework", "Resources", "Python")
     sys.path.append(lldb_framework_path)
-    import lldb
+
+    LLDB_MODULE_NAME = "lldb"
+    try:
+        globals()[LLDB_MODULE_NAME] = __import__(LLDB_MODULE_NAME)
+    except ImportError:
+        print "Failed to import {} from {}".format(LLDB_MODULE_NAME, lldb_framework_path)
+        sys.exit(1)
 
 def find_build_directory():
     return

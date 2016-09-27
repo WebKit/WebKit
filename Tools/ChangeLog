@@ -1,3 +1,26 @@
+2016-09-27  Daniel Bates  <dabates@apple.com>
+
+        Cannot run dump-class-layout; dies with "global name 'lldb' is not defined"
+        https://bugs.webkit.org/show_bug.cgi?id=162585
+
+        Reviewed by Simon Fraser.
+
+        Import the lldb module into the global namespace.
+
+        Currently dump-class-layout imports the lldb Python module using the import statement
+        from the helper function import_lldb. The import statement imports the names of the
+        specified module into the scope of import_lldb(); => the names imported from this
+        module cannot be accessed outside the scope of import_lldb(). Other functions in
+        this script assume that the lldb module was imported into the global scope. We should
+        import the module lldb into the global scope, if it exists, so that these functions
+        can find it. Otherwise, we should emit a human readable error message that explains
+        that we failed to import the lldb module.
+
+        Also remove some unnecessary semicolon characters.
+
+        * Scripts/dump-class-layout:
+        (import_lldb):
+
 2016-09-27  Jer Noble  <jer.noble@apple.com>
 
         Remove deprecated ENCRYPTED_MEDIA implementation.
