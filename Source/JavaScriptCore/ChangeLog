@@ -1,3 +1,17 @@
+2016-09-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r206405.
+        https://bugs.webkit.org/show_bug.cgi?id=162588
+
+        This change caused LayoutTest crashes. (Requested by
+        ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "Add some needed CatchScopes in code that should not throw."
+        https://bugs.webkit.org/show_bug.cgi?id=162584
+        http://trac.webkit.org/changeset/206405
+
 2016-09-26  Mark Lam  <mark.lam@apple.com>
 
         Add some needed CatchScopes in code that should not throw.

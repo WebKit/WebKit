@@ -134,17 +134,11 @@ String Database::toJSON() const
 
 bool Database::save(const char* filename) const
 {
-    auto scope = DECLARE_CATCH_SCOPE(m_vm);
     auto out = FilePrintStream::open(filename, "w");
     if (!out)
         return false;
     
-    String data = toJSON();
-    if (UNLIKELY(scope.exception())) {
-        scope.clearException();
-        return false;
-    }
-    out->print(data);
+    out->print(toJSON());
     return true;
 }
 

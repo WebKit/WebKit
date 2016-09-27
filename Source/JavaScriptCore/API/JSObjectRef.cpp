@@ -309,24 +309,20 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
         return;
     }
     ExecState* exec = toJS(ctx);
-    VM& vm = exec->vm();
-    JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSLockHolder locker(exec);
 
     JSObject* jsObject = toJS(object);
     Identifier name(propertyName->identifier(&exec->vm()));
     JSValue jsValue = toJS(exec, value);
 
-    bool doesNotHaveProperty = attributes && !jsObject->hasProperty(exec, name);
-    if (LIKELY(!scope.exception())) {
-        if (doesNotHaveProperty) {
-            PropertyDescriptor desc(jsValue, attributes);
-            jsObject->methodTable()->defineOwnProperty(jsObject, exec, name, desc, false);
-        } else {
-            PutPropertySlot slot(jsObject);
-            jsObject->methodTable()->put(jsObject, exec, name, jsValue, slot);
-        }
+    if (attributes && !jsObject->hasProperty(exec, name)) {
+        PropertyDescriptor desc(jsValue, attributes);
+        jsObject->methodTable()->defineOwnProperty(jsObject, exec, name, desc, false);
+    } else {
+        PutPropertySlot slot(jsObject);
+        jsObject->methodTable()->put(jsObject, exec, name, jsValue, slot);
     }
+
     handleExceptionIfNeeded(exec, exception);
 }
 

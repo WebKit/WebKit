@@ -583,14 +583,14 @@ private:
 ALWAYS_INLINE static void notifyDebuggerOfUnwinding(CallFrame* callFrame)
 {
     VM& vm = callFrame->vm();
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
         SuspendExceptionScope scope(&vm);
         if (jsDynamicCast<JSFunction*>(callFrame->callee()))
             debugger->returnEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);
-        ASSERT_UNUSED(catchScope, !catchScope.exception());
+        ASSERT_UNUSED(throwScope, !throwScope.exception());
     }
 }
 
