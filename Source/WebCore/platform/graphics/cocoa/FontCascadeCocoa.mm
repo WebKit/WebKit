@@ -120,7 +120,13 @@ static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const F
         styleConfiguration.useSimplifiedEffect = YES;
     }
 
+    CGContextSetFont(context, adoptCF(CTFontCopyGraphicsFont(ctFont, nullptr)).get());
+    CGContextSetFontSize(context, platformData.size());
+
     [catalog drawGlyphs:glyphs atPositions:positions.data() inContext:context withFont:ctFont count:count stylePresetName:@"_UIKitNewLetterpressStyle" styleConfiguration:styleConfiguration foregroundColor:CGContextGetFillColorAsColor(context)];
+
+    CGContextSetFont(context, nullptr);
+    CGContextSetFontSize(context, 0);
 #else
     UNUSED_PARAM(point);
     UNUSED_PARAM(font);

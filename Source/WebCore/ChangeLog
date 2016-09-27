@@ -1,3 +1,20 @@
+2016-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r205883): Letterpressed text is invisible
+        https://bugs.webkit.org/show_bug.cgi?id=162590
+        <rdar://problem/28141512>
+
+        Reviewed by Simon Fraser.
+
+        r205883 removed the last place where we use CGFonts directly in WebKit. However,
+        our letterpress code is sensitive to the current state of the CGContext.
+
+        Tests: fast/text/letterpress-different.html
+               fast/text/letterpress-paint.html
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::showLetterpressedGlyphsWithAdvances):
+
 2016-09-27  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Refactor FetchBody to use std::experimental::variant

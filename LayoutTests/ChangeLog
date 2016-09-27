@@ -1,3 +1,21 @@
+2016-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r205883): Letterpressed text is invisible
+        https://bugs.webkit.org/show_bug.cgi?id=162590
+
+        Reviewed by Simon Fraser.
+
+        Letterpress is only implemented on iOS, so letterpress-different.html is marked
+        as only passing on iOS. letterpress-paint.html makes sure that letterpressed paint
+        is not invisible.
+
+        * TestExpectations:
+        * fast/text/letterpress-different-expected-mismatch.html: Added.
+        * fast/text/letterpress-different.html: Added.
+        * fast/text/letterpress-paint-expected-mismatch.html: Added.
+        * fast/text/letterpress-paint.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2017-09-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking css3/filters/backdrop/backdrop-filter-with-reflection* tests as flaky on Sierra WK1.
