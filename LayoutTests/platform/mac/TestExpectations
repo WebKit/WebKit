@@ -1450,3 +1450,5 @@ webkit.org/b/162308 imported/w3c/web-platform-tests/media-source/mediasource-dur
 webkit.org/b/162497 media/media-source/media-source-duplicate-seeked.html [ Skip ]
 
 webkit.org/b/162523 [ Sierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Pass Failure ]
+
+webkit.org/b/162626 imported/w3c/web-platform-tests/media-source/mediasource-liveseekable.html [ Pass Failure ]
