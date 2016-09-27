@@ -1,5 +1,17 @@
 2016-09-27  Youenn Fablet  <youenn@apple.com>
 
+        [GTK][EFL] imported/w3c/web-platform-tests/fetch/api/basic/accept-header.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=162547
+
+        Reviewed by Michael Catanzaro.
+
+        Covered by existing tests.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::createTestingSession): Setting the underlying soupSession.
+
+2016-09-27  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Remove ReadableStreamSource firstReadCallback
         https://bugs.webkit.org/show_bug.cgi?id=162339
 

@@ -66,7 +66,7 @@ std::unique_ptr<SoupNetworkSession> SoupNetworkSession::createTestingSession()
     auto cookieJar = adoptGRef(createPrivateBrowsingCookieJar());
     auto newSoupSession = std::unique_ptr<SoupNetworkSession>(new SoupNetworkSession(cookieJar.get()));
     // FIXME: Creating a testing session is losing soup session values set when initializing the network process.
-    g_object_set(newSoupSession.get(), "accept-language", "en-us", nullptr);
+    g_object_set(newSoupSession->soupSession(), "accept-language", "en-us", nullptr);
     return newSoupSession;
 }
 
