@@ -1,5 +1,49 @@
 2016-09-27  JF Bastien  <jfbastien@apple.com>
 
+        Speed up Heap::isMarkedConcurrently
+        https://bugs.webkit.org/show_bug.cgi?id=162095
+
+        Reviewed by Filip Pizlo.
+
+        Heap::isMarkedConcurrently had a load-load fence which is expensive on weak memory ISAs such as ARM.
+
+        This patch is fairly perf-neutral overall, but the GC's instrumentation reports:
+          GC:Eden is 93% average runtime after change
+          GC:Full is 76% average runtime after change
+
+        The fence was there because:
+         1. If the read of m_markingVersion in MarkedBlock::areMarksStale isn't what's expected then;
+         2. The read of m_marks in MarkedBlock::isMarked needs to observe the value that was stored *before* m_markingVersion was stored.
+
+        This ordering isn't guaranteed on ARM, which has a weak memory model.
+
+        There are 3 ways to guarantee this ordering:
+         A. Use a barrier instruction.
+         B. Use a load-acquire (new in ARMv8).
+         C. use ARM's address dependency rule, which C++ calls memory_order_consume.
+
+        In general:
+         A. is slow but orders all of memory in an intuitive manner.
+         B. is faster-ish and has the same property-ish.
+         C. should be faster still, but *only orders dependent loads*. This last part is critical! Consume isn't an all-out replacement for acquire (acquire is rather a superset of consume).
+
+        ARM explains the address dependency rule in their document "barrier litmus tests and cookbook":
+
+        > *Resolving by the use of barriers and address dependency*
+        >
+        > There is a rule within the ARM architecture that:
+        > Where the value returned by a read is used to compute the virtual address of a subsequent read or write (this is known as an address dependency), then these two memory accesses will be observed in program order. An address dependency exists even if the value read by the first read has no effect in changing the virtual address (as might be the case if the value returned is masked off before it is used, or if it had no effect on changing a predicted address value).
+        > This restriction applies only when the data value returned from one read is used as a data value to calculate the address of a subsequent read or write. This does not apply if the data value returned from one read is used to determine the condition code flags, and the values of the flags are used for condition code evaluation to determine the address of a subsequent reads, either through conditional execution or the evaluation of a branch. This is known as a control dependency.
+        > Where both a control and address dependency exist, the ordering behaviour is consistent with the address dependency.
+
+        C++'s memory_order_consume is unfortunately unimplemented by C++ compilers, and maybe unimplementable as spec'd. I'm working with interested folks in the committee to fix this situation: http://wg21.link/p0190r2
+
+        * wtf/Atomics.h:
+        (WTF::zeroWithConsumeDependency): a 0 which carries a dependency
+        (WTF::consumeLoad): pixie magic
+
+2016-09-27  JF Bastien  <jfbastien@apple.com>
+
         Atomics.h on Windows: remove seq_cst hack
         https://bugs.webkit.org/show_bug.cgi?id=162022
 

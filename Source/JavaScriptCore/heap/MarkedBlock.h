@@ -269,9 +269,14 @@ public:
     void noteMarked();
         
     WeakSet& weakSet();
-    
-    bool areMarksStale(HeapVersion markingVersion);
+
     bool areMarksStale();
+    bool areMarksStale(HeapVersion markingVersion);
+    struct MarksWithDependency {
+        bool areStale;
+        ConsumeDependency dependency;
+    };
+    MarksWithDependency areMarksStaleWithDependency(HeapVersion markingVersion);
     
     void aboutToMark(HeapVersion markingVersion);
         
@@ -474,6 +479,15 @@ inline bool MarkedBlock::areMarksStale(HeapVersion markingVersion)
     return markingVersion != m_markingVersion;
 }
 
+ALWAYS_INLINE MarkedBlock::MarksWithDependency MarkedBlock::areMarksStaleWithDependency(HeapVersion markingVersion)
+{
+    auto consumed = consumeLoad(&m_markingVersion);
+    MarksWithDependency ret;
+    ret.areStale = consumed.value != markingVersion;
+    ret.dependency = consumed.dependency;
+    return ret;
+}
+
 inline void MarkedBlock::aboutToMark(HeapVersion markingVersion)
 {
     if (UNLIKELY(areMarksStale(markingVersion)))
@@ -499,10 +513,10 @@ inline bool MarkedBlock::isMarked(HeapVersion markingVersion, const void* p)
 
 inline bool MarkedBlock::isMarkedConcurrently(HeapVersion markingVersion, const void* p)
 {
-    if (areMarksStale(markingVersion))
+    auto marksWithDependency = areMarksStaleWithDependency(markingVersion);
+    if (marksWithDependency.areStale)
         return false;
-    WTF::loadLoadFence();
-    return m_marks.get(atomNumber(p));
+    return m_marks.get(atomNumber(p) + marksWithDependency.dependency);
 }
 
 inline bool MarkedBlock::testAndSetMarked(const void* p)
