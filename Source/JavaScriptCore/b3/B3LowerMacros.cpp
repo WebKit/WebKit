@@ -147,6 +147,7 @@ private:
                     normalResult->setPhi(phi);
                     zeroResult->setPhi(phi);
                     m_value->replaceWithIdentity(phi);
+                    before->updatePredecessorsAfter();
                     m_changed = true;
                 } else
                     makeDivisionChill(Mod);
