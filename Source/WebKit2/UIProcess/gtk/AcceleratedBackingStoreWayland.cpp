@@ -61,6 +61,31 @@ AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland()
     WaylandCompositor::singleton().unregisterWebPage(m_webPage);
 }
 
+#if GTK_CHECK_VERSION(3, 16, 0)
+bool AcceleratedBackingStoreWayland::canGdkUseGL() const
+{
+    static bool initialized = false;
+    static bool canCreateGLContext = false;
+
+    if (initialized)
+        return canCreateGLContext;
+
+    initialized = true;
+
+    GUniqueOutPtr<GError> error;
+    GdkWindow* gdkWindow = gtk_widget_get_window(m_webPage.viewWidget());
+    GRefPtr<GdkGLContext> gdkContext(gdk_window_create_gl_context(gdkWindow, &error.outPtr()));
+    if (!gdkContext) {
+        g_warning("GDK is not able to create a GL context, falling back to glReadPixels (slow!): %s", error->message);
+        return false;
+    }
+
+    canCreateGLContext = true;
+
+    return true;
+}
+#endif
+
 bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
 {
     GLuint texture;
@@ -72,8 +97,13 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     AcceleratedBackingStore::paint(cr, clipRect);
 
 #if GTK_CHECK_VERSION(3, 16, 0)
-    gdk_cairo_draw_from_gl(cr, gtk_widget_get_window(m_webPage.viewWidget()), texture, GL_TEXTURE, m_webPage.deviceScaleFactor(), 0, 0, textureSize.width(), textureSize.height());
-#else
+    if (canGdkUseGL()) {
+        gdk_cairo_draw_from_gl(cr, gtk_widget_get_window(m_webPage.viewWidget()), texture, GL_TEXTURE, m_webPage.deviceScaleFactor(), 0, 0, textureSize.width(), textureSize.height());
+        cairo_restore(cr);
+        return true;
+    }
+#endif
+
     if (!m_surface || cairo_image_surface_get_width(m_surface.get()) != textureSize.width() || cairo_image_surface_get_height(m_surface.get()) != textureSize.height())
         m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, textureSize.width(), textureSize.height()));
 
@@ -124,7 +154,6 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     cairo_set_source_surface(cr, m_surface.get(), 0, 0);
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_fill(cr);
-#endif
 
     cairo_restore(cr);
 
