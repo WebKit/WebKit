@@ -1,3 +1,10 @@
+2016-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the GTK+ build.
+
+        * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-09-27  Dan Bernstein  <mitz@apple.com>
 
         [iOS] REGRESSION (r182126): Selection highlight and handles aren’t visible with WKSelectionGranularityCharacter

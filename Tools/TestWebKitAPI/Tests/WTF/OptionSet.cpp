@@ -64,8 +64,8 @@ TEST(WTF_OptionSet, Equal)
 {
     OptionSet<ExampleFlags> set { ExampleFlags::A, ExampleFlags::B };
     
-    EXPECT_TRUE(set == { ExampleFlags::A, ExampleFlags::B });
-    EXPECT_TRUE(set == { ExampleFlags::B, ExampleFlags::A });
+    EXPECT_TRUE(set == ({ ExampleFlags::A, ExampleFlags::B }));
+    EXPECT_TRUE(set == ({ ExampleFlags::B, ExampleFlags::A }));
     EXPECT_FALSE(set == ExampleFlags::B);
 }
 
@@ -81,8 +81,8 @@ TEST(WTF_OptionSet, Minus)
 {
     OptionSet<ExampleFlags> set { ExampleFlags::A, ExampleFlags:B, ExampleFlags::C };
     
-    EXPECT_TRUE((set - ExampleFlags::A) == { ExampleFlags::B, ExampleFlags::C });
-    EXPECT_TRUE((set - ExampleFlags::D) == { ExampleFlags::A, ExampleFlags::B, ExampleFlags::C });
+    EXPECT_TRUE((set - ExampleFlags::A) == ({ ExampleFlags::B, ExampleFlags::C }));
+    EXPECT_TRUE((set - ExampleFlags::D) == ({ ExampleFlags::A, ExampleFlags::B, ExampleFlags::C }));
     EXPECT_TRUE((set - set).isEmpty());
 }
 
