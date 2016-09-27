@@ -810,12 +810,15 @@ private:
     void setControllerJSProperty(const char*, JSC::JSValue);
 
     void addBehaviorRestrictionsOnEndIfNecessary();
+    void handleSeekToPlaybackPosition(double);
+    void seekToPlaybackPositionEndedTimerFired();
 
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
+    Timer m_seekToPlaybackPositionEndedTimer;
     GenericTaskQueue<Timer> m_seekTaskQueue;
     GenericTaskQueue<Timer> m_resizeTaskQueue;
     GenericTaskQueue<Timer> m_shadowDOMTaskQueue;
@@ -967,6 +970,8 @@ private:
     bool m_mediaControlsDependOnPageScaleFactor : 1;
     bool m_haveSetUpCaptionContainer : 1;
 #endif
+
+    bool m_isScrubbingRemotely : 1;
 
 #if ENABLE(VIDEO_TRACK)
     bool m_tracksAreReady : 1;

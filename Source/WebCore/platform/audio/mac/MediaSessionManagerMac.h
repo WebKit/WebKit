@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#include "GenericTaskQueue.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/RetainPtr.h>
 
@@ -41,21 +42,21 @@ private:
 
     MediaSessionManagerMac();
 
+    void scheduleUpdateNowPlayingInfo() override;
     void removeSession(PlatformMediaSession&) override;
 
     bool sessionWillBeginPlayback(PlatformMediaSession&) override;
     void sessionWillEndPlayback(PlatformMediaSession&) override;
+    void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) override;
     void clientCharacteristicsChanged(PlatformMediaSession&) override;
 
     void updateNowPlayingInfo();
 
     PlatformMediaSession* nowPlayingEligibleSession();
 
-    double m_reportedRate { 0 };
-    double m_reportedDuration { 0 };
-    String m_reportedTitle;
     bool m_nowPlayingActive { false };
     bool m_isInBackground { false };
+    GenericTaskQueue<Timer> m_nowPlayingUpdateTaskQueue;
 };
 
 } // namespace WebCore

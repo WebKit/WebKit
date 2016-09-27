@@ -51,6 +51,7 @@ public:
 
     virtual ~PlatformMediaSessionManager() { }
 
+    virtual void scheduleUpdateNowPlayingInfo() { }
     bool has(PlatformMediaSession::MediaType) const;
     int count(PlatformMediaSession::MediaType) const;
     bool activeAudioSessionRequired() const;
@@ -85,6 +86,7 @@ public:
     virtual bool sessionWillBeginPlayback(PlatformMediaSession&);
     virtual void sessionWillEndPlayback(PlatformMediaSession&);
     virtual bool sessionCanLoadMedia(const PlatformMediaSession&) const;
+    virtual void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) { };
     virtual void clientCharacteristicsChanged(PlatformMediaSession&) { }
 
 #if PLATFORM(IOS)
