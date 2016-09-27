@@ -175,7 +175,7 @@ JSValue JSDocument::getCSSCanvasContext(JSC::ExecState& state)
 
 void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(wrapped().scriptExecutionContext());
+    visitor.addOpaqueRoot(static_cast<ScriptExecutionContext*>(&wrapped()));
 }
 
 } // namespace WebCore

@@ -199,6 +199,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
                 m_responseDocument = XMLDocument::create(0, m_url);
             // FIXME: Set Last-Modified.
             m_responseDocument->setContent(m_responseBuilder.toStringPreserveCapacity());
+            m_responseDocument->setContextDocument(downcast<Document>(*scriptExecutionContext()));
             m_responseDocument->setSecurityOriginPolicy(scriptExecutionContext()->securityOriginPolicy());
             m_responseDocument->overrideMIMEType(mimeType);
 

@@ -576,10 +576,11 @@ static bool isAttributeOnAllOwners(const WebCore::QualifiedName& attribute, cons
 }
 #endif
 
-Ref<Document> Document::create(ScriptExecutionContext& context)
+Ref<Document> Document::create(Document& contextDocument)
 {
     Ref<Document> document = adoptRef(*new Document(nullptr, URL()));
-    document->setSecurityOriginPolicy(context.securityOriginPolicy());
+    document->setContextDocument(contextDocument);
+    document->setSecurityOriginPolicy(contextDocument.securityOriginPolicy());
 
     return document;
 }
@@ -3505,6 +3506,7 @@ void Document::cloneDataFromDocument(const Document& other)
     m_documentURI = other.documentURI();
 
     setCompatibilityMode(other.m_compatibilityMode);
+    setContextDocument(other.contextDocument());
     setSecurityOriginPolicy(other.securityOriginPolicy());
     overrideMIMEType(other.contentType());
     setDecoder(other.decoder());
@@ -4111,6 +4113,13 @@ void Document::takeDOMWindowFrom(Document* document)
 
     ASSERT(m_domWindow->document() == this);
     ASSERT(m_domWindow->frame() == m_frame);
+}
+
+Document& Document::contextDocument() const
+{
+    if (m_contextDocument)
+        return *m_contextDocument.get();
+    return const_cast<Document&>(*this);
 }
 
 void Document::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)

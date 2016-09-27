@@ -114,7 +114,7 @@ static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI)
 ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType* documentType)
 {
     auto document = createXMLDocument(namespaceURI);
-
+    document->setContextDocument(m_document.contextDocument());
     document->setSecurityOriginPolicy(m_document.securityOriginPolicy());
 
     RefPtr<Element> documentElement;
@@ -153,6 +153,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
         ASSERT(document->head());
         document->head()->appendChild(titleElement);
     }
+    document->setContextDocument(m_document.contextDocument());
     document->setSecurityOriginPolicy(m_document.securityOriginPolicy());
     return document;
 }

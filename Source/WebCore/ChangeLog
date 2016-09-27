@@ -1,3 +1,39 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        It should be possible to dispatch events on documents that do not have a browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=162620
+
+        Reviewed by Ryosuke Niwa.
+
+        It should be possible to dispatch events on documents that do not have a browsing
+        context (e.g. Documents created using DOMImplementation.createHTMLDocument()).
+        Gecko and Blink both allow this but WebKit did not.
+
+        The approach chosen to support this is similar to the one in Blink. When constructing
+        a new document (e.g. using DOMImplementation.createHTMLDocument()) we now keep track
+        of the context document. When requesting the scriptExecutionContext(), we now return
+        the context document if the document has one instead of the document itself.
+
+        Test: imported/w3c/web-platform-tests/dom/events/Event-dispatch-other-document.html
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::visitAdditionalChildren):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::create):
+        (WebCore::Document::cloneDataFromDocument):
+        (WebCore::Document::contextDocument):
+        (WebCore::Document::takeDOMWindowFrom): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::setContextDocument):
+        (WebCore::Node::scriptExecutionContext):
+        (WebCore::Node::isDocumentNode): Deleted.
+        * dom/Document.idl:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+
 2016-09-27  Alex Christensen  <achristensen@webkit.org>
 
         Implement URLParser::syntaxViolation

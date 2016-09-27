@@ -20,7 +20,7 @@
 
 [
     Constructor,
-    ConstructorCallWith=ScriptExecutionContext,
+    ConstructorCallWith=Document,
     CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT,
     JSCustomHeader,

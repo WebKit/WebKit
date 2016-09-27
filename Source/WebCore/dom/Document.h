@@ -297,7 +297,7 @@ public:
     {
         return adoptRef(*new Document(frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
     }
-    static Ref<Document> create(ScriptExecutionContext&);
+    static Ref<Document> create(Document&);
 
     virtual ~Document();
 
@@ -770,6 +770,9 @@ public:
     DOMWindow* domWindow() const { return m_domWindow.get(); }
     // In DOM Level 2, the Document's DOMWindow is called the defaultView.
     DOMWindow* defaultView() const { return domWindow(); } 
+
+    Document& contextDocument() const;
+    void setContextDocument(Document& document) { m_contextDocument = document.createWeakPtr(); }
 
     // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
     void setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
@@ -1411,6 +1414,7 @@ private:
 
     Frame* m_frame;
     RefPtr<DOMWindow> m_domWindow;
+    WeakPtr<Document> m_contextDocument;
 
     Ref<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
@@ -1791,7 +1795,7 @@ inline bool Node::isDocumentNode() const
 
 inline ScriptExecutionContext* Node::scriptExecutionContext() const
 {
-    return &document();
+    return &document().contextDocument();
 }
 
 Element* eventTargetElementForDocument(Document*);
