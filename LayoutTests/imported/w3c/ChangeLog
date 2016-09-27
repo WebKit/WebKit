@@ -1,3 +1,74 @@
+2016-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import w3c shadow DOM tests and fix one assertion
+        https://bugs.webkit.org/show_bug.cgi?id=162629
+
+        Reviewed by Chris Dumez.
+
+        Import shadow DOM tests in web-platform-tests as of 7163d6eeed81e9e020545fbe0c4b11fc2c5963cd
+        except untriaged tests for v0 API, which we obviously don't implement.
+
+        Most of these tests are the ones we upstreamed from fast/shadow-dom/.
+
+        * web-platform-tests/shadow-dom/Document-prototype-adoptNode-expected.txt: Renamed from LayoutTests/fast/shadow-dom/Document-prototype-adoptNode-expected.txt.
+        * web-platform-tests/shadow-dom/Document-prototype-adoptNode.html: Renamed from LayoutTests/fast/shadow-dom/Document-prototype-adoptNode.html.
+        * web-platform-tests/shadow-dom/Document-prototype-currentScript-expected.txt: Renamed from LayoutTests/fast/shadow-dom/Document-prototype-currentScript-expected.txt.
+        * web-platform-tests/shadow-dom/Document-prototype-currentScript.html: Renamed from LayoutTests/fast/shadow-dom/Document-prototype-currentScript.html.
+        * web-platform-tests/shadow-dom/Document-prototype-importNode-expected.txt: Renamed from LayoutTests/fast/shadow-dom/Document-prototype-importNode-expected.txt.
+        * web-platform-tests/shadow-dom/Document-prototype-importNode.html: Renamed from LayoutTests/fast/shadow-dom/Document-prototype-importNode.html.
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow-expected.txt: Added.
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow.html: Renamed from LayoutTests/fast/shadow-dom/Element-interface-attachShadow.html.
+        * web-platform-tests/shadow-dom/Element-interface-shadowRoot-attribute-expected.txt: Renamed from LayoutTests/fast/shadow-dom/Element-interface-shadowRoot-attribute-expected.txt.
+        * web-platform-tests/shadow-dom/Element-interface-shadowRoot-attribute.html: Renamed from LayoutTests/fast/shadow-dom/Element-interface-shadowRoot-attribute.html.
+        * web-platform-tests/shadow-dom/Extensions-to-Event-Interface-expected.txt: Renamed from LayoutTests/fast/shadow-dom/Extensions-to-Event-Interface-expected.txt.
+        * web-platform-tests/shadow-dom/Extensions-to-Event-Interface.html: Renamed from LayoutTests/fast/shadow-dom/Extensions-to-Event-Interface.html.
+        * web-platform-tests/shadow-dom/HTMLSlotElement-interface-expected.txt: Renamed from LayoutTests/fast/shadow-dom/HTMLSlotElement-interface-expected.txt.
+        * web-platform-tests/shadow-dom/HTMLSlotElement-interface.html: Renamed from LayoutTests/fast/shadow-dom/HTMLSlotElement-interface.html.
+        * web-platform-tests/shadow-dom/MouseEvent-prototype-offsetX-offsetY-expected.txt: Renamed from LayoutTests/fast/shadow-dom/MouseEvent-prototype-offsetX-offsetY-expected.txt.
+        * web-platform-tests/shadow-dom/MouseEvent-prototype-offsetX-offsetY.html: Renamed from LayoutTests/fast/shadow-dom/MouseEvent-prototype-offsetX-offsetY.html.
+        * web-platform-tests/shadow-dom/Node-prototype-cloneNode-expected.txt: Added.
+        * web-platform-tests/shadow-dom/Node-prototype-cloneNode.html: Renamed from LayoutTests/fast/shadow-dom/Node-prototype-cloneNode.html.
+        * web-platform-tests/shadow-dom/OWNERS: Added.
+        * web-platform-tests/shadow-dom/ShadowRoot-interface-expected.txt: Renamed from LayoutTests/fast/shadow-dom/ShadowRoot-interface-expected.txt.
+        * web-platform-tests/shadow-dom/ShadowRoot-interface.html: Renamed from LayoutTests/fast/shadow-dom/ShadowRoot-interface.html.
+        * web-platform-tests/shadow-dom/Slotable-interface-expected.txt: Renamed from LayoutTests/fast/shadow-dom/Slotable-interface-assignedSlot-expected.txt.
+        * web-platform-tests/shadow-dom/Slotable-interface.html: Renamed from LayoutTests/fast/shadow-dom/Slotable-interface-assignedSlot.html.
+        * web-platform-tests/shadow-dom/event-composed-expected.txt: Added.
+        * web-platform-tests/shadow-dom/event-composed-path-expected.txt: Added.
+        * web-platform-tests/shadow-dom/event-composed-path-with-related-target-expected.txt: Added.
+        * web-platform-tests/shadow-dom/event-composed-path-with-related-target.html: Added.
+        * web-platform-tests/shadow-dom/event-composed-path.html: Added.
+        * web-platform-tests/shadow-dom/event-composed.html: Added.
+        * web-platform-tests/shadow-dom/event-inside-shadow-tree-expected.txt: Renamed from LayoutTests/fast/shadow-dom/event-inside-shadow-tree-expected.txt.
+        * web-platform-tests/shadow-dom/event-inside-shadow-tree.html: Renamed from LayoutTests/fast/shadow-dom/event-inside-shadow-tree.html.
+        * web-platform-tests/shadow-dom/event-inside-slotted-node-expected.txt: Renamed from LayoutTests/fast/shadow-dom/event-inside-slotted-node-expected.txt.
+        * web-platform-tests/shadow-dom/event-inside-slotted-node.html: Renamed from LayoutTests/fast/shadow-dom/event-inside-slotted-node.html.
+        * web-platform-tests/shadow-dom/event-with-related-target-expected.txt: Renamed from LayoutTests/fast/shadow-dom/event-with-related-target-expected.txt.
+        * web-platform-tests/shadow-dom/event-with-related-target.html: Renamed from LayoutTests/fast/shadow-dom/event-with-related-target.html.
+        * web-platform-tests/shadow-dom/leaktests/get-elements-expected.txt: Added.
+        * web-platform-tests/shadow-dom/leaktests/get-elements.html: Added.
+        * web-platform-tests/shadow-dom/leaktests/html-collection-expected.txt: Added.
+        * web-platform-tests/shadow-dom/leaktests/html-collection.html: Added.
+        * web-platform-tests/shadow-dom/leaktests/w3c-import.log: Added.
+        * web-platform-tests/shadow-dom/leaktests/window-frames-expected.txt: Added.
+        * web-platform-tests/shadow-dom/leaktests/window-frames.html: Added.
+        * web-platform-tests/shadow-dom/resources/Document-prototype-currentScript-helper.js: Renamed from LayoutTests/fast/shadow-dom/resources/Document-prototype-currentScript-helper.js.
+        * web-platform-tests/shadow-dom/resources/event-path-test-helpers.js: Added.
+        * web-platform-tests/shadow-dom/resources/shadow-dom-utils.js: Added.
+        * web-platform-tests/shadow-dom/resources/shadow-dom.js: Added.
+        * web-platform-tests/shadow-dom/resources/w3c-import.log: Added.
+        * web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree-expected.txt: Added.
+        * web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html: Added.
+        * web-platform-tests/shadow-dom/slotchange-event-expected.txt: Renamed from LayoutTests/fast/shadow-dom/slotchange-event-expected.txt.
+        * web-platform-tests/shadow-dom/slotchange-event.html: Renamed from LayoutTests/fast/shadow-dom/slotchange-event.html.
+        * web-platform-tests/shadow-dom/slotchange-expected.txt: Added.
+        * web-platform-tests/shadow-dom/slotchange.html: Added.
+        * web-platform-tests/shadow-dom/slots-expected.txt: Added.
+        * web-platform-tests/shadow-dom/slots-fallback-expected.txt: Added.
+        * web-platform-tests/shadow-dom/slots-fallback.html: Added.
+        * web-platform-tests/shadow-dom/slots.html: Added.
+        * web-platform-tests/shadow-dom/w3c-import.log: Added.
+
 2016-09-27  Chris Dumez  <cdumez@apple.com>
 
         It should be possible to dispatch events on documents that do not have a browsing context

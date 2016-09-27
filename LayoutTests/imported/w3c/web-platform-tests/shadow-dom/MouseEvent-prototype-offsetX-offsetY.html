@@ -5,10 +5,9 @@
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="The MouseEvent offsetX and offsetY attributes must return the coordinates relative to the origin of the padding edge of the relative target">
 <link rel="help" href="http://w3c.github.io/webcomponents/spec/shadow/#event-dispatch">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
 <script src="resources/event-path-test-helpers.js"></script>
-<link rel='stylesheet' href='../../resources/testharness.css'>
 </head>
 <body>
 <style>
@@ -115,7 +114,7 @@ test(function () {
     var container = shadowRoot.querySelector('#container');
 
     var eventLogs = attachLoggers([target, container, shadowRoot, host, document.body]);
-    var mouseEvent = new MouseEvent('mousedown', {clientX: 51, clientY: 37, scoped: false, bubbles: true});
+    var mouseEvent = new MouseEvent('mousedown', {clientX: 51, clientY: 37, composed: true, bubbles: true});
     target.dispatchEvent(mouseEvent);
 
     assert_equals(host.offsetLeft, 20, 'The host must be at (20px, 10px)');

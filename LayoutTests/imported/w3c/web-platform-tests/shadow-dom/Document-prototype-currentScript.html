@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>DOM and Shadow DOM: Document.prototype.adoptNode</title>
+<title>HTML: Document.prototype.currentScript</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="If the script element is in a document, then set the script element's node document's currentScript attribute to the script element.">
 <link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#execute-the-script-block">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../resources/testharness.css'>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -21,7 +20,7 @@ function testInlineScript(mode)
         var host = document.createElement('div');
         var shadowRoot = host.attachShadow({mode: mode});
         var scriptElement = document.createElement('script');
-        scriptElement.textContent = 'assert_equals(document.currentScript, outerScriptElement)';
+        scriptElement.textContent = 'assert_equals(document.currentScript, null)';
         shadowRoot.appendChild(scriptElement);
 
         assert_equals(document.currentScript, outerScriptElement,
@@ -42,7 +41,6 @@ function executeNextTest()
 {
     var testCase = asyncScriptTests.shift();
     var mode = testCase.mode;
-    var remove = testCase.mode;
     if (!testCase)
         return;
 

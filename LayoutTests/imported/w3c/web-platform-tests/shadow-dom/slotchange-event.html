@@ -3,13 +3,14 @@
 <head>
 <title>Shadow DOM: slotchange event</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../resources/testharness.css'>
+<link rel="help" href="https://dom.spec.whatwg.org/#signaling-slot-change">
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
 </head>
 <body>
 <div id="log"></div>
 <script>
+// FIXME: Fix these test cases once https://github.com/w3c/webcomponents/issues/571 is resolved.
 
 function treeName(mode, connectedToDocument)
 {

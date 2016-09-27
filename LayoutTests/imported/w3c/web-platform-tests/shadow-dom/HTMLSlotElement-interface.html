@@ -5,9 +5,8 @@
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="HTMLSlotElement must exist on window with name attribute and getAssignedNode() method">
 <link rel="help" href="https://w3c.github.io/webcomponents/spec/shadow/#the-slot-element">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../resources/testharness.css'>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -144,8 +143,8 @@ function testMutatingSlotName(options)
 }
 
 testMutatingSlotName(null);
-testMutatingSlottedContents({flattened: false});
-testMutatingSlottedContents({flattened: true});
+testMutatingSlotName({flattened: false});
+testMutatingSlotName({flattened: true});
 
 function testInsertingAndRemovingSlots(options)
 {

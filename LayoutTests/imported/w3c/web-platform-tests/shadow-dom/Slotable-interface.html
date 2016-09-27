@@ -3,11 +3,10 @@
 <head>
 <title>Shadow DOM: Slotable interface</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
-<meta name="assert" content="Slotable interface must have assignedSlot attribute">
-<link rel="help" href="https://w3c.github.io/webcomponents/spec/shadow/#the-slot-element">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../resources/testharness.css'>
+<meta name="assert" content="Element and Text interfaces must implement Slotable interface">
+<link rel="help" href="https://dom.spec.whatwg.org/#slotable">
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -22,7 +21,7 @@ test(function () {
     assert_false('assignedSlot' in document.createComment(''), 'assignedSlot must not be defined on a comment node');
     assert_false('assignedSlot' in document.createProcessingInstruction('target', 'data'), 'assignedSlot must not be defined on a processing instruction node');
 
-}, 'assignedSlot attribute must be defined on NonDocumentTypeChildNode interface');
+}, 'assignedSlot attribute must be defined on Element and Text interfaces');
 
 test(function () {
     assert_equals(document.createElement('div').assignedSlot, null, 'assignedSlot must be null when the element is not in any tree');

@@ -1,3 +1,19 @@
+2016-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import w3c shadow DOM tests and fix one assertion
+        https://bugs.webkit.org/show_bug.cgi?id=162629
+
+        Reviewed by Chris Dumez.
+
+        The assertion failure was caused by RelatedNodeRetargeter's constructor mixing up the ancestor tree scopes
+        for the target and the related target. Fixed the bug by reversing the two.
+
+        Tests: imported/w3c/web-platform-tests/shadow-dom/event-composed-path-with-related-target.html
+
+        * dom/EventPath.cpp:
+        (WebCore::RelatedNodeRetargeter::RelatedNodeRetargeter): i and m_ancestorTreeScopes are for the related target
+        and j and targetTreeScopeAncestors are for the target.
+
 2016-09-27  Chris Dumez  <cdumez@apple.com>
 
         It should be possible to dispatch events on documents that do not have a browsing context

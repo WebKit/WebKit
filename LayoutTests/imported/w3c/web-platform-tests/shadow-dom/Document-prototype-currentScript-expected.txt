@@ -1,3 +1,13 @@
+CONSOLE MESSAGE: line 2422: Error: assert_equals: expected null but got Element node <script id="outerScriptElement">
+
+var outerScriptElement ...
+CONSOLE MESSAGE: line 2422: Error: assert_equals: expected null but got Element node <script id="outerScriptElement">
+
+var outerScriptElement ...
+
+Harness Error (FAIL), message = Error: assert_equals: expected null but got Element node <script id="outerScriptElement">
+
+var outerScriptElement ...
 
 PASS document.currentScript must not to be set to a script element in a shadow tree in open mode 
 PASS document.currentScript must not to be set to a script element in a shadow tree in closed mode 
