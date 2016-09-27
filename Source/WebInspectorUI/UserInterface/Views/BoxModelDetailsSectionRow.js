@@ -43,7 +43,12 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
     set nodeStyles(nodeStyles)
     {
+        if (this._nodeStyles && this._nodeStyles.computedStyle)
+            this._nodeStyles.computedStyle.removeEventListener(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, this._refresh, this);
+
         this._nodeStyles = nodeStyles;
+        if (this._nodeStyles && this._nodeStyles.computedStyle)
+            this._nodeStyles.computedStyle.addEventListener(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, this._refresh, this);
 
         this._refresh();
     }
@@ -67,12 +72,17 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
     _getBox(computedStyle, componentName)
     {
-        var suffix = componentName === "border" ? "-width" : "";
+        var suffix = this._getComponentSuffix(componentName);
         var left = this._getPropertyValueAsPx(computedStyle, componentName + "-left" + suffix);
         var top = this._getPropertyValueAsPx(computedStyle, componentName + "-top" + suffix);
         var right = this._getPropertyValueAsPx(computedStyle, componentName + "-right" + suffix);
         var bottom = this._getPropertyValueAsPx(computedStyle, componentName + "-bottom" + suffix);
         return {left, top, right, bottom};
+    }
+
+    _getComponentSuffix(componentName)
+    {
+        return componentName === "border" ? "-width" : "";
     }
 
     _highlightDOMNode(showHighlight, mode, event)
@@ -103,13 +113,10 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
     _updateMetrics()
     {
-        // Updating with computed style.
         var metricsElement = document.createElement("div");
-
-        var self = this;
         var style = this._nodeStyles.computedStyle;
 
-        function createElement(type, value, name, propertyName, style)
+        function createValueElement(type, value, name, propertyName)
         {
             // Check if the value is a float and whether it should be rounded.
             let floatValue = parseFloat(value);
@@ -126,8 +133,9 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             return element;
         }
 
-        function createBoxPartElement(style, name, side, suffix)
+        function createBoxPartElement(name, side)
         {
+            let suffix = this._getComponentSuffix(name);
             let propertyName = (name !== "position" ? name + "-" : "") + side + suffix;
             let value = style.propertyForName(propertyName).value;
             if (value === "" || (name !== "position" && value === "0px") || (name === "position" && value === "auto"))
@@ -135,35 +143,25 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             else
                 value = value.replace(/px$/, "");
 
-            let element = createElement.call(this, "div", value, name, propertyName, style);
+            let element = createValueElement.call(this, "div", value, name, propertyName);
             element.className = side;
             return element;
         }
 
-        function createContentAreaWidthElement(style)
+        function createContentAreaElement(name)
         {
-            var width = style.propertyForName("width").value.replace(/px$/, "");
-            if (style.propertyForName("box-sizing").value === "border-box") {
-                var borderBox = self._getBox(style, "border");
-                var paddingBox = self._getBox(style, "padding");
+            console.assert(name === "width" || name === "height");
 
-                width = width - borderBox.left - borderBox.right - paddingBox.left - paddingBox.right;
+            let size = style.propertyForName(name).value.replace(/px$/, "");
+            if (style.propertyForName("box-sizing").value === "border-box") {
+                let borderBox = this._getBox(style, "border");
+                let paddingBox = this._getBox(style, "padding");
+
+                let [side, oppositeSide] = name === "width" ? ["left", "right"] : ["top", "bottom"];
+                size = size - borderBox[side] - borderBox[oppositeSide] - paddingBox[side] - paddingBox[oppositeSide];
             }
 
-            return createElement.call(this, "span", width, "width", "width", style);
-        }
-
-        function createContentAreaHeightElement(style)
-        {
-            var height = style.propertyForName("height").value.replace(/px$/, "");
-            if (style.propertyForName("box-sizing").value === "border-box") {
-                var borderBox = self._getBox(style, "border");
-                var paddingBox = self._getBox(style, "padding");
-
-                height = height - borderBox.top - borderBox.bottom - paddingBox.top - paddingBox.bottom;
-            }
-
-            return createElement.call(this, "span", height, "height", "height", style);
+            return createValueElement.call(this, "span", size, name, name);
         }
 
         // Display types for which margin is ignored.
@@ -193,7 +191,6 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
         };
 
         this._boxElements = [];
-        var boxes = ["content", "padding", "border", "margin", "position"];
 
         if (!style.hasProperties()) {
             this.showEmptyMessage();
@@ -201,9 +198,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
         }
 
         var previousBox = null;
-        for (var i = 0; i < boxes.length; ++i) {
-            var name = boxes[i];
-
+        for (let name of ["content", "padding", "border", "margin", "position"]) {
             if (name === "margin" && noMarginDisplayType[style.propertyForName("display").value])
                 continue;
             if (name === "padding" && noPaddingDisplayType[style.propertyForName("display").value])
@@ -218,27 +213,25 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             this._boxElements.push(boxElement);
 
             if (name === "content") {
-                var widthElement = createContentAreaWidthElement.call(this, style);
-                var heightElement = createContentAreaHeightElement.call(this, style);
+                let widthElement = createContentAreaElement.call(this, "width");
+                let heightElement = createContentAreaElement.call(this, "height");
                 boxElement.append(widthElement, " \u00D7 ", heightElement);
             } else {
-                var suffix = name === "border" ? "-width" : "";
-
                 var labelElement = document.createElement("div");
                 labelElement.className = "label";
-                labelElement.textContent = boxes[i];
+                labelElement.textContent = name;
                 boxElement.appendChild(labelElement);
 
-                boxElement.appendChild(createBoxPartElement.call(this, style, name, "top", suffix));
+                boxElement.appendChild(createBoxPartElement.call(this, name, "top"));
                 boxElement.appendChild(document.createElement("br"));
-                boxElement.appendChild(createBoxPartElement.call(this, style, name, "left", suffix));
+                boxElement.appendChild(createBoxPartElement.call(this, name, "left"));
 
                 if (previousBox)
                     boxElement.appendChild(previousBox);
 
-                boxElement.appendChild(createBoxPartElement.call(this, style, name, "right", suffix));
+                boxElement.appendChild(createBoxPartElement.call(this, name, "right"));
                 boxElement.appendChild(document.createElement("br"));
-                boxElement.appendChild(createBoxPartElement.call(this, style, name, "bottom", suffix));
+                boxElement.appendChild(createBoxPartElement.call(this, name, "bottom"));
             }
 
             previousBox = boxElement;
