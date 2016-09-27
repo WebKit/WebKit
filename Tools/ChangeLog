@@ -1,3 +1,13 @@
+2016-09-26  Alex Christensen  <achristensen@webkit.org>
+
+        Implement URLParser::syntaxViolation
+        https://bugs.webkit.org/show_bug.cgi?id=162593
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-09-27  Anders Carlsson  <andersca@apple.com>
 
         Turns out OptionSet.cpp wasn't added to the right target. Add it and fix the build for real.

@@ -1,3 +1,63 @@
+2016-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Implement URLParser::syntaxViolation
+        https://bugs.webkit.org/show_bug.cgi?id=162593
+
+        Reviewed by Geoffrey Garen.
+
+        Most of the time when parsing URLs, we just look at the URL, find offsets of the host, path, query, etc., 
+        and the String can be used untouched.  When this happens, we do not want to allocate and copy the String.
+        We want to just add a reference to an existing String.
+
+        Sometimes we need to canonicalize the String because there has been a syntaxViolation,
+        defined as any String that is different than its canonicalized URL String.  In such cases we need to
+        allocate a new String and fill it with the canonicalized URL String.  When a syntaxViolation happens for the
+        first time, we know that everything in the input String up to that point is equal to what it would have been
+        if we had canonicalized the beginning of the URL, copy it into a buffer, and continue parsing in a mode where
+        instead of just looking at the input URL String, we canonicalize each code point into the buffer.
+
+        Changes to behavior involve additional spec compliance with tabs and newlines in different places in URLs,
+        as well as additional spec compliance when parsing empty and null URLs relative to other URLs.
+        Both are covered by new API tests. Existing behavior covered by existing API tests.
+
+        This is about a 15% speed improvement on my URL parsing benchmark.
+
+        * platform/URL.cpp:
+        (WebCore::assertProtocolIsGood):
+        (WebCore::URL::protocolIs):
+        (WebCore::protocolIs):
+        * platform/URL.h:
+        * platform/URLParser.cpp:
+        (WebCore::isTabOrNewline):
+        (WebCore::URLParser::incrementIteratorSkippingTabsAndNewlines):
+        (WebCore::URLParser::isWindowsDriveLetter):
+        (WebCore::URLParser::appendToASCIIBuffer):
+        (WebCore::URLParser::checkWindowsDriveLetter):
+        (WebCore::URLParser::shouldCopyFileURL):
+        (WebCore::URLParser::utf8PercentEncode):
+        (WebCore::URLParser::utf8QueryEncode):
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::URLParser::syntaxViolation):
+        (WebCore::URLParser::fragmentSyntaxViolation):
+        (WebCore::URLParser::parsedDataView):
+        (WebCore::URLParser::currentPosition):
+        (WebCore::URLParser::URLParser):
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::parseAuthority):
+        (WebCore::URLParser::parseIPv4Number):
+        (WebCore::URLParser::parseIPv4Host):
+        (WebCore::URLParser::parseIPv6Host):
+        (WebCore::URLParser::parsePort):
+        (WebCore::URLParser::parseHostAndPort):
+        (WebCore::serializeURLEncodedForm):
+        (WebCore::URLParser::allValuesEqual):
+        (WebCore::URLParser::internalValuesConsistent):
+        (WebCore::URLParser::incrementIteratorSkippingTabAndNewLine): Deleted.
+        (WebCore::URLParser::syntaxError): Deleted.
+        (WebCore::parseIPv4Number): Deleted.
+        * platform/URLParser.h:
+        (WebCore::URLParser::incrementIteratorSkippingTabsAndNewlines):
+
 2016-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Related videos on YouTube (and YouTube playlists) cause media controls to disappear

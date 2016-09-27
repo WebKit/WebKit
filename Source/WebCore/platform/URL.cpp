@@ -788,15 +788,15 @@ String URL::fileSystemPath() const
 
 #ifdef NDEBUG
 
-static inline void assertProtocolIsGood(const char*, size_t)
+static inline void assertProtocolIsGood(StringView)
 {
 }
 
 #else
 
-static void assertProtocolIsGood(const char* protocol, size_t length)
+static void assertProtocolIsGood(StringView protocol)
 {
-    for (size_t i = 0; i < length; ++i) {
+    for (size_t i = 0; i < protocol.length(); ++i) {
         const char c = protocol[i];
         ASSERT(c > ' ' && c < 0x7F && !(c >= 'A' && c <= 'Z'));
     }
@@ -806,7 +806,7 @@ static void assertProtocolIsGood(const char* protocol, size_t length)
 
 bool URL::protocolIs(const char* protocol) const
 {
-    assertProtocolIsGood(protocol, strlen(protocol));
+    assertProtocolIsGood(StringView(reinterpret_cast<const LChar*>(protocol), strlen(protocol)));
 
     // JavaScript URLs are "valid" and should be executed even if URL decides they are invalid.
     // The free function protocolIsJavaScript() should be used instead. 
@@ -823,14 +823,14 @@ bool URL::protocolIs(const char* protocol) const
     return !protocol[m_schemeEnd]; // We should have consumed all characters in the argument.
 }
 
-bool URL::protocolIs(const LChar* protocol, size_t length) const
+bool URL::protocolIs(StringView protocol) const
 {
-    assertProtocolIsGood(reinterpret_cast<const char*>(protocol), length);
+    assertProtocolIsGood(protocol);
 
     if (!m_isValid)
         return false;
     
-    if (m_schemeEnd != length)
+    if (m_schemeEnd != protocol.length())
         return false;
 
     // Do the comparison without making a new string object.
@@ -1914,7 +1914,7 @@ String encodeWithURLEscapeSequences(const String& notEncodedString)
 
 static bool protocolIs(StringView stringURL, const char* protocol)
 {
-    assertProtocolIsGood(protocol, strlen(protocol));
+    assertProtocolIsGood(StringView(reinterpret_cast<const LChar*>(protocol), strlen(protocol)));
     unsigned length = stringURL.length();
     for (unsigned i = 0; i < length; ++i) {
         if (!protocol[i])
@@ -2141,7 +2141,7 @@ void URL::copyToBuffer(Vector<char, 512>& buffer) const
 bool protocolIs(const String& url, const char* protocol)
 {
     // Do the comparison without making a new string object.
-    assertProtocolIsGood(protocol, strlen(protocol));
+    assertProtocolIsGood(StringView(reinterpret_cast<const LChar*>(protocol), strlen(protocol)));
     bool isLeading = true;
     for (unsigned i = 0, j = 0; url[i]; ++i) {
         // skip leading whitespace and control characters.
