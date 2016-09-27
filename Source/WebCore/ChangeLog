@@ -1,3 +1,13 @@
+2016-09-26  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Fix debug build break since r204205. Unreviewed
+        https://bugs.webkit.org/show_bug.cgi?id=162596
+
+        No new tests, no new behaviours.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::frameImageAtIndex):
+
 2016-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         If you play a youtube video from now playing after it finished in Safari, controls disappear
