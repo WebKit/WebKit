@@ -58,66 +58,32 @@ struct Atomic {
 
     ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
-#if OS(WINDOWS)
-        // Windows makes strange assertions about the argument to compare_exchange_weak, and anyway,
-        // Windows is X86 so seq_cst is cheap.
-        order = std::memory_order_seq_cst;
-#endif
         T expectedOrActual = expected;
         return value.compare_exchange_weak(expectedOrActual, desired, order);
     }
 
     ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
     {
-#if OS(WINDOWS)
-        // Windows makes strange assertions about the argument to compare_exchange_weak, and anyway,
-        // Windows is X86 so seq_cst is cheap.
-        order_success = std::memory_order_seq_cst;
-        order_failure = std::memory_order_seq_cst;
-#endif
         T expectedOrActual = expected;
         return value.compare_exchange_weak(expectedOrActual, desired, order_success, order_failure);
     }
 
     ALWAYS_INLINE bool compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
-#if OS(WINDOWS)
-        // See above.
-        order = std::memory_order_seq_cst;
-#endif
         T expectedOrActual = expected;
         return value.compare_exchange_strong(expectedOrActual, desired, order);
     }
 
     ALWAYS_INLINE bool compareExchangeStrong(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
     {
-#if OS(WINDOWS)
-        // See above.
-        order_success = std::memory_order_seq_cst;
-        order_failure = std::memory_order_seq_cst;
-#endif
         T expectedOrActual = expected;
         return value.compare_exchange_strong(expectedOrActual, desired, order_success, order_failure);
     }
 
     template<typename U>
-    ALWAYS_INLINE T exchangeAndAdd(U addend, std::memory_order order = std::memory_order_seq_cst)
-    {
-#if OS(WINDOWS)
-        // See above.
-        order = std::memory_order_seq_cst;
-#endif
-        return value.fetch_add(addend, order);
-    }
+    ALWAYS_INLINE T exchangeAndAdd(U addend, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_add(addend, order); }
     
-    ALWAYS_INLINE T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst)
-    {
-#if OS(WINDOWS)
-        // See above.
-        order = std::memory_order_seq_cst;
-#endif
-        return value.exchange(newValue, order);
-    }
+    ALWAYS_INLINE T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst) { return value.exchange(newValue, order); }
 
     std::atomic<T> value;
 };

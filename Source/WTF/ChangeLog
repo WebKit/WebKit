@@ -1,3 +1,18 @@
+2016-09-27  JF Bastien  <jfbastien@apple.com>
+
+        Atomics.h on Windows: remove seq_cst hack
+        https://bugs.webkit.org/show_bug.cgi?id=162022
+
+        Reviewed by Mark Lam.
+
+        No need to force access to seq_cst, always inlining fixes the MSVC warning.
+
+        * wtf/Atomics.h:
+        (WTF::Atomic::compareExchangeWeak): remove seq_cst hack
+        (WTF::Atomic::compareExchangeStrong): remove seq_cst hack
+        (WTF::Atomic::exchangeAndAdd): remove seq_cst hack
+        (WTF::Atomic::exchange): remove seq_cst hack
+
 2016-09-27  Don Olmstead  <don.olmstead@am.sony.com>
 
         [CMake] Use CMake to determine HAVE_* defines
