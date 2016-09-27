@@ -1,5 +1,20 @@
 2016-09-27  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Refreshing while in Timelines-tab causes negative timestamps in Network-tab
+        https://bugs.webkit.org/show_bug.cgi?id=160051
+        <rdar://problem/27480122>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype.get startTime):
+        (WebInspector.NetworkGridContentView.prototype.get zeroTime):
+        Use the cached start time for graph data source properties instead of
+        relying on the ruler, which requires a layout in order to be updated
+        for the first time.
+
+2016-09-27  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Unfocusing / Focusing inspector window should not change ContentView
         https://bugs.webkit.org/show_bug.cgi?id=162572
         <rdar://problem/28479562>

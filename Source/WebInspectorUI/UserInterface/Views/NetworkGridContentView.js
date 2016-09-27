@@ -115,10 +115,10 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     // Public
 
     get secondsPerPixel() { return this._timelineRuler.secondsPerPixel; }
-    get startTime() { return this._timelineRuler.startTime; }
+    get startTime() { return this._startTime || 0; }
     get currentTime() { return this.endTime || this.startTime; }
     get endTime() { return this._timelineRuler.endTime; }
-    get zeroTime() { return this._timelineRuler.startTime; }
+    get zeroTime() { return this.startTime; }
 
     get selectionPathComponents()
     {
