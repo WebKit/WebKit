@@ -13,9 +13,9 @@
                 "header": "replay/MemoizedDOMResult.h"
             },
             {
-                "name": "Modifiers", "mode": "SCALAR", "storage": "uint8_t",
+                "name": "Modifier", "mode": "SCALAR",
                 "enclosing_class": "PlatformEvent",
-                "flags": ["ENUM"],
+                "flags": ["OPTION_SET"],
                 "values": ["AltKey", "CtrlKey", "MetaKey", "ShiftKey"],
                 "header": "platform/PlatformEvent.h"
             },

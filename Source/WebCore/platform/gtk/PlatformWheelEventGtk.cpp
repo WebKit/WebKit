@@ -43,15 +43,14 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_type = PlatformEvent::Wheel;
     m_timestamp = currentTime();
 
-    m_modifiers = 0;
     if (event->state & GDK_SHIFT_MASK)
-        m_modifiers |= ShiftKey;
+        m_modifiers |= Modifier::ShiftKey;
     if (event->state & GDK_CONTROL_MASK)
-        m_modifiers |= CtrlKey;
+        m_modifiers |= Modifier::CtrlKey;
     if (event->state & GDK_MOD1_MASK)
-        m_modifiers |= AltKey;
+        m_modifiers |= Modifier::AltKey;
     if (event->state & GDK_META_MASK)
-        m_modifiers |= MetaKey;
+        m_modifiers |= Modifier::MetaKey;
 
     m_deltaX = 0;
     m_deltaY = 0;

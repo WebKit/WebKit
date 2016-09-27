@@ -244,7 +244,7 @@ public:
 
     bool needsKeyboardEventDisambiguationQuirks() const;
 
-    static unsigned accessKeyModifiers();
+    static OptionSet<PlatformEvent::Modifier> accessKeyModifiers();
     WEBCORE_EXPORT bool handleAccessKey(const PlatformKeyboardEvent&);
     WEBCORE_EXPORT bool keyEvent(const PlatformKeyboardEvent&);
     void defaultKeyboardEventHandler(KeyboardEvent&);

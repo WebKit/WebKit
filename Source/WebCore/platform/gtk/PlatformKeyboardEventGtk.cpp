@@ -555,18 +555,18 @@ static PlatformEvent::Type eventTypeForGdkKeyEvent(GdkEventKey* event)
     return event->type == GDK_KEY_RELEASE ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
 }
 
-static PlatformEvent::Modifiers modifiersForGdkKeyEvent(GdkEventKey* event)
+static OptionSet<PlatformEvent::Modifier> modifiersForGdkKeyEvent(GdkEventKey* event)
 {
-    unsigned int modifiers = 0;
+    OptionSet<PlatformEvent::Modifier> modifiers;
     if (event->state & GDK_SHIFT_MASK || event->keyval == GDK_3270_BackTab)
-        modifiers |= PlatformEvent::ShiftKey;
+        modifiers |= PlatformEvent::Modifier::ShiftKey;
     if (event->state & GDK_CONTROL_MASK)
-        modifiers |= PlatformEvent::CtrlKey;
+        modifiers |= PlatformEvent::Modifier::CtrlKey;
     if (event->state & GDK_MOD1_MASK)
-        modifiers |= PlatformEvent::AltKey;
+        modifiers |= PlatformEvent::Modifier::AltKey;
     if (event->state & GDK_META_MASK)
-        modifiers |= PlatformEvent::MetaKey;
-    return static_cast<PlatformEvent::Modifiers>(modifiers);
+        modifiers |= PlatformEvent::Modifier::MetaKey;
+    return modifiers;
 }
 
 // Keep this in sync with the other platform event constructors

@@ -253,7 +253,7 @@ EncodedValue EncodingTraits<PlatformKeyboardEvent>::encodeValue(const PlatformKe
 
     ENCODE_TYPE_WITH_KEY(encodedValue, double, timestamp, input.timestamp());
     ENCODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type, input.type());
-    ENCODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Modifiers, modifiers, static_cast<PlatformEvent::Modifiers>(input.modifiers()));
+    ENCODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Modifier, modifiers, input.modifiers());
     ENCODE_TYPE_WITH_KEY(encodedValue, String, text, input.text());
     ENCODE_TYPE_WITH_KEY(encodedValue, String, unmodifiedText, input.unmodifiedText());
     ENCODE_TYPE_WITH_KEY(encodedValue, String, keyIdentifier, input.keyIdentifier());
@@ -274,7 +274,7 @@ bool EncodingTraits<PlatformKeyboardEvent>::decodeValue(EncodedValue& encodedVal
 {
     DECODE_TYPE_WITH_KEY(encodedValue, double, timestamp);
     DECODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type);
-    DECODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Modifiers, modifiers);
+    DECODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Modifier, modifiers);
     DECODE_TYPE_WITH_KEY(encodedValue, String, text);
     DECODE_TYPE_WITH_KEY(encodedValue, String, unmodifiedText);
     DECODE_TYPE_WITH_KEY(encodedValue, String, keyIdentifier);

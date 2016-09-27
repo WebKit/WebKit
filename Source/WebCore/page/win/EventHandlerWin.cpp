@@ -112,9 +112,9 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
     return false;
 }
 
-unsigned EventHandler::accessKeyModifiers()
+OptionSet<PlatformEvent::Modifier> EventHandler::accessKeyModifiers()
 {
-    return PlatformEvent::AltKey;
+    return PlatformEvent::Modifier::AltKey;
 }
 
 }

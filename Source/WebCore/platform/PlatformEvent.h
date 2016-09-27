@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformEvent_h
-#define PlatformEvent_h
+#pragma once
+
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -68,7 +69,7 @@ public:
 #endif
     };
 
-    enum Modifiers : uint8_t {
+    enum class Modifier {
         AltKey      = 1 << 0,
         CtrlKey     = 1 << 1,
         MetaKey     = 1 << 2,
@@ -77,31 +78,29 @@ public:
 
     Type type() const { return static_cast<Type>(m_type); }
 
-    bool shiftKey() const { return m_modifiers & ShiftKey; }
-    bool ctrlKey() const { return m_modifiers & CtrlKey; }
-    bool altKey() const { return m_modifiers & AltKey; }
-    bool metaKey() const { return m_modifiers & MetaKey; }
+    bool shiftKey() const { return m_modifiers.contains(Modifier::ShiftKey); }
+    bool ctrlKey() const { return m_modifiers.contains(Modifier::CtrlKey); }
+    bool altKey() const { return m_modifiers.contains(Modifier::AltKey); }
+    bool metaKey() const { return m_modifiers.contains(Modifier::MetaKey); }
 
-    unsigned modifiers() const { return m_modifiers; }
+    OptionSet<Modifier> modifiers() const { return m_modifiers; }
 
     double timestamp() const { return m_timestamp; }
 
 protected:
     PlatformEvent()
         : m_type(NoType)
-        , m_modifiers(0)
         , m_timestamp(0)
     {
     }
 
     explicit PlatformEvent(Type type)
         : m_type(type)
-        , m_modifiers(0)
         , m_timestamp(0)
     {
     }
 
-    PlatformEvent(Type type, Modifiers modifiers, double timestamp)
+    PlatformEvent(Type type, OptionSet<Modifier> modifiers, double timestamp)
         : m_type(type)
         , m_modifiers(modifiers)
         , m_timestamp(timestamp)
@@ -110,17 +109,16 @@ protected:
 
     PlatformEvent(Type type, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp)
         : m_type(type)
-        , m_modifiers(0)
         , m_timestamp(timestamp)
     {
         if (shiftKey)
-            m_modifiers |= ShiftKey;
+            m_modifiers |= Modifier::ShiftKey;
         if (ctrlKey)
-            m_modifiers |= CtrlKey;
+            m_modifiers |= Modifier::CtrlKey;
         if (altKey)
-            m_modifiers |= AltKey;
+            m_modifiers |= Modifier::AltKey;
         if (metaKey)
-            m_modifiers |= MetaKey;
+            m_modifiers |= Modifier::MetaKey;
     }
 
     // Explicit protected destructor so that people don't accidentally
@@ -130,10 +128,8 @@ protected:
     }
 
     unsigned m_type;
-    unsigned m_modifiers;
+    OptionSet<Modifier> m_modifiers;
     double m_timestamp;
 };
 
 } // namespace WebCore
-
-#endif // PlatformEvent_h

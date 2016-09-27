@@ -426,21 +426,21 @@ static inline bool isKeyUpEvent(NSEvent *event)
     return false;
 }
 
-static inline PlatformEvent::Modifiers modifiersForEvent(NSEvent *event)
+static inline OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *event)
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    unsigned modifiers = 0;
-    if ([event modifierFlags] & NSShiftKeyMask)
-        modifiers |= PlatformEvent::ShiftKey;
-    if ([event modifierFlags] & NSControlKeyMask)
-        modifiers |= PlatformEvent::CtrlKey;
-    if ([event modifierFlags] & NSAlternateKeyMask)
-        modifiers |= PlatformEvent::AltKey;
-    if ([event modifierFlags] & NSCommandKeyMask)
-        modifiers |= PlatformEvent::MetaKey;
+    OptionSet<PlatformEvent::Modifier> modifiers;
+    if (event.modifierFlags & NSShiftKeyMask)
+        modifiers |= PlatformEvent::Modifier::ShiftKey;
+    if (event.modifierFlags & NSControlKeyMask)
+        modifiers |= PlatformEvent::Modifier::CtrlKey;
+    if (event.modifierFlags & NSAlternateKeyMask)
+        modifiers |= PlatformEvent::Modifier::AltKey;
+    if (event.modifierFlags & NSCommandKeyMask)
+        modifiers |= PlatformEvent::Modifier::MetaKey;
 #pragma clang diagnostic pop
-    return (PlatformEvent::Modifiers)modifiers;
+    return modifiers;
 }
 
 static int typeForEvent(NSEvent *event)
@@ -451,7 +451,7 @@ static int typeForEvent(NSEvent *event)
     if (mouseButtonForEvent(event) == RightButton)
         return static_cast<int>(NSMenuTypeContextMenu);
 
-    if (mouseButtonForEvent(event) == LeftButton && (modifiersForEvent(event) & PlatformEvent::CtrlKey))
+    if (mouseButtonForEvent(event) == LeftButton && modifiersForEvent(event).contains(PlatformEvent::Modifier::CtrlKey))
         return static_cast<int>(NSMenuTypeContextMenu);
 
     return static_cast<int>(NSMenuTypeNone);

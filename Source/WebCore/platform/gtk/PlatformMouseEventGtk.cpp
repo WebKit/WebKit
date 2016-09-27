@@ -42,15 +42,14 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventButton* event)
     m_position = IntPoint((int)event->x, (int)event->y);
     m_globalPosition = IntPoint((int)event->x_root, (int)event->y_root);
 
-    m_modifiers = 0;
     if (event->state & GDK_SHIFT_MASK)
-        m_modifiers |= ShiftKey;
+        m_modifiers |= PlatformEvent::Modifier::ShiftKey;
     if (event->state & GDK_CONTROL_MASK)
-        m_modifiers |= CtrlKey;
+        m_modifiers |= PlatformEvent::Modifier::CtrlKey;
     if (event->state & GDK_MOD1_MASK)
-        m_modifiers |= AltKey;
+        m_modifiers |= PlatformEvent::Modifier::AltKey;
     if (event->state & GDK_META_MASK)
-        m_modifiers |= MetaKey;
+        m_modifiers |= PlatformEvent::Modifier::MetaKey;
 
     switch (event->type) {
     case GDK_BUTTON_PRESS:
@@ -87,15 +86,14 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
     m_position = IntPoint((int)motion->x, (int)motion->y);
     m_globalPosition = IntPoint((int)motion->x_root, (int)motion->y_root);
 
-    m_modifiers = 0;
     if (motion->state & GDK_SHIFT_MASK)
-        m_modifiers |= ShiftKey;
+        m_modifiers |= PlatformEvent::Modifier::ShiftKey;
     if (motion->state & GDK_CONTROL_MASK)
-        m_modifiers |= CtrlKey;
+        m_modifiers |= PlatformEvent::Modifier::CtrlKey;
     if (motion->state & GDK_MOD1_MASK)
-        m_modifiers |= AltKey;
+        m_modifiers |= PlatformEvent::Modifier::AltKey;
     if (motion->state & GDK_META_MASK)
-        m_modifiers |= MetaKey;
+        m_modifiers |= PlatformEvent::Modifier::MetaKey;
 
     switch (motion->type) {
     case GDK_MOTION_NOTIFY:

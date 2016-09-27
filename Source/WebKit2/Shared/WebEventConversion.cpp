@@ -68,15 +68,14 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_modifiers = 0;
         if (webEvent.shiftKey())
-            m_modifiers |= ShiftKey;
+            m_modifiers |= Modifier::ShiftKey;
         if (webEvent.controlKey())
-            m_modifiers |= CtrlKey;
+            m_modifiers |= Modifier::CtrlKey;
         if (webEvent.altKey())
-            m_modifiers |= AltKey;
+            m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
-            m_modifiers |= MetaKey;
+            m_modifiers |= Modifier::MetaKey;
 
         m_timestamp = webEvent.timestamp();
 
@@ -105,16 +104,6 @@ public:
         m_eventNumber = webEvent.eventNumber();
         m_menuTypeForEvent = webEvent.menuTypeForEvent();
 #endif
-
-        m_modifierFlags = 0;
-        if (webEvent.shiftKey())
-            m_modifierFlags |= WebEvent::ShiftKey;
-        if (webEvent.controlKey())
-            m_modifierFlags |= WebEvent::ControlKey;
-        if (webEvent.altKey())
-            m_modifierFlags |= WebEvent::AltKey;
-        if (webEvent.metaKey())
-            m_modifierFlags |= WebEvent::MetaKey;
     }
 };
 
@@ -130,15 +119,14 @@ public:
         // PlatformEvent
         m_type = PlatformEvent::Wheel;
 
-        m_modifiers = 0;
         if (webEvent.shiftKey())
-            m_modifiers |= ShiftKey;
+            m_modifiers |= Modifier::ShiftKey;
         if (webEvent.controlKey())
-            m_modifiers |= CtrlKey;
+            m_modifiers |= Modifier::CtrlKey;
         if (webEvent.altKey())
-            m_modifiers |= AltKey;
+            m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
-            m_modifiers |= MetaKey;
+            m_modifiers |= Modifier::MetaKey;
 
         m_timestamp = webEvent.timestamp();
 
@@ -189,15 +177,14 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_modifiers = 0;
         if (webEvent.shiftKey())
-            m_modifiers |= ShiftKey;
+            m_modifiers |= Modifier::ShiftKey;
         if (webEvent.controlKey())
-            m_modifiers |= CtrlKey;
+            m_modifiers |= Modifier::CtrlKey;
         if (webEvent.altKey())
-            m_modifiers |= AltKey;
+            m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
-            m_modifiers |= MetaKey;
+            m_modifiers |= Modifier::MetaKey;
 
         m_timestamp = webEvent.timestamp();
 
@@ -325,15 +312,14 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_modifiers = 0;
         if (webEvent.shiftKey())
-            m_modifiers |= ShiftKey;
+            m_modifiers |= Modifier::ShiftKey;
         if (webEvent.controlKey())
-            m_modifiers |= CtrlKey;
+            m_modifiers |= Modifier::CtrlKey;
         if (webEvent.altKey())
-            m_modifiers |= AltKey;
+            m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
-            m_modifiers |= MetaKey;
+            m_modifiers |= Modifier::MetaKey;
 
         m_timestamp = webEvent.timestamp();
 
@@ -383,15 +369,14 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_modifiers = 0;
         if (webEvent.shiftKey())
-            m_modifiers |= ShiftKey;
+            m_modifiers |= Modifier::ShiftKey;
         if (webEvent.controlKey())
-            m_modifiers |= CtrlKey;
+            m_modifiers |= Modifier::CtrlKey;
         if (webEvent.altKey())
-            m_modifiers |= AltKey;
+            m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
-            m_modifiers |= MetaKey;
+            m_modifiers |= Modifier::MetaKey;
 
         m_timestamp = webEvent.timestamp();
 

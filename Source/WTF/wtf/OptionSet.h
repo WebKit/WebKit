@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OptionSet_h
-#define OptionSet_h
+#pragma once
 
 #include <initializer_list>
 #include <iterator>
@@ -67,7 +66,7 @@ public:
     };
     using iterator = Iterator<StorageType>;
 
-    static OptionSet fromRaw(StorageType storageType)
+    static constexpr OptionSet fromRaw(StorageType storageType)
     {
         return OptionSet(static_cast<T>(storageType), FromRawValue);
     }
@@ -109,11 +108,26 @@ public:
         return m_storage & optionSet.m_storage;
     }
 
+    constexpr friend bool operator==(OptionSet lhs, OptionSet rhs)
+    {
+        return lhs.m_storage == rhs.m_storage;
+    }
+
+    constexpr friend bool operator!=(OptionSet lhs, OptionSet rhs)
+    {
+        return lhs.m_storage != rhs.m_storage;
+    }
+
     friend OptionSet& operator|=(OptionSet& lhs, OptionSet rhs)
     {
         lhs.m_storage |= rhs.m_storage;
 
         return lhs;
+    }
+
+    constexpr friend OptionSet operator-(OptionSet lhs, OptionSet rhs)
+    {
+        return OptionSet::fromRaw(lhs.m_storage & ~rhs.m_storage);
     }
 
 private:
@@ -128,5 +142,3 @@ private:
 }
 
 using WTF::OptionSet;
-
-#endif // OptionSet_h

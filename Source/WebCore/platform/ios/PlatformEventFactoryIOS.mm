@@ -35,18 +35,18 @@
 
 namespace WebCore {
 
-static unsigned modifiersForEvent(WebEvent *event)
+static OptionSet<PlatformEvent::Modifier> modifiersForEvent(WebEvent *event)
 {
-    unsigned modifiers = 0;
+    OptionSet<PlatformEvent::Modifier> modifiers;
 
     if (event.modifierFlags & WebEventFlagMaskShift)
-        modifiers |= PlatformEvent::ShiftKey;
+        modifiers |= PlatformEvent::Modifier::ShiftKey;
     if (event.modifierFlags & WebEventFlagMaskControl)
-        modifiers |= PlatformEvent::CtrlKey;
+        modifiers |= PlatformEvent::Modifier::CtrlKey;
     if (event.modifierFlags & WebEventFlagMaskAlternate)
-        modifiers |= PlatformEvent::AltKey;
+        modifiers |= PlatformEvent::Modifier::AltKey;
     if (event.modifierFlags & WebEventFlagMaskCommand)
-        modifiers |= PlatformEvent::MetaKey;
+        modifiers |= PlatformEvent::Modifier::MetaKey;
 
     return modifiers;
 }
@@ -82,7 +82,6 @@ public:
     PlatformMouseEventBuilder(WebEvent *event)
     {
         m_type = mouseEventType(event);
-        m_modifiers = 0;
         m_timestamp = currentTime();
 
         m_position = pointForEvent(event);
@@ -104,7 +103,6 @@ public:
         ASSERT(event.type == WebEventScrollWheel);
 
         m_type = PlatformEvent::Wheel;
-        m_modifiers = 0;
         m_timestamp = currentTime();
 
         m_position = pointForEvent(event);

@@ -1,3 +1,32 @@
+2016-09-20  Anders Carlsson  <andersca@apple.com>
+
+        PlatformEvent::m_modifiers should be an OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=162326
+
+        Reviewed by Daniel Bates.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAccessKey):
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::accessKeyModifiers):
+        * platform/PlatformEvent.h:
+        (WebCore::PlatformEvent::shiftKey):
+        (WebCore::PlatformEvent::ctrlKey):
+        (WebCore::PlatformEvent::altKey):
+        (WebCore::PlatformEvent::metaKey):
+        (WebCore::PlatformEvent::modifiers):
+        (WebCore::PlatformEvent::PlatformEvent):
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::modifiersForEvent):
+        (WebCore::typeForEvent):
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::encodeValue):
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::decodeValue):
+        * replay/WebInputs.json:
+
 2016-09-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Handle Wayland & X11 correctly for GST_GL
