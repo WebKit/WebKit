@@ -186,6 +186,8 @@ private:
     void releaseIconForPageURL(const String& pageURL);
     void releaseRemainingIconsForPageURLs();
 
+    bool platformIsBeingDebugged() const;
+
     static const HashSet<String>& platformPathsWithAssumedReadAccess();
 
     // IPC::Connection::Client
@@ -200,6 +202,7 @@ private:
     void didBecomeResponsive() override;
     void willChangeIsResponsive() override;
     void didChangeIsResponsive() override;
+    bool mayBecomeUnresponsive() override;
 
     // ProcessThrottlerClient
     void sendProcessWillSuspendImminently() override;

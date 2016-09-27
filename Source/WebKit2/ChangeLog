@@ -1,3 +1,28 @@
+2016-09-26  Dan Bernstein  <mitz@apple.com>
+
+        -_webViewWebProcessDidBecomeUnresponsive: gets called when the Web process is stopped in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=162234
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::platformIsBeingDebugged): Use the KERN_PROC sysctl to get the
+          process flags and check for P_TRACED.
+
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::timerFired): Call the new client function
+          mayBecomeUnresponsive. If it returns false, restart the timer and bail out without
+          changing the responsiveness state.
+
+        * UIProcess/ResponsivenessTimer.h: Declared new client function mayBecomeUnresponsive.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::platformIsBeingDebugged): A generic implementation that always
+          returns false.
+        (WebKit::WebProcessProxy::mayBecomeUnresponsive): Implement this new
+          ResponsivenessTimer::Client function to return true unless the process is being debugged.
+        * UIProcess/WebProcessProxy.h:
+
 2016-09-26  Chris Dumez  <cdumez@apple.com>
 
         [WK2] BlobDownloadClient should use asynchronous IPC to decide destination path

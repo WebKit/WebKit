@@ -30,6 +30,7 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
+#import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 
 namespace WebKit {
@@ -118,6 +119,17 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
     };
 
     return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
+}
+
+bool WebProcessProxy::platformIsBeingDebugged() const
+{
+    struct kinfo_proc info;
+    int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processIdentifier() };
+    size_t size = sizeof(info);
+    if (sysctl(mib, WTF_ARRAY_LENGTH(mib), &info, &size, nullptr, 0) == -1)
+        return false;
+
+    return info.kp_proc.p_flag & P_TRACED;
 }
 
 }

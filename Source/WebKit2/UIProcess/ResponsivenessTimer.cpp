@@ -52,6 +52,11 @@ void ResponsivenessTimer::timerFired()
     if (!m_isResponsive)
         return;
 
+    if (!m_client.mayBecomeUnresponsive()) {
+        m_timer.startOneShot(responsivenessTimeout);
+        return;
+    }
+
     m_client.willChangeIsResponsive();
     m_isResponsive = false;
     m_client.didChangeIsResponsive();

@@ -472,6 +472,13 @@ void WebProcessProxy::releaseRemainingIconsForPageURLs()
     m_pageURLRetainCountMap.clear();
 }
 
+#if !PLATFORM(COCOA)
+bool WebProcessProxy::platformIsBeingDebugged() const
+{
+    return false;
+}
+#endif
+
 void WebProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (dispatchMessage(connection, decoder))
@@ -577,6 +584,11 @@ void WebProcessProxy::didChangeIsResponsive()
     copyValuesToVector(m_pageMap, pages);
     for (auto& page : pages)
         page->didChangeProcessIsResponsive();
+}
+
+bool WebProcessProxy::mayBecomeUnresponsive()
+{
+    return !platformIsBeingDebugged();
 }
 
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
