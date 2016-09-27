@@ -54,7 +54,7 @@ public:
 
     bool isDisturbedOrLocked() const;
 
-    void loadBlob(Blob&, FetchBodyConsumer*);
+    void loadBlob(const Blob&, FetchBodyConsumer*);
 
     bool isActive() const { return !!m_blobLoader; }
 

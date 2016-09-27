@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-FetchBody::FetchBody(Ref<Blob>&& blob)
+FetchBody::FetchBody(Ref<const Blob>&& blob)
     : m_type(Type::Blob)
     , m_data(WTFMove(blob))
     , m_contentType(this->blobBody().type())
@@ -67,13 +67,13 @@ FetchBody::FetchBody(String&& text)
 {
 }
 
-FetchBody::FetchBody(Ref<ArrayBuffer>&& data)
+FetchBody::FetchBody(Ref<const ArrayBuffer>&& data)
     : m_type(Type::ArrayBuffer)
     , m_data(WTFMove(data))
 {
 }
 
-FetchBody::FetchBody(Ref<ArrayBufferView>&& dataView)
+FetchBody::FetchBody(Ref<const ArrayBufferView>&& dataView)
     : m_type(Type::ArrayBufferView)
     , m_data(WTFMove(dataView))
 {
@@ -104,9 +104,10 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& st
         return { *data };
     }
     if (value.inherits(JSC::JSArrayBufferView::info())) {
-        RefPtr<JSC::ArrayBufferView> data = toArrayBufferView(value);
+        auto data = toArrayBufferView(value);
         ASSERT(data);
-        return { data.releaseNonNull() };
+        // FIXME: We should be able to efficiently get a Ref<const T> from a RefPtr<T>.
+        return { *data };
     }
     return { };
 }
@@ -335,13 +336,13 @@ FetchBody FetchBody::clone() const
 
     switch (m_type) {
     case Type::ArrayBuffer:
-        clone.m_data = const_cast<ArrayBuffer&>(arrayBufferBody());
+        clone.m_data = arrayBufferBody();
         break;
     case Type::ArrayBufferView:
-        clone.m_data = const_cast<ArrayBufferView&>(arrayBufferViewBody());
+        clone.m_data = arrayBufferViewBody();
         break;
     case Type::Blob:
-        clone.m_data = const_cast<Blob&>(blobBody());
+        clone.m_data = blobBody();
         break;
     case Type::FormData:
         clone.m_data = const_cast<FormData&>(formDataBody());

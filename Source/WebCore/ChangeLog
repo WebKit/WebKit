@@ -1,3 +1,30 @@
+2016-09-27  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Use Ref<const T> in FetchBody::m_data variant
+        https://bugs.webkit.org/show_bug.cgi?id=162599
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        Using Ref<const T> for all variants of m_data except for FormData since FetchBody is actually creating it and may modifiy it.
+        Updating blob loading code path to use a const Blob& instead of a Blob&.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::FetchBody):
+        (WebCore::FetchBody::extract):
+        (WebCore::FetchBody::clone):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::blobBody):
+        (WebCore::FetchBody::arrayBufferBody):
+        (WebCore::FetchBody::arrayBufferViewBody):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::loadBlob):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        * Modules/fetch/FetchLoader.h:
+
 2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed typo fix

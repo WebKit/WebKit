@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-void FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
+void FetchLoader::start(ScriptExecutionContext& context, const Blob& blob)
 {
     auto urlForReading = BlobURL::createPublicURL(context.securityOrigin());
     if (urlForReading.isEmpty()) {

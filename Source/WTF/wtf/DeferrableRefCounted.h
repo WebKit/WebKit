@@ -20,11 +20,10 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeferrableRefCounted_h
-#define DeferrableRefCounted_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
@@ -41,39 +40,39 @@ namespace WTF {
 class DeferrableRefCountedBase {
     static const unsigned deferredFlag = 1;
     static const unsigned normalIncrement = 2;
-    
+
 public:
-    void ref()
+    void ref() const
     {
         m_refCount += normalIncrement;
     }
-    
+
     bool hasOneRef() const
     {
         return refCount() == 1;
     }
-    
+
     unsigned refCount() const
     {
         return m_refCount / normalIncrement;
     }
-    
+
     bool isDeferred() const
     {
         return !!(m_refCount & deferredFlag);
     }
-    
+
 protected:
     DeferrableRefCountedBase()
         : m_refCount(normalIncrement)
     {
     }
-    
+
     ~DeferrableRefCountedBase()
     {
     }
-    
-    bool derefBase()
+
+    bool derefBase() const
     {
         m_refCount -= normalIncrement;
         return !m_refCount;
@@ -88,21 +87,21 @@ protected:
         m_refCount &= ~deferredFlag;
         return !m_refCount;
     }
-    
+
 private:
-    unsigned m_refCount;
+    mutable unsigned m_refCount;
 };
 
 template<typename T>
 class DeferrableRefCounted : public DeferrableRefCountedBase {
     WTF_MAKE_NONCOPYABLE(DeferrableRefCounted); WTF_MAKE_FAST_ALLOCATED;
 public:
-    void deref()
+    void deref() const
     {
         if (derefBase())
-            delete static_cast<T*>(this);
+            delete static_cast<const T*>(this);
     }
-    
+
     bool setIsDeferred(bool value)
     {
         if (!setIsDeferredBase(value))
@@ -110,7 +109,7 @@ public:
         delete static_cast<T*>(this);
         return true;
     }
-    
+
 protected:
     DeferrableRefCounted() { }
     ~DeferrableRefCounted() { }
@@ -119,6 +118,3 @@ protected:
 } // namespace WTF
 
 using WTF::DeferrableRefCounted;
-
-#endif // DeferrableRefCounted_h
-

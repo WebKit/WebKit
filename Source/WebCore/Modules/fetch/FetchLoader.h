@@ -48,7 +48,7 @@ public:
     RefPtr<SharedBuffer> startStreaming();
 
     void start(ScriptExecutionContext&, const FetchRequest&);
-    void start(ScriptExecutionContext&, Blob&);
+    void start(ScriptExecutionContext&, const Blob&);
     void stop();
 
     bool isStarted() const { return m_isStarted; }

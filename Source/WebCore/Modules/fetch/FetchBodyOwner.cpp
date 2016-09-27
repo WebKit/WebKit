@@ -141,7 +141,7 @@ void FetchBodyOwner::text(Ref<DeferredPromise>&& promise)
     m_body.text(*this, WTFMove(promise));
 }
 
-void FetchBodyOwner::loadBlob(Blob& blob, FetchBodyConsumer* consumer)
+void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
 {
     // Can only be called once for a body instance.
     ASSERT(isDisturbed());
