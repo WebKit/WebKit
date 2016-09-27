@@ -1,3 +1,39 @@
+2016-09-27  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Refactor FetchBody to use std::experimental::variant
+        https://bugs.webkit.org/show_bug.cgi?id=162559
+
+        Reviewed by Alex Christensen.
+
+        Covered by exiting tests.
+
+        Using variant to represent the variant data types.
+        Adding nullptr as a specific type for default empty values and to allow clean-up.
+        Adding FetchBody::clone as the default copy constructor is deleted with this change.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::FetchBody):
+        (WebCore::FetchBody::json):
+        (WebCore::FetchBody::text):
+        (WebCore::FetchBody::consumeAsStream):
+        (WebCore::FetchBody::consumeArrayBuffer):
+        (WebCore::FetchBody::consumeArrayBufferView):
+        (WebCore::FetchBody::consumeText):
+        (WebCore::FetchBody::consumeBlob):
+        (WebCore::FetchBody::extractFromText):
+        (WebCore::FetchBody::bodyForInternalRequest):
+        (WebCore::FetchBody::clone):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::blobBody):
+        (WebCore::FetchBody::formDataBody):
+        (WebCore::FetchBody::arrayBufferBody):
+        (WebCore::FetchBody::arrayBufferViewBody):
+        (WebCore::FetchBody::textBody):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::clone):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::cloneForJS):
+
 2016-09-26  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix debug build break since r204205. Unreviewed

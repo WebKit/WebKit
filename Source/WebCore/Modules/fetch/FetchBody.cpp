@@ -48,23 +48,22 @@ namespace WebCore {
 
 FetchBody::FetchBody(Ref<Blob>&& blob)
     : m_type(Type::Blob)
-    , m_contentType(blob->type())
-    , m_blob(WTFMove(blob))
+    , m_data(WTFMove(blob))
+    , m_contentType(this->blobBody().type())
 {
 }
 
 FetchBody::FetchBody(DOMFormData& formData, Document& document)
     : m_type(Type::FormData)
-    , m_contentType(ASCIILiteral("multipart/form-data"))
+    , m_data(FormData::createMultiPart(formData, formData.encoding(), &document))
+    , m_contentType(makeString("multipart/form-data;boundary=", this->formDataBody().boundary().data()))
 {
-    m_formData = FormData::createMultiPart(formData, formData.encoding(), &document);
-    m_contentType = makeString("multipart/form-data;boundary=", m_formData->boundary().data());
 }
 
 FetchBody::FetchBody(String&& text)
     : m_type(Type::Text)
+    , m_data(WTFMove(text))
     , m_contentType(ASCIILiteral("text/plain;charset=UTF-8"))
-    , m_text(WTFMove(text))
 {
 }
 
@@ -76,7 +75,14 @@ FetchBody::FetchBody(Ref<ArrayBuffer>&& data)
 
 FetchBody::FetchBody(Ref<ArrayBufferView>&& dataView)
     : m_type(Type::ArrayBufferView)
-    , m_dataView(WTFMove(dataView))
+    , m_data(WTFMove(dataView))
+{
+}
+
+FetchBody::FetchBody(Type type, const String& contentType, const FetchBodyConsumer& consumer)
+    : m_type(type)
+    , m_contentType(contentType)
+    , m_consumer(consumer)
 {
 }
 
@@ -144,7 +150,7 @@ void FetchBody::json(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
     ASSERT(m_type != Type::None);
 
     if (m_type == Type::Text) {
-        fulfillPromiseWithJSON(WTFMove(promise), m_text);
+        fulfillPromiseWithJSON(WTFMove(promise), textBody());
         return;
     }
     m_consumer.setType(FetchBodyConsumer::Type::JSON);
@@ -156,7 +162,7 @@ void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
     ASSERT(m_type != Type::None);
 
     if (m_type == Type::Text) {
-        promise->resolve(m_text);
+        promise->resolve(textBody());
         return;
     }
     m_consumer.setType(FetchBodyConsumer::Type::Text);
@@ -209,26 +215,23 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
     bool closeStream = false;
     switch (m_type) {
     case Type::ArrayBuffer:
-        ASSERT(m_data);
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(m_data->data(), m_data->byteLength()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferBody().data(), arrayBufferBody().byteLength()));
         m_data = nullptr;
         break;
     case Type::ArrayBufferView: {
-        ASSERT(m_dataView);
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(m_dataView->baseAddress(), m_dataView->byteLength()));
-        m_dataView = nullptr;
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength()));
+        m_data = nullptr;
         break;
     }
     case Type::Text: {
         Vector<uint8_t> data = extractFromText();
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
-        m_text = { };
+        m_data = nullptr;
         break;
     }
     case Type::Blob:
-        ASSERT(m_blob);
-        owner.loadBlob(*m_blob, nullptr);
-        m_blob = nullptr;
+        owner.loadBlob(blobBody(), nullptr);
+        m_data = nullptr;
         break;
     case Type::None:
         closeStream = true;
@@ -248,39 +251,35 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
 
 void FetchBody::consumeArrayBuffer(Ref<DeferredPromise>&& promise)
 {
-    ASSERT(m_data);
-    m_consumer.resolveWithData(WTFMove(promise), static_cast<const uint8_t*>(m_data->data()), m_data->byteLength());
+    m_consumer.resolveWithData(WTFMove(promise), static_cast<const uint8_t*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
     m_data = nullptr;
 }
 
 void FetchBody::consumeArrayBufferView(Ref<DeferredPromise>&& promise)
 {
-    ASSERT(m_dataView);
-    m_consumer.resolveWithData(WTFMove(promise), static_cast<const uint8_t*>(m_dataView->baseAddress()), m_dataView->byteLength());
-    m_dataView = nullptr;
+    m_consumer.resolveWithData(WTFMove(promise), static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
+    m_data = nullptr;
 }
 
 void FetchBody::consumeText(Ref<DeferredPromise>&& promise)
 {
     Vector<uint8_t> data = extractFromText();
     m_consumer.resolveWithData(WTFMove(promise), data.data(), data.size());
-    m_text = { };
+    m_data = nullptr;
 }
 
 void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    ASSERT(m_blob);
-
     m_consumePromise = WTFMove(promise);
-    owner.loadBlob(*m_blob, &m_consumer);
-    m_blob = nullptr;
+    owner.loadBlob(blobBody(), &m_consumer);
+    m_data = nullptr;
 }
 
 Vector<uint8_t> FetchBody::extractFromText() const
 {
     ASSERT(m_type == Type::Text);
     // FIXME: This double allocation is not efficient. Might want to fix that at WTFString level.
-    CString data = m_text.utf8();
+    CString data = textBody().utf8();
     Vector<uint8_t> value(data.length());
     memcpy(value.data(), data.data(), data.length());
     return value;
@@ -307,23 +306,19 @@ RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& conte
     case Type::None:
         return nullptr;
     case Type::Text:
-        return FormData::create(UTF8Encoding().encode(m_text, EntitiesForUnencodables));
+        return FormData::create(UTF8Encoding().encode(textBody(), EntitiesForUnencodables));
     case Type::Blob: {
-        ASSERT(m_blob);
         RefPtr<FormData> body = FormData::create();
-        body->appendBlob(m_blob->url());
+        body->appendBlob(blobBody().url());
         return body;
     }
     case Type::ArrayBuffer:
-        ASSERT(m_data);
-        return FormData::create(m_data->data(), m_data->byteLength());
+        return FormData::create(arrayBufferBody().data(), arrayBufferBody().byteLength());
     case Type::ArrayBufferView:
-        ASSERT(m_dataView);
-        return FormData::create(m_dataView->baseAddress(), m_dataView->byteLength());
+        return FormData::create(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength());
     case Type::FormData: {
-        ASSERT(m_formData);
         ASSERT(!context.isWorkerGlobalScope());
-        auto body = m_formData;
+        RefPtr<FormData> body = const_cast<FormData*>(&formDataBody());
         body->generateFiles(static_cast<Document*>(&context));
         return body;
     }
@@ -331,6 +326,36 @@ RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& conte
         ASSERT_NOT_REACHED();
         return nullptr;
     }
+}
+
+FetchBody FetchBody::clone() const
+{
+    ASSERT(!m_consumePromise);
+    FetchBody clone(m_type, m_contentType, m_consumer);
+
+    switch (m_type) {
+    case Type::ArrayBuffer:
+        clone.m_data = const_cast<ArrayBuffer&>(arrayBufferBody());
+        break;
+    case Type::ArrayBufferView:
+        clone.m_data = const_cast<ArrayBufferView&>(arrayBufferViewBody());
+        break;
+    case Type::Blob:
+        clone.m_data = const_cast<Blob&>(blobBody());
+        break;
+    case Type::FormData:
+        clone.m_data = const_cast<FormData&>(formDataBody());
+        break;
+    case Type::Text:
+        clone.m_data = textBody();
+        break;
+    case Type::Loaded:
+    case Type::None:
+    case Type::Loading:
+    case Type::ReadableStream:
+        break;
+    }
+    return clone;
 }
 
 }

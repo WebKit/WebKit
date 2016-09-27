@@ -36,6 +36,7 @@
 #include "FetchLoader.h"
 #include "FormData.h"
 #include "JSDOMPromise.h"
+#include <wtf/Variant.h>
 
 namespace JSC {
 class ExecState;
@@ -85,12 +86,15 @@ public:
 
     void cleanConsumePromise() { m_consumePromise = nullptr; }
 
+    FetchBody clone() const;
+
 private:
     FetchBody(Ref<Blob>&&);
     FetchBody(Ref<ArrayBuffer>&&);
     FetchBody(Ref<ArrayBufferView>&&);
     FetchBody(DOMFormData&, Document&);
     FetchBody(String&&);
+    FetchBody(Type, const String&, const FetchBodyConsumer&);
     FetchBody(Type type) : m_type(type) { }
 
     void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);
@@ -101,15 +105,22 @@ private:
     void consumeText(Ref<DeferredPromise>&&);
     void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
+    Blob& blobBody() { return std::experimental::get<Ref<Blob>>(m_data).get(); }
+    const Blob& blobBody() const { return std::experimental::get<Ref<Blob>>(m_data).get(); }
+    FormData& formDataBody() { return std::experimental::get<Ref<FormData>>(m_data).get(); }
+    const FormData& formDataBody() const { return std::experimental::get<Ref<FormData>>(m_data).get(); }
+    ArrayBuffer& arrayBufferBody() { return std::experimental::get<Ref<ArrayBuffer>>(m_data).get(); }
+    const ArrayBuffer& arrayBufferBody() const { return std::experimental::get<Ref<ArrayBuffer>>(m_data).get(); }
+    ArrayBufferView& arrayBufferViewBody() { return std::experimental::get<Ref<ArrayBufferView>>(m_data).get(); }
+    const ArrayBufferView& arrayBufferViewBody() const { return std::experimental::get<Ref<ArrayBufferView>>(m_data).get(); }
+    String& textBody() { return std::experimental::get<String>(m_data); }
+    const String& textBody() const { return std::experimental::get<String>(m_data); }
+
     Type m_type { Type::None };
-    String m_contentType;
 
     // FIXME: Add support for URLSearchParams.
-    RefPtr<Blob> m_blob;
-    RefPtr<FormData> m_formData;
-    RefPtr<ArrayBuffer> m_data;
-    RefPtr<ArrayBufferView> m_dataView;
-    String m_text;
+    std::experimental::variant<std::nullptr_t, Ref<Blob>, Ref<FormData>, Ref<ArrayBuffer>, Ref<ArrayBufferView>, String> m_data;
+    String m_contentType;
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
     RefPtr<DeferredPromise> m_consumePromise;

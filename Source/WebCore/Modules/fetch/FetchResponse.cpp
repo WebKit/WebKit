@@ -98,7 +98,7 @@ Ref<FetchResponse> FetchResponse::cloneForJS()
 {
     ASSERT(scriptExecutionContext());
     ASSERT(!isDisturbedOrLocked());
-    return adoptRef(*new FetchResponse(*scriptExecutionContext(), FetchBody(m_body), FetchHeaders::create(headers()), ResourceResponse(m_response)));
+    return adoptRef(*new FetchResponse(*scriptExecutionContext(), m_body.clone(), FetchHeaders::create(headers()), ResourceResponse(m_response)));
 }
 
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, FetchPromise&& promise)

@@ -314,7 +314,7 @@ RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext& context, Except
         return nullptr;
     }
 
-    return adoptRef(*new FetchRequest(context, FetchBody(m_body), FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
+    return adoptRef(*new FetchRequest(context, m_body.clone(), FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
 }
 
 const char* FetchRequest::activeDOMObjectName() const
