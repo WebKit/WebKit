@@ -1,3 +1,13 @@
+2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [FreeType] Add comment further justifying use of FT_LOAD_FORCE_AUTOHINT
+        https://bugs.webkit.org/show_bug.cgi?id=162607
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+
 2016-09-27  Mario Sanchez Prada  <mario@endlessm.com>
 
         Build fails for X11+EGL due to missing gst_gl_display_x11_new_with_display()

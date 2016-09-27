@@ -49,7 +49,12 @@ FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffe
     // Chrome is considering switching from autohinting to native hinting in
     // https://code.google.com/p/chromium/issues/detail?id=173207 but this is
     // more risk than we want to assume for now. See
-    // https://bugs.webkit.org/show_bug.cgi?id=140994 before changing this.
+    // https://bugs.webkit.org/show_bug.cgi?id=140994 before changing this, and
+    // also consider that (a) the fonts' native hints will all be designed to
+    // work on Windows, and might not look good at all with FreeType, whereas
+    // automatic hints will always look decent, and (b) Fontconfig is not
+    // capable of providing any per-font hinting settings for web fonts, unlike
+    // for system fonts, so it seems acceptable to treat them differently.
 
     buffer.ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
     static cairo_user_data_key_t bufferKey;
