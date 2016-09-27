@@ -22,6 +22,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 typedef int ExceptionCode;
@@ -30,12 +31,17 @@ class Document;
 
 class DOMParser : public RefCounted<DOMParser> {
 public:
-    static Ref<DOMParser> create() { return adoptRef(*new DOMParser); }
+    static Ref<DOMParser> create(Document& contextDocument)
+    {
+        return adoptRef(*new DOMParser(contextDocument));
+    }
 
     RefPtr<Document> parseFromString(const String&, const String& contentType, ExceptionCode&);
 
 private:
-    DOMParser() { }
+    explicit DOMParser(Document& contextDocument);
+
+    WeakPtr<Document> m_contextDocument;
 };
 
 }

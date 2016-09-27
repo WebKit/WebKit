@@ -25,7 +25,12 @@
 
 namespace WebCore {
 
-RefPtr<Document> DOMParser::parseFromString(const String& str, const String& contentType, ExceptionCode& ec)
+DOMParser::DOMParser(Document& contextDocument)
+    : m_contextDocument(contextDocument.createWeakPtr())
+{
+}
+
+RefPtr<Document> DOMParser::parseFromString(const String& string, const String& contentType, ExceptionCode& ec)
 {
     if (contentType != "text/html"
         && contentType != "text/xml"
@@ -36,9 +41,11 @@ RefPtr<Document> DOMParser::parseFromString(const String& str, const String& con
         return nullptr;
     }
 
-    Ref<Document> doc = DOMImplementation::createDocument(contentType, nullptr, URL());
-    doc->setContent(str);
-    return WTFMove(doc);
+    Ref<Document> document = DOMImplementation::createDocument(contentType, nullptr, URL());
+    if (m_contextDocument)
+        document->setContextDocument(*m_contextDocument.get());
+    document->setContent(string);
+    return WTFMove(document);
 }
 
 } // namespace WebCore

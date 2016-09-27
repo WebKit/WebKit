@@ -1,3 +1,15 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        It should be possible to dispatch events on documents created using DOMParser
+        https://bugs.webkit.org/show_bug.cgi?id=26147
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/dom/parsed-document-dispatchEvent-expected.txt: Added.
+        * fast/dom/parsed-document-dispatchEvent.html: Added.
+
 2016-09-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html as flaky on Sierra.

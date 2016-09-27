@@ -1,3 +1,25 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        It should be possible to dispatch events on documents created using DOMParser
+        https://bugs.webkit.org/show_bug.cgi?id=26147
+
+        Reviewed by Ryosuke Niwa.
+
+        It should be possible to dispatch events on documents created using
+        DOMParser. It did not work because we were not setting the context
+        document on the newly created document in DOMParser::parseFromString().
+
+        Firefox and Chrome both already support this.
+
+        Test: fast/dom/parsed-document-dispatchEvent.html
+
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::DOMParser):
+        (WebCore::DOMParser::parseFromString):
+        * xml/DOMParser.h:
+        (WebCore::DOMParser::create):
+        * xml/DOMParser.idl:
+
 2016-09-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Improve performance of complex text codepath
