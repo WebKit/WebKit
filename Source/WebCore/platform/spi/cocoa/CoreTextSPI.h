@@ -54,6 +54,10 @@ typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions)
     kCTFontDescriptorOptionPreferAppleSystemFont = kCTFontOptionsPreferSystemFont
 };
 
+enum {
+    kCTRunStatusHasOrigins = (1 << 4),
+};
+
 #endif
 
 WTF_EXTERN_C_BEGIN

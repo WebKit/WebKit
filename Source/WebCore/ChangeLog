@@ -1,3 +1,30 @@
+2016-09-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Improve performance of complex text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=161936
+
+        Reviewed by Simon Fraser.
+
+        CoreText exposes a bit on the CTRunStatus which represents whether
+        the run actually uses the glyph origins concept introduced in
+        r205396. If this bit is not set, we can use the (slightly faster)
+        call to CTRunGetAdvances() instead of
+        CTRunGetBaseAdvancesAndOrigins(). In addition, if none of the runs
+        have this bit set, we don't need to allocate storage for the vector
+        of origins at all, thereby using less memory.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::advance):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::glyphOrigins):
+        (WebCore::ComplexTextController::glyphOrigin):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        * platform/spi/cocoa/CoreTextSPI.h:
+
 2016-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import w3c shadow DOM tests and fix one assertion

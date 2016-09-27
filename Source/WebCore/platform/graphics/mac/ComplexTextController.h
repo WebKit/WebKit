@@ -39,6 +39,10 @@ typedef unsigned short CGGlyph;
 typedef const struct __CTRun * CTRunRef;
 typedef const struct __CTLine * CTLineRef;
 
+namespace WTF {
+template<> struct VectorTraits<CGPoint> : SimpleClassVectorTraits { };
+}
+
 namespace WebCore {
 
 class FontCascade;
@@ -48,7 +52,7 @@ class TextRun;
 enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
 
 // ComplexTextController is responsible for rendering and measuring glyphs for
-// complex scripts on OS X.
+// complex scripts on macOS and iOS.
 class ComplexTextController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -108,7 +112,7 @@ private:
          */
         CGSize initialAdvance() const { return m_initialAdvance; }
         const CGSize* baseAdvances() const { return m_baseAdvances; }
-        const CGPoint* glyphOrigins() const { return m_glyphOrigins.data(); }
+        const CGPoint* glyphOrigins() const { return m_glyphOrigins.size() == glyphCount() ? m_glyphOrigins.data() : nullptr; }
         bool isLTR() const { return m_isLTR; }
         bool isMonotonic() const { return m_isMonotonic; }
         void setIsNonMonotonic();
@@ -149,6 +153,8 @@ private:
     unsigned incrementCurrentRun(unsigned& leftmostGlyph);
 
     float runWidthSoFarFraction(unsigned glyphStartOffset, unsigned glyphEndOffset, unsigned oldCharacterInCurrentGlyph, GlyphIterationStyle) const;
+
+    CGPoint glyphOrigin(unsigned index) const { return index < m_glyphOrigins.size() ? m_glyphOrigins[index] : CGPointZero; }
 
     Vector<CGSize, 256> m_adjustedBaseAdvances;
     Vector<CGPoint, 256> m_glyphOrigins;

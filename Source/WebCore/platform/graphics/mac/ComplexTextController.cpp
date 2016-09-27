@@ -568,9 +568,9 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         if (glyphBuffer && !leftmostGlyph) {
             CGSize initialAdvance = complexTextRun.initialAdvance();
 #if USE_LAYOUT_SPECIFIC_ADVANCES
-            unsigned index = ltr ? 0 : m_glyphOrigins.size() - 1;
-            initialAdvance.width += m_glyphOrigins[index].x;
-            initialAdvance.height += m_glyphOrigins[index].y;
+            unsigned index = ltr ? 0 : m_adjustedBaseAdvances.size() - 1;
+            initialAdvance.width += glyphOrigin(index).x;
+            initialAdvance.height += glyphOrigin(index).y;
 #endif
             glyphBuffer->setInitialAdvance(initialAdvance);
 
@@ -597,8 +597,8 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
                 GlyphBufferAdvance paintAdvance = adjustedBaseAdvance;
 #if USE_LAYOUT_SPECIFIC_ADVANCES
                 if (k + 1 < m_adjustedBaseAdvances.size()) {
-                    paintAdvance.setWidth(paintAdvance.width() + m_glyphOrigins[k + 1].x - m_glyphOrigins[k].x);
-                    paintAdvance.setHeight(paintAdvance.height() - m_glyphOrigins[k + 1].y + m_glyphOrigins[k].y);
+                    paintAdvance.setWidth(paintAdvance.width() + glyphOrigin(k + 1).x - glyphOrigin(k).x);
+                    paintAdvance.setHeight(paintAdvance.height() - glyphOrigin(k + 1).y + glyphOrigin(k).y);
                 }
 #endif
                 glyphBuffer->add(m_adjustedGlyphs[k], &complexTextRun.font(), paintAdvance, complexTextRun.indexAt(m_glyphInCurrentRun));
@@ -786,7 +786,12 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             advance.height *= -1;
             m_adjustedBaseAdvances.append(advance);
 #if USE_LAYOUT_SPECIFIC_ADVANCES
-            m_glyphOrigins.append(complexTextRun.glyphOrigins()[i]);
+            if (auto* origins = complexTextRun.glyphOrigins()) {
+                ASSERT(m_glyphOrigins.size() < m_adjustedBaseAdvances.size());
+                m_glyphOrigins.grow(m_adjustedBaseAdvances.size());
+                m_glyphOrigins[m_glyphOrigins.size() - 1] = origins[i];
+                ASSERT(m_glyphOrigins.size() == m_adjustedBaseAdvances.size());
+            }
 #endif
             m_adjustedGlyphs.append(glyph);
             

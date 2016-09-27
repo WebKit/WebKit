@@ -133,18 +133,21 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
     }
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
-    m_baseAdvancesVector.grow(m_glyphCount);
-    m_glyphOrigins.grow(m_glyphCount);
-    CTRunGetBaseAdvancesAndOrigins(ctRun, CFRangeMake(0, 0), m_baseAdvancesVector.data(), m_glyphOrigins.data());
-    m_baseAdvances = m_baseAdvancesVector.data();
-#else
-    m_baseAdvances = CTRunGetAdvancesPtr(ctRun);
-    if (!m_baseAdvances) {
+    if (CTRunGetStatus(ctRun) & kCTRunStatusHasOrigins) {
         m_baseAdvancesVector.grow(m_glyphCount);
-        CTRunGetAdvances(ctRun, CFRangeMake(0, 0), m_baseAdvancesVector.data());
+        m_glyphOrigins.grow(m_glyphCount);
+        CTRunGetBaseAdvancesAndOrigins(ctRun, CFRangeMake(0, 0), m_baseAdvancesVector.data(), m_glyphOrigins.data());
         m_baseAdvances = m_baseAdvancesVector.data();
-    }
+    } else
 #endif
+    {
+        m_baseAdvances = CTRunGetAdvancesPtr(ctRun);
+        if (!m_baseAdvances) {
+            m_baseAdvancesVector.grow(m_glyphCount);
+            CTRunGetAdvances(ctRun, CFRangeMake(0, 0), m_baseAdvancesVector.data());
+            m_baseAdvances = m_baseAdvancesVector.data();
+        }
+    }
 }
 
 // Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
