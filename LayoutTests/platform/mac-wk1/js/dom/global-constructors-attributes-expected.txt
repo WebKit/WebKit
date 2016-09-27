@@ -948,11 +948,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'MediaError').hasOwnProperty('get')
 PASS Object.getOwnPropertyDescriptor(global, 'MediaError').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaError').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaError').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyEvent').value is MediaKeyEvent
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyEvent').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyEvent').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyEvent').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyNeededEvent').value is MediaKeyNeededEvent
 PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyNeededEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyNeededEvent').hasOwnProperty('set') is false

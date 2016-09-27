@@ -26,7 +26,7 @@
 #ifndef MediaKeyError_h
 #define MediaKeyError_h
 
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(ENCRYPTED_MEDIA_V2)
 
 #include <runtime/Uint8Array.h>
 #include <wtf/RefCounted.h>

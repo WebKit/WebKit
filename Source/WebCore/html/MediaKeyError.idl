@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2,
+    Conditional=ENCRYPTED_MEDIA_V2,
     ImplementationLacksVTable,
     InterfaceName=WebKitMediaKeyError
 ] interface MediaKeyError {

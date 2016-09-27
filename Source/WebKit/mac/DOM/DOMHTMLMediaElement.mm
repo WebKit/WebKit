@@ -308,10 +308,10 @@
     IMPL->load();
 }
 
-- (NSString *)canPlayType:(NSString *)type keySystem:(NSString *)keySystem
+- (NSString *)canPlayType:(NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->canPlayType(type, keySystem);
+    return IMPL->canPlayType(type);
 }
 
 - (NSTimeInterval)getStartDate

@@ -1307,12 +1307,6 @@ void MediaPlayerPrivateQTKit::getSupportedTypes(HashSet<String, ASCIICaseInsensi
 
 MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const MediaEngineSupportParameters& parameters)
 {
-#if ENABLE(ENCRYPTED_MEDIA)
-    // QTKit does not support any encrytped media, so return IsNotSupported if the keySystem is non-NULL:
-    if (!parameters.keySystem.isNull() && !parameters.keySystem.isEmpty())
-        return MediaPlayer::IsNotSupported;
-#endif
-
 #if ENABLE(MEDIA_SOURCE)
     if (parameters.isMediaSource)
         return MediaPlayer::IsNotSupported;

@@ -1,3 +1,79 @@
+2016-09-27  Jer Noble  <jer.noble@apple.com>
+
+        Remove deprecated ENCRYPTED_MEDIA implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=161010
+
+        Reviewed by Eric Carlson.
+
+        Remove all references to the deprecated ENABLE_ENCRYPTED_MEDIA (leaving in place
+        the soon-to-be deprecated ENABLE_ENCRYPTED_MEDIA_V2).
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMHTMLMediaElement.h:
+        * bindings/objc/DOMHTMLMediaElement.mm:
+        (-[DOMHTMLMediaElement canPlayType:]):
+        (-[DOMHTMLMediaElement canPlayType:keySystem:]): Deleted.
+        * bindings/js/JSDictionary.cpp:
+        * bindings/js/JSDictionary.h:
+        * dom/Element.idl:
+        * dom/EventNames.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::exceptionCodeForMediaKeyException): Deleted.
+        (WebCore::HTMLMediaElement::canPlayType): Deleted.
+        (WebCore::HTMLMediaElement::mediaPlayerKeyAdded): Deleted.
+        (WebCore::HTMLMediaElement::mediaPlayerKeyError): Deleted.
+        (WebCore::HTMLMediaElement::mediaPlayerKeyMessage): Deleted.
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/MediaError.h:
+        * html/MediaError.idl:
+        * html/MediaKeyError.h:
+        * html/MediaKeyError.idl:
+        * html/MediaKeyEvent.cpp: Removed.
+        (WebCore::MediaKeyEvent::MediaKeyEvent): Deleted.
+        (WebCore::MediaKeyEvent::~MediaKeyEvent): Deleted.
+        (WebCore::MediaKeyEvent::eventInterface): Deleted.
+        * html/MediaKeyEvent.h: Removed.
+        * html/MediaKeyEvent.idl: Removed.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::nextBestMediaEngine):
+        (WebCore::MediaPlayer::generateKeyRequest): Deleted.
+        (WebCore::MediaPlayer::addKey): Deleted.
+        (WebCore::MediaPlayer::cancelKeyRequest): Deleted.
+        (WebCore::MediaPlayer::keyAdded): Deleted.
+        (WebCore::MediaPlayer::keyError): Deleted.
+        (WebCore::MediaPlayer::keyMessage): Deleted.
+        (WebCore::MediaPlayer::keyNeeded): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerKeyAdded): Deleted.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyError): Deleted.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyMessage): Deleted.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyNeeded): Deleted.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::addKey): Deleted.
+        (WebCore::MediaPlayerPrivateInterface::generateKeyRequest): Deleted.
+        (WebCore::MediaPlayerPrivateInterface::cancelKeyRequest): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::update):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsKeySystem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::generateKeyRequest): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::addKey): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelKeyRequest): Deleted.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::supportsType): Deleted.
+        * testing/MockCDM.h:
+
 2016-09-27  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Use Ref<const T> in FetchBody::m_data variant
