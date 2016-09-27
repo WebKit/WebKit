@@ -1,3 +1,18 @@
+2016-09-27  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Locate color picker popup to center of window
+        https://bugs.webkit.org/show_bug.cgi?id=162540
+
+        Reviewed by Michael Catanzaro.
+
+        Color picker popup hasn't located in a center of main window, because
+        elm_win_center() function doesn't work correctly. It looks a bug.
+
+        To fix the problem, this patch uses evas_object_geometry_set() instead.
+
+        * MiniBrowser/efl/main.c:
+        (_color_picker_request_cb):
+
 2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Disable ACCELERATED_2D_CANVAS when using build-webkit

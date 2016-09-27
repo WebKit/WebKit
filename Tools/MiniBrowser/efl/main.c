@@ -60,6 +60,8 @@ static Eina_Bool separated_process_enabled = EINA_FALSE;
 static Eina_Bool longpress_enabled = EINA_FALSE;
 static int window_width = 1000;
 static int window_height = 800;
+static int color_picker_width = 350;
+static int color_picker_height = 500;
 static int search_flags = EWK_FIND_OPTIONS_SHOW_HIGHLIGHT | EWK_FIND_OPTIONS_WRAP_AROUND | EWK_FIND_OPTIONS_CASE_INSENSITIVE;
 /* Default value of device_pixel_ratio is '0' so that we don't set custom device
  * scale factor unless it's required by the User. */
@@ -874,9 +876,13 @@ _file_chooser_request_cb(void *user_data, Evas_Object *ewk_view, void *event_inf
 
    evas_object_smart_callback_add(file_selector, "done", _fileselector_done_cb, fs_data);
 
-   evas_object_resize(elm_window, 400, 400);
-   elm_win_center(elm_window, EINA_TRUE, EINA_TRUE);
-   evas_object_show(elm_window);
+   int x, y, width, height;
+   evas_object_geometry_get(window->elm_window, &x, &y, &width, &height);
+
+   int picker_x = x + width / 2 - color_picker_width / 2;
+   int picker_y = y + height / 2 - color_picker_height / 2;
+   evas_object_geometry_set(window->color_selector.elm_selector_window, picker_x, picker_y,
+     color_picker_width, color_picker_height);
 }
 
 static void
