@@ -1,3 +1,10 @@
+2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed typo fix
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::standardUserAgent):
+
 2016-09-27  Youenn Fablet  <youenn@apple.com>
 
         Clean-up CachedImage constructor
