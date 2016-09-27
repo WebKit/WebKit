@@ -923,8 +923,7 @@ void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameVi
 
 static void evaluateCommandInOverlay(Page* page, Ref<InspectorArray>&& command)
 {
-    JSC::JSValue result = page->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
-    ASSERT_UNUSED(result, result); // There should never be exceptions when evaluating in the overlay page.
+    page->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method)

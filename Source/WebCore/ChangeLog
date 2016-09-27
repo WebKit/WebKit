@@ -1,3 +1,17 @@
+2016-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove an unneeded assert in InspectorOverlay.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=162581
+
+        Reviewed by Alexey Proskuryakov.
+
+        This assertion was added to catch unknown issues, but it is firing frequently enough on certain Inspector
+        tests that it is causing more harm than good.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildQuadObjectForCSSRegionContentClip):
+        (WebCore::evaluateCommandInOverlay):
+
 2016-09-27  Jer Noble  <jer.noble@apple.com>
 
         Remove deprecated ENCRYPTED_MEDIA implementation.
