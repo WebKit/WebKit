@@ -1,5 +1,13 @@
 2016-09-27  Anders Carlsson  <andersca@apple.com>
 
+        Turns out OptionSet.cpp wasn't added to the right target. Add it and fix the build for real.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
+        (TestWebKitAPI::TEST):
+
+2016-09-27  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the GTK+ build.
 
         * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
