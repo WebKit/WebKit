@@ -605,20 +605,25 @@
 #endif
 #endif /* !defined(HAVE_ACCESSIBILITY) */
 
-#if OS(UNIX)
+/* FIXME: Remove after CMake build enabled on Darwin */
+#if OS(DARWIN)
 #define HAVE_ERRNO_H 1
 #define HAVE_LANGINFO_H 1
 #define HAVE_MMAP 1
 #define HAVE_SIGNAL_H 1
+#define HAVE_STAT_BIRTHTIME 1
 #define HAVE_STRINGS_H 1
+#define HAVE_STRNSTR 1
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1 
+#define HAVE_TM_GMTOFF 1
+#define HAVE_TM_ZONE 1
+#define HAVE_TIMEGM 1
+#endif /* OS(DARWIN) */
+
+#if OS(UNIX)
 #define USE_PTHREADS 1
 #endif /* OS(UNIX) */
-
-#if (OS(FREEBSD) || OS(OPENBSD)) && !defined(__GLIBC__)
-#define HAVE_PTHREAD_NP_H 1
-#endif
 
 #if !defined(HAVE_VASPRINTF)
 #if !COMPILER(MSVC) && !COMPILER(MINGW)
@@ -626,24 +631,7 @@
 #endif
 #endif
 
-#if !defined(HAVE_STRNSTR)
-#if OS(DARWIN) || (OS(FREEBSD) && !defined(__GLIBC__))
-#define HAVE_STRNSTR 1
-#endif
-#endif
-
-#if (OS(DARWIN) || OS(FREEBSD) || OS(NETBSD)) && !defined(__GLIBC__)
-#define HAVE_STAT_BIRTHTIME 1
-#endif
-
-#if !OS(WINDOWS) && !OS(SOLARIS)
-#define HAVE_TM_GMTOFF 1
-#define HAVE_TM_ZONE 1
-#define HAVE_TIMEGM 1
-#endif
-
 #if OS(DARWIN)
-
 #define HAVE_DISPATCH_H 1
 #define HAVE_MADV_FREE 1
 #define HAVE_MADV_FREE_REUSE 1
@@ -661,18 +649,6 @@
 #endif
 
 #endif /* OS(DARWIN) */
-
-#if OS(WINDOWS)
-
-#define HAVE_SYS_TIMEB_H 1
-#define HAVE_ALIGNED_MALLOC 1
-#define HAVE_ISDEBUGGERPRESENT 1
-
-#endif
-
-#if OS(WINDOWS)
-#define HAVE_VIRTUALALLOC 1
-#endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
 #define HAVE_CFNETWORK_STORAGE_PARTITIONING 1

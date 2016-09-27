@@ -1,3 +1,12 @@
+2016-09-27  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [CMake] Use CMake to determine HAVE_* defines
+        https://bugs.webkit.org/show_bug.cgi?id=162368
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2016-09-27  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Simplify Clang checks and prepare for compiler ID split
