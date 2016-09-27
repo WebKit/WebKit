@@ -30,6 +30,7 @@
 #if PLATFORM(WAYLAND)
 
 #include <WebCore/RefPtrCairo.h>
+#include <gtk/gtk.h>
 
 namespace WebKit {
 
@@ -40,6 +41,10 @@ class AcceleratedBackingStoreWayland final : public AcceleratedBackingStore {
 public:
     static std::unique_ptr<AcceleratedBackingStoreWayland> create(WebPageProxy&);
     ~AcceleratedBackingStoreWayland();
+
+#if GTK_CHECK_VERSION(3, 16, 0)
+    bool canGdkUseGL() const;
+#endif
 
 private:
     AcceleratedBackingStoreWayland(WebPageProxy&);

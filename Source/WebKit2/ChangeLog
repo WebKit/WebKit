@@ -1,3 +1,25 @@
+2016-09-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] Should check whether GDK can use GL before asking it to
+        https://bugs.webkit.org/show_bug.cgi?id=162598
+
+        Reviewed by Michael Catanzaro.
+
+        gdk_cairo_draw_from_gl can fail even when WebKit itself has been able to use GL (its
+        context creation code might be buggy, GL may have been disabled using GDK_GL=disable, …).
+        Unfortunately it does not have any error reporting other than a warning printed to
+        stderr, so we cannot fallback from it. We have to first check if GL can be used by GDK
+        by trying to create a context.
+
+        See https://bugzilla.redhat.com/show_bug.cgi?id=1378987
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::canGdkUseGL): decide whether GDK can use GL by
+        trying to create a context for a GdkWindow.
+        (WebKit::AcceleratedBackingStoreWayland::paint): fallback to glReadPixels if GDK cannot
+        use GL.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
+
 2016-09-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed, build fix.
