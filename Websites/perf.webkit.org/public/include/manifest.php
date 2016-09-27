@@ -41,7 +41,7 @@ class ManifestGenerator {
             'builders' => (object)$this->builders(),
             'bugTrackers' => (object)$this->bug_trackers($repositories_table),
             'dashboards' => (object)config('dashboards'),
-            'summary' => (object)config('summary'),
+            'summaryPages' => (object)config('summaryPages'),
         );
 
         $this->manifest['elapsedTime'] = (microtime(true) - $start_time) * 1000;

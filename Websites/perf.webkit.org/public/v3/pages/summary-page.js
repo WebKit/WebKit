@@ -3,8 +3,9 @@ class SummaryPage extends PageWithHeading {
 
     constructor(summarySettings)
     {
-        super('Summary', null);
+        super(summarySettings.name, null);
 
+        this._route = summarySettings.route;
         this._table = {
             heading: summarySettings.platformGroups,
             groups: [],
@@ -26,7 +27,7 @@ class SummaryPage extends PageWithHeading {
         }
     }
 
-    routeName() { return 'summary'; }
+    routeName() { return `summary/${this._route}`; }
 
     open(state)
     {
@@ -37,7 +38,7 @@ class SummaryPage extends PageWithHeading {
         for (var group of this._configGroups)
             group.fetchAndComputeSummary(timeRange).then(this.render.bind(this));
     }
-    
+
     render()
     {
         Instrumentation.startMeasuringTime('SummaryPage', 'render');

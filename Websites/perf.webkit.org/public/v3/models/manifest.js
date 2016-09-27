@@ -48,7 +48,7 @@ class Manifest {
         return {
             siteTitle: rawResponse.siteTitle,
             dashboards: rawResponse.dashboards, // FIXME: Add an abstraction around dashboards.
-            summary: rawResponse.summary,
+            summaryPages: rawResponse.summaryPages,
         }
     }
 }

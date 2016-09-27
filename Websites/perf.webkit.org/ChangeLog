@@ -1,3 +1,27 @@
+2016-09-27  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend perf dashboard to support multiple summary pages.
+        https://bugs.webkit.org/show_bug.cgi?id=162594
+
+        Reviewed by Ryosuke Niwa.
+
+        Start support multiple summary pages instead of one.
+        Specify 'summaryPages' as key that map to a list of summaries which follows
+        current 'summary' format in 'config.json' but with 2 more properties:
+           'name': specifying the name shows on perf dashboard,
+           'route': specifying the path to this page.
+
+        * public/include/manifest.php:
+        * public/v3/main.js:
+        (main):
+        (main.): Deleted.
+        * public/v3/models/manifest.js:
+        (Manifest._didFetchManifest):
+        (Manifest):
+        * public/v3/pages/summary-page.js:
+        (SummaryPage):
+        (SummaryPage.prototype.routeName):
+
 2016-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't filter out the latest data point in chart data sampling
