@@ -1,3 +1,11 @@
+2016-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/text/system-font-weight.html for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/text/system-font-weight-expected.txt:
+
 2016-09-23  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r203982. rdar://problem/27547583
