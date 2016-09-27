@@ -1,3 +1,14 @@
+2016-09-27  Konstantin Tokarev  <annulen@yandex.ru> and Vitaliy Slobodin  <vitaliy.slobodin@gmail.com>
+
+        Fixed compilation of WOFF2 on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=162570
+
+        Reviewed by Alex Christensen.
+
+        * woff2/CMakeLists.txt: Avoid passing GCC-specific flags to other
+        compilers.
+        * woff2/src/port.h: Include assert.h.
+
 2016-06-19  Frederic Wang  <fred.wang@free.fr>
 
         Update Brotli to version 0.4.0
