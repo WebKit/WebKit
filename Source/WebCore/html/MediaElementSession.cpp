@@ -228,7 +228,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return true;
     }
 
-    if (!isElementRectMostlyInMainFrame(m_element)) {
+    if (purpose == PlaybackControlsPurpose::ControlsManager && !isElementRectMostlyInMainFrame(m_element)) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: Not in main frame");
         return false;
     }

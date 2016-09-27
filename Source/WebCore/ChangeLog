@@ -1,3 +1,21 @@
+2016-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        If you play a youtube video from now playing after it finished in Safari, controls disappear
+        https://bugs.webkit.org/show_bug.cgi?id=162589
+        <rdar://problem/28484047>
+
+        Reviewed by Jer Noble.
+
+        Tweaks the main content heuristic slightly to remove the "mostly in mainframe" requirement in the case of Now
+        Playing. This was added in the case of the controls manager as an additional way to identify video elements that
+        should not show controls, since we relax audio and video constraints for showing videos in the controls manager,
+        so that a video element is prevented from showing controls on grounds of lacking audio only if it has never had
+        audio before. In the case of Now Playing, we have stricter requirements for videos, which must have audio, which
+        makes the mainframe heuristic not necessary.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canShowControlsManager):
+
 2016-09-26  Antti Koivisto  <antti@apple.com>
 
         Setter on style element's textContent or cssText doesn't trigger style recalc
