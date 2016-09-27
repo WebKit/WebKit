@@ -1,3 +1,12 @@
+2016-09-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove 100ms timeout for media/media-source/media-source-delaying-load-event.html to try to fix flakiness.
+        https://bugs.webkit.org/show_bug.cgi?id=162566
+
+        Reviewed by Alexey Proskuryakov.
+
+        * media/media-source/media-source-delaying-load-event.html:
+
 2016-09-26  Antti Koivisto  <antti@apple.com>
 
         Setter on style element's textContent or cssText doesn't trigger style recalc
