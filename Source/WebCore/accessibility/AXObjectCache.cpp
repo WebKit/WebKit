@@ -2463,6 +2463,9 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     int caretOffset;
     // Use a collapsed range to get the position.
     RefPtr<Range> range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
+    if (!range)
+        return IntRect();
+    
     Position startPosition = range->startPosition();
     startPosition.getInlineBoxAndOffset(DOWNSTREAM, inlineBox, caretOffset);
     
