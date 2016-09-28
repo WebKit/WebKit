@@ -80,7 +80,6 @@ void ImageSource::clear(bool destroyAll, size_t count, SharedBuffer* data)
 
 void ImageSource::destroyDecodedData(SharedBuffer* data, bool destroyAll, size_t count)
 {
-    ASSERT(isDecoderAvailable());
     m_frameCache.destroyDecodedData(destroyAll, count);
     clear(destroyAll, count, data);
 }

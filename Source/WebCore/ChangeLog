@@ -1,3 +1,19 @@
+2016-09-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r206481): ASSERTION FAILED: isDecoderAvailable()
+        https://bugs.webkit.org/show_bug.cgi?id=162665
+
+        Reviewed by Simon Fraser.
+
+        Remove a wrong assertion from ImageSource::destroyDecodedData(). Before
+        r206481, the original function BitmapImage::destroyDecodedData() did not
+        have this assertion. Destroying the decoded ImageFrames can happen after
+        releasing the ImageDecoder. And it can happen also if decoding the image
+        fails and BitmapImage::isNull() is true. See CachedImage::finishLoading().
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::destroyDecodedData):
+
 2016-09-28  Youenn Fablet  <youenn@apple.com>
 
         WebCore::ResourceErrorBase::setType is crashing
