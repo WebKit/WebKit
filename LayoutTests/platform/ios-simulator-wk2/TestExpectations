@@ -1877,3 +1877,5 @@ http/tests/xmlhttprequest/logout.html [ Failure ]
 webkit.org/b/162032 js/date-constructor.html [ Pass Timeout ]
 
 webkit.org/b/162645 imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html [ Failure ]
+
+webkit.org/b/162524 [ Release ] http/tests/cache/disk-cache/disk-cache-redirect.html [ Pass Timeout ]

@@ -553,3 +553,5 @@ webkit.org/b/162081 editing/inserting/smart-quote-with-all-configurations.html [
 webkit.org/b/160017 js/regress-139548.html [ Pass Timeout ]
 
 webkit.org/b/161659 [ Yosemite Debug ] media/media-controls-drag-timeline-set-controls-property.html [ Pass Timeout ]
+
+webkit.org/b/162524 [ Sierra Release ] http/tests/cache/disk-cache/disk-cache-redirect.html [ Pass Timeout ]
