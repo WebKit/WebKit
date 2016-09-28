@@ -121,11 +121,7 @@ RetainPtr<VideoControlsManagerTestWebView*> setUpWebViewForTestingVideoControlsM
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
-    RetainPtr<VideoControlsManagerTestWebView> webView = adoptNS([[VideoControlsManagerTestWebView alloc] initWithFrame:frame configuration:configuration.get()]);
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
-    [[window contentView] addSubview:webView.get()];
-
-    return webView;
+    return adoptNS([[VideoControlsManagerTestWebView alloc] initWithFrame:frame configuration:configuration.get()]);
 }
 
 TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
@@ -210,7 +206,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLast
     [webView loadTestPageNamed:@"large-videos-autoplaying-click-to-pause"];
     [webView waitForPageToLoadWithAutoplayingVideos:2];
 
-    [webView mouseDownAtPoint:clickPoint];
+    [webView mouseDownAtPoint:clickPoint simulatePressure:YES];
 
     __block bool firstVideoPaused = false;
     __block bool secondVideoPaused = false;
@@ -221,7 +217,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLast
             secondVideoPaused = true;
         } else {
             EXPECT_TRUE([controlledElementID isEqualToString:@"first"]);
-            [webView mouseDownAtPoint:clickPoint];
+            [webView mouseDownAtPoint:clickPoint simulatePressure:YES];
         }
         firstVideoPaused = true;
     }];
@@ -259,7 +255,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
     [webView loadTestPageNamed:@"autoplaying-video-with-audio"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
 
-    [webView mouseDownAtPoint:NSMakePoint(50, 50)];
+    [webView mouseDownAtPoint:NSMakePoint(50, 50) simulatePressure:YES];
     [webView expectControlsManager:YES afterReceivingMessage:@"paused"];
 }
 
@@ -291,7 +287,7 @@ TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoAfterSeeking
 
     [webView loadTestPageNamed:@"large-video-hides-controls-after-seek-to-end"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
-    [webView mouseDownAtPoint:NSMakePoint(50, 50)];
+    [webView mouseDownAtPoint:NSMakePoint(50, 50) simulatePressure:YES];
 
     // We expect there to be media controls, since this is a user gestured seek to the end.
     // This is akin to seeking to the end by scrubbing in the controls.
@@ -342,7 +338,7 @@ TEST(VideoControlsManager, VideoControlsManagerDoesNotShowMediaControlsForOffscr
     RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1024, 768));
 
     [webView loadTestPageNamed:@"large-video-offscreen"];
-    [webView expectControlsManager:NO afterReceivingMessage:@"moved"];
+    [webView waitForMediaControlsToHide];
 }
 
 TEST(VideoControlsManager, VideoControlsManagerKeepsControlsStableDuringSrcChangeOnClick)
@@ -351,7 +347,7 @@ TEST(VideoControlsManager, VideoControlsManagerKeepsControlsStableDuringSrcChang
 
     [webView loadTestPageNamed:@"change-video-source-on-click"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
-    [webView mouseDownAtPoint:NSMakePoint(400, 300)];
+    [webView mouseDownAtPoint:NSMakePoint(400, 300) simulatePressure:YES];
 
     [webView expectControlsManager:YES afterReceivingMessage:@"changed"];
 }

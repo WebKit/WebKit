@@ -1,3 +1,43 @@
+2016-09-28  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r206135. rdar://problem/28499358
+
+    2016-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Add a unit test covering <https://trac.webkit.org/changeset/205983>
+            https://bugs.webkit.org/show_bug.cgi?id=162112
+
+            Reviewed by Beth Dakin.
+
+            Adds a new unit test covering the changes in r205983 along with the infrastructure needed to support it. Also
+            further refactors the TestWKWebView used by VideoControlsManager and WKWebViewCandidateTests so that in both
+            cases, we add the WKWebView to a visible key window, and when sending a mouse down event, we propagate the event
+            at the window level rather than the view level, allowing greater flexibility to simulate behaviors such as
+            pressure-sensitive events that are needed for the new test.
+
+            Also rewrites currently disabled unit tests in CandidateTests as WebKit2 unit tests in WKWebViewCandidateTests,
+            checking whether or not to should be requesting candidates in password and non-password fields.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+            (TestWebKitAPI::setUpWebViewForTestingVideoControlsManager):
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewCandidateTests.mm:
+            (-[CandidateTestWebView typeString:inputMessage:]):
+            (+[CandidateTestWebView setUpWithFrame:testPage:]):
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-input-field-focus-onload.html: Added.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/text-and-password-inputs.html: Added.
+            * TestWebKitAPI/mac/TestWKWebViewMac.h:
+            * TestWebKitAPI/mac/TestWKWebViewMac.mm:
+            (__simulated_forceClickAssociatedEventsMask):
+            (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:]):
+            (-[TestWKWebView initWithFrame:]):
+            (-[TestWKWebView initWithFrame:configuration:]):
+            (-[TestWKWebView _setUpTestWindow:]):
+            (-[TestWKWebView mouseDownAtPoint:simulatePressure:]):
+            (-[TestWKWebView typeCharacter:]):
+            (-[TestWKWebView mouseDownAtPoint:]): Deleted.
+
 2016-09-22  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r206038. rdar://problem/28086237

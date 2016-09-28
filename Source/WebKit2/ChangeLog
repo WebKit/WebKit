@@ -1,3 +1,22 @@
+2016-09-28  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r206135. rdar://problem/28499358
+
+    2016-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Add a unit test covering <https://trac.webkit.org/changeset/205983>
+            https://bugs.webkit.org/show_bug.cgi?id=162112
+
+            Reviewed by Beth Dakin.
+
+            Adds some a test support method as SPI on WKWebView to determine whether to request candidates. See
+            Tools/ChangeLog for more details.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _shouldRequestCandidates]):
+            (-[WKWebView _forceRequestCandidates]): Deleted.
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2016-09-26  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r206238. rdar://problem/28450514
