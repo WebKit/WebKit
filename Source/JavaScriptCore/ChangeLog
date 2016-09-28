@@ -1,3 +1,15 @@
+2016-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Store-load fences should be a lot cheaper on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=162461
+
+        Rubber stamped by Keith Miller.
+
+        It turns out that they are already cheap enough, so this change just make us use them.
+
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::visitChildren):
+
 2016-09-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r206522.

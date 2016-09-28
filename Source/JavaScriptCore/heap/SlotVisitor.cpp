@@ -300,10 +300,7 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     
     cell->setCellState(blacken(cell->cellState()));
     
-    // FIXME: Make this work on ARM also.
-    // https://bugs.webkit.org/show_bug.cgi?id=162461
-    if (isX86())
-        WTF::storeLoadFence();
+    WTF::storeLoadFence();
     
     switch (cell->type()) {
     case StringType:
