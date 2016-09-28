@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IntlCollatorPrototype_h
-#define IntlCollatorPrototype_h
+#pragma once
 
 #if ENABLE(INTL)
 
@@ -53,5 +52,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(INTL)
-
-#endif // IntlCollatorPrototype_h

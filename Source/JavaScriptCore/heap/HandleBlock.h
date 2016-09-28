@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HandleBlock_h
-#define HandleBlock_h
+#pragma once
 
 #include <wtf/DoublyLinkedList.h>
 
@@ -72,5 +71,3 @@ inline HandleSet* HandleBlock::handleSet()
 }
 
 } // namespace JSC
-
-#endif // HandleBlock_h

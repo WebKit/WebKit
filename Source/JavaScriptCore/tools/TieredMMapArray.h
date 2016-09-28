@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TieredMMapArray_h
-#define TieredMMapArray_h
+#pragma once
 
 #include <wtf/OSAllocator.h>
 
@@ -110,7 +109,4 @@ private:
     size_t m_size;
 };
 
-}
-
-#endif // TieredMMapArray_h
-
+} // namespace JSC

@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef NodeConstructors_h
-#define NodeConstructors_h
+#pragma once
 
 #include "Nodes.h"
 #include "Lexer.h"
@@ -1071,5 +1070,3 @@ namespace JSC {
     }
     
 } // namespace JSC
-
-#endif // NodeConstructors_h

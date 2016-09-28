@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef JSObject_h
-#define JSObject_h
+#pragma once
 
 #include "ArgList.h"
 #include "ArrayConventions.h"
@@ -1627,5 +1626,3 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetSlow(ExecState*, JSObject*, Prope
 
 
 } // namespace JSC
-
-#endif // JSObject_h

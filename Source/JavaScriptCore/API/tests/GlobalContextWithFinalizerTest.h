@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GlobalContextWithFinalizerTest_h
-#define GlobalContextWithFinalizerTest_h
+#pragma once
 
 #include "JSContextRefPrivate.h"
 
@@ -38,5 +37,3 @@ int testGlobalContextWithFinalizer();
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
-
-#endif /* GlobalContextWithFinalizerTest_h */

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirSpecial_h
-#define AirSpecial_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -139,6 +138,3 @@ inline DeepSpecialDump deepDump(const Special* special)
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirSpecial_h
-

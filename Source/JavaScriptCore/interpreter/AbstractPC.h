@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AbstractPC_h
-#define AbstractPC_h
+#pragma once
 
 #include "MacroAssemblerCodeRef.h"
 
@@ -70,6 +69,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // AbstractPC_h
-

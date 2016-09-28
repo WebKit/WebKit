@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef Heap_h
-#define Heap_h
+#pragma once
 
 #include "ArrayBuffer.h"
 #include "GCIncomingRefCountedSet.h"
@@ -463,5 +462,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // Heap_h

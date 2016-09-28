@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGSpeculativeJIT_h
-#define DFGSpeculativeJIT_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -3673,5 +3672,3 @@ void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocat
 } } // namespace JSC::DFG
 
 #endif
-#endif
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSWeakSet_h
-#define JSWeakSet_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -77,6 +76,4 @@ private:
     WriteBarrier<WeakMapData> m_weakMapData;
 };
 
-}
-
-#endif // !defined(JSWeakSet_h)
+} // namespace JSC

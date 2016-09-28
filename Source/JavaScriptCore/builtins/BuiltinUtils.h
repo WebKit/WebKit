@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BuiltinUtils_h
-#define BuiltinUtils_h
+#pragma once
 
 #include "ConstructAbility.h"
 
@@ -49,6 +48,4 @@ class VM;
 
 JS_EXPORT_PRIVATE UnlinkedFunctionExecutable* createBuiltinExecutable(VM&, const SourceCode&, const Identifier&, ConstructAbility);
     
-}
-
-#endif
+} // namespace JSC

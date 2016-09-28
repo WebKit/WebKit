@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RegisterID_h
-#define RegisterID_h
+#pragma once
 
 #include "VirtualRegister.h"
 
@@ -134,5 +133,3 @@ namespace WTF {
     };
 
 } // namespace WTF
-
-#endif // RegisterID_h

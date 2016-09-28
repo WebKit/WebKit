@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCLogging_h
-#define GCLogging_h
+#pragma once
 
 #include <wtf/Assertions.h>
 
@@ -55,5 +54,3 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::GCLogging::Level);
 
 } // namespace WTF
-
-#endif // GCLogging_h

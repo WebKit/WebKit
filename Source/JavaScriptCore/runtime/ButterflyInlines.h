@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ButterflyInlines_h
-#define ButterflyInlines_h
+#pragma once
 
 #include "ArrayStorage.h"
 #include "Butterfly.h"
@@ -213,6 +212,3 @@ inline Butterfly* Butterfly::shift(Structure* structure, size_t numberOfSlots)
 }
 
 } // namespace JSC
-
-#endif // ButterflyInlines_h
-

@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EncodedValue_h
-#define EncodedValue_h
+#pragma once
 
 #if ENABLE(WEB_REPLAY)
 
@@ -221,5 +220,3 @@ using JSC::EncodedValue;
 using JSC::EncodingTraits;
 
 #endif // ENABLE(WEB_REPLAY)
-
-#endif // EncodedValue_h

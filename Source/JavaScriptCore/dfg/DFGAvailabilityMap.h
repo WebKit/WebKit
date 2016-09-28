@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAvailabilityMap_h
-#define DFGAvailabilityMap_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -86,6 +85,3 @@ struct AvailabilityMap {
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGAvailabilityMap_h
-

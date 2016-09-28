@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DateInstanceCache_h
-#define DateInstanceCache_h
+#pragma once
 
 #include "JSCJSValue.h"
 #include "JSDateMath.h"
@@ -89,5 +88,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // DateInstanceCache_h

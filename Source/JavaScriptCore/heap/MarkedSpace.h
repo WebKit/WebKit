@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef MarkedSpace_h
-#define MarkedSpace_h
+#pragma once
 
 #include "IterationStatus.h"
 #include "LargeAllocation.h"
@@ -323,5 +322,3 @@ ALWAYS_INLINE size_t MarkedSpace::optimalSizeFor(size_t bytes)
 }
 
 } // namespace JSC
-
-#endif // MarkedSpace_h

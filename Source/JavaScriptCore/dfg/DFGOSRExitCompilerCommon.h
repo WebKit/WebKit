@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompilerCommon_h
-#define DFGOSRExitCompilerCommon_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -130,6 +129,3 @@ void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM* vm, JITC
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGOSRExitCompilerCommon_h
-

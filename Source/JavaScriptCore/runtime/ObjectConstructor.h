@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef ObjectConstructor_h
-#define ObjectConstructor_h
+#pragma once
 
 #include "InternalFunction.h"
 #include "JSGlobalObject.h"
@@ -130,5 +129,3 @@ JSArray* ownPropertyKeys(ExecState*, JSObject*, PropertyNameMode, DontEnumProper
 bool toPropertyDescriptor(ExecState*, JSValue, PropertyDescriptor&);
 
 } // namespace JSC
-
-#endif // ObjectConstructor_h

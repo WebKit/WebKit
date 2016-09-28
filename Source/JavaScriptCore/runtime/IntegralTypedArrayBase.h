@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IntegralTypedArrayBase_h
-#define IntegralTypedArrayBase_h
+#pragma once
 
 #include "TypedArrayBase.h"
 #include <limits>
@@ -59,5 +58,3 @@ protected:
 };
 
 } // namespace JSC
-
-#endif // IntegralTypedArrayBase_h

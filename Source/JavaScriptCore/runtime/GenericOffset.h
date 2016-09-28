@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GenericOffset_h
-#define GenericOffset_h
+#pragma once
 
 #include <limits.h>
 #include <wtf/Assertions.h>
@@ -108,6 +107,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // GenericOffset_h
-

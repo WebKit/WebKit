@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGSaneStringGetByValSlowPathGenerator_h
-#define DFGSaneStringGetByValSlowPathGenerator_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -91,6 +90,3 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGSaneStringGetByValSlowPathGenerator_h
-

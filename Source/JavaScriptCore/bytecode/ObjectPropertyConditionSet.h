@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ObjectPropertyConditionSet_h
-#define ObjectPropertyConditionSet_h
+#pragma once
 
 #include "ObjectPropertyCondition.h"
 #include <wtf/FastMalloc.h>
@@ -177,6 +176,3 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
     VM&, JSGlobalObject*, Structure* headStructure, UniquedStringImpl* uid);
 
 } // namespace JSC
-
-#endif // ObjectPropertyConditionSet_h
-

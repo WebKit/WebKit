@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLStackmapArgumentList_h
-#define FTLStackmapArgumentList_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -38,6 +37,3 @@ typedef Vector<LValue, 16> StackmapArgumentList;
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLStackmapArgumentList_h
-

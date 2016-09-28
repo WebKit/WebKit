@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Structure_h
-#define Structure_h
+#pragma once
 
 #include "ClassInfo.h"
 #include "ConcurrentJITLock.h"
@@ -762,5 +761,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // Structure_h

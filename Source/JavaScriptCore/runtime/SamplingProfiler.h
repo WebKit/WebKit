@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SamplingProfiler_h
-#define SamplingProfiler_h
+#pragma once
 
 #if ENABLE(SAMPLING_PROFILER)
 
@@ -190,5 +189,3 @@ void printInternal(PrintStream&, JSC::SamplingProfiler::FrameType);
 } // namespace WTF
 
 #endif // ENABLE(SAMPLING_PROFILER)
-
-#endif // SamplingProfiler_h 

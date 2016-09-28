@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SetForScope_h
-#define SetForScope_h
+#pragma once
 
 #include <wtf/StdLibExtras.h>
 
@@ -58,5 +57,3 @@ private:
 };
 
 }; // namespace JSC
-
-#endif // SetForScope_h

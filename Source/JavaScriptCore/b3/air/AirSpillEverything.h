@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirSpillEverything_h
-#define AirSpillEverything_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -48,6 +47,3 @@ void spillEverything(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirSpillEverything_h
-

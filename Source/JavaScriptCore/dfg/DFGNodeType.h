@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGNodeType_h
-#define DFGNodeType_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -420,6 +419,3 @@ inline NodeFlags defaultFlags(NodeType op)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGNodeType_h
-

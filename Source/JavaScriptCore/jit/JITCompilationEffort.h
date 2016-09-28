@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JITCompilationEffort_h
-#define JITCompilationEffort_h
+#pragma once
 
 namespace JSC {
 
@@ -34,6 +33,3 @@ enum JITCompilationEffort {
 };
 
 } // namespace JSC
-
-#endif // JITCompilationEffort_h
-

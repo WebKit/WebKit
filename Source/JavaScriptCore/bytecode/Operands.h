@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Operands_h
-#define Operands_h
+#pragma once
 
 #include "CallFrame.h"
 #include "JSObject.h"
@@ -283,6 +282,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // Operands_h
-

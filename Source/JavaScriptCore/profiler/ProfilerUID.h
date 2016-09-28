@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfilerUID_h
-#define ProfilerUID_h
+#pragma once
 
 #include "JSCJSValue.h"
 #include <wtf/HashMap.h>
@@ -109,6 +108,3 @@ template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::Profiler::UID> : SimpleClassHashTraits<JSC::Profiler::UID> { };
 
 } // namespace WTF
-
-#endif // ProfilerUID_h
-

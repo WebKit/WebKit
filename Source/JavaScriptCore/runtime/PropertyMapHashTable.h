@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef PropertyMapHashTable_h
-#define PropertyMapHashTable_h
+#pragma once
 
 #include "JSExportMacros.h"
 #include "PropertyOffset.h"
@@ -559,5 +558,3 @@ inline bool PropertyTable::canInsert()
 }
 
 } // namespace JSC
-
-#endif // PropertyMapHashTable_h

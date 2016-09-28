@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLExceptionTarget_h
-#define FTLExceptionTarget_h
+#pragma once
 
 #include "DFGCommon.h"
 
@@ -63,6 +62,3 @@ private:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLExceptionTarget_h
-

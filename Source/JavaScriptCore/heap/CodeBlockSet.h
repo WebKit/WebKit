@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeBlockSet_h
-#define CodeBlockSet_h
+#pragma once
 
 #include "GCSegmentedArray.h"
 #include "HeapOperation.h"
@@ -108,6 +107,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // CodeBlockSet_h
-

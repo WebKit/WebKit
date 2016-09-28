@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3SlotBaseValue_h
-#define B3SlotBaseValue_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -62,6 +61,3 @@ private:
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3SlotBaseValue_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Watchpoint_h
-#define Watchpoint_h
+#pragma once
 
 #include <wtf/Atomics.h>
 #include <wtf/FastMalloc.h>
@@ -433,6 +432,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // Watchpoint_h
-

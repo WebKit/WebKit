@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StructureIDTable_h
-#define StructureIDTable_h
+#pragma once
 
 #include "UnusedPointer.h"
 #include <wtf/Vector.h>
@@ -90,5 +89,3 @@ inline Structure* StructureIDTable::get(StructureID structureID)
 }
 
 } // namespace JSC
-
-#endif // StructureIDTable_h

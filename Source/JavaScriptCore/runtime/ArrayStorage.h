@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ArrayStorage_h
-#define ArrayStorage_h
+#pragma once
 
 #include "ArrayConventions.h"
 #include "Butterfly.h"
@@ -164,6 +163,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // ArrayStorage_h
-

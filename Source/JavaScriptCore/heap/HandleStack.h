@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HandleStack_h
-#define HandleStack_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/BlockStack.h>
@@ -122,6 +121,4 @@ inline HandleSlot HandleStack::push()
     return m_frame.m_next++;
 }
 
-}
-
-#endif
+} // namespace JSC

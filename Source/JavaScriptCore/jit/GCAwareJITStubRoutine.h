@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GCAwareJITStubRoutine_h
-#define GCAwareJITStubRoutine_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -133,6 +132,3 @@ PassRefPtr<JITStubRoutine> createJITStubRoutine(
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // GCAwareJITStubRoutine_h
-

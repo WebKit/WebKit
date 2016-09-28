@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLOSRExit_h
-#define FTLOSRExit_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -135,6 +134,3 @@ struct OSRExit : public DFG::OSRExitBase {
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLOSRExit_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCellInlines_h
-#define JSCellInlines_h
+#pragma once
 
 #include "CallFrame.h"
 #include "DeferGC.h"
@@ -274,5 +273,3 @@ inline void JSCell::callDestructor(VM& vm)
 }
 
 } // namespace JSC
-
-#endif // JSCellInlines_h

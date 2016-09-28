@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PropertyDescriptor_h
-#define PropertyDescriptor_h
+#pragma once
 
 #include "JSCJSValue.h"
 
@@ -93,6 +92,4 @@ private:
     unsigned m_seenAttributes;
 };
 
-}
-
-#endif
+} // namespace JSC

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLLocation_h
-#define FTLLocation_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -212,6 +211,3 @@ template<> struct HashTraits<JSC::FTL::Location> : SimpleClassHashTraits<JSC::FT
 } // namespace WTF
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLLocation_h
-

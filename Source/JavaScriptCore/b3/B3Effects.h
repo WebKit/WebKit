@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3Effects_h
-#define B3Effects_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -94,6 +93,3 @@ struct Effects {
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3Effects_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AirIteratedRegisterCoalescing_h
-#define AirIteratedRegisterCoalescing_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -39,6 +38,3 @@ void iteratedRegisterCoalescing(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirIteratedRegisterCoalescing_h
-

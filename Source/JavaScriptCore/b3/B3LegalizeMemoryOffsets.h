@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef B3LegalizeMemoryOffsets_h
-#define B3LegalizeMemoryOffsets_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -39,6 +38,3 @@ void legalizeMemoryOffsets(Procedure&);
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3LegalizeMemoryOffsets_h
-

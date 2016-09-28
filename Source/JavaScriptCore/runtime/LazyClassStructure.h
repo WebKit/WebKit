@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LazyClassStructure_h
-#define LazyClassStructure_h
+#pragma once
 
 #include "LazyProperty.h"
 #include "Structure.h"
@@ -124,6 +123,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // LazyClassStructure_h
-

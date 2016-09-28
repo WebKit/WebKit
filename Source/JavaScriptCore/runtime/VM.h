@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VM_h
-#define VM_h
+#pragma once
 
 #include "CallData.h"
 #include "ConcurrentJITLock.h"
@@ -766,5 +765,3 @@ void sanitizeStackForVM(VM*);
 void logSanitizeStack(VM*);
 
 } // namespace JSC
-
-#endif // VM_h

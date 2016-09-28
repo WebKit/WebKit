@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGObjectAllocationSinkingPhase_h
-#define DFGObjectAllocationSinkingPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -42,5 +41,3 @@ bool performObjectAllocationSinking(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGObjectAllocationSinkingPhase_h

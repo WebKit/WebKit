@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef ArrayConventions_h
-#define ArrayConventions_h
+#pragma once
 
 #include "IndexingHeader.h"
 #include "WriteBarrier.h"
@@ -145,6 +144,3 @@ ALWAYS_INLINE void clearArray(double* base, unsigned count)
 }
 
 } // namespace JSC
-
-#endif // ArrayConventions_h
-

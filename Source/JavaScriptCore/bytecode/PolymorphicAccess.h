@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PolymorphicAccess_h
-#define PolymorphicAccess_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -523,6 +522,3 @@ void printInternal(PrintStream&, JSC::AccessCase::State);
 } // namespace WTF
 
 #endif // ENABLE(JIT)
-
-#endif // PolymorphicAccess_h
-

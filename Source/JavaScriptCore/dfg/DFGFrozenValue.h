@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGFrozenValue_h
-#define DFGFrozenValue_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -129,6 +128,3 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGFrozenValue_h
-

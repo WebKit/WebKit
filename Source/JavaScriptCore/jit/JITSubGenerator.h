@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JITSubGenerator_h
-#define JITSubGenerator_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -75,5 +74,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // JITSubGenerator_h

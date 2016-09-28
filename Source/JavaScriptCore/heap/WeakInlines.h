@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakInlines_h
-#define WeakInlines_h
+#pragma once
 
 #include "JSCell.h"
 #include "WeakSetInlines.h"
@@ -147,5 +146,3 @@ template<typename T> inline void weakClear(Weak<T>& weak, T* cell)
 }
 
 } // namespace JSC
-
-#endif // WeakInlines_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGEdge_h
-#define DFGEdge_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -248,6 +247,3 @@ inline bool operator!=(Node* node, Edge edge)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGEdge_h
-

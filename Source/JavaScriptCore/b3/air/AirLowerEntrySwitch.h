@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirLowerEntrySwitch_h
-#define AirLowerEntrySwitch_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -40,6 +39,3 @@ void lowerEntrySwitch(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirLowerEntrySwitch_h
-

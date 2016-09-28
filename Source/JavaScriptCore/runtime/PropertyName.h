@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PropertyName_h
-#define PropertyName_h
+#pragma once
 
 #include "Identifier.h"
 #include "PrivateName.h"
@@ -125,6 +124,4 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(PropertyName propertyName)
     return parseIndex(*uid);
 }
 
-}
-
-#endif
+} // namespace JSC

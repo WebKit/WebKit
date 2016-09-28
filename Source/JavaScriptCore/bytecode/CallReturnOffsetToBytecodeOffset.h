@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CallReturnOffsetToBytecodeOffset_h
-#define CallReturnOffsetToBytecodeOffset_h
+#pragma once
 
 namespace JSC {
 
@@ -53,6 +52,3 @@ inline unsigned getCallReturnOffset(CallReturnOffsetToBytecodeOffset* pc)
 #endif
 
 } // namespace JSC
-
-#endif // CallReturnOffsetToBytecodeOffset_h
-

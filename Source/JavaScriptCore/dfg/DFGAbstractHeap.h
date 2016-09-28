@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAbstractHeap_h
-#define DFGAbstractHeap_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -331,6 +330,3 @@ template<> struct HashTraits<JSC::DFG::AbstractHeap> : SimpleClassHashTraits<JSC
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGAbstractHeap_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SimpleTypedArrayController_h
-#define SimpleTypedArrayController_h
+#pragma once
 
 #include "Handle.h"
 #include "TypedArrayController.h"
@@ -66,6 +65,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // SimpleTypedArrayController_h
-

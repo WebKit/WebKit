@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeferredSourceDump_h
-#define DeferredSourceDump_h
+#pragma once
 
 #include "CodeOrigin.h"
 #include "JITCode.h"
@@ -48,5 +47,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // DeferredSourceDump_h

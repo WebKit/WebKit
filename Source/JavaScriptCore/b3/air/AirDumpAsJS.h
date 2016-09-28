@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirDumpAsJS_h
-#define AirDumpAsJS_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -42,6 +41,3 @@ void dumpAsJS(Code&, PrintStream&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirDumpAsJS_h
-

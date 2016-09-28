@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3ValueRep_h
-#define B3ValueRep_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -287,6 +286,3 @@ void printInternal(PrintStream&, JSC::B3::ValueRep::Kind);
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3ValueRep_h
-

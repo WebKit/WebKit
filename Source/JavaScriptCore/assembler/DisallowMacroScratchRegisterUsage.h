@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DisallowMacroScratchRegisterUsage_h
-#define DisallowMacroScratchRegisterUsage_h
+#pragma once
 
 #if ENABLE(ASSEMBLER)
 
@@ -54,6 +53,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
-
-#endif // DisallowMacroScratchRegisterUsage_h
-

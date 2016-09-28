@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGWatchpointCollectionPhase_h
-#define DFGWatchpointCollectionPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -39,6 +38,3 @@ bool performWatchpointCollection(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGWatchpointCollectionPhase_h
-

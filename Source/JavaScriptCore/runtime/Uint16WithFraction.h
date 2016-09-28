@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Uint16WithFraction_h
-#define Uint16WithFraction_h
+#pragma once
 
 #include <wtf/MathExtras.h>
 
@@ -264,7 +263,4 @@ private:
     size_t m_leadingZeros;
 };
 
-}
-
-#endif
-
+} // namespace JSC

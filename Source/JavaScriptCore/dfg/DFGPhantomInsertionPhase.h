@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPhantomInsertionPhase_h
-#define DFGPhantomInsertionPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -39,5 +38,3 @@ bool performPhantomInsertion(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGPhantomInsertionPhase_h

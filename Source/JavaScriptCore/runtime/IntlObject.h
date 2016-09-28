@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IntlObject_h
-#define IntlObject_h
+#pragma once
 
 #if ENABLE(INTL)
 
@@ -72,5 +71,3 @@ Vector<String> numberingSystemsForLocale(const String& locale);
 } // namespace JSC
 
 #endif // ENABLE(INTL)
-
-#endif // IntlObject_h

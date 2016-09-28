@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MacroAssemblerPrinter_h
-#define MacroAssemblerPrinter_h
+#pragma once
 
 #if ENABLE(MASM_PROBE)
 
@@ -301,5 +300,3 @@ void printMemory(MacroAssembler::CPUState&, const Memory&);
 } // namespace JSC
 
 #endif // ENABLE(MASM_PROBE)
-
-#endif // MacroAssemblerPrinter_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLSlowPathCall_h
-#define FTLSlowPathCall_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -123,6 +122,3 @@ SlowPathCall callOperation(
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLSlowPathCall_h
-

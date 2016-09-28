@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFGDesiredWeakReferences_h
-#define DFGDesiredWeakReferences_h
+#pragma once
 
 #include <wtf/HashSet.h>
 
@@ -64,5 +63,3 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGDesiredWeakReferences_h

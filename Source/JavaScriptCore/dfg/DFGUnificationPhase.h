@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGUnificationPhase_h
-#define DFGUnificationPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -42,6 +41,3 @@ bool performUnification(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGUnificationPhase_h
-

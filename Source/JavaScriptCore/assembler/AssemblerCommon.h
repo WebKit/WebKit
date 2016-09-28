@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AssemblerCommon_h
-#define AssemblerCommon_h
+#pragma once
 
 namespace JSC {
 
@@ -288,7 +287,4 @@ private:
     int m_value;
 };
 
-
 } // namespace JSC.
-
-#endif // AssemblerCommon_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BytecodeBasicBlock_h
-#define BytecodeBasicBlock_h
+#pragma once
 
 #include <limits.h>
 #include <wtf/FastBitVector.h>
@@ -101,5 +100,3 @@ inline void BytecodeBasicBlock::addLength(unsigned bytecodeLength)
 }
 
 } // namespace JSC
-
-#endif // BytecodeBasicBlock_h

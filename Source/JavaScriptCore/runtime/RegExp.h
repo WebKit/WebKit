@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef RegExp_h
-#define RegExp_h
+#pragma once
 
 #include "ConcurrentJITLock.h"
 #include "ExecutableAllocator.h"
@@ -152,5 +151,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // RegExp_h

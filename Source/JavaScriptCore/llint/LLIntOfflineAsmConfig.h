@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LLIntOfflineAsmConfig_h
-#define LLIntOfflineAsmConfig_h
+#pragma once
 
 #include "LLIntCommon.h"
 #include <wtf/Assertions.h>
@@ -166,5 +165,3 @@
 #else
 #define OFFLINE_ASM_EXECUTION_TRACING 0
 #endif
-
-#endif // LLIntOfflineAsmConfig_h

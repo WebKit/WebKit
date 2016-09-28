@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ECMAScriptSpecInternalFunctions_h
-#define ECMAScriptSpecInternalFunctions_h
+#pragma once
 
 #include "JSCJSValue.h"
 
@@ -33,5 +32,3 @@ namespace JSC {
 EncodedJSValue JSC_HOST_CALL esSpecIsConstructor(ExecState*);
 
 } // namespace JSC
-
-#endif // ECMAScriptSpecInternalFunctions_h

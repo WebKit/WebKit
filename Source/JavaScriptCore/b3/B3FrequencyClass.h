@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3FrequencyClass_h
-#define B3FrequencyClass_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -61,6 +60,3 @@ void printInternal(PrintStream&, JSC::B3::FrequencyClass);
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3FrequencyClass_h
-

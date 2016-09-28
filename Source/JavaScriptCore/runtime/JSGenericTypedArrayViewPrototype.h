@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSGenericTypedArrayViewPrototype_h
-#define JSGenericTypedArrayViewPrototype_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -61,6 +60,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // JSGenericTypedArrayViewPrototype_h
-

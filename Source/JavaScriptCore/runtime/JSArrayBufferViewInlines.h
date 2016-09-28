@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSArrayBufferViewInlines_h
-#define JSArrayBufferViewInlines_h
+#pragma once
 
 #include "ArrayBufferView.h"
 #include "JSArrayBufferView.h"
@@ -78,6 +77,3 @@ inline unsigned JSArrayBufferView::byteOffset()
 }
 
 } // namespace JSC
-
-#endif // JSArrayBufferViewInlines_h
-

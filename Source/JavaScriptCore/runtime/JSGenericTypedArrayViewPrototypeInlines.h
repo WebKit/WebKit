@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSGenericTypedArrayViewPrototypeInlines_h
-#define JSGenericTypedArrayViewPrototypeInlines_h
+#pragma once
 
 #include "JSGenericTypedArrayViewPrototype.h"
 
@@ -69,5 +68,3 @@ Structure* JSGenericTypedArrayViewPrototype<ViewClass>::createStructure(
 }
 
 } // namespace JSC
-
-#endif // JSGenericTypedArrayViewPrototypeInlines_h

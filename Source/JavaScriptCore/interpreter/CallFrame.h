@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef CallFrame_h
-#define CallFrame_h
+#pragma once
 
 #include "AbstractPC.h"
 #include "MacroAssemblerCodeRef.h"
@@ -295,5 +294,3 @@ namespace JSC  {
     };
 
 } // namespace JSC
-
-#endif // CallFrame_h

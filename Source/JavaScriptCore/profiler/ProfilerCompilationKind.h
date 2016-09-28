@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfilerCompilationKind_h
-#define ProfilerCompilationKind_h
+#pragma once
 
 namespace JSC { namespace Profiler {
 
@@ -44,6 +43,3 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::Profiler::CompilationKind);
 
 } // namespace WTF
-
-#endif // ProfilerCompilationKind_h
-

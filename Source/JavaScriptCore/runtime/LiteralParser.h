@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LiteralParser_h
-#define LiteralParser_h
+#pragma once
 
 #include "Identifier.h"
 #include "JSCJSValue.h"
@@ -203,6 +202,4 @@ private:
     ALWAYS_INLINE const Identifier makeIdentifier(const UChar* characters, size_t length);
 };
 
-}
-
-#endif
+} // namespace JSC

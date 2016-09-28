@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TemplateRegistryKey_h
-#define TemplateRegistryKey_h
+#pragma once
 
 #include <limits>
 #include <wtf/Vector.h>
@@ -99,5 +98,3 @@ template<> struct HashTraits<JSC::TemplateRegistryKey> : CustomHashTraits<JSC::T
 };
 
 } // namespace WTF
-
-#endif // TemplateRegistryKey_h

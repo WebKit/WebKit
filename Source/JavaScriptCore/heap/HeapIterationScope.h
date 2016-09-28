@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HeapIterationScope_h
-#define HeapIterationScope_h
+#pragma once
 
 #include "Heap.h"
 #include <wtf/Noncopyable.h>
@@ -53,6 +52,3 @@ inline HeapIterationScope::~HeapIterationScope()
 }
 
 } // namespace JSC
-
-
-#endif // HeapIterationScope_h

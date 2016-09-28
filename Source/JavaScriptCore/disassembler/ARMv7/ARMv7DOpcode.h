@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ARMv7DOpcode_h
-#define ARMv7DOpcode_h
+#pragma once
 
 #if USE(ARMV7_DISASSEMBLER)
 
@@ -1233,5 +1232,3 @@ protected:
 using JSC::ARMv7Disassembler::ARMv7DOpcode;
 
 #endif // #if USE(ARMV7_DISASSEMBLER)
-
-#endif // ARMv7DOpcode_h

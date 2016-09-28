@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EmptyInputCursor_h
-#define EmptyInputCursor_h
+#pragma once
 
 #if ENABLE(WEB_REPLAY)
 
@@ -75,5 +74,3 @@ private:
 using JSC::EmptyInputCursor;
 
 #endif // ENABLE(WEB_REPLAY)
-
-#endif // EmptyInputCursor_h

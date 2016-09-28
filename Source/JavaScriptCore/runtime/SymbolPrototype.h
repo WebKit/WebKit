@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SymbolPrototype_h
-#define SymbolPrototype_h
+#pragma once
 
 #include "Symbol.h"
 #include "SymbolObject.h"
@@ -59,5 +58,3 @@ protected:
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(SymbolPrototype);
 
 } // namespace JSC
-
-#endif // SymbolPrototype_h

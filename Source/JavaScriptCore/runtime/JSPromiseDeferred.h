@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromiseDeferred_h
-#define JSPromiseDeferred_h
+#pragma once
 
 #include "JSCell.h"
 #include "Structure.h"
@@ -71,5 +70,3 @@ private:
 JSValue newPromiseCapability(ExecState*, JSGlobalObject*, JSPromiseConstructor*);
 
 } // namespace JSC
-
-#endif // JSPromiseDeferred_h

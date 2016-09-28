@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAbstractValue_h
-#define DFGAbstractValue_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -484,7 +483,3 @@ struct HashTraits<JSC::DFG::AbstractValue> : GenericHashTraits<JSC::DFG::Abstrac
 #endif // USE(JSVALUE64)
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGAbstractValue_h
-
-

@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef JSAPIValueWrapper_h
-#define JSAPIValueWrapper_h
+#pragma once
 
 #include "JSCJSValue.h"
 #include "JSCell.h"
@@ -76,5 +75,3 @@ inline JSValue jsAPIValueWrapper(ExecState* exec, JSValue value)
 }
 
 } // namespace JSC
-
-#endif // JSAPIValueWrapper_h

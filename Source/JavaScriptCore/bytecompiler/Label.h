@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Label_h
-#define Label_h
+#pragma once
 
 #include "CodeBlock.h"
 #include "Instruction.h"
@@ -87,5 +86,3 @@ namespace JSC {
     };
 
 } // namespace JSC
-
-#endif // Label_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLExitArgumentForOperand_h
-#define FTLExitArgumentForOperand_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -67,6 +66,3 @@ inline bool lesserArgumentIndex(
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLExitArgumentForOperand_h
-

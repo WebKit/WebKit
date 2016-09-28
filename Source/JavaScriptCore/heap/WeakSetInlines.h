@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakSetInlines_h
-#define WeakSetInlines_h
+#pragma once
 
 #include "CellContainerInlines.h"
 #include "MarkedBlock.h"
@@ -54,5 +53,3 @@ inline void WeakBlock::finalize(WeakImpl* weakImpl)
 }
 
 } // namespace JSC
-
-#endif // WeakSetInlines_h

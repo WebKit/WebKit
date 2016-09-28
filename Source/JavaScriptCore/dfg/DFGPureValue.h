@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPureValue_h
-#define DFGPureValue_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -140,6 +139,3 @@ typedef HashMap<PureValue, Vector<Node*>> PureMultiMap;
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGPureValue_h
-

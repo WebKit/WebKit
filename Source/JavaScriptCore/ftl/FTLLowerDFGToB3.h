@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLLowerDFGToB3_h
-#define FTLLowerDFGToB3_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -38,6 +37,3 @@ void lowerDFGToB3(State&);
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLLowerDFGToB3_h
-

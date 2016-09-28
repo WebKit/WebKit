@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef TypedArrayCTest_h
-#define TypedArrayCTest_h
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,5 +34,3 @@ int testTypedArrayCAPI(void);
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
-
-#endif /* TypedArrayCTest_h */

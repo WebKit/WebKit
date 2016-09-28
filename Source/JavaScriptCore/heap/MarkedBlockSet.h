@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MarkedBlockSet_h
-#define MarkedBlockSet_h
+#pragma once
 
 #include "MarkedBlock.h"
 #include "TinyBloomFilter.h"
@@ -82,5 +81,3 @@ inline const HashSet<MarkedBlock*>& MarkedBlockSet::set() const
 }
 
 } // namespace JSC
-
-#endif // MarkedBlockSet_h

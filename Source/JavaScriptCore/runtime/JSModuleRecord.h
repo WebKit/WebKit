@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSModuleRecord_h
-#define JSModuleRecord_h
+#pragma once
 
 #include "Identifier.h"
 #include "JSDestructibleObject.h"
@@ -215,5 +214,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSModuleRecord_h

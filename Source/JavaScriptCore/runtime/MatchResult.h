@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MatchResult_h
-#define MatchResult_h
+#pragma once
 
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h> // for notFound
@@ -82,5 +81,3 @@ struct MatchResult {
 };
 
 } // namespace JSC
-
-#endif

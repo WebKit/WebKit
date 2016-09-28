@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ParserError_h
-#define ParserError_h
+#pragma once
 
 #include "Error.h"
 #include "ErrorHandlingScope.h"
@@ -167,5 +166,3 @@ inline void printInternal(PrintStream& out, JSC::ParserError::ErrorType type)
 }
 
 } // namespace WTF
-
-#endif // ParserError_h

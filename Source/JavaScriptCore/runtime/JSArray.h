@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef JSArray_h
-#define JSArray_h
+#pragma once
 
 #include "ArrayConventions.h"
 #include "ButterflyInlines.h"
@@ -309,5 +308,3 @@ inline JSArray* constructArrayNegativeIndexed(ExecState* exec, Structure* arrayS
 }
 
 } // namespace JSC
-
-#endif // JSArray_h

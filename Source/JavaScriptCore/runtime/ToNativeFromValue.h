@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ToNativeFromValue_h
-#define ToNativeFromValue_h
+#pragma once
 
 #include "JSCJSValue.h"
 
@@ -59,6 +58,3 @@ Optional<typename Adaptor::Type> toNativeFromValueWithoutCoercion(JSValue value)
 }
 
 } // namespace JSC
-
-#endif // ToNativeFromValue_h
-

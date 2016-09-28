@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VMEntryRecord_h
-#define VMEntryRecord_h
+#pragma once
 
 #include "GPRInfo.h"
 
@@ -74,5 +73,3 @@ struct VMEntryFrame {
 };
 
 } // namespace JSC
-
-#endif // VMEntryRecord_h

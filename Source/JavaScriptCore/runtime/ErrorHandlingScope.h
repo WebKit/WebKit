@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ErrorHandlingScope_h
-#define ErrorHandlingScope_h
+#pragma once
 
 namespace JSC {
 
@@ -40,6 +39,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ErrorHandlingScope_h
-

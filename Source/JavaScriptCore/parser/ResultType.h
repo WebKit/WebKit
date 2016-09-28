@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResultType_h
-#define ResultType_h
+#pragma once
 
 namespace JSC {
 
@@ -191,5 +190,3 @@ namespace JSC {
     };
 
 } // namespace JSC
-
-#endif // ResultType_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Local_h
-#define Local_h
+#pragma once
 
 #include "Handle.h"
 #include "VM.h"
@@ -137,7 +136,7 @@ private:
     unsigned m_count;
 };
 
-}
+} // namespace JSC
 
 namespace WTF {
 
@@ -147,6 +146,4 @@ template<typename T> struct VectorTraits<JSC::Local<T>> : SimpleClassVectorTrait
     static const bool canCompareWithMemcmp = false;
 };
 
-}
-
-#endif
+} // namespace WTF

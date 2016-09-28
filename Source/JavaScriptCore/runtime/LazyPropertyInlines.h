@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LazyPropertyInlines_h
-#define LazyPropertyInlines_h
+#pragma once
 
 #include "Heap.h"
 #include <wtf/StdLibExtras.h>
@@ -103,6 +102,3 @@ ElementType* LazyProperty<OwnerType, ElementType>::callFunc(const Initializer& i
 }
 
 } // namespace JSC
-
-#endif // LazyPropertyInlines_h
-

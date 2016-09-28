@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathCommon_h
-#define MathCommon_h
+#pragma once
 
 #include <cmath>
 #include <wtf/Optional.h>
@@ -159,6 +158,4 @@ double JIT_OPERATION jsMod(double x, double y) REFERENCED_FROM_ASM WTF_INTERNAL;
 #endif
 }
 
-}
-
-#endif // MathCommon_h
+} // namespace JSC

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ModuleAnalyzer_h
-#define ModuleAnalyzer_h
+#pragma once
 
 #include "Nodes.h"
 
@@ -52,5 +51,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ModuleAnalyzer_h

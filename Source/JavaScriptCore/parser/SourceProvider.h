@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SourceProvider_h
-#define SourceProvider_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
@@ -143,5 +142,3 @@ namespace JSC {
 #endif
 
 } // namespace JSC
-
-#endif // SourceProvider_h

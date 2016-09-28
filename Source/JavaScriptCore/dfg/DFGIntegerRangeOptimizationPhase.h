@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGIntegerRangeOptimizationPhase_h
-#define DFGIntegerRangeOptimizationPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -42,6 +41,3 @@ bool performIntegerRangeOptimization(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGIntegerRangeOptimizationPhase_h
-

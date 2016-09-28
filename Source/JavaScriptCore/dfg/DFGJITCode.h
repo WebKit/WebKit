@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGJITCode_h
-#define DFGJITCode_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -169,6 +168,3 @@ public:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGJITCode_h
-

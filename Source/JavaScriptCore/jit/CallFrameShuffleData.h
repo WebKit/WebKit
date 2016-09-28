@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CallFrameShuffleData_h
-#define CallFrameShuffleData_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -50,5 +49,3 @@ public:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // CallFrameShuffleData_h

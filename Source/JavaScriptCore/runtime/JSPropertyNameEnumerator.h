@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPropertyNameEnumerator_h
-#define JSPropertyNameEnumerator_h
+#pragma once
 
 #include "JSCell.h"
 #include "Operations.h"
@@ -144,5 +143,3 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(ExecState* exec, JSObjec
 }
 
 } // namespace JSC
-
-#endif // JSPropertyNameEnumerator_h

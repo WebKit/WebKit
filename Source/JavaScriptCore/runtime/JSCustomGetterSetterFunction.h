@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSCustomGetterSetterFunction_h
-#define JSCustomGetterSetterFunction_h
+#pragma once
 
 #include "JSFunction.h"
 
@@ -70,5 +69,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSCustomGetterSetterFunction_h

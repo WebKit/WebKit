@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HeapInlines_h
-#define HeapInlines_h
+#pragma once
 
 #include "Heap.h"
 #include "HeapCellInlines.h"
@@ -382,5 +381,3 @@ inline void Heap::didFreeBlock(size_t capacity)
 }
 
 } // namespace JSC
-
-#endif // HeapInlines_h

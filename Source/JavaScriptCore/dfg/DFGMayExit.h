@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGMayExit_h
-#define DFGMayExit_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -91,6 +90,3 @@ void printInternal(PrintStream&, JSC::DFG::ExitMode);
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGMayExit_h
-

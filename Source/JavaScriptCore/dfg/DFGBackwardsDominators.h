@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGBackwardsDominators_h
-#define DFGBackwardsDominators_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -48,5 +47,3 @@ public:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGDominators_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGConstantHoistingPhase_h
-#define DFGConstantHoistingPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -39,5 +38,3 @@ bool performConstantHoisting(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGConstantHoistingPhase_h

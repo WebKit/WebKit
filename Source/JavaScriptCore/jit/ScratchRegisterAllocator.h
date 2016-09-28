@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScratchRegisterAllocator_h
-#define ScratchRegisterAllocator_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -108,5 +107,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // ScratchRegisterAllocator_h

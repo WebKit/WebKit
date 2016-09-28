@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CompilationResult_h
-#define CompilationResult_h
+#pragma once
 
 #include <wtf/PrintStream.h>
 
@@ -66,6 +65,3 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::CompilationResult);
 
 } // namespace WTF
-
-#endif // CompilationResult_h
-

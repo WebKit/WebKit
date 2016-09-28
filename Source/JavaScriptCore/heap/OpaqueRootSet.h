@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OpaqueRootSet_h
-#define OpaqueRootSet_h
+#pragma once
 
 #include <wtf/HashSet.h>
 
@@ -90,5 +89,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // OpaqueRootSet_h

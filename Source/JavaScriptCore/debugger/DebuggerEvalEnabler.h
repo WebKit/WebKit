@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DebuggerEvalEnabler_h
-#define DebuggerEvalEnabler_h
+#pragma once
 
 #include "CallFrame.h"
 #include "JSGlobalObject.h"
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // DebuggerEvalEnabler_h

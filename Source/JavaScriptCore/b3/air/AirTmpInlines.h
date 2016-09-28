@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirTmpInlines_h
-#define AirTmpInlines_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -96,6 +95,3 @@ struct AbsoluteTmpMapper<Arg::FP> {
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirTmpInlines_h
-

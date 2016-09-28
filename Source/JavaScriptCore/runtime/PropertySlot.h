@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef PropertySlot_h
-#define PropertySlot_h
+#pragma once
 
 #include "JSCJSValue.h"
 #include "PropertyName.h"
@@ -343,5 +342,3 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, unsigned propertyN
 }
 
 } // namespace JSC
-
-#endif // PropertySlot_h

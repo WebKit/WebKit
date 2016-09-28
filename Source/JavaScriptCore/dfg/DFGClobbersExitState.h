@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGClobbersExitState_h
-#define DFGClobbersExitState_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -64,6 +63,3 @@ bool clobbersExitState(Graph&, Node*);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGClobbersExitState_h
-

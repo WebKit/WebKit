@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptValue_h
-#define ScriptValue_h
+#pragma once
 
 #include "JSCJSValue.h"
 #include "JSCJSValueInlines.h"
@@ -77,5 +76,3 @@ private:
 };
 
 } // namespace Deprecated
-
-#endif // ScriptValue_h

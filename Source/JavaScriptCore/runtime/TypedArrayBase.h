@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TypedArrayBase_h
-#define TypedArrayBase_h
+#pragma once
 
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
@@ -149,5 +148,3 @@ protected:
 } // namespace JSC
 
 using JSC::TypedArrayBase;
-
-#endif // TypedArrayBase_h

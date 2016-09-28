@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGSSALoweringPhase_h
-#define DFGSSALoweringPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -40,6 +39,3 @@ bool performSSALowering(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGSSALoweringPhase_h
-

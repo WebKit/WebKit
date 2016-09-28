@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAllocator_h
-#define DFGAllocator_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -234,6 +233,3 @@ void Allocator<T>::startBumpingIn(typename Allocator<T>::Region* region)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGAllocator_h
-

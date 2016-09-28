@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirGenerate_h
-#define AirGenerate_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -47,6 +46,3 @@ JS_EXPORT_PRIVATE void generate(Code&, CCallHelpers&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirGenerate_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirFrequentedBlock_h
-#define AirFrequentedBlock_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -39,6 +38,3 @@ typedef GenericFrequentedBlock<BasicBlock> FrequentedBlock;
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirFrequentedBlock_h
-

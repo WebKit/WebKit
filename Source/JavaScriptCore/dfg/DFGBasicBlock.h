@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGBasicBlock_h
-#define DFGBasicBlock_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -297,6 +296,3 @@ static inline BasicBlock* blockForBytecodeOffset(Vector<BasicBlock*>& linkingTar
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGBasicBlock_h
-

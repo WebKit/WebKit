@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGInsertionSet_h
-#define DFGInsertionSet_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -141,6 +140,3 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGInsertionSet_h
-

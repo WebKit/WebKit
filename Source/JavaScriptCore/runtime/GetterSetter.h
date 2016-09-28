@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef GetterSetter_h
-#define GetterSetter_h
+#pragma once
 
 #include "JSCell.h"
 
@@ -152,5 +151,3 @@ JSValue callGetter(ExecState*, JSValue base, JSValue getterSetter);
 JS_EXPORT_PRIVATE bool callSetter(ExecState*, JSValue base, JSValue getterSetter, JSValue, ECMAMode);
 
 } // namespace JSC
-
-#endif // GetterSetter_h

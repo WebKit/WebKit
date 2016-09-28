@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InferredType_h
-#define InferredType_h
+#pragma once
 
 #include "ConcurrentJITLock.h"
 #include "JSCell.h"
@@ -288,6 +287,3 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::InferredType::Kind);
 
 } // namespace WTF
-
-#endif // InferredType_h
-

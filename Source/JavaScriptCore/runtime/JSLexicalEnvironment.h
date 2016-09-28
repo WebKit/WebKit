@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef JSLexicalEnvironment_h
-#define JSLexicalEnvironment_h
+#pragma once
 
 #include "CodeBlock.h"
 #include "JSEnvironmentRecord.h"
@@ -87,5 +86,3 @@ inline JSLexicalEnvironment* asActivation(JSValue value)
 }
     
 } // namespace JSC
-
-#endif // JSLexicalEnvironment_h

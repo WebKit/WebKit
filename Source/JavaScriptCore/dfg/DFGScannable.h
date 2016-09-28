@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGScannable_h
-#define DFGScannable_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -45,6 +44,3 @@ public:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGScannable_h
-

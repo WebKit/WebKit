@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGLICMPhase_h
-#define DFGLICMPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -41,6 +40,3 @@ bool performLICM(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGLICMPhase_h
-

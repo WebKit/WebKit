@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCActivityCallback_h
-#define GCActivityCallback_h
+#pragma once
 
 #include "HeapTimer.h"
 #include <wtf/RefPtr.h>
@@ -118,5 +117,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif

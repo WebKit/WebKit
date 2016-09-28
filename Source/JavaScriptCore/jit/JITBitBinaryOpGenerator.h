@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JITBitBinaryOpGenerator_h
-#define JITBitBinaryOpGenerator_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -67,5 +66,3 @@ protected:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // JITBitBinaryOpGenerator_h

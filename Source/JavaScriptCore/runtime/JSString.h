@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef JSString_h
-#define JSString_h
+#pragma once
 
 #include "CallFrame.h"
 #include "CommonIdentifiers.h"
@@ -792,5 +791,3 @@ inline String JSValue::toWTFString(ExecState* exec) const
 }
 
 } // namespace JSC
-
-#endif // JSString_h

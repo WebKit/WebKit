@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSGeneratorFunction_h
-#define JSGeneratorFunction_h
+#pragma once
 
 #include "JSFunction.h"
 
@@ -93,5 +92,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSGeneratorFunction_h

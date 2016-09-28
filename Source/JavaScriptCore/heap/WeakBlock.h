@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakBlock_h
-#define WeakBlock_h
+#pragma once
 
 #include "CellContainer.h"
 #include "WeakImpl.h"
@@ -142,5 +141,3 @@ inline bool WeakBlock::isLogicallyEmptyButNotFree() const
 }
 
 } // namespace JSC
-
-#endif // WeakBlock_h

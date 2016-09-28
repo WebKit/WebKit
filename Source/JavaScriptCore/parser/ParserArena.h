@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ParserArena_h
-#define ParserArena_h
+#pragma once
 
 #include "CommonIdentifiers.h"
 #include "Identifier.h"
@@ -188,6 +187,4 @@ namespace JSC {
         Vector<ParserArenaDeletable*> m_deletableObjects;
     };
 
-}
-
-#endif
+} // namespace JSC

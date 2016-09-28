@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGNode_h
-#define DFGNode_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -2511,5 +2510,4 @@ inline JSC::DFG::Node* inContext(JSC::DFG::Node* node, JSC::DumpContext*) { retu
 
 using WTF::inContext;
 
-#endif
 #endif

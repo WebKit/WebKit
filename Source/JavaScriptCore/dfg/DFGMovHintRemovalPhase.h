@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGMovHintRemovalPhase_h
-#define DFGMovHintRemovalPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -40,5 +39,3 @@ bool performMovHintRemoval(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGMovHintRemovalPhase_h

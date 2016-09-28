@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Yarr_h
-#define Yarr_h
+#pragma once
 
 #include "YarrPattern.h"
 
@@ -65,6 +64,3 @@ enum YarrCharSize {
 struct BytecodePattern;
 
 } } // namespace JSC::Yarr
-
-#endif // Yarr_h
-

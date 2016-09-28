@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfilerOSRExit_h
-#define ProfilerOSRExit_h
+#pragma once
 
 #include "ExitKind.h"
 #include "JSCJSValue.h"
@@ -56,6 +55,3 @@ private:
 };
 
 } } // namespace JSC::Profiler
-
-#endif // ProfilerOSRExit_h
-

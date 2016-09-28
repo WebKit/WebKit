@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CurrentThisInsideBlockGetterTest_h
-#define CurrentThisInsideBlockGetterTest_h
+#pragma once
 
 #include <JavaScriptCore/JavaScriptCore.h>
 
@@ -33,6 +32,3 @@
 void currentThisInsideBlockGetterTest();
 
 #endif // JSC_OBJC_API_ENABLED
-
-
-#endif // CurrentThisInsideBlockGetterTest_h

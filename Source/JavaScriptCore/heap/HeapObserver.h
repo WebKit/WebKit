@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HeapObserver_h
-#define HeapObserver_h
+#pragma once
 
 #include "HeapOperation.h"
 
@@ -38,5 +37,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // HeapObserver_h

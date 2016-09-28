@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSSet_h
-#define JSSet_h
+#pragma once
 
 #include "JSObject.h"
 #include "MapBase.h"
@@ -67,6 +66,4 @@ private:
     static String toStringName(const JSObject*, ExecState*);
 };
 
-}
-
-#endif // !defined(JSSet_h)
+} // namespace JSC

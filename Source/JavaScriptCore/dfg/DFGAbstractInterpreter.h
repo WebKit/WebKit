@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAbstractInterpreter_h
-#define DFGAbstractInterpreter_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -197,6 +196,3 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGAbstractInterpreter_h
-

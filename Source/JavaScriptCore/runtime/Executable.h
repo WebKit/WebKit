@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Executable_h
-#define Executable_h
+#pragma once
 
 #include "ArityCheckMode.h"
 #include "CallData.h"
@@ -763,5 +762,3 @@ JSObject* ScriptExecutable::prepareForExecution(ExecState* exec, JSFunction* fun
 }
 
 } // namespace JSC
-
-#endif // Executable_h

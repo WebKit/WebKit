@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGMaximalFlushInsertionPhase_h
-#define DFGMaximalFlushInsertionPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -53,5 +52,3 @@ bool performMaximalFlushInsertion(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGMaximalFlushInsertionPhase_h

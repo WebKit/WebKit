@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TypeLocation_h
-#define TypeLocation_h
+#pragma once
 
 #include "TypeSet.h"
 
@@ -58,6 +57,4 @@ public:
     RefPtr<TypeSet> m_globalTypeSet;
 };
 
-} //namespace JSC
-
-#endif //TypeLocation_h
+} // namespace JSC

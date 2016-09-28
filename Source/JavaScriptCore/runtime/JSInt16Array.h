@@ -23,10 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSInt16Array_h
-#define JSInt16Array_h
+#pragma once
 
 #include "JSTypedArrays.h"
-
-#endif // JSInt16Array_h
-

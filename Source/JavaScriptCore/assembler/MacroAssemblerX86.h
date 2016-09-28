@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MacroAssemblerX86_h
-#define MacroAssemblerX86_h
+#pragma once
 
 #if ENABLE(ASSEMBLER) && CPU(X86)
 
@@ -374,5 +373,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
-
-#endif // MacroAssemblerX86_h

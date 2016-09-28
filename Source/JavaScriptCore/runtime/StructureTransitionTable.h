@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StructureTransitionTable_h
-#define StructureTransitionTable_h
+#pragma once
 
 #include "IndexingType.h"
 #include "WeakGCMap.h"
@@ -225,5 +224,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // StructureTransitionTable_h

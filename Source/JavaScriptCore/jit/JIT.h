@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JIT_h
-#define JIT_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -965,5 +964,3 @@ namespace JSC {
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // JIT_h

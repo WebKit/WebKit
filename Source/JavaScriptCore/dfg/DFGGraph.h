@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGGraph_h
-#define DFGGraph_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -974,5 +973,4 @@ private:
 
 } } // namespace JSC::DFG
 
-#endif
 #endif

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOperations_h
-#define DFGOperations_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -270,5 +269,4 @@ inline P_JITOperation_EStJ operationNewTypedArrayWithOneArgumentForType(TypedArr
 
 } } // namespace JSC::DFG
 
-#endif
 #endif

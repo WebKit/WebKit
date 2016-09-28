@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InferredValue_h
-#define InferredValue_h
+#pragma once
 
 #include "JSCell.h"
 #include "Watchpoint.h"
@@ -133,6 +132,3 @@ private:
 // to die) when we get invalidated.
 
 } // namespace JSC
-
-#endif // InferredValue_h
-

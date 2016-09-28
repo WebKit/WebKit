@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ARM64Assembler_h
-#define ARM64Assembler_h
+#pragma once
 
 #if ENABLE(ASSEMBLER) && CPU(ARM64)
 
@@ -3609,5 +3608,3 @@ private:
 #undef CHECK_FP_MEMOP_DATASIZE
 
 #endif // ENABLE(ASSEMBLER) && CPU(ARM64)
-
-#endif // ARM64Assembler_h

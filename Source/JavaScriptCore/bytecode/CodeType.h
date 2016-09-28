@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeType_h
-#define CodeType_h
+#pragma once
 
 namespace JSC {
 
@@ -38,6 +37,3 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::CodeType);
 
 } // namespace WTF
-
-#endif // CodeType_h
-

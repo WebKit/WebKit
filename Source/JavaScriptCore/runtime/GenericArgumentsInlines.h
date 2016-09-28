@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GenericArgumentsInlines_h
-#define GenericArgumentsInlines_h
+#pragma once
 
 #include "GenericArguments.h"
 #include "JSCInlines.h"
@@ -234,6 +233,3 @@ void GenericArguments<Type>::copyToArguments(ExecState* exec, VirtualRegister fi
 }
 
 } // namespace JSC
-
-#endif // GenericArgumentsInlines_h
-

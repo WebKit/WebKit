@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSTypedArrayConstructors_h
-#define JSTypedArrayConstructors_h
+#pragma once
 
 #include "JSDataView.h"
 #include "JSGenericTypedArrayViewConstructor.h"
@@ -44,5 +43,3 @@ typedef JSGenericTypedArrayViewConstructor<JSFloat64Array> JSFloat64ArrayConstru
 typedef JSGenericTypedArrayViewConstructor<JSDataView> JSDataViewConstructor;
 
 } // namespace JSC
-
-#endif // JSTypedArrayConstructors_h

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSSegmentedVariableObject_h
-#define JSSegmentedVariableObject_h
+#pragma once
 
 #include "ConcurrentJITLock.h"
 #include "JSObject.h"
@@ -102,6 +101,3 @@ protected:
 };
 
 } // namespace JSC
-
-#endif // JSSegmentedVariableObject_h
-

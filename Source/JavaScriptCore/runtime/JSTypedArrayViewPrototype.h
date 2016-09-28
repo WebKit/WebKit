@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSTypedArrayViewPrototype_h
-#define JSTypedArrayViewPrototype_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -51,8 +50,5 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(ExecState*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncGetOriginalConstructor(ExecState*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSubarrayCreate(ExecState*);
-
     
 } // namespace JSC
-
-#endif /* JSTypedArrayViewPrototype_h */

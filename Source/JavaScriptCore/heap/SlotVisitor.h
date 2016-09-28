@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SlotVisitor_h
-#define SlotVisitor_h
+#pragma once
 
 #include "CellState.h"
 #include "HandleTypes.h"
@@ -195,5 +194,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // SlotVisitor_h

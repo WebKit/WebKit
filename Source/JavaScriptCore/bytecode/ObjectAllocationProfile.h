@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ObjectAllocationProfile_h
-#define ObjectAllocationProfile_h
+#pragma once
 
 #include "VM.h"
 #include "JSGlobalObject.h"
@@ -149,5 +148,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ObjectAllocationProfile_h

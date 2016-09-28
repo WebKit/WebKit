@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BatchedTransitionOptimizer_h
-#define BatchedTransitionOptimizer_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -42,5 +41,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // BatchedTransitionOptimizer_h

@@ -28,8 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BytecodeGenerator_h
-#define BytecodeGenerator_h
+#pragma once
 
 #include "CodeBlock.h"
 #include "Instruction.h"
@@ -978,12 +977,10 @@ namespace JSC {
         DerivedContextType m_derivedContextType { DerivedContextType::None };
     };
 
-}
+} // namespace JSC
 
 namespace WTF {
 
 void printInternal(PrintStream&, JSC::Variable::VariableKind);
 
 } // namespace WTF
-
-#endif // BytecodeGenerator_h

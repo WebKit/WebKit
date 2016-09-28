@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakSet_h
-#define WeakSet_h
+#pragma once
 
 #include "CellContainer.h"
 #include "WeakBlock.h"
@@ -130,5 +129,3 @@ inline void WeakSet::resetAllocator()
 }
 
 } // namespace JSC
-
-#endif // WeakSet_h

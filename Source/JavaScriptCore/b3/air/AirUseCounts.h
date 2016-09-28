@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirUseCounts_h
-#define AirUseCounts_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -117,6 +116,3 @@ private:
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirUseCounts_h
-

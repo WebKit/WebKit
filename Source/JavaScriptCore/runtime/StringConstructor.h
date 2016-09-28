@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef StringConstructor_h
-#define StringConstructor_h
+#pragma once
 
 #include "InternalFunction.h"
 
@@ -58,5 +57,3 @@ JSCell* JSC_HOST_CALL stringFromCharCode(ExecState*, int32_t);
 JSCell* stringConstructor(ExecState*, JSValue);
 
 } // namespace JSC
-
-#endif // StringConstructor_h

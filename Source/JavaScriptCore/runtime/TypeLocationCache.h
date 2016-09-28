@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TypeLocationCache_h
-#define TypeLocationCache_h
+#pragma once
 
 #include "TypeLocation.h"
 #include <unordered_map>
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // TypeLocationCache_h

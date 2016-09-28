@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGFiltrationResult_h
-#define DFGFiltrationResult_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -43,13 +42,10 @@ enum FiltrationResult {
     // Means that this operation may not always exit.
     FiltrationOK,
     
-    // Means taht this operation will always exit.
+    // Means that this operation will always exit.
     Contradiction
 };
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGFiltrationResult_h
-

@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataView_h
-#define DataView_h
+#pragma once
 
 #include "ArrayBufferView.h"
 #include <wtf/FlipBytes.h>
@@ -97,6 +96,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // DataView_h
-

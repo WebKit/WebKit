@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef Error_h
-#define Error_h
+#pragma once
 
 #include "ErrorInstance.h"
 #include "InternalFunction.h"
@@ -147,5 +146,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // Error_h

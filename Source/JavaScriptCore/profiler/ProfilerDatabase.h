@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfilerDatabase_h
-#define ProfilerDatabase_h
+#pragma once
 
 #include "JSCJSValue.h"
 #include "ProfilerBytecodes.h"
@@ -96,6 +95,3 @@ private:
 };
 
 } } // namespace JSC::Profiler
-
-#endif // ProfilerDatabase_h
-

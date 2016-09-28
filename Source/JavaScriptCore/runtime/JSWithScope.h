@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSWithScope_h
-#define JSWithScope_h
+#pragma once
 
 #include "JSGlobalObject.h"
 
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSWithScope_h

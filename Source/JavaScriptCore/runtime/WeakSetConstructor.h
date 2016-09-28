@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WeakSetConstructor_h
-#define WeakSetConstructor_h
+#pragma once
 
 #include "InternalFunction.h"
 
@@ -61,6 +60,4 @@ private:
     static CallType getCallData(JSCell*, CallData&);
 };
 
-}
-
-#endif // !defined(WeakSetConstructor_h)
+} // namespace JSC

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Exception_h
-#define Exception_h
+#pragma once
 
 #include "JSObject.h"
 #include "StackFrame.h"
@@ -77,5 +76,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // Exception_h
