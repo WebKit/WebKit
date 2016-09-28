@@ -1,5 +1,22 @@
 2016-09-27  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser: Handle windows drive letters after two slashes in relative URLs according to spec
+        https://bugs.webkit.org/show_bug.cgi?id=162646
+
+        Reviewed by Saam Barati.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::CodePointIterator::codeUnitsSince):
+        (WebCore::URLParser::appendWindowsDriveLetter):
+        (WebCore::URLParser::parse):
+        (WebCore::isWindowsDriveLetter): Deleted.
+        (WebCore::URLParser::checkWindowsDriveLetter): Deleted.
+        * platform/URLParser.h:
+
+2016-09-27  Alex Christensen  <achristensen@webkit.org>
+
         URLs with @ in the user should only search for the last @ until the end of the authority and host
         https://bugs.webkit.org/show_bug.cgi?id=162635
 

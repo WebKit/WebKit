@@ -651,6 +651,18 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("A://",
         {"a", "", "", "", 0, "/", "", "", "a:///"},
         {"a", "", "", "", 0, "//", "", "", "a://"});
+    checkRelativeURLDifferences("//C|/foo/bar", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},
+        {"", "", "", "", 0, "", "", "", "//C|/foo/bar"});
+    checkRelativeURLDifferences("//C:/foo/bar", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},
+        {"file", "", "", "c", 0, "/foo/bar", "", "", "file://c/foo/bar"});
+    checkRelativeURLDifferences("//C|?foo/bar", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/C:/", "foo/bar", "", "file:///C:/?foo/bar"},
+        {"", "", "", "", 0, "", "", "", "//C|?foo/bar"});
+    checkRelativeURLDifferences("//C|#foo/bar", "file:///tmp/mock/path",
+        {"file", "", "", "", 0, "/C:/", "", "foo/bar", "file:///C:/#foo/bar"},
+        {"", "", "", "", 0, "", "", "", "//C|#foo/bar"});
 }
 
 TEST_F(URLParserTest, DefaultPort)
@@ -790,6 +802,7 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("://:0/", "");
     shouldFail("://:0/", "about:blank");
     shouldFail("about~");
+    shouldFail("//C:asdf/foo/bar", "file:///tmp/mock/path");
 }
 
 // These are in the spec but not in the web platform tests.

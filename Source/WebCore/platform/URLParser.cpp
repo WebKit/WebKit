@@ -77,6 +77,11 @@ public:
         ASSERT(m_begin >= reference);
         return m_begin - reference;
     }
+
+    size_t codeUnitsSince(const CodePointIterator& other) const
+    {
+        return codeUnitsSince(other.m_begin);
+    }
     
 private:
     const CharacterType* m_begin { nullptr };
@@ -436,13 +441,6 @@ bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
     return false;
 }
 
-inline static bool isWindowsDriveLetter(const Vector<LChar>& buffer, size_t index)
-{
-    if (buffer.size() < index + 2)
-        return false;
-    return isASCIIAlpha(buffer[index]) && (buffer[index + 1] == ':' || buffer[index + 1] == '|');
-}
-
 void URLParser::appendToASCIIBuffer(UChar32 codePoint)
 {
     ASSERT(m_unicodeFragmentBuffer.isEmpty());
@@ -459,16 +457,15 @@ void URLParser::appendToASCIIBuffer(const char* characters, size_t length)
 }
 
 template<typename CharacterType>
-void URLParser::checkWindowsDriveLetter(CodePointIterator<CharacterType>& iterator)
+void URLParser::appendWindowsDriveLetter(CodePointIterator<CharacterType>& iterator)
 {
-    if (isWindowsDriveLetter(iterator)) {
-        appendToASCIIBuffer(*iterator);
-        advance(iterator);
-        ASSERT(!iterator.atEnd());
-        ASSERT(*iterator == ':' || *iterator == '|');
-        appendToASCIIBuffer(':');
-        advance(iterator);
-    }
+    ASSERT(isWindowsDriveLetter(iterator));
+    appendToASCIIBuffer(*iterator);
+    advance(iterator);
+    ASSERT(!iterator.atEnd());
+    ASSERT(*iterator == ':' || *iterator == '|');
+    appendToASCIIBuffer(':');
+    advance(iterator);
 }
 
 template<typename CharacterType>
@@ -1409,7 +1406,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                     m_url.m_hostEnd = m_url.m_userStart;
                     m_url.m_portEnd = m_url.m_userStart;
                     m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
-                    checkWindowsDriveLetter(c);
+                    if (isWindowsDriveLetter(c))
+                        appendWindowsDriveLetter(c);
                 }
                 state = State::Path;
                 break;
@@ -1452,18 +1450,21 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             m_url.m_hostEnd = m_url.m_userStart;
             m_url.m_portEnd = m_url.m_userStart;
             m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
-            checkWindowsDriveLetter(c);
+            if (isWindowsDriveLetter(c))
+                appendWindowsDriveLetter(c);
             state = State::Path;
             break;
         case State::FileHost:
             LOG_STATE("FileHost");
             if (isSlashQuestionOrHash(*c)) {
-                if (WebCore::isWindowsDriveLetter(m_asciiBuffer, m_url.m_portEnd + 1)) {
-                    state = State::Path;
-                    break;
+                bool windowsQuirk = c.codeUnitsSince(authorityOrHostBegin) == 2 && isWindowsDriveLetter(authorityOrHostBegin);
+                if (windowsQuirk) {
+                    syntaxViolation(authorityOrHostBegin);
+                    appendToASCIIBuffer('/');
+                    appendWindowsDriveLetter(authorityOrHostBegin);
                 }
-                if (authorityOrHostBegin == c) {
-                    ASSERT(parsedDataView(currentPosition(c) - 1, 1) == "/");
+                if (windowsQuirk || authorityOrHostBegin == c) {
+                    ASSERT(windowsQuirk || parsedDataView(currentPosition(c) - 1, 1) == "/");
                     if (UNLIKELY(*c == '?')) {
                         syntaxViolation(c);
                         appendToASCIIBuffer("/?", 2);

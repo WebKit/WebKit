@@ -72,7 +72,7 @@ private:
     template<typename CharacterType> void fragmentSyntaxViolation(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> bool isWindowsDriveLetter(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool shouldCopyFileURL(CodePointIterator<CharacterType>);
-    template<typename CharacterType> void checkWindowsDriveLetter(CodePointIterator<CharacterType>&);
+    template<typename CharacterType> void appendWindowsDriveLetter(CodePointIterator<CharacterType>&);
     template<typename CharacterType> size_t currentPosition(const CodePointIterator<CharacterType>&);
     template<typename UnsignedIntegerType> void appendNumberToASCIIBuffer(UnsignedIntegerType);
     template<bool(*isInCodeSet)(UChar32), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
