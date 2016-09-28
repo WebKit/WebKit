@@ -53,13 +53,17 @@ protected:
 
 public:
     static JSArray* create(VM&, Structure*, unsigned initialLength = 0);
-    static JSArray* createWithButterfly(VM&, Structure*, Butterfly*);
+    static JSArray* createWithButterfly(VM&, GCDeferralContext*, Structure*, Butterfly*);
 
     // tryCreateUninitialized is used for fast construction of arrays whose size and
     // contents are known at time of creation. Clients of this interface must:
     //   - null-check the result (indicating out of memory, or otherwise unable to allocate vector).
     //   - call 'initializeIndex' for all properties in sequence, for 0 <= i < initialLength.
-    JS_EXPORT_PRIVATE static JSArray* tryCreateUninitialized(VM&, Structure*, unsigned initialLength);
+    JS_EXPORT_PRIVATE static JSArray* tryCreateUninitialized(VM&, GCDeferralContext*, Structure*, unsigned initialLength);
+    static JSArray* tryCreateUninitialized(VM& vm, Structure* structure, unsigned initialLength)
+    {
+        return tryCreateUninitialized(vm, nullptr, structure, initialLength);
+    }
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool throwException);
 
@@ -230,12 +234,12 @@ inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLe
             butterfly->arrayStorage()->m_vector[i].clear();
     }
 
-    return createWithButterfly(vm, structure, butterfly);
+    return createWithButterfly(vm, nullptr, structure, butterfly);
 }
 
-inline JSArray* JSArray::createWithButterfly(VM& vm, Structure* structure, Butterfly* butterfly)
+inline JSArray* JSArray::createWithButterfly(VM& vm, GCDeferralContext* deferralContext, Structure* structure, Butterfly* butterfly)
 {
-    JSArray* array = new (NotNull, allocateCell<JSArray>(vm.heap)) JSArray(vm, structure, butterfly);
+    JSArray* array = new (NotNull, allocateCell<JSArray>(vm.heap, deferralContext)) JSArray(vm, structure, butterfly);
     array->finishCreation(vm);
     return array;
 }

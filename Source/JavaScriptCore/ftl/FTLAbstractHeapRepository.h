@@ -215,6 +215,8 @@ public:
     void decorateCCallWrite(const AbstractHeap*, B3::Value*);
     void decoratePatchpointRead(const AbstractHeap*, B3::Value*);
     void decoratePatchpointWrite(const AbstractHeap*, B3::Value*);
+    void decorateFenceRead(const AbstractHeap*, B3::Value*);
+    void decorateFenceWrite(const AbstractHeap*, B3::Value*);
 
     void computeRangesAndDecorateInstructions();
 
@@ -240,6 +242,8 @@ private:
     Vector<HeapForValue> m_heapForCCallWrite;
     Vector<HeapForValue> m_heapForPatchpointRead;
     Vector<HeapForValue> m_heapForPatchpointWrite;
+    Vector<HeapForValue> m_heapForFenceRead;
+    Vector<HeapForValue> m_heapForFenceWrite;
 };
 
 } } // namespace JSC::FTL

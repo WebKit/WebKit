@@ -365,11 +365,16 @@ public:
         return newString;
     }
 
-    ALWAYS_INLINE static JSString* createSubstringOfResolved(VM& vm, JSString* base, unsigned offset, unsigned length)
+    ALWAYS_INLINE static JSString* createSubstringOfResolved(VM& vm, GCDeferralContext* deferralContext, JSString* base, unsigned offset, unsigned length)
     {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap, deferralContext)) JSRopeString(vm);
         newString->finishCreationSubstringOfResolved(vm, base, offset, length);
         return newString;
+    }
+
+    ALWAYS_INLINE static JSString* createSubstringOfResolved(VM& vm, JSString* base, unsigned offset, unsigned length)
+    {
+        return createSubstringOfResolved(vm, nullptr, base, offset, length);
     }
 
     void visitFibers(SlotVisitor&);
@@ -491,6 +496,7 @@ inline JSString* asString(JSValue value)
     return jsCast<JSString*>(value.asCell());
 }
 
+// This MUST NOT GC.
 inline JSString* jsEmptyString(VM* vm)
 {
     return vm->smallStrings.emptyString();
@@ -581,7 +587,7 @@ inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* s, unsigned offs
     return JSRopeString::create(vm, exec, s, offset, length);
 }
 
-inline JSString* jsSubstringOfResolved(VM& vm, JSString* s, unsigned offset, unsigned length)
+inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContext, JSString* s, unsigned offset, unsigned length)
 {
     ASSERT(offset <= static_cast<unsigned>(s->length()));
     ASSERT(length <= static_cast<unsigned>(s->length()));
@@ -590,7 +596,12 @@ inline JSString* jsSubstringOfResolved(VM& vm, JSString* s, unsigned offset, uns
         return vm.smallStrings.emptyString();
     if (!offset && length == s->length())
         return s;
-    return JSRopeString::createSubstringOfResolved(vm, s, offset, length);
+    return JSRopeString::createSubstringOfResolved(vm, deferralContext, s, offset, length);
+}
+
+inline JSString* jsSubstringOfResolved(VM& vm, JSString* s, unsigned offset, unsigned length)
+{
+    return jsSubstringOfResolved(vm, nullptr, s, offset, length);
 }
 
 inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length)

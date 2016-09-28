@@ -1527,7 +1527,12 @@ class Instruction
         when "leap"
             $asm.puts "lea#{x86Suffix(:ptr)} #{orderOperands(operands[0].x86AddressOperand(:ptr), operands[1].x86Operand(:ptr))}"
         when "memfence"
-            $asm.puts "mfence"
+            sp = RegisterID.new(nil, "sp")
+            if isIntelSyntax
+                $asm.puts "mfence"
+            else
+                $asm.puts "lock; orl $0, (#{sp.x86Operand(:ptr)})"
+            end
         else
             lowerDefault
         end

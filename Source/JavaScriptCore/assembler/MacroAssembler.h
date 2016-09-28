@@ -373,6 +373,11 @@ public:
         branchPtr(cond, op1, imm).linkTo(target, this);
     }
 
+    Jump branch32(RelationalCondition cond, RegisterID left, AbsoluteAddress right)
+    {
+        return branch32(flip(cond), right, left);
+    }
+
     void branch32(RelationalCondition cond, RegisterID op1, RegisterID op2, Label target)
     {
         branch32(cond, op1, op2).linkTo(target, this);

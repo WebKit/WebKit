@@ -195,12 +195,12 @@ public:
     
     const AbstractHeap& atAnyAddress() const { return m_indexedHeap.atAnyIndex(); }
     
-    const AbstractHeap& at(void* address)
+    const AbstractHeap& at(const void* address)
     {
         return m_indexedHeap.at(bitwise_cast<ptrdiff_t>(address));
     }
     
-    const AbstractHeap& operator[](void* address) { return at(address); }
+    const AbstractHeap& operator[](const void* address) { return at(address); }
 
     void dump(PrintStream&) const;
 

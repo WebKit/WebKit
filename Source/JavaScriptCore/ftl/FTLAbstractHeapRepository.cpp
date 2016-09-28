@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "B3CCallValue.h"
+#include "B3FenceValue.h"
 #include "B3MemoryValue.h"
 #include "B3PatchpointValue.h"
 #include "B3ValueInlines.h"
@@ -116,6 +117,16 @@ void AbstractHeapRepository::decoratePatchpointWrite(const AbstractHeap* heap, V
     m_heapForPatchpointWrite.append(HeapForValue(heap, value));
 }
 
+void AbstractHeapRepository::decorateFenceRead(const AbstractHeap* heap, Value* value)
+{
+    m_heapForFenceRead.append(HeapForValue(heap, value));
+}
+
+void AbstractHeapRepository::decorateFenceWrite(const AbstractHeap* heap, Value* value)
+{
+    m_heapForFenceWrite.append(HeapForValue(heap, value));
+}
+
 void AbstractHeapRepository::computeRangesAndDecorateInstructions()
 {
     root.compute();
@@ -132,9 +143,13 @@ void AbstractHeapRepository::computeRangesAndDecorateInstructions()
     for (HeapForValue entry : m_heapForCCallWrite)
         entry.value->as<CCallValue>()->effects.writes = entry.heap->range();
     for (HeapForValue entry : m_heapForPatchpointRead)
-        entry.value->as<CCallValue>()->effects.reads = entry.heap->range();
+        entry.value->as<PatchpointValue>()->effects.reads = entry.heap->range();
     for (HeapForValue entry : m_heapForPatchpointWrite)
-        entry.value->as<CCallValue>()->effects.writes = entry.heap->range();
+        entry.value->as<PatchpointValue>()->effects.writes = entry.heap->range();
+    for (HeapForValue entry : m_heapForFenceRead)
+        entry.value->as<FenceValue>()->read = entry.heap->range();
+    for (HeapForValue entry : m_heapForFenceWrite)
+        entry.value->as<FenceValue>()->write = entry.heap->range();
 }
 
 } } // namespace JSC::FTL

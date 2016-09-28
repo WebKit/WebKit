@@ -2843,11 +2843,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case StoreBarrier: {
+    case StoreBarrier:
+    case FencedStoreBarrier: {
         filter(node->child1(), SpecCell);
         break;
     }
-
+        
     case CheckTierUpAndOSREnter:
     case LoopHint:
     case ZombieHint:

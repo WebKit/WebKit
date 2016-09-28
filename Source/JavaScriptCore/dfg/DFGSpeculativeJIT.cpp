@@ -8305,46 +8305,51 @@ void SpeculativeJIT::linkBranches()
 
 void SpeculativeJIT::compileStoreBarrier(Node* node)
 {
-    ASSERT(node->op() == StoreBarrier);
+    ASSERT(node->op() == StoreBarrier || node->op() == FencedStoreBarrier);
+    
+    bool isFenced = node->op() == FencedStoreBarrier;
     
     SpeculateCellOperand base(this, node->child1());
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
     
-    writeBarrier(base.gpr(), scratch1.gpr(), scratch2.gpr());
+    GPRReg baseGPR = base.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+    
+    JITCompiler::JumpList ok;
+    
+    if (isFenced) {
+        ok.append(m_jit.barrierBranch(baseGPR, scratch1GPR));
+        
+        JITCompiler::Jump noFence = m_jit.jumpIfBarrierStoreLoadFenceNotNeeded();
+        m_jit.memoryFence();
+        ok.append(m_jit.barrierBranchWithoutFence(baseGPR));
+        noFence.link(&m_jit);
+    } else
+        ok.append(m_jit.barrierBranchWithoutFence(baseGPR));
 
-    noResult(node);
-}
-
-void SpeculativeJIT::storeToWriteBarrierBuffer(GPRReg cell, GPRReg scratch1, GPRReg scratch2)
-{
-    ASSERT(scratch1 != scratch2);
     WriteBarrierBuffer& writeBarrierBuffer = m_jit.vm()->heap.m_writeBarrierBuffer;
-    m_jit.load32(writeBarrierBuffer.currentIndexAddress(), scratch2);
-    JITCompiler::Jump needToFlush = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch2, MacroAssembler::TrustedImm32(writeBarrierBuffer.capacity()));
+    m_jit.load32(writeBarrierBuffer.currentIndexAddress(), scratch2GPR);
+    JITCompiler::Jump needToFlush = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch2GPR, MacroAssembler::TrustedImm32(writeBarrierBuffer.capacity()));
 
-    m_jit.add32(TrustedImm32(1), scratch2);
-    m_jit.store32(scratch2, writeBarrierBuffer.currentIndexAddress());
+    m_jit.add32(TrustedImm32(1), scratch2GPR);
+    m_jit.store32(scratch2GPR, writeBarrierBuffer.currentIndexAddress());
 
-    m_jit.move(TrustedImmPtr(writeBarrierBuffer.buffer()), scratch1);
+    m_jit.move(TrustedImmPtr(writeBarrierBuffer.buffer()), scratch1GPR);
     // We use an offset of -sizeof(void*) because we already added 1 to scratch2.
-    m_jit.storePtr(cell, MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
+    m_jit.storePtr(baseGPR, MacroAssembler::BaseIndex(scratch1GPR, scratch2GPR, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
 
-    JITCompiler::Jump done = m_jit.jump();
+    ok.append(m_jit.jump());
     needToFlush.link(&m_jit);
 
     silentSpillAllRegisters(InvalidGPRReg);
-    callOperation(operationFlushWriteBarrierBuffer, cell);
+    callOperation(operationFlushWriteBarrierBuffer, baseGPR);
     silentFillAllRegisters(InvalidGPRReg);
 
-    done.link(&m_jit);
-}
+    ok.link(&m_jit);
 
-void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scratch2)
-{
-    JITCompiler::Jump ownerIsRememberedOrInEden = m_jit.jumpIfIsRememberedOrInEden(ownerGPR);
-    storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
-    ownerIsRememberedOrInEden.link(&m_jit);
+    noResult(node);
 }
 
 void SpeculativeJIT::compilePutAccessorById(Node* node)

@@ -33,6 +33,7 @@
 #include "B3CCallValue.h"
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
+#include "B3FenceValue.h"
 #include "B3MathExtras.h"
 #include "B3MemoryValue.h"
 #include "B3SlotBaseValue.h"
@@ -445,6 +446,11 @@ void Output::store(LValue value, TypedPointer pointer)
     m_heaps->decorateMemory(pointer.heap(), store);
 }
 
+FenceValue* Output::fence()
+{
+    return m_block->appendNew<FenceValue>(m_proc, origin());
+}
+
 void Output::store32As8(LValue value, TypedPointer pointer)
 {
     LValue store = m_block->appendNew<MemoryValue>(m_proc, Store8, origin(), value, pointer.value());
@@ -795,7 +801,7 @@ void Output::store(LValue value, TypedPointer pointer, StoreType type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-TypedPointer Output::absolute(void* address)
+TypedPointer Output::absolute(const void* address)
 {
     return TypedPointer(m_heaps->absolute[address], constIntPtr(address));
 }

@@ -1549,4 +1549,17 @@ void Heap::forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>& func)
     return m_codeBlocks->iterate(func);
 }
 
+void Heap::writeBarrierSlowPath(const JSCell* from)
+{
+    if (UNLIKELY(barrierShouldBeFenced())) {
+        // In this case, the barrierThreshold is the tautological threshold, so from could still be
+        // not black. But we can't know for sure until we fire off a fence.
+        WTF::storeLoadFence();
+        if (!isBlack(from->cellState()))
+            return;
+    }
+    
+    addToRememberedSet(from);
+}
+
 } // namespace JSC

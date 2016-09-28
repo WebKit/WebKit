@@ -64,6 +64,7 @@
 #include "DFGSSALoweringPhase.h"
 #include "DFGStackLayoutPhase.h"
 #include "DFGStaticExecutionCountEstimationPhase.h"
+#include "DFGStoreBarrierClusteringPhase.h"
 #include "DFGStoreBarrierInsertionPhase.h"
 #include "DFGStrengthReductionPhase.h"
 #include "DFGStructureRegistrationPhase.h"
@@ -362,6 +363,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performTierUpCheckInjection(dfg);
 
         performFastStoreBarrierInsertion(dfg);
+        performStoreBarrierClustering(dfg);
         performCleanUp(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
@@ -451,6 +453,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performGlobalStoreBarrierInsertion(dfg);
+        performStoreBarrierClustering(dfg);
         if (Options::useMovHintRemoval())
             performMovHintRemoval(dfg);
         performCleanUp(dfg);

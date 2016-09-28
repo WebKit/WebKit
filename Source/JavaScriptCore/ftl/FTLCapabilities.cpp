@@ -138,6 +138,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetTypedArrayByteOffset:
     case NotifyWrite:
     case StoreBarrier:
+    case FencedStoreBarrier:
     case Call:
     case TailCall:
     case TailCallInlinedCaller:

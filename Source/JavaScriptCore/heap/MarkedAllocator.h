@@ -34,6 +34,7 @@
 
 namespace JSC {
 
+class GCDeferralContext;
 class Heap;
 class MarkedSpace;
 class LLIntOffsetsExtractor;
@@ -151,8 +152,8 @@ public:
     bool needsDestruction() const { return m_attributes.destruction == NeedsDestruction; }
     DestructionMode destruction() const { return m_attributes.destruction; }
     HeapCell::Kind cellKind() const { return m_attributes.cellKind; }
-    void* allocate();
-    void* tryAllocate();
+    void* allocate(GCDeferralContext* = nullptr);
+    void* tryAllocate(GCDeferralContext* = nullptr);
     Heap* heap() { return m_heap; }
     MarkedBlock::Handle* takeLastActiveBlock()
     {
@@ -215,15 +216,15 @@ private:
     
     bool shouldStealEmptyBlocksFromOtherAllocators() const;
     
-    JS_EXPORT_PRIVATE void* allocateSlowCase();
-    JS_EXPORT_PRIVATE void* tryAllocateSlowCase();
-    void* allocateSlowCaseImpl(bool crashOnFailure);
+    JS_EXPORT_PRIVATE void* allocateSlowCase(GCDeferralContext*);
+    JS_EXPORT_PRIVATE void* tryAllocateSlowCase(GCDeferralContext*);
+    void* allocateSlowCaseImpl(GCDeferralContext*, bool crashOnFailure);
     void didConsumeFreeList();
     void* tryAllocateWithoutCollecting();
     MarkedBlock::Handle* tryAllocateBlock();
     void* tryAllocateIn(MarkedBlock::Handle*);
     void* allocateIn(MarkedBlock::Handle*);
-    ALWAYS_INLINE void doTestCollectionsIfNeeded();
+    ALWAYS_INLINE void doTestCollectionsIfNeeded(GCDeferralContext*);
     
     void setFreeList(const FreeList&);
     
@@ -264,7 +265,7 @@ inline ptrdiff_t MarkedAllocator::offsetOfCellSize()
     return OBJECT_OFFSETOF(MarkedAllocator, m_cellSize);
 }
 
-ALWAYS_INLINE void* MarkedAllocator::tryAllocate()
+ALWAYS_INLINE void* MarkedAllocator::tryAllocate(GCDeferralContext* deferralContext)
 {
     unsigned remaining = m_freeList.remaining;
     if (remaining) {
@@ -276,13 +277,13 @@ ALWAYS_INLINE void* MarkedAllocator::tryAllocate()
     
     FreeCell* head = m_freeList.head;
     if (UNLIKELY(!head))
-        return tryAllocateSlowCase();
+        return tryAllocateSlowCase(deferralContext);
     
     m_freeList.head = head->next;
     return head;
 }
 
-ALWAYS_INLINE void* MarkedAllocator::allocate()
+ALWAYS_INLINE void* MarkedAllocator::allocate(GCDeferralContext* deferralContext)
 {
     unsigned remaining = m_freeList.remaining;
     if (remaining) {
@@ -294,7 +295,7 @@ ALWAYS_INLINE void* MarkedAllocator::allocate()
     
     FreeCell* head = m_freeList.head;
     if (UNLIKELY(!head))
-        return allocateSlowCase();
+        return allocateSlowCase(deferralContext);
     
     m_freeList.head = head->next;
     return head;

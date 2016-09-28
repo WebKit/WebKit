@@ -59,7 +59,7 @@ Butterfly* createArrayButterflyInDictionaryIndexingMode(
     return butterfly;
 }
 
-JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, unsigned initialLength)
+JSArray* JSArray::tryCreateUninitialized(VM& vm, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {
     if (initialLength > MAX_STORAGE_VECTOR_LENGTH)
         return 0;
@@ -76,7 +76,7 @@ JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, unsigned 
             || hasContiguous(indexingType));
 
         unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, initialLength);
-        void* temp = vm.heap.tryAllocateAuxiliary(nullptr, Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)));
+        void* temp = vm.heap.tryAllocateAuxiliary(deferralContext, nullptr, Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)));
         if (!temp)
             return nullptr;
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
@@ -104,7 +104,7 @@ JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, unsigned 
             storage->m_vector[i].clear();
     }
 
-    return createWithButterfly(vm, structure, butterfly);
+    return createWithButterfly(vm, deferralContext, structure, butterfly);
 }
 
 void JSArray::setLengthWritable(ExecState* exec, bool writable)

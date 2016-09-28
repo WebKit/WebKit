@@ -1,3 +1,191 @@
+2016-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        The write barrier should be down with TSO
+        https://bugs.webkit.org/show_bug.cgi?id=162316
+
+        Reviewed by Geoffrey Garen.
+        
+        This makes our write barrier behave correctly when it races with the collector. The
+        collector wants to do this when visiting:
+        
+            object->cellState = black
+            visit(object)
+        
+        The mutator wants to do this when storing:
+        
+            object->property = newValue
+            if (object->cellState == black)
+                remember(object)
+        
+        Prior to this change, this didn't work right because the compiler would sometimes place
+        barriers before the store to the property and because the mutator did not have adequate
+        fences.
+        
+        Prior to this change, the DFG and FTL would emit this:
+        
+            if (object->cellState == black)
+                remember(object)
+            object->property = newValue
+        
+        Which is wrong, because the object could start being scanned just after the cellState
+        check, at which point the store would be lost. We need to confirm that the state was not
+        black *after* the store! This change was harder than you'd expect: placing the barrier
+        after the store broke B3's ability to do its super crazy ninja CSE on some store-load
+        redundancies. Because the B3 CSE has some moves that the DFG CSE lacks, the DFG CSE's
+        ability to ignore barriers didn't help. I fixed this by having the FTL convey precise
+        heap ranges for the patchpoint corresponding to the barrier slow path. It reads the world
+        (because of the store-load fence) and it writes only cellState (because the B3 heap ranges
+        don't have any way to represent any of the GC's other state, which means that B3 does not
+        have to worry about aliasing with any of that).
+        
+        The collector already uses a store-load fence on x86 just after setting the cellState and
+        before visiting the object. The mutator needs to do the same. But we cannot put a
+        store-load fence of any kind before store barriers, because that causes enormous slow
+        downs. In the worst case, Octane/richards slowed down by 90%! That's crazy! However, the
+        overall slow downs were small enough (0-15% on benchmark suite aggregates) that it would be
+        reasonable if the slow down only happened while the GC was running. Then, the concurrent GC
+        would lift throughput-while-collecting from 0% of peak to 85% of peak. This changes the
+        barrier so that it looks like this:
+        
+            if (object->cellState <= heap.sneakyBlackThreshold)
+                slowPath(object)
+        
+        Where sneakyBlackThreshold is the normal blackThreshold when we're not collecting, or a
+        tautoligical threshold (that makes everything look black) when we are collecting. This
+        turns out to not be any more expensive than the barrier in tip of tree when the GC is not
+        running, or a 0-15% slow-down when it is "running". (Of course we don't run the GC
+        concurrently yet. I still have more work to do.) The slowPath() does some extra work to
+        check if we are concurrently collecting; if so, it does a fence and rechecks if the object
+        really did need that barrier.
+        
+        This also reintroduces elimination of redundant store barriers, which was lost in the last
+        store barrier change. We can only do it when there is no possibility of GC, exit, or
+        exceptions between the two store barriers. We could remove the exit/exception limitation if
+        we taught OSR exit how to buffer store barriers, which is an insane thing to do considering
+        that I've never been able to detect a win from redundant store barrier elimination. I just
+        want us to have it for stupidly obvious situations, like a tight sequence of stores to the
+        same object. This same optimization also sometimes strength-reduces the store barrier so
+        that it uses a constant black threshold rather than the sneaky one, thereby saving one
+        load.
+        
+        Even with all of those optimizations, I still had problems with barrier cost. I found that one
+        of the benchmarks that was being hit particularly hard was JetStream/regexp-2010. Fortunately
+        that benchmark does most of its barriers in a tight C++ loop in RegExpMatchesArray.h. When we
+        know what we're doing, we can defer GC around a bunch of object initializations and then remove
+        all of the barriers between any of the objects allocated within the deferral. Unfortunately,
+        our GC deferral mechanism isn't really performant enough to make this be a worthwhile
+        optimization. The most efficient version of such an optimization that I could come up with was
+        to have a DeferralContext object that houses a boolean that is false by default, but the GC
+        writes true into it if it would have wanted to GC. You thread a pointer to the deferralContext
+        through all of your allocations. This kind of mechanism has the overhead of a zero 
+        initialization on the stack on entry and a zero check on exit. This is probably even efficient
+        enough that we could start thinking about having the DFG use it, for example if we found a
+        bounded-time section of code with a lot of barriers and entry/exit sites that aren't totally
+        wacky. This optimization took this patch from 0.68% JetStream regressed to neutral, according
+        to my latest data.
+        
+        Finally, an earlier version of this change put the store-load fence in B3 IR, so I ended up
+        adding FTLOutput support for it and AbstractHeapRepository magic for decorating the heaps.
+        I think we might as well keep that, it'll be useful.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branch32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branch32):
+        (JSC::MacroAssemblerX86_64::branch64): Deleted.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isStoreBarrier):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier):
+        (JSC::DFG::SpeculativeJIT::storeToWriteBarrierBuffer): Deleted.
+        (JSC::DFG::SpeculativeJIT::writeBarrier): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileBaseValueStoreBarrier): Deleted.
+        (JSC::DFG::SpeculativeJIT::writeBarrier): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileBaseValueStoreBarrier): Deleted.
+        (JSC::DFG::SpeculativeJIT::writeBarrier): Deleted.
+        * dfg/DFGStoreBarrierClusteringPhase.cpp: Added.
+        (JSC::DFG::performStoreBarrierClustering):
+        * dfg/DFGStoreBarrierClusteringPhase.h: Added.
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGStoreBarrierInsertionPhase.h:
+        * ftl/FTLAbstractHeap.h:
+        (JSC::FTL::AbsoluteAbstractHeap::at):
+        (JSC::FTL::AbsoluteAbstractHeap::operator[]):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::decorateFenceRead):
+        (JSC::FTL::AbstractHeapRepository::decorateFenceWrite):
+        (JSC::FTL::AbstractHeapRepository::computeRangesAndDecorateInstructions):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStoreBarrier):
+        (JSC::FTL::DFG::LowerDFGToB3::storageForTransition):
+        (JSC::FTL::DFG::LowerDFGToB3::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToB3::emitStoreBarrier):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::fence):
+        (JSC::FTL::Output::absolute):
+        * ftl/FTLOutput.h:
+        * heap/CellState.h:
+        (JSC::isWithinThreshold):
+        (JSC::isBlack):
+        * heap/Heap.cpp:
+        (JSC::Heap::writeBarrierSlowPath):
+        * heap/Heap.h:
+        (JSC::Heap::barrierShouldBeFenced):
+        (JSC::Heap::addressOfBarrierShouldBeFenced):
+        (JSC::Heap::sneakyBlackThreshold):
+        (JSC::Heap::addressOfSneakyBlackThreshold):
+        * heap/HeapInlines.h:
+        (JSC::Heap::writeBarrier):
+        (JSC::Heap::writeBarrierWithoutFence):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::jumpIfIsRememberedOrInEdenWithoutFence):
+        (JSC::AssemblyHelpers::sneakyJumpIfIsRememberedOrInEden):
+        (JSC::AssemblyHelpers::jumpIfIsRememberedOrInEden):
+        (JSC::AssemblyHelpers::storeBarrierStoreLoadFence):
+        (JSC::AssemblyHelpers::jumpIfStoreBarrierStoreLoadFenceNotNeeded):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitWriteBarrier):
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/x86.rb:
+        * runtime/Options.h:
+
 2016-09-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Improve useCodeCache Option description string.

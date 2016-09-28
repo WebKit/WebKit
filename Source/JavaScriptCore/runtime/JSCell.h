@@ -39,6 +39,7 @@
 namespace JSC {
 
 class CopyVisitor;
+class GCDeferralContext;
 class ExecState;
 class Identifier;
 class JSArrayBufferView;
@@ -51,6 +52,9 @@ class Structure;
 
 template<typename T> void* allocateCell(Heap&);
 template<typename T> void* allocateCell(Heap&, size_t);
+
+template<typename T> void* allocateCell(Heap&, GCDeferralContext*);
+template<typename T> void* allocateCell(Heap&, GCDeferralContext*, size_t);
 
 #define DECLARE_EXPORT_INFO                                             \
     protected:                                                          \
@@ -69,6 +73,8 @@ class JSCell : public HeapCell {
     friend class MarkedBlock;
     template<typename T> friend void* allocateCell(Heap&);
     template<typename T> friend void* allocateCell(Heap&, size_t);
+    template<typename T> friend void* allocateCell(Heap&, GCDeferralContext*);
+    template<typename T> friend void* allocateCell(Heap&, GCDeferralContext*, size_t);
 
 public:
     static const unsigned StructureFlags = 0;

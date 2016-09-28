@@ -44,6 +44,7 @@ public:
 
     using MacroAssemblerX86Common::add32;
     using MacroAssemblerX86Common::and32;
+    using MacroAssemblerX86Common::branch32;
     using MacroAssemblerX86Common::branchAdd32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::sub32;
@@ -826,6 +827,12 @@ public:
     {
         m_assembler.cmpq_rm(right, address.offset, address.base, address.index, address.scale);
         return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+    
+    Jump branch32(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
+    {
+        load32(left.m_ptr, scratchRegister());
+        return branch32(cond, scratchRegister(), right);
     }
 
     Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)

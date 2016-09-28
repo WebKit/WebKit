@@ -87,6 +87,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NotifyWrite:
     case PutStructure:
     case StoreBarrier:
+    case FencedStoreBarrier:
     case PutByOffset:
     case PutClosureVar:
     case RecordRegExpCachedResult:

@@ -1021,7 +1021,7 @@ char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayS
 
     JSArray* result;
     if (butterfly)
-        result = JSArray::createWithButterfly(vm, arrayStructure, butterfly);
+        result = JSArray::createWithButterfly(vm, nullptr, arrayStructure, butterfly);
     else
         result = JSArray::create(vm, arrayStructure, size);
     return bitwise_cast<char*>(result);

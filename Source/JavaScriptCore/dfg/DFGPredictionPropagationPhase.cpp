@@ -995,6 +995,7 @@ private:
         case PutStack:
         case KillStack:
         case StoreBarrier:
+        case FencedStoreBarrier:
         case GetStack:
         case GetRegExpObjectLastIndex:
         case SetRegExpObjectLastIndex:

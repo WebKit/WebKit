@@ -673,8 +673,6 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     int value = currentInstruction[3].u.operand;
     int direct = currentInstruction[8].u.putByIdFlags & PutByIdIsDirect;
     
-    emitWriteBarrier(base, value, ShouldFilterBase);
-
     emitLoad2(base, regT1, regT0, value, regT3, regT2);
     
     emitJumpSlowCaseIfNotJSCell(base, regT1);
@@ -687,6 +685,8 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     
+    emitWriteBarrier(base, value, ShouldFilterBase);
+
     m_putByIds.append(gen);
 }
 

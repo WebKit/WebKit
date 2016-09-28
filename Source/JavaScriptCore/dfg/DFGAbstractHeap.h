@@ -51,8 +51,9 @@ namespace JSC { namespace DFG {
     macro(Butterfly_vectorLength) \
     macro(GetterSetter_getter) \
     macro(GetterSetter_setter) \
-    macro(JSCell_structureID) \
+    macro(JSCell_cellState) \
     macro(JSCell_indexingType) \
+    macro(JSCell_structureID) \
     macro(JSCell_typeInfoFlags) \
     macro(JSCell_typeInfoType) \
     macro(JSObject_butterfly) \

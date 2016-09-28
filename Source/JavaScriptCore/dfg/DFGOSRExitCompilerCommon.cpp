@@ -249,7 +249,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 
 static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 {
-    AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.jumpIfIsRememberedOrInEden(owner);
+    AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.barrierBranchWithoutFence(owner);
 
     // We need these extra slots because setupArgumentsWithExecState will use poke on x86.
 #if CPU(X86)
@@ -269,6 +269,8 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
 {
+    jit.memoryFence();
+    
     jit.move(
         AssemblyHelpers::TrustedImmPtr(
             jit.codeBlock()->baselineAlternative()), GPRInfo::argumentGPR1);

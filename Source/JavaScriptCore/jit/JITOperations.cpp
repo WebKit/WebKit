@@ -2165,14 +2165,11 @@ void JIT_OPERATION operationOSRWriteBarrier(ExecState* exec, JSCell* cell)
     vm->heap.writeBarrier(cell);
 }
 
-// NB: We don't include the value as part of the barrier because the write barrier elision
-// phase in the DFG only tracks whether the object being stored to has been barriered. It 
-// would be much more complicated to try to model the value being stored as well.
-void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState* exec, JSCell* cell)
+void JIT_OPERATION operationWriteBarrierSlowPath(ExecState* exec, JSCell* cell)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    vm->heap.writeBarrier(cell);
+    vm->heap.writeBarrierSlowPath(cell);
 }
 
 void JIT_OPERATION lookupExceptionHandler(VM* vm, ExecState* exec)

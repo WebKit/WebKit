@@ -410,8 +410,7 @@ char* JIT_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitial
 char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*, JSObject*, size_t newSize) WTF_INTERNAL;
 
 void JIT_OPERATION operationFlushWriteBarrierBuffer(ExecState*, JSCell*);
-void JIT_OPERATION operationWriteBarrier(ExecState*, JSCell*, JSCell*);
-void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState*, JSCell*);
+void JIT_OPERATION operationWriteBarrierSlowPath(ExecState*, JSCell*);
 void JIT_OPERATION operationOSRWriteBarrier(ExecState*, JSCell*);
 
 void JIT_OPERATION operationExceptionFuzz(ExecState*);

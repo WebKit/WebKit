@@ -314,7 +314,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
     case LoopHint:
-    case StoreBarrier:
     case InvalidationPoint:
     case NotifyWrite:
     case CheckInBounds:
@@ -368,6 +367,14 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case BottomValue:
         // If in doubt, assume that this isn't safe to execute, just because we have no way of
         // compiling this node.
+        return false;
+
+    case StoreBarrier:
+    case FencedStoreBarrier:
+        // We conservatively assume that these cannot be put anywhere, which forces the compiler to
+        // keep them exactly where they were. This is sort of overkill since the clobberize effects
+        // already force these things to be ordered precisely. I'm just not confident enough in my
+        // effect based memory model to rely solely on that right now.
         return false;
 
     case GetByVal:

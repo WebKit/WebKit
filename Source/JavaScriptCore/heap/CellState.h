@@ -52,10 +52,16 @@ enum class CellState : uint8_t {
 };
 
 static const unsigned blackThreshold = 1; // x <= blackThreshold means x is black.
+static const unsigned tautologicalThreshold = 100; // x <= tautologicalThreshold is always true.
+
+inline bool isWithinThreshold(CellState cellState, unsigned threshold)
+{
+    return static_cast<unsigned>(cellState) <= threshold;
+}
 
 inline bool isBlack(CellState cellState)
 {
-    return static_cast<unsigned>(cellState) <= blackThreshold;
+    return isWithinThreshold(cellState, blackThreshold);
 }
 
 inline CellState blacken(CellState cellState)

@@ -321,7 +321,7 @@ private:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
                 // These allocate but then run their own barrier.
-                insertBarrier(m_nodeIndex + 1, Edge(m_node->child1().node(), KnownCellUse));
+                insertBarrier(m_nodeIndex + 1, m_node->child1());
                 m_node->setEpoch(Epoch());
                 break;
                 
@@ -430,13 +430,14 @@ private:
         
         if (verbose)
             dataLog("            Inserting barrier.\n");
-        insertBarrier(m_nodeIndex, base);
+        insertBarrier(m_nodeIndex + 1, base);
     }
 
-    void insertBarrier(unsigned nodeIndex, Edge base, bool exitOK = true)
+    void insertBarrier(unsigned nodeIndex, Edge base)
     {
-        // Inserting a barrier means that the object may become marked by the GC, which will make
-        // the object black.
+        // This is just our way of saying that barriers are not redundant with each other according
+        // to forward analysis: if we proved one time that a barrier was necessary then it'll for
+        // sure be necessary next time.
         base->setEpoch(Epoch());
 
         // If we're in global mode, we should only insert the barriers once we have converged.
@@ -446,17 +447,23 @@ private:
         // FIXME: We could support StoreBarrier(UntypedUse:). That would be sort of cool.
         // But right now we don't need it.
 
-        // If the original edge was unchecked, we should also not have a check. We may be in a context
-        // where checks are not allowed. If we ever did have to insert a barrier at an ExitInvalid
-        // context and that barrier needed a check, then we could make that work by hoisting the check.
-        // That doesn't happen right now.
-        if (base.useKind() != KnownCellUse) {
-            DFG_ASSERT(m_graph, m_node, m_node->origin.exitOK);
-            base.setUseKind(CellUse);
-        }
+        DFG_ASSERT(m_graph, m_node, isCell(base.useKind()));
         
-        m_insertionSet.insertNode(
-            nodeIndex, SpecNone, StoreBarrier, m_node->origin.takeValidExit(exitOK), base);
+        // Barriers are always inserted after the node that they service. Therefore, we always know
+        // that the thing is a cell now.
+        base.setUseKind(KnownCellUse);
+        
+        NodeOrigin origin = m_node->origin;
+        if (clobbersExitState(m_graph, m_node))
+            origin = origin.withInvalidExit();
+        
+        NodeType type;
+        if (Options::useConcurrentBarriers())
+            type = FencedStoreBarrier;
+        else
+            type = StoreBarrier;
+        
+        m_insertionSet.insertNode(nodeIndex, SpecNone, type, origin, base);
     }
     
     bool reallyInsertBarriers()

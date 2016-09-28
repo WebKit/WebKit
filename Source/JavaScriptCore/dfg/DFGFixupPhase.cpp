@@ -1402,6 +1402,7 @@ private:
         case KillStack:
         case GetStack:
         case StoreBarrier:
+        case FencedStoreBarrier:
         case GetRegExpObjectLastIndex:
         case SetRegExpObjectLastIndex:
         case RecordRegExpCachedResult:

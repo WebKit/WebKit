@@ -361,6 +361,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGSpeculativeJIT64.cpp
     dfg/DFGStackLayoutPhase.cpp
     dfg/DFGStaticExecutionCountEstimationPhase.cpp
+    dfg/DFGStoreBarrierClusteringPhase.cpp
     dfg/DFGStoreBarrierInsertionPhase.cpp
     dfg/DFGStrengthReductionPhase.cpp
     dfg/DFGStructureAbstractValue.cpp

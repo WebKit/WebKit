@@ -404,11 +404,20 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case LoopHint:
     case ProfileType:
     case ProfileControlFlow:
-    case StoreBarrier:
     case PutHint:
         write(SideState);
         return;
         
+    case StoreBarrier:
+        read(JSCell_cellState);
+        write(JSCell_cellState);
+        return;
+        
+    case FencedStoreBarrier:
+        read(Heap);
+        write(JSCell_cellState);
+        return;
+
     case InvalidationPoint:
         write(SideState);
         def(HeapLocation(InvalidationPointLoc, Watchpoint_fire), LazyNode(node));

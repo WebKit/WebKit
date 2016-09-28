@@ -175,45 +175,49 @@ void* MarkedAllocator::tryAllocateIn(MarkedBlock::Handle* block)
     return result;
 }
 
-ALWAYS_INLINE void MarkedAllocator::doTestCollectionsIfNeeded()
+ALWAYS_INLINE void MarkedAllocator::doTestCollectionsIfNeeded(GCDeferralContext* deferralContext)
 {
     if (!Options::slowPathAllocsBetweenGCs())
         return;
 
     static unsigned allocationCount = 0;
     if (!allocationCount) {
-        if (!m_heap->isDeferred())
-            m_heap->collectAllGarbage();
+        if (!m_heap->isDeferred()) {
+            if (deferralContext)
+                deferralContext->m_shouldGC = true;
+            else
+                m_heap->collectAllGarbage();
+        }
         ASSERT(m_heap->m_operationInProgress == NoOperation);
     }
     if (++allocationCount >= Options::slowPathAllocsBetweenGCs())
         allocationCount = 0;
 }
 
-void* MarkedAllocator::allocateSlowCase()
+void* MarkedAllocator::allocateSlowCase(GCDeferralContext* deferralContext)
 {
     bool crashOnFailure = true;
-    return allocateSlowCaseImpl(crashOnFailure);
+    return allocateSlowCaseImpl(deferralContext, crashOnFailure);
 }
 
-void* MarkedAllocator::tryAllocateSlowCase()
+void* MarkedAllocator::tryAllocateSlowCase(GCDeferralContext* deferralContext)
 {
     bool crashOnFailure = false;
-    return allocateSlowCaseImpl(crashOnFailure);
+    return allocateSlowCaseImpl(deferralContext, crashOnFailure);
 }
 
-void* MarkedAllocator::allocateSlowCaseImpl(bool crashOnFailure)
+void* MarkedAllocator::allocateSlowCaseImpl(GCDeferralContext* deferralContext, bool crashOnFailure)
 {
     SuperSamplerScope superSamplerScope(false);
     ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
-    doTestCollectionsIfNeeded();
+    doTestCollectionsIfNeeded(deferralContext);
 
     ASSERT(!m_markedSpace->isIterating());
     m_heap->didAllocate(m_freeList.originalSize);
     
     didConsumeFreeList();
     
-    m_heap->collectIfNecessaryOrDefer();
+    m_heap->collectIfNecessaryOrDefer(deferralContext);
     
     AllocationScope allocationScope(*m_heap);
 

@@ -235,32 +235,58 @@ void MarkedSpace::lastChanceToFinalize()
 
 void* MarkedSpace::allocate(Subspace& subspace, size_t bytes)
 {
+    if (false)
+        dataLog("Allocating ", bytes, " bytes in ", subspace.attributes, ".\n");
     if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
         void* result = allocator->allocate();
         return result;
     }
-    return allocateLarge(subspace, bytes);
+    return allocateLarge(subspace, nullptr, bytes);
+}
+
+void* MarkedSpace::allocate(Subspace& subspace, GCDeferralContext* deferralContext, size_t bytes)
+{
+    if (false)
+        dataLog("Allocating ", bytes, " deferred bytes in ", subspace.attributes, ".\n");
+    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
+        void* result = allocator->allocate(deferralContext);
+        return result;
+    }
+    return allocateLarge(subspace, deferralContext, bytes);
 }
 
 void* MarkedSpace::tryAllocate(Subspace& subspace, size_t bytes)
 {
+    if (false)
+        dataLog("Try-allocating ", bytes, " bytes in ", subspace.attributes, ".\n");
     if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
         void* result = allocator->tryAllocate();
         return result;
     }
-    return tryAllocateLarge(subspace, bytes);
+    return tryAllocateLarge(subspace, nullptr, bytes);
 }
 
-void* MarkedSpace::allocateLarge(Subspace& subspace, size_t size)
+void* MarkedSpace::tryAllocate(Subspace& subspace, GCDeferralContext* deferralContext, size_t bytes)
 {
-    void* result = tryAllocateLarge(subspace, size);
+    if (false)
+        dataLog("Try-allocating ", bytes, " deferred bytes in ", subspace.attributes, ".\n");
+    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
+        void* result = allocator->tryAllocate(deferralContext);
+        return result;
+    }
+    return tryAllocateLarge(subspace, deferralContext, bytes);
+}
+
+void* MarkedSpace::allocateLarge(Subspace& subspace, GCDeferralContext* deferralContext, size_t size)
+{
+    void* result = tryAllocateLarge(subspace, deferralContext, size);
     RELEASE_ASSERT(result);
     return result;
 }
 
-void* MarkedSpace::tryAllocateLarge(Subspace& subspace, size_t size)
+void* MarkedSpace::tryAllocateLarge(Subspace& subspace, GCDeferralContext* deferralContext, size_t size)
 {
-    m_heap->collectIfNecessaryOrDefer();
+    m_heap->collectIfNecessaryOrDefer(deferralContext);
     
     size = WTF::roundUpToMultipleOf<sizeStep>(size);
     LargeAllocation* allocation = LargeAllocation::tryCreate(*m_heap, size, subspace.attributes);

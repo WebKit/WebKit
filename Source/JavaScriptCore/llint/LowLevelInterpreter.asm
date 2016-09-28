@@ -891,6 +891,7 @@ macro arrayProfile(cellAndIndexingType, profile, scratch)
 end
 
 macro skipIfIsRememberedOrInEden(cell, slowPath)
+    memfence
     bba JSCell::m_cellState[cell], BlackThreshold, .done
     slowPath()
 .done:

@@ -181,6 +181,8 @@ typedef const char* optionString;
     v(bool, testTheFTL, false, Normal, nullptr) \
     v(bool, verboseSanitizeStack, false, Normal, nullptr) \
     v(bool, useGenerationalGC, true, Normal, nullptr) \
+    v(bool, useConcurrentBarriers, true, Normal, nullptr) \
+    v(bool, forceFencedBarrier, false, Normal, nullptr) \
     v(bool, scribbleFreeCells, false, Normal, nullptr) \
     v(double, sizeClassProgression, 1.4, Normal, nullptr) \
     v(unsigned, largeAllocationCutoff, 100000, Normal, nullptr) \

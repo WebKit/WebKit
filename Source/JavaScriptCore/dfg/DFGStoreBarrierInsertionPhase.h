@@ -32,14 +32,13 @@ namespace JSC { namespace DFG {
 class Graph;
 
 // Inserts store barriers in a block-local manner without consulting the abstract interpreter.
-// Uses a simple epoch-based analysis to avoid inserting redundant barriers. This phase requires
-// that we are not in SSA.
+// Uses a simple epoch-based analysis to avoid inserting barriers on newly allocated objects. This
+// phase requires that we are not in SSA.
 bool performFastStoreBarrierInsertion(Graph&);
 
 // Inserts store barriers using a global analysis and consults the abstract interpreter. Uses a
-// simple epoch-based analysis to avoid inserting redundant barriers, but only propagates "same
-// epoch as current" property from one block to the next. This phase requires SSA. This phase
-// also requires having valid AI and liveness.
+// simple epoch-based analysis to avoid inserting barriers on newly allocated objects. This phase
+// requires SSA. This phase also requires having valid AI and liveness.
 bool performGlobalStoreBarrierInsertion(Graph&);
 
 } } // namespace JSC::DFG

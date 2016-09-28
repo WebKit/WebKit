@@ -1,3 +1,17 @@
+2016-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        The write barrier should be down with TSO
+        https://bugs.webkit.org/show_bug.cgi?id=162316
+
+        Reviewed by Geoffrey Garen.
+        
+        Added clearRange(), which quickly clears a range of bits. This turned out to be useful for
+        a DFG optimization pass.
+
+        * wtf/FastBitVector.cpp:
+        (WTF::FastBitVector::clearRange):
+        * wtf/FastBitVector.h:
+
 2016-09-28  Mark Lam  <mark.lam@apple.com>
 
         Fix race condition in StringView's UnderlyingString lifecycle management.

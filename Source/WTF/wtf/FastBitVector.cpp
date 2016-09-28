@@ -53,5 +53,24 @@ void FastBitVectorWordOwner::resizeSlow(size_t numBits)
     m_words = newArray;
 }
 
+void FastBitVector::clearRange(size_t begin, size_t end)
+{
+    if (end - begin < 32) {
+        for (size_t i = begin; i < end; ++i)
+            at(i) = false;
+        return;
+    }
+    
+    size_t endBeginSlop = (begin + 31) & ~31;
+    size_t beginEndSlop = end & ~31;
+    
+    for (size_t i = begin; i < endBeginSlop; ++i)
+        at(i) = false;
+    for (size_t i = beginEndSlop; i < end; ++i)
+        at(i) = false;
+    for (size_t i = endBeginSlop / 32; i < beginEndSlop / 32; ++i)
+        m_words.word(i) = 0;
+}
+
 } // namespace WTF
 

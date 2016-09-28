@@ -375,8 +375,9 @@ namespace JSC { namespace DFG {
     \
     /* Checks the watchdog timer. If the timer has fired, we call operation operationHandleWatchdogTimer*/ \
     macro(CheckWatchdogTimer, NodeMustGenerate) \
-    /* Write barriers ! */\
+    /* Write barriers */\
     macro(StoreBarrier, NodeMustGenerate) \
+    macro(FencedStoreBarrier, NodeMustGenerate) \
     \
     /* For-in enumeration opcodes */\
     macro(GetEnumerableLength, NodeMustGenerate | NodeResultJS) \

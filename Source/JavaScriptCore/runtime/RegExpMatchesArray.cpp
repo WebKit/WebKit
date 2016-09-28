@@ -36,29 +36,31 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
     // FIXME: This should handle array allocation errors gracefully.
     // https://bugs.webkit.org/show_bug.cgi?id=155144
     
+    GCDeferralContext deferralContext(vm.heap);
+    
     if (UNLIKELY(globalObject->isHavingABadTime())) {
-        array = JSArray::tryCreateUninitialized(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
+        array = JSArray::tryCreateUninitialized(vm, &deferralContext, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         
-        array->initializeIndex(vm, 0, jsEmptyString(&vm));
+        array->initializeIndexWithoutBarrier(0, jsEmptyString(&vm));
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
             for (unsigned i = 1; i <= numSubpatterns; ++i)
-                array->initializeIndex(vm, i, jsUndefined());
+                array->initializeIndexWithoutBarrier(i, jsUndefined());
         }
     } else {
-        array = tryCreateUninitializedRegExpMatchesArray(vm, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
+        array = tryCreateUninitializedRegExpMatchesArray(vm, &deferralContext, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         RELEASE_ASSERT(array);
         
-        array->initializeIndex(vm, 0, jsEmptyString(&vm), ArrayWithContiguous);
+        array->initializeIndexWithoutBarrier(0, jsEmptyString(&vm), ArrayWithContiguous);
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
             for (unsigned i = 1; i <= numSubpatterns; ++i)
-                array->initializeIndex(vm, i, jsUndefined(), ArrayWithContiguous);
+                array->initializeIndexWithoutBarrier(i, jsUndefined(), ArrayWithContiguous);
         }
     }
 
-    array->putDirect(vm, RegExpMatchesArrayIndexPropertyOffset, jsNumber(-1));
-    array->putDirect(vm, RegExpMatchesArrayInputPropertyOffset, input);
+    array->putDirectWithoutBarrier(RegExpMatchesArrayIndexPropertyOffset, jsNumber(-1));
+    array->putDirectWithoutBarrier(RegExpMatchesArrayInputPropertyOffset, input);
     return array;
 }
 

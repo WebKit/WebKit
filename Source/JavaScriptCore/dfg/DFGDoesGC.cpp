@@ -196,6 +196,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckTierUpAndOSREnter:
     case LoopHint:
     case StoreBarrier:
+    case FencedStoreBarrier:
     case InvalidationPoint:
     case NotifyWrite:
     case CheckInBounds:

@@ -896,7 +896,7 @@ public:
 
     bool isStoreBarrier()
     {
-        return op() == StoreBarrier;
+        return op() == StoreBarrier || op() == FencedStoreBarrier;
     }
 
     bool hasIdentifier()

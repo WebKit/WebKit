@@ -1309,29 +1309,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 CCallHelpers::Address(scratchGPR, offsetInButterfly(m_offset) * sizeof(JSValue)));
         }
         
-        // If we had allocated using an operation then we would have already executed the store
-        // barrier and we would have already stored the butterfly into the object.
         if (allocatingInline) {
-            CCallHelpers::Jump ownerIsRememberedOrInEden = jit.jumpIfIsRememberedOrInEden(baseGPR);
-            WriteBarrierBuffer& writeBarrierBuffer = jit.vm()->heap.writeBarrierBuffer();
-            jit.load32(writeBarrierBuffer.currentIndexAddress(), scratchGPR2);
-            slowPath.append(
-                jit.branch32(
-                    CCallHelpers::AboveOrEqual, scratchGPR2,
-                    CCallHelpers::TrustedImm32(writeBarrierBuffer.capacity())));
-            
-            jit.add32(CCallHelpers::TrustedImm32(1), scratchGPR2);
-            jit.store32(scratchGPR2, writeBarrierBuffer.currentIndexAddress());
-            
-            jit.move(CCallHelpers::TrustedImmPtr(writeBarrierBuffer.buffer()), scratchGPR3);
-            // We use an offset of -sizeof(void*) because we already added 1 to scratchGPR2.
-            jit.storePtr(
-                baseGPR,
-                CCallHelpers::BaseIndex(
-                    scratchGPR3, scratchGPR2, CCallHelpers::ScalePtr,
-                    static_cast<int32_t>(-sizeof(void*))));
-            ownerIsRememberedOrInEden.link(&jit);
-            
             // We set the new butterfly and the structure last. Doing it this way ensures that
             // whatever we had done up to this point is forgotten if we choose to branch to slow
             // path.
