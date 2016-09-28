@@ -251,6 +251,11 @@ TEST_F(URLParserTest, Basic)
     checkURL("https://@test@test@example:800\\path@end", {"", "", "", "", 0, "", "", "", "https://@test@test@example:800\\path@end"});
     checkURL("http://www.example.com/#a\nb\rc\td", {"http", "", "", "www.example.com", 0, "/", "", "abcd", "http://www.example.com/#abcd"});
     checkURL("http://[A:b:c:DE:fF:0:1:aC]/", {"http", "", "", "[a:b:c:de:ff:0:1:ac]", 0, "/", "", "", "http://[a:b:c:de:ff:0:1:ac]/"});
+    checkURL("http:////////user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
+    checkURL("http:////////user:@webkit.org:99#foo", {"http", "user", "", "webkit.org", 99, "/", "", "foo", "http://user@webkit.org:99/#foo"});
+    checkURL("http:////\t////user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
+    checkURL("http://\t//\\///user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
+    checkURL("http:/\\user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.

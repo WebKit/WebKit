@@ -1290,12 +1290,13 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         case State::SpecialAuthorityIgnoreSlashes:
             LOG_STATE("SpecialAuthorityIgnoreSlashes");
             if (*c == '/' || *c == '\\') {
-                appendToASCIIBuffer('/');
+                syntaxViolation(c);
                 ++c;
+            } else {
+                m_url.m_userStart = currentPosition(c);
+                state = State::AuthorityOrHost;
+                authorityOrHostBegin = c;
             }
-            m_url.m_userStart = currentPosition(c);
-            state = State::AuthorityOrHost;
-            authorityOrHostBegin = c;
             break;
         case State::AuthorityOrHost:
             do {
@@ -1346,6 +1347,11 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
                     failure();
                     return;
+                }
+                if (*c == '?' || *c == '#') {
+                    syntaxViolation(c);
+                    appendToASCIIBuffer('/');
+                    m_url.m_pathAfterLastSlash = currentPosition(c);
                 }
                 state = State::Path;
                 break;
