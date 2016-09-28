@@ -81,7 +81,7 @@ bool MediaSessionManagerMac::sessionWillBeginPlayback(PlatformMediaSession& sess
         return false;
 
     LOG(Media, "MediaSessionManagerMac::sessionWillBeginPlayback");
-    updateNowPlayingInfo();
+    scheduleUpdateNowPlayingInfo();
     return true;
 }
 

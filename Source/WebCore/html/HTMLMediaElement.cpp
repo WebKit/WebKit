@@ -350,6 +350,7 @@ static uint64_t nextElementID()
 
 struct MediaElementSessionInfo {
     const MediaElementSession* session;
+    MediaElementSession::PlaybackControlsPurpose purpose;
 
     double timeOfLastUserInteraction;
     bool canShowControlsManager : 1;
@@ -363,6 +364,7 @@ static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElem
     const HTMLMediaElement& element = session.element();
     return {
         &session,
+        purpose,
         session.mostRecentUserInteractionTime(),
         session.canShowControlsManager(purpose),
         element.isFullscreen() || element.isVisibleInViewport(),
@@ -373,9 +375,16 @@ static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElem
 
 static bool preferMediaControlsForCandidateSessionOverOtherCandidateSession(const MediaElementSessionInfo& session, const MediaElementSessionInfo& otherSession)
 {
-    // Prioritize visible media over offscreen media.
-    if (session.isVisibleInViewportOrFullscreen != otherSession.isVisibleInViewportOrFullscreen)
+    MediaElementSession::PlaybackControlsPurpose purpose = session.purpose;
+    ASSERT(purpose == otherSession.purpose);
+
+    // For the controls manager, prioritize visible media over offscreen media.
+    if (purpose == MediaElementSession::PlaybackControlsPurpose::ControlsManager && session.isVisibleInViewportOrFullscreen != otherSession.isVisibleInViewportOrFullscreen)
         return session.isVisibleInViewportOrFullscreen;
+
+    // For Now Playing, prioritize elements that would normally satisfy main content.
+    if (purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying && session.isLargeEnoughForMainContent != otherSession.isLargeEnoughForMainContent)
+        return session.isLargeEnoughForMainContent;
 
     // As a tiebreaker, prioritize elements that the user recently interacted with.
     return session.timeOfLastUserInteraction > otherSession.timeOfLastUserInteraction;
@@ -5085,6 +5094,9 @@ void HTMLMediaElement::updatePlayState(UpdateState updateState)
     
     updateMediaController();
     updateRenderer();
+
+    m_hasEverHadAudio |= hasAudio();
+    m_hasEverHadVideo |= hasVideo();
 }
 
 void HTMLMediaElement::setPlaying(bool playing)
