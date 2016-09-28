@@ -29,7 +29,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
 
 static bool webViewWasDeallocated = false;
 static bool didFinishLoad = false;
@@ -145,4 +145,4 @@ TEST(CandidateTests, DoNotRequestCandidatesForPasswordInput)
 
 }
 
-#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
