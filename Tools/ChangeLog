@@ -1,3 +1,13 @@
+2016-09-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable flaky API test WebKit2.AutoLayoutIntegration.
+        https://bugs.webkit.org/show_bug.cgi?id=160284
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AutoLayoutIntegration.mm:
+        (TEST):
+
 2016-09-28  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should ignore tabs in authority
