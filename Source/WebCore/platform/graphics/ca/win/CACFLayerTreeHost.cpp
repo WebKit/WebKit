@@ -31,6 +31,7 @@
 #include "DefWndProcWindowClass.h"
 #include "FrameView.h"
 #include "LayerChangesFlusher.h"
+#include "Logging.h"
 #include "MainFrame.h"
 #include "PlatformCALayerWin.h"
 #include "PlatformLayer.h"
@@ -117,6 +118,10 @@ PassRefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
     if (!acceleratedCompositingAvailable())
         return nullptr;
     RefPtr<CACFLayerTreeHost> host = WKCACFViewLayerTreeHost::create();
+    if (!host) {
+        LOG_ERROR("Failed to create layer tree host for accelerated compositing.");
+        return nullptr;
+    }
     host->initialize();
     return host.release();
 }
