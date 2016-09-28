@@ -664,6 +664,7 @@ sub PrototypeFunctionCount
     }
 
     $count += scalar @{$interface->iterable->functions} if $interface->iterable;
+    $count += scalar @{$interface->serializable->functions} if $interface->serializable;
 
     return $count;
 }
@@ -1680,6 +1681,7 @@ sub GeneratePropertiesHashTable
 
     my @functions = @{$interface->functions};
     push(@functions, @{$interface->iterable->functions}) if IsKeyValueIterableInterface($interface);
+    push(@functions, @{$interface->serializable->functions}) if $interface->serializable;
     foreach my $function (@functions) {
         next if ($function->signature->extendedAttributes->{"PrivateIdentifier"} and not $function->signature->extendedAttributes->{"PublicIdentifier"});
         next if ($function->isStatic);
@@ -2322,6 +2324,7 @@ sub GenerateImplementation
 
     my @functions = @{$interface->functions};
     push(@functions, @{$interface->iterable->functions}) if IsKeyValueIterableInterface($interface);
+    push(@functions, @{$interface->serializable->functions}) if $interface->serializable;
 
     my $numConstants = @{$interface->constants};
     my $numFunctions = @functions;
@@ -3533,9 +3536,9 @@ END
 
     }
 
-    if ($interface->iterable) {
-        GenerateImplementationIterableFunctions($interface);
-    }
+
+    GenerateImplementationIterableFunctions($interface) if $interface->iterable;
+    GenerateSerializerFunction($interface, $interfaceName, $className) if $interface->serializable;
 
     if ($needsVisitChildren) {
         push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
@@ -3756,6 +3759,38 @@ END
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateSerializerFunction
+{
+    my ($interface, $interfaceName, $className) = @_;
+    my $serializerFunctionName = "toJSON";
+    my $serializerNativeFunctionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($serializerFunctionName);
+
+    AddToImplIncludes("ObjectConstructor.h");
+    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${serializerNativeFunctionName}(ExecState* state)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    ASSERT(state);\n");
+    push(@implContent, "    auto thisValue = state->thisValue();\n");
+    push(@implContent, "    auto castedThis = jsDynamicCast<JS$interfaceName*>(thisValue);\n");
+    push(@implContent, "    VM& vm = state->vm();\n");
+    push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+    push(@implContent, "    if (UNLIKELY(!castedThis)){\n");
+    push(@implContent, "        return throwThisTypeError(*state, throwScope, \"$interfaceName\", \"$serializerFunctionName\");\n");
+    push(@implContent, "    }\n");
+    push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n\n") unless $interfaceName eq "EventTarget";
+    push(@implContent, "    auto* result = constructEmptyObject(state);\n");
+    foreach my $attribute (@{$interface->attributes}) {
+        my $name = $attribute->signature->name;
+        if (grep $_ eq $name, @{$interface->serializable->attributes}) {
+            my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
+            push(@implContent, "    auto ${name}Value = ${getFunctionName}(state, JSValue::encode(thisValue), Identifier());\n");
+            push(@implContent, "    ASSERT(!throwScope.exception());\n");
+            push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), JSValue::decode(${name}Value));\n");
+        }
+    }
+    push(@implContent, "    return JSValue::encode(result);\n");
+    push(@implContent, "}\n\n");
 }
 
 sub GenerateFunctionCastedThis

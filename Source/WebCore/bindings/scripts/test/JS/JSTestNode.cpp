@@ -26,6 +26,7 @@
 #include "JSDOMConstructor.h"
 #include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
+#include "ObjectConstructor.h"
 #include "RuntimeEnabledFeatures.h"
 #include "URL.h"
 #include <runtime/Error.h>
@@ -44,6 +45,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecSt
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(JSC::ExecState*);
 
 // Attributes
 
@@ -115,6 +117,7 @@ static const HashTableValue JSTestNodePrototypeTableValues[] =
     { "keys", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionKeys), (intptr_t) (0) } },
     { "values", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionValues), (intptr_t) (0) } },
     { "forEach", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionForEach), (intptr_t) (1) } },
+    { "toJSON", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionToJSON), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
@@ -285,6 +288,25 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecSta
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState* state)
 {
     return iteratorForEach<JSTestNode>(*state, "forEach");
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)
+{
+    ASSERT(state);
+    auto thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestNode*>(thisValue);
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    if (UNLIKELY(!castedThis)){
+        return throwThisTypeError(*state, throwScope, "TestNode", "toJSON");
+    }
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestNode::info());
+
+    auto* result = constructEmptyObject(state);
+    auto nameValue = jsTestNodeName(state, JSValue::encode(thisValue), Identifier());
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "name"), JSValue::decode(nameValue));
+    return JSValue::encode(result);
 }
 
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)

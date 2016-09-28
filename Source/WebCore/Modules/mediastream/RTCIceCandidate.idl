@@ -39,5 +39,7 @@
     readonly attribute DOMString candidate;
     readonly attribute DOMString? sdpMid;
     readonly attribute unsigned short? sdpMLineIndex;
+
+    serializer = {candidate, sdpMid, sdpMLineIndex};
 };
 

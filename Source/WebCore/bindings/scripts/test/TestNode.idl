@@ -27,4 +27,6 @@
 
     [EnabledAtRuntime=DOMIterator] iterable<TestNode>;
     Promise testWorkerPromise();
+
+    serializer;
 };

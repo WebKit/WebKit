@@ -13,6 +13,33 @@
             shouldBe('candidate.candidate', '"foo"');
             shouldBe('candidate.sdpMid', '"bar"');
             shouldBe('candidate.sdpMLineIndex', '6');
+            shouldBeDefined('RTCIceCandidate.prototype.toJSON');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").enumerable');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").writable');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").configurable');
+            shouldBe('RTCIceCandidate.prototype.toJSON.length', '0');
+            shouldBe('RTCIceCandidate.prototype.toJSON.name', '"toJSON"');
+
+            var jsonMap = candidate.toJSON();
+            shouldBeTrue('Object.getOwnPropertyDescriptor(jsonMap, "candidate").enumerable');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(jsonMap, "candidate").writable');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(jsonMap, "candidate").configurable');
+
+            var childRTCIceCandidate = function() {};
+            childRTCIceCandidate.prototype = Object.create(RTCIceCandidate.prototype);
+            var childCandidate = new childRTCIceCandidate();
+            shouldThrow('childCandidate.toJSON();');
+
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            candidate.newAttribute = "new value";
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            candidate.sdpMLineIndex = "not a number";
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            candidate.sdpMid = 7;
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            candidate.sdpMid = null;
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+
             debug("");
 
             debug("Attributes are readonly");

@@ -1,3 +1,18 @@
+2016-09-28  Alejandro G. Castro  <alex@igalia.com>
+
+        Add WebIDL special operation support: serializer
+        https://bugs.webkit.org/show_bug.cgi?id=156293
+
+        Reviewed by Youenn Fablet.
+
+        Verify the new API of the objects and check what happens when user
+        modifies the values and types of the attributes, or adds a null value.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCIceCandidate.html:
+        * fast/mediastream/RTCSessionDescription-expected.txt:
+        * fast/mediastream/RTCSessionDescription.html:
+
 2016-09-28  Khaled Hosny  <khaledhosny@eglug.org>
 
         Use new woff2 API

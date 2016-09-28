@@ -51,6 +51,7 @@
 #include "JSTestObj.h"
 #include "JSTestSubObj.h"
 #include "JSXPathNSResolver.h"
+#include "ObjectConstructor.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGPoint.h"
@@ -782,6 +783,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalOverload(
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSingleConditionalOverload(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToJSON(JSC::ExecState*);
 
 // Attributes
 
@@ -1387,6 +1389,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "singleConditionalOverload", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionSingleConditionalOverload), (intptr_t) (1) } },
     { "attachShadowRoot", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAttachShadowRoot), (intptr_t) (1) } },
     { "toString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionToString), (intptr_t) (0) } },
+    { "toJSON", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionToJSON), (intptr_t) (0) } },
 #if ENABLE(Condition1)
     { "CONDITIONAL_CONST", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
 #else
@@ -7372,6 +7375,34 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(ExecState* state
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.stringifierAttribute());
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToJSON(ExecState* state)
+{
+    ASSERT(state);
+    auto thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    if (UNLIKELY(!castedThis)){
+        return throwThisTypeError(*state, throwScope, "TestObj", "toJSON");
+    }
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+
+    auto* result = constructEmptyObject(state);
+    auto readOnlyStringAttrValue = jsTestObjReadOnlyStringAttr(state, JSValue::encode(thisValue), Identifier());
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "readOnlyStringAttr"), JSValue::decode(readOnlyStringAttrValue));
+    auto enumAttrValue = jsTestObjEnumAttr(state, JSValue::encode(thisValue), Identifier());
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "enumAttr"), JSValue::decode(enumAttrValue));
+    auto longAttrValue = jsTestObjLongAttr(state, JSValue::encode(thisValue), Identifier());
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "longAttr"), JSValue::decode(longAttrValue));
+    auto createValue = jsTestObjCreate(state, JSValue::encode(thisValue), Identifier());
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "create"), JSValue::decode(createValue));
     return JSValue::encode(result);
 }
 

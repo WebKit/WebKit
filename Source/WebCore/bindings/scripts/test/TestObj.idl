@@ -410,6 +410,9 @@ enum TestConfidence { "high", "kinda-low" };
     void attachShadowRoot(TestDictionary init);
 
     stringifier attribute USVString stringifierAttribute;
+
+
+    serializer = {readOnlyStringAttr, create, enumAttr, longAttr};
 };
 
 // The following comment should not generate any code.

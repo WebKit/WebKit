@@ -14,6 +14,7 @@
             shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
             shouldBe('sessionDescription.type', '"offer"');
             shouldBe('sessionDescription.sdp', '"foobar"');
+            shouldBeEqualToString('JSON.stringify(sessionDescription.toJSON())', '{"type":"offer","sdp":"foobar"}');
 
             debug("*** Attributes are read-only.");
             shouldNotThrow("sessionDescription.type = 'answer'");

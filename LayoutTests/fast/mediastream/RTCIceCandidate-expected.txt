@@ -7,6 +7,21 @@ PASS candidate = new RTCIceCandidate(initializer); did not throw exception.
 PASS candidate.candidate is "foo"
 PASS candidate.sdpMid is "bar"
 PASS candidate.sdpMLineIndex is 6
+PASS RTCIceCandidate.prototype.toJSON is defined.
+PASS Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").enumerable is true
+PASS Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").writable is true
+PASS Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").configurable is true
+PASS RTCIceCandidate.prototype.toJSON.length is 0
+PASS RTCIceCandidate.prototype.toJSON.name is "toJSON"
+PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").enumerable is true
+PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").writable is true
+PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").configurable is true
+PASS childCandidate.toJSON(); threw exception TypeError: Can only call RTCIceCandidate.toJSON on instances of RTCIceCandidate.
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
 
 Attributes are readonly
 candidate.candidate = "foo-updated"

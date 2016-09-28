@@ -1,3 +1,74 @@
+2016-09-28  Alejandro G. Castro  <alex@igalia.com>
+
+        Add WebIDL special operation support: serializer
+        https://bugs.webkit.org/show_bug.cgi?id=156293
+
+        Reviewed by Youenn Fablet.
+
+        Added support for the serializer special operation for WebIDLs,
+        current implementation adds support for:
+          - just the keyword: serializer; It will return all the
+            attributes of in an object.
+          - map of entries with the attributes: serializer = {attribute1,
+            attribute2, ...}
+
+        It creates a toJSON method that returns the serialized value
+        converted into an ECMAScript value. For more information check the
+        definition of the operation:
+
+        http://heycam.github.io/webidl/#idl-serializers
+
+        We have created a new function in the API of the objects
+        that are marked as serializer.
+
+        Used the support to add new API for RTCIceCandidate and
+        RTCSessionDescription.
+
+        Updated the tests expectations of the bindings.
+
+        Tests: bindings/scripts/test/TestNode.idl
+               bindings/scripts/test/TestObj.idl
+               fast/mediastream/RTCIceCandidate.html
+               fast/mediastream/RTCSessionDescription.html
+
+        * Modules/mediastream/RTCIceCandidate.idl: Added the serializer
+        operation.
+        * Modules/mediastream/RTCSessionDescription.idl: Added the
+        serializer operation.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Added the calls to the serializer
+        code generator.
+        (GenerateSerializerFunction): Added, generates the toJSON function
+        adding all the serializable->attributes value to an object as
+        defined in the spec.
+        * bindings/scripts/IDLParser.pm: Modified the serializer parser
+        that was unused to support the WebIDL spec parts. Added a new
+        domSerializable type to store the list of attributes in the
+        possible map.
+        (parseSerializer): Modified the function to follow the
+        semicolon rule in the spec, now the serializer line must have a
+        semicolon like any other line.
+        (parseSerializerRest): The function now has to get the attributes
+        list from the pattern parsing function and add them to the
+        domSerializable item.
+        (parseSerializationPattern): Now this function returns the list of
+        attributes in the serializable map or list if we have one.
+        (parseSerializationAttributes): Added, this function replaces the
+        Map and List functions, the currently supported parts are similar
+        for both situations.
+        (applyMemberList): Added the serializable item to the interface
+        variable and populate the serializable in case there is not a
+        defined map.
+        (parseSerializationPatternMap): Replaced with
+        parseSerializationAttributes.
+        (parseSerializationPatternList): Ditto.
+        * bindings/scripts/test/JS/JSTestNode.cpp: Modified the expected result.
+        (WebCore::jsTestNodePrototypeFunctionToJSON):
+        * bindings/scripts/test/JS/JSTestObj.cpp: Modified the expected result.
+        (WebCore::jsTestObjPrototypeFunctionToJSON):
+        * bindings/scripts/test/TestNode.idl: Added the serializer test.
+        * bindings/scripts/test/TestObj.idl: Added serializer map test.
+
 2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Simplify platformForUAString
