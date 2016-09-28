@@ -1,3 +1,83 @@
+2016-09-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix race condition in StringView's UnderlyingString lifecycle management.
+        https://bugs.webkit.org/show_bug.cgi?id=162702
+
+        Reviewed by Geoffrey Garen.
+
+        There 2 relevant functions at play:
+
+        void StringView::setUnderlyingString(const StringImpl* string)
+        {
+            UnderlyingString* underlyingString;
+            if (!string)
+                underlyingString = nullptr;
+            else {
+                std::lock_guard<StaticLock> lock(underlyingStringsMutex);
+                auto result = underlyingStrings().add(string, nullptr);
+                if (result.isNewEntry)
+                    result.iterator->value = new UnderlyingString(*string);
+                else
+                    ++result.iterator->value->refCount;
+                underlyingString = result.iterator->value; // Point P2.
+            }
+            adoptUnderlyingString(underlyingString); // Point P5.
+        }
+
+        ... and ...
+
+        void StringView::adoptUnderlyingString(UnderlyingString* underlyingString)
+        {
+            if (m_underlyingString) {
+                // Point P0.
+                if (!--m_underlyingString->refCount) {
+                    if (m_underlyingString->isValid) { // Point P1.
+                        std::lock_guard<StaticLock> lock(underlyingStringsMutex);
+                        underlyingStrings().remove(&m_underlyingString->string); // Point P3.
+                    }
+                    delete m_underlyingString; // Point P4.
+                }
+            }
+            m_underlyingString = underlyingString;
+        }
+
+        Imagine the following scenario:
+
+        1. Thread T1 has been using an UnderlyingString U1, and is now done with it.
+           T1 runs up to point P1 in adoptUnderlyingString(), and is blocked waiting for
+           the underlyingStringsMutex (which is currently being held by Thread T2).
+        2. Context switch to Thread T2.
+           T2 wants to use UnderlyingString U1, and runs up to point P2 in setUnderlyingString()
+           and releases the underlyingStringsMutex.
+           Note: T2 thinks it has successfully refCounted U1, and therefore U1 is safe to use.
+        3. Context switch to Thread T1.
+           T1 acquires the underlyingStringsMutex, and proceeds to remove it from the
+           underlyingStrings() map (see Point P3).  It thinks it has successfully done so
+           and proceeds to delete U1 (see Point P4).
+        4. Context switch to Thread T2.
+           T2 proceeds to use U1 (see Point P5 in setUnderlyingString()).
+           Note: U1 has already been freed.  This is a use after free.
+
+        The fix is to acquire the underlyingStringsMutex at Point P0 in adoptUnderlyingString()
+        instead of after P1.  This ensures that the decrementing of the UnderlyingString
+        refCount and its removal from the underlyingStrings() map is done as an atomic unit.
+
+        Note: If you look in StringView.cpp, you see another setUnderlyingString() which
+        takes a StringView otherString.  This version of setUnderlyingString() can only
+        be called from within the same thread that created the other StringView.  As a
+        result, here, we are guaranteed that the UnderlyingString refCount is never zero,
+        and there's no other threat of another thread trying to delete the UnderlyingString
+        while we adopt it.  Hence, we don't need to acquire the underlyingStringsMutex
+        here.
+
+        This race condition was found when running layout tests fetch/fetch-worker-crash.html
+        and storage/indexeddb/modern/opendatabase-versions.html when CHECK_STRINGVIEW_LIFETIME
+        is enabled.  This issue resulted in those tests crashing due to a use-after-free.
+
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::adoptUnderlyingString):
+        (WTF::StringView::setUnderlyingString):
+
 2016-09-28  Brent Fulgham  <bfulgham@apple.com>
 
         Correct 'safeCast' implementation
