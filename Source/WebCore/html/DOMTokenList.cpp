@@ -36,9 +36,10 @@
 
 namespace WebCore {
 
-DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName)
+DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName, WTF::Function<bool(const String&)>&& isSupportedToken)
     : m_element(element)
     , m_attributeName(attributeName)
+    , m_isSupportedToken(WTFMove(isSupportedToken))
 {
 }
 
@@ -175,6 +176,16 @@ void DOMTokenList::replace(const AtomicString& token, const AtomicString& newTok
         tokens[index] = newToken;
 
     updateAssociatedAttributeFromTokens();
+}
+
+// https://dom.spec.whatwg.org/#concept-domtokenlist-validation
+bool DOMTokenList::supports(const String& token, ExceptionCode& ec)
+{
+    if (!m_isSupportedToken) {
+        ec = TypeError;
+        return false;
+    }
+    return m_isSupportedToken(token);
 }
 
 // https://dom.spec.whatwg.org/#dom-domtokenlist-value

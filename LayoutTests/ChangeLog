@@ -1,3 +1,19 @@
+2016-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Add support for DOMTokenList.supports()
+        https://bugs.webkit.org/show_bug.cgi?id=162659
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage. Our pass rate is identical to Firefox 49,
+        everything passes except HTMLElement.dropzone. Chrome 53's pass rate
+        is lower because relList is not a DOMTokenList on anchor / area,
+        they do not support HTMLElement.dropzone and their
+        DOMTokenList.supports() is case-sensitive.
+
+        * fast/dom/DOMTokenList-supports-expected.txt: Added.
+        * fast/dom/DOMTokenList-supports.html: Added.
+
 2016-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         DOMTokenList’s value and stringifier should not return parsed tokens

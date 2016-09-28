@@ -52,6 +52,8 @@ struct LinkRelAttribute {
 
     LinkRelAttribute();
     explicit LinkRelAttribute(const String&);
+
+    static bool isSupported(const String&);
 };
 
 }

@@ -31,6 +31,7 @@
 #include "HTMLParserIdioms.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -84,6 +85,20 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
         setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
 }
 
+bool SecurityContext::isSupportedSandboxPolicy(const String& policy)
+{
+    static const char* supportedPolicies[] = {
+        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups"
+    };
+
+    for (auto* supportedPolicy : supportedPolicies) {
+        if (equalIgnoringASCIICase(policy, supportedPolicy))
+            return true;
+    }
+    return false;
+}
+
+// Keep SecurityContext::isSupportedSandboxPolicy() in sync when updating this function.
 SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage)
 {
     // http://www.w3.org/TR/html5/the-iframe-element.html#attr-iframe-sandbox

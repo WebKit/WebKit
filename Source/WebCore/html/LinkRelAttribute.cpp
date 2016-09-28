@@ -42,6 +42,7 @@ LinkRelAttribute::LinkRelAttribute()
 {
 }
 
+// Keep LinkRelAttribute::isSupported() in sync when updating this constructor.
 LinkRelAttribute::LinkRelAttribute(const String& rel)
 {
     if (equalLettersIgnoringASCIICase(rel, "stylesheet"))
@@ -84,6 +85,27 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
 #endif
         }
     }
+}
+
+// https://html.spec.whatwg.org/#linkTypes
+bool LinkRelAttribute::isSupported(const String& attribute)
+{
+    static const char* supportedAttributes[] = {
+        "alternate", "dns-prefetch", "icon", "stylesheet", "apple-touch-icon", "apple-touch-icon-precomposed",
+#if ENABLE(LINK_PREFETCH)
+        "prefetch", "subresource",
+#endif
+    };
+
+    for (auto* supportedAttribute : supportedAttributes) {
+        if (equalIgnoringASCIICase(attribute, supportedAttribute))
+            return true;
+    }
+
+    if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalIgnoringASCIICase(attribute, "preload"))
+        return true;
+
+    return false;
 }
 
 }

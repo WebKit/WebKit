@@ -29,8 +29,6 @@ interface HTMLTableCellElement : HTMLElement {
     [ImplementedAs=colSpanForBindings] attribute unsigned long colSpan;
     [ImplementedAs=rowSpanForBindings] attribute unsigned long rowSpan;
 
-    // FIXME: This is supposed to be:
-    // [PutForwards=value] readonly attribute DOMTokenList headers;
     [Reflect] attribute DOMString headers;
 
     [Reflect] attribute DOMString height;

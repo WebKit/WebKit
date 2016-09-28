@@ -34,6 +34,7 @@
     [RaisesException] void remove(DOMString... tokens);
     [RaisesException] boolean toggle(DOMString token, optional boolean force);
     [RaisesException] void replace(DOMString token, DOMString newToken);
+    [RaisesException] boolean supports(DOMString token);
 
     iterable<DOMString>;
 
