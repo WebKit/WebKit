@@ -211,12 +211,16 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     if (!m_image)
         return false;
     // We need this to stay in scope because the native image is just a shallow copy of the data.
-    m_decoder = new ImageSource(premultiplyAlpha ? ImageSource::AlphaPremultiplied : ImageSource::AlphaNotPremultiplied, ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
+    AlphaOption alphaOption = premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied;
+    GammaAndColorProfileOption gammaAndColorProfileOption = ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied;
+    m_decoder = new ImageSource(nullptr, alphaOption, gammaAndColorProfileOption);
+    
     if (!m_decoder)
         return false;
-    ImageSource& decoder = *m_decoder;
 
+    ImageSource& decoder = *m_decoder;
     m_alphaOp = AlphaDoNothing;
+
     if (m_image->data()) {
         decoder.setData(m_image->data(), true);
         if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))

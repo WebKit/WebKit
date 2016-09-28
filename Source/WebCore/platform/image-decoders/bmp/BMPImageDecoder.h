@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BMPImageDecoder_h
-#define BMPImageDecoder_h
+#pragma once
 
 #include "BMPImageReader.h"
 
@@ -38,7 +37,7 @@ namespace WebCore {
     // This class decodes the BMP image format.
     class BMPImageDecoder final : public ImageDecoder {
     public:
-        BMPImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
+        BMPImageDecoder(AlphaOption, GammaAndColorProfileOption);
 
         // ImageDecoder
         String filenameExtension() const override { return "bmp"; }
@@ -80,5 +79,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif

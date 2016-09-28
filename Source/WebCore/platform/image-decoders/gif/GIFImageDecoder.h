@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GIFImageDecoder_h
-#define GIFImageDecoder_h
+#pragma once
 
 #include "ImageDecoder.h"
 
@@ -35,7 +34,7 @@ namespace WebCore {
     // This class decodes the GIF image format.
     class GIFImageDecoder final : public ImageDecoder {
     public:
-        GIFImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
+        GIFImageDecoder(AlphaOption, GammaAndColorProfileOption);
         virtual ~GIFImageDecoder();
 
         enum GIFQuery { GIFFullQuery, GIFSizeQuery, GIFFrameCountQuery };
@@ -45,7 +44,7 @@ namespace WebCore {
         void setData(SharedBuffer& data, bool allDataReceived) override;
         bool isSizeAvailable() override;
         bool setSize(const IntSize&) override;
-        size_t frameCount() override;
+        size_t frameCount() const override;
         RepetitionCount repetitionCount() const override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
@@ -77,5 +76,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif

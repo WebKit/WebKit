@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PNGImageDecoder_h
-#define PNGImageDecoder_h
+#pragma once
 
 #include "ImageDecoder.h"
 #if ENABLE(APNG)
@@ -38,13 +37,13 @@ namespace WebCore {
     // This class decodes the PNG image format.
     class PNGImageDecoder final : public ImageDecoder {
     public:
-        PNGImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
+        PNGImageDecoder(AlphaOption, GammaAndColorProfileOption);
         virtual ~PNGImageDecoder();
 
         // ImageDecoder
         String filenameExtension() const override { return "png"; }
 #if ENABLE(APNG)
-        size_t frameCount() override { return m_frameCount; }
+        size_t frameCount() const override { return m_frameCount; }
         RepetitionCount repetitionCount() const override { return m_playCount-1; }
 #endif
         bool isSizeAvailable() override;
@@ -130,5 +129,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif

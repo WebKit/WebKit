@@ -193,7 +193,7 @@ private:
     png_bytep m_interlaceBuffer;
 };
 
-PNGImageDecoder::PNGImageDecoder(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_doNothingOnFailure(false)
     , m_currentFrame(0)

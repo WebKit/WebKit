@@ -2271,6 +2271,8 @@
 		555B87ED1CAAF0AB00349425 /* ImageDecoderCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */; };
 		5576A5641D88A70800CCC04C /* ImageFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5576A5621D88A70800CCC04C /* ImageFrame.cpp */; };
 		5576A5651D88A70800CCC04C /* ImageFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 5576A5631D88A70800CCC04C /* ImageFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5597F8261D91C3130066BC21 /* ImageFrameCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5597F8241D91C3130066BC21 /* ImageFrameCache.cpp */; };
+		5597F8271D91C3130066BC21 /* ImageFrameCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5597F8251D91C3130066BC21 /* ImageFrameCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55A336F71D8209F40022C4C7 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F61D8209F40022C4C7 /* NativeImage.h */; };
 		55A336F91D821E3C0022C4C7 /* ImageBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5709E8CD1D413D47003244AC /* WebKitSubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5709E8CA1D413CE3003244AC /* WebKitSubtleCrypto.cpp */; };
@@ -9300,6 +9302,8 @@
 		555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDecoderCG.h; sourceTree = "<group>"; };
 		5576A5621D88A70800CCC04C /* ImageFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFrame.cpp; sourceTree = "<group>"; };
 		5576A5631D88A70800CCC04C /* ImageFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrame.h; sourceTree = "<group>"; };
+		5597F8241D91C3130066BC21 /* ImageFrameCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFrameCache.cpp; sourceTree = "<group>"; };
+		5597F8251D91C3130066BC21 /* ImageFrameCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrameCache.h; sourceTree = "<group>"; };
 		55A336F61D8209F40022C4C7 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
 		55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBackingStore.h; sourceTree = "<group>"; };
 		55D408F71A7C631800C78450 /* SVGImageClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageClients.h; sourceTree = "<group>"; };
@@ -20718,6 +20722,8 @@
 				22BD9F7D1353625C009BD102 /* ImageBufferData.h */,
 				5576A5621D88A70800CCC04C /* ImageFrame.cpp */,
 				5576A5631D88A70800CCC04C /* ImageFrame.h */,
+				5597F8241D91C3130066BC21 /* ImageFrameCache.cpp */,
+				5597F8251D91C3130066BC21 /* ImageFrameCache.h */,
 				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
 				A8748D7412CC3F89001FBA41 /* ImageOrientation.cpp */,
 				A8748D6612CC3763001FBA41 /* ImageOrientation.h */,
@@ -24495,6 +24501,7 @@
 				0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */,
 				B275356B0B053814002CE64F /* FloatRect.h in Headers */,
 				6E0E569C183BFFE600E0E8D5 /* FloatRoundedRect.h in Headers */,
+				5597F8271D91C3130066BC21 /* ImageFrameCache.h in Headers */,
 				B275356D0B053814002CE64F /* FloatSize.h in Headers */,
 				58CD35CB18EB4C3900B9F3AC /* FloatSizeHash.h in Headers */,
 				D72F6D7A153159A3001EE44E /* FlowThreadController.h in Headers */,
@@ -27617,6 +27624,7 @@
 				514C764D0CE9234E007EF3CD /* AuthenticationMac.mm in Sources */,
 				E461D65D1BB0C7F000CB5645 /* AuthorStyleSheets.cpp in Sources */,
 				A5F6E16B132ED46E008EDAE3 /* Autocapitalize.cpp in Sources */,
+				5597F8261D91C3130066BC21 /* ImageFrameCache.cpp in Sources */,
 				7C1843FD1C8B7283002EB973 /* Autofill.cpp in Sources */,
 				7C1E97271A9F9834007BF0FB /* AutoFillButtonElement.cpp in Sources */,
 				45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */,

@@ -24,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ImageSource_h
-#define ImageSource_h
+#pragma once
 
 #include "ImageFrame.h"
+#include "ImageFrameCache.h"
 #include "ImageOrientation.h"
 #include "IntPoint.h"
 #include "NativeImage.h"
@@ -38,104 +38,72 @@
 
 namespace WebCore {
 
+class ImageDecoder;
 class ImageOrientation;
 class IntPoint;
 class IntSize;
 class SharedBuffer;
-class ImageDecoder;
 
 class ImageSource {
     WTF_MAKE_NONCOPYABLE(ImageSource);
     friend class BitmapImage;
 public:
-    enum AlphaOption {
-        AlphaPremultiplied,
-        AlphaNotPremultiplied
-    };
-
-    enum GammaAndColorProfileOption {
-        GammaAndColorProfileApplied,
-        GammaAndColorProfileIgnored
-    };
-
-    ImageSource(const NativeImagePtr&);
-    ImageSource(AlphaOption = AlphaPremultiplied, GammaAndColorProfileOption = GammaAndColorProfileApplied);
+    ImageSource(NativeImagePtr&&);
+    ImageSource(Image*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
     ~ImageSource();
 
-    // Tells the ImageSource that the Image no longer cares about decoded frame
-    // data -- at all (if |destroyAll| is true), or before frame
-    // |clearBeforeFrame| (if |destroyAll| is false).  The ImageSource should
-    // delete cached decoded data for these frames where possible to keep memory
-    // usage low.  When |destroyAll| is true, the ImageSource should also reset
-    // any local state so that decoding can begin again.
-    //
-    // Implementations that delete less than what's specified above waste
-    // memory.  Implementations that delete more may burn CPU re-decoding frames
-    // that could otherwise have been cached, or encounter errors if they're
-    // asked to decode frames they can't decode due to the loss of previous
-    // decoded frames.
-    //
-    // Callers should not call clear(false, n) and subsequently call
-    // createFrameImageAtIndex(m) with m < n, unless they first call clear(true).
-    // This ensures that stateful ImageSources/decoders will work properly.
-    //
-    // The |data| and |allDataReceived| parameters should be supplied by callers
-    // who set |destroyAll| to true if they wish to be able to continue using
-    // the ImageSource.  This way implementations which choose to destroy their
-    // decoders in some cases can reconstruct them correctly.
-    void clear(bool destroyAll, size_t clearBeforeFrame = 0, SharedBuffer* data = nullptr, bool allDataReceived = false);
+    void destroyDecodedData(SharedBuffer* data, bool destroyAll = true, size_t count = 0);
+    bool destroyDecodedDataIfNecessary(SharedBuffer* data, bool destroyAll = true, size_t count = 0);
 
-    // FIXME: Remove the decoder() function from this class when caching the ImageFrame is moved outside BitmapImage.
-    ImageDecoder* decoder() const { return m_decoder.get(); }
-    bool initialized() const { return m_decoder.get(); }
+    bool ensureDecoderAvailable(SharedBuffer*);
+    bool isDecoderAvailable() const { return m_decoder.get(); }
 
     void setData(SharedBuffer* data, bool allDataReceived);
-    
-    void setNeedsUpdateMetadata() { m_needsUpdateMetadata = true; }
+    bool dataChanged(SharedBuffer* data, bool allDataReceived);
 
+    unsigned decodedSize() const { return m_frameCache.decodedSize(); }
+    bool isAllDataReceived();
+
+    // Image metadata which is calculated by the decoder or can deduced by the case of the memory NativeImage.
+    bool isSizeAvailable() { return m_frameCache.isSizeAvailable(); }
+    size_t frameCount() { return m_frameCache.frameCount(); }
+    RepetitionCount repetitionCount() { return m_frameCache.repetitionCount(); }
+    String filenameExtension() { return m_frameCache.filenameExtension(); }
+    Optional<IntPoint> hotSpot() { return m_frameCache.hotSpot(); }
+
+    // Image metadata which is calculated from the first ImageFrame.
+    IntSize size() { return m_frameCache.size(); }
+    IntSize sizeRespectingOrientation() { return m_frameCache.sizeRespectingOrientation(); }
+    Color singlePixelSolidColor() { return m_frameCache.singlePixelSolidColor(); }
+
+    // ImageFrame metadata which does not require caching the ImageFrame.
+    bool frameIsCompleteAtIndex(size_t index) { return m_frameCache.frameIsCompleteAtIndex(index); }
+    bool frameHasAlphaAtIndex(size_t index) { return m_frameCache.frameHasAlphaAtIndex(index); }
+    bool frameHasImageAtIndex(size_t index) { return m_frameCache.frameHasImageAtIndex(index); }
+    bool frameHasInvalidNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { return m_frameCache.frameHasInvalidNativeImageAtIndex(index, subsamplingLevel); }
+    SubsamplingLevel frameSubsamplingLevelAtIndex(size_t index) { return m_frameCache.frameSubsamplingLevelAtIndex(index); }
+
+    // ImageFrame metadata which forces caching or re-caching the ImageFrame.
+    IntSize frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default) { return m_frameCache.frameSizeAtIndex(index, subsamplingLevel); }
+    unsigned frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default) { return m_frameCache.frameBytesAtIndex(index, subsamplingLevel); }
+    float frameDurationAtIndex(size_t index) { return m_frameCache.frameDurationAtIndex(index); }
+    ImageOrientation frameOrientationAtIndex(size_t index) { return m_frameCache.frameOrientationAtIndex(index); }
+    NativeImagePtr frameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default) { return m_frameCache.frameImageAtIndex(index, subsamplingLevel); }
+
+    SubsamplingLevel maximumSubsamplingLevel();
     SubsamplingLevel subsamplingLevelForScale(float);
     void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
-    static size_t bytesDecodedToDetermineProperties();
-    
-    bool isSizeAvailable() const;
-    // Always original size, without subsampling.
-    IntSize size() const;
-    IntSize sizeRespectingOrientation() const;
-
-    size_t frameCount();
-    RepetitionCount repetitionCount();
-    String filenameExtension() const;
-    Optional<IntPoint> hotSpot() const;
-
-    bool frameIsCompleteAtIndex(size_t); // Whether or not the frame is completely decoded.
-    bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.
-    bool frameAllowSubsamplingAtIndex(size_t) const;
-    
-    // Size of optionally subsampled frame.
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
-    
-    // Return the number of bytes in the decoded frame. If the frame is not yet
-    // decoded then return 0.
-    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const;
-    
-    float frameDurationAtIndex(size_t);
-    ImageOrientation frameOrientationAtIndex(size_t) const; // EXIF image orientation
-    
-    // Callers should not call this after calling clear() with a higher index;
-    // see comments on clear() above.
     NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
-    
+
 private:
     void clearFrameBufferCache(size_t);
-    SubsamplingLevel calculateMaximumSubsamplingLevel() const;
-    void updateMetadata();
-    void dump(TextStream&) const;
+    void clear(bool destroyAll, size_t count, SharedBuffer* data);
+    void dump(TextStream&);
     
+    ImageFrameCache m_frameCache;
     std::unique_ptr<ImageDecoder> m_decoder;
-    
-    bool m_needsUpdateMetadata { false };
-    size_t m_frameCount { 0 };
-    Optional<SubsamplingLevel> m_maximumSubsamplingLevel { SubsamplingLevel::Default };
+
+    Optional<SubsamplingLevel> m_maximumSubsamplingLevel;
 
     // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
 #if PLATFORM(IOS)
@@ -144,10 +112,14 @@ private:
     bool m_allowSubsampling { false };
 #endif
 
-    AlphaOption m_alphaOption { AlphaPremultiplied };
-    GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileApplied };
+#if PLATFORM(IOS)
+    // FIXME: We should expose a setting to enable/disable progressive loading so that we can remove the PLATFORM(IOS)-guard.
+    double m_progressiveLoadChunkTime { 0 };
+    uint16_t m_progressiveLoadChunkCount { 0 };
+#endif
+
+    AlphaOption m_alphaOption { AlphaOption::Premultiplied };
+    GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileOption::Applied };
 };
 
 }
-
-#endif

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-GIFImageDecoder::GIFImageDecoder(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+GIFImageDecoder::GIFImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
 {
 }
@@ -70,9 +70,9 @@ bool GIFImageDecoder::setSize(const IntSize& size)
     return true;
 }
 
-size_t GIFImageDecoder::frameCount()
+size_t GIFImageDecoder::frameCount() const
 {
-    decode(std::numeric_limits<unsigned>::max(), GIFFrameCountQuery);
+    const_cast<GIFImageDecoder*>(this)->decode(std::numeric_limits<unsigned>::max(), GIFFrameCountQuery);
     return m_frameBufferCache.size();
 }
 

@@ -118,7 +118,7 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-ImageDecoder::ImageDecoder()
+ImageDecoder::ImageDecoder(AlphaOption, GammaAndColorProfileOption)
 {
     m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));
 }
@@ -152,13 +152,6 @@ bool ImageDecoder::isSizeAvailable() const
     
     return CFDictionaryContainsKey(image0Properties.get(), kCGImagePropertyPixelWidth)
     && CFDictionaryContainsKey(image0Properties.get(), kCGImagePropertyPixelHeight);
-}
-
-IntSize ImageDecoder::size() const
-{
-    if (m_size.isEmpty())
-        m_size = frameSizeAtIndex(0);
-    return m_size;
 }
 
 size_t ImageDecoder::frameCount() const
@@ -374,18 +367,15 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
     return maskedImage ? maskedImage : image;
 }
 
-void ImageDecoder::setData(CFDataRef data, bool allDataReceived)
-{
-    CGImageSourceUpdateData(m_nativeDecoder.get(), data, allDataReceived);
-}
-
 void ImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 {
+    m_isAllDataReceived = allDataReceived;
+
 #if PLATFORM(COCOA)
     // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.
     // We use SharedBuffer's ability to wrap itself inside CFData to get around this, ensuring that ImageIO is
     // really looking at the SharedBuffer.
-    setData(data.createCFData().get(), allDataReceived);
+    CGImageSourceUpdateData(m_nativeDecoder.get(), data.createCFData().get(), allDataReceived);
 #else
     // Create a CGDataProvider to wrap the SharedBuffer.
     data.ref();

@@ -327,8 +327,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
         return false;
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
     if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
-        ImageSource decoder(ImageSource::AlphaNotPremultiplied,
-                            ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
+        ImageSource decoder(nullptr, AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
         decoder.setData(m_image->data(), true);
         if (!decoder.frameCount())
             return false;

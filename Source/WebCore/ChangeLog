@@ -1,3 +1,259 @@
+2016-09-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Move caching the ImageFrame from BitmapImage to ImageSource
+        https://bugs.webkit.org/show_bug.cgi?id=155498
+
+        Reviewed by Simon Fraser.
+
+        BitmapImage has two modes of operation regarding its image decoding state.
+        The first mode happens when a remote image is loaded as encoded data and
+        which requires an ImageDecoder to generate the image metadata and the
+        the ImageFrames. The second mode happens when a BitmapImage is created
+        with a NativeImagePtr. In this case, no ImageDecoder is needed.
+
+        To remove this burden from the BitmapImage the member 'm_frames' is removed
+        from BitmapImage. A new member named 'm_frameCache' of type ImageFrameCache
+        is added to ImageSource. This class handles caching and recaching the image
+        metadata and the ImageFrames if the image needs decoding. When the BitmapImage
+        is initialized with a memory image, the ImageFrameCache initializes its
+        metadata and ImageFrames directly from the NativeImagePtr.
+
+        The plan for ImageFrameCache is to be extended for the asynchronous image
+        decoding and also to be used by the non CG image decoders which cache
+        other copies of the ImageFrames. This double caching should be removed.
+
+        When the BitmapImage is replying to the ImageFrame queries, it will ask the
+        ImageSource which will pass the query the ImageFrameCache. ImageFrameCache
+        will ensure the requested ImageFrame is cached and is valid for the requested
+        SubSamplingLevel before accessing the data members of this ImageFrame.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add and ImageFrameCache.cpp to the WebCore project.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage): Move initializing the image metadata to
+        ImageSource. Add initializers for the remaining members in the class declaration.
+
+        (WebCore::BitmapImage::destroyDecodedData): Move most of the logic of this
+        function to ImageFrameCache::destroyDecodedData(). The only part which can't
+        be moved is the call invalidatePlatformData().
+
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary): Move the logic of this
+        function to ImageFrameCache::destroyDecodedDataIfNecessary().
+
+        (WebCore::BitmapImage::dataChanged): Move the logic of this function to
+        ImageSource::dataChanged().
+
+        (WebCore::BitmapImage::frameImageAtIndex): Move most of the logic of this
+        function to ImageFrameCache::frameImageAtIndex(). The only part which can't
+        be moved is the call invalidatePlatformData() if the required subsampling
+        level is different from the subsampling level for the cached frame image.
+
+        (WebCore::BitmapImage::draw): Replace the BitmapImage  cached metadata with
+        the corresponding ImageSource cached metadata.
+        (WebCore::BitmapImage::drawPattern): Ditto.
+        (WebCore::BitmapImage::shouldAnimate): Ditto.
+        (WebCore::BitmapImage::startAnimation): Ditto.
+        (WebCore::BitmapImage::internalAdvanceAnimation): Ditto.
+
+        (WebCore::BitmapImage::dump): Call ImageSource::dump() to dump the image
+        cached metadata.
+
+        (WebCore::BitmapImage::haveFrameImageAtIndex): Deleted.
+        (WebCore::BitmapImage::destroyMetadataAndNotify): Deleted.
+        (WebCore::BitmapImage::cacheFrame): Deleted.
+        (WebCore::BitmapImage::didDecodeProperties): Deleted.
+        (WebCore::BitmapImage::updateSize): Deleted.
+        (WebCore::BitmapImage::size): Deleted.
+        (WebCore::BitmapImage::sizeRespectingOrientation): Deleted.
+        (WebCore::BitmapImage::hotSpot): Deleted.
+        (WebCore::BitmapImage::frameCount): Deleted.
+        (WebCore::BitmapImage::isSizeAvailable): Deleted.
+        (WebCore::BitmapImage::ensureFrameAtIndexIsCached): Deleted.
+        (WebCore::BitmapImage::frameIsCompleteAtIndex): Deleted.
+        (WebCore::BitmapImage::frameDurationAtIndex): Deleted.
+        (WebCore::BitmapImage::frameHasAlphaAtIndex): Deleted.
+        (WebCore::BitmapImage::currentFrameKnownToBeOpaque): Deleted.
+        (WebCore::BitmapImage::frameOrientationAtIndex): Deleted.
+        (WebCore::BitmapImage::singlePixelSolidColor): Deleted.
+        (WebCore::BitmapImage::repetitionCount): Deleted.
+        * platform/graphics/BitmapImage.h:
+        Managing the ImageFrames caching is moved to ImageFrameCache. Caching the
+        image metadata is now moved to the ImageSource.
+        
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::orientationForCurrentFrame):
+        (WebCore::Image::singlePixelSolidColor):
+        Change currentFrameKnownToBeOpaque(), orientationForCurrentFrame() and
+        singlePixelSolidColor() to be const.
+        
+        * platform/graphics/ImageFrame.cpp:
+        (WebCore::ImageFrame::defaultFrame): Returns an empty ImageFrame to get the default ImageFrame metadata.
+        (WebCore::ImageFrame::fillMetadata): Deleted. Moved to ImageFrameCache.
+        (WebCore::ImageFrame::initialize): Deleted. Ditto.
+        
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::setDuration): Change the type of the argument to float instead of unsigned.
+        (WebCore::ImageFrame::hasAlpha): Protect the unset m_hasAlpha by checking hasMetadata() first.
+
+        * platform/graphics/ImageFrameCache.cpp: Added.
+        (WebCore::ImageFrameCache::ImageFrameCache): Two constructors similar to what we do for ImageSource and BitmapImage.
+        (WebCore::ImageFrameCache::destroyDecodedData): Moved from BitmapImage.cpp.
+        (WebCore::ImageFrameCache::destroyDecodedDataIfNecessary): Ditto.
+        (WebCore::ImageFrameCache::destroyIncompleteDecodedData): Ditto.
+        (WebCore::ImageFrameCache::decodedSizeChanged): Ditto.
+        (WebCore::ImageFrameCache::decodedSizeIncremented): Ditto.
+        (WebCore::ImageFrameCache::decodedSizeDecremented): Ditto.
+        (WebCore::ImageFrameCache::decodedSizeReset): Ditto.
+        (WebCore::ImageFrameCache::didDecodeProperties): Ditto.
+        (WebCore::ImageFrameCache::growFrames): Grows the size of m_frames if necessary.
+        (WebCore::ImageFrameCache::setNativeImage): Initializes the ImageFrame metadata directly from the NativeImagePtr. 
+        (WebCore::ImageFrameCache::setFrameNativeImage): Initializes the ImageFrame image and the metadata.
+        (WebCore::ImageFrameCache::setFrameMetadata): Initializes the ImageFrame metadata from the ImageDecoder.
+        (WebCore::ImageFrameCache::frameAtIndex): Returns an ImageFrame given its index. Cache or recache the requested ImageFrame if necessary.
+        (WebCore::ImageFrameCache::clearMetadata): Invalidates the cached image metadata.
+        (WebCore::ImageFrameCache::metadata): A template function which returns an image metadata property.
+        (WebCore::ImageFrameCache::frameMetadataAtIndex): A template function which returns an ImageFrame metadata property.
+        (WebCore::ImageFrameCache::isSizeAvailable): An image metadata property.
+        (WebCore::ImageFrameCache::frameCount): Ditto.
+        (WebCore::ImageFrameCache::repetitionCount): Ditto.
+        (WebCore::ImageFrameCache::filenameExtension): Ditto.
+        (WebCore::ImageFrameCache::hotSpot): Ditto.
+        (WebCore::ImageFrameCache::size): An image metadata property but we get it from the first ImageFrame.
+        (WebCore::ImageFrameCache::sizeRespectingOrientation): Ditto.
+        (WebCore::ImageFrameCache::singlePixelSolidColor): Ditto.
+        (WebCore::ImageFrameCache::frameIsCompleteAtIndex): An ImageFrame metadata property.
+        (WebCore::ImageFrameCache::frameHasAlphaAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameHasImageAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameHasInvalidNativeImageAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameSubsamplingLevelAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameSizeAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameBytesAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameDurationAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameOrientationAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameImageAtIndex): Ditto.
+
+        * platform/graphics/ImageFrameCache.h: Added.
+        (WebCore::ImageFrameCache::setDecoder): Sets the current ImageDecoder which is owned by the ImageSource.
+        (WebCore::ImageFrameCache::decodedSize): Returns the size of the cached NativeImages.
+        (WebCore::ImageFrameCache::isDecoderAvailable): Returns whether an ImageDecoder is available.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ImageSource): Initializes the ImageFrameCache based on the image decoding state.
+        (WebCore::ImageSource::clearFrameBufferCache): Replace initialized() with isDecoderAvailable().
+        (WebCore::ImageSource::clear): Clears the ImageDecoder of the ImageFrameCache.
+        (WebCore::ImageSource::destroyDecodedData): Moved from BitmapImage.cpp.
+        (WebCore::ImageSource::destroyDecodedDataIfNecessary): Ditto.
+        (WebCore::ImageSource::ensureDecoderAvailable): Creates an ImageDecoder if necessary and sets it in ImageFrameCache.
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::dataChanged): Moved from BitmapImage.cpp.
+        (WebCore::ImageSource::isAllDataReceived):
+        (WebCore::ImageSource::maximumSubsamplingLevel): Rename calculateMaximumSubsamplingLevel() to maximumSubsamplingLevel().
+        (WebCore::ImageSource::subsamplingLevelForScale):
+        (WebCore::ImageSource::createFrameImageAtIndex):
+        (WebCore::ImageSource::dump):
+        (WebCore::ImageSource::calculateMaximumSubsamplingLevel): Deleted. Renamed to maximumSubsamplingLevel().
+        (WebCore::ImageSource::updateMetadata): Deleted. Not needed. Caching the image metadata is the responsibility of ImageFrameCache. 
+        (WebCore::ImageSource::bytesDecodedToDetermineProperties): Deleted. Not needed.
+        (WebCore::ImageSource::isSizeAvailable): Deleted. Moved to ImageSource.h. 
+        (WebCore::ImageSource::size): Deleted. Ditto.
+        (WebCore::ImageSource::sizeRespectingOrientation): Deleted. Ditto.
+        (WebCore::ImageSource::frameCount): Deleted. Ditto.
+        (WebCore::ImageSource::repetitionCount): Deleted. Ditto.
+        (WebCore::ImageSource::filenameExtension): Deleted. Ditto.
+        (WebCore::ImageSource::hotSpot): Deleted. Ditto.
+        (WebCore::ImageSource::frameIsCompleteAtIndex): Deleted. Ditto.
+        (WebCore::ImageSource::frameHasAlphaAtIndex): Deleted. Ditto.
+        (WebCore::ImageSource::frameAllowSubsamplingAtIndex): Deleted. Ditto.
+        (WebCore::ImageSource::frameSizeAtIndex): Deleted. Ditto.
+        (WebCore::ImageSource::frameBytesAtIndex): Deleted. Ditto.
+        (WebCore::ImageSource::frameDurationAtIndex): Deleted. Ditto.
+        (WebCore::ImageSource::frameOrientationAtIndex): Deleted. Ditto.
+
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::isDecoderAvailable): initialized() was renamed to isDecoderAvailable().
+        (WebCore::ImageSource::decodedSize): Send the query to ImageFrameCache.
+        (WebCore::ImageSource::isSizeAvailable): Ditto.
+        (WebCore::ImageSource::frameCount): Ditto.
+        (WebCore::ImageSource::repetitionCount): Ditto.
+        (WebCore::ImageSource::filenameExtension): Ditto.
+        (WebCore::ImageSource::hotSpot): Ditto.
+        (WebCore::ImageSource::size): Ditto.
+        (WebCore::ImageSource::sizeRespectingOrientation): Ditto.
+        (WebCore::ImageSource::singlePixelSolidColor): Ditto.
+        (WebCore::ImageSource::frameIsCompleteAtIndex): Ditto.
+        (WebCore::ImageSource::frameHasAlphaAtIndex): Ditto.
+        (WebCore::ImageSource::frameHasImageAtIndex): Ditto.
+        (WebCore::ImageSource::frameHasInvalidNativeImageAtIndex): Ditto.
+        (WebCore::ImageSource::frameSubsamplingLevelAtIndex): Ditto.
+        (WebCore::ImageSource::frameSizeAtIndex): Ditto.
+        (WebCore::ImageSource::frameBytesAtIndex): Ditto.
+        (WebCore::ImageSource::frameDurationAtIndex): Ditto.
+        (WebCore::ImageSource::frameOrientationAtIndex): Ditto.
+        (WebCore::ImageSource::frameImageAtIndex): Ditto.
+        (WebCore::ImageSource::decoder): Deleted. Not needed.
+        (WebCore::ImageSource::initialized): Deleted. Was renamed to isDecoderAvailable().
+        (WebCore::ImageSource::setNeedsUpdateMetadata): Deleted. Not needed.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage): AlphaOption and GammaAndColorProfileOption are moved out of ImageSource.
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage): Ditto.
+        
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::ImageDecoder): Make the constructor of ImageDecoder be the same for all ports. 
+        (WebCore::ImageDecoder::setData): Removed unused overloaded function.
+        (WebCore::ImageDecoder::size): Deleted.  Removed unused function.
+
+        * platform/graphics/cg/ImageDecoderCG.h:
+        (WebCore::ImageDecoder::create): Make the constructor of CG ImageDecoder be like the other ports.
+        (WebCore::ImageDecoder::isAllDataReceived): Make this property owned by ImageDecoder.
+
+        * platform/graphics/cg/PDFDocumentImage.h: Change currentFrameKnownToBeOpaque() to be const.
+
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage): AlphaOption and GammaAndColorProfileOption are moved out of ImageSource.
+        
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::invalidatePlatformData): m_frames is owned by ImageFrameCache. ImageFrameCache::frameCount() has to 
+        be equal to ImageFrame::m_frames.size().
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create): AlphaOption and GammaAndColorProfileOption are moved out of ImageSource.
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::ImageDecoder): Ditto.
+        (WebCore::ImageDecoder::frameCount): Make frameCount const so it can be passed to the template function ImageFrameCache::metadata().
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::BMPImageDecoder): AlphaOption and GammaAndColorProfileOption are moved out of ImageSource.
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::GIFImageDecoder): AlphaOption and GammaAndColorProfileOption are moved out of ImageSource.
+        (WebCore::GIFImageDecoder::frameCount): Make frameCount const so it can be passed to the template function ImageFrameCache::metadata().
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        * platform/image-decoders/gif/GIFImageReader.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::ICOImageDecoder): 
+        (WebCore::ICOImageDecoder::frameCount): Make frameCount const so it can be passed to the template function ImageFrameCache::metadata().
+        (WebCore::ICOImageDecoder::decode): Move resizing the m_frameBufferCache from ICOImageDecoder::frameCount() to ICOImageDecoder::decode().
+        (WebCore::ICOImageDecoder::decodeAtIndex): AlphaOption and GammaAndColorProfileOption are moved out of ImageSource.
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::JPEGImageDecoder): AlphaOption and GammaAndColorProfileOption are moved out of ImageSource.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::PNGImageDecoder): AlphaOption and GammaAndColorProfileOption are moved out of ImageSource.
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        (WebCore::PNGImageDecoder::frameCount): Make frameCount const so it can be passed to the template function ImageFrameCache::metadata().
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::WEBPImageDecoder):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
+        * svg/graphics/SVGImage.h: Make currentFrameKnownToBeOpaque() be const.
+        * svg/graphics/SVGImageForContainer.h: Ditto.
+
 2016-09-27  Alex Christensen  <achristensen@webkit.org>
 
         Correctly parse URLs with the first tab in the fragment

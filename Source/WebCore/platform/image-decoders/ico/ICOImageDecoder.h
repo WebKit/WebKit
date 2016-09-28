@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ICOImageDecoder_h
-#define ICOImageDecoder_h
+#pragma once
 
 #include "BMPImageReader.h"
 
@@ -40,7 +39,7 @@ namespace WebCore {
     // This class decodes the ICO and CUR image formats.
     class ICOImageDecoder final : public ImageDecoder {
     public:
-        ICOImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
+        ICOImageDecoder(AlphaOption, GammaAndColorProfileOption);
         virtual ~ICOImageDecoder();
 
         // ImageDecoder
@@ -50,7 +49,7 @@ namespace WebCore {
         IntSize size() override;
         IntSize frameSizeAtIndex(size_t, SubsamplingLevel) override;
         bool setSize(const IntSize&) override;
-        size_t frameCount() override;
+        size_t frameCount() const override;
         ImageFrame* frameBufferAtIndex(size_t) override;
         // CAUTION: setFailed() deletes all readers and decoders.  Be careful to
         // avoid accessing deleted memory, especially when calling this from
@@ -151,5 +150,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif

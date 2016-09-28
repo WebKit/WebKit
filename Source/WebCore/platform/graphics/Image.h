@@ -88,7 +88,7 @@ public:
     virtual bool isSVGImage() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }
 
-    virtual bool currentFrameKnownToBeOpaque() = 0;
+    virtual bool currentFrameKnownToBeOpaque() const = 0;
     virtual bool isAnimated() const { return false; }
 
     // Derived classes should override this if they can assure that 
@@ -140,7 +140,7 @@ public:
     virtual NativeImagePtr nativeImage() { return nullptr; }
     virtual NativeImagePtr nativeImageOfSize(const IntSize&) { return nullptr; }
     virtual NativeImagePtr nativeImageForCurrentFrame() { return nullptr; }
-    virtual ImageOrientation orientationForCurrentFrame() { return ImageOrientation(); }
+    virtual ImageOrientation orientationForCurrentFrame() const { return ImageOrientation(); }
     virtual Vector<NativeImagePtr> framesNativeImages() { return { }; }
 
     // Accessors for native image formats.
@@ -192,7 +192,7 @@ protected:
     void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, CompositeOperator);
 
     // Supporting tiled drawing
-    virtual Color singlePixelSolidColor() { return Color(); }
+    virtual Color singlePixelSolidColor() const { return Color(); }
     
 private:
     RefPtr<SharedBuffer> m_encodedImageData;

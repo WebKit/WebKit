@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class Color;
-class ImageDecoder;
 
 // There are four subsampling levels: 0 = 1x, 1 = 0.5x, 2 = 0.25x, 3 = 0.125x.
 enum class SubsamplingLevel {
@@ -64,27 +63,34 @@ enum {
     RepetitionCountInfinite = -1,
 };
 
+enum class AlphaOption {
+    Premultiplied,
+    NotPremultiplied
+};
+
+enum class GammaAndColorProfileOption {
+    Applied,
+    Ignored
+};
+
 class ImageFrame {
+    friend class ImageFrameCache;
 public:
     enum class Caching { Empty, Metadata, MetadataAndImage };
     enum class Decoding { Empty, Partial, Complete };
 
     ImageFrame();
-    ImageFrame(NativeImagePtr&&);
     ImageFrame(const ImageFrame& other) { operator=(other); }
 
     ~ImageFrame();
+
+    static const ImageFrame& defaultFrame();
 
     ImageFrame& operator=(const ImageFrame& other);
 
     unsigned clearImage();
     unsigned clear();
 
-    // FIXME: Calling ImageDecoder::repetitionCount() is expensive to be done for every frame.
-    // Remove the 'animating' flag from this function when calling repetitionCount() is cheap
-    // because it will be cached by ImageDecoder or a sub-class of it.
-    void initialize(NativeImagePtr&&, ImageDecoder&, size_t, SubsamplingLevel, bool animating);
-    void initialize(NativeImagePtr&&);
 #if !USE(CG)
     bool initialize(const ImageBackingStore&);
     bool initialize(const IntSize&, bool premultiplyAlpha);
@@ -112,11 +118,11 @@ public:
     void setOrientation(ImageOrientation orientation) { m_orientation = orientation; };
     ImageOrientation orientation() const { return m_orientation; }
 
-    void setDuration(unsigned duration) { m_duration = duration; }
+    void setDuration(float duration) { m_duration = duration; }
     float duration() const { return m_duration; }
 
     void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
-    bool hasAlpha() const { return m_hasAlpha; }
+    bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
     bool hasNativeImage() const { return m_nativeImage; }
     bool hasInvalidNativeImage(SubsamplingLevel subsamplingLevel) const { return hasNativeImage() && subsamplingLevel < m_subsamplingLevel; }
@@ -130,8 +136,6 @@ public:
     Color singlePixelSolidColor() const;
 
 private:
-    void fillMetadata(ImageDecoder&, size_t, SubsamplingLevel, bool animating);
-
     Decoding m_decoding { Decoding::Empty };
     IntSize m_size;
 

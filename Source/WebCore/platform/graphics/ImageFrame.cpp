@@ -26,11 +26,7 @@
 #include "config.h"
 #include "ImageFrame.h"
 
-#if USE(CG)
-#include "ImageDecoderCG.h"
-#else
-#include "ImageDecoder.h"
-#endif
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -41,6 +37,12 @@ ImageFrame::ImageFrame()
 ImageFrame::~ImageFrame()
 {
     clearImage();
+}
+
+const ImageFrame& ImageFrame::defaultFrame()
+{
+    static NeverDestroyed<ImageFrame> sharedInstance;
+    return sharedInstance;
 }
 
 ImageFrame& ImageFrame::operator=(const ImageFrame& other)
@@ -68,19 +70,6 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     return *this;
 }
 
-void ImageFrame::fillMetadata(ImageDecoder& decoder, size_t index, SubsamplingLevel subsamplingLevel, bool animating)
-{
-    m_decoding = decoder.frameIsCompleteAtIndex(index) ? Decoding::Complete : Decoding::Partial;
-    m_size = decoder.frameSizeAtIndex(index, subsamplingLevel);
-
-    m_subsamplingLevel = subsamplingLevel;
-
-    m_orientation = decoder.frameOrientationAtIndex(index);
-    if (animating)
-        m_duration = decoder.frameDurationAtIndex(index);
-    m_hasAlpha = decoder.frameHasAlphaAtIndex(index);
-}
-
 unsigned ImageFrame::clearImage()
 {
 #if !USE(CG)
@@ -104,25 +93,6 @@ unsigned ImageFrame::clear()
     unsigned frameBytes = clearImage();
     *this = ImageFrame();
     return frameBytes;
-}
-
-void ImageFrame::initialize(NativeImagePtr&& nativeImage, ImageDecoder& decoder, size_t index, SubsamplingLevel subsamplingLevel, bool animating)
-{
-    m_nativeImage = WTFMove(nativeImage);
-
-    if (!hasMetadata())
-        fillMetadata(decoder, index, subsamplingLevel, animating);
-    else if (!isComplete())
-        m_decoding = decoder.frameIsCompleteAtIndex(index) ? Decoding::Complete : Decoding::Partial;
-}
-
-void ImageFrame::initialize(NativeImagePtr&& nativeImage)
-{
-    m_nativeImage = WTFMove(nativeImage);
-
-    m_decoding = Decoding::Complete;
-    m_size = nativeImageSize(m_nativeImage);
-    m_hasAlpha = nativeImageHasAlpha(m_nativeImage);
 }
 
 #if !USE(CG)

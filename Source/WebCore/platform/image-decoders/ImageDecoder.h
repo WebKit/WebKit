@@ -28,8 +28,7 @@
 
 #pragma once
 
-#include "ImageBackingStore.h"
-#include "ImageSource.h"
+#include "ImageFrame.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "PlatformScreen.h"
@@ -42,8 +41,6 @@
 
 namespace WebCore {
 
-using ColorProfile = Vector<char>;
-
     // ImageDecoder is a base for all format-specific decoders
     // (e.g. JPEGImageDecoder).  This base manages the ImageFrame cache.
     //
@@ -53,9 +50,9 @@ using ColorProfile = Vector<char>;
     class ImageDecoder {
         WTF_MAKE_NONCOPYABLE(ImageDecoder); WTF_MAKE_FAST_ALLOCATED;
     public:
-        ImageDecoder(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
-            : m_premultiplyAlpha(alphaOption == ImageSource::AlphaPremultiplied)
-            , m_ignoreGammaAndColorProfile(gammaAndColorProfileOption == ImageSource::GammaAndColorProfileIgnored)
+        ImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+            : m_premultiplyAlpha(alphaOption == AlphaOption::Premultiplied)
+            , m_ignoreGammaAndColorProfile(gammaAndColorProfileOption == GammaAndColorProfileOption::Ignored)
         {
         }
 
@@ -66,7 +63,7 @@ using ColorProfile = Vector<char>;
         // Returns a caller-owned decoder of the appropriate type.  Returns 0 if
         // we can't sniff a supported type from the provided data (possibly
         // because there isn't enough data yet).
-        static std::unique_ptr<ImageDecoder> create(const SharedBuffer& data, ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
+        static std::unique_ptr<ImageDecoder> create(const SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
 
         virtual String filenameExtension() const = 0;
         
@@ -122,7 +119,7 @@ using ColorProfile = Vector<char>;
         // possible), without decoding the individual frames.
         // FIXME: Right now that has to be done by each subclass; factor the
         // decode call out and use it here.
-        virtual size_t frameCount() { return 1; }
+        virtual size_t frameCount() const { return 1; }
 
         virtual RepetitionCount repetitionCount() const { return RepetitionCountNone; }
 

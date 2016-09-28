@@ -40,8 +40,7 @@ namespace WebCore {
 // don't pack).
 static const size_t sizeOfFileHeader = 14;
 
-BMPImageDecoder::BMPImageDecoder(ImageSource::AlphaOption alphaOption,
-                                 ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+BMPImageDecoder::BMPImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_decodedOffset(0)
 {

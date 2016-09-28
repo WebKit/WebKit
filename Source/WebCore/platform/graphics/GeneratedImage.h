@@ -52,7 +52,7 @@ protected:
         const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect, BlendMode) override = 0;
 
     // FIXME: Implement this to be less conservative.
-    bool currentFrameKnownToBeOpaque() override { return false; }
+    bool currentFrameKnownToBeOpaque() const override { return false; }
 
     GeneratedImage() { }
 

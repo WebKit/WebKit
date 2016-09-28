@@ -89,7 +89,7 @@ private:
     void destroyDecodedData(bool) final { }
 
     // FIXME: Implement this to be less conservative.
-    bool currentFrameKnownToBeOpaque() final { return false; }
+    bool currentFrameKnownToBeOpaque() const final { return false; }
 
     void dump(TextStream&) const final;
 

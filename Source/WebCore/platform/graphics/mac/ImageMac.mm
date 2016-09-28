@@ -47,7 +47,7 @@ namespace WebCore {
 
 void BitmapImage::invalidatePlatformData()
 {
-    if (m_frames.size() != 1)
+    if (frameCount() != 1)
         return;
 
 #if USE(APPKIT)

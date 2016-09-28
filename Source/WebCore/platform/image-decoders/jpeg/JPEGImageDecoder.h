@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JPEGImageDecoder_h
-#define JPEGImageDecoder_h
+#pragma once
 
 #include "ImageDecoder.h"
 #include <stdio.h> // Needed by jpeglib.h for FILE.
@@ -44,7 +43,7 @@ namespace WebCore {
     // This class decodes the JPEG image format.
     class JPEGImageDecoder final : public ImageDecoder {
     public:
-        JPEGImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
+        JPEGImageDecoder(AlphaOption, GammaAndColorProfileOption);
         virtual ~JPEGImageDecoder();
 
         // ImageDecoder
@@ -84,5 +83,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif

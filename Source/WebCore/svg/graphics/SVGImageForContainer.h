@@ -61,7 +61,7 @@ public:
     void drawPattern(GraphicsContext&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, const FloatRect&, BlendMode) final;
 
     // FIXME: Implement this to be less conservative.
-    bool currentFrameKnownToBeOpaque() final { return false; }
+    bool currentFrameKnownToBeOpaque() const final { return false; }
 
     NativeImagePtr nativeImageForCurrentFrame() final;
 

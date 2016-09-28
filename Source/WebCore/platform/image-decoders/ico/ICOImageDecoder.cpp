@@ -44,8 +44,7 @@ namespace WebCore {
 static const size_t sizeOfDirectory = 6;
 static const size_t sizeOfDirEntry = 16;
 
-ICOImageDecoder::ICOImageDecoder(ImageSource::AlphaOption alphaOption,
-                                 ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+ICOImageDecoder::ICOImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_decodedOffset(0)
 {
@@ -95,14 +94,9 @@ bool ICOImageDecoder::setSize(const IntSize& size)
     return m_frameSize.isEmpty() ? ImageDecoder::setSize(size) : ((size == m_frameSize) || setFailed());
 }
 
-size_t ICOImageDecoder::frameCount()
+size_t ICOImageDecoder::frameCount() const
 {
-    decode(0, true);
-    if (m_frameBufferCache.isEmpty())
-        m_frameBufferCache.resize(m_dirEntries.size());
-    // CAUTION: We must not resize m_frameBufferCache again after this, as
-    // decodeAtIndex() may give a BMPImageReader a pointer to one of the
-    // entries.
+    const_cast<ICOImageDecoder*>(this)->decode(0, true);
     return m_frameBufferCache.size();
 }
 
@@ -180,6 +174,12 @@ void ICOImageDecoder::decode(size_t index, bool onlySize)
         m_bmpReaders[index] = nullptr;
         m_pngDecoders[index] = nullptr;
     }
+    
+    if (m_frameBufferCache.isEmpty())
+        m_frameBufferCache.resize(m_dirEntries.size());
+    // CAUTION: We must not resize m_frameBufferCache again after this, as
+    // decodeAtIndex() may give a BMPImageReader a pointer to one of the
+    // entries.
 }
 
 bool ICOImageDecoder::decodeDirectory()
@@ -217,8 +217,8 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
 
     if (!m_pngDecoders[index]) {
         m_pngDecoders[index] = std::make_unique<
-            PNGImageDecoder>(m_premultiplyAlpha ? ImageSource::AlphaPremultiplied : ImageSource::AlphaNotPremultiplied,
-                m_ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
+            PNGImageDecoder>(m_premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied,
+                m_ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
         setDataForPNGDecoderAtIndex(index);
     }
     // Fail if the size the PNGImageDecoder calculated does not match the size

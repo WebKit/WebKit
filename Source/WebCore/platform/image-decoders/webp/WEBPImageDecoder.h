@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBPImageDecoder_h
-#define WEBPImageDecoder_h
+#pragma once
 
 #include "ImageDecoder.h"
 
@@ -39,7 +38,7 @@ namespace WebCore {
 
 class WEBPImageDecoder final : public ImageDecoder {
 public:
-    WEBPImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
+    WEBPImageDecoder(AlphaOption, GammaAndColorProfileOption);
     virtual ~WEBPImageDecoder();
 
     String filenameExtension() const override { return "webp"; }
@@ -57,7 +56,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif
 
 #endif

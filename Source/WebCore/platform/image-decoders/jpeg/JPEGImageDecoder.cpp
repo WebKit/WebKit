@@ -501,8 +501,7 @@ void term_source(j_decompress_ptr jd)
     src->decoder->decoder()->jpegComplete();
 }
 
-JPEGImageDecoder::JPEGImageDecoder(ImageSource::AlphaOption alphaOption,
-                                   ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+JPEGImageDecoder::JPEGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
 {
 }
