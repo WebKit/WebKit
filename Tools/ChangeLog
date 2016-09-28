@@ -1,3 +1,13 @@
+2016-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should properly handle unexpected periods and overflows in IPv4 addresses
+        https://bugs.webkit.org/show_bug.cgi?id=162655
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-09-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable flaky API test WebKit2.AutoLayoutIntegration.

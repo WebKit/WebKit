@@ -1974,7 +1974,6 @@ void URLParser::serializeIPv6(URLParser::IPv6Address address)
 template<typename CharacterType>
 Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& iterator, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
-    // FIXME: Check for overflow.
     enum class State : uint8_t {
         UnknownBase,
         Decimal,
@@ -1983,11 +1982,15 @@ Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& 
         Hex,
     };
     State state = State::UnknownBase;
-    uint32_t value = 0;
+    Checked<uint32_t, RecordOverflow> value = 0;
+    if (!iterator.atEnd() && *iterator == '.')
+        return Nullopt;
+    bool didSeeSyntaxViolation = false;
     while (!iterator.atEnd()) {
         if (*iterator == '.') {
             ++iterator;
-            return value;
+            ASSERT(!value.hasOverflowed());
+            return value.unsafeGet();
         }
         switch (state) {
         case State::UnknownBase:
@@ -1999,7 +2002,7 @@ Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& 
             state = State::Decimal;
             break;
         case State::OctalOrHex:
-            syntaxViolation(iteratorForSyntaxViolationPosition);
+            didSeeSyntaxViolation = true;
             if (*iterator == 'x' || *iterator == 'X') {
                 ++iterator;
                 state = State::Hex;
@@ -2012,27 +2015,36 @@ Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& 
                 return Nullopt;
             value *= 10;
             value += *iterator - '0';
+            if (UNLIKELY(value.hasOverflowed()))
+                return Nullopt;
             ++iterator;
             break;
         case State::Octal:
-            ASSERT(m_didSeeSyntaxViolation);
+            ASSERT(didSeeSyntaxViolation);
             if (*iterator < '0' || *iterator > '7')
                 return Nullopt;
             value *= 8;
             value += *iterator - '0';
+            if (UNLIKELY(value.hasOverflowed()))
+                return Nullopt;
             ++iterator;
             break;
         case State::Hex:
-            ASSERT(m_didSeeSyntaxViolation);
+            ASSERT(didSeeSyntaxViolation);
             if (!isASCIIHexDigit(*iterator))
                 return Nullopt;
             value *= 16;
             value += toASCIIHexValue(*iterator);
+            if (UNLIKELY(value.hasOverflowed()))
+                return Nullopt;
             ++iterator;
             break;
         }
     }
-    return value;
+    if (didSeeSyntaxViolation)
+        syntaxViolation(iteratorForSyntaxViolationPosition);
+    ASSERT(!value.hasOverflowed());
+    return value.unsafeGet();
 }
 
 ALWAYS_INLINE static uint64_t pow256(size_t exponent)
@@ -2069,7 +2081,7 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<Char
         return Nullopt;
     for (auto item : items) {
         if (item > 255)
-            return Nullopt;
+            syntaxViolation(hostBegin);
     }
 
     if (UNLIKELY(items.size() != 4))

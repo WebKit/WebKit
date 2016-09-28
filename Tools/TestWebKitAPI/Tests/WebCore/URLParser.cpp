@@ -244,9 +244,15 @@ TEST_F(URLParserTest, Basic)
     checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
     checkURL("notspecial:", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
     checkURL("http:/a", {"http", "", "", "a", 0, "/", "", "", "http://a/"});
-    checkURL("http://256/", {"http", "", "", "256", 0, "/", "", "", "http://256/"});
-    checkURL("http://256./", {"http", "", "", "256.", 0, "/", "", "", "http://256./"});
-    checkURL("http://123.256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
+    checkURL("http://256../", {"http", "", "", "256..", 0, "/", "", "", "http://256../"});
+    checkURL("http://256..", {"http", "", "", "256..", 0, "/", "", "", "http://256../"});
+    checkURL("http://127..1/", {"http", "", "", "127..1", 0, "/", "", "", "http://127..1/"});
+    checkURL("http://127.a.0.1/", {"http", "", "", "127.a.0.1", 0, "/", "", "", "http://127.a.0.1/"});
+    checkURL("http://127.0.0.1/", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
+    checkURL("http://12\t7.0.0.1/", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
+    checkURL("http://127.\t0.0.1/", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
+    checkURL("http://./", {"http", "", "", ".", 0, "/", "", "", "http://./"});
+    checkURL("http://.", {"http", "", "", ".", 0, "/", "", "", "http://./"});
     checkURL("http://123\t.256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
     checkURL("http://123.\t256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
     checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
@@ -677,6 +683,27 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("//C|#foo/bar", "file:///tmp/mock/path",
         {"file", "", "", "", 0, "/C:/", "", "foo/bar", "file:///C:/#foo/bar"},
         {"", "", "", "", 0, "", "", "", "//C|#foo/bar"});
+    checkURLDifferences("http://0xFFFFFfFF/",
+        {"http", "", "", "255.255.255.255", 0, "/", "", "", "http://255.255.255.255/"},
+        {"http", "", "", "0xffffffff", 0, "/", "", "", "http://0xffffffff/"});
+    checkURLDifferences("http://0000000000000000037777777777/",
+        {"http", "", "", "255.255.255.255", 0, "/", "", "", "http://255.255.255.255/"},
+        {"http", "", "", "0000000000000000037777777777", 0, "/", "", "", "http://0000000000000000037777777777/"});
+    checkURLDifferences("http://4294967295/",
+        {"http", "", "", "255.255.255.255", 0, "/", "", "", "http://255.255.255.255/"},
+        {"http", "", "", "4294967295", 0, "/", "", "", "http://4294967295/"});
+    checkURLDifferences("http://256/",
+        {"http", "", "", "0.0.1.0", 0, "/", "", "", "http://0.0.1.0/"},
+        {"http", "", "", "256", 0, "/", "", "", "http://256/"});
+    checkURLDifferences("http://256./",
+        {"http", "", "", "0.0.1.0", 0, "/", "", "", "http://0.0.1.0/"},
+        {"http", "", "", "256.", 0, "/", "", "", "http://256./"});
+    checkURLDifferences("http://123.256/",
+        {"http", "", "", "123.0.1.0", 0, "/", "", "", "http://123.0.1.0/"},
+        {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
+    checkURLDifferences("http://127.%.0.1/",
+        {"", "", "", "", 0, "", "", "", "http://127.%.0.1/"},
+        {"http", "", "", "127.%.0.1", 0, "/", "", "", "http://127.%.0.1/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)

@@ -1,3 +1,17 @@
+2016-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should properly handle unexpected periods and overflows in IPv4 addresses
+        https://bugs.webkit.org/show_bug.cgi?id=162655
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseIPv4Number):
+        (WebCore::URLParser::parseIPv4Host):
+        * platform/URLParser.h:
+
 2016-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Some media tests are crashing due to soft-linking failures
