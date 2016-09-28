@@ -76,19 +76,6 @@ private:
     uint32_t m_quirks;
 };
 
-static const char* cpuDescriptionForUAString()
-{
-#if CPU(PPC) || CPU(PPC64)
-    return "PPC";
-#elif CPU(X86) || CPU(X86_64)
-    return "Intel";
-#elif CPU(ARM) || CPU(ARM64)
-    return "ARM";
-#else
-    return "Unknown";
-#endif
-}
-
 static const char* platformForUAString()
 {
 #if OS(MAC_OS_X)
@@ -107,7 +94,8 @@ static const String platformVersionForUAString()
     return uaOSVersion;
 #else
     // We will always claim to be Safari in Mac OS X, since Safari in Linux triggers the iOS path on some websites.
-    static NeverDestroyed<const String> uaOSVersion(String::format("%s Mac OS X", cpuDescriptionForUAString()));
+    // And we always claim to be Intel since ARM triggers mobile versions of some websites.
+    static NeverDestroyed<const String> uaOSVersion(ASCIILiteral("Intel Mac OS X"));
     return uaOSVersion;
 #endif
 }
@@ -130,10 +118,9 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
 
     uaString.appendLiteral("; ");
 
-    if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform)) {
-        uaString.append(cpuDescriptionForUAString());
-        uaString.appendLiteral(" Mac OS X");
-    } else
+    if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
+        uaString.appendLiteral("Intel Mac OS X");
+    else
         uaString.append(platformVersionForUAString());
 
     uaString.appendLiteral(") AppleWebKit/");

@@ -1,5 +1,21 @@
 2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] User agent should always claim to be Intel
+        https://bugs.webkit.org/show_bug.cgi?id=162610
+
+        Reviewed by Carlos Garcia Campos.
+
+        We should always claim to be running on Intel regardless of actual CPU type. See discussion
+        in bug #162548 for details. In particular, we can never advertise ARM because it causes dumb
+        websites to send mobile pages.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::platformVersionForUAString):
+        (WebCore::buildUserAgentString):
+        (WebCore::cpuDescriptionForUAString): Deleted.
+
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Adjust OS X UA quirks list
         https://bugs.webkit.org/show_bug.cgi?id=162616
 
