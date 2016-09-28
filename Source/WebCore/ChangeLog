@@ -1,3 +1,16 @@
+2016-09-28  Jer Noble  <jer.noble@apple.com>
+
+        PiP shows incorrect state of play button.
+        https://bugs.webkit.org/show_bug.cgi?id=162652
+
+        Reviewed by Eric Carlson.
+
+        After getting a new WebPlaybackSessionModel, the first thing WebVideoFullscreenInterfaceMac
+        should do is query for it's playbackRate() and isPlaying() properties.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::WebVideoFullscreenInterfaceMac):
+
 2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add Chrome UA quirk
