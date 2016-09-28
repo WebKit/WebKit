@@ -67,8 +67,7 @@ class Templates:
     HeaderSkeleton = (
     """${licenseBlock}
 
-#ifndef ${headerGuard}
-#define ${headerGuard}
+#pragma once
 
 #if ${guardCondition}
 ${includes}
@@ -93,8 +92,6 @@ ${inputTypeTraitDeclarations}
 ${forEachMacro}
 
 #endif // ${guardCondition}
-
-#endif // ${filename}_h
 """)
 
     InputTraitsDeclaration = (

@@ -170,8 +170,7 @@ if __name__ == "__main__":
     if bytecodeHFilename:
         bytecodeHFile.write(hFileHashString)
         bytecodeHFile.write(cCopyrightMsg % bytecodeJSONFile)
-        bytecodeHFile.write("#ifndef Bytecodes_h\n")
-        bytecodeHFile.write("#define Bytecodes_h\n\n")
+        bytecodeHFile.write("#pragma once\n\n")
 
     if initASMFileName:
         initBytecodesFile.write(asmFileHashString)
@@ -211,7 +210,6 @@ if __name__ == "__main__":
                 initASMBytecodeNum = initASMBytecodeNum + 1
 
     if bytecodeHFilename:
-        bytecodeHFile.write("#endif // Bytecodes_h\n")
         bytecodeHFile.close()
 
     if initASMFileName:

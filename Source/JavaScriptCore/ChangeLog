@@ -1,3 +1,41 @@
+2016-09-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Adopt #pragma once in some generated resources
+        https://bugs.webkit.org/show_bug.cgi?id=162666
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/builtins/builtins_generate_combined_header.py:
+        * Scripts/builtins/builtins_generate_internals_wrapper_header.py:
+        * Scripts/builtins/builtins_generate_internals_wrapper_implementation.py:
+        * Scripts/builtins/builtins_generate_separate_header.py:
+        * Scripts/builtins/builtins_generate_wrapper_header.py:
+        * Scripts/builtins/builtins_generate_wrapper_implementation.py:
+        Remove headerGuard attribute unused by templates.
+
+        * Scripts/tests/builtins/expected/JavaScriptCore-Operations.Promise-Combined.js-result: Removed.
+        No such test exists. It was likely renamed.
+
+        * generate-bytecode-files:
+        Simplify header guard output.
+
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator.generate_output):
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Generator.generate_header):
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py:
+        Simplify header guard output.
+
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.h:
+        Rebaseline.
+
 2016-09-28  Filip Pizlo  <fpizlo@apple.com>
 
         Store-load fences should be a lot cheaper on ARM

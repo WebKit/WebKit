@@ -614,7 +614,6 @@ class Generator:
 
         template_arguments = {
             'licenseBlock': self.generate_license(),
-            'headerGuard': re.sub('[-./]', '_', self.output_filename() + ".h"),
             'filename': self.output_filename(),
             'guardCondition': self.setting('guardCondition'),
             'traitsNamespace': self.traits_framework.setting('namespace'),

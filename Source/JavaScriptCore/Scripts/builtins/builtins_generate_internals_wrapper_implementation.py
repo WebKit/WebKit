@@ -44,7 +44,6 @@ class BuiltinsInternalsWrapperImplementationGenerator(BuiltinsGenerator):
     def generate_output(self):
         args = {
             'namespace': self.model().framework.setting('namespace'),
-            'headerGuard': self.output_filename().replace('.', '_'),
         }
 
         sections = []

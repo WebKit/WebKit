@@ -46,7 +46,6 @@ class BuiltinsCombinedHeaderGenerator(BuiltinsGenerator):
     def generate_output(self):
         args = {
             'namespace': self.model().framework.setting('namespace'),
-            'headerGuard': self.output_filename().replace('.', '_'),
             'macroPrefix': self.model().framework.setting('macro_prefix'),
         }
 

@@ -51,7 +51,6 @@ class BuiltinsSeparateHeaderGenerator(BuiltinsGenerator):
     def generate_output(self):
         args = {
             'namespace': self.model().framework.setting('namespace'),
-            'headerGuard': self.output_filename().replace('.', '_'),
             'macroPrefix': self.macro_prefix(),
             'objectName': self.object.object_name,
             'objectMacro': self.object.object_name.upper(),
