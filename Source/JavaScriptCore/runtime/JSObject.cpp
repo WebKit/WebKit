@@ -230,7 +230,11 @@ String JSObject::toStringName(const JSObject* object, ExecState*)
 String JSObject::calculatedClassName(JSObject* object)
 {
     String prototypeFunctionName;
-    ExecState* exec = object->globalObject()->globalExec();
+    auto globalObject = object->globalObject();
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    ExecState* exec = globalObject->globalExec();
     PropertySlot slot(object->getPrototypeDirect(), PropertySlot::InternalMethodType::VMInquiry);
     PropertyName constructor(exec->propertyNames().constructor);
     if (object->getPropertySlot(exec, constructor, slot)) {
@@ -239,7 +243,6 @@ String JSObject::calculatedClassName(JSObject* object)
             if (constructorValue.isCell()) {
                 if (JSCell* constructorCell = constructorValue.asCell()) {
                     if (JSObject* ctorObject = constructorCell->getObject()) {
-                        VM& vm = exec->vm();
                         if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject))
                             prototypeFunctionName = constructorFunction->calculatedDisplayName(vm);
                         else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject))
@@ -249,6 +252,9 @@ String JSObject::calculatedClassName(JSObject* object)
             }
         }
     }
+    ASSERT(!scope.exception() || prototypeFunctionName.isNull());
+    if (UNLIKELY(scope.exception()))
+        scope.clearException();
 
     if (prototypeFunctionName.isNull() || prototypeFunctionName == "Object") {
         String tableClassName = object->methodTable()->className(object);
