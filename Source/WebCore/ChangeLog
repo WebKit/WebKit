@@ -1,3 +1,32 @@
+2016-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DOMTokenList’s value and stringifier should not return parsed tokens
+        https://bugs.webkit.org/show_bug.cgi?id=161076
+
+        Reviewed by Chris Dumez.
+
+        Updated our implementation of DOMTokenList.prototype.value and its toString function
+        to match the latest DOM specification: https://dom.spec.whatwg.org/#interface-domtokenlist
+
+        "value" attribute, on getting, runs its serialize steps, which simply gets the attribute value.
+        On setting, it sets the attribute value with the given value.
+
+        The stringification behavior returns the same serialize steps as "value" attribute on getting.
+
+        This change simplifies our implementation of DOMTokenList and removes the need for m_cachedValue,
+        which has been removed in this patch.
+
+        No new tests since existing tests cover this.
+
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::value): Just call getAttribute.
+        (WebCore::DOMTokenList::setValue): Just call setAttribute.
+        (WebCore::DOMTokenList::updateTokensFromAttributeValue):
+        (WebCore::DOMTokenList::associatedAttributeValueChanged):
+        (WebCore::DOMTokenList::updateAssociatedAttributeFromTokens): Moved the code to update the tokens
+        from from the attribute value. This is the "update steps".
+        * html/DOMTokenList.h:
+
 2016-09-28  Jer Noble  <jer.noble@apple.com>
 
         CRASH at WebCore::CDMSessionAVStreamSession::update + 950

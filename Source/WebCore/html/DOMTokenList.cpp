@@ -177,27 +177,15 @@ void DOMTokenList::replace(const AtomicString& token, const AtomicString& newTok
     updateAssociatedAttributeFromTokens();
 }
 
+// https://dom.spec.whatwg.org/#dom-domtokenlist-value
 const AtomicString& DOMTokenList::value() const
 {
-    if (m_cachedValue.isNull()) {
-        // https://dom.spec.whatwg.org/#concept-ordered-set-serializer
-        StringBuilder builder;
-        for (auto& token : tokens()) {
-            if (!builder.isEmpty())
-                builder.append(' ');
-            builder.append(token);
-        }
-        m_cachedValue = builder.toAtomicString();
-        ASSERT(!m_cachedValue.isNull());
-    }
-    ASSERT(!m_tokensNeedUpdating);
-    return m_cachedValue;
+    return m_element.getAttribute(m_attributeName);
 }
 
 void DOMTokenList::setValue(const String& value)
 {
-    updateTokensFromAttributeValue(value);
-    updateAssociatedAttributeFromTokens();
+    m_element.setAttribute(m_attributeName, value);
 }
 
 void DOMTokenList::updateTokensFromAttributeValue(const String& value)
@@ -227,7 +215,6 @@ void DOMTokenList::updateTokensFromAttributeValue(const String& value)
 
     m_tokens.shrinkToFit();
     m_tokensNeedUpdating = false;
-    m_cachedValue = nullAtom;
 }
 
 void DOMTokenList::associatedAttributeValueChanged(const AtomicString&)
@@ -237,7 +224,6 @@ void DOMTokenList::associatedAttributeValueChanged(const AtomicString&)
         return;
 
     m_tokensNeedUpdating = true;
-    m_cachedValue = nullAtom;
 }
 
 // https://dom.spec.whatwg.org/#concept-dtl-update
@@ -245,11 +231,17 @@ void DOMTokenList::updateAssociatedAttributeFromTokens()
 {
     ASSERT(!m_tokensNeedUpdating);
 
-    m_cachedValue = nullAtom;
+    // https://dom.spec.whatwg.org/#concept-ordered-set-serializer
+    StringBuilder builder;
+    for (auto& token : tokens()) {
+        if (!builder.isEmpty())
+            builder.append(' ');
+        builder.append(token);
+    }
+    AtomicString serializedValue = builder.toAtomicString();
 
     TemporaryChange<bool> inAttributeUpdate(m_inUpdateAssociatedAttributeFromTokens, true);
-    m_element.setAttribute(m_attributeName, value());
-    ASSERT_WITH_MESSAGE(m_cachedValue, "Calling value() should have cached its results");
+    m_element.setAttribute(m_attributeName, serializedValue);
 }
 
 Vector<AtomicString>& DOMTokenList::tokens()

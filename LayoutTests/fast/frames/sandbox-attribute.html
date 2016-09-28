@@ -14,8 +14,8 @@ shouldBe("iframe.sandbox.length", "3");
 shouldBeEqualToString("iframe.sandbox[0]", "allow-popups");
 shouldBeEqualToString("iframe.sandbox[1]", "allow-scripts");
 shouldBeEqualToString("iframe.sandbox[2]", "allow-same-origin");
-shouldBeEqualToString("String(iframe.sandbox)", "allow-popups allow-scripts allow-same-origin");
-shouldBeEqualToString("iframe.getAttribute('sandbox')", "allow-popups allow-scripts allow-same-origin");
+shouldBeEqualToString("String(iframe.sandbox)", "allow-popups   allow-scripts  allow-scripts  allow-same-origin");
+shouldBeEqualToString("iframe.getAttribute('sandbox')", 'allow-popups   allow-scripts  allow-scripts  allow-same-origin');
 
 debug("");
 evalAndLog("iframe.setAttribute('sandbox', 'allow-popups allow-scripts')");

@@ -18,8 +18,9 @@ debug('- Tests from http://simon.html5.org/test/html/dom/reflecting/DOMTokenList
 createElement('x');
 shouldBe('element.htmlFor.__proto__', 'DOMTokenList.prototype');
 element.htmlFor = 'y  z';
-shouldBeEqualToString('String(element.htmlFor)', 'y z');
-shouldBeEqualToString('element.getAttribute("for")', 'y z');
+shouldBeEqualToString('String(element.htmlFor)', 'y  z');
+shouldBeEqualToString('element.htmlFor.value', 'y  z');
+shouldBeEqualToString('element.getAttribute("for")', 'y  z');
 element.setAttribute('for', 'r s t');
 shouldBeEqualToString('String(element.htmlFor)', 'r s t');
 

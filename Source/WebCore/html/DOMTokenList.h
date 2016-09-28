@@ -72,7 +72,6 @@ private:
     bool m_inUpdateAssociatedAttributeFromTokens { false };
     bool m_tokensNeedUpdating { true };
     Vector<AtomicString> m_tokens;
-    mutable AtomicString m_cachedValue;
 };
 
 inline unsigned DOMTokenList::length() const

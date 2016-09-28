@@ -13,7 +13,7 @@ PASS classList.item() must return null for negative index
 PASS classList[index] must be undefined for out-of-range index 
 PASS classList[index] must be undefined for negative index 
 PASS className should contain initial markup whitespace 
-FAIL classList should contain initial markup whitespace assert_equals: implicit expected " " but got ""
+PASS classList should contain initial markup whitespace 
 PASS .contains(empty_string) must return false 
 PASS .add(empty_string) must throw a SYNTAX_ERR 
 PASS .remove(empty_string) must throw a SYNTAX_ERR 

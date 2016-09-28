@@ -10,8 +10,8 @@ PASS iframe.sandbox.length is 3
 PASS iframe.sandbox[0] is "allow-popups"
 PASS iframe.sandbox[1] is "allow-scripts"
 PASS iframe.sandbox[2] is "allow-same-origin"
-PASS String(iframe.sandbox) is "allow-popups allow-scripts allow-same-origin"
-PASS iframe.getAttribute('sandbox') is "allow-popups allow-scripts allow-same-origin"
+PASS String(iframe.sandbox) is "allow-popups   allow-scripts  allow-scripts  allow-same-origin"
+PASS iframe.getAttribute('sandbox') is "allow-popups   allow-scripts  allow-scripts  allow-same-origin"
 
 iframe.setAttribute('sandbox', 'allow-popups allow-scripts')
 PASS iframe.sandbox.length is 2
