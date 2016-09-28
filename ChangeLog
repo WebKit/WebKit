@@ -1,3 +1,11 @@
+2016-09-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for several CMake ports after r206440
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2016-09-27  Don Olmstead  <don.olmstead@am.sony.com>
 
         [CMake] Add HAVE_LOCALTIME_R definition
