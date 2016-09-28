@@ -1,3 +1,16 @@
+2016-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use GMenu internally in the context menu implementation
+        https://bugs.webkit.org/show_bug.cgi?id=162603
+
+        Reviewed by Michael Catanzaro.
+
+        Remove smart separators test, since that's now done automatically by GTK+.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+        (beforeAll):
+        (testContextMenuWebExtensionMenu): Deleted.
+
 2016-09-27  Alex Christensen  <achristensen@webkit.org>
 
         Correctly parse URLs with the first tab in the fragment

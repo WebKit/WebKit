@@ -122,44 +122,60 @@ WebContextMenuItemGtk::WebContextMenuItemGtk(ContextMenuItemType type, ContextMe
     : WebContextMenuItemData(type, action, title, enabled, checked)
 {
     ASSERT(type != SubmenuType);
-    createGtkActionIfNeeded();
+    createActionIfNeeded();
 }
 
 WebContextMenuItemGtk::WebContextMenuItemGtk(const WebContextMenuItemData& data)
     : WebContextMenuItemData(data.type() == SubmenuType ? ActionType : data.type(), data.action(), data.title(), data.enabled(), data.checked())
 {
-    createGtkActionIfNeeded();
+    createActionIfNeeded();
 }
 
 WebContextMenuItemGtk::WebContextMenuItemGtk(const WebContextMenuItemGtk& data, Vector<WebContextMenuItemGtk>&& submenu)
     : WebContextMenuItemData(ActionType, data.action(), data.title(), data.enabled(), false)
 {
-    m_action = data.gtkAction();
+    m_gAction = G_SIMPLE_ACTION(data.gAction());
+    m_gtkAction = data.gtkAction();
     m_submenuItems = WTFMove(submenu);
 }
 
 WebContextMenuItemGtk::WebContextMenuItemGtk(GtkAction* action)
     : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? CheckableActionType : ActionType, ContextMenuItemBaseApplicationTag, String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) ? gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) : false)
 {
-    m_action = action;
+    m_gtkAction = action;
+    createActionIfNeeded();
+    g_object_set_data_full(G_OBJECT(m_gAction.get()), "webkit-gtk-action", g_object_ref(m_gtkAction), g_object_unref);
 }
 
 WebContextMenuItemGtk::~WebContextMenuItemGtk()
 {
 }
 
-void WebContextMenuItemGtk::createGtkActionIfNeeded()
+void WebContextMenuItemGtk::createActionIfNeeded()
 {
     if (type() == SeparatorType)
         return;
 
-    GUniquePtr<char> actionName(g_strdup_printf("context-menu-action-%d", action()));
-    if (type() == CheckableActionType) {
-        m_action = adoptGRef(GTK_ACTION(gtk_toggle_action_new(actionName.get(), title().utf8().data(), nullptr, gtkStockIDFromContextMenuAction(action()))));
-        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(m_action.get()), checked());
-    } else
-        m_action = adoptGRef(gtk_action_new(actionName.get(), title().utf8().data(), 0, gtkStockIDFromContextMenuAction(action())));
-    gtk_action_set_sensitive(m_action.get(), enabled());
+    static uint64_t actionID = 0;
+    GUniquePtr<char> actionName(g_strdup_printf("action-%" PRIu64, ++actionID));
+    if (type() == CheckableActionType)
+        m_gAction = adoptGRef(g_simple_action_new_stateful(actionName.get(), nullptr, g_variant_new_boolean(checked())));
+    else
+        m_gAction = adoptGRef(g_simple_action_new(actionName.get(), nullptr));
+    g_simple_action_set_enabled(m_gAction.get(), enabled());
+
+    // Create the GtkAction for backwards compatibility only.
+    if (!m_gtkAction) {
+        if (type() == CheckableActionType) {
+            m_gtkAction = GTK_ACTION(gtk_toggle_action_new(actionName.get(), title().utf8().data(), nullptr, gtkStockIDFromContextMenuAction(action())));
+            gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(m_gtkAction), checked());
+        } else
+            m_gtkAction = gtk_action_new(actionName.get(), title().utf8().data(), 0, gtkStockIDFromContextMenuAction(action()));
+        gtk_action_set_sensitive(m_gtkAction, enabled());
+        g_object_set_data_full(G_OBJECT(m_gAction.get()), "webkit-gtk-action", m_gtkAction, g_object_unref);
+    }
+
+    g_signal_connect_object(m_gAction.get(), "activate", G_CALLBACK(gtk_action_activate), m_gtkAction, G_CONNECT_SWAPPED);
 }
 
 } // namespace WebKit

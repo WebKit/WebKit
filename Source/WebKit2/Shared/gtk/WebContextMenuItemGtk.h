@@ -31,6 +31,8 @@
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GtkAction GtkAction;
+typedef struct _GAction GAction;
+typedef struct _GSimpleAction GSimpleAction;
 
 namespace WebKit {
 
@@ -45,13 +47,15 @@ public:
 
     // We don't use the SubmenuType internally, so check if we have submenu items.
     WebCore::ContextMenuItemType type() const { return m_submenuItems.isEmpty() ? WebContextMenuItemData::type() : WebCore::SubmenuType; }
-    GtkAction* gtkAction() const { return m_action.get(); }
+    GtkAction* gtkAction() const { return m_gtkAction; }
+    GAction* gAction() const { return reinterpret_cast<GAction*>(m_gAction.get()); }
     const Vector<WebContextMenuItemGtk>& submenuItems() const { return m_submenuItems; }
 
 private:
-    void createGtkActionIfNeeded();
+    void createActionIfNeeded();
 
-    GRefPtr<GtkAction> m_action;
+    GRefPtr<GSimpleAction> m_gAction;
+    GtkAction* m_gtkAction { nullptr };
     Vector<WebContextMenuItemGtk> m_submenuItems;
 };
 

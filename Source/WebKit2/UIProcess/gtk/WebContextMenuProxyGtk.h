@@ -32,6 +32,9 @@
 #include "WebContextMenuProxy.h"
 #include <WebCore/IntPoint.h>
 #include <wtf/HashMap.h>
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GMenu GMenu;
 
 namespace WebKit {
 
@@ -44,12 +47,13 @@ public:
     WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
     ~WebContextMenuProxyGtk();
 
-    void populate(Vector<WebContextMenuItemGtk>&);
+    void populate(const Vector<WebContextMenuItemGtk>&);
     GtkMenu* gtkMenu() const { return m_menu; }
 
 private:
     void show() override;
-    void append(GtkMenu*, const WebContextMenuItemGtk&);
+    void append(GMenu*, const WebContextMenuItemGtk&);
+    GRefPtr<GMenu> buildMenu(const Vector<WebContextMenuItemGtk>&);
     void populate(const Vector<RefPtr<WebContextMenuItem>>&);
     static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, WebContextMenuProxyGtk*);
 
@@ -57,7 +61,7 @@ private:
     WebPageProxy* m_page;
     GtkMenu* m_menu;
     WebCore::IntPoint m_popupPosition;
-    HashMap<unsigned long, GtkAction*> m_signalHandlers;
+    HashMap<unsigned long, void*> m_signalHandlers;
 };
 
 

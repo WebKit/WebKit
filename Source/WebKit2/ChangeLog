@@ -1,3 +1,30 @@
+2016-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use GMenu internally in the context menu implementation
+        https://bugs.webkit.org/show_bug.cgi?id=162603
+
+        Reviewed by Michael Catanzaro.
+
+        Switch to use GAction instead of GtkAction internally, but still keeping a GtkAction associated to the GAction,
+        because our API depends on GtkAction.
+
+        * Shared/gtk/WebContextMenuItemGtk.cpp:
+        (WebKit::WebContextMenuItemGtk::WebContextMenuItemGtk):
+        (WebKit::WebContextMenuItemGtk::createActionIfNeeded): Create the GAction and the associated GtkAction. Ensure a
+        unique name for the GAction, since the name now matters.
+        * Shared/gtk/WebContextMenuItemGtk.h:
+        (WebKit::WebContextMenuItemGtk::gtkAction):
+        (WebKit::WebContextMenuItemGtk::gAction):
+        (WebKit::WebContextMenuItemGtk::submenuItems): Deleted.
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::contextMenuItemActivatedCallback): Use the GAction.
+        (WebKit::WebContextMenuProxyGtk::append): Create a new GMenuItem for the GAction.
+        (WebKit::WebContextMenuProxyGtk::buildMenu): Build a GMenu for the given items.
+        (WebKit::WebContextMenuProxyGtk::populate): Create a GMenu and bind it ot the GtkMenu.
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk): Create the GActionGroup for the menu.
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk): Remove the action group from the GtkMenu.
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+
 2016-09-27  Daniel Bates  <dabates@apple.com>
 
         NetworkLoad and PingLoad should use private inheritance
