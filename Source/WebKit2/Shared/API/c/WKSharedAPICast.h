@@ -507,8 +507,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
     case WebCore::ContextMenuItemTagShareMenu:
         return kWKContextMenuItemTagShareMenu;
     default:
-        if (action < WebCore::ContextMenuItemBaseApplicationTag)
-            LOG_ERROR("ContextMenuAction %i is an unknown tag but is below the allowable custom tag value of %i", action, WebCore::  ContextMenuItemBaseApplicationTag);
+        if (action < WebCore::ContextMenuItemBaseApplicationTag && !(action >= WebCore::ContextMenuItemBaseCustomTag && action <= WebCore::ContextMenuItemLastCustomTag))
+            LOG_ERROR("ContextMenuAction %i is an unknown tag but is below the allowable custom tag value of %i", action, WebCore::ContextMenuItemBaseApplicationTag);
         return static_cast<WKContextMenuItemTag>(action);
     }
 }
@@ -702,7 +702,7 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
 #endif
     case kWKContextMenuItemTagOpenLinkInThisWindow:
     default:
-        if (tag < kWKContextMenuItemBaseApplicationTag)
+        if (tag < kWKContextMenuItemBaseApplicationTag && !(tag >= WebCore::ContextMenuItemBaseCustomTag && tag <= WebCore::ContextMenuItemLastCustomTag))
             LOG_ERROR("WKContextMenuItemTag %i is an unknown tag but is below the allowable custom tag value of %i", tag, kWKContextMenuItemBaseApplicationTag);
         return static_cast<WebCore::ContextMenuAction>(tag);
     }
