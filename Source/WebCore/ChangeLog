@@ -1,3 +1,17 @@
+2016-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should correctly canonicalize uppercase IPv6 addresses
+        https://bugs.webkit.org/show_bug.cgi?id=162680
+
+        Reviewed by Tim Horton.
+
+        Covered by a new API test.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseIPv6Host):
+        If there is an uppercase character in the IPv6 address part, then it is a syntax violation
+        because the canonicalized IPv6 address differs from the input String.
+
 2016-09-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix iOS build.

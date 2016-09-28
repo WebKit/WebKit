@@ -2111,6 +2111,8 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
                 break;
             if (!isASCIIHexDigit(*c))
                 break;
+            if (isASCIIUpper(*c))
+                syntaxViolation(hostBegin);
             value = value * 0x10 + toASCIIHexValue(*c);
             advance(c, hostBegin);
         }
