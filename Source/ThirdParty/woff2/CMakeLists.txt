@@ -16,6 +16,11 @@ include_directories("${WOFF2_INCLUDE_DIRECTORIES}")
 add_library(woff2 STATIC ${WOFF2_SOURCES})
 target_link_libraries(woff2 brotli)
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(woff2)
+
 if (COMPILER_IS_GCC_OR_CLANG)
-    ADD_TARGET_PROPERTIES(woff2 COMPILE_FLAGS "-Wno-sign-compare -Wno-unused-but-set-variable")
+    ADD_TARGET_PROPERTIES(woff2 COMPILE_FLAGS "-Wno-sign-compare")
+endif ()
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    ADD_TARGET_PROPERTIES(woff2 COMPILE_FLAGS "-Wno-unused-but-set-variable")
 endif ()
