@@ -6758,6 +6758,7 @@ Document& Document::ensureTemplateDocument()
     else
         m_templateDocument = Document::create(nullptr, blankURL());
 
+    m_templateDocument->setContextDocument(contextDocument());
     m_templateDocument->setTemplateDocumentHost(this); // balanced in dtor.
 
     return *m_templateDocument;
