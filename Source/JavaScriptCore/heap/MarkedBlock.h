@@ -29,6 +29,7 @@
 #include "HeapOperation.h"
 #include "IterationStatus.h"
 #include "WeakSet.h"
+#include <wtf/Atomics.h>
 #include <wtf/Bitmap.h>
 #include <wtf/DataLog.h>
 #include <wtf/DoublyLinkedList.h>
