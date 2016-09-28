@@ -90,16 +90,10 @@ static const char* cpuDescriptionForUAString()
 
 static const char* platformForUAString()
 {
-#if PLATFORM(X11)
-    return "X11";
-#elif OS(WINDOWS)
-    return "";
-#elif PLATFORM(MAC)
+#if OS(MAC_OS_X)
     return "Macintosh";
-#elif defined(GDK_WINDOWING_DIRECTFB)
-    return "DirectFB";
 #else
-    return "Unknown";
+    return "X11";
 #endif
 }
 

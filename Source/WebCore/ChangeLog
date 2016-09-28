@@ -1,5 +1,20 @@
 2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Simplify platformForUAString
+        https://bugs.webkit.org/show_bug.cgi?id=162614
+
+        Reviewed by Carlos Garcia Campos.
+
+        Note in particular that the previous PLATFORM(MAC) check was wrong here, as that is never
+        true for GTK; this patch risks changing it to OS(MAC_OS_X), on the hope that advertising Mac
+        when running on Mac might not break anything. If it does, then we should remove it and just
+        always pretend to be on X11.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::platformForUAString):
+
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Bump fake Safari version in UA
         https://bugs.webkit.org/show_bug.cgi?id=162615
 
