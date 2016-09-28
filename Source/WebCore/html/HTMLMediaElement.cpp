@@ -405,6 +405,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
     , m_playbackControlsManagerBehaviorRestrictionsTimer(*this, &HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired)
+    , m_seekToPlaybackPositionEndedTimer(*this, &HTMLMediaElement::seekToPlaybackPositionEndedTimerFired)
     , m_playedTimeRanges()
     , m_asyncEventQueue(*this)
     , m_requestedPlaybackRate(1)
@@ -467,6 +468,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_mediaControlsDependOnPageScaleFactor(false)
     , m_haveSetUpCaptionContainer(false)
 #endif
+    , m_isScrubbingRemotely(false)
 #if ENABLE(VIDEO_TRACK)
     , m_tracksAreReady(true)
     , m_haveVisibleTextTrack(false)
@@ -4560,6 +4562,37 @@ void HTMLMediaElement::addBehaviorRestrictionsOnEndIfNecessary()
     m_playbackControlsManagerBehaviorRestrictionsTimer.startOneShot(HideMediaControlsAfterEndedDelay);
 }
 
+void HTMLMediaElement::handleSeekToPlaybackPosition(double position)
+{
+#if PLATFORM(MAC)
+    // FIXME: This should ideally use faskSeek, but this causes MediaRemote's playhead to flicker upon release.
+    // Please see <rdar://problem/28457219> for more details.
+    seek(MediaTime::createWithDouble(position));
+    m_seekToPlaybackPositionEndedTimer.stop();
+    m_seekToPlaybackPositionEndedTimer.startOneShot(0.5);
+
+    if (!m_isScrubbingRemotely) {
+        m_isScrubbingRemotely = true;
+        if (!paused())
+            pauseInternal();
+    }
+#else
+    fastSeek(position);
+#endif
+}
+
+void HTMLMediaElement::seekToPlaybackPositionEndedTimerFired()
+{
+#if PLATFORM(MAC)
+    if (!m_isScrubbingRemotely)
+        return;
+
+    PlatformMediaSessionManager::sharedManager().sessionDidEndRemoteScrubbing(*m_mediaSession);
+    m_isScrubbingRemotely = false;
+    m_seekToPlaybackPositionEndedTimer.stop();
+#endif
+}
+
 void HTMLMediaElement::mediaPlayerVolumeChanged(MediaPlayer*)
 {
     LOG(Media, "HTMLMediaElement::mediaPlayerVolumeChanged(%p)", this);
@@ -6992,7 +7025,7 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     case PlatformMediaSession::SeekToPlaybackPositionCommand:
         ASSERT(argument);
         if (argument)
-            fastSeek(argument->asDouble);
+            handleSeekToPlaybackPosition(argument->asDouble);
         break;
     default:
         { } // Do nothing
