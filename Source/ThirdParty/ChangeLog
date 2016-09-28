@@ -1,3 +1,12 @@
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        woff2 upgrade introduces compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=162678
+
+        Reviewed by Alex Christensen.
+
+        * woff2/CMakeLists.txt:
+
 2016-09-28  Khaled Hosny  <khaledhosny@eglug.org>
 
         Update woff2 to latest revision
