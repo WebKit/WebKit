@@ -35,6 +35,7 @@ namespace WebCore {
     macro(addTrack) \
     macro(appendFromJS) \
     macro(body) \
+    macro(cancel) \
     macro(cloneForJS) \
     macro(closeRequested) \
     macro(closedPromiseCapability) \

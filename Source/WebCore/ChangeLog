@@ -1,3 +1,31 @@
+2016-09-28  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Streams API] Align cancelReadableStream() with spec
+        https://bugs.webkit.org/show_bug.cgi?id=162556
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Aligned cancelReadableStream() with Streams API. In particular, private cancel() method
+        was added to ReadableStreamDefaultController and function name was replaced by readableStreamCancel().
+        Implementation of cancel() (as well as pull()) is actually made in ReadableStreamInternals.js to
+        avoid creating new function for each controller.
+
+        No change in behaviour.
+
+        * Modules/streams/ReadableStream.js:
+        (cancel): Updated with reference to readableStreamCancel().
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        (cancel): Updated with reference to readableStreamCancel().
+        * Modules/streams/ReadableStreamInternals.js:
+        (privateInitializeReadableStreamDefaultController): Refer to external functions (cancel/pull) to avoid
+        creating new functions.
+        (teeReadableStreamBranch2CancelFunction): Updated with reference to readableStreamCancel().
+        (readableStreamCancel): New name for cancelReadableStream(), behaviour aligned with spec.
+        (readableStreamDefaultControllerCancel): Added to avoid creating new function for each controller.
+        (readableStreamDefaultControllerPull): Added to avoid creating new function for each controller.
+        (readFromReadableStreamDefaultReader): Updated call to pull method to pass controller.
+        * bindings/js/WebCoreBuiltinNames.h: Added "cancel".
+
 2016-09-27  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix debug build break since r206481. Unreviewed

@@ -74,7 +74,7 @@ function cancel(reason)
     if (@isReadableStreamLocked(this))
         return @Promise.@reject(new @TypeError("ReadableStream is locked"));
 
-    return @cancelReadableStream(this, reason);
+    return @readableStreamCancel(this, reason);
 }
 
 function getReader(options)

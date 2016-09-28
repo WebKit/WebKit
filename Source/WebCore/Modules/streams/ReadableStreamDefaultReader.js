@@ -35,7 +35,7 @@ function cancel(reason)
     if (!this.@ownerReadableStream)
         return @Promise.@reject(new @TypeError("cancel() called on a reader owned by no readable stream"));
 
-    return @cancelReadableStream(this.@ownerReadableStream, reason);
+    return @readableStreamCancel(this.@ownerReadableStream, reason);
 }
 
 function read()

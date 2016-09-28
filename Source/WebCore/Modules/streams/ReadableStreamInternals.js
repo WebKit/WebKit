@@ -82,22 +82,9 @@ function privateInitializeReadableStreamDefaultController(stream, underlyingSour
             @readableStreamDefaultControllerError(controller, error);
     });
 
-    this.@pull = function() {
-        "use strict";
+    this.@cancel = @readableStreamDefaultControllerCancel;
 
-        const stream = controller.@controlledReadableStream;
-        if (controller.@queue.content.length) {
-            const chunk = @dequeueValue(controller.@queue);
-            if (controller.@closeRequested && controller.@queue.content.length === 0)
-                @closeReadableStream(stream);
-            else
-                @requestReadableStreamPull(controller);
-            return @Promise.@resolve({value: chunk, done: false});
-        }
-        const pendingPromise = @readableStreamAddReadRequest(stream);
-        @requestReadableStreamPull(controller);
-        return pendingPromise;
-    }
+    this.@pull = @readableStreamDefaultControllerPull;
 
     return this;
 }
@@ -206,7 +193,7 @@ function teeReadableStreamBranch1CancelFunction(teeState, stream)
         teeState.canceled1 = true;
         teeState.reason1 = r;
         if (teeState.canceled2) {
-            @cancelReadableStream(stream, [teeState.reason1, teeState.reason2]).@then(
+            @readableStreamCancel(stream, [teeState.reason1, teeState.reason2]).@then(
                 teeState.cancelPromiseCapability.@resolve,
                 teeState.cancelPromiseCapability.@reject);
         }
@@ -222,7 +209,7 @@ function teeReadableStreamBranch2CancelFunction(teeState, stream)
         teeState.canceled2 = true;
         teeState.reason2 = r;
         if (teeState.canceled1) {
-            @cancelReadableStream(stream, [teeState.reason1, teeState.reason2]).@then(
+            @readableStreamCancel(stream, [teeState.reason1, teeState.reason2]).@then(
                 teeState.cancelPromiseCapability.@resolve,
                 teeState.cancelPromiseCapability.@reject);
         }
@@ -336,7 +323,7 @@ function readableStreamDefaultControllerGetDesiredSize(controller)
    return controller.@strategy.highWaterMark - controller.@queue.size;
 }
 
-function cancelReadableStream(stream, reason)
+function readableStreamCancel(stream, reason)
 {
     "use strict";
 
@@ -346,17 +333,34 @@ function cancelReadableStream(stream, reason)
     if (stream.@state === @streamErrored)
         return @Promise.@reject(stream.@storedError);
     @closeReadableStream(stream);
-    // FIXME: Fix below, which is a temporary solution to the case where controller is undefined.
-    // This issue is due to the fact that in previous version of the spec, cancel was associated
-    // to underlyingSource, whereas in new version it is associated to controller. As this patch
-    // does not yet fully implement the new version, this solution is used.
-    const controller = stream.@readableStreamController;
-    var underlyingSource = @undefined;
-    if (controller !== @undefined)
-        underlyingSource = controller.@underlyingSource;
-    return @promiseInvokeOrNoop(underlyingSource, "cancel", [reason]).@then(function() { });
+    return stream.@readableStreamController.@cancel(stream.@readableStreamController, reason).@then(function() {  });
 }
 
+function readableStreamDefaultControllerCancel(controller, reason)
+{
+    "use strict";
+
+    controller.@queue = @newQueue();
+    return @promiseInvokeOrNoop(controller.@underlyingSource, "cancel", [reason]);
+}
+
+function readableStreamDefaultControllerPull(controller)
+{
+    "use strict";
+
+    const stream = controller.@controlledReadableStream;
+    if (controller.@queue.content.length) {
+        const chunk = @dequeueValue(controller.@queue);
+        if (controller.@closeRequested && controller.@queue.content.length === 0)
+            @closeReadableStream(stream);
+        else
+            @requestReadableStreamPull(controller);
+        return @Promise.@resolve({value: chunk, done: false});
+    }
+    const pendingPromise = @readableStreamAddReadRequest(stream);
+    @requestReadableStreamPull(controller);
+    return pendingPromise;
+}
 
 function readableStreamDefaultControllerClose(controller)
 {
@@ -433,7 +437,7 @@ function readFromReadableStreamDefaultReader(reader)
         return @Promise.@reject(stream.@storedError);
     @assert(stream.@state === @streamReadable);
 
-    return stream.@readableStreamController.@pull();
+    return stream.@readableStreamController.@pull(stream.@readableStreamController);
 }
 
 function readableStreamAddReadRequest(stream)
