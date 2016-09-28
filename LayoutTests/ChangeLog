@@ -1,3 +1,15 @@
+2016-09-28  Youenn Fablet  <youenn@apple.com>
+
+        WebCore::ResourceErrorBase::setType is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=162484
+        <rdar://problem/28390828>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/xmlhttprequest/on-network-timeout-error-during-preflight-expected.txt: Added.
+        * http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html: Added.
+        * tests-options.json: Marking test as slow.
+
 2016-09-28  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] In SourceBufferPrivateAVFObjC::abort(), support reseting parser to the last appended initialization segment.

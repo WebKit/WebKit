@@ -1,3 +1,28 @@
+2016-09-28  Youenn Fablet  <youenn@apple.com>
+
+        WebCore::ResourceErrorBase::setType is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=162484
+        <rdar://problem/28390828>
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html
+
+        Behavior is slightly changed as we are no longer casting Timeout preflight errors as AccessControl errors.
+        This is more inline with fetch spec which prescribes to send back any error received by preflight as response error for fetch.
+
+        Ideally, we should not need to change errors received during preflight loads but the error type is important for some clients:
+        - EventSource may try to reconnect if error is not AccessControl
+        - XMLHttpRequest will send abort events in case of Cancellation errors and timeout events in case of Timeout errors
+
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::notifyFinished): Setting error type to AccessControl except in case of Timeout.
+        (WebCore::CrossOriginPreflightChecker::doPreflight): Ditto.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::preflightFailure): Removing ASSERT since Timeout errors may be returned.
+        * platform/network/ResourceErrorBase.h:
+        (WebCore::ResourceErrorBase::isGeneral): New getter.
+
 2016-09-28  Jer Noble  <jer.noble@apple.com>
 
         PiP shows incorrect state of play button.

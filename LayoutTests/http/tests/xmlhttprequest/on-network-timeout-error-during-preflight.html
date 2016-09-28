@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>XMLHttpRequest: A timeout network error during preflight should end up in a timeout event</title>
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <div id="log"></div>
+    <script>
+      var test = async_test("Testing timing out preflight")
+      test.step(function() {
+        var client = new XMLHttpRequest()
+        var url = "http://localhost:8000/misc/resources/delayed-log.php?delay=10000000"
+        client.open("GET", url, true)
+        client.setRequestHeader("X-Custom", "test")
+        client.hasTimedout = false;
+        client.ontimeout = test.step_func(function () {
+            client.hasTimedout = true
+        })
+        client.onloadend = test.step_func(function () {
+            assert_true(client.hasTimedout, "xhr should have timed out")
+            test.done()
+        })
+        client.send(null)
+      })
+    </script>
+  </body>
+</html>
+

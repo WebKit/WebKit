@@ -1,4 +1,7 @@
 {
+    "http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html": [
+        "slow"
+    ],
     "imported/w3c/syntax/parsing/html5lib_adoption01.html": [
         "slow"
     ],
