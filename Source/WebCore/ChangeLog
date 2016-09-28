@@ -1,3 +1,18 @@
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add Chrome UA quirk
+        https://bugs.webkit.org/show_bug.cgi?id=162617
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add Chrome UA quirk and use it on typekit.net, typekit.com, youtube.com, slack.com, and
+        any domain that begins with "google".
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::buildUserAgentString):
+        (WebCore::urlRequiresChromeBrowser):
+        (WebCore::standardUserAgentForURL):
+
 2016-09-28  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] In SourceBufferPrivateAVFObjC::abort(), support reseting parser to the last appended initialization segment.
