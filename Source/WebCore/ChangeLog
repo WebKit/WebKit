@@ -1,3 +1,24 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        <a download> does not honor the same-origin requirement
+        https://bugs.webkit.org/show_bug.cgi?id=156100
+
+        Reviewed by Alex Christensen.
+
+        We now completely ignore the "download" attribute on anchors if the
+        href URL is cross-origin. We therefore navigate to the URL instead
+        of forcefully downloading it in this case and leave it up to the server
+        to give us the right headers if it should be downloaded. This is
+        conservative and matches Firefox.
+
+        Chrome and the HTML specification ignore only the suggested filename
+        if the URL is cross-origin but still download the file.
+
+        No new tests, updated existing test.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+
 2016-09-27  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: Handle windows drive letters after two slashes in relative URLs according to spec

@@ -363,12 +363,15 @@ void HTMLAnchorElement::handleClick(Event& event)
     StringBuilder url;
     url.append(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(hrefAttr)));
     appendServerMapMousePosition(url, event);
-    URL kurl = document().completeURL(url.toString());
+    URL completedURL = document().completeURL(url.toString());
 
     auto downloadAttribute = nullAtom;
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     if (RuntimeEnabledFeatures::sharedFeatures().downloadAttributeEnabled()) {
-        downloadAttribute = attributeWithoutSynchronization(downloadAttr);
+        // Ignore the download attribute completely if the href URL is cross origin.
+        bool isSameOrigin = completedURL.protocolIsData() || document().securityOrigin()->canRequest(completedURL);
+        if (isSameOrigin)
+            downloadAttribute = attributeWithoutSynchronization(downloadAttr);
         // If the a element has a download attribute and the algorithm is not triggered by user activation
         // then abort these steps.
         // https://html.spec.whatwg.org/#the-a-element:triggered-by-user-activation
@@ -377,9 +380,9 @@ void HTMLAnchorElement::handleClick(Event& event)
     }
 #endif
 
-    frame->loader().urlSelected(kurl, target(), &event, LockHistory::No, LockBackForwardList::No, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), downloadAttribute);
+    frame->loader().urlSelected(completedURL, target(), &event, LockHistory::No, LockBackForwardList::No, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), downloadAttribute);
 
-    sendPings(kurl);
+    sendPings(completedURL);
 }
 
 HTMLAnchorElement::EventType HTMLAnchorElement::eventType(Event& event)

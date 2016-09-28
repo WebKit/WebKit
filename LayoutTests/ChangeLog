@@ -1,3 +1,20 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        <a download> does not honor the same-origin requirement
+        https://bugs.webkit.org/show_bug.cgi?id=156100
+
+        Reviewed by Alex Christensen.
+
+        Update existing cross origin test as it expected the suggested filename to
+        be ignored but the file to still be downloaded (Chrome behavior) instead
+        of the download attribute to be completely ignored and therefore navigate
+        (Firefox behavior).
+
+        * TestExpectations:
+        * http/tests/resources/pass-notify-done.html: Added.
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+        * http/tests/security/anchor-download-block-crossorigin.html:
+
 2016-09-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/xmlhttprequest/onabort-response-getters.html as failing on Sierra.

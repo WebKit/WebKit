@@ -4,15 +4,15 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script>
     if (window.testRunner)
-        testRunner.waitUntilDownloadFinished();
+        testRunner.waitUntilDone();
 </script>
 </head>
 <body>
 <p>
-Tests that a suggested filename on a download attribute is ignored if 
-<a id="dl" href="http://localhost:8080/security/resources/attachment.php" download="foo.pdf">the link</a> is cross origin.
+Tests that the download attribute is ignored if 
+<a id="dl" href="http://localhost:8080/resources/pass-notify-done.html" download="FAIL.pdf">the link</a> is cross origin.
 <p>
-The suggested filename at the top should be empty.
+It should navigate instead of downloading the file.
 <script>
     function click(elmt)
     {

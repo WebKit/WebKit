@@ -898,9 +898,6 @@ fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
 
-# <a download> does not honor cross-origin restrictions
-webkit.org/b/156100 http/tests/security/anchor-download-block-crossorigin.html [ Failure ]
-
 webkit.org/b/157849 fast/frames/crash-during-iframe-load-stop.html [ Pass Timeout ]
 
 webkit.org/b/158085 http/tests/css/shared-stylesheet-mutation.html [ Pass Failure ]
