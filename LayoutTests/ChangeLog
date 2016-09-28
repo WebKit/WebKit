@@ -1,3 +1,15 @@
+2016-09-27  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r204552): Yelp carousel animation is not smooth.
+        https://bugs.webkit.org/show_bug.cgi?id=162632
+
+        Reviewed by Simon Fraser.
+
+        * compositing/hidpi-composited-container-and-graphics-layer-gap-changes-expected.html: Added.
+        * compositing/hidpi-composited-container-and-graphics-layer-gap-changes.html: Added.
+        * compositing/hidpi-negative-composited-bounds-on-device-pixel-expected.html: Added.
+        * compositing/hidpi-negative-composited-bounds-on-device-pixel.html: Added.
+
 2016-09-27  Chris Dumez  <cdumez@apple.com>
 
         <a download> does not honor the same-origin requirement

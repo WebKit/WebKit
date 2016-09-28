@@ -1,3 +1,24 @@
+2016-09-27  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r204552): Yelp carousel animation is not smooth.
+        https://bugs.webkit.org/show_bug.cgi?id=162632
+
+        Reviewed by Simon Fraser.
+
+        For composited state changes when the layers don't need rebuilding, the updateGeometry() traversal
+        is post-order (see webkit.org/162634), so we can't rely on the offsetfromRenderer() value when
+        computing the graphics layer position on the descendants. We need this workaround until after webkit.org/162634
+        gets fixed.
+
+        Tests: compositing/hidpi-composited-container-and-graphics-layer-gap-changes.html
+               compositing/hidpi-negative-composited-bounds-on-device-pixel.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::computeOffsetFromAncestorGraphicsLayer):
+        (WebCore::ComputedOffsets::ComputedOffsets):
+        (WebCore::ComputedOffsets::fromAncestorGraphicsLayer):
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect):
+
 2016-09-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Move caching the ImageFrame from BitmapImage to ImageSource
