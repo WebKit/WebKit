@@ -1,3 +1,58 @@
+2016-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Inline critical functions in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=162653
+
+        Reviewed by Myles C. Maxfield.
+
+        This gives me about a 15% speed improvement.
+
+        * platform/URLParser.cpp:
+        (WebCore::CodePointIterator::CodePointIterator):
+        (WebCore::CodePointIterator::operator==):
+        (WebCore::CodePointIterator::operator!=):
+        (WebCore::CodePointIterator::operator=):
+        (WebCore::CodePointIterator::atEnd):
+        (WebCore::CodePointIterator::codeUnitsSince):
+        (WebCore::CodePointIterator<LChar>::operator):
+        (WebCore::CodePointIterator<UChar>::operator):
+        (WebCore::appendCodePoint):
+        (WebCore::isC0Control):
+        (WebCore::isC0ControlOrSpace):
+        (WebCore::isTabOrNewline):
+        (WebCore::isInSimpleEncodeSet):
+        (WebCore::isInDefaultEncodeSet):
+        (WebCore::isInUserInfoEncodeSet):
+        (WebCore::isInvalidDomainCharacter):
+        (WebCore::isPercentOrNonASCII):
+        (WebCore::isSlashQuestionOrHash):
+        (WebCore::isValidSchemeCharacter):
+        (WebCore::URLParser::advance):
+        (WebCore::URLParser::isWindowsDriveLetter):
+        (WebCore::URLParser::appendToASCIIBuffer):
+        (WebCore::percentEncodeByte):
+        (WebCore::URLParser::utf8PercentEncode):
+        (WebCore::URLParser::utf8QueryEncode):
+        (WebCore::isDefaultPort):
+        (WebCore::isSpecialScheme):
+        (WebCore::isPercentEncodedDot):
+        (WebCore::isSingleDotPathSegment):
+        (WebCore::isDoubleDotPathSegment):
+        (WebCore::consumeSingleDotPathSegment):
+        (WebCore::consumeDoubleDotPathSegment):
+        (WebCore::URLParser::popPath):
+        (WebCore::URLParser::parsedDataView):
+        (WebCore::URLParser::currentPosition):
+        (WebCore::zeroSequenceLength):
+        (WebCore::findLongestZeroSequence):
+        (WebCore::pow256):
+        (WebCore::percentDecode):
+        (WebCore::containsOnlyASCII):
+        (WebCore::domainToASCII):
+        (WebCore::hasInvalidDomainCharacter):
+        (WebCore::formURLDecode):
+        (WebCore::serializeURLEncodedForm):
+
 2016-09-27  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r204552): Yelp carousel animation is not smooth.

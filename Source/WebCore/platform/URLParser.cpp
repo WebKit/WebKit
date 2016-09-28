@@ -36,49 +36,49 @@ namespace WebCore {
 template<typename CharacterType>
 class CodePointIterator {
 public:
-    CodePointIterator() { }
-    CodePointIterator(const CharacterType* begin, const CharacterType* end)
+    ALWAYS_INLINE CodePointIterator() { }
+    ALWAYS_INLINE CodePointIterator(const CharacterType* begin, const CharacterType* end)
         : m_begin(begin)
         , m_end(end)
     {
     }
     
-    CodePointIterator(const CodePointIterator& begin, const CodePointIterator& end)
+    ALWAYS_INLINE CodePointIterator(const CodePointIterator& begin, const CodePointIterator& end)
         : CodePointIterator(begin.m_begin, end.m_begin)
     {
         ASSERT(end.m_begin >= begin.m_begin);
     }
     
-    UChar32 operator*() const;
-    CodePointIterator& operator++();
+    ALWAYS_INLINE UChar32 operator*() const;
+    ALWAYS_INLINE CodePointIterator& operator++();
 
-    bool operator==(const CodePointIterator& other) const
+    ALWAYS_INLINE bool operator==(const CodePointIterator& other) const
     {
         return m_begin == other.m_begin
             && m_end == other.m_end;
     }
-    bool operator!=(const CodePointIterator& other) const { return !(*this == other); }
+    ALWAYS_INLINE bool operator!=(const CodePointIterator& other) const { return !(*this == other); }
     
-    CodePointIterator& operator=(const CodePointIterator& other)
+    ALWAYS_INLINE CodePointIterator& operator=(const CodePointIterator& other)
     {
         m_begin = other.m_begin;
         m_end = other.m_end;
         return *this;
     }
 
-    bool atEnd() const
+    ALWAYS_INLINE bool atEnd() const
     {
         ASSERT(m_begin <= m_end);
         return m_begin >= m_end;
     }
     
-    size_t codeUnitsSince(const CharacterType* reference) const
+    ALWAYS_INLINE size_t codeUnitsSince(const CharacterType* reference) const
     {
         ASSERT(m_begin >= reference);
         return m_begin - reference;
     }
 
-    size_t codeUnitsSince(const CodePointIterator& other) const
+    ALWAYS_INLINE size_t codeUnitsSince(const CodePointIterator& other) const
     {
         return codeUnitsSince(other.m_begin);
     }
@@ -89,14 +89,14 @@ private:
 };
 
 template<>
-UChar32 CodePointIterator<LChar>::operator*() const
+ALWAYS_INLINE UChar32 CodePointIterator<LChar>::operator*() const
 {
     ASSERT(!atEnd());
     return *m_begin;
 }
 
 template<>
-auto CodePointIterator<LChar>::operator++() -> CodePointIterator&
+ALWAYS_INLINE auto CodePointIterator<LChar>::operator++() -> CodePointIterator&
 {
     ASSERT(!atEnd());
     m_begin++;
@@ -104,7 +104,7 @@ auto CodePointIterator<LChar>::operator++() -> CodePointIterator&
 }
 
 template<>
-UChar32 CodePointIterator<UChar>::operator*() const
+ALWAYS_INLINE UChar32 CodePointIterator<UChar>::operator*() const
 {
     ASSERT(!atEnd());
     UChar32 c;
@@ -113,7 +113,7 @@ UChar32 CodePointIterator<UChar>::operator*() const
 }
 
 template<>
-auto CodePointIterator<UChar>::operator++() -> CodePointIterator&
+ALWAYS_INLINE auto CodePointIterator<UChar>::operator++() -> CodePointIterator&
 {
     ASSERT(!atEnd());
     unsigned i = 0;
@@ -123,7 +123,7 @@ auto CodePointIterator<UChar>::operator++() -> CodePointIterator&
     return *this;
 }
     
-static void appendCodePoint(Vector<UChar>& destination, UChar32 codePoint)
+ALWAYS_INLINE static void appendCodePoint(Vector<UChar>& destination, UChar32 codePoint)
 {
     if (U_IS_BMP(codePoint)) {
         destination.append(static_cast<UChar>(codePoint));
@@ -402,20 +402,20 @@ static const uint8_t characterClassTable[256] = {
     QueryPercent, // 0xFF
 };
 
-template<typename CharacterType> inline static bool isC0Control(CharacterType character) { return character <= 0x1F; }
-template<typename CharacterType> inline static bool isC0ControlOrSpace(CharacterType character) { return character <= 0x20; }
-template<typename CharacterType> inline static bool isTabOrNewline(CharacterType character) { return character <= 0xD && character >= 0x9 && character != 0xB && character != 0xC; }
-template<typename CharacterType> inline static bool isInSimpleEncodeSet(CharacterType character) { return character > 0x7E || isC0Control(character); }
-template<typename CharacterType> inline static bool isInDefaultEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & Default; }
-template<typename CharacterType> inline static bool isInUserInfoEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & UserInfo; }
-template<typename CharacterType> inline static bool isInvalidDomainCharacter(CharacterType character) { return character <= ']' && characterClassTable[character] & InvalidDomain; }
-template<typename CharacterType> inline static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
-template<typename CharacterType> inline static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
-template<typename CharacterType> inline static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & Scheme; }
+template<typename CharacterType> ALWAYS_INLINE static bool isC0Control(CharacterType character) { return character <= 0x1F; }
+template<typename CharacterType> ALWAYS_INLINE static bool isC0ControlOrSpace(CharacterType character) { return character <= 0x20; }
+template<typename CharacterType> ALWAYS_INLINE static bool isTabOrNewline(CharacterType character) { return character <= 0xD && character >= 0x9 && character != 0xB && character != 0xC; }
+template<typename CharacterType> ALWAYS_INLINE static bool isInSimpleEncodeSet(CharacterType character) { return character > 0x7E || isC0Control(character); }
+template<typename CharacterType> ALWAYS_INLINE static bool isInDefaultEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & Default; }
+template<typename CharacterType> ALWAYS_INLINE static bool isInUserInfoEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & UserInfo; }
+template<typename CharacterType> ALWAYS_INLINE static bool isInvalidDomainCharacter(CharacterType character) { return character <= ']' && characterClassTable[character] & InvalidDomain; }
+template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
+template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
+template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & Scheme; }
 static bool shouldPercentEncodeQueryByte(uint8_t byte) { return characterClassTable[byte] & QueryPercent; }
 
 template<typename CharacterType>
-void URLParser::advance(CodePointIterator<CharacterType>& iterator, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
+ALWAYS_INLINE void URLParser::advance(CodePointIterator<CharacterType>& iterator, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
     ++iterator;
     while (UNLIKELY(!iterator.atEnd() && isTabOrNewline(*iterator))) {
@@ -425,7 +425,7 @@ void URLParser::advance(CodePointIterator<CharacterType>& iterator, const CodePo
 }
 
 template<typename CharacterType>
-bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
+ALWAYS_INLINE bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
 {
     if (iterator.atEnd() || !isASCIIAlpha(*iterator))
         return false;
@@ -441,7 +441,7 @@ bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
     return false;
 }
 
-void URLParser::appendToASCIIBuffer(UChar32 codePoint)
+ALWAYS_INLINE void URLParser::appendToASCIIBuffer(UChar32 codePoint)
 {
     ASSERT(m_unicodeFragmentBuffer.isEmpty());
     ASSERT(isASCII(codePoint));
@@ -449,7 +449,7 @@ void URLParser::appendToASCIIBuffer(UChar32 codePoint)
         m_asciiBuffer.append(codePoint);
 }
 
-void URLParser::appendToASCIIBuffer(const char* characters, size_t length)
+ALWAYS_INLINE void URLParser::appendToASCIIBuffer(const char* characters, size_t length)
 {
     ASSERT(m_unicodeFragmentBuffer.isEmpty());
     if (UNLIKELY(m_didSeeSyntaxViolation))
@@ -484,7 +484,7 @@ bool URLParser::shouldCopyFileURL(CodePointIterator<CharacterType> iterator)
     return !isSlashQuestionOrHash(*iterator);
 }
 
-inline static void percentEncodeByte(uint8_t byte, Vector<LChar>& buffer)
+static void percentEncodeByte(uint8_t byte, Vector<LChar>& buffer)
 {
     buffer.append('%');
     buffer.append(upperNibbleToASCIIHexDigit(byte));
@@ -502,7 +502,7 @@ const char replacementCharacterUTF8PercentEncoded[10] = "%EF%BF%BD";
 const size_t replacementCharacterUTF8PercentEncodedLength = sizeof(replacementCharacterUTF8PercentEncoded) - 1;
 
 template<bool(*isInCodeSet)(UChar32), typename CharacterType>
-void URLParser::utf8PercentEncode(const CodePointIterator<CharacterType>& iterator)
+ALWAYS_INLINE void URLParser::utf8PercentEncode(const CodePointIterator<CharacterType>& iterator)
 {
     ASSERT(!iterator.atEnd());
     UChar32 codePoint = *iterator;
@@ -530,7 +530,7 @@ void URLParser::utf8PercentEncode(const CodePointIterator<CharacterType>& iterat
 }
 
 template<typename CharacterType>
-void URLParser::utf8QueryEncode(const CodePointIterator<CharacterType>& iterator)
+ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterType>& iterator)
 {
     ASSERT(!iterator.atEnd());
     UChar32 codePoint = *iterator;
@@ -577,7 +577,7 @@ void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& enc
     }
 }
 
-inline static bool isDefaultPort(StringView scheme, uint16_t port)
+ALWAYS_INLINE static bool isDefaultPort(StringView scheme, uint16_t port)
 {
     static const uint16_t ftpPort = 21;
     static const uint16_t gopherPort = 70;
@@ -637,7 +637,7 @@ inline static bool isDefaultPort(StringView scheme, uint16_t port)
     }
 }
 
-inline static bool isSpecialScheme(StringView scheme)
+ALWAYS_INLINE static bool isSpecialScheme(StringView scheme)
 {
     auto length = scheme.length();
     if (!length)
@@ -818,7 +818,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
 static const char* dotASCIICode = "2e";
 
 template<typename CharacterType>
-inline static bool isPercentEncodedDot(CodePointIterator<CharacterType> c)
+ALWAYS_INLINE static bool isPercentEncodedDot(CodePointIterator<CharacterType> c)
 {
     if (c.atEnd())
         return false;
@@ -836,7 +836,7 @@ inline static bool isPercentEncodedDot(CodePointIterator<CharacterType> c)
 }
 
 template<typename CharacterType>
-inline static bool isSingleDotPathSegment(CodePointIterator<CharacterType> c)
+ALWAYS_INLINE static bool isSingleDotPathSegment(CodePointIterator<CharacterType> c)
 {
     if (c.atEnd())
         return false;
@@ -860,7 +860,7 @@ inline static bool isSingleDotPathSegment(CodePointIterator<CharacterType> c)
 }
 
 template<typename CharacterType>
-inline static bool isDoubleDotPathSegment(CodePointIterator<CharacterType> c)
+ALWAYS_INLINE static bool isDoubleDotPathSegment(CodePointIterator<CharacterType> c)
 {
     if (c.atEnd())
         return false;
@@ -884,7 +884,7 @@ inline static bool isDoubleDotPathSegment(CodePointIterator<CharacterType> c)
 }
 
 template<typename CharacterType>
-inline static void consumeSingleDotPathSegment(CodePointIterator<CharacterType>& c)
+static void consumeSingleDotPathSegment(CodePointIterator<CharacterType>& c)
 {
     ASSERT(isSingleDotPathSegment(c));
     if (*c == '.') {
@@ -912,7 +912,7 @@ inline static void consumeSingleDotPathSegment(CodePointIterator<CharacterType>&
 }
 
 template<typename CharacterType>
-inline static void consumeDoubleDotPathSegment(CodePointIterator<CharacterType>& c)
+static void consumeDoubleDotPathSegment(CodePointIterator<CharacterType>& c)
 {
     ASSERT(isDoubleDotPathSegment(c));
     if (*c == '.')
@@ -930,6 +930,7 @@ inline static void consumeDoubleDotPathSegment(CodePointIterator<CharacterType>&
 
 void URLParser::popPath()
 {
+    ASSERT(m_didSeeSyntaxViolation);
     if (m_url.m_pathAfterLastSlash > m_url.m_portEnd + 1) {
         m_url.m_pathAfterLastSlash--;
         if (m_asciiBuffer[m_url.m_pathAfterLastSlash] == '/')
@@ -990,7 +991,7 @@ void URLParser::failure()
     m_url.m_string = m_inputString;
 }
 
-StringView URLParser::parsedDataView(size_t start, size_t length)
+ALWAYS_INLINE StringView URLParser::parsedDataView(size_t start, size_t length)
 {
     if (UNLIKELY(m_didSeeSyntaxViolation)) {
         ASSERT(start + length <= m_asciiBuffer.size());
@@ -1001,7 +1002,7 @@ StringView URLParser::parsedDataView(size_t start, size_t length)
 }
 
 template<typename CharacterType>
-size_t URLParser::currentPosition(const CodePointIterator<CharacterType>& iterator)
+ALWAYS_INLINE size_t URLParser::currentPosition(const CodePointIterator<CharacterType>& iterator)
 {
     if (UNLIKELY(m_didSeeSyntaxViolation)) {
         ASSERT(m_unicodeFragmentBuffer.isEmpty());
@@ -1890,7 +1891,7 @@ void URLParser::serializeIPv4(IPv4Address address)
     appendNumberToASCIIBuffer<uint8_t>(address);
 }
     
-inline static size_t zeroSequenceLength(const std::array<uint16_t, 8>& address, size_t begin)
+static size_t zeroSequenceLength(const std::array<uint16_t, 8>& address, size_t begin)
 {
     size_t end = begin;
     for (; end < 8; end++) {
@@ -1900,7 +1901,7 @@ inline static size_t zeroSequenceLength(const std::array<uint16_t, 8>& address, 
     return end - begin;
 }
 
-inline static Optional<size_t> findLongestZeroSequence(const std::array<uint16_t, 8>& address)
+static Optional<size_t> findLongestZeroSequence(const std::array<uint16_t, 8>& address)
 {
     Optional<size_t> longest;
     size_t longestLength = 0;
@@ -2022,7 +2023,7 @@ Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& 
     return value;
 }
 
-inline static uint64_t pow256(size_t exponent)
+ALWAYS_INLINE static uint64_t pow256(size_t exponent)
 {
     RELEASE_ASSERT(exponent <= 4);
     uint64_t values[5] = {1, 256, 256 * 256, 256 * 256 * 256, 256ull * 256 * 256 * 256 };
@@ -2177,7 +2178,7 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
 
 const size_t defaultInlineBufferSize = 2048;
 
-inline static Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar* input, size_t length)
+static Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar* input, size_t length)
 {
     Vector<LChar, defaultInlineBufferSize> output;
     output.reserveInitialCapacity(length);
@@ -2198,14 +2199,14 @@ inline static Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar* 
     return output;
 }
 
-inline static bool containsOnlyASCII(const String& string)
+ALWAYS_INLINE static bool containsOnlyASCII(const String& string)
 {
     if (string.is8Bit())
         return charactersAreAllASCII(string.characters8(), string.length());
     return charactersAreAllASCII(string.characters16(), string.length());
 }
 
-inline static Optional<Vector<LChar, defaultInlineBufferSize>> domainToASCII(const String& domain)
+static Optional<Vector<LChar, defaultInlineBufferSize>> domainToASCII(const String& domain)
 {
     Vector<LChar, defaultInlineBufferSize> ascii;
     if (containsOnlyASCII(domain)) {
@@ -2251,7 +2252,7 @@ inline static Optional<Vector<LChar, defaultInlineBufferSize>> domainToASCII(con
     return Nullopt;
 }
 
-inline static bool hasInvalidDomainCharacter(const Vector<LChar, defaultInlineBufferSize>& asciiDomain)
+static bool hasInvalidDomainCharacter(const Vector<LChar, defaultInlineBufferSize>& asciiDomain)
 {
     for (size_t i = 0; i < asciiDomain.size(); ++i) {
         if (isInvalidDomainCharacter(asciiDomain[i]))
@@ -2399,7 +2400,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
     return true;
 }
 
-inline static Optional<String> formURLDecode(StringView input)
+static Optional<String> formURLDecode(StringView input)
 {
     auto utf8 = input.utf8(StrictConversion);
     if (utf8.isNull())
@@ -2428,7 +2429,7 @@ auto URLParser::parseURLEncodedForm(StringView input) -> URLEncodedForm
     return output;
 }
 
-inline static void serializeURLEncodedForm(const String& input, Vector<LChar>& output)
+static void serializeURLEncodedForm(const String& input, Vector<LChar>& output)
 {
     auto utf8 = input.utf8(StrictConversion);
     const char* data = utf8.data();
