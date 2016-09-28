@@ -1,3 +1,15 @@
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Bump fake Safari version in UA
+        https://bugs.webkit.org/show_bug.cgi?id=162615
+
+        Reviewed by Carlos Garcia Campos.
+
+        Pretend to be Safari 10.0 to fix sites that don't work when we pretend to be Safari 8.0.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::buildUserAgentString):
+
 2016-09-28  Khaled Hosny  <khaledhosny@eglug.org>
 
         Use new woff2 API

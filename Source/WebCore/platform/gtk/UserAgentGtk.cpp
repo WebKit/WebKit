@@ -145,7 +145,7 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     uaString.append(versionForUAString());
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-    uaString.appendLiteral(" (KHTML, like Gecko) Version/8.0 Safari/");
+    uaString.appendLiteral(" (KHTML, like Gecko) Version/10.0 Safari/");
     uaString.append(versionForUAString());
 
     return uaString.toString();
