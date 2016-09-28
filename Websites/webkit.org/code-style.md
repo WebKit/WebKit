@@ -114,8 +114,8 @@ switch (condition) {
 
 ```cpp
 return attribute.name() == srcAttr
-        || attribute.name() == lowsrcAttr
-        || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#');
+    || attribute.name() == lowsrcAttr
+    || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#');
 ```
 
 
@@ -123,8 +123,8 @@ return attribute.name() == srcAttr
 
 ```cpp
 return attribute.name() == srcAttr ||
-        attribute.name() == lowsrcAttr ||
-        (attribute.name() == usemapAttr && attr->value().string()[0] != '#');
+    attribute.name() == lowsrcAttr ||
+    (attribute.name() == usemapAttr && attr->value().string()[0] != '#');
 ```
 
 
@@ -695,22 +695,21 @@ setResizable(NotResizable);
         NSLocalizedString(@"Stop", @"Stop button title")
 ```
 
-[](#names-header-guards) `#define`, `#ifdef` "header guards" should be named exactly the same as the file (including case), replacing the `.` with a `_`.
+[](#header-guards) Use `#pragma once` instead of `#define` and `#ifdef` for header guards.
 
 ###### Right:
 
 ```cpp
 // HTMLDocument.h
-#ifndef HTMLDocument_h
-#define HTMLDocument_h
+#pragma once
 ```
 
 ###### Wrong:
 
 ```cpp
 // HTMLDocument.h
-#ifndef _HTML_DOCUMENT_H_
-#define _HTML_DOCUMENT_H_
+#ifndef HTMLDocument_h
+#define HTMLDocument_h
 ```
 
 [](#names-protectors-this) Ref and RefPtr objects meant to protect `this` from deletion should be named "protectedThis".
@@ -791,7 +790,7 @@ MyOtherClass::MyOtherClass() : MySuperClass() {}
 
 ```cpp
 for (auto& frameView : frameViews)
-        frameView->updateLayoutAndStyleIfNeededRecursive();
+    frameView->updateLayoutAndStyleIfNeededRecursive();
 ```
 
 

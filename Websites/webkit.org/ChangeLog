@@ -1,3 +1,13 @@
+2016-09-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Update style guide for #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=162633
+
+        Reviewed by Dan Bernstein.
+
+        * code-style.md:
+        Update style guide for #pragma once as discussed on webkit-dev.
+
 2016-09-21  Filip Pizlo  <fpizlo@apple.com>
 
         Add a Fence opcode to B3
