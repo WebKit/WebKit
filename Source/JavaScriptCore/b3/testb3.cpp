@@ -13052,32 +13052,58 @@ void testPatchpointTerminalReturnValue(bool successIsRare)
     CHECK_EQ(invoke<int>(*code, -1), 666);
 }
 
-void testX86MFence()
+void testMemoryFence()
 {
     Procedure proc;
     
     BasicBlock* root = proc.addBlock();
     
     root->appendNew<FenceValue>(proc, Origin());
-    root->appendNew<Value>(proc, Return, Origin());
+    root->appendNew<Value>(proc, Return, Origin(), root->appendIntConstant(proc, Origin(), Int32, 42));
     
     auto code = compile(proc);
-    checkUsesInstruction(*code, "lock or $0x0, (%rsp)");
+    CHECK_EQ(invoke<int>(*code), 42);
+    if (isX86())
+        checkUsesInstruction(*code, "lock or $0x0, (%rsp)");
+    if (isARM64())
+        checkUsesInstruction(*code, "dmb    ish");
     checkDoesNotUseInstruction(*code, "mfence");
+    checkDoesNotUseInstruction(*code, "dmb    ishst");
 }
 
-void testX86CompilerFence()
+void testStoreFence()
 {
     Procedure proc;
     
     BasicBlock* root = proc.addBlock();
     
     root->appendNew<FenceValue>(proc, Origin(), HeapRange::top(), HeapRange());
-    root->appendNew<Value>(proc, Return, Origin());
+    root->appendNew<Value>(proc, Return, Origin(), root->appendIntConstant(proc, Origin(), Int32, 42));
     
     auto code = compile(proc);
+    CHECK_EQ(invoke<int>(*code), 42);
     checkDoesNotUseInstruction(*code, "lock");
     checkDoesNotUseInstruction(*code, "mfence");
+    if (isARM64())
+        checkUsesInstruction(*code, "dmb    ishst");
+}
+
+void testLoadFence()
+{
+    Procedure proc;
+    
+    BasicBlock* root = proc.addBlock();
+    
+    root->appendNew<FenceValue>(proc, Origin(), HeapRange(), HeapRange::top());
+    root->appendNew<Value>(proc, Return, Origin(), root->appendIntConstant(proc, Origin(), Int32, 42));
+    
+    auto code = compile(proc);
+    CHECK_EQ(invoke<int>(*code), 42);
+    checkDoesNotUseInstruction(*code, "lock");
+    checkDoesNotUseInstruction(*code, "mfence");
+    if (isARM64())
+        checkUsesInstruction(*code, "dmb    ish");
+    checkDoesNotUseInstruction(*code, "dmb    ishst");
 }
 
 // Make sure the compiler does not try to optimize anything out.
@@ -14510,8 +14536,6 @@ void run(const char* filter)
         RUN(testBranchBitAndImmFusion(Load, Int32, 1, Air::BranchTest32, Air::Arg::Addr));
         RUN(testBranchBitAndImmFusion(Load, Int64, 1, Air::BranchTest32, Air::Arg::Addr));
         
-        RUN(testX86MFence());
-        RUN(testX86CompilerFence());
     }
 
     if (isARM64()) {
@@ -14519,6 +14543,10 @@ void run(const char* filter)
         RUN(testTernarySubInstructionSelection(Trunc, Int32, Air::Sub32));
     }
 
+    RUN(testMemoryFence());
+    RUN(testStoreFence());
+    RUN(testLoadFence());
+    
     if (tasks.isEmpty())
         usage();
 

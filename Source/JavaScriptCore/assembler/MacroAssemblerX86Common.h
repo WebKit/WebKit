@@ -2636,6 +2636,16 @@ public:
         m_assembler.orl_im(0, 0, X86Registers::esp);
     }
 
+    // We take this to mean that it prevents motion of normal stores. So, it's a no-op on x86.
+    void storeFence()
+    {
+    }
+
+    // We take this to mean that it prevents motion of normal loads. So, it's a no-op on x86.
+    void loadFence()
+    {
+    }
+
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
         X86Assembler::replaceWithJump(instructionStart.executableAddress(), destination.executableAddress());

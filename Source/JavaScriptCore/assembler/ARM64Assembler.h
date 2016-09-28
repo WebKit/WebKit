@@ -1496,9 +1496,14 @@ public:
         }
     }
     
-    ALWAYS_INLINE void dmbSY()
+    ALWAYS_INLINE void dmbISH()
     {
-        insn(0xd5033fbf);
+        insn(0xd5033bbf);
+    }
+
+    ALWAYS_INLINE void dmbISHST()
+    {
+        insn(0xd5033abf);
     }
 
     template<int datasize>

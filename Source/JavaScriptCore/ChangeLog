@@ -1,3 +1,59 @@
+2016-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Optimize B3->Air lowering of Fence on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=162342
+
+        Reviewed by Geoffrey Garen.
+
+        This gives us comprehensive support for standalone fences on x86 and ARM. The changes are as
+        follows:
+
+        - Sets in stone the rule that the heaps of a B3::Fence tell you what the fence protects. If the
+          fence reads, it protects motion of stores. If the fence writes, it protects motion of loads.
+          This allows us to express for example load-load fences in a portable way: on x86 they will just
+          block B3 optimizations and emit no code, while on ARM you will get some fence.
+
+        - Adds comprehensive support for WTF-style fences in the ARM assembler. I simplified it just a bit
+          to match what B3, the main client, knows. There are three fences: MemoryFence, StoreFence, and
+          LoadFence. On x86, MemoryFence is ortop while StoreFence and LoadFence emit no code. On ARM64,
+          MemoryFence and LoadFence are dmb ish while StoreFence is dmb ishst.
+
+        - Tests! To test this, I needed to teach the disassembler how to disassemble dmb ish and dmb
+          ishst. I think that the canonical way to do it would be to create a group for dmb and then teach
+          that group how to decode the operands. But I don't actually know what are all of the ways of
+          encoding dmb, so I'd rather that unrecognized encodings fall through to the ".long blah"
+          bailout. So, this creates explicit matching rules for "dmb ish" and "dmb ishst", which is the
+          most conservative thing we can do.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::dmbISH):
+        (JSC::ARM64Assembler::dmbISHST):
+        (JSC::ARM64Assembler::dmbSY): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::memoryFence):
+        (JSC::MacroAssemblerARM64::storeFence):
+        (JSC::MacroAssemblerARM64::loadFence):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::storeFence):
+        (JSC::MacroAssemblerX86Common::loadFence):
+        * b3/B3FenceValue.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testMemoryFence):
+        (JSC::B3::testStoreFence):
+        (JSC::B3::testLoadFence):
+        (JSC::B3::run):
+        (JSC::B3::testX86MFence): Deleted.
+        (JSC::B3::testX86CompilerFence): Deleted.
+        * disassembler/ARM64/A64DOpcode.cpp:
+        (JSC::ARM64Disassembler::A64DOpcodeDmbIsh::format):
+        (JSC::ARM64Disassembler::A64DOpcodeDmbIshSt::format):
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcodeDmbIsh::opName):
+        (JSC::ARM64Disassembler::A64DOpcodeDmbIshSt::opName):
+
 2016-09-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Adopt #pragma once in some generated resources

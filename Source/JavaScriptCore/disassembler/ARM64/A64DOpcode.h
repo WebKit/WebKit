@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -507,6 +507,30 @@ public:
 
     const char* opName() { return immediate7() <= 5 ? s_opNames[immediate7()] : "hint"; }
     unsigned immediate7() { return (m_opcode >> 5) & 0x7f; }
+};
+
+class A64DOpcodeDmbIsh : public A64DOpcode {
+public:
+    static const uint32_t mask = 0xffffffff;
+    static const uint32_t pattern = 0xd5033bbf;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeDmbIsh, thisObj);
+
+    const char* format();
+
+    const char* opName() { return "dmb"; }
+};
+
+class A64DOpcodeDmbIshSt : public A64DOpcode {
+public:
+    static const uint32_t mask = 0xffffffff;
+    static const uint32_t pattern = 0xd5033abf;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeDmbIshSt, thisObj);
+
+    const char* format();
+
+    const char* opName() { return "dmb"; }
 };
 
 class A64DOpcodeLoadStore : public A64DOpcode {

@@ -2049,10 +2049,18 @@ private:
             
         case Fence: {
             FenceValue* fence = m_value->as<FenceValue>();
-            if (isX86() && !fence->write)
+            if (!fence->write && !fence->read)
                 return;
-            // FIXME: Optimize this on ARM.
-            // https://bugs.webkit.org/show_bug.cgi?id=162342
+            if (!fence->write) {
+                // A fence that reads but does not write is for protecting motion of stores.
+                append(StoreFence);
+                return;
+            }
+            if (!fence->read) {
+                // A fence that writes but does not read is for protecting motion of loads.
+                append(LoadFence);
+                return;
+            }
             append(MemoryFence);
             return;
         }

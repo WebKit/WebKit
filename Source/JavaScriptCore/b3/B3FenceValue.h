@@ -41,7 +41,9 @@ public:
     // The read/write heaps are reflected in the effects() of this value. The compiler may change
     // the lowering of a Fence based on the heaps. For example, if a fence does not write anything
     // then it is understood to be a store-store fence. On x86, this may lead us to not emit any
-    // code, while on ARM we may emit a cheaper fence (dmb ishst instead of dmb ish).
+    // code, while on ARM we may emit a cheaper fence (dmb ishst instead of dmb ish). We will do
+    // the same optimization for load-load fences, which are expressed as a Fence that writes but
+    // does not read.
     //
     // This abstraction allows us to cover all of the fences on x86 and all of the standalone fences
     // on ARM. X86 really just has one fence: mfence. This fence should be used to protect stores
@@ -65,7 +67,6 @@ public:
     // On ARM there are many more fences. The Fence instruction is meant to model just two of them:
     // dmb ish and dmb ishst. You can emit a dmb ishst by using a Fence with an empty write heap.
     // Otherwise, you will get a dmb ish.
-    // FIXME: Make this work right on ARM. https://bugs.webkit.org/show_bug.cgi?id=162342
     // FIXME: Add fenced memory accesses. https://bugs.webkit.org/show_bug.cgi?id=162349
     // FIXME: Add a Depend operation. https://bugs.webkit.org/show_bug.cgi?id=162350
     HeapRange read { HeapRange::top() };

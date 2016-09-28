@@ -844,6 +844,8 @@ MoveDoubleConditionallyFloat U:G:32, U:F:32, U:F:32, U:F:64, U:F:64, D:F:64
     DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
 MemoryFence /effects
+StoreFence /effects
+LoadFence /effects
 
 Jump /branch
 

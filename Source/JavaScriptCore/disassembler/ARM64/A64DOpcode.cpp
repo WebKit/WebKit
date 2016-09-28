@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,6 +84,8 @@ static OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x15, A64DOpcodeConditionalBranchImmediate),
     OPCODE_GROUP_ENTRY(0x15, A64DOpcodeCompareAndBranchImmediate),
     OPCODE_GROUP_ENTRY(0x15, A64DOpcodeHint),
+    OPCODE_GROUP_ENTRY(0x15, A64DOpcodeDmbIsh),
+    OPCODE_GROUP_ENTRY(0x15, A64DOpcodeDmbIshSt),
     OPCODE_GROUP_ENTRY(0x16, A64DOpcodeUnconditionalBranchImmediate),
     OPCODE_GROUP_ENTRY(0x16, A64DOpcodeUnconditionalBranchRegister),
     OPCODE_GROUP_ENTRY(0x16, A64DOpcodeTestAndBranchImmediate),
@@ -820,6 +822,20 @@ const char* A64DOpcodeHint::format()
     if (immediate7() > 5)
         appendUnsignedImmediate(immediate7());
 
+    return m_formatBuffer;
+}
+
+const char* A64DOpcodeDmbIsh::format()
+{
+    appendInstructionName("dmb");
+    appendString("ish");
+    return m_formatBuffer;
+}
+
+const char* A64DOpcodeDmbIshSt::format()
+{
+    appendInstructionName("dmb");
+    appendString("ishst");
     return m_formatBuffer;
 }
 

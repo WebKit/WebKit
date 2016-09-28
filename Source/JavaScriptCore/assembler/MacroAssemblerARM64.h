@@ -3215,11 +3215,26 @@ public:
         m_assembler.nop();
     }
     
+    // We take memoryFence to mean acqrel. This has acqrel semantics on ARM64.
     void memoryFence()
     {
-        m_assembler.dmbSY();
+        m_assembler.dmbISH();
     }
 
+    // We take this to mean that it prevents motion of normal stores. That's a store fence on ARM64 (hence the "ST").
+    void storeFence()
+    {
+        m_assembler.dmbISHST();
+    }
+
+    // We take this to mean that it prevents motion of normal loads. Ideally we'd have expressed this
+    // using dependencies or half fences, but there are cases where this is as good as it gets. The only
+    // way to get a standalone load fence instruction on ARM is to use the ISH fence, which is just like
+    // the memoryFence().
+    void loadFence()
+    {
+        m_assembler.dmbISH();
+    }
 
     // Misc helper functions.
 
