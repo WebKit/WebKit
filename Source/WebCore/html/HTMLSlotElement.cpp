@@ -26,12 +26,12 @@
 #include "config.h"
 #include "HTMLSlotElement.h"
 
-
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "MutationObserver.h"
 #include "ShadowRoot.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -98,30 +98,37 @@ const Vector<Node*>* HTMLSlotElement::assignedNodes() const
     return shadowRoot->assignedNodesForSlot(*this);
 }
 
-static void flattenAssignedNodes(Vector<Node*>& nodes, const Vector<Node*>& assignedNodes)
+static void flattenAssignedNodes(Vector<Node*>& nodes, const HTMLSlotElement& slot)
 {
-    for (Node* node : assignedNodes) {
-        if (is<HTMLSlotElement>(*node)) {
-            if (auto* innerAssignedNodes = downcast<HTMLSlotElement>(*node).assignedNodes())
-                flattenAssignedNodes(nodes, *innerAssignedNodes);
-            continue;
+    auto* assignedNodes = slot.assignedNodes();
+    if (!assignedNodes) {
+        for (Node* child = slot.firstChild(); child; child = child->nextSibling()) {
+            if (is<HTMLSlotElement>(*child))
+                flattenAssignedNodes(nodes, downcast<HTMLSlotElement>(*child));
+            else if (is<Text>(*child) || is<Element>(*child))
+                nodes.append(child);
         }
-        nodes.append(node);
+        return;
+    }
+    for (Node* node : *assignedNodes) {
+        if (is<HTMLSlotElement>(*node))
+            flattenAssignedNodes(nodes, downcast<HTMLSlotElement>(*node));
+        else
+            nodes.append(node);
     }
 }
 
 Vector<Node*> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& options) const
 {
+    if (options.flatten) {
+        Vector<Node*> nodes;
+        flattenAssignedNodes(nodes, *this);
+        return nodes;
+    }
     auto* assignedNodes = this->assignedNodes();
     if (!assignedNodes)
         return { };
-
-    if (!options.flatten)
-        return *assignedNodes;
-
-    Vector<Node*> nodes;
-    flattenAssignedNodes(nodes, *assignedNodes);
-    return nodes;
+    return *assignedNodes;
 }
 
 void HTMLSlotElement::enqueueSlotChangeEvent()

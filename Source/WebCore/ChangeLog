@@ -1,3 +1,19 @@
+2016-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        assignedNodes should include fallback contents when flattened option is set
+        https://bugs.webkit.org/show_bug.cgi?id=162656
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the bug by traversing through fallback contents when there are no assigned nodes.
+
+        Tests: imported/w3c/web-platform-tests/shadow-dom/slots.html
+               imported/w3c/web-platform-tests/shadow-dom/slots-fallback.html
+
+        * html/HTMLSlotElement.cpp:
+        (WebCore::flattenAssignedNodes):
+        (WebCore::HTMLSlotElement::assignedNodes):
+
 2016-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adopt MediaRemote SPI to achieve desired Now Playing behavior

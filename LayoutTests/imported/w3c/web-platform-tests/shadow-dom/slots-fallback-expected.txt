@@ -1,12 +1,12 @@
 
-FAIL Slots fallback: Basic. assert_array_equals: lengths differ, expected 1 got 0
-FAIL Slots fallback: Slots in Slots. assert_array_equals: lengths differ, expected 1 got 0
-FAIL Slots fallback: Fallback contents should not be used if a node is assigned. assert_array_equals: lengths differ, expected 1 got 0
-FAIL Slots fallback: Slots in Slots: Assinged nodes should be used as fallback contents of another slot assert_array_equals: lengths differ, expected 1 got 0
-FAIL Slots fallback: Complex case. assert_array_equals: lengths differ, expected 2 got 0
-FAIL Slots fallback: Mutation. Append fallback contents. assert_array_equals: lengths differ, expected 3 got 0
-FAIL Slots fallback: Mutation. Remove fallback contents. assert_array_equals: lengths differ, expected 1 got 0
-FAIL Slots fallback: Mutation. Assign a node to a slot so that fallback contens are no longer used. assert_array_equals: lengths differ, expected 2 got 0
-FAIL Slots fallback: Mutation. Remove an assigned node from a slot so that fallback contens will be used. assert_array_equals: lengths differ, expected 1 got 0
-FAIL Slots fallback: Mutation.  Remove a slot which is a fallback content of another slot. assert_array_equals: lengths differ, expected 1 got 0
+PASS Slots fallback: Basic. 
+PASS Slots fallback: Slots in Slots. 
+PASS Slots fallback: Fallback contents should not be used if a node is assigned. 
+PASS Slots fallback: Slots in Slots: Assinged nodes should be used as fallback contents of another slot 
+PASS Slots fallback: Complex case. 
+PASS Slots fallback: Mutation. Append fallback contents. 
+PASS Slots fallback: Mutation. Remove fallback contents. 
+PASS Slots fallback: Mutation. Assign a node to a slot so that fallback contens are no longer used. 
+PASS Slots fallback: Mutation. Remove an assigned node from a slot so that fallback contens will be used. 
+PASS Slots fallback: Mutation.  Remove a slot which is a fallback content of another slot. 
 
