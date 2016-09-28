@@ -122,7 +122,7 @@ bool ReadGlyph(const uint8_t* data, size_t len, Glyph* glyph) {
     uint8_t flag_repeat = 0;
     for (int i = 0; i < num_contours; ++i) {
       flags[i].resize(glyph->contours[i].size());
-      for (int j = 0; j < glyph->contours[i].size(); ++j) {
+      for (size_t j = 0; j < glyph->contours[i].size(); ++j) {
         if (flag_repeat == 0) {
           if (!buffer.ReadU8(&flag)) {
             return FONT_COMPRESSION_FAILURE();
@@ -143,7 +143,7 @@ bool ReadGlyph(const uint8_t* data, size_t len, Glyph* glyph) {
     // Read the x coordinates.
     int prev_x = 0;
     for (int i = 0; i < num_contours; ++i) {
-      for (int j = 0; j < glyph->contours[i].size(); ++j) {
+      for (size_t j = 0; j < glyph->contours[i].size(); ++j) {
         uint8_t flag = flags[i][j];
         if (flag & kFLAG_XSHORT) {
           // single byte x-delta coord value
@@ -170,7 +170,7 @@ bool ReadGlyph(const uint8_t* data, size_t len, Glyph* glyph) {
     // Read the y coordinates.
     int prev_y = 0;
     for (int i = 0; i < num_contours; ++i) {
-      for (int j = 0; j < glyph->contours[i].size(); ++j) {
+      for (size_t j = 0; j < glyph->contours[i].size(); ++j) {
         uint8_t flag = flags[i][j];
         if (flag & kFLAG_YSHORT) {
           // single byte y-delta coord value

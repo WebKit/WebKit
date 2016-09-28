@@ -23,8 +23,8 @@
 #include <string>
 #include <vector>
 
+#include "./compressor.h"
 #include "./buffer.h"
-#include "./encode.h"
 #include "./font.h"
 #include "./normalize.h"
 #include "./round.h"
@@ -46,6 +46,7 @@ using std::vector;
 
 const size_t kWoff2HeaderSize = 48;
 const size_t kWoff2EntrySize = 20;
+
 
 bool Compress(const uint8_t* data, const size_t len,
               uint8_t* result, uint32_t* result_len,
@@ -120,7 +121,7 @@ size_t ComputeWoff2Length(const FontCollection& font_collection,
   }
 
   // for collections only, collection tables
-  if (font_collection.fonts.size() > 1) {
+  if (font_collection.flavor == kTtcFontFlavor) {
     size += 4;  // UInt32 Version of TTC Header
     size += Size255UShort(font_collection.fonts.size());  // 255UInt16 numFonts
 
@@ -147,14 +148,6 @@ size_t ComputeWoff2Length(const FontCollection& font_collection,
   return size;
 }
 
-size_t ComputeTTFLength(const std::vector<Table>& tables) {
-  size_t size = 12 + 16 * tables.size();  // sfnt header
-  for (const auto& table : tables) {
-    size += Round4(table.src_length);
-  }
-  return size;
-}
-
 size_t ComputeUncompressedLength(const Font& font) {
   // sfnt header + offset table
   size_t size = 12 + 16 * font.num_tables;
@@ -168,7 +161,7 @@ size_t ComputeUncompressedLength(const Font& font) {
 }
 
 size_t ComputeUncompressedLength(const FontCollection& font_collection) {
-  if (font_collection.fonts.size() == 1) {
+  if (font_collection.flavor != kTtcFontFlavor) {
     return ComputeUncompressedLength(font_collection.fonts[0]);
   }
   size_t size = CollectionHeaderSize(font_collection.header_version,
@@ -279,20 +272,22 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
   std::vector<uint8_t> compression_buf(compression_buffer_size);
   uint32_t total_compressed_length = compression_buffer_size;
 
-  // Collect all transformed data into one place.
+  // Collect all transformed data into one place in output order.
   std::vector<uint8_t> transform_buf(total_transform_length);
   size_t transform_offset = 0;
   for (const auto& font : font_collection.fonts) {
-    for (const auto& i : font.tables) {
-      const Font::Table* table = font.FindTable(i.second.tag ^ 0x80808080);
-      if (i.second.IsReused()) continue;
-      if (i.second.tag & 0x80808080) continue;
+    for (const auto tag : font.OutputOrderedTags()) {
+      const Font::Table& original = font.tables.at(tag);
+      if (original.IsReused()) continue;
+      if (tag & 0x80808080) continue;
+      const Font::Table* table_to_store = font.FindTable(tag ^ 0x80808080);
+      if (table_to_store == NULL) table_to_store = &original;
 
-      if (table == NULL) table = &i.second;
-      StoreBytes(table->data, table->length,
+      StoreBytes(table_to_store->data, table_to_store->length,
                  &transform_offset, &transform_buf[0]);
     }
   }
+
   // Compress all transformed data in one stream.
   if (!Woff2Compress(transform_buf.data(), total_transform_length,
                      &compression_buf[0],
@@ -377,13 +372,12 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
   }
   *result_length = woff2_length;
 
-  const Font& first_font = font_collection.fonts[0];
   size_t offset = 0;
 
   // start of woff2 header (http://www.w3.org/TR/WOFF2/#woff20Header)
   StoreU32(kWoff2Signature, &offset, result);
-  if (font_collection.fonts.size() == 1) {
-    StoreU32(first_font.flavor, &offset, result);
+  if (font_collection.flavor != kTtcFontFlavor) {
+    StoreU32(font_collection.fonts[0].flavor, &offset, result);
   } else {
     StoreU32(kTtcFontFlavor, &offset, result);
   }
@@ -394,9 +388,9 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
   StoreU32(ComputeUncompressedLength(font_collection), &offset, result);
   StoreU32(total_compressed_length, &offset, result);  // totalCompressedSize
 
-  // TODO(user): is always taking this from the first tables head OK?
-  // font revision
-  StoreBytes(first_font.FindTable(kHeadTableTag)->data + 4, 4, &offset, result);
+  // Let's just all be v1.0
+  Store16(1, &offset, result);  // majorVersion
+  Store16(0, &offset, result);  // minorVersion
   if (compressed_metadata_buf_length > 0) {
     StoreU32(woff2_length - compressed_metadata_buf_length,
              &offset, result);  // metaOffset
@@ -418,7 +412,7 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
   }
 
   // for collections only, collection table directory
-  if (font_collection.fonts.size() > 1) {
+  if (font_collection.flavor == kTtcFontFlavor) {
     StoreU32(font_collection.header_version, &offset, result);
     Store255UShort(font_collection.fonts.size(), &offset, result);
     for (const Font& font : font_collection.fonts) {

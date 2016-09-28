@@ -61,6 +61,7 @@ struct Font {
 
 // Accomodates both singular (OTF, TTF) and collection (TTC) fonts
 struct FontCollection {
+  uint32_t flavor;
   uint32_t header_version;
   // (offset, first use of table*) pairs
   std::map<uint32_t, Font::Table*> tables;

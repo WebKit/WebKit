@@ -205,6 +205,8 @@ webkit.org/b/112755 fast/css3-text/css3-text-indent
 # Unsupported on certain OS versions
 webkit.org/b/152491 fast/text/woff2.html [ Skip ]
 
+webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
+
 # Needs testRunner.enableAutoResizeMode()
 fast/autoresize
 

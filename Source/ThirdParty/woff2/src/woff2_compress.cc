@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   }
   output.resize(output_size);
 
-  woff2::SetFileContents(outfilename, output);
+  woff2::SetFileContents(outfilename, output.begin(), output.end());
 
   return 0;
 }

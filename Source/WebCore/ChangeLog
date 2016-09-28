@@ -1,3 +1,18 @@
+2016-09-28  Khaled Hosny  <khaledhosny@eglug.org>
+
+        Use new woff2 API
+        https://bugs.webkit.org/show_bug.cgi?id=162608
+
+        Reviewed by Michael Catanzaro.
+
+        Test: fast/text/woff2-totalsfntsize.html
+
+        * platform/graphics/WOFFFileFormat.cpp:
+        (WebCore::WOFF2VectorOut::WOFF2VectorOut):
+        (WebCore::WOFF2VectorOut::Write):
+        (WebCore::WOFF2VectorOut::Size):
+        (WebCore::convertWOFFToSfnt):
+
 2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add warning comment in UserAgentGtk.cpp

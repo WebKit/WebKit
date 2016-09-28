@@ -1,3 +1,32 @@
+2016-09-28  Khaled Hosny  <khaledhosny@eglug.org>
+
+        Update woff2 to latest revision
+        https://bugs.webkit.org/show_bug.cgi?id=162608
+
+        Reviewed by Michael Catanzaro.
+
+        * woff2/CMakeLists.txt:
+        * woff2/README.webkit:
+        * woff2/src/file.h:
+        (woff2::GetFileContent):
+        (woff2::SetFileContents):
+        * woff2/src/font.cc:
+        * woff2/src/font.h:
+        * woff2/src/glyph.cc:
+        * woff2/src/store_bytes.h:
+        (woff2::Store16):
+        * woff2/src/transform.cc:
+        * woff2/src/woff2_common.cc:
+        * woff2/src/woff2_compress.cc:
+        * woff2/src/woff2_dec.cc:
+        * woff2/src/woff2_dec.h:
+        * woff2/src/woff2_decompress.cc:
+        * woff2/src/woff2_enc.cc:
+        * woff2/src/woff2_out.cc: Added.
+        * woff2/src/woff2_out.h: Added.
+        (woff2::WOFF2Out::~WOFF2Out):
+        (woff2::WOFF2StringOut::MaxSize):
+
 2016-09-28  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Suppress Clang warnings in brotli and woff2

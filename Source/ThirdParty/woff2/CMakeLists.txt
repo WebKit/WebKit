@@ -9,6 +9,7 @@ set(WOFF2_SOURCES
   ${WOFF2_DIR}/src/variable_length.cc
   ${WOFF2_DIR}/src/woff2_common.cc
   ${WOFF2_DIR}/src/woff2_dec.cc
+  ${WOFF2_DIR}/src/woff2_out.cc
 )
 
 include_directories("${THIRDPARTY_DIR}/brotli/dec")

@@ -49,11 +49,7 @@ std::vector<uint32_t> Font::OutputOrderedTags() const {
     output_order.push_back(table.tag);
   }
 
-  // Alphabetize and do not put loca immediately after glyf
-  // This violates woff2 spec but results in a font that passes OTS
-  std::sort(output_order.begin(), output_order.end());
-  // TODO(user): change to match spec once browsers are on newer OTS
-  /*
+  // Alphabetize then put loca immediately after glyf
   auto glyf_loc = std::find(output_order.begin(), output_order.end(),
       kGlyfTableTag);
   auto loca_loc = std::find(output_order.begin(), output_order.end(),
@@ -62,7 +58,7 @@ std::vector<uint32_t> Font::OutputOrderedTags() const {
     output_order.erase(loca_loc);
     output_order.insert(std::find(output_order.begin(), output_order.end(),
       kGlyfTableTag) + 1, kLocaTableTag);
-  }*/
+  }
 
   return output_order;
 }
@@ -145,7 +141,7 @@ bool ReadTrueTypeCollection(Buffer* file, const uint8_t* data, size_t len,
     }
 
     std::vector<uint32_t> offsets;
-    for (auto i = 0; i < num_fonts; i++) {
+    for (size_t i = 0; i < num_fonts; i++) {
       uint32_t offset;
       if (!file->ReadU32(&offset)) {
         return FONT_COMPRESSION_FAILURE();
@@ -185,15 +181,14 @@ bool ReadFontCollection(const uint8_t* data, size_t len,
                         FontCollection* font_collection) {
   Buffer file(data, len);
 
-  uint32_t flavor;
-  if (!file.ReadU32(&flavor)) {
+  if (!file.ReadU32(&font_collection->flavor)) {
     return FONT_COMPRESSION_FAILURE();
   }
 
-  if (flavor != kTtcFontFlavor) {
+  if (font_collection->flavor != kTtcFontFlavor) {
     font_collection->fonts.resize(1);
     Font& font = font_collection->fonts[0];
-    font.flavor = flavor;
+    font.flavor = font_collection->flavor;
     return ReadTrueTypeFont(&file, data, len, &font);
   }
   return ReadTrueTypeCollection(&file, data, len, font_collection);
@@ -290,7 +285,7 @@ bool WriteFontCollection(const FontCollection& font_collection, uint8_t* dst,
   size_t offset = 0;
 
   // It's simpler if this just a simple sfnt
-  if (font_collection.fonts.size() == 1) {
+  if (font_collection.flavor != kTtcFontFlavor) {
     return WriteFont(font_collection.fonts[0], &offset, dst, dst_size);
   }
 
@@ -301,7 +296,7 @@ bool WriteFontCollection(const FontCollection& font_collection, uint8_t* dst,
 
   // Offset Table, zeroed for now
   size_t offset_table = offset;  // where to write offsets later
-  for (int i = 0; i < font_collection.fonts.size(); i++) {
+  for (size_t i = 0; i < font_collection.fonts.size(); i++) {
     StoreU32(0, &offset, dst);
   }
 
@@ -312,7 +307,7 @@ bool WriteFontCollection(const FontCollection& font_collection, uint8_t* dst,
   }
 
   // Write fonts and their offsets.
-  for (int i = 0; i < font_collection.fonts.size(); i++) {
+  for (size_t i = 0; i < font_collection.fonts.size(); i++) {
     const auto& font = font_collection.fonts[i];
     StoreU32(offset, &offset_table, dst);
     if (!WriteFont(font, &offset, dst, dst_size)) {

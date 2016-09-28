@@ -39,7 +39,7 @@ void WriteBytes(std::vector<uint8_t>* out, const uint8_t* data, size_t len) {
 }
 
 void WriteBytes(std::vector<uint8_t>* out, const std::vector<uint8_t>& in) {
-  for (int i = 0; i < in.size(); ++i) {
+  for (size_t i = 0; i < in.size(); ++i) {
     out->push_back(in[i]);
   }
 }

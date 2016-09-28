@@ -23,7 +23,8 @@ namespace woff2 {
 
 uint32_t ComputeULongSum(const uint8_t* buf, size_t size) {
   uint32_t checksum = 0;
-  for (size_t i = 0; i < size; i += 4) {
+  size_t aligned_size = size & ~3;
+  for (size_t i = 0; i < aligned_size; i += 4) {
 #if (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
     uint32_t v = *reinterpret_cast<const uint32_t*>(buf + i);
     checksum += (((v & 0xFF) << 24) | ((v & 0xFF00) << 8) |
@@ -35,6 +36,16 @@ uint32_t ComputeULongSum(const uint8_t* buf, size_t size) {
       (buf[i + 2] << 8) | buf[i + 3];
 #endif
   }
+
+  // treat size not aligned on 4 as if it were padded to 4 with 0's
+  if (size != aligned_size) {
+    uint32_t v = 0;
+    for (size_t i = aligned_size; i < size; ++i) {
+      v |= buf[i] << (24 - 8 * (i & 3));
+    }
+    checksum += v;
+  }
+
   return checksum;
 }
 
