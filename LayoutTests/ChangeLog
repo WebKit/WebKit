@@ -1,3 +1,18 @@
+2016-09-27  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Fix several Touch-related layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=162651
+
+        Reviewed by Darin Adler.
+
+        Fix several Touch-related layout tests. The first parameter to our Touch
+        constructor must be a Window but several of our tests were passing in a
+        Document.
+
+        * platform/ios-simulator/ios/touch/construct-Touch-expected.txt:
+        * platform/ios-simulator/ios/touch/resources/construct-Touch.js:
+        * platform/ios-simulator/ios/touch/resources/construct-TouchList.js:
+
 2016-09-27  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r204552): Yelp carousel animation is not smooth.

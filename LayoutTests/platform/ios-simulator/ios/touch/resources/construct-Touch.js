@@ -5,11 +5,11 @@ description(
 var element = document.getElementById('description');
 
 shouldBe("Touch.prototype.toString.call(new Touch)", "'[object Touch]'");
-shouldBe("Touch.prototype.toString.call(new Touch(document))", "'[object Touch]'");
-shouldBe("Touch.prototype.toString.call(new Touch(document, element))", "'[object Touch]'");
-shouldBe("Touch.prototype.toString.call(new Touch(document, element, 1))", "'[object Touch]'");
-shouldBe("Touch.prototype.toString.call(new Touch(document, element, 1, 2))", "'[object Touch]'");
-shouldBe("Touch.prototype.toString.call(new Touch(document, element, 1, 2, 3))", "'[object Touch]'");
-shouldBe("Touch.prototype.toString.call(new Touch(document, element, 1, 2, 3, 4, 5))", "'[object Touch]'");
+shouldBe("Touch.prototype.toString.call(new Touch(window))", "'[object Touch]'");
+shouldBe("Touch.prototype.toString.call(new Touch(window, element))", "'[object Touch]'");
+shouldBe("Touch.prototype.toString.call(new Touch(window, element, 1))", "'[object Touch]'");
+shouldBe("Touch.prototype.toString.call(new Touch(window, element, 1, 2))", "'[object Touch]'");
+shouldBe("Touch.prototype.toString.call(new Touch(window, element, 1, 2, 3))", "'[object Touch]'");
+shouldBe("Touch.prototype.toString.call(new Touch(window, element, 1, 2, 3, 4, 5))", "'[object Touch]'");
 
 var successfullyParsed = true;
