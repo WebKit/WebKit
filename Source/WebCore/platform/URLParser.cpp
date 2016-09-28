@@ -1847,12 +1847,16 @@ void URLParser::parseAuthority(CodePointIterator<CharacterType> iterator)
         m_url.m_passwordEnd = m_url.m_userEnd;
         return;
     }
-    auto authorityOrHostBegin = iterator;
     for (; !iterator.atEnd(); advance(iterator)) {
         if (*iterator == ':') {
             m_url.m_userEnd = currentPosition(iterator);
             auto iteratorAtColon = iterator;
-            advance(iterator, authorityOrHostBegin);
+            ++iterator;
+            bool tabOrNewlineAfterColon = false;
+            while (UNLIKELY(!iterator.atEnd() && isTabOrNewline(*iterator))) {
+                tabOrNewlineAfterColon = true;
+                ++iterator;
+            }
             if (UNLIKELY(iterator.atEnd())) {
                 syntaxViolation(iteratorAtColon);
                 m_url.m_passwordEnd = m_url.m_userEnd;
@@ -1860,6 +1864,8 @@ void URLParser::parseAuthority(CodePointIterator<CharacterType> iterator)
                     appendToASCIIBuffer('@');
                 return;
             }
+            if (tabOrNewlineAfterColon)
+                syntaxViolation(iteratorAtColon);
             appendToASCIIBuffer(':');
             break;
         }

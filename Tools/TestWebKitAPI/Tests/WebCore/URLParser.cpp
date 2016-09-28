@@ -109,6 +109,12 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://user:pass@webkit.org:123/", {"http", "user", "pass", "webkit.org", 123, "/", "", "", "http://user:pass@webkit.org:123/"});
     checkURL("http://user:pass@webkit.org:123", {"http", "user", "pass", "webkit.org", 123, "/", "", "", "http://user:pass@webkit.org:123/"});
     checkURL("http://user:pass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
+    checkURL("http://user:\t\t\tpass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
+    checkURL("http://us\ter:pass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
+    checkURL("http://user:pa\tss@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
+    checkURL("http://user:pass\t@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
+    checkURL("http://\tuser:pass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
+    checkURL("http://user\t:pass@webkit.org", {"http", "user", "pass", "webkit.org", 0, "/", "", "", "http://user:pass@webkit.org/"});
     checkURL("http://webkit.org", {"http", "", "", "webkit.org", 0, "/", "", "", "http://webkit.org/"});
     checkURL("http://127.0.0.1", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
     checkURL("http://webkit.org/", {"http", "", "", "webkit.org", 0, "/", "", "", "http://webkit.org/"});
@@ -201,6 +207,7 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://host?q=@ <>!#fragment", {"http", "", "", "host", 0, "/", "q=@%20%3C%3E!", "fragment", "http://host/?q=@%20%3C%3E!#fragment"});
     checkURL("http://user:@host", {"http", "user", "", "host", 0, "/", "", "", "http://user@host/"});
     checkURL("http://user:@\thost", {"http", "user", "", "host", 0, "/", "", "", "http://user@host/"});
+    checkURL("http://user:\t@host", {"http", "user", "", "host", 0, "/", "", "", "http://user@host/"});
     checkURL("http://user\t:@host", {"http", "user", "", "host", 0, "/", "", "", "http://user@host/"});
     checkURL("http://use\tr:@host", {"http", "user", "", "host", 0, "/", "", "", "http://user@host/"});
     checkURL("http://127.0.0.1:10100/path", {"http", "", "", "127.0.0.1", 10100, "/path", "", "", "http://127.0.0.1:10100/path"});

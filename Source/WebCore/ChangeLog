@@ -1,5 +1,17 @@
 2016-09-28  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should ignore tabs in authority
+        https://bugs.webkit.org/show_bug.cgi?id=162694
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseAuthority):
+
+2016-09-28  Alex Christensen  <achristensen@webkit.org>
+
         URLParser should ignore extra slashes after scheme:// and handle a missing slash after the port
         https://bugs.webkit.org/show_bug.cgi?id=162690
 
