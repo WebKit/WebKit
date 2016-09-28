@@ -155,7 +155,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
 
     float scale = subsamplingScale(context, destRect, srcRect);
     SubsamplingLevel subsamplingLevel = m_source.subsamplingLevelForScale(scale);
-    LOG(Images, "BitmapImage %p draw - subsamplingLevel %d at scale %.4f", this, subsamplingLevel, scale);
+    LOG(Images, "BitmapImage %p draw - subsamplingLevel %d at scale %.4f", this, static_cast<int>(subsamplingLevel), scale);
 
     auto image = frameImageAtIndex(m_currentFrame, subsamplingLevel);
     if (!image) // If it's too early we won't have an image yet.

@@ -1,3 +1,13 @@
+2016-09-27  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Fix debug build break since r206481. Unreviewed
+        https://bugs.webkit.org/show_bug.cgi?id=162662
+
+        No new tests, no new behaviours.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+
 2016-09-27  Nan Wang  <n_wang@apple.com>
 
         AX: CrashTracer: com.apple.WebKit.WebContent at WebCore::AXObjectCache::localCaretRectForCharacterOffset(WebCore::RenderObject*&, WebCore::CharacterOffset const&) + 116
