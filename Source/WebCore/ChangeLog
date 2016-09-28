@@ -1,3 +1,17 @@
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Adjust OS X UA quirks list
+        https://bugs.webkit.org/show_bug.cgi?id=162616
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the OS X quirk for yahoo.com as it's no longer needed. Add quirks for taobao.com and
+        whatsapp.com.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::urlRequiresMacintoshPlatform):
+        (WebCore::standardUserAgentForURL):
+
 2016-09-28  Alejandro G. Castro  <alex@igalia.com>
 
         Add WebIDL special operation support: serializer
