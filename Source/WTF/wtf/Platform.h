@@ -609,6 +609,7 @@
 #if OS(DARWIN)
 #define HAVE_ERRNO_H 1
 #define HAVE_LANGINFO_H 1
+#define HAVE_LOCALTIME_R 1
 #define HAVE_MMAP 1
 #define HAVE_SIGNAL_H 1
 #define HAVE_STAT_BIRTHTIME 1

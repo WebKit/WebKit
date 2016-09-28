@@ -1,5 +1,14 @@
 2016-09-27  Don Olmstead  <don.olmstead@am.sony.com>
 
+        [CMake] Add HAVE_LOCALTIME_R definition
+        https://bugs.webkit.org/show_bug.cgi?id=162636
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsCommon.cmake:
+
+2016-09-27  Don Olmstead  <don.olmstead@am.sony.com>
+
         [CMake] Use CMake to determine HAVE_* defines
         https://bugs.webkit.org/show_bug.cgi?id=162368
 
