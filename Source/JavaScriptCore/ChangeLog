@@ -1,3 +1,10 @@
+2016-09-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve useCodeCache Option description string.
+
+        * runtime/Options.h:
+        Address late review comments and clarify description.
+
 2016-09-28  Filip Pizlo  <fpizlo@apple.com>
 
         Optimize B3->Air lowering of Fence on ARM
