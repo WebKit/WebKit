@@ -1,3 +1,55 @@
+2016-09-28  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] In SourceBufferPrivateAVFObjC::abort(), support reseting parser to the last appended initialization segment.
+        https://bugs.webkit.org/show_bug.cgi?id=135164
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-abort-resets-parser.html
+
+        Use the -[AVStreamDataParser appendStreamData:withFlags:] to implement "resetting" the parser. In this case,
+        the parser isn't explicitly reset during resetParserState(), but rather a flag is set so that the next append
+        signals a data discontinuity, and the parser is reset at that point.
+
+        Because a previous append operation may be in-flight during this abort(), care must be taken to invalidate any
+        operations which may have already started on a background thread. So SourceBufferPrivateAVFObjC will use a
+        separate WeakPtrFactory for its append operations, will invalidate any outstanding WeakPtrs during an abort(),
+        and will block until the previous append() operation completes.
+
+        This will require the WebAVStreamDataParserListener object to occasionally have it's WeakPtr pointing back to the
+        SourceBufferPrivateAVFObjC to be reset after an abort(), so make that ivar an @property. Rather than passing a
+        RetainPtr to itself in all the callbacks it handles, the WebAVStreamDataParserListener can just pass in a copy
+        of its own WeakPtr (which may be invalidated during an abort()).
+
+        Break the distinct operations of "abort()" and "resetParserState()" into their own methods in SourceBufferPrivate
+        and all its subclasses.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::resetParserState):
+        (WebCore::SourceBuffer::abortIfUpdating):
+        * platform/graphics/SourceBufferPrivate.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:withDiscontinuity:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didFailToParseStreamDataWithError:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideMediaData:forTrackID:mediaType:flags:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didReachEndOfTrackWithTrackID:mediaType:]):
+        (-[WebAVStreamDataParserListener streamDataParserWillProvideContentKeyRequestInitializationData:forTrackID:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+        (WebCore::SourceBufferPrivateAVFObjC::abort):
+        (WebCore::SourceBufferPrivateAVFObjC::resetParserState):
+        (-[WebAVStreamDataParserListener initWithParser:parent:]): Deleted.
+        * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::resetParserState):
+        * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.h:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::resetParserState):
+        * platform/mock/mediasource/MockSourceBufferPrivate.h:
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] User agent should always claim to be Intel

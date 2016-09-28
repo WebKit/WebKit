@@ -50,6 +50,7 @@ public:
 
     virtual void append(const unsigned char* data, unsigned length);
     virtual void abort();
+    virtual void resetParserState();
     virtual void removedFromMediaSource();
 
     virtual MediaPlayer::ReadyState readyState() const;

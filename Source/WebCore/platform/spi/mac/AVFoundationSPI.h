@@ -116,9 +116,14 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserOutputMediaDataFlags) {
     AVStreamDataParserOutputMediaDataReserved = 1 << 0
 };
 
+typedef NS_ENUM(NSUInteger, AVStreamDataParserStreamDataFlags) {
+    AVStreamDataParserStreamDataDiscontinuity = 1 << 0,
+};
+
 @interface AVStreamDataParser : NSObject
 - (void)setDelegate:(nullable id<AVStreamDataParserOutputHandling>)delegate;
 - (void)appendStreamData:(NSData *)data;
+- (void)appendStreamData:(NSData *)data withFlags:(AVStreamDataParserStreamDataFlags)flags;
 - (void)setShouldProvideMediaData:(BOOL)shouldProvideMediaData forTrackID:(CMPersistentTrackID)trackID;
 - (BOOL)shouldProvideMediaDataForTrackID:(CMPersistentTrackID)trackID;
 - (void)providePendingMediaData;

@@ -278,7 +278,7 @@ void SourceBuffer::resetParserState()
     // 7. Set append state to WAITING_FOR_SEGMENT.
     m_appendState = WaitingForSegment;
 
-    m_private->abort();
+    m_private->resetParserState();
 }
 
 void SourceBuffer::abort(ExceptionCode& ec)
@@ -383,6 +383,7 @@ void SourceBuffer::abortIfUpdating()
     // 4.1. Abort the buffer append algorithm if it is running.
     m_appendBufferTimer.stop();
     m_pendingAppendData.clear();
+    m_private->abort();
 
     // 4.2. Set the updating attribute to false.
     m_updating = false;
