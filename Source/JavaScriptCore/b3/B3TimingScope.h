@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3TimingScope_h
-#define B3TimingScope_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -46,6 +45,3 @@ private:
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3TimingScope_h
-

@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef JSObjectInlines_h
-#define JSObjectInlines_h
+#pragma once
 
 #include "AuxiliaryBarrierInlines.h"
 #include "Error.h"
@@ -212,6 +211,3 @@ ALWAYS_INLINE bool JSObject::hasOwnProperty(ExecState* exec, unsigned propertyNa
 }
 
 } // namespace JSC
-
-#endif // JSObjectInlines_h
-

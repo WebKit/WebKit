@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPrePostNumbering_h
-#define DFGPrePostNumbering_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -104,6 +103,3 @@ void printInternal(PrintStream&, JSC::DFG::EdgeKind);
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGPrePostNumbering_h
-

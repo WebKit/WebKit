@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3InferSwitches_h
-#define B3InferSwitches_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -39,6 +38,3 @@ bool inferSwitches(Procedure&);
 } } // namespace JSC::B3
 
 #endif // ENABE(B3_JIT)
-
-#endif // B3InferSwitches_h
-

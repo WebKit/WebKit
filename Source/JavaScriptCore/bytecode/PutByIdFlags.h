@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PutByIdFlags_h
-#define PutByIdFlags_h
+#pragma once
 
 #include "StructureIDTable.h"
 
@@ -100,6 +99,3 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::PutByIdFlags);
 
 } // namespace WTF
-
-#endif // PutByIdFlags_h
-

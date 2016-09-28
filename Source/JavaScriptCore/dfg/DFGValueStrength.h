@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGValueStrength_h
-#define DFGValueStrength_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -65,6 +64,3 @@ void printInternal(PrintStream&, JSC::DFG::ValueStrength);
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGValueStrength_h
-

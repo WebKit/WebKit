@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ExceptionFuzz_h
-#define ExceptionFuzz_h
+#pragma once
 
 #include "Options.h"
 
@@ -44,6 +43,3 @@ ALWAYS_INLINE void doExceptionFuzzingIfEnabled(ExecState* exec, const char* wher
 }
 
 } // namespace JSC
-
-#endif // ExceptionFuzz_h
-

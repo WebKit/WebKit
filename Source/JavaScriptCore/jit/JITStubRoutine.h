@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JITStubRoutine_h
-#define JITStubRoutine_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -158,6 +157,3 @@ protected:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // JITStubRoutine_h
-

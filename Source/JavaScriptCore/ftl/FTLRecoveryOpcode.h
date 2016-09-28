@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLRecoveryOpcode_h
-#define FTLRecoveryOpcode_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -45,6 +44,3 @@ void printInternal(PrintStream&, JSC::FTL::RecoveryOpcode);
 } // namespace WTF
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLRecoveryOpcode_h
-

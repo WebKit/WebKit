@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Reg_h
-#define Reg_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -247,6 +246,3 @@ template<> struct HashTraits<JSC::Reg> : SimpleClassHashTraits<JSC::Reg> {
 } // namespace WTF
 
 #endif // ENABLE(JIT)
-
-#endif // Reg_h
-

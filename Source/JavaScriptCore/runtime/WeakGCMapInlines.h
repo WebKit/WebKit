@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakGCMapInlines_h
-#define WeakGCMapInlines_h
+#pragma once
 
 #include "HeapInlines.h"
 #include "WeakGCMap.h"
@@ -78,5 +77,3 @@ NEVER_INLINE void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::pruneStale
 }
 
 } // namespace JSC
-
-#endif // WeakGCMapInlines_h

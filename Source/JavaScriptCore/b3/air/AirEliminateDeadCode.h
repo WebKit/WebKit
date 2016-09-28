@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirEliminateDeadCode_h
-#define AirEliminateDeadCode_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -42,6 +41,3 @@ bool eliminateDeadCode(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirEliminateDeadCode_h
-

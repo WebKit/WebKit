@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExecutableInfo_h
-#define ExecutableInfo_h
+#pragma once
 
 #include "ParserModes.h"
 
@@ -84,5 +83,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ExecutableInfo_h

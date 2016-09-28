@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGDoubleFormatState_h
-#define DFGDoubleFormatState_h
+#pragma once
 
 namespace JSC { namespace DFG {
 
@@ -91,6 +90,3 @@ inline const char* doubleFormatStateToString(DoubleFormatState state)
 }
 
 } } // namespace JSC::DFG
-
-#endif // DFGDoubleFormatState_h
-

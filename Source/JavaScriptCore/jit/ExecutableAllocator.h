@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ExecutableAllocator_h
-#define ExecutableAllocator_h
+#pragma once
+
 #include "JITCompilationEffort.h"
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
@@ -149,5 +149,3 @@ public:
 #endif // ENABLE(JIT) && ENABLE(ASSEMBLER)
 
 } // namespace JSC
-
-#endif // !defined(ExecutableAllocator)

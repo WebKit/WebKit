@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3StackmapSpecial_h
-#define B3StackmapSpecial_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -88,6 +87,3 @@ void printInternal(PrintStream&, JSC::B3::StackmapSpecial::RoleMode);
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3StackmapSpecial_h
-

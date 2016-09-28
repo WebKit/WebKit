@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSSymbolTableObject_h
-#define JSSymbolTableObject_h
+#pragma once
 
 #include "JSScope.h"
 #include "PropertyDescriptor.h"
@@ -228,6 +227,3 @@ inline bool symbolTablePutInvalidateWatchpointSet(
 }
 
 } // namespace JSC
-
-#endif // JSSymbolTableObject_h
-

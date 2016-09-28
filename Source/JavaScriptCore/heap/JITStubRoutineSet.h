@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JITStubRoutineSet_h
-#define JITStubRoutineSet_h
+#pragma once
 
 #include "JITStubRoutine.h"
 #include <wtf/FastMalloc.h>
@@ -93,6 +92,3 @@ public:
 #endif // !ENABLE(JIT)
 
 } // namespace JSC
-
-#endif // JITStubRoutineSet_h
-

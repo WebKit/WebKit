@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WriteBarrierBuffer_h
-#define WriteBarrierBuffer_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // WriteBarrierBuffer_h

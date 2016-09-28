@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGCompilationMode_h
-#define DFGCompilationMode_h
+#pragma once
 
 #include <wtf/PrintStream.h>
 
@@ -55,6 +54,3 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::DFG::CompilationMode);
 
 } // namespace WTF
-
-#endif // DFGCompilationMode_h
-

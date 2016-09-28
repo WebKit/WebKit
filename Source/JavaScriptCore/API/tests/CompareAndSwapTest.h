@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CompareAndSwapTest_h
-#define CompareAndSwapTest_h
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,5 +35,3 @@ void testCompareAndSwap();
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
-
-#endif /* CompareAndSwapTest_h */

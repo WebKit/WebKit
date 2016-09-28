@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SamplingCounter_h
-#define SamplingCounter_h
+#pragma once
 
 #include <stdint.h>
 #include <wtf/Assertions.h>
@@ -172,7 +171,3 @@ public:
 #endif
 
 } // namespace JSC
-
-#endif // SamplingCounter_h
-
-

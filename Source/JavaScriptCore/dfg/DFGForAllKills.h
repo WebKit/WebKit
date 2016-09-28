@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGForAllKills_h
-#define DFGForAllKills_h
+#pragma once
 
 #include "DFGCombinedLiveness.h"
 #include "DFGGraph.h"
@@ -169,6 +168,3 @@ void forAllKillsInBlock(
 }
 
 } } // namespace JSC::DFG
-
-#endif // DFGForAllKills_h
-

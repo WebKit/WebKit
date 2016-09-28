@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SparseArrayValueMap_h
-#define SparseArrayValueMap_h
+#pragma once
 
 #include "JSCell.h"
 #include "JSTypeInfo.h"
@@ -130,6 +129,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // SparseArrayValueMap_h
-

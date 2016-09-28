@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLLink_h
-#define FTLLink_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -37,6 +36,3 @@ void link(State&);
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLLink_h
-

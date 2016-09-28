@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StaticPropertyAnalyzer_h
-#define StaticPropertyAnalyzer_h
+#pragma once
 
 #include "StaticPropertyAnalysis.h"
 #include <wtf/HashMap.h>
@@ -166,5 +165,3 @@ inline void StaticPropertyAnalyzer::kill()
 }
 
 } // namespace JSC
-
-#endif // StaticPropertyAnalyzer_h

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ConstructData_h
-#define ConstructData_h
+#pragma once
 
 #include "CallData.h"
 #include "JSCJSValue.h"
@@ -75,5 +74,3 @@ ALWAYS_INLINE JSObject* profiledConstruct(ExecState* exec, ProfilingReason reaso
 }
 
 } // namespace JSC
-
-#endif // ConstructData_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Handle_h
-#define Handle_h
+#pragma once
 
 #include "HandleTypes.h"
 
@@ -182,6 +181,4 @@ template <typename T, typename U> inline bool operator!=(JSValue a, const Handle
     return a != b.get(); 
 }
 
-}
-
-#endif
+} // namespace JSC

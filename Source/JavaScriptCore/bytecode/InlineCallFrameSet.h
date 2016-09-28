@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InlineCallFrameSet_h
-#define InlineCallFrameSet_h
+#pragma once
 
 #include "CodeOrigin.h"
 #include <wtf/Bag.h>
@@ -50,6 +49,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // InlineCallFrameSet_h
-

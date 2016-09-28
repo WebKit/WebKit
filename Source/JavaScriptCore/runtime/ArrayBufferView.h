@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ArrayBufferView_h
-#define ArrayBufferView_h
+#pragma once
 
 #include "ArrayBuffer.h"
 #include "TypedArrayType.h"
@@ -207,5 +206,3 @@ void ArrayBufferView::calculateOffsetAndLength(
 } // namespace JSC
 
 using JSC::ArrayBufferView;
-
-#endif // ArrayBufferView_h

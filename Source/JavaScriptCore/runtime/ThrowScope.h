@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThrowScope_h
-#define ThrowScope_h
+#pragma once
 
 #include "ExceptionScope.h"
 
@@ -106,5 +105,3 @@ ALWAYS_INLINE JSObject* throwException(ExecState* exec, ThrowScope& scope, JSObj
 }
 
 } // namespace JSC
-
-#endif // ThrowScope_h

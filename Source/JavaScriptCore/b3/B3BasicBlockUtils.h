@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3BasicBlockUtils_h
-#define B3BasicBlockUtils_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -149,6 +148,3 @@ Vector<BasicBlock*> blocksInPostOrder(BasicBlock* root)
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3BasicBlockUtils_h
-

@@ -71,8 +71,7 @@
  * SOFTWARE.
  */
 
-#ifndef B3ComputeDivisionMagic_h
-#define B3ComputeDivisionMagic_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -138,6 +137,3 @@ DivisionMagic<T> computeDivisionMagic(T divisor)
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3ComputeDivisionMagic_h
-

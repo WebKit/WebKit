@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HandleBlockInlines_h
-#define HandleBlockInlines_h
+#pragma once
 
 #include "HandleBlock.h"
 #include <wtf/FastMalloc.h>
@@ -75,5 +74,3 @@ inline unsigned HandleBlock::nodeCapacity()
 }
 
 } // namespace JSC
-    
-#endif // HandleBlockInlines_h

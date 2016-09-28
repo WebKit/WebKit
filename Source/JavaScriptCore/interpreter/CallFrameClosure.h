@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CallFrameClosure_h
-#define CallFrameClosure_h
+#pragma once
 
 #include "ProtoCallFrame.h"
 
@@ -52,5 +51,3 @@ struct CallFrameClosure {
 };
 
 }
-
-#endif

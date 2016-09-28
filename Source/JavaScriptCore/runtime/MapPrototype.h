@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MapPrototype_h
-#define MapPrototype_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -61,6 +60,4 @@ private:
 EncodedJSValue JSC_HOST_CALL privateFuncMapIterator(ExecState*);
 EncodedJSValue JSC_HOST_CALL privateFuncMapIteratorNext(ExecState*);
 
-}
-
-#endif // !defined(MapPrototype_h)
+} // namespace JSC

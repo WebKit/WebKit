@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirCustom_h
-#define AirCustom_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -277,6 +276,3 @@ struct EntrySwitchCustom : public CommonCustomBase<EntrySwitchCustom> {
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirCustom_h
-

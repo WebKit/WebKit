@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3ValueInlines_h
-#define B3ValueInlines_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -246,6 +245,3 @@ void Value::walk(const Functor& functor, PhiChildren* phiChildren)
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3ValueInlines_h
-

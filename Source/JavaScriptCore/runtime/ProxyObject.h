@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProxyObject_h
-#define ProxyObject_h
+#pragma once
 
 #include "JSGlobalObject.h"
 #include "JSObject.h"
@@ -115,5 +114,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSPromise_h

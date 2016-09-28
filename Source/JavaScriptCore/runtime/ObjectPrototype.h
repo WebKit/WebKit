@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef ObjectPrototype_h
-#define ObjectPrototype_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -48,5 +47,3 @@ private:
 JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState*);
 
 } // namespace JSC
-
-#endif // ObjectPrototype_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GetPutInfo_h
-#define GetPutInfo_h
+#pragma once
 
 #include <wtf/text/UniquedStringImpl.h>
 
@@ -233,5 +232,3 @@ private:
 enum GetOrPut { Get, Put };
 
 } // namespace JSC
-
-#endif // GetPutInfo_h

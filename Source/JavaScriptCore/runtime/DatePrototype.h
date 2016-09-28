@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef DatePrototype_h
-#define DatePrototype_h
+#pragma once
 
 #include "DateInstance.h"
 
@@ -56,5 +55,3 @@ protected:
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTime(ExecState*);
 
 } // namespace JSC
-
-#endif // DatePrototype_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGVariableAccessData_h
-#define DFGVariableAccessData_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -226,5 +225,3 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGVariableAccessData_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BuiltinNames_h
-#define BuiltinNames_h
+#pragma once
 
 #include "BuiltinUtils.h"
 #include "BytecodeIntrinsicRegistry.h"
@@ -266,6 +265,4 @@ inline void BuiltinNames::appendExternalName(const Identifier& publicName, const
     m_publicToPrivateMap.add(publicName.impl(), &privateName);
 }
 
-}
-
-#endif
+} // namespace JSC

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JITWorklist_h
-#define JITWorklist_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -80,6 +79,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // JITWorklist_h
-

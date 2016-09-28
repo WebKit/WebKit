@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCAssertions_h
-#define GCAssertions_h
+#pragma once
 
 #include <type_traits>
 #include <wtf/Assertions.h>
@@ -59,5 +58,3 @@
 #endif
 
 #define STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(klass) static_assert(std::is_trivially_destructible<klass>::value, #klass " must have a trivial destructor")
-
-#endif // GCAssertions_h

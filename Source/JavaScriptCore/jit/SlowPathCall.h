@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SlowPathCall_h
-#define SlowPathCall_h
+#pragma once
 
 #include "CommonSlowPaths.h"
 #include "MacroAssemblerCodeRef.h"
@@ -90,5 +89,3 @@ private:
 } // namespace JS
 
 #endif // ENABLE(JIT)
-
-#endif // SlowPathCall_h

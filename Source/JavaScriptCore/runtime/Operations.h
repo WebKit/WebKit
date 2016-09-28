@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef Operations_h
-#define Operations_h
+#pragma once
 
 #include "CallFrame.h"
 #include "ExceptionHelpers.h"
@@ -254,5 +253,3 @@ inline void scribble(void* base, size_t size)
 }
 
 } // namespace JSC
-
-#endif // Operations_h

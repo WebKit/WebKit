@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JITDivGenerator_h
-#define JITDivGenerator_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -81,5 +80,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // JITDivGenerator_h

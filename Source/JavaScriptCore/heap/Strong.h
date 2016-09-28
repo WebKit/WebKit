@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Strong_h
-#define Strong_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include "Handle.h"
@@ -152,6 +151,4 @@ template<typename T> struct VectorTraits<JSC::Strong<T>> : SimpleClassVectorTrai
 
 template<typename P> struct HashTraits<JSC::Strong<P>> : SimpleClassHashTraits<JSC::Strong<P>> { };
 
-}
-
-#endif // Strong_h
+} // namespace WTF

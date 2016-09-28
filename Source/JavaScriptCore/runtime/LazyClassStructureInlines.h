@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LazyClassStructureInlines_h
-#define LazyClassStructureInlines_h
+#pragma once
 
 #include "LazyClassStructure.h"
 #include "LazyPropertyInlines.h"
@@ -45,6 +44,3 @@ void LazyClassStructure::initLater(const Callback&)
 }
 
 } // namespace JSC
-
-#endif // LazyClassStructureInlines_h
-

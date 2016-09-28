@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGCombinedLiveness_h
-#define DFGCombinedLiveness_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -48,6 +47,3 @@ struct CombinedLiveness {
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGCombinedLiveness_h
-

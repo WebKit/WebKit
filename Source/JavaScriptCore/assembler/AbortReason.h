@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AbortReason_h
-#define AbortReason_h
+#pragma once
 
 namespace JSC {
 
@@ -78,6 +77,3 @@ enum AbortReason {
 };
 
 } // namespace JSC
-
-#endif // AbortReason_h
-

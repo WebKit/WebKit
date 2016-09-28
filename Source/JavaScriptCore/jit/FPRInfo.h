@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FPRInfo_h
-#define FPRInfo_h
+#pragma once
 
 #include "MacroAssembler.h"
 #include <wtf/PrintStream.h>
@@ -427,5 +426,3 @@ inline void printInternal(PrintStream& out, JSC::FPRReg reg)
 }
 
 } // namespace WTF
-
-#endif

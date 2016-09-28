@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StructureRareData_h
-#define StructureRareData_h
+#pragma once
 
 #include "ClassInfo.h"
 #include "JSCell.h"
@@ -86,5 +85,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // StructureRareData_h

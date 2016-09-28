@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JITRightShiftGenerator_h
-#define JITRightShiftGenerator_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -59,5 +58,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // JITRightShiftGenerator_h

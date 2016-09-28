@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef JSFunction_h
-#define JSFunction_h
+#pragma once
 
 #include "FunctionRareData.h"
 #include "InternalFunction.h"
@@ -207,5 +206,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSFunction_h

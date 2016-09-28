@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGMinifiedID_h
-#define DFGMinifiedID_h
+#pragma once
 
 #include "DFGCommon.h"
 #include <wtf/HashMap.h>
@@ -102,6 +101,3 @@ template<> struct HashTraits<JSC::DFG::MinifiedID> : SimpleClassHashTraits<JSC::
 };
 
 } // namespace WTF
-
-#endif // DFGMinifiedID_h
-

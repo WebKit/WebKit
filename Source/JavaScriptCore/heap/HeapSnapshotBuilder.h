@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HeapSnapshotBuilder_h
-#define HeapSnapshotBuilder_h
+#pragma once
 
 #include <functional>
 #include <wtf/Lock.h>
@@ -139,5 +138,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // HeapSnapshotBuilder_h 

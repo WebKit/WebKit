@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef SymbolObject_h
-#define SymbolObject_h
+#pragma once
 
 #include "JSWrapperObject.h"
 #include "Symbol.h"
@@ -65,5 +64,3 @@ protected:
 };
 
 } // namespace JSC
-
-#endif // SymbolObject_h

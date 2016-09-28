@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CommonSlowPaths_h
-#define CommonSlowPaths_h
+#pragma once
 
 #include "CodeBlock.h"
 #include "CodeSpecializationKind.h"
@@ -259,5 +258,3 @@ SLOW_PATH_HIDDEN_DECL(slow_path_put_by_id_with_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_put_by_val_with_this);
 
 } // namespace JSC
-
-#endif // CommonSlowPaths_h

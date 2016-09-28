@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCInlines_h
-#define JSCInlines_h
+#pragma once
 
 // This file's only purpose is to collect commonly used *Inlines.h files, so that you don't
 // have to include all of them in every .cpp file. Instead you just include this. It's good
@@ -52,5 +51,3 @@
 #include "StructureInlines.h"
 #include "ThrowScope.h"
 #include "WeakGCMapInlines.h"
-
-#endif // JSCInlines_h

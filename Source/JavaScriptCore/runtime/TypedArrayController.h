@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TypedArrayController_h
-#define TypedArrayController_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 
@@ -45,6 +44,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // TypedArrayController_h
-

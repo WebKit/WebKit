@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PrototypeMap_h
-#define PrototypeMap_h
+#pragma once
 
 #include "IndexingType.h"
 #include "JSTypeInfo.h"
@@ -61,5 +60,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // PrototypeMap_h

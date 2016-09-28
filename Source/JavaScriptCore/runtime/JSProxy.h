@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSProxy_h
-#define JSProxy_h
+#pragma once
 
 #include "JSDestructibleObject.h"
 
@@ -103,5 +102,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSProxy_h

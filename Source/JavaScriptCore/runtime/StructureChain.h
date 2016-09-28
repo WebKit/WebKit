@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StructureChain_h
-#define StructureChain_h
+#pragma once
 
 #include "JSCell.h"
 #include "JSObject.h"
@@ -85,5 +84,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // StructureChain_h

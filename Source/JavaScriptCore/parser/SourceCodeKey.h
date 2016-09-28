@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SourceCodeKey_h
-#define SourceCodeKey_h
+#pragma once
 
 #include "ParserModes.h"
 #include "SourceCode.h"
@@ -119,6 +118,4 @@ private:
     unsigned m_hash;
 };
 
-}
-
-#endif // SourceCodeKey_h
+} // namespace JSC

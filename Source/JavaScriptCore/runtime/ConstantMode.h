@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConstantMode_h
-#define ConstantMode_h
+#pragma once
 
 #include <wtf/PrintStream.h>
 
@@ -44,6 +43,3 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::ConstantMode);
 
 } // namespace WTF
-
-#endif // ConstantMode_h
-

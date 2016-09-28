@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PutByIdVariant_h
-#define PutByIdVariant_h
+#pragma once
 
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
@@ -146,6 +145,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // PutByIdVariant_h
-

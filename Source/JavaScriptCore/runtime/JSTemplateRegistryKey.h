@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSTemplateRegistryKey_h
-#define JSTemplateRegistryKey_h
+#pragma once
 
 #include "JSDestructibleObject.h"
 #include "Structure.h"
@@ -57,5 +56,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSTemplateRegistryKey_h

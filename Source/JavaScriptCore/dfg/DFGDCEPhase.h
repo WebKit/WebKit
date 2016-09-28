@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGDCEPhase_h
-#define DFGDCEPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -42,6 +41,3 @@ bool performDCE(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGDCEPhase_h
-

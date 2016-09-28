@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PropertyOffset_h
-#define PropertyOffset_h
+#pragma once
 
 #include <wtf/StdLibExtras.h>
 
@@ -143,5 +142,3 @@ inline PropertyOffset offsetForPropertyNumber(int propertyNumber, int inlineCapa
 }
 
 } // namespace JSC
-
-#endif // PropertyOffset_h

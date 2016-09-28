@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLExitArgument_h
-#define FTLExitArgument_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -86,6 +85,3 @@ private:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLExitArgument_h
-

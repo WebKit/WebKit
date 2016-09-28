@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FullGCActivityCallback_h
-#define FullGCActivityCallback_h
+#pragma once
 
 #include "GCActivityCallback.h"
 
@@ -60,5 +59,3 @@ inline RefPtr<FullGCActivityCallback> GCActivityCallback::createFullTimer(Heap* 
 }
 
 } // namespace JSC
-
-#endif // FullGCActivityCallback_h

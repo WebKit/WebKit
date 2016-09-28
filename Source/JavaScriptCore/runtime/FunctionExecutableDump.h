@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FunctionExecutableDump_h
-#define FunctionExecutableDump_h
+#pragma once
 
 #include "Executable.h"
 #include <wtf/PrintStream.h>
@@ -44,6 +43,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // FunctionExecutableDump_h
-

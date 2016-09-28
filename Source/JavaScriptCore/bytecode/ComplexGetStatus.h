@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ComplexGetStatus_h
-#define ComplexGetStatus_h
+#pragma once
 
 #include "JSCJSValue.h"
 #include "ObjectPropertyConditionSet.h"
@@ -109,6 +108,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ComplexGetStatus_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SetupVarargsFrame_h
-#define SetupVarargsFrame_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -48,6 +47,3 @@ void emitSetupVarargsFrameFastCase(CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // SetupVarargsFrame_h
-

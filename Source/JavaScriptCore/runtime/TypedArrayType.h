@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TypedArrayType_h
-#define TypedArrayType_h
+#pragma once
 
 #include "JSType.h"
 #include <wtf/PrintStream.h>
@@ -173,6 +172,3 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::TypedArrayType);
 
 } // namespace WTF
-
-#endif // TypedArrayType_h
-

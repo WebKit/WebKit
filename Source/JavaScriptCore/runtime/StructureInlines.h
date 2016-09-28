@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StructureInlines_h
-#define StructureInlines_h
+#pragma once
 
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
@@ -313,6 +312,3 @@ inline void Structure::setObjectToStringValue(ExecState* exec, VM& vm, JSString*
 }
 
 } // namespace JSC
-
-#endif // StructureInlines_h
-

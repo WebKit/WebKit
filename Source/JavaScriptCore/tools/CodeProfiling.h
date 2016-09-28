@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeProfiling_h
-#define CodeProfiling_h
+#pragma once
 
 namespace WTF {
 
@@ -79,7 +78,4 @@ private:
     static volatile CodeProfile* s_profileStack;
 };
 
-}
-
-#endif // CodeProfiling_h
-
+} // namespace JSC

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGUseKind_h
-#define DFGUseKind_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -293,6 +292,3 @@ void printInternal(PrintStream&, JSC::DFG::UseKind);
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGUseKind_h
-

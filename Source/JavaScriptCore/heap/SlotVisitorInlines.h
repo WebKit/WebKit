@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SlotVisitorInlines_h
-#define SlotVisitorInlines_h
+#pragma once
 
 #include "SlotVisitor.h"
 #include "Weak.h"
@@ -132,6 +131,3 @@ inline const VM& SlotVisitor::vm() const
 }
 
 } // namespace JSC
-
-#endif // SlotVisitorInlines_h
-

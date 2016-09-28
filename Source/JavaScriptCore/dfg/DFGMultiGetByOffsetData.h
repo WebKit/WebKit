@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGMultiGetByOffsetData_h
-#define DFGMultiGetByOffsetData_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -152,6 +151,3 @@ void printInternal(PrintStream&, JSC::DFG::GetByOffsetMethod::Kind);
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGMultiGetByOffsetData_h
-

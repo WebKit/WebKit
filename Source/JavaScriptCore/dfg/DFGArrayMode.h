@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGArrayMode_h
-#define DFGArrayMode_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -533,6 +532,3 @@ void printInternal(PrintStream&, JSC::DFG::Array::Conversion);
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGArrayMode_h
-

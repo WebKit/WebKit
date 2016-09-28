@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3ReduceStrength_h
-#define B3ReduceStrength_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -45,6 +44,3 @@ JS_EXPORT_PRIVATE bool reduceStrength(Procedure&);
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3ReduceStrength_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGStaticExecutionCountEstimationPhase_h
-#define DFGStaticExecutionCountEstimationPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -44,6 +43,3 @@ bool performStaticExecutionCountEstimation(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGStaticExecutionCountEstimationPhase_h
-

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SyntaxChecker_h
-#define SyntaxChecker_h
+#pragma once
 
 #include "Lexer.h"
 #include "ParserFunctionInfo.h"
@@ -401,6 +400,4 @@ private:
     int m_topUnaryToken;
 };
 
-}
-
-#endif
+} // namespace JSC

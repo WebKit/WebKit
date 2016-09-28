@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3Type_h
-#define B3Type_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -93,5 +92,3 @@ void printInternal(PrintStream&, JSC::B3::Type);
 #endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3Type_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StructureStubClearingWatchpoint_h
-#define StructureStubClearingWatchpoint_h
+#pragma once
 
 #include "ObjectPropertyCondition.h"
 #include "Watchpoint.h"
@@ -100,6 +99,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // StructureStubClearingWatchpoint_h
-

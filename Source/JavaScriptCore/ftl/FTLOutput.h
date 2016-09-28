@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FTLOutput_h
-#define FTLOutput_h
+#pragma once
 
 #include "DFGCommon.h"
 
@@ -464,5 +463,3 @@ inline void Output::addIncomingToPhi(LValue phi, ValueFromBlock value, Params...
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLOutput_h

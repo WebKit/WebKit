@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeneratorFunctionConstructor_h
-#define GeneratorFunctionConstructor_h
+#pragma once
 
 #include "InternalFunction.h"
 
@@ -62,5 +61,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // GeneratorFunctionConstructor_h

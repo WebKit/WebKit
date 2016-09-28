@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeSpecializationKind_h
-#define CodeSpecializationKind_h
+#pragma once
 
 namespace JSC {
 
@@ -48,6 +47,3 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::CodeSpecializationKind);
 
 } // namespace WTF
-
-#endif // CodeSpecializationKind_h
-

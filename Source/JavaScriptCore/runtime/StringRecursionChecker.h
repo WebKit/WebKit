@@ -17,8 +17,7 @@
  *
  */
 
-#ifndef StringRecursionChecker_h
-#define StringRecursionChecker_h
+#pragma once
 
 #include "Interpreter.h"
 #include "VMInlines.h"
@@ -92,6 +91,4 @@ inline StringRecursionChecker::~StringRecursionChecker()
     }
 }
 
-}
-
-#endif
+} // namespace JSC

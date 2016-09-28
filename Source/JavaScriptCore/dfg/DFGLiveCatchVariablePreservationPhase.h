@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGLiveCatchVariablePreservationPhase_h
-#define DFGLiveCatchVariablePreservationPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -48,5 +47,3 @@ bool performLiveCatchVariablePreservationPhase(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGLiveCatchVariablePreservationPhase_h

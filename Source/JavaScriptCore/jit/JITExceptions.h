@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JITExceptions_h
-#define JITExceptions_h
+#pragma once
 
 namespace JSC {
 
@@ -37,6 +36,3 @@ void genericUnwind(VM*, ExecState*, UnwindStart);
 void genericUnwind(VM*, ExecState*);
 
 } // namespace JSC
-
-#endif // JITExceptions_h
-

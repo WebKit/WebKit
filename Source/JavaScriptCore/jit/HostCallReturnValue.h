@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HostCallReturnValue_h
-#define HostCallReturnValue_h
+#pragma once
 
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
@@ -60,5 +59,3 @@ inline void initializeHostCallReturnValue() { }
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // HostCallReturnValue_h

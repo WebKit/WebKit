@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef ArgList_h
-#define ArgList_h
+#pragma once
 
 #include "CallFrame.h"
 #include <wtf/HashSet.h>
@@ -163,5 +162,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ArgList_h

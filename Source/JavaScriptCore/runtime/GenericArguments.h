@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GenericArguments_h
-#define GenericArguments_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -57,6 +56,3 @@ protected:
 };
 
 } // namespace JSC
-
-#endif // GenericArguments_h
-

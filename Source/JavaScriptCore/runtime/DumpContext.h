@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DumpContext_h
-#define DumpContext_h
+#pragma once
 
 #include "Structure.h"
 #include <wtf/PrintStream.h>
@@ -47,5 +46,3 @@ struct DumpContext {
 };
 
 } // namespace JSC
-
-#endif // DumpContext_h

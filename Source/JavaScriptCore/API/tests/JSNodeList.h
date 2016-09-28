@@ -23,12 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSNodeList_h
-#define JSNodeList_h
+#pragma once
 
 #include "JSBase.h"
 #include "NodeList.h"
 
 extern JSObjectRef JSNodeList_new(JSContextRef, NodeList*);
-
-#endif /* JSNodeList_h */

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef X86Assembler_h
-#define X86Assembler_h
+#pragma once
 
 #if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
 
@@ -3711,5 +3710,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER) && CPU(X86)
-
-#endif // X86Assembler_h

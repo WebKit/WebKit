@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TemplateRegistry_h
-#define TemplateRegistry_h
+#pragma once
 
 #include "JSArray.h"
 #include "TemplateRegistryKey.h"
@@ -44,5 +43,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // TemplateRegistry_h

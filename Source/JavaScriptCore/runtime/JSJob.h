@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSJob_h
-#define JSJob_h
+#pragma once
 
 #include "JSCell.h"
 #include "Structure.h"
@@ -37,5 +36,3 @@ class JSArray;
 Ref<Microtask> createJSJob(VM&, JSValue job, JSArray* arguments);
 
 } // namespace JSC
-
-#endif // JSJob_h

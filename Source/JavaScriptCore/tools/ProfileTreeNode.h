@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfileTreeNode_h
-#define ProfileTreeNode_h
+#pragma once
 
 namespace JSC {
 
@@ -117,7 +116,4 @@ private:
     Map* m_children;
 };
 
-}
-
-#endif // ProfileTreeNode_h
-
+} // namespace JSC

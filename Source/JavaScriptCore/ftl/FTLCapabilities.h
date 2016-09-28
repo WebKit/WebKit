@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLCapabilities_h
-#define FTLCapabilities_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -43,6 +42,3 @@ CapabilityLevel canCompile(DFG::Graph&);
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLCapabilities_h
-

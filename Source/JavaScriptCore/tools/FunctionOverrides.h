@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FunctionOverrides_h
-#define FunctionOverrides_h
+#pragma once
 
 #include "Options.h"
 #include "SourceCode.h"
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // FunctionOverrides_h

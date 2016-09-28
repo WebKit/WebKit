@@ -589,4 +589,4 @@ void StructureShape::enterDictionaryMode()
     m_isInDictionaryMode = true;
 }
 
-} //namespace JSC
+} // namespace JSC

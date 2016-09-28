@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGEpoch_h
-#define DFGEpoch_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -119,6 +118,3 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGEpoch_h
-

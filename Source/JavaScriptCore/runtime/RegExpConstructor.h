@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RegExpConstructor_h
-#define RegExpConstructor_h
+#pragma once
 
 #include "InternalFunction.h"
 #include "RegExp.h"
@@ -149,5 +148,3 @@ ALWAYS_INLINE bool isRegExp(VM& vm, ExecState* exec, JSValue value)
 EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(ExecState*);
 
 } // namespace JSC
-
-#endif // RegExpConstructor_h

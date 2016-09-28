@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGCapabilities_h
-#define DFGCapabilities_h
+#pragma once
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
@@ -174,6 +173,3 @@ inline bool isSmallEnoughToInlineCodeInto(CodeBlock* codeBlock)
 }
 
 } } // namespace JSC::DFG
-
-#endif // DFGCapabilities_h
-

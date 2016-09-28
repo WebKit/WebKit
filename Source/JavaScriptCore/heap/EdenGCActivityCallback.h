@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EdenGCActivityCallback_h
-#define EdenGCActivityCallback_h
+#pragma once
 
 #include "GCActivityCallback.h"
 
@@ -55,5 +54,3 @@ inline RefPtr<GCActivityCallback> GCActivityCallback::createEdenTimer(Heap* heap
 }
 
 } // namespace JSC
-
-#endif // EdenGCActivityCallback_h

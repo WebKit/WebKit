@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeBlockHash_h
-#define CodeBlockHash_h
+#pragma once
 
 #include "CodeSpecializationKind.h"
 #include <wtf/PrintStream.h>
@@ -77,5 +76,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // CodeBlockHash_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorInstrumentationObject_h
-#define InspectorInstrumentationObject_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -61,5 +60,3 @@ protected:
 };
 
 } // namespace JSC
-
-#endif // InspectorInstrumentationObject_h

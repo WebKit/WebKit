@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfilerOrigin_h
-#define ProfilerOrigin_h
+#pragma once
 
 #include "CodeBlockHash.h"
 #include "JSCJSValue.h"
@@ -115,6 +114,3 @@ template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::Profiler::Origin> : SimpleClassHashTraits<JSC::Profiler::Origin> { };
 
 } // namespace WTF
-
-#endif // ProfilerOrigin_h
-

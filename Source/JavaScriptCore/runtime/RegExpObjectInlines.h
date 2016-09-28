@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RegExpObjectInlines_h
-#define RegExpObjectInlines_h
+#pragma once
 
 #include "ButterflyInlines.h"
 #include "Error.h"
@@ -125,6 +124,3 @@ unsigned RegExpObject::advanceStringUnicode(String s, unsigned length, unsigned 
 }
 
 } // namespace JSC
-
-#endif // RegExpObjectInlines_h
-

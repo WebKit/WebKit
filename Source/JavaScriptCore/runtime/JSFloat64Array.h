@@ -23,10 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSFloat64Array_h
-#define JSFloat64Array_h
+#pragma once
 
 #include "JSTypedArrays.h"
-
-#endif // JSFloat64Array_h
-

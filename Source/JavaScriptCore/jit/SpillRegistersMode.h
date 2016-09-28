@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpillRegistersMode_h
-#define SpillRegistersMode_h
+#pragma once
 
 namespace JSC {
 
 enum SpillRegistersMode { NeedToSpill, DontSpill };
 
 }
-
-#endif

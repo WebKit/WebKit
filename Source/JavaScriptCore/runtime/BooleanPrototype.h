@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef BooleanPrototype_h
-#define BooleanPrototype_h
+#pragma once
 
 #include "BooleanObject.h"
 
@@ -52,5 +51,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // BooleanPrototype_h

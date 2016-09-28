@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AbstractMacroAssembler_h
-#define AbstractMacroAssembler_h
+#pragma once
 
 #include "AbortReason.h"
 #include "AssemblerBuffer.h"
@@ -1115,5 +1114,3 @@ AbstractMacroAssembler<AssemblerType, MacroAssemblerType>::Address::indexedBy(
 #endif // ENABLE(ASSEMBLER)
 
 } // namespace JSC
-
-#endif // AbstractMacroAssembler_h

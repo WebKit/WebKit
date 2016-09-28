@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RegExpObject_h
-#define RegExpObject_h
+#pragma once
 
 #include "JSObject.h"
 #include "RegExp.h"
@@ -131,5 +130,3 @@ inline RegExpObject* asRegExpObject(JSValue value)
 }
 
 } // namespace JSC
-
-#endif // RegExpObject_h

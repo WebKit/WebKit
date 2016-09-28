@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSModuleNamespaceObject_h
-#define JSModuleNamespaceObject_h
+#pragma once
 
 #include "JSDestructibleObject.h"
 #include <wtf/ListHashSet.h>
@@ -76,5 +75,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSModuleNamespaceObject_h

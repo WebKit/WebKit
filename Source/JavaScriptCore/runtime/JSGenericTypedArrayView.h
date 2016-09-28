@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSGenericTypedArrayView_h
-#define JSGenericTypedArrayView_h
+#pragma once
 
 #include "JSArrayBufferView.h"
 #include "ThrowScope.h"
@@ -369,6 +368,3 @@ inline RefPtr<typename Adaptor::ViewType> toNativeTypedView(JSValue value)
 }
 
 } // namespace JSC
-
-#endif // JSGenericTypedArrayView_h
-

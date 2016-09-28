@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CellState_h
-#define CellState_h
+#pragma once
 
 #include <wtf/Assertions.h>
 
@@ -68,6 +67,3 @@ inline CellState blacken(CellState cellState)
 }
 
 } // namespace JSC
-
-#endif // CellState_h
-

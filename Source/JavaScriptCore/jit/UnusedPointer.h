@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef UnusedPointer_h
-#define UnusedPointer_h
+#pragma once
 
 namespace JSC {
 
@@ -33,5 +32,3 @@ static const uintptr_t unusedPointer = 0xd1e7beef;
 } // namespace JSC
 
 using JSC::unusedPointer;
-
-#endif // UnusedPointer_h

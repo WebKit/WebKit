@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirTmp_h
-#define AirTmp_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -297,6 +296,3 @@ template<> struct HashTraits<JSC::B3::Air::Tmp> : SimpleClassHashTraits<JSC::B3:
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirTmp_h
-

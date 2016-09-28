@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Opcode_h
-#define Opcode_h
+#pragma once
 
 #include "Bytecodes.h"
 #include "LLIntOpcode.h"
@@ -202,5 +201,3 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::OpcodeID);
 
 } // namespace WTF
-
-#endif // Opcode_h

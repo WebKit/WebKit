@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ExecutionCounter_h
-#define ExecutionCounter_h
+#pragma once
 
 #include "JSGlobalObject.h"
 #include "Options.h"
@@ -118,6 +117,3 @@ typedef ExecutionCounter<CountingForBaseline> BaselineExecutionCounter;
 typedef ExecutionCounter<CountingForUpperTiers> UpperTierExecutionCounter;
 
 } // namespace JSC
-
-#endif // ExecutionCounter_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeOrigin_h
-#define CodeOrigin_h
+#pragma once
 
 #include "CallMode.h"
 #include "CodeBlockHash.h"
@@ -156,6 +155,3 @@ template<> struct HashTraits<JSC::CodeOrigin> : SimpleClassHashTraits<JSC::CodeO
 };
 
 } // namespace WTF
-
-#endif // CodeOrigin_h
-

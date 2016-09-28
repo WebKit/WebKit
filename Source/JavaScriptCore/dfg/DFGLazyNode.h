@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFGLazyNode_h
-#define DFGLazyNode_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -184,5 +183,3 @@ template<> struct HashTraits<JSC::DFG::LazyNode> : SimpleClassHashTraits<JSC::DF
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGLazyNode_h

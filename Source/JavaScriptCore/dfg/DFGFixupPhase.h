@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGFixupPhase_h
-#define DFGFixupPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -40,5 +39,3 @@ bool performFixup(Graph&);
 } } // namespace JSC::DFG::Phase
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGFixupPhase_h

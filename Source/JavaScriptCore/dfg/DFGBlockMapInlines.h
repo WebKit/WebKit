@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGBlockMapInlines_h
-#define DFGBlockMapInlines_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -42,5 +41,3 @@ BlockMap<T>::BlockMap(Graph& graph)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGBlockMapInlines_h

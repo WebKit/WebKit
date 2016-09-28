@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGCPSRethreadingPhase_h
-#define DFGCPSRethreadingPhase_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -43,6 +42,3 @@ bool performCPSRethreading(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGCPSRethreadingPhase_h
-

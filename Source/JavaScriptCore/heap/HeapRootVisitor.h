@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HeapRootVisitor_h
-#define HeapRootVisitor_h
+#pragma once
 
 #include "SlotVisitor.h"
 #include "SlotVisitorInlines.h"
@@ -83,5 +82,3 @@ namespace JSC {
     }
 
 } // namespace JSC
-
-#endif // HeapRootVisitor_h

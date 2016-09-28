@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ByValInfo_h
-#define ByValInfo_h
+#pragma once
 
 #include "ClassInfo.h"
 #include "CodeLocation.h"
@@ -256,6 +255,3 @@ typedef HashMap<int, void*> ByValInfoMap;
 #endif // ENABLE(JIT)
 
 } // namespace JSC
-
-#endif // ByValInfo_h
-

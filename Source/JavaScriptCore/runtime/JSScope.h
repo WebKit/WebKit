@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSScope_h
-#define JSScope_h
+#pragma once
 
 #include "GetPutInfo.h"
 #include "JSObject.h"
@@ -156,5 +155,3 @@ inline size_t JSScope::offsetOfNext()
 }
 
 } // namespace JSC
-
-#endif // JSScope_h

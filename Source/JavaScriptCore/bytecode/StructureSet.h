@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StructureSet_h
-#define StructureSet_h
+#pragma once
 
 #include "ArrayProfile.h"
 #include "DumpContext.h"
@@ -84,5 +83,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // StructureSet_h

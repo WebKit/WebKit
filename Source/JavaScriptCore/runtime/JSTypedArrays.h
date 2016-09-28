@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSTypedArrays_h
-#define JSTypedArrays_h
+#pragma once
 
 #include "JSGenericTypedArrayView.h"
 #include "TypedArrayAdaptors.h"
@@ -45,6 +44,3 @@ typedef JSGenericTypedArrayView<Float64Adaptor> JSFloat64Array;
 JS_EXPORT_PRIVATE JSUint8Array* createUint8TypedArray(ExecState*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
 
 } // namespace JSC
-
-#endif // JSTypedArrays_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGMinifiedGraph_h
-#define DFGMinifiedGraph_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -65,6 +64,3 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGMinifiedGraph_h
-

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLPatchpointExceptionHandle_h
-#define FTLPatchpointExceptionHandle_h
+#pragma once
 
 #include "DFGCommon.h"
 
@@ -101,6 +100,3 @@ private:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLPatchpointExceptionHandle_h
-

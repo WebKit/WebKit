@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3Commutativity_h
-#define B3Commutativity_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -45,6 +44,3 @@ void printInternal(PrintStream&, JSC::B3::Commutativity);
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3Commutativity_h
-

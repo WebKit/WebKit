@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGThunks_h
-#define DFGThunks_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -42,5 +41,3 @@ MacroAssemblerCodeRef osrEntryThunkGenerator(VM*);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGThunks_h

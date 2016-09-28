@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGHeapLocation_h
-#define DFGHeapLocation_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -157,6 +156,3 @@ template<> struct HashTraits<JSC::DFG::HeapLocation> : SimpleClassHashTraits<JSC
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGHeapLocation_h
-

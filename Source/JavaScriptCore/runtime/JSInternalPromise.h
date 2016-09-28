@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSInternalPromise_h
-#define JSInternalPromise_h
+#pragma once
 
 #include "JSPromise.h"
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSInternalPromise_h

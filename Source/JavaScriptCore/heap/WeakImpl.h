@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakImpl_h
-#define WeakImpl_h
+#pragma once
 
 #include "JSCJSValue.h"
 
@@ -111,5 +110,3 @@ inline WeakImpl* WeakImpl::asWeakImpl(JSValue* slot)
 }
 
 } // namespace JSC
-
-#endif // WeakImpl_h

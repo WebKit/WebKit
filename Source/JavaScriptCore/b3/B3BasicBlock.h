@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3BasicBlock_h
-#define B3BasicBlock_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -199,6 +198,3 @@ inline DeepBasicBlockDump deepDump(const Procedure& proc, const BasicBlock* bloc
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3BasicBlock_h
-

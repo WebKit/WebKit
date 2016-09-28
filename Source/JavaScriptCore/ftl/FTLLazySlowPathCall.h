@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLLazySlowPathCall_h
-#define FTLLazySlowPathCall_h
+#pragma once
 
 #include "CodeBlock.h"
 #include "CodeLocation.h"
@@ -51,6 +50,3 @@ RefPtr<LazySlowPath::Generator> createLazyCallGenerator(
 }
 
 } } // namespace JSC::FTL
-
-#endif // FTLLazySlowPathCall_h
-

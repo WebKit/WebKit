@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DebuggerPrimitives_h
-#define DebuggerPrimitives_h
+#pragma once
 
 #include <stddef.h>
 
@@ -37,5 +36,3 @@ typedef size_t BreakpointID;
 static const BreakpointID noBreakpointID = 0;
 
 } // namespace JSC
-
-#endif // DebuggerPrimitives_h

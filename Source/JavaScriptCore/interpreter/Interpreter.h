@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Interpreter_h
-#define Interpreter_h
+#pragma once
 
 #include "ArgList.h"
 #include "CatchScope.h"
@@ -279,5 +278,3 @@ namespace JSC {
     void setupForwardArgumentsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length);
     
 } // namespace JSC
-
-#endif // Interpreter_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGWorklist_h
-#define DFGWorklist_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -148,6 +147,3 @@ void rememberCodeBlocks(VM&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGWorklist_h
-

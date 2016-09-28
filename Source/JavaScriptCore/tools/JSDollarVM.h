@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSDollarVM_h
-#define JSDollarVM_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // JSDollarVM_h

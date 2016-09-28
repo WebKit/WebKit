@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PureNaN_h
-#define PureNaN_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
@@ -94,5 +93,3 @@ inline double purifyNaN(double value)
 }   
 
 } // namespace JSC
-
-#endif // PureNaN_h

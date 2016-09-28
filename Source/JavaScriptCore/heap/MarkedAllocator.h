@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MarkedAllocator_h
-#define MarkedAllocator_h
+#pragma once
 
 #include "AllocatorAttributes.h"
 #include "FreeList.h"
@@ -310,5 +309,3 @@ template <typename Functor> inline void MarkedAllocator::forEachBlock(const Func
 }
 
 } // namespace JSC
-
-#endif // MarkedAllocator_h

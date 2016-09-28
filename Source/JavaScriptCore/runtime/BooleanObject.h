@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef BooleanObject_h
-#define BooleanObject_h
+#pragma once
 
 #include "JSWrapperObject.h"
 
@@ -57,5 +56,3 @@ inline BooleanObject* asBooleanObject(JSValue value)
 }
 
 } // namespace JSC
-
-#endif // BooleanObject_h

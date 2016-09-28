@@ -56,4 +56,4 @@ const char* checkSyntax(const String& pattern, const String& flags)
     return parse(syntaxChecker, pattern, flags.contains('u'));
 }
 
-}} // JSC::YARR
+}} // JSC::Yarr

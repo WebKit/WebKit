@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CommonSlowPathExceptions_h
-#define CommonSlowPathExceptions_h
+#pragma once
 
 namespace JSC {
 
@@ -37,5 +36,3 @@ namespace CommonSlowPaths {
 void interpreterThrowInCaller(ExecState* callerFrame, JSObject*);
 
 } } // namespace JSC::CommonSlowPaths
-
-#endif // CommonSlowPathExceptions_h

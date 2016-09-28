@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSONObject_h
-#define JSONObject_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -58,8 +57,5 @@ private:
 
 JS_EXPORT_PRIVATE JSValue JSONParse(ExecState*, const String&);
 JS_EXPORT_PRIVATE String JSONStringify(ExecState*, JSValue, unsigned indent);
-
     
 } // namespace JSC
-
-#endif // JSONObject_h

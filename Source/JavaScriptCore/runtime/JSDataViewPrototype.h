@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSDataViewPrototype_h
-#define JSDataViewPrototype_h
+#pragma once
 
 #include "JSObject.h"
 
@@ -49,6 +48,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // JSDataViewPrototype_h
-

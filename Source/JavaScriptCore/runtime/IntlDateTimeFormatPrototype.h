@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IntlDateTimeFormatPrototype_h
-#define IntlDateTimeFormatPrototype_h
+#pragma once
 
 #if ENABLE(INTL)
 
@@ -53,5 +52,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(INTL)
-
-#endif // IntlDateTimeFormatPrototype_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NumericStrings_h
-#define NumericStrings_h
+#pragma once
 
 #include <array>
 #include <wtf/HashFunctions.h>
@@ -94,5 +93,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // NumericStrings_h

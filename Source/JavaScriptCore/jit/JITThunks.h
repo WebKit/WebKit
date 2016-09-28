@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JITThunks_h
-#define JITThunks_h
+#pragma once
 
 #if ENABLE(JIT)
 
@@ -108,6 +107,3 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // JITThunks_h
-

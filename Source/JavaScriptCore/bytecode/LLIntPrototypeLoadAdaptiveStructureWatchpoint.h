@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LLIntPrototypeLoadAdaptiveStructureWatchpoint_h
-#define LLIntPrototypeLoadAdaptiveStructureWatchpoint_h
+#pragma once
 
 #include "Instruction.h"
 #include "ObjectPropertyCondition.h"
@@ -47,5 +46,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif /* LLIntPrototypeLoadAdaptiveStructureWatchpoint_h */

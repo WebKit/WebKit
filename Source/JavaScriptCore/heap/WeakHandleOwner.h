@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakHandleOwner_h
-#define WeakHandleOwner_h
+#pragma once
 
 #include "Handle.h"
 
@@ -40,5 +39,3 @@ public:
 };
 
 } // namespace JSC
-
-#endif // WeakHandleOwner_h

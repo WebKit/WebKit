@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGStructureClobberState_h
-#define DFGStructureClobberState_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -69,5 +68,3 @@ inline void printInternal(PrintStream& out, JSC::DFG::StructureClobberState stat
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGStructureClobberState_h

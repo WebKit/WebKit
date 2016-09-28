@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGToFTLDeferredCompilationCallback_h
-#define DFGToFTLDeferredCompilationCallback_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -53,6 +52,3 @@ public:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // DFGToFTLDeferredCompilationCallback_h
-

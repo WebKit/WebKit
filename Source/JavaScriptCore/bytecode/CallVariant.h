@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CallVariant_h
-#define CallVariant_h
+#pragma once
 
 #include "Executable.h"
 #include "JSCell.h"
@@ -198,6 +197,3 @@ template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::CallVariant> : SimpleClassHashTraits<JSC::CallVariant> { };
 
 } // namespace WTF
-
-#endif // CallVariant_h
-

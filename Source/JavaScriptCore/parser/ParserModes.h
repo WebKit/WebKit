@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef ParserModes_h
-#define ParserModes_h
+#pragma once
 
 #include "ConstructAbility.h"
 #include "Identifier.h"
@@ -225,5 +223,3 @@ const InnerArrowFunctionCodeFeatures NewTargetInnerArrowFunctionFeature =     1 
     
 const InnerArrowFunctionCodeFeatures AllInnerArrowFunctionCodeFeatures = EvalInnerArrowFunctionFeature | ArgumentsInnerArrowFunctionFeature | ThisInnerArrowFunctionFeature | SuperCallInnerArrowFunctionFeature | SuperPropertyInnerArrowFunctionFeature | NewTargetInnerArrowFunctionFeature;
 } // namespace JSC
-
-#endif // ParserModes_h

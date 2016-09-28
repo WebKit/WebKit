@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IndexingHeaderInlines_h
-#define IndexingHeaderInlines_h
+#pragma once
 
 #include "ArrayStorage.h"
 #include "IndexingHeader.h"
@@ -59,6 +58,3 @@ inline size_t IndexingHeader::indexingPayloadSizeInBytes(Structure* structure)
 }
 
 } // namespace JSC
-
-#endif // IndexingHeaderInlines_h
-

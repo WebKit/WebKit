@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLJITFinalizer_h
-#define FTLJITFinalizer_h
+#pragma once
 
 #if ENABLE(FTL_JIT)
 
@@ -71,6 +70,3 @@ public:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLJITFinalizer_h
-

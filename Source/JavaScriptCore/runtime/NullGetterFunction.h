@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NullGetterFunction_h
-#define  NullGetterFunction_h
+#pragma once
 
 #include "InternalFunction.h"
 
@@ -57,6 +56,4 @@ private:
     static CallType getCallData(JSCell*, CallData&);
 };
 
-}
-
-#endif // NullGetterFunction_h
+} // namespace JSC

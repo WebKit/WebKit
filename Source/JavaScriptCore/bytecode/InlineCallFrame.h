@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InlineCallFrame_h
-#define InlineCallFrame_h
+#pragma once
 
 #include "CodeBlock.h"
 #include "CodeBlockHash.h"
@@ -264,5 +263,3 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::InlineCallFrame::Kind);
 
 } // namespace WTF
-
-#endif // InlineCallFrame_h

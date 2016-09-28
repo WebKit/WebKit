@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGClobberize_h
-#define DFGClobberize_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -1411,6 +1410,3 @@ void clobberize(Graph& graph, Node* node, Adaptor& adaptor)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGClobberize_h
-

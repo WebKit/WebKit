@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSEnvironmentRecord_h
-#define JSEnvironmentRecord_h
+#pragma once
 
 #include "JSObject.h"
 #include "JSSymbolTableObject.h"
@@ -113,5 +112,3 @@ protected:
 };
 
 } // namespace JSC
-
-#endif // JSEnvironmentRecord_h

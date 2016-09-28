@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGByteCodeParser_h
-#define DFGByteCodeParser_h
+#pragma once
 
 #if ENABLE(DFG_JIT)
 
@@ -36,5 +35,4 @@ bool parse(Graph&);
 
 } } // namespace JSC::DFG
 
-#endif
 #endif

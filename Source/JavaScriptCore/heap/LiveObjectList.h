@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LiveObjectList_h
-#define LiveObjectList_h
+#pragma once
 
 #include "LiveObjectData.h"
 #include <wtf/Vector.h>
@@ -52,6 +51,3 @@ struct LiveObjectList {
 };
     
 } // namespace JSC
-
-#endif // LiveObjectList_h
-
