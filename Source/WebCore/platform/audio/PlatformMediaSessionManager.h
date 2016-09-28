@@ -57,6 +57,8 @@ public:
     bool activeAudioSessionRequired() const;
     bool canProduceAudio() const;
 
+    WEBCORE_EXPORT virtual bool hasActiveNowPlayingSession() const { return false; }
+
     bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }
     void setWillIgnoreSystemInterruptions(bool ignore) { m_willIgnoreSystemInterruptions = ignore; }
 

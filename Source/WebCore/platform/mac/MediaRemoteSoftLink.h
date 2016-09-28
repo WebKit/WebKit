@@ -39,6 +39,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteRemoveCommandHa
 #define MRMediaRemoteRemoveCommandHandlerBlock softLink_MediaRemote_MRMediaRemoteRemoveCommandHandlerBlock
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetSupportedCommands, void, (CFArrayRef commands, MROriginRef origin, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError err)), (commands, origin, replyQ, completion))
 #define MRMediaRemoteSetSupportedCommands softLink_MediaRemote_MRMediaRemoteSetSupportedCommands
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingVisibility, void, (MROriginRef origin, MRNowPlayingClientVisibility visibility), (origin, visibility))
+#define MRMediaRemoteSetNowPlayingVisibility softLink_MediaRemote_MRMediaRemoteSetNowPlayingVisibility
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCommandInfoCreate, MRMediaRemoteCommandInfoRef, (CFAllocatorRef allocator), (allocator));
 #define MRMediaRemoteCommandInfoCreate softLink_MediaRemote_MRMediaRemoteCommandInfoCreate
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetCommand, void, (MRMediaRemoteCommandInfoRef commandInfo, MRMediaRemoteCommand command), (commandInfo, command))

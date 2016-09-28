@@ -1,5 +1,39 @@
 2016-09-28  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r206527. rdar://problem/28499358
+
+    2016-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Adopt MediaRemote SPI to achieve desired Now Playing behavior
+            https://bugs.webkit.org/show_bug.cgi?id=162658
+            <rdar://problem/28499358>
+
+            Reviewed by Jer Noble.
+
+            Plumbs Now Playing session information (for now, this is just a flag indicating whether or not there is an
+            active session) across from the web process to the UI process for testing in the form of asynchronous request/
+            handle-response messages on the WebPage and its proxy in the UI process.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _requestActiveNowPlayingSessionInfo]):
+            (-[WKWebView _handleActiveNowPlayingSessionInfoResponse:]):
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::requestActiveNowPlayingSessionInfo):
+            (WebKit::WebPageProxy::handleActiveNowPlayingSessionInfoResponse):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::handleActiveNowPlayingSessionInfoResponse):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::requestActiveNowPlayingSessionInfo):
+
+2016-09-28  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r206135. rdar://problem/28499358
 
     2016-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>

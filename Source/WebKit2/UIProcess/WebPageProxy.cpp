@@ -6304,6 +6304,16 @@ void WebPageProxy::requestControlledElementID() const
 #endif
 }
 
+void WebPageProxy::requestActiveNowPlayingSessionInfo()
+{
+    m_process->send(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), m_pageID);
+}
+
+void WebPageProxy::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession) const
+{
+    m_pageClient.handleActiveNowPlayingSessionInfoResponse(hasActiveSession);
+}
+
 void WebPageProxy::handleControlledElementIDResponse(const String& identifier) const
 {
     m_pageClient.handleControlledElementIDResponse(identifier);

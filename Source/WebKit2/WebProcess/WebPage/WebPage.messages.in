@@ -413,6 +413,7 @@ messages -> WebPage LegacyReceiver {
     DataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
     DataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
     HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
+    RequestActiveNowPlayingSessionInfo()
 #endif
 
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)

@@ -27,6 +27,22 @@
 
 #if USE(MEDIAREMOTE)
 
+#if __has_include(<MediaRemote/MRNowPlayingTypes.h>)
+
+#include <MediaRemote/MRNowPlayingTypes.h>
+
+#else
+
+enum {
+    MRNowPlayingClientVisibilityUndefined = 0,
+    MRNowPlayingClientVisibilityAlwaysVisible,
+    MRNowPlayingClientVisibilityVisibleWhenBackgrounded,
+    MRNowPlayingClientVisibilityNeverVisible
+};
+typedef uint32_t MRNowPlayingClientVisibility;
+
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <MediaRemote/MediaRemote.h>
@@ -87,6 +103,7 @@ WTF_EXTERN_C_BEGIN
 void* MRMediaRemoteAddAsyncCommandHandlerBlock(MRMediaRemoteAsyncCommandHandlerBlock);
 void MRMediaRemoteRemoveCommandHandlerBlock(void *observer);
 void MRMediaRemoteSetSupportedCommands(CFArrayRef commands, MROriginRef, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError err));
+void MRMediaRemoteSetNowPlayingVisibility(MROriginRef, MRNowPlayingClientVisibility);
 
 #pragma mark - MROrigin
 

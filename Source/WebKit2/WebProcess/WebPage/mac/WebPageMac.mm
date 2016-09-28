@@ -74,6 +74,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
@@ -157,6 +158,15 @@ void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandid
 
     frame->editor().handleAcceptedCandidate(acceptedCandidate);
     send(Messages::WebPageProxy::DidHandleAcceptedCandidate());
+}
+
+void WebPage::requestActiveNowPlayingSessionInfo()
+{
+    bool hasActiveSession = false;
+    if (auto* sharedManager = WebCore::PlatformMediaSessionManager::sharedManagerIfExists())
+        hasActiveSession = sharedManager->hasActiveNowPlayingSession();
+
+    send(Messages::WebPageProxy::HandleActiveNowPlayingSessionInfoResponse(hasActiveSession));
 }
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()

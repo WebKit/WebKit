@@ -1,5 +1,32 @@
 2016-09-28  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r206527. rdar://problem/28499358
+
+    2016-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Adopt MediaRemote SPI to achieve desired Now Playing behavior
+            https://bugs.webkit.org/show_bug.cgi?id=162658
+            <rdar://problem/28499358>
+
+            Reviewed by Jer Noble.
+
+            Introduces 2 unit tests in the new NowPlayingControlsTests test suite. Also provides some basic support for
+            mocking key window status for TestWKWebViews.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/NowPlayingControlsTests.mm: Added.
+            (-[NowPlayingTestWebView hasActiveNowPlayingSession]):
+            (-[NowPlayingTestWebView expectHasActiveNowPlayingSession:]):
+            (-[NowPlayingTestWebView _handleActiveNowPlayingSessionInfoResponse:]):
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-test-now-playing.html: Added.
+            * TestWebKitAPI/mac/TestWKWebViewMac.mm:
+            (-[TestWKWebViewHostWindow isKeyWindow]):
+            (-[TestWKWebViewHostWindow makeKeyWindow]):
+            (-[TestWKWebViewHostWindow resignKeyWindow]):
+
+2016-09-28  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r206335. rdar://problem/28499358
 
     2016-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
