@@ -1,3 +1,14 @@
+2016-09-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct 'safeCast' implementation
+        https://bugs.webkit.org/show_bug.cgi?id=162679
+        <rdar://problem/28518189>
+
+        Reviewed by Zalan Bujtas.
+
+        * wtf/StdLibExtras.h:
+        (WTF::safeCast): Use a RELEASE_ASSERT.
+
 2016-09-27  Don Olmstead  <don.olmstead@am.sony.com>
 
         [CMake] Add HAVE_LOCALTIME_R definition
