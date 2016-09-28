@@ -1307,6 +1307,9 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                     while (!findLastAt.atEnd()) {
                         if (*findLastAt == '@')
                             lastAt = findLastAt;
+                        bool isSlash = *findLastAt == '/' || (m_urlIsSpecial && *findLastAt == '\\');
+                        if (isSlash || *findLastAt == '?' || *findLastAt == '#')
+                            break;
                         ++findLastAt;
                     }
                     parseAuthority(CodePointIterator<CharacterType>(authorityOrHostBegin, lastAt));

@@ -1,3 +1,15 @@
+2016-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        URLs with @ in the user should only search for the last @ until the end of the authority and host
+        https://bugs.webkit.org/show_bug.cgi?id=162635
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+
 2016-09-27  Chris Dumez  <cdumez@apple.com>
 
         It should be possible to dispatch events on documents created using DOMParser
