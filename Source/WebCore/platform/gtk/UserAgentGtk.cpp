@@ -34,6 +34,12 @@
 #include <sys/utsname.h>
 #endif
 
+// WARNING! WARNING! WARNING!
+//
+// The user agent is ludicrously fragile. The most innocent change can
+// and will break websites. Read the git log for this file carefully
+// before changing user agent construction. You have been warned.
+
 namespace WebCore {
 
 class UserAgentQuirks {
