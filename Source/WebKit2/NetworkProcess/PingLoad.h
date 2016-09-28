@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-class PingLoad final : public NetworkDataTaskClient {
+class PingLoad final : private NetworkDataTaskClient {
 public:
     PingLoad(const NetworkResourceLoadParameters& parameters)
         : m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
