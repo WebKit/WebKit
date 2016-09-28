@@ -130,6 +130,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     AVStreamDataParser* _parser;
 }
+@property (assign) WeakPtr<WebCore::SourceBufferPrivateAVFObjC> parent;
 - (id)initWithParser:(AVStreamDataParser*)parser parent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>)parent;
 @end
 
@@ -146,6 +147,8 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     [_parser setDelegate:self];
     return self;
 }
+
+@synthesize parent=_parent;
 
 - (void)dealloc
 {
@@ -165,12 +168,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RetainPtr<WebAVStreamDataParserListener> protectedSelf = self;
 
     RetainPtr<AVAsset*> protectedAsset = asset;
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedAsset = WTFMove(protectedAsset)] {
-        if (protectedSelf->_parent)
-            protectedSelf->_parent->didParseStreamDataAsAsset(protectedAsset.get());
+    callOnMainThread([parent = _parent, protectedAsset = WTFMove(protectedAsset)] {
+        if (parent)
+            parent->didParseStreamDataAsAsset(protectedAsset.get());
     });
 }
 
@@ -181,12 +183,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RetainPtr<WebAVStreamDataParserListener> protectedSelf = self;
 
     RetainPtr<AVAsset*> protectedAsset = asset;
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedAsset = WTFMove(protectedAsset)] {
-        if (protectedSelf->_parent)
-            protectedSelf->_parent->didParseStreamDataAsAsset(protectedAsset.get());
+    callOnMainThread([parent = _parent, protectedAsset = WTFMove(protectedAsset)] {
+        if (parent)
+            parent->didParseStreamDataAsAsset(protectedAsset.get());
     });
 }
 
@@ -196,12 +197,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RetainPtr<WebAVStreamDataParserListener> protectedSelf = self;
 
     RetainPtr<NSError> protectedError = error;
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedError = WTFMove(protectedError)] {
-        if (protectedSelf->_parent)
-            protectedSelf->_parent->didFailToParseStreamDataWithError(protectedError.get());
+    callOnMainThread([parent = _parent, protectedError = WTFMove(protectedError)] {
+        if (parent)
+            parent->didFailToParseStreamDataWithError(protectedError.get());
     });
 }
 
@@ -211,13 +211,12 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RetainPtr<WebAVStreamDataParserListener> protectedSelf = self;
 
     RetainPtr<CMSampleBufferRef> protectedSample = sample;
     String mediaType = nsMediaType;
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedSample = WTFMove(protectedSample), trackID, mediaType, flags] {
-        if (protectedSelf->_parent)
-            protectedSelf->_parent->didProvideMediaDataForTrackID(trackID, protectedSample.get(), mediaType, flags);
+    callOnMainThread([parent = _parent, protectedSample = WTFMove(protectedSample), trackID, mediaType, flags] {
+        if (parent)
+            parent->didProvideMediaDataForTrackID(trackID, protectedSample.get(), mediaType, flags);
     });
 }
 
@@ -227,12 +226,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RetainPtr<WebAVStreamDataParserListener> protectedSelf = self;
 
     String mediaType = nsMediaType;
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), trackID, mediaType] {
-        if (protectedSelf->_parent)
-            protectedSelf->_parent->didReachEndOfTrackWithTrackID(trackID, mediaType);
+    callOnMainThread([parent = _parent, trackID, mediaType] {
+        if (parent)
+            parent->didReachEndOfTrackWithTrackID(trackID, mediaType);
     });
 }
 
@@ -245,10 +243,9 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
     // We must call synchronously to the main thread, as the AVStreamSession must be associated
     // with the streamDataParser before the delegate method returns.
-    RetainPtr<WebAVStreamDataParserListener> strongSelf = self;
-    dispatch_sync(dispatch_get_main_queue(), [strongSelf, trackID]() {
-        if (strongSelf->_parent)
-            strongSelf->_parent->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
+    dispatch_sync(dispatch_get_main_queue(), [parent = _parent, trackID]() {
+        if (parent)
+            parent->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
     });
 }
 
@@ -258,12 +255,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RetainPtr<WebAVStreamDataParserListener> protectedSelf = self;
 
     OSObjectPtr<dispatch_semaphore_t> hasSessionSemaphore = adoptOSObject(dispatch_semaphore_create(0));
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedInitData = RetainPtr<NSData>(initData), trackID, hasSessionSemaphore] {
-        if (protectedSelf->_parent)
-            protectedSelf->_parent->didProvideContentKeyRequestInitializationDataForTrackID(protectedInitData.get(), trackID, hasSessionSemaphore);
+    callOnMainThread([parent = _parent, protectedInitData = RetainPtr<NSData>(initData), trackID, hasSessionSemaphore] {
+        if (parent)
+            parent->didProvideContentKeyRequestInitializationDataForTrackID(protectedInitData.get(), trackID, hasSessionSemaphore);
     });
     dispatch_semaphore_wait(hasSessionSemaphore.get(), DISPATCH_TIME_FOREVER);
 }
@@ -582,9 +578,11 @@ RefPtr<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourc
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
     : m_weakFactory(this)
+    , m_appendWeakFactory(this)
     , m_parser(adoptNS([allocAVStreamDataParserInstance() init]))
     , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]))
     , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:this]))
+    , m_isAppendingGroup(adoptOSObject(dispatch_group_create()))
     , m_mediaSource(parent)
     , m_client(0)
     , m_parsingSucceeded(true)
@@ -772,21 +770,26 @@ void SourceBufferPrivateAVFObjC::append(const unsigned char* data, unsigned leng
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data, length);
 
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
-    WeakPtr<SourceBufferPrivateAVFObjC> weakThis = createWeakPtr();
+    WeakPtr<SourceBufferPrivateAVFObjC> weakThis = m_appendWeakFactory.createWeakPtr();
     RetainPtr<AVStreamDataParser> parser = m_parser;
     RetainPtr<WebAVStreamDataParserListener> delegate = m_delegate;
 
     m_parsingSucceeded = true;
+    dispatch_group_enter(m_isAppendingGroup.get());
 
-    dispatch_async(globalDataParserQueue(), [nsData, weakThis, parser, delegate] {
-
-        [parser appendStreamData:nsData.get()];
+    dispatch_async(globalDataParserQueue(), [nsData, weakThis, parser, delegate, isAppendingGroup = m_isAppendingGroup, parserStateWasReset = m_parserStateWasReset] {
+        if (parserStateWasReset)
+            [parser appendStreamData:nsData.get() withFlags:AVStreamDataParserStreamDataDiscontinuity];
+        else
+            [parser appendStreamData:nsData.get()];
 
         callOnMainThread([weakThis] {
             if (weakThis)
                 weakThis->appendCompleted();
         });
+        dispatch_group_leave(isAppendingGroup.get());
     });
+    m_parserStateWasReset = false;
 }
 
 void SourceBufferPrivateAVFObjC::appendCompleted()
@@ -800,12 +803,19 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
 
 void SourceBufferPrivateAVFObjC::abort()
 {
-    // The parser does not have a mechanism for resetting to a clean state, so destroy and re-create it.
-    // FIXME(135164): Support resetting parser to the last appended initialization segment.
-    destroyParser();
+    // The parsing queue may be blocked waiting for the main thread to provide it a AVStreamSession. We
+    // were asked to abort, and that cancels all outstanding append operations. Without cancelling this
+    // semaphore, the m_isAppendingGroup wait operation will deadlock.
+    if (m_hasSessionSemaphore)
+        dispatch_semaphore_signal(m_hasSessionSemaphore.get());
+    dispatch_group_wait(m_isAppendingGroup.get(), DISPATCH_TIME_FOREVER);
+    m_appendWeakFactory.revokeAll();
+    m_delegate.get().parent = m_appendWeakFactory.createWeakPtr();
+}
 
-    m_parser = adoptNS([allocAVStreamDataParserInstance() init]);
-    m_delegate = adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]);
+void SourceBufferPrivateAVFObjC::resetParserState()
+{
+    m_parserStateWasReset = true;
 }
 
 void SourceBufferPrivateAVFObjC::destroyParser()
