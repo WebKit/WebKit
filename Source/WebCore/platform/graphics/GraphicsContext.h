@@ -264,7 +264,7 @@ public:
     StrokeStyle strokeStyle() const { return m_state.strokeStyle; }
 
     WEBCORE_EXPORT void setStrokeColor(const Color&);
-    Color strokeColor() const { return m_state.strokeColor; }
+    const Color& strokeColor() const { return m_state.strokeColor; }
 
     void setStrokePattern(Ref<Pattern>&&);
     Pattern* strokePattern() const { return m_state.strokePattern.get(); }
@@ -276,7 +276,7 @@ public:
     WindRule fillRule() const { return m_state.fillRule; }
 
     WEBCORE_EXPORT void setFillColor(const Color&);
-    Color fillColor() const { return m_state.fillColor; }
+    const Color& fillColor() const { return m_state.fillColor; }
 
     void setFillPattern(Ref<Pattern>&&);
     Pattern* fillPattern() const { return m_state.fillPattern.get(); }
@@ -592,7 +592,7 @@ private:
 
     void platformFillRoundedRect(const FloatRoundedRect&, const Color&);
 
-    FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing,  Color&);
+    FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing, Color&);
 
     GraphicsContextPlatformPrivate* m_data { nullptr };
     DisplayList::Recorder* m_displayListRecorder { nullptr };

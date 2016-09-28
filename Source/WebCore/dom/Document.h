@@ -688,7 +688,7 @@ public:
     std::chrono::milliseconds elapsedTime() const;
     
     void setTextColor(const Color& color) { m_textColor = color; }
-    Color textColor() const { return m_textColor; }
+    const Color& textColor() const { return m_textColor; }
 
     const Color& linkColor() const { return m_linkColor; }
     const Color& visitedLinkColor() const { return m_visitedLinkColor; }

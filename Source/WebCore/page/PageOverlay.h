@@ -106,8 +106,8 @@ public:
 
     WEBCORE_EXPORT IntSize viewToOverlayOffset() const;
 
-    Color backgroundColor() const { return m_backgroundColor; }
-    void setBackgroundColor(Color);
+    const Color& backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(const Color&);
 
     void setShouldIgnoreMouseEventsOutsideBounds(bool flag) { m_shouldIgnoreMouseEventsOutsideBounds = flag; }
 

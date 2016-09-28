@@ -1276,7 +1276,7 @@ void CanvasRenderingContext2D::clearShadow()
     setShadow(FloatSize(), 0, Color::transparent);
 }
 
-void CanvasRenderingContext2D::setShadow(const FloatSize& offset, float blur, Color color)
+void CanvasRenderingContext2D::setShadow(const FloatSize& offset, float blur, const Color& color)
 {
     if (state().shadowOffset == offset && state().shadowBlur == blur && state().shadowColor == color)
         return;

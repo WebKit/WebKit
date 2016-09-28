@@ -1,3 +1,143 @@
+2016-09-27  Dean Jackson  <dino@apple.com>
+
+        Use Color references where possible
+        https://bugs.webkit.org/show_bug.cgi?id=162643
+        <rdar://problem/28506550>
+
+        Reviewed by Simon Fraser.
+
+        There were a bunch of places where we pass or use
+        Colors by value. As the Color class gets a bit more
+        complicated, it would be nice to avoid copying, so
+        use references where possible.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::interpolate):
+        * css/StyleColor.h:
+        (WebCore::StyleColor::getColor):
+        (WebCore::StyleColor::resolve):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::backgroundColor):
+        * dom/Document.h:
+        (WebCore::Document::textColor):
+        * editing/FrameSelection.cpp:
+        (WebCore::disappearsIntoBackground):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/track/TextTrackCueGeneric.h:
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::setBackgroundColor):
+        * page/PageOverlay.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::PropertyWrapperColor::PropertyWrapperColor):
+        (WebCore::PropertyWrapperMaybeInvalidColor::PropertyWrapperMaybeInvalidColor):
+        (WebCore::PropertyWrapperVisitedAffectedColor::PropertyWrapperVisitedAffectedColor):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::strokeColor):
+        (WebCore::GraphicsContext::fillColor):
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+        (WebCore::GenericCueData::foregroundColor):
+        (WebCore::GenericCueData::setForegroundColor):
+        (WebCore::GenericCueData::backgroundColor):
+        (WebCore::GenericCueData::setBackgroundColor):
+        (WebCore::GenericCueData::highlightColor):
+        (WebCore::GenericCueData::setHighlightColor):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::platformFillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawFocusRingPath::color):
+        (WebCore::DisplayList::DrawFocusRingRects::color):
+        (WebCore::DisplayList::FillRectWithColor::color):
+        (WebCore::DisplayList::FillCompositedRect::color):
+        (WebCore::DisplayList::FillRoundedRect::color):
+        (WebCore::DisplayList::FillRectWithRoundedHole::color):
+        * platform/graphics/filters/FEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::lightingColor):
+        * platform/graphics/filters/FEDiffuseLighting.h:
+        * platform/graphics/filters/FEDropShadow.h:
+        (WebCore::FEDropShadow::shadowColor):
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::floodColor):
+        (WebCore::FEFlood::platformApplySoftware):
+        * platform/graphics/filters/FEFlood.h:
+        * platform/graphics/filters/FESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::lightingColor):
+        * platform/graphics/filters/FESpecularLighting.h:
+        * platform/graphics/filters/FilterOperation.h:
+        * rendering/BorderEdge.h:
+        (WebCore::BorderEdge::color):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSelection):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::borderStartEdgeColor):
+        (WebCore::borderEndEdgeColor):
+        (WebCore::borderFillColor):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextWithShadows):
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::color):
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::color):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::color):
+        (WebCore::RenderStyle::visitedLinkColor):
+        (WebCore::RenderStyle::setColor):
+        (WebCore::RenderStyle::setVisitedLinkColor):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::borderLeftColor):
+        (WebCore::RenderStyle::borderRightColor):
+        (WebCore::RenderStyle::borderTopColor):
+        (WebCore::RenderStyle::borderBottomColor):
+        (WebCore::RenderStyle::backgroundColor):
+        (WebCore::RenderStyle::columnRuleColor):
+        (WebCore::RenderStyle::outlineColor):
+        (WebCore::RenderStyle::textEmphasisColor):
+        (WebCore::RenderStyle::textFillColor):
+        (WebCore::RenderStyle::textStrokeColor):
+        (WebCore::RenderStyle::visitedLinkBackgroundColor):
+        (WebCore::RenderStyle::visitedLinkBorderLeftColor):
+        (WebCore::RenderStyle::visitedLinkBorderRightColor):
+        (WebCore::RenderStyle::visitedLinkBorderBottomColor):
+        (WebCore::RenderStyle::visitedLinkBorderTopColor):
+        (WebCore::RenderStyle::visitedLinkOutlineColor):
+        (WebCore::RenderStyle::visitedLinkColumnRuleColor):
+        (WebCore::RenderStyle::textDecorationColor):
+        (WebCore::RenderStyle::visitedLinkTextDecorationColor):
+        (WebCore::RenderStyle::visitedLinkTextEmphasisColor):
+        (WebCore::RenderStyle::visitedLinkTextFillColor):
+        (WebCore::RenderStyle::visitedLinkTextStrokeColor):
+        (WebCore::RenderStyle::stopColor):
+        (WebCore::RenderStyle::floodColor):
+        (WebCore::RenderStyle::lightingColor):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::build):
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops):
+
 2016-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         assignedNodes should include fallback contents when flattened option is set

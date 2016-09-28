@@ -312,7 +312,7 @@ public:
     void didPaintBacking(RenderLayerBacking*);
 
     void setRootExtendedBackgroundColor(const Color&);
-    Color rootExtendedBackgroundColor() const { return m_rootExtendedBackgroundColor; }
+    const Color& rootExtendedBackgroundColor() const { return m_rootExtendedBackgroundColor; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPropertiesWithFrameView(const FrameView&);

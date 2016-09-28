@@ -42,7 +42,7 @@ public:
     float dy() const { return m_dy; }
     void setDy(float dy) { m_dy = dy; }
 
-    Color shadowColor() const { return m_shadowColor; } 
+    const Color& shadowColor() const { return m_shadowColor; } 
     void setShadowColor(const Color& shadowColor) { m_shadowColor = shadowColor; }
 
     float shadowOpacity() const { return m_shadowOpacity; }

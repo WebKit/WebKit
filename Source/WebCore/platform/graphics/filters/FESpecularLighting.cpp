@@ -46,7 +46,7 @@ FESpecularLighting::~FESpecularLighting()
 {
 }
 
-Color FESpecularLighting::lightingColor() const
+const Color& FESpecularLighting::lightingColor() const
 {
     return m_lightingColor;
 }

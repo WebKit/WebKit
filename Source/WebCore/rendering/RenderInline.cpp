@@ -1644,7 +1644,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
 }
 
 void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const LayoutPoint& paintOffset,
-    const LayoutRect& previousLine, const LayoutRect& thisLine, const LayoutRect& nextLine, const Color outlineColor)
+    const LayoutRect& previousLine, const LayoutRect& thisLine, const LayoutRect& nextLine, const Color& outlineColor)
 {
     const auto& styleToUse = style();
     float outlineOffset = styleToUse.outlineOffset();

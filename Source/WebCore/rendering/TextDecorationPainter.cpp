@@ -262,7 +262,7 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
     m_context.setStrokeThickness(textDecorationThickness);
     FloatPoint localOrigin = boxOrigin;
 
-    auto paintDecoration = [&](TextDecoration decoration, TextDecorationStyle style, Color color, const FloatPoint& start, const FloatPoint& end, int offset) {
+    auto paintDecoration = [&](TextDecoration decoration, TextDecorationStyle style, const Color& color, const FloatPoint& start, const FloatPoint& end, int offset) {
         m_context.setStrokeColor(color);
 
         auto strokeStyle = textDecorationStyleToStrokeStyle(style);

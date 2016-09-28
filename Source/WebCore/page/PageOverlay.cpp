@@ -136,7 +136,7 @@ IntSize PageOverlay::viewToOverlayOffset() const
     return IntSize();
 }
 
-void PageOverlay::setBackgroundColor(Color backgroundColor)
+void PageOverlay::setBackgroundColor(const Color& backgroundColor)
 {
     if (m_backgroundColor == backgroundColor)
         return;

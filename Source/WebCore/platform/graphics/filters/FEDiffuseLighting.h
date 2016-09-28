@@ -34,7 +34,7 @@ public:
         float, float, PassRefPtr<LightSource>);
     virtual ~FEDiffuseLighting();
 
-    Color lightingColor() const;
+    const Color& lightingColor() const;
     bool setLightingColor(const Color&);
 
     float surfaceScale() const;

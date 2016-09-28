@@ -1379,8 +1379,8 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, this))
         paintBoxShadow(paintInfo, lineStyle, Normal, paintRect);
 
-    Color c = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
-    paintFillLayers(paintInfo, c, lineStyle.backgroundLayers(), paintRect);
+    const Color& color = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+    paintFillLayers(paintInfo, color, lineStyle.backgroundLayers(), paintRect);
     paintBoxShadow(paintInfo, lineStyle, Inset, paintRect);
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our

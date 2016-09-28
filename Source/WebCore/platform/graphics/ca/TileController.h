@@ -93,7 +93,7 @@ public:
 
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
-    Color tileDebugBorderColor() const { return m_tileDebugBorderColor; }
+    const Color& tileDebugBorderColor() const { return m_tileDebugBorderColor; }
     float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
     ScrollingModeIndication indicatorMode() const { return m_indicatorMode; }
 

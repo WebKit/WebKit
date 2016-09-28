@@ -53,7 +53,7 @@ public:
     static void getBorderEdgeInfo(BorderEdge edges[], const RenderStyle&, float deviceScaleFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
 
     EBorderStyle style() const { return m_style; }
-    Color color() const { return m_color; }
+    const Color& color() const { return m_color; }
     bool isTransparent() const { return m_isTransparent; }
     bool isPresent() const { return m_isPresent; }
 

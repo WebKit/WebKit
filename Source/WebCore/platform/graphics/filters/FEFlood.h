@@ -32,7 +32,7 @@ class FEFlood : public FilterEffect {
 public:
     static Ref<FEFlood> create(Filter&, const Color&, float);
 
-    Color floodColor() const;
+    const Color& floodColor() const;
     bool setFloodColor(const Color&);
 
     float floodOpacity() const;

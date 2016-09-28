@@ -617,7 +617,7 @@ std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
     return { clampedOffset(start), clampedOffset(end) };
 }
 
-void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, Color textColor)
+void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, const Color& textColor)
 {
 #if ENABLE(TEXT_SELECTION)
     if (context.paintingDisabled())

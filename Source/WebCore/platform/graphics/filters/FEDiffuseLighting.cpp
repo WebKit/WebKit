@@ -44,7 +44,7 @@ FEDiffuseLighting::~FEDiffuseLighting()
 {
 }
 
-Color FEDiffuseLighting::lightingColor() const
+const Color& FEDiffuseLighting::lightingColor() const
 {
     return m_lightingColor;
 }

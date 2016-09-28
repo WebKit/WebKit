@@ -186,8 +186,8 @@ RefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filter
     RenderObject* renderer = this->renderer();
     if (!renderer)
         return nullptr;
-    
-    Color color = renderer->style().svgStyle().lightingColor();
+
+    const Color& color = renderer->style().svgStyle().lightingColor();
 
     RefPtr<FilterEffect> effect = FEDiffuseLighting::create(filter, color, surfaceScale(), diffuseConstant(),
                                                                 kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));

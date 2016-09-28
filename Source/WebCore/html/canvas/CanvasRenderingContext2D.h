@@ -316,7 +316,7 @@ private:
     const State& state() const { return m_stateStack.last(); }
 
     void applyLineDash() const;
-    void setShadow(const FloatSize& offset, float blur, Color);
+    void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
     bool shouldDrawShadows() const;
 

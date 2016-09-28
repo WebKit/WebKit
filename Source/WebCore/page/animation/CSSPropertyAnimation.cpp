@@ -567,24 +567,23 @@ public:
     }
 };
 
-class PropertyWrapperColor : public PropertyWrapperGetter<Color> {
+class PropertyWrapperColor : public PropertyWrapperGetter<const Color&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
-        : PropertyWrapperGetter<Color>(prop, getter)
+    PropertyWrapperColor(CSSPropertyID prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+        : PropertyWrapperGetter<const Color&>(prop, getter)
         , m_setter(setter)
     {
     }
 
     void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<Color>::m_getter)(), (b->*PropertyWrapperGetter<Color>::m_getter)(), progress));
+        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const Color&>::m_getter)(), (b->*PropertyWrapperGetter<const Color&>::m_getter)(), progress));
     }
 
 protected:
     void (RenderStyle::*m_setter)(const Color&);
 };
-
 
 class PropertyWrapperAcceleratedOpacity : public PropertyWrapper<float> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -811,7 +810,7 @@ private:
 class PropertyWrapperMaybeInvalidColor : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperMaybeInvalidColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+    PropertyWrapperMaybeInvalidColor(CSSPropertyID prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : AnimationPropertyWrapperBase(prop)
         , m_getter(getter)
         , m_setter(setter)
@@ -868,7 +867,7 @@ public:
 #endif
 
 private:
-    Color (RenderStyle::*m_getter)() const;
+    const Color& (RenderStyle::*m_getter)() const;
     void (RenderStyle::*m_setter)(const Color&);
 };
 
@@ -877,15 +876,15 @@ enum MaybeInvalidColorTag { MaybeInvalidColor };
 class PropertyWrapperVisitedAffectedColor : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
-                                        Color (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
+    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
+        const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : AnimationPropertyWrapperBase(prop)
         , m_wrapper(std::make_unique<PropertyWrapperColor>(prop, getter, setter))
         , m_visitedWrapper(std::make_unique<PropertyWrapperColor>(prop, visitedGetter, visitedSetter))
     {
     }
-    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, MaybeInvalidColorTag, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
-                                        Color (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
+    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, MaybeInvalidColorTag, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
+        const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : AnimationPropertyWrapperBase(prop)
         , m_wrapper(std::make_unique<PropertyWrapperMaybeInvalidColor>(prop, getter, setter))
         , m_visitedWrapper(std::make_unique<PropertyWrapperMaybeInvalidColor>(prop, visitedGetter, visitedSetter))

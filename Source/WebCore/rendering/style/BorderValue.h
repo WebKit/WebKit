@@ -69,7 +69,7 @@ public:
         m_color = color;
     }
 
-    Color color() const { return m_color; }
+    const Color& color() const { return m_color; }
 
     float width() const { return m_width; }
     EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }

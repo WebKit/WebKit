@@ -51,7 +51,7 @@ public:
     LayoutUnit width() const { return m_style > BHIDDEN ? m_width : LayoutUnit::fromPixel(0); }
     EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }
     bool exists() const { return m_precedence != BOFF; }
-    Color color() const { return m_color; }
+    const Color& color() const { return m_color; }
     bool isTransparent() const { return m_transparent; }
     EBorderPrecedence precedence() const { return static_cast<EBorderPrecedence>(m_precedence); }
 

@@ -173,8 +173,7 @@ private:
     
     RenderPtr<RenderInline> clone() const;
 
-    void paintOutlineForLine(GraphicsContext&, const LayoutPoint&, const LayoutRect& prevLine, const LayoutRect& thisLine,
-                             const LayoutRect& nextLine, const Color);
+    void paintOutlineForLine(GraphicsContext&, const LayoutPoint&, const LayoutRect& prevLine, const LayoutRect& thisLine, const LayoutRect& nextLine, const Color&);
     RenderBoxModelObject* continuationBefore(RenderObject* beforeChild);
 
     bool willChangeCreatesStackingContext() const

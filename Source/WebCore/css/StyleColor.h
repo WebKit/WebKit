@@ -46,9 +46,9 @@ public:
     static StyleColor currentColor() { return StyleColor(); }
 
     bool isCurrentColor() const { return m_currentColor; }
-    Color getColor() const { ASSERT(!isCurrentColor()); return m_color; }
+    const Color& getColor() const { ASSERT(!isCurrentColor()); return m_color; }
 
-    Color resolve(Color currentColor) const { return m_currentColor ? currentColor : m_color; }
+    const Color& resolve(const Color& currentColor) const { return m_currentColor ? currentColor : m_color; }
 
     static Color colorFromKeyword(CSSValueID);
     static bool isColorKeyword(CSSValueID);

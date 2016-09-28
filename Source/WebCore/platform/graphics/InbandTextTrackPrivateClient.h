@@ -86,15 +86,15 @@ public:
     double relativeFontSize() const { return m_relativeFontSize; }
     void setRelativeFontSize(double relativeFontSize) { m_relativeFontSize = relativeFontSize; }
 
-    Color foregroundColor() const { return m_foregroundColor; }
-    void setForegroundColor(Color color) { m_foregroundColor = color; }
+    const Color& foregroundColor() const { return m_foregroundColor; }
+    void setForegroundColor(const Color& color) { m_foregroundColor = color; }
 
-    Color backgroundColor() const { return m_backgroundColor; }
-    void setBackgroundColor(Color color) { m_backgroundColor = color; }
-    
-    Color highlightColor() const { return m_highlightColor; }
-    void setHighlightColor(Color color) { m_highlightColor = color; }
-    
+    const Color& backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
+
+    const Color& highlightColor() const { return m_highlightColor; }
+    void setHighlightColor(const Color& color) { m_highlightColor = color; }
+
     enum Status {
         Uninitialized,
         Partial,

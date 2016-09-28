@@ -41,7 +41,7 @@ Ref<FEFlood> FEFlood::create(Filter& filter, const Color& floodColor, float floo
     return adoptRef(*new FEFlood(filter, floodColor, floodOpacity));
 }
 
-Color FEFlood::floodColor() const
+const Color& FEFlood::floodColor() const
 {
     return m_floodColor;
 }
@@ -73,7 +73,7 @@ void FEFlood::platformApplySoftware()
     if (!resultImage)
         return;
 
-    Color color = colorWithOverrideAlpha(floodColor().rgb(), floodOpacity());
+    const Color& color = colorWithOverrideAlpha(floodColor().rgb(), floodOpacity());
     resultImage->context().fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color);
 }
 

@@ -140,7 +140,7 @@ static inline int interpolate(int min, int max, float position)
     return min + static_cast<int>(position * (max - min));
 }
 
-static inline Color interpolate(Color color1, Color color2, float position)
+static inline Color interpolate(const Color& color1, const Color& color2, float position)
 {
     int red = interpolate(color1.red(), color2.red(), position);
     int green = interpolate(color1.green(), color2.green(), position);

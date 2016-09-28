@@ -67,19 +67,22 @@ RenderFrameSet::GridAxis::GridAxis()
 {
 }
 
-static Color borderStartEdgeColor()
+static const Color& borderStartEdgeColor()
 {
-    return Color(170, 170, 170);
+    static const Color color(170, 170, 170);
+    return color;
 }
 
-static Color borderEndEdgeColor()
+static const Color& borderEndEdgeColor()
 {
-    return Color::black;
+    static const Color color = Color::black;
+    return color;
 }
 
-static Color borderFillColor()
+static const Color& borderFillColor()
 {
-    return Color(208, 208, 208);
+    static const Color color(208, 208, 208);
+    return color;
 }
 
 void RenderFrameSet::paintColumnBorder(const PaintInfo& paintInfo, const IntRect& borderRect)

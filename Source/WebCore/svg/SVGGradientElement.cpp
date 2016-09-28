@@ -133,7 +133,7 @@ Vector<Gradient::ColorStop> SVGGradientElement::buildStops()
     float previousOffset = 0.0f;
 
     for (auto& stop : childrenOfType<SVGStopElement>(*this)) {
-        Color color = stop.stopColorIncludingOpacity();
+        const Color& color = stop.stopColorIncludingOpacity();
 
         // Figure out right monotonic offset
         float offset = stop.offset();
