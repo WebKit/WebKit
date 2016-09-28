@@ -1,3 +1,16 @@
+2016-09-28  Jer Noble  <jer.noble@apple.com>
+
+        CRASH at WebCore::CDMSessionAVStreamSession::update + 950
+        https://bugs.webkit.org/show_bug.cgi?id=162701
+
+        Reviewed by Beth Dakin.
+
+        If the SourceBuffer backing a <video> element is removed before CDMSessionAVStreamSession::update() gets
+        a chance to run, the protectedSourceBuffer will be null. Just bail early and indicate an error.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::update):
+
 2016-09-28  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should properly handle unexpected periods and overflows in IPv4 addresses
