@@ -35,7 +35,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteGetLocalOrigin,
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteAddAsyncCommandHandlerBlock, void*, (MRMediaRemoteAsyncCommandHandlerBlock block), (block))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteRemoveCommandHandlerBlock, void, (void* observer), (observer))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteSetSupportedCommands, void, (CFArrayRef commands, MROriginRef origin, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError err)), (commands, origin, replyQ, completion))
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingVisibility, void, (MROriginRef origin, MRNowPlayingClientVisibility visibility), (origin, visibility))
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingVisibility, void, (MROriginRef origin, MRNowPlayingClientVisibility visibility), (origin, visibility))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteCommandInfoCreate, MRMediaRemoteCommandInfoRef, (CFAllocatorRef allocator), (allocator));
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetCommand, void, (MRMediaRemoteCommandInfoRef commandInfo, MRMediaRemoteCommand command), (commandInfo, command))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetEnabled, void, (MRMediaRemoteCommandInfoRef commandInfo, Boolean enabled), (commandInfo, enabled))
