@@ -1,3 +1,12 @@
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Remove obsolete comment from OptionsGTK.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=162622
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-09-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for several CMake ports after r206440
