@@ -1035,6 +1035,8 @@ public:
     bool hasActiveVideoForControlsManager() const;
     void requestControlledElementID() const;
     void handleControlledElementIDResponse(const String&) const;
+    void requestActiveNowPlayingSessionInfo();
+    void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession) const;
     bool isPlayingVideoInEnhancedFullscreen() const;
 #endif
 

@@ -36,6 +36,8 @@ class MediaSessionManagerMac : public PlatformMediaSessionManager {
 public:
     virtual ~MediaSessionManagerMac();
 
+    bool hasActiveNowPlayingSession() const override { return m_nowPlayingActive; }
+
 private:
     friend class PlatformMediaSessionManager;
 

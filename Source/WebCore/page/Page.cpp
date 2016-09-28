@@ -1451,6 +1451,7 @@ void Page::setViewState(ViewState::Flags viewState)
 
     ViewState::Flags oldViewState = m_viewState;
 
+    bool wasVisibleAndActive = isVisibleAndActive();
     m_viewState = viewState;
 
     m_focusController->setViewState(viewState);
@@ -1467,6 +1468,9 @@ void Page::setViewState(ViewState::Flags viewState)
 
     for (auto* observer : m_viewStateChangeObservers)
         observer->viewStateDidChange(oldViewState, m_viewState);
+
+    if (wasVisibleAndActive != isVisibleAndActive())
+        PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
 }
 
 bool Page::isVisibleAndActive() const
