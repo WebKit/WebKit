@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LLIntCallLinkInfo_h
+#define LLIntCallLinkInfo_h
 
 #include "JSFunction.h"
 #include "MacroAssemblerCodeRef.h"
@@ -60,3 +61,6 @@ struct LLIntCallLinkInfo : public BasicRawSentinelNode<LLIntCallLinkInfo> {
 };
 
 } // namespace JSC
+
+#endif // LLIntCallLinkInfo_h
+

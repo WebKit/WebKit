@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGInvalidationPointInjectionPhase_h
+#define DFGInvalidationPointInjectionPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -39,3 +40,6 @@ bool performInvalidationPointInjection(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGInvalidationPointInjectionPhase_h
+

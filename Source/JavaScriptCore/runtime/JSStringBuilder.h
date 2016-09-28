@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSStringBuilder_h
+#define JSStringBuilder_h
 
 #include "ExceptionHelpers.h"
 #include "JSString.h"
@@ -136,4 +137,6 @@ inline JSValue jsMakeNontrivialString(ExecState* exec, const StringType& string,
     return jsNontrivialString(exec, WTFMove(result));
 }
 
-} // namespace JSC
+}
+
+#endif

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JITWriteBarrier_h
+#define JITWriteBarrier_h
 
 #if ENABLE(JIT)
 
@@ -137,3 +138,5 @@ public:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif

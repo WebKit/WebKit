@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef CallData_h
+#define CallData_h
 
 #include "JSCJSValue.h"
 #include <wtf/NakedPtr.h>
@@ -73,3 +74,5 @@ JS_EXPORT_PRIVATE JSValue profiledCall(ExecState*, ProfilingReason, JSValue func
 JS_EXPORT_PRIVATE JSValue profiledCall(ExecState*, ProfilingReason, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&, NakedPtr<Exception>& returnedException);
 
 } // namespace JSC
+
+#endif // CallData_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AssemblyHelpers_h
+#define AssemblyHelpers_h
 
 #if ENABLE(JIT)
 
@@ -1549,3 +1550,6 @@ protected:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // AssemblyHelpers_h
+

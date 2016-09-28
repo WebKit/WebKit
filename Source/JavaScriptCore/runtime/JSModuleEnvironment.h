@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSModuleEnvironment_h
+#define JSModuleEnvironment_h
 
 #include "JSLexicalEnvironment.h"
 #include "JSModuleRecord.h"
@@ -98,3 +99,5 @@ inline JSModuleEnvironment::JSModuleEnvironment(VM& vm, Structure* structure, JS
 }
 
 } // namespace JSC
+
+#endif // JSModuleEnvironment_h

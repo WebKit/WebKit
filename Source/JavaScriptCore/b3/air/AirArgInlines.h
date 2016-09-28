@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirArgInlines_h
+#define AirArgInlines_h
 
 #if ENABLE(B3_JIT)
 
@@ -192,3 +193,6 @@ void Arg::forEach(Role role, Type type, Width width, const Functor& functor)
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirArgInlines_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGAbstractInterpreterInlines_h
+#define DFGAbstractInterpreterInlines_h
 
 #if ENABLE(DFG_JIT)
 
@@ -3061,3 +3062,6 @@ void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* n
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGAbstractInterpreterInlines_h
+

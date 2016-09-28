@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSFunctionInlines_h
+#define JSFunctionInlines_h
 
 #include "Executable.h"
 #include "JSFunction.h"
@@ -120,3 +121,6 @@ inline bool JSFunction::hasReifiedName() const
 }
 
 } // namespace JSC
+
+#endif // JSFunctionInlines_h
+

@@ -40,7 +40,8 @@
  *
  */
 
-#pragma once
+#ifndef JSDateMath_h
+#define JSDateMath_h
 
 #include <wtf/DateMath.h>
 #include <wtf/GregorianDateTime.h>
@@ -56,3 +57,5 @@ JS_EXPORT_PRIVATE double parseDateFromNullTerminatedCharacters(VM&, const char* 
 JS_EXPORT_PRIVATE double parseDate(VM&, const WTF::String&);
 
 } // namespace JSC
+
+#endif // JSDateMath_h

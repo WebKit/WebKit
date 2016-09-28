@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef IntlNumberFormatPrototype_h
+#define IntlNumberFormatPrototype_h
 
 #if ENABLE(INTL)
 
@@ -52,3 +53,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(INTL)
+
+#endif // IntlNumberFormatPrototype_h

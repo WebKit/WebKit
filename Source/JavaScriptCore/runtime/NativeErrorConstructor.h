@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef NativeErrorConstructor_h
+#define NativeErrorConstructor_h
 
 #include "InternalFunction.h"
 #include "NativeErrorPrototype.h"
@@ -62,3 +63,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // NativeErrorConstructor_h

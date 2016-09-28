@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef UnconditionalFinalizer_h
+#define UnconditionalFinalizer_h
 
 #include "ListableHandler.h"
 
@@ -42,4 +43,6 @@ protected:
     virtual ~UnconditionalFinalizer() { }
 };
 
-} // namespace JSC
+}
+
+#endif // UltraWeakFinalizer_h

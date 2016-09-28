@@ -23,8 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Uint8ClampedArray_h
+#define Uint8ClampedArray_h
 
 #include "TypedArrays.h"
 
 using JSC::Uint8ClampedArray;
+
+#endif // Uint8ClampedArray_h
+

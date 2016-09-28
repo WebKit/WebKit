@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CallLinkInfo_h
+#define CallLinkInfo_h
 
 #include "CallMode.h"
 #include "CodeLocation.h"
@@ -344,3 +345,5 @@ typedef HashMap<int, void*> CallLinkInfoMap;
 #endif // ENABLE(JIT)
 
 } // namespace JSC
+
+#endif // CallLinkInfo_h

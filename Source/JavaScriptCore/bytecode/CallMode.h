@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CallMode_h
+#define CallMode_h
 
 #include "CodeSpecializationKind.h"
 
@@ -49,3 +50,6 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::CallMode);
 
 } // namespace WTF
+
+#endif // CallMode_h
+

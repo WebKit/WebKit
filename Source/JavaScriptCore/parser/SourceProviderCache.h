@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SourceProviderCache_h
+#define SourceProviderCache_h
 
 #include "SourceProviderCacheItem.h"
 #include <wtf/HashMap.h>
@@ -45,4 +46,6 @@ private:
     HashMap<int, std::unique_ptr<SourceProviderCacheItem>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_map;
 };
 
-} // namespace JSC
+}
+
+#endif // SourceProviderCache_h

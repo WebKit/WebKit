@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef StackAlignment_h
+#define StackAlignment_h
 
 #include "JSCJSValue.h"
 #include <wtf/MathExtras.h>
@@ -58,3 +59,6 @@ inline unsigned logStackAlignmentRegisters()
 }
 
 } // namespace JSC
+
+#endif // StackAlignment_h
+

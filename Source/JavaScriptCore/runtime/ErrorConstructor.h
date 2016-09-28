@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef ErrorConstructor_h
+#define ErrorConstructor_h
 
 #include "ErrorInstance.h"
 #include "InternalFunction.h"
@@ -56,3 +57,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ErrorConstructor_h

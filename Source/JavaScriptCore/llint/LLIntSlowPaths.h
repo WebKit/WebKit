@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LLIntSlowPaths_h
+#define LLIntSlowPaths_h
 
 #include "CommonSlowPaths.h"
 #include <wtf/StdLibExtras.h>
@@ -132,3 +133,6 @@ extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM*, Register*) WTF_
 extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash() WTF_INTERNAL;
 
 } } // namespace JSC::LLInt
+
+#endif // LLIntSlowPaths_h
+

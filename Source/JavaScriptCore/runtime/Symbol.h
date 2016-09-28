@@ -25,7 +25,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef Symbol_h
+#define Symbol_h
 
 #include "JSString.h"
 #include "PrivateName.h"
@@ -85,3 +86,5 @@ inline Symbol* asSymbol(JSValue value)
 }
 
 } // namespace JSC
+
+#endif // Symbol_h

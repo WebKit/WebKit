@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef TagRegistersMode_h
+#define TagRegistersMode_h
 
 namespace JSC {
 
@@ -40,3 +41,6 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::TagRegistersMode);
 
 } // namespace WTF
+
+#endif // TagRegistersMode_h
+

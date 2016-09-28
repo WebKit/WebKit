@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Options_h
+#define Options_h
 
 #include "GCLogging.h"
 #include "JSExportMacros.h"
@@ -640,3 +641,5 @@ inline GCLogging::Level& Option::gcLogLevelVal()
 }
 
 } // namespace JSC
+
+#endif // Options_h

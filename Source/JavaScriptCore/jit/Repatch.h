@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Repatch_h
+#define Repatch_h
 
 #if ENABLE(JIT)
 
@@ -58,3 +59,4 @@ void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall, FunctionPtr newCalle
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+#endif // Repatch_h

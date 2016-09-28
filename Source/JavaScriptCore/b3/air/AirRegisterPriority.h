@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirRegisterPriority_h
+#define AirRegisterPriority_h
 
 #if ENABLE(B3_JIT)
 
@@ -56,3 +57,6 @@ JS_EXPORT_PRIVATE const Vector<Reg>& regsInPriorityOrder(Arg::Type);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirRegisterPriority_h
+

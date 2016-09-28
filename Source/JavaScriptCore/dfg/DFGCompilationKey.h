@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGCompilationKey_h
+#define DFGCompilationKey_h
 
 #include "DFGCompilationMode.h"
 #include <wtf/HashMap.h>
@@ -105,3 +106,6 @@ template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::DFG::CompilationKey> : SimpleClassHashTraits<JSC::DFG::CompilationKey> { };
 
 } // namespace WTF
+
+#endif // DFGCompilationKey_h
+

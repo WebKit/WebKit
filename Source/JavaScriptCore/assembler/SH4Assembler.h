@@ -25,7 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SH4Assembler_h
+#define SH4Assembler_h
 
 #if ENABLE(ASSEMBLER) && CPU(SH4)
 
@@ -2220,3 +2221,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER) && CPU(SH4)
+
+#endif // SH4Assembler_h

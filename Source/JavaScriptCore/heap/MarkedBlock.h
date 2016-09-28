@@ -19,7 +19,8 @@
  *
  */
 
-#pragma once
+#ifndef MarkedBlock_h
+#define MarkedBlock_h
 
 #include "AllocatorAttributes.h"
 #include "DestructionMode.h"
@@ -621,3 +622,5 @@ template<> struct DefaultHash<JSC::MarkedBlock*> {
 void printInternal(PrintStream& out, JSC::MarkedBlock::Handle::SweepMode);
 
 } // namespace WTF
+
+#endif // MarkedBlock_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGLazyJSValue_h
+#define DFGLazyJSValue_h
 
 #if ENABLE(DFG_JIT)
 
@@ -129,3 +130,6 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGLazyJSValue_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGDesiredInferredType_h
+#define DFGDesiredInferredType_h
 
 #if ENABLE(DFG_JIT)
 
@@ -126,3 +127,6 @@ template<> struct HashTraits<JSC::DFG::DesiredInferredType> : SimpleClassHashTra
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGDesiredInferredType_h
+

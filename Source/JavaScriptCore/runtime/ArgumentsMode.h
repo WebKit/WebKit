@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ArgumentsMode_h
+#define ArgumentsMode_h
 
 namespace JSC {
 
@@ -33,3 +34,6 @@ enum class ArgumentsMode {
 };
 
 } // namespace JSC
+
+#endif // ArgumentsMode_h
+

@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ExceptionHelpers_h
+#define ExceptionHelpers_h
 
 #include "CatchScope.h"
 #include "ErrorInstance.h"
@@ -88,3 +89,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ExceptionHelpers_h

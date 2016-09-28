@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef MacroAssemblerCodeRef_h
+#define MacroAssemblerCodeRef_h
 
 #include "ExecutableAllocator.h"
 #include <wtf/DataLog.h>
@@ -419,3 +420,5 @@ template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::MacroAssemblerCodePtr> : public CustomHashTraits<JSC::MacroAssemblerCodePtr> { };
 
 } // namespace WTF
+
+#endif // MacroAssemblerCodeRef_h

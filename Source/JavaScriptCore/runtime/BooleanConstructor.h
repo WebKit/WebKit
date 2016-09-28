@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef BooleanConstructor_h
+#define BooleanConstructor_h
 
 #include "InternalFunction.h"
 
@@ -57,3 +58,5 @@ private:
 JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSGlobalObject*, JSValue);
 
 } // namespace JSC
+
+#endif // BooleanConstructor_h

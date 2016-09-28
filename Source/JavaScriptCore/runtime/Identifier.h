@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef Identifier_h
+#define Identifier_h
 
 #include "VM.h"
 #include <wtf/Optional.h>
@@ -311,3 +312,5 @@ namespace WTF {
 template <> struct VectorTraits<JSC::Identifier> : SimpleClassVectorTraits { };
 
 } // namespace WTF
+
+#endif // Identifier_h

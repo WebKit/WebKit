@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGValueSource_h
+#define DFGValueSource_h
 
 #if ENABLE(DFG_JIT)
 
@@ -216,3 +217,6 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGValueSource_h
+

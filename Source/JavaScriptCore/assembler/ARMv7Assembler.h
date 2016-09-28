@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ARMAssembler_h
+#define ARMAssembler_h
 
 #if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 
@@ -2949,3 +2950,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
+
+#endif // ARMAssembler_h

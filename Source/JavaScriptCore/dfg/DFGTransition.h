@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGTransition_h
+#define DFGTransition_h
 
 #if ENABLE(DFG_JIT)
 
@@ -62,3 +63,6 @@ typedef Vector<Transition, 3> TransitionVector;
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGTransition_h
+

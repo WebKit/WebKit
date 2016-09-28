@@ -23,8 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Int16Array_h
+#define Int16Array_h
 
 #include "TypedArrays.h"
 
 using JSC::Int16Array;
+
+#endif // Int16Array_h
+

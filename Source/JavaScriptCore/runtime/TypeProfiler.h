@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef TypeProfiler_h
+#define TypeProfiler_h
 
 #include "CodeBlock.h"
 #include "TypeLocation.h"
@@ -139,3 +140,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // TypeProfiler_h

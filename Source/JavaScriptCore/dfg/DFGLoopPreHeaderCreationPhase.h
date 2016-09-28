@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGLoopPreHeaderCreationPhase_h
+#define DFGLoopPreHeaderCreationPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -53,3 +54,6 @@ BasicBlock* createPreHeader(Graph&, BlockInsertionSet&, BasicBlock*);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGLoopPreHeaderCreationPhase_h
+

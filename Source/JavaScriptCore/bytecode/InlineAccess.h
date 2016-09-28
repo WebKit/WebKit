@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef InlineAccess_h
+#define InlineAccess_h
 
 #if ENABLE(JIT)
 
@@ -121,3 +122,5 @@ public:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // InlineAccess_h

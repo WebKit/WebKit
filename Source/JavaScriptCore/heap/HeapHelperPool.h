@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef HeapHelperPool_h
+#define HeapHelperPool_h
 
 #include <wtf/ParallelHelperPool.h>
 
@@ -32,3 +33,5 @@ namespace JSC {
 ParallelHelperPool& heapHelperPool();
 
 } // namespace JSC
+
+#endif // HeapHelperPool_h

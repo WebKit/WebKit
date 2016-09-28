@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WeakMapData_h
+#define WeakMapData_h
 
 #include "JSCell.h"
 #include "Structure.h"
@@ -89,4 +90,6 @@ private:
     MapType m_map;
 };
 
-} // namespace JSC
+}
+
+#endif /* !defined(WeakMapData_h) */

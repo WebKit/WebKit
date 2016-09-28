@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef VirtualRegister_h
+#define VirtualRegister_h
 
 #include "BytecodeConventions.h"
 #include "CallFrame.h"
@@ -125,3 +126,5 @@ inline VirtualRegister virtualRegisterForArgument(int argument, int offset = 0)
 }
 
 } // namespace JSC
+
+#endif // VirtualRegister_h

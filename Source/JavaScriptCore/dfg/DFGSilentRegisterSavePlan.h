@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGSilentRegisterSavePlan_h
+#define DFGSilentRegisterSavePlan_h
 
 #if ENABLE(DFG_JIT)
 
@@ -123,3 +124,6 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGSilentRegisterSavePlan_h
+

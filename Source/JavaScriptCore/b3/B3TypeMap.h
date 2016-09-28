@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3TypeMap_h
+#define B3TypeMap_h
 
 #if ENABLE(B3_JIT)
 
@@ -106,3 +107,6 @@ private:
 #endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3TypeMap_h
+

@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef TypedArrayInlines_h
+#define TypedArrayInlines_h
 
 #include "GCIncomingRefCountedInlines.h"
 #include "GenericTypedArrayViewInlines.h"
 #include "JSArrayBufferViewInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewPrototypeInlines.h"
+
+#endif // TypedArrayInlines_h
+

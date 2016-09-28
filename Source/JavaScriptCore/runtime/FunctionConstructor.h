@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef FunctionConstructor_h
+#define FunctionConstructor_h
 
 #include "InternalFunction.h"
 
@@ -69,3 +70,5 @@ JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(
     FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
 
 } // namespace JSC
+
+#endif // FunctionConstructor_h

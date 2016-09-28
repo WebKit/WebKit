@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef RegisterMap_h
+#define RegisterMap_h
 
 #if ENABLE(JIT)
 
@@ -108,3 +109,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // RegisterMap_h

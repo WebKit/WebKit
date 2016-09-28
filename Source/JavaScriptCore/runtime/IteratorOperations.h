@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef IteratorOperations_h
+#define IteratorOperations_h
 
 #include "JSCJSValue.h"
 #include "JSObject.h"
@@ -68,4 +69,6 @@ void forEachInIterable(ExecState* state, JSValue iterable, const CallBackType& c
     }
 }
 
-} // namespace JSC
+}
+
+#endif // !defined(IteratorOperations_h)

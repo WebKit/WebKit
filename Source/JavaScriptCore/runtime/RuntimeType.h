@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef RuntimeType_h
+#define RuntimeType_h
 
 #include <wtf/text/WTFString.h>
 
@@ -57,3 +58,5 @@ ALWAYS_INLINE bool runtimeTypeIsPrimitive(RuntimeTypeMask type)
 }
 
 } // namespace JSC
+
+#endif // RuntimeType_h

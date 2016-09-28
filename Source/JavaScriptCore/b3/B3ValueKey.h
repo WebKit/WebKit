@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3ValueKey_h
+#define B3ValueKey_h
 
 #if ENABLE(B3_JIT)
 
@@ -196,3 +197,6 @@ template<> struct HashTraits<JSC::B3::ValueKey> : public SimpleClassHashTraits<J
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3ValueKey_h
+

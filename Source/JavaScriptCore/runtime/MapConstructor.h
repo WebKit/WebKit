@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef MapConstructor_h
+#define MapConstructor_h
 
 #include "InternalFunction.h"
 
@@ -60,4 +61,6 @@ private:
     static CallType getCallData(JSCell*, CallData&);
 };
 
-} // namespace JSC
+}
+
+#endif // !defined(MapConstructor_h)

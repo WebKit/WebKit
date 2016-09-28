@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSPropertyNameIterator_h
+#define JSPropertyNameIterator_h
 
 #include "JSObject.h"
 #include "JSPropertyNameEnumerator.h"
@@ -70,4 +71,6 @@ private:
     uint32_t m_cursor;
 };
 
-} // namespace JSC
+}
+
+#endif // JSPropertyNameIterator_h

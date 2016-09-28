@@ -23,7 +23,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ConsoleTypes_h
+#define ConsoleTypes_h
 
 namespace JSC {
 
@@ -70,3 +71,5 @@ enum class MessageLevel {
 using JSC::MessageSource;
 using JSC::MessageType;
 using JSC::MessageLevel;
+
+#endif // ConsoleTypes_h

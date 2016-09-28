@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WriteBarrierSupport_h
+#define WriteBarrierSupport_h
 
 #include "SamplingCounter.h"
 #include <wtf/Assertions.h>
@@ -93,3 +94,6 @@ public:
 };
 
 } // namespace JSC
+
+#endif // WriteBarrierSupport_h
+

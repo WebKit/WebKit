@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SmallStrings_h
+#define SmallStrings_h
 
 #include "TypeofType.h"
 #include "WriteBarrier.h"
@@ -141,3 +142,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // SmallStrings_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLAvailableRecovery_h
+#define FTLAvailableRecovery_h
 
 #if ENABLE(FTL_JIT)
 
@@ -73,3 +74,6 @@ private:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLAvailableRecovery_h
+

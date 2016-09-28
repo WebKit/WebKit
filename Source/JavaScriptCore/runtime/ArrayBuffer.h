@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ArrayBuffer_h
+#define ArrayBuffer_h
 
 #include "GCIncomingRefCounted.h"
 #include "Weak.h"
@@ -348,3 +349,6 @@ ArrayBufferContents::~ArrayBufferContents()
 } // namespace JSC
 
 using JSC::ArrayBuffer;
+
+#endif // ArrayBuffer_h
+

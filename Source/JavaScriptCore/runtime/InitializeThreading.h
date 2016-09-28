@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#pragma once
+#ifndef InitializeThreading_h
+#define InitializeThreading_h
 
 namespace JSC {
 
@@ -34,4 +35,6 @@ namespace JSC {
 // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
 JS_EXPORT_PRIVATE void initializeThreading();
 
-} // namespace JSC
+}
+
+#endif // InitializeThreading_h

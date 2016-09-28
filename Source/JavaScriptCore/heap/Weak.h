@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef Weak_h
+#define Weak_h
 
 #include "JSExportMacros.h"
 #include <cstddef>
@@ -112,3 +113,5 @@ template<typename T> struct HashTraits<JSC::Weak<T>> : SimpleClassHashTraits<JSC
 };
 
 } // namespace WTF
+
+#endif // Weak_h

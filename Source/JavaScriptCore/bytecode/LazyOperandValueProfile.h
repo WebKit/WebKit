@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LazyOperandValueProfile_h
+#define LazyOperandValueProfile_h
 
 #include "ConcurrentJITLock.h"
 #include "ValueProfile.h"
@@ -181,3 +182,7 @@ private:
 };
 
 } // namespace JSC
+
+#endif // LazyOperandValueProfile_h
+
+

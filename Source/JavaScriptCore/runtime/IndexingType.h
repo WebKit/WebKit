@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef IndexingType_h
+#define IndexingType_h
 
 #include "SpeculatedType.h"
 #include <wtf/StdLibExtras.h>
@@ -178,3 +179,6 @@ static const IndexingType AllArrayTypes            = IndexingShapeMask | IsArray
 static const IndexingType AllArrayTypesAndHistory  = AllArrayTypes | MayHaveIndexedAccessors;
 
 } // namespace JSC
+
+#endif // IndexingType_h
+

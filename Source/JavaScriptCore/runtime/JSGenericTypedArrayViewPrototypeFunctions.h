@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSGenericTypedArrayViewPrototypeFunctions_h
+#define JSGenericTypedArrayViewPrototypeFunctions_h
 
 #include "ArrayPrototype.h"
 #include "Error.h"
@@ -557,3 +558,5 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
 }
 
 } // namespace JSC
+
+#endif /* JSGenericTypedArrayViewPrototypeFunctions_h */

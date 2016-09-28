@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGBranchDirection_h
+#define DFGBranchDirection_h
 
 #if ENABLE(DFG_JIT)
 
@@ -93,3 +94,5 @@ inline void printInternal(PrintStream& out, JSC::DFG::BranchDirection direction)
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGBranchDirection_h

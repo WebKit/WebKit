@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLCompile_h
+#define FTLCompile_h
 
 #if ENABLE(FTL_JIT)
 
@@ -37,3 +38,6 @@ void compile(State&, DFG::Safepoint::Result&);
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLCompile_h
+

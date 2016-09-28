@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Breakpoint_h
+#define Breakpoint_h
 
 #include "DebuggerPrimitives.h"
 #include <wtf/DoublyLinkedList.h>
@@ -90,3 +91,5 @@ public:
 };
 
 } // namespace JSC
+
+#endif // Breakpoint_h

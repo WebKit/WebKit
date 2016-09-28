@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef UDis86Disassembler_h
+#define UDis86Disassembler_h
 
 #include "Disassembler.h"
 
@@ -40,3 +41,6 @@ inline bool tryToDisassembleWithUDis86(const MacroAssemblerCodePtr&, size_t, con
 #endif // USE(UDIS86)
 
 } // namespace JSC
+
+#endif // UDis86Disassembler_h
+

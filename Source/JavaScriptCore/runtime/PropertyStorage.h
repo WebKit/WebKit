@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef PropertyStorage_h
+#define PropertyStorage_h
 
 #include "WriteBarrier.h"
 
@@ -33,3 +34,6 @@ typedef WriteBarrierBase<Unknown>* PropertyStorage;
 typedef const WriteBarrierBase<Unknown>* ConstPropertyStorage;
 
 } // namespace JSC
+
+#endif // PropertyStorage_h
+

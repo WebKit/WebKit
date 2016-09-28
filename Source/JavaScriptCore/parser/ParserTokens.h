@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ParserTokens_h
+#define ParserTokens_h
 
 #include "ParserModes.h"
 #include <limits.h>
@@ -236,3 +237,5 @@ ALWAYS_INLINE bool isUnaryOp(JSTokenType token)
 }
 
 } // namespace JSC
+
+#endif // ParserTokens_h

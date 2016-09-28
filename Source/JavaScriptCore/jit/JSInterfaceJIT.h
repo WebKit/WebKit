@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSInterfaceJIT_h
+#define JSInterfaceJIT_h
 
 #include "BytecodeConventions.h"
 #include "CCallHelpers.h"
@@ -256,3 +257,5 @@ namespace JSC {
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // JSInterfaceJIT_h

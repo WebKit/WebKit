@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLFail_h
+#define FTLFail_h
 
 #if ENABLE(FTL_JIT)
 
@@ -36,3 +37,6 @@ void fail(State&);
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLFail_h
+

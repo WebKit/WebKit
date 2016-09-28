@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGLivenessAnalysisPhase_h
+#define DFGLivenessAnalysisPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -40,3 +41,6 @@ bool performLivenessAnalysis(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGLivenessAnalysisPhase_h
+

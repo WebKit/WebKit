@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef ErrorPrototype_h
+#define ErrorPrototype_h
 
 #include "JSObject.h"
 
@@ -51,3 +52,5 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // ErrorPrototype_h

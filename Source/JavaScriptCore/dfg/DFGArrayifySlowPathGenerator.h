@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGArrayifySlowPathGenerator_h
+#define DFGArrayifySlowPathGenerator_h
 
 #if ENABLE(DFG_JIT)
 
@@ -148,3 +149,6 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGArrayifySlowPathGenerator_h
+

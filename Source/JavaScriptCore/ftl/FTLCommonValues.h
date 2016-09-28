@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLCommonValues_h
+#define FTLCommonValues_h
 
 #if ENABLE(FTL_JIT)
 
@@ -67,3 +68,6 @@ public:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLCommonValues_h
+

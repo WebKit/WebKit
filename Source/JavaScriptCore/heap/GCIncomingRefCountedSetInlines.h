@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef GCIncomingRefCountedSetInlines_h
+#define GCIncomingRefCountedSetInlines_h
 
 #include "GCIncomingRefCountedSet.h"
 #include "VM.h"
@@ -87,3 +88,5 @@ bool GCIncomingRefCountedSet<T>::removeDead(JSCell* cell)
 }
 
 } // namespace JSC
+
+#endif // GCIncomingRefCountedSetInlines_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGPreciseLocalClobberize_h
+#define DFGPreciseLocalClobberize_h
 
 #if ENABLE(DFG_JIT)
 
@@ -177,3 +178,6 @@ void preciseLocalClobberize(
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGPreciseLocalClobberize_h
+

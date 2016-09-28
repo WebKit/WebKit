@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Butterfly_h
+#define Butterfly_h
 
 #include "IndexingHeader.h"
 #include "PropertyOffset.h"
@@ -171,3 +172,6 @@ public:
 };
 
 } // namespace JSC
+
+#endif // Butterfly_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SnippetOperand_h
+#define SnippetOperand_h
 
 #if ENABLE(JIT)
 
@@ -102,3 +103,7 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // SnippetOperand_h
+    
+

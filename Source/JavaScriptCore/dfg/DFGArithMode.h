@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGArithMode_h
+#define DFGArithMode_h
 
 #if ENABLE(DFG_JIT)
 
@@ -150,3 +151,6 @@ void printInternal(PrintStream&, JSC::DFG::Arith::RoundingMode);
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGArithMode_h
+

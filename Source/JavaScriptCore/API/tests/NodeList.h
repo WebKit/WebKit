@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef NodeList_h
+#define NodeList_h
 
 #include "Node.h"
 
@@ -37,3 +38,5 @@ extern unsigned NodeList_length(NodeList*);
 extern Node* NodeList_item(NodeList*, unsigned);
 extern void NodeList_ref(NodeList*);
 extern void NodeList_deref(NodeList*);
+
+#endif /* NodeList_h */

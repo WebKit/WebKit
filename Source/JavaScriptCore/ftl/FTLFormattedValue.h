@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLFormattedValue_h
+#define FTLFormattedValue_h
 
 #if ENABLE(FTL_JIT)
 
@@ -73,3 +74,6 @@ static inline FormattedValue doubleValue(LValue value) { return FormattedValue(D
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLFormattedValue_h
+

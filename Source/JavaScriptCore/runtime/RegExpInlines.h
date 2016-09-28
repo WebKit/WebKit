@@ -20,7 +20,8 @@
  *
  */
 
-#pragma once
+#ifndef RegExpInlines_h
+#define RegExpInlines_h
 
 #include "RegExp.h"
 #include "JSCInlines.h"
@@ -232,3 +233,6 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
 }
 
 } // namespace JSC
+
+#endif // RegExpInlines_h
+

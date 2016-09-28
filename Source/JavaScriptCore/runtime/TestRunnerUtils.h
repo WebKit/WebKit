@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef TestRunnerUtils_h
+#define TestRunnerUtils_h
 
 #include "JSCJSValue.h"
 
@@ -55,3 +56,5 @@ JS_EXPORT_PRIVATE unsigned numberOfOSRExitFuzzChecks();
 JS_EXPORT_PRIVATE void finalizeStatsAtEndOfTesting();
 
 } // namespace JSC
+
+#endif // TestRunnerUtils_h

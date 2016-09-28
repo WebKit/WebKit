@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef StaticPropertyAnalysis_h
+#define StaticPropertyAnalysis_h
 
 #include "Executable.h"
 #include "JSGlobalObject.h"
@@ -62,3 +63,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // StaticPropertyAnalysis_h

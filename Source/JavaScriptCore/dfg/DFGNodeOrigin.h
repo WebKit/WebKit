@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGNodeOrigin_h
+#define DFGNodeOrigin_h
 
 #if ENABLE(DFG_JIT)
 
@@ -134,3 +135,6 @@ struct NodeOrigin {
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGNodeOrigin_h
+

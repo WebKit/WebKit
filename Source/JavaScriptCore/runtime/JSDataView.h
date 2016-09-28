@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSDataView_h
+#define JSDataView_h
 
 #include "DataView.h"
 #include "JSArrayBufferView.h"
@@ -77,3 +78,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // JSDataView_h
+

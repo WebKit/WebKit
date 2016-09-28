@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSArrayBufferConstructor_h
+#define JSArrayBufferConstructor_h
 
 #include "InternalFunction.h"
 
@@ -53,3 +54,6 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // JSArrayBufferConstructor_h
+

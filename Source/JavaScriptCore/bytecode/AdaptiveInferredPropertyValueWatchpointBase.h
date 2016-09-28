@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef AdaptiveInferredPropertyValueWatchpointBase_h
+#define AdaptiveInferredPropertyValueWatchpointBase_h
 
 #include "ObjectPropertyCondition.h"
 #include "Watchpoint.h"
@@ -70,3 +71,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif /* AdaptiveInferredPropertyValueWatchpointBase_h */

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef StrongInlines_h
+#define StrongInlines_h
 
 #include "VM.h"
 
@@ -52,3 +53,5 @@ inline void Strong<T>::set(VM& vm, ExternalType value)
 }
 
 } // namespace JSC
+    
+#endif // StrongInlines_h

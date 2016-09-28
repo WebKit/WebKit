@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef GCIncomingRefCountedSet_h
+#define GCIncomingRefCountedSet_h
 
 #include "GCIncomingRefCounted.h"
 
@@ -54,3 +55,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // GCIncomingRefCountedSet_h
+

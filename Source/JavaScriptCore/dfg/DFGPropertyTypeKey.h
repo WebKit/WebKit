@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGPropertyTypeKey_h
+#define DFGPropertyTypeKey_h
 
 #if ENABLE(DFG_JIT)
 
@@ -123,3 +124,6 @@ template<> struct HashTraits<JSC::DFG::PropertyTypeKey> : SimpleClassHashTraits<
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGPropertyTypeKey_h
+

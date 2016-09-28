@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGPutStackSinkingPhase_h
+#define DFGPutStackSinkingPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -40,3 +41,6 @@ bool performPutStackSinking(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGPutStackSinkingPhase_h
+

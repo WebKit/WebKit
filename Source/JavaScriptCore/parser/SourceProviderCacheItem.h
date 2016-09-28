@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SourceProviderCacheItem_h
+#define SourceProviderCacheItem_h
 
 #include "ParserTokens.h"
 #include <wtf/Vector.h>
@@ -146,4 +147,6 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
 #pragma warning(pop)
 #endif
 
-} // namespace JSC
+}
+
+#endif // SourceProviderCacheItem_h

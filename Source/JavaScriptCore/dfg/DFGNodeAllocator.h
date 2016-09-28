@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGNodeAllocator_h
+#define DFGNodeAllocator_h
 
 #if ENABLE(DFG_JIT)
 
@@ -43,3 +44,6 @@ inline void* operator new (size_t size, JSC::DFG::NodeAllocator& allocator)
 }
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGNodeAllocator_h
+

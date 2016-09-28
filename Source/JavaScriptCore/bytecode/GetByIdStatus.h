@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef GetByIdStatus_h
+#define GetByIdStatus_h
 
 #include "CallLinkStatus.h"
 #include "CodeOrigin.h"
@@ -117,3 +118,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // PropertyAccessStatus_h
+

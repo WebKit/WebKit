@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef LazyProperty_h
+#define LazyProperty_h
 
 #include "VM.h"
 
@@ -116,3 +117,6 @@ private:
 typedef LazyProperty<JSCell, JSCell> LazyCellProperty;
 
 } // namespace JSC
+
+#endif // LazyProperty_h
+

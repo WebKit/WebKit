@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGDominators_h
+#define DFGDominators_h
 
 #if ENABLE(DFG_JIT)
 
@@ -52,3 +53,5 @@ public:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGDominators_h

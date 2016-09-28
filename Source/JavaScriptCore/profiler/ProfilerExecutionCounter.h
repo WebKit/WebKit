@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ProfilerExecutionCounter_h
+#define ProfilerExecutionCounter_h
 
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -44,3 +45,6 @@ private:
 };
 
 } } // namespace JSC::Profiler
+
+#endif // ProfilerExecutionCounter_h
+

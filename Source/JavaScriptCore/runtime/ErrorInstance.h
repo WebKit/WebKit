@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef ErrorInstance_h
+#define ErrorInstance_h
 
 #include "JSObject.h"
 #include "RuntimeType.h"
@@ -76,3 +77,5 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // ErrorInstance_h

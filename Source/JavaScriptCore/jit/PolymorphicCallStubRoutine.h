@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef PolymorphicCallStubRoutine_h
+#define PolymorphicCallStubRoutine_h
 
 #if ENABLE(JIT)
 
@@ -109,3 +110,6 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // PolymorphicCallStubRoutine_h
+

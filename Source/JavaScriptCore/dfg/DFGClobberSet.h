@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGClobberSet_h
+#define DFGClobberSet_h
 
 #if ENABLE(DFG_JIT)
 
@@ -117,3 +118,6 @@ bool writesOverlap(Graph&, Node*, ClobberSet&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGClobberSet_h
+

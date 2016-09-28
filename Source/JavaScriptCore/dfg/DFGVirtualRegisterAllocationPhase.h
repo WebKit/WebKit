@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGVirtualRegisterAllocationPhase_h
+#define DFGVirtualRegisterAllocationPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -44,3 +45,6 @@ bool performVirtualRegisterAllocation(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGVirtualRegisterAllocationPhase_h
+

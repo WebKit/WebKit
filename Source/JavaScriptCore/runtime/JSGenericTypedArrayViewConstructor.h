@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSGenericTypedArrayViewConstructor_h
+#define JSGenericTypedArrayViewConstructor_h
 
 #include "InternalFunction.h"
 
@@ -64,3 +65,6 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // JSGenericTypedArrayViewConstructor_h
+

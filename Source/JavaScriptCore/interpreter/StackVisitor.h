@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef StackVisitor_h
+#define StackVisitor_h
 
 #include "VMEntryRecord.h"
 #include <functional>
@@ -179,3 +180,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // StackVisitor_h
+

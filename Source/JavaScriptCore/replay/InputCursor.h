@@ -25,7 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef InputCursor_h
+#define InputCursor_h
 
 #if ENABLE(WEB_REPLAY)
 
@@ -83,3 +84,5 @@ private:
 using JSC::InputCursor;
 
 #endif // ENABLE(WEB_REPLAY)
+
+#endif // InputCursor_h

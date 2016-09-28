@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGOSRExitPreparation_h
+#define DFGOSRExitPreparation_h
 
 #if ENABLE(DFG_JIT)
 
@@ -46,3 +47,7 @@ void prepareCodeOriginForOSRExit(ExecState*, CodeOrigin);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGOSRExitPreparation_h
+
+

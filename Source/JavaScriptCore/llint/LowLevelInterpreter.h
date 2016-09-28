@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LowLevelInterpreter_h
+#define LowLevelInterpreter_h
 
 #include "Opcode.h"
 
@@ -45,3 +46,5 @@ FOR_EACH_CORE_OPCODE_ID(LLINT_OPCODE_ALIAS)
 } // namespace JSC
 
 #endif // !ENABLE(JIT)
+
+#endif // LowLevelInterpreter_h

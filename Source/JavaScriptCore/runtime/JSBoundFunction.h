@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSBoundFunction_h
+#define JSBoundFunction_h
 
 #include "JSFunction.h"
 
@@ -74,3 +75,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // JSFunction_h

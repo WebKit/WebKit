@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGFinalizer_h
+#define DFGFinalizer_h
 
 #if ENABLE(DFG_JIT)
 
@@ -54,3 +55,6 @@ protected:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGFinalizer_h
+

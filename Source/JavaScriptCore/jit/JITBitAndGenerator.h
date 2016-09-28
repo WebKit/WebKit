@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JITBitAndGenerator_h
+#define JITBitAndGenerator_h
 
 #if ENABLE(JIT)
 
@@ -44,3 +45,5 @@ public:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // JITBitAndGenerator_h

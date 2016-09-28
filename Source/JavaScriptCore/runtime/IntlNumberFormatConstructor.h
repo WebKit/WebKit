@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef IntlNumberFormatConstructor_h
+#define IntlNumberFormatConstructor_h
 
 #if ENABLE(INTL)
 
@@ -61,3 +62,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(INTL)
+
+#endif // IntlNumberFormatConstructor_h

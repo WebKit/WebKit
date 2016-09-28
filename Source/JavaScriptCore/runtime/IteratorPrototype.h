@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef IteratorPrototype_h
+#define IteratorPrototype_h
 
 #include "JSObject.h"
 
@@ -56,4 +57,6 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-} // namespace JSC
+}
+
+#endif // !defined(IteratorPrototype_h)

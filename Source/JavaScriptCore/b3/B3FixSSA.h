@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3FixSSA_h
+#define B3FixSSA_h
 
 #if ENABLE(B3_JIT)
 
@@ -46,3 +47,6 @@ bool fixSSA(Procedure&);
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3FixSSA_h
+

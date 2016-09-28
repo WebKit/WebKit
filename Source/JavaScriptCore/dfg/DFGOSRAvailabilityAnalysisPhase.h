@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGOSRAvailabilityAnalysisPhase_h
+#define DFGOSRAvailabilityAnalysisPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -59,3 +60,6 @@ public:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGOSRAvailabilityAnalysisPhase_h
+

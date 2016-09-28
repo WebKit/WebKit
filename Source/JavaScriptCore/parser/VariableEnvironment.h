@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef VariableEnvironment_h
+#define VariableEnvironment_h
 
 #include "Identifier.h"
 #include <wtf/HashMap.h>
@@ -115,3 +116,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // VariableEnvironment_h

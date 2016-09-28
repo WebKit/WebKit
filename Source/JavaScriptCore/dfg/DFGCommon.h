@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGCommon_h
+#define DFGCommon_h
 
 #include "DFGCompilationMode.h"
 
@@ -375,3 +376,6 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::DFG::CapabilityLevel);
 
 } // namespace WTF
+
+#endif // DFGCommon_h
+

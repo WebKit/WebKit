@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef GCSegmentedArrayInlines_h
+#define GCSegmentedArrayInlines_h
 
 #include "GCSegmentedArray.h"
 
@@ -225,3 +226,5 @@ inline size_t GCSegmentedArray<T>::size()
 }
 
 } // namespace JSC
+
+#endif // GCSegmentedArrayInlines_h

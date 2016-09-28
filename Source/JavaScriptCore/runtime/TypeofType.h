@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef TypeofType_h
+#define TypeofType_h
 
 #include <wtf/PrintStream.h>
 
@@ -46,3 +47,6 @@ namespace WTF {
 void printInternal(PrintStream& out, JSC::TypeofType);
 
 } // namespace WTF
+
+#endif // TypeofType_h
+

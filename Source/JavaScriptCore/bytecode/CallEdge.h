@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CallEdge_h
+#define CallEdge_h
 
 #include "CallVariant.h"
 
@@ -65,3 +66,6 @@ inline CallEdge::CallEdge()
 typedef Vector<CallEdge, 1> CallEdgeList;
 
 } // namespace JSC
+
+#endif // CallEdge_h
+

@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef ArrayPrototype_h
+#define ArrayPrototype_h
 
 #include "JSArray.h"
 #include "Lookup.h"
@@ -73,3 +74,5 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(ExecState*);
 
 } // namespace JSC
+
+#endif // ArrayPrototype_h

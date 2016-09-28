@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ConsoleClient_h
+#define ConsoleClient_h
 
 #include "ConsoleTypes.h"
 #include <wtf/Forward.h>
@@ -69,3 +70,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ConsoleClient_h

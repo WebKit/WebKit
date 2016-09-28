@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef AssemblerBufferWithConstantPool_h
+#define AssemblerBufferWithConstantPool_h
 
 #if ENABLE(ASSEMBLER)
 
@@ -331,3 +332,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
+
+#endif // AssemblerBufferWithConstantPool_h

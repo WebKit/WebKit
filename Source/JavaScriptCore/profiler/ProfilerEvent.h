@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ProfilerEvent_h
+#define ProfilerEvent_h
 
 #include "JSCJSValue.h"
 #include <wtf/PrintStream.h>
@@ -72,3 +73,6 @@ private:
 };
 
 } } // namespace JSC::Profiler
+
+#endif // ProfilerEvent_h
+

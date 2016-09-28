@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef HeapSnapshot_h
+#define HeapSnapshot_h
 
 #include "HeapSnapshotBuilder.h"
 #include "TinyBloomFilter.h"
@@ -62,3 +63,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // HeapSnapshot_h 

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ArityCheckMode_h
+#define ArityCheckMode_h
 
 namespace JSC {
 
@@ -33,3 +34,6 @@ enum ArityCheckMode {
 };
 
 } // namespace JSC
+
+#endif // ArityCheckMode_h
+

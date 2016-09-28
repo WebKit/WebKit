@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ScopedArgumentsTable_h
+#define ScopedArgumentsTable_h
 
 #include "JSCell.h"
 #include "ScopeOffset.h"
@@ -90,3 +91,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ScopedArgumentsTable_h
+

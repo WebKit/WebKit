@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Disassembler_h
+#define Disassembler_h
 
 #include "JSExportMacros.h"
 #include <functional>
@@ -56,3 +57,6 @@ void disassembleAsynchronously(
 JS_EXPORT_PRIVATE void waitForAsynchronousDisassembly();
 
 } // namespace JSC
+
+#endif // Disassembler_h
+

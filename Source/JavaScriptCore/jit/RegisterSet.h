@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef RegisterSet_h
+#define RegisterSet_h
 
 #if ENABLE(JIT)
 
@@ -188,3 +189,6 @@ template<> struct HashTraits<JSC::RegisterSet> : public CustomHashTraits<JSC::Re
 } // namespace WTF
 
 #endif // ENABLE(JIT)
+
+#endif // RegisterSet_h
+

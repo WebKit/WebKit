@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGInlineCacheWrapperInlines_h
+#define DFGInlineCacheWrapperInlines_h
 
 #if ENABLE(DFG_JIT)
 
@@ -42,3 +43,6 @@ void InlineCacheWrapper<GeneratorType>::finalize(LinkBuffer& linkBuffer)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGInlineCacheWrapperInlines_h
+

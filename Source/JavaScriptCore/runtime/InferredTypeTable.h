@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef InferredTypeTable_h
+#define InferredTypeTable_h
 
 #include "Identifier.h"
 #include "InferredType.h"
@@ -107,3 +108,7 @@ private:
 };
 
 } // namespace JSC
+
+#endif // InferredTypeTable_h
+
+

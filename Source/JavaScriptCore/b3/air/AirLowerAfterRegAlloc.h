@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirLowerAfterRegAlloc_h
+#define AirLowerAfterRegAlloc_h
 
 #if ENABLE(B3_JIT)
 
@@ -39,3 +40,5 @@ void lowerAfterRegAlloc(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirLowerAfterRegAlloc_h

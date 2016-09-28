@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef NumberPrototype_h
+#define NumberPrototype_h
 
 #include "NumberObject.h"
 
@@ -53,3 +54,5 @@ private:
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState*);
 
 } // namespace JSC
+
+#endif // NumberPrototype_h

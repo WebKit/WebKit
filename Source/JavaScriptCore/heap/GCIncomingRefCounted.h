@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef GCIncomingRefCounted_h
+#define GCIncomingRefCounted_h
 
 #include <wtf/DeferrableRefCounted.h>
 #include <wtf/Vector.h>
@@ -109,3 +110,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // GCIncomingRefCounted_h
+

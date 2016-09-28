@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirOptimizeBlockOrder_h
+#define AirOptimizeBlockOrder_h
 
 #if ENABLE(B3_JIT)
 
@@ -47,3 +48,6 @@ void optimizeBlockOrder(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirOptimizeBlockOrder_h
+

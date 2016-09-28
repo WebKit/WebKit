@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGDriver_h
+#define DFGDriver_h
 
 #include "CallFrame.h"
 #include "DFGCompilationMode.h"
@@ -48,3 +49,6 @@ CompilationResult compile(
     PassRefPtr<DeferredCompilationCallback>);
 
 } } // namespace JSC::DFG
+
+#endif
+

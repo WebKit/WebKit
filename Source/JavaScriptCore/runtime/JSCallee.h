@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSCallee_h
+#define JSCallee_h
 
 #include "JSGlobalObject.h"
 #include "JSObject.h"
@@ -103,3 +104,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // JSCallee_h

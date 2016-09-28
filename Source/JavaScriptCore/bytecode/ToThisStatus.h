@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ToThisStatus_h
+#define ToThisStatus_h
 
 #include <wtf/PrintStream.h>
 
@@ -44,3 +45,6 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::ToThisStatus);
 
 } // namespace WTF
+
+#endif // ToThisStatus_h
+

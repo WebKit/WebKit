@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef PrivateName_h
+#define PrivateName_h
 
 #include <wtf/text/SymbolImpl.h>
 
@@ -63,4 +64,6 @@ private:
     Ref<SymbolImpl> m_uid;
 };
 
-} // namespace JSC
+}
+
+#endif

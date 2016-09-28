@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef RegularExpression_h
+#define RegularExpression_h
 
 #include <wtf/text/WTFString.h>
 
@@ -57,3 +58,5 @@ private:
 void JS_EXPORT_PRIVATE replace(String&, const RegularExpression&, const String&);
 
 } } // namespace JSC::Yarr
+
+#endif // RegularExpression_h

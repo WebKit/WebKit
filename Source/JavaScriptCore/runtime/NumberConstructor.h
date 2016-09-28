@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef NumberConstructor_h
+#define NumberConstructor_h
 
 #include "InternalFunction.h"
 
@@ -56,3 +57,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // NumberConstructor_h

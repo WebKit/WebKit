@@ -26,7 +26,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef MIPSAssembler_h
+#define MIPSAssembler_h
 
 #if ENABLE(ASSEMBLER) && CPU(MIPS)
 
@@ -1095,3 +1096,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER) && CPU(MIPS)
+
+#endif // MIPSAssembler_h

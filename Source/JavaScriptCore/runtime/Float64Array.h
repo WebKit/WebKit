@@ -23,8 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Float64Array_h
+#define Float64Array_h
 
 #include "TypedArrays.h"
 
 using JSC::Float64Array;
+
+#endif // Float64Array_h
+

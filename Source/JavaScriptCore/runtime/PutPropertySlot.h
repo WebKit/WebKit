@@ -23,10 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef PutPropertySlot_h
+#define PutPropertySlot_h
 
 #include "JSCJSValue.h"
 #include "PropertySlot.h"
+
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -142,3 +144,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // PutPropertySlot_h

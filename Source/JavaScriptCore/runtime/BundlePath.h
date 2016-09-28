@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef BundlePath_h
+#define BundlePath_h
 
 #include <string>
 #include <wtf/text/CString.h>
@@ -33,3 +34,6 @@ namespace JSC {
 const CString& bundlePath();
 
 } // namespace JSC
+
+#endif // BundlePath_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef GenericTypedArrayViewInlines_h
+#define GenericTypedArrayViewInlines_h
 
 #include "GenericTypedArrayView.h"
 #include "JSGlobalObject.h"
@@ -106,3 +107,6 @@ JSArrayBufferView* GenericTypedArrayView<Adaptor>::wrap(
 }
 
 } // namespace JSC
+
+#endif // GenericTypedArrayViewInlines_h
+

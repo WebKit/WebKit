@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ControlFlowProfiler_h
+#define ControlFlowProfiler_h
 
 #include "BasicBlockLocation.h"
 #include <wtf/HashMap.h>
@@ -110,3 +111,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ControlFlowProfiler_h

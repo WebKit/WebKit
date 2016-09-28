@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef YarrInterpreter_h
+#define YarrInterpreter_h
 
 #include "ConcurrentJITLock.h"
 #include "YarrPattern.h"
@@ -386,3 +387,5 @@ unsigned interpret(BytecodePattern*, const LChar* input, unsigned length, unsign
 unsigned interpret(BytecodePattern*, const UChar* input, unsigned length, unsigned start, unsigned* output);
 
 } } // namespace JSC::Yarr
+
+#endif // YarrInterpreter_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef TypedArrayAdaptors_h
+#define TypedArrayAdaptors_h
 
 #include "JSCJSValue.h"
 #include "MathCommon.h"
@@ -284,3 +285,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // TypedArrayAdaptors_h
+

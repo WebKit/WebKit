@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ThunkGenerators_h
+#define ThunkGenerators_h
 
 #include "CodeSpecializationKind.h"
 #include "ThunkGenerator.h"
@@ -67,3 +68,5 @@ MacroAssemblerCodeRef boundThisNoArgsFunctionCallGenerator(VM* vm);
 
 }
 #endif // ENABLE(JIT)
+
+#endif // ThunkGenerator_h

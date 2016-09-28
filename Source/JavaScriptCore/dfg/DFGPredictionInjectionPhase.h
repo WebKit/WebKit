@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGPredictionInjectionPhase_h
+#define DFGPredictionInjectionPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -41,3 +42,5 @@ bool performPredictionInjection(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGPredictionInjectionPhase_h

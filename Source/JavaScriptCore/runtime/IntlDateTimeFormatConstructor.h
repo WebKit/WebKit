@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef IntlDateTimeFormatConstructor_h
+#define IntlDateTimeFormatConstructor_h
 
 #if ENABLE(INTL)
 
@@ -61,3 +62,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(INTL)
+
+#endif // IntlDateTimeFormatConstructor_h

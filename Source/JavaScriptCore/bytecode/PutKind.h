@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef PutKind_h
+#define PutKind_h
 
 namespace JSC {
 
 enum PutKind { Direct, NotDirect };
 
 } // namespace JSC
+
+#endif // PutKind_h
+

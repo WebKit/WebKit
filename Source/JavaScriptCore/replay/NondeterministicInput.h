@@ -25,7 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef NondeterministicInput_h
+#define NondeterministicInput_h
 
 #if ENABLE(WEB_REPLAY)
 
@@ -84,3 +85,5 @@ using JSC::NondeterministicInput;
 using JSC::NondeterministicInputBase;
 
 #endif // ENABLE(WEB_REPLAY)
+
+#endif // NondeterministicInput_h

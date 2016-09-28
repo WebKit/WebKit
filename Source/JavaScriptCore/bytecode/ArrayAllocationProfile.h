@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ArrayAllocationProfile_h
+#define ArrayAllocationProfile_h
 
 #include "IndexingType.h"
 #include "JSArray.h"
@@ -75,3 +76,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ArrayAllocationProfile_h
+

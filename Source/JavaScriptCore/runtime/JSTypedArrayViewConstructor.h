@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSTypedArrayViewConstructor_h
+#define JSTypedArrayViewConstructor_h
 
 #include "InternalFunction.h"
 
@@ -55,5 +56,9 @@ protected:
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
 };
+
+
     
 } // namespace JSC
+
+#endif /* JSTypedArrayViewConstructor_h */

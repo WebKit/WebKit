@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef PutDirectIndexMode_h
+#define PutDirectIndexMode_h
 
 namespace JSC {
 
 enum PutDirectIndexMode { PutDirectIndexLikePutDirect, PutDirectIndexShouldNotThrow, PutDirectIndexShouldThrow };
 
 } // namespace JSC
+
+#endif // PutDirectIndexMode_h
+

@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef Register_h
+#define Register_h
 
 #include "JSCJSValue.h"
 #include <wtf/Assertions.h>
@@ -227,3 +228,5 @@ namespace WTF {
     template<> struct VectorTraits<JSC::Register> : VectorTraitsBase<true, JSC::Register> { };
 
 } // namespace WTF
+
+#endif // Register_h

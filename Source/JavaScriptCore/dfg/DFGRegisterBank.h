@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGRegisterBank_h
+#define DFGRegisterBank_h
 
 #if ENABLE(DFG_JIT)
 
@@ -362,4 +363,5 @@ typedef RegisterBank<FPRInfo>::iterator fpr_iterator;
 
 } } // namespace JSC::DFG
 
+#endif
 #endif

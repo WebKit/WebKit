@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirCode_h
+#define AirCode_h
 
 #if ENABLE(B3_JIT)
 
@@ -273,3 +274,6 @@ private:
 #endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirCode_h
+

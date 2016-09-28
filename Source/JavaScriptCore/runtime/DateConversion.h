@@ -22,7 +22,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef DateConversion_h
+#define DateConversion_h
 
 #include <wtf/GregorianDateTime.h>
 
@@ -41,3 +42,5 @@ enum DateTimeFormat {
 JS_EXPORT_PRIVATE WTF::String formatDateTime(const GregorianDateTime&, DateTimeFormat, bool asUTCVariant);
 
 } // namespace JSC
+
+#endif // DateConversion_h

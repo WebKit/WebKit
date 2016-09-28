@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGLongLivedState_h
+#define DFGLongLivedState_h
 
 #if ENABLE(DFG_JIT)
 
@@ -47,3 +48,6 @@ public:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGLongLivedState_h
+

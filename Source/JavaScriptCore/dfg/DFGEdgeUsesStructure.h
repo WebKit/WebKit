@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGEdgeUsesStructure_h
+#define DFGEdgeUsesStructure_h
 
 #if ENABLE(DFG_JIT)
 
@@ -59,3 +60,6 @@ inline bool edgesUseStructure(Graph& graph, Node* node)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGEdgeUsesStructure_h
+

@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef BytecodeIntrinsicRegistry_h
+#define BytecodeIntrinsicRegistry_h
 
 #include "Identifier.h"
 #include <wtf/Noncopyable.h>
@@ -101,3 +102,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // BytecodeIntrinsicRegistry_h

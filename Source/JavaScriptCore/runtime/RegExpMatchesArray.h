@@ -17,7 +17,8 @@
  *
  */
 
-#pragma once
+#ifndef RegExpMatchesArray_h
+#define RegExpMatchesArray_h
 
 #include "ButterflyInlines.h"
 #include "JSArray.h"
@@ -129,4 +130,6 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject*, JSString*, RegExp*);
 Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject*);
 Structure* createRegExpMatchesArraySlowPutStructure(VM&, JSGlobalObject*);
 
-} // namespace JSC
+}
+
+#endif // RegExpMatchesArray_h

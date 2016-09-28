@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef FunctionHasExecutedCache_h
+#define FunctionHasExecutedCache_h
 
 #include <unordered_map>
 #include <wtf/HashMethod.h>
@@ -60,3 +61,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // FunctionHasExecutedCache_h

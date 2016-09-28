@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef MaxFrameExtentForSlowPathCall_h
+#define MaxFrameExtentForSlowPathCall_h
 
 #include "Register.h"
 #include "StackAlignment.h"
@@ -81,3 +82,6 @@ COMPILE_ASSERT((maxFrameExtentForSlowPathCall % 16) == 16 - sizeof(CallerFrameAn
 static const size_t maxFrameExtentForSlowPathCallInRegisters = maxFrameExtentForSlowPathCall / sizeof(Register);
 
 } // namespace JSC
+
+#endif // MaxFrameExtentForSlowPathCall_h
+

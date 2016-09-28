@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGObjectMaterializationData_h
+#define DFGObjectMaterializationData_h
 
 #if ENABLE(DFG_JIT)
 
@@ -45,3 +46,6 @@ struct ObjectMaterializationData {
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGObjectMaterializationData_h
+

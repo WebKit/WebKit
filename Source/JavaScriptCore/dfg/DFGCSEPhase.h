@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGCSEPhase_h
+#define DFGCSEPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -51,3 +52,6 @@ bool performGlobalCSE(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGCSEPhase_h
+

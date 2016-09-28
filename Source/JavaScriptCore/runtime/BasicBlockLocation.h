@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef BasicBlockLocation_h
+#define BasicBlockLocation_h
 
 #include "MacroAssembler.h"
 #include <wtf/RefPtr.h>
@@ -68,3 +69,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // BasicBlockLocation_h

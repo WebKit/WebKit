@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef CustomGetterSetter_h
+#define CustomGetterSetter_h
 
 #include "JSCell.h"
 #include "PropertySlot.h"
@@ -73,3 +74,5 @@ JS_EXPORT_PRIVATE bool callCustomSetter(ExecState*, CustomGetterSetter::CustomSe
 JS_EXPORT_PRIVATE bool callCustomSetter(ExecState*, JSValue customGetterSetter, bool isAccessor, JSObject* slotBase, JSValue thisValue, JSValue);
 
 } // namespace JSC
+
+#endif // CustomGetterSetter_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3InsertionSetInlines_h
+#define B3InsertionSetInlines_h
 
 #if ENABLE(B3_JIT)
 
@@ -41,3 +42,6 @@ ValueType* InsertionSet::insert(size_t index, Arguments... arguments)
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3InsertionSetInlines_h
+

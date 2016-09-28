@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGBlockWorklist_h
+#define DFGBlockWorklist_h
 
 #if ENABLE(DFG_JIT)
 
@@ -55,3 +56,6 @@ typedef PostOrderGraphNodeWorklist<BasicBlock*, BlockSet> PostOrderBlockWorklist
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGBlockWorklist_h
+

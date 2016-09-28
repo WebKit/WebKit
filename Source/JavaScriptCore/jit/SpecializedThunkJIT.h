@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SpecializedThunkJIT_h
+#define SpecializedThunkJIT_h
 
 #if ENABLE(JIT)
 
@@ -214,3 +215,5 @@ namespace JSC {
 }
 
 #endif // ENABLE(JIT)
+
+#endif // SpecializedThunkJIT_h

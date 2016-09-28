@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef EnumerationMode_h
+#define EnumerationMode_h
 
 namespace JSC {
 
@@ -75,3 +76,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // EnumerationMode_h

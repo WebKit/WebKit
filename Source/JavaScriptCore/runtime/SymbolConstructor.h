@@ -24,7 +24,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SymbolConstructor_h
+#define SymbolConstructor_h
 
 #include "InternalFunction.h"
 #include "Symbol.h"
@@ -63,3 +64,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // SymbolConstructor_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGEdgeDominates_h
+#define DFGEdgeDominates_h
 
 #if ENABLE(DFG_JIT)
 
@@ -72,3 +73,6 @@ inline bool edgesDominate(Graph& graph, Node* node, BasicBlock* block)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGEdgeDominates_h
+

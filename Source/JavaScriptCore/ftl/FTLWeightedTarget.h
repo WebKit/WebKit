@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLWeightedTarget_h
+#define FTLWeightedTarget_h
 
 #if ENABLE(FTL_JIT)
 
@@ -87,3 +88,6 @@ inline WeightedTarget unsure(LBasicBlock block)
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLWeightedTarget_h
+

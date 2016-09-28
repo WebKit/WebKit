@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DeferGC_h
+#define DeferGC_h
 
 #include "Heap.h"
 #include <wtf/Noncopyable.h>
@@ -95,3 +96,6 @@ public:
 #endif // NDEBUG
 
 } // namespace JSC
+
+#endif // DeferGC_h
+

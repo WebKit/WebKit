@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef IndexingHeader_h
+#define IndexingHeader_h
 
 #include "PropertyStorage.h"
 
@@ -133,3 +134,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // IndexingHeader_h
+

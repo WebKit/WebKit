@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LLIntExceptions_h
+#define LLIntExceptions_h
 
 #include <wtf/StdLibExtras.h>
 #include "MacroAssemblerCodeRef.h"
@@ -48,3 +49,5 @@ Instruction* returnToThrow(ExecState*);
 void* callToThrow(ExecState*);
 
 } } // namespace JSC::LLInt
+
+#endif // LLIntExceptions_h

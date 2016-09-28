@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSNativeStdFunction_h
+#define JSNativeStdFunction_h
 
 #include "JSFunction.h"
 
@@ -64,3 +65,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // JSNativeStdFunction_h

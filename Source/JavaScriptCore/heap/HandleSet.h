@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef HandleSet_h
+#define HandleSet_h
 
 #include "Handle.h"
 #include "HandleBlock.h"
@@ -193,4 +194,6 @@ template<typename Functor> void HandleSet::forEachStrongHandle(const Functor& fu
     }
 }
 
-} // namespace JSC
+}
+
+#endif

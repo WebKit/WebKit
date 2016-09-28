@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGOpInfo_h
+#define DFGOpInfo_h
 
 #include <wtf/StdLibExtras.h>
 
@@ -49,3 +50,6 @@ struct OpInfo {
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGOpInfo_h
+

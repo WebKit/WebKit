@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef TypeProfilerLog_h
+#define TypeProfilerLog_h
 
 #include "JSCJSValue.h"
 #include "Structure.h"
@@ -79,3 +80,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // TypeProfilerLog_h

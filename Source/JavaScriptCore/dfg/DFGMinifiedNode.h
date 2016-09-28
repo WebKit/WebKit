@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGMinifiedNode_h
+#define DFGMinifiedNode_h
 
 #if ENABLE(DFG_JIT)
 
@@ -97,3 +98,6 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGMinifiedNode_h
+

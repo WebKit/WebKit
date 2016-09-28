@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLThunks_h
+#define FTLThunks_h
 
 #if ENABLE(FTL_JIT)
 
@@ -94,3 +95,5 @@ private:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLTHunks_h

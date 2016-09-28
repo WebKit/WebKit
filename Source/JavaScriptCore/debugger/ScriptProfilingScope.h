@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ScriptProfilingScope_h
+#define ScriptProfilingScope_h
 
 #include "Debugger.h"
 #include "JSGlobalObject.h"
@@ -87,4 +88,6 @@ private:
     ProfilingReason m_reason;
 };
 
-} // namespace JSC
+}
+
+#endif // ScriptProfilingScope_h

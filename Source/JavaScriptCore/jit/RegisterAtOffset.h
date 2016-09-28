@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef RegisterAtOffset_h
+#define RegisterAtOffset_h
 
 #if ENABLE(JIT)
 
@@ -75,3 +76,6 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // RegisterAtOffset_h
+

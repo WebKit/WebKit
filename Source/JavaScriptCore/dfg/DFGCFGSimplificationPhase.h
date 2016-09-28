@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGCFGSimplificationPhase_h
+#define DFGCFGSimplificationPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -44,3 +45,6 @@ bool performCFGSimplification(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGCFGSimplificationPhase_h
+

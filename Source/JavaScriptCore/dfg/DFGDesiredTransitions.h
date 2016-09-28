@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef DFGDesiredTransitions_h
+#define DFGDesiredTransitions_h
 
 #include <wtf/Vector.h>
 
@@ -72,3 +73,5 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGDesiredTransitions_h

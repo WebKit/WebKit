@@ -19,7 +19,8 @@
  *
  */
 
-#pragma once
+#ifndef JSGlobalObject_h
+#define JSGlobalObject_h
 
 #include "ArrayAllocationProfile.h"
 #include "InternalFunction.h"
@@ -883,3 +884,5 @@ inline JSObject* JSGlobalObject::globalThis() const
 }
 
 } // namespace JSC
+
+#endif // JSGlobalObject_h

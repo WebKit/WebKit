@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JITCode_h
+#define JITCode_h
 
 #include "ArityCheckMode.h"
 #include "CallFrame.h"
@@ -254,3 +255,5 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::JITCode::JITType);
 
 } // namespace WTF
+
+#endif

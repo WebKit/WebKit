@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3ConstPtrValue_h
+#define B3ConstPtrValue_h
 
 #if ENABLE(B3_JIT)
 
@@ -67,3 +68,6 @@ private:
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3ConstPtrValue_h
+

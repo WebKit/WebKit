@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGPlan_h
+#define DFGPlan_h
 
 #include "CompilationResult.h"
 #include "DFGCompilationKey.h"
@@ -131,3 +132,6 @@ private:
 #endif // ENABLE(DFG_JIT)
 
 } } // namespace JSC::DFG
+
+#endif // DFGPlan_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef GPRInfo_h
+#define GPRInfo_h
 
 #include "MacroAssembler.h"
 #include <array>
@@ -913,3 +914,5 @@ inline void printInternal(PrintStream& out, JSC::GPRReg reg)
 }
 
 } // namespace WTF
+
+#endif

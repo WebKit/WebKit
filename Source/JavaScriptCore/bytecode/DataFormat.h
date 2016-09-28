@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DataFormat_h
+#define DataFormat_h
 
 #include <wtf/Assertions.h>
 
@@ -128,3 +129,5 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::DataFormat);
 
 } // namespace WTF
+
+#endif // DataFormat_h

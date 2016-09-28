@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LinkBuffer_h
+#define LinkBuffer_h
 
 #if ENABLE(ASSEMBLER)
 
@@ -348,3 +349,5 @@ bool shouldDumpDisassemblyFor(CodeBlock*);
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
+
+#endif // LinkBuffer_h

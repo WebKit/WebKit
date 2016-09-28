@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSStringJoiner_h
+#define JSStringJoiner_h
 
 #include "ExceptionHelpers.h"
 #include "JSCJSValue.h"
@@ -149,4 +150,6 @@ ALWAYS_INLINE void JSStringJoiner::append(ExecState& state, JSValue value)
     }
 }
 
-} // namespace JSC
+}
+
+#endif

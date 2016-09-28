@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JITDisassembler_h
+#define JITDisassembler_h
 
 #if ENABLE(JIT)
 
@@ -88,3 +89,6 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // JITDisassembler_h
+

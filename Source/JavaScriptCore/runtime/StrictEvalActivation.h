@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef StrictEvalActivation_h
+#define StrictEvalActivation_h
 
 #include "JSScope.h"
 
@@ -56,3 +57,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // StrictEvalActivation_h

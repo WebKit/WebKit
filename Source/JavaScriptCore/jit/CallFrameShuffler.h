@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CallFrameShuffler_h
+#define CallFrameShuffler_h
 
 #if ENABLE(JIT)
 
@@ -799,3 +800,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // CallFrameShuffler_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ProfilerBytecode_h
+#define ProfilerBytecode_h
 
 #include "JSCJSValue.h"
 #include <wtf/text/CString.h>
@@ -62,3 +63,6 @@ private:
 inline unsigned getBytecodeIndexForBytecode(Bytecode* bytecode) { return bytecode->bytecodeIndex(); }
 
 } } // namespace JSC::Profiler
+
+#endif // ProfilerBytecode_h
+

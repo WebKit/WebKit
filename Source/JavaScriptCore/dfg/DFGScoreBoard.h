@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGScoreBoard_h
+#define DFGScoreBoard_h
 
 #if ENABLE(DFG_JIT)
 
@@ -178,4 +179,5 @@ private:
 
 } } // namespace JSC::DFG
 
+#endif
 #endif

@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef CommonIdentifiers_h
+#define CommonIdentifiers_h
 
 #include "Identifier.h"
 #include <wtf/Noncopyable.h>
@@ -382,3 +383,5 @@ namespace JSC {
     };
 
 } // namespace JSC
+
+#endif // CommonIdentifiers_h

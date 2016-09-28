@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WriteBarrier_h
+#define WriteBarrier_h
 
 #include "GCAssertions.h"
 #include "HandleTypes.h"
@@ -223,3 +224,5 @@ template <typename U, typename V> inline bool operator==(const WriteBarrierBase<
 }
 
 } // namespace JSC
+
+#endif // WriteBarrier_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirCCallingConvention_h
+#define AirCCallingConvention_h
 
 #if ENABLE(B3_JIT)
 
@@ -49,3 +50,6 @@ Inst buildCCall(Code&, Value* origin, const Vector<Arg>&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirCCallingConvention_h
+

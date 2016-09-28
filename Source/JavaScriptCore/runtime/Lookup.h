@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef Lookup_h
+#define Lookup_h
 
 #include "BatchedTransitionOptimizer.h"
 #include "CallFrame.h"
@@ -353,3 +354,5 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
 }
 
 } // namespace JSC
+
+#endif // Lookup_h

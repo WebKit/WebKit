@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3DuplicateTails_h
+#define B3DuplicateTails_h
 
 #if ENABLE(B3_JIT)
 
@@ -40,3 +41,6 @@ void duplicateTails(Procedure&);
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3DuplicateTails_h
+

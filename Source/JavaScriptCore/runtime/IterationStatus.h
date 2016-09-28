@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef IterationStatus_h
+#define IterationStatus_h
 
 namespace JSC {
 
@@ -33,3 +34,5 @@ enum class IterationStatus {
 };
 
 } // namespace JSC
+
+#endif // IterationStatus_h

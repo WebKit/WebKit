@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef GeneratorPrototype_h
+#define GeneratorPrototype_h
 
 #include "JSObject.h"
 
@@ -56,4 +57,6 @@ private:
     void finishCreation(VM&);
 };
 
-} // namespace JSC
+}
+
+#endif // !defined(GeneratorPrototype_h)

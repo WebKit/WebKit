@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef A64DOpcode_h
+#define A64DOpcode_h
 
 #include <wtf/Assertions.h>
 #include <stdint.h>
@@ -703,3 +704,5 @@ public:
 } } // namespace JSC::ARM64Disassembler
 
 using JSC::ARM64Disassembler::A64DOpcode;
+
+#endif // A64DOpcode_h

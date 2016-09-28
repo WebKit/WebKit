@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLGeneratedFunction_h
+#define FTLGeneratedFunction_h
 
 #if ENABLE(FTL_JIT)
 
@@ -36,3 +37,5 @@ typedef EncodedJSValue (*GeneratedFunction)(ExecState*);
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLGeneratedFunction_h

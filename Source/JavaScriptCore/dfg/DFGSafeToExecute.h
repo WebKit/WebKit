@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGSafeToExecute_h
+#define DFGSafeToExecute_h
 
 #if ENABLE(DFG_JIT)
 
@@ -456,3 +457,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGSafeToExecute_h
+

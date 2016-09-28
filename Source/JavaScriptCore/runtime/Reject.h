@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Reject_h
+#define Reject_h
 
 #include "CallFrame.h"
 #include "Error.h"
@@ -40,3 +41,6 @@ inline bool reject(ExecState* exec, bool throwException, const char* message)
 }
 
 } // namespace JSC
+
+#endif // Reject_h
+

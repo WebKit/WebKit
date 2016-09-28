@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WeakGCMap_h
+#define WeakGCMap_h
 
 #include "Weak.h"
 #include <wtf/HashMap.h>
@@ -102,3 +103,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // WeakGCMap_h

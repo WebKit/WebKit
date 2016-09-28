@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ReflectObject_h
+#define ReflectObject_h
 
 #include "JSObject.h"
 
@@ -56,3 +57,5 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // ReflectObject_h

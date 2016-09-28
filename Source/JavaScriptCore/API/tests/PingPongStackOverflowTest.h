@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef PingPongStackOverflowTest_h
+#define PingPongStackOverflowTest_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,3 +35,5 @@ int testPingPongStackOverflow();
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
+
+#endif /* PingPongStackOverflowTest_h */

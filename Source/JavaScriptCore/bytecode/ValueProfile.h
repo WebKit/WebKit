@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ValueProfile_h
+#define ValueProfile_h
 
 #include "ConcurrentJITLock.h"
 #include "Heap.h"
@@ -207,3 +208,5 @@ inline int getRareCaseProfileBytecodeOffset(RareCaseProfile* rareCaseProfile)
 }
 
 } // namespace JSC
+
+#endif // ValueProfile_h

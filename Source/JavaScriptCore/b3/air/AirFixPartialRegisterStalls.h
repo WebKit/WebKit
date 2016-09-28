@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef AirFixPartialRegisterStalls_h
+#define AirFixPartialRegisterStalls_h
 
 #if ENABLE(B3_JIT)
 
@@ -44,3 +45,5 @@ void fixPartialRegisterStalls(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirFixPartialRegisterStalls_h

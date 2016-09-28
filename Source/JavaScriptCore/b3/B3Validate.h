@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3Validate_h
+#define B3Validate_h
 
 #if ENABLE(B3_JIT)
 
@@ -36,3 +37,6 @@ JS_EXPORT_PRIVATE void validate(Procedure&, const char* dumpBefore = nullptr);
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3Validate_h
+

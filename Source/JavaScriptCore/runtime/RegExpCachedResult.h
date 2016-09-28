@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef RegExpCachedResult_h
+#define RegExpCachedResult_h
 
 #include "RegExpObject.h"
 
@@ -90,3 +91,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // RegExpCachedResult_h

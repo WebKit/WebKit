@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSSetIterator_h
+#define JSSetIterator_h
 
 #include "IterationKind.h"
 #include "JSObject.h"
@@ -107,4 +108,6 @@ private:
 };
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSSetIterator);
 
-} // namespace JSC
+}
+
+#endif // !defined(JSSetIterator_h)

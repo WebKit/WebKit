@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef BytecodeUseDef_h
+#define BytecodeUseDef_h
 
 #include "CodeBlock.h"
 #include "Interpreter.h"
@@ -460,3 +461,6 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
 }
 
 } // namespace JSC
+
+#endif // BytecodeUseDef_h
+

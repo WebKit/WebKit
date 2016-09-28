@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ConservativeRoots_h
+#define ConservativeRoots_h
 
 #include "Heap.h"
 
@@ -75,3 +76,5 @@ inline HeapCell** ConservativeRoots::roots()
 }
 
 } // namespace JSC
+
+#endif // ConservativeRoots_h

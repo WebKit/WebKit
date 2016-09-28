@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef JSLock_h
+#define JSLock_h
 
 #include <mutex>
 #include <thread>
@@ -141,3 +142,5 @@ private:
 };
 
 } // namespace
+
+#endif // JSLock_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DeferredCompilationCallback_h
+#define DeferredCompilationCallback_h
 
 #include "CompilationResult.h"
 #include "DeferredSourceDump.h"
@@ -53,3 +54,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // DeferredCompilationCallback_h
+

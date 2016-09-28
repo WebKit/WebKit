@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLLoweredNodeValue_h
+#define FTLLoweredNodeValue_h
 
 #if ENABLE(FTL_JIT)
 
@@ -70,3 +71,6 @@ private:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLLoweredNodeValue_h
+

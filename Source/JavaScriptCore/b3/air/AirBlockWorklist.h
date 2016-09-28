@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirBlockWorklist_h
+#define AirBlockWorklist_h
 
 #if ENABLE(B3_JIT)
 
@@ -50,3 +51,6 @@ typedef PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> PostOrderB
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirBlockWorklist_h
+

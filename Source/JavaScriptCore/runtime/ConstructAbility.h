@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ConstructAbility_h
+#define ConstructAbility_h
 
 namespace JSC {
 
@@ -32,4 +33,6 @@ enum class ConstructAbility : unsigned {
     CannotConstruct,
 };
 
-} // namespace JSC
+}
+
+#endif // ConstructAbility_h

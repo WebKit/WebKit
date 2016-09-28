@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGOSREntrypointCreationPhase_h
+#define DFGOSREntrypointCreationPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -46,3 +47,6 @@ bool performOSREntrypointCreation(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGOSREntrypointCreationPhase_h
+

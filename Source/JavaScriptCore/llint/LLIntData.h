@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LLIntData_h
+#define LLIntData_h
 
 #include "JSCJSValue.h"
 #include "Opcode.h"
@@ -115,4 +116,8 @@ ALWAYS_INLINE void* getCodePtr(JSC::EncodedJSValue glueHelper())
     return bitwise_cast<void*>(glueHelper);
 }
 
+
 } } // namespace JSC::LLInt
+
+#endif // LLIntData_h
+

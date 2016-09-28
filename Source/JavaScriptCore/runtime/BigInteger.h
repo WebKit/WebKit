@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef BigInteger_h
+#define BigInteger_h
 
 #include <wtf/MathExtras.h>
 
@@ -105,4 +106,7 @@ private:
     Vector<uint32_t, 36> m_values;
 };
 
-} // namespace JSC
+}
+
+#endif
+

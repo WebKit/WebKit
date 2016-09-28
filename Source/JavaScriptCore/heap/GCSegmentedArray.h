@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef GCSegmentedArray_h
+#define GCSegmentedArray_h
 
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Vector.h>
@@ -162,3 +163,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // GCSegmentedArray_h

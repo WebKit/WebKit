@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3ReduceDoubleToFloat_h
+#define B3ReduceDoubleToFloat_h
 
 #if ENABLE(B3_JIT)
 
@@ -38,3 +39,6 @@ void reduceDoubleToFloat(Procedure&);
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3ReduceDoubleToFloat_h
+

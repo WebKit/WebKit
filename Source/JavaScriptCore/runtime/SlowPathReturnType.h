@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef SlowPathReturnType_h
+#define SlowPathReturnType_h
 
 #include <wtf/StdLibExtras.h>
 
@@ -81,3 +82,5 @@ inline void decodeResult(SlowPathReturnType result, void*& a, void*& b)
 #endif // USE(JSVALUE32_64)
 
 } // namespace JSC
+
+#endif // SlowPathReturnType_h

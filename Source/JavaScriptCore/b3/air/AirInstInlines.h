@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirInstInlines_h
+#define AirInstInlines_h
 
 #if ENABLE(B3_JIT)
 
@@ -248,3 +249,6 @@ inline bool isX86Div64Valid(const Inst& inst)
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirInstInlines_h
+

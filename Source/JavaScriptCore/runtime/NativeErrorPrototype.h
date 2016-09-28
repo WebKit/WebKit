@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef NativeErrorPrototype_h
+#define NativeErrorPrototype_h
 
 #include "ErrorPrototype.h"
 
@@ -45,3 +46,5 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // NativeErrorPrototype_h

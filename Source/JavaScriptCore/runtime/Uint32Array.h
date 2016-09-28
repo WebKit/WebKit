@@ -23,8 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Uint32Array_h
+#define Uint32Array_h
 
 #include "TypedArrays.h"
 
 using JSC::Uint32Array;
+
+#endif // Uint32Array_h
+

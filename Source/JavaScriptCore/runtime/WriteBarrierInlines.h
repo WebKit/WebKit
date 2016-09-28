@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WriteBarrierInlines_h
+#define WriteBarrierInlines_h
 
 #include "VM.h"
 #include "WriteBarrier.h"
@@ -62,3 +63,5 @@ inline void WriteBarrierBase<Unknown>::set(VM& vm, const JSCell* owner, JSValue 
 }
 
 } // namespace JSC 
+
+#endif // WriteBarrierInlines_h

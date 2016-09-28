@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef InternalFunctionAllocationProfile_h
+#define InternalFunctionAllocationProfile_h
 
 #include "JSGlobalObject.h"
 #include "ObjectPrototype.h"
@@ -62,3 +63,5 @@ inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFr
 }
 
 } // namespace JSC
+
+#endif /* InternalFunctionAllocationProfile_h */

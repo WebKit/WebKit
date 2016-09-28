@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef VarOffset_h
+#define VarOffset_h
 
 #include "DirectArgumentsOffset.h"
 #include "ScopeOffset.h"
@@ -241,3 +242,6 @@ template<> struct HashTraits<JSC::VarOffset> : SimpleClassHashTraits<JSC::VarOff
 };
 
 } // namespace WTF
+
+#endif // VarOffset_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGOSRExitCompilationInfo_h
+#define DFGOSRExitCompilationInfo_h
 
 #if ENABLE(DFG_JIT)
 
@@ -42,3 +43,6 @@ struct OSRExitCompilationInfo {
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGOSRExitCompilationInfo_h
+

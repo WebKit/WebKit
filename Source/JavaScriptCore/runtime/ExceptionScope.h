@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ExceptionScope_h
+#define ExceptionScope_h
 
 #include "VM.h"
 
@@ -76,3 +77,5 @@ protected:
     } while (false)
 
 } // namespace JSC
+
+#endif // ExceptionScope_h

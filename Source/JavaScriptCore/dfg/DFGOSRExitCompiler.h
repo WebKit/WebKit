@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGOSRExitCompiler_h
+#define DFGOSRExitCompiler_h
 
 #if ENABLE(DFG_JIT)
 
@@ -60,3 +61,5 @@ void JIT_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGOSRExitCompiler_h

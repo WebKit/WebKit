@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ProtoCallFrame_h
+#define ProtoCallFrame_h
 
 #include "Register.h"
 
@@ -71,3 +72,5 @@ struct JS_EXPORT_PRIVATE ProtoCallFrame {
 };
 
 } // namespace JSC
+
+#endif // ProtoCallFrame_h

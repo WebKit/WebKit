@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JITInlineCacheGenerator_h
+#define JITInlineCacheGenerator_h
 
 #if ENABLE(JIT)
 
@@ -127,3 +128,6 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // JITInlineCacheGenerator_h
+

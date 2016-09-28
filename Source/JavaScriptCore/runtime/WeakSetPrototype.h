@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef WeakSetPrototype_h
+#define WeakSetPrototype_h
 
 #include "JSObject.h"
 
@@ -55,4 +56,6 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-} // namespace JSC
+}
+
+#endif // !defined(WeakSetPrototype_h)

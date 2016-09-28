@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SetPrototype_h
+#define SetPrototype_h
 
 #include "JSObject.h"
 
@@ -60,4 +61,6 @@ private:
 EncodedJSValue JSC_HOST_CALL privateFuncSetIterator(ExecState*);
 EncodedJSValue JSC_HOST_CALL privateFuncSetIteratorNext(ExecState*);
 
-} // namespace JSC
+}
+
+#endif // !defined(SetPrototype_h)

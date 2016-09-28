@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3StackSlot_h
+#define B3StackSlot_h
 
 #if ENABLE(B3_JIT)
 
@@ -103,3 +104,6 @@ inline DeepStackSlotDump deepDump(const StackSlot* slot)
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3StackSlot_h
+

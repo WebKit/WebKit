@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CodeProfile_h
+#define CodeProfile_h
 
 #include "SourceCode.h"
 #include "TieredMMapArray.h"
@@ -87,4 +88,7 @@ private:
     static const char* s_codeTypeNames[NumberOfCodeTypes];
 };
 
-} // namespace JSC
+}
+
+#endif // CodeProfile_h
+

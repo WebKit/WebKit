@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGSlowPathGenerator_h
+#define DFGSlowPathGenerator_h
 
 #if ENABLE(DFG_JIT)
 
@@ -267,3 +268,6 @@ inline std::unique_ptr<SlowPathGenerator> slowPathMove(
 } } // namespace JSC::DFG
 
 #endif // ENABLD(DFG_JIT)
+
+#endif // DFGSlowPathGenerator_h
+

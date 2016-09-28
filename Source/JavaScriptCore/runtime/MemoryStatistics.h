@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef MemoryStatistics_h
+#define MemoryStatistics_h
 
 #include "Heap.h"
 
@@ -38,4 +39,7 @@ struct GlobalMemoryStatistics {
 
 JS_EXPORT_PRIVATE GlobalMemoryStatistics globalMemoryStatistics();
 
-} // namespace JSC
+}
+
+#endif // MemoryStatistics_h
+

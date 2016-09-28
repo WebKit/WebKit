@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef GenericTypedArrayView_h
+#define GenericTypedArrayView_h
 
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
@@ -112,3 +113,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // GenericTypedArrayView_h
+

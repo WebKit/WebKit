@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef Instruction_h
+#define Instruction_h
 
 #include "BasicBlockLocation.h"
 #include "MacroAssembler.h"
@@ -159,3 +160,5 @@ namespace WTF {
 template<> struct VectorTraits<JSC::Instruction> : VectorTraitsBase<true, JSC::Instruction> { };
 
 } // namespace WTF
+
+#endif // Instruction_h

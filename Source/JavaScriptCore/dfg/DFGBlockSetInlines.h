@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGBlockSetInlines_h
+#define DFGBlockSetInlines_h
 
 #if ENABLE(DFG_JIT)
 
@@ -40,3 +41,6 @@ inline BasicBlock* BlockSet::iterator::operator*() const
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGBlockSetInlines_h
+

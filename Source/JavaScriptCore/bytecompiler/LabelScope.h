@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef LabelScope_h
+#define LabelScope_h
 
 #include <wtf/PassRefPtr.h>
 #include "Label.h"
@@ -131,3 +132,5 @@ namespace JSC {
     };
 
 } // namespace JSC
+
+#endif // LabelScope_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CodeLocation_h
+#define CodeLocation_h
 
 #include "MacroAssemblerCodeRef.h"
 
@@ -218,3 +219,5 @@ inline CodeLocationConvertibleLoad CodeLocationCommon::convertibleLoadAtOffset(i
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
+
+#endif // CodeLocation_h

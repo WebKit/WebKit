@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef GetByIdVariant_h
+#define GetByIdVariant_h
 
 #include "CallLinkStatus.h"
 #include "JSCJSValue.h"
@@ -83,3 +84,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // GetByIdVariant_h
+

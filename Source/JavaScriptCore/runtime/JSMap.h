@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSMap_h
+#define JSMap_h
 
 #include "JSObject.h"
 #include "MapBase.h"
@@ -70,4 +71,6 @@ private:
     static String toStringName(const JSObject*, ExecState*);
 };
 
-} // namespace JSC
+}
+
+#endif // !defined(JSMap_h)

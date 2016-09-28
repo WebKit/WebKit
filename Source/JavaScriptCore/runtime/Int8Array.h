@@ -23,8 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Int8Array_h
+#define Int8Array_h
 
 #include "TypedArrays.h"
 
 using JSC::Int8Array;
+
+#endif // Int8Array_h
+

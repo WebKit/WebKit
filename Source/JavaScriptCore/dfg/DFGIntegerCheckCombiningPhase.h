@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGIntegerCheckCombiningPhase_h
+#define DFGIntegerCheckCombiningPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -38,3 +39,6 @@ bool performIntegerCheckCombining(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGIntegerCheckCombiningPhase_h
+

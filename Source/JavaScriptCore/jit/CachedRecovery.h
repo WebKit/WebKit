@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CachedRecovery_h
+#define CachedRecovery_h
 
 #if ENABLE(JIT)
 
@@ -132,3 +133,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // CachedRecovery_h

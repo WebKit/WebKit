@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DirectArgumentsOffset_h
+#define DirectArgumentsOffset_h
 
 #include "GenericOffset.h"
 #include <wtf/PrintStream.h>
@@ -47,3 +48,6 @@ public:
 };
 
 } // namespace JSC
+
+#endif // DirectArgumentsOffset_h
+

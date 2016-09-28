@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AssemblerBuffer_h
+#define AssemblerBuffer_h
 
 #if ENABLE(ASSEMBLER)
 
@@ -300,3 +301,5 @@ namespace JSC {
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
+
+#endif // AssemblerBuffer_h

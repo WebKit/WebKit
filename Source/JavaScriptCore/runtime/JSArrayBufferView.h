@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSArrayBufferView_h
+#define JSArrayBufferView_h
 
 #include "AuxiliaryBarrier.h"
 #include "JSObject.h"
@@ -196,3 +197,6 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::TypedArrayMode);
 
 } // namespace WTF
+
+#endif // JSArrayBufferView_h
+

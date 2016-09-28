@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef TypeSet_h
+#define TypeSet_h
 
 #include "ConcurrentJITLock.h"
 #include "RuntimeType.h"
@@ -107,4 +108,6 @@ private:
     StructureSet m_structureSet;
 };
 
-} // namespace JSC
+} //namespace JSC
+
+#endif //TypeSet_h

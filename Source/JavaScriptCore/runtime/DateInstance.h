@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef DateInstance_h
+#define DateInstance_h
 
 #include "JSWrapperObject.h"
 
@@ -88,3 +89,5 @@ inline DateInstance* asDateInstance(JSValue value)
 }
 
 } // namespace JSC
+
+#endif // DateInstance_h

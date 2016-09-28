@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef SuperSampler_h
+#define SuperSampler_h
 
 namespace JSC {
 
@@ -56,3 +57,6 @@ JS_EXPORT_PRIVATE void resetSuperSamplerState();
 JS_EXPORT_PRIVATE void printSuperSamplerState();
 
 } // namespace JSC
+
+#endif // SuperSampler_h
+

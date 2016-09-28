@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ProxyRevoke_h
+#define ProxyRevoke_h
 
 #include "InternalFunction.h"
 
@@ -58,3 +59,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ProxyRevoke_h

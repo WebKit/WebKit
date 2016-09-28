@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef YarrParser_h
+#define YarrParser_h
 
 #include "Yarr.h"
 #include <wtf/ASCIICType.h>
@@ -955,3 +956,5 @@ const char* parse(Delegate& delegate, const String& pattern, bool isUnicode, uns
 }
 
 } } // namespace JSC::Yarr
+
+#endif // YarrParser_h

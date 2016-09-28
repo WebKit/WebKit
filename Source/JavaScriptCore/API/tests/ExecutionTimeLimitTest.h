@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ExecutionTimeLimitTest_h
+#define ExecutionTimeLimitTest_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,3 +36,5 @@ int testExecutionTimeLimit();
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
+
+#endif /* ExecutionTimeLimitTest_h */

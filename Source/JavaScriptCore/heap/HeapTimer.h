@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef HeapTimer_h
+#define HeapTimer_h
 
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
@@ -81,3 +82,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif

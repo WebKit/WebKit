@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirLowerMacros_h
+#define AirLowerMacros_h
 
 #if ENABLE(B3_JIT)
 
@@ -39,3 +40,6 @@ void lowerMacros(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirLowerMacros_h
+

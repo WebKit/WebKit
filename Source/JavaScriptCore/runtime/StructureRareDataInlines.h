@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef StructureRareDataInlines_h
+#define StructureRareDataInlines_h
 
 #include "JSString.h"
 #include "StructureRareData.h"
@@ -51,3 +52,5 @@ inline JSString* StructureRareData::objectToStringValue() const
 }
 
 } // namespace JSC
+
+#endif // StructureRareDataInlines_h

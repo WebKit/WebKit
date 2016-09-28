@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef MapIteratorPrototype_h
+#define MapIteratorPrototype_h
 
 #include "JSObject.h"
 
@@ -55,4 +56,6 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-} // namespace JSC
+}
+
+#endif // !defined(MapIteratorPrototype_h)

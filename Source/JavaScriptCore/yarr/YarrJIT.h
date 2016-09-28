@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef YarrJIT_h
+#define YarrJIT_h
 
 #if ENABLE(YARR_JIT)
 
@@ -171,3 +172,5 @@ void jitCompile(YarrPattern&, YarrCharSize, VM*, YarrCodeBlock& jitObject, YarrJ
 } } // namespace JSC::Yarr
 
 #endif
+
+#endif // YarrJIT_h

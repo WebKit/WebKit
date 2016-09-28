@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef CodeCache_h
+#define CodeCache_h
 
 #include "ExecutableInfo.h"
 #include "ParserModes.h"
@@ -203,4 +204,6 @@ private:
     CodeCacheMap m_sourceCode;
 };
 
-} // namespace JSC
+}
+
+#endif // CodeCache_h

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGControlEquivalenceAnalysis_h
+#define DFGControlEquivalenceAnalysis_h
 
 #if ENABLE(DFG_JIT)
 
@@ -82,3 +83,6 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGControlEquivalenceAnalysis_h
+

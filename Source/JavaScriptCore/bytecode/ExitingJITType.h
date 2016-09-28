@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ExitingJITType_h
+#define ExitingJITType_h
 
 #include "JITCode.h"
 
@@ -56,3 +57,6 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::ExitingJITType);
 
 } // namespace WTF
+
+#endif // ExitingJITType_h
+

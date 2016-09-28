@@ -23,8 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef CustomGlobalObjectClassTest_h
+#define CustomGlobalObjectClassTest_h
 
 void customGlobalObjectClassTest(void);
 void globalObjectSetPrototypeTest(void);
 void globalObjectPrivatePropertyTest(void);
+
+#endif // CustomGlobalObjectClassTest_h

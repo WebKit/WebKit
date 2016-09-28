@@ -17,7 +17,8 @@
  *
  */
 
-#pragma once
+#ifndef JSArrayInlines_h
+#define JSArrayInlines_h
 
 #include "JSArray.h"
 #include "JSCellInlines.h"
@@ -92,3 +93,5 @@ ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
 }
 
 } // namespace JSC
+
+#endif /* JSArrayInlines_h */

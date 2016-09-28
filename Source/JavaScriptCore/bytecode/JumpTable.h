@@ -27,7 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JumpTable_h
+#define JumpTable_h
 
 #include "MacroAssembler.h"
 #include <wtf/HashMap.h>
@@ -117,3 +118,5 @@ namespace JSC {
     };
 
 } // namespace JSC
+
+#endif // JumpTable_h

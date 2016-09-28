@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGExitProfile_h
+#define DFGExitProfile_h
 
 #if ENABLE(DFG_JIT)
 
@@ -218,3 +219,5 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGExitProfile_h

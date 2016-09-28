@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ProfilerCompilation_h
+#define ProfilerCompilation_h
 
 #include "ExitKind.h"
 #include "JSCJSValue.h"
@@ -97,3 +98,6 @@ private:
 };
 
 } } // namespace JSC::Profiler
+
+#endif // ProfilerCompilation_h
+

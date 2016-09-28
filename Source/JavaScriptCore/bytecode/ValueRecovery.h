@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ValueRecovery_h
+#define ValueRecovery_h
 
 #include "DFGMinifiedID.h"
 #include "DataFormat.h"
@@ -397,3 +398,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ValueRecovery_h

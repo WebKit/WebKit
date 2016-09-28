@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CachedCall_h
+#define CachedCall_h
 
 #include "CallFrameClosure.h"
 #include "ExceptionHelpers.h"
@@ -74,3 +75,5 @@ namespace JSC {
         CallFrameClosure m_closure;
     };
 }
+
+#endif

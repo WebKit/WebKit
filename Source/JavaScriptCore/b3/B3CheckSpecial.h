@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3CheckSpecial_h
+#define B3CheckSpecial_h
 
 #if ENABLE(B3_JIT)
 
@@ -165,3 +166,6 @@ template<> struct HashTraits<JSC::B3::CheckSpecial::Key> : SimpleClassHashTraits
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3CheckSpecial_h
+

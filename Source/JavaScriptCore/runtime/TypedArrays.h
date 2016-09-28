@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef TypedArrays_h
+#define TypedArrays_h
 
 #include "GenericTypedArrayView.h"
 #include "TypedArrayAdaptors.h"
@@ -41,3 +42,6 @@ typedef GenericTypedArrayView<Float32Adaptor> Float32Array;
 typedef GenericTypedArrayView<Float64Adaptor> Float64Array;
 
 } // namespace JSC
+
+#endif // TypedArrays_h
+

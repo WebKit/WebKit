@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SymbolTable_h
+#define SymbolTable_h
 
 #include "ConcurrentJITLock.h"
 #include "ConstantMode.h"
@@ -719,3 +720,5 @@ public:
 };
 
 } // namespace JSC
+
+#endif // SymbolTable_h

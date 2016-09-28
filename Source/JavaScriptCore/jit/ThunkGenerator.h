@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ThunkGenerator_h
+#define ThunkGenerator_h
 
 #if ENABLE(JIT)
 
@@ -36,3 +37,6 @@ typedef MacroAssemblerCodeRef (*ThunkGenerator)(VM*);
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // ThunkGenerator_h
+

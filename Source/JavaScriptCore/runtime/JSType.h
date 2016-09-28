@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef JSType_h
+#define JSType_h
 
 namespace JSC {
 
@@ -92,3 +93,5 @@ enum JSType : uint8_t {
 COMPILE_ASSERT(sizeof(JSType) == sizeof(uint8_t), sizeof_jstype_is_one_byte);
 
 } // namespace JSC
+
+#endif

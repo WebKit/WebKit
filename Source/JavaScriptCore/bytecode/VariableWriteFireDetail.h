@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef VariableWriteFireDetail_h
+#define VariableWriteFireDetail_h
 
 #include "Watchpoint.h"
 
@@ -50,3 +51,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // VariableWriteFireDetail_h

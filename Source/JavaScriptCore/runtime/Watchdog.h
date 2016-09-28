@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Watchdog_h
+#define Watchdog_h
 
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
@@ -95,3 +96,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // Watchdog_h

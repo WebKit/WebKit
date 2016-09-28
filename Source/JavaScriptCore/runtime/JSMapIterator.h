@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSMapIterator_h
+#define JSMapIterator_h
 
 #include "IterationKind.h"
 #include "JSMap.h"
@@ -118,4 +119,6 @@ private:
 };
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSMapIterator);
 
-} // namespace JSC
+}
+
+#endif // !defined(JSMapIterator_h)

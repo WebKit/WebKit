@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef ArrayConstructor_h
+#define ArrayConstructor_h
 
 #include "InternalFunction.h"
 #include "ProxyObject.h"
@@ -91,3 +92,5 @@ inline bool isArrayConstructor(JSValue argumentValue)
 }
 
 } // namespace JSC
+
+#endif // ArrayConstructor_h

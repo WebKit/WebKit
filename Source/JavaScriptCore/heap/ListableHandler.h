@@ -17,7 +17,8 @@
  *
  */
 
-#pragma once
+#ifndef ListableHandler_h
+#define ListableHandler_h
 
 #include <stdint.h>
 #include <wtf/Lock.h>
@@ -108,3 +109,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ListableHandler_h

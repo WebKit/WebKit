@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLSaveRestore_h
+#define FTLSaveRestore_h
 
 #if ENABLE(FTL_JIT)
 
@@ -53,3 +54,6 @@ void restoreAllRegisters(MacroAssembler& jit, char* scratchMemory);
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLSaveRestore_h
+

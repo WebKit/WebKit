@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JITInlines_h
+#define JITInlines_h
 
 #if ENABLE(JIT)
 
@@ -1384,3 +1385,6 @@ inline Instruction* JIT::copiedInstruction(Instruction* inst)
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // JITInlines_h
+

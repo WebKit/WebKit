@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSArrayBuffer_h
+#define JSArrayBuffer_h
 
 #include "ArrayBuffer.h"
 #include "JSObject.h"
@@ -72,3 +73,6 @@ inline ArrayBuffer* toArrayBuffer(JSValue value)
 }
 
 } // namespace JSC
+
+#endif // JSArrayBuffer_h
+

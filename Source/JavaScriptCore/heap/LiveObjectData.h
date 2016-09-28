@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef LiveObjectData_h
+#define LiveObjectData_h
 
 namespace JSC {
 
@@ -41,3 +42,6 @@ struct LiveObjectData {
 };
 
 } // namespace JSC
+
+#endif // LiveObjectData_h
+

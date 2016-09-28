@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef FullBytecodeLiveness_h
+#define FullBytecodeLiveness_h
 
 #include <wtf/FastBitVector.h>
 
@@ -53,3 +54,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // FullBytecodeLiveness_h
+

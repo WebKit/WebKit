@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGTypeCheckHoistingPhase_h
+#define DFGTypeCheckHoistingPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -42,3 +43,6 @@ bool performTypeCheckHoisting(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGTypeCheckHoistingPhase_h
+

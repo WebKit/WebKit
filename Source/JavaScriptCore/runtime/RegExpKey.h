@@ -25,7 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef RegExpKey_h
+#define RegExpKey_h
 
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -110,3 +111,5 @@ template<> struct HashTraits<JSC::RegExpKey> : GenericHashTraits<JSC::RegExpKey>
     static bool isDeletedValue(const JSC::RegExpKey& value) { return value.flagsValue == JSC::DeletedValueFlags; }
 };
 } // namespace WTF
+
+#endif // RegExpKey_h

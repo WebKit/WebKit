@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ExitKind_h
+#define ExitKind_h
 
 namespace JSC {
 
@@ -69,3 +70,6 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::ExitKind);
 
 } // namespace WTF
+
+#endif // ExitKind_h
+

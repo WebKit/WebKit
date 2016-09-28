@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGPredictionPropagationPhase_h
+#define DFGPredictionPropagationPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -50,3 +51,5 @@ SpeculatedType resultOfToPrimitive(SpeculatedType);
 } } // namespace JSC::DFG::Phase
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGPredictionPropagationPhase_h

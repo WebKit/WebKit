@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef BinarySwitch_h
+#define BinarySwitch_h
 
 #if ENABLE(JIT)
 
@@ -141,3 +142,6 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // BinarySwitch_h
+

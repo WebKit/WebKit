@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3BlockWorklist_h
+#define B3BlockWorklist_h
 
 #if ENABLE(B3_JIT)
 
@@ -55,3 +56,6 @@ typedef PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> PostOrderB
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3BlockWorklist_h
+

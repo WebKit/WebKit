@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLWeight_h
+#define FTLWeight_h
 
 #if ENABLE(FTL_JIT)
 
@@ -69,3 +70,6 @@ private:
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLWeight_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLOSRExitCompiler_h
+#define FTLOSRExitCompiler_h
 
 #if ENABLE(FTL_JIT)
 
@@ -40,3 +41,6 @@ void* JIT_OPERATION compileFTLOSRExit(ExecState*, unsigned exitID) WTF_INTERNAL;
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLOSRExitCompiler_h
+

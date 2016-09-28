@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGOSREntry_h
+#define DFGOSREntry_h
 
 #include "DFGAbstractValue.h"
 #include "Operands.h"
@@ -77,3 +78,6 @@ inline void* prepareOSREntry(ExecState*, CodeBlock*, unsigned) { return 0; }
 #endif
 
 } } // namespace JSC::DFG
+
+#endif // DFGOSREntry_h
+

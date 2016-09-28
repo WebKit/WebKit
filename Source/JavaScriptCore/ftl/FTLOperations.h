@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLOperations_h
+#define FTLOperations_h
 
 #if ENABLE(FTL_JIT)
 
@@ -49,3 +50,6 @@ void* JIT_OPERATION compileFTLLazySlowPath(ExecState*, unsigned) WTF_INTERNAL;
 } } // namespace JSC::DFG
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLOperations_h
+

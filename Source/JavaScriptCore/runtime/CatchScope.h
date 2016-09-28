@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef CatchScope_h
+#define CatchScope_h
 
 #include "ExceptionScope.h"
 
@@ -69,3 +70,5 @@ public:
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 
 } // namespace JSC
+
+#endif // CatchScope_h

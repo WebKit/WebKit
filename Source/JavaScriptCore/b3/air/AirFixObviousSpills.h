@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef AirFixObviousSpills_h
+#define AirFixObviousSpills_h
 
 #if ENABLE(B3_JIT)
 
@@ -39,3 +40,6 @@ void fixObviousSpills(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirFixObviousSpills_h
+

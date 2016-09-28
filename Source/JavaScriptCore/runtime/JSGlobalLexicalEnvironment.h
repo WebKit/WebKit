@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSGlobalLexicalEnvironment_h
+#define JSGlobalLexicalEnvironment_h
 
 #include "JSSegmentedVariableObject.h"
 
@@ -73,3 +74,6 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // JSGlobalLexicalEnvironment_h
+

@@ -20,7 +20,8 @@
  *
  */
 
-#pragma once
+#ifndef Completion_h
+#define Completion_h
 
 #include "CallData.h"
 #include "JSCJSValue.h"
@@ -68,3 +69,5 @@ JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const SourceCode&, J
 JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(ExecState*, const Identifier& moduleKey, JSValue initiator = jsUndefined());
 
 } // namespace JSC
+
+#endif // Completion_h

@@ -20,7 +20,8 @@
  *
  */
 
-#pragma once
+#ifndef Lexer_h
+#define Lexer_h
 
 #include "Lookup.h"
 #include "ParserArena.h"
@@ -392,3 +393,5 @@ slowCase:
 }
 
 } // namespace JSC
+
+#endif // Lexer_h

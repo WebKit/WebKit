@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGInPlaceAbstractState_h
+#define DFGInPlaceAbstractState_h
 
 #if ENABLE(DFG_JIT)
 
@@ -148,3 +149,6 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGInPlaceAbstractState_h
+

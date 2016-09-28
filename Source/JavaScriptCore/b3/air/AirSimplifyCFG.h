@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirSimplifyCFG_h
+#define AirSimplifyCFG_h
 
 #if ENABLE(B3_JIT)
 
@@ -38,3 +39,6 @@ bool simplifyCFG(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirSimplifyCFG_h
+

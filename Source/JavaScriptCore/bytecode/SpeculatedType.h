@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SpeculatedType_h
+#define SpeculatedType_h
 
 #include "JSCJSValue.h"
 #include "TypedArrayType.h"
@@ -478,3 +479,5 @@ SpeculatedType typeOfDoubleBinaryOp(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleUnaryOp(SpeculatedType);
 
 } // namespace JSC
+
+#endif // SpeculatedType_h

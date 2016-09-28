@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SourceCode_h
+#define SourceCode_h
 
 #include "SourceProvider.h"
 #include <wtf/RefPtr.h>
@@ -130,3 +131,5 @@ namespace JSC {
     }
 
 } // namespace JSC
+
+#endif // SourceCode_h

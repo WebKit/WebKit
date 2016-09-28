@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ProfilerBytecodeSequence_h
+#define ProfilerBytecodeSequence_h
 
 #include "JSCJSValue.h"
 #include "ProfilerBytecode.h"
@@ -59,3 +60,6 @@ private:
 };
 
 } } // namespace JSC::Profiler
+
+#endif // ProfilerBytecodeSequence_h
+

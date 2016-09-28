@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ICStats_h
+#define ICStats_h
 
 #include "ClassInfo.h"
 #include "Identifier.h"
@@ -192,3 +193,6 @@ private:
     } while (false)
 
 } // namespace JSC
+
+#endif // ICStats_h
+

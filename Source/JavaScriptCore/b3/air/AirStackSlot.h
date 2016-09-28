@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirStackSlot_h
+#define AirStackSlot_h
 
 #if ENABLE(B3_JIT)
 
@@ -131,3 +132,6 @@ inline void printInternal(PrintStream& out, JSC::B3::Air::StackSlot* stackSlot)
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirStackSlot_h
+

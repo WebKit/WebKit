@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ClonedArguments_h
+#define ClonedArguments_h
 
 #include "ArgumentsMode.h"
 #include "JSObject.h"
@@ -75,3 +76,6 @@ private:
 static const PropertyOffset clonedArgumentsLengthPropertyOffset = 100;
 
 } // namespace JSC
+
+#endif // ClonedArguments_h
+

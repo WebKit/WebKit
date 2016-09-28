@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirHandleCalleeSaves_h
+#define AirHandleCalleeSaves_h
 
 #if ENABLE(B3_JIT)
 
@@ -44,3 +45,6 @@ void handleCalleeSaves(Code&);
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirHandleCalleeSaves_h
+

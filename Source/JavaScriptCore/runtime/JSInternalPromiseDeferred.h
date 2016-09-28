@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSInternalPromiseDeferred_h
+#define JSInternalPromiseDeferred_h
 
 #include "JSPromiseDeferred.h"
 
@@ -54,3 +55,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // JSInternalPromiseDeferred_h

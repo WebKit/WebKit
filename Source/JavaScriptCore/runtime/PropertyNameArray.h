@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef PropertyNameArray_h
+#define PropertyNameArray_h
 
 #include "CallFrame.h"
 #include "Identifier.h"
@@ -151,3 +152,5 @@ ALWAYS_INLINE bool PropertyNameArray::includeStringProperties() const
 }
 
 } // namespace JSC
+
+#endif // PropertyNameArray_h

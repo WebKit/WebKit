@@ -20,7 +20,8 @@
  *
  */
 
-#pragma once
+#ifndef JSCell_h
+#define JSCell_h
 
 #include "CallData.h"
 #include "CellState.h"
@@ -259,3 +260,5 @@ inline To jsDynamicCast(JSValue from)
 }
 
 } // namespace JSC
+
+#endif // JSCell_h

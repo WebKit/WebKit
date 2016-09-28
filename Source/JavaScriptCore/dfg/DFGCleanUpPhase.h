@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGCleanUpPhase_h
+#define DFGCleanUpPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -38,3 +39,5 @@ bool performCleanUp(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGCleanUpPhase_h

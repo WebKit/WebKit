@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ArrayIteratorPrototype_h
+#define ArrayIteratorPrototype_h
 
 #include "IterationKind.h"
 #include "JSObject.h"
@@ -58,4 +59,6 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-} // namespcae JSc
+}
+
+#endif // !defined(ArrayIteratorPrototype_h)

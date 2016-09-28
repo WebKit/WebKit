@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSInt8Array_h
+#define JSInt8Array_h
 
 #include "JSTypedArrays.h"
+
+#endif // JSInt8Array_h
+

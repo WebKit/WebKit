@@ -18,7 +18,9 @@
  *
  */
 
-#pragma once
+
+#ifndef Protect_h
+#define Protect_h
 
 #include "Heap.h"
 #include "JSCJSValue.h"
@@ -60,3 +62,5 @@ inline void gcUnprotect(JSValue value)
 }
 
 } // namespace JSC
+
+#endif // Protect_h

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef HeapStatistics_h
+#define HeapStatistics_h
 
 #include "JSExportMacros.h"
 #include <wtf/Vector.h>
@@ -51,3 +52,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif

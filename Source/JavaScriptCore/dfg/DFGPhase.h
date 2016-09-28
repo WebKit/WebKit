@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGPhase_h
+#define DFGPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -92,3 +93,6 @@ bool runPhase(Graph& graph)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGPhase_h
+

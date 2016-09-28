@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef RegExpPrototype_h
+#define RegExpPrototype_h
 
 #include "JSObject.h"
 #include "RegExp.h"
@@ -63,3 +64,5 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState*);
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncTestFast(ExecState*);
 
 } // namespace JSC
+
+#endif // RegExpPrototype_h

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef DFGStoreBarrierInsertionPhase_h
+#define DFGStoreBarrierInsertionPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -45,3 +46,6 @@ bool performGlobalStoreBarrierInsertion(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGStoreBarrierInsertionPhase_h
+

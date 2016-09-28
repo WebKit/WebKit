@@ -20,7 +20,8 @@
  *
  */
 
-#pragma once
+#ifndef JSCJSValue_h
+#define JSCJSValue_h
 
 #include "JSExportMacros.h"
 #include "PureNaN.h"
@@ -598,3 +599,5 @@ bool isThisValueAltered(const PutPropertySlot&, JSObject* baseObject);
 bool sameValue(ExecState*, JSValue a, JSValue b);
 
 } // namespace JSC
+
+#endif // JSCJSValue_h

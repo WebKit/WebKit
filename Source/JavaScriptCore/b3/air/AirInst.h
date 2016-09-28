@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirInst_h
+#define AirInst_h
 
 #if ENABLE(B3_JIT)
 
@@ -206,3 +207,6 @@ public:
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirInst_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ScopeOffset_h
+#define ScopeOffset_h
 
 #include "GenericOffset.h"
 #include <wtf/PrintStream.h>
@@ -45,3 +46,6 @@ public:
 };
 
 } // namespace JSC
+
+#endif // ScopeOffset_h
+

@@ -29,7 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ScriptFunctionCall_h
+#define ScriptFunctionCall_h
 
 #include "ArgList.h"
 #include "ScriptObject.h"
@@ -80,3 +81,5 @@ protected:
 };
 
 } // namespace Deprecated
+
+#endif // ScriptFunctionCall

@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef EvalCodeCache_h
+#define EvalCodeCache_h
 
 #include "Executable.h"
 #include "JSGlobalObject.h"
@@ -145,3 +146,5 @@ namespace JSC {
     };
 
 } // namespace JSC
+
+#endif // EvalCodeCache_h

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef StructureIDBlob_h
+#define StructureIDBlob_h
 
 #include "CellState.h"
 #include "IndexingType.h"
@@ -90,3 +91,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // StructureIDBlob_h

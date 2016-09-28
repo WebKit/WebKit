@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSFloat32Array_h
+#define JSFloat32Array_h
 
 #include "JSTypedArrays.h"
+
+#endif // JSFloat32Array_h
+

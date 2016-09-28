@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DirectArguments_h
+#define DirectArguments_h
 
 #include "AuxiliaryBarrier.h"
 #include "DirectArgumentsOffset.h"
@@ -152,3 +153,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // DirectArguments_h
+

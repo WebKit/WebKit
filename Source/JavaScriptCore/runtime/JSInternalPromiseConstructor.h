@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSInternalPromiseConstructor_h
+#define JSInternalPromiseConstructor_h
 
 #include "JSPromiseConstructor.h"
 
@@ -49,3 +50,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // JSInternalPromiseConstructor_h

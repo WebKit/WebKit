@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ObjectPropertyCondition_h
+#define ObjectPropertyCondition_h
 
 #include "JSObject.h"
 #include "PropertyCondition.h"
@@ -267,3 +268,6 @@ template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::ObjectPropertyCondition> : SimpleClassHashTraits<JSC::ObjectPropertyCondition> { };
 
 } // namespace WTF
+
+#endif // ObjectPropertyCondition_h
+

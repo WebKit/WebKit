@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef HeapOperation_h
+#define HeapOperation_h
 
 namespace JSC {
 
@@ -38,3 +39,5 @@ class PrintStream;
 void printInternal(PrintStream& out, JSC::HeapOperation);
 
 } // namespace WTF
+
+#endif // HeapOperation_h

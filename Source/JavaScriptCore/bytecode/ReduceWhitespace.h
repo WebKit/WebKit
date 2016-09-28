@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ReduceWhitespace_h
+#define ReduceWhitespace_h
 
 #include <wtf/text/CString.h>
 
@@ -33,3 +34,5 @@ namespace JSC {
 CString reduceWhitespace(const CString&);
 
 } // namespace JSC
+
+#endif // ReduceWhitespace_h

@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef MacroAssemblerARMv7_h
+#define MacroAssemblerARMv7_h
 
 #if ENABLE(ASSEMBLER)
 
@@ -2132,3 +2133,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
+
+#endif // MacroAssemblerARMv7_h

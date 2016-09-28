@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef NativeStdFunctionCell_h
+#define NativeStdFunctionCell_h
 
 #include "JSCell.h"
 #include "JSNativeStdFunction.h"
@@ -56,3 +57,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // NativeStdFunctionCell_h

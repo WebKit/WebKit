@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ArrayBufferNeuteringWatchpoint_h
+#define ArrayBufferNeuteringWatchpoint_h
 
 #include "JSCell.h"
 #include "Watchpoint.h"
@@ -55,3 +56,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ArrayBufferNeuteringWatchpoint_h

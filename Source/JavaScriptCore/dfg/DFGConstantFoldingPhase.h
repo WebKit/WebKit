@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGConstantFoldingPhase_h
+#define DFGConstantFoldingPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -40,3 +41,6 @@ bool performConstantFolding(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGConstantFoldingPhase_h
+

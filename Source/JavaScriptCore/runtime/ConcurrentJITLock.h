@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ConcurrentJITLock_h
+#define ConcurrentJITLock_h
 
 #include "DeferGC.h"
 #include <wtf/Lock.h>
@@ -140,3 +141,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ConcurrentJITLock_h

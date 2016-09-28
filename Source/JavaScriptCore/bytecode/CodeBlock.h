@@ -27,7 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef CodeBlock_h
+#define CodeBlock_h
 
 #include "ArrayProfile.h"
 #include "ByValInfo.h"
@@ -1383,3 +1384,5 @@ template <typename Functor> inline void ScriptExecutable::forEachCodeBlock(Funct
     (codeBlock->vm()->logEvent(codeBlock, summary, [&] () { return toCString details; }))
 
 } // namespace JSC
+
+#endif // CodeBlock_h

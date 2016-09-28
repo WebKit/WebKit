@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef MarkStack_h
+#define MarkStack_h
 
 #include "GCSegmentedArray.h"
 
@@ -40,3 +41,5 @@ public:
 };
 
 } // namespace JSC
+
+#endif

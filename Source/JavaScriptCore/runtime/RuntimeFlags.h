@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef RuntimeFlags_h
+#define RuntimeFlags_h
 
 #include <initializer_list>
 
@@ -94,3 +95,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // RuntimeFlags_h

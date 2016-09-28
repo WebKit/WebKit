@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef StringPrototype_h
+#define StringPrototype_h
 
 #include "JITOperations.h"
 #include "StringObject.h"
@@ -68,3 +69,5 @@ EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(ExecState*);
 EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(ExecState*);
 
 } // namespace JSC
+
+#endif // StringPrototype_h

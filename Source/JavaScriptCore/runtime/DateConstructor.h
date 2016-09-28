@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef DateConstructor_h
+#define DateConstructor_h
 
 #include "InternalFunction.h"
 
@@ -60,3 +61,5 @@ JSObject* constructDate(ExecState*, JSGlobalObject*, JSValue newTarget, const Ar
 EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
 
 } // namespace JSC
+
+#endif // DateConstructor_h

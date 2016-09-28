@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLOSRExitHandle_h
+#define FTLOSRExitHandle_h
 
 #include "DFGCommon.h"
 
@@ -61,3 +62,6 @@ struct OSRExitHandle : public ThreadSafeRefCounted<OSRExitHandle> {
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLOSRExitHandle_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DebuggerScope_h
+#define DebuggerScope_h
 
 #include "DebuggerLocation.h"
 #include "JSObject.h"
@@ -116,3 +117,5 @@ inline DebuggerScope::iterator DebuggerScope::end()
 }
 
 } // namespace JSC
+
+#endif // DebuggerScope_h

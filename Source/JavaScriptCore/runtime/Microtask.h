@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef Microtask_h
+#define Microtask_h
 
 #include <wtf/RefCounted.h>
 
@@ -41,3 +42,5 @@ public:
 };
 
 } // namespace JSC
+
+#endif // Microtask_h

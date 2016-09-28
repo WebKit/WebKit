@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3ValueKeyInlines_h
+#define B3ValueKeyInlines_h
 
 #if ENABLE(B3_JIT)
 
@@ -65,3 +66,6 @@ inline Value* ValueKey::child(Procedure& proc, unsigned index) const
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3ValueKeyInlines_h
+

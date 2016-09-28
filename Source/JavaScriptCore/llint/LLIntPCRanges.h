@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LLIntPCRanges_h
+#define LLIntPCRanges_h
 
 namespace JSC {
 
@@ -49,3 +50,5 @@ static const GPRReg LLIntPC = GPRInfo::regT4;
 #endif
 
 } } // namespace JSC::LLInt
+
+#endif // LLIntPCRanges_h

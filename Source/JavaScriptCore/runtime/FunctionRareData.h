@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FunctionRareData_h
+#define FunctionRareData_h
 
 #include "InternalFunctionAllocationProfile.h"
 #include "JSCell.h"
@@ -127,3 +128,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // FunctionRareData_h

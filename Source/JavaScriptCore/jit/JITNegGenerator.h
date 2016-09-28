@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JITNegGenerator_h
+#define JITNegGenerator_h
 
 #if ENABLE(JIT)
 
@@ -55,3 +56,5 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // JITNegGenerator_h

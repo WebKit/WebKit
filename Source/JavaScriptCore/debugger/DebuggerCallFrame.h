@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#pragma once
+#ifndef DebuggerCallFrame_h
+#define DebuggerCallFrame_h
 
 #include "CallFrame.h"
 #include "DebuggerPrimitives.h"
@@ -88,3 +89,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // DebuggerCallFrame_h

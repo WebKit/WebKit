@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSGlobalObjectDebuggable_h
+#define JSGlobalObjectDebuggable_h
 
 #if ENABLE(REMOTE_INSPECTOR)
 
@@ -69,3 +70,5 @@ private:
 SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(JSC::JSGlobalObjectDebuggable, JavaScript);
 
 #endif // ENABLE(REMOTE_INSPECTOR)
+
+#endif // !defined(JSGlobalObjectDebuggable_h)

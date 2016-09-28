@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef BuiltinExecutableCreator_h
+#define BuiltinExecutableCreator_h
 
 #include "ConstructAbility.h"
 #include "ParserModes.h"
@@ -34,3 +35,5 @@ namespace JSC {
 JS_EXPORT_PRIVATE UnlinkedFunctionExecutable* createBuiltinExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
 
 } // namespace JSC
+
+#endif /* BuiltinExecutableCreator_h */

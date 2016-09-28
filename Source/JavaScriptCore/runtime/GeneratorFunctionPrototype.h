@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef GeneratorFunctionPrototype_h
+#define GeneratorFunctionPrototype_h
 
 #include "JSObject.h"
 
@@ -55,3 +56,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // GeneratorFunctionPrototype_h

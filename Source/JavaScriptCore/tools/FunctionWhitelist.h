@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef FunctionWhitelist_h
+#define FunctionWhitelist_h
 
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
@@ -44,3 +45,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // FunctionWhitelist_h

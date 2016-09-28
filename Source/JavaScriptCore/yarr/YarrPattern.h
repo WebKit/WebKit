@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef YarrPattern_h
+#define YarrPattern_h
 
 #include "RegExpKey.h"
 #include <wtf/CheckedArithmetic.h>
@@ -462,3 +463,5 @@ private:
 };
 
 } } // namespace JSC::Yarr
+
+#endif // YarrPattern_h

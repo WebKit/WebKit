@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef HeapProfiler_h
+#define HeapProfiler_h
 
 #include <wtf/Vector.h>
 
@@ -55,3 +56,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // HeapProfiler_h 

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef YarrSyntaxChecker_h
+#define YarrSyntaxChecker_h
 
 #include <wtf/text/WTFString.h>
 
@@ -31,4 +32,7 @@ namespace JSC { namespace Yarr {
 
 const char* checkSyntax(const String& pattern, const String& flags);
 
-}} // JSC::Yarr
+}} // JSC::YARR
+
+#endif // YarrSyntaxChecker_h
+

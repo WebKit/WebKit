@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef CompactJITCodeMap_h
+#define CompactJITCodeMap_h
 
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
@@ -290,3 +291,5 @@ inline void CompactJITCodeMap::Decoder::read(unsigned& bytecodeIndex, unsigned& 
 }
 
 } // namespace JSC
+
+#endif // CompactJITCodeMap_h

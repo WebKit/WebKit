@@ -25,14 +25,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "RegExp.h"
 #include "RegExpKey.h"
 #include "Strong.h"
 #include "Weak.h"
 #include <array>
 #include <wtf/HashMap.h>
+
+#ifndef RegExpCache_h
+#define RegExpCache_h
 
 namespace JSC {
 
@@ -63,3 +64,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // RegExpCache_h

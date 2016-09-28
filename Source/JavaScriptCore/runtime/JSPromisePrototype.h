@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSPromisePrototype_h
+#define JSPromisePrototype_h
 
 #include "JSObject.h"
 
@@ -48,3 +49,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // JSPromisePrototype_h

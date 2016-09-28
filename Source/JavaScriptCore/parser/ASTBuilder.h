@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ASTBuilder_h
+#define ASTBuilder_h
 
 #include "BuiltinNames.h"
 #include "BytecodeIntrinsicRegistry.h"
@@ -1413,3 +1414,5 @@ ExpressionNode* ASTBuilder::makePostfixNode(const JSTokenLocation& location, Exp
 }
 
 }
+
+#endif

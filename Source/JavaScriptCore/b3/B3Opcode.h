@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3Opcode_h
+#define B3Opcode_h
 
 #if ENABLE(B3_JIT)
 
@@ -294,3 +295,6 @@ JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Opcode);
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3Opcode_h
+

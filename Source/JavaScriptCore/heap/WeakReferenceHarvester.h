@@ -17,7 +17,8 @@
  *
  */
 
-#pragma once
+#ifndef WeakReferenceHarvester_h
+#define WeakReferenceHarvester_h
 
 #include "ListableHandler.h"
 
@@ -38,3 +39,5 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // WeakReferenceHarvester_h

@@ -21,7 +21,8 @@
  *
  */
 
-#pragma once
+#ifndef InternalFunction_h
+#define InternalFunction_h
 
 #include "Identifier.h"
 #include "JSDestructibleObject.h"
@@ -68,3 +69,5 @@ inline InternalFunction* asInternalFunction(JSValue value)
 }
 
 } // namespace JSC
+
+#endif // InternalFunction_h

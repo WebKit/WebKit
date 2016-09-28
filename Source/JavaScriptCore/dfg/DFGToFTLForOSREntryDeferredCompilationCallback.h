@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGToFTLForOSREntryDeferredCompilationCallback_h
+#define DFGToFTLForOSREntryDeferredCompilationCallback_h
 
 #if ENABLE(FTL_JIT)
 
@@ -55,3 +56,6 @@ private:
 } } // namespace JSC::DFG
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // DFGToFTLForOSREntryDeferredCompilationCallback_h
+

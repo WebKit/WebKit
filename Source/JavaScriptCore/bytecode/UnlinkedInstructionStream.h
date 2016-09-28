@@ -24,7 +24,8 @@
  */
 
 
-#pragma once
+#ifndef UnlinkedInstructionStream_h
+#define UnlinkedInstructionStream_h
 
 #include "Opcode.h"
 #include "UnlinkedCodeBlock.h"
@@ -147,3 +148,5 @@ ALWAYS_INLINE const UnlinkedInstruction* UnlinkedInstructionStream::Reader::next
 }
 
 } // namespace JSC
+
+#endif // UnlinkedInstructionStream_h

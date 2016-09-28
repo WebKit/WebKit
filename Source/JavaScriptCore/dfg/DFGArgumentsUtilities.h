@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGArgumentsUtilities_h
+#define DFGArgumentsUtilities_h
 
 #if ENABLE(DFG_JIT)
 
@@ -41,3 +42,6 @@ Node* emitCodeToGetArgumentsArrayLength(
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGArgumentsUtilities_h
+

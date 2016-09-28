@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGOSRExitFuzz_h
+#define DFGOSRExitFuzz_h
 
 #include "Options.h"
 
@@ -46,3 +47,6 @@ inline bool doOSRExitFuzzing()
 extern unsigned g_numberOfOSRExitFuzzChecks;
 
 } } // namespace JSC::DFG
+
+#endif // DFGOSRExitFuzz_h
+

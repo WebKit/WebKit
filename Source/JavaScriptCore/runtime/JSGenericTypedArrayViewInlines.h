@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSGenericTypedArrayViewInlines_h
+#define JSGenericTypedArrayViewInlines_h
 
 #include "ArrayBufferView.h"
 #include "DeferGC.h"
@@ -560,3 +561,6 @@ JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl(JSArrayBufferView* object)
 }
 
 } // namespace JSC
+
+#endif // JSGenericTypedArrayViewInlines_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGValidate_h
+#define DFGValidate_h
 
 #if ENABLE(DFG_JIT)
 
@@ -39,3 +40,6 @@ void validate(Graph&, GraphDumpMode = DumpGraph, CString graphDumpBeforePhase = 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGPhase_h
+

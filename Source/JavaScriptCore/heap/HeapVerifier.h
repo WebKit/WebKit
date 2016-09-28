@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef HeapVerifier_h
+#define HeapVerifier_h
 
 #include "Heap.h"
 #include "LiveObjectList.h"
@@ -99,3 +100,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // HeapVerifier

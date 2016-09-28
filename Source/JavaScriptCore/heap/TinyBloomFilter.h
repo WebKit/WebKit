@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef TinyBloomFilter_h
+#define TinyBloomFilter_h
 
 namespace JSC {
 
@@ -74,3 +75,5 @@ inline void TinyBloomFilter::reset()
 }
 
 } // namespace JSC
+
+#endif // TinyBloomFilter_h

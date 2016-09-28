@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef IdentifierInlines_h
+#define IdentifierInlines_h
 
 #include "CallFrame.h"
 #include "Identifier.h"
@@ -149,3 +150,5 @@ inline JSValue identifierToSafePublicJSValue(VM& vm, const Identifier& identifie
 }
 
 } // namespace JSC
+
+#endif // IdentifierInlines_h

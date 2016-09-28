@@ -21,7 +21,8 @@
  *
  */
 
-#pragma once
+#ifndef JSGlobalObjectFunctions_h
+#define JSGlobalObjectFunctions_h
 
 #include "JSCJSValue.h"
 #include <unicode/uchar.h>
@@ -57,3 +58,5 @@ bool isStrWhiteSpace(UChar);
 double jsToNumber(StringView);
 
 } // namespace JSC
+
+#endif // JSGlobalObjectFunctions_h

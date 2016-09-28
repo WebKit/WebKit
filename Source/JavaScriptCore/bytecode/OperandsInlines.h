@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef OperandsInlines_h
+#define OperandsInlines_h
 
 #include "Operands.h"
 #include <wtf/CommaPrinter.h>
@@ -63,3 +64,6 @@ void Operands<T>::dump(PrintStream& out) const
 }
 
 } // namespace JSC
+
+#endif // OperandsInlines_h
+

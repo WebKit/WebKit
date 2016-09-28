@@ -19,7 +19,8 @@
  *
  */
 
-#pragma once
+#ifndef JSWrapperObject_h
+#define JSWrapperObject_h
 
 #include "JSDestructibleObject.h"
 
@@ -82,3 +83,5 @@ inline void JSWrapperObject::setInternalValue(VM& vm, JSValue value)
 }
 
 } // namespace JSC
+
+#endif // JSWrapperObject_h

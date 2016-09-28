@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef SpecialPointer_h
+#define SpecialPointer_h
 
 namespace JSC {
 
@@ -61,3 +62,6 @@ void* actualPointerFor(JSGlobalObject*, Special::Pointer);
 void* actualPointerFor(CodeBlock*, Special::Pointer);
 
 } // namespace JSC
+
+#endif // SpecialPointer_h
+

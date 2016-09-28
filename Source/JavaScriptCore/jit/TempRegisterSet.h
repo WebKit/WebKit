@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef TempRegisterSet_h
+#define TempRegisterSet_h
 
 #if ENABLE(JIT)
 
@@ -217,3 +218,6 @@ struct TempRegisterSet { };
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // TempRegisterSet_h
+

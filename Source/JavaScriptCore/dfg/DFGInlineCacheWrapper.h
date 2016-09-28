@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGInlineCacheWrapper_h
+#define DFGInlineCacheWrapper_h
 
 #if ENABLE(DFG_JIT)
 
@@ -52,3 +53,7 @@ struct InlineCacheWrapper {
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGInlineCacheWrapper_h
+
+

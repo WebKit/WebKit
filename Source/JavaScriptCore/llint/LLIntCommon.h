@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LLIntCommon_h
+#define LLIntCommon_h
 
 // Enables LLINT stats collection.
 #define ENABLE_LLINT_STATS 0
@@ -44,3 +45,6 @@
 
 // Disable inline caching of get_by_id and put_by_id.
 #define LLINT_ALWAYS_ACCESS_SLOW 0
+
+#endif // LLIntCommon_h
+

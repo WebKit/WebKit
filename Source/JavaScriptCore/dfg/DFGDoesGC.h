@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGDoesGC_h
+#define DFGDoesGC_h
 
 #if ENABLE(DFG_JIT)
 
@@ -37,3 +38,6 @@ bool doesGC(Graph&, Node*);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGDoesGC_h
+

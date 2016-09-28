@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ScopedArguments_h
+#define ScopedArguments_h
 
 #include "GenericArguments.h"
 #include "JSLexicalEnvironment.h"
@@ -151,3 +152,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ScopedArguments_h
+

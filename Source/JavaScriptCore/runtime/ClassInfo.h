@@ -20,7 +20,8 @@
  *
  */
 
-#pragma once
+#ifndef ClassInfo_h
+#define ClassInfo_h
 
 #include "CallFrame.h"
 #include "ConstructData.h"
@@ -205,3 +206,5 @@ struct ClassInfo {
 };
 
 } // namespace JSC
+
+#endif // ClassInfo_h

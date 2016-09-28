@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ProfilerJettisonReason_h
+#define ProfilerJettisonReason_h
 
 namespace JSC { namespace Profiler {
 
@@ -48,3 +49,6 @@ class PrintStream;
 void printInternal(PrintStream&, JSC::Profiler::JettisonReason);
 
 } // namespace WTF
+
+#endif // ProfilerJettisonReason_h
+

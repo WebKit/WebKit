@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef B3Common_h
+#define B3Common_h
 
 #if ENABLE(B3_JIT)
 
@@ -123,3 +124,6 @@ static IntType chillMod(IntType numerator, IntType denominator)
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3Common_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef HandlerInfo_h
+#define HandlerInfo_h
 
 #include "CodeLocation.h"
 #include <wtf/Vector.h>
@@ -118,3 +119,6 @@ struct HandlerInfo : public HandlerInfoBase {
 };
 
 } // namespace JSC
+
+#endif // HandlerInfo_h
+

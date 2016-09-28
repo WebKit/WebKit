@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LLIntCLoop_h
+#define LLIntCLoop_h
 
 #if !ENABLE(JIT)
 
@@ -46,3 +47,5 @@ public:
 using JSC::LLInt::CLoop;
 
 #endif // !ENABLE(JIT)
+
+#endif // LLIntCLoop_h

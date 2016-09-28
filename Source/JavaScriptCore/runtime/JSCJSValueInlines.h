@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSValueInlines_h
+#define JSValueInlines_h
 
 #include "ExceptionHelpers.h"
 #include "Identifier.h"
@@ -1072,3 +1073,6 @@ ALWAYS_INLINE bool sameValue(ExecState* exec, JSValue a, JSValue b)
 }
 
 } // namespace JSC
+
+#endif // JSValueInlines_h
+

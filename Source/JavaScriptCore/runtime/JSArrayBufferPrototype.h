@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JSArrayBufferPrototype_h
+#define JSArrayBufferPrototype_h
 
 #include "JSObject.h"
 
@@ -46,3 +47,6 @@ public:
 };
 
 } // namespace JSC
+
+#endif // JSArrayBufferPrototype_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef DFGInferredTypeCheck_h
+#define DFGInferredTypeCheck_h
 
 #if ENABLE(DFG_JIT)
 
@@ -39,3 +40,6 @@ void insertInferredTypeCheck(
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGInferredTypeCheck_h
+

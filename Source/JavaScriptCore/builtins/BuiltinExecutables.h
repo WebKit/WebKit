@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef BuiltinExecutables_h
+#define BuiltinExecutables_h
 
 #include "JSCBuiltins.h"
 #include "ParserModes.h"
@@ -67,3 +68,5 @@ private:
 };
 
 }
+
+#endif

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSDestructibleObject_h
+#define JSDestructibleObject_h
 
 #include "JSObject.h"
 
@@ -54,3 +55,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif

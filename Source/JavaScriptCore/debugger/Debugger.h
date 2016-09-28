@@ -19,7 +19,8 @@
  *
  */
 
-#pragma once
+#ifndef Debugger_h
+#define Debugger_h
 
 #include "Breakpoint.h"
 #include "CallData.h"
@@ -238,3 +239,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // Debugger_h

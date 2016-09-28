@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef VMInlines_h
+#define VMInlines_h
 
 #include "ProfilerDatabase.h"
 #include "VM.h"
@@ -68,3 +69,6 @@ void VM::logEvent(CodeBlock* codeBlock, const char* summary, const Func& func)
 }
 
 } // namespace JSC
+
+#endif // LLIntData_h
+

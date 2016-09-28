@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ProxyConstructor_h
+#define ProxyConstructor_h
 
 #include "InternalFunction.h"
 
@@ -54,3 +55,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ProxyConstructor_h

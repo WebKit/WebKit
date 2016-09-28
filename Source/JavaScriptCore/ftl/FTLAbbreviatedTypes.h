@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLAbbreviatedTypes_h
+#define FTLAbbreviatedTypes_h
 
 #if ENABLE(FTL_JIT)
 
@@ -44,3 +45,6 @@ typedef B3::Value* LValue;
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLAbbreviatedTypes_h
+

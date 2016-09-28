@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef LLIntThunks_h
+#define LLIntThunks_h
 
 #include "MacroAssemblerCodeRef.h"
 
@@ -51,3 +52,5 @@ MacroAssemblerCodeRef programEntryThunkGenerator(VM*);
 MacroAssemblerCodeRef moduleProgramEntryThunkGenerator(VM*);
 
 } } // namespace JSC::LLInt
+
+#endif // LLIntThunks_h

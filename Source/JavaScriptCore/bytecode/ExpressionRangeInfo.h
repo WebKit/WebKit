@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef ExpressionRangeInfo_h
+#define ExpressionRangeInfo_h
 
 #include <wtf/StdLibExtras.h>
 
@@ -106,3 +107,6 @@ struct ExpressionRangeInfo {
 };
 
 } // namespace JSC
+
+#endif // ExpressionRangeInfo_h
+

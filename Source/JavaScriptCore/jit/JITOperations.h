@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef JITOperations_h
+#define JITOperations_h
 
 #if ENABLE(JIT)
 
@@ -456,3 +457,6 @@ void JIT_OPERATION operationProcessShadowChickenLog(ExecState*) WTF_INTERNAL;
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // JITOperations_h
+

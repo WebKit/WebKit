@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JITLeftShiftGenerator_h
+#define JITLeftShiftGenerator_h
 
 #if ENABLE(JIT)
 
@@ -44,3 +45,5 @@ public:
 } // namespace JSC
 
 #endif // ENABLE(JIT)
+
+#endif // JITLeftShiftGenerator_h

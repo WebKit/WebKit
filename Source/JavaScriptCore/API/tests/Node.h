@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Node_h
+#define Node_h
 
 typedef struct __Node Node;
 typedef struct __NodeLink NodeLink;
@@ -45,3 +46,5 @@ extern void Node_deref(Node* node);
 extern void Node_appendChild(Node* node, Node* child);
 extern void Node_removeChild(Node* node, Node* child);
 extern void Node_replaceChild(Node* node, Node* newChild, Node* oldChild);
+
+#endif /* Node_h */

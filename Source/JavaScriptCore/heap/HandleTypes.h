@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef HandleTypes_h
+#define HandleTypes_h
 
 #include "JSCJSValue.h"
 
@@ -47,3 +48,5 @@ template<> struct HandleTypes<Unknown> {
 };
 
 } // namespace JSC
+
+#endif // HandleTypes_h

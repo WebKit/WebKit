@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef MathObject_h
+#define MathObject_h
 
 #include "JSObject.h"
 
@@ -54,3 +55,5 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncTrunc(ExecState*);
 
 } // namespace JSC
+
+#endif // MathObject_h

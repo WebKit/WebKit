@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef MethodOfGettingAValueProfile_h
+#define MethodOfGettingAValueProfile_h
 
 // This is guarded by ENABLE_DFG_JIT only because it uses some value profiles
 // that are currently only used if the DFG is enabled (i.e. they are not
@@ -97,3 +98,6 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // MethodOfGettingAValueProfile_h
+

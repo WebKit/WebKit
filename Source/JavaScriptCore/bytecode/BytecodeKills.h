@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef BytecodeKills_h
+#define BytecodeKills_h
 
 #include "CodeBlock.h"
 #include <wtf/FastBitVector.h>
@@ -175,3 +176,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // BytecodeKills_h
+

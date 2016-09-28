@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef Intrinsic_h
+#define Intrinsic_h
 
 namespace JSC {
 
@@ -82,3 +83,5 @@ enum JS_EXPORT_PRIVATE Intrinsic {
 };
 
 } // namespace JSC
+
+#endif // Intrinsic_h

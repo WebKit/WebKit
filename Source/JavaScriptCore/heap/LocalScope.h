@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef LocalScope_h
+#define LocalScope_h
 
 #include "HandleStack.h"
 #include "Local.h"
@@ -72,4 +73,6 @@ template <typename T> Local<T> LocalScope::release(Local<T> local)
     return Local<T>(slot, ptr);
 }
 
-} // namespace JSC
+}
+
+#endif

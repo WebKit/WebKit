@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef FTLOSREntry_h
+#define FTLOSREntry_h
 
 #if ENABLE(FTL_JIT)
 
@@ -41,3 +42,6 @@ void* prepareOSREntry(
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLOSREntry_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef PutByIdStatus_h
+#define PutByIdStatus_h
 
 #include "CallLinkStatus.h"
 #include "ExitingJITType.h"
@@ -113,3 +114,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // PutByIdStatus_h
+

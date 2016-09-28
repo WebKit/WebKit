@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGBackwardsPropagationPhase_h
+#define DFGBackwardsPropagationPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -41,3 +42,6 @@ bool performBackwardsPropagation(Graph&);
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGBackwardsPropagationPhase_h
+

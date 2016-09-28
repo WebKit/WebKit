@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef JSStringIterator_h
+#define JSStringIterator_h
 
 #include "JSObject.h"
 
@@ -60,4 +61,6 @@ private:
     void finishCreation(VM&, JSGlobalObject*, JSString* iteratedString);
 };
 
-} // namespace JSC
+}
+
+#endif // !defined(JSStringIterator_h)

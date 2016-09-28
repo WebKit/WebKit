@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef AirBasicBlock_h
+#define AirBasicBlock_h
 
 #if ENABLE(B3_JIT)
 
@@ -170,3 +171,6 @@ inline DeepBasicBlockDump deepDump(const BasicBlock* block)
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirBasicBlock_h
+

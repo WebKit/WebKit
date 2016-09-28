@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef CodeBlockWithJITType_h
+#define CodeBlockWithJITType_h
 
 #include "CodeBlock.h"
 
@@ -50,3 +51,6 @@ private:
 };
 
 } // namespace JSC
+
+#endif // CodeBlockWithJITType_h
+

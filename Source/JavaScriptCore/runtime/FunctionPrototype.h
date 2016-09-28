@@ -18,7 +18,8 @@
  *
  */
 
-#pragma once
+#ifndef FunctionPrototype_h
+#define FunctionPrototype_h
 
 #include "InternalFunction.h"
 
@@ -55,3 +56,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // FunctionPrototype_h

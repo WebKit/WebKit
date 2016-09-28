@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef DFGArgumentPosition_h
+#define DFGArgumentPosition_h
 
 #include "DFGDoubleFormatState.h"
 #include "DFGVariableAccessData.h"
@@ -140,3 +141,6 @@ private:
 };
 
 } } // namespace JSC::DFG
+
+#endif // DFGArgumentPosition_h
+

@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef YarrCanonicalize_h
+#define YarrCanonicalize_h
 
 #include <stdint.h>
 #include <unicode/utypes.h>
@@ -141,3 +142,5 @@ inline bool areCanonicallyEquivalent(UChar32 a, UChar32 b, CanonicalMode canonic
 }
 
 } } // JSC::Yarr
+
+#endif
