@@ -1,3 +1,15 @@
+2016-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Correctly parse URLs with the first tab in the fragment
+        https://bugs.webkit.org/show_bug.cgi?id=162650
+
+        Reviewed by Saam Barati.
+
+        Covered by a new API test.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::fragmentSyntaxViolation):
+
 2016-09-27  Chris Dumez  <cdumez@apple.com>
 
         <a download> does not honor the same-origin requirement

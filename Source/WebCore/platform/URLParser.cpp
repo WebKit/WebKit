@@ -966,6 +966,7 @@ void URLParser::fragmentSyntaxViolation(const CodePointIterator<CharacterType>& 
     if (m_didSeeSyntaxViolation)
         return;
     m_didSeeSyntaxViolation = true;
+    m_didSeeUnicodeFragmentCodePoint = true;
 
     ASSERT(m_asciiBuffer.isEmpty());
     ASSERT(m_unicodeFragmentBuffer.isEmpty());
