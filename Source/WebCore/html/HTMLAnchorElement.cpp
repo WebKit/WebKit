@@ -375,11 +375,16 @@ void HTMLAnchorElement::handleClick(Event& event)
         bool isSameOrigin = completedURL.protocolIsData() || document().securityOrigin()->canRequest(completedURL);
         if (isSameOrigin)
             downloadAttribute = attributeWithoutSynchronization(downloadAttr);
+        else if (hasAttributeWithoutSynchronization(downloadAttr))
+            document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin.");
         // If the a element has a download attribute and the algorithm is not triggered by user activation
         // then abort these steps.
         // https://html.spec.whatwg.org/#the-a-element:triggered-by-user-activation
-        if (!downloadAttribute.isNull() && !event.isTrusted())
+        if (!downloadAttribute.isNull() && !event.isTrusted()) {
+            // The specification says to throw an InvalidAccessError but other browsers do not.
+            document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Synthetic clicks on anchors that have a download attribute are ignored.");
             return;
+        }
     }
 #endif
 

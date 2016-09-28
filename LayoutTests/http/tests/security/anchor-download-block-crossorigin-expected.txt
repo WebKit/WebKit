@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: line 24: The download attribute on anchor was ignored because its href URL has a different security origin.
 PASS

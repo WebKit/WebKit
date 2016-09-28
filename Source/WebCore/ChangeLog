@@ -1,5 +1,20 @@
 2016-09-28  Chris Dumez  <cdumez@apple.com>
 
+        Log console messages when the anchor download attribute is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=162703
+
+        Reviewed by Alex Christensen.
+
+        Log console messages when the anchor download attribute is ignored so
+        that the developer can better understand what's happening.
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+
+2016-09-28  Chris Dumez  <cdumez@apple.com>
+
         Add support for DOMTokenList.supports()
         https://bugs.webkit.org/show_bug.cgi?id=162659
 
