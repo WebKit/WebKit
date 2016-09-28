@@ -996,3 +996,4 @@ webkit.org/b/162696 [ Release ] fast/images/move-image-to-new-document.html [ Cr
 webkit.org/b/162696 [ Release ] fast/images/pdf-as-background.html [ Crash ]
 webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-landscape.html [ Crash ]
 webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-with-annotations-expected.html [ Crash ]
+webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-too-big.html [ Crash ]
