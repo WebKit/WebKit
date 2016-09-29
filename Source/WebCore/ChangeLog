@@ -1,3 +1,15 @@
+2016-09-29  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=162262
+
+        Reviewed by Anders Carlsson.
+
+        If CoreText.h is included, we will get redefinition compile errors on some older SDK
+        versions. 
+
+        * platform/spi/win/CoreTextSPIWin.h:
+
 2016-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Remove WebCoreSynchronousLoader from ResourceHandleSoup

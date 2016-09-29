@@ -27,7 +27,8 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
-#include <CoreText/CoreText.h>
+#include <CoreText/CTDefines.h>
+#include <CoreText/CTFontDescriptor.h>
 
 WTF_EXTERN_C_BEGIN
 
