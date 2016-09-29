@@ -1,3 +1,15 @@
+2016-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should correctly parse ports with leading 0's
+        https://bugs.webkit.org/show_bug.cgi?id=162752
+
+        Reviewed by Tim Horton.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parsePort):
+
 2016-09-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206483.

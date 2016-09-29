@@ -396,6 +396,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("://:0/", "http://webkit.org/", {"http", "", "", "webkit.org", 0, "/://:0/", "", "", "http://webkit.org/://:0/"});
     checkRelativeURL(String(), "http://webkit.org/", {"http", "", "", "webkit.org", 0, "/", "", "", "http://webkit.org/"});
     checkRelativeURL("https://@test@test@example:800\\path@end", "http://doesnotmatter/", {"", "", "", "", 0, "", "", "", "https://@test@test@example:800\\path@end"});
+    checkRelativeURL("http://f:0/c", "http://example.org/foo/bar", {"http", "", "", "f", 0, "/c", "", "", "http://f:0/c"});
 
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
@@ -766,6 +767,12 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://127.0.1.~",
         {"http", "", "", "127.0.1.~", 0, "/", "", "", "http://127.0.1.~/"},
         {"", "", "", "", 0, "", "", "", "http://127.0.1.~"});
+    checkRelativeURLDifferences("http://f:000/c", "http://example.org/foo/bar",
+        {"http", "", "", "f", 0, "/c", "", "", "http://f:0/c"},
+        {"http", "", "", "f", 0, "/c", "", "", "http://f:000/c"});
+    checkRelativeURLDifferences("http://f:010/c", "http://example.org/foo/bar",
+        {"http", "", "", "f", 10, "/c", "", "", "http://f:10/c"},
+        {"http", "", "", "f", 10, "/c", "", "", "http://f:010/c"});
 }
 
 TEST_F(URLParserTest, DefaultPort)

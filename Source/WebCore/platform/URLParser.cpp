@@ -2361,18 +2361,32 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
         syntaxViolation(colonIterator);
         return true;
     }
+    bool seenDigit = false;
+    bool seenMultipleDigits = false;
+    bool leadingZeros = false;
     for (; !iterator.atEnd(); ++iterator) {
         if (UNLIKELY(isTabOrNewline(*iterator))) {
             syntaxViolation(colonIterator);
             continue;
         }
         if (isASCIIDigit(*iterator)) {
+            if (*iterator == '0' && !seenDigit)
+                leadingZeros = true;
+            if (seenDigit)
+                seenMultipleDigits = true;
+            seenDigit = true;
             port = port * 10 + *iterator - '0';
             if (port > std::numeric_limits<uint16_t>::max())
                 return false;
         } else
             return false;
     }
+
+    if (port && leadingZeros)
+        syntaxViolation(colonIterator);
+    
+    if (!port && seenMultipleDigits)
+        syntaxViolation(colonIterator);
 
     if (UNLIKELY(isDefaultPort(parsedDataView(0, m_url.m_schemeEnd), port)))
         syntaxViolation(colonIterator);
