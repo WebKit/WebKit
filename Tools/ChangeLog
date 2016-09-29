@@ -1,3 +1,26 @@
+2016-09-28  Tim Horton  <timothy_horton@apple.com>
+
+        API test WebKit2.AutoLayoutIntegration is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=160284
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AutoLayoutIntegration.mm:
+        (-[AutoLayoutWKWebView load:withWidth:expectingContentSize:resettingWidth:]):
+        (-[AutoLayoutWKWebView beginLayoutAtMinimumWidth:andExpectContentSizeChange:]):
+        (-[AutoLayoutWKWebView waitForContentSizeChangeResettingWidth:]):
+        (-[AutoLayoutWKWebView layoutAtMinimumWidth:andExpectContentSizeChange:resettingWidth:]):
+        (-[AutoLayoutWKWebView invalidateIntrinsicContentSize]):
+        (TEST):
+        Make the autolayout tests a bit more flexible regarding the ordering of
+        invalidateIntrinsicContentSize, to avoid a race between the load
+        completing and the invalidation.
+
+        Also, move the newly added test to use its own WKWebView, since once in a
+        while we get a first layout notification from the previous page, causing the test to fail.
+
+        Un-disable the tests, which now run without any flakes for me with quite a few iterations.
+
 2016-09-28  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should properly handle unexpected periods and overflows in IPv4 addresses

@@ -70,12 +70,13 @@ static bool didEvaluateJavaScript;
     "</style>";
 
     [self loadHTMLString:[baseHTML stringByAppendingString:HTMLString] baseURL:nil];
+    [self beginLayoutAtMinimumWidth:width andExpectContentSizeChange:size];
     [self _test_waitForDidFinishNavigation];
 
-    [self layoutAtMinimumWidth:width andExpectContentSizeChange:size resettingWidth:resetAfter];
+    [self waitForContentSizeChangeResettingWidth:resetAfter];
 }
 
-- (void)layoutAtMinimumWidth:(CGFloat)width andExpectContentSizeChange:(NSSize)size resettingWidth:(BOOL)resetAfter
+- (void)beginLayoutAtMinimumWidth:(CGFloat)width andExpectContentSizeChange:(NSSize)size
 {
     [self _setMinimumLayoutWidth:width];
 
@@ -85,10 +86,24 @@ static bool didEvaluateJavaScript;
     _expectingIntrinsicContentSizeChange = YES;
     _expectedIntrinsicContentSize = size;
     didInvalidateIntrinsicContentSize = false;
+}
+
+- (void)waitForContentSizeChangeResettingWidth:(BOOL)resetAfter
+{
     TestWebKitAPI::Util::run(&didInvalidateIntrinsicContentSize);
+
+    NSSize intrinsicContentSize = self.intrinsicContentSize;
+    EXPECT_EQ(_expectedIntrinsicContentSize.width, intrinsicContentSize.width);
+    EXPECT_EQ(_expectedIntrinsicContentSize.height, intrinsicContentSize.height);
 
     if (resetAfter)
         [self _setMinimumLayoutWidth:0];
+}
+
+- (void)layoutAtMinimumWidth:(CGFloat)width andExpectContentSizeChange:(NSSize)size resettingWidth:(BOOL)resetAfter
+{
+    [self beginLayoutAtMinimumWidth:width andExpectContentSizeChange:size];
+    [self waitForContentSizeChangeResettingWidth:resetAfter];
 }
 
 - (void)invalidateIntrinsicContentSize
@@ -97,17 +112,12 @@ static bool didEvaluateJavaScript;
         return;
 
     _expectingIntrinsicContentSizeChange = NO;
-
-    NSSize intrinsicContentSize = self.intrinsicContentSize;
-    EXPECT_EQ(_expectedIntrinsicContentSize.width, intrinsicContentSize.width);
-    EXPECT_EQ(_expectedIntrinsicContentSize.height, intrinsicContentSize.height);
-
     didInvalidateIntrinsicContentSize = true;
 }
 
 @end
 
-TEST(WebKit2, DISABLED_AutoLayoutIntegration)
+TEST(WebKit2, AutoLayoutIntegration)
 {
     RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
 
@@ -156,6 +166,11 @@ TEST(WebKit2, DISABLED_AutoLayoutIntegration)
     TestWebKitAPI::Util::run(&didEvaluateJavaScript);
     didEvaluateJavaScript = false;
     [webView _setShouldExpandContentToViewHeightForAutoLayout:NO];
+}
+
+TEST(WebKit2, AutoLayoutRenderingProgressRelativeOrdering)
+{
+    RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
 
