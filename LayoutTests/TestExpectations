@@ -998,3 +998,4 @@ webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-landscape.html [ Crash 
 webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-with-annotations-expected.html [ Crash ]
 webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-too-big.html [ Crash ]
 webkit.org/b/162696 [ Release ] fast/images/object-image.html [ Crash ]
+webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-with-annotations.html [ Crash ]
