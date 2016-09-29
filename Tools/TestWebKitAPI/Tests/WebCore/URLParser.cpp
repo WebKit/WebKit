@@ -289,6 +289,9 @@ TEST_F(URLParserTest, Basic)
     checkURL("http:////\t////user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
     checkURL("http://\t//\\///user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
     checkURL("http:/\\user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
+    checkURL("http://127.0.0.1", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
+    checkURL("http://127.0.0.1.", {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
+    checkURL("http://127.0.0.1./", {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -748,6 +751,21 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://[1:2:3:4:5:6:7:::]/",
         {"", "", "", "", 0, "", "", "", "http://[1:2:3:4:5:6:7:::]/"},
         {"http", "", "", "[1:2:3:4:5:6:7:::]", 0, "/", "", "", "http://[1:2:3:4:5:6:7:::]/"});
+    checkURLDifferences("http://127.0.0.1~/",
+        {"http", "", "", "127.0.0.1~", 0, "/", "", "", "http://127.0.0.1~/"},
+        {"", "", "", "", 0, "", "", "", "http://127.0.0.1~/"});
+    checkURLDifferences("http://127.0.1~/",
+        {"http", "", "", "127.0.1~", 0, "/", "", "", "http://127.0.1~/"},
+        {"", "", "", "", 0, "", "", "", "http://127.0.1~/"});
+    checkURLDifferences("http://127.0.1./",
+        {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"},
+        {"http", "", "", "127.0.1.", 0, "/", "", "", "http://127.0.1./"});
+    checkURLDifferences("http://127.0.1.~/",
+        {"http", "", "", "127.0.1.~", 0, "/", "", "", "http://127.0.1.~/"},
+        {"", "", "", "", 0, "", "", "", "http://127.0.1.~/"});
+    checkURLDifferences("http://127.0.1.~",
+        {"http", "", "", "127.0.1.~", 0, "/", "", "", "http://127.0.1.~/"},
+        {"", "", "", "", 0, "", "", "", "http://127.0.1.~"});
 }
 
 TEST_F(URLParserTest, DefaultPort)

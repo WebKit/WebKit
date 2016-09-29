@@ -2043,7 +2043,6 @@ Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& 
     bool didSeeSyntaxViolation = false;
     while (!iterator.atEnd()) {
         if (*iterator == '.') {
-            ++iterator;
             ASSERT(!value.hasOverflowed());
             return value.unsafeGet();
         }
@@ -2123,8 +2122,16 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<Char
             items.append(item.value());
         else
             return Nullopt;
+        if (!iterator.atEnd()) {
+            if (items.size() >= 4)
+                return Nullopt;
+            if (*iterator == '.')
+                ++iterator;
+            else
+                return Nullopt;
+        }
     }
-    if (!items.size() || items.size() > 4)
+    if (!iterator.atEnd() || !items.size() || items.size() > 4)
         return Nullopt;
     if (items.size() > 2) {
         for (size_t i = 0; i < items.size() - 2; i++) {
