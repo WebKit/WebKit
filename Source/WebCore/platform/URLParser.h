@@ -66,12 +66,23 @@ private:
     template<typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
 
     void failure();
-    template<typename CharacterType> void advance(CodePointIterator<CharacterType>& iterator) { advance(iterator, iterator); }
-    template<typename CharacterType> void advance(CodePointIterator<CharacterType>&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
+    enum class ReportSyntaxViolation { No, Yes };
+    template<typename CharacterType, ReportSyntaxViolation reportSyntaxViolation = ReportSyntaxViolation::Yes>
+    void advance(CodePointIterator<CharacterType>& iterator) { advance<CharacterType, reportSyntaxViolation>(iterator, iterator); }
+    template<typename CharacterType, ReportSyntaxViolation = ReportSyntaxViolation::Yes>
+    void advance(CodePointIterator<CharacterType>&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     template<typename CharacterType> void syntaxViolation(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> void fragmentSyntaxViolation(const CodePointIterator<CharacterType>&);
+    template<typename CharacterType> bool isPercentEncodedDot(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool isWindowsDriveLetter(CodePointIterator<CharacterType>);
+    template<typename CharacterType> bool isSingleDotPathSegment(CodePointIterator<CharacterType>);
+    template<typename CharacterType> bool isDoubleDotPathSegment(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool shouldCopyFileURL(CodePointIterator<CharacterType>);
+    template<typename CharacterType> bool checkLocalhostCodePoint(CodePointIterator<CharacterType>&, UChar32);
+    template<typename CharacterType> bool isAtLocalhost(CodePointIterator<CharacterType>);
+    bool isLocalhost(StringView);
+    template<typename CharacterType> void consumeSingleDotPathSegment(CodePointIterator<CharacterType>&);
+    template<typename CharacterType> void consumeDoubleDotPathSegment(CodePointIterator<CharacterType>&);
     template<typename CharacterType> void appendWindowsDriveLetter(CodePointIterator<CharacterType>&);
     template<typename CharacterType> size_t currentPosition(const CodePointIterator<CharacterType>&);
     template<typename UnsignedIntegerType> void appendNumberToASCIIBuffer(UnsignedIntegerType);
@@ -92,7 +103,7 @@ private:
     using IPv6Address = std::array<uint16_t, 8>;
     template<typename CharacterType> Optional<IPv6Address> parseIPv6Host(CodePointIterator<CharacterType>);
     void serializeIPv6Piece(uint16_t piece);
-    void serializeIPv6(URLParser::IPv6Address);
+    void serializeIPv6(IPv6Address);
 
     enum class URLPart;
     template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&);

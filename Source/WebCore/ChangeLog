@@ -1,3 +1,38 @@
+2016-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should ignore tabs at all possible locations
+        https://bugs.webkit.org/show_bug.cgi?id=162711
+
+        Reviewed by Tim Horton.
+
+        The URL spec says to remove all tabs and newlines before parsing a URL.
+        To reduce passes on the URL and copies of data, I chose to just ignore them every time I increment the iterator.
+        This is fragile, but faster.  It can be completely tested, though.  That is what this patch does.
+
+        Covered by an addition to the API tests that tries inserting one tab at each location of each test.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::advance):
+        (WebCore::URLParser::isWindowsDriveLetter):
+        (WebCore::URLParser::appendWindowsDriveLetter):
+        (WebCore::URLParser::isPercentEncodedDot):
+        (WebCore::URLParser::isSingleDotPathSegment):
+        (WebCore::URLParser::isDoubleDotPathSegment):
+        (WebCore::URLParser::consumeSingleDotPathSegment):
+        (WebCore::URLParser::consumeDoubleDotPathSegment):
+        (WebCore::URLParser::checkLocalhostCodePoint):
+        (WebCore::URLParser::isAtLocalhost):
+        (WebCore::URLParser::isLocalhost):
+        (WebCore::URLParser::URLParser):
+        (WebCore::URLParser::parse):
+        (WebCore::isPercentEncodedDot): Deleted.
+        (WebCore::isSingleDotPathSegment): Deleted.
+        (WebCore::isDoubleDotPathSegment): Deleted.
+        (WebCore::consumeSingleDotPathSegment): Deleted.
+        (WebCore::consumeDoubleDotPathSegment): Deleted.
+        * platform/URLParser.h:
+        (WebCore::URLParser::advance):
+
 2016-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         Fix hit testing on display:block <svg> elements
