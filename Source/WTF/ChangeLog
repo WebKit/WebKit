@@ -1,3 +1,15 @@
+2016-09-29  Mark Lam  <mark.lam@apple.com>
+
+        Re-enable StringView life-cycle checking.
+        https://bugs.webkit.org/show_bug.cgi?id=160384
+        <rdar://problem/28479434>
+
+        Reviewed by Saam Barati.
+
+        Re-landing after slow running tests have been resolved.
+
+        * wtf/text/StringView.h:
+
 2016-09-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206563.
