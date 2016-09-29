@@ -123,6 +123,8 @@ private:
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) override;
     void wasBlocked() override;
     void cannotShowURL() override;
+
+    void completeAuthenticationChallenge(ChallengeCompletionHandler&&);
 #endif
 
     NetworkLoadClient& m_client;
@@ -130,7 +132,9 @@ private:
 #if USE(NETWORK_SESSION)
     RefPtr<NetworkDataTask> m_task;
     Optional<WebCore::AuthenticationChallenge> m_challenge;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     ChallengeCompletionHandler m_challengeCompletionHandler;
+#endif
     ResponseCompletionHandler m_responseCompletionHandler;
     RedirectCompletionHandler m_redirectCompletionHandler;
 #else

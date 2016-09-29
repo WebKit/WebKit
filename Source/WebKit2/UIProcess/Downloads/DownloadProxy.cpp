@@ -113,6 +113,7 @@ void DownloadProxy::didReceiveAuthenticationChallenge(const AuthenticationChalle
 }
 
 #if USE(NETWORK_SESSION)
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void DownloadProxy::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     if (!m_processPool)
@@ -126,6 +127,7 @@ void DownloadProxy::canAuthenticateAgainstProtectionSpace(const ProtectionSpace&
     
     networkProcessProxy->connection()->send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpaceDownload(m_downloadID, result), 0);
 }
+#endif
 
 void DownloadProxy::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)
 {

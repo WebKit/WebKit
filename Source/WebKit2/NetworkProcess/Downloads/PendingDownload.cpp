@@ -56,6 +56,7 @@ void PendingDownload::continueWillSendRequest(WebCore::ResourceRequest&& newRequ
     m_networkLoad->continueWillSendRequest(WTFMove(newRequest));
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void PendingDownload::canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace& protectionSpace)
 {
     send(Messages::DownloadProxy::CanAuthenticateAgainstProtectionSpace(protectionSpace));
@@ -65,6 +66,7 @@ void PendingDownload::continueCanAuthenticateAgainstProtectionSpace(bool canAuth
 {
     m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
 }
+#endif
 
 void PendingDownload::didBecomeDownload()
 {

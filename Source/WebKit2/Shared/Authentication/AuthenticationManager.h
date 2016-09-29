@@ -58,7 +58,9 @@ public:
 #if USE(NETWORK_SESSION)
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(PendingDownload&, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
+#endif
 #endif
     // Called for resources in the WebProcess (NetworkProcess disabled)
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);

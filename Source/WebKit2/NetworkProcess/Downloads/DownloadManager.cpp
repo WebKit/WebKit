@@ -80,7 +80,8 @@ std::pair<RefPtr<NetworkDataTask>, std::unique_ptr<PendingDownload>> DownloadMan
     m_downloads.add(downloadID, WTFMove(download));
     return std::make_pair(WTFMove(downloadAfterLocationDecided), WTFMove(pendingDownload));
 }
-    
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void DownloadManager::continueCanAuthenticateAgainstProtectionSpace(DownloadID downloadID, bool canAuthenticate)
 {
     auto* pendingDownload = m_pendingDownloads.get(downloadID);
@@ -88,6 +89,7 @@ void DownloadManager::continueCanAuthenticateAgainstProtectionSpace(DownloadID d
     if (pendingDownload)
         pendingDownload->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
 }
+#endif
 
 void DownloadManager::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
 {

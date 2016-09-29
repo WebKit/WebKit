@@ -648,16 +648,12 @@ void NetworkResourceLoader::invalidateSandboxExtensions()
     m_fileReferences.clear();
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(const ProtectionSpace& protectionSpace)
 {
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     NetworkProcess::singleton().canAuthenticateAgainstProtectionSpace(*this, protectionSpace);
-#else
-    UNUSED_PARAM(protectionSpace);
-#endif
 }
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
     if (m_networkLoad)
