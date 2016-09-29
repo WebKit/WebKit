@@ -170,6 +170,7 @@ namespace JSC {
         virtual bool isBracketAccessorNode() const { return false; }
         virtual bool isDotAccessorNode() const { return false; }
         virtual bool isDestructuringNode() const { return false; }
+        virtual bool isBaseFuncExprNode() const { return false; }
         virtual bool isFuncExprNode() const { return false; }
         virtual bool isArrowFuncExprNode() const { return false; }
         virtual bool isClassExprNode() const { return false; }
@@ -1954,6 +1955,8 @@ namespace JSC {
     class BaseFuncExprNode : public ExpressionNode {
     public:
         FunctionMetadataNode* metadata() { return m_metadata; }
+
+        bool isBaseFuncExprNode() const override { return true; }
 
     protected:
         BaseFuncExprNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&, FunctionMode);
