@@ -1,3 +1,26 @@
+2016-09-29  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Streams API] Improve ReadableStreamDefaultController.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=160293
+
+        Reviewed by Youenn Fablet.
+
+        Various small improvements in ReadableStreamDefaultController code (helper methods and asserts).
+
+        No change in behaviour.
+
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        (WebCore::ReadableStreamDefaultController::isControlledReadableStreamLocked): Added an assert and updated based 
+        on new helper methods.
+        * bindings/js/ReadableStreamDefaultController.h:
+        (WebCore::ReadableStreamDefaultController::close): Updated based on new helper methods.
+        (WebCore::ReadableStreamDefaultController::error): Updated based on new helper methods.
+        (WebCore::ReadableStreamDefaultController::enqueue): Added an assert and updated based on new helper methods.
+        (WebCore::ReadableStreamDefaultController::jsController): New helper method.
+        (WebCore::ReadableStreamDefaultController::globalObject): Return reference instead of pointer.
+        (WebCore::ReadableStreamDefaultController::globalExec): New helper; return reference after performing an assert.
+        (WebCore::ReadableStreamDefaultController::error<String>): Added an assert and updated based on new helper methods.
+
 2016-09-29  Jon Davis  <jond@apple.com>
 
         Added Beacon API to the Feature Status page.

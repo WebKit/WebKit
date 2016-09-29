@@ -33,8 +33,6 @@
 
 #if ENABLE(READABLE_STREAM_API)
 
-#include "JSReadableStream.h"
-#include "JSReadableStreamSource.h"
 #include "WebCoreJSClientData.h"
 
 namespace WebCore {
@@ -69,17 +67,18 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC:
 
 bool ReadableStreamDefaultController::isControlledReadableStreamLocked() const
 {
-    auto globalObject = this->globalObject();
-    JSC::VM& vm = globalObject->vm();
+    auto& globalObject = this->globalObject();
+    JSC::VM& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto& state = *globalObject->globalExec();
+    auto& state = globalExec();
 
     auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     auto readableStream = m_jsController->get(&state, clientData.builtinNames().controlledReadableStreamPrivateName());
     ASSERT_UNUSED(scope, !scope.exception());
 
-    auto isLocked = globalObject->builtinInternalFunctions().readableStreamInternals().m_isReadableStreamLockedFunction.get();
+    auto* isLocked = globalObject.builtinInternalFunctions().readableStreamInternals().m_isReadableStreamLockedFunction.get();
+    ASSERT(isLocked);
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(readableStream);
