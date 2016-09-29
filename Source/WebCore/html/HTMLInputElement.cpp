@@ -714,7 +714,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         }
     } else if (name == maxlengthAttr)
         maxLengthAttributeChanged(value);
-    else if (name == minAttr)
+    else if (name == minlengthAttr)
         minLengthAttributeChanged(value);
     else if (name == sizeAttr) {
         unsigned oldSize = m_size;

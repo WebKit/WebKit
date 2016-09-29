@@ -1,5 +1,20 @@
 2016-09-29  Chris Dumez  <cdumez@apple.com>
 
+        Assigning non-numeric to input.minlength should set minlength to 0
+        https://bugs.webkit.org/show_bug.cgi?id=162727
+
+        Reviewed by Ryosuke Niwa.
+
+        There was a typo when we were updating the m_minLength member from the 'min'
+        content attribute instead of the 'minlength' one.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/minlength.html.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+
+2016-09-29  Chris Dumez  <cdumez@apple.com>
+
         [Web IDL] Fix overload resolution when the distinguishing argument is a Window
         https://bugs.webkit.org/show_bug.cgi?id=162728
 
