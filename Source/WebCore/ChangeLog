@@ -1,3 +1,26 @@
+2016-09-29  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] scheduler for layout nodes
+        https://bugs.webkit.org/show_bug.cgi?id=162726
+        <rdar://problem/28543043>
+
+        Reviewed by Dean Jackson.
+
+        For the work on the modern media controls we will be using a tree of LayoutNode objects that will
+        commit to the DOM in coordinated `requestAnimationFrame()` calls to ensure all layouts are done
+        in an efficient and coordinated manner. As a preamble, we introduce a `scheduler` singleton which
+        provides a single public method `scheduleLayout(callback)` to queue callbacks to be fired in the
+        next `requestAnimationFrame()` callback.
+
+        Tests: media/modern-media-controls/scheduler/not-reentrant.html
+               media/modern-media-controls/scheduler/single-callback-when-registered-multiple-times.html
+
+        * Modules/modern-media-controls/controls/scheduler.js: Added.
+        (const.scheduler.new.prototype.scheduleLayout):
+        (const.scheduler.new.prototype._requestFrameIfNeeded):
+        (const.scheduler.new.prototype._frameDidFire):
+        (const.scheduler.new.prototype._layout):
+
 2016-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Text nodes assigned to a linked slot are not clickable
