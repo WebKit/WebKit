@@ -1,3 +1,21 @@
+2016-09-28  Saam Barati  <sbarati@apple.com>
+
+        stringProtoFuncRepeatCharacter will return `null` when it should not
+        https://bugs.webkit.org/show_bug.cgi?id=161944
+
+        Reviewed by Yusuke Suzuki.
+
+        stringProtoFuncRepeatCharacter was expecting its second argument
+        to always be a boxed integer. This is not correct. The DFG may decide
+        to represent a particular value as a double instead of integer. This
+        function needs to have correct behavior when its second argument is
+        a boxed double. I also added an assertion stating that the second argument
+        is always a number. We can guarantee this since it's only called from
+        builtins.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncRepeatCharacter):
+
 2016-09-28  Filip Pizlo  <fpizlo@apple.com>
 
         The write barrier should be down with TSO

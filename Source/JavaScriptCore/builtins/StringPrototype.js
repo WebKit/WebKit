@@ -110,11 +110,8 @@ function repeat(count)
     if (count < 0 || count === @Infinity)
         throw new @RangeError("String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity");
 
-    if (string.length === 1) {
-        var result = @repeatCharacter(string, count);
-        if (result !== null)
-            return result;
-    }
+    if (string.length === 1)
+        return @repeatCharacter(string, count);
 
     return @repeatSlowPath(string, count);
 }

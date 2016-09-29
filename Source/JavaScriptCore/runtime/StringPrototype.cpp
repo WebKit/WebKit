@@ -780,11 +780,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
     JSString* string = jsCast<JSString*>(exec->uncheckedArgument(0));
     ASSERT(string->length() == 1);
 
-    if (!exec->uncheckedArgument(1).isInt32())
-        return JSValue::encode(jsNull());
-
-    int32_t repeatCount = exec->uncheckedArgument(1).asInt32();
+    JSValue repeatCountValue = exec->uncheckedArgument(1);
+    RELEASE_ASSERT(repeatCountValue.isNumber());
+    int32_t repeatCount;
+    {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        double value = repeatCountValue.asNumber();
+        if (value > JSString::MaxLength)
+            return JSValue::encode(throwOutOfMemoryError(exec, scope));
+        repeatCount = static_cast<int32_t>(value);
+    }
     ASSERT(repeatCount >= 0);
+    ASSERT(!repeatCountValue.isDouble() || repeatCountValue.asDouble() == repeatCount);
 
     UChar character = string->view(exec)[0];
     if (!(character & ~0xff))
