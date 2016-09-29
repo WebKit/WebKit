@@ -32,7 +32,7 @@ namespace WebCore {
 class DOMTokenList {
     WTF_MAKE_NONCOPYABLE(DOMTokenList); WTF_MAKE_FAST_ALLOCATED;
 public:
-    DOMTokenList(Element&, const QualifiedName& attributeName, WTF::Function<bool(const String&)>&& isSupportedToken = { });
+    DOMTokenList(Element&, const QualifiedName& attributeName, WTF::Function<bool(StringView)>&& isSupportedToken = { });
 
     void associatedAttributeValueChanged(const AtomicString&);
 
@@ -49,7 +49,7 @@ public:
     void remove(const AtomicString&, ExceptionCode&);
     WEBCORE_EXPORT bool toggle(const AtomicString&, Optional<bool> force, ExceptionCode&);
     void replace(const AtomicString& token, const AtomicString& newToken, ExceptionCode&);
-    bool supports(const String& token, ExceptionCode&);
+    bool supports(StringView token, ExceptionCode&);
 
     Element& element() const { return m_element; }
 
@@ -73,7 +73,7 @@ private:
     bool m_inUpdateAssociatedAttributeFromTokens { false };
     bool m_tokensNeedUpdating { true };
     Vector<AtomicString> m_tokens;
-    WTF::Function<bool(const String&)> m_isSupportedToken;
+    WTF::Function<bool(StringView)> m_isSupportedToken;
 };
 
 inline unsigned DOMTokenList::length() const

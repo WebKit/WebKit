@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName, WTF::Function<bool(const String&)>&& isSupportedToken)
+DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName, WTF::Function<bool(StringView)>&& isSupportedToken)
     : m_element(element)
     , m_attributeName(attributeName)
     , m_isSupportedToken(WTFMove(isSupportedToken))
@@ -179,7 +179,7 @@ void DOMTokenList::replace(const AtomicString& token, const AtomicString& newTok
 }
 
 // https://dom.spec.whatwg.org/#concept-domtokenlist-validation
-bool DOMTokenList::supports(const String& token, ExceptionCode& ec)
+bool DOMTokenList::supports(StringView token, ExceptionCode& ec)
 {
     if (!m_isSupportedToken) {
         ec = TypeError;

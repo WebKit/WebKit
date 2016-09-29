@@ -1,3 +1,30 @@
+2016-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Fix post-landing nits after r206561.
+        https://bugs.webkit.org/show_bug.cgi?id=162659
+
+        Reviewed by Alex Christensen.
+
+        Uses more StringViews and constness.
+
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::isSupportedSandboxPolicy):
+        * dom/SecurityContext.h:
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::DOMTokenList):
+        (WebCore::DOMTokenList::supports):
+        * html/DOMTokenList.h:
+        (WebCore::DOMTokenList::DOMTokenList):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::relList):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::sandbox):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::relList):
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::isSupported):
+        * html/LinkRelAttribute.h:
+
 2016-09-29  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should correctly parse ports with leading 0's

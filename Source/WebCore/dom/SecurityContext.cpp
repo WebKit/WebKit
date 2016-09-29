@@ -85,9 +85,9 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
         setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
 }
 
-bool SecurityContext::isSupportedSandboxPolicy(const String& policy)
+bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 {
-    static const char* supportedPolicies[] = {
+    static const char* const supportedPolicies[] = {
         "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups"
     };
 

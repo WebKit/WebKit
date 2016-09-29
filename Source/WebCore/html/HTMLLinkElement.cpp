@@ -444,7 +444,7 @@ void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
 DOMTokenList& HTMLLinkElement::relList()
 {
     if (!m_relList) 
-        m_relList = std::make_unique<DOMTokenList>(*this, HTMLNames::relAttr, [](const String& token) {
+        m_relList = std::make_unique<DOMTokenList>(*this, HTMLNames::relAttr, [](StringView token) {
             return LinkRelAttribute::isSupported(token);
         });
     return *m_relList;

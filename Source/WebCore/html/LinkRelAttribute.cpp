@@ -88,9 +88,9 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
 }
 
 // https://html.spec.whatwg.org/#linkTypes
-bool LinkRelAttribute::isSupported(const String& attribute)
+bool LinkRelAttribute::isSupported(StringView attribute)
 {
-    static const char* supportedAttributes[] = {
+    static const char* const supportedAttributes[] = {
         "alternate", "dns-prefetch", "icon", "stylesheet", "apple-touch-icon", "apple-touch-icon-precomposed",
 #if ENABLE(LINK_PREFETCH)
         "prefetch", "subresource",
