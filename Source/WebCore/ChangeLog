@@ -1,3 +1,12 @@
+2016-09-29  Jon Davis  <jond@apple.com>
+
+        Added Beacon API to the Feature Status page.
+        https://bugs.webkit.org/show_bug.cgi?id=162630
+
+        Reviewed by Alex Christensen.
+
+        * features.json:
+
 2016-09-28  Chris Dumez  <cdumez@apple.com>
 
         Drop first 'state' parameter to JSDOMWindow::toWrapped() / JSEventTarget::toWrapped()

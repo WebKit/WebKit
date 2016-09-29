@@ -1,6 +1,23 @@
 {
     "specification": [
     {
+        "name": "Beacon API",
+        "status": {
+            "status": "Under Consideration",
+            "enabled-by-default": false
+        },
+        "url": "https://www.w3.org/TR/beacon/",
+        "webkit-url": "https://webkit.org/b/147885",
+        "keywords": ["beacon","analytics","diagnostics","request"],
+        "category": "webapps",
+        "description": "Schedules asynchronous and non-blocking data delivery while the current page is unloading to mitigate resource contention for other time-critical requests.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "CSS Grid Layout Level 1",
         "status": {
             "status": "In Development",
