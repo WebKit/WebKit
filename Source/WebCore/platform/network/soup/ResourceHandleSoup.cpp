@@ -72,132 +72,7 @@
 
 namespace WebCore {
 
-static bool loadingSynchronousRequest = false;
 static const size_t gDefaultReadBufferSize = 8192;
-
-class WebCoreSynchronousLoader final : public ResourceHandleClient {
-    WTF_MAKE_NONCOPYABLE(WebCoreSynchronousLoader);
-public:
-
-    WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, SoupSession* session, Vector<char>& data, StoredCredentials storedCredentials)
-        : m_error(error)
-        , m_response(response)
-#if !SOUP_CHECK_VERSION(2, 49, 91)
-        , m_session(session)
-#endif
-        , m_data(data)
-        , m_finished(false)
-        , m_storedCredentials(storedCredentials)
-    {
-        // We don't want any timers to fire while we are doing our synchronous load
-        // so we replace the thread default main context. The main loop iterations
-        // will only process GSources associated with this inner context.
-        loadingSynchronousRequest = true;
-        GRefPtr<GMainContext> innerMainContext = adoptGRef(g_main_context_new());
-        g_main_context_push_thread_default(innerMainContext.get());
-        m_mainLoop = adoptGRef(g_main_loop_new(innerMainContext.get(), false));
-
-#if !SOUP_CHECK_VERSION(2, 49, 91)
-        adjustMaxConnections(1);
-#else
-        UNUSED_PARAM(session);
-#endif
-    }
-
-    ~WebCoreSynchronousLoader()
-    {
-#if !SOUP_CHECK_VERSION(2, 49, 91)
-        adjustMaxConnections(-1);
-#endif
-
-        GMainContext* context = g_main_context_get_thread_default();
-        while (g_main_context_pending(context))
-            g_main_context_iteration(context, FALSE);
-
-        g_main_context_pop_thread_default(context);
-        loadingSynchronousRequest = false;
-    }
-
-#if !SOUP_CHECK_VERSION(2, 49, 91)
-    void adjustMaxConnections(int adjustment)
-    {
-        int maxConnections, maxConnectionsPerHost;
-        g_object_get(m_session,
-                     SOUP_SESSION_MAX_CONNS, &maxConnections,
-                     SOUP_SESSION_MAX_CONNS_PER_HOST, &maxConnectionsPerHost,
-                     NULL);
-        maxConnections += adjustment;
-        maxConnectionsPerHost += adjustment;
-        g_object_set(m_session,
-                     SOUP_SESSION_MAX_CONNS, maxConnections,
-                     SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost,
-                     NULL);
-
-    }
-#endif // SOUP_CHECK_VERSION(2, 49, 91)
-
-    void didReceiveResponse(ResourceHandle*, ResourceResponse&& response) override
-    {
-        m_response = response;
-    }
-
-    void didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int) override
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int /* encodedLength */) override
-    {
-        // This pattern is suggested by SharedBuffer.h.
-        const char* segment;
-        unsigned position = 0;
-        while (unsigned length = buffer->getSomeData(segment, position)) {
-            m_data.append(segment, length);
-            position += length;
-        }
-    }
-
-    void didFinishLoading(ResourceHandle*, double) override
-    {
-        if (g_main_loop_is_running(m_mainLoop.get()))
-            g_main_loop_quit(m_mainLoop.get());
-        m_finished = true;
-    }
-
-    void didFail(ResourceHandle* handle, const ResourceError& error) override
-    {
-        m_error = error;
-        didFinishLoading(handle, 0);
-    }
-
-    void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override
-    {
-        // We do not handle authentication for synchronous XMLHttpRequests.
-        challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
-    }
-
-    bool shouldUseCredentialStorage(ResourceHandle*) override
-    {
-        return m_storedCredentials == AllowStoredCredentials;
-    }
-
-    void run()
-    {
-        if (!m_finished)
-            g_main_loop_run(m_mainLoop.get());
-    }
-
-private:
-    ResourceError& m_error;
-    ResourceResponse& m_response;
-#if !SOUP_CHECK_VERSION(2, 49, 91)
-    SoupSession* m_session;
-#endif
-    Vector<char>& m_data;
-    bool m_finished;
-    GRefPtr<GMainLoop> m_mainLoop;
-    StoredCredentials m_storedCredentials;
-};
 
 class HostTLSCertificateSet {
 public:
@@ -952,12 +827,6 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     g_signal_connect(d->m_soupMessage.get(), "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), handle);
 
     unsigned flags = SOUP_MESSAGE_NO_REDIRECT;
-#if SOUP_CHECK_VERSION(2, 49, 91)
-    // Ignore the connection limits in synchronous loads to avoid freezing the networking process.
-    // See https://bugs.webkit.org/show_bug.cgi?id=141508.
-    if (loadingSynchronousRequest)
-        flags |= SOUP_MESSAGE_IGNORE_CONNECTION_LIMITS;
-#endif
     soup_message_set_flags(d->m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(d->m_soupMessage.get()) | flags));
 
 #if ENABLE(WEB_TIMING)
@@ -1288,22 +1157,9 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
     }
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>&)
 {
-    ASSERT(!loadingSynchronousRequest);
-    if (loadingSynchronousRequest) // In practice this cannot happen, but if for some reason it does,
-        return;                    // we want to avoid accidentally going into an infinite loop of requests.
-
-    WebCoreSynchronousLoader syncLoader(error, response, sessionFromContext(context), data, storedCredentials);
-    RefPtr<ResourceHandle> handle = create(context, request, &syncLoader, false /*defersLoading*/, false /*shouldContentSniff*/);
-    if (!handle)
-        return;
-
-    // If the request has already failed, do not run the main loop, or else we'll block indefinitely.
-    if (handle->d->m_scheduledFailureType != NoFailure)
-        return;
-
-    syncLoader.run();
+    ASSERT_NOT_REACHED();
 }
 
 static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)

@@ -1,3 +1,15 @@
+2016-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Remove WebCoreSynchronousLoader from ResourceHandleSoup
+        https://bugs.webkit.org/show_bug.cgi?id=162723
+
+        Reviewed by Sergio Villar Senin.
+
+        Since all soup based ports switched to NetworkProcess this is dead code.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+
 2016-09-29  Nan Wang  <n_wang@apple.com>
 
         AX: Meter: [Mac] Content in label element should be used as AXTitle or AXDescription
