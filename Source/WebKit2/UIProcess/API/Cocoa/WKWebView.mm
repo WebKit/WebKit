@@ -4574,6 +4574,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     _impl->forceRequestCandidatesForTesting();
 }
+
+- (BOOL)_shouldRequestCandidates
+{
+    return _impl->shouldRequestCandidates();
+}
 #endif // PLATFORM(MAC)
 
 // Execute the supplied block after the next transaction from the WebProcess.
