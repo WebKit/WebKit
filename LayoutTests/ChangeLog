@@ -1,3 +1,16 @@
+2016-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Import touch-events web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=162713
+
+        Reviewed by Alex Christensen.
+
+        Skip on all platforms that do not have Touch enabled.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-09-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/images/object-image.html as crashing.

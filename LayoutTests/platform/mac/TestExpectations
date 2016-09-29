@@ -64,6 +64,7 @@ plugins/reloadplugins-and-pages.html
 
 # These tests require touch support
 fast/events/touch [ Skip ]
+imported/w3c/web-platform-tests/touch-events [ Skip ]
 
 # No button tracked
 fast/events/mouseover-button.html

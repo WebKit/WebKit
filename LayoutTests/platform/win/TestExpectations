@@ -202,6 +202,7 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Skip ]
 
 # These tests require touch support
 fast/events/touch/ [ Skip ]
+imported/w3c/web-platform-tests/touch-events/ [ Skip ]
 
 # TODO No support for key event location in EventSender.
 webkit.org/b/140526 [ Release ] fast/events/keydown-numpad-keys.html [ Failure ]
