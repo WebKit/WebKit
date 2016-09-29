@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "B3Kind.h"
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
+#include <wtf/CommaPrinter.h>
 
 namespace JSC { namespace B3 {
 
-class Variable;
-
-class JS_EXPORT_PRIVATE VariableValue : public Value {
-public:
-    static bool accepts(Kind kind) { return kind == Get || kind == Set; }
-
-    ~VariableValue();
-
-    Variable* variable() const { return m_variable; }
-
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
-
-private:
-    friend class Procedure;
-
-    // Use this for Set.
-    VariableValue(Kind, Origin, Variable*, Value*);
-
-    // Use this for Get.
-    VariableValue(Kind, Origin, Variable*);
-
-    Variable* m_variable;
-};
+void Kind::dump(PrintStream& out) const
+{
+    out.print(m_opcode);
+    if (!hasExtraBits())
+        return;
+    
+    CommaPrinter comma;
+    out.print("<");
+    if (isChill())
+        out.print(comma, "Chill");
+    out.print(">");
+}
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

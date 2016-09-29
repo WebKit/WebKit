@@ -33,7 +33,7 @@ namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE Const64Value : public Value {
 public:
-    static bool accepts(Opcode opcode) { return opcode == Const64; }
+    static bool accepts(Kind kind) { return kind == Const64; }
     
     ~Const64Value();
     

@@ -33,7 +33,7 @@ namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE ConstDoubleValue : public Value {
 public:
-    static bool accepts(Opcode opcode) { return opcode == ConstDouble; }
+    static bool accepts(Kind kind) { return kind == ConstDouble; }
     
     ~ConstDoubleValue();
     

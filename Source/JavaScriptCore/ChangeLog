@@ -1,3 +1,162 @@
+2016-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 opcodes should leave room for flags
+        https://bugs.webkit.org/show_bug.cgi?id=162692
+
+        Reviewed by Keith Miller.
+
+        It used to be that the main thing that determined what a Value did was the opcode. The
+        Opcode was how you knew what subclass of Value you had. The opcode told you what the Value
+        actually did. This change replaces Opcode with Kind, which is a tuple of opcode and other
+        stuff.
+        
+        Opcodes are great, and that's how most compilers work. But opcodes are one-dimensional. Here
+        is how this manifests. Say you have an opcode, like Load. You will be happy if your IR has
+        one Load opcode. But then, you might add Load8S/Load8Z/Load16S/Load16Z opcodes, as we have
+        done in B3. B3 has one dimension of Load opcodes, which determines something like the C type
+        of the load. But in the very near future, we will want to add two more dimensions to Loads:
+        
+        - A flag to say if the load traps.
+        - A flag to say if the load has acquire semantics.
+        
+        Mapping these three dimensions (type, trap, acquire) onto the one-dimensional Opcode space
+        would create mayham: Load8S, Load8STrap, Load8SAcquire, Load8STrapAcquire, Load8Z,
+        Load8ZTrap, etc.
+        
+        This happens in other parts of the IR. For example, we have a dimension of arithmetic
+        operations: add, sub, mul, div, mod, etc. Then we have the chill flag. But since opcodes
+        are one-dimensional, that means having ChillDiv and ChillMod, and tons of places in the
+        compiler that case on both Div and ChillDiv, or case on both Mod and ChillMod, since they
+        are only interested in the kind of arithmetic being done and not the chillness.
+        
+        Though the examples all involve bits (chill or not, trapping or not, etc), I can imagine
+        other properties that behave more like small enums, like if we fill out more memory ordering
+        modes other than just "acquire? yes/no". There will eventually have to be something like a
+        std::memory_order associated with memory accesses.
+        
+        One approach to this problem is to have a Value subclass that contains fields with the meta
+        data. I don't like this for two reasons:
+        
+        - In bug 162688, I want to make trapping memory accesses have stackmaps. This means that a
+          trapping memory access would have a different Value subclass than a non-trapping memory
+          access. So, this meta-data needs to channel into ValueType::accepts(). Currently that
+          takes Opcode and nothing else.
+        
+        - Compiler IRs are all about making common tasks easy. If it becomes commonplace for opcodes
+          to require a custom Value subclass just for a bit then that's not very easy.
+        
+        This change addresses this problem by making the compiler pass around Kinds rather than
+        Opcodes. A Kind contains an Opcode as well as any number of opcode-specific bits. This
+        change demonstrates how Kind should be used by converting chillness to it. Kind has
+        hasIsChill(), isChill(), and setIsChill() methods. hasIsChill() is true only for Div and
+        Mod. setIsChill() asserts if !hasIsChill(). If you want to create a Chill Div, you say
+        chill(Div). IR dumps will print it like this:
+
+            Int32 @38 = Div<Chill>(@36, @37, DFG:@24, ControlDependent)
+        
+        Where "Div<Chill>" is how a Kind that hasExtraBits() dumps itself. If a Kind does not
+        hasExtraBits() (the normal case) then it dumps like a normal Opcode (without the "<>").
+        
+        I replaced many uses of Opcode with Kind. New code has to be mindful that Opcode may not be
+        the right way to summarize what a value does, and so in many cases it's better to carry
+        around a Kind instead - especially if you will use it to stamp out new Values. Opcode is no
+        longer sufficient to perform a dynamic Value cast, since that code now uses Kind. ValueKey
+        now wants a Kind instead of an Opcode. All Value constructors now take Kind instead of
+        Opcode. But most opcodes don't get any extra Kind bits, and so the code that operates on
+        those opcodes is largely unchanged.
+        
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3ArgumentRegValue.h:
+        * b3/B3CCallValue.h:
+        * b3/B3CheckValue.cpp:
+        (JSC::B3::CheckValue::convertToAdd):
+        (JSC::B3::CheckValue::CheckValue):
+        * b3/B3CheckValue.h:
+        (JSC::B3::CheckValue::accepts):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.h:
+        * b3/B3FenceValue.h:
+        * b3/B3Kind.cpp: Added.
+        (JSC::B3::Kind::dump):
+        * b3/B3Kind.h: Added.
+        (JSC::B3::Kind::Kind):
+        (JSC::B3::Kind::opcode):
+        (JSC::B3::Kind::setOpcode):
+        (JSC::B3::Kind::hasExtraBits):
+        (JSC::B3::Kind::hasIsChill):
+        (JSC::B3::Kind::isChill):
+        (JSC::B3::Kind::setIsChill):
+        (JSC::B3::Kind::operator==):
+        (JSC::B3::Kind::operator!=):
+        (JSC::B3::Kind::hash):
+        (JSC::B3::Kind::isHashTableDeletedValue):
+        (JSC::B3::chill):
+        (JSC::B3::KindHash::hash):
+        (JSC::B3::KindHash::equal):
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MemoryValue.h:
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3PatchpointValue.h:
+        (JSC::B3::PatchpointValue::accepts):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3SlotBaseValue.h:
+        * b3/B3StackmapValue.cpp:
+        (JSC::B3::StackmapValue::StackmapValue):
+        * b3/B3StackmapValue.h:
+        * b3/B3SwitchValue.h:
+        (JSC::B3::SwitchValue::accepts):
+        * b3/B3UpsilonValue.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::dump):
+        (JSC::B3::Value::deepDump):
+        (JSC::B3::Value::invertedCompare):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        (JSC::B3::Value::badKind):
+        (JSC::B3::Value::badOpcode): Deleted.
+        * b3/B3Value.h:
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::as):
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::dump):
+        (JSC::B3::ValueKey::materialize):
+        * b3/B3ValueKey.h:
+        (JSC::B3::ValueKey::ValueKey):
+        (JSC::B3::ValueKey::kind):
+        (JSC::B3::ValueKey::opcode):
+        (JSC::B3::ValueKey::operator==):
+        (JSC::B3::ValueKey::hash):
+        * b3/B3ValueKeyInlines.h:
+        (JSC::B3::ValueKey::ValueKey):
+        * b3/B3VariableValue.cpp:
+        (JSC::B3::VariableValue::VariableValue):
+        * b3/B3VariableValue.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testChillDiv):
+        (JSC::B3::testChillDivTwice):
+        (JSC::B3::testChillDiv64):
+        (JSC::B3::testChillModArg):
+        (JSC::B3::testChillModArgs):
+        (JSC::B3::testChillModImms):
+        (JSC::B3::testChillModArg32):
+        (JSC::B3::testChillModArgs32):
+        (JSC::B3::testChillModImms32):
+        (JSC::B3::testSwitchChillDiv):
+        (JSC::B3::testEntrySwitchWithCommonPaths):
+        (JSC::B3::testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::chillDiv):
+        (JSC::FTL::Output::chillMod):
+
 2016-09-29  Saam Barati  <sbarati@apple.com>
 
         We don't properly propagate non-simple-parameter-list when parsing a setter

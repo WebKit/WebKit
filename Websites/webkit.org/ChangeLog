@@ -1,3 +1,15 @@
+2016-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 opcodes should leave room for flags
+        https://bugs.webkit.org/show_bug.cgi?id=162692
+
+        Reviewed by Keith Miller.
+        
+        Updated the documentation to talk about Kind and the isChill bit, and to remove
+        ChillDiv/ChillMod.
+
+        * docs/b3/intermediate-representation.html:
+
 2016-09-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Update style guide for #pragma once

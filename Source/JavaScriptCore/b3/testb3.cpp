@@ -9976,7 +9976,7 @@ void testChillDiv(int num, int den, int res)
         root->appendNewControlValue(
             proc, Return, Origin(),
             root->appendNew<Value>(
-                proc, ChillDiv, Origin(),
+                proc, chill(Div), Origin(),
                 root->appendNew<Value>(
                     proc, Trunc, Origin(),
                     root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
@@ -9995,7 +9995,7 @@ void testChillDiv(int num, int den, int res)
         root->appendNewControlValue(
             proc, Return, Origin(),
             root->appendNew<Value>(
-                proc, ChillDiv, Origin(),
+                proc, chill(Div), Origin(),
                 root->appendNew<Const32Value>(proc, Origin(), num),
                 root->appendNew<Const32Value>(proc, Origin(), den)));
         
@@ -10013,7 +10013,7 @@ void testChillDivTwice(int num1, int den1, int num2, int den2, int res)
         root->appendNew<Value>(
             proc, Add, Origin(),
             root->appendNew<Value>(
-                proc, ChillDiv, Origin(),
+                proc, chill(Div), Origin(),
                 root->appendNew<Value>(
                     proc, Trunc, Origin(),
                     root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
@@ -10021,7 +10021,7 @@ void testChillDivTwice(int num1, int den1, int num2, int den2, int res)
                     proc, Trunc, Origin(),
                     root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))),
             root->appendNew<Value>(
-                proc, ChillDiv, Origin(),
+                proc, chill(Div), Origin(),
                 root->appendNew<Value>(
                     proc, Trunc, Origin(),
                     root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)),
@@ -10045,7 +10045,7 @@ void testChillDiv64(int64_t num, int64_t den, int64_t res)
         root->appendNewControlValue(
             proc, Return, Origin(),
             root->appendNew<Value>(
-                proc, ChillDiv, Origin(),
+                proc, chill(Div), Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
         
@@ -10060,7 +10060,7 @@ void testChillDiv64(int64_t num, int64_t den, int64_t res)
         root->appendNewControlValue(
             proc, Return, Origin(),
             root->appendNew<Value>(
-                proc, ChillDiv, Origin(),
+                proc, chill(Div), Origin(),
                 root->appendNew<Const64Value>(proc, Origin(), num),
                 root->appendNew<Const64Value>(proc, Origin(), den)));
         
@@ -10179,7 +10179,7 @@ void testChillModArg(int64_t value)
     BasicBlock* root = proc.addBlock();
 
     Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument, argument);
+    Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument, argument);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
     CHECK(!compileAndRun<int64_t>(proc, value));
@@ -10192,7 +10192,7 @@ void testChillModArgs(int64_t numerator, int64_t denominator)
 
     Value* argument1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     Value* argument2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
-    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument1, argument2);
+    Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
     CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
@@ -10205,7 +10205,7 @@ void testChillModImms(int64_t numerator, int64_t denominator)
 
     Value* argument1 = root->appendNew<Const64Value>(proc, Origin(), numerator);
     Value* argument2 = root->appendNew<Const64Value>(proc, Origin(), denominator);
-    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument1, argument2);
+    Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
     CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
@@ -10218,7 +10218,7 @@ void testChillModArg32(int32_t value)
 
     Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
         root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument, argument);
+    Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument, argument);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
     CHECK(!compileAndRun<int32_t>(proc, value));
@@ -10233,7 +10233,7 @@ void testChillModArgs32(int32_t numerator, int32_t denominator)
         root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
     Value* argument2 = root->appendNew<Value>(proc, Trunc, Origin(),
         root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
-    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument1, argument2);
+    Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
     CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
@@ -10246,7 +10246,7 @@ void testChillModImms32(int32_t numerator, int32_t denominator)
 
     Value* argument1 = root->appendNew<Const32Value>(proc, Origin(), numerator);
     Value* argument2 = root->appendNew<Const32Value>(proc, Origin(), denominator);
-    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument1, argument2);
+    Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
     CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
@@ -10313,7 +10313,7 @@ void testSwitchChillDiv(unsigned degree, unsigned gap = 1)
         newBlock->appendNewControlValue(
             proc, Return, Origin(),
             newBlock->appendNew<Value>(
-                proc, ChillDiv, Origin(), (i & 1) ? right : left, (i & 1) ? left : right));
+                proc, chill(Div), Origin(), (i & 1) ? right : left, (i & 1) ? left : right));
         
         switchValue->appendCase(SwitchCase(gap * i, FrequentedBlock(newBlock)));
     }
@@ -12674,7 +12674,7 @@ void testEntrySwitchWithCommonPaths()
     end->appendNew<Value>(
         proc, Return, Origin(),
         end->appendNew<Value>(
-            proc, ChillMod, Origin(),
+            proc, chill(Mod), Origin(),
             phi, end->appendNew<Value>(
                 proc, Trunc, Origin(),
                 end->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2))));
@@ -12791,7 +12791,7 @@ void testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint()
     end->appendNew<Value>(
         proc, Return, Origin(),
         end->appendNew<Value>(
-            proc, ChillMod, Origin(),
+            proc, chill(Mod), Origin(),
             phi, end->appendNew<Value>(
                 proc, Trunc, Origin(),
                 end->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2))));

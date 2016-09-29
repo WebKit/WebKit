@@ -78,9 +78,14 @@
     <h2>Values</h2>
 
     <p>Variables, and the instructions that define them, are represented using the Value object.
-      The Value object has a return type, an opcode, and zero or more children.  Children are
+      The Value object has a return type, a kind, and zero or more children.  Children are
       references to other Values.  Those values are used as input to the instruction that
       computes this value.</p>
+    
+    <p>The value kind is a combination of an opcode and optional flags. The flags allow a single
+      opcode to have many variants. For example, Div and Mod may have the Chill flag set to indicate
+      that they should not trap on corner cases.</p>
+    
     <p>Values also have a unique 32-bit index that is used as the name.</p>
     
     <p>Example:</p>
@@ -231,30 +236,35 @@
         according to the IEEE 854 spec.</dd>
 
       <dt>T Div(T, T)</dt>
-      <dd>Works with any type except Void.  For integer types, this represents signed division
-        with round-to-zero.  Its behavior is undefined for x/0 or -2<sup>31</sup>/-1.  For floating
-        point types, this represents division according to the IEEE 854 spec.</dd>
+      <dd>
+        <p>Works with any type except Void.  For integer types, this represents signed
+          division with round-to-zero.  By default, its behavior is undefined for x/0 or
+          -2<sup>31</sup>/-1.  For floating point types, this represents division according
+          to the IEEE 854 spec.</p>
+        <p>Integer Div may have the Chill flag set. You can create a Chill Div by saying
+          <code>chill(Div)</code> instead of <code>Div</code>; the former creates a Kind
+          that has Div as the opcode and has the Chill bit set. An operation is said to be
+          chill if it returns a sensible value whenever its non-chill form would have had
+          undefined behavior. Chill Div turns x/0 into 0 and -2<sup>31</sup>/-1 into
+          -2<sup>31</sup>. We recognize this in IR because it's exactly the semantics of
+          division on ARM64, and it's also exactly the semantics that JavaScript wants for
+          "(x/y)|0".</p>
+      </dd>
 
       <dt>T Mod(T, T)</dt>
-      <dd>Works with any type except Void.  For integer types, this represents signed modulo.
-        Its behavior is undefined for x%0 or -2<sup>31</sup>%-1.  For floating point types, this
-        represents modulo according to "fmod()".</dd>
+      <dd>
+        <p>Works with any type except Void.  For integer types, this represents signed
+          modulo. By default, its behavior is undefined for x%0 or -2<sup>31</sup>%-1.  For
+          floating point types, this represents modulo according to "fmod()".</p>
+        <p>Integer Mod may have the Chill flag set. You can create a Chill Mod by saying
+          <code>chill(Mod)</code>. Chill Mod turns x%0 into 0 and -2<sup>31</sup>%-1 into
+          0.</p>
+      </dd>
 
       <dt>T Neg(T)</dt>
       <dd>Works with any type except Void.  For integer types, this represents twos-complement
         negation.  For floating point types, this represents negation according to the IEEE
         spec.</dd>
-
-      <dt>T ChillDiv(T, T)</dt>
-      <dd>Chill division.  Valid for Int32 and Int64.  An operation is said to be chill if it
-        returns a sensible value whenever its non-chill form would have had undefined behavior.
-        ChillDiv turns x/0 into 0 and -2<sup>31</sup>/-1 into -2<sup>31</sup>.  This is a separate opcode
-        because it's exactly the semantics of division on ARM64, and it's also exactly the
-        semantics that JavaScript wants for "(x/y)|0".</dd>
-
-      <dt>T ChillMod(T, T)</dt>
-      <dd>Chill modulo.  Valid for Int32 and Int64.  ChllMod turns x%0 into 0 and
-        -2<sup>31</sup>%-1 into 0.</dd>
 
       <dt>T BitAnd(T, T)</dt>
       <dd>Bitwise and.  Valid for Int32 and Int64.</dd>

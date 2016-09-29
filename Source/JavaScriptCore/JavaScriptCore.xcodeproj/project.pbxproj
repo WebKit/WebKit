@@ -726,6 +726,8 @@
 		0FDB2CEA174896C7007B3C1B /* ConcurrentJITLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CE9174896C7007B3C1B /* ConcurrentJITLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDDBFB51666EED800C55FEF /* DFGVariableAccessDataDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */; };
 		0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */; };
+		0FDF67D21D9C6D27001B9825 /* B3Kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF67D11D9C6086001B9825 /* B3Kind.h */; };
+		0FDF67D31D9C6D2A001B9825 /* B3Kind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF67D01D9C6086001B9825 /* B3Kind.cpp */; };
 		0FDF70851D3F2C2200927449 /* AirLowerEntrySwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF70831D3F2C1F00927449 /* AirLowerEntrySwitch.cpp */; };
 		0FDF70861D3F2C2500927449 /* AirLowerEntrySwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF70841D3F2C1F00927449 /* AirLowerEntrySwitch.h */; };
 		0FE050141AA9091100D33B33 /* ArgumentsMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2983,6 +2985,8 @@
 		0FDB2CE9174896C7007B3C1B /* ConcurrentJITLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcurrentJITLock.h; sourceTree = "<group>"; };
 		0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVariableAccessDataDump.cpp; path = dfg/DFGVariableAccessDataDump.cpp; sourceTree = "<group>"; };
 		0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessDataDump.h; path = dfg/DFGVariableAccessDataDump.h; sourceTree = "<group>"; };
+		0FDF67D01D9C6086001B9825 /* B3Kind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Kind.cpp; path = b3/B3Kind.cpp; sourceTree = "<group>"; };
+		0FDF67D11D9C6086001B9825 /* B3Kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Kind.h; path = b3/B3Kind.h; sourceTree = "<group>"; };
 		0FDF70831D3F2C1F00927449 /* AirLowerEntrySwitch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLowerEntrySwitch.cpp; path = b3/air/AirLowerEntrySwitch.cpp; sourceTree = "<group>"; };
 		0FDF70841D3F2C1F00927449 /* AirLowerEntrySwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLowerEntrySwitch.h; path = b3/air/AirLowerEntrySwitch.h; sourceTree = "<group>"; };
 		0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentsMode.h; sourceTree = "<group>"; };
@@ -4877,6 +4881,8 @@
 				0FEC85B41BE1462F0080FF74 /* B3InsertionSet.cpp */,
 				0FEC85B51BE1462F0080FF74 /* B3InsertionSet.h */,
 				0FEC85B61BE1462F0080FF74 /* B3InsertionSetInlines.h */,
+				0FDF67D01D9C6086001B9825 /* B3Kind.cpp */,
+				0FDF67D11D9C6086001B9825 /* B3Kind.h */,
 				436E54511C468E5F00B5AF73 /* B3LegalizeMemoryOffsets.cpp */,
 				436E54521C468E5F00B5AF73 /* B3LegalizeMemoryOffsets.h */,
 				0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */,
@@ -7740,6 +7746,7 @@
 				0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */,
 				A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */,
 				DC69B99D1D15F914002E3C00 /* B3InferSwitches.h in Headers */,
+				0FDF67D21D9C6D27001B9825 /* B3Kind.h in Headers */,
 				A5EA710619F6DE760098F5EC /* generate_objc_configuration_implementation.py in Headers */,
 				0F7C39FF1C90C55B00480151 /* DFGOpInfo.h in Headers */,
 				A5EA710719F6DE780098F5EC /* generate_objc_protocol_type_conversions_header.py in Headers */,
@@ -9095,6 +9102,7 @@
 				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,
 				0F2FC77216E12F710038D976 /* DFGDCEPhase.cpp in Sources */,
 				0F338E121BF0276C0013C88F /* B3OpaqueByproducts.cpp in Sources */,
+				0FDF67D31D9C6D2A001B9825 /* B3Kind.cpp in Sources */,
 				0F8F2B99172F04FF007DBDA5 /* DFGDesiredIdentifiers.cpp in Sources */,
 				C2C0F7CD17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp in Sources */,
 				0FE8534B1723CDA500B618F5 /* DFGDesiredWatchpoints.cpp in Sources */,

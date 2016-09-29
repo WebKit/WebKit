@@ -35,7 +35,7 @@ namespace JSC { namespace B3 {
 
 class SwitchValue : public Value {
 public:
-    static bool accepts(Opcode opcode) { return opcode == Switch; }
+    static bool accepts(Kind kind) { return kind == Switch; }
 
     ~SwitchValue();
 

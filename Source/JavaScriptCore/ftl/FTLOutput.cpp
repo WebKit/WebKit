@@ -152,7 +152,7 @@ LValue Output::div(LValue left, LValue right)
 
 LValue Output::chillDiv(LValue left, LValue right)
 {
-    return m_block->appendNew<B3::Value>(m_proc, B3::ChillDiv, origin(), left, right);
+    return m_block->appendNew<B3::Value>(m_proc, chill(B3::Div), origin(), left, right);
 }
 
 LValue Output::mod(LValue left, LValue right)
@@ -162,7 +162,7 @@ LValue Output::mod(LValue left, LValue right)
 
 LValue Output::chillMod(LValue left, LValue right)
 {
-    return m_block->appendNew<B3::Value>(m_proc, B3::ChillMod, origin(), left, right);
+    return m_block->appendNew<B3::Value>(m_proc, chill(B3::Mod), origin(), left, right);
 }
 
 LValue Output::neg(LValue value)

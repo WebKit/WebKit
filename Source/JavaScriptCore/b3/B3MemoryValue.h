@@ -37,9 +37,9 @@ namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE MemoryValue : public Value {
 public:
-    static bool accepts(Opcode opcode)
+    static bool accepts(Kind kind)
     {
-        switch (opcode) {
+        switch (kind.opcode()) {
         case Load8Z:
         case Load8S:
         case Load16Z:
@@ -54,9 +54,9 @@ public:
         }
     }
 
-    static bool isStore(Opcode opcode)
+    static bool isStore(Kind kind)
     {
-        switch (opcode) {
+        switch (kind.opcode()) {
         case Store8:
         case Store16:
         case Store:
@@ -66,9 +66,9 @@ public:
         }
     }
 
-    static bool isLoad(Opcode opcode)
+    static bool isLoad(Kind kind)
     {
-        return accepts(opcode) && !isStore(opcode);
+        return accepts(kind) && !isStore(kind);
     }
 
     ~MemoryValue();
@@ -94,13 +94,13 @@ private:
 
     // Use this form for Load (but not Load8Z, Load8S, or any of the Loads that have a suffix that
     // describes the returned type).
-    MemoryValue(Opcode opcode, Type type, Origin origin, Value* pointer, int32_t offset = 0)
-        : Value(CheckedOpcode, opcode, type, origin, pointer)
+    MemoryValue(Kind kind, Type type, Origin origin, Value* pointer, int32_t offset = 0)
+        : Value(CheckedOpcode, kind, type, origin, pointer)
         , m_offset(offset)
         , m_range(HeapRange::top())
     {
         if (!ASSERT_DISABLED) {
-            switch (opcode) {
+            switch (kind.opcode()) {
             case Load:
                 break;
             case Load8Z:
@@ -121,19 +121,19 @@ private:
     }
 
     // Use this form for loads where the return type is implied.
-    MemoryValue(Opcode opcode, Origin origin, Value* pointer, int32_t offset = 0)
-        : MemoryValue(opcode, Int32, origin, pointer, offset)
+    MemoryValue(Kind kind, Origin origin, Value* pointer, int32_t offset = 0)
+        : MemoryValue(kind, Int32, origin, pointer, offset)
     {
     }
 
     // Use this form for stores.
-    MemoryValue(Opcode opcode, Origin origin, Value* value, Value* pointer, int32_t offset = 0)
-        : Value(CheckedOpcode, opcode, Void, origin, value, pointer)
+    MemoryValue(Kind kind, Origin origin, Value* value, Value* pointer, int32_t offset = 0)
+        : Value(CheckedOpcode, kind, Void, origin, value, pointer)
         , m_offset(offset)
         , m_range(HeapRange::top())
     {
         if (!ASSERT_DISABLED) {
-            switch (opcode) {
+            switch (kind.opcode()) {
             case Store8:
             case Store16:
             case Store:

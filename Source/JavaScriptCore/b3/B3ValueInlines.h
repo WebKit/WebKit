@@ -57,7 +57,7 @@ void Value::replaceWithBottom(const BottomProvider& bottomProvider)
 template<typename T>
 inline T* Value::as()
 {
-    if (T::accepts(opcode()))
+    if (T::accepts(kind()))
         return static_cast<T*>(this);
     return nullptr;
 }

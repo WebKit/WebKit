@@ -46,18 +46,18 @@ Value* VariableValue::cloneImpl() const
     return new VariableValue(*this);
 }
 
-VariableValue::VariableValue(Opcode opcode, Origin origin, Variable* variable, Value* value)
-    : Value(CheckedOpcode, opcode, Void, origin, value)
+VariableValue::VariableValue(Kind kind, Origin origin, Variable* variable, Value* value)
+    : Value(CheckedOpcode, kind, Void, origin, value)
     , m_variable(variable)
 {
-    ASSERT(opcode == Set);
+    ASSERT(kind == Set);
 }
 
-VariableValue::VariableValue(Opcode opcode, Origin origin, Variable* variable)
-    : Value(CheckedOpcode, opcode, variable->type(), origin)
+VariableValue::VariableValue(Kind kind, Origin origin, Variable* variable)
+    : Value(CheckedOpcode, kind, variable->type(), origin)
     , m_variable(variable)
 {
-    ASSERT(opcode == Get);
+    ASSERT(kind == Get);
 }
 
 } } // namespace JSC::B3

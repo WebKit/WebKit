@@ -37,7 +37,7 @@ class PatchpointValue : public StackmapValue {
 public:
     typedef StackmapValue Base;
     
-    static bool accepts(Opcode opcode) { return opcode == Patchpoint; }
+    static bool accepts(Kind kind) { return kind == Patchpoint; }
 
     ~PatchpointValue();
 

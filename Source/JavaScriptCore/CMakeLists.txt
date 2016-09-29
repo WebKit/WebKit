@@ -133,6 +133,7 @@ set(JavaScriptCore_SOURCES
     b3/B3HeapRange.cpp
     b3/B3InferSwitches.cpp
     b3/B3InsertionSet.cpp
+    b3/B3Kind.cpp
     b3/B3LegalizeMemoryOffsets.cpp
     b3/B3LowerMacros.cpp
     b3/B3LowerMacrosAfterOptimizations.cpp

@@ -30,7 +30,7 @@
 #include "AirArg.h"
 #include "B3Effects.h"
 #include "B3FrequentedBlock.h"
-#include "B3Opcode.h"
+#include "B3Kind.h"
 #include "B3Origin.h"
 #include "B3SparseCollection.h"
 #include "B3Type.h"
@@ -54,15 +54,21 @@ public:
 
     static const char* const dumpPrefix;
 
-    static bool accepts(Opcode) { return true; }
+    static bool accepts(Kind) { return true; }
 
     virtual ~Value();
 
     unsigned index() const { return m_index; }
     
-    // Note that the opcode is immutable, except for replacing values with:
+    // Note that the kind is immutable, except for replacing values with:
     // Identity, Nop, Oops, Jump, and Phi. See below for replaceWithXXX() methods.
-    Opcode opcode() const { return m_opcode; }
+    Kind kind() const { return m_kind; }
+    
+    Opcode opcode() const { return kind().opcode(); }
+    
+    // It's good practice to mirror Kind methods here, so you can say value->isBlah()
+    // instead of value->kind().isBlah().
+    bool isChill() const { return kind().isChill(); }
 
     Origin origin() const { return m_origin; }
     void setOrigin(Origin origin) { m_origin = origin; }
@@ -131,8 +137,8 @@ public:
     //     things
     // }
     //
-    // This will return null if this opcode() != ArgumentReg. This works because this returns nullptr
-    // if T::accepts(opcode()) returns false.
+    // This will return null if this kind() != ArgumentReg. This works because this returns nullptr
+    // if T::accepts(kind()) returns false.
     template<typename T>
     T* as();
     template<typename T>
@@ -141,7 +147,7 @@ public:
     // What follows are a bunch of helpers for inspecting and modifying values. Note that we have a
     // bunch of different idioms for implementing such helpers. You can use virtual methods, and
     // override from the various Value subclasses. You can put the method inside Value and make it
-    // non-virtual, and the implementation can switch on opcode. The method could be inline or not.
+    // non-virtual, and the implementation can switch on kind. The method could be inline or not.
     // If a method is specific to some Value subclass, you could put it in the subclass, or you could
     // put it on Value anyway. It's fine to pick whatever feels right, and we shouldn't restrict
     // ourselves to any particular idiom.
@@ -158,8 +164,8 @@ public:
     virtual Value* checkSubConstant(Procedure&, const Value* other) const;
     virtual Value* checkMulConstant(Procedure&, const Value* other) const;
     virtual Value* checkNegConstant(Procedure&) const;
-    virtual Value* divConstant(Procedure&, const Value* other) const; // This chooses ChillDiv semantics for integers.
-    virtual Value* modConstant(Procedure&, const Value* other) const; // This chooses ChillMod semantics.
+    virtual Value* divConstant(Procedure&, const Value* other) const; // This chooses Div<Chill> semantics for integers.
+    virtual Value* modConstant(Procedure&, const Value* other) const; // This chooses Mod<Chill> semantics.
     virtual Value* bitAndConstant(Procedure&, const Value* other) const;
     virtual Value* bitOrConstant(Procedure&, const Value* other) const;
     virtual Value* bitXorConstant(Procedure&, const Value* other) const;
@@ -273,10 +279,10 @@ private:
     friend class Procedure;
     friend class SparseCollection<Value>;
 
-    // Checks that this opcode is valid for use with B3::Value.
-    ALWAYS_INLINE static void checkOpcode(Opcode opcode, unsigned numArgs)
+    // Checks that this kind is valid for use with B3::Value.
+    ALWAYS_INLINE static void checkKind(Kind kind, unsigned numArgs)
     {
-        switch (opcode) {
+        switch (kind.opcode()) {
         case FramePointer:
         case Nop:
         case Phi:
@@ -284,11 +290,11 @@ private:
         case Oops:
         case EntrySwitch:
             if (UNLIKELY(numArgs))
-                badOpcode(opcode, numArgs);
+                badKind(kind, numArgs);
             break;
         case Return:
             if (UNLIKELY(numArgs > 1))
-                badOpcode(opcode, numArgs);
+                badKind(kind, numArgs);
             break;
         case Identity:
         case Neg:
@@ -309,15 +315,13 @@ private:
         case BitwiseCast:
         case Branch:
             if (UNLIKELY(numArgs != 1))
-                badOpcode(opcode, numArgs);
+                badKind(kind, numArgs);
             break;
         case Add:
         case Sub:
         case Mul:
         case Div:
         case Mod:
-        case ChillDiv:
-        case ChillMod:
         case BitAnd:
         case BitOr:
         case BitXor:
@@ -336,14 +340,14 @@ private:
         case BelowEqual:
         case EqualOrUnordered:
             if (UNLIKELY(numArgs != 2))
-                badOpcode(opcode, numArgs);
+                badKind(kind, numArgs);
             break;
         case Select:
             if (UNLIKELY(numArgs != 3))
-                badOpcode(opcode, numArgs);
+                badKind(kind, numArgs);
             break;
         default:
-            badOpcode(opcode, numArgs);
+            badKind(kind, numArgs);
             break;
         }
     }
@@ -357,56 +361,56 @@ protected:
     // Instantiate values via Procedure.
     // This form requires specifying the type explicitly:
     template<typename... Arguments>
-    explicit Value(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, Value* firstChild, Arguments... arguments)
-        : m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Kind kind, Type type, Origin origin, Value* firstChild, Arguments... arguments)
+        : m_kind(kind)
         , m_type(type)
         , m_origin(origin)
         , m_children{ firstChild, arguments... }
     {
     }
     // This form is for specifying the type explicitly when the opcode has no children:
-    explicit Value(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin)
-        : m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Kind kind, Type type, Origin origin)
+        : m_kind(kind)
         , m_type(type)
         , m_origin(origin)
     {
     }
     // This form is for those opcodes that can infer their type from the opcode and first child:
     template<typename... Arguments>
-    explicit Value(CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild)
-        : m_opcode(opcode)
-        , m_type(typeFor(opcode, firstChild))
+    explicit Value(CheckedOpcodeTag, Kind kind, Origin origin, Value* firstChild)
+        : m_kind(kind)
+        , m_type(typeFor(kind, firstChild))
         , m_origin(origin)
         , m_children{ firstChild }
     {
     }
     // This form is for those opcodes that can infer their type from the opcode and first and second child:
     template<typename... Arguments>
-    explicit Value(CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild, Value* secondChild, Arguments... arguments)
-        : m_opcode(opcode)
-        , m_type(typeFor(opcode, firstChild, secondChild))
+    explicit Value(CheckedOpcodeTag, Kind kind, Origin origin, Value* firstChild, Value* secondChild, Arguments... arguments)
+        : m_kind(kind)
+        , m_type(typeFor(kind, firstChild, secondChild))
         , m_origin(origin)
         , m_children{ firstChild, secondChild, arguments... }
     {
     }
     // This form is for those opcodes that can infer their type from the opcode alone, and that don't
     // take any arguments:
-    explicit Value(CheckedOpcodeTag, Opcode opcode, Origin origin)
-        : m_opcode(opcode)
-        , m_type(typeFor(opcode, nullptr))
+    explicit Value(CheckedOpcodeTag, Kind kind, Origin origin)
+        : m_kind(kind)
+        , m_type(typeFor(kind, nullptr))
         , m_origin(origin)
     {
     }
     // Use this form for varargs.
-    explicit Value(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, const AdjacencyList& children)
-        : m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Kind kind, Type type, Origin origin, const AdjacencyList& children)
+        : m_kind(kind)
         , m_type(type)
         , m_origin(origin)
         , m_children(children)
     {
     }
-    explicit Value(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, AdjacencyList&& children)
-        : m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Kind kind, Type type, Origin origin, AdjacencyList&& children)
+        : m_kind(kind)
         , m_type(type)
         , m_origin(origin)
         , m_children(WTFMove(children))
@@ -416,52 +420,52 @@ protected:
     // This is the constructor you end up actually calling, if you're instantiating Value
     // directly.
     template<typename... Arguments>
-        explicit Value(Opcode opcode, Type type, Origin origin)
-        : Value(CheckedOpcode, opcode, type, origin)
+        explicit Value(Kind kind, Type type, Origin origin)
+        : Value(CheckedOpcode, kind, type, origin)
     {
-        checkOpcode(opcode, 0);
+        checkKind(kind, 0);
     }
     template<typename... Arguments>
-        explicit Value(Opcode opcode, Type type, Origin origin, Value* firstChild, Arguments&&... arguments)
-        : Value(CheckedOpcode, opcode, type, origin, firstChild, std::forward<Arguments>(arguments)...)
+        explicit Value(Kind kind, Type type, Origin origin, Value* firstChild, Arguments&&... arguments)
+        : Value(CheckedOpcode, kind, type, origin, firstChild, std::forward<Arguments>(arguments)...)
     {
-        checkOpcode(opcode, 1 + sizeof...(arguments));
+        checkKind(kind, 1 + sizeof...(arguments));
     }
     template<typename... Arguments>
-        explicit Value(Opcode opcode, Type type, Origin origin, const AdjacencyList& children)
-        : Value(CheckedOpcode, opcode, type, origin, children)
+        explicit Value(Kind kind, Type type, Origin origin, const AdjacencyList& children)
+        : Value(CheckedOpcode, kind, type, origin, children)
     {
-        checkOpcode(opcode, children.size());
+        checkKind(kind, children.size());
     }
     template<typename... Arguments>
-        explicit Value(Opcode opcode, Type type, Origin origin, AdjacencyList&& children)
-        : Value(CheckedOpcode, opcode, type, origin, WTFMove(children))
+        explicit Value(Kind kind, Type type, Origin origin, AdjacencyList&& children)
+        : Value(CheckedOpcode, kind, type, origin, WTFMove(children))
     {
-        checkOpcode(opcode, m_children.size());
+        checkKind(kind, m_children.size());
     }
     template<typename... Arguments>
-        explicit Value(Opcode opcode, Origin origin, Arguments&&... arguments)
-        : Value(CheckedOpcode, opcode, origin, std::forward<Arguments>(arguments)...)
+        explicit Value(Kind kind, Origin origin, Arguments&&... arguments)
+        : Value(CheckedOpcode, kind, origin, std::forward<Arguments>(arguments)...)
     {
-        checkOpcode(opcode, sizeof...(arguments));
+        checkKind(kind, sizeof...(arguments));
     }
 
 private:
-    friend class CheckValue; // CheckValue::convertToAdd() modifies m_opcode.
+    friend class CheckValue; // CheckValue::convertToAdd() modifies m_kind.
     
-    static Type typeFor(Opcode, Value* firstChild, Value* secondChild = nullptr);
+    static Type typeFor(Kind, Value* firstChild, Value* secondChild = nullptr);
 
     // This group of fields is arranged to fit in 64 bits.
 protected:
     unsigned m_index { UINT_MAX };
 private:
-    Opcode m_opcode;
+    Kind m_kind;
     Type m_type;
     
     Origin m_origin;
     AdjacencyList m_children;
 
-    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void badOpcode(Opcode, unsigned);
+    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void badKind(Kind, unsigned);
 
 public:
     BasicBlock* owner { nullptr }; // computed by Procedure::resetValueOwners().

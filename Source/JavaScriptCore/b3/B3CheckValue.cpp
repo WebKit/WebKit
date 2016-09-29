@@ -37,7 +37,7 @@ CheckValue::~CheckValue()
 void CheckValue::convertToAdd()
 {
     RELEASE_ASSERT(opcode() == CheckAdd || opcode() == CheckSub || opcode() == CheckMul);
-    m_opcode = CheckAdd;
+    m_kind = CheckAdd;
 }
 
 Value* CheckValue::cloneImpl() const
@@ -46,21 +46,21 @@ Value* CheckValue::cloneImpl() const
 }
 
 // Use this form for CheckAdd, CheckSub, and CheckMul.
-CheckValue::CheckValue(Opcode opcode, Origin origin, Value* left, Value* right)
-    : StackmapValue(CheckedOpcode, opcode, left->type(), origin)
+CheckValue::CheckValue(Kind kind, Origin origin, Value* left, Value* right)
+    : StackmapValue(CheckedOpcode, kind, left->type(), origin)
 {
     ASSERT(B3::isInt(type()));
     ASSERT(left->type() == right->type());
-    ASSERT(opcode == CheckAdd || opcode == CheckSub || opcode == CheckMul);
+    ASSERT(kind == CheckAdd || kind == CheckSub || kind == CheckMul);
     append(ConstrainedValue(left, ValueRep::WarmAny));
     append(ConstrainedValue(right, ValueRep::WarmAny));
 }
 
 // Use this form for Check.
-CheckValue::CheckValue(Opcode opcode, Origin origin, Value* predicate)
-    : StackmapValue(CheckedOpcode, opcode, Void, origin)
+CheckValue::CheckValue(Kind kind, Origin origin, Value* predicate)
+    : StackmapValue(CheckedOpcode, kind, Void, origin)
 {
-    ASSERT(opcode == Check);
+    ASSERT(kind == Check);
     append(ConstrainedValue(predicate, ValueRep::WarmAny));
 }
 

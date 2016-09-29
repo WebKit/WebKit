@@ -83,6 +83,41 @@ private:
             m_origin = m_value->origin();
             switch (m_value->opcode()) {
             case Mod: {
+                if (m_value->isChill()) {
+                    if (isARM64()) {
+                        BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+                        BasicBlock* zeroDenCase = m_blockInsertionSet.insertBefore(m_block);
+                        BasicBlock* normalModCase = m_blockInsertionSet.insertBefore(m_block);
+
+                        before->replaceLastWithNew<Value>(m_proc, Branch, m_origin, m_value->child(1));
+                        before->setSuccessors(
+                            FrequentedBlock(normalModCase, FrequencyClass::Normal),
+                            FrequentedBlock(zeroDenCase, FrequencyClass::Rare));
+
+                        Value* divResult = normalModCase->appendNew<Value>(m_proc, chill(Div), m_origin, m_value->child(0), m_value->child(1));
+                        Value* multipliedBack = normalModCase->appendNew<Value>(m_proc, Mul, m_origin, divResult, m_value->child(1));
+                        Value* result = normalModCase->appendNew<Value>(m_proc, Sub, m_origin, m_value->child(0), multipliedBack);
+                        UpsilonValue* normalResult = normalModCase->appendNew<UpsilonValue>(m_proc, m_origin, result);
+                        normalModCase->appendNew<Value>(m_proc, Jump, m_origin);
+                        normalModCase->setSuccessors(FrequentedBlock(m_block));
+
+                        UpsilonValue* zeroResult = zeroDenCase->appendNew<UpsilonValue>(
+                            m_proc, m_origin,
+                            zeroDenCase->appendIntConstant(m_proc, m_value, 0));
+                        zeroDenCase->appendNew<Value>(m_proc, Jump, m_origin);
+                        zeroDenCase->setSuccessors(FrequentedBlock(m_block));
+
+                        Value* phi = m_insertionSet.insert<Value>(m_index, Phi, m_value->type(), m_origin);
+                        normalResult->setPhi(phi);
+                        zeroResult->setPhi(phi);
+                        m_value->replaceWithIdentity(phi);
+                        before->updatePredecessorsAfter();
+                        m_changed = true;
+                    } else
+                        makeDivisionChill(Mod);
+                    break;
+                }
+                
                 double (*fmodDouble)(double, double) = fmod;
                 if (m_value->type() == Double) {
                     Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, fmodDouble);
@@ -106,7 +141,7 @@ private:
                     m_value->replaceWithIdentity(result);
                     m_changed = true;
                 } else if (isARM64()) {
-                    Value* divResult = m_insertionSet.insert<Value>(m_index, ChillDiv, m_origin, m_value->child(0), m_value->child(1));
+                    Value* divResult = m_insertionSet.insert<Value>(m_index, chill(Div), m_origin, m_value->child(0), m_value->child(1));
                     Value* multipliedBack = m_insertionSet.insert<Value>(m_index, Mul, m_origin, divResult, m_value->child(1));
                     Value* result = m_insertionSet.insert<Value>(m_index, Sub, m_origin, m_value->child(0), multipliedBack);
                     m_value->replaceWithIdentity(result);
@@ -114,43 +149,9 @@ private:
                 }
                 break;
             }
-            case ChillDiv: {
-                makeDivisionChill(Div);
-                break;
-            }
-
-            case ChillMod: {
-                if (isARM64()) {
-                    BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
-                    BasicBlock* zeroDenCase = m_blockInsertionSet.insertBefore(m_block);
-                    BasicBlock* normalModCase = m_blockInsertionSet.insertBefore(m_block);
-
-                    before->replaceLastWithNew<Value>(m_proc, Branch, m_origin, m_value->child(1));
-                    before->setSuccessors(
-                        FrequentedBlock(normalModCase, FrequencyClass::Normal),
-                        FrequentedBlock(zeroDenCase, FrequencyClass::Rare));
-
-                    Value* divResult = normalModCase->appendNew<Value>(m_proc, ChillDiv, m_origin, m_value->child(0), m_value->child(1));
-                    Value* multipliedBack = normalModCase->appendNew<Value>(m_proc, Mul, m_origin, divResult, m_value->child(1));
-                    Value* result = normalModCase->appendNew<Value>(m_proc, Sub, m_origin, m_value->child(0), multipliedBack);
-                    UpsilonValue* normalResult = normalModCase->appendNew<UpsilonValue>(m_proc, m_origin, result);
-                    normalModCase->appendNew<Value>(m_proc, Jump, m_origin);
-                    normalModCase->setSuccessors(FrequentedBlock(m_block));
-
-                    UpsilonValue* zeroResult = zeroDenCase->appendNew<UpsilonValue>(
-                        m_proc, m_origin,
-                        zeroDenCase->appendIntConstant(m_proc, m_value, 0));
-                    zeroDenCase->appendNew<Value>(m_proc, Jump, m_origin);
-                    zeroDenCase->setSuccessors(FrequentedBlock(m_block));
-
-                    Value* phi = m_insertionSet.insert<Value>(m_index, Phi, m_value->type(), m_origin);
-                    normalResult->setPhi(phi);
-                    zeroResult->setPhi(phi);
-                    m_value->replaceWithIdentity(phi);
-                    before->updatePredecessorsAfter();
-                    m_changed = true;
-                } else
-                    makeDivisionChill(Mod);
+            case Div: {
+                if (m_value->isChill())
+                    makeDivisionChill(Div);
                 break;
             }
 
@@ -188,7 +189,7 @@ private:
         if (isARM64())
             return;
 
-        // We implement "res = ChillDiv/ChillMod(num, den)" as follows:
+        // We implement "res = Div<Chill>/Mod<Chill>(num, den)" as follows:
         //
         //     if (den + 1 <=_unsigned 1) {
         //         if (!den) {

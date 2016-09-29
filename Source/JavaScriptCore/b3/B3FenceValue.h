@@ -34,7 +34,7 @@ namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE FenceValue : public Value {
 public:
-    static bool accepts(Opcode opcode) { return opcode == Fence; }
+    static bool accepts(Kind kind) { return kind == Fence; }
     
     ~FenceValue();
     

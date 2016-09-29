@@ -33,7 +33,7 @@ namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE Const32Value : public Value {
 public:
-    static bool accepts(Opcode opcode) { return opcode == Const32; }
+    static bool accepts(Kind kind) { return kind == Const32; }
     
     ~Const32Value();
     

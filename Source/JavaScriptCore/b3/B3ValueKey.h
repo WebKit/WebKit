@@ -28,7 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3HeapRange.h"
-#include "B3Opcode.h"
+#include "B3Kind.h"
 #include "B3Origin.h"
 #include "B3Type.h"
 #include <wtf/HashTable.h>
@@ -50,34 +50,34 @@ public:
     {
     }
 
-    ValueKey(Opcode opcode, Type type)
-        : m_opcode(opcode)
+    ValueKey(Kind kind, Type type)
+        : m_kind(kind)
         , m_type(type)
     {
     }
 
-    ValueKey(Opcode, Type, Value* child);
+    ValueKey(Kind, Type, Value* child);
 
-    ValueKey(Opcode, Type, Value* left, Value* right);
+    ValueKey(Kind, Type, Value* left, Value* right);
 
-    ValueKey(Opcode, Type, Value* a, Value* b, Value* c);
+    ValueKey(Kind, Type, Value* a, Value* b, Value* c);
 
-    ValueKey(Opcode opcode, Type type, int64_t value)
-        : m_opcode(opcode)
+    ValueKey(Kind kind, Type type, int64_t value)
+        : m_kind(kind)
         , m_type(type)
     {
         u.value = value;
     }
 
-    ValueKey(Opcode opcode, Type type, double value)
-        : m_opcode(opcode)
+    ValueKey(Kind kind, Type type, double value)
+        : m_kind(kind)
         , m_type(type)
     {
         u.doubleValue = value;
     }
 
-    ValueKey(Opcode opcode, Type type, float value)
-        : m_opcode(opcode)
+    ValueKey(Kind kind, Type type, float value)
+        : m_kind(kind)
         , m_type(type)
     {
         u.floatValue = value;
@@ -85,7 +85,8 @@ public:
 
     static ValueKey intConstant(Type type, int64_t value);
 
-    Opcode opcode() const { return m_opcode; }
+    Kind kind() const { return m_kind; }
+    Opcode opcode() const { return kind().opcode(); }
     Type type() const { return m_type; }
     unsigned childIndex(unsigned index) const { return u.indices[index]; }
     Value* child(Procedure&, unsigned index) const;
@@ -95,7 +96,7 @@ public:
 
     bool operator==(const ValueKey& other) const
     {
-        return m_opcode == other.m_opcode
+        return m_kind == other.m_kind
             && m_type == other.m_type
             && u == other.u;
     }
@@ -107,7 +108,7 @@ public:
 
     unsigned hash() const
     {
-        return m_opcode + m_type + WTF::IntHash<int32_t>::hash(u.indices[0]) + u.indices[1] + u.indices[2];
+        return m_kind.hash() + m_type + WTF::IntHash<int32_t>::hash(u.indices[0]) + u.indices[1] + u.indices[2];
     }
 
     explicit operator bool() const { return *this != ValueKey(); }
@@ -149,7 +150,7 @@ public:
     }
         
 private:
-    Opcode m_opcode { Oops };
+    Kind m_kind;
     Type m_type { Void };
     union U {
         unsigned indices[3];

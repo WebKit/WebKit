@@ -83,10 +83,10 @@ void StackmapValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
         ", lateClobbered = ", m_lateClobbered, ", usedRegisters = ", m_usedRegisters);
 }
 
-StackmapValue::StackmapValue(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin)
-    : Value(CheckedOpcode, opcode, type, origin)
+StackmapValue::StackmapValue(CheckedOpcodeTag, Kind kind, Type type, Origin origin)
+    : Value(CheckedOpcode, kind, type, origin)
 {
-    ASSERT(accepts(opcode));
+    ASSERT(accepts(kind));
 }
 
 } } // namespace JSC::B3

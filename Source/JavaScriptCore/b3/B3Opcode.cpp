@@ -128,12 +128,6 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Neg:
         out.print("Neg");
         return;
-    case ChillDiv:
-        out.print("ChillDiv");
-        return;
-    case ChillMod:
-        out.print("ChillMod");
-        return;
     case BitAnd:
         out.print("BitAnd");
         return;

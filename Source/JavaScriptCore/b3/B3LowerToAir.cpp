@@ -1846,10 +1846,9 @@ private:
             return;
         }
 
-        case ChillDiv:
-            RELEASE_ASSERT(isARM64());
-            FALLTHROUGH;
         case Div: {
+            if (m_value->isChill())
+                RELEASE_ASSERT(isARM64());
 #if CPU(X86) || CPU(X86_64)
             if (isInt(m_value->type())) {
                 lowerX86Div();
@@ -1865,6 +1864,7 @@ private:
 
         case Mod: {
             RELEASE_ASSERT(isX86());
+            RELEASE_ASSERT(!m_value->isChill());
 #if CPU(X86) || CPU(X86_64)
             lowerX86Div();
             append(Move, Tmp(X86Registers::edx), tmp(m_value));

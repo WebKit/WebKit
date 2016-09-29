@@ -33,23 +33,23 @@
 
 namespace JSC { namespace B3 {
 
-inline ValueKey::ValueKey(Opcode opcode, Type type, Value* child)
-    : m_opcode(opcode)
+inline ValueKey::ValueKey(Kind kind, Type type, Value* child)
+    : m_kind(kind)
     , m_type(type)
 {
     u.indices[0] = child->index();
 }
 
-inline ValueKey::ValueKey(Opcode opcode, Type type, Value* left, Value* right)
-    : m_opcode(opcode)
+inline ValueKey::ValueKey(Kind kind, Type type, Value* left, Value* right)
+    : m_kind(kind)
     , m_type(type)
 {
     u.indices[0] = left->index();
     u.indices[1] = right->index();
 }
 
-inline ValueKey::ValueKey(Opcode opcode, Type type, Value* a, Value* b, Value* c)
-    : m_opcode(opcode)
+inline ValueKey::ValueKey(Kind kind, Type type, Value* a, Value* b, Value* c)
+    : m_kind(kind)
     , m_type(type)
 {
     u.indices[0] = a->index();

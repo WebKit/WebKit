@@ -35,7 +35,7 @@ class StackSlot;
 
 class JS_EXPORT_PRIVATE SlotBaseValue : public Value {
 public:
-    static bool accepts(Opcode opcode) { return opcode == SlotBase; }
+    static bool accepts(Kind kind) { return kind == SlotBase; }
 
     ~SlotBaseValue();
 

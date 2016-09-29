@@ -648,10 +648,9 @@ private:
             break;
 
         case Div:
-        case ChillDiv:
             // Turn this: Div(constant1, constant2)
             // Into this: constant1 / constant2
-            // Note that this uses ChillDiv semantics. That's fine, because the rules for Div
+            // Note that this uses Div<Chill> semantics. That's fine, because the rules for Div
             // are strictly weaker: it has corner cases where it's allowed to do anything it
             // likes.
             if (replaceWithNewValue(m_value->child(0)->divConstant(m_proc, m_value->child(1))))
@@ -737,10 +736,9 @@ private:
             break;
 
         case Mod:
-        case ChillMod:
             // Turn this: Mod(constant1, constant2)
             // Into this: constant1 / constant2
-            // Note that this uses ChillMod semantics.
+            // Note that this uses Mod<Chill> semantics.
             if (replaceWithNewValue(m_value->child(0)->modConstant(m_proc, m_value->child(1))))
                 break;
 
@@ -774,19 +772,8 @@ private:
                     //                = -2^31 - -2^31
                     //                = 0
 
-                    Opcode divOpcode;
-                    switch (m_value->opcode()) {
-                    case Mod:
-                        divOpcode = Div;
-                        break;
-                    case ChillMod:
-                        divOpcode = ChillDiv;
-                        break;
-                    default:
-                        divOpcode = Oops;
-                        RELEASE_ASSERT_NOT_REACHED();
-                        break;
-                    }
+                    Kind divKind = Div;
+                    divKind.setIsChill(m_value->isChill());
 
                     replaceWithIdentity(
                         m_insertionSet.insert<Value>(
@@ -795,7 +782,7 @@ private:
                             m_insertionSet.insert<Value>(
                                 m_index, Mul, m_value->origin(),
                                 m_insertionSet.insert<Value>(
-                                    m_index, divOpcode, m_value->origin(),
+                                    m_index, divKind, m_value->origin(),
                                     m_value->child(0), m_value->child(1)),
                                 m_value->child(1))));
                     break;
