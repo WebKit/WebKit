@@ -1,3 +1,17 @@
+2016-09-28  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r206518. rdar://problem/28505032
+
+    2016-09-28  Jer Noble  <jer.noble@apple.com>
+
+            [MSE][Mac] In SourceBufferPrivateAVFObjC::abort(), support reseting parser to the last appended initialization segment.
+            https://bugs.webkit.org/show_bug.cgi?id=135164
+
+            Reviewed by Eric Carlson.
+
+            * media/media-source/media-source-abort-resets-parser-expected.txt: Added.
+            * media/media-source/media-source-abort-resets-parser.html: Added.
+
 2016-09-23  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r203982. rdar://problem/27547583
