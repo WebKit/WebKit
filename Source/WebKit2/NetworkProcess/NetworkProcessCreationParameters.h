@@ -81,7 +81,11 @@ struct NetworkProcessCreationParameters {
     String uiProcessBundleIdentifier;
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;
-
+    String sourceApplicationBundleIdentifier;
+    String sourceApplicationSecondaryIdentifier;
+#if PLATFORM(IOS)
+    String ctDataConnectionServiceType;
+#endif
     String httpProxy;
     String httpsProxy;
 #if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)

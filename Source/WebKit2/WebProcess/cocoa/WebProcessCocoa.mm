@@ -31,6 +31,7 @@
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
+#import "SessionTracker.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKFullKeyboardAccessWatcher.h"
@@ -51,9 +52,9 @@
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/NSAccessibilitySPI.h>
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/pthreadSPI.h>
 #import <WebCore/VNodeTracker.h>
 #import <WebCore/WebCoreNSURLExtras.h>
+#import <WebCore/pthreadSPI.h>
 #import <WebKitSystemInterface.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
@@ -90,6 +91,7 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& parameters)
 {
     WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
+    SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);

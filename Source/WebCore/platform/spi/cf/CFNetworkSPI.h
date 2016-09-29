@@ -100,7 +100,11 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @interface NSURLSessionConfiguration ()
 @property (assign) _TimingDataOptions _timingDataOptions;
 @property (copy) NSData *_sourceApplicationAuditTokenData;
-@property (copy) NSString *_sourceApplicationBundleIdentifier;
+@property (nullable, copy) NSString *_sourceApplicationBundleIdentifier;
+@property (nullable, copy) NSString *_sourceApplicationSecondaryIdentifier;
+#if PLATFORM(IOS)
+@property (nullable, copy) NSString *_CTDataConnectionServiceType;
+#endif
 @end
 #endif
 

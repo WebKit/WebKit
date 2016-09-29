@@ -241,6 +241,12 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.shouldEnableNetworkCacheEfficacyLogging = [defaults boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 #endif
 
+    parameters.sourceApplicationBundleIdentifier = m_configuration->sourceApplicationBundleIdentifier();
+    parameters.sourceApplicationSecondaryIdentifier = m_configuration->sourceApplicationSecondaryIdentifier();
+#if PLATFORM(IOS)
+    parameters.ctDataConnectionServiceType = m_configuration->ctDataConnectionServiceType();
+#endif
+
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100

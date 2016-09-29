@@ -62,9 +62,15 @@ public:
 
     WebCore::SessionID sessionID() const { return m_sessionID; }
 
+    // Must be called before any NetworkSession has been created.
     static void setCustomProtocolManager(CustomProtocolManager*);
 #if PLATFORM(COCOA)
     static void setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&&);
+    static void setSourceApplicationBundleIdentifier(const String&);
+    static void setSourceApplicationSecondaryIdentifier(const String&);
+#if PLATFORM(IOS)
+    static void setCTDataConnectionServiceType(const String&);
+#endif
 #endif
 
     void clearCredentials();

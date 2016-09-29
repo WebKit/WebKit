@@ -1,3 +1,14 @@
+2016-09-29  Sam Weinig  <sam@webkit.org>
+
+        Allow overriding some NSURLSessionConfiguration properties on a per-NetworkProcess basis
+        <rdar://problem/27648683>
+        https://bugs.webkit.org/show_bug.cgi?id=162735
+
+        Reviewed by Dan Bernstein.
+
+        * platform/spi/cf/CFNetworkSPI.h:
+        Forward declare _sourceApplicationSecondaryIdentifier and _CTDataConnectionServiceType
+
 2016-09-29  Antti Koivisto  <antti@apple.com>
 
         Remove addSubresourceStyleURLs functions

@@ -223,14 +223,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
 
-#if PLATFORM(COCOA) || USE(CFNETWORK)
-    SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
-#endif
-
-#if USE(NETWORK_SESSION)
-    NetworkSession::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
-#endif
-
     // FIXME: instead of handling this here, a message should be sent later (scales to multiple sessions)
     if (parameters.privateBrowsingEnabled)
         RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID());

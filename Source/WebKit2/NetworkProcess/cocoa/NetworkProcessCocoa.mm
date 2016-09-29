@@ -29,7 +29,9 @@
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
+#import "NetworkSession.h"
 #import "SandboxExtension.h"
+#import "SessionTracker.h"
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PublicSuffix.h>
@@ -78,6 +80,17 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
+#endif
+
+    SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
+
+#if USE(NETWORK_SESSION)
+    NetworkSession::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
+    NetworkSession::setSourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier);
+    NetworkSession::setSourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier);
+#if PLATFORM(IOS)
+    NetworkSession::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
+#endif
 #endif
 
     initializeNetworkSettings();
