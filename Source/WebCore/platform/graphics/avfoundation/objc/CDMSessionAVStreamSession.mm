@@ -261,6 +261,11 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
         return false;
     }
 
+    if (!protectedSourceBuffer) {
+        errorCode = MediaPlayer::InvalidPlayerState;
+        return false;
+    }
+
     ASSERT(!m_sourceBuffers.isEmpty());
     LOG(Media, "CDMSessionAVStreamSession::update(%p) - key data", this);
     errorCode = MediaPlayer::NoError;
