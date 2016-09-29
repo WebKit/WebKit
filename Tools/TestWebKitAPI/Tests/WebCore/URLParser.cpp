@@ -736,6 +736,18 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://127.%.0.1/",
         {"", "", "", "", 0, "", "", "", "http://127.%.0.1/"},
         {"http", "", "", "127.%.0.1", 0, "/", "", "", "http://127.%.0.1/"});
+    checkURLDifferences("http://[1:2:3:4:5:6:7:8:]/",
+        {"", "", "", "", 0, "", "", "", "http://[1:2:3:4:5:6:7:8:]/"},
+        {"http", "", "", "[1:2:3:4:5:6:7:8:]", 0, "/", "", "", "http://[1:2:3:4:5:6:7:8:]/"});
+    checkURLDifferences("http://[:2:3:4:5:6:7:8:]/",
+        {"", "", "", "", 0, "", "", "", "http://[:2:3:4:5:6:7:8:]/"},
+        {"http", "", "", "[:2:3:4:5:6:7:8:]", 0, "/", "", "", "http://[:2:3:4:5:6:7:8:]/"});
+    checkURLDifferences("http://[1:2:3:4:5:6:7::]/",
+        {"http", "", "", "[1:2:3:4:5:6:7:0]", 0, "/", "", "", "http://[1:2:3:4:5:6:7:0]/"},
+        {"http", "", "", "[1:2:3:4:5:6:7::]", 0, "/", "", "", "http://[1:2:3:4:5:6:7::]/"});
+    checkURLDifferences("http://[1:2:3:4:5:6:7:::]/",
+        {"", "", "", "", 0, "", "", "", "http://[1:2:3:4:5:6:7:::]/"},
+        {"http", "", "", "[1:2:3:4:5:6:7:::]", 0, "/", "", "", "http://[1:2:3:4:5:6:7:::]/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)
@@ -882,6 +894,7 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("http://[1234::ab@]");
     shouldFail("http://[1234::ab~]");
     shouldFail("http://[2001::1");
+    shouldFail("http://[1:2:3:4:5:6:7:8~]/");
 }
 
 // These are in the spec but not in the web platform tests.

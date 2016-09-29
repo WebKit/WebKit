@@ -2201,7 +2201,7 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
         address[piecePointer++] = value;
         if (c.atEnd())
             break;
-        if (*c != ':')
+        if (piecePointer == 8 || *c != ':')
             return Nullopt;
         advance(c, hostBegin);
     }
