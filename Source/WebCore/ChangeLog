@@ -1,3 +1,24 @@
+2016-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Text nodes assigned to a linked slot are not clickable
+        https://bugs.webkit.org/show_bug.cgi?id=162091
+        <rdar://problem/28383300>
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by updateMouseEventTargetNode adjusting the target to its parent element when
+        the original target was a text node. Fixed the bug by using the parent element in the composed tree.
+
+        Also fixed the bug that the hit testing was not finding the anchor element and keeping the cursor
+        in I-beam by traversing the composed tree instead.
+
+        Test: fast/shadow-dom/click-text-inside-linked-slot.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::enclosingLinkEventParentOrSelf): Fixed the cursor problem.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode): Fixed the activation problem.
+
 2016-09-29  Sam Weinig  <sam@webkit.org>
 
         Allow overriding some NSURLSessionConfiguration properties on a per-NetworkProcess basis

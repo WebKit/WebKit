@@ -1842,7 +1842,7 @@ void Node::getSubresourceURLs(ListHashSet<URL>& urls) const
 
 Element* Node::enclosingLinkEventParentOrSelf()
 {
-    for (Node* node = this; node; node = node->parentOrShadowHostNode()) {
+    for (Node* node = this; node; node = node->parentInComposedTree()) {
         // For imagemaps, the enclosing link element is the associated area element not the image itself.
         // So we don't let images be the enclosing link element, even though isLink sometimes returns
         // true for them.

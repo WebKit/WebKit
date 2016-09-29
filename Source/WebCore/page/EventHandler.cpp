@@ -2362,10 +2362,9 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         targetElement = m_capturingMouseEventsElement.get();
     else if (targetNode) {
         // If the target node is a non-element, dispatch on the parent. <rdar://problem/4196646>
-        if (!is<Element>(*targetNode))
-            targetElement = targetNode->parentOrShadowHostElement();
-        else
-            targetElement = downcast<Element>(targetNode);
+        while (targetNode && !is<Element>(*targetNode))
+            targetNode = targetNode->parentInComposedTree();
+        targetElement = downcast<Element>(targetNode);
     }
 
     m_elementUnderMouse = targetElement;

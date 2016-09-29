@@ -1,3 +1,20 @@
+2016-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Text nodes assigned to a linked slot are not clickable
+        https://bugs.webkit.org/show_bug.cgi?id=162091
+        <rdar://problem/28383300>
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test for clicking inside a text node assigned to a slot inside a hyperlink.
+
+        Unfortunately, there is not a way to make this a W3C style test until the web platform tests
+        start supporting WebDriver.
+
+        * fast/shadow-dom/click-text-inside-linked-slot-expected.txt: Added.
+        * fast/shadow-dom/click-text-inside-linked-slot.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-09-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/images/load-img-with-empty-src.html as crashing.

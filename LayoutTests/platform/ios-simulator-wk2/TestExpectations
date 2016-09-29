@@ -1765,6 +1765,7 @@ webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-she
 fast/loader/location-hash-user-gesture.html [ Skip ]
 imported/blink/editing/selection/selectstart-event-crash.html [ Skip ]
 fast/dom/Window/post-message-user-action.html [ Skip ]
+fast/shadow-dom/click-text-inside-linked-slot.html [ Skip ]
 
 # No touch events
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html [ Skip ]
