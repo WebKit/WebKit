@@ -1,3 +1,16 @@
+2016-09-29  Aaron Chu  <aaron_chu@apple.com>
+
+        Web Inspector: AXI: linkified refs to #document and #text are not usually navigable nodes; consider delinkifying them
+        https://bugs.webkit.org/show_bug.cgi?id=130600
+        <rdar://problem/16391333>
+
+        Reviewed by Brian Burg.
+
+        Added a manual test to test the node links in the Accessibility Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=130600
+
+        * ManualTests/accessibility/delinkified-non-navigable-links.html: Added.
+
 2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Remove obsolete comment from OptionsGTK.cmake

@@ -66,8 +66,12 @@ WebInspector.linkifyNodeReference = function(node, maxLength)
     let link = document.createElement("span");
     link.append(displayName);
     link.setAttribute("role", "link");
-    link.className = "node-link";
+    
     link.title = displayName;
+    
+    let nodeType = node.nodeType();
+    if ((nodeType !== Node.DOCUMENT_NODE || node.parentNode) && nodeType !== Node.TEXT_NODE)
+        link.className = "node-link";
 
     link.addEventListener("click", WebInspector.domTreeManager.inspectElement.bind(WebInspector.domTreeManager, node.id));
     link.addEventListener("mouseover", WebInspector.domTreeManager.highlightDOMNode.bind(WebInspector.domTreeManager, node.id, "all"));

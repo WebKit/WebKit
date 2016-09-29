@@ -1,3 +1,17 @@
+2016-09-29  Aaron Chu  <aaron_chu@apple.com>
+
+        Web Inspector: AXI: linkified refs to #document and #text are not usually navigable nodes; consider delinkifying them
+        https://bugs.webkit.org/show_bug.cgi?id=130600
+        <rdar://problem/16391333>
+
+        Reviewed by Brian Burg.
+
+        Removing link style for non-navigable nodes by first
+        checking nodeType of the node.
+
+        * UserInterface/Base/DOMUtilities.js:
+        (WebInspector.linkifyNodeReference):
+
 2016-09-27  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Refreshing while in Timelines-tab causes negative timestamps in Network-tab
