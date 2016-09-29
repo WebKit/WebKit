@@ -591,7 +591,7 @@ JSValue JSDOMWindow::setInterval(ExecState& state)
     return jsNumber(result);
 }
 
-DOMWindow* JSDOMWindow::toWrapped(ExecState&, JSValue value)
+DOMWindow* JSDOMWindow::toWrapped(JSValue value)
 {
     if (!value.isObject())
         return nullptr;

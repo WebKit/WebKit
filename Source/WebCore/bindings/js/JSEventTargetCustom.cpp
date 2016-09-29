@@ -60,7 +60,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget& targ
     if (value.inherits(JS##interfaceName::info()))                      \
         return &jsCast<JS##interfaceName*>(asObject(value))->wrapped();
 
-EventTarget* JSEventTarget::toWrapped(ExecState&, JSValue value)
+EventTarget* JSEventTarget::toWrapped(JSValue value)
 {
     TRY_TO_UNWRAP_WITH_INTERFACE(DOMWindowShell)
     TRY_TO_UNWRAP_WITH_INTERFACE(DOMWindow)

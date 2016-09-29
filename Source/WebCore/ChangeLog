@@ -1,5 +1,32 @@
 2016-09-28  Chris Dumez  <cdumez@apple.com>
 
+        Drop first 'state' parameter to JSDOMWindow::toWrapped() / JSEventTarget::toWrapped()
+        https://bugs.webkit.org/show_bug.cgi?id=162709
+
+        Reviewed by Alex Christensen.
+
+        Drop first 'state' parameter to JSDOMWindow::toWrapped() / JSEventTarget::toWrapped()
+        as it is unused. This is the quickest way to allow DOMWindow / EventTarget members
+        in IDL dictionaries. This is because the generated bindings code relies on
+        convertWrapperType() in JSDOMConvert.h which calls toWrapped() with a single
+        parameter. Right now, the only type that requires an ExecState for its toWrapped()
+        is XPathNSResolver (which should likely be a callback interface rather than a
+        regular interface).
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::toWrapped):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::toWrapped):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (JSValueToNative):
+
+2016-09-28  Chris Dumez  <cdumez@apple.com>
+
         Log console messages when the anchor download attribute is ignored
         https://bugs.webkit.org/show_bug.cgi?id=162703
 

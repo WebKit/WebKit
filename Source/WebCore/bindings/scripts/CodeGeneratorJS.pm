@@ -1202,7 +1202,7 @@ sub GenerateHeader
     # JSValue to implementation type
     if (ShouldGenerateToWrapped($hasParent, $interface)) {
         my $nativeType = GetNativeType($interface, $implType);
-        if ($interface->extendedAttributes->{"JSCustomToNativeObject"}) {
+        if ($interface->name eq "XPathNSResolver") {
             push(@headerContent, "    static $nativeType toWrapped(JSC::ExecState&, JSC::JSValue);\n");
         } else {
             my $export = "";
@@ -4844,7 +4844,7 @@ sub JSValueToNative
     return "JSEventListener::create($value, *castedThis, false, currentWorld(state))" if $type eq "EventListener";
 
     my $extendedAttributes = $codeGenerator->getInterfaceExtendedAttributesFromName($type);
-    return ("JS${type}::toWrapped(*state, $value)", 1) if $extendedAttributes->{"JSCustomToNativeObject"};
+    return ("JS${type}::toWrapped(*state, $value)", 1) if $type eq "XPathNSResolver";
     return ("JS${type}::toWrapped($value)", 0);
 }
 

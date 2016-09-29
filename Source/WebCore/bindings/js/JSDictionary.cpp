@@ -184,7 +184,7 @@ void JSDictionary::convertValue(ExecState* state, JSValue value, RefPtr<DOMWindo
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* window = JSDOMWindow::toWrapped(*state, value);
+    auto* window = JSDOMWindow::toWrapped(value);
     if (UNLIKELY(!window) && !value.isUndefinedOrNull()) {
         throwVMTypeError(state, scope, "Dictionary member is not of type Window");
         return;
@@ -192,9 +192,9 @@ void JSDictionary::convertValue(ExecState* state, JSValue value, RefPtr<DOMWindo
     result = window;
 }
 
-void JSDictionary::convertValue(ExecState* state, JSValue value, RefPtr<EventTarget>& result)
+void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<EventTarget>& result)
 {
-    result = JSEventTarget::toWrapped(*state, value);
+    result = JSEventTarget::toWrapped(value);
 }
 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Node>& result)
