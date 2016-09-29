@@ -629,6 +629,23 @@ invalid("({get [x (){}})")
 invalid("({set [x](){}})")
 valid("({set [x](x){}})")
 invalid("({set [x (x){}})")
+valid("({set foo(x) { } })");
+valid("({set foo(x) { 'use strict'; } })");
+invalid("({set foo(x = 20) { 'use strict'; } })");
+invalid("({set foo({x}) { 'use strict'; } })");
+invalid("({set foo([x]) { 'use strict'; } })");
+invalid("({set foo(...x) {} })");
+valid("class Foo { set v(z) { } }");
+valid("class Foo { set v(z) { 'use strict'; } }");
+invalid("class Foo { set v(z = 50) { 'use strict'; } }");
+invalid("class Foo { set v({z}) { 'use strict'; } }");
+invalid("class Foo { set v([z]) { 'use strict'; } }");
+invalid("class Foo { set v(...z) { } }");
+invalid("class foo { set y([x, y, x]) { } }");
+invalid("class foo { set y([x, y, {x}]) { } }");
+invalid("class foo { set y({x, x}) { } }");
+invalid("class foo { set y({x, field: {x}}) { } }");
+valid("class foo { set y({x, field: {xx}}) { } }");
 invalid("({[...x]: 1})")
 invalid("function f({a, a}) {}");
 invalid("function f({a}, a) {}");

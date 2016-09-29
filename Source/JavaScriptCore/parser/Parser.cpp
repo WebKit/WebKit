@@ -1994,11 +1994,15 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
     } else if (mode == SourceParseMode::SetterMode) {
         failIfTrue(match(CLOSEPAREN), "setter functions must have one parameter");
         const Identifier* duplicateParameter = nullptr;
-        auto parameter = parseDestructuringPattern(context, DestructuringKind::DestructureToParameters, ExportType::NotExported, &duplicateParameter);
+        bool hasDestructuringPattern = false;
+        auto parameter = parseDestructuringPattern(context, DestructuringKind::DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
         failIfFalse(parameter, "setter functions must have one parameter");
         auto defaultValue = parseDefaultValueForDestructuringPattern(context);
         propagateError();
-        semanticFailIfTrue(duplicateParameter && defaultValue, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with default parameter values");
+        if (defaultValue || hasDestructuringPattern) {
+            semanticFailIfTrue(duplicateParameter, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with non-simple parameter list");
+            currentScope()->setHasNonSimpleParameterList();
+        }
         context.appendParameter(parameterList, parameter, defaultValue);
         functionInfo.parameterCount = 1;
         functionInfo.functionLength = defaultValue ? 0 : 1;
