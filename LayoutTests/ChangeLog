@@ -1,3 +1,21 @@
+2016-09-28  Ada Chan  <adachan@apple.com>
+
+        Fix flaky test media/click-placeholder-not-pausing.html
+        https://bugs.webkit.org/show_bug.cgi?id=162661
+
+        Reviewed by Eric Carlson.
+
+        This test became flaky after r201474 when we started to delay showing
+        the inline placeholder until we are sure the video layer has been moved
+        into the video fullscreen layer. This means we can't guarantee that the
+        placeholder is visible right away after the video's presentation mode
+        changes to "picture-in-picture".
+
+        To fix this, wait for the placeholder to become visible before clicking it.
+
+        * media/click-placeholder-not-pausing.html:
+        * platform/mac-wk2/TestExpectations:
+
 2016-09-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206483.

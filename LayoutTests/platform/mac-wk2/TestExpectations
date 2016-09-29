@@ -472,8 +472,7 @@ webkit.org/b/158639 [ Release Yosemite ] imported/blink/storage/indexeddb/blob-d
 [ Sierra+ ] media/video-contained-in-fullscreen-element-going-into-pip.html [ Pass ]
 
 # rdar://problem/26885345
-[ Release Sierra+ ] media/click-placeholder-not-pausing.html [ Pass ]
-[ Debug Sierra+ ] media/click-placeholder-not-pausing.html [ Skip ]
+[ Sierra+ ] media/click-placeholder-not-pausing.html [ Pass ]
 
 # RTL Scrollbars are enabled on Sierra WebKit2.
 [ Sierra+ ] fast/scrolling/rtl-scrollbars.html [ Pass ]

@@ -7,6 +7,9 @@
     <script>
         var mediaElement;
         var placeholder;
+        var maxAttemptsToTestPlaceholderVisibility = 10;
+        var attemptsToTestPlaceholderVisibility = 0;
+
 
         if (window.internals)
             window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
@@ -38,7 +41,26 @@
         {
             testExpected("mediaElement.webkitPresentationMode", "picture-in-picture");
 
+            pollPIPPlaceholderVisibilityChange();
+        }
+
+        function pollPIPPlaceholderVisibilityChange()
+        {
             placeholder = mediaControlsElement(internals.shadowRoot(mediaElement), '-webkit-media-controls-wireless-playback-status');
+
+            if (placeholder.classList.contains('hidden')) {
+                if (attemptsToTestPlaceholderVisibility > maxAttemptsToTestPlaceholderVisibility) {
+                    failTest("Inline placeholder did not become visible after video enters picture-in-picture.");
+                    endTest();
+                    return;
+                }
+
+                // Use 33 to match PlaceholderPollingDelay in mediaControlsApple.js.
+                setTimeout(pollPIPPlaceholderVisibilityChange, 33);
+                attemptsToTestPlaceholderVisibility++;
+                return;
+            }
+
             testExpected("placeholder.classList.contains('hidden')", false);
 
             if (!window.eventSender) {
