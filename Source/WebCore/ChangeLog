@@ -1,5 +1,17 @@
 2016-09-29  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should fail to parse unclosed IPv6 addresses
+        https://bugs.webkit.org/show_bug.cgi?id=162715
+
+        Reviewed by Tim Horton.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseHostAndPort):
+
+2016-09-29  Alex Christensen  <achristensen@webkit.org>
+
         URLParser should ignore tabs at all possible locations
         https://bugs.webkit.org/show_bug.cgi?id=162711
 

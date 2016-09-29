@@ -876,6 +876,12 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("://:0/", "about:blank");
     shouldFail("about~");
     shouldFail("//C:asdf/foo/bar", "file:///tmp/mock/path");
+    shouldFail("http://[1234::ab#]");
+    shouldFail("http://[1234::ab/]");
+    shouldFail("http://[1234::ab?]");
+    shouldFail("http://[1234::ab@]");
+    shouldFail("http://[1234::ab~]");
+    shouldFail("http://[2001::1");
 }
 
 // These are in the spec but not in the web platform tests.
