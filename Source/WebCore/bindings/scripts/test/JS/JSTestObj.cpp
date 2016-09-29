@@ -38,6 +38,8 @@
 #include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
 #include "JSDOMStringList.h"
+#include "JSDOMWindow.h"
+#include "JSDOMWindowShell.h"
 #include "JSDocument.h"
 #include "JSElement.h"
 #include "JSEventListener.h"
@@ -6340,9 +6342,10 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9(ExecSta
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arrayArg = toNativeArray<String>(*state, state->uncheckedArgument(0));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.overloadedMethod(WTFMove(arrayArg));
+    auto window = JSDOMWindow::toWrapped(state->uncheckedArgument(0));
+    if (UNLIKELY(!window))
+        return throwArgumentTypeError(*state, throwScope, 0, "window", "TestObject", "overloadedMethod", "DOMWindow");
+    impl.overloadedMethod(*window);
     return JSValue::encode(jsUndefined());
 }
 
@@ -6359,7 +6362,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10(ExecSt
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arrayArg = toNativeArray<uint32_t>(*state, state->uncheckedArgument(0));
+    auto arrayArg = toNativeArray<String>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.overloadedMethod(WTFMove(arrayArg));
     return JSValue::encode(jsUndefined());
@@ -6378,13 +6381,32 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11(ExecSt
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto arrayArg = toNativeArray<uint32_t>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.overloadedMethod(WTFMove(arrayArg));
+    return JSValue::encode(jsUndefined());
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto strArg = state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.overloadedMethod(WTFMove(strArg));
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12(ExecState* state)
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13(ExecState* state)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -6409,7 +6431,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
     UNUSED_PARAM(throwScope);
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     if (argsCount == 0) {
-        return jsTestObjPrototypeFunctionOverloadedMethod12(state);
+        return jsTestObjPrototypeFunctionOverloadedMethod13(state);
     }
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
@@ -6423,8 +6445,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
             return jsTestObjPrototypeFunctionOverloadedMethod6(state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod8(state);
+        if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(JSDOMWindowShell::info()) || asObject(distinguishingArg)->inherits(JSDOMWindow::info())))
+            return jsTestObjPrototypeFunctionOverloadedMethod9(state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethod12(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod13(state);
         if (hasIteratorMethod(*state, distinguishingArg))
             return jsTestObjPrototypeFunctionOverloadedMethod7(state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->type() != RegExpObjectType)
@@ -6438,7 +6462,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         if (distinguishingArg.isUndefined())
             return jsTestObjPrototypeFunctionOverloadedMethod2(state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethod12(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod13(state);
         if (distinguishingArg.isNumber())
             return jsTestObjPrototypeFunctionOverloadedMethod2(state);
         return jsTestObjPrototypeFunctionOverloadedMethod1(state);

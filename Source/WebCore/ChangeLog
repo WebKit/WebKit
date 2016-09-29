@@ -1,3 +1,25 @@
+2016-09-29  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Fix overload resolution when the distinguishing argument is a Window
+        https://bugs.webkit.org/show_bug.cgi?id=162728
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix overload resolution when the distinguishing argument is a Window.
+        Window is special because we could have a window or a proxy to the
+        Window (JSDOMWindowShell).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOverloadedFunctionOrConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod9):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod10):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod11):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod12):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod13):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        * bindings/scripts/test/TestObj.idl:
+
 2016-09-29  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile fix.

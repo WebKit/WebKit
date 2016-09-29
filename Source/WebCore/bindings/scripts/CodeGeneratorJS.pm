@@ -1997,7 +1997,12 @@ END
                 my $overload = @{$tuple}[0];
                 my $type = StripNullable(@{@{$tuple}[1]}[$d]);
                 if ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type)) {
-                    &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JS${type}::info())");
+                    if ($type eq "DOMWindow") {
+                        AddToImplIncludes("JSDOMWindowShell.h");
+                        &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(JSDOMWindowShell::info()) || asObject(distinguishingArg)->inherits(JSDOMWindow::info()))");
+                    } else {
+                        &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JS${type}::info())");
+                    }
                 }
             }
 
