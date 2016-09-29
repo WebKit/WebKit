@@ -1,3 +1,15 @@
+2016-09-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Clang 3.9 reports a compilation warning about ENABLE_EXCEPTION_SCOPE_VERIFICATION
+        https://bugs.webkit.org/show_bug.cgi?id=162718
+
+        Reviewed by Alex Christensen.
+
+        Clang 3.9 reports a following compilation warning:
+          Source/JavaScriptCore/runtime/VM.h:656:5: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+        * wtf/Platform.h: Changed the definition of ENABLE_EXCEPTION_SCOPE_VERIFICATION not to use 'defined'.
+
 2016-09-28  Mark Lam  <mark.lam@apple.com>
 
         Re-enable StringView life-cycle checking.
