@@ -1,3 +1,12 @@
+2016-09-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Removing El Capitan modifier from flaky test media/restore-from-page-cache.html.
+        https://bugs.webkit.org/show_bug.cgi?id=158747
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-09-29  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] scheduler for layout nodes
