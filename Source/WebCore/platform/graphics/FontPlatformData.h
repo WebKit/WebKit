@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010, 2013 Apple Inc.
+ * Copyright (C) 2006, 2007, 2008, 2010, 2013-2016 Apple Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
@@ -28,6 +28,7 @@
 #include "TextFlags.h"
 
 #if PLATFORM(WIN)
+#include "COMPtr.h"
 #include "SharedGDIObject.h"
 #endif
 
@@ -65,6 +66,8 @@ typedef const struct __CTFont* CTFontRef;
 #if PLATFORM(WIN)
 #include <wtf/win/GDIObject.h>
 typedef struct HFONT__* HFONT;
+interface IDWriteFont;
+interface IDWriteFontFace;
 #endif
 
 
@@ -103,6 +106,8 @@ public:
 
 #if USE(CG)
     FontPlatformData(GDIObject<HFONT>, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
+#elif USE(DIRECT2D)
+    FontPlatformData(GDIObject<HFONT>, IDWriteFont*, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #elif USE(CAIRO)
     FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic);
 #endif
@@ -135,6 +140,11 @@ public:
 
 #if USE(CG) && (PLATFORM(WIN) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 100000))
     CGFontRef cgFont() const { return m_cgFont.get(); }
+#endif
+
+#if USE(DIRECT2D)
+    IDWriteFont* dwFont() const { return m_dwFont.get(); }
+    IDWriteFontFace* dwFontFace() const { return m_dwFontFace.get(); }
 #endif
 
     bool isFixedPitch() const;
@@ -240,6 +250,10 @@ private:
 
 #if USE(CG) && (PLATFORM(WIN) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 100000))
     RetainPtr<CGFontRef> m_cgFont;
+#endif
+#if USE(DIRECT2D)
+    COMPtr<IDWriteFont> m_dwFont;
+    COMPtr<IDWriteFontFace> m_dwFontFace;
 #endif
 #if USE(CAIRO)
     RefPtr<cairo_scaled_font_t> m_scaledFont;

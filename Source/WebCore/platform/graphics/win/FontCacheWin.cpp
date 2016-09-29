@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013-2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2008, 2013-2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,10 @@
 #include "CoreGraphicsSPI.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
+
+#if USE(DIRECT2D)
+#include <dwrite.h>
 #endif
 
 using std::min;
@@ -549,6 +553,7 @@ static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMET
     procData->m_traitsMasks.add(traitsMask);
     return 1;
 }
+
 Vector<FontTraitsMask> FontCache::getTraitsInFamily(const AtomicString& familyName)
 {
     HWndDC hdc(0);
@@ -599,6 +604,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
 #if USE(CG)
     bool fontCreationFailed = !result->cgFont();
+#elif USE(DIRECT2D)
+    bool fontCreationFailed = !result->dwFont();
 #elif USE(CAIRO)
     bool fontCreationFailed = !result->scaledFont();
 #endif

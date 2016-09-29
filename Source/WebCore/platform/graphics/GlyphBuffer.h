@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2009, 2011, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -96,6 +96,7 @@ public:
     GlyphBufferAdvance* advances(unsigned from) { return m_advances.data() + from; }
     const GlyphBufferGlyph* glyphs(unsigned from) const { return m_glyphs.data() + from; }
     const GlyphBufferAdvance* advances(unsigned from) const { return m_advances.data() + from; }
+    size_t advancesCount() const { return m_advances.size(); }
 
     const Font* fontAt(unsigned index) const { return m_font[index]; }
 

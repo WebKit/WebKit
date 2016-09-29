@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2010, 2013, 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,20 +25,26 @@
 #include "FontPlatformData.h"
 #include "OpenTypeUtilities.h"
 #include "SharedBuffer.h"
-#include <ApplicationServices/ApplicationServices.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/win/GDIObject.h>
 
-namespace WebCore {
+#if USE(CG)
+#include <ApplicationServices/ApplicationServices.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
-using namespace std;
+#if USE(DIRECT2D)
+#include "Font.h"
+#include <dwrite.h>
+#endif
+
+namespace WebCore {
 
 FontCustomPlatformData::~FontCustomPlatformData()
 {
     if (m_fontReference)
-            RemoveFontMemResourceEx(m_fontReference);
+        RemoveFontMemResourceEx(m_fontReference);
 }
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic)
@@ -68,8 +74,15 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     auto hfont = adoptGDIObject(::CreateFontIndirect(&logFont));
 
+#if USE(CG)
     RetainPtr<CGFontRef> cgFont = adoptCF(CGFontCreateWithPlatformFont(&logFont));
     return FontPlatformData(WTFMove(hfont), cgFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
+#else
+    COMPtr<IDWriteFont> dwFont;
+    HRESULT hr = Font::systemDWriteGdiInterop()->CreateFontFromLOGFONT(&logFont, &dwFont);
+    RELEASE_ASSERT(SUCCEEDED(hr));
+    return FontPlatformData(WTFMove(hfont), dwFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
+#endif
 }
 
 // Creates a unique and unpredictable font name, in order to avoid collisions and to

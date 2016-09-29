@@ -1,3 +1,43 @@
+2016-09-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Add D2D Font handling code
+        https://bugs.webkit.org/show_bug.cgi?id=162712
+
+        Reviewed by Brent Fulgham.
+
+        This patch lands a set of new files that implement 
+
+        No new tests until complete backend lands.
+
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::syntheticObliqueAngle): Added helper function.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::dwFont): Added.
+        (WebCore::FontPlatformData::dwFontFace): Ditto.
+        * platform/graphics/GlyphBuffer.h:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs): Use helper function.
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::FontCascade::drawGlyphs): Ditto.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData): Add case for Direct2D.
+        * platform/graphics/win/FontCascadeDirect2D.cpp: Added.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Fix whitespace.
+        (WebCore::FontCustomPlatformData::fontPlatformData): Add Direct2D case.
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Clean up C++ initializers.
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        * platform/graphics/win/FontPlatformDataDirect2D.cpp: Added.
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Clean up C++ initializers.
+        * platform/graphics/win/GlyphPageTreeNodeDirect2D.cpp: Added.
+        * platform/graphics/win/SimpleFontDataDirect2D.cpp: Added.
+        * platform/graphics/win/TextAnalyzerHelper.cpp: Added.
+        * platform/graphics/win/TextAnalyzerHelper.h: Added.
+
 2016-09-29  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should fail to parse unclosed IPv6 addresses

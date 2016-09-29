@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2009, 2013, 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,8 +39,6 @@
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
-
-const int syntheticObliqueAngle = 14;
 
 static inline CGFloat toCGFloat(FIXED f)
 {
@@ -168,7 +166,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     matrix.d = -matrix.d;
 
     if (platformData.syntheticOblique()) {
-        static float skew = -tanf(syntheticObliqueAngle * piFloat / 180.0f);
+        static float skew = -tanf(syntheticObliqueAngle() * piFloat / 180.0f);
         matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, skew, 1, 0, 0));
     }
 
