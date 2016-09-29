@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
 
 #import "PlatformUtilities.h"
 #import "TestWKWebViewMac.h"
@@ -243,4 +243,4 @@ TEST(WKWebViewCandidateTests, ShouldRequestCandidatesInTextField)
 
 #endif
 
-#endif /* WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 */
+#endif /* WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201 */
