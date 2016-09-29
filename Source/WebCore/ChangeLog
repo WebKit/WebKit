@@ -1,3 +1,24 @@
+2016-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix syntax violation handling in IPv4 address parsing
+        https://bugs.webkit.org/show_bug.cgi?id=162756
+
+        Reviewed by Tim Horton.
+
+        When we are parsing the up to 4 numbers in an IPv4 address, if we find a syntax violation 
+        (the canonicalized address would be different than the input string) then wait to report
+        it until we have determined that this is a valid IPv4 address that will be canonicalized.
+        If it is not a valid IPv4 address, then we will just treat the characters as the host, and
+        that could be no syntax violation.
+
+        Covered by a new API test and existing API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::URLParser):
+        (WebCore::URLParser::parseIPv4Number):
+        (WebCore::URLParser::parseIPv4Host):
+        * platform/URLParser.h:
+
 2016-09-29  Chris Dumez  <cdumez@apple.com>
 
         Fix post-landing nits after r206561.

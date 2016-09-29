@@ -2027,7 +2027,7 @@ void URLParser::serializeIPv6(URLParser::IPv6Address address)
 }
 
 template<typename CharacterType>
-Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& iterator, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
+Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
 {
     enum class State : uint8_t {
         UnknownBase,
@@ -2040,7 +2040,6 @@ Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& 
     Checked<uint32_t, RecordOverflow> value = 0;
     if (!iterator.atEnd() && *iterator == '.')
         return Nullopt;
-    bool didSeeSyntaxViolation = false;
     while (!iterator.atEnd()) {
         if (*iterator == '.') {
             ASSERT(!value.hasOverflowed());
@@ -2095,8 +2094,6 @@ Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& 
             break;
         }
     }
-    if (didSeeSyntaxViolation)
-        syntaxViolation(iteratorForSyntaxViolationPosition);
     ASSERT(!value.hasOverflowed());
     return value.unsafeGet();
 }
@@ -2115,10 +2112,11 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<Char
 
     Vector<uint32_t, 4> items;
     items.reserveInitialCapacity(4);
+    bool didSeeSyntaxViolation = false;
     while (!iterator.atEnd()) {
         if (items.size() >= 4)
             return Nullopt;
-        if (auto item = parseIPv4Number(iterator, hostBegin))
+        if (auto item = parseIPv4Number(iterator, didSeeSyntaxViolation))
             items.append(item.value());
         else
             return Nullopt;
@@ -2141,6 +2139,9 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<Char
     }
     if (items[items.size() - 1] >= pow256(5 - items.size()))
         return Nullopt;
+
+    if (didSeeSyntaxViolation)
+        syntaxViolation(hostBegin);
     for (auto item : items) {
         if (item > 255)
             syntaxViolation(hostBegin);
