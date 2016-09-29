@@ -2046,6 +2046,14 @@ _navigation_policy_decision_cb(void *user_data, Evas_Object *obj, void *event_in
 }
 
 static void
+_search_button_clicked_cb(void *user_data, Evas_Object *home_button, void *event_info)
+{
+   Browser_Window *window = (Browser_Window *)user_data;
+
+   search_box_show(window);
+}
+
+static void
 _home_button_clicked_cb(void *user_data, Evas_Object *home_button, void *event_info)
 {
    Browser_Window *window = (Browser_Window *)user_data;
@@ -2061,14 +2069,14 @@ _window_deletion_cb(void *user_data, Evas_Object *elm_window, void *event_info)
 }
 
 static Evas_Object *
-create_toolbar_button(Evas_Object *elm_window, const char *icon_name)
+_create_toolbar_button(Evas_Object *elm_window, const char *icon_name)
 {
    Evas_Object *button = elm_button_add(elm_window);
 
    Evas_Object *icon = elm_icon_add(elm_window);
    elm_icon_standard_set(icon, icon_name);
    evas_object_size_hint_max_set(icon, TOOL_BAR_ICON_SIZE, TOOL_BAR_ICON_SIZE);
-   evas_object_color_set(icon, 44, 44, 102, 128);
+   evas_object_color_set(icon, 0, 255, 255, 255);
    evas_object_show(icon);
    elm_object_part_content_set(button, "icon", icon);
    evas_object_size_hint_min_set(button, TOOL_BAR_BUTTON_SIZE, TOOL_BAR_BUTTON_SIZE);
@@ -2124,7 +2132,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    evas_object_show(window->horizontal_layout);
 
    /* Create Back button */
-   window->back_button = create_toolbar_button(window->elm_window, "arrow_left");
+   window->back_button = _create_toolbar_button(window->elm_window, "arrow_left");
    evas_object_smart_callback_add(window->back_button, "clicked", _back_button_clicked_cb, window);
    evas_object_smart_callback_add(window->back_button, "repeated", _back_button_longpress_cb, window);
    elm_object_tooltip_text_set(window->back_button, "Click to go back, longpress to see session history");
@@ -2136,7 +2144,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    evas_object_show(window->back_button);
 
    /* Create Forward button */
-   window->forward_button = create_toolbar_button(window->elm_window, "arrow_right");
+   window->forward_button = _create_toolbar_button(window->elm_window, "arrow_right");
    evas_object_smart_callback_add(window->forward_button, "clicked", _forward_button_clicked_cb, window);
    evas_object_smart_callback_add(window->forward_button, "repeated", _forward_button_longpress_cb, window);
    elm_object_tooltip_text_set(window->forward_button, "Click to go forward, longpress to see session history");
@@ -2146,6 +2154,16 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    evas_object_size_hint_align_set(window->forward_button, 0.0, 0.5);
    elm_box_pack_end(window->horizontal_layout, window->forward_button);
    evas_object_show(window->forward_button);
+
+   /* Create Search button */
+   Evas_Object *search_button = _create_toolbar_button(window->elm_window, "toolbar/search");
+   evas_object_smart_callback_add(search_button, "clicked", _search_button_clicked_cb, window);
+   elm_object_tooltip_text_set(search_button, "Find text");
+   elm_object_tooltip_window_mode_set(search_button, EINA_TRUE);
+   evas_object_size_hint_weight_set(search_button, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(search_button, 1.0, 0.5);
+   elm_box_pack_end(window->horizontal_layout, search_button);
+   evas_object_show(search_button);
 
    /* Create URL bar */
    window->url_bar = elm_entry_add(window->elm_window);
@@ -2162,7 +2180,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    evas_object_show(window->url_bar);
 
    /* Create Refresh button */
-   Evas_Object *refresh_button = create_toolbar_button(window->elm_window, "refresh");
+   Evas_Object *refresh_button = _create_toolbar_button(window->elm_window, "refresh");
    evas_object_smart_callback_add(refresh_button, "clicked", _refresh_button_clicked_cb, window);
    elm_object_tooltip_text_set(refresh_button, "Reload page");
    elm_object_tooltip_window_mode_set(refresh_button, EINA_TRUE);
@@ -2172,7 +2190,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    evas_object_show(refresh_button);
 
    /* Create Stop button */
-   Evas_Object *stop_button = create_toolbar_button(window->elm_window, "close");
+   Evas_Object *stop_button = _create_toolbar_button(window->elm_window, "close");
    evas_object_smart_callback_add(stop_button, "clicked", _stop_button_clicked_cb, window);
    elm_object_tooltip_text_set(stop_button, "Stop page load");
    elm_object_tooltip_window_mode_set(stop_button, EINA_TRUE);
@@ -2182,7 +2200,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    evas_object_show(stop_button);
 
    /* Create Home button */
-   Evas_Object *home_button = create_toolbar_button(window->elm_window, "home");
+   Evas_Object *home_button = _create_toolbar_button(window->elm_window, "home");
    evas_object_smart_callback_add(home_button, "clicked", _home_button_clicked_cb, window);
    elm_object_tooltip_text_set(home_button, "Home page");
    elm_object_tooltip_window_mode_set(home_button, EINA_TRUE);
@@ -2214,7 +2232,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    elm_box_pack_end(window->search.search_bar, window->search.search_field);
 
    /* Create Search backward button */
-   window->search.backward_button = create_toolbar_button(window->elm_window, "arrow_up");
+   window->search.backward_button = _create_toolbar_button(window->elm_window, "arrow_up");
    evas_object_smart_callback_add(window->search.backward_button, "clicked", _search_backward_button_clicked_cb, window);
    elm_object_disabled_set(window->search.backward_button, EINA_FALSE);
    evas_object_size_hint_weight_set(window->search.backward_button, 0.0, EVAS_HINT_EXPAND);
@@ -2223,7 +2241,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    elm_box_pack_end(window->search.search_bar, window->search.backward_button);
 
    /* Create Search forwardward button */
-   window->search.forward_button = create_toolbar_button(window->elm_window, "arrow_down");
+   window->search.forward_button = _create_toolbar_button(window->elm_window, "arrow_down");
    evas_object_smart_callback_add(window->search.forward_button, "clicked", _search_forward_button_clicked_cb, window);
    elm_object_disabled_set(window->search.forward_button, EINA_FALSE);
    evas_object_size_hint_weight_set(window->search.forward_button, 0.0, EVAS_HINT_EXPAND);
@@ -2251,7 +2269,7 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
    elm_box_pack_end(window->search.search_bar, window->search.search_word_start_check_box);
 
    /* Create Search close button */
-   window->search.close_button = create_toolbar_button(window->elm_window, "close");
+   window->search.close_button = _create_toolbar_button(window->elm_window, "close");
    evas_object_smart_callback_add(window->search.close_button, "clicked", _search_close_button_clicked_cb, window);
    elm_object_disabled_set(window->search.close_button, EINA_FALSE);
    evas_object_size_hint_weight_set(window->search.close_button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
