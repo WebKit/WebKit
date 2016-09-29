@@ -1,5 +1,16 @@
 2016-09-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Arrow functions do not infer name from computed property but normal functions do
+        https://bugs.webkit.org/show_bug.cgi?id=162720
+
+        Reviewed by Saam Barati.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitSetFunctionNameIfNeeded):
+        Set function name on arrow functions as well.
+
+2016-09-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: class and function names should be inferred in assignment
         https://bugs.webkit.org/show_bug.cgi?id=146262
 

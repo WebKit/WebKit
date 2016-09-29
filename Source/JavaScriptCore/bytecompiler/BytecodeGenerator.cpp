@@ -3044,8 +3044,8 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadata
 
 void BytecodeGenerator::emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, RegisterID* name)
 {
-    if (valueNode->isFuncExprNode()) {
-        FunctionMetadataNode* metadata = static_cast<FuncExprNode*>(valueNode)->metadata();
+    if (valueNode->isBaseFuncExprNode()) {
+        FunctionMetadataNode* metadata = static_cast<BaseFuncExprNode*>(valueNode)->metadata();
         if (!metadata->ecmaName().isNull())
             return;
     } else if (valueNode->isClassExprNode()) {

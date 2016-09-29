@@ -70,9 +70,8 @@ assert( ({*[funcName()](){}}).func.name === "func" );
 
 assert( ({"func": ()=>{}}).func.name === "func" );
 assert( ({func: ()=>{}}).func.name === "func" );
-// FIXME: <https://webkit.org/b/162720> Arrow functions do not infer name from computed property but normal functions do
-// assert( ({["func"]: ()=>{}}).func.name === "func" );
-// assert( ({[funcName()]: ()=>{}}).func.name === "func" );
+assert( ({["func"]: ()=>{}}).func.name === "func" );
+assert( ({[funcName()]: ()=>{}}).func.name === "func" );
 
 assert( ({"klass": class{}}).klass.name === "klass" );
 assert( ({klass: class{}}).klass.name === "klass" );
