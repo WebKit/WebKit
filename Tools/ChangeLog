@@ -1,3 +1,27 @@
+2016-09-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Make WKTR short timeout dynamic
+        https://bugs.webkit.org/show_bug.cgi?id=162733
+
+        Reviewed by Alex Christensen.
+
+        WebKitTestRunner has a hardcoded value for how long to wait for IPC responses,
+        which is 5 seconds, or 10 seconds under ASan. But some of the operations can be
+        fairly time consuming - e.g. launching Networking process on demand.
+        These may take longer under load, especially with GuardMalloc.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::reattachPageToWebProcess):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::shortTimeout):
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::dumpResults):
+
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::customTimeout): Deleted, this function was unused.
+
 2016-09-29  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should fail to parse unclosed IPv6 addresses

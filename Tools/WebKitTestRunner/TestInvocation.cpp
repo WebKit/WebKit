@@ -98,6 +98,20 @@ void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
     m_expectedPixelHash = expectedPixelHash;
 }
 
+double TestInvocation::shortTimeout() const
+{
+    if (!m_timeout) {
+        // Running WKTR directly, without webkitpy.
+        return TestController::defaultShortTimeout;
+    }
+
+    // This is not exactly correct for the way short timeout is used - it should not depend on whether a test is "slow",
+    // but it currently does. There is no way to know what a normal test's timeout is, as webkitpy only passes timeouts
+    // for each test individually.
+    // But there shouldn't be any observable negative consequences from this.
+    return m_timeout / 1000. / 2;
+}
+
 bool TestInvocation::shouldLogFrameLoadDelegates() const
 {
     return urlContains("loading/");
@@ -149,7 +163,7 @@ void TestInvocation::invoke()
 
     bool shouldOpenExternalURLs = false;
 
-    TestController::singleton().runUntil(m_gotInitialResponse, TestController::shortTimeout);
+    TestController::singleton().runUntil(m_gotInitialResponse, shortTimeout());
     if (!m_gotInitialResponse) {
         m_errorMessage = "Timed out waiting for initial response from web process\n";
         m_webProcessIsUnresponsive = true;
@@ -253,7 +267,7 @@ void TestInvocation::dumpResults()
         else if (m_pixelResultIsPending) {
             m_gotRepaint = false;
             WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
-            TestController::singleton().runUntil(m_gotRepaint, TestController::shortTimeout);
+            TestController::singleton().runUntil(m_gotRepaint, shortTimeout());
             if (!m_gotRepaint) {
                 m_errorMessage = "Timed out waiting for pre-pixel dump repaint\n";
                 m_webProcessIsUnresponsive = true;

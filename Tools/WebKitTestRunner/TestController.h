@@ -57,7 +57,7 @@ public:
     static const unsigned w3cSVGViewWidth;
     static const unsigned w3cSVGViewHeight;
 
-    static const double shortTimeout;
+    static const double defaultShortTimeout;
     static const double noTimeout;
 
     TestController(int argc, const char* argv[]);

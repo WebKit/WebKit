@@ -89,11 +89,7 @@ const unsigned TestController::viewHeight = 600;
 const unsigned TestController::w3cSVGViewWidth = 480;
 const unsigned TestController::w3cSVGViewHeight = 360;
 
-#if ASAN_ENABLED
-const double TestController::shortTimeout = 10.0;
-#else
-const double TestController::shortTimeout = 5.0;
-#endif
+const double TestController::defaultShortTimeout = 5.0;
 
 const double TestController::noTimeout = -1;
 
@@ -797,7 +793,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     setIgnoresViewportScaleLimits(options.ignoresViewportScaleLimits);
 
     WKPageLoadURL(m_mainWebView->page(), blankURL());
-    runUntil(m_doneResetting, shortTimeout);
+    runUntil(m_doneResetting, m_currentInvocation->shortTimeout());
     return m_doneResetting;
 }
 
@@ -811,7 +807,7 @@ void TestController::reattachPageToWebProcess()
     // Loading a web page is the only way to reattach an existing page to a process.
     m_doneResetting = false;
     WKPageLoadURL(m_mainWebView->page(), blankURL());
-    runUntil(m_doneResetting, shortTimeout);
+    runUntil(m_doneResetting, m_currentInvocation->shortTimeout());
 }
 
 const char* TestController::webProcessName()

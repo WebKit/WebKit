@@ -49,8 +49,11 @@ public:
 
     void setIsPixelTest(const std::string& expectedPixelHash);
 
+    // Milliseconds
     void setCustomTimeout(int duration) { m_timeout = duration; }
-    int customTimeout() const { return m_timeout; }
+
+    // Seconds
+    double shortTimeout() const;
 
     void invoke();
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
