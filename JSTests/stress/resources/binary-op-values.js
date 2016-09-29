@@ -1,15 +1,4 @@
-//@ runFTLNoCJIT
-
-// If all goes well, this test module will terminate silently. If not, it will print
-// errors. See binary-op-test.js for debugging options if needed.
-
-load("./resources/binary-op-test.js");
-
-//============================================================================
-// Test configuration data:
-
-var opName = "mod";
-var op = "%";
+// This file provides values that may be interesting for testing binary operations.
 
 var o1 = {
     valueOf: function() { return 10; }
@@ -30,6 +19,8 @@ var values = [
     'negInfinity',
     '100.2', // Some random small double value.
     '-100.2',
+    '2147483647.5', // Value that will get truncated down to 0x7fffffff (by shift ops).
+    '-2147483647.5',
     '54294967296.2923', // Some random large double value.
     '-54294967296.2923',
 
@@ -37,6 +28,12 @@ var values = [
     '-0',
     '1',
     '-1',
+    '5',
+    '-5',
+    '31',
+    '-31',
+    '32',
+    '-32',
     '0x3fff',
     '-0x3fff',
     '0x7fff',
@@ -45,6 +42,8 @@ var values = [
     '-0x10000',
     '0x7ffffff',
     '-0x7ffffff',
+    '0x7fffffff',
+    '-0x7fffffff',
     '0x100000000',
     '-0x100000000',
 
@@ -53,6 +52,12 @@ var values = [
     '"-0"',
     '"1"',
     '"-1"',
+    '"5"',
+    '"-5"',
+    '"31"',
+    '"-31"',
+    '"32"',
+    '"-32"',
     '"0x3fff"',
     '"-0x3fff"',
     '"0x7fff"',
@@ -61,13 +66,8 @@ var values = [
     '"-0x10000"',
     '"0x7ffffff"',
     '"-0x7ffffff"',
+    '"0x7fffffff"',
+    '"-0x7fffffff"',
     '"0x100000000"',
     '"-0x100000000"',
 ];
-
-tests = [];
-generateBinaryTests(tests, opName, op, "VarVar", values, values);
-generateBinaryTests(tests, opName, op, "VarConst", values, values);
-generateBinaryTests(tests, opName, op, "ConstVar", values, values);
-
-run();

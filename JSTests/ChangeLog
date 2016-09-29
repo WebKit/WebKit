@@ -1,3 +1,66 @@
+2016-09-29  Mark Lam  <mark.lam@apple.com>
+
+        Break some slow running tests into smaller bits so they don't time out.
+        https://bugs.webkit.org/show_bug.cgi?id=162743
+
+        Reviewed by Keith Miller.
+
+        The following tests have shown to be slow running:
+            op_div.js
+            op_lshift.js
+            op_mod.js
+            op_mul.js
+            op_rshift.js
+            op_sub.js
+            op_urshift
+
+        These tests auto-generate permutations of values to apply to binary operations.
+        They also test the operations with 3 permutations of value types:
+            1. VarVar - both operands variables
+            2. VarConst - variable operand 1, constant / literal operand 2
+            3. ConstVar - constant / literal operand 1, variable operand 2
+
+        We can prevent these tests from timing out by breaking each up to only run 1 of
+        the 3 permutations of value types.
+
+        * stress/op_div-ConstVar.js: Added.
+        * stress/op_div-VarConst.js: Added.
+        * stress/op_div-VarVar.js: Copied from JSTests/stress/op_div.js.
+        (o1.valueOf): Deleted.
+        * stress/op_div.js: Removed.
+        * stress/op_lshift-ConstVar.js: Added.
+        * stress/op_lshift-VarConst.js: Added.
+        * stress/op_lshift-VarVar.js: Copied from JSTests/stress/op_lshift.js.
+        (o1.valueOf): Deleted.
+        * stress/op_lshift.js: Removed.
+        * stress/op_mod-ConstVar.js: Added.
+        * stress/op_mod-VarConst.js: Added.
+        * stress/op_mod-VarVar.js: Copied from JSTests/stress/op_mod.js.
+        (o1.valueOf): Deleted.
+        * stress/op_mod.js: Removed.
+        * stress/op_mul-ConstVar.js: Added.
+        * stress/op_mul-VarConst.js: Added.
+        * stress/op_mul-VarVar.js: Copied from JSTests/stress/op_mul.js.
+        (o1.valueOf): Deleted.
+        * stress/op_mul.js: Removed.
+        * stress/op_rshift-ConstVar.js: Added.
+        * stress/op_rshift-VarConst.js: Added.
+        * stress/op_rshift-VarVar.js: Copied from JSTests/stress/op_rshift.js.
+        (o1.valueOf): Deleted.
+        * stress/op_rshift.js: Removed.
+        * stress/op_sub-ConstVar.js: Added.
+        * stress/op_sub-VarConst.js: Added.
+        * stress/op_sub-VarVar.js: Copied from JSTests/stress/op_sub.js.
+        (o1.valueOf): Deleted.
+        * stress/op_sub.js: Removed.
+        * stress/op_urshift-ConstVar.js: Added.
+        * stress/op_urshift-VarConst.js: Added.
+        * stress/op_urshift-VarVar.js: Copied from JSTests/stress/op_urshift.js.
+        (o1.valueOf): Deleted.
+        * stress/op_urshift.js: Removed.
+        * stress/resources/binary-op-values.js: Added.
+        (o1.valueOf):
+
 2016-09-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: class and function names should be inferred in assignment
