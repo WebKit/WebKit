@@ -1,3 +1,16 @@
+2016-09-29  Daniel Bates  <dabates@apple.com>
+
+        Mark NetworkLoad as final
+        https://bugs.webkit.org/show_bug.cgi?id=162681
+
+        Reviewed by Alex Christensen.
+
+        Mark class NetworkLoad as final as we do not have any derived classes at the moment and it
+        is unclear if it would make sense to subclass it. We can always unmark the class if it turns
+        out that it makes sense to subclass it.
+
+        * NetworkProcess/NetworkLoad.h:
+
 2016-09-29  Sam Weinig  <sam@webkit.org>
 
         Allow overriding some NSURLSessionConfiguration properties on a per-NetworkProcess basis
