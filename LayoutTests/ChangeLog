@@ -1,5 +1,16 @@
 2016-09-29  Chris Dumez  <cdumez@apple.com>
 
+        [iOS] Update Touch constructor test to cover clientX / clientY attributes
+        https://bugs.webkit.org/show_bug.cgi?id=162757
+
+        Reviewed by Sam Weinig.
+
+        Update Touch constructor test to cover clientX / clientY attributes.
+
+        * fast/events/touch/touch-constructor.html:
+
+2016-09-29  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Add test for Touch constructor
         https://bugs.webkit.org/show_bug.cgi?id=162736
         <rdar://problem/28520007>

@@ -45,6 +45,14 @@ function validateTouch(touch, dictionary)
         shouldBe("createdTouch.pageY", "init.pageY");
     else
         shouldBe("createdTouch.pageY", "0");
+    if (init.hasOwnProperty("clientX"))
+        shouldBe("createdTouch.clientX", "init.clientX");
+    else
+        shouldBe("createdTouch.clientX", "0");
+    if (init.hasOwnProperty("clientY"))
+        shouldBe("createdTouch.clientY", "init.clientY");
+    else
+        shouldBe("createdTouch.clientY", "0");
     if (init.hasOwnProperty("force"))
         shouldBe("createdTouch.force", "init.force");
     else
@@ -60,8 +68,8 @@ shouldNotThrow("touch = new Touch({ identifier: 1, target: document.body, client
 validateTouch(touch, { identifier: 1, target: document.body, clientX: 1, clientY: 2, screenX: 3, screenY: 4, pageX: 5, pageY: 6, force: 7 });
 
 debug("");
-shouldNotThrow("touch = new Touch({ identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5 })");
-validateTouch(touch, { identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5 });
+shouldNotThrow("touch = new Touch({ identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5, clientX: 8.5, clientY: 9.5 })");
+validateTouch(touch, { identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5, clientX: 8.5, clientY: 9.5 });
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
