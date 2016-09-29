@@ -63,7 +63,9 @@
 @interface TestWKWebViewHostWindow : NSWindow
 @end
 
-@implementation TestWKWebViewHostWindow
+@implementation TestWKWebViewHostWindow {
+    BOOL _forceKeyWindow;
+}
 
 static int gEventNumber = 1;
 
@@ -108,6 +110,26 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
         method_setImplementation(associatedEventsMaskMethod, originalAssociatedEventsMaskImpl);
     }
 #endif
+}
+
+- (BOOL)isKeyWindow
+{
+    return _forceKeyWindow || [super isKeyWindow];
+}
+
+- (void)makeKeyWindow
+{
+    if (_forceKeyWindow)
+        return;
+
+    _forceKeyWindow = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidBecomeKeyNotification object:self];
+}
+
+- (void)resignKeyWindow
+{
+    _forceKeyWindow = NO;
+    [super resignKeyWindow];
 }
 
 @end

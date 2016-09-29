@@ -763,6 +763,13 @@ void PageClientImpl::handleControlledElementIDResponse(const String& identifier)
 #endif
 }
 
+void PageClientImpl::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession)
+{
+#if WK_API_ENABLED
+    [m_webView _handleActiveNowPlayingSessionInfoResponse:hasActiveSession];
+#endif
+}
+
 void PageClientImpl::didChangeBackgroundColor()
 {
     notImplemented();

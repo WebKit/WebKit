@@ -735,8 +735,8 @@ bool MediaElementSession::updateIsMainContent() const
 
 bool MediaElementSession::pageAllowsNowPlayingControls() const
 {
-    // FIXME: Ideally, we should not allow Now Playing controls for the active tab in the main window.
-    return true;
+    auto page = m_element.document().page();
+    return page && !page->isVisibleAndActive();
 }
 
 }
