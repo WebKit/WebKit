@@ -1,3 +1,13 @@
+2016-09-28  Mark Lam  <mark.lam@apple.com>
+
+        Re-enable StringView life-cycle checking.
+        https://bugs.webkit.org/show_bug.cgi?id=160384
+        <rdar://problem/28479434>
+
+        Reviewed by Saam Barati.
+
+        * wtf/text/StringView.h:
+
 2016-09-28  Filip Pizlo  <fpizlo@apple.com>
 
         The write barrier should be down with TSO
