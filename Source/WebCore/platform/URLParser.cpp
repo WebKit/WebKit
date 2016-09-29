@@ -2361,8 +2361,7 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
         syntaxViolation(colonIterator);
         return true;
     }
-    bool seenDigit = false;
-    bool seenMultipleDigits = false;
+    size_t digitCount = 0;
     bool leadingZeros = false;
     for (; !iterator.atEnd(); ++iterator) {
         if (UNLIKELY(isTabOrNewline(*iterator))) {
@@ -2370,11 +2369,9 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
             continue;
         }
         if (isASCIIDigit(*iterator)) {
-            if (*iterator == '0' && !seenDigit)
+            if (*iterator == '0' && !digitCount)
                 leadingZeros = true;
-            if (seenDigit)
-                seenMultipleDigits = true;
-            seenDigit = true;
+            ++digitCount;
             port = port * 10 + *iterator - '0';
             if (port > std::numeric_limits<uint16_t>::max())
                 return false;
@@ -2385,7 +2382,7 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
     if (port && leadingZeros)
         syntaxViolation(colonIterator);
     
-    if (!port && seenMultipleDigits)
+    if (!port && digitCount > 1)
         syntaxViolation(colonIterator);
 
     if (UNLIKELY(isDefaultPort(parsedDataView(0, m_url.m_schemeEnd), port)))
