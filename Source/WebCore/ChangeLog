@@ -1,3 +1,52 @@
+2016-09-29  Antti Koivisto  <antti@apple.com>
+
+        Remove addSubresourceStyleURLs functions
+        https://bugs.webkit.org/show_bug.cgi?id=162731
+
+        Reviewed by Ryosuke Niwa.
+
+        Use the generic std::function taking traverseSubresources instead. This prevents bugs caused by the code paths
+        not being in sync.
+
+        These functions are only used by the legacy webarchive code to gather URLs to locate CachedResources from the memory cache.
+        This can be improved further by returning the cached resources themselves instead of the URLs.
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::addSubresourceStyleURLs): Deleted.
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::addSubresourceStyleURLs): Deleted.
+        * css/CSSPrimitiveValue.h:
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::addSubresourceStyleURLs): Deleted.
+        * css/CSSReflectValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::addSubresourceStyleURLs): Deleted.
+        * css/CSSValue.h:
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::addSubresourceStyleURLs): Deleted.
+        * css/CSSValueList.h:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::addSubresourceStyleURLs): Deleted.
+        * css/StyleProperties.h:
+        * css/StyleRuleImport.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::traverseSubresources):
+
+            Fix a bug where this would miss @import rules in @imported stylesheets.
+            Include the CachedResource for the imported stylesheet itself.
+
+            Tested by the test cases under LayoutTests/webarchive
+
+        (WebCore::StyleSheetContents::addSubresourceStyleURLs): Deleted.
+        * css/StyleSheetContents.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::addSubresourceAttributeURLs):
+
 2016-09-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Add D2D Font handling code

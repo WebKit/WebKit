@@ -1113,13 +1113,6 @@ void MutableStyleProperties::mergeAndOverrideOnConflict(const StyleProperties& o
         addParsedProperty(other.propertyAt(i).toCSSProperty());
 }
 
-void StyleProperties::addSubresourceStyleURLs(ListHashSet<URL>& urls, StyleSheetContents* contextStyleSheet) const
-{
-    unsigned size = propertyCount();
-    for (unsigned i = 0; i < size; ++i)
-        propertyAt(i).value()->addSubresourceStyleURLs(urls, contextStyleSheet);
-}
-
 bool StyleProperties::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
     unsigned size = propertyCount();

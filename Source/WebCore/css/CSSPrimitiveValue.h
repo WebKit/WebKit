@@ -381,8 +381,6 @@ public:
     // FIXME-NEWPARSER: Can ditch the boolean and just use the unit type once old parser is gone.
     bool isQuirkValue() const { return m_isQuirkValue || primitiveType() == CSS_QUIRKY_EMS; }
 
-    void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
-
     Ref<CSSPrimitiveValue> cloneForCSSOM() const;
     void setCSSOMSafe() { m_isCSSOMSafe = true; }
 

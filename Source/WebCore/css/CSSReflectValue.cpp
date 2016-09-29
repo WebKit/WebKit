@@ -38,12 +38,6 @@ String CSSReflectValue::customCSSText() const
     return m_direction->cssText() + ' ' + m_offset->cssText();
 }
 
-void CSSReflectValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const StyleSheetContents* styleSheet) const
-{
-    if (m_mask)
-        m_mask->addSubresourceStyleURLs(urls, styleSheet);
-}
-
 bool CSSReflectValue::equals(const CSSReflectValue& other) const
 {
     return m_direction.ptr() == other.m_direction.ptr()

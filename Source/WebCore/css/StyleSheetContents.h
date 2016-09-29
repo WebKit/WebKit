@@ -86,7 +86,6 @@ public:
     bool loadCompleted() const { return m_loadCompleted; }
 
     URL completeURL(const String& url) const;
-    void addSubresourceStyleURLs(ListHashSet<URL>&);
     bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }

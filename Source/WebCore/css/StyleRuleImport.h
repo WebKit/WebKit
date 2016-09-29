@@ -51,6 +51,7 @@ public:
     MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
 
     void requestStyleSheet();
+    const CachedCSSStyleSheet* cachedCSSStyleSheet() const { return m_cachedSheet.get(); }
 
 private:
     // NOTE: We put the CachedStyleSheetClient in a member instead of inheriting from it

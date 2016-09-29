@@ -48,8 +48,6 @@ public:
 
     String customCSSText() const;
 
-    void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
-
     bool equals(const CSSReflectValue&) const;
 
 private:

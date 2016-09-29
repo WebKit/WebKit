@@ -25,6 +25,7 @@
 #include "HTMLStyleElement.h"
 
 #include "AuthorStyleSheets.h"
+#include "CachedResource.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -142,8 +143,12 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {    
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    if (CSSStyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet())
-        styleSheet->contents().addSubresourceStyleURLs(urls);
+    if (auto* styleSheet = this->sheet()) {
+        styleSheet->contents().traverseSubresources([&] (auto& resource) {
+            urls.add(resource.url());
+            return false;
+        });
+    }
 }
 
 bool HTMLStyleElement::disabled() const

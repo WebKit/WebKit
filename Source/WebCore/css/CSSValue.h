@@ -137,8 +137,6 @@ public:
 
     RefPtr<CSSValue> cloneForCSSOM() const;
 
-    void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
-
     bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
     bool equals(const CSSValue&) const;

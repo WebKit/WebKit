@@ -530,10 +530,13 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     
     // Append the URL of this link element.
     addSubresourceURL(urls, href());
-    
-    // Walk the URLs linked by the linked-to stylesheet.
-    if (CSSStyleSheet* styleSheet = const_cast<HTMLLinkElement*>(this)->sheet())
-        styleSheet->contents().addSubresourceStyleURLs(urls);
+
+    if (auto* styleSheet = this->sheet()) {
+        styleSheet->contents().traverseSubresources([&] (auto& resource) {
+            urls.add(resource.url());
+            return false;
+        });
+    }
 }
 
 void HTMLLinkElement::addPendingSheet(PendingSheetType type)

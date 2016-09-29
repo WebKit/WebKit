@@ -1264,12 +1264,6 @@ String CSSPrimitiveValue::customCSSText() const
     return text;
 }
 
-void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const StyleSheetContents* styleSheet) const
-{
-    if (m_primitiveUnitType == CSS_URI)
-        addSubresourceURL(urls, styleSheet->completeURL(m_value.string));
-}
-
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
 {
     RefPtr<CSSPrimitiveValue> result;

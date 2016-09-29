@@ -155,12 +155,6 @@ bool CSSValueList::equals(const CSSValue& other) const
     return m_values[0].get().equals(other);
 }
 
-void CSSValueList::addSubresourceStyleURLs(ListHashSet<URL>& urls, const StyleSheetContents* styleSheet) const
-{
-    for (unsigned i = 0, size = m_values.size(); i < size; ++i)
-        m_values[i].get().addSubresourceStyleURLs(urls, styleSheet);
-}
-
 bool CSSValueList::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
     for (unsigned i = 0; i < m_values.size(); ++i) {

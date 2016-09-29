@@ -123,21 +123,6 @@ CSSValue::Type CSSValue::cssValueType() const
     return CSS_CUSTOM;
 }
 
-void CSSValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const StyleSheetContents* styleSheet) const
-{
-    // This should get called for internal instances only.
-    ASSERT(!isCSSOMSafe());
-
-    if (is<CSSPrimitiveValue>(*this))
-        downcast<CSSPrimitiveValue>(*this).addSubresourceStyleURLs(urls, styleSheet);
-    else if (is<CSSValueList>(*this))
-        downcast<CSSValueList>(*this).addSubresourceStyleURLs(urls, styleSheet);
-    else if (is<CSSFontFaceSrcValue>(*this))
-        downcast<CSSFontFaceSrcValue>(*this).addSubresourceStyleURLs(urls, styleSheet);
-    else if (is<CSSReflectValue>(*this))
-        downcast<CSSReflectValue>(*this).addSubresourceStyleURLs(urls, styleSheet);
-}
-
 bool CSSValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
     // This should get called for internal instances only.

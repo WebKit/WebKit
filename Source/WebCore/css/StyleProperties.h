@@ -96,8 +96,6 @@ public:
 
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
-    void addSubresourceStyleURLs(ListHashSet<URL>&, StyleSheetContents* contextStyleSheet) const;
-
     WEBCORE_EXPORT Ref<MutableStyleProperties> mutableCopy() const;
     Ref<ImmutableStyleProperties> immutableCopyIfNeeded() const;
 

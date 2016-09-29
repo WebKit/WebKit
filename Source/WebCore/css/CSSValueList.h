@@ -72,8 +72,6 @@ public:
     bool equals(const CSSValueList&) const;
     bool equals(const CSSValue&) const;
 
-    void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
-
     bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
     
     Ref<CSSValueList> cloneForCSSOM() const;

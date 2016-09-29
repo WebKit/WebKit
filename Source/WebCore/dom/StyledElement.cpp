@@ -28,6 +28,7 @@
 #include "CSSParser.h"
 #include "CSSStyleSheet.h"
 #include "CSSValuePool.h"
+#include "CachedResource.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
 #include "HTMLElement.h"
@@ -266,8 +267,13 @@ void StyledElement::removeAllInlineStyleProperties()
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
-    if (const StyleProperties* inlineStyle = elementData() ? elementData()->inlineStyle() : nullptr)
-        inlineStyle->addSubresourceStyleURLs(urls, &document().elementSheet().contents());
+    auto* inlineStyle = this->inlineStyle();
+    if (!inlineStyle)
+        return;
+    inlineStyle->traverseSubresources([&] (auto& resource) {
+        urls.add(resource.url());
+        return false;
+    });
 }
 
 static inline bool attributeNameSort(const std::pair<AtomicStringImpl*, AtomicString>& p1, const std::pair<AtomicStringImpl*, AtomicString>& p2)
