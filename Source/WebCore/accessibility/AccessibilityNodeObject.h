@@ -183,7 +183,9 @@ protected:
     void changeValueByStep(bool increase);
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
     bool isGenericFocusableElement() const;
+    bool isLabelable() const;
     HTMLLabelElement* labelForElement(Element*) const;
+    String textForLabelElement(Element*) const;
     String ariaAccessibilityDescription() const;
     void ariaLabeledByElements(Vector<Element*>& elements) const;
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;

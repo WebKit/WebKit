@@ -1,3 +1,15 @@
+2016-09-29  Nan Wang  <n_wang@apple.com>
+
+        AX: Meter: [Mac] Content in label element should be used as AXTitle or AXDescription
+        https://bugs.webkit.org/show_bug.cgi?id=162586
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/aria-label-on-label-element-expected.txt:
+        * accessibility/mac/aria-label-on-label-element.html:
+        * accessibility/mac/meter-with-label-element-expected.txt: Added.
+        * accessibility/mac/meter-with-label-element.html: Added.
+
 2016-09-28  Chris Dumez  <cdumez@apple.com>
 
         Import touch-events web-platform-tests

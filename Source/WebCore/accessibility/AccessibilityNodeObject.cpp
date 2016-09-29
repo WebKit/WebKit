@@ -1230,6 +1230,33 @@ bool AccessibilityNodeObject::usesAltTagForTextComputation() const
 {
     return isImage() || isInputImage() || isNativeImage() || isCanvas() || (node() && node()->hasTagName(imgTag));
 }
+
+bool AccessibilityNodeObject::isLabelable() const
+{
+    Node* node = this->node();
+    if (!node)
+        return false;
+    
+    return is<HTMLInputElement>(*node) || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl() || isProgressIndicator() || isMeter();
+}
+
+String AccessibilityNodeObject::textForLabelElement(Element* element) const
+{
+    String result = String();
+    if (!is<HTMLLabelElement>(*element))
+        return result;
+    
+    HTMLLabelElement* label = downcast<HTMLLabelElement>(element);
+    // Check to see if there's aria-labelledby attribute on the label element.
+    if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label))
+        result = labelObject->ariaLabeledByAttribute();
+    
+    // Then check for aria-label attribute.
+    if (result.isEmpty())
+        result = label->attributeWithoutSynchronization(aria_labelAttr);
+    
+    return !result.isEmpty() ? result : label->innerText();
+}
     
 void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOrder) const
 {
@@ -1237,19 +1264,14 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
     if (!node)
         return;
     
-    bool isInputTag = is<HTMLInputElement>(*node);
-    if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl() || isProgressIndicator()) {
+    if (isLabelable()) {
         if (HTMLLabelElement* label = labelForElement(downcast<Element>(node))) {
             AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label);
-            String innerText = label->innerText();
-            
-            const AtomicString& ariaLabel = label->attributeWithoutSynchronization(aria_labelAttr);
-            if (!ariaLabel.isEmpty())
-                innerText = ariaLabel;
+            String innerText = textForLabelElement(label);
             
             // Only use the <label> text if there's no ARIA override.
             if (!innerText.isEmpty() && !ariaAccessibilityDescription())
-                textOrder.append(AccessibilityText(innerText, LabelByElementText, labelObject));
+                textOrder.append(AccessibilityText(innerText, isMeter() ? AlternativeText : LabelByElementText, labelObject));
             return;
         }
     }
@@ -1710,11 +1732,11 @@ String AccessibilityNodeObject::title() const
             return input.valueWithDefault();
     }
 
-    if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl() || isProgressIndicator()) {
+    if (isLabelable()) {
         HTMLLabelElement* label = labelForElement(downcast<Element>(node));
         // Use the label text as the title if 1) the title element is NOT an exposed element and 2) there's no ARIA override.
         if (label && !exposesTitleUIElement() && !ariaAccessibilityDescription().length())
-            return label->innerText();
+            return textForLabelElement(label);
     }
 
     // If this node isn't rendered, there's no inner text we can extract from a select element.

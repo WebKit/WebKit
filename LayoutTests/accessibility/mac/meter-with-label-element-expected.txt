@@ -1,0 +1,19 @@
+label  label wrapping meter label 
+aria
+
+labelledby
+
+label
+This tests that for meter elements, the label element should be used as accessible name.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS meter1.description is 'AXDescription: label'
+PASS meter2.description is 'AXDescription: label wrapping meter'
+PASS meter3.description is 'AXDescription: aria label'
+PASS meter4.description is 'AXDescription: aria labelledby'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

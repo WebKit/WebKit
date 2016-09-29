@@ -1,3 +1,26 @@
+2016-09-29  Nan Wang  <n_wang@apple.com>
+
+        AX: Meter: [Mac] Content in label element should be used as AXTitle or AXDescription
+        https://bugs.webkit.org/show_bug.cgi?id=162586
+
+        Reviewed by Chris Fleizach.
+
+        Exposed the label element's text as AXDescription for meter elements.
+        Also refactored the code for fetching the label element's text and taken care of 
+        the case where aria-label and aria-labelledby attributes are used on label elements. 
+
+        Test: accessibility/mac/meter-with-label-element.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isLabelable):
+        (WebCore::AccessibilityNodeObject::textForLabelElement):
+        (WebCore::AccessibilityNodeObject::titleElementText):
+        (WebCore::AccessibilityNodeObject::title):
+        (WebCore::AccessibilityNodeObject::usesAltTagForTextComputation): Deleted.
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement):
+
 2016-09-29  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Streams API] Improve ReadableStreamDefaultController.h/cpp

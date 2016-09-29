@@ -14,6 +14,11 @@
 <label id="label3" for="input3" hidden aria-label="hidden aria label">hidden text</label>
 <input id="input3" type="text">
 
+<p id="p1">aria</p>
+<p id="p2">labelledby</p>
+<label for="input4" aria-labelledby="p1 p2">Some text</label>
+<input id="input4" type="text" size=20>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -37,6 +42,10 @@
         // Make sure when the input element has no rendered label, it won't cause crash.
         var input3 = accessibilityController.accessibleElementById("input3");
         shouldBe("input3.title", "'AXTitle: hidden aria label'");
+        
+        // aria-labelledby also works.
+        var input4 = accessibilityController.accessibleElementById("input4");
+        shouldBe("input4.title", "'AXTitle: aria labelledby'");
     }
 
 </script>
