@@ -170,7 +170,9 @@ namespace WebCore {
         void privateBrowsingStateChanged(bool) override;
 
         void disconnectStream(PluginStream*);
+#if ENABLE(NETSCAPE_PLUGIN_API)
         void streamDidFinishLoading(PluginStream* stream) override { disconnectStream(stream); }
+#endif
 
         // Widget functions
         void setFrameRect(const IntRect&) override;

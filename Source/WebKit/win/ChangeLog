@@ -1,3 +1,16 @@
+2016-09-29  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed compilation of PluginView when NETSCAPE_PLUGIN_API is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=162725
+
+        Reviewed by Alex Christensen.
+
+        Fix for r206460, streamDidFinishLoading() does not override anything
+        when NETSCAPE_PLUGIN_API is disabled because PlugivView does not
+        inherit PluginStreamClient in this case.
+
+        * Plugins/PluginView.h:
+
 2016-09-27  Konstantin Tokarev  <annulen@yandex.ru>
 
         Use override specifiers in PluginView
