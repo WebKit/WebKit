@@ -21,7 +21,7 @@ function runTest(_a, expectSyntaxError)
 
     if (expectSyntaxError) {
         if (error && error instanceof SyntaxError)
-            testPassed('Invalid: "' + _a + '"');
+            testPassed(`Invalid: "${_a}". Produced the following syntax error: "${error.toString()}"`);
         else if (error)
             testFailed('Invalid: "' + _a + '" should throw SyntaxError but got ' + (error.name || error));
         else
