@@ -999,3 +999,4 @@ webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-with-annotations-expect
 webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-too-big.html [ Crash ]
 webkit.org/b/162696 [ Release ] fast/images/object-image.html [ Crash ]
 webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-with-annotations.html [ Crash ]
+webkit.org/b/162696 [ Release ] fast/images/load-img-with-empty-src.html [ Crash ]
