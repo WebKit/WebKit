@@ -127,6 +127,11 @@ void UIScriptController::dismissFormAccessoryView()
 void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
 {
 }
+    
+JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+{
+    return nullptr;
+}
 
 void UIScriptController::scrollToOffset(long, long)
 {

@@ -62,6 +62,9 @@ interface UIScriptController {
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();
 
+    // Returned object is a dictionary with the passed in string as a key for returned object
+    object contentsOfUserInterfaceItem(DOMString interfaceItem);
+
     // These callbacks also work for the form accessory views.
     attribute object didShowKeyboardCallback;
     attribute object didHideKeyboardCallback;

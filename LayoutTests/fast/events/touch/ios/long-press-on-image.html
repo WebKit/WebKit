@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.longPressAtPoint(30, 20, function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('actionSheet')));
+                });
+             })();`
+        }
+
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var target = document.getElementById('target');
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    var actionDictionary = JSON.parse(result);
+                    var actionStrings = actionDictionary.actionSheet;
+                    var output = '';
+                    if (actionStrings[0] == 'Save Image' && actionStrings[1] == 'Copy' && actionStrings[2] == 'Cancel') {
+                        output += 'Available Actions: <br>';
+                        output +=  actionStrings.join('<br>');
+                        output += '<br>';
+                        output += 'PASS';
+                    }
+                    else
+                        output = 'FAIL'
+
+                    document.getElementById('target').innerHTML = output;
+                    testRunner.notifyDone();
+                });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<div id="target">
+    <img src="../../../images/resources/dice.png" width="320" height="240" alt="Dice">
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>

@@ -4519,6 +4519,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView selectFormAccessoryPickerRow:rowIndex];
 }
 
+- (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
+{
+    return [_contentView _contentsOfUserInterfaceItem:(NSString *)userInterfaceItem];
+}
+
 - (void)didStartFormControlInteraction
 {
     // For subclasses to override.

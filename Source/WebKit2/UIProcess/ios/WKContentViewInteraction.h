@@ -231,6 +231,7 @@ struct WKAutoCorrectionData {
 @interface WKContentView (WKTesting)
 
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;
+- (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
 @end
 

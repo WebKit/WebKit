@@ -263,6 +263,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(10.0));
 - (void)dismissFormAccessoryView WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)selectFormAccessoryPickerRow:(int)rowIndex WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 - (void)didStartFormControlInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)didEndFormControlInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));

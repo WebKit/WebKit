@@ -3849,6 +3849,14 @@ static bool isAssistableInputType(InputType type)
         [(WKFormSelectControl *)_inputPeripheral selectRow:rowIndex inComponent:0 extendingSelection:NO];
 }
 
+- (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
+{
+    if ([userInterfaceItem isEqualToString:@"actionSheet"])
+        return @{ userInterfaceItem: [_actionSheetAssistant currentAvailableActionTitles] };
+    
+    return nil;
+}
+
 @end
 
 #if HAVE(LINK_PREVIEW)

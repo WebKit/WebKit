@@ -1,0 +1,5 @@
+Available Actions: 
+Save Image
+Copy
+Cancel
+PASS

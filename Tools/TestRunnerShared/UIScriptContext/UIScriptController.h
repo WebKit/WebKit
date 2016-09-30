@@ -74,6 +74,8 @@ public:
     void dismissFormAccessoryView();
     void selectFormAccessoryPickerRow(long);
     
+    JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const;
+    
     void scrollToOffset(long x, long y);
 
     void setDidStartFormControlInteractionCallback(JSValueRef);

@@ -247,6 +247,13 @@ void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     [webView selectFormAccessoryPickerRow:rowIndex];
 }
+    
+JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:toWTFString(toWK(interfaceItem))];
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
 
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
 {

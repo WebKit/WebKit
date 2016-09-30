@@ -213,6 +213,19 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return _interactionSheet != nil;
 }
 
+- (NSArray *)currentAvailableActionTitles
+{
+    if (!_interactionSheet)
+        return @[];
+    
+    NSMutableArray *array = [NSMutableArray array];
+    
+    for (UIAlertAction *action in _interactionSheet.get().actions)
+        [array addObject:action.title];
+    
+    return array;
+}
+
 - (void)_createSheetWithElementActions:(NSArray *)actions showLinkTitle:(BOOL)showLinkTitle
 {
     auto delegate = _delegate.get();

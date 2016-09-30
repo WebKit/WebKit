@@ -1,3 +1,13 @@
+2016-09-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Make it possible to test web-related user-interface features
+        https://bugs.webkit.org/show_bug.cgi?id=162657
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/long-press-on-image-expected.txt: Added.
+        * fast/events/touch/ios/long-press-on-image.html: Added.
+
 2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Change the MemoryCache and CachedResource adjustSize functions to take a long argument
