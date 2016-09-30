@@ -961,7 +961,7 @@ TEST_F(URLParserTest, AdditionalTests)
         {"http", "", "", "w", 0, "/", "%ED%A0%80", "", "http://w/?%ED%A0%80"});
 }
 
-static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts)
+static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts, bool checkTabs = true)
 {
     URLParser parser(urlString, { }, encoding);
     auto url = parser.result();
@@ -975,13 +975,32 @@ static void checkURL(const String& urlString, const TextEncoding& encoding, cons
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, url.string()));
 
-    // FIXME: check tabs here like we do for checkURL and checkRelativeURL.
+    if (checkTabs) {
+        for (size_t i = 0; i < urlString.length(); ++i) {
+            String urlStringWithTab = makeString(urlString.substring(0, i), "\t", urlString.substring(i));
+            ExpectedParts invalidPartsWithTab = {"", "", "", "", 0, "" , "", "", urlStringWithTab};
+            checkURL(urlStringWithTab, encoding, parts.isInvalid() ? invalidPartsWithTab : parts, false);
+        }
+    }
 }
 
 TEST_F(URLParserTest, QueryEncoding)
 {
-    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")});
-    // FIXME: Add tests with other encodings.
+    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")}, false);
+    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")}, false);
+
+    TextEncoding latin1(String("latin1"));
+    checkURL("http://host/?query with%20spaces", latin1, {"http", "", "", "host", 0, "/", "query%20with%20spaces", "", "http://host/?query%20with%20spaces"});
+    checkURL("http://host/?query", latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
+    checkURL("http://host/?\tquery", latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
+    checkURL("http://host/?q\tuery", latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
+    checkURL("http://host/?query with SpAcEs#fragment", latin1, {"http", "", "", "host", 0, "/", "query%20with%20SpAcEs", "fragment", "http://host/?query%20with%20SpAcEs#fragment"});
+
+    TextEncoding unrecognized(String("unrecognized invalid encoding name"));
+    checkURL("http://host/?query", unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});
+    checkURL("http://host/?", unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});
+
+    // FIXME: Add more tests with other encodings and things like non-ascii characters, emoji and unmatched surrogate pairs.
 }
 
 } // namespace TestWebKitAPI

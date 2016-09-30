@@ -1,3 +1,23 @@
+2016-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser: handle syntax violations in non-UTF-8 encoded queries
+        https://bugs.webkit.org/show_bug.cgi?id=162770
+
+        Reviewed by Tim Horton.
+
+        There is a fast path for queries of URLs that use UTF-8 encoding, which are quite common.
+        For non-UTF-8 encoded queries, which are less common, we put the code points in a Vector<UChar>
+        and encode them all at once.  If there is a syntax violation in the query, we need to copy the
+        syntax-violation-free string up to the beginning of the query, then encode the query.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::percentEncodeByte):
+        (WebCore::URLParser::encodeQuery):
+        (WebCore::URLParser::parse):
+        * platform/URLParser.h:
+
 2016-09-27  Anders Carlsson  <andersca@apple.com>
 
         Remove a couple of unused members from PlatformKeyboardEvent

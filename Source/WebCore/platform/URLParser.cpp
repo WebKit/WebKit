@@ -494,6 +494,7 @@ static void percentEncodeByte(uint8_t byte, Vector<LChar>& buffer)
 
 void URLParser::percentEncodeByte(uint8_t byte)
 {
+    ASSERT(m_didSeeSyntaxViolation);
     appendToASCIIBuffer('%');
     appendToASCIIBuffer(upperNibbleToASCIIHexDigit(byte));
     appendToASCIIBuffer(lowerNibbleToASCIIHexDigit(byte));
@@ -562,14 +563,38 @@ ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterT
             appendToASCIIBuffer(byte);
     }
 }
-    
-void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& encoding)
+
+template<typename CharacterType>
+void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& encoding, CodePointIterator<CharacterType> iterator)
 {
     // FIXME: It is unclear in the spec what to do when encoding fails. The behavior should be specified and tested.
     CString encoded = encoding.encode(StringView(source.data(), source.size()), URLEncodedEntitiesForUnencodables);
     const char* data = encoded.data();
     size_t length = encoded.length();
-    for (size_t i = 0; i < length; ++i) {
+    
+    if (!length == !iterator.atEnd()) {
+        syntaxViolation(iterator);
+        return;
+    }
+    
+    size_t i = 0;
+    for (; i < length; ++i) {
+        ASSERT(!iterator.atEnd());
+        uint8_t byte = data[i];
+        if (UNLIKELY(byte != *iterator)) {
+            syntaxViolation(iterator);
+            break;
+        }
+        if (UNLIKELY(shouldPercentEncodeQueryByte(byte))) {
+            syntaxViolation(iterator);
+            break;
+        }
+        appendToASCIIBuffer(byte);
+        ++iterator;
+    }
+    ASSERT((i == length) == iterator.atEnd());
+    for (; i < length; ++i) {
+        ASSERT(m_didSeeSyntaxViolation);
         uint8_t byte = data[i];
         if (shouldPercentEncodeQueryByte(byte))
             percentEncodeByte(byte);
@@ -1103,6 +1128,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
     }
     CodePointIterator<CharacterType> c(input, input + endIndex);
     CodePointIterator<CharacterType> authorityOrHostBegin;
+    CodePointIterator<CharacterType> queryBegin;
     while (UNLIKELY(!c.atEnd() && isC0ControlOrSpace(*c))) {
         syntaxViolation(c);
         ++c;
@@ -1127,7 +1153,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         PathStart,
         Path,
         CannotBeABaseURLPath,
-        Query,
+        UTF8Query,
+        NonUTF8Query,
         Fragment,
     };
 
@@ -1288,8 +1315,13 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             case '?':
                 copyURLPartsUntil(base, URLPart::PathEnd, c);
                 appendToASCIIBuffer('?');
-                state = State::Query;
                 ++c;
+                if (isUTF8Encoding)
+                    state = State::UTF8Query;
+                else {
+                    queryBegin = c;
+                    state = State::NonUTF8Query;
+                }
                 break;
             case '#':
                 copyURLPartsUntil(base, URLPart::QueryEnd, c);
@@ -1431,6 +1463,13 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 if (base.isValid() && base.protocolIs("file"))
                     copyURLPartsUntil(base, URLPart::PathEnd, c);
                 appendToASCIIBuffer("///?", 4);
+                ++c;
+                if (isUTF8Encoding)
+                    state = State::UTF8Query;
+                else {
+                    queryBegin = c;
+                    state = State::NonUTF8Query;
+                }
                 m_url.m_userStart = currentPosition(c) - 2;
                 m_url.m_userEnd = m_url.m_userStart;
                 m_url.m_passwordEnd = m_url.m_userStart;
@@ -1438,8 +1477,6 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 m_url.m_portEnd = m_url.m_userStart;
                 m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
                 m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
-                state = State::Query;
-                ++c;
                 break;
             case '#':
                 syntaxViolation(c);
@@ -1533,9 +1570,14 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                             syntaxViolation(c);
                             appendToASCIIBuffer("/?", 2);
                             ++c;
+                            if (isUTF8Encoding)
+                                state = State::UTF8Query;
+                            else {
+                                queryBegin = c;
+                                state = State::NonUTF8Query;
+                            }
                             m_url.m_pathAfterLastSlash = currentPosition(c) - 1;
                             m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
-                            state = State::Query;
                             break;
                         }
                         if (UNLIKELY(*c == '#')) {
@@ -1601,7 +1643,14 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             }
             if (*c == '?') {
                 m_url.m_pathEnd = currentPosition(c);
-                state = State::Query;
+                appendToASCIIBuffer('?');
+                ++c;
+                if (isUTF8Encoding)
+                    state = State::UTF8Query;
+                else {
+                    queryBegin = c;
+                    state = State::NonUTF8Query;
+                }
                 break;
             }
             if (*c == '#') {
@@ -1628,7 +1677,14 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             LOG_STATE("CannotBeABaseURLPath");
             if (*c == '?') {
                 m_url.m_pathEnd = currentPosition(c);
-                state = State::Query;
+                appendToASCIIBuffer('?');
+                ++c;
+                if (isUTF8Encoding)
+                    state = State::UTF8Query;
+                else {
+                    queryBegin = c;
+                    state = State::NonUTF8Query;
+                }
             } else if (*c == '#') {
                 m_url.m_pathEnd = currentPosition(c);
                 m_url.m_queryEnd = m_url.m_pathEnd;
@@ -1642,11 +1698,10 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 ++c;
             }
             break;
-        case State::Query:
-            LOG_STATE("Query");
+        case State::UTF8Query:
+            LOG_STATE("UTF8Query");
+            ASSERT(queryBegin == CodePointIterator<CharacterType>());
             if (*c == '#') {
-                if (!isUTF8Encoding)
-                    encodeQuery(queryBuffer, encoding);
                 m_url.m_queryEnd = currentPosition(c);
                 state = State::Fragment;
                 break;
@@ -1656,6 +1711,20 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             else
                 appendCodePoint(queryBuffer, *c);
             ++c;
+            break;
+        case State::NonUTF8Query:
+            do {
+                LOG_STATE("NonUTF8Query");
+                ASSERT(queryBegin != CodePointIterator<CharacterType>());
+                if (*c == '#') {
+                    encodeQuery(queryBuffer, encoding, CodePointIterator<CharacterType>(queryBegin, c));
+                    m_url.m_queryEnd = currentPosition(c);
+                    state = State::Fragment;
+                    break;
+                }
+                appendCodePoint(queryBuffer, *c);
+                advance(c, queryBegin);
+            } while (!c.atEnd());
             break;
         case State::Fragment:
             do {
@@ -1859,10 +1928,16 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         m_url.m_queryEnd = m_url.m_pathEnd;
         m_url.m_fragmentEnd = m_url.m_pathEnd;
         break;
-    case State::Query:
-        LOG_FINAL_STATE("Query");
-        if (!isUTF8Encoding)
-            encodeQuery(queryBuffer, encoding);
+    case State::UTF8Query:
+        LOG_FINAL_STATE("UTF8Query");
+        ASSERT(queryBegin == CodePointIterator<CharacterType>());
+        m_url.m_queryEnd = currentPosition(c);
+        m_url.m_fragmentEnd = m_url.m_queryEnd;
+        break;
+    case State::NonUTF8Query:
+        LOG_FINAL_STATE("NonUTF8Query");
+        ASSERT(queryBegin != CodePointIterator<CharacterType>());
+        encodeQuery(queryBuffer, encoding, CodePointIterator<CharacterType>(queryBegin, c));
         m_url.m_queryEnd = currentPosition(c);
         m_url.m_fragmentEnd = m_url.m_queryEnd;
         break;

@@ -92,7 +92,7 @@ private:
     void appendToASCIIBuffer(UChar32);
     void appendToASCIIBuffer(const char*, size_t);
     void appendToASCIIBuffer(const LChar* characters, size_t size) { appendToASCIIBuffer(reinterpret_cast<const char*>(characters), size); }
-    void encodeQuery(const Vector<UChar>& source, const TextEncoding&);
+    template<typename CharacterType> void encodeQuery(const Vector<UChar>& source, const TextEncoding&, CodePointIterator<CharacterType>);
     void copyASCIIStringUntil(const String&, size_t lengthIf8Bit, size_t lengthIf16Bit);
     StringView parsedDataView(size_t start, size_t length);
 

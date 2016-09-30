@@ -1,3 +1,16 @@
+2016-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser: handle syntax violations in non-UTF-8 encoded queries
+        https://bugs.webkit.org/show_bug.cgi?id=162770
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::TEST_F):
+        Tests with emoji change behavior when we insert a tab between the surrogates, so don't do the
+        insert-tab-at-each-location verification that syntax violations are handled correctly.
+
 2016-09-30  Megan Gardner  <megan_gardner@apple.com>
 
         Make it possible to test web-related user-interface features
