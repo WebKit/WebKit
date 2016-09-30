@@ -1,3 +1,24 @@
+2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The dragged image should be the current frame only of the animated image
+        https://bugs.webkit.org/show_bug.cgi?id=162109
+
+        Reviewed by Tim Horton.
+
+        * DOM/DOM.mm:
+        (-[DOMElement image]): Call the Image function with its new name.
+        (-[DOMElement _imageTIFFRepresentation]): Ditto.
+        * Misc/WebElementDictionary.mm:
+        (-[WebElementDictionary _image]): Call the Image function with its new name.
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase defaultIconWithSize:]): Call currentFrameNSImage() to create the icon image.
+        (webGetNSImage): Call the Image function with its new name.
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::imageForCurrentSharingServicePickerItem): Call currentFrameNSImage() instead of nsImage()..
+        (WebContextMenuClient::contextMenuForEvent): Ditto.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView pasteboard:provideDataForType:]): Call the Image function with its new name.
+
 2016-09-27  Jer Noble  <jer.noble@apple.com>
 
         Remove deprecated ENCRYPTED_MEDIA implementation.

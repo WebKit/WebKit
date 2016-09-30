@@ -146,11 +146,12 @@ public:
     // Accessors for native image formats.
 
 #if USE(APPKIT)
-    virtual NSImage* getNSImage() { return nullptr; }
+    virtual NSImage *nsImage() { return nullptr; }
+    virtual RetainPtr<NSImage> currentFrameNSImage() { return nullptr; }
 #endif
 
 #if PLATFORM(COCOA)
-    virtual CFDataRef getTIFFRepresentation() { return nullptr; }
+    virtual CFDataRef tiffRepresentation() { return nullptr; }
 #endif
 
 #if PLATFORM(WIN)
