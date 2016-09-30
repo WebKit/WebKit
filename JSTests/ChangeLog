@@ -1,3 +1,13 @@
+2016-09-30  Saam Barati  <sbarati@apple.com>
+
+        Make some microbenchmarks run for less time.
+
+        Rubber stamped by Filip Pizlo.
+
+        * microbenchmarks/bound-function-construction-performance.js:
+        (foo):
+        * microbenchmarks/getter-richards-try-catch.js:
+
 2016-09-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Arrow functions do not infer name from computed property but normal functions do

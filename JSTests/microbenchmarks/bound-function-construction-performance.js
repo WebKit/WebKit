@@ -7,7 +7,7 @@ noInline(makeBoundFunc);
 
 function foo() {
     function f() { }
-    for (let i = 0; i < 15000000; i++) {
+    for (let i = 0; i < 400000; i++) {
         makeBoundFunc(f); 
     }
 }
