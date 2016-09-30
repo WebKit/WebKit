@@ -1,3 +1,81 @@
+2016-09-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] layout nodes
+        https://bugs.webkit.org/show_bug.cgi?id=162799
+        <rdar://problem/28569301>
+
+        Reviewed by Dean Jackson.
+
+        Modern media controls will be using a tree of LayoutNode objects that commit to the DOM
+        in coordinated `requestAnimationFrame()` calls to ensure all layouts are done in an efficient
+        and coordinated manner. As a preamble, we introduced the `scheduler` singleton in
+        https://webkit.org/b/162726 which is in charge of scheduling callbacks.
+
+        A LayoutNode is created by providing an Element to its constructor, or an HTML string. Not
+        providing a parameter creates a simple <div>.
+
+        When we set a property on a LayoutNode, we call `markDirtyProperty(propertyName)` which keeps
+        track of dirty properties in the `_dirtyProperties` set. When this set is non-empty, the node
+        is marked as dirty and registered in the global `dirtyNodes` map, asking the shared scheduler
+        that a layout is needed. When the layout is performed, all nodes in the `dirtyNodes` map are
+        processed such that `commitProperty(propertyName)` is called to commit dirty properties for
+        a given node to the DOM, and `layout()` is called to allow subclasses of LayoutNode to conduct
+        custom layout logic that goes beyond committing a given property.
+
+        Another reason why a node may be marked as dirty is when a DOM hierarchy change is needed. A
+        host of DOM-like methods are exposed to allow flexible manipulations of nodes, with an extra
+        `children` property which allows wholesale change of a node's subtree with a single array
+        property assignment. Changes to the DOM hierarchy are performed in the same scheduler callback
+        as style properties.
+
+        Nodes can be marked for layout explicitly with by setting the `needsLayout` property.
+
+        Tests: media/modern-media-controls/layout-node/addChild.html
+               media/modern-media-controls/layout-node/children.html
+               media/modern-media-controls/layout-node/constructor.html
+               media/modern-media-controls/layout-node/height.html
+               media/modern-media-controls/layout-node/insertAfter.html
+               media/modern-media-controls/layout-node/insertBefore.html
+               media/modern-media-controls/layout-node/parent.html
+               media/modern-media-controls/layout-node/remove.html
+               media/modern-media-controls/layout-node/removeChild.html
+               media/modern-media-controls/layout-node/subclassing.html
+               media/modern-media-controls/layout-node/visible.html
+               media/modern-media-controls/layout-node/width.html
+               media/modern-media-controls/layout-node/x.html
+               media/modern-media-controls/layout-node/y.html
+
+        * Modules/modern-media-controls/controls/layout-node.js: Added.
+        (LayoutNode):
+        (LayoutNode.prototype.get x):
+        (LayoutNode.prototype.set x):
+        (LayoutNode.prototype.get y):
+        (LayoutNode.prototype.set y):
+        (LayoutNode.prototype.get width):
+        (LayoutNode.prototype.set width):
+        (LayoutNode.prototype.get height):
+        (LayoutNode.prototype.set height):
+        (LayoutNode.prototype.get visible):
+        (LayoutNode.prototype.set visible):
+        (LayoutNode.prototype.get needsLayout):
+        (LayoutNode.prototype.set needsLayout):
+        (LayoutNode.prototype.get parent):
+        (LayoutNode.prototype.get children):
+        (LayoutNode.prototype.set children):
+        (LayoutNode.prototype.addChild):
+        (LayoutNode.prototype.insertBefore):
+        (LayoutNode.prototype.insertAfter):
+        (LayoutNode.prototype.removeChild):
+        (LayoutNode.prototype.remove):
+        (LayoutNode.prototype.markDirtyProperty):
+        (LayoutNode.prototype.commitProperty):
+        (LayoutNode.prototype.layout):
+        (LayoutNode.prototype._markNodeManipulation):
+        (LayoutNode.prototype._updateDirtyState):
+        (LayoutNode.prototype._updateChildren):
+        (performScheduledLayout):
+        (elementFromString):
+
 2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The dragged image should be the current frame only of the animated image

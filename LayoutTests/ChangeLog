@@ -1,3 +1,42 @@
+2016-09-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] layout nodes
+        https://bugs.webkit.org/show_bug.cgi?id=162799
+        <rdar://problem/28569301>
+
+        Reviewed by Dean Jackson.
+
+        Testing all public properties and methods of the LayoutNode class.
+
+        * media/modern-media-controls/layout-node/addChild-expected.txt: Added.
+        * media/modern-media-controls/layout-node/addChild.html: Added.
+        * media/modern-media-controls/layout-node/children-expected.txt: Added.
+        * media/modern-media-controls/layout-node/children.html: Added.
+        * media/modern-media-controls/layout-node/constructor-expected.txt: Added.
+        * media/modern-media-controls/layout-node/constructor.html: Added.
+        * media/modern-media-controls/layout-node/height-expected.txt: Added.
+        * media/modern-media-controls/layout-node/height.html: Added.
+        * media/modern-media-controls/layout-node/insertAfter-expected.txt: Added.
+        * media/modern-media-controls/layout-node/insertAfter.html: Added.
+        * media/modern-media-controls/layout-node/insertBefore-expected.txt: Added.
+        * media/modern-media-controls/layout-node/insertBefore.html: Added.
+        * media/modern-media-controls/layout-node/parent-expected.txt: Added.
+        * media/modern-media-controls/layout-node/parent.html: Added.
+        * media/modern-media-controls/layout-node/remove-expected.txt: Added.
+        * media/modern-media-controls/layout-node/remove.html: Added.
+        * media/modern-media-controls/layout-node/removeChild-expected.txt: Added.
+        * media/modern-media-controls/layout-node/removeChild.html: Added.
+        * media/modern-media-controls/layout-node/subclassing-expected.txt: Added.
+        * media/modern-media-controls/layout-node/subclassing.html: Added.
+        * media/modern-media-controls/layout-node/visible-expected.txt: Added.
+        * media/modern-media-controls/layout-node/visible.html: Added.
+        * media/modern-media-controls/layout-node/width-expected.txt: Added.
+        * media/modern-media-controls/layout-node/width.html: Added.
+        * media/modern-media-controls/layout-node/x-expected.txt: Added.
+        * media/modern-media-controls/layout-node/x.html: Added.
+        * media/modern-media-controls/layout-node/y-expected.txt: Added.
+        * media/modern-media-controls/layout-node/y.html: Added.
+
 2016-09-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/media/hls/hls-video-resize.html as flaky on mac-wk1.
