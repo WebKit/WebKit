@@ -1,3 +1,27 @@
+2016-09-30  Saam Barati  <sbarati@apple.com>
+
+        Arrow functions should not allow duplicate parameter names
+        https://bugs.webkit.org/show_bug.cgi?id=162741
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes parsing arrow function parameters throw
+        a syntax error when there are duplicate parameter names.
+        It also starts to make some syntax errors for arrow functions
+        better, however, this is trickier than it seems since we need
+        to choose between two parsing productions when we decide to
+        throw a syntax error. I'm going to work on this problem
+        in another patch specifically devoted to making the error
+        messages better for parsing arrow functions:
+        https://bugs.webkit.org/show_bug.cgi?id=162794
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        * parser/Parser.h:
+
 2016-09-30  Mark Lam  <mark.lam@apple.com>
 
         Use topVMEntryFrame to determine whether to skip the re-throw of a simulated throw.

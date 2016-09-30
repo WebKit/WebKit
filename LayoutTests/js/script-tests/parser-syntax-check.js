@@ -843,6 +843,20 @@ valid("class C { constructor() { this._x = 45; } get foo() { return this._x;} } 
 valid("class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = (y = () => super.foo) => {return y()}) { return y(); } }");
 valid("class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super.foo) { super(); this._x_f = x; } x() { return this._x_f(); } }");
 valid("class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super()) { x(); } x() { return super.foo; } }");
+invalid("let x = (a,a)=>a;");
+invalid("let x = ([a],a)=>a;");
+invalid("let x = ([a, a])=>a;");
+invalid("let x = ({a, b:{a}})=>a;");
+invalid("let x = (a,a)=>{ a };");
+invalid("let x = ([a],a)=>{ };");
+invalid("let x = ([a, a])=>{ };");
+invalid("let x = ([a, a])=>{ };");
+invalid("let x = (a, ...a)=>{ };");
+invalid("let x = (b, c, b)=>{ };");
+invalid("let x = (a, b, c, d, {a})=>{ };");
+invalid("let x = (b = (a,a)=>a, b)=>{ };");
+invalid("((a,a)=>a);");
+invalid("let x = (a)\n=>a;");
 
 debug("Weird things that used to crash.");
 invalid(`or ([[{break //(elseifo (a=0;a<2;a++)n=

@@ -36,7 +36,7 @@
     logError(shouldPrintToken, __VA_ARGS__); \
 } while (0)
 
-#define propagateError() do { if (hasError()) return 0; } while (0)
+#define propagateError() do { if (UNLIKELY(hasError())) return 0; } while (0)
 #define internalFailWithMessage(shouldPrintToken, ...) do { updateErrorMessage(shouldPrintToken, __VA_ARGS__); return 0; } while (0)
 #define handleErrorToken() do { if (m_token.m_type == EOFTOK || m_token.m_type & ErrorTokenFlag) { failDueToUnexpectedToken(); } } while (0)
 #define failWithMessage(...) do { { handleErrorToken(); updateErrorMessage(true, __VA_ARGS__); } return 0; } while (0)
@@ -370,8 +370,9 @@ bool Parser<LexerType>::isArrowFunctionParameters()
 
             unsigned parametersCount = 0;
             unsigned functionLength = 0;
-            isArrowFunction = parseFormalParameters(syntaxChecker, syntaxChecker.createFormalParameterList(), parametersCount, functionLength) && consume(CLOSEPAREN) && match(ARROWFUNCTION);
-                
+            bool isArrowFunctionParameterList = true;
+            isArrowFunction = parseFormalParameters(syntaxChecker, syntaxChecker.createFormalParameterList(), isArrowFunctionParameterList, parametersCount, functionLength) && consume(CLOSEPAREN) && match(ARROWFUNCTION);
+            propagateError();
             popScope(fakeScope, syntaxChecker.NeedsFreeVariableInfo);
         }
         restoreSavePoint(saveArrowFunctionPoint);
@@ -1838,13 +1839,14 @@ template <class TreeBuilder> bool Parser<LexerType>::maybeParseAsyncFunctionDecl
 }
 
 template <typename LexerType>
-template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeBuilder& context, TreeFormalParameterList list, unsigned& parameterCount, unsigned& functionLength)
+template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeBuilder& context, TreeFormalParameterList list, bool isArrowFunction, unsigned& parameterCount, unsigned& functionLength)
 {
 #define failIfDuplicateIfViolation() \
     if (duplicateParameter) {\
         semanticFailIfTrue(hasDefaultParameterValues, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with default parameter values");\
         semanticFailIfTrue(hasDestructuringPattern, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with destructuring parameters");\
         semanticFailIfTrue(isRestParameter, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with a rest parameter");\
+        semanticFailIfTrue(isArrowFunction, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in an arrow function");\
     }
 
     bool hasDefaultParameterValues = false;
@@ -1966,8 +1968,10 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
                 if (match(CLOSEPAREN)) {
                     functionInfo.parameterCount = 0;
                     functionInfo.functionLength = 0;
-                } else
-                    failIfFalse(parseFormalParameters(context, parameterList, functionInfo.parameterCount, functionInfo.functionLength), "Cannot parse parameters for this ", stringForFunctionMode(mode));
+                } else {
+                    bool isArrowFunction = true;
+                    failIfFalse(parseFormalParameters(context, parameterList, isArrowFunction, functionInfo.parameterCount, functionInfo.functionLength), "Cannot parse parameters for this ", stringForFunctionMode(mode));
+                }
                 
                 consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
             } else {
@@ -2012,8 +2016,10 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
         if (match(CLOSEPAREN)) {
             functionInfo.parameterCount = 0;
             functionInfo.functionLength = 0;
-        } else
-            failIfFalse(parseFormalParameters(context, parameterList, functionInfo.parameterCount, functionInfo.functionLength), "Cannot parse parameters for this ", stringForFunctionMode(mode));
+        } else {
+            bool isArrowFunction = false;
+            failIfFalse(parseFormalParameters(context, parameterList, isArrowFunction, functionInfo.parameterCount, functionInfo.functionLength), "Cannot parse parameters for this ", stringForFunctionMode(mode));
+        }
         consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
     }
 
@@ -3410,6 +3416,8 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
                     currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
                 return parseArrowFunctionExpression(context, isAsyncArrow);
             }
+            if (isArrowFunctionToken)
+                propagateError();
             restoreSavePointWithError(errorRestorationSavePoint);
             if (isArrowFunctionToken)
                 failDueToUnexpectedToken();
