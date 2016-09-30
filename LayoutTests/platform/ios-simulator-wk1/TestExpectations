@@ -1347,7 +1347,6 @@ media
 fast/text/emoji-gender.html [ Pass ]
 fast/css/ancestor-of-hovered-element-removed.html [ Pass ]
 fast/images/animated-gif-no-layout.html [ Pass ]
-fast/images/gif-loop-count.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 
 # w3c tests that fail

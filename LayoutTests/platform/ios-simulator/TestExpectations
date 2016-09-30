@@ -2665,3 +2665,5 @@ webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Timeout ]
 
 # Only iOS has implemented lettepress.
 fast/text/letterpress-different.html [ Pass ]
+
+webkit.org/b/162739 fast/images/gif-loop-count.html [ Pass ImageOnlyFailure ]
