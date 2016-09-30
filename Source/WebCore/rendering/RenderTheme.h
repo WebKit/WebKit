@@ -325,6 +325,11 @@ protected:
     virtual void adjustCapsLockIndicatorStyle(StyleResolver&, RenderStyle&, const Element*) const;
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&);
 
+#if ENABLE(APPLE_PAY)
+    virtual void adjustApplePayButtonStyle(StyleResolver&, RenderStyle&, const Element*) const { }
+    virtual bool paintApplePayButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual void adjustAttachmentStyle(StyleResolver&, RenderStyle&, const Element*) const;
     virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&);

@@ -806,6 +806,9 @@ rating-level-indicator
 #if defined(ENABLE_SERVICE_CONTROLS) && ENABLE_SERVICE_CONTROLS
 image-controls-button
 #endif
+#if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
+-apple-pay-button
+#endif
 textarea
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
 attachment
@@ -1177,6 +1180,17 @@ from-intrinsic
 #if defined(ENABLE_CSS_TRAILING_WORD) && ENABLE_CSS_TRAILING_WORD
 // -apple-trailing-word
 -webkit-partially-balanced
+#endif
+
+#if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
+// -apple-pay-button-style
+white-outline
+
+// -apple-pay-button-type
+plain
+buy
+set-up
+in-store
 #endif
 
 // font-synthesis

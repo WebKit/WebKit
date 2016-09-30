@@ -19,12 +19,12 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#if !PLATFORM(IOS)
 
-#ifndef RenderThemeMac_h
-#define RenderThemeMac_h
+#pragma once
 
-#import "RenderTheme.h"
+#if PLATFORM(MAC)
+
+#import "RenderThemeCocoa.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/HashMap.h>
 
@@ -40,7 +40,7 @@ class RenderProgress;
 class RenderStyle;
 struct AttachmentLayout;
 
-class RenderThemeMac final : public RenderTheme {
+class RenderThemeMac final : public RenderThemeCocoa {
 public:
     static Ref<RenderTheme> create();
 
@@ -250,6 +250,4 @@ private:
 
 } // namespace WebCore
 
-#endif // RenderThemeMac_h
-
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)

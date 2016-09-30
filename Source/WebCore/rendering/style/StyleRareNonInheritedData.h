@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef StyleRareNonInheritedData_h
-#define StyleRareNonInheritedData_h
+#pragma once
 
 #include "BasicShapes.h"
 #include "CSSPropertyNames.h"
@@ -220,6 +219,11 @@ public:
     unsigned m_isolation : 1; // Isolation
 #endif
 
+#if ENABLE(APPLE_PAY)
+    unsigned m_applePayButtonStyle : 2;
+    unsigned m_applePayButtonType : 3;
+#endif
+
     unsigned m_objectFit : 3; // ObjectFit
     
     unsigned m_breakBefore : 4; // BreakBetween
@@ -237,5 +241,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // StyleRareNonInheritedData_h

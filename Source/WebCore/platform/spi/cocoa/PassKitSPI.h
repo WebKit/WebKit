@@ -222,3 +222,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+extern "C"
+void PKDrawApplePayButton(_Nonnull CGContextRef, CGRect drawRect, CGFloat scale, PKPaymentButtonType, PKPaymentButtonStyle, NSString * _Nullable languageCode);
