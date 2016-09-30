@@ -989,8 +989,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueWhite || valueID == CSSValueWhiteOutline || valueID == CSSValueBlack)
             return true;
         break;
-    case CSSPropertyApplePayButtonType: // plain | buy | set-up | in-store
-        if (valueID == CSSValuePlain || valueID == CSSValueBuy || valueID == CSSValueSetUp || valueID == CSSValueInStore)
+    case CSSPropertyApplePayButtonType: // plain | buy | set-up
+        if (valueID == CSSValuePlain || valueID == CSSValueBuy || valueID == CSSValueSetUp)
             return true;
         break;
 #endif
