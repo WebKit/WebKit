@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDownloadFinished();
+</script>
+</head>
+<body>
+<img id="testImage" src="/resources/square100.png" usemap="#testmap">
+<map name="testmap">
+  <area shape="rect" coords="0,0,100,100" href="resources/FAIL-notify-done.html" alt="Test" download="foo.pdf">
+</map>
+<p>Tests that the download attribute on area elements is working.</p>
+<p>The suggested filename at the top should be foo.pdf.</p>
+<div id="console"></div>
+<script>
+    function click(elmt)
+    {
+        if (!window.eventSender)
+            return;
+
+        eventSender.mouseMoveTo(elmt.offsetLeft + 10, elmt.offsetTop + 10);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    function runTest()
+    {
+        var img = document.getElementById("testImage");
+        click(img);
+    }
+    onload = function() {
+        runTest();
+    }
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

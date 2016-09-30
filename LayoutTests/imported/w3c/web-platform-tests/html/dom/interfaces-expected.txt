@@ -2270,7 +2270,7 @@ PASS HTMLAreaElement interface: attribute alt
 PASS HTMLAreaElement interface: attribute coords 
 PASS HTMLAreaElement interface: attribute shape 
 PASS HTMLAreaElement interface: attribute target 
-FAIL HTMLAreaElement interface: attribute download assert_true: The prototype object must have a property "download" expected true got false
+PASS HTMLAreaElement interface: attribute download 
 PASS HTMLAreaElement interface: attribute ping 
 PASS HTMLAreaElement interface: attribute rel 
 PASS HTMLAreaElement interface: attribute relList 
@@ -2293,7 +2293,7 @@ PASS HTMLAreaElement interface: document.createElement("area") must inherit prop
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "coords" with the proper type (1) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "shape" with the proper type (2) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "target" with the proper type (3) 
-FAIL HTMLAreaElement interface: document.createElement("area") must inherit property "download" with the proper type (4) assert_inherits: property "download" not found in prototype chain
+PASS HTMLAreaElement interface: document.createElement("area") must inherit property "download" with the proper type (4) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "ping" with the proper type (5) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "rel" with the proper type (6) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "relList" with the proper type (7) 

@@ -1,5 +1,16 @@
 2016-09-29  Chris Dumez  <cdumez@apple.com>
 
+        Add support for download attribute on area elements
+        https://bugs.webkit.org/show_bug.cgi?id=162765
+
+        Reviewed by Brent Fulgham.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+
+2016-09-29  Chris Dumez  <cdumez@apple.com>
+
         Assigning non-numeric to input.minlength should set minlength to 0
         https://bugs.webkit.org/show_bug.cgi?id=162727
 

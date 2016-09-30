@@ -741,10 +741,6 @@ fast/dom/Geolocation/permission-denied-already-clear-watch.html
 fast/dom/Geolocation/permission-denied-already-error.html
 fast/dom/Geolocation/permission-denied-stops-watches.html
 fast/dom/Geolocation/requestQueuingForHiddenPage.html
-fast/dom/HTMLAnchorElement/anchor-download-unset.html
-fast/dom/HTMLAnchorElement/anchor-download.html
-fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
-fast/dom/HTMLAnchorElement/anchor-nodownload.html
 fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/MutationObserver/end-of-task-delivery.html
 fast/dom/Node/mutation-blur.html
@@ -1806,7 +1802,12 @@ webkit.org/b/155947 [ Debug ] fast/loader/scroll-position-restored-on-back.html 
 
 webkit.org/b/155948 transitions/cancel-transition.html [ Pass Failure ]
 
-# <a download> is not supported with NETWORK_SESSION yet.
+# <a download> does not work on iOS.
+webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Skip ]
+webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
+webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
+webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Skip ]
+webkit.org/b/156067 http/tests/download/area-download.html [ Skip ]
 webkit.org/b/156067 http/tests/security/anchor-download-allow-blob.html [ Skip ]
 webkit.org/b/156067 http/tests/security/anchor-download-allow-data.html [ Skip ]
 webkit.org/b/156067 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]

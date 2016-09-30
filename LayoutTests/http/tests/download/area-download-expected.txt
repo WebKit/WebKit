@@ -1,0 +1,12 @@
+Download started.
+Downloading URL with suggested filename "foo.pdf"
+Download completed.
+
+Tests that the download attribute on area elements is working.
+
+The suggested filename at the top should be foo.pdf.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

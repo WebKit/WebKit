@@ -27,6 +27,8 @@ interface HTMLAreaElement : HTMLElement {
     [Reflect] attribute DOMString shape;
     [Reflect] attribute DOMString target;
 
+    [Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
+
     [PutForwards=value] readonly attribute DOMTokenList relList;
 };
 
