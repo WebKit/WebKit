@@ -1,3 +1,20 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix modules tests after r206653 handle breakpoint locations in import/export statements
+        https://bugs.webkit.org/show_bug.cgi?id=162807
+
+        Reviewed by Mark Lam.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createExportDefaultDeclaration):
+        (JSC::ASTBuilder::createExportLocalDeclaration):
+        Don't record an extra breakpoint location for the statement
+        within an export statement.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        Record a pause location for import/export statements.
+
 2016-09-30  Mark Lam  <mark.lam@apple.com>
 
         Remove the dumping of the stack back trace in VM::verifyExceptionCheckNeedIsSatisfied().

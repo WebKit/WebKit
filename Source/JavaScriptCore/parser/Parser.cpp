@@ -459,11 +459,15 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSo
 
     while (true) {
         TreeStatement statement = 0;
-        if (match(IMPORT))
+        if (match(IMPORT)) {
             statement = parseImportDeclaration(context);
-        else if (match(EXPORT))
+            if (statement)
+                recordPauseLocation(context.breakpointLocation(statement));
+        } else if (match(EXPORT)) {
             statement = parseExportDeclaration(context);
-        else {
+            if (statement)
+                recordPauseLocation(context.breakpointLocation(statement));
+        } else {
             const Identifier* directive = 0;
             unsigned directiveLiteralLength = 0;
             if (parseMode == SourceParseMode::ModuleAnalyzeMode) {
