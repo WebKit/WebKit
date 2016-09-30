@@ -40,6 +40,28 @@ TestPage.registerInitializer(() => {
         return loadLinesFromSourceCode(WebInspector.frameResourceManager.mainFrame.mainResource);
     }
 
+    window.setBreakpointsOnLinesWithBreakpointComment = function(resource) {
+        if (!resource)
+            resource = WebInspector.frameResourceManager.mainFrame.mainResource;
+
+        function createLocation(resource, lineNumber, columnNumber) {
+            return {url: resource.url, lineNumber, columnNumber};
+        }
+
+        let promises = [];
+
+        for (let i = 0; i < lines.length; ++i) {
+            let line = lines[i];
+            if (/BREAKPOINT/.test(line)) {
+                let lastPathComponent = parseURL(resource.url).lastPathComponent;
+                InspectorTest.log(`Setting Breakpoint: ${lastPathComponent}:${i}:0`);
+                promises.push(DebuggerAgent.setBreakpointByUrl.invoke({url: resource.url, lineNumber: i, columnNumber: 0}));
+            }
+        }
+
+        return Promise.all(promises);
+    }
+
     window.logResolvedBreakpointLinesWithContext = function(inputLocation, resolvedLocation, context) {
         if (resolvedLocation.sourceCode !== linesSourceCode && !WebInspector.frameResourceManager.mainFrame.mainResource.scripts.includes(resolvedLocation.sourceCode)) {
             InspectorTest.log("--- Source Unavailable ---");

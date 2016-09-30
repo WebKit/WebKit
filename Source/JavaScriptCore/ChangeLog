@@ -1,3 +1,16 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping over/out of a function sometimes resumes instead of taking you to caller
+        https://bugs.webkit.org/show_bug.cgi?id=162802
+        <rdar://problem/28569982>
+
+        Reviewed by Mark Lam.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::stepOverStatement):
+        (JSC::Debugger::stepOutOfFunction):
+        Enable stepping mode when we start stepping.
+
 2016-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3::moveConstants should be able to edit code to minimize the number of constants

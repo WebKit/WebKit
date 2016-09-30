@@ -1,0 +1,106 @@
+Checking pause locations when pausing inside a function and stepping through to the outer function.
+
+Setting Breakpoint: stepping-pause-in-inner-step-to-parent.html:11:0
+
+== Running test suite: Debugger.stepping.inner-to-outer
+-- Running test case: Debugger.stepping.inner-to-outer.StepIn
+EXPRESSION: setTimeout(entry)
+STEPS: in, in, resume
+PAUSED (breakpoint)
+PAUSE AT pause:12:5
+      8    }
+      9    
+     10    function pause() {
+ ->  11        |var x; // BREAKPOINT
+     12    }
+     13    
+     14    // ---------
+
+ACTION: step-in
+PAUSE AT pause:13:2
+      9    
+     10    function pause() {
+     11        var x; // BREAKPOINT
+ ->  12    }|
+     13    
+     14    // ---------
+     15    
+
+ACTION: step-in
+PAUSE AT entry:9:2
+      5    <script>
+      6    function entry() {
+      7        pause();
+ ->   8    }|
+      9    
+     10    function pause() {
+     11        var x; // BREAKPOINT
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.inner-to-outer.StepOver
+EXPRESSION: setTimeout(entry)
+STEPS: over, over, resume
+PAUSED (breakpoint)
+PAUSE AT pause:12:5
+      8    }
+      9    
+     10    function pause() {
+ ->  11        |var x; // BREAKPOINT
+     12    }
+     13    
+     14    // ---------
+
+ACTION: step-over
+PAUSE AT pause:13:2
+      9    
+     10    function pause() {
+     11        var x; // BREAKPOINT
+ ->  12    }|
+     13    
+     14    // ---------
+     15    
+
+ACTION: step-over
+PAUSE AT entry:9:2
+      5    <script>
+      6    function entry() {
+      7        pause();
+ ->   8    }|
+      9    
+     10    function pause() {
+     11        var x; // BREAKPOINT
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.inner-to-outer.StepOut
+EXPRESSION: setTimeout(entry)
+STEPS: out, resume
+PAUSED (breakpoint)
+PAUSE AT pause:12:5
+      8    }
+      9    
+     10    function pause() {
+ ->  11        |var x; // BREAKPOINT
+     12    }
+     13    
+     14    // ---------
+
+ACTION: step-out
+PAUSE AT entry:9:2
+      5    <script>
+      6    function entry() {
+      7        pause();
+ ->   8    }|
+      9    
+     10    function pause() {
+     11        var x; // BREAKPOINT
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

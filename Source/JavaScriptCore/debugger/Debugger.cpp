@@ -638,6 +638,7 @@ void Debugger::stepOverStatement()
         return;
 
     m_pauseOnCallFrame = m_currentCallFrame;
+    setSteppingMode(SteppingModeEnabled);
     notifyDoneProcessingDebuggerEvents();
 }
 
@@ -649,6 +650,7 @@ void Debugger::stepOutOfFunction()
     VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
     m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topVMEntryFrame) : nullptr;
     m_pauseOnStepOut = true;
+    setSteppingMode(SteppingModeEnabled);
     notifyDoneProcessingDebuggerEvents();
 }
 

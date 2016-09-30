@@ -1,3 +1,21 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping over/out of a function sometimes resumes instead of taking you to caller
+        https://bugs.webkit.org/show_bug.cgi?id=162802
+        <rdar://problem/28569982>
+
+        Reviewed by Mark Lam.
+
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.createLocation):
+        (TestPage.registerInitializer.window.setBreakpointsOnLinesWithBreakpointComment):
+        Helper to set breakpoints everywhere in a file that has a BREAKPOINT comment.
+
+        * inspector/debugger/stepping/stepping-pause-in-inner-step-to-parent-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-pause-in-inner-step-to-parent.html: Added.
+        Test that stepping out and over end up in the parent. Before this change
+        we would never have made it back into entry and the test failed.
+
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement rendering of font-variation-settings
