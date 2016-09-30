@@ -984,6 +984,16 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
 #endif
+#if ENABLE(APPLE_PAY)
+    case CSSPropertyApplePayButtonStyle: // white | white-outline | black
+        if (valueID == CSSValueWhite || valueID == CSSValueWhiteOutline || valueID == CSSValueBlack)
+            return true;
+        break;
+    case CSSPropertyApplePayButtonType: // plain | buy | set-up | in-store
+        if (valueID == CSSValuePlain || valueID == CSSValueBuy || valueID == CSSValueSetUp || valueID == CSSValueInStore)
+            return true;
+        break;
+#endif
     case CSSPropertyFontVariantPosition: // normal | sub | super
         if (valueID == CSSValueNormal || valueID == CSSValueSub || valueID == CSSValueSuper)
             return true;
@@ -13552,6 +13562,17 @@ bool CSSParser::parseViewportShorthand(CSSPropertyID propId, CSSPropertyID first
 }
 #endif
 
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
+static bool isAppleLegacyCSSPropertyKeyword(const char* propertyKeyword, unsigned length)
+{
+    static const char applePrefix[] = "-apple-";
+    static const char applePayPrefix[] = "-apple-pay-";
+
+    return hasPrefix(propertyKeyword, length, applePrefix)
+        && !hasPrefix(propertyKeyword, length, applePayPrefix);
+}
+#endif
+
 template <typename CharacterType>
 static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned length)
 {
@@ -13571,7 +13592,7 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
         // If the prefix is -apple- or -khtml-, change it to -webkit-.
         // This makes the string one character longer.
         if (RuntimeEnabledFeatures::sharedFeatures().legacyCSSVendorPrefixesEnabled()
-            && (hasPrefix(buffer, length, "-apple-") || hasPrefix(buffer, length, "-khtml-"))) {
+            && (isAppleLegacyCSSPropertyKeyword(buffer, length) || hasPrefix(buffer, length, "-khtml-"))) {
             memmove(buffer + 7, buffer + 6, length + 1 - 6);
             memcpy(buffer, "-webkit", 7);
             ++length;
@@ -13622,14 +13643,16 @@ void cssPropertyNameIOSAliasing(const char* propertyName, const char*& propertyN
 }
 #endif
 
-static bool isAppleLegacyCssValueKeyword(const char* valueKeyword, unsigned length)
+static bool isAppleLegacyCSSValueKeyword(const char* valueKeyword, unsigned length)
 {
     static const char applePrefix[] = "-apple-";
-    static const char appleSystemPrefix[] = "-apple-system";
+    static const char appleSystemPrefix[] = "-apple-system-";
+    static const char applePayPrefix[] = "-apple-pay-";
     static const char* appleWirelessPlaybackTargetActive = getValueName(CSSValueAppleWirelessPlaybackTargetActive);
 
     return hasPrefix(valueKeyword, length, applePrefix)
         && !hasPrefix(valueKeyword, length, appleSystemPrefix)
+        && !hasPrefix(valueKeyword, length, applePayPrefix)
         && !WTF::equal(reinterpret_cast<const LChar*>(valueKeyword), reinterpret_cast<const LChar*>(appleWirelessPlaybackTargetActive), length);
 }
 
@@ -13651,7 +13674,7 @@ static CSSValueID cssValueKeywordID(const CharacterType* valueKeyword, unsigned 
         // This makes the string one character longer.
         // On iOS we don't want to change values starting with -apple-system to -webkit-system.
         // FIXME: Remove this mangling without breaking the web.
-        if (isAppleLegacyCssValueKeyword(buffer, length) || hasPrefix(buffer, length, "-khtml-")) {
+        if (isAppleLegacyCSSValueKeyword(buffer, length) || hasPrefix(buffer, length, "-khtml-")) {
             memmove(buffer + 7, buffer + 6, length + 1 - 6);
             memcpy(buffer, "-webkit", 7);
             ++length;
