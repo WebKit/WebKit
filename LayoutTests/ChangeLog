@@ -1,3 +1,11 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Rebaseline results after r206654.
+
+        Better location for unary expressions.
+
+        * js/stack-trace-expected.txt:
+
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix fast/text/trak-optimizeLegibility.html
