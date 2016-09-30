@@ -260,3 +260,5 @@ webkit.org/b/162591 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-refle
 webkit.org/b/162591 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-reflection-value-change.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/162791 http/tests/security/cached-cross-origin-preloading-css-stylesheet.html [ Pass Failure ]
+
+webkit.org/b/162507 http/tests/media/hls/hls-video-resize.html [ Pass Failure ]
