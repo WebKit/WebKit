@@ -309,7 +309,8 @@ RefPtr<JSC::Uint32Array> toUint32Array(JSC::JSValue);
 RefPtr<JSC::Float32Array> toFloat32Array(JSC::JSValue);
 RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue);
 
-template<typename T, typename JSType> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState*, JSC::JSValue);
+template<typename T, typename JSType> Vector<Ref<T>> toRefNativeArray(JSC::ExecState&, JSC::JSValue);
+template<typename T, typename JSType> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState&, JSC::JSValue);
 template<typename T> Vector<T> toNativeArray(JSC::ExecState&, JSC::JSValue);
 bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
 
@@ -812,6 +813,30 @@ template<> struct NativeValueTraits<double> {
     }
 };
 
+template<typename T, typename JST> inline Vector<Ref<T>> toRefNativeArray(JSC::ExecState& state, JSC::JSValue value)
+{
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!value.isObject()) {
+        throwSequenceTypeError(state, scope);
+        return { };
+    }
+
+    Vector<Ref<T>> result;
+    forEachInIterable(&state, value, [&result](JSC::VM& vm, JSC::ExecState* state, JSC::JSValue jsValue) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        if (jsValue.inherits(JST::info())) {
+            auto* object = JST::toWrapped(jsValue);
+            ASSERT(object);
+            result.append(*object);
+        } else
+            throwArrayElementTypeError(*state, scope);
+    });
+    return result;
+}
+
 template<typename T, typename JST> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState& exec, JSC::JSValue value)
 {
     JSC::VM& vm = exec.vm();
@@ -819,7 +844,7 @@ template<typename T, typename JST> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::Ex
 
     if (!value.isObject()) {
         throwSequenceTypeError(exec, scope);
-        return Vector<RefPtr<T>>();
+        return { };
     }
 
     Vector<RefPtr<T>> result;
