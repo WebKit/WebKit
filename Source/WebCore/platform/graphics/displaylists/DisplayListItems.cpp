@@ -532,7 +532,7 @@ static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
 }
 #endif
 
-DrawPattern::DrawPattern(Image& image, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+DrawPattern::DrawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
     : DrawingItem(ItemType::DrawPattern)
     , m_image(image)
     , m_patternTransform(patternTransform)
@@ -547,7 +547,7 @@ DrawPattern::DrawPattern(Image& image, const FloatRect& tileRect, const AffineTr
 
 void DrawPattern::apply(GraphicsContext& context) const
 {
-    context.drawPattern(m_image.get(), m_tileRect, m_patternTransform, m_phase, m_spacing, m_op, m_destination, m_blendMode);
+    context.drawPattern(m_image.get(), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_op, m_blendMode);
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawPattern& item)

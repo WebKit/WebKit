@@ -275,11 +275,11 @@ void ImageBuffer::draw(GraphicsContext& destinationContext, const FloatRect& des
     destinationContext.drawImage(*image, destRect, srcRect, ImagePaintingOptions(op, blendMode, ImageOrientationDescription()));
 }
 
-void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode)
+void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
+    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode)
 {
     if (RefPtr<Image> image = copyImage(DontCopyBackingStore))
-        image->drawPattern(context, srcRect, patternTransform, phase, spacing, op, destRect);
+        image->drawPattern(context, destRect, srcRect, patternTransform, phase, spacing, op);
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)

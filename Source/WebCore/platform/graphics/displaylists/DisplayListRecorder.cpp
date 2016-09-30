@@ -132,9 +132,9 @@ void Recorder::drawTiledImage(Image& image, const FloatRect& destination, const 
     updateItemExtent(newItem);
 }
 
-void Recorder::drawPattern(Image& image, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawPattern::create(image, tileRect, patternTransform, phase, spacing, op, destRect, blendMode)));
+    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawPattern::create(image, destRect, tileRect, patternTransform, phase, spacing, op, blendMode)));
     updateItemExtent(newItem);
 }
 

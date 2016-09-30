@@ -58,7 +58,7 @@ public:
 
     void draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientationDescription) final;
 
-    void drawPattern(GraphicsContext&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, const FloatRect&, BlendMode) final;
+    void drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, BlendMode) final;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }

@@ -31,20 +31,16 @@
 #if USE(CAIRO)
 
 #include "AffineTransform.h"
-#include "CairoUtilities.h"
 #include "Color.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
-#include "PlatformContextCairo.h"
-#include <cairo.h>
-#include <math.h>
 
 namespace WebCore {
 
-void Image::drawPattern(GraphicsContext& context, const FloatRect& tileRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+void Image::drawPattern(GraphicsContext& context, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform,
+    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
 {
-    context.drawPattern(*this, tileRect, patternTransform, phase, spacing, op, destRect, blendMode);
+    context.drawPattern(*this, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

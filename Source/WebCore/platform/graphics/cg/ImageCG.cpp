@@ -28,29 +28,19 @@
 
 #if USE(CG)
 
-#include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContextCG.h"
 #include "ImageObserver.h"
-#include <CoreGraphics/CoreGraphics.h>
-
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#endif
-
-#if PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
 
 namespace WebCore {
 
-void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform,
+    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
 {
     if (!nativeImageForCurrentFrame())
         return;
 
-    ctxt.drawPattern(*this, tileRect, patternTransform, phase, spacing, op, destRect, blendMode);
+    ctxt.drawPattern(*this, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

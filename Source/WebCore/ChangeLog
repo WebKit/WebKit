@@ -1,3 +1,61 @@
+2016-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Re-order the arguments to drawPattern() functions
+        https://bugs.webkit.org/show_bug.cgi?id=162772
+
+        Reviewed by Zalan Bujtas.
+        
+        Re-order the arguments to have the destination rect come near the front,
+        leaving CompositeOperator and BlendMode hanging out at the back like
+        other drawing functions.
+
+        No behavior change.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::drawPattern):
+        * platform/graphics/GradientImage.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::drawPattern):
+        * platform/graphics/NamedImageGeneratedImage.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawPattern):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::drawPattern):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawPattern):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::drawPattern):
+        * platform/graphics/cg/ImageCG.cpp: This file can probably be removed and the code moved, since the
+        code is almost the same as the cairo code, and not platform-specific.
+        (WebCore::Image::drawPattern):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawPattern::DrawPattern):
+        (WebCore::DisplayList::DrawPattern::apply):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawPattern::create):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawPattern):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawPatternForContainer):
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::drawPattern):
+        * svg/graphics/SVGImageForContainer.h:
+
 2016-09-29  Chris Dumez  <cdumez@apple.com>
 
         Add support for download attribute on area elements

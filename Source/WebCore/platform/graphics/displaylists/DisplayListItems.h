@@ -670,9 +670,9 @@ private:
 
 class DrawPattern : public DrawingItem {
 public:
-    static Ref<DrawPattern> create(Image& image, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+    static Ref<DrawPattern> create(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
     {
-        return adoptRef(*new DrawPattern(image, tileRect, patternTransform, phase, spacing, op, destRect, blendMode));
+        return adoptRef(*new DrawPattern(image, destRect, tileRect, patternTransform, phase, spacing, op, blendMode));
     }
 
     const Image& image() const { return m_image.get(); }
@@ -683,7 +683,7 @@ public:
     FloatSize spacing() const { return m_spacing; }
 
 private:
-    DrawPattern(Image&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
+    DrawPattern(Image&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode = BlendModeNormal);
 
     void apply(GraphicsContext&) const override;
 
