@@ -1,6 +1,6 @@
 PASS first.getClientRects().length is 1
 PASS third.getClientRects().length is 1
-FAIL first.getClientRects()[0].right should be within 4 of 346. Was 369.
+PASS first.getClientRects()[0].right is third.getClientRects()[0].right
 PASS successfullyParsed is true
 
 TEST COMPLETE

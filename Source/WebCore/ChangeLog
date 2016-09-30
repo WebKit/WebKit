@@ -1,5 +1,25 @@
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Fix fast/text/trak-optimizeLegibility.html
+        https://bugs.webkit.org/show_bug.cgi?id=162779
+
+        Reviewed by Simon Fraser.
+
+        I accidentally created this test to allow an unnecessary delta
+        in the width comparison. This covered the fact that the fonts
+        were not being selected correctly in our testing code. Update the
+        font selection code to work with system fonts correctly and
+        update the test to not use a delta when performing width
+        comparisons.
+
+        Test: fast/text/trak-optimizeLegibility.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::isSystemFont):
+        (WebCore::platformFontLookupWithFamily):
+
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Create runtime flag for variation font work
         https://bugs.webkit.org/show_bug.cgi?id=162780
 

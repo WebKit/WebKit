@@ -661,10 +661,15 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
 }
 
 #if ENABLE(PLATFORM_FONT_LOOKUP)
+static bool isSystemFont(const AtomicString& family)
+{
+    return family.length() >= 1 && family[0] == '.';
+}
+
 static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, float size)
 {
     const auto& whitelist = fontWhitelist();
-    if (whitelist.size() && !whitelist.contains(family))
+    if (!isSystemFont(family) && whitelist.size() && !whitelist.contains(family))
         return nullptr;
 
     return adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), toCoreTextFontWeight(weight), requestedTraits, size));
