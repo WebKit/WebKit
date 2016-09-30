@@ -1,3 +1,10 @@
+2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed, fix 32-bit build.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::decodedSizeChanged):
+
 2016-09-30  Youenn Fablet  <youenn@apple.com>
 
         FetchBody should use UTF8Encoding to encode text data
