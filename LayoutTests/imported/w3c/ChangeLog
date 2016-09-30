@@ -1,3 +1,15 @@
+2016-09-30  Youenn Fablet  <youenn@apple.com>
+
+        FetchBody should use UTF8Encoding to encode text data
+        https://bugs.webkit.org/show_bug.cgi?id=162775
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/fetch/api/basic/text-utf8-expected.txt:
+        * web-platform-tests/fetch/api/basic/text-utf8.html:
+        * web-platform-tests/fetch/api/resources/utils.js:
+        (encode_utf8):
+
 2016-09-30  Chris Dumez  <cdumez@apple.com>
 
         Add support for ImageData.data attribute

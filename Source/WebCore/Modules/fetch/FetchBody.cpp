@@ -47,15 +47,6 @@
 
 namespace WebCore {
 
-// FIXME: This implementation is not efficient and we should probably use UTF8Encoding().
-static Vector<uint8_t> extractBytesFromText(const String& text)
-{
-    CString data = text.utf8();
-    Vector<uint8_t> value(data.length());
-    memcpy(value.data(), data.data(), data.length());
-    return value;
-}
-
 FetchBody::FetchBody(Ref<const Blob>&& blob)
     : m_type(Type::Blob)
     , m_data(WTFMove(blob))
@@ -247,14 +238,14 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
         break;
     }
     case Type::Text: {
-        Vector<uint8_t> data = extractBytesFromText(textBody());
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        auto data = UTF8Encoding().encode(textBody(), EntitiesForUnencodables);
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.length()));
         m_data = nullptr;
         break;
     }
     case Type::URLSeachParams: {
-        Vector<uint8_t> data = extractBytesFromText(urlSearchParamsBody().toString());
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        auto data = UTF8Encoding().encode(urlSearchParamsBody().toString(), EntitiesForUnencodables);
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.length()));
         m_data = nullptr;
         break;
     }
@@ -292,8 +283,8 @@ void FetchBody::consumeArrayBufferView(Ref<DeferredPromise>&& promise)
 
 void FetchBody::consumeText(Ref<DeferredPromise>&& promise, const String& text)
 {
-    Vector<uint8_t> data = extractBytesFromText(text);
-    m_consumer.resolveWithData(WTFMove(promise), data.data(), data.size());
+    auto data = UTF8Encoding().encode(text, EntitiesForUnencodables);
+    m_consumer.resolveWithData(WTFMove(promise), reinterpret_cast<const uint8_t*>(data.data()), data.length());
     m_data = nullptr;
 }
 

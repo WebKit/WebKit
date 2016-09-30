@@ -1,3 +1,20 @@
+2016-09-30  Youenn Fablet  <youenn@apple.com>
+
+        FetchBody should use UTF8Encoding to encode text data
+        https://bugs.webkit.org/show_bug.cgi?id=162775
+
+        Reviewed by Sam Weinig.
+
+        Covered by added tests.
+
+        Removing unnecesary vector allocation when extracting UTF8 bytes from a Request/Response text/URLSearchParams body.
+        Making use of UTF8Encoding for consistency with  the upload code path.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consumeAsStream):
+        (WebCore::FetchBody::consumeText):
+        (WebCore::extractBytesFromText): Deleted.
+
 2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Change the MemoryCache and CachedResource adjustSize functions to take a long argument

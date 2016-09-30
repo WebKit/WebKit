@@ -44,6 +44,11 @@ function checkRequest(request, ExpectedValuesDict) {
   }
 }
 
+function encode_utf8(str)
+{
+    return unescape(encodeURIComponent(str));
+}
+
 function stringToArray(str) {
   var array = new Uint8Array(str.length);
   for (var i=0, strLen = str.length; i < strLen; i++)
