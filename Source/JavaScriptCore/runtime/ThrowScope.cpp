@@ -57,13 +57,13 @@ ThrowScope::~ThrowScope()
 
     bool willBeHandleByLLIntOrJIT = false;
     void* previousScope = m_previousScope;
-    void* topCallFrame = m_vm.topCallFrame;
-    
-    // If the topCallFrame was pushed on the stack after the previousScope was instantiated,
+    void* topVMEntryFrame = m_vm.topVMEntryFrame;
+
+    // If the topVMEntryFrame was pushed on the stack after the previousScope was instantiated,
     // then this throwScope will be returning to LLINT or JIT code that always do an exception
     // check. In that case, skip the simulated throw because the LLInt and JIT will be
     // checking for the exception their own way instead of calling ThrowScope::exception().
-    if (topCallFrame && previousScope > topCallFrame)
+    if (topVMEntryFrame && previousScope > topVMEntryFrame)
         willBeHandleByLLIntOrJIT = true;
     
     if (!willBeHandleByLLIntOrJIT)

@@ -1,3 +1,22 @@
+2016-09-30  Mark Lam  <mark.lam@apple.com>
+
+        Use topVMEntryFrame to determine whether to skip the re-throw of a simulated throw.
+        https://bugs.webkit.org/show_bug.cgi?id=162793
+
+        Reviewed by Saam Barati.
+
+        Change the ThrowScope destructor to use topVMEntryFrame (instead of topCallFrame)
+        in the determination of whether to skip the re-throw of a simulated throw.  This
+        is needed because the topCallFrame is not updated in operationConstructArityCheck()
+        (and does not need to be), whereas topVMEntryFrame is always updated properly.
+        Hence, we should just switch to using the more reliable topVMEntryFrame instead.
+
+        This issue was discovered by existing JSC tests when exception check validation
+        is enabled.
+
+        * runtime/ThrowScope.cpp:
+        (JSC::ThrowScope::~ThrowScope):
+
 2016-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         64-bit LLInt needs to have a concurrency-aware barrier
