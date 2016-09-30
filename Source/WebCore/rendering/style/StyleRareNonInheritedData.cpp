@@ -104,6 +104,10 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_effectiveBlendMode(RenderStyle::initialBlendMode())
     , m_isolation(RenderStyle::initialIsolation())
 #endif
+#if ENABLE(APPLE_PAY)
+    , m_applePayButtonStyle(static_cast<unsigned>(RenderStyle::initialApplePayButtonStyle()))
+    , m_applePayButtonType(static_cast<unsigned>(RenderStyle::initialApplePayButtonType()))
+#endif
     , m_objectFit(RenderStyle::initialObjectFit())
     , m_breakBefore(RenderStyle::initialBreakBetween())
     , m_breakAfter(RenderStyle::initialBreakBetween())
@@ -199,6 +203,10 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(o.m_effectiveBlendMode)
     , m_isolation(o.m_isolation)
+#endif
+#if ENABLE(APPLE_PAY)
+    , m_applePayButtonStyle(o.m_applePayButtonStyle)
+    , m_applePayButtonType(o.m_applePayButtonType)
 #endif
     , m_objectFit(o.m_objectFit)
     , m_breakBefore(o.m_breakBefore)
@@ -305,6 +313,10 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #if ENABLE(CSS_COMPOSITING)
         && m_effectiveBlendMode == o.m_effectiveBlendMode
         && m_isolation == o.m_isolation
+#endif
+#if ENABLE(APPLE_PAY)
+        && m_applePayButtonStyle == o.m_applePayButtonStyle
+        && m_applePayButtonType == o.m_applePayButtonType
 #endif
         && m_aspectRatioType == o.m_aspectRatioType
         && m_objectFit == o.m_objectFit

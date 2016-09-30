@@ -696,6 +696,21 @@ enum class TrailingWord {
 };
 #endif
 
+#if ENABLE(APPLE_PAY)
+enum class ApplePayButtonStyle {
+    White,
+    WhiteOutline,
+    Black,
+};
+
+enum class ApplePayButtonType {
+    Plain,
+    Buy,
+    SetUp,
+    InStore,
+};
+#endif
+
 TextStream& operator<<(TextStream&, EFillSizeType);
 TextStream& operator<<(TextStream&, EFillAttachment);
 TextStream& operator<<(TextStream&, EFillBox);

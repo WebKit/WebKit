@@ -616,6 +616,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         m_value.valueID = CSSValueImageControlsButton;
         break;
 #endif
+#if ENABLE(APPLE_PAY)
+    case ApplePayButtonPart:
+        m_value.valueID = CSSValueApplePayButton;
+        break;
+#endif
     }
 }
 
@@ -5470,6 +5475,87 @@ template<> inline CSSPrimitiveValue::operator TrailingWord() const
     }
     ASSERT_NOT_REACHED();
     return TrailingWord::Auto;
+}
+#endif
+
+#if ENABLE(APPLE_PAY)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ApplePayButtonStyle e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (e) {
+    case ApplePayButtonStyle::White:
+        m_value.valueID = CSSValueWhite;
+        break;
+    case ApplePayButtonStyle::WhiteOutline:
+        m_value.valueID = CSSValueWhiteOutline;
+        break;
+    case ApplePayButtonStyle::Black:
+        m_value.valueID = CSSValueBlack;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ApplePayButtonStyle() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueWhite:
+        return ApplePayButtonStyle::White;
+    case CSSValueWhiteOutline:
+        return ApplePayButtonStyle::WhiteOutline;
+    case CSSValueBlack:
+        return ApplePayButtonStyle::Black;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return ApplePayButtonStyle::Black;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ApplePayButtonType e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (e) {
+    case ApplePayButtonType::Plain:
+        m_value.valueID = CSSValuePlain;
+        break;
+    case ApplePayButtonType::Buy:
+        m_value.valueID = CSSValueBuy;
+        break;
+    case ApplePayButtonType::SetUp:
+        m_value.valueID = CSSValueSetUp;
+        break;
+    case ApplePayButtonType::InStore:
+        m_value.valueID = CSSValueInStore;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ApplePayButtonType() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValuePlain:
+        return ApplePayButtonType::Plain;
+    case CSSValueBuy:
+        return ApplePayButtonType::Buy;
+    case CSSValueSetUp:
+        return ApplePayButtonType::SetUp;
+    case CSSValueInStore:
+        return ApplePayButtonType::InStore;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return ApplePayButtonType::Plain;
 }
 #endif
 

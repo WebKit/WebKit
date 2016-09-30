@@ -3765,6 +3765,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return cssValuePool.createValue(style->trailingWord());
 #endif
 
+#if ENABLE(APPLE_PAY)
+        case CSSPropertyApplePayButtonStyle:
+            return cssValuePool.createValue(style->applePayButtonStyle());
+        case CSSPropertyApplePayButtonType:
+            return cssValuePool.createValue(style->applePayButtonType());
+#endif
+
         /* Individual properties not part of the spec */
         case CSSPropertyBackgroundRepeatX:
         case CSSPropertyBackgroundRepeatY:
