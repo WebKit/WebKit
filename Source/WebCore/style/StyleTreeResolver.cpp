@@ -214,10 +214,9 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
         scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
-        // If "rem" units are used anywhere in the document, and if the document element's font size changes, then force font updating
-        // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
-        if (m_document.authorStyleSheets().usesRemUnits() && update.change != NoChange && existingStyle && existingStyle->fontSize() != update.style->fontSize()) {
-            // Cached RenderStyles may depend on the rem units.
+        if (update.change != NoChange && existingStyle && existingStyle->fontSize() != update.style->fontSize()) {
+            // "rem" units are relative to the document element's font size so we need to recompute everything.
+            // In practice this is rare.
             scope().styleResolver.invalidateMatchedPropertiesCache();
             update.change = Force;
         }

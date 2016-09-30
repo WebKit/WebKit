@@ -76,8 +76,6 @@ public:
 
     bool hasPendingSheets() const { return m_pendingStyleSheetCount > 0; }
 
-    bool usesRemUnits() const { return m_usesRemUnits; }
-    void setUsesRemUnit(bool b) { m_usesRemUnits = b; }
     bool usesStyleBasedEditability() { return m_usesStyleBasedEditability; }
 
     bool activeStyleSheetsContains(const CSSStyleSheet*) const;
@@ -131,7 +129,6 @@ private:
     String m_preferredStylesheetSetName;
     String m_selectedStylesheetSetName;
 
-    bool m_usesRemUnits { false };
     bool m_usesStyleBasedEditability { false };
 };
 

@@ -1,3 +1,32 @@
+2016-09-30  Antti Koivisto  <antti@apple.com>
+
+        Remove "rem" unit optimization for document element font size changes
+        https://bugs.webkit.org/show_bug.cgi?id=162778
+
+        Reviewed by Alex Christensen.
+
+        We awkwardly track from the parser level if any stylesheet in a document uses any rem units. This is only used to minimally
+        optimize a case where document element's (<html>) font size changes dynamically.
+
+        In practice such changes are rare. Browsing around I couldn't find a single case where this optimization got used.
+        Even if it was used it would be of low value as a full style resolution is likely to happen anyway (as font inherits)
+        and the only thing really saved is that we don't need to invalidate the matched properties cache.
+
+        * css/CSSGrammar.y.in:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::StyleSheetContents):
+        * css/StyleSheetContents.h:
+        * dom/AuthorStyleSheets.cpp:
+        (WebCore::AuthorStyleSheets::updateActiveStyleSheets):
+        * dom/AuthorStyleSheets.h:
+        (WebCore::AuthorStyleSheets::usesRemUnits): Deleted.
+        (WebCore::AuthorStyleSheets::setUsesRemUnit): Deleted.
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateBaseURL):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
 2016-09-30  Zalan Bujtas  <zalan@apple.com>
 
         RenderLayer::clipRects may return nullptr.

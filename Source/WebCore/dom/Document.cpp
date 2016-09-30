@@ -1866,12 +1866,6 @@ void Document::recalcStyle(Style::Change change)
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(*this);
 
-    // FIXME: We never reset this flags.
-    if (m_elementSheet && m_elementSheet->contents().usesRemUnits())
-        authorStyleSheets().setUsesRemUnit(true);
-    // We don't call setUsesStyleBasedEditability here because the whole point of the flag is to avoid style recalc.
-    // i.e. updating the flag here would be too late.
-
     m_inStyleRecalc = true;
     bool updatedCompositingLayers = false;
     {
@@ -2972,12 +2966,9 @@ void Document::updateBaseURL()
     if (m_elementSheet) {
         // Element sheet is silly. It never contains anything.
         ASSERT(!m_elementSheet->contents().ruleCount());
-        bool usesRemUnits = m_elementSheet->contents().usesRemUnits();
         bool usesStyleBasedEditability = m_elementSheet->contents().usesStyleBasedEditability();
         m_elementSheet = CSSStyleSheet::createInline(*this, m_baseURL);
         // FIXME: So we are not really the parser. The right fix is to eliminate the element sheet completely.
-        if (usesRemUnits)
-            m_elementSheet->contents().parserSetUsesRemUnits();
         if (usesStyleBasedEditability)
             m_elementSheet->contents().parserSetUsesStyleBasedEditability();
     }

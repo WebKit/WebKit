@@ -330,8 +330,6 @@ void AuthorStyleSheets::updateActiveStyleSheets(UpdateType updateType)
     InspectorInstrumentation::activeStyleSheetsUpdated(m_document);
 
     for (const auto& sheet : m_activeStyleSheets) {
-        if (sheet->contents().usesRemUnits())
-            m_usesRemUnits = true;
         if (sheet->contents().usesStyleBasedEditability())
             m_usesStyleBasedEditability = true;
     }
