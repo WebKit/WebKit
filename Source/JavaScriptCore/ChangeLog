@@ -1,3 +1,14 @@
+2016-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        64-bit LLInt needs to have a concurrency-aware barrier
+        https://bugs.webkit.org/show_bug.cgi?id=162790
+
+        Reviewed by Mark Lam.
+
+        In a concurrent GC the barrier definitely has to be after the store, not before it.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2016-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Air should have a way of expressing additional instruction flags
