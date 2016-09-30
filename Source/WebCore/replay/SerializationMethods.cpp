@@ -258,8 +258,6 @@ EncodedValue EncodingTraits<PlatformKeyboardEvent>::encodeValue(const PlatformKe
     ENCODE_TYPE_WITH_KEY(encodedValue, String, unmodifiedText, input.unmodifiedText());
     ENCODE_TYPE_WITH_KEY(encodedValue, String, keyIdentifier, input.keyIdentifier());
     ENCODE_TYPE_WITH_KEY(encodedValue, int, windowsVirtualKeyCode, input.windowsVirtualKeyCode());
-    ENCODE_TYPE_WITH_KEY(encodedValue, int, nativeVirtualKeyCode, input.nativeVirtualKeyCode());
-    ENCODE_TYPE_WITH_KEY(encodedValue, int, macCharCode, input.macCharCode());
     ENCODE_TYPE_WITH_KEY(encodedValue, bool, autoRepeat, input.isAutoRepeat());
     ENCODE_TYPE_WITH_KEY(encodedValue, bool, keypad, input.isKeypad());
     ENCODE_TYPE_WITH_KEY(encodedValue, bool, systemKey, input.isSystemKey());
@@ -279,8 +277,6 @@ bool EncodingTraits<PlatformKeyboardEvent>::decodeValue(EncodedValue& encodedVal
     DECODE_TYPE_WITH_KEY(encodedValue, String, unmodifiedText);
     DECODE_TYPE_WITH_KEY(encodedValue, String, keyIdentifier);
     DECODE_TYPE_WITH_KEY(encodedValue, int, windowsVirtualKeyCode);
-    DECODE_TYPE_WITH_KEY(encodedValue, int, nativeVirtualKeyCode);
-    DECODE_TYPE_WITH_KEY(encodedValue, int, macCharCode);
     DECODE_TYPE_WITH_KEY(encodedValue, bool, autoRepeat);
     DECODE_TYPE_WITH_KEY(encodedValue, bool, keypad);
     DECODE_TYPE_WITH_KEY(encodedValue, bool, systemKey);
@@ -289,7 +285,7 @@ bool EncodingTraits<PlatformKeyboardEvent>::decodeValue(EncodedValue& encodedVal
     DECODE_TYPE_WITH_KEY(encodedValue, Vector<KeypressCommand>, commands);
 #endif
 
-    PlatformKeyboardEvent platformEvent = PlatformKeyboardEvent(type, text, unmodifiedText, keyIdentifier, WTF::safeCast<int>(windowsVirtualKeyCode), WTF::safeCast<int>(nativeVirtualKeyCode), WTF::safeCast<int>(macCharCode), autoRepeat, keypad, systemKey, modifiers, timestamp);
+    PlatformKeyboardEvent platformEvent = PlatformKeyboardEvent(type, text, unmodifiedText, keyIdentifier, WTF::safeCast<int>(windowsVirtualKeyCode), autoRepeat, keypad, systemKey, modifiers, timestamp);
 #if USE(APPKIT)
     input = std::make_unique<PlatformKeyboardEventAppKit>(platformEvent, handledByInputMethod, commands);
 #else

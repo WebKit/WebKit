@@ -562,8 +562,6 @@ public:
         m_unmodifiedText = unmodifiedTextFromEvent(event);
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
         m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event);
-        m_nativeVirtualKeyCode = [event keyCode];
-        m_macCharCode = wkGetNSEventKeyChar(event);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         m_autoRepeat = [event type] != NSFlagsChanged && [event isARepeat];

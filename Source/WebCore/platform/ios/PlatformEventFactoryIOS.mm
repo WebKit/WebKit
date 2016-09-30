@@ -143,7 +143,6 @@ public:
         m_unmodifiedText = event.charactersIgnoringModifiers;
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
         m_windowsVirtualKeyCode = event.keyCode;
-        m_macCharCode = 0;
         m_autoRepeat = event.isKeyRepeating;
         m_isKeypad = false; // iOS does not distinguish the numpad. See <rdar://problem/7190835>.
         m_isSystemKey = false;

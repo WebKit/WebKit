@@ -58,8 +58,6 @@ namespace WebCore {
         PlatformKeyboardEvent()
             : PlatformEvent(PlatformEvent::KeyDown)
             , m_windowsVirtualKeyCode(0)
-            , m_nativeVirtualKeyCode(0)
-            , m_macCharCode(0)
 #if USE(APPKIT) || PLATFORM(GTK)
             , m_handledByInputMethod(false)
 #endif
@@ -72,14 +70,12 @@ namespace WebCore {
         {
         }
 
-        PlatformKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, double timestamp)
+        PlatformKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, double timestamp)
             : PlatformEvent(type, modifiers, timestamp)
             , m_text(text)
             , m_unmodifiedText(unmodifiedText)
             , m_keyIdentifier(keyIdentifier)
             , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
-            , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
-            , m_macCharCode(macCharCode)
 #if USE(APPKIT) || PLATFORM(GTK)
             , m_handledByInputMethod(false)
 #endif
@@ -110,9 +106,6 @@ namespace WebCore {
         // Zero for Char events.
         int windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
         void setWindowsVirtualKeyCode(int code) { m_windowsVirtualKeyCode = code; }
-
-        int nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
-        int macCharCode() const { return m_macCharCode; }
 
 #if USE(APPKIT) || PLATFORM(GTK)
         bool handledByInputMethod() const { return m_handledByInputMethod; }
@@ -163,8 +156,6 @@ namespace WebCore {
         String m_unmodifiedText;
         String m_keyIdentifier;
         int m_windowsVirtualKeyCode;
-        int m_nativeVirtualKeyCode;
-        int m_macCharCode;
 #if USE(APPKIT) || PLATFORM(GTK)
         bool m_handledByInputMethod;
 #endif

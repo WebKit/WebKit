@@ -193,8 +193,6 @@ public:
         m_unmodifiedText = webEvent.unmodifiedText();
         m_keyIdentifier = webEvent.keyIdentifier();
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
-        m_nativeVirtualKeyCode = webEvent.nativeVirtualKeyCode();
-        m_macCharCode = webEvent.macCharCode();
 #if USE(APPKIT) || PLATFORM(GTK)
         m_handledByInputMethod = webEvent.handledByInputMethod();
         m_commands = webEvent.commands();
