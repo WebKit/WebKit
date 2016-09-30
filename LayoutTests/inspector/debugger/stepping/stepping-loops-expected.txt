@@ -180,11 +180,11 @@ PAUSE AT entryTraditionalFor:29:9
      31    function entryTraditionalForNoInit() {
 
 ACTION: step-over
-PAUSE AT entryTraditionalFor:28:31
+PAUSE AT entryTraditionalFor:28:28
      24    
      25    function entryTraditionalFor() {
      26        debugger;
- ->  27        for (let i = 0; i < 2; ++i|)
+ ->  27        for (let i = 0; i < 2; |++i)
      28            a();
      29    }
      30    
@@ -210,11 +210,11 @@ PAUSE AT entryTraditionalFor:29:9
      31    function entryTraditionalForNoInit() {
 
 ACTION: step-over
-PAUSE AT entryTraditionalFor:28:31
+PAUSE AT entryTraditionalFor:28:28
      24    
      25    function entryTraditionalFor() {
      26        debugger;
- ->  27        for (let i = 0; i < 2; ++i|)
+ ->  27        for (let i = 0; i < 2; |++i)
      28            a();
      29    }
      30    
@@ -287,11 +287,11 @@ PAUSE AT entryTraditionalFor:29:9
      31    function entryTraditionalForNoInit() {
 
 ACTION: step-over
-PAUSE AT entryTraditionalFor:28:31
+PAUSE AT entryTraditionalFor:28:28
      24    
      25    function entryTraditionalFor() {
      26        debugger;
- ->  27        for (let i = 0; i < 2; ++i|)
+ ->  27        for (let i = 0; i < 2; |++i)
      28            a();
      29    }
      30    
@@ -317,11 +317,11 @@ PAUSE AT entryTraditionalFor:29:9
      31    function entryTraditionalForNoInit() {
 
 ACTION: step-over
-PAUSE AT entryTraditionalFor:28:31
+PAUSE AT entryTraditionalFor:28:28
      24    
      25    function entryTraditionalFor() {
      26        debugger;
- ->  27        for (let i = 0; i < 2; ++i|)
+ ->  27        for (let i = 0; i < 2; |++i)
      28            a();
      29    }
      30    
@@ -384,11 +384,11 @@ PAUSE AT entryTraditionalForNoInit:36:9
      38    function entryForIn() {
 
 ACTION: step-over
-PAUSE AT entryTraditionalForNoInit:35:22
+PAUSE AT entryTraditionalForNoInit:35:19
      31    function entryTraditionalForNoInit() {
      32        let i = 0;
      33        debugger;
- ->  34        for (; i < 2; ++i|)
+ ->  34        for (; i < 2; |++i)
      35            a();
      36    }
      37    
@@ -414,11 +414,11 @@ PAUSE AT entryTraditionalForNoInit:36:9
      38    function entryForIn() {
 
 ACTION: step-over
-PAUSE AT entryTraditionalForNoInit:35:22
+PAUSE AT entryTraditionalForNoInit:35:19
      31    function entryTraditionalForNoInit() {
      32        let i = 0;
      33        debugger;
- ->  34        for (; i < 2; ++i|)
+ ->  34        for (; i < 2; |++i)
      35            a();
      36    }
      37    

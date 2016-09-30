@@ -4626,6 +4626,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
         return parseAwaitExpression(context);
 #endif
 
+    JSTokenLocation location(tokenLocation());
+
     while (isUnaryOp(m_token.m_type)) {
         if (strictMode()) {
             switch (m_token.m_type) {
@@ -4654,7 +4656,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     }
     JSTextPosition subExprStart = tokenStartPosition();
     ASSERT(subExprStart.offset >= subExprStart.lineStartOffset);
-    JSTokenLocation location(tokenLocation());
     TreeExpression expr = parseMemberExpression(context);
     if (!expr) {
         if (lastOperator)
@@ -4703,8 +4704,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     if (!TreeBuilder::CreatesAST && (m_syntaxAlreadyValidated || !strictMode()))
         return expr;
 
-    location = tokenLocation();
-    location.line = m_lexer->lastLineNumber();
     while (tokenStackDepth) {
         switch (context.unaryTokenStackLastType(tokenStackDepth)) {
         case EXCLAMATION:
@@ -4748,7 +4747,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     }
     return expr;
 }
-
 
 template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(WTF::PrintStream& out)
 {

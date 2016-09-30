@@ -1,3 +1,61 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping through `a(); b(); c();` it is unclear where we are and what is about to execute
+        https://bugs.webkit.org/show_bug.cgi?id=161658
+        <rdar://problem/28181254>
+
+        Reviewed by Geoffrey Garen.
+
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.requestScriptSyntaxTree):
+        Fix first calls to requestScriptSyntaxTree. They were getting an uncaught
+        exception because the content argument was missing.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype.containersOfOffset):
+        Find all AST nodes that contain a particular offset.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.close):
+        (WebInspector.SourceCodeTextEditor.prototype._activeCallFrameDidChange):
+        (WebInspector.SourceCodeTextEditor.prototype._activeCallFrameSourceCodeLocationChanged):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        Provide a good highlight range for a given offset. This is normally the start
+        of a statement/expression, inside a statement/expression, or the closing brace
+        of a function (leaving a function). Provide good ranges for each of these.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.set string.update):
+        (WebInspector.TextEditor.prototype.set string):
+        (WebInspector.TextEditor.prototype.setExecutionLineAndColumn):
+        (WebInspector.TextEditor.prototype.revealPosition.revealAndHighlightLine):
+        (WebInspector.TextEditor.prototype.revealPosition):
+        (WebInspector.TextEditor.prototype.currentPositionToOriginalOffset):
+        (WebInspector.TextEditor.prototype._updateAfterFormatting):
+        (WebInspector.TextEditor.prototype.set executionLineNumber): Deleted.
+        (WebInspector.TextEditor.prototype.set executionColumnNumber): Deleted.
+        (WebInspector.TextEditor.prototype._updateExecutionLine.update): Deleted.
+        Always set the execution line and column together, to simplify how we update highlights.
+
+        (WebInspector.TextEditor.prototype._clearMultilineExecutionLineHighlights):
+        (WebInspector.TextEditor.prototype._updateExecutionLine):
+        When updating the main highlight clear any multi-line highlights.
+
+        (WebInspector.TextEditor.prototype._updateExecutionRangeHighlight):
+        Ask the delegate for a specific highlight range. If provided use that range,
+        otherwise just highlight the end of the line. Once we know the range, if it
+        is multiple lines, give the extra lines the full line highlight as well.
+        Also make adjustments, such as not highlighting trailing whitespace.
+
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor > .CodeMirror .execution-line.primary .CodeMirror-linenumber::after):
+        (.text-editor > .CodeMirror .execution-line):
+        (.text-editor > .CodeMirror .execution-line .CodeMirror-matchingbracket):
+        (.text-editor > .CodeMirror .execution-range-highlight):
+        Styles for execution lines and execution range highlights.
+
 2016-09-29  Aaron Chu  <aaron_chu@apple.com>
 
         Web Inspector: AXI: linkified refs to #document and #text are not usually navigable nodes; consider delinkifying them

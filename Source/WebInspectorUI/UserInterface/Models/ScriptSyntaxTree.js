@@ -80,6 +80,28 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         return nodes;
     }
 
+    containersOfOffset(offset)
+    {
+        console.assert(this._parsedSuccessfully);
+        if (!this._parsedSuccessfully)
+            return [];
+
+        let allNodes = [];
+        const start = 0;
+        const end = 1;
+
+        this.forEachNode((node, state) => {
+            if (node.range[end] < offset)
+                state.skipChildNodes = true;
+            if (node.range[start] > offset)
+                state.shouldStopEarly = true;
+            if (node.range[start] <= offset && node.range[end] >= offset)
+                allNodes.push(node);
+        });
+
+        return allNodes;
+    }
+
     filterByRange(startOffset, endOffset)
     {
         console.assert(this._parsedSuccessfully);

@@ -264,11 +264,11 @@ PAUSE AT entryLabelBreakLoop:52:13
      54    }
 
 ACTION: step-over
-PAUSE AT entryLabelBreakLoop:49:35
+PAUSE AT entryLabelBreakLoop:49:32
      45        debugger;
      46    outer:
      47        for (let i = 0; ; ++i) {
- ->  48            for (let j = 0; j < 2; ++j|) {
+ ->  48            for (let j = 0; j < 2; |++j) {
      49                if (i === 1 && j === 0)
      50                    break outer;
      51                a();
@@ -304,11 +304,11 @@ PAUSE AT entryLabelBreakLoop:52:13
      54    }
 
 ACTION: step-over
-PAUSE AT entryLabelBreakLoop:49:35
+PAUSE AT entryLabelBreakLoop:49:32
      45        debugger;
      46    outer:
      47        for (let i = 0; ; ++i) {
- ->  48            for (let j = 0; j < 2; ++j|) {
+ ->  48            for (let j = 0; j < 2; |++j) {
      49                if (i === 1 && j === 0)
      50                    break outer;
      51                a();
@@ -324,11 +324,11 @@ PAUSE AT entryLabelBreakLoop:49:25
      51                a();
 
 ACTION: step-over
-PAUSE AT entryLabelBreakLoop:48:26
+PAUSE AT entryLabelBreakLoop:48:23
      44    function entryLabelBreakLoop() {
      45        debugger;
      46    outer:
- ->  47        for (let i = 0; ; ++i|) {
+ ->  47        for (let i = 0; ; |++i) {
      48            for (let j = 0; j < 2; ++j) {
      49                if (i === 1 && j === 0)
      50                    break outer;

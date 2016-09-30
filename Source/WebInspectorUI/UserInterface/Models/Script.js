@@ -221,7 +221,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
             return;
         }
 
-        var makeSyntaxTreeAndCallCallback = () => {
+        var makeSyntaxTreeAndCallCallback = (content) => {
             this._makeSyntaxTree(content);
             callback(this._scriptSyntaxTree);
         };

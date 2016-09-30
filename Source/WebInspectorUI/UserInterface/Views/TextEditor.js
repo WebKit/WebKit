@@ -58,6 +58,10 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         this._executionLineNumber = NaN;
         this._executionColumnNumber = NaN;
 
+        this._executionLineHandle = null;
+        this._executionMultilineHandles = [];
+        this._executionRangeHighlightMarker = null;
+
         this._searchQuery = null;
         this._searchResults = [];
         this._currentSearchResultIndex = -1;
@@ -107,6 +111,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
 
             // Update the execution line now that we might have content for that line.
             this._updateExecutionLine();
+            this._updateExecutionRangeHighlight();
 
             // Set the breakpoint styles now that we might have content for those lines.
             for (var lineNumber in this._breakpoints)
@@ -206,28 +211,9 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         return this._executionLineNumber;
     }
 
-    set executionLineNumber(lineNumber)
-    {
-        // Only return early if there isn't a line handle and that isn't changing.
-        if (!this._executionLineHandle && isNaN(lineNumber))
-            return;
-
-        this._executionLineNumber = lineNumber;
-        this._updateExecutionLine();
-
-        // Still dispatch the event even if the number didn't change. The execution state still
-        // could have changed (e.g. continuing in a loop with a breakpoint inside).
-        this.dispatchEventToListeners(WebInspector.TextEditor.Event.ExecutionLineNumberDidChange);
-    }
-
     get executionColumnNumber()
     {
         return this._executionColumnNumber;
-    }
-
-    set executionColumnNumber(columnNumber)
-    {
-        this._executionColumnNumber = columnNumber;
     }
 
     get formatterSourceMap()
@@ -338,6 +324,23 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
 
         // Start the search.
         boundBatchSearch();
+    }
+
+    setExecutionLineAndColumn(lineNumber, columnNumber)
+    {
+        // Only return early if there isn't a line handle and that isn't changing.
+        if (!this._executionLineHandle && isNaN(lineNumber))
+            return;
+
+        this._executionLineNumber = lineNumber;
+        this._executionColumnNumber = columnNumber;
+
+        this._updateExecutionLine();
+        this._updateExecutionRangeHighlight();
+
+        // Still dispatch the event even if the number didn't change. The execution state still
+        // could have changed (e.g. continuing in a loop with a breakpoint inside).
+        this.dispatchEventToListeners(WebInspector.TextEditor.Event.ExecutionLineNumberDidChange);
     }
 
     addSearchResults(textRanges)
@@ -491,6 +494,11 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             this.selectedTextRange = textRangeToSelect;
 
             if (noHighlight)
+                return;
+
+            // Don't show blue line highlight when debugging.
+            // FIXME: This could be better, we could avoid highlight only when switching for active call frames switches.
+            if (WebInspector.debuggerManager.paused)
                 return;
 
             this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.HighlightedStyleClassName);
@@ -690,7 +698,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
 
     currentPositionToOriginalOffset(position)
     {
-        var offset = null;
+        let offset = null;
+
         if (this._formatterSourceMap)
             offset = this._formatterSourceMap.formattedToOriginalOffset(position.line, position.ch);
         else
@@ -900,8 +909,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
 
         if (newExecutionLocation) {
             this._executionLineHandle = null;
-            this.executionColumnNumber = newExecutionLocation.columnNumber;
-            this.executionLineNumber = newExecutionLocation.lineNumber;
+            this._executionMultilineHandles = [];
+            this.setExecutionLineAndColumn(newExecutionLocation.lineNumber, newExecutionLocation.columnNumber);
         }
 
         // FIXME: <rdar://problem/13129955> FindBanner: New searches should not lose search position (start from current selection/caret)
@@ -1178,20 +1187,82 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         }
     }
 
+    _clearMultilineExecutionLineHighlights()
+    {
+        if (this._executionMultilineHandles.length) {
+            for (let lineHandle of this._executionMultilineHandles)
+                this._codeMirror.removeLineClass(lineHandle, "wrap", WebInspector.TextEditor.ExecutionLineStyleClassName);
+            this._executionMultilineHandles = [];
+        }
+    }
+
     _updateExecutionLine()
     {
-        function update()
-        {
-            if (this._executionLineHandle)
+        this._codeMirror.operation(() => {
+            if (this._executionLineHandle) {
                 this._codeMirror.removeLineClass(this._executionLineHandle, "wrap", WebInspector.TextEditor.ExecutionLineStyleClassName);
+                this._codeMirror.removeLineClass(this._executionLineHandle, "wrap", "primary");
+            }
+
+            this._clearMultilineExecutionLineHighlights();
 
             this._executionLineHandle = !isNaN(this._executionLineNumber) ? this._codeMirror.getLineHandle(this._executionLineNumber) : null;
 
-            if (this._executionLineHandle)
+            if (this._executionLineHandle) {
                 this._codeMirror.addLineClass(this._executionLineHandle, "wrap", WebInspector.TextEditor.ExecutionLineStyleClassName);
+                this._codeMirror.addLineClass(this._executionLineHandle, "wrap", "primary");
+            }
+        });
+    }
+
+    _updateExecutionRangeHighlight()
+    {
+        if (this._executionRangeHighlightMarker) {
+            this._executionRangeHighlightMarker.clear();
+            this._executionRangeHighlightMarker = null;
         }
 
-        this._codeMirror.operation(update.bind(this));
+        if (isNaN(this._executionLineNumber))
+            return;
+
+        let offset = this.currentPositionToOriginalOffset({line: this._executionLineNumber, ch: this._executionColumnNumber});
+
+        this._delegate.textEditorExecutionHighlightRange(offset, (range) => {
+            let start, end;
+            if (!range) {
+                // Highlight the rest of the line.
+                start = {line: this._executionLineNumber, ch: this._executionColumnNumber};
+                end = {line: this._executionLineNumber};
+            } else {
+                // Highlight the range.
+                start = this.originalOffsetToCurrentPosition(range[0]);
+                end = this.originalOffsetToCurrentPosition(range[1]);
+            }
+
+            // Ensure the marker is cleared in case there were multiple updates very quickly.
+            if (this._executionRangeHighlightMarker) {
+                this._executionRangeHighlightMarker.clear();
+                this._executionRangeHighlightMarker = null;
+            }
+
+            // Avoid highlighting trailing whitespace.
+            let text = this._codeMirror.getRange(start, end);
+            let trailingWhitespace = text.match(/\s+$/);
+            if (trailingWhitespace)
+                end.ch = Math.max(0, end.ch - trailingWhitespace[0].length);
+
+            // Give each line containing part of the range the full line style.
+            this._clearMultilineExecutionLineHighlights();
+            if (start.line !== end.line) {
+                for (let line = start.line; line < end.line; ++line) {
+                    let lineHandle = this._codeMirror.getLineHandle(line);
+                    this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.ExecutionLineStyleClassName);
+                    this._executionMultilineHandles.push(lineHandle);
+                }
+            }
+
+            this._executionRangeHighlightMarker = this._codeMirror.markText(start, end, {className: "execution-range-highlight"});
+        });
     }
 
     _setBreakpointStylesOnLine(lineNumber)

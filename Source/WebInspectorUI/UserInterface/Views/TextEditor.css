@@ -82,7 +82,7 @@
     text-indent: -1px;
 }
 
-.text-editor > .CodeMirror .execution-line .CodeMirror-linenumber::after {
+.text-editor > .CodeMirror .execution-line.primary .CodeMirror-linenumber::after {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -99,7 +99,16 @@
 }
 
 .text-editor > .CodeMirror .execution-line {
-    background-color: hsl(99, 38%, 86%) !important;
+    background-color: hsla(99, 38%, 86%, 0.5) !important;
+}
+
+.text-editor > .CodeMirror .execution-line .CodeMirror-matchingbracket {
+    background-color: hsla(90, 30%, 82%, 0.7);
+    border-bottom: 1px dotted hsl(78, 18%, 58%);
+}
+
+.text-editor > .CodeMirror .execution-range-highlight {
+    background-color: hsl(90, 30%, 82%);
 }
 
 .text-editor > .CodeMirror .highlighted {
