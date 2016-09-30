@@ -136,6 +136,9 @@ public:
             functor(block);
     }
     
+    // Note: This will visit the dominators starting with the 'to' node and moving up the idom tree
+    // until it gets to the root. Some clients of this function, like B3::moveConstants(), rely on this
+    // order.
     template<typename Functor>
     void forAllDominatorsOf(typename Graph::Node to, const Functor& functor) const
     {

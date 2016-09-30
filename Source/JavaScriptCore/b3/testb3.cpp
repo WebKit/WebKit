@@ -42,6 +42,7 @@
 #include "B3LowerToAir.h"
 #include "B3MathExtras.h"
 #include "B3MemoryValue.h"
+#include "B3MoveConstants.h"
 #include "B3Procedure.h"
 #include "B3ReduceStrength.h"
 #include "B3SlotBaseValue.h"
@@ -49,6 +50,7 @@
 #include "B3StackmapGenerationParams.h"
 #include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
+#include "B3UseCounts.h"
 #include "B3Validate.h"
 #include "B3ValueInlines.h"
 #include "B3VariableValue.h"
@@ -13106,6 +13108,67 @@ void testLoadFence()
     checkDoesNotUseInstruction(*code, "dmb    ishst");
 }
 
+void testMoveConstants()
+{
+    auto check = [] (Procedure& proc) {
+        proc.resetReachability();
+        
+        if (shouldBeVerbose()) {
+            dataLog("IR before:\n");
+            dataLog(proc);
+        }
+        
+        moveConstants(proc);
+        
+        if (shouldBeVerbose()) {
+            dataLog("IR after:\n");
+            dataLog(proc);
+        }
+        
+        UseCounts useCounts(proc);
+        unsigned count = 0;
+        for (Value* value : proc.values()) {
+            if (useCounts.numUses(value) && value->hasInt64())
+                count++;
+        }
+        
+        if (count == 1)
+            return;
+        
+        crashLock.lock();
+        dataLog("Fail in testMoveConstants: got more than one Const64:\n");
+        dataLog(proc);
+        CRASH();
+    };
+
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* a = root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(), 
+            root->appendNew<ConstPtrValue>(proc, Origin(), 0x123412341234));
+        Value* b = root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), 0x123412341334));
+        root->appendNew<CCallValue>(proc, Void, Origin(), a, b);
+        root->appendNew<Value>(proc, Return, Origin());
+        check(proc);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* x = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* a = root->appendNew<Value>(
+            proc, Add, Origin(), x, root->appendNew<ConstPtrValue>(proc, Origin(), 0x123412341234));
+        Value* b = root->appendNew<Value>(
+            proc, Add, Origin(), x, root->appendNew<ConstPtrValue>(proc, Origin(), -0x123412341234));
+        root->appendNew<CCallValue>(proc, Void, Origin(), a, b);
+        root->appendNew<Value>(proc, Return, Origin());
+        check(proc);
+    }
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -14546,6 +14609,7 @@ void run(const char* filter)
     RUN(testMemoryFence());
     RUN(testStoreFence());
     RUN(testLoadFence());
+    RUN(testMoveConstants());
     
     if (tasks.isEmpty())
         usage();

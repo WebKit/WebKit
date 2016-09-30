@@ -134,10 +134,31 @@ private:
         for (BasicBlock* block : m_proc) {
             for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
                 Value* value = block->at(valueIndex);
-                for (Value* child : value->children()) {
+                
+                // This finds the outermost (best) block last. So, the functor overrides the result
+                // each time it finds something acceptable.
+                auto findBestConstant = [&] (const auto& predicate) -> Value* {
+                    Value* result = nullptr;
+                    dominators.forAllDominatorsOf(
+                        block,
+                        [&] (BasicBlock* dominator) {
+                            for (Value* value : materializations[dominator]) {
+                                if (predicate(value)) {
+                                    result = value;
+                                    break;
+                                }
+                            }
+                        });
+                    return result;
+                };
+                
+                // We call this when we have found a constant that we'd like to use. It's possible that
+                // we have computed that the constant should be meterialized in this block, but we
+                // haven't inserted it yet. This inserts the constant if necessary.
+                auto materialize = [&] (Value* child) {
                     ValueKey key = child->key();
                     if (!filter(key))
-                        continue;
+                        return;
 
                     // If we encounter a fast constant, then it must be canonical, since we already
                     // got rid of the non-canonical ones.
@@ -146,14 +167,88 @@ private:
                     if (child->owner != block) {
                         // This constant isn't our problem. It's going to be materialized in another
                         // block.
-                        continue;
+                        return;
                     }
                     
                     // We're supposed to materialize this constant in this block, and we haven't
                     // done it yet.
                     m_insertionSet.insertValue(valueIndex, child);
                     child->owner = nullptr;
+                };
+                
+                if (MemoryValue* memoryValue = value->as<MemoryValue>()) {
+                    Value* pointer = memoryValue->lastChild();
+                    if (pointer->hasIntPtr() && filter(pointer->key())) {
+                        auto desiredOffset = [&] (Value* otherPointer) -> intptr_t {
+                            // We would turn this:
+                            //
+                            //     Load(@p, offset = c)
+                            //
+                            // into this:
+                            //
+                            //     Load(@q, offset = ?)
+                            //
+                            // The offset should be c + @p - @q, because then we're loading from:
+                            //
+                            //     @q + c + @p - @q
+                            uintptr_t c = static_cast<uintptr_t>(static_cast<intptr_t>(memoryValue->offset()));
+                            uintptr_t p = pointer->asIntPtr();
+                            uintptr_t q = otherPointer->asIntPtr();
+                            return c + p - q;
+                        };
+                        
+                        Value* bestPointer = findBestConstant(
+                            [&] (Value* candidatePointer) -> bool {
+                                if (!candidatePointer->hasIntPtr())
+                                    return false;
+                                
+                                intptr_t offset = desiredOffset(candidatePointer);
+                                if (!B3::isRepresentableAs<int32_t>(static_cast<int64_t>(offset)))
+                                    return false;
+                                return Air::Arg::isValidAddrForm(
+                                    static_cast<int32_t>(offset),
+                                    Air::Arg::widthForBytes(memoryValue->accessByteSize()));
+                            });
+                        
+                        if (bestPointer) {
+                            memoryValue->lastChild() = bestPointer;
+                            memoryValue->setOffset(desiredOffset(bestPointer));
+                        }
+                    }
+                } else {
+                    switch (value->opcode()) {
+                    case Add:
+                    case Sub: {
+                        Value* addend = value->child(1);
+                        if (!addend->hasInt() || !filter(addend->key()))
+                            break;
+                        int64_t addendConst = addend->asInt();
+                        Value* bestAddend = findBestConstant(
+                            [&] (Value* candidateAddend) -> bool {
+                                if (candidateAddend->type() != addend->type())
+                                    return false;
+                                if (!candidateAddend->hasInt())
+                                    return false;
+                                return candidateAddend == addend
+                                    || candidateAddend->asInt() == -addendConst;
+                            });
+                        if (!bestAddend || bestAddend == addend)
+                            break;
+                        materialize(value->child(0));
+                        materialize(bestAddend);
+                        value->replaceWithIdentity(
+                            m_insertionSet.insert<Value>(
+                                valueIndex, value->opcode() == Add ? Sub : Add, value->origin(),
+                                value->child(0), bestAddend));
+                        break;
+                    }
+                    default:
+                        break;
+                    }
                 }
+                
+                for (Value* child : value->children())
+                    materialize(child);
             }
 
             // We may have some constants that need to be materialized right at the end of this

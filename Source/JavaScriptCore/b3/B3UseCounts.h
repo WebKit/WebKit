@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,8 @@ class Procedure;
 
 class UseCounts {
 public:
-    UseCounts(Procedure&);
-    ~UseCounts();
+    JS_EXPORT_PRIVATE UseCounts(Procedure&);
+    JS_EXPORT_PRIVATE ~UseCounts();
 
     unsigned numUses(Value* value) const { return m_counts[value].numUses; }
     unsigned numUsingInstructions(Value* value) const { return m_counts[value].numUsingInstructions; }

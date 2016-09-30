@@ -1,3 +1,15 @@
+2016-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::moveConstants should be able to edit code to minimize the number of constants
+        https://bugs.webkit.org/show_bug.cgi?id=162764
+
+        Reviewed by Saam Barati.
+        
+        I thought it would be a good idea to document the fact that dominator traversal happens in a
+        particular order for a reason.
+
+        * wtf/Dominators.h:
+
 2016-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Air should have a way of expressing additional instruction flags

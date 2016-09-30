@@ -1,3 +1,42 @@
+2016-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::moveConstants should be able to edit code to minimize the number of constants
+        https://bugs.webkit.org/show_bug.cgi?id=162764
+
+        Reviewed by Saam Barati.
+        
+        There are some interesting cases where we can reduce the number of constant materializations if
+        we teach moveConstants() how to edit code. The two examples that this patch supports are:
+        
+            - Loads and stores from a constant pointer. Since loads and stores get an offset for free
+              and the instruction selector is really good at handling it, and since we can query Air to
+              see what kinds of offsets are legal, we can sometimes avoid using a constant pointer that
+              is specific to the absolute address of that load and instead pick some other constant
+              that is within offset distance of ours.
+            
+            - Add and Sub by a constant (x + c, x - c). Since x + c = x - -c and x - c = x + -c, we can
+              flip Add to Sub or vice versa if the negated constant is available.
+        
+        This change makes moveConstants() pick the most dominant constant that works for an value. In
+        the case of memory accesses, it uses Air::Arg::isValidAddrForm() to work out what other
+        constants would work. In the case of Add/Sub, it simply looks for the negated constant. This
+        should result in something like a minimal number of constants since these rules always pick the
+        most dominant constant that works - so if an Add's constant is already most dominant then
+        nothing changes, but if the negated one is more dominant then it becomes a Sub.
+        
+        This is a 0.5% speed-up on LongSpider and neutral elsewhere. It's a speed-up because the
+        absolute address thing reduces the number of address materializations that we have to do, while
+        the add/sub thing prevents us from having to materialize 0x1000000000000 to box doubles.
+        However, this may introduce a pathology, which I've filed a bug for: bug 162796.
+
+        * b3/B3MoveConstants.cpp:
+        * b3/B3MoveConstants.h:
+        * b3/B3UseCounts.h:
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testMoveConstants):
+        (JSC::B3::run):
+
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix modules tests after r206653 handle breakpoint locations in import/export statements
