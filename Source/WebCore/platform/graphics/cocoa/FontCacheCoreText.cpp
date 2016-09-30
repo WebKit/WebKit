@@ -143,6 +143,7 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
 }
 
 typedef HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits> FeaturesMap;
+typedef HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits> VariationsMap;
 
 static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings)
 {
@@ -360,9 +361,9 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
     return result;
 }
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings, const FontVariationSettings& variations)
 {
-    if (!originalFont || (!features.size() && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()
+    if (!originalFont || (!features.size() && variations.isEmpty() && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()
         && (!fontFaceFeatures || !fontFaceFeatures->size()) && (!fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal())))
         return originalFont;
 
@@ -398,8 +399,12 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
     for (auto& newFeature : features)
         featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
+    VariationsMap variationsToBeApplied;
+    for (auto& newVariation : variations)
+        variationsToBeApplied.set(newVariation.tag(), newVariation.value());
+
     RetainPtr<CFMutableDictionaryRef> attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    if (featuresToBeApplied.size()) {
+    if (!featuresToBeApplied.isEmpty()) {
         RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
         for (auto& p : featuresToBeApplied) {
             auto feature = FontFeature(p.key, p.value);
@@ -408,6 +413,18 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         }
         CFDictionaryAddValue(attributes.get(), kCTFontFeatureSettingsAttribute, featureArray.get());
     }
+
+    if (!variationsToBeApplied.isEmpty()) {
+        auto variationDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        for (auto& p : variationsToBeApplied) {
+            long long bitwiseTag = p.key[0] << 24 | p.key[1] << 16 | p.key[2] << 8 | p.key[3];
+            auto tagNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &bitwiseTag));
+            auto valueNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &p.value));
+            CFDictionarySetValue(variationDictionary.get(), tagNumber.get(), valueNumber.get());
+        }
+        CFDictionaryAddValue(attributes.get(), kCTFontVariationAttribute, variationDictionary.get());
+    }
+
     if (textRenderingMode == OptimizeLegibility) {
         CGFloat size = CTFontGetSize(originalFont);
         RetainPtr<CFNumberRef> sizeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &size));
@@ -676,7 +693,7 @@ static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& fam
 }
 #endif
 
-static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size)
+static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontVariationSettings& variationSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size)
 {
     if (family.isEmpty())
         return nullptr;
@@ -689,7 +706,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSym
         foundFont = platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
 #endif
     }
-    return preparePlatformFont(foundFont.get(), textRenderingMode, fontFaceFeatures, fontFaceVariantSettings, featureSettings, variantSettings);
+    return preparePlatformFont(foundFont.get(), textRenderingMode, fontFaceFeatures, fontFaceVariantSettings, featureSettings, variantSettings, variationSettings);
 }
 
 #if PLATFORM(MAC)
@@ -729,7 +746,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     CTFontSymbolicTraits traits = computeTraits(fontDescription);
     float size = fontDescription.computedPixelSize();
 
-    RetainPtr<CTFontRef> font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
+    RetainPtr<CTFontRef> font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
 
 #if PLATFORM(MAC)
     if (!font) {
@@ -740,7 +757,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         autoActivateFont(family.string(), size);
 
-        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
+        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
     }
 #endif
 
@@ -784,7 +801,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
     const FontPlatformData& platformData = originalFontData->platformData();
     RetainPtr<CTFontRef> result = platformLookupFallbackFont(platformData.font(), description.weight(), description.locale(), characters, length);
-    result = preparePlatformFont(result.get(), description.textRenderingMode(), nullptr, nullptr, description.featureSettings(), description.variantSettings());
+    result = preparePlatformFont(result.get(), description.textRenderingMode(), nullptr, nullptr, description.featureSettings(), description.variantSettings(), description.variationSettings());
     if (!result)
         return lastResortFallbackFont(description);
 

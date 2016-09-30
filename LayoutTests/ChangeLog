@@ -1,5 +1,24 @@
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Implement rendering of font-variation-settings
+        https://bugs.webkit.org/show_bug.cgi?id=162782
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/variations/duplicate-expected.html: Added.
+        * fast/text/variations/duplicate.html: Added.
+        * fast/text/variations/exist-expected-mismatch.html: Added.
+        * fast/text/variations/exist.html: Added.
+        * fast/text/variations/getComputedStyle.html:
+        * fast/text/variations/inheritance-expected.html: Added.
+        * fast/text/variations/inheritance.html: Added.
+        * fast/text/variations/order-expected.html: Added.
+        * fast/text/variations/order.html: Added.
+        * fast/text/variations/outofbounds-expected.html: Added.
+        * fast/text/variations/outofbounds.html: Added.
+
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Implement animation of font-variation-settings
         https://bugs.webkit.org/show_bug.cgi?id=162783
 
