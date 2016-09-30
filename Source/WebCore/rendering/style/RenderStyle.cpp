@@ -1550,6 +1550,16 @@ void RenderStyle::setFontSize(float size)
     fontCascade().update(currentFontSelector);
 }
 
+void RenderStyle::setFontVariationSettings(FontVariationSettings settings)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setVariationSettings(WTFMove(settings));
+
+    setFontDescription(description);
+    fontCascade().update(currentFontSelector);
+}
+
 void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit &top, LayoutUnit &right, LayoutUnit &bottom, LayoutUnit &left) const
 {
     top = 0;

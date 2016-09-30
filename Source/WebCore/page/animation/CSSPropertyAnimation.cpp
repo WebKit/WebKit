@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2013, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012, 2013 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@
 #include "CachedImage.h"
 #include "ClipPathOperation.h"
 #include "FloatConversion.h"
+#include "FontTaggedSettings.h"
 #include "IdentityTransformOperation.h"
 #include "Logging.h"
 #include "Matrix3DTransformOperation.h"
@@ -371,6 +372,23 @@ static inline NinePieceImage blendFunc(const AnimationBase* anim, const NinePiec
     return NinePieceImage(newContentImage, from.imageSlices(), from.fill(), from.borderSlices(), from.outset(), from.horizontalRule(), from.verticalRule());
 }
 
+static inline FontVariationSettings blendFunc(const AnimationBase* anim, const FontVariationSettings& from, const FontVariationSettings& to, double progress)
+{
+    if (from.size() != to.size())
+        return FontVariationSettings();
+    FontVariationSettings result;
+    unsigned size = from.size();
+    for (unsigned i = 0; i < size; ++i) {
+        auto& fromItem = from.at(i);
+        auto& toItem = to.at(i);
+        if (fromItem.tag() != toItem.tag())
+            return FontVariationSettings();
+        float interpolated = blendFunc(anim, fromItem.value(), toItem.value(), progress);
+        result.insert({ fromItem.tag(), interpolated });
+    }
+    return result;
+}
+
 class AnimationPropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
     WTF_MAKE_FAST_ALLOCATED;
@@ -514,6 +532,29 @@ public:
         if (!clipPathA || !clipPathB)
             return false;
         return *clipPathA == *clipPathB;
+    }
+};
+
+class PropertyWrapperFontVariationSettings : public PropertyWrapper<FontVariationSettings> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PropertyWrapperFontVariationSettings(CSSPropertyID prop, FontVariationSettings (RenderStyle::*getter)() const, void (RenderStyle::*setter)(FontVariationSettings))
+        : PropertyWrapper<FontVariationSettings>(prop, getter, setter)
+    {
+    }
+
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
+    {
+        // If the style pointers are the same, don't bother doing the test.
+        // If either is null, return false. If both are null, return true.
+        if (a == b)
+            return true;
+        if (!a || !b)
+            return false;
+
+        const FontVariationSettings& variationSettingsA = (a->*m_getter)();
+        const FontVariationSettings& variationSettingsB = (b->*m_getter)();
+        return variationSettingsA == variationSettingsB;
     }
 };
 
@@ -1438,6 +1479,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new PropertyWrapper<SVGLength>(CSSPropertyBaselineShift, &RenderStyle::baselineShiftValue, &RenderStyle::setBaselineShiftValue),
         new PropertyWrapper<SVGLength>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
+        new PropertyWrapperFontVariationSettings(CSSPropertyFontVariationSettings, &RenderStyle::fontVariationSettings, &RenderStyle::setFontVariationSettings),
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

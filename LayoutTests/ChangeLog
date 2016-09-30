@@ -1,3 +1,24 @@
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement animation of font-variation-settings
+        https://bugs.webkit.org/show_bug.cgi?id=162783
+
+        Reviewed by Simon Fraser.
+
+        Animation tests need a little infrastructure to be able to tell if two computed
+        values for font-variation-settings are equivalent.
+
+        * animations/font-variation-settings-expected.html: Added.
+        * animations/font-variation-settings-order-expected.html: Added.
+        * animations/font-variation-settings-order.html: Added.
+        * animations/font-variation-settings-unlike-expected.html: Added.
+        * animations/font-variation-settings-unlike.html: Added.
+        * animations/font-variation-settings.html: Added.
+        * animations/resources/animation-test-helpers.js:
+        (compareFontVariationSettings):
+        (getPropertyValue):
+        (comparePropertyValue):
+
 2016-09-30  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] layout nodes

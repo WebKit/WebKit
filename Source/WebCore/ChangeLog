@@ -1,3 +1,34 @@
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement animation of font-variation-settings
+        https://bugs.webkit.org/show_bug.cgi?id=162783
+
+        Reviewed by Simon Fraser.
+
+        Modify CSSPropertyAnimation to understand FontVariationSettings objects and how
+        to interpolate them.
+
+        If two FontVariationSettings objects are unlike (meaning they specify different
+        variation axes), for now the interpolation simply returns an empty object. This
+        might change in the future, but for now, this is a reasonable place to start.
+
+        Because CSSPropertyAnimation interacts with RenderStyles instead of
+        FontDescriptions, this patch adds a transparent accessor from the RenderStyle
+        to the inner FontDescription.
+
+        Tests: animations/font-variation-settings-order.html
+               animations/font-variation-settings-unlike.html
+               animations/font-variation-settings.html
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::PropertyWrapperFontVariationSettings::PropertyWrapperFontVariationSettings):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontVariationSettings):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontVariationSettings):
+
 2016-09-30  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] layout nodes

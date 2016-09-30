@@ -258,6 +258,29 @@ function compareCSSImages(computedValue, expectedValue, tolerance)
     }
 }
 
+function compareFontVariationSettings(computedValue, expectedValue, tolerance)
+{
+    if (computedValue == "normal" || expectedValue == "normal")
+        return computedValue == expectedValue;
+    var computed = computedValue.split(", ");
+    var expected = expectedValue.split(", ");
+    if (computed.length != expected.length)
+        return false;
+    for (var i = 0; i < computed.length; ++i) {
+        var computedPieces = computed[i].split(" ");
+        var expectedPieces = expected[i].split(" ");
+        if (computedPieces.length != 2 || expectedPieces.length != 2)
+            return false;
+        if (computedPieces[0] != expectedPieces[0])
+            return false;
+        var computedNumber = Number.parseFloat(computedPieces[1]);
+        var expectedNumber = Number.parseFloat(expectedPieces[1]);
+        if (Math.abs(computedNumber - expectedNumber) > tolerance)
+            return false;
+    }
+    return true;
+}
+
 // Called by CSS Image function filter() as well as filter property.
 function compareFilterFunctions(computedValue, expectedValue, tolerance)
 {
@@ -401,6 +424,7 @@ function getPropertyValue(property, elementId, iframeId)
                || property == "webkitClipPath"
                || property == "webkitShapeInside"
                || property == "webkitShapeOutside"
+               || property == "font-variation-settings"
                || !property.indexOf("webkitTransform")
                || !property.indexOf("transform")) {
         computedValue = window.getComputedStyle(element)[property.split(".")[0]];
@@ -446,9 +470,10 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
                || property == "webkitMaskImage"
                || property == "webkitMaskBoxImage")
         result = compareCSSImages(computedValue, expectedValue, tolerance);
-    else {
+    else if (property == "font-variation-settings")
+        result = compareFontVariationSettings(computedValue, expectedValue, tolerance);
+    else
         result = isCloseEnough(computedValue, expectedValue, tolerance);
-    }
     return result;
 }
 

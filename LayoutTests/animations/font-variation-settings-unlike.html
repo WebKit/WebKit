@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    window.internals.settings.setVariationFontsEnabled(true);
+</script>
+<script src="resources/animation-test-helpers.js"></script>
+<style>
+@keyframes "weightAnimation" {
+    from {
+        font-variation-settings: "wght" 0.5, "wdth" 0.9;
+    }
+    to {
+        font-variation-settings: "wght" 3.2;
+    }
+}
+
+#box {
+    font: 100px "Skia";
+    animation-name: "weightAnimation";
+    animation-duration: 3s;
+    animation-timing-function: linear;
+}
+</style>
+</head>
+<body>
+<div id="box">Hello</div>
+<div id="result"></div>
+<script>
+var expectedValues = [
+    // [animation-name, time, element-id, property, expected-value, tolerance]
+    ["weightAnimation", 0.5, "box", "font-variation-settings", "normal", 0.05],
+    ["weightAnimation", 1.0, "box", "font-variation-settings", "normal", 0.05],
+    ["weightAnimation", 2.0, "box", "font-variation-settings", "normal", 0.05],
+];
+runAnimationTest(expectedValues, undefined, undefined, undefined, true, undefined);
+</script>
+</body>
+</html>
