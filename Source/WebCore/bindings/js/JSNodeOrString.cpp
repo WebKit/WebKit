@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSNodeOrString.h"
 
+#include "IDLTypes.h"
+#include "JSDOMConvert.h"
 #include "JSNode.h"
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/ThrowScope.h>
@@ -36,23 +38,31 @@ namespace WebCore {
 
 Vector<std::experimental::variant<Ref<Node>, String>> toNodeOrStringVector(ExecState& state)
 {
+    using NodeOrStringType = IDLUnion<IDLInterface<Node>, IDLDOMString>;
+    using ConverterType = Converter<NodeOrStringType>;
+
+    using InterfaceTypeList = typename ConverterType::InterfaceTypeList;
+    using InterfaceType = brigand::front<InterfaceTypeList>;
+    static_assert(std::is_same<InterfaceType, IDLInterface<Node>>::value, "");
+    static_assert(brigand::size<InterfaceTypeList>::value == 1, "");
+
+    using StringTypeList = typename ConverterType::StringTypeList;
+    using StringType = typename ConverterType::StringType;
+    static_assert(std::is_same<StringType, IDLDOMString>::value, "");
+    static_assert(brigand::size<StringTypeList>::value == 1, "");
+
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     size_t argumentCount = state.argumentCount();
 
-    Vector<std::experimental::variant<Ref<Node>, String>> result;
+    Vector<typename NodeOrStringType::ImplementationType> result;
     result.reserveInitialCapacity(argumentCount);
 
     for (size_t i = 0; i < argumentCount; ++i) {
-        JSValue value = state.uncheckedArgument(i);
-        if (auto* node = jsDynamicCast<JSNode*>(value))
-            result.uncheckedAppend(node->wrapped());
-        else {
-            String string = value.toWTFString(&state);
-            RETURN_IF_EXCEPTION(scope, { });
-            result.uncheckedAppend(string);
-        }
+         auto item = ConverterType::convert(state, state.uncheckedArgument(i));
+         RETURN_IF_EXCEPTION(scope, { });
+         result.uncheckedAppend(WTFMove(item));
     }
 
     return result;

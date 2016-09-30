@@ -1,3 +1,43 @@
+2016-09-29  Sam Weinig  <sam@webkit.org>
+
+        Add initial support for IDL union conversion
+        https://bugs.webkit.org/show_bug.cgi?id=161576
+
+        Reviewed by Chris Dumez.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add IDLTypes.h
+
+        * bindings/generic/IDLTypes.h: Added.
+        Add a basic type hierarchy for types defined by WebIDL and their corresponding
+        WebCore implementation types.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLDOMString>::convert):
+        (WebCore::Converter<IDLUSVString>::convert):
+        Add Converters for IDLDOMString and IDLUSVString.
+
+        (WebCore::ConditionalConverter<typename ReturnType, typename T, bool enabled>)
+        Add a struct to allow conditional conversion of types based on a compile boolean
+        value. This allows the union code to work, by ensuring that code for types that don't
+        exist doesn't get compiled.
+
+        (WebCore::Converter<IDLUnion>::convert):
+        Add template meta programming based version of the WebIDL conversion algorithm. It uses
+        introspection of the typelist to conditionally execute the parts of the algorithm that
+        apply and relies on the compiler eliminate the dead code it produces. This initial cut
+        doesn't implement the full algorithm, just a subset needed to see if this method will work
+        out.
+
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::isJSDOMWrapperType):
+        Add JSDOMWrapperType to the list of well known types to allow quick checking of wrappers
+        by the union code.
+
+        * bindings/js/JSNodeOrString.cpp:
+        (WebCore::toNodeOrStringVector):
+        Switch to new IDLUnion based converter.
+
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement animation of font-variation-settings

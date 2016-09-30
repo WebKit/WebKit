@@ -19,8 +19,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef JSDOMWrapper_h
-#define JSDOMWrapper_h
+#pragma once
 
 #include "JSDOMGlobalObject.h"
 #include <runtime/JSDestructibleObject.h>
@@ -30,9 +29,10 @@ namespace WebCore {
 class JSDOMWindow;
 class ScriptExecutionContext;
 
-static const uint8_t JSNodeType = JSC::LastJSCObjectType + 1;
-static const uint8_t JSDocumentWrapperType = JSC::LastJSCObjectType + 2;
-static const uint8_t JSElementType = JSC::LastJSCObjectType + 3;
+static const uint8_t JSDOMWrapperType = JSC::LastJSCObjectType + 1;
+static const uint8_t JSNodeType = JSC::LastJSCObjectType + 2;
+static const uint8_t JSDocumentWrapperType = JSC::LastJSCObjectType + 3;
+static const uint8_t JSElementType = JSC::LastJSCObjectType + 4;
 
 class JSDOMObject : public JSC::JSDestructibleObject {
 public:
@@ -69,6 +69,13 @@ private:
     Ref<ImplementationClass> m_wrapped;
 };
 
+ALWAYS_INLINE bool isJSDOMWrapperType(JSC::JSValue value)
+{
+    if (UNLIKELY(!value.isCell()))
+        return false;
+    return value.asCell()->type() >= JSDOMWrapperType;
+}
+
 template<typename ImplementationClass> struct JSDOMWrapperConverterTraits;
 
 template<typename JSClass, typename Enable = void>
@@ -92,5 +99,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // JSDOMWrapper_h

@@ -365,6 +365,43 @@ Visitor<F...> makeVisitor(F... f)
     return Visitor<F...>(f...);
 }
 
+namespace Detail
+{
+    template <typename, template <typename...> class>
+    struct IsTemplate_ : std::false_type
+    {
+    };
+
+    template <typename... Ts, template <typename...> class C>
+    struct IsTemplate_<C<Ts...>, C> : std::true_type
+    {
+    };
+}
+
+template <typename T, template <typename...> class Template>
+struct IsTemplate : public std::integral_constant<bool, Detail::IsTemplate_<T, Template>::value> {};
+
+namespace Detail
+{
+    template <template <typename...> class Base, typename Derived>
+    struct IsBaseOfTemplateImpl
+    {
+        template <typename... Args>
+        static std::true_type test(Base<Args...>*);
+        static std::false_type test(void*);
+
+        static constexpr const bool value = decltype(test(std::declval<typename std::remove_cv<Derived>::type*>()))::value;
+    };
+}
+
+template <template <typename...> class Base, typename Derived>
+struct IsBaseOfTemplate : public std::integral_constant<bool, Detail::IsBaseOfTemplateImpl<Base, Derived>::value> {};
+
+template <class T>
+struct RemoveCVAndReference  {
+    typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type type;
+};
+
 } // namespace WTF
 
 // This version of placement new omits a 0 check.

@@ -126,6 +126,7 @@
 		70ECA60E1B02426800449739 /* SymbolImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA60B1B02426800449739 /* SymbolImpl.h */; };
 		70ECA60F1B02426800449739 /* UniquedStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA60C1B02426800449739 /* UniquedStringImpl.h */; };
 		79EC70611C99F9BC003A3AE2 /* SmallPtrSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */; };
+		7C3F723A1D78811A00674E26 /* Brigand.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F72391D78811900674E26 /* Brigand.h */; };
 		7CBBA07419BB7FDC00BBF025 /* OSObjectPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */; };
 		7CD0D5A91D5534A7000CC9E1 /* Variant.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0D5A71D55322A000CC9E1 /* Variant.h */; };
 		7CDD7FF8186D291E007433CD /* IteratorAdaptors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */; };
@@ -475,6 +476,7 @@
 		70ECA60B1B02426800449739 /* SymbolImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolImpl.h; sourceTree = "<group>"; };
 		70ECA60C1B02426800449739 /* UniquedStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniquedStringImpl.h; sourceTree = "<group>"; };
 		7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallPtrSet.h; sourceTree = "<group>"; };
+		7C3F72391D78811900674E26 /* Brigand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Brigand.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
 		7CD0D5A71D55322A000CC9E1 /* Variant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Variant.h; sourceTree = "<group>"; };
 		7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorAdaptors.h; sourceTree = "<group>"; };
@@ -847,6 +849,7 @@
 				A8A47264151A825A004123FF /* BlockStack.h */,
 				A8A47265151A825A004123FF /* BloomFilter.h */,
 				0F93274A1C17F4B700CF6564 /* Box.h */,
+				7C3F72391D78811900674E26 /* Brigand.h */,
 				0F4570441BE834410062A629 /* BubbleSort.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
@@ -1333,6 +1336,7 @@
 				513E170B1CD7D5BF00E3650B /* LoggingAccumulator.h in Headers */,
 				A8A473E6151A825B004123FF /* MainThread.h in Headers */,
 				1A233C7D17DAA6E300A93ACF /* MallocPtr.h in Headers */,
+				7C3F723A1D78811A00674E26 /* Brigand.h in Headers */,
 				A8A473E8151A825B004123FF /* MathExtras.h in Headers */,
 				A8A473EA151A825B004123FF /* MD5.h in Headers */,
 				CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */,

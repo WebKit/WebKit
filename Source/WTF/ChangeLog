@@ -1,3 +1,24 @@
+2016-09-29  Sam Weinig  <sam@webkit.org>
+
+        Add initial support for IDL union conversion
+        https://bugs.webkit.org/show_bug.cgi?id=161576
+
+        Reviewed by Chris Dumez.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        Add Brigand.h
+
+        * wtf/Brigand.h: Added.
+        Import a standalone copy of Edouard Alligand and Joel Falcou's 
+        Brigand library for help with for help with list based meta programming
+
+        * wtf/StdLibExtras.h:
+        Add a new three new type traits, IsTemplate, IsBaseOfTemplate and RemoveCVAndReference.
+        - IsTemplate acts like std::is_class, but works with a generic base.
+        - IsBaseOfTemplate acts like std::is_base_of, but works with a generic base.
+        - RemoveCVAndReference combines std::remove_cv and std::remove_reference.
+
 2016-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3::moveConstants should be able to edit code to minimize the number of constants
